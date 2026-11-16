@@ -31,6 +31,7 @@
   "stats_energy_line": "063fa730a59a909e92ed3c402f46dabaa8138be31a2ad67611d12bddf4458dbe",
   "stats_evening": "c8df8e6c13ceee7afc1329c9792b632abf1a96b960113e55f21aa3a85875e696",
   "stats_every_belt": "57b79a02c67e45c91c12cd56956b771e069b3095c7270c0d459e1b7e735147e5",
+  "stats_few_answers_legend": "cf0e33bc3f2d88b4b380a1f3371261d7722df8dd3d4b96fdc2ff0857096c2e74",
   "stats_go_to_today": "6af3f2f55fd6873ddf66241d49d8b3fae5228605b9ff322ff78442023cb817b2",
   "stats_high": "d4517e0e55e27d773f68da1e72efe94cef30807ca005f734baf71ace91746dbb",
   "stats_less": "bdcb21d895d63930bd80ed0109afcfab3df8d92b1ef34fdc91acaf7c58741651",
@@ -48,6 +49,7 @@
   "stats_open": "685759c9a6b03a587889a8556ac3ee09eed133f4beb262c249917612db967a63",
   "stats_overview": "a6a615115eb749bc9c117fc5cec6cd9071c0218cef4b63cd75287e03b563d8d9",
   "stats_part_failed": "bb8f42070e64c2f4d76b2e4e6186514bd85a3c0e858e2d124d3a3e03c0481723",
+  "stats_past_6_months": "3c73d4b58b785792e0d9c6505624b55346cb9f142df1f8544fbb919f9ce3fe81",
   "stats_past_year": "299c03e60c939909aa7f332bb39db08f6b083658705d3eed0d93fe535dbbc072",
   "stats_patterns": "82e493daf98856c796c25c39b42b83f7e99d90e33e7f1d85b3d667296e612dca",
   "stats_patterns_90": "822cfec41472122e6e01f56148d0378d28b3e9940c1806302fb5ad3d3b96e0d4",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">레슨</string>
     <string name="stats_time">시간</string>
     <string name="stats_past_year">지난 12개월</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">최근 6개월</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">점선 막대는 통계를 내기에 아직 답한 문제가 적다는 뜻이에요.</string>
     <string name="stats_less">적음</string>
     <string name="stats_more">많음</string>
     <plurals name="stats_calendar_activity_summary">

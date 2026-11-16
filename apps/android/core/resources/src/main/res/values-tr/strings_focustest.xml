@@ -11,8 +11,8 @@
   "focustest_change_focus": "a231425c19d31fe6817733ea5c6ca1e8eae388ae9e3423ad0b330fea2915c701",
   "focustest_continue": "e72a50678daf56478778207bb7646fee4cfe21e14d868b67f065de5fc6e54ea2",
   "focustest_done": "e15addfe2cb2e3ced70db8af97ff5d91835db3a4b5cbf9dff12c50a825ea6e22",
-  "focustest_find_focus": "7c990cf0c20ac18e13901aa5470594eb2a41d53bcfa68d33c3f3b01ae5ea08e3",
-  "focustest_find_start": "412f38c450c778edd53fdf9d158f88313d97c27caa56673dd00490cb8d2adfda",
+  "focustest_find_focus": "fcfb52009e5372988f53887cae5b9f34410ff40055f2b99921ed8dd63a93e541",
+  "focustest_find_start": "4cc6a7b681fbce894da16553bcd34b61010786744c14c44f7cdde114a6076d4d",
   "focustest_from_basics": "8b4108ea463d5160a117097914290e069937bccf8c32e22136a9c41a3996041c",
   "focustest_how_grade": "c67b14f8b757068f4f691c89fa264f11d8a4a59df63cc53df2bbd5ec95127503",
   "focustest_how_grade_title": "f7f37502cd671917f351639bb705c7292c683a34dd3277fed3f7ad0504894817",
@@ -27,9 +27,8 @@
   "focustest_how_weight_title": "c2fb05f28d4b7e068b5a0623683e96febb8d6deb9fde7038936f17f33f75bb7e",
   "focustest_in_progress": "85387194816fb572883f0a5576339ffb6f01e0c0a8fb048d33e0233e6c8c50e8",
   "focustest_lessons_skipped": "3fbd19a98ca0bd18d74b6b59167e281a6a37b2af3cf3bda58a715e89dfbe25d3",
-  "focustest_listening_not_checked": "91e3357a1546d87563978ad73e9c9abd78c707e74590e138562caee974d4b5e4",
+  "focustest_listening_not_checked": "c0f1d8bd4a7768e86ce7f9d76957a19ecc2e5f402995d178e7ae0f01dcc5fba8",
   "focustest_many_unknown": "77e7ffc43f603a90e7f8e18d631ef7ae0c3aef63513adad8da6f2d5a5c692971",
-  "focustest_not_asked_yet": "ef2b8997365df918fddcc524dc2f4e2e894a8f7c820296acdc6697ea9effaf05",
   "focustest_not_known_yet": "004f73400d2279699da23f5e0aef2544712fcb1f9165cb85fee3a2369414ad13",
   "focustest_not_now": "af4c8034fb27dc411d987bd00473df897b1ae0c336d71ef9328511c3a26f539c",
   "focustest_not_today": "3fc78286effb52d39b49ff35083f477ad2b54f20bdac9734b700153640a00a81",
@@ -37,7 +36,7 @@
   "focustest_offer_description": "00009c24143192eb29c4457f63aef0094621365fc27399f42e6a81f46772fa11",
   "focustest_offer_description_focus": "26cced166cdf9e3856ddd026c4ca33b9d89ff183243f9f1fda90199c0cf06b50",
   "focustest_paused_in_sessions": "52e3d22b301df5c821f3a1778ab9001e992588ba1e3eba165f5508e82a878c26",
-  "focustest_practical_not_checked": "6022fb7ee608d109fbe6d941d979dffe72d9dd1f1de21e354e5ae665b73e7da2",
+  "focustest_practical_not_checked": "cc4cf6ba3e0a917d27a270aec4a559d23ee3ac14a0579cd1e6902a4aa9d1cb4c",
   "focustest_proposal_applied": "be855d0681da6cec1ffa0a27b040ae2f27a616d47ddddcf2b940684118883bd5",
   "focustest_proposal_declined": "a8d107680aa407e046d2071571f61e2978a03b0db74613fe4306ab8455768240",
   "focustest_proposal_description": "90e8850bd8e9553a1965958adfb320949b8aa5aa2e8f5e2672635ea00529ab1b",
@@ -59,7 +58,7 @@
   "focustest_session_questions_when": "60c7d40967538293f4962498c7c88eafbfa1e7d50802a4fd826161593cbdb203",
   "focustest_skip_for_now": "4007a0f6eac0efaab99e9e3f9b0f6dcf79a365af8dc7a98554bad080ae8458d8",
   "focustest_skip_note": "ac83484e4b22c65dc511e2435159c6f213d5c98aea546c86bacbf9b0c15e67b6",
-  "focustest_speaking_not_checked": "4f2c7e165b0b778ecac40435e1200cf0c2f3d9b501e2aee0488917115dc38319",
+  "focustest_speaking_not_checked": "87676ccbcf6d89c7a3bc7af5b356e5c89d51c2837916529dd6c6890659940101",
   "focustest_start": "4ab9c05dc69e281186fe3fcafeadde580d66a38c885e89ca09ddafb4795bf7a9",
   "focustest_starting_point_title": "130658eb4101d0dc8b94d717101a3b0ef7df71f3c490add2e08ac30b193c59b1",
   "focustest_stop": "400a92fd3efd4663eb8c7e6bbdc4449b9ed96ebbb73ec53d369ffe7e82e13d89",
@@ -73,7 +72,7 @@
   "focustest_undo": "efa5d5e01fc1676d4e4dce902f235c6f6af084da573cd62a08740f9563270a86",
   "focustest_update_plan": "4819c5f34950b937ddf4ea7155df03df15b0821172bb029df3b0470141fd4b3c",
   "focustest_what_test_changed": "e56f18f66142f80215072ec842719b6d5fce5684ae306c0f06860c82f4d86fc2",
-  "focustest_written_not_checked": "300f75ea13c900526aaaf90d92c293b3901fcdc9f864b2688d341a377da9ca1f"
+  "focustest_written_not_checked": "c6f25db5621de729ee767daa64ded61fa9f207c7ee56e3e5b87fd78dae24db6e"
 }
 -->
 <resources>
@@ -84,9 +83,9 @@
     <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
     <string name="focustest_about_left">Yaklaşık %1$s kaldı</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">Neye odaklanman gerektiğini öğren</string>
+    <string name="focustest_find_focus">En çok neye çalışman gerektiğini bul</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
-    <string name="focustest_find_start">Nereden başlayacağını öğren</string>
+    <string name="focustest_find_start">Bunların bir kısmını zaten biliyor musun?</string>
     <string name="focustest_offer_description_focus">Sınavındaki branşlardan kısa sorular. Planın zaten bildiklerini atlar, böylece zamanını en çok çalışman gereken konulara ayırırsın.</string>
     <string name="focustest_offer_description">Sınavındaki branşlardan kısa sorular. Planın zaten bildiklerini atlar.</string>
     <string name="focustest_how_it_works">Nasıl işler</string>
@@ -161,13 +160,11 @@
         <item quantity="one">%1$d / %2$d doğru</item>
         <item quantity="other">%1$d / %2$d doğru</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Henüz soru sorulmadı</string>
-    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
-    <string name="focustest_written_not_checked">Yazma: burada değerlendirilmiyor</string>
-    <string name="focustest_listening_not_checked">Dinleme: burada değerlendirilmiyor</string>
-    <string name="focustest_speaking_not_checked">Konuşma: burada değerlendirilmiyor</string>
-    <string name="focustest_practical_not_checked">Uygulama bölümü: burada değerlendirilmiyor</string>
+    <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
+    <string name="focustest_written_not_checked">Yazma: bu testte yok</string>
+    <string name="focustest_listening_not_checked">Dinleme: bu testte yok</string>
+    <string name="focustest_speaking_not_checked">Konuşma: bu testte yok</string>
+    <string name="focustest_practical_not_checked">Uygulamalı bölüm: bu testte yok</string>
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">Devam ediliyor</string>
     <string name="focustest_see_your_result">Sonucunu gör</string>

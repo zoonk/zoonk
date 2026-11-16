@@ -5,14 +5,14 @@
   "generation_connection_lost_description": "7a877cdd7b54619d9122dda99b4acd7804ace01d8ba5fafad380189a8f218263",
   "generation_curriculum": "9a1b4b5c77cbdb2174aae0ad213b6235995a726e7cab5889e228b844e67d54d8",
   "generation_curriculum_plan": "5864b8e4d13d5ee33a98968ecce03ccb48e8e06444e7e92264a874ead72467e2",
-  "generation_curriculum_plan_line_1": "77f6fea17d692ece98d3a4670081051772956894c060c83671071618151b863a",
+  "generation_curriculum_plan_line_1": "897c7ffd5cf4fca7676ede181428601e09ee662025c41beb4c43cf4e2d4f5fa1",
   "generation_curriculum_plan_line_2": "b5367bb0bd2dadcdde1d627a8e24ee14040c106d482a882ab9abf4d6cb864194",
   "generation_curriculum_plan_line_3": "0035f127cb544f326d1bca115f602aa9be7cf2419f9ceb8c862a1347e7774f2d",
   "generation_failed_description": "ae74d8534a222eb66b1f1a7135778595fce6bfe7ff28dab353c45e3d5af1c023",
   "generation_failed_ours": "d79efc62bc5a737ddcd99133f9f6773d7e2294bc95362faa97daeba25243a780",
   "generation_first_lesson": "cdadbc52729c4cf4667be0760814b1c377c6927597b682ab42367e57d36a5323",
   "generation_first_lesson_day": "e44045057e2a6b57d4308306a9d9df5454c3490895f5b8a90c747bf2b834435b",
-  "generation_first_lesson_day_line_1": "a16b0ef5ce5da243198f6642ac59d9b18ce5bb5a2dcb243cd425eb84b80e8ab8",
+  "generation_first_lesson_day_line_1": "a9dfee38deb9cb293bf9a36504b82229b166030dbde94ed62eb43ba3e3f920d4",
   "generation_first_lesson_day_line_2": "a9834739bfe1a79c3eff1b97bd215ec16d226e78bc765fbb497fb7e0fb15caf7",
   "generation_goal": "7c70b8e6fa4328cdb19d3de15a941ef83994fcd3a5ac8e22f88db2dabe1b5da6",
   "generation_goal_line_1": "947edab6d8aba9dc43e1181a733c46389c4a74c14b2fc99fde192f31dac5c35f",
@@ -94,7 +94,7 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">계획을 만들고 있어요</string>
     <string name="generation_curriculum_plan">일정에 맞춰 계획을 짜고 있어요</string>
-    <string name="generation_curriculum_plan_line_1">라이브러리에서 레슨을 찾고 있어요…</string>
+    <string name="generation_curriculum_plan_line_1">목표에 맞는 레슨을 찾고 있어요…</string>
     <string name="generation_curriculum_plan_line_2">날짜별로 배울 스킬을 정하고 있어요…</string>
     <string name="generation_curriculum_plan_line_3">계획을 저장하고 있어요…</string>
     <!-- The wait while placement questions are written. -->
@@ -104,7 +104,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">첫날 학습을 준비하고 있어요</string>
     <string name="generation_first_lesson_day">첫날 학습을 계획하고 있어요</string>
-    <string name="generation_first_lesson_day_line_1">라이브러리에서 레슨을 찾고 있어요…</string>
+    <string name="generation_first_lesson_day_line_1">목표에 맞는 레슨을 찾고 있어요…</string>
     <string name="generation_first_lesson_day_line_2">어디부터 시작할지 정하고 있어요…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">레벨 테스트를 준비하고 있어요</string>

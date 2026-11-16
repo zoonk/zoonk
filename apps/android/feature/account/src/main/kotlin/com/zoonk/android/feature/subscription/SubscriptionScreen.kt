@@ -75,7 +75,9 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
@@ -87,9 +89,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
 import kotlin.time.Instant
@@ -680,18 +679,11 @@ internal fun Note(
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
 }
 
+/** As main's subscription page writes a period's end: the day with its year ("Dec 1, 2026"). */
 internal fun planDate(
     instant: Instant,
     locale: Locale,
-): String =
-    DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.MEDIUM)
-        .withLocale(locale)
-        .format(
-            java.time.Instant
-                .ofEpochMilli(instant.toEpochMilliseconds())
-                .atZone(ZoneId.systemDefault()),
-        )
+): String = formatMomentDay(instant, locale, style = DateStyle.Short)
 
 internal fun money(
     micros: Long,

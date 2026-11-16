@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -204,10 +203,16 @@ private fun chapterBlocks(
                 Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
                     HorizontalDivider()
                     Spacer(Modifier.size(48.dp))
-                    Text(
-                        stringResource(if (startChapterId != null) R.string.catalog_chapter_closing else R.string.catalog_closing_start),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
+                    SectionTitle(
+                        stringResource(
+                            if (startChapterId !=
+                                null
+                            ) {
+                                R.string.catalog_chapter_closing
+                            } else {
+                                R.string.catalog_closing_start
+                            },
+                        ),
                     )
                     Spacer(Modifier.size(8.dp))
                     Text(
@@ -463,22 +468,25 @@ internal fun ChapterLessons(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place))
+        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place, withPosition = false))
         ChapterLessonRows(navigator, courseId, place, currentLessonId = null)
     }
 }
 
 @Composable
-internal fun chapterFacts(place: ChapterPlace): String {
+internal fun chapterFacts(
+    place: ChapterPlace,
+    withPosition: Boolean = true,
+): String {
     val locale = currentLocale()
     val lessons = place.chapter.lessons
 
-    return listOf(
+    return listOfNotNull(
         stringResource(
             R.string.catalog_chapter_position,
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
-        ),
+        ).takeIf { withPosition },
         pluralStringResource(R.plurals.catalog_short_lessons, lessons.size, lessons.size),
         formatTotalDuration(lessons.sumOf { it.estimatedMinutes }.toDouble(), locale),
     ).factsLine()

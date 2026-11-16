@@ -31,6 +31,7 @@
   "stats_energy_line": "aaa612eb096cf8fb62b5ec9153e6d34aae1cae5c613eb52195b015c7238eabf4",
   "stats_evening": "6fb4c6c24f9b72e1262a316b19058393d347211593a27b7a6a02786a5872ad38",
   "stats_every_belt": "dfedc7353796d921c54e61c6003bd8aaaaa5960470bb65449d958d3f8dcb73f8",
+  "stats_few_answers_legend": "a86669eb99ab7dc803d3e1063de96ba419a125939e68da6f03c76cfe97525082",
   "stats_go_to_today": "192933e718deb923dfa720d8c96c28bfcf75a7cbe13cff613295731a6e913934",
   "stats_high": "6546a791b74a622d5fb729e5e4d70e7bef7a98f8461a061b717f9410d32124cd",
   "stats_less": "3ad27b458c80e5860d3f8bdbe8999ce29d101055479d15dc981d8a5691091434",
@@ -48,6 +49,7 @@
   "stats_open": "be078f1c71f9e669e94e323284b8c28eb7733302bda223b57cbae0fb33efaab2",
   "stats_overview": "000999212061caf6368e40fb3058b5656244d5f0981bc122d63e40415b904e3e",
   "stats_part_failed": "1e7e9b8b89e6bf65b34f10aa470b6230cc7d2cc4f15beecbeb81894025c01eb0",
+  "stats_past_6_months": "65add819be97eb1f84fd2d5a48a241aa3811e4a3335daf1085c60a213e97bd02",
   "stats_past_year": "dce7d65c57127e48433d6c8dc047ffed43005205d962adeac4b3470d4e231403",
   "stats_patterns": "7e162b1016577fc1c02154d8c398689db28c7681ce5e15c5d6d1f1133e792e9a",
   "stats_patterns_90": "d01c08de755d64b60bd8b9eb1fc5780a0a7f78ec836e2c0575724cec50b66372",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">Lektionen</string>
     <string name="stats_time">Zeit</string>
     <string name="stats_past_year">Letzte 12 Monate</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">Letzte 6 Monate</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">Bei gestrichelten Balken gibt es noch zu wenige Antworten für eine Auswertung.</string>
     <string name="stats_less">Weniger</string>
     <string name="stats_more">Mehr</string>
     <plurals name="stats_calendar_activity_summary">

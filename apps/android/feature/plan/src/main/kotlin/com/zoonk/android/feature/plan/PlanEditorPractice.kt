@@ -106,8 +106,8 @@ internal fun WrittenCadenceChoice(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
+                    Text(cadenceLabel(cadence), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
                     RadioButton(selected = cadence == shown, onClick = null, enabled = !pending)
-                    Text(cadenceLabel(cadence), style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }

@@ -31,6 +31,7 @@
   "stats_energy_line": "d87f127871864813d3f8401ab85537dce27da18f8fbb4fbc9649b3d3adfc05eb",
   "stats_evening": "5fbc1e9fc97d10925c851611727a4d2a63fe270c6f1a1601890b459de3c2ed5a",
   "stats_every_belt": "136ce2ec6a4eb3a27aad0ad4fa556297dd245fb8c4b82b78f3fb04061256c034",
+  "stats_few_answers_legend": "7ea4e44eab354d6acd371ad4ed4f8456e9ebe8bda1b23dc3a970ff5de8b476c0",
   "stats_go_to_today": "00e08cfa7407700ff71052a7b1cee82c163993ce7ac786cd673d291de68820a9",
   "stats_high": "250d0cae9c4455aa0002c52a3bab555b5ee651613cb68a164370843566ac350f",
   "stats_less": "ff14373454bdb374154cd68dec7747bfd367166030441dd11b380771dff99372",
@@ -48,6 +49,7 @@
   "stats_open": "a6a1b142d608b010afb0b26dfde5a9512980bb14830a24142222bdbc2a1c7b9e",
   "stats_overview": "e69870ba694ad885fda085221b01b0f8bdd17abeb12b254d16f4e410adf1493e",
   "stats_part_failed": "b950aa736f1216c067e9b9a09a89d27c75291b112933d115872f9b3d04c321d2",
+  "stats_past_6_months": "bd02978e4d93b624ba41e31cd8450aaf6c66483f2094ce93012eeeb27ee1beff",
   "stats_past_year": "98dc6286ab96619015b09d1534d6b8bc521a709b3e4b16d94d1eb80880356a88",
   "stats_patterns": "db8e73d58e3677b06797c3f22bc3a043daa7b0dd9e4a1e8ae3f9aedf3c2c6407",
   "stats_patterns_90": "818ec89fd34c3a3222c714af28375217bdd7105cc39b4f020d86d747c1551d8e",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">Lecciones</string>
     <string name="stats_time">Tiempo</string>
     <string name="stats_past_year">Últimos 12 meses</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">Últimos 6 meses</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">Una barra con borde discontinuo aún tiene muy pocas respuestas para tenerla en cuenta.</string>
     <string name="stats_less">Menos</string>
     <string name="stats_more">Más</string>
     <plurals name="stats_calendar_activity_summary">

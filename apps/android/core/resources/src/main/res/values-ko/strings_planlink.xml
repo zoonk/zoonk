@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "planlink_about": "626e8bca14ceb25820bb9b9db7a8a2555dbd2de09b2ecc6ca5faa3e1a0d85ce8",
-  "planlink_eyebrow": "cc0473ea530706f02a6c3c1b749e9a1f3b28b453546c3ce63991345af684729e",
+  "planlink_eyebrow": "238b2d330cbb3b109a466b56ef6996539ff8530e09f3a72a9b09a2945ad75b28",
   "planlink_facts": "3c3844e03cbf2d5519c25b2dead5d9551d3fa64f5c1311825d85c23f6385adec",
   "planlink_failed": "1b1f9dc55472a37ea36ab17e0e5191e3613854a59bf5c47c7b670e280daac6c6",
   "planlink_make_it_yours": "55e409ed6a0a6cca3481d629e7e154d3ca5e2afa2125f40c052f1e5508c9e308",
@@ -18,7 +18,7 @@
 -->
 <resources>
     <!-- Above a shared plan's subject. -->
-    <string name="planlink_eyebrow">누군가 공유해 준 학습 계획</string>
+    <string name="planlink_eyebrow">누군가 학습 계획을 공유해 줬어요</string>
     <!-- A shared plan without a subject, and the title over its phases. -->
     <string name="planlink_study_plan">학습 계획</string>
     <string name="planlink_minutes_label">하루에 얼마나 공부할까요?</string>

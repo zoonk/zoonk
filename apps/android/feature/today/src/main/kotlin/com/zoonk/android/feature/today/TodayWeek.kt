@@ -34,6 +34,8 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -111,24 +113,18 @@ private fun DayCell(
         note = dayNote(day, weekDate, status),
         footer = { if (challenge != null) ChallengeLine(challenge) },
     ) { open ->
-        Column(
+        WeekDayCell(
+            letter = names.narrow.getValue(dayOfWeek),
+            today = day.isToday,
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
                     .then(open)
                     .clearAndSetSemantics { contentDescription = description },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             DayRing(day, weekDate) {
                 if (challenge != null && day.share == 0f) KindMark(challenge.kind())
             }
-            Text(
-                text = names.narrow.getValue(dayOfWeek),
-                color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = if (day.isToday) FontWeight.Medium else null,
-                style = MaterialTheme.typography.labelSmall,
-            )
         }
     }
 }
@@ -185,9 +181,10 @@ private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
     }
 }
 
+/** A day's ring as Today draws it, which the weekly recap draws for its days too. */
 @Composable
-private fun DayRing(
-    day: WeekDay,
+internal fun DayRing(
+    day: StudyWeekDay,
     weekDate: LocalDate,
     content: @Composable () -> Unit,
 ) {
@@ -352,4 +349,4 @@ private fun ChallengeRow(
     }
 }
 
-private val RING = 30.dp
+private val RING = WEEK_RING

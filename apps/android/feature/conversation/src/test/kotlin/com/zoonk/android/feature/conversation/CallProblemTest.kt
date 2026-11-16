@@ -58,6 +58,7 @@ class CallProblemTest {
         // The title's room stays, so the line under it doesn't move.
         assertEquals(line, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
+        compose.onNodeWithText("Your call time is back").assertExists()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
         compose.onNodeWithText("Try again").performClick()
 

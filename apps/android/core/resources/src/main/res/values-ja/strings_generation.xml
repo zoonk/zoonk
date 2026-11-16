@@ -5,14 +5,14 @@
   "generation_connection_lost_description": "0c0007d56b84bff0928a75c5d767a871f75dcff8942fecc2ceabed5613cd5518",
   "generation_curriculum": "347db21dc8f8caf16cf91a0aa4bfceeb3de1c58a24bbe8959a7249a5ae621a49",
   "generation_curriculum_plan": "d80eded0fc10e59aa43cb04c5738d44a193ab9b5960fe7c10afaf423d73c478c",
-  "generation_curriculum_plan_line_1": "19ee9c7299a03a7f5dd7216e3f2406e9213e9ac436a83acc1db8b51f17603f3f",
+  "generation_curriculum_plan_line_1": "41911d919db30adc227161dc0f6a6f72e248ef19bdda7b6b2420d20a623ccf4e",
   "generation_curriculum_plan_line_2": "aed43876ae0a51bc135b54ba28a7fbce18344f5798e745f0d4f04fa7504f867c",
   "generation_curriculum_plan_line_3": "2529093ae2ed9e44d8f66619f9eca461de84642f0dfb253faeba87ba03958b27",
   "generation_failed_description": "076b4b7bdd6f6661c554c193554c695b51c10690298f734f2f5fda94d372b480",
   "generation_failed_ours": "24d5a8100304c91338853d27202013db57a5d86d71bc818c2c94aeba92231f6a",
   "generation_first_lesson": "b4825aa35c398cd5b9ffc9ae06dfecb2fe73465b9c40274f62a79a3b0063786a",
   "generation_first_lesson_day": "33997a18c1d37f1cf9582f1d03c334b3daf12ebb4ab99e388f2de3fc9092cf5d",
-  "generation_first_lesson_day_line_1": "d899dca1c2b6d1078146220f4e9ec9c7b226340a087f68f68190c799b1ad7efe",
+  "generation_first_lesson_day_line_1": "3c7771ce86aba4a1be41a0f3693b277c631c73dd5618b2bb63fbcd85318eddd4",
   "generation_first_lesson_day_line_2": "c715a370b020ff1eadf78826d4c4921ab6bbf2e4e6590f74edbe7d3edbcd21d5",
   "generation_goal": "0d74de4a986c39a930ed7415d64b8813d112ef11988cfe605d0a424a6455d915",
   "generation_goal_line_1": "5f4ce78912d91eac351de64f5016e4a07b13138d4d16750ea0c2ce3627c9069e",
@@ -94,7 +94,7 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">学習計画を作成しています</string>
     <string name="generation_curriculum_plan">日々の予定に合わせて学習計画を立てています</string>
-    <string name="generation_curriculum_plan_line_1">ライブラリでレッスンを探しています…</string>
+    <string name="generation_curriculum_plan_line_1">目標に合うレッスンを探しています…</string>
     <string name="generation_curriculum_plan_line_2">スキルの学習を日ごとに振り分けています…</string>
     <string name="generation_curriculum_plan_line_3">学習計画を保存しています…</string>
     <!-- The wait while placement questions are written. -->
@@ -104,7 +104,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">初日の学習を準備しています</string>
     <string name="generation_first_lesson_day">初日の学習計画を立てています</string>
-    <string name="generation_first_lesson_day_line_1">ライブラリでレッスンを探しています…</string>
+    <string name="generation_first_lesson_day_line_1">目標に合うレッスンを探しています…</string>
     <string name="generation_first_lesson_day_line_2">どこから始めるか選んでいます…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">レベルテストを準備しています</string>

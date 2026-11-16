@@ -315,7 +315,7 @@ private fun FocusTestSheet(
 }
 
 @Composable
-private fun subjectState(subject: FocusTestSubject): String =
+private fun subjectState(subject: FocusTestSubject): String? =
     when (subject.state) {
         FocusTestSubject.State.ANSWERED -> {
             val chosen = (subject.asked - subject.dontKnow).toInt()
@@ -327,7 +327,7 @@ private fun subjectState(subject: FocusTestSubject): String =
         }
 
         FocusTestSubject.State.NOT_ASKED -> {
-            stringResource(R.string.focustest_not_asked_yet)
+            null
         }
 
         FocusTestSubject.State.NOT_CHECKED -> {
@@ -350,7 +350,7 @@ internal fun SubjectsList(subjects: List<FocusTestSubject>) {
             if (index > 0) ListDivider()
             ListRow(
                 headline = { Text(displayName(subject.name, subject.shortName)) },
-                meta = { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                meta = subjectState(subject)?.let { state -> { Text(state, color = MaterialTheme.colorScheme.onSurfaceVariant) } },
             )
         }
     }

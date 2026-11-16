@@ -105,7 +105,7 @@ class OnboardingBarTest {
     fun onAPhoneUnderstoodKeepsItsActionsInReach() {
         showUnderstood()
         write("understood-tall-phone")
-        assertPinned("Here's what I understood", "Looks right")
+        assertPinned("Here's what we understood", "Looks right")
     }
 
     @Test
@@ -113,7 +113,7 @@ class OnboardingBarTest {
     fun onAWideWindowUnderstoodKeepsItsActionsInReach() {
         showUnderstood()
         write("understood-tall-wide")
-        assertPinned("Here's what I understood", "Looks right")
+        assertPinned("Here's what we understood", "Looks right")
     }
 
     /** Large text, since the level choices fit a phone at the default size. */

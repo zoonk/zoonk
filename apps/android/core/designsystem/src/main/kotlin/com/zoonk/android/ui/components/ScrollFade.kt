@@ -42,4 +42,6 @@ fun Modifier.fadingHorizontalScroll(state: ScrollState): Modifier =
 
 private const val FADE_SHARE = 0.12f
 private val FADE_WIDTH = 40.dp
-private val REVEAL = 96.dp
+
+/** Main's `--scroll-fade-reveal`: a fade is whole within the last 16 dp of scroll toward its edge. */
+private val REVEAL = 16.dp

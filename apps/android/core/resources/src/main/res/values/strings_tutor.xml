@@ -3,6 +3,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">Your buddy</string>
     <string name="tutor_ask">Ask %1$s</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">Ask for help</string>
     <string name="tutor_ask_chapter">Ask %1$s about this chapter</string>
     <string name="tutor_ask_mock">Ask %1$s about this mock exam</string>
     <string name="tutor_ask_plan">Ask %1$s about your plan</string>

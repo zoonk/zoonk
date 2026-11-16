@@ -3,8 +3,9 @@ package com.zoonk.android.feature.feedback
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,18 +78,27 @@ fun HelpScreen(
 
                 FeedbackForm(app, form, withSend = false)
 
-                // Main's row of quiet icons, each a 48dp target whose mark lines up with the page's margin.
+                // Main's row of quiet icons, each a 48dp target whose mark lines up with the page's margin; rows that
+                // wrap share the icons evenly, so none is left alone on a row of its own.
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     SectionHeader(stringResource(R.string.feedback_follow_us))
-                    FlowRow(Modifier.offset(x = -ICON_INSET)) {
-                        SOCIALS.forEach { social ->
-                            IconButton(onClick = { openWebPage(context, if (portuguese) social.urlPt else social.url) }) {
-                                Icon(
-                                    painterResource(social.icon),
-                                    contentDescription = social.name,
-                                    modifier = Modifier.size(18.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
+                    BoxWithConstraints(Modifier.offset(x = -ICON_INSET)) {
+                        val fits = ((maxWidth + ICON_INSET * 2) / ICON_TARGET).toInt().coerceIn(1, SOCIALS.size)
+                        val rows = (SOCIALS.size + fits - 1) / fits
+                        Column {
+                            SOCIALS.chunked((SOCIALS.size + rows - 1) / rows).forEach { row ->
+                                Row {
+                                    row.forEach { social ->
+                                        IconButton(onClick = { openWebPage(context, if (portuguese) social.urlPt else social.url) }) {
+                                            Icon(
+                                                painterResource(social.icon),
+                                                contentDescription = social.name,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -121,3 +131,5 @@ private val SOCIALS =
 
 /** How far a 48dp target reaches past its 18dp mark on each side. */
 private val ICON_INSET = 15.dp
+
+private val ICON_TARGET = 48.dp

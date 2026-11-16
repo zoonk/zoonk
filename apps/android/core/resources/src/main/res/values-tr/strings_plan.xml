@@ -202,10 +202,12 @@
   "plan_effect_fewer": "bee5f5a061544551419788933406290d476c5c17492827d456c6c171464a7b96",
   "plan_effect_fewer_before_end_date": "f7953d53dcedcc581b5e678ff0aff3117c5cbd183ec148174ceb338883d0eaa3",
   "plan_effect_fewer_before_exam": "0b508dc4f7c489569755029af6a8965181d15197d19f4f4c1cb15d15bf8946c7",
+  "plan_effect_fewer_by": "fd4af16270d87903c1da2c4c35cd27ff023484e4944db681de0d4c0382c6fa86",
   "plan_effect_mocks_on": "38730016309ea82851c3f089cec4c2c5f75948f70297ecc56ff27d6b10569142",
   "plan_effect_more": "e0299c6b0b9514a47c6a0c01bb85feab7f46c57cd6bc57d2828e016df61aa046",
   "plan_effect_more_before_end_date": "30f9cd363f828fe24b368b8481357b9b3e9387f53a7a7c294755cc7630f1658d",
   "plan_effect_more_before_exam": "a82435af4b7c871acf038ea1cb4529da41548a7df71bc6ef9094c10795ee1326",
+  "plan_effect_more_by": "58b4bb026bcb14f57d0a1fcb13223c29030d1e4c3afe5af7bc6d04bea195bff6",
   "plan_effect_names_and_more": "b603a4211331eadf34d09773edde2c9d2b120153ea0cede5f469568f889f77f8",
   "plan_effect_next_mock": "38a60d3597ac66c68bba53a50c4b1afdaf698986f6b4cd09e6c276f0ed63fe30",
   "plan_effect_numbers_different": "482c81a9e592304546c9eca56d606a9f66ae84485372fa1d33c463d739e0d35a",
@@ -257,7 +259,7 @@
   "plan_far_from_month": "6df66fb5cd541eba8e5a8641e99956f0343a895c6b2266a93df30ec7d59c5b05",
   "plan_far_lessons": "686defb96cf1edbce263f227bc04c64dd329d3507374baa9caf09a4e9ad19fde",
   "plan_far_lessons_about": "1d5619ab1df43dc310a4cc539d8c880c65162ce5083d99e3ae809911280f51b1",
-  "plan_far_nothing_left": "2e5bb985962fa052be588dc30a7bc85999a6ac395799306ee8d6aa1a86ffa584",
+  "plan_far_nothing_left": "3f586c011a993f4e72a1af8db79c3acf460f796862ab11c10398a1a7aaa36a58",
   "plan_far_see_lessons": "5e3d1feeddafdf2b5f96e37533d1fb7d97978f69b45f9454fb3385d7d3d061fe",
   "plan_far_unreachable": "dffd717644fa274e556af5d641415aaf819dddd74576ea7dfae7ef3ed359813e",
   "plan_far_writing": "2bf518e3759633c9f20581ad20fd2eb4cb4b7f93268cced104203a4901dc0b24",
@@ -447,6 +449,8 @@
   "plan_time_covers_exam_all_month": "4c38957f0647520db256b26c413415ca92e9c4b900cc40297d70754a304d7443",
   "plan_time_covers_goal_all": "6bf896a0a4228b3016257c6d2fdc7dde236c8edeaabc18d5ca7d757bd36f79cf",
   "plan_time_covers_goal_all_month": "a68bd23a04fc1e1fa250a99150b6d50821b5bc85f59fbd73d23d5894a2241a96",
+  "plan_time_covers_share_exam": "bb83029100acc2e965f7b04cf733c1b71fc71bf635907d330190f892566f4c71",
+  "plan_time_covers_share_goal": "834a00bda7aa66a962d736e1e195e5b1c6fadde5b5b25f4babe5c668685d0903",
   "plan_time_find_failed": "0c97894580e8aa20738a4a1d4139504b5c4cd9097c5058ea7413191f3a25f12f",
   "plan_time_finish_failed": "c21a915995afe27dedcd9b519acdcf6c316bc19556c58184aa1ec72bf90695c7",
   "plan_time_finish_unknown": "d5ec8a3d69f87f92f3956cee9f0d9bedf491eb728748a5140d48e0a4058cd72c",
@@ -516,6 +520,7 @@
   "plan_try_again": "50e02d0d3e47d8caa6a659dc55954ac010d31d3325bb5159c45e4891d509fb84",
   "plan_tuesdays": "9a3111d3e87d051c2cd00f248ca46da5915610fc9c46657aac3a3dec3724d56b",
   "plan_undo": "28728aeba8c09e920c42f4047c90175c836be9d323cfdd4d0dd7e295ed0089f9",
+  "plan_undo_failed": "9c0b54ef47cc0d8c2fc9c072e9a6cb04a0a1c3ff51178f55832e1191e0137739",
   "plan_up_next": "d707df702fdead2672554a8b69359991d52fe6df69da6fc0884aff7e6f4b832b",
   "plan_up_next_suffix": "49c671195af2f65be9b0a66b1338a7b71b1386ec4f82d43ecacbb9a7605d75a9",
   "plan_updated": "5320dc6cf341f0c1192645ded882c710e46b6179f2f7d2f155262280e0066059",
@@ -678,7 +683,8 @@
     <!-- Write the duration out in words, not as "30 s". -->
     <string name="plan_far_writing">Dersleri hazırlıyoruz… Yaklaşık yarım dakika sürer.</string>
     <string name="plan_far_unreachable">Sunucuya ulaşamadık. Bağlantını kontrol et.</string>
-    <string name="plan_far_nothing_left">Bu konu için hazırlanacak bir şey kalmadı.</string>
+    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
+    <string name="plan_far_nothing_left">Bu dersler erkenden hazırlanamaz. Bu konuya gelmeden önce hazır olacak.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d ünite daha</item>
         <item quantity="other">%d ünite daha</item>
@@ -1015,6 +1021,8 @@
     <string name="plan_editor_title">Planını ayarla</string>
     <string name="plan_editor_close">Kapat</string>
     <string name="plan_undo">Geri al</string>
+    <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
+    <string name="plan_undo_failed">Bu değişiklik geri alınamadı.</string>
     <string name="plan_deadline">Son tarih</string>
     <string name="plan_named_month_note">Şimdilik %1$s. Gün belli olunca seç.</string>
     <string name="plan_no_deadline_note">Son tarih yok: her şeyi kendi temponda çalışırsın. Son tarih belirlersen planın o zamana kadar en önemli konuları kapsar.</string>
@@ -1180,6 +1188,10 @@
     <string name="plan_time_covers_everything_by">Ayırdığın süreyle her şeyi %1$s tarihine kadar bitirebilirsin</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Ayırdığın süreyle her şeyi %1$s itibarıyla bitirebilirsin</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_exam">Günde %1$s ile sınav konularının yaklaşık %2$s kadarı plana sığar</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_goal">Günde %1$s ile hedefinin yaklaşık %2$s kadarı plana sığar</string>
     <string name="plan_covered_not_enough">Günde %1$s ayırmak, hedefin için gereken her şeyi çalışmaya yetmiyor.</string>
     <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_find">Süreyi hesapla</string>
@@ -1295,6 +1307,16 @@
     <plurals name="plan_effect_more_before_end_date">
         <item quantity="one">Bitiş tarihinden önce %d ders daha çalışıyorsun.</item>
         <item quantity="other">Bitiş tarihinden önce %d ders daha çalışıyorsun.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d lessons studied by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_more_by">
+        <item quantity="one">%1$d ders daha çalışırsın; bitiş tarihin %2$s olur.</item>
+        <item quantity="other">%1$d ders daha çalışırsın; bitiş tarihin %2$s olur.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d fewer lessons by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_fewer_by">
+        <item quantity="one">%1$d ders daha az çalışırsın; bitiş tarihin %2$s olur.</item>
+        <item quantity="other">%1$d ders daha az çalışırsın; bitiş tarihin %2$s olur.</item>
     </plurals>
     <plurals name="plan_effect_more">
         <item quantity="one">%d ders daha çalışıyorsun.</item>

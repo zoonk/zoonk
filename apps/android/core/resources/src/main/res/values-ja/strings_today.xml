@@ -20,8 +20,6 @@
   "today_continue_mock": "7bb401467570af21befccd878950526697506279042ce5b2e226de52ec1554f5",
   "today_continue_mock_detail": "f93f09b107e635ceb7b70790814d61ed91d3e20110785d6a49471d8050d7f13c",
   "today_continue_session": "7fc61d65b7e5710fa6026c51b87a7a6f2a3384438def511339fec5ad01de8283",
-  "today_day_is_here": "ecaf7cfd9f019f73ccbbcc8ee1dacf826da59ce25189fae53d42eda70b25365e",
-  "today_days_left": "b2fb833998f9232598bd5e8b7f713f00ef2096afb73fa2c025d47ca6754fdf5d",
   "today_done": "13433041e309c66ecd2d9fd5bb1f222120a6c509b97604bb32ba1a3d9b7c630c",
   "today_done_count": "49ba7434e17534c087df1507f64f4fbdefc3110fc123fc96c294f5da3a46535d",
   "today_done_day_off": "e25b2db7f9b9395f884f263e83d2d5fa3934a6617116dbf77025bc75da3072fb",
@@ -175,10 +173,6 @@
     </plurals>
     <string name="today_shorter_day">今日は学習時間が短め</string>
     <string name="today_shorter_day_note">学習計画では、%1$sに模試を受ける時間を確保しています。</string>
-    <string name="today_day_is_here">いよいよ当日</string>
-    <plurals name="today_days_left">
-        <item quantity="other">あと%d日</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="other">予定に追いつくまであと%dレッスン</item>
     </plurals>

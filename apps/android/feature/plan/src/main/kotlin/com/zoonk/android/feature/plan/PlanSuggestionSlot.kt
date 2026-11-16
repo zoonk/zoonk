@@ -466,8 +466,9 @@ internal class SlotAnswer(
     @Composable
     fun Undo() {
         val change = change?.takeIf { it.canUndo } ?: return
+        val action = planNoticeActions(failed = failed, canUndo = true).first()
         SuggestionAction(
-            text = stringResource(R.string.plan_undo),
+            text = stringResource(action.label),
             onClick = {
                 onUndo()
                 edits.undo(change)
@@ -482,8 +483,8 @@ internal class SlotAnswer(
     @Composable
     fun Result() {
         SuggestionResult(text)
+        if (failed) SuggestionSaveError(stringResource(R.string.plan_undo_failed))
         SuggestionActions { Undo() }
-        if (tracked?.undoFailed == true) SuggestionSaveError()
     }
 }
 
@@ -514,6 +515,7 @@ internal fun PlanChangeSuggestion(
         answered = answer != null,
         failed = answer?.failed == true,
         lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen() }),
+        failure = stringResource(R.string.plan_undo_failed),
     ) {
         if (answer != null) {
             SuggestionHeader(stringResource(R.string.plan_updated))

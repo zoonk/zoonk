@@ -10,11 +10,6 @@
     </plurals>
     <string name="today_shorter_day">A shorter day</string>
     <string name="today_shorter_day_note">Your plan keeps time for the mock exam on %1$s.</string>
-    <string name="today_day_is_here">The day is here</string>
-    <plurals name="today_days_left">
-        <item quantity="one">%d day left</item>
-        <item quantity="other">%d days left</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d lesson to catch up</item>
         <item quantity="other">%d lessons to catch up</item>

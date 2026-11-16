@@ -2,9 +2,9 @@
 <!-- eloqnt-fingerprints-v1
 {
   "country_all": "5783dd2a4353aca7636495135f95dc47f1968cad8a4ddcbce6485bfc57f84b2a",
-  "country_change_body": "98e54613665d343833f6275159bb442aec6b986626145139b3e72b1fe95e654b",
-  "country_change_confirm": "8b0c2730be71de0c68250466f3f9d8e7d13705ae1f8d7c72499494135ac6b1cb",
-  "country_change_title": "8d8de2dca93e7628b7247acb82463ed0a1d1bb114dacc43f81a1539f7da782aa",
+  "country_change_body": "129807d2ec3340d16d6b212f108b503640af645b85df7a8ce5f6d7160cfbea39",
+  "country_change_confirm": "ef55c234a4a963721023ba5ccc4bbced32930e24b2c0feb0a43faa14e4796834",
+  "country_change_title": "dc1f7b667fc25423ae70cc00bff39d5630378e4653a7ce7093e4d9b5808ae297",
   "country_content_label": "74e8b465736b099e3357fe02f5eaee24aaaf91e1a0cbf6a70008ecc5e18ae993",
   "country_content_value": "3967fd1bfc6dd23af2eb6b78dae2232263db261ad54fcdcce3995ed1976a8f90",
   "country_exam_label": "41ab6efe29ae5072c526479298734ffd349c24aba4231cf38003e7cdfcda2b26",
@@ -57,11 +57,11 @@
     <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
     <string name="country_lesson_examples_label">Przykłady w lekcjach</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
-    <string name="country_change_title">Zmienić kraj w planie?</string>
+    <string name="country_change_title">Zmienić kraj?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
-    <string name="country_change_body">Nowy kraj: %1$s. Przygotujemy dla niego nową wersję twojego planu. Ukończone lekcje pozostaną zaliczone, a dopóki nowy plan nie będzie gotowy, możesz uczyć się według obecnego.</string>
+    <string name="country_change_body">Nowy kraj: %1$s. Przygotujemy dla niego nowy plan. Ukończone lekcje pozostaną zaliczone.</string>
     <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
-    <string name="country_change_confirm">Ułóż plan na nowo</string>
+    <string name="country_change_confirm">Zmień kraj</string>
     <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
     <string name="country_rebuild_title">Przygotowujemy twój nowy plan</string>
     <!-- Under that notice's title. -->

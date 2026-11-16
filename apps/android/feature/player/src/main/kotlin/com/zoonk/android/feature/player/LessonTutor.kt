@@ -46,6 +46,7 @@ import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.tutor.TutorSuggestion
+import com.zoonk.android.feature.tutor.askText
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.LessonTutorSuggestion
@@ -95,7 +96,7 @@ internal fun AskBuddyOffer(
                 ) {
                     TutorAvatar(identity, ButtonDefaults.IconSize, Modifier.padding(end = ButtonDefaults.IconSpacing))
                 }
-                Text(stringResource(R.string.tutor_ask, identity.name))
+                Text(identity.askText())
             }
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.player_offer_no_thanks)) }
         }
@@ -121,7 +122,7 @@ internal fun ScreenHelp(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                stringResource(R.string.tutor_ask_screen, tutor.identity.name),
+                tutor.identity.askText(R.string.tutor_ask_screen),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )

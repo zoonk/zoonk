@@ -31,6 +31,7 @@
   "stats_energy_line": "68a27df879797dde1e74cda2e58fdd9dc39be9501325540de21ae249cbdd5a93",
   "stats_evening": "ecd669b7efc50db88f620f8eb20fbdadfbc69211906b751d58f7ad07c2d42595",
   "stats_every_belt": "bf9405fdafcfb7f2702ea6c3840297f995a581f0263d7ddddd33df4ca2917a02",
+  "stats_few_answers_legend": "251aa00d2a9b9475ecae3246db76c404d174c8f213ed9b26aa2aef514305677c",
   "stats_go_to_today": "3b3a5a7bcd0faf9361bbb63f7b82ded3cddaed4bdc16ca09e6a81619649996b0",
   "stats_high": "850e60784ac3f63bf9f88df06cd949567628fde5d9cfa93be16918c47f7ddb3b",
   "stats_less": "3edd6deeb383769fd3873b7fcf348610c2b360aeafb35fa5259663dad33331a2",
@@ -48,6 +49,7 @@
   "stats_open": "a95d88e7c7c88d9d58925caf8cb8916c3b0cae6855c9c23df0a56712f1cd02b7",
   "stats_overview": "4c0893fde0979a39317a6c0ae03a937e908acdf94442e905193581e8377fe93f",
   "stats_part_failed": "72024611f9634c6c466e38beaae936211a331f58f9f42e467ab09bed4185aaaa",
+  "stats_past_6_months": "de145d04cbe9ca8eef58339f937b12af783596ffa89c9e72866e19ed64feaa5f",
   "stats_past_year": "ae9ec3dfd0b467b9e77c28decdcf255103ad0552872ae8d8a3f76718a844d9f8",
   "stats_patterns": "194654efb1d90ab7572a4af45246f96c9ec9a2787eaca392eaeb7b49848e97e6",
   "stats_patterns_90": "52ef677ca29866dc2775d2cd32f2f662631324fe32ff0d946f1da5330c2f84c0",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">Lekcje</string>
     <string name="stats_time">Czas</string>
     <string name="stats_past_year">Ostatnie 12 miesięcy</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">Ostatnie 6 miesięcy</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">Słupek z przerywanym obrysem oznacza, że na wynik jest jeszcze za mało odpowiedzi.</string>
     <string name="stats_less">Mniej</string>
     <string name="stats_more">Więcej</string>
     <plurals name="stats_calendar_activity_summary">

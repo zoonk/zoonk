@@ -20,8 +20,6 @@
   "today_continue_mock": "429e2e7d241613416605b6c11145773538c1a8b3f9acf522a5d0b028c5e43e94",
   "today_continue_mock_detail": "b66f4d254ecc88dd43190bfa89ed7f80da3f4396e34bc5b398247a6680d54757",
   "today_continue_session": "1b53fc21a7fc17af1b302a598097d2420895f59f4705c5879cd32e3723c1163c",
-  "today_day_is_here": "39856b2fb9828e42ea7e7117892adc38113bb2dcee0ac347a4e1d0c6fba853a4",
-  "today_days_left": "ddca4673ac6b00cea1909a18cb3c0574efbd480e38e37156de284d509ef1723d",
   "today_done": "9d2a0dbca912c9262f9296a9ddcc4402e35aaa01da0c65fda93c9b3734d47c4a",
   "today_done_count": "77739ca31a44b4066daac64d201a6d05fc64c01e8f65282c3a2f0841af1c000b",
   "today_done_day_off": "947362f77c84d95608a4d7e104714f610b0983b2593241450ba9949be60afd61",
@@ -177,12 +175,6 @@
     </plurals>
     <string name="today_shorter_day">Um dia mais curto</string>
     <string name="today_shorter_day_note">Seu plano reserva tempo para o simulado de %1$s.</string>
-    <string name="today_day_is_here">O dia chegou</string>
-    <plurals name="today_days_left">
-        <item quantity="one">Falta %d dia</item>
-        <item quantity="many">Faltam %d dias</item>
-        <item quantity="other">Faltam %d dias</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d aula para colocar em dia</item>
         <item quantity="many">%d aulas para colocar em dia</item>

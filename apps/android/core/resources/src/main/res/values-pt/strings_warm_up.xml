@@ -16,12 +16,15 @@
   "warm_up_questions_ready": "deca6af652162fa212bbe3467106c7ed578219b1e42f7fe127b6f441b5c0bc67",
   "warm_up_ready_to_start": "72a71cec110d6c8374a60e617c5646e39becdedc793d3d9fecef11e303828e83",
   "warm_up_start_first_lesson": "af038f6785794fa1dfbe09c4d7e8ba61df265d8513547c59a84ffced9ddc62e6",
-  "warm_up_title": "6e76dcaa0eb65a192dc030caa346bdc05d84da8b825aaef34d6d937e8988af29"
+  "warm_up_title": "6e76dcaa0eb65a192dc030caa346bdc05d84da8b825aaef34d6d937e8988af29",
+  "warm_up_title_ready": "55de92f19b173efba0133ca9f6e9ae474cfb28bc5f2d646e442bbe950a361825"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Perguntas enquanto você espera</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Quiz</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Próximo palpite</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->

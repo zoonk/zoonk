@@ -11,7 +11,7 @@ import kotlin.math.abs
 
 /**
  * Core's `packages/core/src/exams/kept-month.ts` and `_utils/exam-sittings.ts`, which main runs on
- * the device to word "Here's what I understood": days at most two weeks apart are one sitting.
+ * the device to word "Here's what we understood": days at most two weeks apart are one sitting.
  */
 internal object ExamSittings {
     private const val SITTING_GAP_DAYS = 14L

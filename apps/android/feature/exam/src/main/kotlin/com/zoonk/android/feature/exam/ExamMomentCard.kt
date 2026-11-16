@@ -198,12 +198,13 @@ fun ExamChecklist(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Checkbox(checked = checked, onCheckedChange = null)
                     Text(
                         text = checklistLabel(item),
+                        modifier = Modifier.weight(1f),
                         color = if (checked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium,
                     )
+                    Checkbox(checked = checked, onCheckedChange = null)
                 }
             }
         }

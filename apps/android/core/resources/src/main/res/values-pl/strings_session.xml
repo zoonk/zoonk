@@ -58,7 +58,7 @@
   "session_review_intro_weakest_title": "41f091b4bf49b4d4ecc2ebb0b6e1e89f9ad5e5a03f30ec9f12e089bd49ba943c",
   "session_summary_brain_power": "46ea1462e8e8e2363c23061978f70c3299fa0b67b79566d37e36500c94f1d151",
   "session_summary_buddy_happy": "5872f893b2f2c5e555c7bc18cb3c79136a736563587b649c3f4ce0d466e75a7e",
-  "session_summary_create_account": "03800ee0ab9eda10bb738dd4afc61f3f445498bbb27e4221f5523c584b6544d3",
+  "session_summary_create_account": "517e1b368fbc2761f863f465d3040727ef295a93b8c51f248910713405d11d0d",
   "session_summary_done_for_now": "e05b022245ddb866875a08addf699075afec9ce22be9969eead051af27842f7c",
   "session_summary_done_in": "6941fcf929fbe1db6ce964d801255b952b3403c0159fb6411054c7f2986e26a6",
   "session_summary_done_under_minute": "9fe75db1dbb4469013fb36d1a892a9b95706f2e36c93ff0732f13e1328c6ba14",
@@ -201,7 +201,7 @@
     <string name="session_summary_keep_going">Kontynuuj</string>
     <string name="session_summary_finish">Zakończ</string>
     <string name="session_summary_save_note">Zapisz plan, żeby wrócić do niego następnym razem.</string>
-    <string name="session_summary_create_account">Utwórz konto</string>
+    <string name="session_summary_create_account">Utwórz bezpłatne konto</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Następny krok</string>
     <string name="session_next_start">Zacznij</string>

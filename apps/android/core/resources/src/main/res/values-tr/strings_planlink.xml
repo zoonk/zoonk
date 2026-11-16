@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "planlink_about": "f458b409c2b1dd860b14abb5cdf6782c8cd4a2908baef86b435d9f3c63ab4aa3",
-  "planlink_eyebrow": "0c0008110b32313383bbf2b499a681aa35c19bb491c3bcac609dc71946af0edc",
+  "planlink_eyebrow": "4a9ac5cd1e9ddb41591b0e26c44798edae13964e62b1a37234379195e0e97d69",
   "planlink_facts": "47f4d79c25695b05cc1a071ddfba0fa238010164fdcb2f0867711a38293d6d30",
   "planlink_failed": "f0ef9866c92f9a33207e7e4da94d939712fcf5adc5a23ca1270033ed3c306116",
   "planlink_make_it_yours": "3a465c21c66b3aea164d5fa943eef1926100bdd90c825a065efeaee651628fcb",
@@ -18,7 +18,7 @@
 -->
 <resources>
     <!-- Above a shared plan's subject. -->
-    <string name="planlink_eyebrow">Seninle paylaşılan bir çalışma planı</string>
+    <string name="planlink_eyebrow">Biri çalışma planını seninle paylaştı</string>
     <!-- A shared plan without a subject, and the title over its phases. -->
     <string name="planlink_study_plan">Çalışma planı</string>
     <string name="planlink_minutes_label">Günde ne kadar zaman?</string>

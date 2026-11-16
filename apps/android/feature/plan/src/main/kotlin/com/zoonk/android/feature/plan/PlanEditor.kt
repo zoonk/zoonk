@@ -513,7 +513,6 @@ internal fun ChoiceRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RadioButton(selected = selected, onClick = null, enabled = enabled)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             // A mark that can come after the first frame, such as a recommendation: every row lays out room for
             // it, beside the label where it fits and under it where it doesn't, so it moves nothing when it comes.
@@ -528,5 +527,7 @@ internal fun ChoiceRow(
             description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
         trailing?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        // The choice's mark at the row's end, as every choice list draws it.
+        RadioButton(selected = selected, onClick = null, enabled = enabled)
     }
 }

@@ -18,9 +18,6 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.plan.reasonTitleResource
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedTextField
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingLanguageAim
@@ -73,12 +70,6 @@ internal fun ColumnScope.ReasonStep(
                                 else -> R.string.onboarding_reason_other_description
                             },
                         ),
-                        listOfNotNull(
-                            row.aim?.value,
-                            row.hours?.let {
-                                stringResource(R.string.onboarding_aim_hours, formatNumber(it.toDouble(), currentLocale()))
-                            },
-                        ).factsLine().ifEmpty { stringResource(R.string.onboarding_reason_exam) },
                     )
                 },
             value = reason,
@@ -112,11 +103,6 @@ internal fun ColumnScope.ReasonStep(
                     }
                 }
             },
-        )
-        Text(
-            stringResource(R.string.onboarding_reason_hours_note),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

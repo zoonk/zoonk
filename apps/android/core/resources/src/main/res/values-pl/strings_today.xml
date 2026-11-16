@@ -20,8 +20,6 @@
   "today_continue_mock": "f9e1967605fc30916fe310803cad07a2d1966d71f2b4d3f50f4027374c069681",
   "today_continue_mock_detail": "8c91461462f3e29d8da41729c3991325a77aa3d5075756d3da65e3ec9caf953f",
   "today_continue_session": "929c54aeeaa3022e0068dda88e94d5b11b294d68031d71ccae19ffcb7da95766",
-  "today_day_is_here": "19548ab6f16647f8814da07dad3c1e538576af2ac6063fbbf2f17a312fbc06ef",
-  "today_days_left": "3a46b2abe8edaf14adf13f122822e9843bd287f85495c149b21ee0d32900d040",
   "today_done": "afdc0a5abf9f58ffa94ae73a3d49f59672a41f27533d91f59c774a05eb43ced6",
   "today_done_count": "648b859a9a630044daccfdfe40b94afaf2a945e80efefa9410e38e5870fe8a50",
   "today_done_day_off": "a50a56953ac22bbd5f313cf00ed35a8b206d7de12df0a32444cd6d674bb98a43",
@@ -178,13 +176,6 @@
     </plurals>
     <string name="today_shorter_day">Krótszy dzień</string>
     <string name="today_shorter_day_note">Twój plan rezerwuje czas na egzamin próbny %1$s.</string>
-    <string name="today_day_is_here">To już dziś</string>
-    <plurals name="today_days_left">
-        <item quantity="one">Pozostał %d dzień</item>
-        <item quantity="few">Pozostały %d dni</item>
-        <item quantity="many">Pozostało %d dni</item>
-        <item quantity="other">Pozostało %d dni</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d lekcja do nadrobienia</item>
         <item quantity="few">%d lekcje do nadrobienia</item>

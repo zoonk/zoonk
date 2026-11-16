@@ -116,6 +116,7 @@ import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
+import com.zoonk.android.feature.player.steps.LocalResultNotes
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.LocalWordBankCheck
@@ -470,7 +471,7 @@ fun LessonPlayer(
                 if (state == null || screen == null) {
                     PageLoading()
                 } else {
-                    Segments(screen.segments, state)
+                    if (screen.showProgress) Segments(screen.segments, state)
                     val spread = spreadShows()
                     CompositionLocalProvider(
                         LocalPrimaryFocus provides primaryFocus,
@@ -702,9 +703,12 @@ private fun Content(
                         }
                         // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
                         val inBank = step.canSelfCorrect
+                        val checked = state.results[step.id]?.takeIf { state.phase == LessonPhase.Feedback && notesInOwnCard(step) }
                         CompositionLocalProvider(
                             LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null,
                             LocalWordBankCheck provides if (inBank) ({ CheckAdded(state, result) }) else null,
+                            LocalResultNotes provides
+                                checked?.let { { LessonResultNotes(resultNext(state, step.id, it), screen.hyperdriveStreak) } },
                         ) {
                             work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
                         }
@@ -849,11 +853,7 @@ private fun Result(
 
     if (state.phase != LessonPhase.Feedback) return
 
-    val next =
-        ResultNext(
-            savedMistake = result.savedMistake && !result.isCorrect,
-            willReturn = !result.isCorrect && state.queue.drop(state.position + 1).contains(step.id),
-        )
+    val next = resultNext(state, step.id, result)
 
     val margin = with(LocalDensity.current) { REVEAL_MARGIN.toPx() }
 
@@ -867,7 +867,7 @@ private fun Result(
 
     Column(Modifier.revealPart(reveal, RevealPart.Result), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (showsOwnResult(step)) {
-            LessonResultNotes(next, screen.hyperdriveStreak)
+            if (!notesInOwnCard(step)) LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
             val explanations by viewModel.explanations.collectAsStateWithLifecycle()
             LessonStepResultView(step.asAnswered(state.answers[step.id]), result, next, screen.hyperdriveStreak) {

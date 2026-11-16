@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.zoonk
 import java.time.DayOfWeek
-import java.time.format.TextStyle
 import java.util.Locale
 
 /**
@@ -58,18 +58,19 @@ fun WeekdayPicker(
 private fun dayNames(
     width: Dp,
     locale: Locale,
-): TextStyle {
+): Map<DayOfWeek, String> {
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelLarge
+    val names = weekdayNames(locale)
     val cell = with(LocalDensity.current) { ((width - DAY_GAP * (DAYS_PER_WEEK - 1)) / DAYS_PER_WEEK - DAY_PADDING * 2).toPx() }
-    val fits = DayOfWeek.entries.all { measurer.measure(dayName(it, TextStyle.SHORT, locale), style).size.width <= cell }
-    return if (fits) TextStyle.SHORT else TextStyle.NARROW_STANDALONE
+    val fits = names.picker.values.all { measurer.measure(it, style).size.width <= cell }
+    return if (fits) names.picker else names.narrow
 }
 
 @Composable
 private fun DayToggle(
     weekday: Int,
-    name: TextStyle,
+    names: Map<DayOfWeek, String>,
     on: Boolean,
     enabled: Boolean,
     onToggle: (Boolean) -> Unit,
@@ -83,7 +84,7 @@ private fun DayToggle(
     Surface(
         checked = on,
         onCheckedChange = onToggle,
-        modifier = modifier.heightIn(min = 48.dp).semantics { contentDescription = day.getDisplayName(TextStyle.FULL, locale) },
+        modifier = modifier.heightIn(min = 48.dp).semantics { contentDescription = weekdayNames(locale).full.getValue(day) },
         enabled = enabled,
         shape = MaterialTheme.shapes.small,
         color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
@@ -92,7 +93,7 @@ private fun DayToggle(
     ) {
         Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
             Text(
-                text = dayName(day, name, locale),
+                text = names.getValue(day),
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
@@ -100,13 +101,6 @@ private fun DayToggle(
         }
     }
 }
-
-/** Java's short names are lowercase in Portuguese, Spanish and French; main capitalizes them. */
-private fun dayName(
-    day: DayOfWeek,
-    style: TextStyle,
-    locale: Locale,
-) = day.getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
 private const val DAYS_PER_WEEK = 7
 private val MONDAY_TO_SUNDAY = listOf(1, 2, 3, 4, 5, 6, 0)

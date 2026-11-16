@@ -20,8 +20,6 @@
   "today_continue_mock": "4c27bfaaf065c14019aace6ce73250d1084659119cd0a6c24eec0db21f2dfee1",
   "today_continue_mock_detail": "7e8a2b7ba945db45cf8bfe4eddf37f5ca970e9e4a37149d7d20129dd67465bd4",
   "today_continue_session": "cfbd4bd1361f9047daef16abfa91c762bc3594fa5008bbde686a70954e14b0b2",
-  "today_day_is_here": "ac1848dac83e4a1d697414675aa29f6c052c2b8032306c211bf8143e757a8d83",
-  "today_days_left": "e91ad08b3cfe0d60a2eaf677bae0ef7dc4ff8a9fb12bda9bae0e8624517cf9ec",
   "today_done": "c8b87d38744b909359dd26ebc6ffcd51f05c51a4fdb89e812e8d1912aa2be3c7",
   "today_done_count": "851fc29862da807336e55c74c68285e40b5a41f6e55588683ee2543c5f62f791",
   "today_done_day_off": "449d36b73f37e0faa10223abfb0d85fad03946eef7d64443c6fee33b2a4de0a3",
@@ -176,11 +174,6 @@
     </plurals>
     <string name="today_shorter_day">Daha kısa bir çalışma günü</string>
     <string name="today_shorter_day_note">Planın %1$s tarihindeki deneme sınavı için zaman ayırıyor.</string>
-    <string name="today_day_is_here">O gün geldi</string>
-    <plurals name="today_days_left">
-        <item quantity="one">%d gün kaldı</item>
-        <item quantity="other">%d gün kaldı</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">Arayı kapatmak için %d ders</item>
         <item quantity="other">Arayı kapatmak için %d ders</item>

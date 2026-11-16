@@ -373,12 +373,12 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = null
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         rule.onNodeWithText("Your level today").assertIsDisplayed()
     }

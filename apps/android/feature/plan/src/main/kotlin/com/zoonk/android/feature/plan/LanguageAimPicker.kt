@@ -29,7 +29,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
 
@@ -132,11 +132,14 @@ fun LanguageAimSheet(
                             choice.aim.value,
                             listOfNotNull(choice.aim.value, languageAimName(choice.aim.value)).factsLine(),
                             if (date == null) {
-                                stringResource(R.string.onboarding_aim_hours_more, formatNumber(choice.hours.toDouble(), locale))
+                                stringResource(
+                                    R.string.onboarding_aim_hours_more,
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
+                                )
                             } else {
                                 stringResource(
                                     R.string.onboarding_aim_hours_month,
-                                    formatNumber(choice.hours.toDouble(), locale),
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
                                     formatDate(date, locale, DateStyle.MonthShort),
                                 )
                             },
@@ -159,3 +162,5 @@ fun LanguageAimSheet(
         }
     }
 }
+
+private const val MINUTES_PER_HOUR = 60

@@ -26,6 +26,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -36,6 +37,7 @@ import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -103,6 +105,7 @@ internal fun AlphabetRow(
                     ),
                 )
             },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
             leading = { MarkIcon(R.drawable.ic_translate, size = 16.dp) },
             onClick = { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
         )

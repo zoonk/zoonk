@@ -203,6 +203,7 @@ internal fun ExamChoiceSuggestion(
         answered = answer != null,
         failed = answer?.failed == true,
         lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen(stringResource(R.string.plan_choose)) }),
+        failure = stringResource(R.string.plan_undo_failed),
     ) {
         SuggestionHeader(title)
         if (answer != null) {

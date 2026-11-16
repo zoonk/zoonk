@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -66,6 +65,7 @@ import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -366,7 +366,7 @@ private fun ChapterPractice(
         Column {
             if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut)
             if (mistakes) {
-                if (canTestOut) HorizontalDivider()
+                if (canTestOut) ListDivider()
                 PracticeChapterRow(practice, onPractice = actions.practice)
             }
         }
@@ -396,7 +396,14 @@ private fun PracticeChapterRow(
                 Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics {
                     liveRegion = LiveRegionMode.Polite
                 },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                if (practice.outcome ==
+                    PracticeOutcome.Failed
+                ) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             style = MaterialTheme.typography.bodyMedium,
         )
     }

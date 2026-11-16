@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -269,33 +270,34 @@ private fun NumericCheckField(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         CheckQuestion(check.question)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (unitFirst) UnitText(unit.orEmpty())
-            OutlinedTextField(
-                value = shown,
-                onValueChange = { text ->
-                    typed = text
-                    onAnswerChange(
-                        parseLocalizedNumber(text, locale)?.let {
-                            numericAnswer(it)
-                        },
-                    )
-                },
-                modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
-                readOnly = locked,
-                label = stringResource(R.string.player_your_answer),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
-            )
-            if (unit != null && !unitFirst) UnitText(unit)
-        }
+        OutlinedTextField(
+            value = shown,
+            onValueChange = { text ->
+                typed = text
+                onAnswerChange(
+                    parseLocalizedNumber(text, locale)?.let {
+                        numericAnswer(it)
+                    },
+                )
+            },
+            modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
+            readOnly = locked,
+            label = stringResource(R.string.player_your_answer),
+            leadingIcon = unit?.takeIf { unitFirst }?.let { { UnitText(it) } },
+            trailingIcon = unit?.takeUnless { unitFirst }?.let { { UnitText(it, Modifier.padding(end = 12.dp)) } },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
+        )
     }
 }
 
 @Composable
-private fun UnitText(unit: String) {
-    Text(unit, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+private fun UnitText(
+    unit: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(unit, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
 }
 
 /** The difference a numeric answer may have from the expected one and still be right. */
@@ -430,6 +432,8 @@ private fun ActivityFeedback(
                 FeedbackText(check.value.explanation)
             }
         }
+
+        LocalResultNotes.current?.invoke()
     }
 }
 

@@ -58,7 +58,7 @@
   "session_review_intro_weakest_title": "0ba791eaebf8346c3c8411ae46c69bbd7fdd89ad96872820635a77b223fe9dd9",
   "session_summary_brain_power": "89f7f72963b04922627746a0202c96a5f0726b72364869e0c3b9707063fac26d",
   "session_summary_buddy_happy": "fcdc5ef09af23f6add015dbe503c9c53cf7d69ee73ee531663ef016fbaac401d",
-  "session_summary_create_account": "2d60c0b2f36b99f2dd856887cd3c9a741f3f24c12caf088a07368fa131045881",
+  "session_summary_create_account": "7f6ea3fc111681c65f342dc71bdc6599df027b857bb9f3f1c76de52ae061a8b6",
   "session_summary_done_for_now": "d8d62528a0833843beb8f2ef3dba9c2248a5df2c843cdc041317cab747ceff83",
   "session_summary_done_in": "bc73e767763a0bae9c1d78c6b904f36243efb4b3b21f70f6f32f6df0f057773f",
   "session_summary_done_under_minute": "cf0b4821c40c72aee98fc4c3ad4c3ce39e3b5038ce67ead759a7b1d64fe6cf04",
@@ -180,7 +180,7 @@
     <string name="session_summary_keep_going">계속하기</string>
     <string name="session_summary_finish">마치기</string>
     <string name="session_summary_save_note">다음에도 볼 수 있도록 계획을 저장하세요.</string>
-    <string name="session_summary_create_account">계정 만들기</string>
+    <string name="session_summary_create_account">무료 계정 만들기</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">다음 단계</string>
     <string name="session_next_start">시작하기</string>

@@ -23,16 +23,27 @@ fun mockSubject(shape: MockShape?): String = if (shape?.kind == MockShape.Kind.A
 @Composable
 fun mockDate(finishedAt: Instant): String = formatMomentDay(finishedAt, currentLocale())
 
-/** What a finished mock exam certainly was: its score where wrong answers cost points, else its right answers. */
+/**
+ * What a finished mock exam certainly was: its score where wrong answers cost points, else its right answers, as
+ * [points] once part of a point counted, in its list too, so one list says one unit.
+ */
 @Composable
-fun mockMeasure(mock: ExamMockSummary): String {
+fun mockMeasure(
+    mock: ExamMockSummary,
+    points: Boolean = mock.hasPartMarks,
+): String {
     val locale = currentLocale()
     if (mock.scoring == ExamMockSummary.Scoring.NET) {
         return stringResource(R.string.mock_net_score, formatNumber(mock.measure, locale), mock.total)
     }
-    // Partial credit reads to the hundredth.
-    val correct = (mock.correct * HUNDREDTHS).roundToLong() / HUNDREDTHS
-    return pluralStringResource(R.plurals.mock_right_answers, floor(correct).toInt(), formatNumber(correct, locale), mock.total)
+    val correct = mock.shownCorrect
+    val plural = if (points) R.plurals.mock_points_of else R.plurals.mock_right_answers
+    return pluralStringResource(plural, floor(correct).toInt(), formatNumber(correct, locale), mock.total)
 }
+
+/** Partial credit reads to the hundredth. */
+private val ExamMockSummary.shownCorrect: Double get() = (correct * HUNDREDTHS).roundToLong() / HUNDREDTHS
+
+val ExamMockSummary.hasPartMarks: Boolean get() = shownCorrect != floor(shownCorrect)
 
 private const val HUNDREDTHS = 100.0

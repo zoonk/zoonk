@@ -202,10 +202,12 @@
   "plan_effect_fewer": "ae64ab69fb12d81381a603391c8355d286c5a6ec09a180f92f7b226833460999",
   "plan_effect_fewer_before_end_date": "5a8e5bfdad28c0fe8d3f5d093063f622252ea1d7bc462a974bc23024c0337167",
   "plan_effect_fewer_before_exam": "bd7ad3a9e321067a0de62608a0fb342589fbb0d80548403029bc4a783d6aa355",
+  "plan_effect_fewer_by": "1f942df4f2489c7f8429dadc75f5e072f928f1d223ef36fbd4be6032410c6bba",
   "plan_effect_mocks_on": "bc84bc772ade9f1664061ca115068e4329851ecdd64cd44bccf0d2b8b122c031",
   "plan_effect_more": "95a86d47431143b00c528b5d1504e6fdb1d4b0ca4ab9043c2dc656399b46f97e",
   "plan_effect_more_before_end_date": "8b7520472264b75c9b9830afc9c4f9ac80b46eef3507162f6136ed3c783ac1ca",
   "plan_effect_more_before_exam": "f8149e1081a570d78e1fac0595d45d085c5ef5b809ff0a0f9b16b462156f9eb5",
+  "plan_effect_more_by": "d8b4cc0b6385a9c25dce0c04921b0619342c713e85b5f8b468e1d7c06ccadc9f",
   "plan_effect_names_and_more": "f20f9cfdadaa9439eed47d060b45cc821896365b6a840f1783f7ede90443d6eb",
   "plan_effect_next_mock": "bdc8735a2bfd91f1c22b956273bd77a0b0d49ae1b9de2514b9a22a97ca5bc1ff",
   "plan_effect_numbers_different": "4f234499719ac7f09014f5999f85dac7aa36c66a04db36db8d63b3c1f4b78957",
@@ -257,7 +259,7 @@
   "plan_far_from_month": "a79412bae99efa7849ee48683d0ecada027ef0db4849b35fb49274a97d048f49",
   "plan_far_lessons": "3a0850df7b73a26118e051fc1531f03a16ebf35664f64f37ec9da9063569a6df",
   "plan_far_lessons_about": "3dc54f6fac7dd843169865d25a83078980b1363bff74cfc71ec4ca3b342c56cc",
-  "plan_far_nothing_left": "39980c06664a7f0b5988ddddacb27d13b036391d9bf5cc26e77df3dacc2617f7",
+  "plan_far_nothing_left": "963b037c62baa61c15429b073ae5dd7f261c7e44547faec46aa1b294d1724725",
   "plan_far_see_lessons": "91222c66b422a1fa317fb79853baa9d8c0fcd4d510afefd1d1f852f8c492ccde",
   "plan_far_unreachable": "fcbb4c7a32f344e8718b08843080d9b42ac1ca7f88a4c37020abbeb36260f36f",
   "plan_far_writing": "d60ff660c639c48035623876100336fa3b6e48bd34f30064cd9da52fa2f79dee",
@@ -447,6 +449,8 @@
   "plan_time_covers_exam_all_month": "81f74bb77e2ca7eabf060d08d426d2863f85131f40b81312ab3f857bb1678c8e",
   "plan_time_covers_goal_all": "f62501511bfa3e523d0787309c5052552c157dacf75a0fdd0ff62ac97290b208",
   "plan_time_covers_goal_all_month": "a2124c6f75d96b3828927656a6aa6873f74f2a54963ffa855fc42955ccb90b6b",
+  "plan_time_covers_share_exam": "a4e4a5130b50782bedd7989356689a3c23b486ede532ed15cbb660941a6b7999",
+  "plan_time_covers_share_goal": "921dc94d20739c459f87629b65b5a62e8987def0c5b53f24934b8c4de2950fa6",
   "plan_time_find_failed": "a84e025675eded5caf37cc9fdaee40a6cf551cff382a9ef459d368d36ec6d8de",
   "plan_time_finish_failed": "ac3048ae09df782f32ee2e00bc0398542b42efbb33c9953459ec3efff8dadd30",
   "plan_time_finish_unknown": "3346a675149d05658086f591b76bd0119d435b05981842fb1bbb4e123724ee0f",
@@ -516,6 +520,7 @@
   "plan_try_again": "dc98417b560732ae3b4bff210d071467cc7bc79f59550bc65c69a59fd1b80bae",
   "plan_tuesdays": "e70a0cd29941957cfda9f6133c3cc63d7fce2be1271c47e3c09d503abf320589",
   "plan_undo": "c1b16070b19f787bde9d22305d8be221b30523ac460e4a0906012d38c14ff6f9",
+  "plan_undo_failed": "dc25d689ccb86caf17135ed3bd37615d813ef600c9d36c541e05fff1bcfbad17",
   "plan_up_next": "b46f0f341dd32e592248bb5d4bc439dae6540bce024e1e0e6c2bb25841efa4f4",
   "plan_up_next_suffix": "153f254d75d72737733eb076f22aa5905462ea7b7b98d7293cfa8909845093c1",
   "plan_updated": "24ff6705c8127b1e9be92f79ec7bb14237d5ca52afcb7707190cece43435e194",
@@ -669,7 +674,8 @@
     <!-- Write the duration out in words, not as "30 s". -->
     <string name="plan_far_writing">레슨을 준비하고 있어요… 삼십 초 정도 걸려요.</string>
     <string name="plan_far_unreachable">서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요.</string>
-    <string name="plan_far_nothing_left">이 주제에는 더 준비할 레슨이 없어요.</string>
+    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
+    <string name="plan_far_nothing_left">이 레슨들은 아직 준비할 수 없어요. 이 주제를 공부하기 전에 준비해 둘게요.</string>
     <plurals name="plan_more_chapters">
         <item quantity="other">챕터 %d개 더</item>
     </plurals>
@@ -966,6 +972,8 @@
     <string name="plan_editor_title">계획 조정하기</string>
     <string name="plan_editor_close">닫기</string>
     <string name="plan_undo">실행 취소</string>
+    <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
+    <string name="plan_undo_failed">변경 사항을 되돌리지 못했어요.</string>
     <string name="plan_deadline">기한</string>
     <string name="plan_named_month_note">우선 %1$s로 정해 뒀어요. 날짜를 알게 되면 선택하세요.</string>
     <string name="plan_no_deadline_note">마감일이 없으면 원하는 속도로 모든 내용을 공부해요. 마감일이 있으면 그날까지 가장 중요한 내용을 공부할 수 있도록 계획을 맞춰요.</string>
@@ -1126,6 +1134,10 @@
     <string name="plan_time_covers_everything_by">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_exam">하루 %1$s이면 시험에 나오는 주제 중 약 %2$s를 공부할 수 있어요</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_goal">하루 %1$s이면 목표로 한 내용의 약 %2$s를 공부할 수 있어요</string>
     <string name="plan_covered_not_enough">목표에 필요한 내용을 모두 공부하려면 하루 %1$s보다 더 많은 시간이 필요해요.</string>
     <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_find">필요한 시간 계산하기</string>
@@ -1234,6 +1246,14 @@
     </plurals>
     <plurals name="plan_effect_more_before_end_date">
         <item quantity="other">종료일까지 공부할 레슨이 %d개 늘어요.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d lessons studied by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_more_by">
+        <item quantity="other">레슨 %1$d개만큼 %2$s까지 공부할 분량이 늘어요.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d fewer lessons by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_fewer_by">
+        <item quantity="other">레슨 %1$d개만큼 %2$s까지 공부할 분량이 줄어요.</item>
     </plurals>
     <plurals name="plan_effect_more">
         <item quantity="other">공부할 레슨이 %d개 늘어요.</item>

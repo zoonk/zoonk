@@ -47,6 +47,7 @@
   "mock_next_section": "89517ad4965e09b827e1f354464008cdee29149eecaa4667b9e33f91363b8503",
   "mock_not_saved_retrying": "f91d396fb8d18051cf66578684d6d6eb4aebc69523b1f12319ccd44181fca453",
   "mock_place": "ff4722c9820bee57713c87e7af6c0dd977cbab69ab2826e7021e829a9ab9d278",
+  "mock_points_of": "aca46f5fa19c131b01ac174e8d043107a0f00f4ee45376f315770aa1d1627779",
   "mock_progress_label": "63b66069fb271fba4e4a0eedb6733ed4a4bebd0522b30e96f8e016ac5fbc83b0",
   "mock_question_number": "0c163d8c70f660f9475520df4feab4e93263c713e5058348c3f62fd3bc98cc20",
   "mock_question_place": "59521414e1c1cb0f83c934ad95da8090bf26ef7ad3028474e89d82e94732ad63",
@@ -65,7 +66,7 @@
   "mock_speaking_hand_in_done": "9f2255e847fbfc4f37da17172afd095fa1a1f95b3644dc8284e2a728ca671082",
   "mock_speaking_hand_in_left": "91762762a4a4915cf6681b5384e3b29ec9af065bc7c490dc061dcd54d68ff300",
   "mock_speaking_intro": "bf9aa4303b4ece9cd45fe1158986314250ae2828ca688e4d44498c354192a62e",
-  "mock_speaking_left": "f5dada543461933e54fbc994c61288eedb1f13f0fcbf17da7f1e84184a1417f8",
+  "mock_speaking_left": "35e11cbf689fb46657d774cf0d71760227dad97eafe717c11f7c3d1257a4f4ee",
   "mock_speaking_paper_opens": "c3ce99938987bbdb9bedc10781119bf96934c468156e5832ca9df5b61a1fc3d4",
   "mock_speaking_start": "0f9317817c0dd8ac48f3cd47e0e60afe00d4f797711caabc6e31d25af3c17894",
   "mock_speaking_start_task": "63ef142f750249e910f50f056d5459fb43d7e40f46e4200225fb850c2d9d1c68",
@@ -99,12 +100,19 @@
     <string name="mock_title">Egzamin próbny %1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s z %2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s z %2$d poprawnie</item>
         <item quantity="few">%1$s z %2$d poprawnie</item>
         <item quantity="many">%1$s z %2$d poprawnie</item>
         <item quantity="other">%1$s z %2$d poprawnie</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="one">%1$s z %2$d pkt</item>
+        <item quantity="few">%1$s z %2$d pkt</item>
+        <item quantity="many">%1$s z %2$d pkt</item>
+        <item quantity="other">%1$s z %2$d pkt</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -246,7 +254,8 @@
     <string name="mock_speaking_writing_paper_line_2">Przygotowujemy polecenia do każdej karty…</string>
     <string name="mock_speaking_writing_paper_line_3">Przygotowujemy wypowiedzi egzaminatora…</string>
     <string name="mock_speaking_writing_paper_line_4">Dodajemy zwroty, które ci pomogą…</string>
-    <string name="mock_speaking_left">Wykonaj zadania po kolei. Każde to rozmowa.</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">Wykonuj zadania po kolei. W każdym z nich rozmawiasz na głos z egzaminatorem.</string>
     <string name="mock_speaking_all_done">Wszystkie zadania ukończone. Oddaj tę część, aby przejść dalej.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Zadanie %1$d · %2$s</string>

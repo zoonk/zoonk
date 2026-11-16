@@ -27,6 +27,7 @@ fun MockSummaryRow(
     onOpen: (() -> Unit)?,
     stacked: Boolean,
     modifier: Modifier = Modifier,
+    points: Boolean = mock.hasPartMarks,
 ) {
     val subject = mockSubject(mock.shape)
     val date = mockDate(mock.finishedAt)
@@ -34,7 +35,7 @@ fun MockSummaryRow(
     MockListRow(
         headline = { Text(mockTitle(mock.number)) },
         supporting = if (subject.isEmpty()) date else stringResource(R.string.mock_row_detail, date, subject),
-        trailing = mockMeasure(mock),
+        trailing = mockMeasure(mock, points),
         leading = { StatusMark(MarkStatus.Done) },
         onClick = onOpen,
         modifier = modifier,

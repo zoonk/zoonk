@@ -3,10 +3,15 @@
     <string name="mock_title">Mock exam %1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s of %2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s of %2$d right</item>
         <item quantity="other">%1$s of %2$d right</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="one">%1$s of %2$d points</item>
+        <item quantity="other">%1$s of %2$d points</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -130,7 +135,8 @@
     <string name="mock_speaking_writing_paper_line_2">Writing each card\'s instructions…</string>
     <string name="mock_speaking_writing_paper_line_3">Preparing what the examiner says…</string>
     <string name="mock_speaking_writing_paper_line_4">Adding phrases you can lean on…</string>
-    <string name="mock_speaking_left">Do the tasks in order. Each one is a call.</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">Do the tasks in order. You speak each one out loud with the examiner.</string>
     <string name="mock_speaking_all_done">Every task is done. Hand in this section to go on.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Task %1$d · %2$s</string>

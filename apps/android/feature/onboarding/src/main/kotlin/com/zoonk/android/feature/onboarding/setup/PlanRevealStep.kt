@@ -418,7 +418,7 @@ private fun ColumnScope.RevealBody(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )
-                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account)) }
             }
         }
 
@@ -793,7 +793,7 @@ private fun RevealLink(
     text: String,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, edge = ButtonEdge.Start) { Text(text) }
+    TextButton(onClick = onClick, forward = true, edge = ButtonEdge.Start) { Text(text) }
 }
 
 @Composable

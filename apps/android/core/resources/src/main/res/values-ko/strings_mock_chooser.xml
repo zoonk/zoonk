@@ -18,7 +18,7 @@
   "mock_chooser_parts": "e261e5f6cda282017a437f5ff0c1c85752ef095fbd41963f349d7ab61402f513",
   "mock_chooser_pick_another": "79cc80c70d3726bf4a8d10d29342132e8859af705dda524a9a0e1b1a2086fb70",
   "mock_chooser_picked": "9afd55f09030f7f9ad9ddfd6cbec5daac7b17c7590ef2864b8b85ddcd9e2074b",
-  "mock_chooser_preparing": "69b4fc9fda2d3619aecb2ba3a65e469a0fd7cab8c1b80e968295e57eff1da6e2",
+  "mock_chooser_preparing": "326ac27a0c6adcb31b590f9315c5b3323ba401e1abb4c290657871239b1b22eb",
   "mock_chooser_preparing_detail": "02f2b67f7d9c0822e3b5eca9571d98a4a6ea3fc34f77e770779433e2ee4b7228",
   "mock_chooser_questions": "80b12e3631e99ce80263fcf087a74271f86fb14d64e370737bc531e38ae56a27",
   "mock_chooser_short_day": "ea2aeb5ce0b46e5212f8225583f779ec471a698b21a967835b2ee568def5d878",
@@ -76,7 +76,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">오늘은 %1$s문제(전체 %2$s문제)를 풀 수 있고, 약 %3$s 걸려요.</string>
     <string name="mock_chooser_pick_another">다른 모의고사 고르기</string>
-    <string name="mock_chooser_preparing">모의고사를 준비하고 있어요…</string>
+    <string name="mock_chooser_preparing">모의고사를 준비하고 있어요</string>
     <string name="mock_chooser_preparing_detail">실제 시험과 비슷한 문제를 만들고 있어요. 준비가 끝나면 여기서 바로 시작돼요.</string>
     <string name="mock_chooser_writing">모의고사를 만들고 있어요</string>
     <string name="mock_chooser_writing_questions">실제 시험과 비슷한 문제를 만들고 있어요</string>
