@@ -112,11 +112,11 @@ export function GoalEntry({
         {section && <SubmitButton />}
       </GoalBox>
 
+      {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}
+
       {attachment}
 
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
-
-      {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}
 
       <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
     </OnboardingColumn>
