@@ -1,6 +1,5 @@
 "use client";
 
-import { ScrollTable as Table } from "@/components/scroll-table";
 import { formatDollarsColumn, formatSeconds } from "@/lib/format";
 import {
   type SortDirection,
@@ -9,11 +8,19 @@ import {
   getDefaultSortDirection,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
 import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, Columns3Icon } from "lucide-react";
 import Link from "next/link";
@@ -210,7 +217,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
       </div>
 
       {/* Each column keeps its content's width and a wide table scrolls, so "More columns" moves no column. */}
-      <Table className="w-max">
+      <Table scrollLabels={SCROLL_LABELS} className="w-max">
         <TableHeader>
           <TableRow>
             {shownColumns.map((column) => (

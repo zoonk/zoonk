@@ -6,6 +6,7 @@ import {
 import { getExamResults } from "@/data/stats/get-exam-results";
 import { countGoalsByStatus, getGoalsReachedTrend } from "@/data/stats/get-goals-reached-trend";
 import { formatPercent } from "@/lib/format";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTable } from "../_components/admin-analysis-table";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
@@ -160,7 +161,7 @@ async function ExamResultsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }
       {rows.length === 0 ? (
         <p className="text-muted-foreground p-6 text-sm">No results reported in this period.</p>
       ) : (
-        <Table>
+        <Table scrollLabels={SCROLL_LABELS}>
           <TableHeader>
             <AdminTableRow>
               <TableHead>Exam</TableHead>

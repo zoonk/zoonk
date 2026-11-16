@@ -1,19 +1,29 @@
-import { ScrollTable as Table } from "@/components/scroll-table";
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 
-/** Both tables share these widths, so their columns start and end on the same lines. */
+/**
+ * Both tables share these widths, so their columns start and end on the same lines. A number's
+ * column is padded only before it, so labels squeezed by a phone still stand apart.
+ */
 const LABEL_COLUMN = "w-64";
-const NUMBER_COLUMN = "w-32 px-0";
+const NUMBER_COLUMN = "w-32 pr-0 pl-3";
 const NUMBER_CELL = cn(CELL_CLASS, NUMBER_COLUMN);
 
 function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table className="w-auto">
+    <Table scrollLabels={SCROLL_LABELS} className="w-auto">
       <TableHeader>
         <TableRow>
           <TableHead className={LABEL_COLUMN}>Expected label</TableHead>
@@ -45,7 +55,7 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
 
 function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table className="w-auto">
+    <Table scrollLabels={SCROLL_LABELS} className="w-auto">
       <TableHeader>
         <TableRow>
           <TableHead className={LABEL_COLUMN}>

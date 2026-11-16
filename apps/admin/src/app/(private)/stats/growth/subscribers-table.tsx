@@ -1,9 +1,10 @@
 import { AdminTableRow } from "@/components/admin-table-row";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 export function SubscribersTable({ data }: { data: { plan: string; count: number }[] }) {
   return (
-    <Table>
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
         <AdminTableRow>
           <TableHead>Plan</TableHead>
