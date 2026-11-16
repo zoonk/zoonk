@@ -276,3 +276,38 @@ export function placeLineLabels({
   const next = box ? [...placed, box] : placed;
   return [box, ...placeLineLabels({ area, labels: rest, marks, placed: next })];
 }
+
+/**
+ * Every name on the chart. The names shown while answering are placed against their own lines
+ * only, so the answer's line and name that Check reveals never move them; the answer's name then
+ * takes a spot around them, against every line.
+ */
+export function placeChartLabels({
+  area,
+  marks,
+  revealed,
+  shown,
+}: {
+  area: LabelBox;
+  marks: Omit<LabelMarks, "lines">;
+  revealed: readonly LineLabel[];
+  shown: readonly LineLabel[];
+}): (LabelBox | null)[] {
+  const segments = (labels: readonly LineLabel[]) => labels.map((label) => label.segment);
+
+  const placed = placeLineLabels({
+    area,
+    labels: shown,
+    marks: { ...marks, lines: segments(shown) },
+  });
+
+  return [
+    ...placed,
+    ...placeLineLabels({
+      area,
+      labels: revealed,
+      marks: { ...marks, lines: segments([...shown, ...revealed]) },
+      placed: placed.filter((box) => box !== null),
+    }),
+  ];
+}

@@ -4,6 +4,7 @@ import {
   ARROW_STROKE,
   type LabelBox,
   changeArrows,
+  placeChartLabels,
   placeLineLabels,
 } from "./line-crossing-labels";
 import { type Point } from "./line-crossing-model";
@@ -205,6 +206,57 @@ describe(placeLineLabels, () => {
 
     expect(name).not.toBeNull();
     expect(optional).toBeNull();
+  });
+});
+
+describe(placeChartLabels, () => {
+  const revenue = {
+    isUpper: true,
+    segment: { from: { x: 22, y: 222 }, to: { x: 311, y: 60 } },
+    size,
+  };
+
+  const cost = {
+    isUpper: true,
+    segment: { from: { x: 22, y: 170 }, to: { x: 311, y: 120 } },
+    size,
+  };
+
+  const answer = {
+    isUpper: false,
+    segment: { from: { x: 22, y: 150 }, to: { x: 311, y: 100 } },
+    size,
+  };
+
+  it("keeps the names already shown in place when the answer's line and name appear", () => {
+    const before = placeChartLabels({ area, marks: noMarks, revealed: [], shown: [revenue, cost] });
+
+    const after = placeChartLabels({
+      area,
+      marks: noMarks,
+      revealed: [answer],
+      shown: [revenue, cost],
+    });
+
+    expect(after.slice(0, 2)).toStrictEqual(before);
+    expect(after[2]).not.toBeNull();
+  });
+
+  it("keeps the answer's name nearer the answer's line than the lines shown before it", () => {
+    const box = placeChartLabels({
+      area,
+      marks: noMarks,
+      revealed: [answer],
+      shown: [revenue, cost],
+    }).at(2);
+
+    if (!box) {
+      throw new Error("The answer's name found no spot.");
+    }
+
+    expect(gapToSegment(box, answer.segment)).toBeLessThan(
+      Math.min(gapToSegment(box, cost.segment), gapToSegment(box, revenue.segment)),
+    );
   });
 });
 

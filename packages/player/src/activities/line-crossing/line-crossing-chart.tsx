@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
-import { type LabelSize, changeArrowBoxes, placeLineLabels } from "./line-crossing-labels";
+import { type LabelSize, changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
 import {
   Axes,
   CROSSING_RADIUS,
@@ -106,7 +106,7 @@ function LineLabels({
     circles: [...handles, ...dots],
   };
 
-  const labels: ChartLabel[] = [
+  const shown: ChartLabel[] = [
     ...lines.map((line, index) => ({
       className: LINE_TEXT_CLASSES[index] ?? "",
       id: line.id,
@@ -114,17 +114,6 @@ function LineLabels({
       label: line.label,
       line: movedLine(line, offsetOf(line), axis),
     })),
-    ...(answerLine
-      ? [
-          {
-            className: "text-success-text",
-            id: "answer",
-            isUpper: false,
-            label: t("What happened"),
-            line: answerLine,
-          },
-        ]
-      : []),
     ...lines
       .filter((line) => offsetOf(line) !== 0)
       .map((line) => ({
@@ -137,30 +126,48 @@ function LineLabels({
       })),
   ];
 
-  const measured = labels.flatMap((label) => {
-    const size = sizes[label.id];
-    const { from, to } = visibleSegment(label.line, domain);
+  const revealed: ChartLabel[] = answerLine
+    ? [
+        {
+          className: "text-success-text",
+          id: "answer",
+          isUpper: false,
+          label: t("What happened"),
+          line: answerLine,
+        },
+      ]
+    : [];
 
-    return size
-      ? [
-          {
-            isOptional: label.isOptional,
-            isUpper: label.isUpper,
-            segment: { from: pixel(from), to: pixel(to) },
-            size,
-          },
-        ]
-      : [];
-  });
+  const labels = [...shown, ...revealed];
 
-  const boxes =
-    measured.length === labels.length
-      ? placeLineLabels({
-          area,
-          labels: measured,
-          marks: { ...marks, lines: measured.map((label) => label.segment) },
-        })
-      : [];
+  const measure = (list: readonly ChartLabel[]) =>
+    list.flatMap((label) => {
+      const size = sizes[label.id];
+      const { from, to } = visibleSegment(label.line, domain);
+
+      return size
+        ? [
+            {
+              isOptional: label.isOptional,
+              isUpper: label.isUpper,
+              segment: { from: pixel(from), to: pixel(to) },
+              size,
+            },
+          ]
+        : [];
+    });
+
+  const isMeasured = (list: readonly ChartLabel[]) => list.every((label) => sizes[label.id]);
+
+  // The answer's name is measured once Check shows it; the names already shown keep their spots meanwhile.
+  const boxes = isMeasured(shown)
+    ? placeChartLabels({
+        area,
+        marks,
+        revealed: isMeasured(revealed) ? measure(revealed) : [],
+        shown: measure(shown),
+      })
+    : [];
 
   return labels.map((label, index) => (
     <LineLabel

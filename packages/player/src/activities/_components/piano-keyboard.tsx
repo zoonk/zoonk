@@ -3,14 +3,11 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { isBlackKey } from "../_utils/music-notes";
 import { useRovingFocus } from "../_utils/use-roving-focus";
-import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
 
 const OCTAVE = 12;
 const PERCENT = 100;
 const BLACK_KEY_SHARE = 0.62;
-
-const NARROWEST_WHITE_KEY_REM = 2.5;
 
 type PianoKey = { isBlack: boolean; midi: number; whiteIndex: number };
 
@@ -24,11 +21,6 @@ function layoutKeys(from: number, to: number): { keys: PianoKey[]; whiteCount: n
   }));
 
   return { keys, whiteCount: keys.filter((key) => !key.isBlack).length };
-}
-
-/** The whole range fits the card; only a card narrower than this many pressable keys scrolls. */
-function pressableWidth(whiteCount: number): string {
-  return `${whiteCount * NARROWEST_WHITE_KEY_REM}rem`;
 }
 
 type KeyboardProps = {
@@ -71,15 +63,14 @@ export function PianoKeyboard({
   const rovingProps = useRovingFocus(keys.length);
   const isInteractive = Boolean(onPress);
 
-  const keyboard = (
+  // The whole octave always fits its card, in every state, so nothing about it scrolls or moves on Check.
+  return (
     <div
       aria-hidden={isInteractive ? undefined : true}
-      className={cn(
-        "relative flex h-36 w-full touch-manipulation select-none",
-        !isInteractive && className,
-      )}
+      aria-label={isInteractive ? label : undefined}
+      className={cn("relative flex h-36 w-full touch-manipulation select-none", className)}
       data-slot="piano-keyboard"
-      style={isInteractive ? { minWidth: pressableWidth(whiteCount) } : undefined}
+      role={isInteractive ? "group" : undefined}
     >
       {keys.map((key, index) => {
         const mark = marks.get(key.midi);
@@ -126,13 +117,5 @@ export function PianoKeyboard({
         );
       })}
     </div>
-  );
-
-  return isInteractive ? (
-    <ActivityHorizontalScroll box={{ label }} className={cn("w-full", className)}>
-      {keyboard}
-    </ActivityHorizontalScroll>
-  ) : (
-    keyboard
   );
 }
