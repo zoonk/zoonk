@@ -17,6 +17,10 @@ function steps(pattern: string): { index: number; isHit: boolean }[] {
   return Array.from(pattern, (symbol, index) => ({ index, isHit: symbol === "x" }));
 }
 
+function stepSlot({ index, stepsPerBeat }: { index: number; stepsPerBeat: number }) {
+  return cn("min-w-0 flex-1", index > 0 && index % stepsPerBeat === 0 && "ml-1.5");
+}
+
 function RoundRow({
   pattern,
   playingStep,
@@ -40,8 +44,8 @@ function RoundRow({
         return (
           <div
             className={cn(
-              "flex min-w-0 flex-1 flex-col items-center gap-1",
-              step.index > 0 && step.index % stepsPerBeat === 0 && "ml-1.5",
+              "flex flex-col items-center gap-1",
+              stepSlot({ index: step.index, stepsPerBeat }),
             )}
             key={step.index}
           >
@@ -80,7 +84,6 @@ export function RhythmGrid({
 }) {
   const t = useExtracted();
   const hitsPerRound = rhythmHitSteps(pattern).length;
-  const beats = pattern.length / stepsPerBeat;
 
   return (
     <div aria-hidden="true" className="flex flex-col gap-2" data-slot="rhythm-grid">
@@ -95,15 +98,15 @@ export function RhythmGrid({
       ))}
 
       <div className="flex gap-0.5">
-        {Array.from({ length: beats }, (_, beat) => (
+        {steps(pattern).map((step) => (
           <span
             className={cn(
-              "text-muted-foreground flex-1 text-center text-xs tabular-nums",
-              beat > 0 && "ml-1.5",
+              "text-muted-foreground text-center text-xs tabular-nums",
+              stepSlot({ index: step.index, stepsPerBeat }),
             )}
-            key={beat}
+            key={step.index}
           >
-            {beat + 1}
+            {step.index % stepsPerBeat === 0 ? step.index / stepsPerBeat + 1 : null}
           </span>
         ))}
       </div>

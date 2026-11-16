@@ -48,10 +48,10 @@ export function ActivityCodeBlock({
   label: string;
 }) {
   return (
-    <ActivityHorizontalScroll box={{ label }} className={cn("-mx-1", className)}>
+    <ActivityHorizontalScroll box={{ label }} className={cn("-mx-2", className)}>
       <div
         className={cn(
-          "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-1 pb-1",
+          "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1",
           CODE_TEXT,
         )}
       >
@@ -77,9 +77,9 @@ export function ActivityCodeLine({
   return (
     <div
       className={cn(
-        "col-span-full grid grid-cols-subgrid items-center rounded-lg pr-2 whitespace-pre",
+        "col-span-full -mx-1.5 grid grid-cols-subgrid items-center rounded-lg px-1.5 whitespace-pre",
         tone === "current" &&
-          "bg-viz-highlight-soft rounded-l-none shadow-[-3px_0_0_var(--color-viz-highlight)]",
+          "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
           "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
         tone === "error" && "bg-destructive/10",

@@ -55,6 +55,31 @@ function place(degrees: number, label: { height: number; width: number }, width:
 }
 
 describe(sinLabelPlacement, () => {
+  it("uses the room beside the sine leg on a 390px phone without touching the circle", () => {
+    const label = { height: 17, width: 54 };
+    const phoneCenter = { x: 163, y: center.y };
+    const phonePoint = { ...onCircle(30), x: onCircle(30).x + phoneCenter.x - center.x };
+
+    const placement = sinLabelPlacement({
+      canvas: { width: 326 },
+      center: phoneCenter,
+      label,
+      point: phonePoint,
+      radius,
+      target: phonePoint,
+    });
+
+    expect(placement.baseline).toBe("middle");
+    expect(placement.point.y).toBe((phoneCenter.y + phonePoint.y) / 2);
+    const box = boxOf(placement, label);
+
+    expect(Math.hypot(box.left - phoneCenter.x, box.bottom - phoneCenter.y)).toBeGreaterThan(
+      radius + 3,
+    );
+
+    expect(box.right).toBeLessThanOrEqual(326);
+  });
+
   it("keeps the label off the circle when a phone has no room beside the point", () => {
     const label = { height: 17, width: 50 };
     const box = boxOf(place(0, label, 310), label);
