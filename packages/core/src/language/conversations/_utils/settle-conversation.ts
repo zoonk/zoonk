@@ -166,8 +166,15 @@ export async function settleConversation(
         data: {
           brainPower,
           completedAt: lock.completedAt,
-          ...(payload?.timing && {
-            payload: { ...payload, timing: pausedBlockTiming({ block, now: lock.completedAt }) },
+          ...(payload && {
+            payload: {
+              ...payload,
+              milestoneReward: {
+                bossWon: checkpoint?.passed ?? false,
+                brainPower: progress.brainPower,
+              },
+              timing: pausedBlockTiming({ block, now: lock.completedAt }),
+            },
           }),
           status: "completed",
         },

@@ -429,7 +429,6 @@ private fun SearchResults(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val tint = MaterialTheme.colorScheme.surfaceContainerHighest
     val label = MaterialTheme.zoonkType.label
 
     LazyColumn(modifier.fillMaxSize()) {
@@ -454,8 +453,10 @@ private fun SearchResults(
                     ListDivider()
                     ListRow(
                         headline = { Text(item.label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-                        modifier = Modifier.background(if (item == highlighted) tint else Color.Transparent),
                         onClick = { onOpen(item) },
+                        highlighted = item == highlighted,
+                        // The search view is on the tint a highlighted row has elsewhere.
+                        highlightColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         leading = { MarkIcon(item.icon) },
                         supporting =
                             item.detail?.let { detail ->

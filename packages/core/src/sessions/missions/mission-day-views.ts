@@ -8,6 +8,7 @@ import {
 } from "../../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type DayBlockInput, toDayBlockView } from "../_utils/day-block-view";
+import { readBlockPayload } from "../block-payload";
 import { getStoredBlockWait } from "../block-wait";
 import { toDayBlockRef } from "../day-block";
 import { type DayMission, type Mission } from "../missions";
@@ -175,7 +176,11 @@ function getDone({
   pick: MissionPick;
   progress: DayProgress;
 }): number {
-  const completed = blocks.filter((block) => block.status === "completed").length;
+  const completed = blocks.filter((block) => block.status === "completed");
+
+  if (pick.kind === "challenge") {
+    return completed.filter((block) => readBlockPayload(block).milestoneReward?.bossWon).length;
+  }
 
   if (pick.kind === "fixMistake") {
     return progress.fixed;
@@ -197,7 +202,7 @@ function getDone({
     return progress.questions;
   }
 
-  return completed;
+  return completed.length;
 }
 
 function getMissionOpens({

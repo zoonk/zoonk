@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,6 +60,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay

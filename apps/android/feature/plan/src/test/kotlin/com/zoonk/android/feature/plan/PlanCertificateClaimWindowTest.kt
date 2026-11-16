@@ -149,7 +149,8 @@ class PlanCertificateClaimWindowTest {
         PlanClaimTest.visible = true
         PlanClaimTest.app = AppContainer.preview(application)
         PlanClaimTest.page = page
-        PlanClaimTest.viewModel = PlanViewModel(PlanStore(FakePlanApi(), cache), page.goal.id, PlanClaimTest.app.writingWaits)
+        PlanClaimTest.viewModel =
+            PlanViewModel(PlanStore(FakePlanApi(), cache), page.goal.id, PlanClaimTest.app.writingWaits, PlanNavigationModel())
         PlanClaimTest.farTopics = FarTopicViewModel(PlanStore(FakePlanApi(), cache), page.goal.id)
         PlanClaimTest.claims = CertificateStore(HeldClaims(held), cache)
         PlanClaimTest.app.plans.end[page.goal.id].replace(

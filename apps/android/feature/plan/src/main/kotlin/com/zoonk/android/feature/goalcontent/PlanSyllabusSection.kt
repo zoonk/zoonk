@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
@@ -85,7 +86,7 @@ fun PlanSyllabusSection(
                 val name = if (group.extra) beyondGroupName(syllabus) else group.name
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     SubjectRow(
                         subject = subject,
                         alsoIn = alsoInLine(syllabus.sharedExams, subject.sharedWith),

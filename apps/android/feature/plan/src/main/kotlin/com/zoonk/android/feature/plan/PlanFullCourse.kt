@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +30,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale

@@ -94,7 +94,7 @@ private fun TaskTopBar(
         val fold = screenSplit(maxWidth, span)
 
         CenterAlignedTopAppBar(
-            title = { if (fold == null) Box(Modifier.titleTarget(focus)) { title() } },
+            title = { if (fold == null) Box(Modifier.titleTarget(focus)) { ProvideTextStyle(TASK_TITLE) { title() } } },
             navigationIcon = {
                 if (fold == null) {
                     CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
@@ -102,7 +102,7 @@ private fun TaskTopBar(
                     Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
                         CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            Box(Modifier.titleTarget(focus)) { ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() } }
+                            Box(Modifier.titleTarget(focus)) { ProvideTextStyle(TASK_TITLE) { title() } }
                         }
                         Spacer(Modifier.width(CLOSE_WIDTH))
                     }
@@ -112,6 +112,10 @@ private fun TaskTopBar(
         )
     }
 }
+
+/** Main's task title (`text-label`), in every pose: a screen's plain text doesn't take Material's larger bar title. */
+private val TASK_TITLE
+    @Composable get() = MaterialTheme.typography.titleSmall
 
 /** Material's icon button, which the way out is: the space that keeps the title centered over its page. */
 private val CLOSE_WIDTH = 48.dp

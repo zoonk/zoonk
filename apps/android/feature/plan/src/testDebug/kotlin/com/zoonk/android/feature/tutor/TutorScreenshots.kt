@@ -147,7 +147,10 @@ class TutorScreenshots {
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":40}]""", extra = """"todaySession":"changed""""),
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":20}]""", status = "declined"),
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":30}]""", status = "replaced"),
-        ).mapIndexed { index, change -> turn("c$index", TutorTurn.Status.Completed, "Here.").copy(planChange = change) }
+        ).mapIndexed { index, change ->
+            // Each change its own, as the server's are, so only the newest proposal is the one still asked.
+            turn("c$index", TutorTurn.Status.Completed, "Here.").copy(planChange = change.copy(id = java.util.UUID(0, index + 1L)))
+        }
 
     private fun capture(
         name: String,

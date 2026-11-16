@@ -52,6 +52,7 @@ class PlanViewModelTest {
 
     /** The sheet opening a save answers. */
     private val opening = UUID.randomUUID()
+    private lateinit var navigation: PlanNavigationModel
     private lateinit var store: PlanStore
     private lateinit var viewModel: PlanViewModel
 
@@ -60,7 +61,8 @@ class PlanViewModelTest {
         val dispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(dispatcher)
         store = PlanStore(api, AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher)))
-        viewModel = PlanViewModel(store, goalId, writingWaits(runs))
+        navigation = PlanNavigationModel()
+        viewModel = PlanViewModel(store, goalId, writingWaits(runs), navigation)
     }
 
     @After
@@ -81,6 +83,8 @@ class PlanViewModelTest {
         runTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
             viewModel.visit.end()
+            assertEquals(PlanEvent.Archived, navigation.event.value)
+            navigation.visit.end()
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
             assertNull(viewModel.event.value)
@@ -93,7 +97,7 @@ class PlanViewModelTest {
             api.statusGate = held
 
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
-            viewModel.visit.end()
+            navigation.visit.end()
             held.complete(Unit)
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
@@ -657,7 +661,7 @@ class PlanViewModelTest {
     fun aSetupLessonBeingWrittenIsWaitedOnThenTheSameChoiceIsSentAgain() =
         runTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
-            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            viewModel = PlanViewModel(store, goalId, writingWaits(held), navigation)
             api.setupWritings += "run-1"
             val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
 
@@ -681,7 +685,7 @@ class PlanViewModelTest {
     fun aToolChoiceWhoseSetupLessonIsWrittenAfterThePlanLeftShowsNothingOnReturn() =
         runTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
-            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            viewModel = PlanViewModel(store, goalId, writingWaits(held), navigation)
             api.setupWritings += "run-1"
             val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
 
@@ -710,7 +714,7 @@ class PlanViewModelTest {
     fun aChoiceThatFailsWhenSentAgainAfterItsRunClosesTheWaitAndFailsTheTools() =
         runTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
-            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            viewModel = PlanViewModel(store, goalId, writingWaits(held), navigation)
             api.setupWritings += "run-1"
 
             viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
