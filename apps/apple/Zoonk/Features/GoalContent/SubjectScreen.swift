@@ -295,7 +295,7 @@ private struct SubjectContent: View {
                   KindMark(kind: .mindMap)
                 }
               }
-              .buttonStyle(.ghost)
+              .buttonStyle(.ghost.endsRow)
               .controlSize(.small)
             }
           }

@@ -32,8 +32,8 @@ struct ZoonkButtonStyle: ButtonStyle {
   /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
   var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
-  /// Main's `edge="end"`, for a ghost icon button that ends a row or a header: its glyph sits on
-  /// the column's edge, where the row's other marks end, and its pressed box hangs past it.
+  /// Main's `edge="end"`, for a ghost button that ends a row or a header: its glyph or its words
+  /// sit on the column's edge, where the row's other marks end, and its pressed box hangs past it.
   var endsRow: ZoonkButtonStyle {
     ZoonkButtonStyle(variant: variant, isIcon: isIcon, isAtRowEnd: true)
   }
@@ -135,6 +135,7 @@ private struct ZoonkButton: View {
       .scaleEffect(isPressed && !reduceMotion ? 0.97 : 1)
       .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
+      .padding(.trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
   }
 
   /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.
