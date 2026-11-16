@@ -83,18 +83,29 @@ const UNIT_PATTERN = UNITS.toSorted((a, b) => b.length - a.length).join("|");
 
 const NUMBER_THEN_UNIT = new RegExp(`(?<=\\d) (?=(?:${UNIT_PATTERN})(?![\\p{L}\\d]))`, "gu");
 
-const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc}) (?=\d)/gu;
+/** A sign and its amount, apart by a space or by the no-break space a question's text keeps them with. */
+const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ](?=\d)/gu;
+
+/**
+ * Only money, written the way the learner's money format writes it: a question's own text keeps its
+ * other digits (a code in a table, an ID, a count it asks about) as written.
+ */
+export function typesetMoney({ locale, text }: { locale: string; text: string }): string {
+  return text.replaceAll(
+    CURRENCY_THEN_NUMBER,
+    (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
+  );
+}
 
 export function typesetNumbers({ locale, text }: { locale: string; text: string }): string {
   const grouping = getNumberFormatter(locale, { useGrouping: true });
 
-  return text
-    .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
-      isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
-    )
-    .replaceAll(NUMBER_THEN_UNIT, NBSP)
-    .replaceAll(
-      CURRENCY_THEN_NUMBER,
-      (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
-    );
+  return typesetMoney({
+    locale,
+    text: text
+      .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
+        isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
+      )
+      .replaceAll(NUMBER_THEN_UNIT, NBSP),
+  });
 }
