@@ -37,7 +37,8 @@ fun Modifier.fadingHorizontalScroll(state: ScrollState): Modifier =
                 ),
                 blendMode = BlendMode.DstIn,
             )
-        }.horizontalScroll(state)
+        }.layoutScrollSign()
+        .horizontalScroll(state)
 
 private const val FADE_SHARE = 0.12f
 private val FADE_WIDTH = 40.dp

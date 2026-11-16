@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "platform": "apple",
+  "unit": "pt",
+  "scale": 3,
+  "activeSurface": "page",
+  "scenario": null,
+  "screen": "Apple platform limits fixture",
+  "configuration": {
+    "size": "phone",
+    "width": 390,
+    "height": 844,
+    "pointer": "touch",
+    "locale": "en",
+    "textScale": 1,
+    "scheme": "light"
+  },
+  "elements": [],
+  "measuredRules": ["one-height"],
+  "notMeasurable": {
+    "line-end": "SwiftUI Text.Layout doesn't expose resolved strings",
+    "lone-word": "SwiftUI Text.Layout doesn't expose resolved strings",
+    "cut": "SwiftUI masks and clamps aren't exposed by the host tree"
+  }
+}

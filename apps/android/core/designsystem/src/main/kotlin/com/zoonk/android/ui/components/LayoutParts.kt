@@ -74,3 +74,8 @@ val DrawnDescriptionsKey = SemanticsPropertyKey<() -> Int>("ZoonkDrawnDescriptio
 
 internal fun Modifier.drawnDescriptions(count: () -> Int): Modifier =
     if (BuildConfig.DEBUG) semantics { this[DrawnDescriptionsKey] = count } else this
+
+/** The kit owns the continuation fade; the capture must not mistake any horizontal scroller for it. */
+val LayoutScrollSignKey = SemanticsPropertyKey<Boolean>("ZoonkLayoutScrollSign")
+
+internal fun Modifier.layoutScrollSign(): Modifier = if (BuildConfig.DEBUG) semantics { this[LayoutScrollSignKey] = true } else this
