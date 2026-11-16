@@ -12456,61 +12456,118 @@
         }
       }
     },
-    "Archive your %@ goal?" : {
-      "comment" : "Asks before archiving the goal named here",
+    "Archive this goal?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Ziel „%@“ archivieren?"
+            "value" : "Dieses Ziel archivieren?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Archivar tu objetivo de %@?"
+            "value" : "¿Archivar este objetivo?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Archiver ton objectif %@ ?"
+            "value" : "Archiver cet objectif ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuoi archiviare il tuo obiettivo %@?"
+            "value" : "Vuoi archiviare questo obiettivo?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目標「%@」をアーカイブしますか？"
+            "value" : "この目標をアーカイブしますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 목표를 보관할까요?"
+            "value" : "이 목표를 보관할까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zarchiwizować cel: %@?"
+            "value" : "Zarchiwizować ten cel?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arquivar seu objetivo de %@?"
+            "value" : "Arquivar este objetivo?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hedefini arşivlemek ister misin?"
+            "value" : "Bu hedef arşivlensin mi?"
+          }
+        }
+      }
+    },
+    "Archived goals leave Today and the Plan. What you learned stays in your progress." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivierte Ziele erscheinen nicht mehr unter „Heute“ oder im Plan. Dein bisheriger Lernfortschritt bleibt erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los objetivos archivados ya no aparecen en Hoy ni en el Plan. Lo que aprendiste se conserva en tu progreso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les objectifs archivés sont retirés d’Aujourd’hui et du Plan. Ce que tu as appris reste dans ta progression."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli obiettivi archiviati non compaiono più in Oggi e nel Piano. Quello che hai imparato resta nei tuoi progressi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アーカイブした目標は「今日」と「学習計画」に表示されなくなります。学習の進捗はそのまま残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보관한 목표는 오늘과 계획에 표시되지 않아요. 배운 내용은 진도에 남아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zarchiwizowane cele znikają z zakładek Dziś i Plan. Zachowujesz postępy w nauce."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivos arquivados deixam de aparecer em Hoje e no Plano. O que você aprendeu continua no seu progresso."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arşivlenen hedefler Bugün ve Plan’dan kaldırılır. Kaydettiğin ilerleme korunur."
           }
         }
       }
@@ -19334,65 +19391,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orta seviye"
-          }
-        }
-      }
-    },
-    "It leaves your goals and its plan stops. What you learned stays in your progress." : {
-      "comment" : "Explains what archiving a goal does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Ziel wird aus deinen Zielen entfernt und sein Plan wird beendet. Was du gelernt hast, bleibt in deinem Fortschritt erhalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deja de aparecer en tus objetivos y su plan se detiene. Lo que aprendiste se conserva en tu progreso."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cet objectif quitte ta liste et son plan s’arrête. Ce que tu as appris reste dans ta progression."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non compare più tra i tuoi obiettivi e il suo piano si interrompe. Ciò che hai imparato resta nei tuoi progressi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標の一覧から外れ、学習計画が停止します。学んだことは進捗に残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표 목록에서 빠지고 계획은 멈춰요. 배운 내용은 진도에 남아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cel znika z listy, a jego plan się zatrzymuje. Twoje dotychczasowe postępy w nauce pozostają."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O objetivo sai da sua lista e o plano dele para. O que você aprendeu continua no seu progresso."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hedeflerin arasından çıkar ve planı durur. Öğrendiklerin ilerleme kaydında kalır."
           }
         }
       }
@@ -27072,61 +27070,60 @@
         }
       }
     },
-    "Resume your %@ goal?" : {
-      "comment" : "Asks before resuming the paused goal named here",
+    "Resume this goal?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Ziel „%@“ fortsetzen?"
+            "value" : "Dieses Ziel fortsetzen?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Reanudar tu objetivo de %@?"
+            "value" : "¿Reanudar este objetivo?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reprendre ton objectif %@ ?"
+            "value" : "Reprendre cet objectif ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuoi riprendere il tuo obiettivo %@?"
+            "value" : "Vuoi riprendere questo obiettivo?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目標「%@」を再開しますか？"
+            "value" : "この目標を再開しますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 목표를 이어갈까요?"
+            "value" : "이 목표를 이어갈까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wznowić realizację celu: %@?"
+            "value" : "Wrócić do tego celu?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retomar seu objetivo de %@?"
+            "value" : "Retomar este objetivo?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hedefine devam etmek ister misin?"
+            "value" : "Bu hedefe devam edilsin mi?"
           }
         }
       }

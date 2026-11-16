@@ -50,39 +50,6 @@ extension TutorScope {
     }
   }
 
-  var placeholder: Text {
-    switch self {
-    case .plan:
-      Text(
-        "Ask about your plan…", tableName: "Tutor", comment: "Placeholder of the buddy's composer")
-    case .subject:
-      Text(
-        "Ask about this subject…", tableName: "Tutor",
-        comment:
-          "Placeholder of the buddy's composer; the subject is one of the learner's exam or plan")
-    case .chapter:
-      Text(
-        "Ask about this chapter…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer")
-    case .mock:
-      Text(
-        "Ask about this mock exam…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer")
-    case .lesson, .step:
-      Text(
-        "Ask about the lesson content…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer in a lesson")
-    case .item(_, _, let answered, _, _):
-      answered
-        ? Text(
-          "Ask about your answer…", tableName: "Tutor",
-          comment: "Placeholder of the buddy's composer")
-        : Text(
-          "Ask about this question…", tableName: "Tutor",
-          comment: "Placeholder of the buddy's composer")
-    }
-  }
-
   func askLabel(_ name: String) -> String {
     switch self {
     case .plan:

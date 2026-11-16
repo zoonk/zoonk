@@ -209,7 +209,6 @@ struct TodaySessionAction: View {
 
   private var examOver: some View {
     ExamOverButtons(
-      goalName: view.goal.title,
       pressed: busy == .archive ? .archive : busy == .keepStudying ? .keepStudying : nil,
       archive: archive, keepStudying: keepStudying)
   }

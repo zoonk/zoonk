@@ -25,9 +25,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         ResumeGoal(isBusy: changes.isSaving, failure: changes.resumeFailure, action: resume)
       )
       .confirmationDialog(
-        Text(
-          "Resume your \(goal.displayName) goal?", tableName: "Plan",
-          comment: "Asks before resuming the paused goal named here"),
+        Text("Resume this goal?", tableName: "Plan"),
         isPresented: Bindable(changes).confirmsResume, titleVisibility: .visible
       ) {
         Button {
@@ -40,7 +38,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
           "Your plan picks up from today, starting with the lessons planned for the days you paused.",
           tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
       }
-      .archiveGoalConfirmation(goal, isPresented: $isArchiving) {
+      .archiveGoalConfirmation(isPresented: $isArchiving) {
         set(.archived)
       }
       .alert(
@@ -313,21 +311,13 @@ extension GoalOptionsToolbar where PlanItems == EmptyView {
 }
 
 extension View {
-  func archiveGoalConfirmation(
-    _ goal: LearnerGoal, isPresented: Binding<Bool>, archive: @escaping () -> Void
-  ) -> some View {
-    archiveGoalConfirmation(named: goal.displayName, isPresented: isPresented, archive: archive)
-  }
-
   /// The one archive confirm: the "…" menu's, and the Plan's and Today's question after an exam's
   /// date.
-  func archiveGoalConfirmation(
-    named name: String, isPresented: Binding<Bool>, archive: @escaping () -> Void
-  ) -> some View {
+  func archiveGoalConfirmation(isPresented: Binding<Bool>, archive: @escaping () -> Void)
+    -> some View
+  {
     confirmationDialog(
-      Text(
-        "Archive your \(name) goal?", tableName: "Plan",
-        comment: "Asks before archiving the goal named here"),
+      Text("Archive this goal?", tableName: "Plan"),
       isPresented: isPresented, titleVisibility: .visible
     ) {
       Button(role: .destructive, action: archive) {
@@ -335,8 +325,8 @@ extension View {
       }
     } message: {
       Text(
-        "It leaves your goals and its plan stops. What you learned stays in your progress.",
-        tableName: "Plan", comment: "Explains what archiving a goal does")
+        "Archived goals leave Today and the Plan. What you learned stays in your progress.",
+        tableName: "Plan")
     }
   }
 }
@@ -412,7 +402,6 @@ struct ExamOverButtons: View {
     case keepStudying
   }
 
-  let goalName: String
   let pressed: Answer?
   let archive: () -> Void
   let keepStudying: () -> Void
@@ -427,7 +416,7 @@ struct ExamOverButtons: View {
     }
     .buttonStyle(.outline)
     .disabled(pressed == .keepStudying)
-    .archiveGoalConfirmation(named: goalName, isPresented: $isArchiving, archive: archive)
+    .archiveGoalConfirmation(isPresented: $isArchiving, archive: archive)
 
     BusyButton(isBusy: pressed == .keepStudying, action: keepStudying) {
       Text(
@@ -463,7 +452,7 @@ private struct ExamOverBar: ViewModifier {
       .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
-            goalName: goal.displayName, pressed: pressed, archive: { save(.archive) },
+            pressed: pressed, archive: { save(.archive) },
             keepStudying: { save(.keepStudying) })
         }
       }

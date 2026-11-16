@@ -312,7 +312,10 @@ private struct ExamHero: View {
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
     let today = PlanDate.today()
     let days = dates.map { day, _ in
-      let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
+      // An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet.
+      let date = PlanDate.text(
+        day.date, today: today, weekday: dates.count == 1 && !exam.daysEstimated)
+      let text = exam.daysEstimated ? "~" + date : date
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
