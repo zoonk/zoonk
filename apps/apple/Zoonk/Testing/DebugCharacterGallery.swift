@@ -6,9 +6,7 @@
   /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated. Both are
   /// also launch arguments (`-ZOONK_DEBUG_CHARACTERS moments`).
   struct DebugCharacterGallery: ViewModifier {
-    private let mode =
-      ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
-      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_CHARACTERS")
+    private let mode = debugLaunchValue("ZOONK_DEBUG_CHARACTERS")
 
     func body(content: Content) -> some View {
       if let mode {
@@ -198,8 +196,7 @@
     @State private var index = 0
 
     private let codes =
-      (ProcessInfo.processInfo.environment["ZOONK_DEBUG_CERTIFICATES"]
-      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_CERTIFICATES") ?? "")
+      (debugLaunchValue("ZOONK_DEBUG_CERTIFICATES") ?? "")
       .split(separator: ",").map(String.init)
 
     var body: some View {

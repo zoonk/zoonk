@@ -1,6 +1,12 @@
 #if DEBUG
   import SwiftUI
 
+  /// A Debug launch setting, from the environment or as a launch argument (`-KEY value`): device
+  /// tools pass launch arguments but no launch environment.
+  func debugLaunchValue(_ key: String) -> String? {
+    ProcessInfo.processInfo.environment[key] ?? UserDefaults.standard.string(forKey: key)
+  }
+
   /// `ZOONK_DEBUG_LINK` opens an app path as a link to it would (`/learn/{id}`,
   /// `/conversation/{id}`, `/start/{goalId}`), since the simulator sends a local universal link to
   /// Safari. The link is also a launch argument (`-ZOONK_DEBUG_LINK /start/{goalId}`), which device
@@ -15,17 +21,11 @@
     @State private var signInFinished = false
     @State private var didOpen = false
 
-    private let environment = ProcessInfo.processInfo.environment
-
-    private func launchValue(_ key: String) -> String? {
-      environment[key] ?? UserDefaults.standard.string(forKey: key)
-    }
-
     func body(content: Content) -> some View {
       content
         .task {
-          if let email = launchValue("ZOONK_DEBUG_SIGN_IN_EMAIL"),
-            let code = launchValue("ZOONK_DEBUG_SIGN_IN_CODE")
+          if let email = debugLaunchValue("ZOONK_DEBUG_SIGN_IN_EMAIL"),
+            let code = debugLaunchValue("ZOONK_DEBUG_SIGN_IN_CODE")
           {
             await session.signInWithEmailCode(email: email, code: code)
           }
@@ -35,7 +35,7 @@
         .onChange(of: signInFinished && session.authenticatedSession != nil, initial: true) {
           _, isReady in
           if isReady, !didOpen,
-            let path = launchValue("ZOONK_DEBUG_LINK"),
+            let path = debugLaunchValue("ZOONK_DEBUG_LINK"),
             let url = URL(string: "https://zoonk.com\(path)")
           {
             didOpen = true

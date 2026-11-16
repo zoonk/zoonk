@@ -4,13 +4,11 @@
   /// Launch with `--activity-gallery` and the screens as `[PlayableLibraryStep]` JSON in
   /// `ZOONK_ACTIVITY_GALLERY`. `ZOONK_ACTIVITY_GALLERY_OPEN` opens one screen at launch; with
   /// `ZOONK_ACTIVITY_GALLERY_ANSWER` (a `LessonStepAnswer`) it starts answered and checked, and
-  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored.
+  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored. Each is also a launch argument.
   struct ActivityGalleryLaunch: ViewModifier {
-    private static let environment = ProcessInfo.processInfo.environment
-
     private let steps: [LessonStep]? = {
       guard ProcessInfo.processInfo.arguments.contains("--activity-gallery"),
-        let json = ProcessInfo.processInfo.environment["ZOONK_ACTIVITY_GALLERY"]
+        let json = debugLaunchValue("ZOONK_ACTIVITY_GALLERY")
       else {
         return nil
       }
@@ -27,11 +25,11 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           ActivityGallery(
             steps: steps,
-            path: steps.filter { $0.id == Self.environment["ZOONK_ACTIVITY_GALLERY_OPEN"] },
-            answer: Self.environment["ZOONK_ACTIVITY_GALLERY_ANSWER"].flatMap {
+            path: steps.filter { $0.id == debugLaunchValue("ZOONK_ACTIVITY_GALLERY_OPEN") },
+            answer: debugLaunchValue("ZOONK_ACTIVITY_GALLERY_ANSWER").flatMap {
               try? JSONDecoder().decode(LessonAnswer.self, from: Data($0.utf8))
             },
-            isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
+            isExploring: debugLaunchValue("ZOONK_ACTIVITY_GALLERY_EXPLORE") != nil
           )
           .zoonkStyles()
         }
