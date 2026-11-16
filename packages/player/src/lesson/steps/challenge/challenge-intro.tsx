@@ -32,7 +32,7 @@ function ChallengeTeamList({
           const name = names.names[slot.id] ?? slot.role;
 
           return (
-            <li className="flex items-center gap-3" key={slot.id}>
+            <li className="flex items-start gap-3" key={slot.id}>
               <ChallengeAvatar name={name} slot={slot} />
               <span className="flex flex-col">
                 <span className="text-foreground text-sm font-semibold">{name}</span>
@@ -64,7 +64,7 @@ export function ChallengeIntro({
         <Eyebrow icon={<TargetIcon aria-hidden="true" />}>
           {content.variant === "whatIf"
             ? t("What if · {setting}", { setting: fill(content.setting) })
-            : t("Challenge · {setting}", { setting: fill(content.setting) })}
+            : fill(content.setting)}
         </Eyebrow>
         <LessonQuestion>{fill(content.title)}</LessonQuestion>
       </div>
