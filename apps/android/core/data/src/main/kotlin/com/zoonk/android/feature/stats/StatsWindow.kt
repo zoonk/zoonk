@@ -3,16 +3,13 @@ package com.zoonk.android.feature.stats
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+/** The period a statistics chart names, such as "Score · 90 days", however few of its days have answers. */
 data class StatsWindow(
     val start: LocalDate,
     val end: LocalDate,
 ) {
     val days: Long get() = ChronoUnit.DAYS.between(start, end)
 
-    fun position(date: LocalDate): Double = ChronoUnit.DAYS.between(start, date).toDouble() / days.coerceAtLeast(1)
-
-    companion object {
-        /** The 90 days ending today that "Score · 90 days" names, however few weeks have answers. */
-        fun score(today: LocalDate): StatsWindow = StatsWindow(today.minusDays(89), today)
-    }
+    /** Where a date sits, 0 at the start and 1 at the end; core dates a week by its Monday, so a week that began before the window starts where the window starts. */
+    fun position(date: LocalDate): Double = ChronoUnit.DAYS.between(start, maxOf(date, start)).toDouble() / days.coerceAtLeast(1)
 }

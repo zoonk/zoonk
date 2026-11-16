@@ -5,16 +5,15 @@ import org.junit.Test
 import java.time.LocalDate
 
 class StatsWindowTest {
-    @Test fun sparseScoresStillSpanNinetyDays() {
-        val today = LocalDate.of(2026, 10, 27)
-        val window = StatsWindow.score(today)
-        assertEquals(today.minusDays(89), window.start)
-        assertEquals(today, window.end)
-        assertEquals(82.0 / 89, window.position(today.minusDays(7)), 0.00001)
+    private val window = StatsWindow(LocalDate.of(2026, 8, 23), LocalDate.of(2026, 11, 20))
+
+    @Test fun aDateSitsByItsDaysFromTheStart() {
+        assertEquals(82.0 / 89, window.position(LocalDate.of(2026, 11, 13)), 0.00001)
+        assertEquals(1.0, window.position(window.end), 0.00001)
     }
 
-    @Test fun anEmptyScoreStillHasTheNamedWindow() {
-        val today = LocalDate.of(2026, 10, 27)
-        assertEquals(today.minusDays(89), StatsWindow.score(today).start)
+    /** Core groups answers under their week's Monday, which can come before the window's first day. */
+    @Test fun aWeekThatBeganBeforeTheWindowStartsAtItsStart() {
+        assertEquals(0.0, window.position(LocalDate.of(2026, 8, 17)), 0.00001)
     }
 }

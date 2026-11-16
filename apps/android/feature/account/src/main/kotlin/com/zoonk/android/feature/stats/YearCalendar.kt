@@ -191,7 +191,8 @@ internal class CalendarSize(
 
 /**
  * The whole year when its days stay at least [FITTED_CELL_MIN] wide; otherwise its last [RECENT_WEEKS]
- * weeks, as main's phone shows, each as wide as the column allows.
+ * weeks, as main's phone shows, each as wide as the column allows so weeks sit as close as days. That
+ * column is under a year at the smallest cell, so a recent week is never wider than about 26 dp.
  */
 internal fun calendarSize(
     available: Dp,
@@ -203,7 +204,7 @@ internal fun calendarSize(
     if (year >= FITTED_CELL_MIN) return CalendarSize(minOf(year, FITTED_CELL_MAX), weeks, recent = false)
 
     val recent = minOf(weeks, RECENT_WEEKS)
-    return CalendarSize(minOf(fitted(recent), FITTED_CELL_MAX), recent, recent = true)
+    return CalendarSize(fitted(recent), recent, recent = true)
 }
 
 /**

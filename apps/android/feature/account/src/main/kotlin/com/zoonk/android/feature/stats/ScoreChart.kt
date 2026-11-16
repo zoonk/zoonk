@@ -27,7 +27,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserScoreResponseScore
 import kotlinx.datetime.toJavaLocalDate
-import java.time.LocalDate
 
 /**
  * Main's weekly score trend: one line in the score's blue on a fixed 0–100 scale, each week at its date
@@ -71,7 +70,7 @@ internal fun ScoreChart(
     val grid = MaterialTheme.zoonk.vizGrid
     val line = MaterialTheme.colorScheme.tertiary
     val ticks = remember(measurer, labelStyle, locale) { PERCENT_TICKS.map { measurer.measure(formatNumber(it, locale), labelStyle) } }
-    val window = remember { StatsWindow.score(LocalDate.now()) }
+    val window = remember(score) { StatsWindow(score.periodStart.toJavaLocalDate(), score.periodEnd.toJavaLocalDate()) }
     val axis = remember(window) { listOf(window.start, window.start.plusDays(window.days / 2), window.end) }
     val axisLabels =
         remember(measurer, labelStyle, axis, locale) { axis.map { measurer.measure(formatDate(it, locale, DateStyle.Day), labelStyle) } }
