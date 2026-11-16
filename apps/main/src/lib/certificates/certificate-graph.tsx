@@ -63,7 +63,7 @@ function scaleRoute(spec: RouteSpec, scale: number): RouteSpec {
   };
 }
 
-function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) {
+export function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) {
   return (
     <span
       style={{

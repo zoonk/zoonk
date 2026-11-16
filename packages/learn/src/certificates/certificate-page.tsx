@@ -3,8 +3,9 @@
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { BackLink, PageTitle, PageTop } from "@zoonk/ui/components/page-top";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import { BadgeCheckIcon, DownloadIcon, PrinterIcon } from "lucide-react";
+import { ArrowUpRightIcon, BadgeCheckIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { LearnLink } from "../learn-link";
@@ -154,22 +155,40 @@ export function CertificatePaper({
   facts: CertificateFacts;
   links: CertificateLinks;
 }) {
+  const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
   return (
-    <a
-      className="focus-visible:ring-ring/50 block rounded-xl outline-none focus-visible:ring-[3px]"
-      href={links.imageUrls.print}
-      rel="noopener"
-      target="_blank"
-    >
-      <CertificateSheet
-        alt={`${sentence(facts)} · ${date.long(facts.completedOn)}`}
-        className="rounded-xl"
-        loading="eager"
-        images={links.imageUrls}
-      />
-    </a>
+    <div className="flex flex-col items-start gap-3">
+      <a
+        className="focus-visible:ring-ring/50 block w-full rounded-xl outline-none focus-visible:ring-[3px]"
+        href={links.imageUrls.print}
+        rel="noopener"
+        target="_blank"
+      >
+        <CertificateSheet
+          alt={`${sentence(facts)} · ${date.long(facts.completedOn)}`}
+          className="rounded-xl"
+          loading="eager"
+          images={links.imageUrls}
+        />
+      </a>
+
+      {/* A phone draws the sheet too small to read its fine print; the details below repeat it. */}
+      <a
+        className={cn(buttonVariants({ variant: "link" }), "text-sm sm:hidden")}
+        href={links.imageUrls.print}
+        rel="noopener"
+        target="_blank"
+      >
+        {t({
+          description:
+            "Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.",
+          message: "See the full certificate",
+        })}
+        <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
+      </a>
+    </div>
   );
 }

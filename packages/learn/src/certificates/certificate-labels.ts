@@ -81,17 +81,10 @@ export function useCertificateRowName() {
       : { level: null, name: certificateName(facts) };
 }
 
-/** "about 41 hr", "about 45 min". */
+/** "~41 hr", "~45 min": the public certificate's way. */
 export function useStudyTime() {
-  const t = useExtracted();
   const formatDuration = useFormatDuration();
-
-  return (minutes: number): string =>
-    t({
-      description: 'An approximate study time, such as "about 41 hr".',
-      message: "about {duration}",
-      values: { duration: formatDuration(roundStudyMinutes(minutes)) },
-    });
+  return (minutes: number): string => `~${formatDuration(roundStudyMinutes(minutes))}`;
 }
 
 export function useCertificateDate() {
