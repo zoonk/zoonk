@@ -39,6 +39,9 @@ struct AppTabView: View {
           router.leaveStudyTab(keepingPlace: false)
         }
       }
+      .onChange(of: isStudyShown ? Set(studyTabs + AppTab.stats) : [], initial: true) {
+        router.sidebarTabs = $1
+      }
   }
 
   private var tabs: some View {

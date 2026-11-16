@@ -92,4 +92,10 @@ enum AppRoute: Hashable, Identifiable {
   var studyTab: AppTab? {
     AppTab.sidebarPlaces.first { $0.studyRoute == self }
   }
+
+  /// The sidebar row this page is: its own, and Level's for the statistics overview, which opens
+  /// with Level beside it.
+  var sidebarTab: AppTab? {
+    self == .statistics() ? .stats(.level) : studyTab
+  }
 }
