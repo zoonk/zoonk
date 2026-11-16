@@ -80,7 +80,9 @@ struct ShellGate<Content: View>: View {
         "Tell us what you want to learn, and we'll plan every day until you get there.",
         tableName: "Navigation",
         comment: "Explains what starting a goal does, on a page that needs one")
-    } actions: {
+    }
+    // Main's: the way on is the page's main action, in its bar.
+    .bottomBar {
       Button {
         router.showRoot(of: .today)
       } label: {
