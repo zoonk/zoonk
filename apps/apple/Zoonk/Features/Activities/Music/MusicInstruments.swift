@@ -135,9 +135,9 @@ struct PianoKeyboard: View {
   /// Pressing a key toggles it; without it the keyboard only shows notes.
   var onPress: ((Int) -> Void)?
 
-  /// A key people press is at least 44 points wide: white keys of 72 keep the black keys above
-  /// it, so a keyboard wider than the screen scrolls sideways.
-  private static let pressableWhiteKey: CGFloat = 72
+  /// Main's narrowest white key, which keeps room for its note's mark and grows with the text, so
+  /// an octave fits the card on every phone at the usual text size; only larger text scrolls.
+  @ScaledMetric(relativeTo: .caption) private var narrowestWhiteKey = 36.0
   private static let blackKeyShare: CGFloat = 0.62
 
   private var midis: [Int] { Array(from...to) }
@@ -148,13 +148,11 @@ struct PianoKeyboard: View {
 
     Group {
       if onPress != nil {
-        ScrollView(.horizontal) {
+        ActivityHorizontalScroll {
           keys(
-            width: max(width, CGFloat(whiteKeys.count) * Self.pressableWhiteKey),
+            width: max(width, CGFloat(whiteKeys.count) * narrowestWhiteKey),
             height: keyboardHeight)
         }
-        .scrollIndicators(.visible)
-        .scrollBounceBehavior(.basedOnSize)
         .focusable()
         .focused($isFocused)
         .focusEffectDisabled()

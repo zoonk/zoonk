@@ -219,7 +219,7 @@ private struct SQLPlaygroundCanvas: View {
   }
 
   private var snippets: some View {
-    ScrollView(.horizontal) {
+    ActivityHorizontalScroll {
       HStack(spacing: 6) {
         ForEach(fields.snippets, id: \.self) { snippet in
           Button {
@@ -232,7 +232,6 @@ private struct SQLPlaygroundCanvas: View {
         }
       }
     }
-    .scrollIndicators(.hidden)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -470,14 +469,13 @@ private struct SQLRowsTable: View {
   var marks: [Mark]?
 
   var body: some View {
-    ScrollView(.horizontal) {
+    ActivityHorizontalScroll {
       grid
         .overlay {
           RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
         }
         .clipShape(.rect(cornerRadius: Radius.lg))
     }
-    .scrollBounceBehavior(.basedOnSize)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(caption)
   }

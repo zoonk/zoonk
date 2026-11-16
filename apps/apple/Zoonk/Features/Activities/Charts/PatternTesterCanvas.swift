@@ -233,7 +233,7 @@ struct PatternTesterCanvas: View {
   }
 
   private var snippets: some View {
-    ScrollView(.horizontal) {
+    ActivityHorizontalScroll {
       HStack(spacing: 6) {
         ForEach(snippetList) { snippet in
           Button {
@@ -248,7 +248,6 @@ struct PatternTesterCanvas: View {
         }
       }
     }
-    .scrollIndicators(.hidden)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text("Symbols", tableName: "ActivitiesCharts", comment: "The row of symbol buttons"))
