@@ -65,6 +65,7 @@ val DayStep.practisesTopics: Boolean
 @Composable
 fun blockTitle(step: DayStep): String {
     val checkpoint = step.checkpointFacts
+    val practiceNames = step.topics.take(1).ifEmpty { step.areas }
 
     return when {
         checkpoint != null -> {
@@ -101,10 +102,10 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_practice_mistakes)
         }
 
-        step.areas.isNotEmpty() -> {
+        practiceNames.isNotEmpty() -> {
             stringResource(
                 if (step.extra) R.string.session_block_bonus_practice_areas else R.string.session_block_practice_areas,
-                formatList(step.areas, currentLocale()),
+                formatList(practiceNames, currentLocale()),
             )
         }
 
