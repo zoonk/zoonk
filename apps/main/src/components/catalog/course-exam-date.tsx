@@ -1,11 +1,11 @@
 import { getIsoDayFormatter } from "@/lib/public/public-labels";
 import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
 import { DaysLeft } from "@zoonk/learn/days-left";
+import { FactSegments } from "@zoonk/learn/facts";
 import { addIsoDays } from "@zoonk/utils/calendar-day";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getExtracted, getFormatter } from "next-intl/server";
 
-/** A fact beside the subject's chip, not a second chip. */
+/** The exam's days and the time left, as the facts under the course's title. */
 export async function CourseExamDate({ exam }: { exam: NonNullable<CoursePlanExample["exam"]> }) {
   const [first] = exam.days;
 
@@ -19,10 +19,13 @@ export async function CourseExamDate({ exam }: { exam: NonNullable<CoursePlanExa
   const dates = format.list(exam.days.map(formatDay), { type: "conjunction" });
 
   return (
-    <p className="text-muted-foreground text-xs text-pretty">
-      {exam.estimated ? t("Exam around {dates}", { dates }) : t("Exam on {dates}", { dates })}
-      {FACT_SEPARATOR}
-      <DaysLeft days={exam.daysLeft} estimated={exam.estimated} />
+    <p className="text-muted-foreground mt-3 text-sm text-pretty">
+      <FactSegments
+        extra={<DaysLeft days={exam.daysLeft} estimated={exam.estimated} />}
+        facts={[
+          exam.estimated ? t("Exam around {dates}", { dates }) : t("Exam on {dates}", { dates }),
+        ]}
+      />
     </p>
   );
 }

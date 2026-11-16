@@ -97,7 +97,7 @@ export async function loadNotice(
     courseWeights: toCourseWeights(goal.details),
     fromMaterial: blueprint.ownerId !== null,
     passMarks: getPassMarks({ blueprint, goal, structure }),
-    questionsSource: getPastQuestionsSource(structure),
+    questionsSource: getPastQuestionsSource({ examName: blueprint.name, structure }),
     subjects,
     url: edition.noticeUrl,
   };

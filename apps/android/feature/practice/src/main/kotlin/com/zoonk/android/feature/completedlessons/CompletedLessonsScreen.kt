@@ -34,6 +34,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
@@ -196,7 +197,7 @@ private fun LessonRow(
     onOpen: (UUID) -> Unit,
 ) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
-        if (!first) HorizontalDivider()
+        if (!first) ListDivider()
         ListRow(
             headline = { Text(lesson.title) },
             supporting = listRowDescription(lesson.chapterTitle),

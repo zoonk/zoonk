@@ -2,26 +2,27 @@ import { CourseChapterFold, CourseHere } from "@/components/catalog/course-progr
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
+import { FactSegments } from "@zoonk/learn/facts";
 import { RouteMark } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { Fragment, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 export type OutlineParams = { brandSlug: string; courseSlug: string };
 export type OutlineBand = LibraryOutline["levels"][number];
 export type OutlineChapter = OutlineBand["chapters"][number];
 
-/** A no-break space keeps each dot at the end of a line, never at the start of the next. */
-const OUTLINE_SEPARATOR = "\u00A0· ";
-
 const CHAPTERS_NAMED = 3;
 
 /** A closed level or subject says what it holds; open, its rows do. */
-export function getZoneChapterNames(chapters: OutlineChapter[]): string {
-  return chapters
-    .slice(0, CHAPTERS_NAMED)
-    .map((chapter) => chapter.title)
-    .join(OUTLINE_SEPARATOR);
+export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
+  return (
+    <FactSegments
+      facts={chapters
+        .slice(0, CHAPTERS_NAMED)
+        .map((chapter) => ({ content: chapter.title, key: chapter.id }))}
+    />
+  );
 }
 
 const CHAPTERS_SHOWN = 6;
@@ -40,8 +41,9 @@ const ROW_STATION_CLASS = "top-[1.6875rem]";
 const CHAPTER_LINK_CLASS =
   "focus-visible:ring-ring/50 relative inline-block rounded-md outline-none before:absolute before:inset-x-0 before:-top-4 before:-bottom-1.5 before:min-w-11 hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
 
+/** Inset: a link at a line's start sits on FactSegments' clip edge, which would cut an outer ring. */
 const LESSON_LINK_CLASS =
-  "hover:text-foreground focus-visible:ring-ring/50 rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
+  "hover:text-foreground focus-visible:ring-ring/50 rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px] focus-visible:ring-inset";
 
 const LONE_LESSON_LINK_CLASS =
   "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
@@ -56,19 +58,25 @@ function ChapterLessonLinks({
   const hasLoneLesson = chapter.lessons.length === 1;
 
   return (
-    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-pretty">
-      {chapter.lessons.map((lesson, index) => (
-        <Fragment key={lesson.id}>
-          {index > 0 && OUTLINE_SEPARATOR}
-          <Link
-            className={cn(LESSON_LINK_CLASS, hasLoneLesson && LONE_LESSON_LINK_CLASS)}
-            href={getLessonHref({ ...params, chapterSlug: chapter.slug, lessonSlug: lesson.slug })}
-            prefetch
-          >
-            {lesson.title}
-          </Link>
-        </Fragment>
-      ))}
+    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-balance">
+      <FactSegments
+        facts={chapter.lessons.map((lesson) => ({
+          content: (
+            <Link
+              className={cn(LESSON_LINK_CLASS, hasLoneLesson && LONE_LESSON_LINK_CLASS)}
+              href={getLessonHref({
+                ...params,
+                chapterSlug: chapter.slug,
+                lessonSlug: lesson.slug,
+              })}
+              prefetch
+            >
+              {lesson.title}
+            </Link>
+          ),
+          key: lesson.id,
+        }))}
+      />
     </p>
   );
 }

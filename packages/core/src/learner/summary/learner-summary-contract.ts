@@ -43,6 +43,7 @@ export type LearnerSummaryGoal = GoalCountryFields & {
   status: GoalStatus;
   /** `YYYY-MM-DD`, or null for a goal without a date. */
   targetDate: string | null;
+  targetDateEstimated: boolean;
   targetLanguage: string | null;
   /** Set only when the learner asked for a country. */
   targetRegion: string | null;

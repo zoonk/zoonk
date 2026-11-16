@@ -13,7 +13,7 @@ import {
   OnboardingTitle,
 } from "./onboarding-frame";
 
-/** A test's start: Skip, which plans from what the learner said, then Start. */
+/** A test's start: Skip, which plans from what the learner said, then the test's start. */
 export function TestStartActions({
   onScratch,
   onStart,
@@ -38,7 +38,7 @@ export function TestStartActions({
         {t("Skip")}
       </OnboardingSecondaryButton>
       <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
-        {t("Start")}
+        {t("Start the test")}
       </OnboardingPrimaryButton>
     </OnboardingActions>
   );

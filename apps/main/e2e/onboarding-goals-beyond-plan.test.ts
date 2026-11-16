@@ -61,7 +61,7 @@ async function typeCard({ page, userId }: { page: Page; userId: string }) {
   await page.goto("/start");
   await page.getByRole("textbox", { name: "I want to" }).fill(words);
   await page.getByRole("button", { name: "Build my plan" }).click();
-  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
 
   return words;
 }

@@ -19,6 +19,10 @@ class GoalSwitch(
     private val target = MutableStateFlow<UUID?>(null)
     private val writing = MutableStateFlow(false)
 
+    /** Successful learner selections; other writes can change the active goal without making a selection. */
+    var revision = 0L
+        private set
+
     val pending: StateFlow<UUID?> = target.asStateFlow()
 
     /** The switch is being saved; until it is, the tabs can't have read the new goal. */
@@ -42,6 +46,7 @@ class GoalSwitch(
         try {
             val saved = makeActive(goalId)
             if (saved) {
+                revision++
                 coroutineScope { shown.forEach { launch { it.refresh() } } }
                 if (shows(goalId)) settle(goalId)
             } else {

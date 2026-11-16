@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -80,8 +79,9 @@ fun WeekendTime(
             )
             Switch(checked = on, onCheckedChange = null, enabled = missing == null)
         }
-        // The reason takes the time's room, which stays laid out under it, so a day's pick moves nothing.
-        Box(contentAlignment = Alignment.CenterStart) {
+        // The reason takes the time's room, which stays laid out under it, so a day's pick moves nothing. It sits at
+        // the room's top, next to the switch it explains.
+        Box(contentAlignment = Alignment.TopStart) {
             TimeSelect(
                 label = stringResource(R.string.weekend_time_label),
                 times = times,

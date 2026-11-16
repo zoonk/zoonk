@@ -494,9 +494,14 @@ describe("missions completed outside a study block", () => {
     ).resolves.toMatchObject({ completed: ["askBuddy"], fullMeal: { paid: false } });
   });
 
-  it.each([false, true])(
-    "announces the linked checkpoint mission, including retries (last: %s)",
-    async (last) => {
+  it.each([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])(
+    "announces the linked checkpoint mission, including retries (last: %s, won: %s)",
+    async (last, won) => {
       const { goal, user } = await signedInLearner();
 
       await prisma.subscription.create({
@@ -528,7 +533,7 @@ describe("missions completed outside a study block", () => {
           language: "en",
           level: "A2",
           minutes: 2,
-          objectivesMet: [],
+          objectivesMet: won ? RENTING_SCENARIO.objectives.map((objective) => objective.label) : [],
           scenario: RENTING_SCENARIO,
           startedAt: NOW,
           studyBlockId: block.id,
@@ -554,13 +559,28 @@ describe("missions completed outside a study block", () => {
       });
 
       expect(completed).toMatchObject({
-        missionMoment: { completed: ["challenge"], fullMeal: { bonus: 50, paid: last } },
+        missionMoment: won
+          ? { completed: ["challenge"], fullMeal: { bonus: 50, paid: last } }
+          : null,
         status: "completed",
+      });
+
+      const beforeRetry = await prisma.userProgress.findUniqueOrThrow({
+        where: { userId: user.id },
       });
 
       await expect(
         completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
-      ).resolves.toStrictEqual(completed);
+      ).resolves.toMatchObject({
+        missionMoment: won
+          ? { completed: ["challenge"], fullMeal: { bonus: 50, paid: last } }
+          : null,
+        status: "completed",
+      });
+
+      await expect(
+        prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({ totalBrainPower: beforeRetry.totalBrainPower });
     },
   );
 
@@ -599,7 +619,7 @@ describe("missions completed outside a study block", () => {
           language: "en",
           level: "A2",
           minutes: 2,
-          objectivesMet: [],
+          objectivesMet: RENTING_SCENARIO.objectives.map((objective) => objective.label),
           scenario: RENTING_SCENARIO,
           startedAt: NOW,
           studyBlockId: block.id,

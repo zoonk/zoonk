@@ -18,6 +18,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -67,6 +68,7 @@ class FitOfferCheckTest {
             ),
             page.goal.id,
             writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
+            PlanNavigationModel(GoalSwitch { true }),
         )
     private var shown by mutableStateOf(true)
     private var cardWidth by mutableStateOf(411.dp)

@@ -63,6 +63,7 @@ const learnerSummaryGoalSchema = z
       }),
     status: z.enum(GoalStatus),
     targetDate: z.iso.date().nullable(),
+    targetDateEstimated: z.boolean(),
     targetLanguage: z.string().nullable(),
     targetRegion: z
       .string()

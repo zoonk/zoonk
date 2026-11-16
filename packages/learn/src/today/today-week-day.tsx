@@ -9,12 +9,15 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
-import { GraduationCapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { KindIcon } from "../_components/kind-tile";
-import { DoneMark } from "../_components/status-mark";
-import { WEEK_DAY_CLASS, WeekDayLetter } from "../_components/week-row";
+import {
+  WEEK_DAY_CLASS,
+  WeekDayLetter,
+  WeekDayRing,
+  getDayShare,
+  isMissed,
+} from "../_components/week-row";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
@@ -35,19 +38,6 @@ const DAY_BUTTON_CLASS =
 
 const RING_CLASS = "size-7.5";
 
-/** A day the plan gave no time that the learner studied anyway fills whole. */
-function getDayShare(day: WeekDay): number {
-  if (day.hitGoal) {
-    return 1;
-  }
-
-  if (day.goalMinutes === 0) {
-    return day.studied ? 1 : 0;
-  }
-
-  return Math.min(1, day.minutes / day.goalMinutes);
-}
-
 /** The week marks the current local day even while a lesson carries the previous day's session. */
 function useWeekDate(): Date {
   const { today } = useTodayScreen();
@@ -55,55 +45,13 @@ function useWeekDate(): Date {
   return today.session.week.days.find((day) => day.isToday)?.date ?? today.session.localDate;
 }
 
-function isMissed(day: WeekDay, localDate: Date): boolean {
-  return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
-}
-
-function isOutsidePlan(day: WeekDay): boolean {
-  return !day.studied && (day.kind === "beforeStart" || day.kind === "afterEnd");
-}
-
-function getTrack(day: WeekDay, localDate: Date): GoalRingTrack {
-  if (day.isToday) {
-    return "today";
-  }
-
-  if (isMissed(day, localDate)) {
-    return "missed";
-  }
-
-  return day.kind === "rest" ? "rest" : "default";
-}
-
-function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }) {
-  const localDate = useWeekDate();
-
-  if (isOutsidePlan(day) && !day.isToday) {
-    return (
-      <span aria-hidden="true" className={cn("flex items-center justify-center", RING_CLASS)}>
-        <span className="bg-foreground/15 h-0.5 w-3 rounded-full" />
-      </span>
-    );
-  }
-
-  const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
-
-  return (
-    <GoalRing className={RING_CLASS} share={getDayShare(day)} track={getTrack(day, localDate)}>
-      {day.hitGoal && <DoneMark />}
-      {isTarget && <GraduationCapIcon className="text-foreground" />}
-      {!day.hitGoal && !isTarget && children}
-    </GoalRing>
-  );
-}
-
 function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }) {
   return (
-    <DayRing day={day}>
+    <WeekDayRing className={RING_CLASS} day={day} localDate={useWeekDate()}>
       {getDayShare(day) === 0 && (
         <KindIcon className="size-3.5" kind={getChallengeKind(challenge)} />
       )}
-    </DayRing>
+    </WeekDayRing>
   );
 }
 
@@ -180,7 +128,7 @@ function PlainDay({ day }: { day: WeekDay }) {
 
   return (
     <>
-      <DayRing day={day} />
+      <WeekDayRing className={RING_CLASS} day={day} localDate={useWeekDate()} />
       <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {t("{day}: {status}", { day: weekdayLabel(day.date), status: dayStatus(day) })}

@@ -105,6 +105,8 @@ fun DailyTimePicker(
         Row(
             modifier =
                 Modifier
+                    // The time's ink starts the column; its 4dp of touch room reaches past it.
+                    .bleed(TIME_TOUCH_ROOM)
                     .clip(MaterialTheme.shapes.small)
                     // Disabled, it stays focusable, as main's is: focus waits on it while a time saves.
                     .clickable(role = Role.DropdownList) { if (enabled) open = true }
@@ -112,7 +114,7 @@ fun DailyTimePicker(
                         contentDescription = "$label, $shown"
                         if (!enabled) disabled()
                     }.alpha(if (stale || !enabled) STALE_ALPHA else 1f)
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = TIME_TOUCH_ROOM),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -180,3 +182,5 @@ fun TimeSelect(
 private val MENU_ITEM_HEIGHT = 48.dp
 
 private const val STALE_ALPHA = 0.6f
+
+private val TIME_TOUCH_ROOM = 4.dp

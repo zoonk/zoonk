@@ -52,9 +52,14 @@ function toSubject({
   };
 }
 
-function toQuestionsSource(structure: Structure): Pick<ExamFactsContext, "questionsSource"> {
-  const source = getPastQuestionsSource(structure);
-  return { questionsSource: source };
+function toQuestionsSource({
+  examName,
+  structure,
+}: {
+  examName: string;
+  structure: Structure;
+}): Pick<ExamFactsContext, "questionsSource"> {
+  return { questionsSource: getPastQuestionsSource({ examName, structure }) };
 }
 
 function toFacts({
@@ -95,7 +100,7 @@ function toFacts({
     scoring: structure.mock?.scoring.description ?? null,
     source: edition.noticeUrl,
     subjects: structure.subjects.map((subject) => toSubject({ structure, subject })),
-    ...toQuestionsSource(structure),
+    ...toQuestionsSource({ examName: blueprint.name, structure }),
   };
 }
 

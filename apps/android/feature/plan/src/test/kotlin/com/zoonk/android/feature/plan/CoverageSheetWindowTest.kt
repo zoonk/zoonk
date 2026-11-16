@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -78,7 +79,12 @@ class CoverageSheetWindowTest {
         runBlocking { store.plan[page.goal.id].refresh() }
         CoverageSheetTest.page = page
         CoverageSheetTest.viewModel =
-            PlanViewModel(store, page.goal.id, writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")))
+            PlanViewModel(
+                store,
+                page.goal.id,
+                writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
+                PlanNavigationModel(GoalSwitch { true }),
+            )
         // One test starts as a wide panel, which a recreation then makes a closed line; the rest start in the line's sheet.
         val startsAsPanel = testName.methodName == "aPanelRecreatedAsAClosedLineAsksNoPreviewWhenItOpens"
         if (startsAsPanel) RuntimeEnvironment.setQualifiers("w1280dp-h900dp")

@@ -69,6 +69,7 @@ import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -417,7 +418,7 @@ private fun ZoomControls(
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FilledTonalIconButton(onClick = onZoomOut, enabled = scale > 1f) {
+        FilledTonalIconButton(onClick = onZoomOut, enabled = scale > 1f, shape = ICON_BUTTON_SHAPE) {
             Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
         }
         val fit = stringResource(R.string.mindmaps_fit)
@@ -434,7 +435,7 @@ private fun ZoomControls(
                 style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
             )
         }
-        FilledTonalIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE) {
+        FilledTonalIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE, shape = ICON_BUTTON_SHAPE) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.mindmaps_zoom_in))
         }
     }

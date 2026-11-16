@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -171,6 +172,7 @@ class FitOfferWindowTest {
                 PlanStore(api, cache),
                 page.goal.id,
                 writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
+                PlanNavigationModel(GoalSwitch { true }),
             )
         scenario = ActivityScenario.launch(FitOfferTestActivity::class.java)
         return held to api

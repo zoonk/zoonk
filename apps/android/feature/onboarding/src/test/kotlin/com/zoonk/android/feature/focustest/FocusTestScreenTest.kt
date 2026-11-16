@@ -101,6 +101,7 @@ class FocusTestScreenTest {
             suggested = emptyList(),
             status = LearnerSummaryGoal.Status.ACTIVE,
             targetDate = null,
+            targetDateEstimated = false,
             targetLanguage = null,
             targetRegion = null,
             title = "DELE B2",

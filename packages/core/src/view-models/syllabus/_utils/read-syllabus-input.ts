@@ -1,6 +1,7 @@
 import "server-only";
 import { readClaimEvents } from "../../../learner/facts/claim-events";
 import { readOwnedGoal } from "../../../learner/facts/owned-goal";
+import { readPlanLessonItems } from "../../../learner/facts/plan-lesson-items";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { readTaughtStandInSkills } from "../../../learner/facts/taught-stand-in-skills";
 import { toIdKey } from "../../../library/_utils/shared-rows";
@@ -27,6 +28,7 @@ export async function readSyllabusInput(userId: string, goalId: string) {
   return loadSyllabusInput(goal, {
     blueprint:
       goal.kind === "exam" && goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+    lessonItems: readPlanLessonItems(userId, goalId),
     readClaims: (skillIds) => readClaimEvents(userId, goalId, toIdKey(skillIds)),
     savedPlan,
     taughtStandIns: readTaughtStandInSkills(userId, goalId),

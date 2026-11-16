@@ -2,13 +2,17 @@ import { prisma } from "@zoonk/db";
 import { SEED_PERSONA_NAMES } from "@zoonk/db/seed/personas";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
+import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
 import { getTargetLevel, loadLanguageSkillLevels } from "../language/levels/language-skill-levels";
 import { getOwnLevel } from "../learner/placement/placement-contract";
 import { filterMistakesWithPracticeMaterial } from "../mistakes/mistake-practice-eligibility";
 import { readMistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
 import { getBlockElapsedMs } from "../sessions/_utils/block-timing";
+import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
+import { readBlockPayload } from "../sessions/block-payload";
 import { readMissionDocument } from "../sessions/missions/catalog";
+import { getDayMissions } from "../sessions/missions/get-day-missions";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { seedPersonaCopy } from "./seed";
 
@@ -105,6 +109,53 @@ describe("a persona's copy", () => {
     ).toStrictEqual({ listening: "A2", reading: "B1", speaking: "A2", writing: "A2" });
   });
 
+  it("retains the outcome of seeded past boss answers in blocks and missions", async () => {
+    const copy = await seedPersonaCopy({
+      copyKey: "past-wins",
+      email: "past-wins@zoonk.test",
+      persona: "buddy",
+    });
+
+    const sessions = await prisma.studySession.findMany({
+      include: STUDY_SESSION_INCLUDE,
+      where: { status: "completed", userId: copy.userId },
+    });
+
+    const challenges = sessions.flatMap((session) =>
+      session.blocks.filter((block) => readBlockPayload(block).checkpoint?.kind === "boss"),
+    );
+
+    expect(challenges.length).toBeGreaterThan(0);
+
+    await Promise.all(
+      challenges.map(async (block) => {
+        const attempts = await prisma.attempt.findMany({
+          where: {
+            itemId: { in: readBlockPayload(block).itemIds },
+            studySessionId: block.sessionId,
+          },
+        });
+
+        const passed = hasPassedCheckpoint({
+          correct: attempts.filter((attempt) => attempt.isCorrect).length,
+          passMark: getPassMark(attempts.length),
+        });
+
+        expect(readBlockPayload(block).milestoneReward?.bossWon).toBe(passed);
+      }),
+    );
+
+    await Promise.all(
+      sessions.map(async (session) => {
+        const views = await getDayMissions({ session, timeZone: "America/Sao_Paulo" });
+
+        for (const mission of views.filter((candidate) => candidate.kind === "challenge")) {
+          expect(mission.status).toBe("done");
+        }
+      }),
+    );
+  });
+
   it.each(["535d0cba", "ef53361d"])(
     "has Ana's study days and her Friday under copy key %s",
     async (copyKey) => {
@@ -128,6 +179,7 @@ describe("a persona's copy", () => {
       });
 
       const sessions = await prisma.studySession.findMany({
+        include: STUDY_SESSION_INCLUDE,
         where: { localDate: { lt: TODAY }, userId: copy.userId },
       });
 

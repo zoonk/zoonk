@@ -8,7 +8,7 @@ import {
   OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
-  getZoneChapterNames,
+  ZoneChapterNames,
 } from "./outline-chapter-row";
 
 const LEVEL_LINE_CLASS =
@@ -92,7 +92,7 @@ export async function OutlineLevel({
       aside={t("{count, plural, one {# chapter} other {# chapters}}", {
         count: band.chapters.length,
       })}
-      closedDetail={getZoneChapterNames(band.chapters)}
+      closedDetail={<ZoneChapterNames chapters={band.chapters} />}
       courseId={courseId}
       isFirst={isFirst}
       level={band.level}

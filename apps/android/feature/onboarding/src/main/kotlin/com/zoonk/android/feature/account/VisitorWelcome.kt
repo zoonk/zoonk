@@ -36,6 +36,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.TextButton
@@ -141,7 +142,9 @@ fun VisitorWelcome(
                 if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = onSend)
 
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = { navigator.open(AppRoute.Terms) }) { Text(stringResource(R.string.account_terms)) }
+                    TextButton(onClick = { navigator.open(AppRoute.Terms) }, edge = ButtonEdge.Start) {
+                        Text(stringResource(R.string.account_terms))
+                    }
                     TextButton(onClick = { navigator.open(AppRoute.Privacy) }) { Text(stringResource(R.string.account_privacy)) }
                 }
             }

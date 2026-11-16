@@ -36,6 +36,8 @@ export type CertificateUnit = {
   chapterIds: string[];
   courseLevel: CourseLevel | null;
   finished: boolean;
+  canEarn: boolean;
+  progress: number | null;
   /** Its learn items and the challenges of their phases. */
   items: CertifiableItem[];
   key: string;
@@ -55,7 +57,7 @@ function isStudied(item: CertifiableItem): boolean {
  * One set of lessons sizes the unit and credits it: every lesson teaching its skills, each once,
  * whichever unit holds it, with what those skills still lack.
  */
-function isHalfOfSkillsStudied({
+function measureSkillsStudied({
   learn,
   scope,
   skillIds,
@@ -63,21 +65,23 @@ function isHalfOfSkillsStudied({
   learn: readonly CertifiableItem[];
   scope: PlanScope;
   skillIds: ReadonlySet<string>;
-}): boolean {
-  return isHalfStudied(
-    measureStudied({
-      items: learn.filter((item) => !isStandIn(item) || skillIds.has(item.skillId ?? "")),
-      lessonIds: new Set(
-        scope.lessons.flatMap((lesson) =>
-          lesson.skillIds.some((skillId) => skillIds.has(skillId)) ? lesson.lessonId : [],
-        ),
+}): { size: number; studied: number } {
+  return measureStudied({
+    items: learn.filter((item) => !isStandIn(item) || skillIds.has(item.skillId ?? "")),
+    lessonIds: new Set(
+      scope.lessons.flatMap((lesson) =>
+        lesson.skillIds.some((skillId) => skillIds.has(skillId)) ? lesson.lessonId : [],
       ),
-      unwritten: scope.unwritten.reduce(
-        (sum, skill) => (skillIds.has(skill.skillId) ? sum + skill.lessons : sum),
-        0,
-      ),
-    }),
-  );
+    ),
+    unwritten: scope.unwritten.reduce(
+      (sum, skill) => (skillIds.has(skill.skillId) ? sum + skill.lessons : sum),
+      0,
+    ),
+  });
+}
+
+function studyShare(study: { size: number; studied: number }): number | null {
+  return study.size > 0 ? Math.min(1, study.studied / study.size) : null;
 }
 
 /**
@@ -184,31 +188,37 @@ export function listCertificateUnits({
         const unitChallenges = challenges.filter((item) => phaseIndexes.has(item.phase));
         const chapterIds = listChapterIds(unitLearn);
 
+        const study = measureSkillsStudied({
+          learn,
+          scope,
+          skillIds: new Set(
+            [...skillLevels].flatMap(([skillId, taught]) =>
+              taught.includes(level) ? skillId : [],
+            ),
+          ),
+        });
+
+        const canEarn = holdsWholeLevel({ chapterIds, level, levelChapters, planCreatedAt });
+
         const finished =
-          holdsWholeLevel({ chapterIds, level, levelChapters, planCreatedAt }) &&
+          canEarn &&
           isUnitDone({
             challenges: unitChallenges,
             dates,
-            halfStudied: isHalfOfSkillsStudied({
-              learn,
-              scope,
-              skillIds: new Set(
-                [...skillLevels].flatMap(([skillId, taught]) =>
-                  taught.includes(level) ? skillId : [],
-                ),
-              ),
-            }),
+            halfStudied: isHalfStudied(study),
             learn: unitLearn,
             phases: phases.filter((_phase, index) => phaseIndexes.has(index)),
           });
 
         return [
           {
+            canEarn,
             chapterIds,
             courseLevel: level,
             finished,
             items: [...unitLearn, ...unitChallenges],
             key: getCourseLevelKey({ courseId: levelCourseId, level }),
+            progress: studyShare(study),
           },
         ];
       })
@@ -218,24 +228,22 @@ export function listCertificateUnits({
     levelUnits.flatMap((unit) => (unit.finished || heldKeys.has(unit.key) ? unit.courseLevel : [])),
   );
 
+  const study = measureSkillsStudied({
+    learn,
+    scope,
+    skillIds: new Set(scope.keptSkills.map((skill) => skill.skillId)),
+  });
+
   const planUnit: CertificateUnit = {
+    canEarn: true,
     chapterIds: listChapterIds(learn),
     courseLevel: null,
     finished:
       learn.some((item) => isStudied(item) && (!item.level || !covered.has(item.level))) &&
-      isUnitDone({
-        challenges,
-        dates,
-        halfStudied: isHalfOfSkillsStudied({
-          learn,
-          scope,
-          skillIds: new Set(scope.keptSkills.map((skill) => skill.skillId)),
-        }),
-        learn,
-        phases,
-      }),
+      isUnitDone({ challenges, dates, halfStudied: isHalfStudied(study), learn, phases }),
     items: [...learn, ...challenges],
     key: goal.id,
+    progress: studyShare(study),
   };
 
   return [...levelUnits, planUnit];
