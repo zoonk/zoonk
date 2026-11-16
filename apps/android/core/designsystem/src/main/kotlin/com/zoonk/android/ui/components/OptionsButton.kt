@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -57,7 +58,7 @@ fun MoreButton(
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.offset(x = MORE_INK_BLANK),
         enabled = enabled,
         colors =
             if (quiet) {
@@ -71,3 +72,6 @@ fun MoreButton(
 }
 
 private val ICON = 16.dp
+
+/** `ic_more_horiz` leaves 4dp blank after its last dot; pushed by it, the dots end where the bar's or row's edge is, as the back arrow's ink starts on it. */
+private val MORE_INK_BLANK = 4.dp

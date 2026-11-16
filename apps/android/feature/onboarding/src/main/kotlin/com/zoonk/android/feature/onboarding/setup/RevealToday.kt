@@ -279,7 +279,7 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                         }
                     },
                 )
-                ListDivider()
+                if (index != days.lastIndex) ListDivider()
             }
         }
     }
