@@ -340,11 +340,7 @@ enum UnderstoodRows {
         UnderstoodRow(
           id: "targetScore",
           label: facts.kind == "language"
-            ? LocalizedStringResource(
-              "Level to reach", table: "Onboarding",
-              comment:
-                "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
-            )
+            ? LocalizedStringResource(stringLiteral: aimTitle(language: facts.targetLanguage))
             : LocalizedStringResource(
               "Target score", table: "Onboarding", comment: "Row with the score an exam aims for"),
           value: target, field: .targetScore, editValue: target))

@@ -41,12 +41,14 @@ export function AimName({ aim }: { aim: string }) {
 
 /** A tap, a number key or Enter on the highlighted aim picks it; the arrow keys only move. */
 export function AimChoices({
+  label,
   numberKeys = true,
   onPick,
   options,
   pending,
   value,
 }: {
+  label: string;
   /** Off where the choices share the screen with other controls. */
   numberKeys?: boolean;
   onPick: (aim: LanguageAim) => void;
@@ -55,7 +57,6 @@ export function AimChoices({
   /** The picked aim, as a band or as the plan names it ("B1+"). */
   value: string | null;
 }) {
-  const words = useAimWords();
   const saved = toLanguageAimBand(value);
   const [highlighted, setHighlighted] = useState(saved);
   const [shownSaved, setShownSaved] = useState(saved);
@@ -73,7 +74,7 @@ export function AimChoices({
         label: <AimName aim={option.name ?? option.aim} />,
         value: option.aim,
       }))}
-      label={words.title}
+      label={label}
       numberKeys={numberKeys}
       onChange={setHighlighted}
       onPick={onPick}
@@ -136,7 +137,7 @@ export function AimPicker({
 
   const choices = (
     <>
-      <AimChoices onPick={pick} options={options} pending={isSaving} value={value} />
+      <AimChoices label={title} onPick={pick} options={options} pending={isSaving} value={value} />
       {failed && <ChangeSaveError />}
     </>
   );

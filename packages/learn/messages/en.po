@@ -5387,10 +5387,11 @@ msgctxt "7ncC9e"
 msgid "Around {month}"
 msgstr "Around {month}"
 
+#. Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".
 #: src/language-aim/use-aim-words.ts
-msgctxt "7T7vIF"
-msgid "Level to reach"
-msgstr "Level to reach"
+msgctxt "hFWAQd"
+msgid "{language} level to reach"
+msgstr "{language} level to reach"
 
 #: src/language-aim/use-reason-copy.ts
 msgctxt "IZU_K4"
@@ -11264,9 +11265,9 @@ msgid "More explanation from now on."
 msgstr "More explanation from now on."
 
 #: src/plan/use-operation-statement.ts
-msgctxt "ennIrt"
-msgid "Level to reach: {level}."
-msgstr "Level to reach: {level}."
+msgctxt "0Ar6uy"
+msgid "You now study up to {level}."
+msgstr "You now study up to {level}."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "IQ6KGj"

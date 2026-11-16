@@ -330,6 +330,7 @@ internal fun ColumnScope.PlanEditorBody(
                 LanguageAimRow(
                     aim.value,
                     languageAim.label,
+                    languageAim.targetLanguage,
                     languageAim.choices,
                     open = drafts.picking == PlanPicker.Aim,
                     onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },

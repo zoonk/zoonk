@@ -3,10 +3,12 @@
 import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 
 export function useAimWords() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const languageName = useLanguageNameInSentence();
 
   const labels: Record<LanguageAim, string> = {
     A2: t("Get by on trips"),
@@ -25,6 +27,13 @@ export function useAimWords() {
       const band = toLanguageAimBand(aim);
       return band ? labels[band] : null;
     },
-    title: t("Level to reach"),
+    /** Named with its language, so it isn't read as the game's level. */
+    title: (targetLanguage: string | null): string =>
+      t({
+        description:
+          'Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".',
+        message: "{language} level to reach",
+        values: { language: languageName(targetLanguage) },
+      }),
   };
 }

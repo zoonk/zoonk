@@ -569,8 +569,7 @@ enum PlanChangeWords {
 
   static func aimStatement(_ aim: String) -> String {
     String(
-      localized: "Level to reach: \(aim).", table: "Plan",
-      comment: "Says a language course's level to reach changed; the argument is a level like B1")
+      localized: "You now study up to \(aim).", table: "Plan")
   }
 }
 

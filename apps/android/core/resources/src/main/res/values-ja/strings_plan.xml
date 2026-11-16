@@ -89,7 +89,7 @@
   "plan_change_adds": "655081d94481366f09e43a4aa56813db9e8658aa1adb6dc730eeebe904a54342",
   "plan_change_adds_about": "f529b526f56ad003c16ac35c338269160e9ea7d9aa83e63c55d4ae8dd8ec3d2c",
   "plan_change_adds_and_leaves_out": "9422f3628a5a3c9e6fe284d82a42448287d9acb461fb00cae765ee49358de0b1",
-  "plan_change_aim": "b0444f9f67d864ade8f037c3c7716ab7afc361e9c43efbf433b8d614fec7ae2e",
+  "plan_change_aim": "81c64d45336d122731559c8a758dfbe6af8b7b547abe04318f01563a604fcddb",
   "plan_change_area_from_basics": "57e67cd13fd738a6ef286c9c6c42c886c60ac1c17e24e9c1ecd4a17421014ecb",
   "plan_change_area_left_out": "b06b02647133cf398348d267e509b3954c8f0ef0733673690483b492d371fd33",
   "plan_change_areas_from_basics": "0c5d739f734ba5f3c5406c3d1ac4e0662568e5f5b3c6777b63683cd781e8bc4a",
@@ -1277,7 +1277,7 @@
     <string name="plan_effect_row_review_on">%1$sの復習</string>
     <string name="plan_effect_row_starts_with">%1$sから始まります</string>
     <string name="plan_effect_row_new_lessons_start">新しいレッスンの開始日</string>
-    <string name="plan_change_aim">目標レベル：%1$s。</string>
+    <string name="plan_change_aim">学習範囲が%1$sまでになりました。</string>
     <string name="plan_change_topics_added">%1$sを学習計画に追加しました。</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">%1$sは学習計画に入りきりません。</string>

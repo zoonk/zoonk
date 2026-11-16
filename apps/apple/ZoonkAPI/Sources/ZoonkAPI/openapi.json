@@ -6602,7 +6602,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Takes a pattern off Today without practicing it, such as the note that recent mistakes were only typos. Dismissing it again changes nothing.",
+        "description": "Stops offering a pattern without practicing it: a rule pattern on Today and its unit, or the note on the unit and in the mistakes notebook that recent mistakes were only typos (Today never offers that note). Dismissing it again changes nothing.",
         "operationId": "dismissMistakePattern",
         "summary": "Dismiss a mistake pattern",
         "parameters": [
@@ -85429,12 +85429,18 @@
             "nullable": true,
             "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
             "type": "string"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "The goal's language (a code like \"en\"), which names the aim's title: \"English level to reach\"; null while it isn't known",
+            "type": "string"
           }
         },
         "required": [
           "aim",
           "choices",
-          "label"
+          "label",
+          "targetLanguage"
         ],
         "additionalProperties": false,
         "description": "Language goals only, null for others: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`"
@@ -92347,6 +92353,11 @@
                 "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
                 "type": "string"
               },
+              "targetLanguage": {
+                "nullable": true,
+                "description": "The goal's language (a code like \"en\"), which names the aim's title: \"English level to reach\"; null while it isn't known",
+                "type": "string"
+              },
               "reasons": {
                 "type": "array",
                 "items": {
@@ -92359,6 +92370,7 @@
               "aim",
               "choices",
               "label",
+              "targetLanguage",
               "reasons"
             ],
             "additionalProperties": false

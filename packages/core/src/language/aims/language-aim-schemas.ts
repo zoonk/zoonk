@@ -39,6 +39,13 @@ export const languageAimViewSchema = z
         description:
           'The aim as the rest of the plan names it, half bands included ("B1+"): show this, not `aim`, wherever the goal\'s aim is named, the picked choice included; null when none is set yet',
       }),
+    targetLanguage: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          'The goal\'s language (a code like "en"), which names the aim\'s title: "English level to reach"; null while it isn\'t known',
+      }),
   })
   .meta({
     description:

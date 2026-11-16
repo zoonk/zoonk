@@ -23,8 +23,13 @@ export type UnderstandingContext = {
 
 type DetailValue = NonNullable<GoalDraft["details"]>[string];
 
-export function getUnderstoodAim(draft: Pick<GoalDraft, "details" | "kind">) {
-  return draft.kind === "language" ? toLanguageAimView(draft.details ?? {}) : null;
+export function getUnderstoodAim(draft: Pick<GoalDraft, "details" | "kind" | "targetLanguage">) {
+  return draft.kind === "language"
+    ? toLanguageAimView({
+        details: draft.details ?? {},
+        targetLanguage: draft.targetLanguage ?? null,
+      })
+    : null;
 }
 
 /** The learner's own date, so "this year" and "in March" read from where they are. */
@@ -162,7 +167,11 @@ async function toGoalView({
       title: goal.title,
     },
     examDates: exam?.dates ?? [],
-    languageAim: getUnderstoodAim({ details, kind: goal.kind }),
+    languageAim: getUnderstoodAim({
+      details,
+      kind: goal.kind,
+      targetLanguage: goal.targetLanguage,
+    }),
     regionChoices: getGoalRegionChoices({
       kind: goal.kind,
       language,

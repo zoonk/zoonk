@@ -3,7 +3,10 @@ import { toLanguageAimView } from "./language-aims";
 
 describe(toLanguageAimView, () => {
   it("a half-band aim keeps its label beside the band its choice matches", () => {
-    const view = toLanguageAimView({ level: "none", targetScore: "B1+" });
+    const view = toLanguageAimView({
+      details: { level: "none", targetScore: "B1+" },
+      targetLanguage: "en",
+    });
 
     expect(view.aim).toBe("B1");
     expect(view.label).toBe("B1+");
@@ -11,6 +14,8 @@ describe(toLanguageAimView, () => {
   });
 
   it("a whole-band aim is its own label", () => {
-    expect(toLanguageAimView({ targetScore: "B2" })).toMatchObject({ aim: "B2", label: "B2" });
+    expect(
+      toLanguageAimView({ details: { targetScore: "B2" }, targetLanguage: "es" }),
+    ).toMatchObject({ aim: "B2", label: "B2", targetLanguage: "es" });
   });
 });
