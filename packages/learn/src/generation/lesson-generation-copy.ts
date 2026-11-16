@@ -51,12 +51,11 @@ export function useLessonCopy(): KindCopy<"lesson"> {
       },
       write: {
         label: t("Writing the lesson"),
-        lines: [],
-        numbered: {
-          count: 6,
-          line: (number) => t("Writing screen {number}…", { number: String(number) }),
-          review: t("Checking the answers…"),
-        },
+        lines: [
+          t("Writing the explanations…"),
+          t("Writing the questions…"),
+          t("Checking the answers…"),
+        ],
       },
     },
   };
