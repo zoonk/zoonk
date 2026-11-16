@@ -78,10 +78,11 @@ export const STATE_SCENARIOS: Scenario[] = [
   {
     anchors: [],
     app: "playground",
+    evidence: ['button:has-text("Check"):enabled'],
     id: "player.code-runner.after-run",
     prerequisites: { persona: "visitor" },
-    proof: "Run again",
-    reach: [{ click: "Run" }, { wait: "Run again" }],
+    proof: "4950",
+    reach: [{ click: "Run" }, { wait: "4950" }],
     screen: "/preview?entry=activity-codeRunner&state=answering",
     sizes: PHONE_AND_LAPTOP,
   },

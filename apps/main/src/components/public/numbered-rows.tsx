@@ -1,4 +1,4 @@
-import { ListGroup, ListRow } from "@zoonk/learn/list";
+import { ListGroup, ListRow, ListRowDescription, ListRowTitle } from "@zoonk/learn/list";
 
 type NumberedRow = { description?: string; id: string; title: React.ReactNode };
 
@@ -10,11 +10,9 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-sm leading-5 font-medium text-pretty">{row.title}</span>
+        <ListRowTitle className="leading-5">{row.title}</ListRowTitle>
         {row.description && (
-          <span className="text-muted-foreground text-xs leading-snug text-pretty">
-            {row.description}
-          </span>
+          <ListRowDescription className="leading-snug">{row.description}</ListRowDescription>
         )}
       </span>
     </>

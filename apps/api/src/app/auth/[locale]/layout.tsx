@@ -1,5 +1,6 @@
 import { getAuthPageLocale } from "@/i18n/page-locale";
 import { Toaster } from "@zoonk/ui/components/toast";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
@@ -24,7 +25,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
   const appLocale = await getAuthPageLocale();
 
   return (
-    <html lang={appLocale}>
+    <html className={FONT_VARIABLES} lang={appLocale}>
       <head>
         <script
           // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.

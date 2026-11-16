@@ -808,7 +808,7 @@
   );
   --edge-short: calc(var(--edge-under, 1rem) * 0.053);
   --edge-start: round(
-    down,
+    up,
     var(
         --edge-text-start,
         var(
@@ -841,6 +841,10 @@
 
   &:has(.lucide-x) {
     --glyph-blank: 5;
+  }
+
+  &:has(.lucide-paperclip) {
+    --glyph-blank: 2;
   }
 
   &:has(.lucide-check) {
