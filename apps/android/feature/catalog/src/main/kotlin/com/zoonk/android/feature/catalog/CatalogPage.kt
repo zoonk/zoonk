@@ -65,7 +65,6 @@ import kotlinx.coroutines.launch
 internal fun <T : Any> CatalogPage(
     app: AppContainer,
     navigator: AppNavigator,
-    pageKey: String,
     resource: Resource<T>,
     state: LoadState<T>,
     title: String?,
@@ -73,7 +72,7 @@ internal fun <T : Any> CatalogPage(
     alsoShown: List<Resource<*>> = emptyList(),
     blocks: (T, CatalogPageLayout) -> List<CatalogBlock>,
 ) {
-    val continuing = viewModel(key = "catalog-continue:$pageKey") { SwitchThenToday(app.scope, app::switchGoal) }
+    val continuing = viewModel { SwitchThenToday(app.scope, app::switchGoal) }
     VisitOf(continuing.visit)
     ActOn(continuing.switched) { saved ->
         if (saved) navigator.showRoot(AppTab.Today) else app.snackbars.show(R.string.goal_switcher_failed)

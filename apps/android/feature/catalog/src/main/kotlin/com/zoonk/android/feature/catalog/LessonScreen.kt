@@ -80,7 +80,6 @@ fun LessonScreen(
     CatalogPage(
         app,
         navigator,
-        "lesson:${route.courseId}:${route.lessonId}",
         detail,
         shown,
         outlineLesson?.title,

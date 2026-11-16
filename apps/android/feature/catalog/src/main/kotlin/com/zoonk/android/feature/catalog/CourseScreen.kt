@@ -76,7 +76,6 @@ fun CourseScreen(
     CatalogPage(
         app,
         navigator,
-        "course:${route.courseId}",
         detail,
         state,
         title,

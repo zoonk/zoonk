@@ -98,7 +98,6 @@ fun ChapterScreen(
     CatalogPage(
         app,
         navigator,
-        "chapter:${route.courseId}:${route.chapterId}",
         detail,
         shown,
         place?.chapter?.title,
