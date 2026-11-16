@@ -48,7 +48,9 @@
     </plurals>
     <string name="session_opening_slow">Opening your next step…</string>
     <string name="session_opening_very_slow">This is taking longer than usual. It opens on its own, no need to tap again.</string>
-    <string name="session_level_up">Level up!</string>
+    <string name="session_belt_step">%1$s, level %2$s</string>
+    <!-- Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10. -->
+    <string name="session_next_belt">%1$s comes after level %2$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">Energy at %1$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 100%. -->

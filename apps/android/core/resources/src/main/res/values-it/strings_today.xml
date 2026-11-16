@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "8581b61840545f79c4033f9af9e1a0491728d321fc7f5cf97912cf7fd4fc32d0",
   "today_preparation": "2d3e3984108018b2dd7624131909bd7d71c15de04db4c1da938d361cbbf27a8c",
   "today_progress": "78db5c371af9afba30c8da8424d788773af8f031a72240b97c77e4f989fed746",
-  "today_progress_known": "03fcb585af62c250d4ec09f3b2b1e5df7bfa860a159dadcab52f80486f805a10",
+  "today_progress_known": "32f9683b1c39c6238e2fdd3fedb179a59179b0d7512557b3e7b2f3b3ee49aa2f",
   "today_progress_lessons_today": "55083f1b93771cd99f539b6429b7182e9d5f28fcc5d92ee0a50ec3815abdcd5d",
   "today_progress_studied": "655969ab35167200a1f2174f330c234eeddb1ecebf9187c681dea675628da9bc",
   "today_progress_today": "4c67c720b7228449abd221b16b9ebbf8aa4d5dd529d0b37a92244876a2f4aeb7",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "96ed344c35396769770ffe62e3c51007293eedab82d087353562d2691ae2df72",
   "today_step_skipped": "f5c628048b68bf638aaed23afb9b6b91eb3213c811f37057ef0d099c6e4702b8",
   "today_steps_done": "aa89457283d96cf636b79a93da6c71fe4bad703b0c356ba1edac361437bbe36e",
-  "today_study_everything": "84aacf3579ee334831743a8eb0e490ec063c6b0b822eea82302226349a58cc81",
+  "today_study_everything": "a27ef784720f26a5ed2b95ef4ac4a267363d310d1c0e3380f7f0b58b5d978f98",
   "today_study_more_minutes": "3a3dd3e2ea295166e329b113b6f8c670bb151adf18afa7b8be3620028b44bb83",
   "today_suggested_goal_accept": "a7c48756a79c6d1e4e80f004ac98ae0649ca4820ba6f16f68a5f0fc7ad8964eb",
   "today_suggested_goal_detail": "22200cba36ac6993e2b13625fc09fb52ad868cec63b62caeb1aada6fdd268e37",
@@ -329,7 +329,7 @@
     <string name="today_behind_goal">Con %1$s al giorno ora puoi completare una parte più piccola del tuo obiettivo: %2$s invece di %3$s.</string>
     <string name="today_more_time_a_day">Aggiungi tempo</string>
     <string name="today_choose_focus">Scegli su cosa concentrarti</string>
-    <string name="today_study_everything">Studia tutto</string>
+    <string name="today_study_everything">Rimuovi la data di fine</string>
     <string name="today_keep_studying_after_exam">Continua a studiare dopo l’esame</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="one">Ti resta %d lezione. Vuoi continuare a studiare o archiviare questo obiettivo?</item>
@@ -362,7 +362,7 @@
     <!-- A legend label in the progress card: lessons the learner studied. -->
     <string name="today_progress_studied">Studiate</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Già noto</string>
+    <string name="today_progress_known">Sapevi già</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Oggi</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->

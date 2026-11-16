@@ -45,7 +45,7 @@
   "player_challenge_phase_write": "8c1951297076de2d98d06345bdff1875bbbbc59c76977bb60409e9f8a3b7b928",
   "player_challenge_phase_write_line_1": "3dadd88b436e87a03daadfc00b88d439655102550df74f0f0257f0ccb48997e3",
   "player_challenge_phase_write_line_2": "32838daa6bf745c8868c99244a7cddb379863fa18f7784a99080c689ed04571f",
-  "player_challenge_practice": "1f7f56cb9b0da2154b852f133928cd57ff2a42bb40cdd84028126b89e029ac18",
+  "player_challenge_practice": "41c723e54fc62246e12ec143ef90acf4ca18afaa8eb66eb764dcee1ce2eab82e",
   "player_challenge_ready": "e01816825c6706cc9487e9eafbb609e3297dbe990ae1585519b7c7d9001a4b70",
   "player_challenge_said": "1add01dfc3bccd1938f37331007c89e636bbd5c4784690152cff59ce24a68156",
   "player_challenge_scenario_complete": "be3b339d720266fa20fdb093075c8018616b79a62b8454c78bca188a7a1f2753",
@@ -383,8 +383,7 @@
     <string name="player_challenge_good">よかった点</string>
     <string name="player_challenge_improve">改善点</string>
     <string name="player_challenge_skills">練習した内容</string>
-    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">「%1$s」を練習する · %2$s</string>
+    <string name="player_challenge_practice">自分でやってみよう</string>
     <string name="player_done">完了</string>
     <string name="player_drawing_picture">絵を描いています…</string>
     <string name="player_not_in_app_title">このレッスンはまだアプリで利用できません</string>

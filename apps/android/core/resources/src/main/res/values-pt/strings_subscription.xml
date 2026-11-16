@@ -73,6 +73,7 @@
   "subscription_questions_title": "c5b5d9e55149773e296c18f25c52bc316c93906f24a20e43c44a61a247a34253",
   "subscription_questions_unsure": "f2bfd023f229176779b84c25283f87be04c75d9875d7af8b4a87ad8ed0a94ef6",
   "subscription_renewal_failed": "5070e61e8df2c170c7cb4f53e49545d54594c65fd232318d3b3f1d943f14d8ea",
+  "subscription_renewal_failed_website": "0ffcf61f8038170d4adcb14b213c9e38da2f52f5741c4bacf3f2aae38cf17581",
   "subscription_renews_on": "0c88feb024bd57964a6ae8cec7551b66f22b9a4762c7587bda09be1dce267692",
   "subscription_save": "830f6d2099ff6f045f3697854d09171c4189136540aebd1199d718549142932f",
   "subscription_show_answer": "357291e88a52e63e0b71b0fdba2212e90cec534c94cd25a99cfae57c526533c3",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">Você continua com o Plus até o fim do período já pago.</string>
     <string name="subscription_website">Assinatura feita pelo site</string>
     <string name="subscription_renewal_failed">O pagamento da sua última renovação falhou.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">Atualize seu pagamento no site, onde você assinou.</string>
     <string name="subscription_cancel_unpaid">O Plus termina na hora, e você não terá novas cobranças.</string>
     <string name="subscription_cancel_back">Voltar</string>
     <string name="subscription_keep_plus">Manter o Plus</string>
@@ -172,6 +175,12 @@
         <item quantity="many">Um parceiro de estudos com IA: %d mensagens por dia</item>
         <item quantity="other">Um parceiro de estudos com IA: %d mensagens por dia</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Um parceiro de estudos com IA: %1$d mensagem por dia, até %2$s por mês</item>
+        <item quantity="many">Um parceiro de estudos com IA: %1$d mensagens por dia, até %2$s por mês</item>
+        <item quantity="other">Um parceiro de estudos com IA: %1$d mensagens por dia, até %2$s por mês</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Prática de conversação</string>
     <string name="subscription_questions_title">Dúvidas frequentes</string>
@@ -198,6 +207,12 @@
         <item quantity="many">%d aulas por mês para dividir entre todos os seus objetivos, incluindo provas</item>
         <item quantity="other">%d aulas por mês para dividir entre todos os seus objetivos, incluindo provas</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Seu próprio material de estudo: %d arquivo por dia</item>
+        <item quantity="many">Seu próprio material de estudo: %d arquivos por dia</item>
+        <item quantity="other">Seu próprio material de estudo: %d arquivos por dia</item>
+    </plurals>
     <string name="subscription_answer_free_calls">Prática de conversação, com menos conversas que no Plus (tarefas de conversação de provas vêm com o Plus)</string>
     <string name="subscription_question_unlimited">O Plus é mesmo ilimitado?</string>
     <string name="subscription_answer_unlimited">Quase. As aulas, os objetivos e seu parceiro só têm limites para barrar robôs e ferramentas automáticas, não quem está aprendendo. As conversas têm limites diários e mensais, mais altos do que no plano Grátis.</string>
@@ -207,16 +222,4 @@
     <string name="subscription_answer_cancel">Você continua com o Plus até o fim do período já pago. Depois, volta para o plano Grátis e mantém seus objetivos e seu progresso.</string>
     <string name="subscription_question_refund">Posso receber um reembolso?</string>
     <string name="subscription_answer_refund">Google Play cuida dos reembolsos de quem assinou o Plus por lá: peça o seu no Google Play. Se você assinou pelo nosso site, escreva para contato@zoonk.com e a gente analisa seu caso.</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="one">Um parceiro de estudos com IA: %1$d mensagem por dia, até %2$s por mês</item>
-        <item quantity="many">Um parceiro de estudos com IA: %1$d mensagens por dia, até %2$s por mês</item>
-        <item quantity="other">Um parceiro de estudos com IA: %1$d mensagens por dia, até %2$s por mês</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="one">Seu próprio material de estudo: %d arquivo por dia</item>
-        <item quantity="many">Seu próprio material de estudo: %d arquivos por dia</item>
-        <item quantity="other">Seu próprio material de estudo: %d arquivos por dia</item>
-    </plurals>
 </resources>

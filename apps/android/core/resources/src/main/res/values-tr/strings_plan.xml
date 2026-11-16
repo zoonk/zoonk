@@ -289,7 +289,7 @@
   "plan_full_course_rule_exam": "9c86bba5e7834316e9b08d5f4aec12f7a21f34a0fc4e8301d71e3ae2c06ae7f1",
   "plan_full_course_rule_goal": "4d54099a4b4969687cc44acb8589aa14ac1b088df94a30b95192a8e019b8d78a",
   "plan_full_course_rule_goal_month": "ea23bdfeaada730b55927df2f8d97796f26eee37aadfcc1603f87a7f9634c30a",
-  "plan_full_course_switch": "3dc7482c5bf4ab7e4e13a7df333eb160509c7dfeb53e633b08ed5792df02826d",
+  "plan_full_course_switch": "a3a827a7496044525df043b081ebee1dfaf2b82e0793f1cae076118c797e8943",
   "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
@@ -306,7 +306,7 @@
   "plan_lessons_of": "55bef226f0f35df5b255c1bd9c820ebac61158fa391cf401618681c9ab0810d5",
   "plan_lessons_on_the_way": "74cb815d30c1515da4eaf2732843e140dfe4508e383f8098d659df2d773f9bfc",
   "plan_lessons_studied": "cada70ede7601e07a41fc4f27a181862b3c808e97134f3daa43446fa052ac8d5",
-  "plan_level": "6685eaef3c3d9ad51db214c84f99acbfb19d27ecbd2bc0ed4b6f5194d5d07841",
+  "plan_level": "cf9e33223adf7b19c40dc5f05eed5248d096b37d68502fa9f4009e06beb4eda8",
   "plan_level_complete": "15c353cd7d6acc2055f764b8ac12d6436cdd69c7561e23791698e6e7d639f205",
   "plan_loss_this_week": "2719857f5aa5427f2ef1d6f28edf75802f9145700d7ea98d34e12e8787df3172",
   "plan_measure_mock_exam": "78c7ef6026c62f14cf77f8799d53c76407710d7b76f5a38246bee5a07a9e91b3",
@@ -324,6 +324,7 @@
   "plan_more_chapters": "c29a8a3105219660046e237ddcfd5f3d9b00c52a8482db3e51f00805bfd42c2f",
   "plan_more_lessons": "165daca0cb6e79a3c360f2f0f54cea384076c726ec1735164c959fef920cc15d",
   "plan_more_lessons_fit": "cceb5f2acd9b34ec9bbd859214fd9dd5babb99fe8cd7db58f9631d05fe793c89",
+  "plan_more_units": "13e9b973e7bd8a2223011ff8be22771192a8c531bac81be130dd4be4f934ab39",
   "plan_most_asked_first_until_exam": "a86fafed2d1af309e1088ffa749b0a340448208dc9a58bddf8a2ae6a7b97d9f3",
   "plan_move_date": "8fd9718b0428f1ba687e60986286cca3e92dea79fc30b98e563786c1e6ae2b51",
   "plan_move_date_to": "8d7598fa2aa52e54d744f53dcc8e6af08d4c8cd34b971b0e80db0c89a30a230c",
@@ -379,6 +380,7 @@
   "plan_practice": "71fc3dcc0516eee1fcb1770f5f75ee67891643ffc0880f04fc1a4816d00178e0",
   "plan_preparation": "2c61b5ab79edc1d3d6c155bbbd52b164015ee17717d1323f5a8770414f90532a",
   "plan_prerequisites": "45d24ae9ef8c86f56c610c3bac2c8b6518f6086baad5b60d966dd74cd5b5192e",
+  "plan_prerequisites_description": "87da45bfdbf3e384f7a246b9a38eaa6a787b1062e3438a48733c99b41cbcd18a",
   "plan_preview": "499e4556fb98581d0df8d1d7a638b0371756432606c0b863b206961d954da92b",
   "plan_progress": "84d362e072dc9e27f8c46d908cac9f29a6646632742008183c7053be5f6799be",
   "plan_recommended": "ce985759e2fec347864c1ac85f34c88f657434c6ff54749d68c4b33198bcf7f1",
@@ -416,6 +418,7 @@
   "plan_short_mock_and_practice": "1df55f194eb94bf88a88a84fffcdde3be007b125e72bcb6e0c8bb79dade246de",
   "plan_short_mock_and_review": "d7f08fbc923cbda1ae49deb259f185a60a7c3b5ba477c9f1a537bfcd2d65b945",
   "plan_show_fewer_chapters": "cde0cce702cb6088073a5e2b027c7996f5e3f81467c459247781f66e28d2e129",
+  "plan_show_fewer_units": "7c6f6848eecddb306c5beb6e7ac2decedab92842a2ac2aeffcb76eef9e77be2c",
   "plan_skills_you_know": "1274ac9a53579713ff2f0fbc9ca2a14c890251f25442d58fd8ae80eb697dfadd",
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "8b004075fdfb4bc428e7d62f13ea9d7984c8aa4c154b95edd576e6e195438a66",
@@ -423,10 +426,10 @@
   "plan_still_first_challenge": "dff573a594c1197e3ae45c34efef7ae65aa1a6cb4cdd08074a91a5f545e15972",
   "plan_still_first_mock": "58505cbbad53215559e72ed5355260ce66a1b0e05396c7f9f09e01048b8d2806",
   "plan_study_days": "28fc737a7d17ed95b00aecb4dcf5b5a9649aa7626f5503f1299237e20b6ee7c8",
-  "plan_study_everything": "9bc9ac2470a6f71cef7baa46db85fce7c1796769a3a44b6f760a57661e5a4784",
-  "plan_study_everything_after_exam": "9e15893f027768348946df111f1dc1a9ff6e64d41e6bfae72915595854ba37a7",
-  "plan_study_everything_exam_description": "1b0e9ef523daedcc90202c6cdb57ced84825d80a235fc10074e414c52a86772c",
-  "plan_study_everything_goal_description": "9ac5bf3548656d6fc6f487b1075464c28e11cc7602f059a486ae3185e33ce699",
+  "plan_study_everything": "f3423a61022bad08ccc5fb83c83386b8561345250c31e9d348a7c6bebba4c5d8",
+  "plan_study_everything_after_exam": "1873022b52248174471c4157eeaf515bef5e901a84ade3c240b463435f31f4c5",
+  "plan_study_everything_exam_description": "dcaedfdf420044f9ebb8df985963a927cee2217be682a5575f93869dd99d565d",
+  "plan_study_everything_goal_description": "283eac19c96d16a7d1d48875f079ce497493d5a397e38edd96eb4a0114ef2b58",
   "plan_study_next": "3dda74ae5bfad6c540a0e012caec8446ddebed93ea80d6ec084ff39c1a7766a0",
   "plan_suggestion": "aa6ffa865f7110d52582b80c7a65bc2c26b789cdd5d431fffcc250d7921c4df8",
   "plan_suggestion_next": "d1fae89b8a1b241f017d83b1fcba174a9ed9e1857195a57cc6239c067ecf21b9",
@@ -442,9 +445,9 @@
   "plan_time_a_day_label": "3950ff60d6c7a6ae59656271d7baf11806b4be8e9aa901b9cbd75f4360169cc2",
   "plan_time_ask_failed": "3cd35cbd880075a5cba3a8e776e306c1aa04a197b9a4f20b46ac4f58c9b76b58",
   "plan_time_asking": "6d390898b50109e5f02fec4c97b7ebdd157c938e80e8c74f942f31e949df40e2",
+  "plan_time_covers_everything": "5b95dd15ac99a8dce63f1460fd681d63d95e66511ded22f74b5964dd4653ddcc",
   "plan_time_covers_everything_by": "11383f1a726fbffd5dd0f5a2d6f36a5d8b58df9940f7df3f475c2333af6d1dc1",
   "plan_time_covers_everything_by_month": "ea83e13c95b6948c838583b09accfcf72585be33eaa64a62cc3e2fe06ba00d3b",
-  "plan_time_covers_everything_in_depth": "96a099130dcbe9cc2a88a07869a0f1d865293b8b7f18fb0d23d6ac217b090b32",
   "plan_time_covers_exam_all": "c20ee503cc49e01996e1adce012fe46e2337f5678817283f8bbebb0b782262e6",
   "plan_time_covers_exam_all_month": "4c38957f0647520db256b26c413415ca92e9c4b900cc40297d70754a304d7443",
   "plan_time_covers_goal_all": "6bf896a0a4228b3016257c6d2fdc7dde236c8edeaabc18d5ca7d757bd36f79cf",
@@ -454,32 +457,25 @@
   "plan_time_find_failed": "0c97894580e8aa20738a4a1d4139504b5c4cd9097c5058ea7413191f3a25f12f",
   "plan_time_finish_failed": "c21a915995afe27dedcd9b519acdcf6c316bc19556c58184aa1ec72bf90695c7",
   "plan_time_finish_unknown": "d5ec8a3d69f87f92f3956cee9f0d9bedf491eb728748a5140d48e0a4058cd72c",
-  "plan_time_focus_exam_every_topic": "4fea08ff3c77f1cce2a626e15a48ffe0968d434a172023695cc307b63180f4fe",
-  "plan_time_focus_exam_most_asked": "17f9ff3e436f1daecae0e6c01ba3d965a6592c2b19da49bbb95c7677bc2071c1",
-  "plan_time_focus_goal_every_part": "9cb8c6a06fec9f40ccbf4eeeda17da31be74e42ba4c2e8fee26bf44a89d89ce6",
-  "plan_time_focus_goal_most_important": "bdc23daa0083638220eaf9887380c9354a35a5f11f409893765edce9770bd343",
   "plan_time_more_days": "bbff4bad16d95e9bf82dc6a3fcb3c354287e1a4e3f1db402dc1a7ea790a88244",
   "plan_time_no_days": "472c663caa602e4c2a1e69ec83aba57e061e12ad13611e2c47721f0f2ec13864",
-  "plan_time_none": "0e960584c81586c7eecedff194297b2d8060df9b21579c4b6b4528031e17146f",
-  "plan_time_none_month": "f6d0cbe3b67a0295cb8cfca52bf4c13ffdc8df95bd4f0117a20e0f857cf02f2b",
+  "plan_time_none": "9289389dc3371ce369fe2d2b956a7c5f2dde65ad09253ad5b3ff90053f618c1f",
+  "plan_time_none_month": "4b013f5d9e563c39bda91028f06802ef449bd2e88a4f476511ac24740ee6075c",
   "plan_time_past_date": "0c99bbe1a2a5f7b50dcf611abbf2f4c78056d8d0e1770c8337c6d1269ee81eed",
   "plan_time_past_date_month": "460501f695e3241f499b6000ddcf580d7eb6e0e651c47f1a2cc9468db473e1ea",
-  "plan_time_share_exam": "1893d33bb0429e007a039dc001739506ababb4646d9d11970210987a571225ec",
-  "plan_time_share_exam_month": "d37ddf3b71b95690359d9df15012faae3d47a3b27ba0a1e352b0ee7921fcf47b",
-  "plan_time_share_goal": "7ec6af210109881e3973d9a530900a22ed7163544562804c8151354b929be16f",
-  "plan_time_share_goal_month": "3645060b49ab8ed52c62b8e897714b285f7bf0db12e2426ba98f588c6386cbe8",
+  "plan_time_share_exam": "79110db43b05a7788f5772303ca15807f5dd4f60132b580ab6c33b98ee45fd83",
+  "plan_time_share_exam_month": "46ecf825c0818e1599df38b165de02a05927ce13ba86ba5164b7e037235bb564",
+  "plan_time_share_goal": "565a27759aa2ca685f2212b5c55b66ee9f0db43892a2f9e85df759e26d433465",
+  "plan_time_share_goal_month": "cf5fd16134c8601270f0d8acdaf8762d20bdfa7b1cc0304977ee7ed6edae50f9",
   "plan_time_split_many": "02cdc88b64036348de52a688c7e720e3273e50366c62d2845a4f1c5437ba182b",
   "plan_time_split_one": "7bab3a14938082e868bf1222645f0b8dbb6091b5957d0347093519a137347d00",
-  "plan_time_suggest": "33b33c0c8ff4b1b4ac65ea12dab288902455e78dacf25ed6f4bd3335cbec15b9",
   "plan_time_suggest_title": "789840c3c1773b8d525d0cbf827bd0184339ee558279d8dd672bc30c2fd69cad",
-  "plan_time_takes_everything": "acd48bcdd2fbe006aac6d5fb465e0a47dc61bead1a5faeec1735dd6c0b438ce8",
-  "plan_time_takes_everything_month": "b1c4e116ead6bcb3b9fb5b0e47b8f715e13b8e27c511479595401adc93922fce",
+  "plan_time_takes_everything": "58a8d5d13f7d6f5f702ad8fedcd70dd5d98024406ac3fcbff9f4ec5c3eb501bc",
   "plan_time_takes_exam_all": "b2b870b236258e888d7a9157361157c85b2a8dc416c54fe10ae7529a42d75280",
   "plan_time_takes_exam_all_month": "773592212308f8066641e731d5845152216dab3656b3af8fdf80ec2b75840a98",
   "plan_time_takes_goal_all": "5906ad6680d44e4f0b49b2c4a09210ffa4f7283aec9793b2191e37c638e15644",
   "plan_time_takes_goal_all_month": "39d6900c1329a505accc30b8dd48b6f2e5238a632e3230fcb72dd3921d611acd",
-  "plan_time_takes_most": "8c8f6abff04ea3e9f755deba725d60483352fca95a287706e9d48ee4eb08d6e7",
-  "plan_time_takes_most_month": "c91e53a4c0b1d24764ce408aa7e18d3487cc0fcae4bb50ea3dafaa59df859d63",
+  "plan_time_takes_most": "34643ab4f5faf7a3eaa44eb091ae87f1f439f567153b9ccad76d6713062fccc3",
   "plan_time_too_long": "e42080696e530689f9081179e3fe3f0c6063a9a51aaaed83a96152e635edbcf5",
   "plan_time_use_suggested": "98d09db1fded76bb57a1bef54c54ccc1b6982fad8e277103a3a7c5c6e2b91dfb",
   "plan_time_use_to_cover_everything": "97251da590f113961cd4767343f1a467f0cb957e8f03db0dc2c19136fc82ac69",
@@ -540,7 +536,7 @@
   "plan_why_phase_end_off_rest": "36219ac56f8711ab56c358156175a943895c529c4b76e379b1fc794f3fdceff5",
   "plan_working_out_coverage": "fb33a68bbba9463c7ba44d94c3e8e3f5ec92f17eeddf749d506f812e5ebde211",
   "plan_you_are_here_suffix": "b4bbc92b5333ed7afb16dbcafb380f29a355a161149af3547aaab24f2a60868c",
-  "plan_your_level": "ec15fb3abcac4c6e828b19e36599d5c00c81c0c9277f8b0243d0402467640fbf",
+  "plan_your_level": "8bf9296150c876aeda940092bd996f58382add41a83f18421e5b4d0a0b662ed3",
   "plan_your_pace": "a9ccda368ec84a95b8680e4218b59fd99b13000ed53850abfeaae67d2ecdae60",
   "plan_your_path": "0a8936fb831065aeabe5b84b7e3b6ca677bb2537888c2cd31e7e0f02f8c6f572",
   "plan_your_plan": "bd7443496d84819e55409edf4424d36518b977278fc9c87a770750ef086b3d44",
@@ -690,6 +686,11 @@
         <item quantity="other">%d ünite daha</item>
     </plurals>
     <string name="plan_show_fewer_chapters">Daha az ünite göster</string>
+    <plurals name="plan_more_units">
+        <item quantity="one">%d ünite daha</item>
+        <item quantity="other">%d ünite daha</item>
+    </plurals>
+    <string name="plan_show_fewer_units">Daha az ünite göster</string>
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Kazanıldı</string>
     <string name="plan_challenge_next_session">Bir sonraki çalışmanda</string>
@@ -809,9 +810,8 @@
     <string name="plan_progress">İlerleme</string>
     <string name="plan_your_preparation">Hazırlığın</string>
     <string name="plan_your_progress">İlerlemen</string>
-    <!-- A language goal's standing: its level across skills, such as "B1". -->
-    <string name="plan_level">Seviye</string>
-    <string name="plan_your_level">Seviyen</string>
+    <string name="plan_level">%1$s seviyesi</string>
+    <string name="plan_your_level">%1$s seviyen</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Henüz ders tamamlamadın</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
@@ -1034,6 +1034,7 @@
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
     <string name="plan_prerequisites">Ön bilgiler</string>
+    <string name="plan_prerequisites_description">Konularının dayandığı temeller. Ne kadarına çalışacağını seç.</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d ön bilgi · seçimlerin · %2$s</item>
         <item quantity="other">%1$d ön bilgi · seçimlerin · %2$s</item>
@@ -1110,36 +1111,20 @@
     <string name="plan_cadence_biweekly_effect">Aynı miktarda pratik, iki haftada bir: daha az güne yayılır, her seferinde daha çok çalışırsın.</string>
     <string name="plan_cadence_final_weeks_effect">Pratik zamana daha az yayılır, sınavdan önceki son haftalarda yoğunlaşır.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_none">Her gün tüm zamanını ayırmak bile %1$s tarihine kadar her şeyi derinlemesine çalışmaya yetmez.</string>
+    <string name="plan_time_none">Günde ne kadar çalışırsan çalış, %1$s tarihine kadar her şeyi bitirmek mümkün değil.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_none_month">Her gün tüm zamanını ayırmak bile %1$s tarihine kadar her şeyi derinlemesine çalışmaya yetmez.</string>
-    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <string name="plan_time_takes_everything">%1$s tarihine kadar her şeyi derinlemesine çalışmak için günde yaklaşık %2$s gerekiyor; bu süre çoğu kişinin sürdürebileceğinden fazla.</string>
-    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <string name="plan_time_takes_everything_month">%1$s tarihine kadar her şeyi derinlemesine çalışmak için günde yaklaşık %2$s gerekiyor; bu süre çoğu kişinin sürdürebileceğinden fazla.</string>
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <string name="plan_time_takes_most">%1$s tarihine kadar içeriğin en fazla yaklaşık %2$s kadarını derinlemesine çalışabilirsin. Bunun için günde yaklaşık %3$s gerekiyor; çoğu kişi bu tempoyu sürdüremez.</string>
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <string name="plan_time_takes_most_month">%1$s tarihine kadar içeriğin en fazla yaklaşık %2$s kadarını derinlemesine çalışabilirsin. Bunun için günde yaklaşık %3$s gerekiyor; çoğu kişi bu tempoyu sürdüremez.</string>
+    <string name="plan_time_none_month">Günde ne kadar çalışırsan çalış, %1$s tarihine kadar her şeyi bitirmek mümkün değil.</string>
+    <string name="plan_time_takes_everything">Her şeyi bitirmek için günde yaklaşık %1$s ayırman gerekir.</string>
+    <string name="plan_time_takes_most">En fazla yaklaşık %1$s kadarını günde %2$s çalışarak bitirebilirsin.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_exam">En çok çıkan konulardan başlayarak sınav konularının yaklaşık %1$s kadarını %2$s tarihine kadar derinlemesine çalışmanı sağlar.</string>
+    <string name="plan_time_share_exam">Sınav konularının yaklaşık %1$s kadarını %2$s tarihine kadar bitirebilirsin.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_exam_month">En çok çıkan konulardan başlayarak sınav konularının yaklaşık %1$s kadarını %2$s tarihine kadar derinlemesine çalışmanı sağlar.</string>
+    <string name="plan_time_share_exam_month">Sınav konularının yaklaşık %1$s kadarını %2$s tarihine kadar bitirebilirsin.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_goal">En önemli konulardan başlayarak hedefindeki konuların yaklaşık %1$s kadarını %2$s tarihine kadar derinlemesine çalışmanı sağlar.</string>
+    <string name="plan_time_share_goal">Hedefinin yaklaşık %1$s kadarını %2$s tarihine kadar tamamlayabilirsin.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_goal_month">En önemli konulardan başlayarak hedefindeki içeriğin yaklaşık %1$s kadarını %2$s tarihine kadar derinlemesine ele alır.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_exam_every_topic">Böylece planın tüm sınav konularını kapsar, en çok çıkanları daha ayrıntılı ele alır. Bu, sınav kapsamının yaklaşık %1$s kadarını ayrıntılı çalışman demek.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_exam_most_asked">Böylece planın sınavda en çok çıkan konularla başlar ve sınav kapsamının yaklaşık %1$s kadarını ayrıntılı ele alır. En az çıkan konular sığmayabilir.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_goal_every_part">Böylece planın hedefinin her kısmını kapsar, en önemli kısımları daha ayrıntılı ele alır. Bu, hedefinin yaklaşık %1$s kadarını ayrıntılı çalışman demek.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_goal_most_important">Böylece planın en önemli kısımlarla başlar ve hedefinin yaklaşık %1$s kadarını ayrıntılı ele alır. Geri kalanı sığmayabilir.</string>
+    <string name="plan_time_share_goal_month">Hedefinin yaklaşık %1$s kadarını %2$s tarihine kadar tamamlayabilirsin.</string>
     <string name="plan_time_more_days">Çalışmaya daha fazla gün ayırmak yardımcı olur.</string>
-    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
-    <string name="plan_time_suggest">Günde %1$s çalışmanı öneriyoruz.</string>
     <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
     <string name="plan_time_suggest_title">Günde %1$s çalışmanı öneriyoruz</string>
     <string name="plan_time_too_long">Çoğu kişi bu tempoyu sürdüremez.</string>
@@ -1207,7 +1192,7 @@
     <string name="plan_move_date">Her şeye yetişmek için tarihini değiştir</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Tarihini %1$s olarak değiştir</string>
-    <string name="plan_full_course_switch">Sınavdan sonra da olsa tüm konuları çalış</string>
+    <string name="plan_full_course_switch">Sınavdan sonra çalışmaya devam et</string>
     <string name="plan_full_course_off">Kapalıyken planın sınav tarihinde biter.</string>
     <string name="plan_full_course_on_exam">%1$s Sınava kadar en çok çıkan konulara öncelik verilir.</string>
     <string name="plan_full_course_on_exam_unknown_end">Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyenler sınavdan sonra işlenir.</string>
@@ -1221,9 +1206,9 @@
     <string name="plan_full_course_rule_goal">%1$s olarak belirlediğin hedef tarih planından kaldırılır. İstediğin zaman yeniden belirleyebilirsin.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_full_course_rule_goal_month">%1$s olarak belirlediğin hedef tarih planından kaldırılır. İstediğin zaman yeniden belirleyebilirsin.</string>
-    <string name="plan_study_everything">Tüm konulara çalış</string>
-    <string name="plan_study_everything_exam_description">Sınavdan sonra da devam ederek her konuyu kendi temponda çalışırsın.</string>
-    <string name="plan_study_everything_goal_description">Hedefinle ilgili her konuyu, bitiş tarihi olmadan kendi temponda çalışırsın.</string>
+    <string name="plan_study_everything">Bitiş tarihini kaldır</string>
+    <string name="plan_study_everything_exam_description">Tüm konulara çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır.</string>
+    <string name="plan_study_everything_goal_description">Bitiş tarihi olmadan hedefindeki tüm konulara çalışırsın.</string>
     <string name="plan_sheet_done">Tamam</string>
     <string name="plan_choose_focus">Neye odaklanacağını seç</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
@@ -1253,9 +1238,9 @@
     <string name="plan_updated">Plan güncellendi</string>
     <string name="plan_updated_sentence">Planın güncellendi.</string>
     <string name="plan_preview">Ön izle</string>
-    <string name="plan_study_everything_after_exam">Sınavdan sonra da olsa tüm konuları çalış</string>
+    <string name="plan_study_everything_after_exam">Sınavdan sonra çalışmaya devam et</string>
     <string name="plan_most_asked_first_until_exam">Sınava kadar en sık çıkan konulara öncelik verilir.</string>
-    <string name="plan_time_covers_everything_in_depth">Günde %1$s ile her şey ayrıntılı olarak işlenir</string>
+    <string name="plan_time_covers_everything">Günde %1$s ayırmak her şeye yeter</string>
     <plurals name="plan_more_lessons_fit">
         <item quantity="one">%1$d ders daha için zamanın var</item>
         <item quantity="other">%1$d ders daha için zamanın var</item>

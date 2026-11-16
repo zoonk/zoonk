@@ -18,7 +18,7 @@
   "language_estimate_writing": "59429239dba07b40ae536c17264fe5659b2737d5fcbce3e0b299d46ca9e69b9d",
   "language_estimates_note": "74c51b0dabd711d4a6c3cf4447d0f669016daecf1f73f8bec44e238afaf84afd",
   "language_estimates_rose": "312176d0d5f9410b392daf3f27bc0463cadf24cb6a4764b1d6b361d2cbd23167",
-  "language_level": "1ccd7393c58d8e6cd1b48aa65b1362d0562b9c4dac7f801b127ef0b9fd0fd261",
+  "language_level": "8e47c690b4315d45ce46da0398bd0a70df1649f1f836b68d1482819edf643d60",
   "language_level_down": "b4d8766e4117a9e16b76b83be22aece019398c9a201bddc9ffc9c9a066744625",
   "language_level_goal": "4f8b07bb983c8b2f6941b4fa64cec3dbc100ee95a16566707dd5a60782333519",
   "language_level_goal_by": "c3c25d2d40391b2a9c7d88a246a6a72de173c517fee4a91f9ad24fa4f3567a13",
@@ -31,7 +31,7 @@
   "language_pattern_noticed_summary": "450e755e330abe15338df5830f806884daa27817e8da4ee024abb49e9dc56d1b",
   "language_pattern_practice": "39c74ee43bbb635cf50b9e63745d1248b7110704a7f8bd9efc70623d22a8891a",
   "language_pattern_typos": "940d9d0fd9d278cc04d979a227d87f75bd72d55fad57a874a271e1c39cd7419a",
-  "language_pattern_typos_description": "7fd2d3865f876948c8b6e964416c8b61575082a58b14e8143d9ded0c930706ce",
+  "language_pattern_typos_description": "4f7fee5ac4d86f4df0d5139d577612076533c3192329486c4b2173208246306c",
   "language_practice_estimates": "3b822d7fb69787487299b4bfd571ced75a88b493494291c5d67c69cff02a3942",
   "language_say_again": "3cff069cdc195c7d0ffe17f18905e5d9af2b0a1b9df2e1010941ffbf20744f47",
   "language_say_them": "f5c689c9eb1b3263aa6d4a155825115e619abeb3a3fc7153cc97f1db87437c52",
@@ -41,7 +41,6 @@
   "language_skill_speaking": "2574958596e22e9ab0f428c044258a9a84ee38a9721b750b32b78eaae38c84b3",
   "language_skill_words": "3e8d1534bf332d820758cb19d3b3c48561bb6768cd42eaec6cf1312b1a190844",
   "language_skill_writing": "999f638a1720dcd0e23f6f50bae0cc5ca15f4ba4159039918f572fd60fde48e3",
-  "language_typos_open": "f45b481accd4ecd8b9a15030a3b847243e7eb93b87d2334c0c6f7d4874952259",
   "language_unit_about": "1dfe91c8a0962b02a5ad45661a1bff444d97db699d360160fdf1999221571768",
   "language_unit_continue": "8b6515a1860b17c0d4a0c9adcc9f0a3becf82ceb068f4aa01afa36a44844877a",
   "language_unit_done_share": "e9752d24fcff399a0a170ec773fb55fa5e57ff03be87ae4c420615993c23063e",
@@ -126,7 +125,7 @@
     <string name="language_level_toward_goal">%1$s, Ziel %2$s</string>
     <string name="language_pattern_noticed">Uns ist ein Muster aufgefallen</string>
     <string name="language_pattern_typos">Nur Tippfehler</string>
-    <string name="language_pattern_typos_description">Deine letzten Fehler waren Versehen. Du musst dafür keine Regel lernen.</string>
+    <string name="language_pattern_typos_description">Deine letzten Fehler waren Tippfehler, keine Regel zum Lernen.</string>
     <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
     <plurals name="language_say_again">
         <item quantity="one">Sprich %d Wort noch einmal</item>
@@ -141,13 +140,11 @@
     <string name="language_alphabet_skip_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Sprich sie aus</string>
-    <!-- Opens the noticed typos. -->
-    <string name="language_typos_open">Öffnen</string>
     <!-- %1$s names the rule the learner keeps getting wrong. -->
     <string name="language_pattern_noticed_summary">Uns ist ein Muster aufgefallen: %1$s</string>
     <!-- Opens the noticed pattern. -->
     <string name="language_pattern_practice">Übe es</string>
-    <string name="language_level">Level</string>
+    <string name="language_level">Level in %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->

@@ -15,7 +15,7 @@
   "pattern_seen": "0c61234307065a683409c942524ecec55c43554456a43103e035b117bb01bafb",
   "pattern_seen_times": "2f1e753d8764524fe5b5e2ba2e99ded17d56470203d8f27f2bf8365258bc48f4",
   "pattern_title": "0df2831a243f1947b0b5109ef4e1d37a616ead6670094be85a83ef7e93c448be",
-  "pattern_typos_detail": "5e2ba4b561489e5bf660982e1fedd11dbdbee6fbb60c5ed7b02447b66614e23a",
+  "pattern_typos_detail": "6f4d65b6a70f5d85fa2eb87c27a8cba85663e7723827bebf2049f8d990369037",
   "pattern_where_you_slipped": "175a7e83487fd5c09bec09ebc1f754e550c61467aa332228492b9732625975ad",
   "pattern_you_said": "24951a28c2adeecc0f59e151650cb5da64413c4b88276e1678d9b5e9e718e8c7"
 }
@@ -49,5 +49,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Schließen</string>
     <string name="pattern_just_typos">Nur Tippfehler</string>
-    <string name="pattern_typos_detail">Deine letzten Fehler waren Tippfehler. Du hast dabei keine Regel übersehen. Es gibt nichts zu üben.</string>
+    <string name="pattern_typos_detail">Deine letzten Fehler waren Tippfehler. Die Regeln kennst du schon. Es gibt nichts zu üben.</string>
 </resources>

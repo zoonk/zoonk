@@ -258,7 +258,7 @@
     <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
     <string name="onboarding_language_test_say_it">Say it out loud</string>
     <string name="onboarding_language_test_skip_part">Skip this part</string>
-    <string name="onboarding_language_test_done_title">Your level today</string>
+    <string name="onboarding_language_test_done_title">Your %1$s level</string>
     <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>
     <string name="onboarding_language_test_build_plan">Build my plan</string>
     <!-- Language skills, each beside its level. -->
@@ -381,8 +381,10 @@
     <string name="onboarding_reveal_estimated_material_areas">~ Estimated: your material doesn\'t say how much these areas weigh.</string>
     <string name="onboarding_reveal_estimated_guide_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
-    <string name="onboarding_reveal_estimated_notice_area">~ Estimated: the notice doesn\'t say how much this area weighs.</string>
-    <string name="onboarding_reveal_estimated_notice_areas">~ Estimated: the notice doesn\'t say how much these areas weigh.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
     <string name="onboarding_intent_label">What you want to do with your material</string>
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_skip">Skip</string>
@@ -530,7 +532,7 @@
         <item quantity="other">%d study days</item>
     </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
-    <string name="onboarding_full_course">Study everything, even after the exam</string>
+    <string name="onboarding_full_course">Keep studying after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

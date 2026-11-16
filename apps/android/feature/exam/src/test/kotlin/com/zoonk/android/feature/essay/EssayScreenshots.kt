@@ -116,6 +116,10 @@ class EssayScreenshots {
     fun phoneWrite() = show("phone-write", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
 
     @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
+    fun phoneWriteInPortuguese() = show("phone-write-pt", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneGrading() = show("phone-grading", text = "A mobilidade urbana é um desafio.", grading = true)
 

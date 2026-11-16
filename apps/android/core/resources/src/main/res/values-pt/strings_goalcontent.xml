@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "6730e82216ff19d6f8057fa780bdee29acedfa21f4040ad49910d69dfc740ac5",
   "goalcontent_frequency_waits": "799aeb9163ae1560c822c642d12d7caa63f2294acb27ec3962d2b70e6b76cdd2",
   "goalcontent_from_material": "fe94522b1288bf7be55d5bea8fcc25064d939a87f944f14003d7b0e098f37734",
-  "goalcontent_known": "3ef575dbb9bf52de5012ea13c9249679d4d2905f50cc70cbed1ba4df66009105",
+  "goalcontent_known": "48f7621ce80de3fd13d3c633415b9de39fedd1ee8181aa54d82e9fae973d603c",
   "goalcontent_known_before": "713d6724357e835cf35d1f8045e99fa1009cb95eb76425c09350e47b92bf7175",
   "goalcontent_lesson_count": "8ccf70eaa72a2888a67ac2a41a5b6c70409dda5528e42da4f4239c845df6af56",
   "goalcontent_lessons_done": "6bcdf489e3444a00658f8fe89659397008ccc26a15eaabc123beb5b7f5893e0d",
@@ -56,8 +56,8 @@
   "goalcontent_practice_nothing": "696e23491ad42f464c6c31bc1c01ff0ddfc910fe00812742942b21f8dc0b3d5d",
   "goalcontent_preparation": "4c90233571d016df9c9f60e7a3b4a91740b1a3eae57744bbc7b12fca099dc043",
   "goalcontent_progress": "bb412daef9c5ac8c88b73208d10a9b3d1ec972f8a23da89165ebab89d0732677",
-  "goalcontent_question_count": "ba5bf64473022e42404eb8eb6572bd319e1a801ba13a559f863f283dcbb50d0d",
-  "goalcontent_questions": "787bcc3c0dbfc061236d8f6446c3b6d5916f2f601be66e861b83302cdc872785",
+  "goalcontent_question_count": "0d7ae8e9e4bfa93276e09e232624b60c2828e1b52d0e8d8cdc4d2f98e3966802",
+  "goalcontent_questions": "24e4cb34002188f1092c9facc899d371ee7bc23d9efeef7e50176e8e3d5779d5",
   "goalcontent_questions_source_edition": "836088f5510759a41eb85087d635a2a784a2b870614716b3317c0d7a04d61e15",
   "goalcontent_questions_source_latest": "71196904d9739693db330d1d81b52862498175799efd1fe02a44699070b4416a",
   "goalcontent_save_failed": "c23d4d6897a94d9998dcb7a686cd8e43ce56bf52649a36746db4fd0eaa27fe70",
@@ -135,10 +135,11 @@
         <item quantity="many">%d aulas</item>
         <item quantity="other">%d aulas</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
-        <item quantity="one">%d pergunta</item>
-        <item quantity="many">%d perguntas</item>
-        <item quantity="other">%d perguntas</item>
+        <item quantity="one">%d questão</item>
+        <item quantity="many">%d questões</item>
+        <item quantity="other">%d questões</item>
     </plurals>
     <plurals name="goalcontent_skill_count">
         <item quantity="one">%d habilidade</item>
@@ -229,7 +230,8 @@
     <string name="goalcontent_details">Detalhes</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Também</string>
-    <string name="goalcontent_questions">Perguntas</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
+    <string name="goalcontent_questions">Questões</string>
     <string name="goalcontent_topics">Tópicos</string>
     <string name="goalcontent_chapters">Capítulos</string>
     <!-- The next day the plan studies a subject. -->

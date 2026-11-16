@@ -15,7 +15,7 @@
   "pattern_seen": "3e236ea08cf327b46469d55ef9b218fcb3cb4354f4093c4e009d40373ec8c185",
   "pattern_seen_times": "a2bf17b6b165f787a08137dbd981c6ec147b76bcde4d81caaf7ada933da583a8",
   "pattern_title": "587103eff6b2df332f90d76a5051a4cb51739ea75c35caf6fe487249a4e9debf",
-  "pattern_typos_detail": "f2b00e42319f3736b20633db3efb90abb6526b687661fc4019eb4bccd537c371",
+  "pattern_typos_detail": "9722272f9e33ad5ba7fd11401350629060e43ebb1bf75ad2a3bb8cf7e5c575fa",
   "pattern_where_you_slipped": "23ec29276fa7a2b71f2fee8860e6a164f837645130548f086fa4cf79b0c8076e",
   "pattern_you_said": "62750bc0457f4cacb08c0033382b841ac6f59634e5aa273256f7d3d419d4911f"
 }
@@ -50,5 +50,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Chiudi</string>
     <string name="pattern_just_typos">Solo errori di battitura</string>
-    <string name="pattern_typos_detail">I tuoi ultimi errori erano dovuti a sviste di battitura, non a regole che non conosci. Non c’è nulla su cui esercitarti.</string>
+    <string name="pattern_typos_detail">I tuoi ultimi errori erano refusi: non ci sono regole da imparare. Non c’è nulla su cui esercitarti.</string>
 </resources>

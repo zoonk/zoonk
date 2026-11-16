@@ -18,7 +18,7 @@
   "language_estimate_writing": "f42ba1213b843b7062e12e3a3dc20a813e8b699283ebcba4f829433398fee703",
   "language_estimates_note": "9ede16bd116b5b6506363e802c7e26cb2b89f96c4d304dd5fe89ab2141c07e86",
   "language_estimates_rose": "e6bdb390401856fbebe51acd7e1c1fe65ae7624007a16eaeec4cc1d189b85fbf",
-  "language_level": "e6c65afc3e9724308959d73d8ac38bf67b0c332a05b027b2744a9b6b35e614d7",
+  "language_level": "64195dcc0d8a3912912a2c55e0fa0b3ef7b93ddbe0beb9ebfc47690c26df166b",
   "language_level_down": "9c6e792123ae46f0bb8dfbeac4e14410359777f55ab82d8ee9b1c61907ad95fc",
   "language_level_goal": "6e89b75de087b64f009b15ff13d9146ac3c66c510742275736ed1d794ee259fc",
   "language_level_goal_by": "1f74495160dc1898de1a5928adbfd6dbcdc92adc0bec961a724a9da7a724ba0b",
@@ -31,7 +31,7 @@
   "language_pattern_noticed_summary": "fbe5cf73ff03b8ec0cbe8c56a33545076cc0f6f02ca7dbb91772090b6039c4e4",
   "language_pattern_practice": "a2dc0d3921f7c359b537e7df01f23cd6fe4e520f9c1b0c4bba743c03b82ca613",
   "language_pattern_typos": "dc73eb5359217a091daed4821a48a0385e0af7afd5a1aabdd32f8fe45aae69f3",
-  "language_pattern_typos_description": "9b94c2c1eca05428ea6a34678e7c3441c94a4eb33b145f419c138994467088f0",
+  "language_pattern_typos_description": "2dbaa5a715e6c5045c1630a9779e251508ccb63be7957e19e7570d9f9f54d501",
   "language_practice_estimates": "81f166302659b1559f221eb1867ea0e894f85e8bfc035e812df0d8bcf5504025",
   "language_say_again": "8e0c0407eb0cc69c21203bc62484cdd281dcb96188cc79649fa452f14299e18e",
   "language_say_them": "5d1f501eafeed368990a47b624f83ba02c2d8beb53db9dbdf66917533114acf3",
@@ -41,7 +41,6 @@
   "language_skill_speaking": "a94d8d2d399f7eafef3247e0d78407bfa8e2daf3866b12c94555b5d8217aead9",
   "language_skill_words": "3c255aff7a74c973e9b6f31dd47ed99836656531dc1ef99091375361b83463e7",
   "language_skill_writing": "0c211ff3a1c65eaef79721fbc548294edca918698c607c0df36a5e5f3936a04a",
-  "language_typos_open": "4666b76e29e76783864fbc9026327e50440d9ada3d41820e0002a5c0ac973347",
   "language_unit_about": "17e20e9672ddb81670fa8928a32341702b3f16fb7639bcae45441b7cbd4ac816",
   "language_unit_continue": "bcb5d8e1fab57510bef013b78c766dc70a6ad5d864fce9d09525e3dff37575b8",
   "language_unit_done_share": "2e9d0ba3def927cbe7205bc3010c3c50f7948762ee48ac4581f6946c6c38ecd5",
@@ -128,7 +127,7 @@
     <string name="language_level_toward_goal">%1$s, objetivo %2$s</string>
     <string name="language_pattern_noticed">A gente percebeu um padrão</string>
     <string name="language_pattern_typos">Só erros de digitação</string>
-    <string name="language_pattern_typos_description">Seus erros recentes foram de digitação, não de alguma regra que você precisa aprender.</string>
+    <string name="language_pattern_typos_description">Seus erros recentes foram de digitação, não uma regra para aprender.</string>
     <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
     <plurals name="language_say_again">
         <item quantity="one">Repita %d palavra</item>
@@ -144,13 +143,11 @@
     <string name="language_alphabet_skip_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Repetir as palavras</string>
-    <!-- Opens the noticed typos. -->
-    <string name="language_typos_open">Abrir</string>
     <!-- %1$s names the rule the learner keeps getting wrong. -->
     <string name="language_pattern_noticed_summary">A gente percebeu um padrão: %1$s</string>
     <!-- Opens the noticed pattern. -->
     <string name="language_pattern_practice">Praticar</string>
-    <string name="language_level">Nível</string>
+    <string name="language_level">Nível de %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->

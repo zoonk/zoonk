@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "session_belt_step": "0543f6e3ab9b408327dbfe078f29f690d50072261ab79560fb17472a42c58ea8",
   "session_block_bonus_practice": "8e383e8c1bf854e22fb0e4349c2c4c29555355105675ab8ebec1c6b86e38e96b",
   "session_block_bonus_practice_areas": "dd7d39d98d9ec0c0e81e6f81fd716131e8f4b52441e1b54fbcf8bbdcfbd3a589",
   "session_block_bonus_practice_topic": "8bfdc627c1f509cc743dcd62bb0ad62768f9dc9ecf6b128bc339623a615267a5",
@@ -34,7 +35,7 @@
   "session_energy_glowing_brightest": "7f4bb76ad02c5ea1600bc961951a0d151eb2233a401f4d55b4bb857ddcda168b",
   "session_energy_max": "2989a6614b8b626ed9361defeab1a1000ea2f5c7d0f39bdd2ebcd9ead6a793c9",
   "session_lessons_deferred": "2e9384f9309d1a11fdb57f78cdb3e6c423145aa787e22cc78248db13f21404ba",
-  "session_level_up": "b11c966a1fdc28af53818eab0d694f37c1588a9fd51f2b125d779ef61060f9ba",
+  "session_next_belt": "f96ad377c0479f7adb226a7e3137a05e5d579e23841b088dad591438d8dc39a1",
   "session_next_continue": "a5308726d6243d7d6f89b34ee3b7d858381eef6f42d2a9fe91bf4306cf5a2e5f",
   "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
   "session_next_lesson_ready": "33fbd98216ad37d4342ee22ed126450634a737040aaf70c5931b2046d030c2ce",
@@ -134,7 +135,9 @@
     </plurals>
     <string name="session_opening_slow">다음 단계를 열고 있어요…</string>
     <string name="session_opening_very_slow">평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요.</string>
-    <string name="session_level_up">레벨이 올랐어요!</string>
+    <string name="session_belt_step">%1$s, 레벨 %2$s</string>
+    <!-- Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10. -->
+    <string name="session_next_belt">%1$s 승급은 레벨 %2$s 다음이에요</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">에너지 %1$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 100%. -->

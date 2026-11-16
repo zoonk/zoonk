@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "ebaca852599f989f4451abadcecb89a461fe27d1370cf7b51d6b80b7a1327773",
   "today_preparation": "955460ab75724e08b765b9fe0f7a5e156d567528e9d87355c4cca66efd3a3fb6",
   "today_progress": "39e7b4bd32b7b7694528c86186418f5257c836f6a2b0dc021a6648a7fe1e8b1d",
-  "today_progress_known": "2db13e22e0de8d928f7115139e4bc01344a0f7d53e1f04e3cdce7c6f0313f243",
+  "today_progress_known": "0f367f8114560966127a602153374bb24841be3ce099f3b604cdd131dde2055b",
   "today_progress_lessons_today": "f5f492c95d4a17a823b69d832f1049731d026845006cf9509856e234e5837046",
   "today_progress_studied": "e53f250f1adf4aa55f0b196e30c171da47371e54fd0342a3bf92a80a981775f1",
   "today_progress_today": "f6b8d983edc2805169db995845c411ac23722f3ed280c0e866e0bc1e09f7083c",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "86e7f5cf0d7b91ebf8b5d7cf6d6c7cc628d05980eca9276541e4db269b7aa9f1",
   "today_step_skipped": "cb24182ca6ea0f088d8d5b38f56bbd05e8cbb4acb8bdf4419ddf57ea1053c4ca",
   "today_steps_done": "6e91ae9a9cdf297c1eb649b3720d4d8268c4ee49eb2614d53db3b7dc40e8a13d",
-  "today_study_everything": "a443e2bdfcb281f9aa76749ce4dd24200c5ef7625662dd305b9697b3923e5eb3",
+  "today_study_everything": "9c70bdc7cb80dc8bab28ee732e4f33e262285ba9ddb8e5bb1532c6ff91b7bbcd",
   "today_study_more_minutes": "efb2abdc79f1f3fbc66dbd863a5cbd2ea691d6103259957f098905dcd708d7dd",
   "today_suggested_goal_accept": "a45f91e3f624611c7dd0b0260dfe6cb61c8b81685674a549334900670db89158",
   "today_suggested_goal_detail": "8ce7c1b4c7dbe9475192d9e78d88564c55f0406a2d8323b8b4475607e0f960f5",
@@ -329,7 +329,7 @@
     <string name="today_behind_goal">Avec %1$s par jour, ton plan couvre maintenant %2$s de ton objectif, contre %3$s auparavant.</string>
     <string name="today_more_time_a_day">Ajouter du temps</string>
     <string name="today_choose_focus">Choisir tes priorités</string>
-    <string name="today_study_everything">Tout étudier</string>
+    <string name="today_study_everything">Supprimer la date de fin</string>
     <string name="today_keep_studying_after_exam">Continuer à étudier après l’examen</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="one">Il te reste %d leçon. Continuer à l’étudier ou archiver cet objectif ?</item>

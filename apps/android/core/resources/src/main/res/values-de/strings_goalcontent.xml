@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "aaba2c39335eca7dbb70bb0daccae7fda362deb0e596b67f5192a1669f138262",
   "goalcontent_frequency_waits": "b68585d29900b4055cfabfb4b8946348cf0a9aa51ef91bd71e3e7629c529c3ad",
   "goalcontent_from_material": "d50e45eb188b5d39afa3862dc59bddabf3acf37e04a03c1a22c439048651ec12",
-  "goalcontent_known": "6c9f1c48e83ff4c46a3047ad98aaf0b0aee64548a88e66d6276ec49a8231092d",
+  "goalcontent_known": "921636b98c7fc20bae5fde1f376c06af9d986a1c95614991b295f74a104f3a09",
   "goalcontent_known_before": "89a995869ec3b716fd0ab13a3ffd73189e56a0a8b4fdaa8edab859b5ea03d0ec",
   "goalcontent_lesson_count": "062f0846140364b77afe30a5be591772486f8ba3123c42a29b80eb80eb8f6602",
   "goalcontent_lessons_done": "c88dfb68ac56c298e14ee33fd19599c5db6eaedf2afcd7638fbbcec2050c0c52",
@@ -129,6 +129,7 @@
         <item quantity="one">%d Lektion</item>
         <item quantity="other">%d Lektionen</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d Frage</item>
         <item quantity="other">%d Fragen</item>
@@ -153,7 +154,7 @@
     <string name="goalcontent_percent_done">%1$d%% abgeschlossen</string>
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Gelernt</string>
-    <string name="goalcontent_known">Bekannt</string>
+    <string name="goalcontent_known">Schon gewusst</string>
     <string name="goalcontent_new">Neu</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Vorbereitung</string>
@@ -214,6 +215,7 @@
     <string name="goalcontent_details">Details</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Außerdem</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Fragen</string>
     <string name="goalcontent_topics">Themen</string>
     <string name="goalcontent_chapters">Kapitel</string>

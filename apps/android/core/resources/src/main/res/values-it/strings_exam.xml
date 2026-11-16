@@ -187,6 +187,7 @@
     <string name="exam_mock_time_up">Tempo scaduto</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">Tempo rimasto: %1$s</string>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="exam_questions">
         <item quantity="one">%d domanda</item>
         <item quantity="many">%d domande</item>

@@ -45,7 +45,7 @@
   "player_challenge_phase_write": "30758daed640ec20c5e75851eac6aa48c537a7f9fbeee4690b62dc936a7c2a86",
   "player_challenge_phase_write_line_1": "3c695aaef7f2a07afd0c94a8b7cb4e2994ed22c097cd109a6866268c3bc168c6",
   "player_challenge_phase_write_line_2": "39075d6101aa2391e4591ec4508ace95734ac2ce9de00792257c476982687fb8",
-  "player_challenge_practice": "5dd4ae61746e8ff037a805b8b8d7f2a7868d0875740b12a47307af560dcbce64",
+  "player_challenge_practice": "33235aac7df4027e5c2f302d3c23e2609e8a02e7334604f9a704a9c37adc0eb5",
   "player_challenge_ready": "370ae66416e18f60ef2d9b3df477e1d97c2501cb07ec5a94309cf05dc1e21519",
   "player_challenge_said": "b446c9a8cdbd11f56bf67eba1b7906d2681085f9c8bfff53b284823ac543dcd6",
   "player_challenge_scenario_complete": "7d7b7e4a641c3dc24c2034d4679366fd8527252b15abd1a813c6b6b582bc6af9",
@@ -392,8 +392,7 @@
     <string name="player_challenge_good">Co poszło dobrze</string>
     <string name="player_challenge_improve">Do poprawy</string>
     <string name="player_challenge_skills">Przećwiczone umiejętności</string>
-    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">Ćwicz „%1$s” · %2$s</string>
+    <string name="player_challenge_practice">Spróbuj samodzielnie</string>
     <string name="player_done">Zakończ</string>
     <string name="player_drawing_picture">Rysujemy obrazek…</string>
     <string name="player_not_in_app_title">Tej lekcji nie ma jeszcze w aplikacji</string>

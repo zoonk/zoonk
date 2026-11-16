@@ -74,6 +74,10 @@ class ExamScreenshots {
     fun phoneInGerman() = capture("exam-phone-de")
 
     @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h2800dp-xxhdpi")
+    fun phoneInPortuguese() = capture("exam-phone-pt")
+
+    @Test
     @Config(qualifiers = "w411dp-h1800dp-xxhdpi")
     fun afterTheExamOnFree() = capture("exam-phone-after-free", exam = AFTER_EXAM_FREE)
 

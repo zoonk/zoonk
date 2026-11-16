@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "session_belt_step": "b7622ed4301f16d58327f9cf5d3e5263adc103a2aece94ccff62320a8c64922b",
   "session_block_bonus_practice": "7f1078c78d3e4b4ee6c041db6987925ecdd51111807a31e785c85a77b7ca8974",
   "session_block_bonus_practice_areas": "63696d04370dddb4d01c7de843507c97007bf39d2dea2cccfd6abc0cfeeace9d",
   "session_block_bonus_practice_topic": "dbdcf65058b7f9c1af1ae68fd43379f857c54f3161381d7961e09e35908e5409",
@@ -34,7 +35,7 @@
   "session_energy_glowing_brightest": "0f7dda432d1d1c3b050d26ece6109c0dec475fa75f5995687a08b90f8e17f7a1",
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
   "session_lessons_deferred": "4550e67ea283c869b3a0e1b9dc4ee9312374a2c06dcd6a0ef674152b49262788",
-  "session_level_up": "8132f6a958bc4d3b50d1aeaf27a17ef93d0c382556eb24e35048a4f9e208b7d7",
+  "session_next_belt": "ed2871c649d774783684ff153f04c2ddc3be3d45d4eca9cab840a8499942d868",
   "session_next_continue": "85164fcd78662ae75f9e72dc560dc6e189aebbc2a1cd909ef79820d8fbd1f551",
   "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
   "session_next_lesson_ready": "8789126525b3bc8944fab8e6dd8b9dd871206aa546927b65956f74bd831e9d26",
@@ -144,7 +145,9 @@
     </plurals>
     <string name="session_opening_slow">Abriendo tu siguiente paso…</string>
     <string name="session_opening_very_slow">Está tardando más de lo normal. Se abrirá automáticamente, no hace falta volver a tocar.</string>
-    <string name="session_level_up">¡Subiste de nivel!</string>
+    <string name="session_belt_step">%1$s, nivel %2$s</string>
+    <!-- Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10. -->
+    <string name="session_next_belt">%1$s viene después del nivel %2$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">Energía al %1$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 100%. -->

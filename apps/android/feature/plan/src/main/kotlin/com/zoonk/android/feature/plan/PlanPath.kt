@@ -390,16 +390,18 @@ internal fun PhaseChapters(
     val window = chapterWindow(rows.map { it.state })
     val hidden = rows.size - (window.last - window.first + 1).coerceAtLeast(0)
     val shown = if (showAll) rows else rows.slice(window)
+    val units = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE
 
     Column {
         shown.forEach { ChapterRow(it, links, indent) }
         if (hidden > 0) {
             MoreChaptersRow(
                 text =
-                    if (showAll) {
-                        stringResource(R.string.plan_show_fewer_chapters)
-                    } else {
-                        pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
+                    when {
+                        showAll && units -> stringResource(R.string.plan_show_fewer_units)
+                        showAll -> stringResource(R.string.plan_show_fewer_chapters)
+                        units -> pluralStringResource(R.plurals.plan_more_units, hidden, hidden)
+                        else -> pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
                     },
                 open = showAll,
                 indent = indent,

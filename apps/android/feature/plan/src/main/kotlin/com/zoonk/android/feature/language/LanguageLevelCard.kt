@@ -14,12 +14,15 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguagePlanLevel
 
 @Composable
 fun LanguageLevelCard(
     level: LanguagePlanLevel,
+    targetLanguage: String,
     onOpenPlan: () -> Unit,
     modifier: Modifier = Modifier,
     ladder: @Composable () -> Unit = {},
@@ -29,7 +32,7 @@ fun LanguageLevelCard(
     val spoken = if (target == null) level.label else stringResource(R.string.language_level_toward_spoken, level.label, target)
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.language_level))
+        SectionHeader(stringResource(R.string.language_level, languageName(targetLanguage, currentLocale())))
         Text(
             value,
             Modifier.semantics { contentDescription = spoken },

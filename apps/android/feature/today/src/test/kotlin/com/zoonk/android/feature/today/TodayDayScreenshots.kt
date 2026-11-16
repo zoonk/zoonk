@@ -268,7 +268,7 @@ class TodayDayScreenshots {
 
     private fun caughtUp(finished: Boolean = false) =
         Day(
-            day("ahead", left = 20, fields = listOf("emptyDay" to "nothingNew", "extraTime" to extraTime(practice = true))),
+            day("ahead", left = 0, fields = listOf("emptyDay" to "nothingNew", "extraTime" to extraTime(practice = true))),
             today = if (finished) listOf("progress" to progress(buildJsonObject { put("kind", "finished") })) else emptyList(),
         )
 

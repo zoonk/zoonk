@@ -78,6 +78,7 @@ import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
@@ -258,7 +259,10 @@ internal fun WebPlusPlan(
         }
         val dateLine =
             if (subscription.state == State.UNPAID) {
-                stringResource(R.string.subscription_renewal_failed)
+                joinSentences(
+                    stringResource(R.string.subscription_renewal_failed),
+                    stringResource(R.string.subscription_renewal_failed_website),
+                )
             } else {
                 subscription.periodEnd?.let {
                     stringResource(

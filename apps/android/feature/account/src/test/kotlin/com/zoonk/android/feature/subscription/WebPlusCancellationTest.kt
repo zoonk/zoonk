@@ -137,7 +137,7 @@ class WebPlusCancellationTest {
         subscription = null
         response = { web(State.UNPAID) }
         show()
-        rule.onNodeWithText("Your last renewal payment failed.").assertExists()
+        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         rule.onNodeWithText("Free offer").assertDoesNotExist()
         rule.onNodeWithText("Active").assertDoesNotExist()
         rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
@@ -148,7 +148,7 @@ class WebPlusCancellationTest {
         response = { null }
         rule.runOnIdle { scope.launch { website.refresh() } }
         rule.onNodeWithText("Free offer").assertExists()
-        rule.onNodeWithText("Your last renewal payment failed.").assertDoesNotExist()
+        rule.onNodeWithText(RENEWAL_FAILED).assertDoesNotExist()
     }
 
     @Test
@@ -271,7 +271,7 @@ class WebPlusCancellationTest {
         capture(folder, "$prefix-ending")
         subscription = null
         update(State.UNPAID)
-        rule.onNodeWithText("Your last renewal payment failed.").assertExists()
+        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         capture(folder, "$prefix-unpaid")
         rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
         capture(folder, "$prefix-unpaid-dialog", dialog = true)
@@ -320,3 +320,5 @@ class WebPlusCancellationTest {
             )
     }
 }
+
+internal const val RENEWAL_FAILED = "Your last renewal payment failed. Update your payment on the website, where you subscribed."

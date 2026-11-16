@@ -28,5 +28,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Done</string>
     <string name="pattern_just_typos">Just typos</string>
-    <string name="pattern_typos_detail">Your recent mistakes were slips while typing, not a rule you\'re missing. There\'s nothing to practice.</string>
+    <string name="pattern_typos_detail">Your recent mistakes were typos, not a rule you\'re missing. There\'s nothing to practice.</string>
 </resources>

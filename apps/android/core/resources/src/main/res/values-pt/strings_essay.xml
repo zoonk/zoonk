@@ -51,7 +51,7 @@
   "essay_the_case": "6a79827af19b7a884f54f5fabaf073b1b769042a7a1c279bc8810f82a0e42590",
   "essay_title": "46124df0b25c62da967119a5a2d155bdf5646faec4ebedf753dcdb50e75cfe2c",
   "essay_title_ap": "27f0afc25073483b364ac3cecb7b1f1e4674a98859e62c45d2ffbb7bba013261",
-  "essay_title_enem": "0b6d1c5274eb65705011e7641684522b7a874f0153a48b130b04fa9f4da9941f",
+  "essay_title_enem": "8194c6c21df243435b6d7574de9b280174ecd0b7a18d6bd59b692c1f6d534dd6",
   "essay_too_short": "c19c6136f624e51553ce67a573571d5b4da23f7fc7a8179c41ae9d68601f60be",
   "essay_too_short_detail": "b0d32e217a716562f1798f0d663ee701a6b593221ebebce4798c24c9ed6403e2",
   "essay_what_to_rewrite": "d15da2ce8573f15ae29c39be1e9263443ccd29aa32084e86cc1ee837e3056a18",
@@ -89,7 +89,7 @@
     <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
     <string name="essay_title">Prática de escrita</string>
     <string name="essay_title_ap">Resposta discursiva · critérios de correção AP</string>
-    <string name="essay_title_enem">Redação · critérios de correção Enem</string>
+    <string name="essay_title_enem">Redação · critérios do ENEM</string>
     <string name="essay_supporting_texts">Textos de apoio</string>
     <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
     <string name="essay_motivating_texts">Textos motivadores</string>

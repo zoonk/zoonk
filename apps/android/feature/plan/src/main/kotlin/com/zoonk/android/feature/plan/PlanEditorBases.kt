@@ -123,7 +123,7 @@ internal fun ColumnScope.BasesChoices(
 
     PlanSheetContent(
         title = title,
-        description = null,
+        description = stringResource(R.string.plan_prerequisites_description),
         body = {
             AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
             val areas = bases.items.groupBy { it.area }

@@ -163,8 +163,8 @@ internal fun ColumnScope.StudyEverythingBody(
     val save = saved
     val applied = save?.let(edits::sheetApplied)
     val course = fullCourse(page)
-    val title = stringResource(R.string.plan_study_everything)
     val exam = course?.isExam ?: page.isExam
+    val title = stringResource(if (exam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything)
     val description =
         stringResource(if (exam) R.string.plan_study_everything_exam_description else R.string.plan_study_everything_goal_description)
 
@@ -231,7 +231,7 @@ internal fun ColumnScope.StudyEverythingBody(
                 busy = pending,
                 onClick = ::choose,
                 modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.plan_study_everything)) }
+            ) { Text(stringResource(if (exam) R.string.plan_keep_studying else R.string.plan_study_everything)) }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
             if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()
         },

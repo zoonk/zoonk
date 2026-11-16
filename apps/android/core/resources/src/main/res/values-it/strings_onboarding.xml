@@ -85,7 +85,7 @@
   "onboarding_fix_something": "4ee1b9defccd8a7dcef2a85ecaf9f54a577f6eee85122a9e5aec53c71a732ab9",
   "onboarding_follow_ups_description": "4dad9c19841bd4b0311efbb10d3084e39d6fdd3cb70fdfc2eb79e818f26993b9",
   "onboarding_follow_ups_title": "06dff8c0ef96b207d81392c765e7586254378c4bb1b86fa6cbe87f78c9b723f3",
-  "onboarding_full_course": "4c960f886fb2ffc75b289ac5963c76d80788a1995bad529dc7b0aa25fe1152c2",
+  "onboarding_full_course": "46ae29ae1d8adeaf11e2252dbc8bf3096cd2af123a5c0199aafbbc98fbcc51cd",
   "onboarding_full_course_finish": "1dee53ec816a18aa8101dfc0f918a26ea85bc4803fad88ecae1cf867e520fb09",
   "onboarding_full_course_finish_month": "f2e8bfa0fcc00e88a3d3b2f847fb0c8159607a5f8979a2032346a32c163ff3fd",
   "onboarding_full_course_rule": "1b4a98da979882227d32edec3b154c76349267d35e6890eb54f14f3b61b957ae",
@@ -116,7 +116,7 @@
   "onboarding_language_test_description": "b0d76f6dc5839f0b925a9fb79cc16252f0d447da3fc74b241547affe651c8a0b",
   "onboarding_language_test_did_not_understand": "d439c6878e73b9e51ca6d93d2bf08643b14f346a001c1120a6f14ed234233197",
   "onboarding_language_test_done_description": "fc0ae32b3f33218a9f40344eca1852b07fc3cc2f0d56e48e4cf0c94bf8cd8d28",
-  "onboarding_language_test_done_title": "207bb7e2ff036d7632c27288b7f136ff9fd9cefa2351418cefb959386adc33bb",
+  "onboarding_language_test_done_title": "f039d77cac459e0720b907b64811cc036885a18f92d73ef16492287e115127a5",
   "onboarding_language_test_listening": "40317ffa2d5855e27c46678541daffadb5218f97cd35f91ac179175e4edbf6b5",
   "onboarding_language_test_message": "687d53f54fa9e41a7306107dd5d715a0d607c8c1cbae744a16e8a4756057ae44",
   "onboarding_language_test_message_loading": "723bba9c937e5f318c3f90e28126826141ed567e50e8d609792c8436fdf8d4b5",
@@ -270,8 +270,8 @@
   "onboarding_reveal_estimated_guide_areas": "694f0214cb8facc8871d58926612b008328b841af3e992f36c1d370fef919728",
   "onboarding_reveal_estimated_material_area": "c6e9b44a3bc8ac827bdd4da2a2f3a6f46c2b1904aa38378481fad31d0c72b413",
   "onboarding_reveal_estimated_material_areas": "0e30692735561b3dba3f6e7d98867a1540cf5534743082a7950b297e1424293f",
-  "onboarding_reveal_estimated_notice_area": "04588254a0af36e227c1faf394f799dfa5eed5d1989dd998f5335fed268b81a5",
-  "onboarding_reveal_estimated_notice_areas": "9ccc5e03e2459fea6f155c31de5c687d36c3339194dfc8377c1a47e0a7a198bb",
+  "onboarding_reveal_estimated_notice_area": "00360f2f2b6253bfe54bf384dc64d140c0f5893b7185a7a25792d66ad0d4d193",
+  "onboarding_reveal_estimated_notice_areas": "c2f00a85db9a96082daa133d9f5dea17025f5a252e06ce42fd901201fb363e0f",
   "onboarding_reveal_estimated_percent": "92d714c3373e331e7ecd320ba44e688a36878028d2bb90c2be9a09ee16ef4e86",
   "onboarding_reveal_first_week": "e28ff2ccb459c82e372771e8f3ee5445cf7e8427f1ac78c601565cb2ab7f62e8",
   "onboarding_reveal_full_course": "78ac7d3ee14fe12f801c4f473fb818407f83d0d1663f724cc055df766065ddc6",
@@ -693,7 +693,7 @@
     <string name="onboarding_language_test_message">Hai ricevuto un messaggio vocale. Ascolta e rispondi.</string>
     <string name="onboarding_language_test_say_it">Dillo ad alta voce</string>
     <string name="onboarding_language_test_skip_part">Salta questa parte</string>
-    <string name="onboarding_language_test_done_title">Il tuo livello oggi</string>
+    <string name="onboarding_language_test_done_title">Il tuo livello di %1$s</string>
     <string name="onboarding_language_test_done_description">Una stima basata sul test. Diventa più precisa ogni settimana.</string>
     <string name="onboarding_language_test_build_plan">Crea il mio piano</string>
     <!-- Language skills, each beside its level. -->
@@ -825,7 +825,9 @@
     <string name="onboarding_reveal_estimated_material_areas">~ Stima: il tuo materiale non indica il peso di queste aree.</string>
     <string name="onboarding_reveal_estimated_guide_area">~ Stima: la guida ufficiale non indica il peso di quest’area.</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ Stima: la guida ufficiale non indica il peso di queste aree.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
     <string name="onboarding_reveal_estimated_notice_area">~ Stima: il bando non indica il peso di quest’area.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
     <string name="onboarding_reveal_estimated_notice_areas">~ Stima: il bando non indica il peso di queste aree.</string>
     <string name="onboarding_intent_label">Cosa vuoi fare con il tuo materiale</string>
     <string name="onboarding_continue">Continua</string>
@@ -983,7 +985,7 @@
         <item quantity="other">%d giorni di studio</item>
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo puoi dedicare allo studio ogni giorno?</string>
-    <string name="onboarding_full_course">Studia tutto, anche dopo l’esame</string>
+    <string name="onboarding_full_course">Continua a studiare dopo l’esame</string>
     <string name="onboarding_full_course_rule">Fino all’esame, la priorità va agli argomenti più frequenti. Quelli che non rientrano nel tempo disponibile vengono dopo l’esame.</string>
     <string name="onboarding_full_course_until_exam">Fino all’esame, la priorità va agli argomenti più frequenti.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

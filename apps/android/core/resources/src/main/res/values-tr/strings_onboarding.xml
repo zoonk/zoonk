@@ -85,7 +85,7 @@
   "onboarding_fix_something": "8bec742480541afd967d6384918f423ce91bb9027a6831bda4f8fdb8a6fa40c9",
   "onboarding_follow_ups_description": "e8b0925e514a3777d98c4f3cd9af87600f575dcba246bc5e7200ce9a4bee3483",
   "onboarding_follow_ups_title": "b40dacbebe39419909b3533bf5771177afcde429873b801d662575bb698a7b72",
-  "onboarding_full_course": "a80fb10a1f6f09c6ab7f15170660427aa0ee476d8caa4abf6f0d43a07780946b",
+  "onboarding_full_course": "207e237c83c358f781a99a90eba805db93fb840d28b9a2ed99b7bfd81d60b34b",
   "onboarding_full_course_finish": "eece12dab253e8168b06e470c238e15b2a3aa21d0ad41974f510dbdd4f371ab0",
   "onboarding_full_course_finish_month": "f4e70e1dce7a38501ebdf578d43796512a6b1aab167c3671bc044058f115f07d",
   "onboarding_full_course_rule": "528c457fb13e665475ef87a1310243474b87578e0b45e1118b2d42b8be1624b8",
@@ -116,7 +116,7 @@
   "onboarding_language_test_description": "9c5728eae15872640c037e7b8e81ec7c7b3f6e10588e032ef3bb3b6e6f69fcaa",
   "onboarding_language_test_did_not_understand": "8a2c33c9bf6987cddaf836a592afb12fb5843d91c624a39f1adec2f89a979c23",
   "onboarding_language_test_done_description": "bc825a1a458cfc28b6b3e92ac3246e907fe82b43e304c6422f7df37657aa148b",
-  "onboarding_language_test_done_title": "0bae93caaf7a29306a9fdf62e49b34a8415031aefcdf674addb8ce952a58429a",
+  "onboarding_language_test_done_title": "b1b2f7f2d5790274f27400089a9e17df18b6d50fe1db4c55935918000314dc5b",
   "onboarding_language_test_listening": "51a8f4d5c09a3ae2bc1e7400f08c7de2675e5270168d48fdc941d068bcfc228e",
   "onboarding_language_test_message": "c17994cf844fdf0ba88b914e325b3d5df386723ef11a8aed19d2765ac6dc0119",
   "onboarding_language_test_message_loading": "8dfd88430a885ce1d526c5d94c005421b75ab728971e39c7d2caa6b932872c0c",
@@ -270,8 +270,8 @@
   "onboarding_reveal_estimated_guide_areas": "6690a8ff05a68cf1ce369f902aff4a9e8b5c9e63b4f8dfc5d3e66243dff73fbd",
   "onboarding_reveal_estimated_material_area": "c4fb5b460c0d3bf18e014be62798f626cb2ef0a2d702b2891e2b83d885aa16e2",
   "onboarding_reveal_estimated_material_areas": "c48188a68ab9230c47c29289d5d155b8db2a07e0bb4acce7f1c7bad478f5d8a9",
-  "onboarding_reveal_estimated_notice_area": "2cced9af9589382e7b525d6c965ab067a3bb802f809198373cf02456802a320e",
-  "onboarding_reveal_estimated_notice_areas": "695db662afb59a437179d7bbe72354b8e71865f5d47afc21d411c46da273f712",
+  "onboarding_reveal_estimated_notice_area": "76e1f450c73d18ea4c66a235826d147228974b706e4af1a625b43ff9b62536ff",
+  "onboarding_reveal_estimated_notice_areas": "5b1a873c7b2d51dccc8a6adbc91b9a0a51d2e86853f35b172ec1b7ef35fc5337",
   "onboarding_reveal_estimated_percent": "e84e11a74eb3992f3ad1060930933e48ee76dbc39bf43deb7150f6ca64da279b",
   "onboarding_reveal_first_week": "157a44f90ea6c818471802af60a79bc25cf432279c2520bd64f7f953cbe0a130",
   "onboarding_reveal_full_course": "d3c73daf5a5209ac1f260cee40d3d607b690db2c572f3597527d30f59e250cef",
@@ -689,7 +689,7 @@
     <string name="onboarding_language_test_message">Sesli mesajın var. Dinle ve cevapla.</string>
     <string name="onboarding_language_test_say_it">Sesli söyle</string>
     <string name="onboarding_language_test_skip_part">Bu bölümü atla</string>
-    <string name="onboarding_language_test_done_title">Bugünkü seviyen</string>
+    <string name="onboarding_language_test_done_title">%1$s seviyen</string>
     <string name="onboarding_language_test_done_description">Seviyeni teste göre belirledik. Her hafta daha doğru ölçeriz.</string>
     <string name="onboarding_language_test_build_plan">Planımı oluştur</string>
     <!-- Language skills, each beside its level. -->
@@ -811,8 +811,10 @@
     <string name="onboarding_reveal_estimated_material_areas">~ Tahmini: Materyalinde bu alanların ağırlıkları belirtilmiyor.</string>
     <string name="onboarding_reveal_estimated_guide_area">~ Tahmini: Resmî kılavuzda bu alanın ağırlığı belirtilmiyor.</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ Tahmini: Resmî kılavuzda bu alanların ağırlıkları belirtilmiyor.</string>
-    <string name="onboarding_reveal_estimated_notice_area">~ Tahmini: İlanda bu alanın ağırlığı belirtilmiyor.</string>
-    <string name="onboarding_reveal_estimated_notice_areas">~ Tahmini: İlanda bu alanların ağırlıkları belirtilmiyor.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_area">~ Tahmini: Resmî ilanda bu alanın ağırlığı belirtilmiyor.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_areas">~ Tahmini: Resmî ilanda bu alanların ağırlıkları belirtilmiyor.</string>
     <string name="onboarding_intent_label">Materyalinle ne yapmak istediğin</string>
     <string name="onboarding_continue">Devam et</string>
     <string name="onboarding_skip">Atla</string>
@@ -960,7 +962,7 @@
         <item quantity="other">%d çalışma günü</item>
     </plurals>
     <string name="onboarding_schedule_title">Her gün ne kadar süre ders çalışabilirsin?</string>
-    <string name="onboarding_full_course">Sınavdan sonra da olsa tüm konuları çalış</string>
+    <string name="onboarding_full_course">Sınavdan sonra çalışmaya devam et</string>
     <string name="onboarding_full_course_rule">Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyenler sınavdan sonra işlenir.</string>
     <string name="onboarding_full_course_until_exam">Sınava kadar en sık çıkan konulara öncelik verilir.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

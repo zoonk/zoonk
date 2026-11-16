@@ -60,7 +60,7 @@
   "exam_progress_chart_label": "8ecac5a617427308187797de8126bbe969713a82b24c04492e2b6c4cdb62aad7",
   "exam_progress_needs_work": "e0a8b626fd97e730eca1b6a492ae1803d9abe4d61d3dc7a72f48356a157e5ff3",
   "exam_progress_title": "567a73d95f97b0654a78e11bea3535b54a663f330003708ef9dffd99a2d8167e",
-  "exam_questions": "165ca224a0609a78eda8cc869512219689549af094f19f7967e628bc45f350b5",
+  "exam_questions": "ee6ef050c79e05bcee413fa69180deb33738d788cb5a728b5d3e69cb8e6f8faa",
   "exam_result_detail": "07c7cf36bfd8ac9fabe064ed51a5a92dc971129ff5bb2ad557c0432795f1c536",
   "exam_result_saved": "2ae3fc5a7ab30adef3f77d7fd1f3c5476ad85b8b089f28dbad10e042b2d9174b",
   "exam_result_saved_score": "ddc8277b135af8ccb574b49b547ea97f6858009ba2f2aeebf10da174e099eec2",
@@ -187,10 +187,11 @@
     <string name="exam_mock_time_up">O tempo acabou</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">Faltam %1$s</string>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="exam_questions">
-        <item quantity="one">%d pergunta</item>
-        <item quantity="many">%d perguntas</item>
-        <item quantity="other">%d perguntas</item>
+        <item quantity="one">%d questão</item>
+        <item quantity="many">%d questões</item>
+        <item quantity="other">%d questões</item>
     </plurals>
     <string name="exam_progress_title">Seu progresso</string>
     <string name="exam_latest_mock">Último simulado</string>

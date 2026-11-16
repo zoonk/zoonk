@@ -341,7 +341,7 @@ class LevelTestStepFlowTest {
 
         assertEquals(2, api.levelTestAnswers.size)
         assertEquals(api.levelTestAnswers[0], api.levelTestAnswers[1])
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
     }
 
     @Test
@@ -351,7 +351,7 @@ class LevelTestStepFlowTest {
         show()
         tap("Skip this part")
 
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
     }
 
@@ -380,7 +380,7 @@ class LevelTestStepFlowTest {
         api.writeFailure = null
         tap("Stop and use my answers")
 
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
     }
 
     @Test

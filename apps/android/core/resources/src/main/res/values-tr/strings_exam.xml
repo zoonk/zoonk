@@ -183,6 +183,7 @@
     <string name="exam_mock_time_up">Süre doldu</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">%1$s kaldı</string>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="exam_questions">
         <item quantity="one">%d soru</item>
         <item quantity="other">%d soru</item>

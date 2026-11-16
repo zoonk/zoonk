@@ -147,7 +147,7 @@ fun BeltTicks(
     )
 }
 
-private const val LEVELS_PER_BELT = 10
+const val LEVELS_PER_BELT = 10
 private const val WHITE_TICK_ALPHA = 0.7f
 
 private const val BELT_DOT_SHARE = 0.45f

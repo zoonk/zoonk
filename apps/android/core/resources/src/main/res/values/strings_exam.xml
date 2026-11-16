@@ -84,6 +84,7 @@
     <string name="exam_mock_time_up">Time\'s up</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">%1$s left</string>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="exam_questions">
         <item quantity="one">%d question</item>
         <item quantity="other">%d questions</item>

@@ -42,7 +42,7 @@
   "certificates_issued_on": "bd25682561692e9dab9f2345d4b68af85c610f1f32d5ec7e01e0e14145352f87",
   "certificates_language_level": "9a929089174b475ba8499786dc5907e76d95c0a0a217b247b927293f7cceb9f1",
   "certificates_language_ready": "d8ee76c9cefe0e4b5c949d102698aff299a16dbd34b0cf91057670c5b7851eb9",
-  "certificates_lead": "9bf4e1b8863f15cb4208b49563b4e607bc87136ed022f6c2db6f5144ed8af49d",
+  "certificates_lead": "13f3e9de851f0def89f0ebed565410298895b321479a46eb4dcfd2b9f95380d2",
   "certificates_lessons": "cbb5836737560926feadde2fe45c4afbc1b6d1f6fbf752d37b789e6f58fd4614",
   "certificates_level_complete": "eff50704b3c23634ac951b3803c3488999df00f18779993f7d9d4c98f626b33f",
   "certificates_level_on_zoonk": "9942b3dbadd42dcbcca5d7ed39320047e6d5993073c83fc9f7429db4eb11e765",
@@ -91,7 +91,7 @@
 <resources>
     <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
     <string name="certificates_title">인증서</string>
-    <string name="certificates_lead">레벨과 계획을 마칠 때마다 인증서를 받아요.</string>
+    <string name="certificates_lead">코스 레벨, 언어 레벨, 계획을 마칠 때마다 인증서를 받아요.</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->

@@ -42,7 +42,7 @@
   "certificates_issued_on": "3f6a2a6fb9c7f88a1eaf78e97a07065cfd9baa5112af01a3587bbe8bf0eb6719",
   "certificates_language_level": "761898edca1a5c7e216e0ba14f905cf96f371e2f063043ecd8a1d79418446862",
   "certificates_language_ready": "dc773c95553254ca10bffacbbad3730ec133436b6303f82ef93ce0ec5a70c889",
-  "certificates_lead": "9fe5138e1ea484acaac0449878c8822ee5b6be68c39b80c44deb977efc06f6ff",
+  "certificates_lead": "701e25ea752709a32934c6e04d425eaeb5b38271d3b971c205eb8d01f6e544a0",
   "certificates_lessons": "82679a72c40309b85c72c20b2bd2cbd26cd767428586582f54eeb269ddc2e2a5",
   "certificates_level_complete": "80f7daf06072cdc2193ca9ae6e0916233e5f98d626bf86b75dad413070b3f6bc",
   "certificates_level_on_zoonk": "ffeba60c7005d9ab8b5f11f7dea2514e8ad7a1b569a2a1ac749674069ef81d43",
@@ -91,7 +91,7 @@
 <resources>
     <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
     <string name="certificates_title">Certificati</string>
-    <string name="certificates_lead">Un certificato per ogni livello e ogni piano che completi.</string>
+    <string name="certificates_lead">Un certificato ogni volta che completi un livello di un corso, un livello linguistico o un piano.</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->

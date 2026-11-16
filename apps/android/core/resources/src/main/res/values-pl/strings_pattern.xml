@@ -15,7 +15,7 @@
   "pattern_seen": "45deec57c4640bcf9e9d41d8e648c8bfd10ec1cd2937c136001d538e235173e0",
   "pattern_seen_times": "b60305b1a231c2bca1ea73896e426188155b4ea891f618fa0b8ab30bfb10dd07",
   "pattern_title": "193d236236bc24725d5fa93a1c09fca3c568b5c1e03fd39fed57df3ed1a5f9bd",
-  "pattern_typos_detail": "d05a72f475f8b727ecfde0c7a3741eeedb536412e3721ff848b442d2cc513551",
+  "pattern_typos_detail": "47e3194be5b31e0aea6fa5ed782285a9045a78c0fa5a26616ea0c012e91cb44f",
   "pattern_where_you_slipped": "4cb2e3bf971b5809e7ca7670a32d901baac11ace12ffdcbb8582e57a6c1ac668",
   "pattern_you_said": "5f158d22cb628f227b7089fa0ef1cad4f3eb818c6fbfa4cd085cee2de8318575"
 }
@@ -51,5 +51,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Zamknij</string>
     <string name="pattern_just_typos">To tylko literówki</string>
-    <string name="pattern_typos_detail">Twoje ostatnie błędy to pomyłki przy pisaniu, a nie problem ze znajomością reguł. Nie ma tu nic do przećwiczenia.</string>
+    <string name="pattern_typos_detail">Ostatnie błędy to literówki. Zasady już znasz, więc nie ma tu nic do ćwiczenia.</string>
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "session_belt_step": "932064e22c8aae4ba183b32757117c16ef7297ce1e62e080826c2e909a49a961",
   "session_block_bonus_practice": "7acb70ec455d62ddaec46c1d6d4c244e607873441e1b0081b4c228de0c053c39",
   "session_block_bonus_practice_areas": "1d549e095bf03946375537146a044660e7e5e7599e1dc1468151aeba4ed7e8ce",
   "session_block_bonus_practice_topic": "880ad41111088c47ebcb37551757042dcdf8e8538f50151d344ff718c5c22822",
@@ -34,7 +35,7 @@
   "session_energy_glowing_brightest": "6e2be7991da3c472a92d06b399ec0c7eacb5a7e30f2a41a5dda72db217ac4d2b",
   "session_energy_max": "767d7f5bdbb3d6f12f1d034502e6a6295531ce283d139cd9b3b547105617cecc",
   "session_lessons_deferred": "54d107c91b7a9b38aecbcc395d4419c7a596a66d6c535bf5026d16b5785168e3",
-  "session_level_up": "ae4737aeba0a78589721a589dbc0f4ac9142abcdc3a1db2d55a312ea4b980105",
+  "session_next_belt": "a4ca1729ee58a2e707596ff34bb917489e7a4e66f1a543ce88b64cc896ec2b8a",
   "session_next_continue": "e0fabce12834cc2bd85645092b456a1fcd3fa2de57648fd60bbc4081578ee889",
   "session_next_eyebrow": "8be43af1861a6b3fe59c541fd58b207d4cbf4f379bd353e90b8a201ad0047733",
   "session_next_lesson_ready": "0ecf5ee001d9b58732bd7036ec908c85cc61f538ce88c7369dae8f16b5842869",
@@ -134,7 +135,9 @@
     </plurals>
     <string name="session_opening_slow">次のステップを開いています…</string>
     <string name="session_opening_very_slow">いつもより時間がかかっています。自動で開くので、もう一度タップしなくても大丈夫です。</string>
-    <string name="session_level_up">レベルアップ！</string>
+    <string name="session_belt_step">%1$s、レベル%2$s</string>
+    <!-- Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10. -->
+    <string name="session_next_belt">%1$sはレベル%2$sのあとです</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">エネルギー：%1$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 100%. -->

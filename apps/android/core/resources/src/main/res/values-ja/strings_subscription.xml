@@ -73,6 +73,7 @@
   "subscription_questions_title": "e7837e5303d443b8d4534c1b558ebd03d61f3019716ad887654eeacc87b287ac",
   "subscription_questions_unsure": "54a2ed5f5d9b57d5ebe4ca51faecc3665bdc94241559fe9320de8a80c5f6d538",
   "subscription_renewal_failed": "c593a4ce14dbf21d0c1ca98cf590ab92ef446cc98aa2fa220129b721c0a4c418",
+  "subscription_renewal_failed_website": "4f9f211d4f18d536cb20b1e3ed8a29b29cf0284c601de2f59e1193ab8014a4e1",
   "subscription_renews_on": "b2dab5f3605ab9f524e70a52726ed99b0221234d2902ec4a26fb5e52ead1d102",
   "subscription_save": "1d211229417ed82fbfa0a64a756bd23da964f84548a8254dc0eb5c238993f96c",
   "subscription_show_answer": "8071113b2b2c8e15621c1ce0f6738d226ebf288a9df42a376301d44f8a938db1",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">お支払い済みの期間が終わるまで、引き続きPlusを利用できます。</string>
     <string name="subscription_website">ウェブサイトで購入</string>
     <string name="subscription_renewal_failed">前回の更新料金を決済できませんでした。</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">登録したウェブサイトでお支払い方法を更新してください。</string>
     <string name="subscription_cancel_unpaid">Plusはすぐに終了し、今後料金は請求されません。</string>
     <string name="subscription_cancel_back">戻る</string>
     <string name="subscription_keep_plus">Plusを続ける</string>
@@ -166,6 +169,10 @@
     <plurals name="subscription_free_buddy">
         <item quantity="other">AIの学習の相棒：メッセージは1日%d通</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="other">学習の相棒AI：1日%1$d件のメッセージ、月%2$s件まで</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">会話でのスピーキング練習</string>
     <string name="subscription_questions_title">よくある質問</string>
@@ -186,6 +193,10 @@
     <plurals name="subscription_answer_free_lessons">
         <item quantity="other">試験対策を含むすべての目標で、月に合計%dレッスン</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="other">自分の資料を追加：1日%dファイル</item>
+    </plurals>
     <string name="subscription_answer_free_calls">会話でのスピーキング練習はPlusより回数が少なくなります（試験のスピーキングタスクはPlusで利用できます）</string>
     <string name="subscription_question_unlimited">Plusは本当に無制限ですか？</string>
     <string name="subscription_answer_unlimited">ほぼ無制限です。レッスン、目標、相棒の制限は、ボットや自動化ツールによる利用を防ぐためだけのものです。学習する人の利用を制限するものではありません。会話練習には1日ごとと1か月ごとの上限がありますが、無料プランより多く利用できます。</string>
@@ -195,12 +206,4 @@
     <string name="subscription_answer_cancel">支払い済みの期間が終わるまではPlusを使えます。その後は無料プランに戻りますが、目標と学習の進捗はそのまま残ります。</string>
     <string name="subscription_question_refund">返金は受けられますか？</string>
     <string name="subscription_answer_refund">Google Playで購入したPlusの払い戻しは、Google Playが対応します。Google Playから申請してください。Zoonkのウェブサイトで登録した場合は、hello@zoonk.comまでメールでご連絡ください。こちらで確認します。</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="other">学習の相棒AI：1日%1$d件のメッセージ、月%2$s件まで</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="other">自分の資料を追加：1日%dファイル</item>
-    </plurals>
 </resources>

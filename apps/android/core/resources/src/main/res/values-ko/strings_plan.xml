@@ -289,7 +289,7 @@
   "plan_full_course_rule_exam": "7d7e6f3fb94d00f0b950a443f4dcc6eaccfe5b64aef78f19ea35f73090a39d1a",
   "plan_full_course_rule_goal": "44bdea8fac79be25c41337406ad2baf6e8e7cdd611421746407290a6c285e83c",
   "plan_full_course_rule_goal_month": "e61afe883f17683a85ece12df3cb82bedc389e0d249b7905f3297de15bf28db3",
-  "plan_full_course_switch": "da82071a4352f6d7588505f0a73a2640e52a1fbf673868681800a75fcdfadd33",
+  "plan_full_course_switch": "8b66f991102d00d0a31ff2a9cfcb4f63182f4c52b7d298e4edc2c3c66449410e",
   "plan_gain_this_week": "9e41fae3f22e56dc1bb7c4a39deb5b6daa3f4ff5a06c3d78727a3810ea0cbccd",
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
@@ -306,7 +306,7 @@
   "plan_lessons_of": "d6a9eb3b1615a9459a32b081b8d34656eb2db543f4fdafa95aafdf46ac7e0d81",
   "plan_lessons_on_the_way": "a7eef1be32d2f1818a4a63c911ba1f3b4aa065f6ee503174538638db8ce458c9",
   "plan_lessons_studied": "dc55775a1dc01503e6f79db18e9f1bb4e5502f998d1cffef77b86dd0bb9a9b84",
-  "plan_level": "4e1af743aac57ae5a61de51bfe7bf25c4464815413c1a0f17cae84e06dff2555",
+  "plan_level": "95a95fe443a4248955c78a9835066202f43fb465242e3e67a9dc1c09a0ce3e09",
   "plan_level_complete": "30d1782ed9aa2010b41687a355f0579da1a2fae1e7303331f7e5213008a798a9",
   "plan_loss_this_week": "be4477cedaa16fbb2ca97e786e5b6ba4d517f118df75d758836c0b0d4c4a4b6b",
   "plan_measure_mock_exam": "4d6ce9d65350432ce813624dba8c1154ef1a7b31467e61da729a20aba1ae2d2f",
@@ -324,6 +324,7 @@
   "plan_more_chapters": "4ce2dc1adeb7f1b39d5db476ae4a885e6e4f73e46cebdcd3b72921cef8095268",
   "plan_more_lessons": "a0d587c04c59f1815e79059b3edb6ce7be912de2fcb24afddb654ee898850615",
   "plan_more_lessons_fit": "b5f220df1b6477fb0c3af5f88a2694c2688f803ae0564ea886d4f46c931087cf",
+  "plan_more_units": "fbb76bcf36b2bfe6627b1a787216af87686e9aa32e032d9805a838ee41945568",
   "plan_most_asked_first_until_exam": "98a6c53f1e9301551ecdb27d8315b8962b174f1728f354f47b2e153428f205fd",
   "plan_move_date": "86f154933a78c5149afd996c4214109e4b46354219fa60033d224c805c669136",
   "plan_move_date_to": "0fbc8328724c22ab752ddaa41921dd916352bd4b6e74eb767ad8f6322ac5c902",
@@ -379,6 +380,7 @@
   "plan_practice": "3f75d573fe8afe21882475861d4b0c91d96b699e7ada872af69e0d8aeace8f77",
   "plan_preparation": "4a363660c6614cbff8f4b637c273ed8a3cf84725b9abaa4aa5c8c4b9508fcf0f",
   "plan_prerequisites": "d4a13e8d505d469845d07a310ace8d825e01d0836079b354cdc11b5e9345ae4f",
+  "plan_prerequisites_description": "414014fc3439117c37c965d18e0f1646a912a15fe35acd4b60ba8ce03a02f4ed",
   "plan_preview": "2a34ae59ea5d75cb1955ad070efa6681c49093ad1300e7e2fef4e30b4ee573a5",
   "plan_progress": "66c2bcdca035ecabd65c05e68460daf6b8ce840c0ad98154d4525a962da71ad5",
   "plan_recommended": "2b16065cca2a5a8fdca9cd7dbe0fed02a3ae6bf9d36573f6d501a07f778e6499",
@@ -416,6 +418,7 @@
   "plan_short_mock_and_practice": "dd6441dc6273781495a2e82e64fcde1f30892b3cfee6e020f53367da9ef45f96",
   "plan_short_mock_and_review": "b27a51b07b81be669217286fe1acb112dc19c28f4924c3eb0c7a5a0f607466b1",
   "plan_show_fewer_chapters": "4f504d1bb98609708c58dbe292d0587951fa36e7792fc28b3cd5d2f606ccfe0b",
+  "plan_show_fewer_units": "9645b15eabf2164111069432c14229b5206976fb64739936a6afec2528a92a85",
   "plan_skills_you_know": "da2751647ba39893f1559482fd5065ab8d91700f50be29bb402bf30155d67240",
   "plan_skipped": "d6c4b3a5c7deb80a3876fe1e5262b3e108fa87aded474f0293a0ddd5b027d125",
   "plan_skipped_known": "7928674c9ad62b78afa253934c7d4b50373df7cb3c69d804da58a6a0fdceb36b",
@@ -423,10 +426,10 @@
   "plan_still_first_challenge": "56191bf91178d52a9005e21ad9f39826c9e6b4eff09a5beb69d84ba33af31910",
   "plan_still_first_mock": "191be5b6a198ffd87b80b30e6b2315625f567948cdcd1e8c72cd53130e885c28",
   "plan_study_days": "84db2e1b428de029e9b9efe7ff917c11812a924ea419cb00c9777e56cdbb6f98",
-  "plan_study_everything": "30e6056a2bed0e4cea45110bad0493b7f1d4a2d5712720cc5d54b147980405c9",
-  "plan_study_everything_after_exam": "bc7fa1b8129ae22f4a5e9d0f8099c0b4637a252e3169a4d0f4359afb1a8516c9",
-  "plan_study_everything_exam_description": "ae4b1352ef93b20b550de462de3b0c14221b3e61ba548b3d9c25da80316708ea",
-  "plan_study_everything_goal_description": "1ffa9759dc3655d4c7b6b6d26d03cc9d66673a9f0dbd22e9cd5f6b8cd278e137",
+  "plan_study_everything": "2f44f9477106eb47b22cc5ab8e8a6f1cd757c1517ccd093770ce99fc6e4921cf",
+  "plan_study_everything_after_exam": "1b407da82a3b5c8fc5514915a6588009eede9707e633706702272db5e753a587",
+  "plan_study_everything_exam_description": "bfadb11667077f7c862b66ecf2f4cb86181f7edcf64b329db28f7390fc0ebdfb",
+  "plan_study_everything_goal_description": "2431a4a727cb09800e6ab58c4317cb5c51f0d1d4124b37feea760a02415b94f4",
   "plan_study_next": "a38fe5dc34250f720de327c060922675895f4591a347818d70dabcbf89170be0",
   "plan_suggestion": "62adebfb04d32c78dd1c32c43e31cdcfda52af6e5b1ecba0c27d7a17b5ddf698",
   "plan_suggestion_next": "5b60d254b8adef5f63f045aa526a9d7c0338a3bb90cefcfb629ccecf78190751",
@@ -442,9 +445,9 @@
   "plan_time_a_day_label": "102d0c37c84aa82bcac07f2ae3120d46d5478e7428ab4e5d0808d9267bd7e970",
   "plan_time_ask_failed": "225e46f7b9a9954f66572b069854ccb62f7e9c97f26801f2d2e472ed1554b711",
   "plan_time_asking": "a58135df80dbb49b0faf43579a8c38b13c39a73fe17611236ccfb2a397adf396",
+  "plan_time_covers_everything": "c51fd95211e08efab13f821cee24d1e236c8058b4d8fcc105b34c7b0860320f7",
   "plan_time_covers_everything_by": "649e09cb57c26efc4e09a2e4cced62489987a6eecabc3fc5605726149f39171f",
   "plan_time_covers_everything_by_month": "99edcaf9708e7058287d24299de97f6e2bf428507e4051b82f27b32498dfd031",
-  "plan_time_covers_everything_in_depth": "c3f098e001bb16f8635903fd15c3acd39e02f9dc16465d2095bf08fa4b42f009",
   "plan_time_covers_exam_all": "9d30438a50c8e7102b13339562d5f7073179fd6ddae72df199e33d257e4585a1",
   "plan_time_covers_exam_all_month": "81f74bb77e2ca7eabf060d08d426d2863f85131f40b81312ab3f857bb1678c8e",
   "plan_time_covers_goal_all": "f62501511bfa3e523d0787309c5052552c157dacf75a0fdd0ff62ac97290b208",
@@ -454,32 +457,25 @@
   "plan_time_find_failed": "a84e025675eded5caf37cc9fdaee40a6cf551cff382a9ef459d368d36ec6d8de",
   "plan_time_finish_failed": "ac3048ae09df782f32ee2e00bc0398542b42efbb33c9953459ec3efff8dadd30",
   "plan_time_finish_unknown": "3346a675149d05658086f591b76bd0119d435b05981842fb1bbb4e123724ee0f",
-  "plan_time_focus_exam_every_topic": "964f8f314c7cd98a0f4f8fd7fd222aba2805243b5c7c1ebe13b848b6072e2e78",
-  "plan_time_focus_exam_most_asked": "cbcac23505324eb277003277007d4d8c77128ad5110f0ee43a1618818b72f139",
-  "plan_time_focus_goal_every_part": "e53e12e99e253d5d1fdbfe81fe6a9988b28d2a28193f2c68781b90aa18b4932b",
-  "plan_time_focus_goal_most_important": "267e706a080c7e5c0c8fe68dfc948d70664aed6106f7ecff60d290ca82daac7b",
   "plan_time_more_days": "9c23c042570866fc754fb4676e6c357f70421d1990666080900a3f09af179956",
   "plan_time_no_days": "54b2f89145036fd6991316cf40aca121f14ac469613ead132122aaf1544ea9a4",
-  "plan_time_none": "bf753a1c6218a9115a53770f543d238189aafd13718b358f98a3044c7d87df9e",
-  "plan_time_none_month": "a1e6d9beecbb2fe72f32a142b55e4fba30a44c9fd9aeca7c055cdefbda638013",
+  "plan_time_none": "091db072b0a4fdbbc196940c6e058611d45a00b793caffa0d98426bebd388629",
+  "plan_time_none_month": "49fb6f7e431e216c49451257edb9f92c86cfe55aab77c2dbc4ad5f02fa3eddbe",
   "plan_time_past_date": "199f210f2b11e3523cca314279f744cfc50099dea0f845086262ba0b1edabb8e",
   "plan_time_past_date_month": "2e8d188e5ec3f71c096b991d4df25eb7ef733ef39a7f1e30d566cc9ef65a624a",
-  "plan_time_share_exam": "8a434d1f4dc2b1ac0277e973d7b68785c2ca87988296d19bee53290953f223d7",
-  "plan_time_share_exam_month": "f2e34d3893778f56af1ccff69a2427e4f6e94654842cc0677139394814b5b178",
-  "plan_time_share_goal": "26b288287c6e126d7d9056c59a4b743a597cf6578d399aae42df48f32d5a427a",
-  "plan_time_share_goal_month": "f1dfa8a26ebf2abbf13bdee1ead29e9081692cb33b6e67da5c85137711a0ead2",
+  "plan_time_share_exam": "4bcbe6fbcd96e29a1db679c484be360cf5b2a23a82d98802f58053dc1a472aa6",
+  "plan_time_share_exam_month": "05b681a748cfd10b033c69a0844703be3e48b112c6485b55aba8f10d54dc2511",
+  "plan_time_share_goal": "d73b0a7a424e53493b5d62cae3fdb9f7f7c2972250b86d4c29024e001363d9ec",
+  "plan_time_share_goal_month": "a89e4055f1f1e3bcc54f7aafa66febe26d4265ae94c78060bdbad775ccbf55b0",
   "plan_time_split_many": "2c8db11cd07ad5ec4819635e575d42b394a5e477630f781aec6c9c5b1bcc3f4e",
   "plan_time_split_one": "e1e2dd04fba97e72836167dfc3f486caea51e891cf151be8b8427464299b3a57",
-  "plan_time_suggest": "1c60afd73462142ab552108d97248028a0c6f1e3b81c8b97a37b9e5effba2d2e",
   "plan_time_suggest_title": "bb275559890f7657643455eb36065f7b37fdae5e1763247dc7b16cda22ee8454",
-  "plan_time_takes_everything": "f0e54f954b4aa1cf785e9823536924e8dfb7d102880bd99715baa907289c1cb3",
-  "plan_time_takes_everything_month": "bd776511c02f12acb119e0820dd5e7c60d66e649e217cf6a85603406d581557b",
+  "plan_time_takes_everything": "5e47c5e1373146500b99de9f499c2be6fee841c2de5b2363e24e6bedc6aa9ad1",
   "plan_time_takes_exam_all": "99eead34c06603fdf35af8e2ce7ea20c91573e235e4fb99c8e429ae9ee5b7192",
   "plan_time_takes_exam_all_month": "79cead1e2fe090b24b9b64b6f7983446c89ff914eb7c73fb4d7b5470413f6dfa",
   "plan_time_takes_goal_all": "161802130a810192f73e7d5d91aae3d5ce1fd9fbdd237764d3d8f9d37ead7739",
   "plan_time_takes_goal_all_month": "323f1f9a6e32e206b573abcddd077fecc11b94850832b73a7a6be52ff52e4693",
-  "plan_time_takes_most": "f8d401725c2d253c1645ea037392aa601decc7a6eacbcbbe67bde6de3f9cda03",
-  "plan_time_takes_most_month": "f2381099f5e78cf64887f6327143740fd55a0a6ef780886a18716c1a612a9ad6",
+  "plan_time_takes_most": "2b89092ce0bbf6655502b55c1174cf2fd1ebfef2ea921009b3ab974001a4a5d2",
   "plan_time_too_long": "6dbe8d8658aa7381cf653c392b1220ac524255e749640f7b4ac9af0f3e277a67",
   "plan_time_use_suggested": "4a2646718d425b237c5631215ed29e7b607426433be108f67383262d950cc237",
   "plan_time_use_to_cover_everything": "da7d67441c4bf68021118826204a51feaf2b3bd8a20d1f499cd61c89e929f0a7",
@@ -540,7 +536,7 @@
   "plan_why_phase_end_off_rest": "f349025f7db0c125e64bf56cb625fc8eabb7d1dd19261d24c11f33e8f4bcebdc",
   "plan_working_out_coverage": "1d49e3c4ff37c810fa26c9da9d1e634dea637d4bf67b5694128725cd77d31bfd",
   "plan_you_are_here_suffix": "a5de9bea67715eb66aac362d6169bd878da55ee2e9144be4df4648b3e09619e7",
-  "plan_your_level": "37b3198f93fec3bb6f28ac7b5fd82e6cb391f6ffa17e1a89ecc2408c19721a38",
+  "plan_your_level": "8d42ee1b842b7b2df49de28c84ddaf446bf1c17920c5a01443f825826ff36e47",
   "plan_your_pace": "71cca99cd65eff7ea3a1daabf04192de2ffe20b2df19f66851081b9cb21e98f7",
   "plan_your_path": "b937ee7be07604b0a21465ea631278d5eda15fd5bbc600c33a463f189611a7b3",
   "plan_your_plan": "7b3a1db982934852dc4abd56da4ec487e0a6e88e9c69ca62a681435a3ba12004",
@@ -680,6 +676,10 @@
         <item quantity="other">챕터 %d개 더</item>
     </plurals>
     <string name="plan_show_fewer_chapters">챕터 목록 접기</string>
+    <plurals name="plan_more_units">
+        <item quantity="other">단원 %d개 더</item>
+    </plurals>
+    <string name="plan_show_fewer_units">단원 접기</string>
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">승리</string>
     <string name="plan_challenge_next_session">다음 학습 때</string>
@@ -787,9 +787,8 @@
     <string name="plan_progress">진도</string>
     <string name="plan_your_preparation">내 준비도</string>
     <string name="plan_your_progress">내 진도</string>
-    <!-- A language goal's standing: its level across skills, such as "B1". -->
-    <string name="plan_level">레벨</string>
-    <string name="plan_your_level">내 수준</string>
+    <string name="plan_level">%1$s 레벨</string>
+    <string name="plan_your_level">내 %1$s 레벨</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">아직 학습을 마친 레슨 없음</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
@@ -985,6 +984,7 @@
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: 어떤 항목을 선택할까요?</string>
     <string name="plan_prerequisites">사전 지식</string>
+    <string name="plan_prerequisites_description">주제의 바탕이 되는 내용이에요. 얼마나 공부할지 고르세요.</string>
     <plurals name="plan_bases_mixed">
         <item quantity="other">사전 지식 %1$d개 · 선택한 방식 · %2$s</item>
     </plurals>
@@ -1056,36 +1056,20 @@
     <string name="plan_cadence_biweekly_effect">같은 양을 2주마다 연습해요. 횟수는 줄고 한 번에 하는 양은 늘어요.</string>
     <string name="plan_cadence_final_weeks_effect">시험 직전 몇 주에 집중해서 연습해요. 시간을 두고 나눠 하는 연습은 줄어요.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_none">하루 종일 공부해도 %1$s까지 모든 내용을 깊이 있게 다룰 수는 없어요.</string>
+    <string name="plan_time_none">하루 학습 시간을 아무리 늘려도 %1$s까지 모두 끝낼 수는 없어요.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_none_month">하루 종일 공부해도 %1$s까지 모든 내용을 깊이 있게 다룰 수는 없어요.</string>
-    <!-- %1$s is a day, such as "May 5"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <string name="plan_time_takes_everything">%1$s까지 모든 내용을 깊이 있게 다루려면 하루에 약 %2$s씩 공부해야 해요. 대부분의 사람이 꾸준히 이어 가기에는 무리가 있어요.</string>
-    <!-- %1$s is a month and year, such as "May 2027"; %2$s is a daily study time, such as "13 h 30 min". -->
-    <string name="plan_time_takes_everything_month">%1$s까지 모든 내용을 깊이 있게 다루려면 하루에 약 %2$s씩 공부해야 해요. 대부분의 사람이 꾸준히 이어 가기에는 무리가 있어요.</string>
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a day, such as "May 5"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <string name="plan_time_takes_most">학습 시간을 아무리 늘려도 %1$s까지 깊이 있게 다룰 수 있는 최대 분량은 약 %2$s예요. 하루에 약 %3$s씩 공부해야 해서 대부분의 사람이 꾸준히 이어 가기에는 무리가 있어요.</string>
-    <!-- Part of the goal never fits, whatever the time, so this is the most any daily time covers. %1$s is a month and year, such as "May 2027"; %2$s a percentage, such as "99%"; %3$s a daily study time, such as "8 h". -->
-    <string name="plan_time_takes_most_month">학습 시간을 아무리 늘려도 %1$s까지 깊이 있게 다룰 수 있는 최대 분량은 약 %2$s예요. 하루에 약 %3$s씩 공부해야 해서 대부분의 사람이 꾸준히 이어 가기에는 무리가 있어요.</string>
+    <string name="plan_time_none_month">하루 학습 시간을 아무리 늘려도 %1$s까지 모두 끝낼 수는 없어요.</string>
+    <string name="plan_time_takes_everything">하루 약 %1$s씩 공부하면 전부 학습할 수 있어요.</string>
+    <string name="plan_time_takes_most">학습할 수 있는 최대 분량은 약 %1$s이고, 하루 %2$s씩 공부하면 돼요.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_exam">시험에 자주 나오는 주제부터 시작해 전체 주제의 약 %1$s를 %2$s까지 깊이 있게 다뤄요.</string>
+    <string name="plan_time_share_exam">시험에 나오는 주제 중 약 %1$s를 %2$s까지 학습할 수 있어요.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_exam_month">시험에 자주 나오는 주제부터 시작해 전체 주제의 약 %1$s를 %2$s까지 깊이 있게 다뤄요.</string>
+    <string name="plan_time_share_exam_month">시험에 나오는 주제 중 약 %1$s를 %2$s까지 학습할 수 있어요.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_goal">가장 중요한 내용부터 시작해 목표 범위의 약 %1$s를 %2$s까지 깊이 있게 공부해요.</string>
+    <string name="plan_time_share_goal">목표의 약 %1$s를 %2$s까지 달성할 수 있어요.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_goal_month">가장 중요한 내용부터 시작해 목표 범위의 약 %1$s를 %2$s까지 깊이 있게 공부해요.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_exam_every_topic">그러면 시험 범위를 모두 공부하되, 자주 출제되는 내용은 더 깊이 있게 공부해요. 깊이 있게 공부하는 분량은 전체 시험 범위의 약 %1$s예요.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_exam_most_asked">그러면 자주 출제되는 내용부터 공부하고, 전체 시험 범위의 약 %1$s를 깊이 있게 공부해요. 출제 빈도가 낮은 주제는 계획에 포함되지 않을 수 있어요.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_goal_every_part">그러면 목표로 정한 내용을 모두 공부하되, 가장 중요한 내용은 더 깊이 있게 공부해요. 깊이 있게 공부하는 분량은 전체의 약 %1$s예요.</string>
-    <!-- %1$s is a percentage, such as "32%": how much of everything gets studied in depth, not how many topics are reached. -->
-    <string name="plan_time_focus_goal_most_important">그러면 가장 중요한 내용부터 공부하고, 목표로 정한 내용의 약 %1$s를 깊이 있게 공부해요. 나머지는 계획에 포함되지 않을 수 있어요.</string>
+    <string name="plan_time_share_goal_month">목표의 약 %1$s를 %2$s까지 달성할 수 있어요.</string>
     <string name="plan_time_more_days">공부하는 날을 늘리면 도움이 돼요.</string>
-    <!-- A sentence before what that time covers. %1$s is a daily study time, such as "4 h". -->
-    <string name="plan_time_suggest">하루 %1$s씩 공부하는 걸 추천해요.</string>
     <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
     <string name="plan_time_suggest_title">하루 %1$s씩 공부하는 걸 추천해요</string>
     <string name="plan_time_too_long">대부분의 사람이 그만큼의 시간을 꾸준히 내기는 어려워요.</string>
@@ -1153,7 +1137,7 @@
     <string name="plan_move_date">전체 내용을 공부할 수 있게 날짜 변경하기</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">날짜를 %1$s로 변경하기</string>
-    <string name="plan_full_course_switch">시험 후에도 모든 내용 공부하기</string>
+    <string name="plan_full_course_switch">시험 후에도 계속 공부하기</string>
     <string name="plan_full_course_off">끄면 계획이 시험일에 끝나요.</string>
     <string name="plan_full_course_on_exam">%1$s 시험 전까지는 가장 자주 출제되는 내용부터 공부해요.</string>
     <string name="plan_full_course_on_exam_unknown_end">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
@@ -1167,9 +1151,9 @@
     <string name="plan_full_course_rule_goal">마감일(%1$s)이 계획에서 빠져요. 언제든 다시 정할 수 있어요.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_full_course_rule_goal_month">마감일(%1$s)이 계획에서 빠져요. 언제든 다시 정할 수 있어요.</string>
-    <string name="plan_study_everything">모두 공부하기</string>
-    <string name="plan_study_everything_exam_description">시험이 끝난 뒤에도 모든 주제를 원하는 속도로 배워요.</string>
-    <string name="plan_study_everything_goal_description">기한 없이 목표의 모든 내용을 원하는 속도로 배워요.</string>
+    <string name="plan_study_everything">종료일 없애기</string>
+    <string name="plan_study_everything_exam_description">모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 내용은 시험 후에 공부해요.</string>
+    <string name="plan_study_everything_goal_description">종료일을 정하지 않고 목표에 필요한 모든 내용을 공부해요.</string>
     <string name="plan_sheet_done">완료</string>
     <string name="plan_choose_focus">집중할 과목 선택하기</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
@@ -1199,9 +1183,9 @@
     <string name="plan_updated">계획을 바꿨어요</string>
     <string name="plan_updated_sentence">계획을 수정했어요.</string>
     <string name="plan_preview">미리 보기</string>
-    <string name="plan_study_everything_after_exam">시험 후에도 모든 내용 공부하기</string>
+    <string name="plan_study_everything_after_exam">시험 후에도 계속 공부하기</string>
     <string name="plan_most_asked_first_until_exam">시험 전까지는 자주 출제되는 내용부터 배워요.</string>
-    <string name="plan_time_covers_everything_in_depth">하루 %1$s씩 공부하면 모든 내용을 깊이 있게 배워요</string>
+    <string name="plan_time_covers_everything">하루 %1$s이면 모두 공부할 수 있어요</string>
     <plurals name="plan_more_lessons_fit">
         <item quantity="other">레슨 %1$d개를 더 할 시간이 있어요</item>
     </plurals>

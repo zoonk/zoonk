@@ -202,8 +202,7 @@
     <string name="player_challenge_good">Nicely done</string>
     <string name="player_challenge_improve">To improve</string>
     <string name="player_challenge_skills">What you practiced</string>
-    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">Practice “%1$s” · %2$s</string>
+    <string name="player_challenge_practice">Try it yourself</string>
     <string name="player_done">Done</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
