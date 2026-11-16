@@ -22,6 +22,8 @@ const DECIMAL_EXAMPLE = 2.5;
 function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   const t = useExtracted();
 
+  const kind = entry.kind === "decimals" && entry.places === 0 ? "integer" : entry.kind;
+
   const rule = {
     decimals: t(
       "{places, plural, one {Round to # decimal place.} other {Round to # decimal places.}}",
@@ -30,7 +32,7 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
     fraction: t("A fraction, like 2/3, or a decimal."),
     integer: t("A whole number."),
     number: null,
-  }[entry.kind];
+  }[kind];
 
   return rule ? (
     <p className="text-muted-foreground text-sm" id={id}>

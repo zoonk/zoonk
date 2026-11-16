@@ -1,4 +1,7 @@
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
@@ -13,6 +16,19 @@ function numericGroup() {
 }
 
 describe("activity numeric answers", () => {
+  it("the calculator uses whole-number wording for zero decimal places", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    await expect.element(page.getByText("A whole number.", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByText("Round to 0 decimal places.", { exact: true }))
+      .not.toBeInTheDocument();
+
+    await valueInput().fill("251.54");
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
+
   it.each([
     { token: "--success", value: "0.5", verdict: "Correct!" },
     { token: "--destructive", value: "0.7", verdict: "Not quite" },
