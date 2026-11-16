@@ -147,9 +147,9 @@ struct QuestionBlockView: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
-  @State private var stopFailed = false
-  @State private var isStopping = false
-  @State private var stopping: Task<Void, Never>?
+  private var stopFailed: Bool { stopping.outcome ?? false }
+  private var isStopping: Bool { stopping.isRunning }
+  @State private var stopping = VisitRequest<Bool>()
   @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
@@ -196,7 +196,7 @@ struct QuestionBlockView: View {
       if needsRefresh { onRefresh() }
     }
     .onDisappear {
-      stopping?.cancel()
+      stopping.leave()
     }
   }
 
@@ -336,7 +336,7 @@ struct QuestionBlockView: View {
 
       if feedback.pauseSuggested {
         PauseSuggestionView(isStopping: isStopping, failed: stopFailed) {
-          stopping = Task { await stop() }
+          stopping.run { await stop() }
         }
       }
     }
@@ -477,27 +477,27 @@ struct QuestionBlockView: View {
       "Finish", table: "Practice", comment: "Finishes a block opened with every answer in.")
   }
 
-  private func stop() async {
-    isStopping = true
-    stopFailed = false
-    defer { isStopping = false }
+  private func stop() async -> Bool? {
+    var outcome: Bool = false
 
     if let onStop {
-      stopFailed = !(await onStop())
-      return
+      return !(await onStop())
     }
 
     let sessionId = sessionId
-    switch await practice.write(
+    let result = await practice.write(
       .finished, onPurpose: true,
       { identity in
         try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
       })
-    {
+    guard !Task.isCancelled else { return nil }
+    switch result {
     case .done: dismiss()
-    case .refused, .failed: stopFailed = true
+    case .refused, .failed: outcome = true
     case .obsolete: break
     }
+
+    return outcome
   }
 }
 

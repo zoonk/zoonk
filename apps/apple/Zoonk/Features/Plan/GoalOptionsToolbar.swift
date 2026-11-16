@@ -439,9 +439,7 @@ extension View {
 private struct ExamOverBar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var pressed: ExamOverButtons.Answer?
-  @State private var failed = false
-  @State private var saving: Task<Void, Never>?
+  @State private var saving = ExamOverSave()
 
   let goal: LearnerGoal
   let isShown: Bool
@@ -449,14 +447,14 @@ private struct ExamOverBar: ViewModifier {
   func body(content: Content) -> some View {
     content
       .holdsMainActionInBar(isShown)
-      .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
+      .bottomBar(note: isShown && saving.request.outcome == true ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
-            pressed: pressed, archive: { save(.archive) },
+            pressed: saving.pressed, archive: { save(.archive) },
             keepStudying: { save(.keepStudying) })
         }
       }
-      .onDisappear { saving?.cancel() }
+      .onDisappear { saving.leave() }
   }
 
   private var saveFailure: LocalizedStringResource {
@@ -465,25 +463,36 @@ private struct ExamOverBar: ViewModifier {
   }
 
   private func save(_ answer: ExamOverButtons.Answer) {
-    guard pressed == nil else {
-      return
-    }
+    saving.save(answer, goalId: goal.id, store: store, router: router)
+  }
+}
 
+@MainActor
+@Observable
+final class ExamOverSave {
+  let request = VisitRequest<Bool>()
+  private(set) var pressed: ExamOverButtons.Answer?
+
+  func leave() { request.leave() }
+
+  func save(
+    _ answer: ExamOverButtons.Answer, goalId: String, store: PlanStore, router: AppRouter
+  ) {
+    guard pressed == nil else { return }
     pressed = answer
-    failed = false
-
-    saving = Task {
-      defer { pressed = nil }
-
+    request.run {
+      let failed: Bool
       switch answer {
       case .archive:
-        failed = await !store.archive(goalId: goal.id) { router.showRoot(of: .today) }
+        failed = await !store.archive(goalId: goalId) { router.showRoot(of: .today) }
       case .keepStudying:
-        switch await store.change(goalId: goal.id, edits: [.fullCourse(true)]) {
+        switch await store.change(goalId: goalId, edits: [.fullCourse(true)]) {
         case .done(.invalid), .failed: failed = true
-        case .done, .obsolete: break
+        case .done, .obsolete: failed = false
         }
       }
+      self.pressed = nil
+      return failed
     }
   }
 }

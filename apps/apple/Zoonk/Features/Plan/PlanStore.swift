@@ -372,7 +372,7 @@ final class PlanStore {
 
 /// What the plan's answers (time to cover, the prerequisites advice) are worked out from, the day
 /// included: the days left change them.
-private struct PlanInputs: Equatable {
+struct PlanInputs: Equatable {
   let today: String
   let planId: String
   let schedule: GoalPlan.Schedule

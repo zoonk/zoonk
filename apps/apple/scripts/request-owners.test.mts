@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { describe, it } from "vitest";
+import { REQUEST_STATES } from "./request-owner-exemptions.mts";
+import { looseRoutesIn, screenFailuresIn, sitesIn } from "./request-owners.mts";
 
 /**
  * Every view that cancels or leaves work as it disappears, and why that disappearance is the right
@@ -143,119 +145,6 @@ async function swiftFiles(directory: string): Promise<string[]> {
   return nested.flat();
 }
 
-/**
- * What `onDisappear` is given, from the modifier to the bracket that closes it: its closure, or its
- * `perform:` argument.
- */
-function closureAt(lines: string[], start: number): string {
-  let text = "";
-  let depth = 0;
-  let opened = false;
-
-  for (let index = start; index < lines.length; index += 1) {
-    const line = lines[index] ?? "";
-    const from = index === start ? line.indexOf(".onDisappear") : 0;
-
-    for (const character of line.slice(from)) {
-      text += character;
-
-      if (character === "{" || character === "(") {
-        depth += 1;
-        opened = true;
-      } else if (character === "}" || character === ")") {
-        depth -= 1;
-      }
-
-      if (opened && depth === 0) {
-        return text;
-      }
-    }
-
-    text += " ";
-  }
-
-  return text;
-}
-
-/** What each `onDisappear` in one file ends: the receivers of its `cancel…()` and `leave(…)` calls. */
-function sitesIn(source: string, relative: string): string[] {
-  const lines = source.split("\n");
-
-  return counted(
-    lines.flatMap((line, index) => {
-      if (!line.includes(".onDisappear")) {
-        return [];
-      }
-
-      const receivers = [
-        ...closureAt(lines, index).matchAll(
-          /(?<receiver>[\w?.]+?)\??\.(?:cancel\w*|leave)(?=\s*[()])/gu,
-        ),
-      ].map((match) => match.groups?.receiver ?? "");
-
-      return receivers.length === 0
-        ? []
-        : [`${relative}: ${[...new Set(receivers)].toSorted().join(", ")}`];
-    }),
-  );
-}
-
-/** Each site once: a second site that ends the same things in one file is `… #2`, its own entry. */
-function counted(keys: string[]): string[] {
-  const seen = new Map<string, number>();
-
-  return keys.map((key) => {
-    const count = (seen.get(key) ?? 0) + 1;
-    seen.set(key, count);
-    return count === 1 ? key : `${key} #${count}`;
-  });
-}
-
-/** The text of the braces that open at `start`, without them. */
-function bracesAt(source: string, start: number): string {
-  let depth = 0;
-
-  for (let index = start; index < source.length; index += 1) {
-    if (source[index] === "{") {
-      depth += 1;
-    } else if (source[index] === "}") {
-      depth -= 1;
-
-      if (depth === 0) {
-        return source.slice(start + 1, index);
-      }
-    }
-  }
-
-  return source.slice(start + 1);
-}
-
-/** The router calls each unkept `Task {}` in one file makes after its first `await`. */
-function looseRoutesIn(source: string, relative: string): string[] {
-  return counted(
-    [...source.matchAll(/^(?<before>[^\n]*?)\bTask\s*\{/gmu)].flatMap((match) => {
-      if (/[=]|\breturn\b/u.test(match.groups?.before ?? "")) {
-        return [];
-      }
-
-      const body = bracesAt(source, (match.index ?? 0) + match[0].length - 1);
-      const awaited = body.indexOf("await");
-
-      if (awaited === -1) {
-        return [];
-      }
-
-      const routes = [...body.slice(awaited).matchAll(/\brouter\.(?<call>\w+)\(/gu)].map(
-        (route) => `router.${route.groups?.call ?? ""}`,
-      );
-
-      return routes.length === 0
-        ? []
-        : [`${relative}: ${[...new Set(routes)].toSorted().join(", ")}`];
-    }),
-  );
-}
-
 async function sources(): Promise<{ relative: string; source: string }[]> {
   const files = await swiftFiles(SOURCES);
 
@@ -365,5 +254,57 @@ describe(sitesIn, () => {
     `;
 
     assert.deepEqual(sitesIn(source, "Card.swift"), ["Card.swift: start"]);
+  });
+});
+
+describe("request outcomes have an owner", () => {
+  it("rejects screen failure state beside a raw task, even at a listed disappearance", async () => {
+    const files = await sources();
+
+    assert.deepEqual(
+      files
+        .flatMap(({ source, relative }) => screenFailuresIn(source, relative))
+        .filter((site) => !(site in REQUEST_STATES)),
+      [],
+      "Keep the request and its outcome in VisitRequest or a feature owner, never separate @State beside Task",
+    );
+  });
+
+  it("keeps only exemptions the source still needs", async () => {
+    const files = await sources();
+
+    const found = new Set(
+      files.flatMap(({ source, relative }) => screenFailuresIn(source, relative)),
+    );
+
+    assert.deepEqual(
+      Object.keys(REQUEST_STATES).filter((site) => !found.has(site)),
+      [],
+    );
+  });
+
+  it("checks each view separately and accepts owned outcomes", () => {
+    assert.deepEqual(
+      screenFailuresIn(
+        `struct Card: View {
+      @State private var failed = false
+      @State private var saving: Task<Void, Never>?
+      func save() { saving = Task { if case .failed = await write() { failed = true } } }
+    }`,
+        "Card.swift",
+      ),
+      ["Card.swift: Card"],
+    );
+
+    assert.deepEqual(
+      screenFailuresIn(
+        `struct Card: View {
+      @State private var saving = VisitRequest<Bool>()
+    }
+    struct Other: View { @State private var failed = false }`,
+        "Card.swift",
+      ),
+      [],
+    );
   });
 });

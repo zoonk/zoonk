@@ -8,8 +8,8 @@ struct MakeRoomSheet: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
   @State private var pausingGoalID: String?
-  @State private var failed = false
-  @State private var start: Task<Void, Never>?
+  private var failed: Bool { start.outcome ?? false }
+  @State private var start = VisitRequest<Bool>()
 
   let waitingGoal: LearnerWaitingGoal
 
@@ -66,7 +66,8 @@ struct MakeRoomSheet: View {
     .presentationDetents([.medium, .large])
     .interactiveDismissDisabled(pausingGoalID != nil)
     .onDisappear {
-      start?.cancel()
+      start.leave()
+      pausingGoalID = nil
     }
   }
 
@@ -101,19 +102,22 @@ struct MakeRoomSheet: View {
     }
 
     pausingGoalID = goal.id
-    failed = false
+    start.run {
+      var outcome: Bool = false
 
-    start = Task {
-      defer { pausingGoalID = nil }
+      defer { if !Task.isCancelled { pausingGoalID = nil } }
 
       do {
         let goalID = try await onboarding.startWaitingGoal(waitingGoal, pausing: goal.id)
+        guard !Task.isCancelled else { return nil }
         router.sheet = nil
         router.open(.goalSetup(goalId: goalID))
       } catch is CancellationError {
       } catch {
-        failed = true
+        outcome = true
       }
+
+      return outcome
     }
   }
 }

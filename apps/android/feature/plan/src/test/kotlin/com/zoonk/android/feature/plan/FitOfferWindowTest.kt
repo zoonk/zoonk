@@ -9,6 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.hasStateDescription
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -115,6 +117,49 @@ class FitOfferWindowTest {
 
         assertEquals(emptyList<List<PlanOp>>(), api.changes)
         assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
+    }
+
+    @Test
+    fun aCheckFromThePanelAddsNothingWhenThePlanChangesButItsSuggestionStays() {
+        val (held, api) = launchAFitOffer(wide = true)
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        rule.runOnIdle {
+            val current = FitOfferTest.page!!
+            FitOfferTest.page = current.copy(plan = current.plan.copy(schedule = current.plan.schedule.copy(dailyMinutes = 30)))
+        }
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(emptyList<List<PlanOp>>(), api.changes)
+        assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
+        rule.onNodeWithText("Add to my plan").assertIsEnabled()
+
+        val next = CompletableDeferred<Unit>()
+        api.previewGate = next
+        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNode(hasStateDescription("Checking what changes…")).assertExists()
+        next.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(listOf(fitOperations()), api.changes)
+    }
+
+    @Test
+    fun anUnchangedPlanRefreshKeepsTheFitCheck() {
+        val (held, api) = launchAFitOffer(wide = true)
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        rule.runOnIdle {
+            val current = FitOfferTest.page!!
+            FitOfferTest.page = current.copy(plan = current.plan.copy())
+        }
+        rule.onNode(hasStateDescription("Checking what changes…")).assertExists()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(listOf(fitOperations()), api.changes)
     }
 
     @Test
