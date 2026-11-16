@@ -30,7 +30,9 @@ struct ActivityStepView: View {
   var body: some View {
     switch part {
     case .screen:
-      if let badge = activityRenderers.renderer(for: content.template)?.badge.badge(for: content) {
+      if let badge = activityRenderers.renderer(for: content.template)?.badge?.badge(for: content),
+        badge.isShown(over: content.prompt)
+      {
         Chip(Text(badge.title), systemImage: badge.systemImage)
       }
 

@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let processOrder = ActivityRenderer(
-    template: "processOrder", badge: .always(.putInOrder),
+    template: "processOrder",
     grade: ActivityExpectedAnswer.grader(ProcessOrderFields.self) { .order($0.steps.map(\.id)) }
   ) { context in
     if let fields = try? context.fields(as: ProcessOrderFields.self) {

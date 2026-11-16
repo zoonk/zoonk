@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let labeledDiagram = ActivityRenderer(
-    template: "labeledDiagram", badge: .always(.labelIt),
+    template: "labeledDiagram",
     grade: ActivityExpectedAnswer.grader(LabeledDiagramFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: LabeledDiagramFields.self) {
