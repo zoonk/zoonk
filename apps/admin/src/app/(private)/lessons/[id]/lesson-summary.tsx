@@ -75,7 +75,7 @@ export function LessonAbout({ lesson }: { lesson: Lesson }) {
             {formatCount(lesson._count.planItems, "plan")} ·{" "}
             {formatCount(lesson._count.studyBlocks, "session")}
           </DetailField>
-          <DetailField label="Buddy questions">
+          <DetailField label="Buddy questions" mono={false}>
             {formatCount(lesson._count.questionThreads, "question")}
           </DetailField>
         </DetailFields>
