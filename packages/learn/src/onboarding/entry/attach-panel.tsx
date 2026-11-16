@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
+import { FileButton } from "@zoonk/ui/components/file-button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -116,7 +117,6 @@ type AttachControlsProps = {
 
 export function AttachControls({ attach, autoFocus, language, onAttached }: AttachControlsProps) {
   const t = useExtracted();
-  const fileId = useId();
   const errorFor = useAttachError();
   const routes = useLearnRoutes();
   const [pasting, setPasting] = useState<"link" | "text" | null>(null);
@@ -145,38 +145,28 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
   return (
     <>
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <label
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "has-focus-visible:border-ring has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px]",
-          )}
-          htmlFor={fileId}
+        <FileButton
+          accept={ACCEPTED_FILES}
+          aria-disabled={isPending || undefined}
+          autoFocus={autoFocus}
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            event.target.value = "";
+
+            if (file) {
+              add(() => attach.file({ file, language }));
+            }
+          }}
+          // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
+          onClick={(event) => {
+            if (isPending) {
+              event.preventDefault();
+            }
+          }}
         >
           <UploadIcon aria-hidden="true" data-icon="inline-start" />
           {t("Upload a file")}
-          <input
-            accept={ACCEPTED_FILES}
-            aria-disabled={isPending || undefined}
-            autoFocus={autoFocus}
-            className="sr-only"
-            id={fileId}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              event.target.value = "";
-
-              if (file) {
-                add(() => attach.file({ file, language }));
-              }
-            }}
-            // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
-            onClick={(event) => {
-              if (isPending) {
-                event.preventDefault();
-              }
-            }}
-            type="file"
-          />
-        </label>
+        </FileButton>
 
         <Button
           aria-pressed={pasting === "text"}

@@ -2,10 +2,10 @@
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { FileButton } from "@zoonk/ui/components/file-button";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { UploadIcon } from "lucide-react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import {
   type MissingAudioResourceKind,
   type UploadMissingAudioState,
@@ -23,7 +23,6 @@ export function MissingAudioUploadForm({
   resourceKind: MissingAudioResourceKind;
   text: string;
 }) {
-  const fileId = useId();
   const [fileName, setFileName] = useState("");
 
   const [state, formAction] = useAdminActionState<UploadMissingAudioState>({
@@ -45,20 +44,18 @@ export function MissingAudioUploadForm({
     <form action={formAction} className="flex items-center gap-2">
       <input name="resourceId" type="hidden" value={resourceId} />
       <input name="resourceKind" type="hidden" value={resourceKind} />
-      <label className={buttonVariants({ size: "sm", variant: "outline" })} htmlFor={fileId}>
-        {fileName || "Upload a file"}
-        <input
-          accept="audio/mpeg,audio/mp4,audio/m4a,audio/wav,audio/x-wav,audio/ogg,audio/webm"
-          aria-label={`Audio file for ${text}`}
-          className="sr-only"
-          id={fileId}
-          key={state.submissionId}
-          name="audio"
-          onChange={(event) => setFileName(event.target.files?.[0]?.name ?? "")}
-          required
-          type="file"
-        />
-      </label>
+      <FileButton
+        accept="audio/mpeg,audio/mp4,audio/m4a,audio/wav,audio/x-wav,audio/ogg,audio/webm"
+        aria-label={`Audio file for ${text}`}
+        className="max-w-48"
+        key={state.submissionId}
+        name="audio"
+        onChange={(event) => setFileName(event.target.files?.[0]?.name ?? "")}
+        required
+        size="sm"
+      >
+        <span className="truncate">{fileName || "Choose file"}</span>
+      </FileButton>
       <AdminActionSubmitButton icon={<UploadIcon />}>Upload</AdminActionSubmitButton>
     </form>
   );

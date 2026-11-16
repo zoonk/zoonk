@@ -1,11 +1,9 @@
 import { Label } from "@zoonk/ui/components/label";
-import { NativeSelect } from "@zoonk/ui/components/native-select";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 
 type SelectOption = { label: string; value: string };
 
-/**
- * A form's native select with its label over it.
- */
+/** A form's select with its label over it. */
 export function LabeledSelect({
   defaultValue,
   disabled,
@@ -30,7 +28,7 @@ export function LabeledSelect({
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
       <NativeSelect
-        className={`${triggerClassName ?? ""} **:data-[slot=native-select]:bg-background`}
+        className={triggerClassName}
         defaultValue={defaultValue}
         disabled={disabled}
         form={form}
@@ -38,9 +36,9 @@ export function LabeledSelect({
         name={name}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <NativeSelectOption key={option.value} value={option.value}>
             {option.label}
-          </option>
+          </NativeSelectOption>
         ))}
       </NativeSelect>
     </div>
