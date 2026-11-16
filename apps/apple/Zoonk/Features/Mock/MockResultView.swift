@@ -683,12 +683,15 @@ private struct MockInsightsSection: View {
             if let slowest, let target = slowest.targetSecondsPerQuestion {
               Text(
                 "\(Int(slowest.secondsPerQuestion.rounded())) seconds per \(slowest.name) question. Aim for \(Int(target.rounded())) or less.",
-                tableName: "Mock", comment: "The slowest area against the exam's pace")
+                tableName: "Mock",
+                comment:
+                  "A mock exam's result: the time spent on each question of its slowest subject.")
             }
             if result.unansweredAtTimeout > 0 {
               Text(
                 "\(result.unansweredAtTimeout) questions were left when time ran out.",
-                tableName: "Mock", comment: "Questions left at the end")
+                tableName: "Mock",
+                comment: "A mock exam's result: its questions left unanswered when time ran out.")
             }
           }
         }

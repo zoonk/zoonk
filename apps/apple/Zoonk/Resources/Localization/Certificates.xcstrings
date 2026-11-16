@@ -620,25 +620,25 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificado por cada nivel de curso, nivel de idioma y plan que completes."
+            "value" : "Un certificado por cada nivel de curso o de idioma y por cada plan que completes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificat pour chaque niveau de cours, niveau de langue et plan que tu termines."
+            "value" : "Un certificat pour chaque niveau de cours, niveau de langue ou plan terminé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificato per ogni livello di corso, livello linguistico e piano che completi."
+            "value" : "Un certificato ogni volta che completi un livello di un corso, un livello linguistico o un piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コースや言語の各レベル、学習計画を終えるたびに証明書がもらえます。"
+            "value" : "コースの各レベル、言語の各レベル、学習計画を終えるたびに証明書がもらえます。"
           }
         },
         "ko" : {
