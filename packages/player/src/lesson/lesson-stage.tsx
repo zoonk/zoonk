@@ -199,9 +199,12 @@ function getResultNext({
   state: LessonPlayerState;
   step: PlayableLibraryStep;
 }): LessonResultNext {
+  const isMiss = !result.isCorrect;
+
   return {
-    savedMistake: result.savedMistake && !result.isCorrect,
-    willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
+    savePending: isMiss && Boolean(result.savePending) && !state.unsavedAnswers,
+    savedMistake: isMiss && result.savedMistake,
+    willReturn: isMiss && state.queue.includes(step.id, state.position + 1),
   };
 }
 

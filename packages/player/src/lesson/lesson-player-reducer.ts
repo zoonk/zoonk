@@ -17,6 +17,7 @@ import {
   type LessonPlayerState,
   getCurrentStep,
 } from "./lesson-player-state";
+import { type LessonStepResult } from "./lesson-player-types";
 
 type ActionOf<TType extends LessonPlayerAction["type"]> = Extract<
   LessonPlayerAction,
@@ -69,22 +70,35 @@ function navigate(state: LessonPlayerState, action: ActionOf<"navigate">): Lesso
   return action.direction === "prev" ? goBack(state) : continueFrom(state);
 }
 
+/** The server's word on a saved miss goes to the attempt it answers, set aside by a retry or not. */
+function settleSave(
+  result: LessonStepResult | undefined,
+  action: ActionOf<"checkConfirmed">,
+): LessonStepResult | null {
+  return result && result.attemptId === action.attemptId
+    ? { ...result, savePending: false, savedMistake: action.savedMistake }
+    : null;
+}
+
 function confirmCheck(
   state: LessonPlayerState,
   action: ActionOf<"checkConfirmed">,
 ): LessonPlayerState {
-  const current = state.results[action.stepId];
+  const current = settleSave(state.results[action.stepId], action);
+  const first = state.firstAttempts[action.stepId];
+  const setAside = settleSave(first?.result, action);
 
-  if (!current || current.attemptId !== action.attemptId) {
+  if (!current && !setAside) {
     return state;
   }
 
   return {
     ...state,
-    results: {
-      ...state.results,
-      [action.stepId]: { ...current, savedMistake: action.result.savedMistake },
-    },
+    firstAttempts:
+      first && setAside
+        ? { ...state.firstAttempts, [action.stepId]: { ...first, result: setAside } }
+        : state.firstAttempts,
+    results: current ? { ...state.results, [action.stepId]: current } : state.results,
   };
 }
 

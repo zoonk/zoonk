@@ -237,40 +237,31 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   );
 }
 
-function CompletionAside() {
+function BuddyAside() {
   const t = useExtracted();
-  const { lesson } = useLessonPlayerConfig();
-
-  if (!lesson.summary) {
-    return <TaskAside label={t("Help with this screen")} />;
-  }
 
   return (
-    <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
-      <LessonMap map={lesson.summary} title={lesson.title} />
+    <TaskAside label={t("Help with this screen")}>
+      <TutorDock />
     </TaskAside>
   );
 }
 
 export function LessonAside() {
   const t = useExtracted();
-  const { slots } = useLessonPlayerConfig();
+  const { lesson, slots } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
 
-  if (state.phase === "map") {
+  if (state.phase === "completed" && !slots.completion && lesson.summary) {
     return (
-      <TaskAside label={t("Help with this screen")}>
-        <TutorDock />
+      <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
+        <LessonMap map={lesson.summary} title={lesson.title} />
       </TaskAside>
     );
   }
 
-  if (state.phase === "completed") {
-    return slots.completion ? (
-      <TaskAside label={t("Help with this screen")} />
-    ) : (
-      <CompletionAside />
-    );
+  if (state.phase === "map" || state.phase === "completed") {
+    return <BuddyAside />;
   }
 
   if (!screen.step) {

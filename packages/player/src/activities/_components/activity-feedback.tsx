@@ -132,7 +132,11 @@ export function ActivityFeedback({
       {check.kind === "interaction" && <FeedbackText>{check.explanation}</FeedbackText>}
 
       {notes && (
-        <LessonResultNote savedMistake={notes.savedMistake} willReturn={notes.willReturn} />
+        <LessonResultNote
+          savePending={notes.savePending}
+          savedMistake={notes.savedMistake}
+          willReturn={notes.willReturn}
+        />
       )}
     </FeedbackPanel>
   );

@@ -121,8 +121,9 @@ export function useHeldAnswers({
           .checkStep({ answer, attemptId, durationMs, runId: run.runId, stepId, usedHelp })
           .catch(() => null));
 
-      if (outcome?.status === "checked") {
-        dispatch({ attemptId, result: outcome.result, stepId, type: "checkConfirmed" });
+      if (outcome?.status === "checked" || outcome?.status === "refused") {
+        const savedMistake = outcome.status === "checked" && outcome.result.savedMistake;
+        dispatch({ attemptId, savedMistake, stepId, type: "checkConfirmed" });
       }
 
       if (!run || (outcome?.status !== "checked" && outcome?.status !== "refused")) {
