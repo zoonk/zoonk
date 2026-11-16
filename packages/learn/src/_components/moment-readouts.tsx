@@ -159,17 +159,19 @@ export function MomentReadouts({
           )}
 
           {earned && (
-            <p data-slot="moment-brain-power">
-              <BrainPowerReadout points={brainPower} />
-            </p>
+            <div className="flex flex-col gap-1.5">
+              <p data-slot="moment-brain-power">
+                <BrainPowerReadout points={brainPower} />
+              </p>
+
+              {intro && (
+                <p className="text-muted-foreground text-sm" data-slot="brain-power-intro">
+                  {t("Points for what you learn.")}
+                </p>
+              )}
+            </div>
           )}
         </div>
-      )}
-
-      {intro && (
-        <p className="text-muted-foreground -mt-1.5 text-sm" data-slot="brain-power-intro">
-          {t("Points for what you learn.")}
-        </p>
       )}
 
       <TaskMeta facts={facts} />
