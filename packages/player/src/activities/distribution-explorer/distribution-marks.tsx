@@ -1,9 +1,10 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
-import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
+import { DRAWING_LABEL_HALO, type LabelBox } from "../_utils/drawing-label";
 import { type PlotPoint } from "../_utils/sample-formula";
 import { type SnapRange } from "../_utils/snap-value";
 
@@ -114,20 +115,70 @@ export function DistributionTicks({
   );
 }
 
-export function DistributionTails({
+export function DistributionLabels({
   below,
   above,
   curve,
   handles,
+  target,
 }: {
+  target?: { from: number; to: number; label: string };
   above: string;
   below: string;
   curve: readonly PlotPoint[];
   handles: readonly [number, number];
 }) {
   const { x, y } = usePlotScales();
-  const [bottom] = y.range;
+  const [bottom, top] = y.range;
   const [left, right] = x.range;
+  const targetRef = useRef<SVGTextElement>(null);
+  const belowRef = useRef<SVGTextElement>(null);
+  const aboveRef = useRef<SVGTextElement>(null);
+
+  const layout = [above, below, target?.label, target?.from, target?.to, left, right, top].join(
+    "\n",
+  );
+
+  const [drawn, setDrawn] = useState<{
+    layout: string;
+    target?: LabelBox;
+    below: { width: number; height: number };
+    above: { width: number; height: number };
+  }>({ above: { height: 0, width: 0 }, below: { height: 0, width: 0 }, layout: "" });
+
+  useLayoutEffect(() => {
+    const nodes = [targetRef.current, belowRef.current, aboveRef.current];
+
+    const measure = () => {
+      const [targetBox, belowBox, aboveBox] = nodes.map((node) => node?.getBBox());
+
+      setDrawn({
+        above: { height: aboveBox?.height ?? 0, width: aboveBox?.width ?? 0 },
+        below: { height: belowBox?.height ?? 0, width: belowBox?.width ?? 0 },
+        layout,
+        target: targetBox
+          ? {
+              bottom: targetBox.y + targetBox.height,
+              left: targetBox.x,
+              right: targetBox.x + targetBox.width,
+              top: targetBox.y,
+            }
+          : undefined,
+      });
+    };
+
+    measure();
+    const resizes = new ResizeObserver(measure);
+
+    for (const node of nodes) {
+      if (node) {
+        resizes.observe(node);
+      }
+    }
+
+    return () => resizes.disconnect();
+  }, [layout]);
+
   const [from, to] = [x.toPixel(handles[0]), x.toPixel(handles[1])];
 
   const belowY = Math.min(
@@ -140,26 +191,74 @@ export function DistributionTails({
     ...curve.filter((point) => point.x >= handles[1]).map((point) => y.toPixel(point.y)),
   );
 
+  function labelBottom(
+    at: number,
+    preferred: number,
+    size: { width: number; height: number },
+    anchor: "start" | "end",
+  ) {
+    const labelLeft = anchor === "start" ? at : at - size.width;
+    const labelRight = labelLeft + size.width;
+    const box = drawn.layout === layout ? drawn.target : undefined;
+
+    if (
+      !box ||
+      labelRight + TAIL_GAP <= box.left ||
+      labelLeft - TAIL_GAP >= box.right ||
+      preferred + TAIL_GAP <= box.top ||
+      preferred - size.height - TAIL_GAP >= box.bottom
+    ) {
+      return preferred;
+    }
+
+    const line = curve.map((point) => ({ x: x.toPixel(point.x), y: y.toPixel(point.y) }));
+
+    const underLabel = line.filter(
+      (point, index) =>
+        (line[index - 1]?.x ?? point.x) <= labelRight + TAIL_GAP &&
+        (line[index + 1]?.x ?? point.x) >= labelLeft - TAIL_GAP,
+    );
+
+    return Math.max(box.bottom, ...underLabel.map((point) => point.y)) + TAIL_GAP + size.height;
+  }
+
   return (
-    <g aria-hidden="true" className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}>
-      {from - left >= MIN_TAIL_ROOM && (
-        <text textAnchor="end" x={from - TAIL_GAP} y={belowY - TAIL_GAP}>
-          {below}
-        </text>
-      )}
-      {right - to >= MIN_TAIL_ROOM && (
-        <text textAnchor="start" x={to + TAIL_GAP} y={aboveY - TAIL_GAP}>
-          {above}
-        </text>
-      )}
-    </g>
+    <>
+      {target && <DistributionTarget label={target.label} ref={targetRef} target={target} />}
+      <g aria-hidden="true" className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}>
+        {from - left >= MIN_TAIL_ROOM && (
+          <text
+            dominantBaseline="text-after-edge"
+            ref={belowRef}
+            textAnchor="end"
+            x={from - TAIL_GAP}
+            y={labelBottom(from - TAIL_GAP, belowY - TAIL_GAP, drawn.below, "end")}
+          >
+            {below}
+          </text>
+        )}
+        {right - to >= MIN_TAIL_ROOM && (
+          <text
+            dominantBaseline="text-after-edge"
+            ref={aboveRef}
+            textAnchor="start"
+            x={to + TAIL_GAP}
+            y={labelBottom(to + TAIL_GAP, aboveY - TAIL_GAP, drawn.above, "start")}
+          >
+            {above}
+          </text>
+        )}
+      </g>
+    </>
   );
 }
 
-export function DistributionTarget({
+function DistributionTarget({
+  ref,
   label,
   target,
 }: {
+  ref: React.Ref<SVGTextElement>;
   label: string;
   target: { from: number; to: number };
 }) {
@@ -176,7 +275,8 @@ export function DistributionTarget({
         strokeWidth={2}
       />
       <text
-        className={cn("fill-success text-xs font-semibold")}
+        className="fill-success text-xs font-semibold"
+        ref={ref}
         textAnchor="middle"
         x={(from + to) / 2}
         y={top - TARGET_LABEL_RISE}
