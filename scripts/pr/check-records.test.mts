@@ -291,4 +291,17 @@ describe("pr:media check with declared platform limits", () => {
     assert.match(printed, /cut not measurable on apple/u);
     assert.ok(oldResult.problems.some((problem) => problem.kind === "alignment"));
   });
+
+  it("prints limits only from captures the evaluator judged", async () => {
+    const stored = capture([shot({ file: "a.png" })], {
+      alignment: {
+        findings: [],
+        summary: { notMeasurable: ["one-height not measurable on android: stored claim"] },
+      },
+    });
+
+    const printed = formatCheck(await stored.check(), fixture.repository);
+
+    assert.doesNotMatch(printed, /stored claim/u);
+  });
 });
