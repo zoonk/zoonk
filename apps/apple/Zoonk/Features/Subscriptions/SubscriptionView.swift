@@ -483,7 +483,7 @@ struct PlusStatusView: View {
             .chip()
           }
 
-          if refusesPurchase {
+          if refusesPurchase, let alreadyHasPlus {
             alreadyHasPlus
           }
 
@@ -540,8 +540,9 @@ struct PlusStatusView: View {
     await web
   }
 
-  /// Main and Android say the same.
-  private var alreadyHasPlus: Text {
+  /// Main and Android say the same. Plus that Zoonk added says nothing here when its date line,
+  /// "You have Plus until…", already says it.
+  private var alreadyHasPlus: Text? {
     switch subscription.provider {
     case "apple":
       Text(
@@ -556,8 +557,7 @@ struct PlusStatusView: View {
         "You already have Plus through the Zoonk website.", tableName: "Subscriptions"
       )
     default:
-      Text(
-        "You already have Plus.", tableName: "Subscriptions")
+      dateLine == nil ? Text("You already have Plus.", tableName: "Subscriptions") : nil
     }
   }
 
