@@ -848,6 +848,11 @@
     --glyph-blank-start: 4;
   }
 
+  &:has(.lucide-award) {
+    --glyph-blank: 5;
+    --glyph-blank-start: 5;
+  }
+
   &:has(.lucide-ellipsis, .lucide-menu) {
     --glyph-blank: 3;
   }

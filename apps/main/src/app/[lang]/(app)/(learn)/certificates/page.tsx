@@ -6,8 +6,9 @@ import {
   CertificatesHeader,
   CertificatesScreen,
 } from "@zoonk/learn/certificates/list";
-import { PAGE_COLUMN_CLASS } from "@zoonk/learn/page";
+import { MEASURED_CLASS, PAGE_COLUMN_CLASS, pageMeasureClass } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getCertificateLinks } from "@zoonk/utils/certificate-links";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
@@ -65,7 +66,14 @@ function CertificatesSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
       <CertificatesBar back={BACK_HREF} />
-      <div className={`${PAGE_COLUMN_CLASS} flex flex-col gap-8`}>
+      <div
+        className={cn(
+          PAGE_COLUMN_CLASS,
+          MEASURED_CLASS,
+          pageMeasureClass("list"),
+          "flex flex-col gap-8",
+        )}
+      >
         <CertificatesHeader />
         <div className="grid gap-x-6 gap-y-7 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
           {Array.from({ length: 3 }, (_, index) => (

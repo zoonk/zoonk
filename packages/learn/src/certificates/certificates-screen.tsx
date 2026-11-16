@@ -212,7 +212,21 @@ export function CertificatesScreen({
   const empty = certificates.length === 0;
 
   return (
-    <DetailLayout bar={<CertificatesBar back={back} />} className="flex-1" data-slot="certificates">
+    <DetailLayout
+      bar={<CertificatesBar back={back} />}
+      bottomBar={
+        empty && (
+          <BottomBar>
+            <BottomBarActions>
+              <EnterLink href={continueHref}>{t("Continue learning")}</EnterLink>
+            </BottomBarActions>
+          </BottomBar>
+        )
+      }
+      className="flex-1"
+      data-slot="certificates"
+      measure="list"
+    >
       <CertificatesHeader />
 
       <DetailContent className="flex-1">
@@ -222,14 +236,6 @@ export function CertificatesScreen({
           <CertificateList certificates={certificates} />
         )}
       </DetailContent>
-
-      {empty && (
-        <BottomBar>
-          <BottomBarActions>
-            <EnterLink href={continueHref}>{t("Continue learning")}</EnterLink>
-          </BottomBarActions>
-        </BottomBar>
-      )}
     </DetailLayout>
   );
 }

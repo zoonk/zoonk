@@ -24,24 +24,23 @@ const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
-    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
+    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
-    isNext
-      ? "bg-muted -mx-2.5 my-0.5 rounded-lg border-b-0 px-2.5 before:inset-x-0"
-      : "before:-inset-x-2.5",
+    isNext && "before:bg-muted has-[[data-slot=today-row-open]:hover]:before:bg-muted border-b-0",
     THREE_LINES_CLASS,
   );
 }
 
 /**
  * While the row's own open runs, its time turns into the spinner in place. The row is its own
- * group: the next row also holds "Take the test", a busy button of its own.
+ * group: the next row also holds "Take the test", a busy button of its own. Its room fits "12 min",
+ * so a mission's mark before it keeps one place down the list.
  */
 function RowTime({ minutes }: { minutes: number }) {
   const formatDuration = useFormatDuration();
 
   return (
-    <span className="relative">
+    <span className="relative min-w-[6ch] text-end">
       <span className="group-has-[[data-slot=today-row-open][aria-busy=true]]/row:invisible">
         {formatDuration(minutes)}
       </span>
