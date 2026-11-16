@@ -180,7 +180,7 @@ export function GuitarFretboard(props: FretboardProps) {
   const board = (
     <div
       aria-hidden={onChange ? undefined : true}
-      className="grid w-full items-center select-none"
+      className="grid w-full min-w-max items-center select-none"
       data-slot="guitar-fretboard"
       style={gridColumns(Boolean(onChange))}
     >

@@ -23,7 +23,8 @@ const FOCUSABLE = "a[href],button,input,select,textarea,[tabindex]";
  * mouse a chevron button on that edge scrolls it (`labels` name the two). A row of chips keeps the
  * buttons on the chips' line. A `box` (a table, a code block, a keyboard) centers them on its
  * height and, while it scrolls and nothing inside it takes focus, takes keyboard focus itself; its
- * `label` says what scrolls.
+ * `label` says what scrolls. What scrolls is measured from its children's boxes, so a child is as
+ * wide as its content (`w-max` or `min-w-max`), not cut by its own width.
  */
 function HorizontalScroll({
   box,

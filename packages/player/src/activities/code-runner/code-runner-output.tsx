@@ -31,7 +31,9 @@ function OutputCell({
 
 function OutputText({ className, text }: { className?: string; text: string }) {
   return (
-    <pre className={cn("font-mono text-lg font-semibold whitespace-pre", className)}>{text}</pre>
+    <pre className={cn("min-w-max font-mono text-lg font-semibold whitespace-pre", className)}>
+      {text}
+    </pre>
   );
 }
 
@@ -151,7 +153,7 @@ export function CodeRunnerOutput({
 
       {run?.errorOutput && !isStale && (
         <ActivityHorizontalScroll box={{ label: t("Error") }}>
-          <pre className="text-muted-foreground font-mono text-xs whitespace-pre">
+          <pre className="text-muted-foreground min-w-max font-mono text-xs whitespace-pre">
             {run.errorOutput}
           </pre>
         </ActivityHorizontalScroll>
