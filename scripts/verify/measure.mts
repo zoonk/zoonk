@@ -232,6 +232,7 @@ export async function measureLoad(
     return {
       ...measurement,
       alignment: webCapture({
+        app: target.app,
         page: alignment,
         path: redactQuery(path),
         scheme: schemes[0] ?? "light",

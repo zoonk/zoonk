@@ -207,7 +207,7 @@ export async function AiPlusLearnersSection() {
   const { learners, prices, since } = await listPlusLearnerCosts();
   const spenders = learners.filter((learner) => learner.calls > 0).slice(0, LEARNER_ROWS);
 
-  const sinceLabel = formatDay(since);
+  const sinceLabel = formatDay(since, { year: false });
 
   return (
     <>
