@@ -138,6 +138,21 @@ describe(findNumberFormatFlaws, () => {
     ).toStrictEqual(["Groups 50 000.5 with a space; write 50.000,5."]);
   });
 
+  it("keeps every digit of a long number grouped with a space", () => {
+    expect(
+      findNumberFormatFlaws({
+        language: "en",
+        value: {
+          text: "It counts 9 007 199 254 740 993 grains, or 50 000.123456789123 kg, of 9007199254740993.",
+        },
+      }),
+    ).toStrictEqual([
+      "Writes 9007199254740993 without grouping its digits; write 9,007,199,254,740,993.",
+      "Groups 9 007 199 254 740 993 with a space; write 9,007,199,254,740,993.",
+      "Groups 50 000.123456789123 with a space; write 50,000.123456789123.",
+    ]);
+  });
+
   it("finds a number grouped with a space right after a plus in math", () => {
     expect(
       findNumberFormatFlaws({ language: "en", value: { math: String.raw`x+50\,000` } }),
