@@ -11,7 +11,13 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
-import { WEEK_DAY_CLASS, WeekDayLetter, WeekDayRing, getDayShare } from "../_components/week-row";
+import {
+  WEEK_DAY_CLASS,
+  WeekDayLetter,
+  WeekDayRing,
+  getDayShare,
+  isMissed,
+} from "../_components/week-row";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
@@ -37,10 +43,6 @@ function useWeekDate(): Date {
   const { today } = useTodayScreen();
 
   return today.session.week.days.find((day) => day.isToday)?.date ?? today.session.localDate;
-}
-
-function isMissed(day: WeekDay, localDate: Date): boolean {
-  return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
 }
 
 function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }) {

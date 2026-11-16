@@ -50,7 +50,7 @@ export function getDayShare(day: WeekDay): number {
   return Math.min(1, day.minutes / day.goalMinutes);
 }
 
-function isMissed(day: WeekDay, localDate: Date): boolean {
+export function isMissed(day: WeekDay, localDate: Date): boolean {
   return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
 }
 

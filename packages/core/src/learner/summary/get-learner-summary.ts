@@ -66,6 +66,23 @@ async function toSummaryGoals({
   countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
   phaseFacts: readonly PlanPhaseFacts[];
 }): Promise<LearnerSummaryGoal[]> {
+  const blueprintIds = [
+    ...new Set(
+      countries.flatMap(({ goal }) =>
+        goal.status !== "archived" && goal.kind === "exam" && goal.examBlueprintId
+          ? [goal.examBlueprintId]
+          : [],
+      ),
+    ),
+  ];
+
+  const blueprints =
+    blueprintIds.length > 0
+      ? await prisma.examBlueprint.findMany({ where: { id: { in: blueprintIds } } })
+      : [];
+
+  const byId = new Map(blueprints.map((blueprint) => [blueprint.id, blueprint]));
+
   return Promise.all(
     countries
       .filter(({ goal }) => goal.status !== "archived")
@@ -75,7 +92,10 @@ async function toSummaryGoals({
           ? phaseFacts.find((facts) => facts.goalId === goal.id)
           : undefined;
 
-        const dateKind = await loadGoalDateKind(goal);
+        const dateKind = await loadGoalDateKind(
+          goal,
+          goal.examBlueprintId ? (byId.get(goal.examBlueprintId) ?? null) : null,
+        );
 
         return {
           ...countryView,
