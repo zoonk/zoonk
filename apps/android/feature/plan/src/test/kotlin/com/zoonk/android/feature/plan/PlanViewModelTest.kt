@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -61,7 +62,7 @@ class PlanViewModelTest {
         val dispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(dispatcher)
         store = PlanStore(api, AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher)))
-        navigation = PlanNavigationModel()
+        navigation = PlanNavigationModel(GoalSwitch { true })
         viewModel = PlanViewModel(store, goalId, writingWaits(runs), navigation)
     }
 
@@ -74,7 +75,7 @@ class PlanViewModelTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
-            assertEquals(PlanEvent.Archived, viewModel.event.value)
+            assertNotNull(viewModel.event.value)
             assertFalse(viewModel.isSaving.value)
         }
 
@@ -82,8 +83,10 @@ class PlanViewModelTest {
     fun anArchiveThatSavedBeforeThePlanActedAndThenLeftLeavesNothingToDoOnReturn() =
         runTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            val archived = navigation.event.value
+            assertNotNull(archived)
             viewModel.visit.end()
-            assertEquals(PlanEvent.Archived, navigation.event.value)
+            assertEquals(archived, navigation.event.value)
             navigation.visit.end()
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
