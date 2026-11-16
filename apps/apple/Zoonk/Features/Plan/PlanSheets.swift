@@ -13,6 +13,10 @@ enum PlanSheet: Identifiable, Hashable {
   case country
 
   var id: Self { self }
+
+  var isSuggestion: Bool {
+    if case .suggestion = self { true } else { false }
+  }
 }
 
 extension View {
@@ -44,12 +48,6 @@ private struct PlanSheets: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      // However a suggestion's sheet closes, its opening ends.
-      .onChange(of: sheet) { closed, _ in
-        if case .suggestion = closed {
-          context.slotChecks.leave()
-        }
-      }
       .sheet(item: $sheet, onDismiss: doThen) { sheet in
         Group {
           switch sheet {

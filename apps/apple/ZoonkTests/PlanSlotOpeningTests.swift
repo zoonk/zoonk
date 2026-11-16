@@ -21,6 +21,27 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes, [], "Put off, the offer adds nothing")
   }
 
+  /// Review of `a840fd3f5b`: the plan is read again into one whose shown suggestion is another, so
+  /// the card that asked is gone though nobody put it off or paged.
+  func testARefreshIntoAnotherSuggestionDropsAnAddStillWaiting() async throws {
+    let api = try await waitingAdd()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    await api.waitForHeldCall()
+    await api.setPlan(try goalPlanFixture(status: "needsAdjusting", fitOffer: Self.offer))
+    await api.setChanged(true)
+    await plans.plan(goalId: "goal").refresh()
+    try await settle()
+    XCTAssertTrue(
+      spoken(in: window).contains(String(localized: "More lessons than days left", table: "Plan")),
+      "Another suggestion shows: \(spoken(in: window))")
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [], "Its card gone, the offer adds nothing")
+  }
+
   func testPagingPastDropsAnAddStillWaiting() async throws {
     let api = try await waitingAdd(tooTight: true)
     let window = try await showPlan(api: api, width: .wide)
@@ -67,6 +88,53 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes.count, 1, "The offer adds once")
   }
 
+  /// PR comment 34: "Get your certificate" in the finished plan's sheet, the sheet closed before the
+  /// claim answers. Nothing opens then, nor when another of the Plan's sheets closes later.
+  func testClosingTheSheetDropsAClaimStillWaiting() async throws {
+    let claims = HeldClaims()
+    let router = AppRouter()
+    let window = try await showPlan(
+      api: try await finishedPlan(), width: .narrow, claims: claims, router: router)
+
+    try activate(String(localized: "View", table: "Plan"), in: window)
+    try await settle()
+    try activate(Self.claim, in: window)
+    await claims.waitUntilAsked()
+    try close(in: window)
+    try await settle()
+    await claims.answer()
+    try await settle()
+    XCTAssertNil(router.sheet, "Nothing opens once its sheet closed")
+
+    try activate(String(localized: "View", table: "Plan"), in: window)
+    try await settle()
+    try close(in: window)
+    try await settle()
+    try await settle()
+    XCTAssertNil(router.sheet, "Nor when a later sheet closes")
+  }
+
+  /// The sheet stays open while the window turns wide: what the claim earned opens, once.
+  func testAClaimStillShownThroughAResizeOpensWhatItEarned() async throws {
+    let claims = HeldClaims()
+    let router = AppRouter()
+    let window = try await showPlan(
+      api: try await finishedPlan(), width: .narrow, claims: claims, router: router)
+
+    try activate(String(localized: "View", table: "Plan"), in: window)
+    try await settle()
+    try activate(Self.claim, in: window)
+    await claims.waitUntilAsked()
+    window.frame = Width.wide.frame
+    try await settle()
+    await claims.answer()
+    try await settle()
+    try await settle()
+
+    XCTAssertEqual(router.sheet, .account(.certificates), "The certificates open")
+  }
+
+  private static let claim = String(localized: "Get your certificate", table: "Plan")
   private static let add = String(localized: "Add to my plan", table: "Plan")
   /// The pager, with one other suggestion.
   private static let more = String(localized: "\(1) more", table: "Plan")
@@ -83,12 +151,17 @@ final class PlanSlotOpeningTests: XCTestCase {
     }
   }
 
+  private static let offer = """
+    {"canApply":false,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
+     "operations":[{"kind":"addLessons","count":6}]}
+    """
+
+  /// The store the shown Plan reads.
+  private var plans: PlanStore!
+
   /// A plan offering 6 more lessons, whose check today finds the same 6 once it's let through.
   private func waitingAdd(tooTight: Bool = false) async throws -> PlanAPIStub {
-    let offer = """
-      {"canApply":false,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
-       "operations":[{"kind":"addLessons","count":6}]}
-      """
+    let offer = Self.offer
     let api = PlanAPIStub()
     await api.setPlan(
       try goalPlanFixture(status: tooTight ? "needsAdjusting" : "onTrack", fitOffer: offer))
@@ -120,6 +193,20 @@ final class PlanSlotOpeningTests: XCTestCase {
     ((view as? Kind).map { [$0] } ?? []) + view.subviews.flatMap { views(kind, in: $0) }
   }
 
+  /// A finished plan whose certificate the learner hasn't claimed yet.
+  private func finishedPlan() async throws -> PlanAPIStub {
+    let api = PlanAPIStub()
+    await api.setPlan(try goalPlanFixture(end: "finished"))
+    await api.setPlanEnd(
+      try JSONDecoder().decode(
+        PlanEnd.self,
+        from: Data(
+          #"""
+          {"certificates": {"earned": [], "unclaimed": [{"courseLevel": null}]}, "next": null}
+          """#.utf8)))
+    return api
+  }
+
   /// The held check answers, and the Plan settles.
   private func answer(_ api: PlanAPIStub) async throws {
     try await settle()
@@ -128,7 +215,9 @@ final class PlanSlotOpeningTests: XCTestCase {
     try await settle()
   }
 
-  private func showPlan(api: PlanAPIStub, width: Width) async throws -> UIWindow {
+  private func showPlan(
+    api: PlanAPIStub, width: Width, claims: HeldClaims? = nil, router: AppRouter = AppRouter()
+  ) async throws -> UIWindow {
     try readsWhatVoiceOverReads()
     let dependencies = AppDependencies(
       clients: APIClientFactory(
@@ -136,13 +225,18 @@ final class PlanSlotOpeningTests: XCTestCase {
       session: .preview(account: .planTestAccount), imageLoader: .live(),
       subscriptionStore: .live(), learnerSummaryAPI: OneLearnGoal())
     await dependencies.learnerSummaryStore.summary.load()
+    let certificates = claims.map {
+      CertificatesStore(api: $0, cache: dependencies.cache)
+    }
+    plans = PlanStore(api: api, cache: dependencies.cache)
     let window = try show(
       NavigationStack {
         PlanScreen()
       }
-      .environment(PlanStore(api: api, cache: dependencies.cache))
+      .environment(plans)
+      .environment(certificates ?? dependencies.certificatesStore)
       .appDependencies(dependencies)
-      .environment(AppRouter())
+      .environment(router)
       .zoonkStyles())
     window.frame = width.frame
     try await settle()
@@ -153,6 +247,47 @@ final class PlanSlotOpeningTests: XCTestCase {
   private func settle() async throws {
     try await Task.sleep(for: .milliseconds(400))
   }
+}
+
+/// A claim that answers when the test says, with two certificates already shown before, so the
+/// Plan opens the learner's certificates.
+private actor HeldClaims: CertificatesAPIClient {
+  private var asked: CheckedContinuation<Void, Never>?
+  private var askedWaiter: CheckedContinuation<Void, Never>?
+
+  func waitUntilAsked() async {
+    guard asked == nil else {
+      return
+    }
+
+    await withCheckedContinuation { askedWaiter = $0 }
+  }
+
+  func answer() {
+    asked?.resume()
+    asked = nil
+  }
+
+  func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] {
+    await withCheckedContinuation { continuation in
+      asked = continuation
+      askedWaiter?.resume()
+      askedWaiter = nil
+    }
+
+    return ["COURSE000001", "COURSE000002"].map {
+      ClaimedCertificate(
+        facts: CertificateFacts(
+          code: $0, kind: .course, recipientName: "Ana Souza", completedOn: "2026-11-03",
+          title: "Finance", courseLevel: nil, targetLanguage: nil, level: nil, topics: [],
+          canDo: [], lessonsStudied: 10, lessonsTestedOut: 0, minutes: 120, locked: false),
+        wasShown: true)
+    }
+  }
+
+  func list(token: String) async throws -> [OwnedCertificate] { [] }
+  func markShown(token: String, code: String) async throws {}
+  func upNext(token: String) async throws -> [CertificateUpNext] { [] }
 }
 
 /// One goal, "goal", whose Plan shows.

@@ -54,7 +54,7 @@ const OWNERS: Record<string, string> = {
   "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
-  "Features/Plan/PlanScreen.swift: alphabetSkip, certificateClaim, nextLevel, rebuildRetry, slotAnswer?.editor, slotChecks":
+  "Features/Plan/PlanScreen.swift: alphabetSkip, rebuildRetry, slotAnswer?.editor, slotChecks":
     "The Plan, which holds its PaneSplit.",
   "Features/PlanLink/PlanLinkScreen.swift: startTask": "A shared plan's page has no split.",
   "Features/Player/Views/LessonEndViews.swift: starting":

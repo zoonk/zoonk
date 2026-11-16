@@ -184,9 +184,7 @@ private struct PlanContent: View {
   @State private var isReporting = false
   @State private var claimed: [CertificateFacts] = []
   @State private var slotAnswer: PlanSlotAnswer?
-  @State private var certificateClaim = CertificateClaim()
   @State private var slotChecks = PlanSlotChecks()
-  @State private var nextLevel = VisitRequest<Bool>()
   @State private var alphabetSkip = VisitRequest<Bool>()
   @State private var rebuildRetry = VisitRequest<Bool>()
   /// The new plan arrived while the learner watched; gone on the next visit.
@@ -201,8 +199,9 @@ private struct PlanContent: View {
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
-      certificateClaim: certificateClaim, slotChecks: slotChecks, nextLevel: nextLevel,
-      alphabetSkip: alphabetSkip)
+      slotChecks: slotChecks, alphabetSkip: alphabetSkip)
+    let opening = SuggestionOpening(
+      item: context.suggestions(in: store).shown, plan: plan, inSheet: sheet?.isSuggestion == true)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -275,15 +274,11 @@ private struct PlanContent: View {
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
     )
-    // Putting the suggestion off or paging past it, in this window or another, ends its opening.
-    .onChange(of: store.suggestionState(goalId: goal.id).dismissed) { slotChecks.leave() }
-    .onChange(of: store.suggestionState(goalId: goal.id).position) { slotChecks.leave() }
+    .onChange(of: opening) { slotChecks.leave() }
     .onDisappear {
       slotAnswer?.editor.cancel()
       slotAnswer = nil
       alphabetSkip.leave()
-      certificateClaim.leave()
-      nextLevel.leave()
       rebuildRetry.leave()
       slotChecks.leave()
     }
@@ -405,14 +400,20 @@ struct PlanContext {
   var claimCertificate: () async -> PlanClaim? = { nil }
   var showClaim: (PlanClaim) -> Void = { _ in }
   /// The screen's, above its panes.
-  var certificateClaim = CertificateClaim()
   var slotChecks = PlanSlotChecks()
-  /// The finished plan's "Continue at" the next level; true once it started.
-  var nextLevel = VisitRequest<Bool>()
   /// A language plan's "I can already read it"; true once the alphabet is skipped.
   var alphabetSkip = VisitRequest<Bool>()
 
   var isPaused: Bool { goal.status == .paused }
+}
+
+/// One opening of the Plan's suggestion: the one shown, the plan it's from, and whether its sheet is
+/// open. Whatever changes it (put off, paged past, a refresh that shows another, its sheet closed,
+/// another goal) ends what the opening asked for.
+private struct SuggestionOpening: Equatable {
+  let item: PlanSlotItem?
+  let plan: GoalPlan
+  let inSheet: Bool
 }
 
 /// Main's notice above the roadmap while the plan is rebuilt for a new content country: the old plan

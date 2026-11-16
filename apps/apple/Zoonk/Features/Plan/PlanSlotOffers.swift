@@ -634,7 +634,9 @@ struct PlanFitSlot: View {
     defer { check.isWorking = false }
     check.failed = false
 
-    switch await store.addFitOffer(offer, goalId: context.goal.id, apply: actions.apply) {
+    let landing: ([PlanEdit]) -> Void = { [actions] edits in check.land { actions.apply(edits) } }
+
+    switch await store.addFitOffer(offer, goalId: context.goal.id, apply: landing) {
     case .repriced(let repriced): check.repriced = repriced
     case .failed: check.failed = true
     case .applied, nil: break
@@ -692,48 +694,66 @@ func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
 }
 
 extension PlanContext {
-  /// The check `item`'s card keeps for the plan shown now.
-  func slotCheck(_ item: PlanSlotItem) -> PlanSlotCheck {
-    slotChecks.check(item, goalId: goal.id, plan: plan)
+  /// What `item`'s card asks for (its offer's check, its certificate claim, the next level), kept
+  /// for the opening shown now.
+  func slotCheck(_ item: PlanSlotItem, request: PlanSlotChecks.Request = .offer) -> PlanSlotCheck {
+    slotChecks.check(item, request: request, goalId: goal.id, plan: plan)
   }
 }
 
-/// What the Plan's suggestion cards are checking and what they found, kept by the Plan above its
-/// panes: a card is drawn again as the Plan splits into panes or joins them, and its check goes on
-/// and shows there, or in the sheet the line opens. A check is an answer about one plan: once the
-/// Plan shows another (Adjust plan, a refresh that read a change), the card starts clean. A check
-/// also belongs to the suggestion's opening: the Plan calls `leave()` as that ends (put off, paged
-/// past, its sheet closed) and as the Plan closes, so a check still out applies and shows nothing.
+/// What the Plan's suggestions asked for and what they found, kept by the Plan above its panes: a
+/// card is drawn again as the Plan splits into panes or joins them, and its check goes on and shows
+/// there, or in the sheet the line opens. Each belongs to an opening of its suggestion, which lasts
+/// while the same suggestion shows, from the same plan, in its sheet or out of it; the Plan calls
+/// `leave()` whenever any of that changes, whatever changed it, and as it closes. What an opening
+/// asked for lands only while it's still the one shown (`PlanSlotCheck.land`), and the next opening
+/// starts clean.
 @MainActor
+@Observable
 final class PlanSlotChecks {
+  enum Request: Hashable {
+    case offer
+    case claim
+    case nextLevel
+  }
+
   private struct Key: Hashable {
     let goalId: String
     let item: PlanSlotItem
+    let request: Request
   }
 
   private struct Kept {
     let plan: GoalPlan
+    let opening: Int
     let check: PlanSlotCheck
   }
 
-  private var checks: [Key: Kept] = [:]
+  /// The opening shown now.
+  private(set) var opening = 0
+  @ObservationIgnored private var checks: [Key: Kept] = [:]
 
-  func check(_ item: PlanSlotItem, goalId: String, plan: GoalPlan) -> PlanSlotCheck {
-    let key = Key(goalId: goalId, item: item)
+  func check(
+    _ item: PlanSlotItem, request: Request, goalId: String, plan: GoalPlan
+  ) -> PlanSlotCheck {
+    let key = Key(goalId: goalId, item: item, request: request)
 
-    if let kept = checks[key], kept.plan == plan {
+    if let kept = checks[key], kept.plan == plan, kept.opening == opening {
       return kept.check
     }
 
     checks[key]?.check.leave()
-    let check = PlanSlotCheck()
-    checks[key] = Kept(plan: plan, check: check)
+    let opening = opening
+    let check = PlanSlotCheck { [weak self] in self?.opening == opening }
+    checks[key] = Kept(plan: plan, opening: opening, check: check)
     return check
   }
 
-  /// Ends every check: what one was waiting for, found or failed at shows nothing afterward. One
-  /// suggestion shows at a time, so its opening's end ends them all.
+  /// Ends the opening shown: what it asked for lands nowhere, and what it found or failed at shows
+  /// nothing afterward.
   func leave() {
+    opening += 1
+
     for kept in checks.values {
       kept.check.leave()
     }
@@ -761,9 +781,22 @@ final class PlanSlotCheck {
   var failed = false
   var noDate = false
   @ObservationIgnored private let tasks = ScreenTasks()
+  @ObservationIgnored private let isShown: () -> Bool
+
+  fileprivate init(isShown: @escaping () -> Bool) {
+    self.isShown = isShown
+  }
 
   func run(_ work: @escaping @MainActor () async -> Void) {
     tasks.run(work)
+  }
+
+  /// What an answer does outside its card (adding lessons, opening what a claim earned), only while
+  /// the opening that asked is still the one shown.
+  func land(_ effect: () -> Void) {
+    if isShown() {
+      effect()
+    }
   }
 
   fileprivate func leave() {

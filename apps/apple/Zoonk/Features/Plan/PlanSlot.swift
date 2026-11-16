@@ -56,6 +56,23 @@ enum PlanSlotItem: Hashable {
   }
 }
 
+extension PlanContext {
+  /// The suggestions the plan offers now, without those put off, and the one paged to.
+  func suggestions(in store: PlanStore) -> (items: [PlanSlotItem], index: Int, shown: PlanSlotItem?)
+  {
+    let state = store.suggestionState(goalId: goal.id)
+    let unclaimed =
+      goal.kind == .exam ? store.planEnd(goalId: goal.id).value?.certificates?.unclaimed ?? [] : []
+    let items = PlanSlotItem.items(
+      plan: plan, isPaused: isPaused, courseComplete: !unclaimed.isEmpty
+    )
+    .filter { !state.dismissed.contains($0) }
+
+    let index = min(state.position, max(items.count - 1, 0))
+    return (items, index, items.indices.contains(index) ? items[index] : nil)
+  }
+}
+
 /// An answer given in the suggestion slot and the editor that saved it. Its screen keeps it above
 /// the panes a fold rebuilds, for its window alone, as main keeps it for one page.
 struct PlanSlotAnswer {
@@ -106,13 +123,7 @@ struct PlanSuggestionSection: View {
   private var shown:
     (items: [PlanSlotItem], index: Int, applied: (change: AppliedPlanChange, sentence: String)?)
   {
-    let state = store.suggestionState(goalId: context.goal.id)
-    let isExam = context.goal.kind == .exam
-    let unclaimed =
-      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
-    let items = PlanSlotItem.items(
-      plan: context.plan, isPaused: context.isPaused, courseComplete: !unclaimed.isEmpty
-    ).filter { !state.dismissed.contains($0) }
+    let (items, index, _) = context.suggestions(in: store)
     let answer = currentAnswer
     let applied: (change: AppliedPlanChange, sentence: String)? =
       if case .applied(let change, let sentence) = answer?.editor.latest, answer?.isOver == false {
@@ -121,7 +132,7 @@ struct PlanSuggestionSection: View {
         nil
       }
 
-    return (items, min(state.position, max(items.count - 1, 0)), applied)
+    return (items, index, applied)
   }
 
   /// The sheet closes once its suggestion stops showing: answered, put off or paged past.
@@ -385,7 +396,7 @@ struct PlanSuggestionSection: View {
   /// "Beginner complete" when the claim certifies one level, else "Course complete".
   /// A claim that didn't save takes the done mark off its line.
   private var claimMark: SuggestionMark.Kind {
-    context.certificateClaim.failed ? .alert : .done
+    context.slotCheck(.courseComplete, request: .claim).failed ? .alert : .done
   }
 
   private var completeTitle: Text {
@@ -480,7 +491,7 @@ struct PlanSuggestionSection: View {
       PlanCoverageSlot(context: context, title: text, asksAtOnce: !isInline, actions: offers)
     case .courseComplete:
       PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
-        CertificateClaimButton(context: context)
+        CertificateClaimButton(context: context, item: .courseComplete)
       }
     case .finished:
       PlanFinishedSlot(context: context)
@@ -678,11 +689,13 @@ struct PlanStatement: View {
 /// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
 struct CertificateClaimButton: View {
   let context: PlanContext
+  /// The suggestion it's in, whose opening the claim belongs to.
+  let item: PlanSlotItem
 
   var body: some View {
-    let claim = context.certificateClaim
+    let claim = context.slotCheck(item, request: .claim)
 
-    BusyButton(isBusy: claim.isClaiming, icon: .certificate) {
+    BusyButton(isBusy: claim.isWorking, icon: .certificate) {
       claim.claim(context)
     } label: {
       Text(
@@ -697,40 +710,23 @@ struct CertificateClaimButton: View {
   }
 }
 
-/// The Plan's claim, not its button's: the button is drawn again as the Plan splits into panes or
-/// joins them, and what the claim earned still plays. The Plan calls `leave()` as it closes; then
-/// the claim shows nothing, and what it earned plays with the learner's next result.
-@MainActor
-@Observable
-final class CertificateClaim {
-  private(set) var isClaiming = false
-  private(set) var failed = false
-  @ObservationIgnored private var sent: Task<Void, Never>?
-
+extension PlanSlotCheck {
+  /// The claim is the Plan's, not its button's: the button is drawn again as the Plan splits into
+  /// panes or joins them, and what the claim earned still plays. Once its opening ends, what it
+  /// earned opens nothing and plays with the learner's next result.
   func claim(_ context: PlanContext) {
-    isClaiming = true
-    sent = Task {
+    isWorking = true
+    failed = false
+
+    run {
       let claim = await context.claimCertificate()
-
-      guard !Task.isCancelled else {
-        return
-      }
-
-      isClaiming = false
-      failed = claim == nil
+      self.isWorking = false
+      self.failed = claim == nil
 
       if let claim {
-        context.showClaim(claim)
+        self.land { context.showClaim(claim) }
       }
     }
-  }
-
-  /// What it earned, or that it failed, shows nothing on the next visit.
-  func leave() {
-    sent?.cancel()
-    sent = nil
-    isClaiming = false
-    failed = false
   }
 }
 
@@ -795,7 +791,7 @@ private struct PlanFinishedSlot: View {
         if certificates.unclaimed.isEmpty {
           PlanCertificatesButton(context: context, earned: certificates.earned)
         } else {
-          CertificateClaimButton(context: context)
+          CertificateClaimButton(context: context, item: .finished)
         }
       }
 
@@ -807,7 +803,7 @@ private struct PlanFinishedSlot: View {
         .foregroundStyle(.mutedForeground)
 
         if let level = value.nextLevel {
-          BusyButton(isBusy: context.nextLevel.isRunning, icon: .play) {
+          BusyButton(isBusy: start.isWorking, icon: .play) {
             continueAtNextLevel()
           } label: {
             Text(
@@ -828,7 +824,7 @@ private struct PlanFinishedSlot: View {
         }
       }
 
-      if context.nextLevel.outcome == false {
+      if start.failed {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Plan",
@@ -840,12 +836,24 @@ private struct PlanFinishedSlot: View {
     .loads(end, refreshable: false)
   }
 
+  /// "Continue at" the next level, the finished plan's own.
+  private var start: PlanSlotCheck {
+    context.slotCheck(.finished, request: .nextLevel)
+  }
+
   private func continueAtNextLevel() {
-    context.nextLevel.run { [store, goalId = context.goal.id] in
-      switch await store.continueAtNextLevel(goalId: goalId) {
-      case .done(let started): started
-      case .failed: false
-      case .obsolete: nil
+    let start = start
+    start.isWorking = true
+    start.failed = false
+
+    start.run { [store, goalId = context.goal.id] in
+      let result = await store.continueAtNextLevel(goalId: goalId)
+      start.isWorking = false
+
+      switch result {
+      case .done(let started): start.failed = !started
+      case .failed: start.failed = true
+      case .obsolete: break
       }
     }
   }
