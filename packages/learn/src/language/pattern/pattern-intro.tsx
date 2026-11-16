@@ -146,7 +146,7 @@ export function TyposNote({ pattern }: { pattern: MistakePatternView }) {
       <PageTitle>{t("Just typos")}</PageTitle>
       <p className="text-muted-foreground text-pretty">
         {t(
-          "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice.",
+          "Your recent mistakes were typos, not a rule you're missing. There's nothing to practice.",
         )}
       </p>
       {pattern.rule && <p className="mt-2 text-pretty">{pattern.rule}</p>}

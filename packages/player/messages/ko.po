@@ -3417,9 +3417,9 @@ msgid "What you practiced"
 msgstr "연습한 내용"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "gvZdep"
-msgid "Practice “{skill}” · {time}"
-msgstr "“{skill}” 연습 · {time}"
+msgctxt "2thi6d"
+msgid "Try it yourself"
+msgstr "직접 해 보기"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"

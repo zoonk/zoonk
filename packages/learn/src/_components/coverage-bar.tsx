@@ -45,7 +45,7 @@ function LegendItem({ state }: { state: CoverageState }) {
   const t = useExtracted();
 
   const marks: Record<CoverageState, { className: string; label: string }> = {
-    known: { className: "bg-muted-foreground/70", label: t("Known") },
+    known: { className: "bg-muted-foreground/70", label: t("Already knew") },
     new: { className: "ring-muted-foreground/70 ring-1 ring-inset", label: t("New") },
     studied: { className: "bg-success", label: t("Studied") },
     today: { className: "ring-success ring-1 ring-inset", label: t("Today") },

@@ -309,7 +309,7 @@ export function OtherOptions({
       )}
       {course && !course.on && !studyEverythingLeads && (
         <DropdownMenuItem onClick={() => studyEverything(course)}>
-          {course.isExam ? keepStudying : t("Study everything")}
+          {course.isExam ? keepStudying : t("Remove end date")}
         </DropdownMenuItem>
       )}
       <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>

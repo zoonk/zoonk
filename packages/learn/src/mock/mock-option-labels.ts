@@ -58,8 +58,10 @@ export function useMockOptionSize() {
   const duration = useFormatDuration();
 
   return (option: Pick<MockOptionView, "minutes" | "questions">): string =>
-    t("{count, plural, one {# question} other {# questions}} · {time}", {
-      count: option.questions,
-      time: duration(option.minutes),
+    t({
+      description: "A mock exam's size: its number of questions, then its time limit.",
+      id: "mockQuestionsAndTime",
+      message: "{count, plural, one {# question} other {# questions}} · {time}",
+      values: { count: option.questions, time: duration(option.minutes) },
     });
 }

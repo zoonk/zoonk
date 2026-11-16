@@ -184,6 +184,7 @@ function AttachableGoalEntry({
       defaultGoal={defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
+      hasAccount={canAttach}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={onSubmit}
       signUpHref={routes.signUp}

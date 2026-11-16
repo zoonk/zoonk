@@ -10,7 +10,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
+import { CalendarX2Icon, LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
@@ -93,11 +93,17 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
         <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
         <Button
           busy={isPending}
-          icon={<ListPlusIcon aria-hidden="true" />}
+          icon={
+            course.isExam ? (
+              <ListPlusIcon aria-hidden="true" />
+            ) : (
+              <CalendarX2Icon aria-hidden="true" />
+            )
+          }
           onClick={() => void choose()}
           size="lg"
         >
-          {course.isExam ? t("Keep studying") : t("Study everything")}
+          {course.isExam ? t("Keep studying") : t("Remove end date")}
         </Button>
       </DrawerFooter>
     </>
@@ -122,7 +128,7 @@ function StudyEverythingSheet({
       <DrawerPopup>
         <SheetHeader>
           <div className="flex flex-col gap-1">
-            <DrawerTitle>{course.isExam ? keepStudying : t("Study everything")}</DrawerTitle>
+            <DrawerTitle>{course.isExam ? keepStudying : t("Remove end date")}</DrawerTitle>
             <DrawerDescription>
               {course.isExam
                 ? t("You study every topic. What doesn't fit before the exam comes after it.")
@@ -200,7 +206,7 @@ export function StudyEverything({ course }: { course: FullCourse }) {
       type="button"
       variant="outline"
     >
-      {course.isExam ? keepStudying : t("Study everything")}
+      {course.isExam ? keepStudying : t("Remove end date")}
     </Button>
   );
 }

@@ -178,9 +178,9 @@ msgstr "Noch nicht genug kostenlose Lektionen für diese Mindmap"
 
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
-msgctxt "9U6D5-"
-msgid "Known"
-msgstr "Bekannt"
+msgctxt "kP0umu"
+msgid "Already knew"
+msgstr "Schon gewusst"
 
 #: src/_components/coverage-bar.tsx
 #: src/_utils/use-state-label.ts
@@ -1613,9 +1613,7 @@ msgid "Copy"
 msgstr "Kopieren"
 
 #: src/certificates/certificate-details.tsx
-#: src/journey/journey-hero.tsx
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/today/today-preparation.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Level"
@@ -1836,7 +1834,7 @@ msgid "Start this course"
 msgstr "Diesen Kurs starten"
 
 #: src/certificates/certificate-meaning.tsx
-#: src/onboarding/how-it-works.tsx
+#: src/onboarding/free-start-note.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
 msgstr "Starte kostenlos, ohne Konto."
@@ -2030,9 +2028,9 @@ msgid "Your next certificate"
 msgstr "Dein nächstes Zertifikat"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ybfjqu"
-msgid "A certificate for every level and plan you finish."
-msgstr "Ein Zertifikat für jedes abgeschlossene Level und jeden abgeschlossenen Plan."
+msgctxt "xQ7ze5"
+msgid "A certificate for every course level, language level and plan you finish."
+msgstr "Ein Zertifikat für jedes abgeschlossene Kurs- und Sprachlevel und jeden abgeschlossenen Plan."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2144,12 +2142,7 @@ msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # s
 msgstr "{lessons, plural, =0 {Morgen noch einmal.} one {Morgen noch einmal, nach # kurzen Lektion.} other {Morgen noch einmal, nach # kurzen Lektionen.}}"
 
 #: src/challenge/challenge-intro-parts.tsx
-#: src/exam/exam-format-section.tsx
-#: src/exam/exam-map-section.tsx
-#: src/exam/exam-next-mock.tsx
 #: src/session/use-block-copy.ts
-#: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-section.tsx
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
 msgctxt "UIUcbm"
@@ -2216,15 +2209,12 @@ msgstr "Wöchentliche Herausforderung"
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-answer-sheet.tsx
-#: src/mock/mock-chooser-picked.tsx
-#: src/syllabus/subject-aside.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "KV_9Hv"
 msgid "Questions"
 msgstr "Fragen"
 
 #: src/challenge/challenge-intro.tsx
-#: src/mock/mock-option-labels.ts
 msgctxt "lOV4AS"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, one {# Frage} other {# Fragen}} · {time}"
@@ -2757,7 +2747,6 @@ msgstr "Für Aufsatzübungen brauchst du ein Abo"
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/conversation/tutor-tool-offer.tsx
-#: src/language/today/language-today-section.tsx
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "JfG49w"
 msgid "Open"
@@ -3756,6 +3745,18 @@ msgstr "Zuletzt nötige Punktzahl: {score}"
 msgctxt "gemtGt"
 msgid "Your goal: {target}"
 msgstr "Dein Ziel: {target}"
+
+#. The number of questions in an exam or a mock exam.
+#: src/exam/use-exam-question-count.ts
+msgctxt "examQuestionCount"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, one {# Frage} other {# Fragen}}"
+
+#. Labels the number of questions in an exam or a mock exam.
+#: src/exam/use-exam-question-count.ts
+msgctxt "examQuestionsLabel"
+msgid "Questions"
+msgstr "Fragen"
 
 #: src/explain/explain-ending.tsx
 msgctxt "D1mqTL"
@@ -4762,6 +4763,16 @@ msgid "More on an earlier topic"
 msgstr "Mehr zu einem früheren Thema"
 
 #: src/journey/journey-chapters.tsx
+msgctxt "oJQZOI"
+msgid "Show fewer units"
+msgstr "Weniger Einheiten anzeigen"
+
+#: src/journey/journey-chapters.tsx
+msgctxt "OyUs0-"
+msgid "{count, plural, one {# more unit} other {# more units}}"
+msgstr "{count, plural, one {# weitere Einheit} other {# weitere Einheiten}}"
+
+#: src/journey/journey-chapters.tsx
 msgctxt "OGR3YM"
 msgid "Show fewer chapters"
 msgstr "Weniger Kapitel anzeigen"
@@ -4803,13 +4814,16 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {Noch keine Lektionen gelernt} one {# Lektion gelernt} other {# Lektionen gelernt}}"
 
 #: src/journey/journey-hero.tsx
+#: src/today/today-preparation.tsx
+msgctxt "JdekDJ"
+msgid "{language} level"
+msgstr "Level in {language}"
+
+#: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-screens.tsx
-#: src/language/progress/skill-levels-card.tsx
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "Dein Level"
+msgctxt "zSuk_8"
+msgid "Your {language} level"
+msgstr "Dein Level in {language}"
 
 #: src/journey/journey-hero.tsx
 #: src/mock/mock-result-plan.tsx
@@ -6469,9 +6483,9 @@ msgid "Just typos"
 msgstr "Nur Tippfehler"
 
 #: src/language/pattern/pattern-intro.tsx
-msgctxt "A256Tq"
-msgid "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice."
-msgstr "Deine letzten Fehler waren Tippfehler. Du hast dabei keine Regel übersehen. Es gibt nichts zu üben."
+msgctxt "Xg1Xcy"
+msgid "Your recent mistakes were typos, not a rule you're missing. There's nothing to practice."
+msgstr "Deine letzten Fehler waren Tippfehler. Die Regeln kennst du schon. Es gibt nichts zu üben."
 
 #: src/language/progress/can-do-list.tsx
 #: src/language/unit/unit-sections.tsx
@@ -6555,6 +6569,13 @@ msgstr "Du hast dich beim {skills} verbessert"
 msgctxt "gShZPM"
 msgid "Your level shows here once you practice."
 msgstr "Dein Level erscheint hier, sobald du übst."
+
+#: src/language/progress/skill-levels-card.tsx
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "Dein Level"
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -6663,9 +6684,9 @@ msgid "We noticed a pattern"
 msgstr "Uns ist ein Muster aufgefallen"
 
 #: src/language/today/language-today-section.tsx
-msgctxt "1Vekac"
-msgid "Your recent mistakes were slips, not a rule to learn."
-msgstr "Deine letzten Fehler waren Flüchtigkeitsfehler. Du musst dafür keine Regel lernen."
+msgctxt "XPSm_J"
+msgid "Your recent mistakes were typos, not a rule to learn."
+msgstr "Deine letzten Fehler waren Tippfehler, keine Regel zum Lernen."
 
 #: src/language/today/language-today-section.tsx
 msgctxt "mEBzEG"
@@ -8173,6 +8194,12 @@ msgstr "Die ganze Prüfung"
 msgctxt "Iu6kfw"
 msgid "No written part"
 msgstr "Ohne schriftlichen Teil"
+
+#. A mock exam's size: its number of questions, then its time limit.
+#: src/mock/mock-option-labels.ts
+msgctxt "mockQuestionsAndTime"
+msgid "{count, plural, one {# question} other {# questions}} · {time}"
+msgstr "{count, plural, one {# Frage} other {# Fragen}} · {time}"
 
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
@@ -10397,6 +10424,11 @@ msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Voraussetzungen"
 
+#: src/plan/plan-bases-sheet.tsx
+msgctxt "hTZKqq"
+msgid "What your topics build on. Choose how much of it to study."
+msgstr "Worauf deine Themen aufbauen. Wähle, wie viel du davon lernst."
+
 #: src/plan/plan-choice-lines.tsx
 msgctxt "YT4OTs"
 msgid "{group}: {option}"
@@ -10564,9 +10596,9 @@ msgstr "Mit {time} am Tag passt alles in deinen Plan"
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/study-everything.tsx
 #: src/today/today-falling-behind.tsx
-msgctxt "tODRiS"
-msgid "Study everything"
-msgstr "Alles lernen"
+msgctxt "F-Gyka"
+msgid "Remove end date"
+msgstr "Enddatum entfernen"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "hZ68v2"

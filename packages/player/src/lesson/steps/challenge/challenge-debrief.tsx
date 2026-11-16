@@ -3,10 +3,8 @@
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeDebrief } from "@zoonk/core/library/challenges/run";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
-import { useAppLocale } from "@zoonk/learn/locale";
 import { PageSectionLabel } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
-import { formatDuration } from "@zoonk/utils/duration";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
@@ -17,8 +15,6 @@ import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
 type ChallengeDebrief = ReturnType<typeof getChallengeDebrief>;
-
-const PRACTICE_SECONDS = 300;
 
 function DebriefNotes({
   debrief,
@@ -98,7 +94,6 @@ export function ChallengeDebriefView({
   steps: ChallengeStep[];
 }) {
   const t = useExtracted();
-  const locale = useAppLocale();
   const { fill } = names;
   const debrief = getChallengeDebrief(content, steps);
   const ending = steps.at(-1)?.choice.next;
@@ -139,12 +134,7 @@ export function ChallengeDebriefView({
           className="flex w-full flex-col gap-2"
           data-slot="challenge-practice"
         >
-          <PageSectionLabel id="challenge-practice">
-            {t("Practice “{skill}” · {time}", {
-              skill: fill(debrief.practice.name),
-              time: formatDuration({ locale, totalSeconds: PRACTICE_SECONDS }),
-            })}
-          </PageSectionLabel>
+          <PageSectionLabel id="challenge-practice">{t("Try it yourself")}</PageSectionLabel>
           <p className="text-foreground text-base leading-relaxed">
             <LessonRichText text={fill(debrief.practice.practice)} />
           </p>

@@ -24,6 +24,7 @@ import { FrequencyChip, setsApart } from "../syllabus/frequency-chip";
 import { groupSubjects } from "../syllabus/group-subjects";
 import { QuestionsSourceNote } from "../syllabus/syllabus-notes";
 import { useExamScreen } from "./exam-context";
+import { useExamQuestionCount } from "./use-exam-question-count";
 
 type Subject = NonNullable<ExamView["map"]>["subjects"][number];
 type Topic = Subject["topics"][number];
@@ -53,13 +54,12 @@ function TopicRow({ showFrequency, topic }: { showFrequency: boolean; topic: Top
 
 function useSubjectWeight() {
   const t = useExtracted();
+  const questionCount = useExamQuestionCount();
   const formatShare = useFormatShare();
 
   return (subject: Subject): string => {
     if (subject.questions !== null) {
-      return t("{count, plural, one {# question} other {# questions}}", {
-        count: subject.questions,
-      });
+      return questionCount(subject.questions);
     }
 
     if (subject.share !== null) {

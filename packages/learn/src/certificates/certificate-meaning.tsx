@@ -4,8 +4,8 @@ import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { LearnLink } from "../learn-link";
-import { useLanguageNameInSentence } from "./certificate-labels";
 
 function useMeaning(facts: CertificateFacts): string[] {
   const t = useExtracted();

@@ -21,6 +21,7 @@ import {
 } from "../_components/page";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
+import { useExamQuestionCount } from "../exam/use-exam-question-count";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
@@ -106,8 +107,8 @@ function SubjectRow({
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSectionSubject;
 }) {
-  const t = useExtracted();
   const formatShare = useFormatProgressShare();
+  const questionCount = useExamQuestionCount();
   const progress = useSubjectProgress()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const notPlanned = subject.notPlannedReason !== null;
@@ -125,11 +126,7 @@ function SubjectRow({
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
-          {subject.questions !== null &&
-            subject.questions > 0 &&
-            t("{count, plural, one {# question} other {# questions}}", {
-              count: subject.questions,
-            })}
+          {subject.questions !== null && subject.questions > 0 && questionCount(subject.questions)}
         </span>
 
         {progress.bar ? (

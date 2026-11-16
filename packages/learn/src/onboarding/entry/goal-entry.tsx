@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { EnterButton } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
+import { FreeStartNote } from "../free-start-note";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingActions,
@@ -49,6 +50,7 @@ export function GoalEntry({
   defaultGoal,
   error,
   fromSharedPlan = false,
+  hasAccount,
   onAttach,
   onSubmit,
   signUpHref,
@@ -60,6 +62,7 @@ export function GoalEntry({
   defaultGoal: string;
   error: GoalError | null;
   fromSharedPlan?: boolean;
+  hasAccount: boolean;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
   signUpHref: string;
@@ -112,6 +115,8 @@ export function GoalEntry({
       {attachment}
 
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
+
+      {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}
 
       <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
     </OnboardingColumn>

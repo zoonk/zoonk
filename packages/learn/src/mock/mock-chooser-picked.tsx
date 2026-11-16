@@ -12,6 +12,7 @@ import {
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
+import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useMockOptionName } from "./mock-option-labels";
 
 export type MockChooserHrefs = { mock: (id: string) => string };
@@ -31,11 +32,12 @@ function ChooserPicked({
 }) {
   const t = useExtracted();
   const duration = useFormatDuration();
+  const questionsLabel = useExamQuestionsLabel();
 
   return (
     <div className="flex flex-col gap-8" data-slot="mock-chooser-picked">
       <DetailProperties>
-        <DetailProperty label={t("Questions")} mono>
+        <DetailProperty label={questionsLabel} mono>
           {size.questions}
         </DetailProperty>
         <DetailProperty label={t("Time limit")} mono>

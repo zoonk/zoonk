@@ -9,6 +9,7 @@ import { DetailAsideSection, DetailProperties, DetailProperty } from "../_compon
 import { ListGroup } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
+import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 
 function getCoverage(subject: SyllabusSubject) {
@@ -106,7 +107,7 @@ export function SubjectCoverage({
 
   const parts = [
     { dot: "bg-success", label: t("Studied"), share: coverage.studied },
-    { dot: "bg-muted-foreground/70", label: t("Known"), share: coverage.known },
+    { dot: "bg-muted-foreground/70", label: t("Already knew"), share: coverage.known },
     { dot: "ring-muted-foreground/70 ring-1 ring-inset", label: t("New"), share: coverage.new },
   ];
 
@@ -152,12 +153,13 @@ function SubjectDetails({
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
   const questions = useQuestionsValue({ source: questionsSource, subject });
+  const questionsLabel = useExamQuestionsLabel();
   const chaptersDone = subject.chapters.filter((chapter) => chapter.state === "done").length;
 
   return (
     <DetailProperties>
       {questions && (
-        <DetailProperty label={t("Questions")} mono>
+        <DetailProperty label={questionsLabel} mono>
           {questions}
         </DetailProperty>
       )}

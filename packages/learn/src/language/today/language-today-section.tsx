@@ -41,7 +41,7 @@ export function PatternRow({ href, pattern }: { href: string; pattern: NoticedPa
       <ListRowContent>
         <ListRowTitle>{isTypos ? t("Just typos") : t("We noticed a pattern")}</ListRowTitle>
         <ListRowDescription>
-          {isTypos ? t("Your recent mistakes were slips, not a rule to learn.") : pattern.title}
+          {isTypos ? t("Your recent mistakes were typos, not a rule to learn.") : pattern.title}
         </ListRowDescription>
       </ListRowContent>
     </ListRowLink>
@@ -80,17 +80,15 @@ export function PronunciationRow({
 }
 
 function PracticeNotice({
-  action,
   description,
-  href,
   label,
+  link,
   mark,
   summary,
 }: {
-  action: string;
   description: string;
-  href: string;
   label: string;
+  link?: { action: string; href: string };
   mark?: React.ReactNode;
   summary: string;
 }) {
@@ -98,19 +96,23 @@ function PracticeNotice({
     <Suggestion data-slot="language-practice" label={label} mark={mark}>
       <SuggestionLine>
         <SuggestionSummary>{summary}</SuggestionSummary>
-        <SuggestionLinkAction className="shrink-0" href={href} variant="outline">
-          {action}
-        </SuggestionLinkAction>
+        {link && (
+          <SuggestionLinkAction className="shrink-0" href={link.href} variant="outline">
+            {link.action}
+          </SuggestionLinkAction>
+        )}
       </SuggestionLine>
 
       <SuggestionContent>
         <SuggestionHeader>{label}</SuggestionHeader>
         <SuggestionDescription>{description}</SuggestionDescription>
-        <SuggestionActions>
-          <SuggestionLinkAction href={href} variant="outline">
-            {action}
-          </SuggestionLinkAction>
-        </SuggestionActions>
+        {link && (
+          <SuggestionActions>
+            <SuggestionLinkAction href={link.href} variant="outline">
+              {link.action}
+            </SuggestionLinkAction>
+          </SuggestionActions>
+        )}
       </SuggestionContent>
     </Suggestion>
   );
@@ -134,10 +136,9 @@ export function LanguagePracticeRow({
 
     return (
       <PracticeNotice
-        action={t("Say them")}
         description={format.list(pronunciation.words, { type: "conjunction" })}
-        href={hrefs.pronunciation}
         label={title}
+        link={{ action: t("Say them"), href: hrefs.pronunciation }}
         mark={<MicIcon />}
         summary={title}
       />
@@ -151,22 +152,19 @@ export function LanguagePracticeRow({
   if (pattern.kind === "typos") {
     return (
       <PracticeNotice
-        action={t("Open")}
-        description={t("Your recent mistakes were slips, not a rule to learn.")}
-        href={hrefs.pattern}
+        description={t("Your recent mistakes were typos, not a rule to learn.")}
         label={t("Just typos")}
         mark={<KeyboardIcon />}
-        summary={t("Your recent mistakes were slips, not a rule to learn.")}
+        summary={t("Your recent mistakes were typos, not a rule to learn.")}
       />
     );
   }
 
   return (
     <PracticeNotice
-      action={t("Practice it")}
       description={pattern.title}
-      href={hrefs.pattern}
       label={t("We noticed a pattern")}
+      link={{ action: t("Practice it"), href: hrefs.pattern }}
       summary={t("We noticed a pattern: {pattern}", { pattern: pattern.title })}
     />
   );

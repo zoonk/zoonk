@@ -41,9 +41,7 @@ describe("challenge lesson", () => {
       .element(page.getByText("One day of data can't tell a real gain from chance."))
       .toBeVisible();
 
-    await expect
-      .element(page.getByRole("heading", { name: "Practice “Sample size” · 5 min" }))
-      .toBeVisible();
+    await expect.element(page.getByRole("heading", { name: "Try it yourself" })).toBeVisible();
 
     await press("Enter");
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();

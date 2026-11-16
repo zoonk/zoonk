@@ -3,6 +3,7 @@
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { useExtracted } from "next-intl";
 import { useFormatShare } from "../_utils/percent";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { LevelLadder } from "../language/progress/level-ladder";
 import { LevelValue } from "../language/progress/level-value";
 import { useTodayScreen } from "./today-context";
@@ -54,18 +55,21 @@ function PreparationCard({
 function LevelCard({
   className,
   level,
+  targetLanguage,
 }: {
   className?: string;
   level: NonNullable<LanguageTodayView["level"]>;
+  targetLanguage: string;
 }) {
   const t = useExtracted();
   const ids = useCardIds();
+  const languageName = useLanguageNameInSentence();
 
   return (
     <ProgressCard
       className={className}
       ids={ids}
-      title={t("Level")}
+      title={t("{language} level", { language: languageName(targetLanguage) })}
       value={<LevelValue {...level} />}
     >
       <LevelLadder {...level} />
@@ -77,17 +81,23 @@ function LevelCard({
 export function TodayPreparation({
   className,
   knownLessons,
-  level = null,
+  language = null,
 }: {
   className?: string;
   knownLessons: number;
-  level?: LanguageTodayView["level"];
+  language?: Pick<LanguageTodayView, "level" | "targetLanguage"> | null;
 }) {
   const { today } = useTodayScreen();
   const { progress } = today;
 
   if (today.goal.kind === "language") {
-    return level ? <LevelCard className={className} level={level} /> : null;
+    return language?.level ? (
+      <LevelCard
+        className={className}
+        level={language.level}
+        targetLanguage={language.targetLanguage}
+      />
+    ) : null;
   }
 
   if (!progress) {

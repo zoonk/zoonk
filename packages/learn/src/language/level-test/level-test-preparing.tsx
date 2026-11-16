@@ -2,6 +2,7 @@
 
 import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import {
@@ -15,17 +16,18 @@ import {
 } from "../../onboarding/onboarding-frame";
 
 export function LevelTestPreparing({
-  language,
   onSkip,
   run,
   skipping,
+  targetLanguage,
 }: {
-  language: string;
   onSkip: () => void;
   run: GenerationRun;
   skipping: boolean;
+  targetLanguage: string;
 }) {
   const t = useExtracted();
+  const language = useLanguageNameInSentence()(targetLanguage);
 
   return (
     <OnboardingColumn

@@ -836,9 +836,9 @@ msgid "No answer was saved."
 msgstr "저장된 답변이 없어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "yfq070"
-msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
-msgstr "질문을 남긴 뒤 레슨 내용이 바뀌었어요. 질문과 답변은 여기에 보관돼 있어요."
+msgctxt "ttMteQ"
+msgid "Your questions from lessons that were updated, with their answers."
+msgstr "업데이트된 레슨에서 했던 질문과 답변이에요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "QKPtX3"
@@ -872,9 +872,9 @@ msgid "Your day"
 msgstr "내 하루"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
-msgctxt "Ybfjqu"
-msgid "A certificate for every level and plan you finish."
-msgstr "레벨이나 계획을 완료할 때마다 인증서를 받아요."
+msgctxt "xQ7ze5"
+msgid "A certificate for every course level, language level and plan you finish."
+msgstr "코스 레벨, 언어 레벨, 계획을 마칠 때마다 인증서를 받아요."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"

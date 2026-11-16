@@ -16,12 +16,9 @@ import { LinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { CopyButton } from "./certificate-copy-button";
-import {
-  roundStudyMinutes,
-  useCertificateName,
-  useLanguageNameInSentence,
-} from "./certificate-labels";
+import { roundStudyMinutes, useCertificateName } from "./certificate-labels";
 
 const MINUTES_PER_HOUR = 60;
 

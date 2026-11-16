@@ -1,11 +1,12 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { getLanguageName, getLanguageNameInSentence } from "@zoonk/utils/languages";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useAppLocale } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { useLevelName } from "../course/use-level-name";
 
 const MINUTES_PER_HOUR = 60;
@@ -27,13 +28,6 @@ function useLanguageName() {
 
   return (targetLanguage: string | null) =>
     targetLanguage ? getLanguageName({ targetLanguage, userLanguage: locale }) : "";
-}
-
-export function useLanguageNameInSentence() {
-  const locale = useAppLocale();
-
-  return (targetLanguage: string | null) =>
-    targetLanguage ? getLanguageNameInSentence({ targetLanguage, userLanguage: locale }) : "";
 }
 
 /**

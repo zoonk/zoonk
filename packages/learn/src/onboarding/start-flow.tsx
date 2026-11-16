@@ -167,6 +167,16 @@ function SectionExamples({ onPick }: { onPick: (goal: string) => void }) {
   return useOnboardingSection() ? <GoalExamples onPick={onPick} /> : null;
 }
 
+/** "How it works" describes a plan's path, which an explanation offer doesn't have. */
+function showsRail({ atGoalLimit, state }: { atGoalLimit: boolean; state: StartState }): boolean {
+  const offersExplanation =
+    state.kind === "draft" &&
+    state.draft.status === "understood" &&
+    state.draft.understanding?.status === "explain";
+
+  return !atGoalLimit && !offersExplanation;
+}
+
 function GoalStartFlow({
   actions,
   buddy,
@@ -272,12 +282,12 @@ function GoalStartFlow({
   const atGoalLimit = goalLimit?.reason === "activeGoals";
   const bar = { backDisabled: creation.isCreating, onBack: getBack({ backToEntry, state }) };
 
-  const rail = atGoalLimit ? null : (
+  const rail = showsRail({ atGoalLimit, state }) ? (
     <>
       {state.kind === "entry" && <SectionExamples onPick={submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
     </>
-  );
+  ) : null;
 
   return (
     <OnboardingRailProvider rail={rail}>

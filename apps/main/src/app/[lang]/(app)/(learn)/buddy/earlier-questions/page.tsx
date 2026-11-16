@@ -88,9 +88,7 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
             <PageTitle>{t("Earlier questions")}</PageTitle>
             {result.questions.length > 0 && (
               <PageSubtitle>
-                {t(
-                  "Lessons you asked about were updated since. Your questions and their answers are kept here.",
-                )}
+                {t("Your questions from lessons that were updated, with their answers.")}
               </PageSubtitle>
             )}
           </PageHeaderContent>
