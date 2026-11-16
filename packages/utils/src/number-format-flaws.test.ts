@@ -128,6 +128,22 @@ describe(findNumberFormatFlaws, () => {
     ).toStrictEqual(["Groups 5 000,5 with a space; write 5.000,5."]);
   });
 
+  it("writes the decimal mark the language uses in the rewrite of a number grouped with a space", () => {
+    expect(
+      findNumberFormatFlaws({ language: "en", value: { text: "It holds 50 000,5 kcal." } }),
+    ).toStrictEqual(["Groups 50 000,5 with a space; write 50,000.5."]);
+
+    expect(
+      findNumberFormatFlaws({ language: "pt", value: { text: "Cabem 50 000.5 kcal." } }),
+    ).toStrictEqual(["Groups 50 000.5 with a space; write 50.000,5."]);
+  });
+
+  it("finds a number grouped with a space right after a plus in math", () => {
+    expect(
+      findNumberFormatFlaws({ language: "en", value: { math: String.raw`x+50\,000` } }),
+    ).toStrictEqual([String.raw`Groups 50\,000 with a space; write 50{,}000.`]);
+  });
+
   it("passes space grouping where the language groups with a space, and digits that aren't one number", () => {
     const french = { text: "L'herbe contient 50 000 kcal." };
     const phones = { text: "Call 555 123 4567 or +41 800 123 456, or see items 12 and 345." };

@@ -2,9 +2,9 @@
 
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
-import { queryShown } from "./_utils/lesson-focus";
 import { getRevealDelta } from "./_utils/reveal-feedback";
 import { useLessonPlayer } from "./lesson-player-context";
+import { getScreenRef } from "./use-kept-screens";
 
 const FEEDBACK_SELECTOR = [
   '[data-slot="feedback-panel"]',
@@ -54,19 +54,22 @@ function getScrollDelta({
  * Scrolls a checked screen to its feedback, one frame after the check, once the bar holds its new
  * action. A canvas or a picture that finishes loading later moves the feedback, so it's revealed
  * again each time the screen's height changes, until the learner scrolls on their own. It watches
- * the screen that's showing, so going back to an answered screen watches that one.
+ * the screen that's showing, so going back to an answered screen, or to a retried question's
+ * earlier attempt, watches that one.
  */
 export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
   const { screen, state } = useLessonPlayer();
   const showsFeedback = state.phase === "feedback";
-  const stepId = screen.step?.id ?? null;
+  const screenKey = screen.step ? getScreenRef(state, screen.step.id).key : null;
 
   useEffect(() => {
     const scroller = scrollerRef.current;
 
     const stage =
-      scroller && stepId !== null
-        ? queryShown(`${STAGE_SELECTOR}[data-step="${CSS.escape(stepId)}"]`, scroller)
+      scroller && screenKey !== null
+        ? scroller.querySelector<HTMLElement>(
+            `[data-screen="${CSS.escape(screenKey)}"] ${STAGE_SELECTOR}`,
+          )
         : null;
 
     if (!showsFeedback || !scroller || !stage) {
@@ -107,5 +110,5 @@ export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
         scroller.removeEventListener(event, stop);
       }
     };
-  }, [scrollerRef, showsFeedback, stepId]);
+  }, [scrollerRef, screenKey, showsFeedback]);
 }

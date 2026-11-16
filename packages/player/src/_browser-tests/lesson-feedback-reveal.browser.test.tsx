@@ -142,4 +142,34 @@ describe("feedback after a check", () => {
       }),
     );
   });
+
+  it("watches the earlier attempt of a retried question the learner went back to", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({ lesson: buildLesson([checkStep()]) });
+
+        await page.getByRole("radio", { name: "The electron's size" }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: /^Continue/u }).click();
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: "Previous screen" }).click();
+
+        const verdict = page
+          .getByRole("region", { name: "Answer feedback" })
+          .getByText("Not quite");
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+
+        [...document.querySelectorAll<HTMLElement>('[data-slot="lesson-screen"]')]
+          .find((screen) => screen.getClientRects().length > 0)
+          ?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
 });

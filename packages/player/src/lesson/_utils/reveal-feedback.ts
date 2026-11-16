@@ -10,11 +10,18 @@ function getWholeFeedbackDelta(feedback: Span, visible: Span): number {
     return feedback.top - visible.top - MARGIN;
   }
 
-  if (feedback.bottom > visible.bottom) {
-    return Math.min(feedback.bottom - visible.bottom + MARGIN, feedback.top - visible.top - MARGIN);
+  if (feedback.bottom <= visible.bottom) {
+    return 0;
   }
 
-  return 0;
+  const toBottom = feedback.bottom - visible.bottom;
+  const toTop = feedback.top - visible.top;
+
+  if (toBottom > toTop) {
+    return toTop - MARGIN;
+  }
+
+  return Math.min(toBottom + MARGIN, Math.max(toTop - MARGIN, toBottom));
 }
 
 /**

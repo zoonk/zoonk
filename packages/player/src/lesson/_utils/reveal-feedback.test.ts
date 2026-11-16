@@ -76,6 +76,20 @@ describe(getRevealDelta, () => {
     expect(delta).toBe(26);
   });
 
+  it("gives up the margin over a feedback that only fits without it, never its bottom", () => {
+    const feedback = { bottom: 1390, top: 800 };
+
+    const delta = getRevealDelta({
+      chip: null,
+      feedback,
+      title: { bottom: 144, top: 116 },
+      visible,
+    });
+
+    expect(feedback.bottom - delta).toBeLessThanOrEqual(visible.bottom);
+    expect(feedback.top - delta).toBeGreaterThanOrEqual(visible.top);
+  });
+
   it("stops at the top of a feedback taller than the screen", () => {
     const delta = getRevealDelta({
       chip: null,

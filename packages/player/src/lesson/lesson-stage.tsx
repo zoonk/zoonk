@@ -305,11 +305,7 @@ export function LessonStage({
   const inBank = canSelfCorrect(answered);
 
   return (
-    <div
-      className={cn("flex w-full flex-col", FILL_SCREEN_CLASS)}
-      data-slot="lesson-stage"
-      data-step={step.id}
-    >
+    <div className={cn("flex w-full flex-col", FILL_SCREEN_CLASS)} data-slot="lesson-stage">
       <OrientationStrip step={step} />
       {isShown && <LessonNotice />}
 

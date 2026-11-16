@@ -92,7 +92,15 @@ function LessonContent() {
     const isShown = key === shown?.key;
 
     return (
-      step && <LessonScreen isShown={isShown} key={key} step={step} turn={isShown ? turn : null} />
+      step && (
+        <LessonScreen
+          isShown={isShown}
+          key={key}
+          screenKey={key}
+          step={step}
+          turn={isShown ? turn : null}
+        />
+      )
     );
   });
 
@@ -110,10 +118,12 @@ function LessonContent() {
  */
 function LessonScreen({
   isShown,
+  screenKey,
   step,
   turn,
 }: {
   isShown: boolean;
+  screenKey: string;
   step: PlayableLibraryStep;
   turn: ScreenTurn | null;
 }) {
@@ -129,7 +139,7 @@ function LessonScreen({
       <LessonPlayerRuntimeContext value={isShown ? runtime : left}>
         <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
           <MainActionSlotProvider>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col" data-screen={screenKey}>
               <LessonStage isShown={isShown} step={step} turn={turn} />
             </div>
             {isShown && <LessonActionBar />}
