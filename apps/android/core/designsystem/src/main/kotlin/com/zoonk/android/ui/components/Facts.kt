@@ -49,11 +49,13 @@ fun Facts(
 ) {
     var start = 0
     val parts =
-        text.text
-            .split(FACT_SEPARATOR)
-            .map { part ->
-                text.subSequence(start, start + part.length).also { start += part.length + FACT_SEPARATOR.length }
-            }.filter { it.isNotEmpty() }
+        buildList {
+            FACT_BREAK.findAll(text.text).forEach { separator ->
+                add(text.subSequence(start, separator.range.first))
+                start = separator.range.last + 1
+            }
+            add(text.subSequence(start, text.length))
+        }.filter { it.isNotEmpty() }
     FactSegments(parts, modifier, color, style)
 }
 
@@ -76,7 +78,7 @@ private fun FactSegments(
             type.color.isSpecified -> type.color
             else -> LocalContentColor.current
         }
-    val separator = rememberTextMeasurer().measure(" · ", type.copy(color = ink))
+    val separator = rememberTextMeasurer().measure(FACT_SEPARATOR, type.copy(color = ink))
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     FlowRow(
         modifier.clipToBounds().semantics(mergeDescendants = true) {},
@@ -97,3 +99,5 @@ private fun FactSegments(
         }
     }
 }
+
+private val FACT_BREAK = Regex("\\p{Zs}+·\\p{Zs}+")

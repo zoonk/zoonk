@@ -186,6 +186,20 @@ class LayoutCaptureTest {
     }
 
     @Test
+    fun translatedFactsKeepTheirSegmentsWholeAcrossNonbreakingSeparatorSpaces() {
+        org.robolectric.RuntimeEnvironment.setFontScale(2f)
+        val parts =
+            capture {
+                Box(Modifier.width(280.dp)) {
+                    Facts("First in your next session\u00A0· 10\u00A0min", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        val texts = parts.elements().filter { it.optString("part") == "text" }
+        assertEquals(listOf("First in your next session", "10\u00A0min"), texts.map { it.getString("text") })
+        assertTrue(texts.all { it.getJSONArray("lineTexts").length() == 1 })
+    }
+
+    @Test
     fun aPagedDeckIsNotAContinuousHorizontalScroller() {
         val parts =
             capture {

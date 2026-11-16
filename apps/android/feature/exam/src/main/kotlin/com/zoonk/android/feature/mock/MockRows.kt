@@ -19,6 +19,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * A finished mock exam: its number, when (and its subject when it had one), and how it went; [onOpen] opens its result.
@@ -74,7 +75,7 @@ fun MockListRow(
         stateDescription = if (current) stringResource(R.string.exam_current) else null,
         leading = leading,
         supporting = {
-            Text(supporting)
+            FactSegments(supporting)
             // Under the line, the fact is the row's quietest words.
             if (trailing != null && stacked) Text(trailing, style = factStyle())
         },
