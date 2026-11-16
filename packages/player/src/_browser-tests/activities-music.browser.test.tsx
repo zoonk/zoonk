@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -57,6 +57,7 @@ const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
 const PHONE = { height: 812, width: 375 };
 const PHONE_LANDSCAPE = { height: 375, width: 812 };
+const SMALL_PHONE = { height: 640, width: 320 };
 const HALF_TAP_TARGET_PX = 21;
 // Above a white key's rounded bottom corners, where its whole width takes a tap.
 const KEY_CORNER_PX = 12;
@@ -109,6 +110,23 @@ async function pickFret({ position, string }: { position: string; string: string
     .getByRole("radiogroup", { name: string })
     .getByRole("radio", { name: position })
     .click();
+}
+
+function keySpans() {
+  return [...document.querySelectorAll("[data-slot='piano-key']")].map((key) => {
+    const { left, width } = key.getBoundingClientRect();
+    return { left: Math.round(left), width: Math.round(width) };
+  });
+}
+
+function marksOutsideTheirKey() {
+  return [...document.querySelectorAll("[data-slot='piano-key'] [data-slot='note-mark']")].filter(
+    (mark) => {
+      const inner = mark.getBoundingClientRect();
+      const key = mark.closest("[data-slot='piano-key']")?.getBoundingClientRect();
+      return !key || inner.left < key.left || inner.right > key.right;
+    },
+  );
 }
 
 function tapRhythm() {
@@ -355,5 +373,31 @@ describe("music activities with a keyboard only", () => {
 
     await expectVerdict("Correct!");
     await expect.element(page.getByText("C, E♭, G")).toBeVisible();
+  });
+
+  it("keyboard: in large text on a small phone, every mark sits in its key and Check moves no key", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(SMALL_PHONE, async () => {
+      openActivity({ template: "keyboardFretboard" });
+      await focusOn(pianoKey("C"));
+      await press("ArrowRight", 4);
+      await press("Enter");
+      await press("ArrowLeft");
+      await press("Enter");
+      await expect.element(pianoKey("E flat")).toHaveAttribute("aria-pressed", "true");
+      expect(marksOutsideTheirKey()).toStrictEqual([]);
+
+      const answering = keySpans();
+      await focusOn(page.getByRole("button", { name: "Check" }));
+      await press("Enter");
+      await expectVerdict("Correct!");
+      expect(marksOutsideTheirKey()).toStrictEqual([]);
+      expect(keySpans()).toStrictEqual(answering);
+    });
   });
 });
