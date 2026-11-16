@@ -474,13 +474,15 @@ struct PracticeRedirect: View {
 
 struct PracticeLoadFailureView: View {
   let error: APIError
+  /// False inside a screen whose own main action stays, such as the notebook's list.
+  var inBar = true
   let retry: () -> Void
 
   var body: some View {
     if error == .notFound {
       NotFoundView()
     } else {
-      PageLoadFailure {
+      PageLoadFailure(inBar: inBar) {
         Label {
           if error == .network {
             Text(

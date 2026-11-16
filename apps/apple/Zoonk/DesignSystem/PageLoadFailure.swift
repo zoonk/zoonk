@@ -1,41 +1,60 @@
 import SwiftUI
 
 /// Main's `PageErrorMessage`: a page that didn't load says what didn't, and "Try again" is the
-/// screen's main action, in the bottom bar.
+/// screen's main action, in the bottom bar. Inside a screen whose own main action stays (`inBar:
+/// false`), Try again is outlined under the words instead.
 struct PageLoadFailure<Label: View, Line: View>: View {
   @ViewBuilder let label: Label
   @ViewBuilder let line: Line
+  var inBar = true
   let retry: () async -> Void
 
   init(
-    @ViewBuilder label: () -> Label, @ViewBuilder description: () -> Line,
+    inBar: Bool = true, @ViewBuilder label: () -> Label, @ViewBuilder description: () -> Line,
     retry: @escaping () async -> Void
   ) {
     self.label = label()
     self.line = description()
+    self.inBar = inBar
     self.retry = retry
   }
 
   var body: some View {
-    StateMessage {
+    let message = StateMessage {
       label
     } description: {
       line
+    } actions: {
+      if !inBar {
+        retryButton
+          .buttonStyle(.outline)
+      }
     }
     .lonePage()
-    .bottomBar {
-      Button {
-        Task { await retry() }
-      } label: {
-        Text("Try again", tableName: "DesignSystem", comment: "Loads a page that didn't load again")
+
+    if inBar {
+      message.bottomBar {
+        retryButton
+          .buttonStyle(.mainAction)
       }
-      .buttonStyle(.mainAction)
+    } else {
+      message
+    }
+  }
+
+  private var retryButton: some View {
+    Button {
+      Task { await retry() }
+    } label: {
+      Text("Try again", tableName: "DesignSystem", comment: "Loads a page that didn't load again")
     }
   }
 }
 
 extension PageLoadFailure where Line == EmptyView {
-  init(@ViewBuilder label: () -> Label, retry: @escaping () async -> Void) {
-    self.init(label: label, description: { EmptyView() }, retry: retry)
+  init(
+    inBar: Bool = true, @ViewBuilder label: () -> Label, retry: @escaping () async -> Void
+  ) {
+    self.init(inBar: inBar, label: label, description: { EmptyView() }, retry: retry)
   }
 }

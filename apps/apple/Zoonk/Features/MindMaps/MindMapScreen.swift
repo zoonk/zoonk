@@ -108,7 +108,7 @@ struct MindMapUnreachable: View {
   let retry: () -> Void
 
   var body: some View {
-    PageLoadFailure {
+    PageLoadFailure(inBar: false) {
       Label {
         Text(
           "We couldn't reach the server.", tableName: "MindMaps",

@@ -199,7 +199,7 @@ private struct MistakeListSections: View {
         }
       }
     } else if case .failed(let error) = resource.state {
-      PracticeLoadFailureView(error: error) { Task { await resource.refresh() } }
+      PracticeLoadFailureView(error: error, inBar: false) { Task { await resource.refresh() } }
         .listRowBackground(Color.clear)
     } else {
       ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear)
