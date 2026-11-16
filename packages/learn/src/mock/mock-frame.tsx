@@ -54,12 +54,14 @@ export function MockStepStatus() {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const saved = runner.saveStatus === "saved";
+  // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
+  const failed = runner.error && runner.saveStatus !== "retrying";
 
   return (
     <>
       <SaveStatusLine />
 
-      {runner.error && (
+      {failed && (
         <p className="text-destructive-text text-sm" role="alert">
           {saved
             ? t("That didn't go through. Your answers are saved. Try again in a moment.")
