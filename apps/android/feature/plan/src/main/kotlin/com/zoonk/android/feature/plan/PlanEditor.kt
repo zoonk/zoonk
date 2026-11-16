@@ -337,7 +337,9 @@ internal fun ColumnScope.PlanEditorBody(
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
-                    endDate = page.plan.estimate.endDate?.toJavaLocalDate(),
+                    endDate =
+                        page.plan.estimate.endDate
+                            ?.toJavaLocalDate(),
                     modifier = Modifier.bleed(LIST_ITEM_INSET),
                 )
             }
