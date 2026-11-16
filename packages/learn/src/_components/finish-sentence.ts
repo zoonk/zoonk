@@ -22,7 +22,7 @@ export function useFinishSentence() {
     endDate: string;
     minutes?: number | null;
   }): string => {
-    const month = formatDate(endDate, "month");
+    const month = formatDate(endDate, "sentenceMonth", { year: "always" });
 
     return aim && minutes !== null
       ? t("At {time} a day, you reach {level} around {month}.", {

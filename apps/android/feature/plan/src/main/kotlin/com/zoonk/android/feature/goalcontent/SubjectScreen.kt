@@ -8,7 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -24,6 +26,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
@@ -40,6 +43,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -114,11 +118,12 @@ internal fun SubjectContent(
             PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
         } else {
             val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
+            VisitOf(writes.visit)
             val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
             SubjectPage(
                 syllabus = value,
                 subject = subject,
-                writes = writes.state.collectAsStateWithLifecycle().value,
+                writes = writes.state,
                 menu = menu,
                 ask = ask,
                 actions =
@@ -167,24 +172,36 @@ internal class SubjectViewModel(
     private val syllabus: Resource<Syllabus>,
     private val goalId: UUID,
 ) : ViewModel() {
-    private val writes = MutableStateFlow(SubjectWrites())
-    val state: StateFlow<SubjectWrites> = writes.asStateFlow()
+    /** The subject's visit: a change that didn't save says so only on it. */
+    val visit = Visit()
+
+    private var restoring by mutableStateOf(false)
+    private var tappedCadence by mutableStateOf<WrittenPractice.Cadence?>(null)
+    private val restoreFailure = visit.outcome<Unit>()
+    private val cadenceFailure = visit.outcome<Unit>()
+
+    /** What's saving, and what didn't save on this visit. */
+    val state get() = SubjectWrites(restoring, restoreFailure.value != null, tappedCadence, cadenceFailure.value != null)
 
     fun restore(areas: List<String>) {
-        if (writes.value.restoring) return
-        writes.update { it.copy(restoring = true, restoreFailed = false) }
+        if (restoring) return
+        restoring = true
+        restoreFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val result = change(PlanOp.RestoreAreas(areas))
-            writes.update { it.copy(restoring = false, restoreFailed = result is MutationResult.Failed) }
+            if (change(PlanOp.RestoreAreas(areas)) is MutationResult.Failed) restoreFailure.send(started, Unit)
+            restoring = false
         }
     }
 
     fun setCadence(cadence: WrittenPractice.Cadence) {
-        if (writes.value.tappedCadence != null) return
-        writes.update { it.copy(tappedCadence = cadence, cadenceFailed = false) }
+        if (tappedCadence != null) return
+        tappedCadence = cadence
+        cadenceFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val result = change(PlanOp.WrittenCadence(cadence.value))
-            writes.update { it.copy(tappedCadence = null, cadenceFailed = result is MutationResult.Failed) }
+            if (change(PlanOp.WrittenCadence(cadence.value)) is MutationResult.Failed) cadenceFailure.send(started, Unit)
+            tappedCadence = null
         }
     }
 

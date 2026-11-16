@@ -4,7 +4,7 @@ import { type CompletedLesson } from "@zoonk/core/completed-lessons/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { daysBetweenIsoDays } from "@zoonk/utils/calendar-day";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
@@ -19,7 +19,7 @@ import {
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
-import { getIsoDateOptions, isoDateToUtc } from "../_utils/iso-date";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 
@@ -32,7 +32,7 @@ function groupByDay(lessons: readonly CompletedLesson[]) {
 /** Both days are learner-local `YYYY-MM-DD`, read at UTC midnight so no time zone moves them. */
 function useDayTitle(today: string) {
   const t = useExtracted();
-  const format = useFormatter();
+  const formatDate = useFormatIsoDate();
 
   return (day: string): string => {
     const daysAgo = daysBetweenIsoDays({ from: day, to: today });
@@ -45,10 +45,7 @@ function useDayTitle(today: string) {
       return t("Yesterday");
     }
 
-    return format.dateTime(
-      isoDateToUtc(day),
-      getIsoDateOptions({ isoDate: day, style: "weekdayDay", today }),
-    );
+    return formatDate(day, "sentence", { weekday: true });
   };
 }
 

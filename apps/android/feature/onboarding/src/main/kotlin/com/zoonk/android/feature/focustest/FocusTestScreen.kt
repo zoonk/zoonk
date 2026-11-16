@@ -35,6 +35,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
@@ -101,6 +102,7 @@ internal fun FocusTestScreen(
                 goal?.kind == LearnerSummaryGoal.Kind.EXAM -> {
                     CompositionLocalProvider(LocalSetupDrafts provides drafts) {
                         val questions = viewModel(key = "focus-test-questions:${goal.id}") { SessionQuestionsModel(focusTests, goal.id) }
+                        VisitOf(questions.visit)
                         SetupColumn {
                             FocusTestFlow(
                                 goalId = goal.id.toString(),

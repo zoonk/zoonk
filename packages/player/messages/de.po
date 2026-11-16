@@ -2918,8 +2918,9 @@ msgid "Back"
 msgstr "Zurück"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Kostenloses Konto erstellen"
@@ -2939,6 +2940,11 @@ msgstr "Wir konnten diese Lektion nicht öffnen"
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Anmelden"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "Der Link ist vielleicht veraltet oder falsch eingegeben."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
@@ -3802,9 +3808,9 @@ msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
 
 #: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Erstell ein kostenloses Konto, um Fragen zu stellen"
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Für Fragen brauchst du ein kostenloses Konto"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"

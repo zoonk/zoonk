@@ -22,7 +22,7 @@ function useDayLabel() {
       return t("Yesterday");
     }
 
-    return formatDate(date, "weekdayDay");
+    return formatDate(date, "sentence", { weekday: true });
   };
 }
 

@@ -1,6 +1,7 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
+import { type CaptureElement } from "./alignment-capture.mts";
 import { element, fixtureCapture } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
@@ -41,6 +42,14 @@ function bar(above: number, below: number) {
   ]);
 }
 
+/** A note whose words render nothing: only its 16 px of top padding, over the bar. */
+const EMPTY_NOTE = {
+  bounds: [0, 684, 390, 16],
+  ink: null,
+  name: "<div>",
+  part: "note",
+} satisfies Pick<CaptureElement, "bounds" | "ink" | "name" | "part">;
+
 function room(capture: ReturnType<typeof bar>) {
   return evaluateCapture(capture)
     .filter((finding) => finding.rule === "room")
@@ -56,5 +65,25 @@ describe("a bottom bar's note sits as far from its line as its buttons sit from 
     assert.deepEqual(room(bar(8, 16)), [
       '"Start free, no account needed." has 8 above it and 16 below it',
     ]);
+  });
+
+  it("fails a note that draws nothing and still holds its room over the bar (C-L03, the course start)", () => {
+    const capture = bar(16, 16);
+
+    const empty = {
+      ...capture,
+      elements: capture.elements.map((item) =>
+        item.id === "note"
+          ? element({ ...EMPTY_NOTE, group: "bar", id: "note", piece: "bottom-bar" })
+          : item,
+      ),
+    };
+
+    assert.deepEqual(
+      evaluateCapture(empty)
+        .filter((finding) => finding.rule === "room")
+        .map((finding) => `${finding.level} ${finding.detail}`),
+      ["fail <div> draws nothing and holds 16 over the bar"],
+    );
   });
 });

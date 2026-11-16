@@ -1,48 +1,29 @@
 "use client";
 
-import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
 import { TutorMessage, useTutorIdentity } from "../conversation/tutor-identity";
 import { LearnLink } from "../learn-link";
-import {
-  GoalField,
-  GoalFieldSubmit,
-  GoalFieldText,
-  useGoalFieldAction,
-} from "../onboarding/entry/goal-field";
-import { useLocalExamGoal, useLocalGoalExample } from "../onboarding/entry/use-local-goal-example";
+import { GoalBox } from "../onboarding/entry/goal-box";
+import { useGoalExamples } from "../onboarding/entry/goal-examples";
+import { GoalFieldSubmit, useGoalFieldAction } from "../onboarding/entry/goal-field";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 
-function useGoalExamples(): string[] {
-  const t = useExtracted();
-  const { language } = useLocalGoalExample();
-  const exam = useLocalExamGoal();
+/** As many as fit a phone's width in two lines, drawn as the buddy's own chips. */
+const SHOWN_EXAMPLES = 3;
 
-  return [
-    exam,
-    t("Speak {language} for a job interview", { language }),
-    t("Understand quantum physics"),
-  ];
-}
-
-function GoalChips({ examples, onPick }: { examples: string[]; onPick: (goal: string) => void }) {
+function GoalChips({ onPick }: { onPick: (goal: string) => void }) {
   const t = useExtracted();
+  const examples = useGoalExamples().slice(0, SHOWN_EXAMPLES);
 
   return (
     <ul aria-label={t("Examples")} className="flex flex-wrap gap-2">
-      {examples.map((example) => (
-        <li className="min-w-0" key={example}>
-          <Button
-            className="text-muted-foreground max-w-full"
-            onClick={() => onPick(example)}
-            size="sm"
-            variant="outline"
-          >
-            <span className="truncate">{example}</span>
+      {examples.map(({ label }) => (
+        <li className="min-w-0" key={label}>
+          <Button className="max-w-full" onClick={() => onPick(label)} variant="outline">
+            <span className="truncate">{label}</span>
           </Button>
         </li>
       ))}
@@ -62,10 +43,8 @@ export function BuddyGoalStart({
   status: BuddyStatusView;
 }) {
   const t = useExtracted();
-  const fieldId = useId();
   const buddy = toLearnBuddy({ buddy: status.buddy, status });
   const identity = useTutorIdentity(buddy);
-  const examples = useGoalExamples();
   const goal = useGoalFieldAction({ onSend });
 
   // The hello says the buddy is an AI, since it opens the conversation (EU AI Act art. 50;
@@ -94,24 +73,11 @@ export function BuddyGoalStart({
       )}
 
       <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
-        <GoalChips examples={examples} onPick={goal.fill} />
+        <GoalChips onPick={goal.fill} />
 
-        <GoalField action={goal.action}>
-          <label className="sr-only" htmlFor={fieldId}>
-            {t("Your goal")}
-          </label>
-
-          <GoalFieldText
-            autoFocusOnPointer
-            defaultValue={draft}
-            id={fieldId}
-            maxLength={MAX_GOAL_PROMPT_LENGTH}
-            placeholder={t("What you want to learn")}
-            {...goal.field}
-          />
-
+        <GoalBox defaultValue={draft} goal={goal}>
           <GoalFieldSubmit>{t("Build my plan")}</GoalFieldSubmit>
-        </GoalField>
+        </GoalBox>
       </div>
     </div>
   );

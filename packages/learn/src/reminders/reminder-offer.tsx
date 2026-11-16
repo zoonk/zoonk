@@ -1,13 +1,13 @@
 "use client";
 
 import { type StudyReminderView } from "@zoonk/core/reminders/contract";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { safeAsync } from "@zoonk/utils/error";
-import { BellIcon, CheckIcon, UserPlusIcon } from "lucide-react";
+import { BellIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react";
+import { CreateAccountLink } from "../_components/create-account-link";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { type StudyMomentView } from "../session/session-types";
@@ -148,13 +148,7 @@ function GuestOffer({
       title={t("Want a study reminder?")}
     >
       <div className="flex flex-wrap gap-2">
-        <PendingLink
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          href={signUpHref}
-          icon={<UserPlusIcon aria-hidden="true" />}
-        >
-          {t("Create an account")}
-        </PendingLink>
+        <CreateAccountLink href={signUpHref} />
         <Button onClick={onClose} size="sm" variant="ghost">
           {t("No thanks")}
         </Button>

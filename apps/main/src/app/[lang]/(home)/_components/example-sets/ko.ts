@@ -23,10 +23,11 @@ export const ko: ExampleSet = {
     goal: (month) => `${month} 수능 준비하기`,
     headline: "수능 준비",
     mock: {
-      details: "30문항 · 100분",
       firm: ["지수와 로그", "적분"],
+      minutes: 100,
       mistakes: 3,
       name: "수학",
+      questions: "30문항",
       review: ["미분", "수열"],
       scores: [{ label: "수학", range: "2–3등급" }],
     },

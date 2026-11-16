@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
@@ -111,7 +112,7 @@ function TestRowLines({ row }: { row: TestRow }) {
     >
       {row.met === false && <XIcon aria-hidden="true" className="size-3.5 shrink-0" />}
       {row.met === true && <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" />}
-      {lines.join(" · ")}
+      {lines.join(FACT_SEPARATOR)}
     </span>
   );
 }

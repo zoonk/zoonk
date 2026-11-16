@@ -14,15 +14,17 @@ export function pinnedLeads(context: Context): AlignmentFinding[] {
   return bars.flatMap((bar) => {
     const pinned = box(bar.bounds);
 
-    // A declared group drawn as the bar itself (its button row) is what the bar pins.
+    // What the bar holds rides with it: a group the capture names as drawn in it, or one drawn as
+    // the bar itself (its button row), where a platform names none.
     const own = new Set(
       elements
         .filter(
           (group) =>
             group.part === "group" &&
-            group.bounds.every(
-              (value, index) => Math.abs(value - (bar.bounds[index] ?? 0)) <= EDGE,
-            ),
+            (group.pinnedIn === bar.id ||
+              group.bounds.every(
+                (value, index) => Math.abs(value - (bar.bounds[index] ?? 0)) <= EDGE,
+              )),
         )
         .map((group) => group.id),
     );

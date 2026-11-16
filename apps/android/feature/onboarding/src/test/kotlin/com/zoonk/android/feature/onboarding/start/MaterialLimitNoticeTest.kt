@@ -3,6 +3,8 @@ package com.zoonk.android.feature.onboarding.start
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -43,6 +45,7 @@ class MaterialLimitNoticeTest {
     private fun uploadRefused(
         period: String = "rolling30Days",
         availableAt: String? = clock.opening.toString(),
+        pasting: Pasting? = null,
     ) = show {
         AttachControls(
             pending = false,
@@ -52,6 +55,7 @@ class MaterialLimitNoticeTest {
             onLink = {},
             onCreateAccount = {},
             onSubscribe = { subscribes++ },
+            draft = AttachDraft(pasting = pasting, text = "notes", link = "https://example.com"),
         )
     }
 
@@ -66,6 +70,26 @@ class MaterialLimitNoticeTest {
 
     private fun waitForTryAgain() =
         compose.waitUntil(10_000) { compose.onAllNodesWithText("You can try again now.").fetchSemanticsNodes().isNotEmpty() }
+
+    @Test
+    fun anUploadCapDisablesEveryAttachActionIncludingAnOpenTextDraft() {
+        uploadRefused(pasting = Pasting.Text)
+        listOf("Upload a file", "Paste text", "Paste a link", "Add text").forEach {
+            compose.onNodeWithText(it).assertIsNotEnabled()
+        }
+        compose.onNodeWithText("Adding your material…").assertDoesNotExist()
+        clock.passOpening()
+        waitForTryAgain()
+        listOf("Upload a file", "Paste text", "Paste a link", "Add text").forEach {
+            compose.onNodeWithText(it).assertIsEnabled()
+        }
+    }
+
+    @Test
+    fun anUploadCapAlsoDisablesAddingAnOpenLinkDraft() {
+        uploadRefused(pasting = Pasting.Link)
+        compose.onNodeWithText("Add link").assertIsNotEnabled()
+    }
 
     @Test
     fun anUploadRefusalIsTheNoticeUntilItsDayComes() {

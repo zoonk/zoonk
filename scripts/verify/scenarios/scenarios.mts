@@ -1,5 +1,6 @@
 import { type Anchor, PHONE_AND_LAPTOP, type Scenario } from "./shape.mts";
 import { STATE_SCENARIOS } from "./states.mts";
+import { SWEEP_SCENARIOS } from "./sweep.mts";
 
 export type { Prerequisites, Scenario, Step } from "./shape.mts";
 
@@ -219,6 +220,7 @@ export const SCENARIOS: Scenario[] = [
     sizes: PHONE_AND_LAPTOP,
   },
   ...STATE_SCENARIOS,
+  ...SWEEP_SCENARIOS,
   {
     anchors: [],
     id: "mind-maps.offer.lifted",

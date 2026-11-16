@@ -1,7 +1,8 @@
-import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import "server-only";
 import { getUserSearchWhere } from "@zoonk/core/users/user-search";
 import { prisma } from "@zoonk/db";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Route } from "next";
 
@@ -74,7 +75,7 @@ export const searchAdminRecords = cacheAdminData(async (query: string) => {
       items: lessons.map((lesson) => ({
         detail: [lesson.homeChapter?.homeCourse?.title, lesson.language]
           .filter(Boolean)
-          .join(" · "),
+          .join(FACT_SEPARATOR),
         href: `/lessons/${lesson.id}` as const,
         label: lesson.title,
       })),

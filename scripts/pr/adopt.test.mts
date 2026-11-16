@@ -65,11 +65,11 @@ async function adoptAndCheck(
 }
 
 describe("pr:media adopt, an Android render into a capture folder", () => {
-  it("records a clean, current render as captured and current, still to read, its layout measured", async () => {
+  it("records a current legacy render with its missing layout measurements and unread picture", async () => {
     const { result, to } = await adoptAndCheck([render({ uncommitted: "clean" })]);
     const [item] = (await readManifest(to)) ?? [];
 
-    assert.deepEqual(kinds(result), ["unread"]);
+    assert.deepEqual(kinds(result), ["unread", "alignment", "alignment", "alignment", "alignment"]);
     assert.equal(result.notMeasured, 0);
 
     assert.deepEqual(item && { ...item, steps: "" }, {
@@ -93,8 +93,23 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
     const dirty = await adoptAndCheck([render({ uncommitted: sha256("draft") })]);
     const stale = await adoptAndCheck([render({ commit: fixture.older, uncommitted: "clean" })]);
 
-    assert.deepEqual(kinds(dirty.result), ["uncommitted", "unread"]);
-    assert.deepEqual(kinds(stale.result), ["stale", "unread"]);
+    assert.deepEqual(kinds(dirty.result), [
+      "uncommitted",
+      "unread",
+      "alignment",
+      "alignment",
+      "alignment",
+      "alignment",
+    ]);
+
+    assert.deepEqual(kinds(stale.result), [
+      "stale",
+      "unread",
+      "alignment",
+      "alignment",
+      "alignment",
+      "alignment",
+    ]);
   });
 
   it("refuses a picture that isn't the one its layout file measured", async () => {
@@ -110,8 +125,28 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
     const after = await adoptAndCheck([render(clean, lost)], { ...lost, read: true });
     const before = await adoptAndCheck([render(clean, lost)], { ...lost, side: "before" });
 
-    assert.deepEqual(kinds(after.result), ["alignment"]);
-    assert.match(after.result.problems[0]?.detail ?? "", /no rows the read could find/u);
+    assert.deepEqual(kinds(after.result), [
+      "alignment",
+      "alignment",
+      "alignment",
+      "alignment",
+      "alignment",
+    ]);
+
+    assert.ok(
+      after.result.problems.some((problem) =>
+        /no rows the read could find/u.test(problem.detail ?? ""),
+      ),
+    );
+
+    assert.equal(
+      after.result.problems.filter((problem) =>
+        /measurements were not recorded/u.test(problem.detail ?? ""),
+      ).length,
+      // oxlint-disable-next-line no-magic-numbers -- Version 1 omits four new relationships.
+      4,
+    );
+
     assert.deepEqual(before.result.problems, []);
   });
 });

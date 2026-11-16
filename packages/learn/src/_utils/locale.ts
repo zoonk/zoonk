@@ -1,4 +1,5 @@
 import { getSentenceSpace, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getTimeZoneName } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
 
 export function useAppLocale() {
@@ -10,9 +11,5 @@ export function useSentenceSpace() {
 }
 
 export function useTimeZoneName(timeZone: string): string {
-  const name = new Intl.DateTimeFormat(useLocale(), { timeZone, timeZoneName: "longGeneric" })
-    .formatToParts()
-    .find((part) => part.type === "timeZoneName");
-
-  return name?.value ?? timeZone;
+  return getTimeZoneName({ locale: useLocale(), timeZone });
 }

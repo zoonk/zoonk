@@ -83,10 +83,7 @@ export function WeekendTime({
       </div>
 
       {missing ? (
-        <p
-          className="text-muted-foreground flex min-h-11 items-center text-sm text-pretty"
-          id={reasonId}
-        >
+        <p className="text-muted-foreground -mt-3 min-h-14 text-sm text-pretty" id={reasonId}>
           {missingDayReason(missing)}
         </p>
       ) : (

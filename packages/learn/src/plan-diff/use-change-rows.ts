@@ -1,9 +1,8 @@
 "use client";
 
 import { useExtracted, useFormatter } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate, useFormatWeekday } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
 import {
   type ChangeOptions,
   type GoalDateMove,

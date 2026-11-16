@@ -6,6 +6,7 @@ export type Prerequisites = {
   persona: { flags?: string[]; name: string } | "visitor";
   /** A state no persona or step reaches yet: what has to be seeded first. */
   seed?: string;
+  fixture?: string;
   /** A named state written on the persona's copy (`SCENARIO_STATES` in core's seed). */
   state?: string;
   /** Values the page keeps on the device, as `verify:pages --local-storage`. */
@@ -28,6 +29,8 @@ export type Anchor = { id: string; web?: string };
 export type Scenario = {
   /** The app it runs in: Main, or the playground, which shows the player's screens alone. */
   app?: "playground";
+  failure?: "mock-save" | "plan-build";
+  evidence?: string[];
   id: string;
   screen: string;
   /** The page the steps start from, where it isn't the screen (a tap that opens the screen). */

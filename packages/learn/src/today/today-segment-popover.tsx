@@ -8,6 +8,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { useFormatDuration } from "../_utils/time-format";
@@ -61,7 +62,7 @@ function useSegmentFacts() {
           answered: block.answered,
           count: block.questions,
         })
-      : [t("Up next"), time].join(" · ");
+      : [t("Up next"), time].join(FACT_SEPARATOR);
   };
 }
 

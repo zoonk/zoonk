@@ -126,22 +126,27 @@ class TodayViewModel(
     var isCatchingUp by mutableStateOf(false)
         private set
 
-    var catchUpFailed by mutableStateOf(false)
-        private set
+    private val catchUpFailure = visits.outcome<Unit>()
+
+    /** Catching up didn't save, on this visit. */
+    val catchUpFailed get() = catchUpFailure.value != null
 
     fun catchUp(read: TodayRead.Day) {
         if (isCatchingUp) return
         isCatchingUp = true
-        catchUpFailed = false
+        catchUpFailure.clear()
+        val started = visit
 
         viewModelScope.launch {
-            catchUpFailed = opener.catchUp(read.day, read.today.goal.id) is MutationResult.Failed
+            if (opener.catchUp(read.day, read.today.goal.id) is MutationResult.Failed) catchUpFailure.send(started, Unit)
             isCatchingUp = false
         }
     }
 
-    var resumeFailure by mutableStateOf<ResumeFailure?>(null)
-        private set
+    private val resumeFailed = visits.outcome<ResumeFailure>()
+
+    /** Why Resume didn't save, on this visit. */
+    val resumeFailure: ResumeFailure? get() = resumeFailed.value
 
     /** The goal being resumed; it stays busy once saved, until Today's next read shows its day. */
     var resuming by mutableStateOf<UUID?>(null)
@@ -150,17 +155,18 @@ class TodayViewModel(
     fun resume(goalId: UUID) {
         if (resuming != null) return
         resuming = goalId
-        resumeFailure = null
+        resumeFailed.clear()
+        val started = visit
 
         viewModelScope.launch {
             when (val result = store.resume(goalId)) {
                 is MutationResult.Done -> {
-                    if (result.value) todayReadAgain() else resumeFailure = ResumeFailure.GoalLimit
+                    if (result.value) todayReadAgain() else resumeFailed.send(started, ResumeFailure.GoalLimit)
                     resuming = null
                 }
 
                 is MutationResult.Failed -> {
-                    resumeFailure = ResumeFailure.Failed
+                    resumeFailed.send(started, ResumeFailure.Failed)
                     resuming = null
                 }
 
@@ -172,9 +178,7 @@ class TodayViewModel(
     }
 
     /** Today no longer shows a paused goal, so a resume that failed says nothing about a later pause. */
-    fun resumed() {
-        resumeFailure = null
-    }
+    fun resumed() = resumeFailed.clear()
 
     /**
      * Returns once a read of Today has succeeded since the write, which dropped any read already on its way, so a saved
@@ -216,6 +220,8 @@ class TodayViewModel(
         planChangeFailedOn = null
         examChoiceMade = null
         examChoiceFailedOn = null
+        insightAnswers = emptyMap()
+        repricedInsights = emptyMap()
     }
 
     /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row and opens nothing. */
@@ -285,12 +291,15 @@ class TodayViewModel(
     var isDismissingFocusTest by mutableStateOf(false)
         private set
 
-    var focusTestFailedOn by mutableStateOf<NoticeVisit?>(null)
-        private set
+    private val focusTestFailure = visits.outcome<NoticeVisit>()
 
-    /** The suggestion just dismissed, so its card says what "Not now" did after Today stops carrying it. */
-    var focusTestDismissed by mutableStateOf<FocusTestDismissed?>(null)
-        private set
+    /** The goal and day whose "Not now" didn't save on this visit, so the error shows on that notice only. */
+    val focusTestFailedOn get() = focusTestFailure.value
+
+    private val focusTestAnswer = visits.outcome<FocusTestDismissed>()
+
+    /** The suggestion just dismissed on this visit, so its card says what "Not now" did after Today stops carrying it. */
+    val focusTestDismissed get() = focusTestAnswer.value
 
     /** "Not now" on the Focus test's suggestion: Today stops suggesting it for this goal. */
     fun dismissFocusTest(
@@ -300,16 +309,17 @@ class TodayViewModel(
         if (isDismissingFocusTest) return
         isDismissingFocusTest = true
         val on = read.noticeVisit()
-        focusTestFailedOn = null
+        val started = visit
+        focusTestFailure.clear()
 
         viewModelScope.launch {
             when (focusTests.dismissSuggestion(on.goalId)) {
                 is MutationResult.Done -> {
-                    focusTestDismissed = FocusTestDismissed(on, test)
+                    focusTestAnswer.send(started, FocusTestDismissed(on, test))
                 }
 
                 is MutationResult.Failed -> {
-                    focusTestFailedOn = on
+                    focusTestFailure.send(started, on)
                 }
 
                 MutationResult.Obsolete -> {}
@@ -408,7 +418,7 @@ class TodayViewModel(
         }
     }
 
-    /** Kept per insight, so its card shows what the answer did once Today no longer carries it. */
+    /** Kept per insight for this visit, so its card shows what the answer did once Today no longer carries it. */
     var insightAnswers by mutableStateOf(mapOf<UUID, InsightAnswer>())
         private set
 
@@ -426,9 +436,12 @@ class TodayViewModel(
         if (isAnsweringInsight) return
         isAnsweringInsight = true
         insightAnswers -= insight.id
+        val started = visit
 
         viewModelScope.launch {
             val result = store.answerInsight(insight, accepted)
+            isAnsweringInsight = false
+            if (visit != started) return@launch
             val repriced = (result as? MutationResult.Done)?.value?.takeIf { accepted && it.status == MemoryInsight.Status.PENDING }
             val answer =
                 when {
@@ -439,7 +452,6 @@ class TodayViewModel(
                 }
             repricedInsights = if (repriced != null) repricedInsights + (insight.id to repriced) else repricedInsights - insight.id
             answer?.let { insightAnswers += insight.id to it }
-            isAnsweringInsight = false
         }
     }
 

@@ -23,11 +23,11 @@ import { readEditValue, toDraftEdit } from "./understood-edits";
 import { useCardLimit } from "./understood-limit";
 import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
+import { useScheduleRow } from "./use-schedule-row";
 import {
   type EditableField,
   type UnderstoodRow,
   useMaterialRow,
-  useScheduleRow,
   useUnderstoodRows,
 } from "./use-understood-rows";
 
@@ -206,7 +206,11 @@ export function UnderstoodScreen({
               {t("Fix something")}
             </OnboardingSecondaryButton>
             <form action={() => onConfirm()} className="contents">
-              <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} type="submit">
+              <OnboardingPrimaryButton
+                busy={isCreating}
+                disabled={rewriting || editing !== null}
+                type="submit"
+              >
                 {t("Looks right")}
               </OnboardingPrimaryButton>
             </form>

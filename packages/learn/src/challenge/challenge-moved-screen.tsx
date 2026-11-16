@@ -51,7 +51,9 @@ export function ChallengeMovedScreen({
     >
       <StepCard role="status">
         <StepHeader>
-          <StepTitle>{t("Moved to {date}", { date: formatDate(date, "weekdayDay") })}</StepTitle>
+          <StepTitle>
+            {t("Moved to {date}", { date: formatDate(date, "sentence", { weekday: true }) })}
+          </StepTitle>
           <StepDetail>
             {[t("Your plan moved later lessons to make room for it."), leftOut]
               .filter(Boolean)

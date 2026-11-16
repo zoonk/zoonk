@@ -12,6 +12,7 @@ import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
+import { FactSegments } from "@zoonk/learn/facts";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -208,13 +209,13 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
           {OUTCOMES[state]}
         </StateMark>
         <p className="text-muted-foreground">
-          {[
-            fix.status === "stale" ? fix.staleReason : null,
-            fix.decider?.name,
-            fix.decidedAt ? formatDateTime(fix.decidedAt) : null,
-          ]
-            .filter(Boolean)
-            .join(" · ")}
+          <FactSegments
+            facts={[
+              fix.status === "stale" ? fix.staleReason : null,
+              fix.decider?.name,
+              fix.decidedAt ? formatDateTime(fix.decidedAt) : null,
+            ]}
+          />
         </p>
       </div>
 

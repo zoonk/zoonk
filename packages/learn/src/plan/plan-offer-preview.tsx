@@ -220,7 +220,7 @@ export function useAnswerOffer() {
     const { fittingDate } = time;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
-      const date = formatDate(fittingDate, "long");
+      const date = formatDate(fittingDate, "sentence");
 
       return {
         description: [covered],

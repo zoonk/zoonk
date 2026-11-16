@@ -2,8 +2,9 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { GoalKindIcon } from "@/components/goal-kind-icon";
 import { StateMark } from "@/components/state-mark";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
-import { formatDate, toWords } from "@/lib/format";
+import { formatDate, formatDay, toWords } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
+import { FactSegments } from "@zoonk/learn/facts";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import {
   CalendarXIcon,
@@ -17,12 +18,6 @@ import {
   RouteIcon,
 } from "lucide-react";
 import Link from "next/link";
-
-function goalFacts(goal: UserGoal): string {
-  return [toWords(goal.kind), languagePairName(goal), goal.examBlueprint?.name]
-    .filter(Boolean)
-    .join(" · ");
-}
 
 /** A goal as the learner's plan shows it: how much of it is done, drawn, then its pace and date. */
 function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: UserGoal }) {
@@ -44,7 +39,11 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
           ) : (
             title
           )}
-          <span className="text-muted-foreground text-xs">{goalFacts(goal)}</span>
+          <span className="text-muted-foreground text-xs">
+            <FactSegments
+              facts={[toWords(goal.kind), languagePairName(goal), goal.examBlueprint?.name]}
+            />
+          </span>
         </span>
         <StateMark className="text-muted-foreground" state={goal.status} />
       </div>
@@ -74,7 +73,7 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
         </span>
         <span>
           {goal.dailyMinutes} min a day
-          {goal.targetDate ? ` · By ${formatDate(goal.targetDate)}` : ""}
+          {goal.targetDate ? ` · By ${formatDay(goal.targetDate)}` : ""}
         </span>
         {children ? <span className="basis-full">{children}</span> : null}
       </div>

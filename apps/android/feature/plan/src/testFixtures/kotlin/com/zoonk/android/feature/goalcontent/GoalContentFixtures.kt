@@ -189,7 +189,7 @@ private fun practiceBlock(): AreaPractice =
 
 internal class FakeGoalContentApi : GoalContentApi {
     var chapters = 0
-    var practice: () -> AreaPractice = { practiceBlock() }
+    var practice: suspend () -> AreaPractice = { practiceBlock() }
     val practiced = mutableListOf<AreaPracticeInput>()
 
     override suspend fun chapter(

@@ -26,7 +26,7 @@ function useGuideQuestion() {
   }: Pick<PlanChangeView, "examDocument" | "operations">): string => {
     const follows = operations.some((operation) => operation.kind === "followNotice");
     const day = operations.find((operation) => operation.kind === "setNoticeDate");
-    const date = day?.kind === "setNoticeDate" ? formatDate(day.targetDate, "long") : null;
+    const date = day?.kind === "setNoticeDate" ? formatDate(day.targetDate, "sentence") : null;
     const estimated = day?.kind === "setNoticeDate" && day.estimated;
 
     if (follows && date) {
@@ -201,7 +201,7 @@ export function useOfficialDateLine() {
   ): string | null {
     return change.status === "proposed" && change.officialDate
       ? t("The official exam date is {date}.", {
-          date: formatDate(change.officialDate.date, "long"),
+          date: formatDate(change.officialDate.date, "sentence"),
         })
       : null;
   };

@@ -1,3 +1,4 @@
+import { FactSegments } from "@zoonk/learn/facts";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { DetailFacts } from "@zoonk/ui/components/detail";
 import { PageTitle } from "@zoonk/ui/components/page-top";
@@ -80,7 +81,7 @@ export function AdminDetailHeader({
   title: string;
   titleClassName?: string;
 }) {
-  const factsLine = facts.filter(Boolean).join(" · ");
+  const shown = facts.filter((fact): fact is string => Boolean(fact));
 
   return (
     <AdminHeader
@@ -106,9 +107,10 @@ export function AdminDetailHeader({
     >
       {/* A record's facts here are names, a plan and dates: words, so the text face (Main's are counts). */}
       <DetailFacts className="font-sans">
-        {alert && <span className="text-destructive-text">{alert}</span>}
-        {alert && factsLine && <span aria-hidden="true">·</span>}
-        {factsLine}
+        <FactSegments
+          facts={shown}
+          lead={alert && <span className="text-destructive-text">{alert}</span>}
+        />
       </DetailFacts>
     </AdminHeader>
   );

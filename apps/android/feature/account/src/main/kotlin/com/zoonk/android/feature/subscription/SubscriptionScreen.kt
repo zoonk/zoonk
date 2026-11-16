@@ -68,6 +68,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -157,6 +158,7 @@ private fun Account(
             )
         }
 
+    VisitOf(cancellation.visit)
     WebPlusCancellationDialog(cancellation)
 
     when (val state = account) {

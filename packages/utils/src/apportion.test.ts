@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apportion } from "./apportion";
+import { apportion, roundToTotal } from "./apportion";
 
 describe(apportion, () => {
   it("shares the total in proportion, the largest remainders taking what's left", () => {
@@ -10,5 +10,22 @@ describe(apportion, () => {
 
   it("shares equally when no weight counts", () => {
     expect(apportion({ total: 4, weights: [0, 0] })).toStrictEqual([2, 2]);
+  });
+});
+
+describe(roundToTotal, () => {
+  it("rounds each part so the parts add up to the rounded total", () => {
+    const rows = roundToTotal([2.4, 3.3, 2.9, 3]);
+
+    expect(rows).toStrictEqual([3, 3, 3, 3]);
+    expect(rows.reduce((sum, row) => sum + row, 0)).toBe(Math.round(2.4 + 3.3 + 2.9 + 3));
+  });
+
+  it("leaves whole parts as they are", () => {
+    expect(roundToTotal([2, 3, 3, 3])).toStrictEqual([2, 3, 3, 3]);
+  });
+
+  it("has no parts for no rows", () => {
+    expect(roundToTotal([])).toStrictEqual([]);
   });
 });

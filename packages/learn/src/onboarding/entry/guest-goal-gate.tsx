@@ -2,6 +2,7 @@
 
 import { UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SignUpMainLink } from "../../_components/subscribe-gate";
 import { LearnLink } from "../../learn-link";
 import { type OnboardingRoutes } from "../onboarding-actions";
 import {
@@ -13,7 +14,6 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { StepIcon } from "../steps/step-parts";
-import { SignUpLink } from "./goal-outcomes";
 
 export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
   const t = useExtracted();
@@ -25,7 +25,7 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
           <LearnLink className={ONBOARDING_ACTION_LINK_CLASS.other} href={routes.today}>
             {t("Back to Today")}
           </LearnLink>
-          <SignUpLink href={routes.signUp} />
+          <SignUpMainLink href={routes.signUp} />
         </OnboardingActions>
       }
     >

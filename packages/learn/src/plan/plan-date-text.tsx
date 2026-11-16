@@ -1,33 +1,20 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { type DateTimeFormatOptions, useExtracted, useFormatter } from "next-intl";
-import { isoDateToUtc, useIsoToday } from "../_utils/iso-date";
-import { type PlanDateStyle, getPlanDateStyle } from "./plan-date-style";
-
-const STYLE_OPTIONS: Record<PlanDateStyle, DateTimeFormatOptions> = {
-  day: { day: "numeric", month: "short" },
-  dayYear: { day: "numeric", month: "short", year: "numeric" },
-  month: { month: "short" },
-  monthYear: { month: "short", year: "numeric" },
-};
+import { useExtracted } from "next-intl";
+import { useFormatIsoDate } from "../_utils/iso-date";
 
 /** Kept whole on its line, unless it's wider than the whole line. */
 const PLAN_DATE_CLASS = "inline-block font-mono tabular-nums";
 
+/** A date on the plan: a row's day, or its month when the plan only knows the month. */
 export function useFormatPlanDate() {
-  const format = useFormatter();
-  const today = useIsoToday();
+  const formatDate = useFormatIsoDate();
 
   return (
     isoDate: string,
     { month = false, weekday = false }: { month?: boolean; weekday?: boolean } = {},
-  ): string =>
-    format.dateTime(isoDateToUtc(isoDate), {
-      ...STYLE_OPTIONS[getPlanDateStyle({ isoDate, month, today })],
-      ...(weekday && { weekday: "short" }),
-      timeZone: "UTC",
-    });
+  ): string => formatDate(isoDate, month ? "rowMonth" : "row", { weekday });
 }
 
 export function PlanDateText({
