@@ -49,7 +49,14 @@ export function ActivityCodeBlock({
 }) {
   return (
     <ActivityHorizontalScroll box={{ label }} className={cn("-mx-1", className)}>
-      <div className={cn("flex w-max min-w-full flex-col px-1 pb-1", CODE_TEXT)}>{children}</div>
+      <div
+        className={cn(
+          "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-1 pb-1",
+          CODE_TEXT,
+        )}
+      >
+        {children}
+      </div>
     </ActivityHorizontalScroll>
   );
 }
@@ -71,7 +78,7 @@ export function ActivityCodeLine({
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg pr-2 whitespace-pre",
+        "col-span-full grid grid-cols-subgrid items-center rounded-lg pr-2 pl-1.5 whitespace-pre",
         tone === "current" &&
           "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
@@ -85,11 +92,11 @@ export function ActivityCodeLine({
     >
       <span
         aria-hidden="true"
-        className="text-muted-foreground w-8 shrink-0 pr-3 text-left tabular-nums select-none"
+        className="text-muted-foreground pr-3 text-right tabular-nums select-none"
       >
         {number}
       </span>
-      {children}
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
