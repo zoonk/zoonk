@@ -1,6 +1,7 @@
 "use client";
 
 import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
+import { estimatedLabelWidth, sideOffLine } from "../_utils/drawing-label";
 import { tickLabels } from "../_utils/plot-ticks";
 import { type PlotPoint } from "../_utils/sample-formula";
 import {
@@ -19,8 +20,9 @@ const PLOT_HEIGHT = 168;
 const MARK_RADIUS = 4.5;
 const EXPECTED_RADIUS = 7;
 const DELTA_LABEL_GAP = 8;
-const EXPECTED_LABEL_GAP = EXPECTED_RADIUS + DELTA_LABEL_GAP;
+const EXPECTED_LABEL_GAP = EXPECTED_RADIUS + DELTA_LABEL_GAP / 2;
 const EXPECTED_LABEL_HALO = 3;
+const LABEL_HEIGHT = 12;
 const MIN_DELTA_PIXELS = 12;
 
 type Curve = { points: readonly PlotPoint[]; y: number | null };
@@ -68,8 +70,26 @@ function DeltaMark({
   );
 }
 
-function ExpectedMark({ label, x, y }: { label: string; x: number; y: number }) {
+function ExpectedMark({
+  label,
+  line,
+  x,
+  y,
+}: {
+  label: string;
+  line: readonly PlotPoint[];
+  x: number;
+  y: number;
+}) {
   const scales = usePlotScales();
+  const mark = { x: scales.x.toPixel(x), y: scales.y.toPixel(y) };
+
+  const side = sideOffLine({
+    gap: EXPECTED_LABEL_GAP,
+    line: line.map((point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) })),
+    mark,
+    size: { height: LABEL_HEIGHT, width: estimatedLabelWidth(label) },
+  });
 
   return (
     <>
@@ -77,10 +97,11 @@ function ExpectedMark({ label, x, y }: { label: string; x: number; y: number }) 
       <text
         aria-hidden="true"
         className="fill-success-text stroke-background text-xs font-semibold tabular-nums [paint-order:stroke]"
+        dominantBaseline={side === "above" ? "text-after-edge" : "text-before-edge"}
         strokeWidth={EXPECTED_LABEL_HALO}
         textAnchor="middle"
-        x={scales.x.toPixel(x)}
-        y={scales.y.toPixel(y) - EXPECTED_LABEL_GAP}
+        x={mark.x}
+        y={mark.y + (side === "above" ? -EXPECTED_LABEL_GAP : EXPECTED_LABEL_GAP)}
       >
         {label}
       </text>
@@ -158,7 +179,9 @@ export function ActivityFormulaChart({
         />
       )}
 
-      {expected && <ExpectedMark label={expected.label} x={expected.x} y={expected.y} />}
+      {expected && (
+        <ExpectedMark label={expected.label} line={current.points} x={expected.x} y={expected.y} />
+      )}
 
       {current.y !== null && (
         <>

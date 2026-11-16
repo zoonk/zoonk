@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blankStem, commonStem, nextOpenBlank, splitForm } from "./pattern-cells";
+import { blankForms, blankStem, commonStem, nextOpenBlank, splitForm } from "./pattern-cells";
 
 describe("pattern cells", () => {
   it("finds the stem every form shares", () => {
@@ -27,5 +27,18 @@ describe("pattern cells", () => {
     expect(
       nextOpenBlank({ blanks: [4, 5], current: 5, filled: { "4": "éis", "5": "en" } }),
     ).toBeNull();
+  });
+
+  it("lists every word a blank can show, once", () => {
+    expect(
+      blankForms({
+        choices: ["áis", "éis", "en"],
+        rows: [
+          { answer: "como" },
+          { answer: "coméis", blank: true },
+          { answer: "comen", blank: true },
+        ],
+      }),
+    ).toStrictEqual(["comáis", "coméis", "comen"]);
   });
 });

@@ -20,6 +20,7 @@ import {
   checkedMarks,
   expectedPitches,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
@@ -84,6 +85,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
                 }
               : null
           }
+          heading={keyboardHeading({ content, phase, shown })}
           notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
           onHear={() =>
             void piano.play(
@@ -93,6 +95,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
               ),
             )
           }
+          start={fields.start}
           target={fields.target}
         />
 

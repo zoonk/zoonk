@@ -20,6 +20,7 @@ import {
   expectedPitches,
   fretWindowStart,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   targetPitches,
   targetSound,
@@ -109,8 +110,10 @@ export function GuitarOnlyBoard({
                 }
               : null
           }
+          heading={keyboardHeading({ content, phase, shown: played })}
           notes={played.map((pitch) => spell(pitch))}
           onHear={() => void guitar.play(together(voicingMidis(voicing), { gap: STRUM_GAP }))}
+          start={fields.start}
           target={fields.target}
         />
 

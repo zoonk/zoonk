@@ -15,7 +15,7 @@ export function TracerVariables({ values }: { values: readonly WatchedValue[] })
   return (
     <dl
       aria-label={t("Variables")}
-      className="grid gap-1 font-mono"
+      className="-mx-2 grid gap-1 font-mono"
       style={{ gridTemplateColumns: `repeat(${values.length}, minmax(0, 1fr))` }}
     >
       {values.map((item) => (

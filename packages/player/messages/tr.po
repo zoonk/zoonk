@@ -128,6 +128,16 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Henüz tahmin yok"
 
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Sola kaydır"
+
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Sağa kaydır"
+
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -604,11 +614,6 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "{cause} seçildi. Şimdi yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} / {total, plural, other {# ilişki}}"
@@ -617,6 +622,11 @@ msgstr "{count} / {total, plural, other {# ilişki}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Nedenler ve sonuçlar"
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -745,6 +755,11 @@ msgstr "Beklenen"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Kodu değiştirdin. Yeni çıktıyı görmek için tekrar çalıştır."
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "KN7zKn"
+msgid "Error"
+msgstr "Hata"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "DhXJyL"
@@ -1236,14 +1251,19 @@ msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Do’dan Si’ye uzanan bir piyano klavyesi. Basılan tuşlar: {notes}."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "0kfXGd"
+msgid "{count, plural, one {# note} other {# notes}}"
+msgstr "{count, plural, other {# nota}}"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "S7Oawr"
 msgid "By ear"
 msgstr "Kulaktan"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "0kfXGd"
-msgid "{count, plural, one {# note} other {# notes}}"
-msgstr "{count, plural, other {# nota}}"
+msgctxt "nfwiHT"
+msgid "Your notes"
+msgstr "Notaların"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "uHVyhO"
@@ -1999,6 +2019,11 @@ msgstr "Sayı doğrusundaki cevabın"
 msgctxt "mgXw7n"
 msgid "{person}: {word}, choose the ending"
 msgstr "{person}: {word}, eki seç"
+
+#: src/activities/pattern-table/pattern-table-activity.tsx
+msgctxt "dlL374"
+msgid "Forms of {model} and {word}"
+msgstr "{model} ve {word} kelimelerinin biçimleri"
 
 #: src/activities/pattern-table/pattern-table-activity.tsx
 msgctxt "om_2Uq"

@@ -14,9 +14,12 @@ const GAP = 2;
 const EDGE_LABEL_GAP = 10;
 const PILL_LONG = 26;
 const PILL_SHORT = 12;
-const BIG_CELL = 64;
-const MEDIUM_CELL = 36;
 const MIN_LABEL_CELL = 20;
+const DIGIT_WIDTH = 9;
+const LABEL_INSET = 4;
+
+/** Every number in the figure, the sides' lengths and the parts' areas, at one size. */
+const NUMBER_CLASS = "fill-foreground text-sm font-semibold tabular-nums";
 
 const CELL_TONES = ["fill-viz-accent-soft", "fill-viz-accent/25", "fill-viz-accent/40"] as const;
 
@@ -24,14 +27,9 @@ function edgesOf(side: SideCuts, scale: LinearScale): number[] {
   return [0, ...side.cuts, side.total].map((edge) => scale.toPixel(edge));
 }
 
-function cellTextClass(width: number, height: number): string {
-  const size = Math.min(width, height);
-
-  if (size >= BIG_CELL) {
-    return "text-2xl";
-  }
-
-  return size >= MEDIUM_CELL ? "text-base" : "text-xs";
+/** Each part's drawn size along one side, between its two edges less the gap. */
+function sizesOf(edges: readonly number[]): number[] {
+  return edges.slice(1).map((edge, index) => Math.abs(edge - (edges[index] ?? 0)) - GAP);
 }
 
 export function CutHandle({
@@ -114,7 +112,7 @@ function EdgeLabels({
   const edges = edgesOf(side, scale);
 
   return (
-    <g aria-hidden="true" className="fill-foreground text-sm font-semibold tabular-nums">
+    <g aria-hidden="true" className={NUMBER_CLASS}>
       {cutsToParts(side.cuts, side.total).map((part, index) => {
         const middle = ((edges[index] ?? 0) + (edges[index + 1] ?? 0)) / 2;
 
@@ -133,8 +131,7 @@ function EdgeLabels({
             dominantBaseline="middle"
             // oxlint-disable-next-line react/no-array-index-key -- Parts are positional
             key={index}
-            textAnchor="end"
-            x={x.range[0] - EDGE_LABEL_GAP - PILL_SHORT}
+            x={0}
             y={middle}
           >
             {format(part)}
@@ -170,6 +167,8 @@ export function AreaGrid({
     cutsToParts(height.cuts, height.total),
   ];
 
+  const [columnSizes, rowSizes] = [sizesOf(columns), sizesOf(rows)];
+
   return (
     <>
       <g aria-hidden="true">
@@ -182,8 +181,12 @@ export function AreaGrid({
               rows[row + 1] ?? 0,
             ];
 
-            const [cellWidth, cellHeight] = [right - left - GAP, bottom - top - GAP];
-            const showsLabel = cellWidth >= MIN_LABEL_CELL && cellHeight >= MIN_LABEL_CELL;
+            const [cellWidth, cellHeight] = [columnSizes[column] ?? 0, rowSizes[row] ?? 0];
+            const area = format(columnPart * rowPart);
+
+            const showsLabel =
+              cellHeight >= MIN_LABEL_CELL &&
+              cellWidth >= area.length * DIGIT_WIDTH + LABEL_INSET * 2;
 
             return (
               // oxlint-disable-next-line react/no-array-index-key -- Cells are positional
@@ -198,16 +201,13 @@ export function AreaGrid({
                 />
                 {showsLabel && (
                   <text
-                    className={cn(
-                      "fill-foreground font-semibold tabular-nums",
-                      cellTextClass(cellWidth, cellHeight),
-                    )}
+                    className={NUMBER_CLASS}
                     dominantBaseline="middle"
                     textAnchor="middle"
                     x={(left + right) / 2}
                     y={(top + bottom) / 2}
                   >
-                    {format(columnPart * rowPart)}
+                    {area}
                   </text>
                 )}
               </g>
