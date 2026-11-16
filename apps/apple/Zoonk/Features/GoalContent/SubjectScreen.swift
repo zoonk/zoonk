@@ -421,6 +421,14 @@ private struct SubjectPreparation: View {
         }
         .typeStyle(.meta)
       }
+
+      // The page's topics and chapters count lessons, so a number they don't explain says what it
+      // counts.
+      if share > 0 {
+        Text("Counts your answers in lessons, practice and tests.", tableName: "Plan")
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
     }
     .padding(.vertical, 4)
     .accessibilityElement(children: .combine)
