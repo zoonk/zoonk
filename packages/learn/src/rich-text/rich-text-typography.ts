@@ -97,6 +97,52 @@ export function typesetMoney({ locale, text }: { locale: string; text: string })
   );
 }
 
+type Segment = { kind: string; text: string };
+
+const KEPT_AS_WRITTEN = new Set(["code", "displayMath", "math"]);
+
+/** A sign that ends a segment, apart from an amount the next segment starts ("R$ **80**"). */
+const SIGN_AT_END = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ]$/u;
+
+const STARTS_WITH_DIGIT = /^\d/u;
+
+/**
+ * Prose segments set by `typeset`, math and code as written, and a money sign kept with the amount
+ * the next prose segment starts with, as money in one segment is.
+ */
+export function typesetProse<T extends Segment>({
+  locale,
+  segments,
+  typeset,
+}: {
+  locale: string;
+  segments: readonly T[];
+  typeset: (text: string) => string;
+}): T[] {
+  const isProse = (segment: T | undefined) => segment && !KEPT_AS_WRITTEN.has(segment.kind);
+
+  return segments.map((segment, index) => {
+    if (!isProse(segment)) {
+      return segment;
+    }
+
+    const next = segments[index + 1];
+    const text = typeset(segment.text);
+
+    return {
+      ...segment,
+      text:
+        next && isProse(next) && STARTS_WITH_DIGIT.test(next.text)
+          ? text.replace(
+              SIGN_AT_END,
+              (_money, sign: string) =>
+                `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
+            )
+          : text,
+    };
+  });
+}
+
 export function typesetNumbers({ locale, text }: { locale: string; text: string }): string {
   const grouping = getNumberFormatter(locale, { useGrouping: true });
 

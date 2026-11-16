@@ -6,7 +6,7 @@ import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
 import { speakSegments } from "../rich-text/rich-text-speech";
-import { typesetMoney } from "../rich-text/rich-text-typography";
+import { typesetMoney, typesetProse } from "../rich-text/rich-text-typography";
 import { SpokenMath } from "../rich-text/spoken-math";
 import { useMathWords } from "../rich-text/use-spoken-text";
 import { LessonVisual } from "../visuals/lesson-visual";
@@ -20,11 +20,7 @@ function useMoneyTypesetting() {
   const locale = useAppLocale();
 
   return (segments: RichInlineSegment[]) =>
-    segments.map((segment) =>
-      segment.kind === "math" || segment.kind === "displayMath" || segment.kind === "code"
-        ? segment
-        : { ...segment, text: typesetMoney({ locale, text: segment.text }) },
-    );
+    typesetProse({ locale, segments, typeset: (text) => typesetMoney({ locale, text }) });
 }
 
 function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {

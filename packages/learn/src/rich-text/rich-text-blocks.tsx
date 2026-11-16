@@ -8,7 +8,7 @@ import {
 } from "./rich-inline-segments";
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { speakSegments } from "./rich-text-speech";
-import { typesetNumbers } from "./rich-text-typography";
+import { typesetNumbers, typesetProse } from "./rich-text-typography";
 import { SpokenMath } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
 
@@ -19,11 +19,7 @@ function typeset({
   locale: string;
   segments: RichInlineSegment[];
 }): RichInlineSegment[] {
-  return segments.map((segment) =>
-    segment.kind === "math" || segment.kind === "displayMath" || segment.kind === "code"
-      ? segment
-      : { ...segment, text: typesetNumbers({ locale, text: segment.text }) },
-  );
+  return typesetProse({ locale, segments, typeset: (text) => typesetNumbers({ locale, text }) });
 }
 
 function typesetBlock({ block, locale }: { block: RichBlock; locale: string }): RichBlock {

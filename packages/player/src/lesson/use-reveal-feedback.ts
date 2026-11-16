@@ -6,9 +6,11 @@ import { type Reveal, getReveal } from "./_utils/reveal-feedback";
 import { useLessonPlayer } from "./lesson-player-context";
 import { getScreenRef } from "./use-kept-screens";
 
+/** A challenge's result is its feedback, so it's revealed from its title. */
 const FEEDBACK_SELECTOR = [
   '[data-slot="feedback-panel"]',
   '[data-slot="lesson-result-notes"]',
+  '[data-slot="challenge-result"]',
 ].join(",");
 
 const STAGE_SELECTOR = '[data-slot="lesson-stage"]';

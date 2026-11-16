@@ -106,7 +106,7 @@ export function ChallengeDebriefView({
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2" data-slot="challenge-result">
         <h2 className="text-title">
           {content.variant === "whatIf" ? t("Scenario complete") : t("Challenge complete")}
         </h2>

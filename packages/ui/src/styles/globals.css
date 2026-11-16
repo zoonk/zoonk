@@ -843,6 +843,14 @@
     --glyph-blank: 5;
   }
 
+  &:has(.lucide-check) {
+    --glyph-blank: 3;
+  }
+
+  &:has(.lucide-lightbulb) {
+    --glyph-blank: 5;
+  }
+
   &:has(.lucide-plus) {
     --glyph-blank: 4;
     --glyph-blank-start: 4;
