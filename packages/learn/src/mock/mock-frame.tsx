@@ -29,7 +29,7 @@ function SaveStatusLine() {
   if (runner.saveStatus === "retrying") {
     return (
       <div className="flex items-center gap-2 text-sm" role="status">
-        <span className="text-muted-foreground min-w-0 flex-1">
+        <span className="text-destructive-text min-w-0 flex-1">
           {t("Your answer isn't saved yet")}
         </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">

@@ -7932,10 +7932,11 @@ msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
 msgstr "L’examen complet ou la moitié"
 
+#. An action, like "Take a mock exam" beside it: goes back into the mock exam already started.
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
-msgstr "Continuer ton examen blanc"
+msgstr "Reprendre ton examen blanc"
 
 #: src/mock/mock-expired.tsx
 msgctxt "lCUjGY"

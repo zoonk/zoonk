@@ -157,7 +157,7 @@ function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
   const t = useExtracted();
 
   return (
-    <div className="flex max-w-104 flex-col gap-10">
+    <div className="flex flex-col gap-10">
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">

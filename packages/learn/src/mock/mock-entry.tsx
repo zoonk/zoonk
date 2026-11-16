@@ -39,7 +39,13 @@ export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: Moc
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
-          {target.resume ? t("Continue your mock exam") : t("Take a mock exam")}
+          {target.resume
+            ? t({
+                description:
+                  'An action, like "Take a mock exam" beside it: goes back into the mock exam already started.',
+                message: "Continue your mock exam",
+              })
+            : t("Take a mock exam")}
         </ListRowTitle>
       </ListRowContent>
     </ListRowLink>
@@ -65,7 +71,13 @@ export function MockEntryButton({
 
   return (
     <EnterLink className={DETAIL_PRIMARY_CLASS} href={target.href} size="lg">
-      {target.resume ? t("Continue your mock exam") : t("Take a mock exam")}
+      {target.resume
+        ? t({
+            description:
+              'An action, like "Take a mock exam" beside it: goes back into the mock exam already started.',
+            message: "Continue your mock exam",
+          })
+        : t("Take a mock exam")}
     </EnterLink>
   );
 }

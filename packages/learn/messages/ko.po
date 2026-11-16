@@ -7932,10 +7932,11 @@ msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
 msgstr "시험 전체 또는 절반"
 
+#. An action, like "Take a mock exam" beside it: goes back into the mock exam already started.
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
-msgstr "모의고사 이어서 풀기"
+msgstr "모의고사 이어 풀기"
 
 #: src/mock/mock-expired.tsx
 msgctxt "lCUjGY"
