@@ -78,6 +78,19 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
+export function TutorIntro({ identity }: { identity: TutorIdentity }) {
+  const t = useExtracted();
+
+  return (
+    <EmptyHeader>
+      <EmptyMedia aria-hidden="true">{identity.figure}</EmptyMedia>
+      <EmptyDescription>
+        {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
+      </EmptyDescription>
+    </EmptyHeader>
+  );
+}
+
 function EmptyThread({
   context,
   identity,
@@ -89,20 +102,13 @@ function EmptyThread({
   lessonSuggestions: readonly LessonTutorSuggestion[] | null;
   onSelect: (suggestion: OfferedSuggestion) => void;
 }) {
-  const t = useExtracted();
-
   const offered = useTutorSuggestions({ context, lessonSuggestions: lessonSuggestions ?? [] });
 
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
     <Empty className="min-h-full">
-      <EmptyHeader>
-        <EmptyMedia aria-hidden="true">{identity.figure}</EmptyMedia>
-        <EmptyDescription>
-          {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
-        </EmptyDescription>
-      </EmptyHeader>
+      <TutorIntro identity={identity} />
       <EmptyContent>
         <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
       </EmptyContent>

@@ -1728,6 +1728,20 @@ describe("docked beside the lesson", () => {
       .toBeVisible();
   });
 
+  it("introduces the buddy while the aside holds nothing else, then gives it to the recap", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [teachingStep("explanation"), teachingStep("check")],
+    });
+
+    playLesson({ lesson });
+    const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
+    await expect.element(intro).toBeVisible();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(lessonAside().getByText("From the lesson")).toBeVisible();
+    await expect.element(intro).not.toBeVisible();
+  });
+
   it("offers the lesson's takes on a reading screen, one tap each", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     playLesson({ lesson });
