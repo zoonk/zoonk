@@ -3,6 +3,7 @@
 {
   "session_block_bonus_practice": "7f1078c78d3e4b4ee6c041db6987925ecdd51111807a31e785c85a77b7ca8974",
   "session_block_bonus_practice_areas": "63696d04370dddb4d01c7de843507c97007bf39d2dea2cccfd6abc0cfeeace9d",
+  "session_block_bonus_practice_topic": "dbdcf65058b7f9c1af1ae68fd43379f857c54f3161381d7961e09e35908e5409",
   "session_block_call": "4edb29a68b2ef9977480d273bc6b0c2bfd59bac670afa9b1754698e0b2aea0c5",
   "session_block_full_review_questions": "92ffd8c66a06c635e4e0e9e6261c99d000dd3ccfac2b8028d7b100bec6bf830b",
   "session_block_mixed_practice": "fd994e90957f22c66da46ecf9839017704aeddd2624fbb59bee4592c8394aa24",
@@ -10,6 +11,7 @@
   "session_block_new_lesson": "b14746ab8e54f38aacf56a70c0e0a7c72842c1757d04a6b16201e7d3eed76a1d",
   "session_block_practice_areas": "86791144af067b0ce40c7b92125e7ba5e62b07aafef064f59ebec6dbf515b95c",
   "session_block_practice_mistakes": "03157b975e3ba41467bf3f5d0eba3b560950c9aff32b31de5ba67d034c6097ef",
+  "session_block_practice_topic": "cf0e44d65362d1db97a12fa6813ceb14bd1fb6d1fef9d5cbff5bbc63a2ac55b2",
   "session_block_questions": "fdf53fb6be8173b4342f526c391e97ea33bd0b17837dc703948736562fcaa6f4",
   "session_block_rematch": "c93fe08384f4c2c71eb5ae54e3f14abd76d8f6c90b6d7e94c2b98650b7a03fc4",
   "session_block_rematch_lesson": "efc4952f5215fd31d91a92b57ee37edef7c989d400c8d77651e757e69cfecc22",
@@ -107,6 +109,10 @@
     <string name="session_block_practice_areas">Práctica: %1$s</string>
     <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_bonus_practice_areas">Práctica extra: %1$s</string>
+    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_practice_topic">Práctica: %1$s</string>
+    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_bonus_practice_topic">Práctica extra: %1$s</string>
     <string name="session_block_rematch_lesson">Lección breve antes de volver a intentarlo</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pregunta</item>
