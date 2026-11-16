@@ -231,7 +231,7 @@ export function UnderstoodScreen({
       />
 
       <OnboardingHeading>
-        <OnboardingTitle>{t("Here's what I understood")}</OnboardingTitle>
+        <OnboardingTitle>{t("Here's what we understood")}</OnboardingTitle>
         <OnboardingDescription>
           {draft.goals.length > 1
             ? t("These goals share your daily time. You can change all of this later.")

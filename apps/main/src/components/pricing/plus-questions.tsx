@@ -5,6 +5,7 @@ import {
   PublicDisclosure,
   renderHelpLink,
 } from "@/components/public/public-disclosure";
+import { QuestionsHeading } from "@/components/public/questions-heading";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -98,12 +99,11 @@ export async function PlusQuestions({
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className={titleClassName} id={PLUS_QUESTIONS_ID}>
-          {t("Common questions")}
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          {t.rich("Still unsure? <link>Ask us</link>.", { link: renderHelpLink })}
-        </p>
+        <QuestionsHeading
+          id={PLUS_QUESTIONS_ID}
+          lineClassName="text-sm"
+          titleClassName={titleClassName}
+        />
       </div>
 
       <div>

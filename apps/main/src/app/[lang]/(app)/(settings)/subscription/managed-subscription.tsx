@@ -34,7 +34,7 @@ export async function ManagedSubscription({
       <div className="flex flex-wrap gap-2">
         {action ? (
           <a
-            className={cn(buttonVariants({ size: "lg" }), "w-max")}
+            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-max")}
             href={action.href}
             rel="noopener noreferrer"
             target="_blank"

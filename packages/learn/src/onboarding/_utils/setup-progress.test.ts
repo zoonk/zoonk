@@ -41,6 +41,30 @@ describe(getSetupProgress, () => {
     }
   });
 
+  it("shows no dashes while a question that can add another is current or ahead", () => {
+    const steps = ["contentCountry", "purpose", "level", "targetDate", "schedule", "plan"] as const;
+
+    expect(
+      getSetupProgress({ current: "contentCountry", history: [], view: { steps } }),
+    ).toBeNull();
+
+    expect(
+      getSetupProgress({
+        current: "purpose",
+        history: ["contentCountry"],
+        view: { steps: steps.slice(1) },
+      }),
+    ).toBeNull();
+
+    expect(
+      getSetupProgress({
+        current: "level",
+        history: ["contentCountry", "purpose"],
+        view: { steps: ["level", "role", "targetDate", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 2, total: 6 });
+  });
+
   it("keeps an earlier question's place when a later screen opens it again", () => {
     expect(
       getSetupProgress({

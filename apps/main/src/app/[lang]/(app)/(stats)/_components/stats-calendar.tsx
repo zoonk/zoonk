@@ -92,10 +92,20 @@ export async function StatsCalendar({
       aria-labelledby={titleId}
       defaultIndex={Math.max(0, startIndex)}
       details={details}
+      recentOnPhone
       weeks={weeks.length}
     >
       <ContributionCalendarCaption>
-        <ContributionCalendarTitle id={titleId}>{t("Past 12 months")}</ContributionCalendarTitle>
+        <ContributionCalendarTitle id={titleId}>
+          <span className="max-sm:hidden">{t("Past 12 months")}</span>
+          <span className="sm:hidden">
+            {t({
+              description:
+                "Title over a calendar of days on a phone, which shows only its last 26 weeks.",
+              message: "Past 6 months",
+            })}
+          </span>
+        </ContributionCalendarTitle>
 
         <ContributionCalendarLegend aria-label={legend.label}>
           <ContributionCalendarLegendLabel>{legend.low}</ContributionCalendarLegendLabel>

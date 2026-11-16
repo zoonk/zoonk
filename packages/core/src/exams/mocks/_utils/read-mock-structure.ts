@@ -56,6 +56,7 @@ export function readMockSizeSource(blueprint: ExamBlueprint | null): MockSizeSou
   const { edition, structure } = readBlueprintContent(blueprint);
 
   return getMockSizeSource({
+    examName: blueprint.name,
     noticeQuestions: edition.questionCount,
     ownerId: blueprint.ownerId,
     structure,

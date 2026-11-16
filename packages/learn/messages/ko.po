@@ -284,7 +284,6 @@ msgstr "계속하기"
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
-#: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
@@ -292,7 +291,6 @@ msgstr "계속하기"
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -1027,6 +1025,13 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "주말 학습 시간 따로 설정"
 
+#: src/_utils/iso-date.ts
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}쯤"
+
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
@@ -1215,9 +1220,9 @@ msgid "Where you live"
 msgstr "사는 나라"
 
 #: src/appearance/home-country-setting.tsx
-msgctxt "yXIjI8"
-msgid "So examples and exams match your country."
-msgstr "선택한 나라에 맞는 예시와 시험을 보여 드려요."
+msgctxt "0sZNO3"
+msgid "So examples and exams match your country"
+msgstr "예시와 시험을 국가에 맞춰 드려요"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
@@ -1675,12 +1680,6 @@ msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
 
-#. An approximate study time, such as "about 41 hr".
-#: src/certificates/certificate-labels.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "약 {duration}"
-
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
 msgid "{name} completed level {level} in {language}"
@@ -1929,6 +1928,12 @@ msgstr "<whole>{date}</whole>에 발급된 수료 인증서예요."
 msgctxt "CXRlIo"
 msgid "Print"
 msgstr "인쇄"
+
+#. Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.
+#: src/certificates/certificate-page.tsx
+msgctxt "hlcpTE"
+msgid "See the full certificate"
+msgstr "인증서 크게 보기"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -3924,6 +3929,14 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, other {계획에서 이미 아는 레슨 #개도 건너뛰어요.}}"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/test-outcome.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "테스트 시작하기"
+
+#: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "테스트 이어서 풀기"
@@ -3979,9 +3992,9 @@ msgstr "집중해서 공부할 내용 찾기"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "이미 아는 내용 건너뛰기"
+msgctxt "YSXaxI"
+msgid "Already know some of this?"
+msgstr "이미 아는 내용이 있나요?"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "-nbx59"
@@ -4990,12 +5003,6 @@ msgstr "{dateKind, select, month {{date}쯤 끝나요} other {{date}쯤 끝나�
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "{date}에 끝나요"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}쯤"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
@@ -6909,9 +6916,9 @@ msgid "From a call"
 msgstr "대화에서"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ut2Sio"
-msgid "When off, notes aren't saved or used."
-msgstr "끄면 메모를 저장하거나 사용하지 않아요."
+msgctxt "LwVSHh"
+msgid "When off, notes aren't saved or used"
+msgstr "끄면 메모를 저장하거나 사용하지 않아요"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -10004,8 +10011,8 @@ msgid "Looks right"
 msgstr "맞아요"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "N7XZZA"
-msgid "Here's what I understood"
+msgctxt "8nmZkr"
+msgid "Here's what we understood"
 msgstr "이렇게 이해했어요"
 
 #: src/onboarding/understood/understood-screen.tsx
@@ -10783,9 +10790,9 @@ msgid "No tools? You can do it all with examples."
 msgstr "도구가 없나요? 예시만으로 모두 배우기."
 
 #: src/plan/plan-tools.tsx
-msgctxt "svOBOg"
-msgid "More later: {tools}"
-msgstr "나중에 사용할 도구: {tools}"
+msgctxt "r_GVXm"
+msgid "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}"
+msgstr "{count, plural, other {나중에 쓸 도구 #개 더: {tools}}}"
 
 #: src/plan/plan-tools.tsx
 msgctxt "z1Z_Hg"
@@ -11897,12 +11904,6 @@ msgstr "통과하면 건너뛰는 내용"
 msgctxt "M-U3f0"
 msgid "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know."
 msgstr "이 챕터의 문제를 몇 개 풀고 나면 결과를 볼 수 있어요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요."
-
-#: src/questions/test-out-preparing.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "테스트 시작하기"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"

@@ -37,10 +37,12 @@ function isTimeStated(structure: ExamStructure): boolean {
 }
 
 export function getMockSizeSource({
+  examName,
   noticeQuestions,
   ownerId,
   structure,
 }: {
+  examName: string;
   noticeQuestions: number | null;
   ownerId: string | null;
   structure: ExamStructure;
@@ -53,7 +55,7 @@ export function getMockSizeSource({
   return {
     formats: getFormatMixSource(structure),
     material,
-    pastEdition: fromPast ? getPastQuestionsSource(structure) : null,
+    pastEdition: fromPast ? getPastQuestionsSource({ examName, structure }) : null,
     questions: found?.source ?? "unstated",
     subjects,
     time: isTimeStated(structure) ? "notice" : "unstated",

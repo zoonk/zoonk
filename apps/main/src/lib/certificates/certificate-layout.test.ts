@@ -79,11 +79,11 @@ describe(getLinkOverflow, () => {
     const title = 2 * 42 * 1.12;
 
     expect(
-      getLinkOverflow({ graph: "route", nameHeight: 2 * 96, titleHeight: title }),
+      getLinkOverflow({ graph: "none", nameHeight: 2 * 96, titleHeight: title }),
     ).toBeLessThanOrEqual(0);
 
     expect(
-      getLinkOverflow({ graph: "route", nameHeight: 6 * 60, titleHeight: title }),
+      getLinkOverflow({ graph: "none", nameHeight: 6 * 60, titleHeight: title }),
     ).toBeGreaterThan(0);
   });
 });

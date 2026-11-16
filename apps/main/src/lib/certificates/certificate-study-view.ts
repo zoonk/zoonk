@@ -50,12 +50,7 @@ export async function getStudyFacts({ facts, locale }: KindInput): Promise<Reado
         "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.",
       message: "Study time",
     }),
-    value: t({
-      description:
-        "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).",
-      message: "about {duration}",
-      values: { duration: formatStudyTime({ locale, minutes }) },
-    }),
+    value: formatStudyTime({ locale, minutes }),
   };
 
   return [completed, studied, testedOut, studyTime].filter((fact) => fact !== false);

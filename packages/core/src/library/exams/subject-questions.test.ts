@@ -46,13 +46,36 @@ describe(getSubjectQuestions, () => {
     const [own] = stated.subjects;
     expect(own && getSubjectQuestions({ structure: stated, subject: own })).toBe(10);
 
-    expect(getPastQuestionsSource(looked)).toStrictEqual({
+    expect(getPastQuestionsSource({ examName: "OAB", structure: looked })).toStrictEqual({
       edition: "45º Exame",
       title: "Distribuição",
       url: "https://example.com/oab",
     });
 
-    expect(getPastQuestionsSource(oab)).toBeNull();
+    expect(getPastQuestionsSource({ examName: "OAB", structure: oab })).toBeNull();
+  });
+
+  it("writes the exam's name in the edition the way the exam itself is named", () => {
+    const enem = (edition: string): ExamStructure => ({
+      ...looked,
+      pastQuestions: looked.pastQuestions && { ...looked.pastQuestions, edition },
+    });
+
+    expect(
+      getPastQuestionsSource({ examName: "ENEM", structure: enem("Enem 2025") })?.edition,
+    ).toBe("ENEM 2025");
+
+    expect(getPastQuestionsSource({ examName: "ENEM", structure: enem("2025") })?.edition).toBe(
+      "2025",
+    );
+
+    expect(
+      getPastQuestionsSource({ examName: "ENEM", structure: enem("Enem PPL 2024") })?.edition,
+    ).toBe("ENEM PPL 2024");
+
+    expect(getPastQuestionsSource({ examName: "OAB", structure: looked })?.edition).toBe(
+      "45º Exame",
+    );
   });
 
   it("never counts questions for a written test, whatever the latest edition's count says", () => {

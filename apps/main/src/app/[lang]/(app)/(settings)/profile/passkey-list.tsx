@@ -182,7 +182,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
         <SettingRow
           description={
             passkeys.length > 0
-              ? t("You'll confirm with a passkey you already have first.")
+              ? t("You'll confirm with a passkey you already have first")
               : t("Your fingerprint, face or screen lock on this device")
           }
           label={t("Add a passkey")}

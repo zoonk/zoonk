@@ -65,7 +65,7 @@ export function FocusTestInvitation({
             disabled={pressed === "other"}
             onClick={onStart}
           >
-            {t("Start")}
+            {t("Start the test")}
           </OnboardingPrimaryButton>
         </OnboardingActions>
       }

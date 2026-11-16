@@ -4,7 +4,7 @@ import { useFormatShare } from "../_utils/percent";
 import { type FullTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 
-export type GoalDate = { isoDate: string; namedMonth: boolean };
+export type GoalDate = { estimated?: boolean; isoDate: string; namedMonth: boolean };
 
 export function useTimeAnswerTexts() {
   const t = useExtracted();

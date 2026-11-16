@@ -108,7 +108,8 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
 export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsData | null }) {
   const t = await getExtracted();
 
-  const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
+  const verdict = patterns?.dayVerdict;
+  const day = verdict?.kind === "best" ? await getBestDayName(verdict) : null;
 
   return (
     <ListGroup className="md:hidden">
@@ -118,7 +119,8 @@ export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsDat
             <ListRowTitle>{t("Patterns")}</ListRowTitle>
           </ListRowContent>
           <ListRowTrailing className="font-sans">
-            {day ? t("Best on {day}", { day }) : t("Not yet")}
+            {day && t("Best on {day}", { day })}
+            {!day && verdict?.kind !== "even" && t("Not yet")}
           </ListRowTrailing>
         </ListRowBody>
       </ListRowLink>
