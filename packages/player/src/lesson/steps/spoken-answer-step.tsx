@@ -5,7 +5,6 @@ import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
 import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { RecordButton } from "@zoonk/learn/speech/record-button";
-import { Button } from "@zoonk/ui/components/button";
 import {
   type MicrophoneProblem,
   useCanRecord,
@@ -15,7 +14,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, KeyboardIcon, MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
-import { InteractiveStepLayout } from "../../components/step-layouts";
+import {
+  FILL_SCREEN_CLASS,
+  InteractiveStepLayout,
+  PlayerContentFrame,
+} from "../../components/step-layouts";
+import { StepWayOut } from "../../components/step-way-out";
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
@@ -219,30 +223,21 @@ function ModeSwitch({
 
   if (mode === "speak") {
     return (
-      <Button
-        className="w-fit"
-        edge="start"
+      <StepWayOut
+        icon={
+          canListen ? <HeadphonesIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />
+        }
         onClick={() => switchTo({ cantTalk: true })}
-        size="sm"
-        variant="ghost"
       >
-        {canListen ? <HeadphonesIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />}
         {t("I can't talk now")}
-      </Button>
+      </StepWayOut>
     );
   }
 
   return (
-    <Button
-      className="w-fit"
-      edge="start"
-      onClick={() => switchTo({ cantTalk: false })}
-      size="sm"
-      variant="ghost"
-    >
-      <MicIcon aria-hidden="true" />
+    <StepWayOut icon={<MicIcon aria-hidden="true" />} onClick={() => switchTo({ cantTalk: false })}>
       {cantTalk ? t("I can talk now") : t("Say it instead")}
-    </Button>
+    </StepWayOut>
   );
 }
 
@@ -256,9 +251,13 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
   if (answerMode.mode === "listen" && listening) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
         <ListeningInstead props={props} step={{ ...step, listening }} />
-        <ModeSwitch answerMode={answerMode} isLocked={isLocked} />
+
+        {/* Under the answer on the column, as on the speaking screen. */}
+        <PlayerContentFrame className="pb-6 empty:hidden">
+          <ModeSwitch answerMode={answerMode} isLocked={isLocked} />
+        </PlayerContentFrame>
       </div>
     );
   }
@@ -270,7 +269,8 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
       {answerMode.mode === "type" ? (
         <>
-          {answerMode.micProblem && !isLocked && (
+          {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
+          {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
             <p className="text-muted-foreground text-sm text-pretty" role="status">
               {answerMode.micProblem === "blocked"
                 ? t("The microphone is blocked.")

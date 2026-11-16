@@ -12,6 +12,7 @@ import {
   ActivityReadout,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { useReducedMotion } from "../_utils/use-reduced-motion";
 import { useRevealCount } from "../_utils/use-reveal-count";
@@ -92,7 +93,7 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
         </div>
 
         {isChecked && (
-          <ActivityReadout aria-hidden="true" className="text-viz-accent">
+          <ActivityReadout aria-hidden="true" className={ACTIVITY_COLOR.dataThird.text}>
             {percent(share)}
           </ActivityReadout>
         )}

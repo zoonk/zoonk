@@ -325,12 +325,14 @@ class CheckpointScreenshots {
         answers: JsonArray = defaultAnswers,
         openReview: Boolean = false,
     ) {
+        val missionKind = if (ended["kind"] == JsonPrimitive("weekly")) "weeklyChallenge" else "challenge"
+        val missionDone = missionKind == "weeklyChallenge" || ended["passed"] == JsonPrimitive(true)
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
                 "study-block-completion",
                 "checkpoint" to JsonObject(ended + ("answers" to answers)),
-                "missions" to missions,
-                "completedMissions" to JsonArray(listOf(JsonPrimitive("challenge"))),
+                "missions" to missions(missionKind, missionDone),
+                "completedMissions" to JsonArray(if (missionDone) listOf(JsonPrimitive(missionKind)) else emptyList()),
                 "reached" to
                     JsonObject(
                         mapOf(
@@ -423,19 +425,21 @@ class CheckpointScreenshots {
 
     private val weekly = checkpoint(kind = "weekly", fields = arrayOf(noReward))
 
-    private val missions =
-        JsonArray(
-            listOf("challenge" to "done", "review" to "todo").map { (kind, status) ->
-                JsonObject(
-                    mapOf(
-                        "done" to JsonPrimitive(if (status == "done") 1 else 0),
-                        "kind" to JsonPrimitive(kind),
-                        "status" to JsonPrimitive(status),
-                        "total" to JsonPrimitive(1),
-                    ),
-                )
-            },
-        )
+    private fun missions(
+        kind: String,
+        done: Boolean,
+    ) = JsonArray(
+        listOf(kind to if (done) "done" else "todo", "review" to "todo").map { (kind, status) ->
+            JsonObject(
+                mapOf(
+                    "done" to JsonPrimitive(if (status == "done") 1 else 0),
+                    "kind" to JsonPrimitive(kind),
+                    "status" to JsonPrimitive(status),
+                    "total" to JsonPrimitive(1),
+                ),
+            )
+        },
+    )
 
     @Test
     @Config(qualifiers = BOOK)

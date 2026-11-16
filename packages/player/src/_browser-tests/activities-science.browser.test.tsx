@@ -39,23 +39,19 @@ async function labelSpots(names: readonly string[]) {
   }
 }
 
-function cellOption({ square, value }: { square: number; value: string }) {
+function cellOption(value: string) {
   const isGenotype = /^[A-Za-z]+$/u.test(value);
 
-  const question = isGenotype
-    ? `Which genotype goes in square ${square}?`
-    : `What goes in square ${square}?`;
-
   return page
-    .getByRole("group", { name: question })
+    .getByRole("group", { name: "What goes in the highlighted square?" })
     .getByRole("button")
     .filter({ hasText: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
 }
 
 async function fillSquare(values: readonly string[]) {
-  for (const [index, value] of values.entries()) {
+  for (const value of values) {
     // oxlint-disable-next-line no-await-in-loop -- The palette fills one square at a time.
-    await cellOption({ square: index + 1, value }).click();
+    await cellOption(value).click();
   }
 }
 
@@ -169,15 +165,15 @@ describe("science activities", () => {
     await pressOnSlider("Launch angle", "ArrowRight", 14);
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775", { exact: true }).first()).toBeVisible();
+    await expect.element(page.getByText("40.775 m", { exact: true }).first()).toBeVisible();
 
     await expect
       .poll(() =>
-        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map(
-          (text) => text.textContent,
+        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map((text) =>
+          text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775");
+      .toContain("40.775 m");
   });
 
   it("formula model simulation: the chart writes the right answer with the digits a typed answer needs", async () => {
@@ -191,20 +187,20 @@ describe("science activities", () => {
     await valueInput().fill("40.75");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775", { exact: true }).first()).toBeVisible();
+    await expect.element(page.getByText("40.775 m", { exact: true }).first()).toBeVisible();
 
     await expect
       .poll(() =>
-        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map(
-          (text) => text.textContent,
+        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map((text) =>
+          text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775");
+      .toContain("40.775 m");
   });
 
   it("labeled diagram: every name on its part is right", async () => {
     openActivity({ template: "labeledDiagram" });
-    await expect.element(page.getByRole("img", { name: /five numbered parts/u })).toBeVisible();
+    await expect.element(page.getByRole("img", { name: /five numbered spots/u })).toBeVisible();
     await labelSpots(HEART_SPOTS);
 
     await expect
@@ -282,7 +278,21 @@ describe("science activities", () => {
     await page.getByRole("radio", { name: /1 in 2/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("2 of 4 squares: White")).toBeVisible();
+    await expect.element(page.getByText("White: 2 of 4 squares")).toBeVisible();
+  });
+
+  it("Punnett grid: the share is asked once the square is filled, one question at a time", async () => {
+    openActivity({ template: "combinationGrid" });
+    const share = page.getByText("What share of the seeds grow white flowers?");
+
+    await expect
+      .element(page.getByRole("group", { name: "What goes in the highlighted square?" }))
+      .toBeVisible();
+
+    await expect.element(share).not.toBeInTheDocument();
+
+    await fillSquare(["Pp", "Pp", "pp", "pp"]);
+    await expect.element(share).toBeVisible();
   });
 
   it("Punnett grid: a wrong square in a fill-the-square check is wrong", async () => {
@@ -309,13 +319,13 @@ describe("science activities", () => {
     openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
 
     await expect
-      .element(page.getByRole("group", { name: /goes in square/u }))
+      .element(page.getByRole("group", { name: /goes in the highlighted square/u }))
       .not.toBeInTheDocument();
 
     await valueInput().fill("0.1667");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("6 of 36 squares: 7")).toBeVisible();
+    await expect.element(page.getByText("7: 6 of 36 squares")).toBeVisible();
   });
 });
 

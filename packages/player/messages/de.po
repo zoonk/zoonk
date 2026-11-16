@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "Schätz zuerst"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "Verschiebe eine Kurve"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "Linie verschieben"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "Beispielzahlen, keine echten Daten"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "Quelle:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "Deine Antwort:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -196,9 +189,14 @@ msgid "Try again"
 msgstr "Noch einmal versuchen"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "Mit dem ursprünglichen Code von vorn beginnen"
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "Ausführen"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "Von vorn beginnen"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -206,11 +204,6 @@ msgstr "Mit dem ursprünglichen Code von vorn beginnen"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Noch einmal ausführen"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Ausführen"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -744,11 +737,6 @@ msgid "Output"
 msgstr "Ausgabe"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "Deine Ausgabe"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "Erwartet"
@@ -757,6 +745,11 @@ msgstr "Erwartet"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Du hast den Code geändert. Führ ihn noch einmal aus, um die neue Ausgabe zu sehen."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "DhXJyL"
+msgid "Step forward to run the next line. We'll stop for you to predict a value."
+msgstr "Geh einen Schritt weiter, um die nächste Zeile auszuführen. Wir halten an, damit du einen Wert vorhersagen kannst."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -859,6 +852,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}: {rowLabel} ({rowValues}) steht seitlich, {columnLabel} ({columnValues}) oben. Jedes Feld enthält das Produkt der beiden Werte."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "Deine Antwort:"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "Feld {number}, {row} und {column}: leer"
@@ -869,9 +868,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Feld {number}, {row} und {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}}: {what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} von {total, plural, =0 {# Quadraten} one {# Quadrat} other {# Quadraten}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -894,14 +893,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "Alle Felder sind ausgefüllt. Tippe auf ein Feld, um es zu ändern."
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "Welcher Genotyp gehört in Feld {number}?"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "Was gehört in Feld {number}?"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "Was gehört in das hervorgehobene Feld?"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -917,6 +911,11 @@ msgstr "Du hast gesagt:"
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "Diesen Satz anhören"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "Beste Antwort:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1262,6 +1261,11 @@ msgid "Play the sound"
 msgstr "Ton abspielen"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "Deine Töne anhören"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "Anhören"
@@ -1343,6 +1347,11 @@ msgid "Tap a name for spot {number}, or drag it onto any spot."
 msgstr "Tipp auf eine Bezeichnung für Stelle {number} oder zieh sie auf eine beliebige Stelle."
 
 #: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "TNAgYA"
+msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgstr "{count, plural, one {# Name passt zu keiner Stelle.} other {# Namen passen zu keiner Stelle.}}"
+
+#: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
 msgid "Names"
 msgstr "Bezeichnungen"
@@ -1354,19 +1363,19 @@ msgid "What happened"
 msgstr "Was passiert ist"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis} nimmt ab."
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}: sinkt"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis} bleibt gleich."
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}: unverändert"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis} nimmt zu."
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}: steigt"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1399,14 +1408,24 @@ msgid "{line} moved down."
 msgstr "{line} hat sich nach unten verschoben."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "Ziehe eine Linie an ihrem Griff."
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "Zieh eine Linie am Griff nach links oder rechts."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "Ziehe eine Linie an ihrem Griff oder nutze die Pfeiltasten."
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "Zieh eine Linie am Griff nach links oder rechts oder nutz die Pfeiltasten."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "Zieh eine Linie am Griff nach oben oder unten."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "Zieh eine Linie am Griff nach oben oder unten oder nutz die Pfeiltasten."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1730,11 +1749,6 @@ msgid "Nothing selected."
 msgstr "Nichts ausgewählt."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "Ziel: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "Gebaut: {formula}"
@@ -1783,6 +1797,12 @@ msgstr "{atom} entfernen"
 msgctxt "E6Wo-S"
 msgid "Remove the selected atom"
 msgstr "Ausgewähltes Atom entfernen"
+
+#. Button that removes the atom the learner selected from the molecule.
+#: src/activities/molecule-builder/molecule-palette.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Entfernen"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "hXYqS7"
@@ -2336,11 +2356,6 @@ msgid "Listen first"
 msgstr "Erst anhören"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "Tippen starten"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
 msgstr "Tonverzögerung noch einmal prüfen"
@@ -2366,9 +2381,9 @@ msgid "All set."
 msgstr "Alles bereit."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "Tippe bei {count} Klicks im Takt mit, damit wir deine Schläge zeitlich richtig erfassen."
+msgctxt "Q4pNZZ"
+msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgstr "Lautsprecher und Kopfhörer können Töne leicht verzögert wiedergeben. Tippe im Takt der {count} Klicks mit, damit deine Schläge zeitlich richtig erfasst werden."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2452,6 +2467,11 @@ msgid "or press Space"
 msgstr "oder Leertaste drücken"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "Tippen starten"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "Ein Rhythmus mit {length} Schritten und einem Taktschlag alle {perBeat} Schritte. Tippe bei den Schritten {hits}. Bei jedem Taktschlag hörst du ein Klicken."
@@ -2511,11 +2531,6 @@ msgstr "SQLite konnte nicht geladen werden. Prüf deine Verbindung und versuch e
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "Abfrage"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "Deine Abfrage"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2660,9 +2675,15 @@ msgid "Time between the dates"
 msgstr "Zeit zwischen den Jahreszahlen"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "von {earlier} ({earlierYear}) bis {later} ({laterYear})"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event} ({year})"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "bis"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
@@ -2767,6 +2788,34 @@ msgstr "Deine Antwort"
 msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Wähle Wörter für deine Antwort"
+
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "prüfen"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "senden"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "neue Zeile"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Drücke Enter zum Prüfen, Shift+Enter für eine neue Zeile."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Drück Enter zum Senden und Shift+Enter für eine neue Zeile."
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
@@ -3414,11 +3463,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "Einfach raten, das zählt nicht"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Drücke Enter zum Prüfen, Shift+Enter für eine neue Zeile."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Schreib deine Antwort"
@@ -3636,11 +3680,6 @@ msgstr "Senden"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "Stell eine Frage"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ senden · ⇧⏎ neue Zeile"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"

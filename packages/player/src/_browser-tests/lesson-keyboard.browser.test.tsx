@@ -662,7 +662,7 @@ describe("lesson by keyboard", () => {
     await atViewport(DESKTOP, async () => {
       openLesson({ steps: [activityStep({ content: activityContentFixtures.numberLine })] });
 
-      const value = page.getByRole("textbox", { name: "What is the value?" });
+      const value = page.getByRole("textbox", { name: /\?$/u });
       await value.fill("");
       await userEvent.type(value, "5");
       await expect.element(value).toHaveValue("5");

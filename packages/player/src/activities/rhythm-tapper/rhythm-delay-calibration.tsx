@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
+import { ActivityBarAction } from "../_components/activity-bar-action";
 import { CALIBRATION_CLICKS } from "./rhythm-calibration";
 import { RhythmTapPad } from "./rhythm-tap-pad";
 import { type CalibrationPhase, useDelayCalibration } from "./use-delay-calibration";
@@ -30,9 +31,10 @@ function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
     return t("All set.");
   }
 
-  return t("Tap along with {count} clicks, so your taps are timed right.", {
-    count: String(CALIBRATION_CLICKS),
-  });
+  return t(
+    "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right.",
+    { count: String(CALIBRATION_CLICKS) },
+  );
 }
 
 export function RhythmDelayCalibration({
@@ -74,24 +76,26 @@ export function RhythmDelayCalibration({
         ref={padRef}
       />
 
-      {!isRunning && (
-        <div className="flex flex-wrap gap-2">
-          {reading === null ? (
-            <Button onClick={() => void start()} size="lg" type="button">
-              {phase.kind === "done" ? t("Try again") : t("Start")}
-            </Button>
-          ) : (
-            <Button onClick={() => onDone(reading)} size="lg" type="button">
-              {t("Continue")}
-            </Button>
-          )}
+      {/* The set-up comes before anything can be checked, so its action is the bar's. */}
+      {reading === null ? (
+        <ActivityBarAction disabled={isRunning} onPress={() => void start()}>
+          {phase.kind === "done" ? t("Try again") : t("Start")}
+        </ActivityBarAction>
+      ) : (
+        <ActivityBarAction onPress={() => onDone(reading)}>{t("Continue")}</ActivityBarAction>
+      )}
 
-          {reading === null && (
-            <Button onClick={onSkip} size="lg" type="button" variant="ghost">
-              {t("Skip for now")}
-            </Button>
-          )}
-        </div>
+      {!isRunning && reading === null && (
+        <Button
+          className="w-fit"
+          edge="start"
+          onClick={onSkip}
+          size="lg"
+          type="button"
+          variant="ghost"
+        >
+          {t("Skip for now")}
+        </Button>
       )}
     </section>
   );

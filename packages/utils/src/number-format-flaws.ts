@@ -18,6 +18,34 @@ const NUMBER_LIST = /[([]\s*-?\d+(?:\s*,\s*-?\d+)+\s*[)\]]/gu;
 
 const GROUPING_SPACE = /[\u00A0\u202F ]/gu;
 
+/**
+ * A number whose thousands are split by a space ("50 000"), in prose or in LaTeX (a thin space
+ * `\,`), read where the language groups another way: the same number then shows two ways on one
+ * screen. Its sign and decimals are part of it. Digits a space only sits beside, like a phone
+ * number's, aren't one number; in prose a plus right before the digits starts a phone number.
+ */
+function spaceGroupedNumber({ notAfter, space }: { notAfter: string; space: string }): {
+  number: RegExp;
+  space: RegExp;
+} {
+  return {
+    number: new RegExp(
+      String.raw`(?<![\d.,\p{L}/${notAfter}-]|\d${space})[-−]?[1-9]\d{0,2}(?:${space}\d{3})+(?:[.,]\d+)?(?!${space}?\d|[\p{L}/-])`,
+      "gu",
+    ),
+    space: new RegExp(space, "gu"),
+  };
+}
+
+const SPACE_GROUPED = {
+  latex: spaceGroupedNumber({ notAfter: "", space: String.raw`(?:\\[,;]|[\u00A0\u202F ])` }),
+  prose: spaceGroupedNumber({ notAfter: "+", space: String.raw`[\u00A0\u202F ]` }),
+};
+
+const SIGNED_DECIMAL = /^(?<sign>[-−]?)(?<whole>\d+)(?:[.,](?<fraction>\d+))?$/u;
+
+const GROUPED_SAMPLE = 10_000;
+
 const DECIMAL_SAMPLE = 1.5;
 
 const NOT_TEXT_FIELDS = new Set([
@@ -74,6 +102,10 @@ function usesDecimalComma(language: string): boolean {
   return parts.some((part) => part.type === "decimal" && part.value === ",");
 }
 
+function groupSeparator(number: Intl.NumberFormat): string {
+  return number.formatToParts(GROUPED_SAMPLE).find((part) => part.type === "group")?.value ?? "";
+}
+
 function toLatexNumber(grouped: string): string {
   return grouped.replaceAll(",", "{,}").replaceAll(GROUPING_SPACE, String.raw`\,`);
 }
@@ -90,6 +122,41 @@ function findLongNumbers({
   return [...text.matchAll(LONG_NUMBER)].map(([digits]) => {
     const grouped = number.format(Number(digits));
     return `Writes ${digits} without grouping its digits; write ${latex ? toLatexNumber(grouped) : grouped}.`;
+  });
+}
+
+/** The number written the language's way, keeping the sign as written and every decimal. */
+function regroup({ digits, number }: { digits: string; number: Intl.NumberFormat }): string {
+  const { fraction = "", sign = "", whole = "" } = SIGNED_DECIMAL.exec(digits)?.groups ?? {};
+
+  const written = new Intl.NumberFormat(number.resolvedOptions().locale, {
+    maximumFractionDigits: fraction.length,
+    minimumFractionDigits: fraction.length,
+  }).format(Number(`${whole}.${fraction}`));
+
+  return `${sign}${written}`;
+}
+
+function findSpaceGrouping({
+  latex,
+  number,
+  text,
+}: {
+  latex: boolean;
+  number: Intl.NumberFormat;
+  text: string;
+}): string[] {
+  const separator = groupSeparator(number);
+
+  if (separator.trim() === "") {
+    return [];
+  }
+
+  const grouped = latex ? SPACE_GROUPED.latex : SPACE_GROUPED.prose;
+
+  return [...text.matchAll(grouped.number)].map(([written]) => {
+    const rewritten = regroup({ digits: written.replaceAll(grouped.space, ""), number });
+    return `Groups ${written} with a space; write ${latex ? toLatexNumber(rewritten) : rewritten}.`;
   });
 }
 
@@ -113,8 +180,10 @@ export function findNumberFormatFlaws({
 
   return collectTexts(value).flatMap(({ math, prose }) => [
     ...findLongNumbers({ latex: false, number, text: prose }),
+    ...findSpaceGrouping({ latex: false, number, text: prose }),
     ...math.flatMap((formula) => [
       ...findLongNumbers({ latex: true, number, text: formula }),
+      ...findSpaceGrouping({ latex: true, number, text: formula }),
       ...(decimalComma ? findBareCommas(formula) : []),
     ]),
   ]);

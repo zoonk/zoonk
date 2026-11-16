@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { type GridCell, type GridFill, sameCell } from "./grid-model";
 import { CellValue, GridHeader, type GridTraits, Trait } from "./grid-parts";
 
@@ -36,7 +37,7 @@ function CheckedCell({
         isCompact ? "min-h-11 py-1" : "min-h-18 py-2",
         learner !== null && !isWrong && "border-success/60",
         isWrong && "border-destructive/60 bg-destructive/5",
-        counted && "bg-viz-highlight-soft",
+        counted && ACTIVITY_COLOR.right.soft,
       )}
     >
       <CellValue

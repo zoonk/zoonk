@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { ArrowRight } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { roundedGap, yearsBetween } from "./timeline-scale";
 
@@ -51,13 +52,18 @@ export function TimelineGaps({
             <span className="font-semibold tabular-nums">
               {gapText(yearsBetween(earlier.year, later.year))}
             </span>{" "}
+            {/* An event's label is a title, not a clause, so the two are shown side by side, never in a sentence. */}
             <span className="text-muted-foreground">
-              {t("from {earlier} ({earlierYear}) to {later} ({laterYear})", {
-                earlier: earlier.label,
-                earlierYear: formatYear(earlier.year),
-                later: later.label,
-                laterYear: formatYear(later.year),
-              })}
+              {t("{event} ({year})", { event: earlier.label, year: formatYear(earlier.year) })}
+              <ArrowRight aria-hidden="true" className="mx-1.5 inline size-3.5 align-[-2px]" />
+              <span className="sr-only">
+                {t({
+                  description:
+                    "Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.",
+                  message: "to",
+                })}{" "}
+              </span>
+              {t("{event} ({year})", { event: later.label, year: formatYear(later.year) })}
             </span>
           </span>
         </li>

@@ -23,7 +23,7 @@ export function GridCaption({
   function text() {
     if (counted !== null && outputName !== null) {
       return t(
-        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}",
+        "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}",
         { count: String(counted), total, what: outputName },
       );
     }

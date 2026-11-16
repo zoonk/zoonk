@@ -117,7 +117,7 @@ describe("lesson feedback", () => {
     await expect.element(page.getByText("Let's go through it together")).not.toBeInTheDocument();
     await next(/^Next/u);
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-    await next(/^Next/u);
+    await next();
 
     await expect.element(page.getByText(QUESTION)).toBeVisible();
     await expect.element(page.getByText("Quick check", { exact: false })).not.toBeInTheDocument();

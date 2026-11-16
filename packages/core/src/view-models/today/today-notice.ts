@@ -98,7 +98,6 @@ export function pickTodayNotice({
         ["exam", exam?.stage === "finalStretch"],
         ["uploadRequest", host.uploadRequest],
         ["examChoice", today.examChoice !== null],
-        ["planChange", planChange === "applied"],
         ["insight", insight !== null],
         ["practice", host.practice],
         ["focusTest", today.focusTest !== null],

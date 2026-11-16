@@ -41,12 +41,13 @@ function StepMarks({
   state,
 }: {
   icon: ProcessStep["icon"] | undefined;
-  position: number;
+  /** `null` while the steps are still being ordered: a number there would read as the answer. */
+  position: number | null;
   state: "correct" | "incorrect" | null;
 }) {
   return (
     <span className="flex h-8 shrink-0 items-center gap-3">
-      <PositionBadge position={position} state={state} />
+      {position !== null && <PositionBadge position={position} state={state} />}
       <ProcessStepIcon icon={icon} />
     </span>
   );
@@ -146,9 +147,9 @@ export function ProcessOrderActivity({
         })}
         label={t("Steps, in your order")}
         onReorder={handleReorder}
-        renderItem={(item, index) => (
+        renderItem={(item) => (
           <span className="flex min-w-0 flex-1 items-start gap-3">
-            <StepMarks icon={byId.get(item.id)?.icon} position={index + 1} state={null} />
+            <StepMarks icon={byId.get(item.id)?.icon} position={null} state={null} />
             <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium">
               <LessonRichText text={item.label} />
             </span>

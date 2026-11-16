@@ -128,7 +128,7 @@ object ActivityFixtures {
         val explore = entry(name).getValue("explore").jsonObject
         val content =
             buildJsonObject {
-                put("text", "Explore $name.")
+                put("text", contentJson(name).getValue("prompt"))
                 put("title", name)
                 put("explore", explore.getValue("content"))
             }

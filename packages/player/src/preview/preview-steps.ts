@@ -276,6 +276,9 @@ function escapeSvgText(value: string) {
 }
 
 const SAMPLE_PICTURE_SIZE = { height: 1280, width: 1024 };
+const LABEL_SHARE = 0.05;
+const CAPTION_SHARE = 0.036;
+const CAPTION_ROOM = 1.7;
 
 /** `kind` draws the sample at the size a new picture of that kind arrives in, the room its wait holds. */
 export function inlineImage({
@@ -289,10 +292,18 @@ export function inlineImage({
 }): PlayableStepImage {
   const { height, width } = kind ? DRAWN_PICTURE_SIZE[kind] : SAMPLE_PICTURE_SIZE;
 
+  const text = `font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle"`;
+  const captionSize = Math.min(width * CAPTION_SHARE, (width * CAPTION_ROOM) / alt.length);
+
+  // A drawn stand-in with its own label, so a sample never reads as a picture that failed to load.
   const svg = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
     `<rect width="${width}" height="${height}" fill="#f4f4f5" />`,
-    `<text x="${width / 2}" y="${height / 2}" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">`,
+    `<circle cx="${width * 0.68}" cy="${height * 0.34}" r="${width * 0.07}" fill="#d4d4d8" />`,
+    `<path d="M0 ${height * 0.66} L${width * 0.34} ${height * 0.4} L${width * 0.62} ${height * 0.66} Z" fill="#e4e4e7" />`,
+    `<path d="M${width * 0.36} ${height * 0.66} L${width * 0.7} ${height * 0.46} L${width} ${height * 0.66} Z" fill="#d4d4d8" />`,
+    `<text x="${width / 2}" y="${height * 0.76}" fill="#52525b" font-size="${width * LABEL_SHARE}" font-weight="600" ${text}>Sample picture</text>`,
+    `<text x="${width / 2}" y="${height * 0.83}" fill="#71717a" font-size="${captionSize}" ${text}>`,
     escapeSvgText(alt),
     "</text>",
     "</svg>",

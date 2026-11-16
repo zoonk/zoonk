@@ -22,6 +22,10 @@ const LONG_REASON = Array.from(
   () => "Where the cloud is densest, the electron is most likely to be.",
 ).join(" ");
 
+function checkStep() {
+  return contentStep("check", { content: playableStepContent.check });
+}
+
 function nextFrame() {
   return new Promise((resolve) => {
     requestAnimationFrame(resolve);
@@ -29,7 +33,7 @@ function nextFrame() {
 }
 
 describe("feedback after a check", () => {
-  it("shows the verdict on a tablet without scrolling the question away", async () => {
+  it("shows the whole feedback on a tablet, leaving no sliver of the chip over the question", async () => {
     await onDevice({ reducedMotion: "reduce" }, () =>
       atViewport(LANDSCAPE_TABLET, async () => {
         openActivity({ template: "unitCircle" });
@@ -40,19 +44,22 @@ describe("feedback after a check", () => {
         const scroller = page.getByRole("main", { name: "Lesson content" }).element();
         await expect.poll(() => scroller.scrollTop).toBeGreaterThan(0);
 
-        const question = page.getByRole("heading", { name: "Turn the wheel to 30°." }).element();
-        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect
+          .element(page.getByRole("region", { name: "Answer feedback" }))
+          .toBeInViewport({ ratio: 1 });
 
-        expect(question.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-          scroller.getBoundingClientRect().top,
-        );
+        const chip = document
+          .querySelector('[data-slot="activity-badge"]')
+          ?.getBoundingClientRect();
 
-        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+        const top = scroller.getBoundingClientRect().top;
+
+        expect(chip && (chip.top >= top || chip.bottom <= top)).toBe(true);
       }),
     );
   });
 
-  it("keeps a question with no badge in view when its verdict fits but the reason runs on", async () => {
+  it("starts a feedback taller than the screen at its top, so the verdict is read first", async () => {
     const content = {
       ...playableStepContent.check,
       options: playableStepContent.check.options.map((option) =>
@@ -74,15 +81,94 @@ describe("feedback after a check", () => {
         await nextFrame();
 
         const scroller = page.getByRole("main", { name: "Lesson content" }).element();
-        const question = page.getByRole("heading", { name: content.question }).element();
+        const feedback = page.getByRole("region", { name: "Answer feedback" }).element();
 
-        expect(question.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        expect(feedback.getBoundingClientRect().top).toBeGreaterThanOrEqual(
           scroller.getBoundingClientRect().top,
         );
 
         await expect
           .element(page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!"))
           .toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
+
+  it("shows the verdict again when a picture or canvas that loads after the check pushes it down", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({
+          lesson: buildLesson([contentStep("check", { content: playableStepContent.check })]),
+        });
+
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+
+        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+        document.querySelector('[data-slot="lesson-screen"]')?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
+
+  it("watches the screen the learner went back to, not the one checked last", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({ lesson: buildLesson([checkStep(), checkStep()]) });
+
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: /^Continue/u }).click();
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: "Previous screen" }).click();
+
+        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+
+        [...document.querySelectorAll<HTMLElement>('[data-slot="lesson-screen"]')]
+          .find((screen) => screen.getClientRects().length > 0)
+          ?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
+
+  it("watches the earlier attempt of a retried question the learner went back to", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({ lesson: buildLesson([checkStep()]) });
+
+        await page.getByRole("radio", { name: "The electron's size" }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: /^Continue/u }).click();
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: "Previous screen" }).click();
+
+        const verdict = page
+          .getByRole("region", { name: "Answer feedback" })
+          .getByText("Not quite");
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+
+        [...document.querySelectorAll<HTMLElement>('[data-slot="lesson-screen"]')]
+          .find((screen) => screen.getClientRects().length > 0)
+          ?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
       }),
     );
   });

@@ -8,21 +8,21 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "Because of 212 m².",
+            "reason": "That adds only two of the four pieces, 200 and 12.",
             "text": "212 m²",
             "value": 212
           },
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "Because of 322 m².",
+            "reason": "The four pieces are 200, 80, 30 and 12. Together they make 322.",
             "text": "322 m²",
             "value": 322
           },
           {
             "id": "o2",
             "isCorrect": false,
-            "reason": "Because of 37 m².",
+            "reason": "That adds the two sides, 23 + 14. An area multiplies them.",
             "text": "37 m²",
             "value": 37
           }
@@ -60,10 +60,11 @@
     "content": {
       "check": {
         "answer": 3,
-        "explanation": "Worked out by code.",
+        "explanation": "Take 2 bags and 1 kg off each side and 2 bags balance 6 kg, so one bag weighs 3 kg.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "How heavy is one bag?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "kg"
       },
       "fields": {
         "equation": { "left": "4*x + 1", "right": "2*x + 7" },
@@ -79,7 +80,7 @@
         ],
         "variable": "x"
       },
-      "prompt": "Every bag weighs the same. How heavy is one bag?",
+      "prompt": "Every bag weighs the same. Take the same off both sides until one bag is alone.",
       "template": "balance"
     },
     "expected": { "kind": "numeric", "value": 3 },
@@ -113,10 +114,11 @@
       "check": {
         "inputs": [{ "name": "rate", "value": 7 }],
         "answer": 3869.68,
-        "explanation": "Worked out by code.",
+        "explanation": "At 7% a year, $1,000 grows to $3,869.68 in 20 years.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "What is $1,000 worth after 20 years at 7% a year?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "$"
       },
       "data": { "isExample": true },
       "fields": {
@@ -141,7 +143,7 @@
           }
         ]
       },
-      "prompt": "Move the rate. What is $1,000 worth after 20 years?",
+      "prompt": "Move the rate and watch $1,000 grow over 20 years.",
       "template": "formulaModel"
     },
     "expected": { "kind": "numeric", "value": 3869.68 },
@@ -183,9 +185,9 @@
     "content": {
       "check": {
         "answer": 11.57,
-        "explanation": "Worked out by code.",
+        "explanation": "A day has 86,400 seconds, and 1,000,000 ÷ 86,400 is about 11.6.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "How many days is a million seconds?",
         "tolerance": { "kind": "relative", "value": 0.01 }
       },
       "fields": {
@@ -217,10 +219,11 @@
     "content": {
       "check": {
         "answer": 5,
-        "explanation": "Worked out by code.",
+        "explanation": "Start at −3 and go up 8: it takes 3 to reach zero, then 5 more.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "What is the temperature at noon?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "°C"
       },
       "fields": {
         "label": "Temperature",
@@ -257,7 +260,10 @@
   "stepSolver": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "The discount comes first: $60 less 25% is $45. Then the tax is added to $45, so you pay $48.60.",
+        "kind": "interaction"
+      },
       "fields": {
         "problem": "A $60 jacket is 25% off. With 8% sales tax, what do you pay?",
         "steps": [
@@ -299,7 +305,7 @@
             ],
             "expression": "45 * 0.08",
             "id": "tax",
-            "math": "8% of 45 = 3.60",
+            "math": "8% of 45 = 3.6",
             "prompt": "8% of which price?",
             "value": 3.6
           }
@@ -326,28 +332,28 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "Because of 9 ppm.",
+            "reason": "That's the rise from 1960 to 1970.",
             "text": "9 ppm",
             "value": 9
           },
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "Because of 24 ppm.",
+            "reason": "It went from 390 to 414 ppm.",
             "text": "24 ppm",
             "value": 24
           },
           {
             "id": "o2",
             "isCorrect": false,
-            "reason": "Because of 50 ppm.",
+            "reason": "The line climbs 24 ppm in that decade, less than half of 50.",
             "text": "50 ppm",
             "value": 50
           }
         ],
         "question": "How much did CO₂ rise from 2010 to 2020?"
       },
-      "data": { "source": { "publisher": "NOAA", "title": "Mauna Loa CO2 record", "year": 2024 } },
+      "data": { "source": { "publisher": "NOAA", "title": "Mauna Loa CO₂ record", "year": 2024 } },
       "fields": {
         "points": [
           { "x": 1960, "y": 317 },
@@ -370,7 +376,7 @@
     "explore": {
       "content": {
         "data": {
-          "source": { "publisher": "NOAA", "title": "Mauna Loa CO2 record", "year": 2024 }
+          "source": { "publisher": "NOAA", "title": "Mauna Loa CO₂ record", "year": 2024 }
         },
         "fields": {
           "points": [
@@ -400,9 +406,9 @@
     "content": {
       "check": {
         "answer": 95.45,
-        "explanation": "Worked out by code.",
+        "explanation": "Two standard deviations on each side of 100 is 70 to 130, and 95.45% of scores fall there.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "What percent of people score within 2 standard deviations of the average?",
         "tolerance": { "kind": "absolute", "value": 0.01 },
         "unit": "%"
       },
@@ -441,10 +447,11 @@
     "content": {
       "check": {
         "answer": 180,
-        "explanation": "Worked out by code.",
+        "explanation": "When one corner opens up, the other two together close by just as much.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "What do the three angles add up to?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "°"
       },
       "fields": {
         "invariant": "The angles always add to 180°.",
@@ -487,28 +494,28 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "Because of Almost always.",
+            "reason": "5 heads is the most likely count, but 4 and 6 come up almost as often.",
             "text": "Almost always",
             "value": 0.9
           },
           {
             "id": "o1",
             "isCorrect": false,
-            "reason": "Because of About half the time.",
+            "reason": "Half is the chance of heads on one flip, not of exactly 5 heads in 10.",
             "text": "About half the time",
             "value": 0.5
           },
           {
             "id": "o2",
             "isCorrect": true,
-            "reason": "Because of About 1 in 4.",
-            "text": "About 1 in 4",
+            "reason": "252 of the 1,024 ways 10 flips can land have exactly 5 heads.",
+            "text": "About 25% of the time",
             "value": 0.25
           },
           {
             "id": "o3",
             "isCorrect": false,
-            "reason": "Because of Rarely.",
+            "reason": "It's the most likely single count, about 25% of the time.",
             "text": "Rarely",
             "value": 0.05
           }
@@ -560,9 +567,9 @@
         "inputs": [{ "name": "angle", "value": 30 }],
         "output": "sin",
         "answer": 0.5,
-        "explanation": "Worked out by code.",
+        "explanation": "At 30° the seat is half the wheel's radius above the middle, so sin 30° = 0.5.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "What is sin at 30°?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "fields": {
@@ -600,21 +607,21 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "Because of 1 in 4.",
+            "reason": "That's the white share when both parents are Pp. Here one parent is pp.",
             "text": "1 in 4",
             "value": 0.25
           },
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "Because of 1 in 2.",
+            "reason": "2 of the 4 squares are pp, and only pp grows white.",
             "text": "1 in 2",
             "value": 0.5
           },
           {
             "id": "o2",
             "isCorrect": false,
-            "reason": "Because of 3 in 4.",
+            "reason": "That's the purple share when both parents are Pp.",
             "text": "3 in 4",
             "value": 0.75
           }
@@ -652,7 +659,10 @@
   "labeledDiagram": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "The atria sit on top and the ventricles under them, with the aorta arching over the heart. You face the heart, so its right side is on your left.",
+        "kind": "interaction"
+      },
       "fields": {
         "distractors": ["Pulmonary valve"],
         "mixUps": [
@@ -669,11 +679,11 @@
           { "label": "Aorta", "part": "aorta" }
         ],
         "picture": {
-          "alt": "A human heart cut open from the front, with five numbered parts",
+          "alt": "A human heart cut open from the front, with five numbered spots",
           "prompt": "A human heart cut open from the front, showing its four chambers and the aorta"
         }
       },
-      "prompt": "Put each name on its number in the heart.",
+      "prompt": "Put each name on its spot in the heart.",
       "template": "labeledDiagram"
     },
     "expected": {
@@ -707,7 +717,7 @@
             { "label": "Aorta", "part": "aorta" }
           ],
           "picture": {
-            "alt": "A human heart cut open from the front, with five numbered parts",
+            "alt": "A human heart cut open from the front, with five numbered spots",
             "prompt": "A human heart cut open from the front, showing its four chambers and the aorta"
           }
         },
@@ -727,12 +737,12 @@
         "kind": "interaction"
       },
       "picture": {
-        "alt": "A human heart cut open from the front, with five numbered parts",
+        "alt": "A human heart cut open from the front, with five numbered spots",
         "required": false
       }
     },
     "picture": {
-      "alt": "A human heart cut open from the front, with five numbered parts",
+      "alt": "A human heart cut open from the front, with five numbered spots",
       "required": true
     },
     "value": null
@@ -740,7 +750,10 @@
   "lineCrossing": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Fewer hens lay fewer eggs at every price, so Supply moves left. Along Demand, the price goes up and fewer eggs are sold.",
+        "kind": "interaction"
+      },
       "data": { "source": { "publisher": "USDA", "title": "Egg Markets Overview", "year": 2022 } },
       "fields": {
         "change": "Bird flu cut the number of laying hens.",
@@ -793,7 +806,10 @@
   "moleculeBuilder": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Carbon makes four bonds and oxygen two, so each oxygen joins the carbon with a double bond: O=C=O.",
+        "kind": "interaction"
+      },
       "fields": { "elements": ["C", "O", "H"], "formula": "CO2" },
       "prompt": "Build CO₂ so every atom has all its bonds.",
       "template": "moleculeBuilder"
@@ -816,7 +832,10 @@
   "processOrder": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Light comes first. It splits water and charges ATP and NADPH, which power the Calvin cycle that builds the sugar a plant stores.",
+        "kind": "interaction"
+      },
       "fields": {
         "steps": [
           { "icon": "sun", "id": "absorb", "text": "Chlorophyll absorbs sunlight" },
@@ -898,7 +917,10 @@
   "codeRunner": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "range(1, 101) stops before 101, so the loop adds 1 through 100 and prints 5050.",
+        "kind": "interaction"
+      },
       "fields": {
         "editableLines": [2],
         "expectedOutput": "5050",
@@ -932,7 +954,10 @@
   "codeTracer": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Each pass halves the range: mid is 3, then 5, then 6, where the search stops.",
+        "kind": "interaction"
+      },
       "fields": {
         "code": "let lo = 0, hi = 7;\nwhile (lo <= hi) {\n  const mid = Math.floor((lo + hi) / 2);\n  if (mid < 6) lo = mid + 1;\n  else if (mid > 6) hi = mid - 1;\n  else break;\n}",
         "language": "javascript",
@@ -1099,7 +1124,10 @@
   "patternTable": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Comer follows hablar's pattern with e in place of a: habláis becomes coméis and hablan becomes comen.",
+        "kind": "interaction"
+      },
       "fields": {
         "choices": ["áis", "éis", "ís", "en"],
         "modelMeaning": "to speak",
@@ -1165,7 +1193,10 @@
   "patternTester": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Five digits, then an optional hyphen and four more, with ^ and $ so nothing can come before or after.",
+        "kind": "interaction"
+      },
       "fields": {
         "hints": [{ "hint": "Say where the text must end.", "mistake": "Matches extra digits" }],
         "mode": "regex",
@@ -1213,7 +1244,10 @@
   "sqlPlayground": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "WHERE keeps the rows that pass both tests, in Asia and over 200 million: India, China and Indonesia.",
+        "kind": "interaction"
+      },
       "data": {
         "source": {
           "publisher": "United Nations",
@@ -1337,7 +1371,10 @@
   "argumentBuilder": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "“Too rash, too unadvised, too sudden” names the speed, and Juliet saying it herself ties the quote to the claim.",
+        "kind": "interaction"
+      },
       "fields": {
         "claim": "Romeo's love is impulsive.",
         "evidence": [
@@ -1382,7 +1419,10 @@
   "categorize": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Burning and rusting make something new: ash and gas, iron oxide. Melted ice is still water.",
+        "kind": "interaction"
+      },
       "fields": {
         "groups": [
           { "id": "chemical", "label": "New substance", "rule": "Something new forms." },
@@ -1411,7 +1451,10 @@
   "causeEffectChain": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Plowing left the soil bare and the drought dried it out, so the wind could lift it into dust storms.",
+        "kind": "interaction"
+      },
       "fields": {
         "links": [
           { "from": "plow", "to": "dust", "why": "Bare soil blew away." },
@@ -1460,7 +1503,10 @@
   "findError": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Taking 20% off 120 removes 24, more than the 20 the rise added, so the price ends at $96.",
+        "kind": "interaction"
+      },
       "fields": {
         "correction": "120 × 0.8 = 96, not 100.",
         "errorStepId": "s2",
@@ -1614,13 +1660,13 @@
           {
             "id": "o0",
             "isCorrect": true,
-            "reason": "Because of Their water didn't come from the Broad Street pump.",
+            "reason": "The brewery and the workhouse had wells of their own, so nobody there drank from the pump.",
             "text": "Their water didn't come from the Broad Street pump"
           },
           {
             "id": "o1",
             "isCorrect": false,
-            "reason": "Because of The air in their buildings was cleaner.",
+            "reason": "Everyone on these streets breathed the same air. What differed was the water they drank.",
             "text": "The air in their buildings was cleaner"
           }
         ],
@@ -1697,7 +1743,10 @@
   "matchPairs": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Embarazada, éxito and librería look like embarrassed, exit and library, but they mean pregnant, success and bookstore.",
+        "kind": "interaction"
+      },
       "fields": {
         "distractors": [
           {
@@ -1731,9 +1780,12 @@
   "sourceComparison": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Each writer says the other side fired first: the captain blames the regulars, the officer the rebels.",
+        "kind": "interaction"
+      },
       "fields": {
-        "markPrompt": "Mark who each writer says fired first.",
+        "markPrompt": "Mark one phrase in each account.",
         "sources": [
           {
             "author": "A colonial captain",
@@ -1741,7 +1793,10 @@
             "date": "April 1775",
             "excerpt": "The regulars fired on us without any provocation.",
             "id": "parker",
-            "passages": [{ "id": "p1", "isTarget": true, "text": "The regulars fired on us" }]
+            "passages": [
+              { "id": "p1", "isTarget": true, "text": "The regulars fired on us" },
+              { "id": "p1b", "isTarget": false, "text": "without any provocation" }
+            ]
           },
           {
             "author": "A British officer",
@@ -1749,11 +1804,14 @@
             "date": "April 1775",
             "excerpt": "Some of the rebels fired first from behind a wall.",
             "id": "pitcairn",
-            "passages": [{ "id": "p2", "isTarget": true, "text": "the rebels fired first" }]
+            "passages": [
+              { "id": "p2", "isTarget": true, "text": "the rebels fired first" },
+              { "id": "p2b", "isTarget": false, "text": "from behind a wall" }
+            ]
           }
         ]
       },
-      "prompt": "Read both eyewitnesses.",
+      "prompt": "Mark who each eyewitness says fired first.",
       "template": "sourceComparison"
     },
     "expected": { "answer": { "ids": ["p1", "p2"], "kind": "selection" }, "kind": "interaction" },
@@ -1764,7 +1822,10 @@
   "timeline": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Cleopatra ruled about 2,500 years after the Great Pyramid was built and about 2,000 years before the Moon landing.",
+        "kind": "interaction"
+      },
       "fields": {
         "anchors": [{ "label": "Great Pyramid built", "year": -2560 }],
         "end": 2000,
@@ -1803,9 +1864,9 @@
       "check": {
         "output": "hours",
         "answer": 0.12,
-        "explanation": "Worked out by code.",
+        "explanation": "1.5 ÷ 12.5 = 0.12: in 1914 a car took about an eighth of the 1912 time.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "Divide the 1914 time by the 1912 time. What do you get?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "data": { "source": { "title": "Ford Motor Company production records" } },
@@ -1890,8 +1951,18 @@
       "check": {
         "kind": "choice",
         "options": [
-          { "id": "o0", "isCorrect": true, "reason": "Because of By steps.", "text": "By steps" },
-          { "id": "o1", "isCorrect": false, "reason": "Because of By leaps.", "text": "By leaps" }
+          {
+            "id": "o0",
+            "isCorrect": true,
+            "reason": "Almost every note moves to the one next to it: E to F, F to G.",
+            "text": "By steps"
+          },
+          {
+            "id": "o1",
+            "isCorrect": false,
+            "reason": "A leap skips over notes. Here almost every note sits next to the one before.",
+            "text": "By leaps"
+          }
         ],
         "question": "Does this melody move mostly by steps or by leaps?"
       },
@@ -1933,7 +2004,7 @@
         "tempo": 90,
         "toleranceMs": 100
       },
-      "prompt": "Tap the son clave over the beat.",
+      "prompt": "Tap the son clave, a five-hit Cuban rhythm, over the beat.",
       "template": "rhythmTapper"
     },
     "expected": {
@@ -1957,9 +2028,9 @@
       "check": {
         "output": "7",
         "answer": 0.1667,
-        "explanation": "Worked out by code.",
+        "explanation": "6 of the 36 squares add up to 7, and 6 ÷ 36 is about 0.167.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "What is the chance of a 7, as a decimal?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "fields": {
@@ -1991,7 +2062,10 @@
   "combinationGrid.timesTable": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": {
+        "explanation": "Each square is its row's number times its column's.",
+        "kind": "interaction"
+      },
       "fields": {
         "columns": { "label": "Times", "values": [1, 2, 3] },
         "rows": { "label": "Number", "values": [2, 3, 4] },
@@ -2027,9 +2101,9 @@
       "check": {
         "inputs": [{ "name": "extra", "value": 200 }],
         "answer": 251.54,
-        "explanation": "Worked out by code.",
+        "explanation": "With $200 extra a month the loan is paid off in 251.54 months, about 9 years sooner than with no extra.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "How many months does it take with $200 extra a month?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "data": { "isExample": true },
@@ -2097,10 +2171,11 @@
           { "name": "rentUp", "value": 1 }
         ],
         "answer": 1000,
-        "explanation": "Worked out by code.",
+        "explanation": "At $4 a cup the cart sells 1,000 cups and keeps $3 on each: $3,000. Take off $1,500 in costs and the $500 of extra rent and $1,000 is left.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "What is the monthly profit at $4 a cup with the higher rent?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "$"
       },
       "data": { "isExample": true },
       "fields": {
@@ -2170,10 +2245,11 @@
       "check": {
         "inputs": [{ "name": "angle", "value": 45 }],
         "answer": 40.77,
-        "explanation": "Worked out by code.",
+        "explanation": "At 45° and 20 m/s the ball lands 40.77 m away, farther than at any other angle.",
         "kind": "numeric",
-        "question": "What is the value?",
-        "tolerance": { "kind": "absolute", "value": 0.01 }
+        "question": "How far away does the ball land at 45° and 20 m/s?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "m"
       },
       "data": { "isExample": true },
       "fields": {
@@ -2272,9 +2348,9 @@
     "content": {
       "check": {
         "answer": 14,
-        "explanation": "Worked out by code.",
+        "explanation": "Africa covers about 30 million km² and Greenland about 2.2 million, so about 14 Greenlands fit.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "How many Greenlands fit in Africa?",
         "tolerance": { "kind": "absolute", "value": 2 }
       },
       "data": { "source": { "title": "The True Size of Africa", "year": 2010 } },
@@ -2282,7 +2358,7 @@
         "max": 30,
         "min": 1,
         "scale": "linear",
-        "takeaway": "The map stretches land near the poles.",
+        "takeaway": "The usual world map stretches land near the poles, so Greenland looks far bigger than it is.",
         "truth": { "kind": "cited", "value": 14 },
         "unit": "times"
       },
@@ -2297,7 +2373,7 @@
   "keyboardFretboard.byEar": {
     "baseMap": null,
     "content": {
-      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "check": { "explanation": "The sound is C and G played together.", "kind": "interaction" },
       "fields": {
         "byEar": true,
         "instruments": ["piano"],
@@ -2334,13 +2410,13 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "Because of A major chord.",
+            "reason": "A major has C♯ in the middle, which sounds brighter.",
             "text": "A major chord"
           },
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "Because of A minor chord.",
+            "reason": "The middle note is C, a half step lower than in A major. That gives the darker sound.",
             "text": "A minor chord"
           }
         ],
@@ -2376,9 +2452,9 @@
       "check": {
         "output": "x",
         "answer": 250,
-        "explanation": "Worked out by code.",
+        "explanation": "The rent adds $500 to the cost at every quantity, so Cost moves up to start at $2,500. Each lamp brings in $10 more than it costs, so it takes 250 lamps to cover that.",
         "kind": "numeric",
-        "question": "What is the value?",
+        "question": "How many lamps does the workshop sell to break even now?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "data": { "isExample": true },
@@ -2396,7 +2472,7 @@
         "xLabel": "Lamps sold",
         "yLabel": "Dollars per month"
       },
-      "prompt": "Move a line to show the new rent. How many lamps break even now?",
+      "prompt": "Move a line to show the new rent.",
       "template": "lineCrossing"
     },
     "expected": { "kind": "numeric", "value": 250 },
@@ -2434,26 +2510,26 @@
           {
             "id": "o0",
             "isCorrect": true,
-            "reason": "Because of Half as big.",
+            "reason": "The margin shrinks with the square root of the sample: 4 times the people, half the margin.",
             "text": "Half as big",
             "value": 0.5
           },
           {
             "id": "o1",
             "isCorrect": false,
-            "reason": "Because of A quarter as big.",
+            "reason": "The margin shrinks more slowly than the sample grows: 4 times the people only halves it.",
             "text": "A quarter as big",
             "value": 0.25
           },
           {
             "id": "o2",
             "isCorrect": false,
-            "reason": "Because of The same.",
+            "reason": "A bigger sample lands closer to the town's true share, so the margin shrinks.",
             "text": "The same",
             "value": 1
           }
         ],
-        "question": "Asking 4 times the people makes the error…"
+        "question": "Asking 4 times the people makes the margin of error…"
       },
       "data": { "isExample": true },
       "fields": {
@@ -2462,9 +2538,9 @@
         "populationLabel": "Example town",
         "runs": 200,
         "sampleSizes": [100, 400],
-        "sizeLabel": "People per poll"
+        "sizeLabel": "People per sample"
       },
-      "prompt": "Run 200 polls of each size.",
+      "prompt": "Poll the town 200 times with each sample size and see how far the results spread.",
       "template": "randomSimulation"
     },
     "expected": { "kind": "choice", "optionId": "o0" },
@@ -2477,7 +2553,7 @@
           "populationLabel": "Example town",
           "runs": 200,
           "sampleSizes": [100, 400],
-          "sizeLabel": "People per poll"
+          "sizeLabel": "People per sample"
         },
         "template": "randomSimulation"
       },

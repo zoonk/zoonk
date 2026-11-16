@@ -108,6 +108,7 @@ function DiagramBoard({
         {!isChecked && (
           <NameBank
             activeNumber={activeSlot?.number ?? null}
+            extraNames={fields.distractors.length}
             names={unplacedNames(names, placements)}
             onPlace={(name) => {
               if (activeSlot) {

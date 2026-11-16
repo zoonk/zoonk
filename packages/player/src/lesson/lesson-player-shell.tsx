@@ -92,7 +92,15 @@ function LessonContent() {
     const isShown = key === shown?.key;
 
     return (
-      step && <LessonScreen isShown={isShown} key={key} step={step} turn={isShown ? turn : null} />
+      step && (
+        <LessonScreen
+          isShown={isShown}
+          key={key}
+          screenKey={key}
+          step={step}
+          turn={isShown ? turn : null}
+        />
+      )
     );
   });
 
@@ -110,10 +118,12 @@ function LessonContent() {
  */
 function LessonScreen({
   isShown,
+  screenKey,
   step,
   turn,
 }: {
   isShown: boolean;
+  screenKey: string;
   step: PlayableLibraryStep;
   turn: ScreenTurn | null;
 }) {
@@ -129,7 +139,7 @@ function LessonScreen({
       <LessonPlayerRuntimeContext value={isShown ? runtime : left}>
         <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
           <MainActionSlotProvider>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col" data-screen={screenKey}>
               <LessonStage isShown={isShown} step={step} turn={turn} />
             </div>
             {isShown && <LessonActionBar />}
@@ -144,19 +154,24 @@ export function LessonPlayerShell() {
   return <LessonPlayerFrame />;
 }
 
-/** Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for their answers. */
+/**
+ * Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for
+ * their answers. A language lesson's screens are plain too, except its summary, which looks the
+ * same in every lesson.
+ */
 function useDotPaper(): boolean {
   const { lesson } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
 
-  if (lesson.targetLanguage || state.run.status === "refused") {
+  if (state.run.status === "refused" || state.phase === "completed") {
     return false;
   }
 
-  return (
-    state.phase === "map" ||
-    (state.phase !== "completed" && Boolean(screen.step && isReadStep(screen.step)))
-  );
+  if (lesson.targetLanguage) {
+    return state.phase !== "map" && screen.step?.kind === "summary";
+  }
+
+  return state.phase === "map" || Boolean(screen.step && isReadStep(screen.step));
 }
 
 function LessonPlayerFrame() {

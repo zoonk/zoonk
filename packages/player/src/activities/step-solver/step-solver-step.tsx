@@ -116,15 +116,14 @@ export function StepSolverStep({
             status === "later" && "text-muted-foreground font-normal",
           )}
         >
-          {status === "done" && correct ? (
-            <LessonRichText text={correct.text} />
-          ) : (
-            <RichTextBlocks text={step.prompt} />
-          )}
+          <RichTextBlocks text={step.prompt} />
         </div>
 
-        {status === "done" && (
-          <RichTextBlocks className="text-muted-foreground text-sm" text={step.prompt} />
+        {/* The question keeps its place and its answer goes under it, so nothing reads backwards. */}
+        {status === "done" && correct && (
+          <p className="text-sm leading-snug font-medium">
+            <LessonRichText text={correct.text} />
+          </p>
         )}
 
         {status === "current" && !isChecked && (

@@ -14,7 +14,7 @@ export const societyMoneyRenderers: ActivityRendererMap<
     template: "causeEffectChain",
   }),
   lineCrossing: defineActivityRenderer({
-    badge: "moveCurve",
+    badge: "moveLine",
     load: () =>
       import("./line-crossing/line-crossing-activity").then(
         (module) => module.LineCrossingActivity,
