@@ -335,7 +335,7 @@ actor PageServer: ClientTransport {
 }
 
 /// One goal of `kind`, the one every page shows.
-private struct OneGoalSummary: LearnerSummaryAPIClient {
+struct OneGoalSummary: LearnerSummaryAPIClient {
   let kind: LearnerGoal.Kind
 
   func getSummary(token: String) async throws -> LearnerSummary {

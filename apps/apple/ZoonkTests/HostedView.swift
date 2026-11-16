@@ -121,3 +121,22 @@ extension XCTestCase {
     return nil
   }
 }
+
+extension XCTestCase {
+  @MainActor
+  func closeRequestSheet(in window: UIWindow) throws {
+    let buttons = views(in: window).filter { $0.accessibilityLabel == "Close" }
+    if buttons.contains(where: { $0.accessibilityActivate() }) { return }
+    let control = try XCTUnwrap(
+      buttons.compactMap { $0 as? UIControl }.first
+        ?? buttons.lazy.compactMap { self.views(in: $0).compactMap { $0 as? UIControl }.first }
+        .first)
+    control.sendActions(for: .touchUpInside)
+  }
+
+  @MainActor
+  private func views(in view: UIView) -> [UIView] {
+    [view] + view.subviews.flatMap { views(in: $0) }
+  }
+
+}

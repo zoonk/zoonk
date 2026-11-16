@@ -524,6 +524,11 @@ struct TodayFocusTestSection: View {
       .announcesStatus(dismissed ? String(localized: Self.noted) : nil)
       .onAppear { kept = offer ?? kept }
       .onChange(of: offer) { kept = offer ?? kept }
+      .onChange(of: isOpen) {
+        if !isOpen && !dismissed {
+          dismissal.leave()
+        }
+      }
     }
   }
 
