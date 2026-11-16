@@ -254,6 +254,8 @@ function placeLineLabel({
  * handle while a free spot is left; then it keeps just off its own line. Every spot it searches keeps clear of the boxes (the arrows, heads included, and the axis title). Its
  * halo never cuts the line it names: with no free spot anywhere it stays by its end. An optional
  * name with no spot clear of the marks and the names before it is left out, as null.
+ *
+ * @internal
  */
 export function placeLineLabels({
   area,
