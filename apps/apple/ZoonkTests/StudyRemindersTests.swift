@@ -242,6 +242,7 @@ private final class PushStub: PushAccess {
 
   func requestAuthorization() async -> Bool { allows }
   func isAuthorized() async -> Bool { allows }
+  func isDenied() async -> Bool { !allows }
 
   func deviceToken() async -> String? {
     await registration?.wait()

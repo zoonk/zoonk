@@ -4,18 +4,18 @@ import SwiftUI
 struct RemindersView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(AppRouter.self) private var router
-  @Environment(PushNotifications.self) private var notifications
   @Environment(StudyRemindersStore.self) private var reminders
 
   let createAccount: () -> Void
 
   /// Read from the system each time the app comes back, since it changes in Settings.
   @State private var notificationsOff = false
-  /// Turning push on here just met blocked notifications.
-  @State private var pushRefused = false
-  /// The time's and email's changes: false when one didn't save, while the learner is on the page.
-  @State private var saving = VisitRequest<Bool>()
-  /// Nil when no setup ran and the plain change saved.
+  /// One per control, so a later change to one never hides the other's failure: false when it
+  /// didn't save, while the learner is on the page.
+  @State private var timeSave = VisitRequest<Bool>()
+  @State private var emailSave = VisitRequest<Bool>()
+  /// Denied when turning push on here just met blocked notifications; nil when no setup ran and the
+  /// plain change saved.
   @State private var pushSetup = VisitRequest<PushSetup>()
 
   var body: some View {
@@ -60,7 +60,7 @@ struct RemindersView: View {
         }
       }
 
-      if saving.outcome == false || pushSetup.outcome == .failed {
+      if timeSave.outcome == false || emailSave.outcome == false || pushSetup.outcome == .failed {
         SettingsSaveError()
       }
     }
@@ -91,12 +91,13 @@ struct RemindersView: View {
     )
     .task(id: scenePhase) {
       if scenePhase == .active {
-        notificationsOff = await notifications.isDenied()
+        notificationsOff = await reminders.notificationsDenied()
       }
     }
     .onDisappear {
+      emailSave.leave()
       pushSetup.leave()
-      saving.leave()
+      timeSave.leave()
     }
   }
 
@@ -106,7 +107,7 @@ struct RemindersView: View {
       SettingToggle(
         isOn: Binding(
           get: { reminder.emailOn },
-          set: { on in save(StudyReminderChange(emailOn: on)) }),
+          set: { on in save(StudyReminderChange(emailOn: on), in: emailSave) }),
         title: Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
         description: Text(verbatim: address))
     } else {
@@ -157,7 +158,7 @@ struct RemindersView: View {
     }
 
     // A learner who chose email, or never wanted push, isn't nudged to turn it back on.
-    if notificationsOff, pushRefused || (reminder.pushOn && isThisPhone) {
+    if notificationsOff, pushSetup.outcome == .denied || (reminder.pushOn && isThisPhone) {
       NotificationsOffNotice()
     }
   }
@@ -166,13 +167,12 @@ struct RemindersView: View {
     pushSetup.run(setUp) { result in
       if result == .denied {
         notificationsOff = true
-        pushRefused = true
       }
     }
   }
 
-  private func save(_ change: StudyReminderChange) {
-    saving.run { [reminders] in await reminders.change(change) }
+  private func save(_ change: StudyReminderChange, in request: VisitRequest<Bool>) {
+    request.run { [reminders] in await reminders.change(change) }
   }
 
   private static let planLink = URL(string: "zoonk-reminders:plan")!
@@ -190,7 +190,7 @@ struct RemindersView: View {
     Binding(
       get: { ReminderTime.date(reminder.time) },
       set: { date in
-        save(StudyReminderChange(time: ReminderTime.string(date)))
+        save(StudyReminderChange(time: ReminderTime.string(date)), in: timeSave)
       })
   }
 }

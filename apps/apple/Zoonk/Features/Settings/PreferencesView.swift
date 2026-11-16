@@ -5,8 +5,11 @@ struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
-  /// Says the page's last change didn't save, while the learner is on it.
-  @State private var saving = VisitRequest<Bool>()
+  /// One per control, so a later change to one never hides another's failure: false when it didn't
+  /// save, while the learner is on the page.
+  @State private var buddySave = VisitRequest<Bool>()
+  @State private var homeSave = VisitRequest<Bool>()
+  @State private var soundsSave = VisitRequest<Bool>()
   @State private var isPickingHome = false
 
   var body: some View {
@@ -110,7 +113,7 @@ struct PreferencesView: View {
         }
       }
 
-      if saving.outcome == false {
+      if [buddySave, homeSave, soundsSave].contains(where: { $0.outcome == false }) {
         SettingsSaveError()
       }
     }
@@ -125,7 +128,11 @@ struct PreferencesView: View {
       }
     }
     .loads(settings.preferences)
-    .onDisappear { saving.leave() }
+    .onDisappear {
+      buddySave.leave()
+      homeSave.leave()
+      soundsSave.leave()
+    }
     .sheet(isPresented: $isPickingHome) {
       if let preferences = settings.preferences.value {
         CountryPickerSheet(
@@ -137,7 +144,7 @@ struct PreferencesView: View {
           selected: preferences.homeCountry?.code
         ) { choice in
           // Nothing rebuilds, so it closes at once; a failed save shows on the page.
-          save(.homeCountry(choice))
+          save(.homeCountry(choice), in: homeSave)
 
           return true
         }
@@ -148,7 +155,7 @@ struct PreferencesView: View {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
           choice in
-          save(.buddy(choice))
+          save(.buddy(choice), in: buddySave)
         }
         .zoonkStyles()
       }
@@ -166,12 +173,12 @@ struct PreferencesView: View {
     Binding(
       get: { preferences.soundsEnabled },
       set: { enabled in
-        save(.soundsEnabled(enabled))
+        save(.soundsEnabled(enabled), in: soundsSave)
       })
   }
 
-  private func save(_ update: PreferencesUpdate) {
-    saving.run { [settings] in await settings.updatePreferences(update) }
+  private func save(_ update: PreferencesUpdate, in request: VisitRequest<Bool>) {
+    request.run { [settings] in await settings.updatePreferences(update) }
   }
 }
 

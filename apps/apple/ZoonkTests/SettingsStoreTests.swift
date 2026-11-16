@@ -265,6 +265,24 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(restoreCount, 2)
   }
 
+  /// A later change doesn't hide an earlier one that failed: the deletion fails while the switch,
+  /// made after it, saves, and the page still says so (review of `697b994fb2`).
+  func testAFailedDeletionStillSaysSoWhenALaterChangeSaves() async throws {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let changes = MemoryChanges()
+    await store.memory.load()
+    await api.holdDeletes()
+
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await api.waitForHeldDelete()
+    changes.save(.memorySwitch) { await store.setMemoryEnabled(false) }
+    await api.releaseDeletes(throwing: APIError.network)
+    try await Task.sleep(for: .milliseconds(300))
+
+    XCTAssertTrue(changes.saveFailed)
+  }
+
   func testLeavingMemoryEndsItsNoticeAndWhatsStillOut() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)

@@ -52,6 +52,11 @@ final class StudyRemindersStore {
     set { defaults.set(newValue, forKey: Self.tokenKey) }
   }
 
+  /// The system blocks Zoonk's notifications.
+  func notificationsDenied() async -> Bool {
+    await push.isDenied()
+  }
+
   func isThisPhone(_ reminder: StudyReminder) -> Bool {
     reminder.phone != nil && reminder.phone?.token == savedToken
   }
