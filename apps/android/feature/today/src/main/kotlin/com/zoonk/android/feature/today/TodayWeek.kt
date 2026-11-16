@@ -34,6 +34,8 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDay
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -111,24 +113,18 @@ private fun DayCell(
         note = dayNote(day, weekDate, status),
         footer = { if (challenge != null) ChallengeLine(challenge) },
     ) { open ->
-        Column(
+        WeekDay(
+            letter = names.narrow.getValue(dayOfWeek),
+            today = day.isToday,
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
                     .then(open)
                     .clearAndSetSemantics { contentDescription = description },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             DayRing(day, weekDate) {
                 if (challenge != null && day.share == 0f) KindMark(challenge.kind())
             }
-            Text(
-                text = names.narrow.getValue(dayOfWeek),
-                color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = if (day.isToday) FontWeight.Medium else null,
-                style = MaterialTheme.typography.labelSmall,
-            )
         }
     }
 }
@@ -352,4 +348,4 @@ private fun ChallengeRow(
     }
 }
 
-private val RING = 30.dp
+private val RING = WEEK_RING

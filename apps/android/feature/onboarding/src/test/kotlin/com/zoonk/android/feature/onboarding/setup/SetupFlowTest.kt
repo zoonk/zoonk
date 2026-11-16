@@ -43,6 +43,13 @@ class SetupFlowTest {
     }
 
     @Test
+    fun noDashesWhileTheQuestionThatCanAddOneIsCurrentOrAhead() {
+        assertNull(setupProgress(SetupFlow(GOAL, LEVEL), listOf(PURPOSE, SCHEDULE, PLAN)))
+        assertNull(setupProgress(SetupFlow(GOAL, PURPOSE, listOf(LEVEL)), listOf(SCHEDULE, PLAN)))
+        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(SetupFlow(GOAL, LEVEL, listOf(PURPOSE)), listOf(SCHEDULE, PLAN)))
+    }
+
+    @Test
     fun theDateOpenedFromTheTimeHoldsItsFirstPlaceAndCountsOnce() {
         val steps = listOf(SCHEDULE, BUDDY, PLAN)
 

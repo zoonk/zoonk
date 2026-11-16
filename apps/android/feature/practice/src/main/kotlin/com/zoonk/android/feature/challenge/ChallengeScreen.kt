@@ -632,11 +632,8 @@ private fun Topics(
                 if (subject == null) {
                     DetailRow(names.first(), meta = null)
                 } else {
-                    DetailRow(
-                        subject,
-                        meta = pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
-                        details = listOf(names.joinToString(", ")),
-                    )
+                    // The topics listed under a subject already say how many; a lone topic row has no count to match.
+                    DetailRow(subject, meta = null, details = listOf(names.joinToString(", ")))
                 }
             }
         }

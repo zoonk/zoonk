@@ -161,8 +161,6 @@
         <item quantity="one">%1$d / %2$d doğru</item>
         <item quantity="other">%1$d / %2$d doğru</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Henüz soru sorulmadı</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">Yazma: burada değerlendirilmiyor</string>
     <string name="focustest_listening_not_checked">Dinleme: burada değerlendirilmiyor</string>

@@ -207,6 +207,9 @@ enum class DateStyle(
 ) {
     Day("MMMd", yearWhenAnotherYear = true),
 
+    /** "Nov 8": a row's day never with a year, for a list whose last day carries it ("Nov 8 and Nov 15, 2026"). */
+    DayNoYear("MMMd"),
+
     /** Never with a year: for lists whose year is stated beside them, and a cap's opening day, never more than a month away. */
     DayMonth("MMMMd"),
 
@@ -244,6 +247,20 @@ fun formatDate(
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
 
+/** A time zone by Android's localized name for it, such as "Brasilia Time", or null for an id it doesn't know. */
+fun formatTimeZoneName(
+    zone: String,
+    locale: Locale,
+): String? =
+    runCatching { ZoneId.of(zone).getDisplayName(java.time.format.TextStyle.FULL, locale) }
+        .getOrNull()
+
+/** A month's short name on its own, as a calendar heads its weeks ("Oct", "out."). */
+fun formatMonthName(
+    date: LocalDate,
+    locale: Locale,
+): String = formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), "LLL", locale)
+
 /** "Nov 9 – 15", or "Dec 28, 2026 – Jan 3, 2027" once either end is in another year than [today]. */
 fun formatDayRange(
     start: LocalDate,
@@ -264,7 +281,8 @@ fun formatMomentDay(
     locale: Locale,
     zone: ZoneId = ZoneId.systemDefault(),
     today: LocalDate = LocalDate.now(zone),
-): String = formatDate(moment.toJavaInstant().atZone(zone).toLocalDate(), locale, DateStyle.Day, today)
+    style: DateStyle = DateStyle.Day,
+): String = formatDate(moment.toJavaInstant().atZone(zone).toLocalDate(), locale, style, today)
 
 /** Calendar days and times of day carry no time zone, so they're formatted as UTC instants in UTC. */
 private fun formatUtc(

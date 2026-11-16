@@ -614,6 +614,20 @@ internal fun NextStop(
     }
 }
 
+/** Beside its count ("0 of 2 done") a bar lights only what's done, so the two agree; the header marks the learner's place. */
+internal fun sessionSegments(
+    steps: List<DayStep>,
+    position: Long,
+    counted: Boolean,
+): List<TaskSegment> =
+    steps.map {
+        when {
+            it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
+            !counted && it.position == position -> TaskSegment.Current
+            else -> TaskSegment.Ahead
+        }
+    }
+
 /**
  * Main's session header segments: the day's work by its minutes, done in blue and the shown step as
  * the learner's place. [counted] says how many are done above them, for a page of their own.
@@ -628,14 +642,7 @@ private fun SessionSegments(
     val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
     if (steps.isEmpty()) return
 
-    val segments =
-        steps.map {
-            when {
-                it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
-                it.position == step.position -> TaskSegment.Current
-                else -> TaskSegment.Ahead
-            }
-        }
+    val segments = sessionSegments(steps, step.position, counted)
     val weights = steps.map { it.estimatedMinutes.toFloat() }
     val progress = stepsDone(day.sessionBar)
 

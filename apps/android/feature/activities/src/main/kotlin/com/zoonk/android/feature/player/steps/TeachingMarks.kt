@@ -175,12 +175,8 @@ internal fun TeachingText(
                 RichInlineText(
                     title,
                     modifier.semantics { heading() },
-                    style =
-                        MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 21.sp,
-                        ),
+                    // At least the size of the reading text it heads, set apart by weight.
+                    style = MaterialTheme.zoonkType.lessonText.copy(fontWeight = FontWeight.SemiBold),
                 )
             }
         }

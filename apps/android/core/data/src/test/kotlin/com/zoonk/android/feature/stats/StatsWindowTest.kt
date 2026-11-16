@@ -17,10 +17,4 @@ class StatsWindowTest {
         val today = LocalDate.of(2026, 10, 27)
         assertEquals(today.minusDays(89), StatsWindow.score(today).start)
     }
-
-    @Test fun aYearWindowSpansLeapDay() {
-        val window = StatsWindow.year(LocalDate.of(2024, 3, 1))
-        assertEquals(LocalDate.of(2023, 3, 2), window.start)
-        assertEquals(1.0, window.position(window.end), 0.0)
-    }
 }

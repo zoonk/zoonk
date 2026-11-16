@@ -67,6 +67,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDay
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
@@ -441,8 +443,7 @@ private fun PlanWeek(page: PlanPageState) {
             Text(
                 text = stringResource(R.string.plan_this_week),
                 modifier = Modifier.weight(1f).semantics { heading() },
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleMedium,
             )
             if (time.targetMinutes > 0) {
                 Text(
@@ -462,18 +463,11 @@ private fun PlanWeek(page: PlanPageState) {
                 val date = day.date.toJavaLocalDate()
                 val spoken =
                     stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
-                Column(
+                WeekDay(
+                    letter = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
+                    today = day.state == PlanDay.State.TODAY,
                     modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(
-                        text = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    DayRing(day)
-                }
+                ) { DayRing(day) }
             }
         }
     }
@@ -510,7 +504,7 @@ private fun DayRing(day: PlanDay) {
             else -> 0.1f
         }
 
-    val ring = markSize() * DAY_RING_SHARE
+    val ring = WEEK_RING
     Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
         Canvas(Modifier.size(ring)) {
             val width = 3.dp.toPx()
@@ -814,7 +808,6 @@ private const val MAX_STEPS_SHOWN = 2
 
 /** Core keeps a subject under this share until the learner takes their first test of it. */
 private const val TEST_THRESHOLD = 0.75
-private const val DAY_RING_SHARE = 1.5f
 
 /** A stat's touch room past its words, which takes no room in the column (main's `-m-2 p-2`). */
 private val STAT_PADDING = 8.dp

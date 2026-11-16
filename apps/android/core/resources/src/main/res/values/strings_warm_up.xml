@@ -2,6 +2,8 @@
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Quiz while you wait</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Quiz</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Next guess</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->

@@ -90,9 +90,6 @@
     <string name="challenge_topics_weekly">이번 주 주제</string>
     <string name="challenge_topics_asked">물어본 내용</string>
     <string name="challenge_topics_will_ask">물어볼 내용</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="other">주제 %d개</item>
-    </plurals>
     <string name="challenge_today">오늘</string>
     <string name="challenge_tomorrow">내일</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->

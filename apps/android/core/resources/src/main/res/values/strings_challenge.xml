@@ -32,10 +32,6 @@
     <string name="challenge_topics_weekly">This week\'s topics</string>
     <string name="challenge_topics_asked">What he asked</string>
     <string name="challenge_topics_will_ask">What he\'ll ask</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="one">%d topic</item>
-        <item quantity="other">%d topics</item>
-    </plurals>
 
     <string name="challenge_today">Today</string>
     <string name="challenge_tomorrow">Tomorrow</string>

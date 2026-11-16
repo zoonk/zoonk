@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -709,12 +710,7 @@ private fun TopicChapterLink(
 private fun numberedTopic(
     number: String?,
     text: String,
-) = buildAnnotatedString {
-    if (number != null) {
-        withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontFeatureSettings = "tnum")) { append("$number ") }
-    }
-    append(text)
-}
+): AnnotatedString = if (number == null) AnnotatedString(text) else numberedTitle(number, text)
 
 @Composable
 private fun topicNote(

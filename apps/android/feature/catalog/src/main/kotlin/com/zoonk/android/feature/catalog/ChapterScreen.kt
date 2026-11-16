@@ -463,22 +463,25 @@ internal fun ChapterLessons(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place))
+        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place, withPosition = false))
         ChapterLessonRows(navigator, courseId, place, currentLessonId = null)
     }
 }
 
 @Composable
-internal fun chapterFacts(place: ChapterPlace): String {
+internal fun chapterFacts(
+    place: ChapterPlace,
+    withPosition: Boolean = true,
+): String {
     val locale = currentLocale()
     val lessons = place.chapter.lessons
 
-    return listOf(
+    return listOfNotNull(
         stringResource(
             R.string.catalog_chapter_position,
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
-        ),
+        ).takeIf { withPosition },
         pluralStringResource(R.plurals.catalog_short_lessons, lessons.size, lessons.size),
         formatTotalDuration(lessons.sumOf { it.estimatedMinutes }.toDouble(), locale),
     ).factsLine()

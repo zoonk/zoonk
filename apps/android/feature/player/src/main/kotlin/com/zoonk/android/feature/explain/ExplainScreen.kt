@@ -67,12 +67,13 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.QUICK_EXPLANATION_MINUTES
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
@@ -85,7 +86,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-private const val QUICK_EXPLANATION_SECONDS = 300L
 private const val OUTLINE_PLACEHOLDERS = 5
 
 /** The first screen usually shows within about 20 seconds. */
@@ -257,7 +257,7 @@ internal fun ExplainWaiting(
 }
 
 @Composable
-private fun quickExplanationLabel() = stringResource(R.string.explain_quick, formatDuration(QUICK_EXPLANATION_SECONDS, currentLocale()))
+private fun quickExplanationLabel() = stringResource(R.string.explain_quick, formatMinutes(QUICK_EXPLANATION_MINUTES, currentLocale()))
 
 @Composable
 private fun ExplainHeading(

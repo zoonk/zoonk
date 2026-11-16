@@ -36,7 +36,9 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.planWeekday
 import com.zoonk.android.ui.format.varietyName
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -46,8 +48,6 @@ import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPhaseCheckpoint
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
-import java.time.format.TextStyle
 
 @Composable
 internal fun NextOnPath(
@@ -375,7 +375,7 @@ internal fun studyDaysText(
     val mondayFirst = (0 until DAYS_PER_WEEK).map { (it + 1) % DAYS_PER_WEEK }
     val days = mondayFirst.filter { weekdayMinutes.getOrElse(it) { 0 } > 0 }
 
-    fun short(day: Int) = DayOfWeek.of(if (day == 0) DAYS_PER_WEEK else day).getDisplayName(TextStyle.SHORT, locale)
+    fun short(day: Int) = weekdayNames(locale).shortInSentence.getValue(planWeekday(day))
     val positions = days.map(mondayFirst::indexOf)
     val oneRun = positions.zipWithNext().all { (a, b) -> b == a + 1 }
     return when {

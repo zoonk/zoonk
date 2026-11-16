@@ -110,14 +110,10 @@ private fun shownScore(
     return criterion.score / criterion.maxScore * grade.total.maxScore to grade.total.maxScore
 }
 
-/** "Next step", a muted label inside the title block over the criterion's name. */
+/** Main's "Next step" eyebrow over the criterion's name. */
 @Composable
 private fun NextStepLabel() {
-    Text(
-        stringResource(R.string.essay_next_step),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+    Eyebrow(stringResource(R.string.essay_next_step))
 }
 
 @Composable

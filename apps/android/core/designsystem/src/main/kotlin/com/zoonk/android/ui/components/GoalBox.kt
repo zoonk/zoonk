@@ -321,7 +321,8 @@ private fun spokenLanguage(locale: Locale): String {
     return Locale.forLanguageTag(spoken).getDisplayLanguage(locale)
 }
 
-private const val QUICK_EXPLANATION_MINUTES = 5
+/** How long a quick explanation takes to read, wherever one is offered. */
+const val QUICK_EXPLANATION_MINUTES = 5
 
 /** Main's `text-[17px] leading-6 py-2.5`: one line of words is 44dp. */
 private val GOAL_LINE_HEIGHT = 24.sp

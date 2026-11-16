@@ -487,7 +487,6 @@
     <string name="onboarding_goals_at_once_title">Tu as atteint ta limite d’objectifs en cours</string>
     <string name="onboarding_goals_at_once_line">Mets-en un en pause dans ton Plan ou abonne-toi pour travailler sur plus d’objectifs à la fois.</string>
     <string name="onboarding_create_account">Créer un compte gratuit</string>
-    <string name="onboarding_create_account_short">Créer un compte</string>
     <string name="onboarding_guest_gate_title">Crée un compte gratuit pour commencer un autre objectif</string>
     <string name="onboarding_guest_gate_description">Sans compte, tu peux suivre un seul objectif. Si tu crées un compte, tu gardes ton plan et tes progrès.</string>
     <string name="onboarding_back_to_today">Retour à Aujourd’hui</string>
@@ -1036,7 +1035,6 @@
     <string name="onboarding_aim_picker_title">Jusqu’où veux-tu aller ?</string>
     <string name="onboarding_aim_hours_more">Encore environ %1$s h</string>
     <string name="onboarding_aim_hours_month">Encore environ %1$s h · vers %2$s</string>
-    <string name="onboarding_aim_hours">%1$s h</string>
     <string name="onboarding_aim_by_month">d’ici %1$s</string>
     <string name="onboarding_aim_finish">Avec %1$s par jour, tu atteins %2$s vers %3$s.</string>
     <string name="onboarding_reason_travel">Voyager</string>
@@ -1050,11 +1048,9 @@
     <string name="onboarding_reason_certificate">Obtenir une certification</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI et autres</string>
     <string name="onboarding_reason_other_description">Avec tes propres mots. Objectif B1</string>
-    <string name="onboarding_reason_exam">Examen</string>
     <string name="onboarding_reason_which_exam">Laquelle ?</string>
     <string name="onboarding_reason_exam_plan">Ton plan s’adapte aux épreuves et au Score de cet examen.</string>
     <string name="onboarding_reason_your_words">Avec tes propres mots</string>
-    <string name="onboarding_reason_hours_note">Heures d’étude en partant de zéro, entraînement compris. Moins si tu as déjà des bases.</string>
     <string name="onboarding_aim_from_none">En partant de zéro, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_basic">En partant des bases, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_intermediate">En partant d’un niveau intermédiaire, avec %1$s par jour.</string>

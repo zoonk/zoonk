@@ -161,7 +161,7 @@ internal fun CoverageSuggestion(slot: Slot) {
     val edits = slot.edits
     val state = slot.state
     val coverage = planCoverage(plan)
-    val covered = coverage?.let { coveredText(plan, it, page.today) }.orEmpty()
+    val covered = coverage?.let { coveredText(plan, it) }.orEmpty()
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val course = fullCourse(page)

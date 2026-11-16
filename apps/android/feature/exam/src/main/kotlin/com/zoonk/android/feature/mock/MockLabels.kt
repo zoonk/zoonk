@@ -30,9 +30,10 @@ fun mockMeasure(mock: ExamMockSummary): String {
     if (mock.scoring == ExamMockSummary.Scoring.NET) {
         return stringResource(R.string.mock_net_score, formatNumber(mock.measure, locale), mock.total)
     }
-    // Partial credit reads to the hundredth.
+    // Partial credit reads to the hundredth, and a count with part of a point counts points, not right answers.
     val correct = (mock.correct * HUNDREDTHS).roundToLong() / HUNDREDTHS
-    return pluralStringResource(R.plurals.mock_right_answers, floor(correct).toInt(), formatNumber(correct, locale), mock.total)
+    val plural = if (correct == floor(correct)) R.plurals.mock_right_answers else R.plurals.mock_points_of
+    return pluralStringResource(plural, floor(correct).toInt(), formatNumber(correct, locale), mock.total)
 }
 
 private const val HUNDREDTHS = 100.0

@@ -485,7 +485,6 @@
     <string name="onboarding_goals_at_once_title">동시에 학습할 수 있는 목표 수를 다 채웠어요</string>
     <string name="onboarding_goals_at_once_line">계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요.</string>
     <string name="onboarding_create_account">무료 계정 만들기</string>
-    <string name="onboarding_create_account_short">계정 만들기</string>
     <string name="onboarding_guest_gate_title">다른 목표를 시작하려면 무료 계정을 만드세요</string>
     <string name="onboarding_guest_gate_description">계정 없이도 목표 하나를 진행할 수 있어요. 계정을 만들면 계획과 진도가 그대로 이어져요.</string>
     <string name="onboarding_back_to_today">오늘로 돌아가기</string>
@@ -990,7 +989,6 @@
     <string name="onboarding_aim_picker_title">어느 수준까지 배우고 싶나요?</string>
     <string name="onboarding_aim_hours_more">약 %1$s시간 더 필요</string>
     <string name="onboarding_aim_hours_month">약 %1$s시간 더 필요 · %2$s쯤</string>
-    <string name="onboarding_aim_hours">%1$s시간</string>
     <string name="onboarding_aim_by_month">%1$s까지</string>
     <string name="onboarding_aim_finish">하루에 %1$s씩 공부하면 %2$s에 %3$s쯤 도달해요.</string>
     <string name="onboarding_reason_travel">여행</string>
@@ -1004,11 +1002,9 @@
     <string name="onboarding_reason_certificate">어학시험 합격하기</string>
     <string name="onboarding_reason_certificate_description">토익, DELE, CELI 등</string>
     <string name="onboarding_reason_other_description">자유롭게 적어 주세요. B1을 목표로 해요</string>
-    <string name="onboarding_reason_exam">시험</string>
     <string name="onboarding_reason_which_exam">어떤 시험인가요?</string>
     <string name="onboarding_reason_exam_plan">그 시험의 구성과 점수에 맞춰 계획을 세워요.</string>
     <string name="onboarding_reason_your_words">내 말로 설명하기</string>
-    <string name="onboarding_reason_hours_note">처음부터 배울 때 필요한 시간으로, 연습 시간도 포함돼요. 이미 아는 내용이 있다면 더 짧아져요.</string>
     <string name="onboarding_aim_from_none">처음부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_basic">기초부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_intermediate">중급부터 하루에 %1$s씩 공부해요.</string>

@@ -486,7 +486,6 @@
     <string name="onboarding_goals_at_once_title">Mehr Ziele kannst du nicht gleichzeitig verfolgen</string>
     <string name="onboarding_goals_at_once_line">Pausier ein Ziel in deinem Plan oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen.</string>
     <string name="onboarding_create_account">Kostenloses Konto erstellen</string>
-    <string name="onboarding_create_account_short">Konto erstellen</string>
     <string name="onboarding_guest_gate_title">Erstelle ein kostenloses Konto, um ein weiteres Ziel zu starten</string>
     <string name="onboarding_guest_gate_description">Ohne Konto kannst du ein Ziel verfolgen. Wenn du ein Konto erstellst, nimmst du deinen Plan und Fortschritt mit.</string>
     <string name="onboarding_back_to_today">Zurück zu Heute</string>
@@ -1013,7 +1012,6 @@
     <string name="onboarding_aim_picker_title">Wie weit möchtest du kommen?</string>
     <string name="onboarding_aim_hours_more">Etwa %1$s Std. mehr</string>
     <string name="onboarding_aim_hours_month">Etwa %1$s Std. mehr · voraussichtlich %2$s</string>
-    <string name="onboarding_aim_hours">%1$s Std.</string>
     <string name="onboarding_aim_by_month">bis %1$s</string>
     <string name="onboarding_aim_finish">Mit %1$s pro Tag erreichst du %2$s gegen %3$s.</string>
     <string name="onboarding_reason_travel">Reisen</string>
@@ -1027,11 +1025,9 @@
     <string name="onboarding_reason_certificate">Zertifikatsprüfung bestehen</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI und andere</string>
     <string name="onboarding_reason_other_description">In deinen eigenen Worten. Ziel: B1</string>
-    <string name="onboarding_reason_exam">Prüfung</string>
     <string name="onboarding_reason_which_exam">Welche?</string>
     <string name="onboarding_reason_exam_plan">Dein Plan richtet sich nach den Prüfungsteilen und dem Score dieser Prüfung.</string>
     <string name="onboarding_reason_your_words">In deinen eigenen Worten</string>
-    <string name="onboarding_reason_hours_note">Stunden zum Lernen und Üben ohne Vorkenntnisse. Weniger, wenn du schon etwas kannst.</string>
     <string name="onboarding_aim_from_none">Ohne Vorkenntnisse, bei %1$s pro Tag.</string>
     <string name="onboarding_aim_from_basic">Mit Grundkenntnissen, bei %1$s pro Tag.</string>
     <string name="onboarding_aim_from_intermediate">Ab mittlerem Niveau, bei %1$s pro Tag.</string>

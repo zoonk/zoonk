@@ -90,9 +90,6 @@
     <string name="challenge_topics_weekly">今週のトピック</string>
     <string name="challenge_topics_asked">出題されたトピック</string>
     <string name="challenge_topics_will_ask">出題予定のトピック</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="other">%dトピック</item>
-    </plurals>
     <string name="challenge_today">今日</string>
     <string name="challenge_tomorrow">明日</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->

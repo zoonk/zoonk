@@ -487,7 +487,6 @@
     <string name="onboarding_goals_at_once_title">Hai raggiunto il limite di obiettivi da seguire insieme</string>
     <string name="onboarding_goals_at_once_line">Mettine uno in pausa nel tuo Piano, oppure abbonati per seguirne di più insieme.</string>
     <string name="onboarding_create_account">Crea un account gratuito</string>
-    <string name="onboarding_create_account_short">Crea un account</string>
     <string name="onboarding_guest_gate_title">Crea un account gratuito per iniziare un altro obiettivo</string>
     <string name="onboarding_guest_gate_description">Senza un account puoi seguire un solo obiettivo. Creandone uno, mantieni il tuo piano e i tuoi progressi.</string>
     <string name="onboarding_back_to_today">Torna a Oggi</string>
@@ -1036,7 +1035,6 @@
     <string name="onboarding_aim_picker_title">Fin dove vuoi arrivare?</string>
     <string name="onboarding_aim_hours_more">Ancora circa %1$s h</string>
     <string name="onboarding_aim_hours_month">Ancora circa %1$s h · verso %2$s</string>
-    <string name="onboarding_aim_hours">%1$s h</string>
     <string name="onboarding_aim_by_month">entro %1$s</string>
     <string name="onboarding_aim_finish">Con %1$s al giorno, raggiungi %2$s verso %3$s.</string>
     <string name="onboarding_reason_travel">Viaggiare</string>
@@ -1050,11 +1048,9 @@
     <string name="onboarding_reason_certificate">Ottenere una certificazione</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI e altri</string>
     <string name="onboarding_reason_other_description">Con parole tue. Obiettivo: B1</string>
-    <string name="onboarding_reason_exam">Esame</string>
     <string name="onboarding_reason_which_exam">Quale?</string>
     <string name="onboarding_reason_exam_plan">Il tuo piano si basa sulle prove e sul punteggio di quell’esame.</string>
     <string name="onboarding_reason_your_words">Con parole tue</string>
-    <string name="onboarding_reason_hours_note">Ore di studio da zero, pratica inclusa. Meno se conosci già un po’ la lingua.</string>
     <string name="onboarding_aim_from_none">Da zero, con %1$s al giorno.</string>
     <string name="onboarding_aim_from_basic">Dalle basi, con %1$s al giorno.</string>
     <string name="onboarding_aim_from_intermediate">Da un livello intermedio, con %1$s al giorno.</string>

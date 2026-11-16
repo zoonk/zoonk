@@ -161,8 +161,6 @@
         <item quantity="one">%1$d von %2$d richtig</item>
         <item quantity="other">%1$d von %2$d richtig</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Noch nicht abgefragt</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">Schreiben: hier nicht geprüft</string>
     <string name="focustest_listening_not_checked">Hören: hier nicht geprüft</string>

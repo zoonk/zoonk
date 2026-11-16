@@ -157,8 +157,6 @@
     <plurals name="focustest_subject_right">
         <item quantity="other">정답 %1$d개 / 총 %2$d문제</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">아직 출제되지 않음</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">쓰기: 여기서는 확인하지 않음</string>
     <string name="focustest_listening_not_checked">듣기: 여기서는 확인하지 않음</string>

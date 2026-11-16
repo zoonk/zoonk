@@ -146,6 +146,9 @@ object FillsView
 /** What a check adds to a word bank's screen (its feedback, or "fix it yourself"), which the bank places itself. */
 val LocalWordBankCheck = compositionLocalOf<(@Composable () -> Unit)?> { null }
 
+/** Where a checked question goes next ("Saved to your mistakes"), drawn inside the activity's own feedback card. */
+val LocalResultNotes = compositionLocalOf<(@Composable () -> Unit)?> { null }
+
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
  * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the

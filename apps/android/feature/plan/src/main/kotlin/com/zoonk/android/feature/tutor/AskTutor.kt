@@ -49,14 +49,14 @@ fun AskTutor(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val identity = tutorIdentity(summary.value)
-    val label = askLabel(scope, identity.name)
+    val label = askLabel(scope, identity)
     var open by rememberSaveable { mutableStateOf(false) }
 
     when (appearance) {
         AskTutorAppearance.Button -> {
             OutlinedButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
-                Box(Modifier.size(BUTTON_AVATAR_SIZE)) { TutorAvatar(identity, BUTTON_AVATAR_SIZE) }
-                Text(stringResource(R.string.tutor_ask, identity.name), Modifier.padding(start = 8.dp))
+                if (identity.look != null) TutorAvatar(identity, BUTTON_AVATAR_SIZE, Modifier.padding(end = 8.dp))
+                Text(identity.askText())
             }
         }
 
@@ -115,7 +115,7 @@ fun TutorAskButton(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val identity = tutorIdentity(summary.value)
-    val label = stringResource(R.string.tutor_ask, identity.name)
+    val label = identity.askText()
 
     if (worded) {
         OutlinedButton(onClick = { onOpenChange(true) }) {

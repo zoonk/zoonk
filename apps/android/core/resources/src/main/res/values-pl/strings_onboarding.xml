@@ -488,7 +488,6 @@
     <string name="onboarding_goals_at_once_title">Masz już maksymalną liczbę aktywnych celów</string>
     <string name="onboarding_goals_at_once_line">Wstrzymaj jeden z nich w Planie lub wykup subskrypcję, by realizować więcej celów naraz.</string>
     <string name="onboarding_create_account">Utwórz bezpłatne konto</string>
-    <string name="onboarding_create_account_short">Utwórz konto</string>
     <string name="onboarding_guest_gate_title">Utwórz bezpłatne konto, by zacząć realizować kolejny cel</string>
     <string name="onboarding_guest_gate_description">Bez konta możesz realizować jeden cel. Po założeniu konta zachowasz swój plan i postępy.</string>
     <string name="onboarding_back_to_today">Wróć do „Dziś”</string>
@@ -1059,7 +1058,6 @@
     <string name="onboarding_aim_picker_title">Jak daleko chcesz dojść?</string>
     <string name="onboarding_aim_hours_more">Jeszcze około %1$s godz. nauki</string>
     <string name="onboarding_aim_hours_month">Jeszcze około %1$s godz. nauki · orientacyjnie: %2$s</string>
-    <string name="onboarding_aim_hours">%1$s godz.</string>
     <string name="onboarding_aim_by_month">Termin: %1$s</string>
     <string name="onboarding_aim_finish">Przy %1$s nauki dziennie orientacyjny termin osiągnięcia poziomu %2$s to %3$s.</string>
     <string name="onboarding_reason_travel">Podróże</string>
@@ -1073,11 +1071,9 @@
     <string name="onboarding_reason_certificate">Zdobyć certyfikat</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI i inne</string>
     <string name="onboarding_reason_other_description">Własnymi słowami. Cel: B1</string>
-    <string name="onboarding_reason_exam">Egzamin</string>
     <string name="onboarding_reason_which_exam">Który certyfikat?</string>
     <string name="onboarding_reason_exam_plan">Twój plan uwzględnia arkusze tego egzaminu i docelowy wynik.</string>
     <string name="onboarding_reason_your_words">Własnymi słowami</string>
-    <string name="onboarding_reason_hours_note">Liczba godzin nauki od zera, razem z ćwiczeniami. Mniej, jeśli już coś umiesz.</string>
     <string name="onboarding_aim_from_none">Od zera, po %1$s dziennie.</string>
     <string name="onboarding_aim_from_basic">Od podstaw, po %1$s dziennie.</string>
     <string name="onboarding_aim_from_intermediate">Od poziomu średnio zaawansowanego, po %1$s dziennie.</string>

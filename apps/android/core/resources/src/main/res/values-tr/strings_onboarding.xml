@@ -486,7 +486,6 @@
     <string name="onboarding_goals_at_once_title">Aynı anda çalışabileceğin hedef sınırına ulaştın</string>
     <string name="onboarding_goals_at_once_line">Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol.</string>
     <string name="onboarding_create_account">Ücretsiz hesap oluştur</string>
-    <string name="onboarding_create_account_short">Hesap oluştur</string>
     <string name="onboarding_guest_gate_title">Başka bir hedefe başlamak için ücretsiz hesap oluştur</string>
     <string name="onboarding_guest_gate_description">Hesap oluşturmadan tek bir hedef üzerinde çalışabilirsin. Hesap oluşturduğunda planın ve ilerlemen korunur.</string>
     <string name="onboarding_back_to_today">Bugün’e dön</string>
@@ -1013,7 +1012,6 @@
     <string name="onboarding_aim_picker_title">Hangi seviyeye ulaşmak istiyorsun?</string>
     <string name="onboarding_aim_hours_more">Yaklaşık %1$s sa. daha</string>
     <string name="onboarding_aim_hours_month">Yaklaşık %1$s sa. daha · %2$s civarında</string>
-    <string name="onboarding_aim_hours">%1$s sa.</string>
     <string name="onboarding_aim_by_month">en geç %1$s</string>
     <string name="onboarding_aim_finish">Günde %1$s çalışarak %2$s düzeyine %3$s civarında ulaşırsın.</string>
     <string name="onboarding_reason_travel">Seyahat</string>
@@ -1027,11 +1025,9 @@
     <string name="onboarding_reason_certificate">Sertifika sınavını geçmek</string>
     <string name="onboarding_reason_certificate_description">IELTS, YDS, YÖKDİL ve diğerleri</string>
     <string name="onboarding_reason_other_description">Kendi sözlerinle. Hedef B1</string>
-    <string name="onboarding_reason_exam">Sınav</string>
     <string name="onboarding_reason_which_exam">Hangisi?</string>
     <string name="onboarding_reason_exam_plan">Planın, o sınavın bölümlerine ve puanlamasına göre hazırlanır.</string>
     <string name="onboarding_reason_your_words">Kendi cümlelerinle</string>
-    <string name="onboarding_reason_hours_note">Sıfırdan öğrenmek için gereken çalışma süresi, pratik dahil. Biraz biliyorsan daha kısa sürer.</string>
     <string name="onboarding_aim_from_none">Sıfırdan, günde %1$s</string>
     <string name="onboarding_aim_from_basic">Temel bilgilerden başlayarak, günde %1$s</string>
     <string name="onboarding_aim_from_intermediate">Orta seviyeden, günde %1$s</string>

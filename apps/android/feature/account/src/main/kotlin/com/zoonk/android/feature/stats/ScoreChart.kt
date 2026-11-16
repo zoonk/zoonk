@@ -27,10 +27,12 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserScoreResponseScore
 import kotlinx.datetime.toJavaLocalDate
+import java.time.LocalDate
 
 /**
- * Main's weekly score trend: one line in the score's blue on a fixed 0–100 scale, weeks along the
- * bottom with as many labels as fit. TalkBack reads main's hidden caption: the score, then each week.
+ * Main's weekly score trend: one line in the score's blue on a fixed 0–100 scale, each week at its date
+ * across the 90 days its heading names, with that span's first, middle and last days below. TalkBack
+ * reads main's hidden caption: the score, then each week.
  */
 @Composable
 internal fun ScoreChart(
@@ -69,16 +71,19 @@ internal fun ScoreChart(
     val grid = MaterialTheme.zoonk.vizGrid
     val line = MaterialTheme.colorScheme.tertiary
     val ticks = remember(measurer, labelStyle, locale) { PERCENT_TICKS.map { measurer.measure(formatNumber(it, locale), labelStyle) } }
-    val weekLabels = remember(measurer, labelStyle, weeks) { weeks.map { measurer.measure(it, labelStyle) } }
+    val window = remember { StatsWindow.score(LocalDate.now()) }
+    val axis = remember(window) { listOf(window.start, window.start.plusDays(window.days / 2), window.end) }
+    val axisLabels =
+        remember(measurer, labelStyle, axis, locale) { axis.map { measurer.measure(formatDate(it, locale, DateStyle.Day), labelStyle) } }
 
     Canvas(modifier.fillMaxWidth().height(CHART_HEIGHT).semantics { contentDescription = summary }) {
         val gap = 8.dp.toPx()
-        val labelHeight = weekLabels.maxOfOrNull { it.size.height } ?: 0
+        val labelHeight = axisLabels.maxOf { it.size.height }
         val left = (ticks.maxOf { it.size.width } + gap)
         val bottom = size.height - labelHeight - gap
         val top = ticks.first().size.height / 2f
         val y = LinearScale(0.0..PERCENT, bottom to top)
-        val x = LinearScale(0.0..(weeks.size - 1).coerceAtLeast(1).toDouble(), left + START_PAD.toPx() to size.width - END_PAD.toPx())
+        val x = LinearScale(0.0..1.0, left + START_PAD.toPx() to size.width - END_PAD.toPx())
 
         PERCENT_TICKS.forEachIndexed { index, tick ->
             val at = y.toPixel(tick)
@@ -86,25 +91,15 @@ internal fun ScoreChart(
             drawText(ticks[index], topLeft = Offset(left - gap - ticks[index].size.width, at - ticks[index].size.height / 2f))
         }
 
-        // Recharts' `preserveStartEnd` with a minimum gap: the last week, then the first and those between that fit.
-        fun labelStart(index: Int): Float {
-            val width = weekLabels[index].size.width
-            return (x.toPixel(index.toDouble()) - width / 2f).coerceAtMost(size.width - width).coerceAtLeast(0f)
-        }
-        var lastEnd = Float.NEGATIVE_INFINITY
-        val lastStart = labelStart(weekLabels.lastIndex)
-        weekLabels.forEachIndexed { index, label ->
-            val start = labelStart(index)
-            val isLast = index == weekLabels.lastIndex
-            if (isLast || (start >= lastEnd + MIN_LABEL_GAP.toPx() && start + label.size.width + MIN_LABEL_GAP.toPx() <= lastStart)) {
-                drawText(label, topLeft = Offset(start, bottom + gap))
-                lastEnd = start + label.size.width
-            }
+        axis.forEachIndexed { index, day ->
+            val label = axisLabels[index]
+            val start = (x.toPixel(window.position(day)) - label.size.width / 2f).coerceIn(left, size.width - label.size.width)
+            drawText(label, topLeft = Offset(start, bottom + gap))
         }
 
         val path = Path()
         score.dataPoints.forEachIndexed { index, point ->
-            val at = Offset(x.toPixel(index.toDouble()), y.toPixel(point.score.coerceIn(0.0, PERCENT)))
+            val at = Offset(x.toPixel(window.position(point.date.toJavaLocalDate())), y.toPixel(point.score.coerceIn(0.0, PERCENT)))
             if (index == 0) path.moveTo(at.x, at.y) else path.lineTo(at.x, at.y)
             drawCircle(line, radius = DOT.toPx(), center = at)
         }
@@ -117,5 +112,4 @@ private val PERCENT_TICKS = listOf(0.0, 25.0, 50.0, 75.0, 100.0)
 private val CHART_HEIGHT = 220.dp
 private val START_PAD = 16.dp
 private val END_PAD = 24.dp
-private val MIN_LABEL_GAP = 24.dp
 private val DOT = 2.5.dp

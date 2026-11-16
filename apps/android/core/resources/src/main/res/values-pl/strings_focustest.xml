@@ -169,8 +169,6 @@
         <item quantity="many">%1$d z %2$d poprawnie</item>
         <item quantity="other">%1$d z %2$d poprawnie</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Jeszcze bez pytań</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">Pisanie: nie jest tu sprawdzane</string>
     <string name="focustest_listening_not_checked">Słuchanie: nie jest tu sprawdzane</string>

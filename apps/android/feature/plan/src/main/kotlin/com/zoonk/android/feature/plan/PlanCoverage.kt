@@ -30,6 +30,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
 import kotlinx.datetime.toJavaLocalDate
@@ -43,22 +44,26 @@ internal fun timeEnough(plan: Plan): Boolean = plan.feasibility?.timeCovers ?: f
 
 internal fun canMoveDate(page: PlanPageState): Boolean = !page.isExam && planCoverage(page.plan) != null && !timeEnough(page.plan)
 
-/** Main's `useCoveredText`: what the time a day covers by the date. */
+/** Main's `useCoveredText`: what the learner's time a day covers now, named by that time beside an offer of another. */
 @Composable
 internal fun coveredText(
     plan: Plan,
     coverage: PlanFeasibility,
-    today: LocalDate,
 ): String {
-    val target = plan.schedule.targetDate
-    if (coverage.coveredShare < MIN_SHOWN_SHARE || target == null) {
-        return stringResource(R.string.plan_covered_not_enough, formatMinutes(plan.schedule.dailyMinutes.toInt(), currentLocale()))
+    val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), currentLocale())
+    if (coverage.coveredShare < MIN_SHOWN_SHARE || plan.schedule.targetDate == null) {
+        return stringResource(R.string.plan_covered_not_enough, time)
     }
-    return shareText(
-        GoalDate(target, plan.schedule.targetDateNamedMonth),
-        exam = coverage.measure == PlanFeasibility.Measure.EXAM,
-        share = coverage.coveredShare,
-        today = today,
+    return stringResource(
+        if (coverage.measure ==
+            PlanFeasibility.Measure.EXAM
+        ) {
+            R.string.plan_time_covers_share_exam
+        } else {
+            R.string.plan_time_covers_share_goal
+        },
+        time,
+        formatPercent(coverage.coveredShare, currentLocale()),
     )
 }
 

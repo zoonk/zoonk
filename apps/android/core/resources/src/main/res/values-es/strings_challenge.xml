@@ -96,11 +96,6 @@
     <string name="challenge_topics_weekly">Temas de esta semana</string>
     <string name="challenge_topics_asked">Lo que preguntó</string>
     <string name="challenge_topics_will_ask">Lo que preguntará</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="one">%d tema</item>
-        <item quantity="many">%d temas</item>
-        <item quantity="other">%d temas</item>
-    </plurals>
     <string name="challenge_today">Hoy</string>
     <string name="challenge_tomorrow">Mañana</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->

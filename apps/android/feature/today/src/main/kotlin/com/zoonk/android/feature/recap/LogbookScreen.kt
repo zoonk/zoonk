@@ -55,6 +55,8 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDay
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -243,13 +245,8 @@ private fun WeekRings(recap: WeeklyRecap) {
         repeat(DAYS_PER_WEEK) { offset ->
             val day = recap.weekStart.plus(DatePeriod(days = offset))
             val isStudied = day in studied
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                GoalRing(if (isStudied) 1f else 0f) { if (isStudied) DoneMark() }
-                Text(
-                    text = weekdayNames(locale).narrow.getValue(day.toJavaLocalDate().dayOfWeek),
-                    color = if (isStudied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+            WeekDay(weekdayNames(locale).narrow.getValue(day.toJavaLocalDate().dayOfWeek), today = false) {
+                GoalRing(if (isStudied) 1f else 0f, size = WEEK_RING) { if (isStudied) DoneMark() }
             }
         }
     }

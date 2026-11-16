@@ -157,8 +157,6 @@
     <plurals name="focustest_subject_right">
         <item quantity="other">%1$d問正解（全%2$d問）</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">まだ出題されていません</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">ライティング：この診断の対象外</string>
     <string name="focustest_listening_not_checked">リスニング：この診断の対象外</string>

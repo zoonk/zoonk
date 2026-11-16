@@ -10,13 +10,13 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.format.planWeekday
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
@@ -28,10 +28,14 @@ import kotlin.math.abs
 
 private val NEVER_APPLIED = setOf(PlanChange.Status.PROPOSED, PlanChange.Status.DECLINED, PlanChange.Status.REPLACED)
 
-/** What a plan change says: [title], the question a proposal asks or what an applied change did, and at most one [why]. */
+/**
+ * What a plan change says: [title], the question a proposal asks or what an applied change did, and at most one [why].
+ * A [general] title ("Change your plan?") names no change, so a line showing it says [why] too.
+ */
 data class ChangeWords(
     val title: String,
     val why: String?,
+    val general: Boolean = false,
 )
 
 /**
@@ -66,7 +70,7 @@ fun planChangeWords(
     }
     val own = first?.takeIf { ops.size == 1 }?.let { operationQuestion(it, dateKind) }
     if (own != null) return ChangeWords(own, change.reason)
-    return ChangeWords(stringResource(R.string.plan_ask_change), change.reason ?: statements().ifEmpty { null })
+    return ChangeWords(stringResource(R.string.plan_ask_change), change.reason ?: statements().ifEmpty { null }, general = true)
 }
 
 /** The title alone, where a change shows in one line. */
@@ -130,17 +134,7 @@ internal fun longDate(date: LocalDate): String = formatDate(date, currentLocale(
 
 /** Sunday is 0, as the API counts weekdays. */
 @Composable
-internal fun weekdayName(weekday: Int): String =
-    DayOfWeek
-        .of(
-            if (weekday ==
-                0
-            ) {
-                7
-            } else {
-                weekday
-            },
-        ).getDisplayName(TextStyle.FULL, currentLocale())
+internal fun weekdayName(weekday: Int): String = weekdayNames(currentLocale()).inSentence.getValue(planWeekday(weekday))
 
 @Composable
 internal fun joinList(items: List<String>): String = ListFormatter.getInstance(currentLocale()).format(items)

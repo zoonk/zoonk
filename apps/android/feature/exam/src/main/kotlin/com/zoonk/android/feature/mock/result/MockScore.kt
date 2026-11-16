@@ -163,8 +163,9 @@ private fun score(
         }
 
         else -> {
+            // Part of a point on some questions makes the count points, as the exam page's row says.
             Score(
-                stringResource(R.string.mock_result_right_answers),
+                stringResource(if (result.correct % 1.0 == 0.0) R.string.mock_result_right_answers else R.string.mock_result_points),
                 rightOf(result.correct, result.total),
                 lead = formatNumber(result.correct, locale),
             )

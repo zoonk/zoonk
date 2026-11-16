@@ -165,8 +165,6 @@
         <item quantity="many">Acertaste %1$d de %2$d</item>
         <item quantity="other">Acertaste %1$d de %2$d</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Aún sin preguntas</string>
     <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
     <string name="focustest_written_not_checked">Expresión escrita: no se evalúa aquí</string>
     <string name="focustest_listening_not_checked">Escucha: no se evalúa aquí</string>

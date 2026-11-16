@@ -485,7 +485,6 @@
     <string name="onboarding_goals_at_once_title">同時に取り組める目標の上限に達しました</string>
     <string name="onboarding_goals_at_once_line">学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。</string>
     <string name="onboarding_create_account">無料アカウントを作成する</string>
-    <string name="onboarding_create_account_short">アカウントを作成する</string>
     <string name="onboarding_guest_gate_title">無料アカウントを作成して、別の目標を始める</string>
     <string name="onboarding_guest_gate_description">アカウントなしで取り組める目標は1つです。アカウントを作成すると、学習計画と進捗をそのまま引き継げます。</string>
     <string name="onboarding_back_to_today">「今日」に戻る</string>
@@ -990,7 +989,6 @@
     <string name="onboarding_aim_picker_title">どのレベルを目指しますか？</string>
     <string name="onboarding_aim_hours_more">あと約%1$s時間</string>
     <string name="onboarding_aim_hours_month">あと約%1$s時間・%2$sごろ</string>
-    <string name="onboarding_aim_hours">%1$s時間</string>
     <string name="onboarding_aim_by_month">%1$sまでに</string>
     <string name="onboarding_aim_finish">1日%1$sのペースなら、%2$sには%3$sごろに到達します。</string>
     <string name="onboarding_reason_travel">旅行</string>
@@ -1004,11 +1002,9 @@
     <string name="onboarding_reason_certificate">資格試験に合格する</string>
     <string name="onboarding_reason_certificate_description">英検、TOEIC、IELTSなど</string>
     <string name="onboarding_reason_other_description">自分の言葉で書けます。B1を目指します</string>
-    <string name="onboarding_reason_exam">試験</string>
     <string name="onboarding_reason_which_exam">どの試験ですか？</string>
     <string name="onboarding_reason_exam_plan">その試験の出題内容とスコアに合わせて学習計画を立てます。</string>
     <string name="onboarding_reason_your_words">自分の言葉で</string>
-    <string name="onboarding_reason_hours_note">初めて学ぶ場合の学習時間で、練習も含みます。すでに知っていることがあれば、短くなります。</string>
     <string name="onboarding_aim_from_none">ゼロから、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_basic">基礎から、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_intermediate">中級から、1日%1$sずつ学びます。</string>

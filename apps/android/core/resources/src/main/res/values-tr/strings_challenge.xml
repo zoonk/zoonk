@@ -93,10 +93,6 @@
     <string name="challenge_topics_weekly">Bu haftanın konuları</string>
     <string name="challenge_topics_asked">Sordukları</string>
     <string name="challenge_topics_will_ask">Soracakları</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="one">%d konu</item>
-        <item quantity="other">%d konu</item>
-    </plurals>
     <string name="challenge_today">Bugün</string>
     <string name="challenge_tomorrow">Yarın</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->

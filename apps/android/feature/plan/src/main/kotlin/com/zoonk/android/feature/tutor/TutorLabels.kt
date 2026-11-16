@@ -9,9 +9,9 @@ import com.zoonk.android.ui.components.limitWords
 @Composable
 internal fun askLabel(
     scope: TutorScope,
-    name: String,
+    identity: TutorIdentity,
 ): String =
-    stringResource(
+    identity.askText(
         when (scope) {
             is TutorScope.Chapter -> R.string.tutor_ask_chapter
             is TutorScope.Mock -> R.string.tutor_ask_mock
@@ -21,7 +21,6 @@ internal fun askLabel(
             is TutorScope.Item -> if (scope.answered) R.string.tutor_ask_answer else R.string.tutor_ask_question
             is TutorScope.Lesson, is TutorScope.Step -> R.string.tutor_ask_screen
         },
-        name,
     )
 
 @Composable
