@@ -21,16 +21,12 @@ private struct ScoreTiles: View {
   var body: some View {
     StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
       StatTile(
-        label: Text(
-          "Last 90 days", tableName: "Progress",
-          comment: "Tile: the share of right answers over the last 90 days"),
+        label: Text(StatsSection.score.title),
         value: Text(verbatim: metricPercent(performance.score)),
         systemImage: "target", tone: .success,
         detail: Text(
-          "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted())",
-          tableName: "Progress",
-          comment:
-            "Under the share of right answers: right answers of all answers, as in 153 of 197")
+          "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted()) right in the last \(90) days",
+          tableName: "Progress")
       )
     }
   }
@@ -113,10 +109,13 @@ struct ScoreTrendChart: View {
     .chartXScale(range: .plotDimension(padding: 16))
     .chartXAxis {
       AxisMarks(values: points.map(\.date)) { value in
+        // On its point, not after it: the ends start and stop at theirs, so none leaves the plot.
         AxisValueLabel(
+          centered: false,
           anchor: value.index == 0
             ? .topLeading : value.index == value.count - 1 ? .topTrailing : .top,
-          collisionResolution: .greedy(minimumSpacing: 8)
+          collisionResolution: .greedy(minimumSpacing: 8),
+          horizontalSpacing: 0
         ) {
           if let date = value.as(Date.self) {
             Text(weekLabel(date))
