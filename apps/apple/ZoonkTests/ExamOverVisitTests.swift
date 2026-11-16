@@ -5,6 +5,24 @@ import XCTest
 
 @MainActor
 final class ExamOverVisitTests: XCTestCase {
+  func testReturningWhileKeepStudyingSavesDoesNotSendAnotherChange() async throws {
+    let api = PlanAPIStub()
+    await api.hold(.change)
+    let tabs = Tabs()
+    let window = try showPlan(api: api, tabs: tabs)
+    try await settle()
+    try activate(String(localized: "Keep studying", table: "Plan"), in: window)
+    await api.waitForHeldCall()
+    try await leaveAndComeBack(tabs)
+    if spoken(in: window).contains(String(localized: "Keep studying", table: "Plan")) {
+      try activate(String(localized: "Keep studying", table: "Plan"), in: window)
+    }
+    await api.releaseHeldCall()
+    try await settle()
+    let calls = await api.calls
+    XCTAssertEqual(calls.changes.count, 1)
+  }
+
   func testKeepStudyingFailureEndsWithTheVisit() async throws {
     let api = PlanAPIStub()
     await api.setChangeError(APIError.network)

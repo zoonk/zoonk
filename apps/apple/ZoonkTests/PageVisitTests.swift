@@ -240,6 +240,7 @@ actor PageServer: ClientTransport {
   static let subjectKey = "biology"
   static let speakingTask = "t1"
 
+  private(set) var writes: [String] = []
   private var holding: String?
   private var held: CheckedContinuation<Void, Never>?
   private var heldWaiter: CheckedContinuation<Void, Never>?
@@ -258,6 +259,7 @@ actor PageServer: ClientTransport {
       )
     }
 
+    writes.append(operationID)
     if operationID == holding {
       holding = nil
       await withCheckedContinuation { continuation in

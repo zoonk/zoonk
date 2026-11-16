@@ -7,6 +7,21 @@ import XCTest
 /// gone when they come back, and one that lands after they left says nothing.
 @MainActor
 final class TodayVisitTests: XCTestCase {
+  func testReturningWhileKeepStudyingSavesDoesNotSendAnotherChange() async throws {
+    let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
+    let label = String(localized: "Keep studying", table: "Plan")
+    try await visit.activate(label)
+    await visit.server.waitForHeldRequest()
+    try await visit.leaveAndComeBack()
+    if spoken(in: visit.window).contains(label) {
+      try activate(label, in: visit.window)
+    }
+    await visit.server.release()
+    try await visit.settle()
+    let changes = await visit.server.writes.filter { $0 == "createPlanChange" }
+    XCTAssertEqual(changes.count, 1)
+  }
+
   func testAnExamKeepStudyingFailureEndsWithTheVisit() async throws {
     let visit = try await todayVisit(try day(pastDate: true))
     try await visit.settle()

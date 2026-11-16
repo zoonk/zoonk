@@ -209,32 +209,6 @@ final class GoalChanges {
   var confirmsResume = false
   var isRenaming = false
   private(set) var renameFailed = false
-  private(set) var examAnswer: ExamOverButtons.Answer?
-  private(set) var examFailed = false
-
-  func answerExam(
-    _ answer: ExamOverButtons.Answer, goalId: String, store: PlanStore, router: AppRouter
-  ) {
-    guard examAnswer == nil else { return }
-    examAnswer = answer
-    examFailed = false
-    tasks.run {
-      let failed: Bool
-      switch answer {
-      case .archive:
-        failed = await !store.archive(goalId: goalId) { router.showRoot(of: .today) }
-      case .keepStudying:
-        switch await store.change(goalId: goalId, edits: [.fullCourse(true)]) {
-        case .done(.invalid), .failed: failed = true
-        case .done, .obsolete: failed = false
-        }
-      }
-      guard !Task.isCancelled else { return }
-      self.examAnswer = nil
-      self.examFailed = failed
-    }
-  }
-
   @ObservationIgnored private let tasks = ScreenTasks()
 
   /// Resuming asks first only when it changes the plan (the pause left lessons behind).
@@ -294,8 +268,6 @@ final class GoalChanges {
 
   func leave() {
     tasks.cancel()
-    examAnswer = nil
-    examFailed = false
     isSaving = false
     failure = nil
     resumeFailure = nil
@@ -478,7 +450,7 @@ extension View {
 private struct ExamOverBar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var saving = GoalChanges()
+  @State private var saving = ExamOverSave()
 
   let goal: LearnerGoal
   let isShown: Bool
@@ -486,10 +458,10 @@ private struct ExamOverBar: ViewModifier {
   func body(content: Content) -> some View {
     content
       .holdsMainActionInBar(isShown)
-      .bottomBar(note: isShown && saving.examFailed ? BarNote(saveFailure) : nil) {
+      .bottomBar(note: isShown && saving.request.outcome == true ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
-            goalName: goal.displayName, pressed: saving.examAnswer, archive: { save(.archive) },
+            goalName: goal.displayName, pressed: saving.pressed, archive: { save(.archive) },
             keepStudying: { save(.keepStudying) })
         }
       }
@@ -502,7 +474,37 @@ private struct ExamOverBar: ViewModifier {
   }
 
   private func save(_ answer: ExamOverButtons.Answer) {
-    saving.answerExam(answer, goalId: goal.id, store: store, router: router)
+    saving.save(answer, goalId: goal.id, store: store, router: router)
+  }
+}
+
+@MainActor
+@Observable
+final class ExamOverSave {
+  let request = VisitRequest<Bool>()
+  private(set) var pressed: ExamOverButtons.Answer?
+
+  func leave() { request.leave() }
+
+  func save(
+    _ answer: ExamOverButtons.Answer, goalId: String, store: PlanStore, router: AppRouter
+  ) {
+    guard pressed == nil else { return }
+    pressed = answer
+    request.run {
+      let failed: Bool
+      switch answer {
+      case .archive:
+        failed = await !store.archive(goalId: goalId) { router.showRoot(of: .today) }
+      case .keepStudying:
+        switch await store.change(goalId: goalId, edits: [.fullCourse(true)]) {
+        case .done(.invalid), .failed: failed = true
+        case .done, .obsolete: failed = false
+        }
+      }
+      self.pressed = nil
+      return failed
+    }
   }
 }
 

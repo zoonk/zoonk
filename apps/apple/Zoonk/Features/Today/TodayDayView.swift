@@ -85,7 +85,6 @@ struct TodayDayView: View {
     .onChange(of: isCovered) {
       if isCovered {
         tapTask.leave()
-        busy = nil
       } else {
         startVisit()
       }
@@ -124,7 +123,6 @@ struct TodayDayView: View {
     }
     .onDisappear {
       tapTask.leave()
-      busy = nil
       examChoice?.cancel()
       focusTestDismissal.leave()
       insightAnswer.leave()
@@ -451,8 +449,8 @@ struct TodayDayView: View {
     busy = tap
     tapTask.run {
       let result = await action()
-      guard !Task.isCancelled else { return nil }
       busy = nil
+      guard !Task.isCancelled else { return nil }
       switch result {
       case .done(let destination): router.openStudy(destination)
       case .failed: return tap
@@ -467,8 +465,8 @@ struct TodayDayView: View {
     busy = tap
     tapTask.run {
       let result = await action()
-      guard !Task.isCancelled else { return nil }
       busy = nil
+      guard !Task.isCancelled else { return nil }
       if case .failed = result { return tap }
       return nil
     }
