@@ -2,7 +2,6 @@
 
 import { LESSON_BODY_CLASS } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
@@ -10,16 +9,11 @@ import { ActivityBadge } from "../../activities/_components/activity-badge";
 import { ActivityExplore, exploreBadge } from "../../activities/activity-explore";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture, useIsExploredPictureLost } from "../_components/lesson-pictures";
-import { LessonRichText } from "../_components/lesson-rich-text";
-import { useTermHighlighter } from "../_components/lesson-step-text";
+import { LessonStepHeading, useTermHighlighter } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText, hasExampleFrame } from "../_components/marked-text";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
-
-/** A heading is the size of the text it heads, set apart by its weight, never smaller. */
-const STEP_HEADING_CLASS =
-  "text-foreground mb-2 text-lg leading-snug font-semibold text-pretty sm:mb-3 md:text-xl";
 
 export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explanation">>) {
   const { content, marks } = step;
@@ -41,13 +35,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
             <ActivityBadge kind={badge} over={[content.title ?? "", content.text]} />
           </div>
         )}
-        {content.title && (
-          <h2 className={STEP_HEADING_CLASS}>
-            <SpokenMath>
-              <LessonRichText text={content.title} />
-            </SpokenMath>
-          </h2>
-        )}
+        {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
         <MarkedText
           className={cn(LESSON_BODY_CLASS, highlighter)}
           marks={marks}
