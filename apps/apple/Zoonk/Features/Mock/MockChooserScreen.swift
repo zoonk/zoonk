@@ -31,7 +31,7 @@ private struct MockChooserContent: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("No mock exams for this goal", tableName: "Mock", comment: "Not an exam goal")
         } icon: {
@@ -42,7 +42,7 @@ private struct MockChooserContent: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Mock exams didn't load", tableName: "Mock", comment: "Loading failed")
         } icon: {
@@ -82,10 +82,13 @@ private struct MockChooser: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var picked: String?
-  @State private var status: ChooserStatus = .choosing
-  @State private var busy = false
-  @State private var isOnScreen = false
-  @State private var starting: Task<Void, Never>?
+  @State private var starting = VisitRequest<ChooserStatus>()
+
+  private var status: ChooserStatus {
+    get { starting.outcome ?? .choosing }
+    nonmutating set { starting.outcome = newValue }
+  }
+  private var busy: Bool { starting.isRunning }
 
   let goalId: String
   let view: MockOptions
@@ -122,10 +125,8 @@ private struct MockChooser: View {
     .bottomBar(note: barNote) {
       startAction
     }
-    .onAppear { isOnScreen = true }
     .onDisappear {
-      isOnScreen = false
-      starting?.cancel()
+      starting.leave()
     }
   }
 
@@ -211,7 +212,7 @@ private struct MockChooser: View {
     } else {
       BusyButton(isBusy: busy) {
         if isOpen {
-          starting = Task { await start() }
+          start()
         } else {
           status = .plusRequired
         }
@@ -230,7 +231,7 @@ private struct MockChooser: View {
         presenting: shortNote
       ) { _ in
         Button {
-          starting = Task { await start(acceptingFewer: true) }
+          start(acceptingFewer: true)
         } label: {
           Text("Start", tableName: "Mock", comment: "Starts the picked mock")
         }
@@ -464,17 +465,12 @@ private struct MockChooser: View {
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
 
-    return Button(action: action) {
+    return ChoiceRow(isPicked: isPicked, action: action) {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
-          if let detail, !detail.isEmpty {
-            Text(detail)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
+          ChoiceWords(
+            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) })
+
           if sizeUnderWords {
             size
           }
@@ -484,16 +480,9 @@ private struct MockChooser: View {
         if !sizeUnderWords {
           size
         }
-
-        Image(systemName: isPicked ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
-          .accessibilityHidden(true)
       }
-      .contentShape(.rect)
     }
     .disabled(busy)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
-    .pickedRow(isPicked)
   }
 
   private func optionDetail(_ option: MockOption) -> String {
@@ -512,50 +501,44 @@ private struct MockChooser: View {
   }
 
   /// `acceptingFewer` only after the learner pressed Start in the shorter mock exam's dialog.
-  private func start(acceptingFewer acceptFewer: Bool = false) async {
-    guard let pickedOption else { return }
+  private func start(acceptingFewer acceptFewer: Bool = false) {
+    guard let pickedOption, !busy else { return }
 
-    busy = true
-    status = .choosing
-    defer { busy = false }
+    starting.run {
+      let result = await exam.startMock(
+        goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
+        onWriting: { if !Task.isCancelled { status = .writing } })
+      guard !Task.isCancelled else { return nil }
 
-    switch await exam.startMock(
-      goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
-      onWriting: { status = .writing })
-    {
-    case .done(.started(let id)):
-      status = .choosing
-      onStarted(id)
-    case .done(.short(let examQuestions, let limit, let availableAt, let minutes, let questions)):
-      status = .short(
-        optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
-        availableAt: availableAt, minutes: minutes, questions: questions)
-    case .done(.notEnoughQuestions):
-      status = .notEnoughQuestions
-    case .done(.refused(let limit)):
-      status = .refused(limit)
-    case .done(.plusRequired):
-      status = .plusRequired
-      // The server's answer is the access now, even if the read after it fails; a later read
-      // (a subscription bought) replaces it.
-      let options = exam.mockOptions(goalId: goalId)
-      options.update { options in
-        var locked = options
-        locked.access = .plusRequired
-        return locked
+      switch result {
+      case .done(.started(let id)):
+        onStarted(id)
+        return nil
+      case .done(.short(let examQuestions, let limit, let availableAt, let minutes, let questions)):
+        return .short(
+          optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
+          availableAt: availableAt, minutes: minutes, questions: questions)
+      case .done(.notEnoughQuestions): return .notEnoughQuestions
+      case .done(.refused(let limit)): return .refused(limit)
+      case .done(.plusRequired):
+        // The server's answer is the access now, even if the read after it fails; a later read
+        // (a subscription bought) replaces it.
+        let options = exam.mockOptions(goalId: goalId)
+        options.update { options in
+          var locked = options
+          locked.access = .plusRequired
+          return locked
+        }
+        await options.refresh()
+        return .plusRequired
+      case .done(.needsQuestions), .failed: return .failed
+      case .obsolete: return nil
       }
-      await options.refresh()
-    case .done(.needsQuestions), .failed:
-      status = .failed
-    case .obsolete:
-      status = .choosing
-    }
-
-    // A start that ends after the learner left for another tab isn't read out over it.
-    if isOnScreen, !outcome.isEmpty {
-      announcePolitely(outcome.joinedSentences())
+    } then: { _ in
+      if !outcome.isEmpty { announcePolitely(outcome.joinedSentences()) }
     }
   }
+
 }
 
 struct MockSummaryRow: View {

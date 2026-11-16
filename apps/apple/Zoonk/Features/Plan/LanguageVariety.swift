@@ -66,6 +66,7 @@ func varietyNote(language: String, region: String?, taughtRegion: String?) -> St
 /// Saves a pick at once, as the plan's other settings do, and stays open so the learner sees what it
 /// changed.
 struct LanguageVarietySheet: View {
+  @Environment(\.dismiss) private var dismiss
   let variety: LanguageVariety
   /// False when it didn't save.
   let save: (String?) async -> Bool
@@ -108,11 +109,8 @@ struct LanguageVarietySheet: View {
         )
       )
       .toolbarTitleDisplayMode(.inline)
+      .sheetClose { dismiss() }
       .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-
         if saving != nil {
           ToolbarItem(placement: .status) {
             ProgressView()
@@ -135,17 +133,9 @@ struct LanguageVarietySheet: View {
   private func option(region: String?, selected: String?, name: Text) -> some View {
     let isSelected = region == selected
 
-    return Button {
+    return ChoiceRow(name, isPicked: isSelected) {
       pick(region)
-    } label: {
-      name
-        .typeStyle(.rowTitle)
-        .foregroundStyle(Color(.foreground))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(.rect)
     }
-    .pickedRow(isSelected)
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 
   private func pick(_ region: String?) {

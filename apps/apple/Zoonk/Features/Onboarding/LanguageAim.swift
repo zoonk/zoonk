@@ -146,20 +146,21 @@ struct AimChoicesSheet: View {
             BusyButton(isBusy: picking == choice.aim, isRow: true) {
               apply(choice.aim)
             } label: {
-              VStack(alignment: .leading, spacing: 2) {
-                AimName(aim: choice.aim)
-                  .typeStyle(.rowTitle)
-                  .foregroundStyle(Color(.foreground))
+              ChoiceRowLabel(isPicked: choice.aim == languageAim.aim) {
+                VStack(alignment: .leading, spacing: 2) {
+                  AimName(aim: choice.aim)
+                    .typeStyle(.rowTitle)
+                    .foregroundStyle(Color(.foreground))
 
-                if let detail = aimChoiceDetail(
-                  end: choice.aim == languageAim.aim ? currentEnd : ends[choice.aim])
-                {
-                  Text(detail)
-                    .typeStyle(.meta)
-                    .foregroundStyle(.mutedForeground)
+                  if let detail = aimChoiceDetail(
+                    end: choice.aim == languageAim.aim ? currentEnd : ends[choice.aim])
+                  {
+                    Text(detail)
+                      .typeStyle(.meta)
+                      .foregroundStyle(.mutedForeground)
+                  }
                 }
               }
-              .frame(maxWidth: .infinity, alignment: .leading)
             }
             .pickedRow(choice.aim == languageAim.aim)
             .accessibilityAddTraits(choice.aim == languageAim.aim ? .isSelected : [])
@@ -182,13 +183,7 @@ struct AimChoicesSheet: View {
           comment: "Title of the choices of a language course's aim")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
+      .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
     .readsAimEnds($ends, aims: languageAim.otherAims, key: languageAim.aim, read: readEnd)

@@ -11,9 +11,9 @@ struct SessionSummaryView: View {
   let sessionID: String
   let stopped: Bool
 
-  @State private var action: Task<Void, Never>?
-  @State private var isBusy = false
-  @State private var failed: SummaryAction?
+  @State private var action = VisitRequest<SummaryAction>()
+  private var isBusy: Bool { action.isRunning }
+  private var failed: SummaryAction? { action.outcome }
   @State private var reminderOffer: ReminderOfferState?
 
   private enum SummaryAction {
@@ -27,7 +27,7 @@ struct SessionSummaryView: View {
       if let value = summary.value {
         content(value)
       } else if case .failed = summary.state {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text("The summary didn't load", tableName: "Session", comment: "Load failed")
           } icon: {
@@ -58,7 +58,7 @@ struct SessionSummaryView: View {
       certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
     )
     .onDisappear {
-      action?.cancel()
+      action.leave()
     }
   }
 
@@ -250,12 +250,12 @@ struct SessionSummaryView: View {
 
   /// Opens the next block, as the next stop's button does.
   private func keepGoing(_ next: StudyBlock) {
-    isBusy = true
-    failed = nil
 
-    action = Task {
+    action.run {
+      var outcome: SummaryAction? = nil
+
       let result = await today.open(next, as: .next, sessionID: sessionID)
-      isBusy = false
+      guard !Task.isCancelled else { return nil }
 
       switch result {
       case .done(.session), .done(.lessonWait):
@@ -265,29 +265,33 @@ struct SessionSummaryView: View {
         router.playback.resume(sessionID: sessionID)
         router.openStudy(destination)
       case .failed:
-        failed = .keepGoing
+        outcome = .keepGoing
       case .done, .obsolete:
         break
       }
+
+      return outcome
     }
   }
 
   private func keepLearning() {
-    isBusy = true
-    failed = nil
 
-    action = Task {
+    action.run {
+      var outcome: SummaryAction? = nil
+
       let result = await today.addExtraTime(sessionID: sessionID)
-      isBusy = false
+      guard !Task.isCancelled else { return nil }
 
       switch result {
       case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination)
       case .failed:
-        failed = .extraTime
+        outcome = .extraTime
       case .done, .obsolete:
         break
       }
+
+      return outcome
     }
   }
 }

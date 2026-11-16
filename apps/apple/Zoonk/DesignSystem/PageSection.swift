@@ -20,7 +20,7 @@ extension View {
 
 /// A page's section: a list `Section`, or inside a `BlockGridSection` main's block, its title over
 /// its rows with a hairline between them, as the list draws them. `isPanel` puts the block on a
-/// panel, as main's missions card.
+/// panel, as main's missions card, in a list as in a grid.
 struct PageSection<Content: View, Header: View, Footer: View>: View {
   @Environment(\.isGridBlock) private var isGridBlock
 
@@ -32,6 +32,14 @@ struct PageSection<Content: View, Header: View, Footer: View>: View {
   var body: some View {
     if isGridBlock {
       block
+    } else if isPanel {
+      Section {
+        block
+          .environment(\.isGridBlock, true)
+          .buttonStyle(.plain)
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+      }
     } else if Footer.self == EmptyView.self {
       Section {
         content
@@ -108,6 +116,7 @@ struct BlockGridSection<Content: View>: View {
         content
       }
       .environment(\.isGridBlock, true)
+      .rowLabelColumn()
       // A list row's buttons act as one; in blocks each row's button acts on its own.
       .buttonStyle(.plain)
       .listRowSeparator(.hidden)

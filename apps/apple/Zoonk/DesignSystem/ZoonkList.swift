@@ -1,77 +1,108 @@
 import SwiftUI
 
 /// Main's `ListGroup` as a page's `List`: flat rows with a hairline between them, as wide as the
-/// column, and space rather than a line between sections. Where the width is regular it's
-/// one column at most 768pt wide, on the title's edge on a page and in the middle in a task, as
-/// `readableColumnAlignment` says; a pane is narrower, so it keeps its own width. The page is the
-/// system background, which a plain list's rows paint.
+/// column, and space rather than a line between sections. Where the width is regular it's the
+/// page's one column (`pageColumn()`), in the middle as main's tablet column is; a pane is
+/// narrower, so it keeps its own width. The page is the system background, which a plain list's
+/// rows paint.
 ///
 /// Rows are main's `ListRowContent`, at least 44pt high, rather than a plain list's 52pt. A row that
 /// sets its own insets keeps them.
 struct ZoonkList<Content: View>: View {
-  /// A page's own column, such as practice's narrower one, in place of the 768pt one.
-  var readableWidth: CGFloat?
-  /// In place of the one `readableColumnAlignment` gives.
-  var alignment: HorizontalAlignment?
   @ViewBuilder let content: Content
 
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  @Environment(\.readableColumnAlignment) private var columnAlignment
+  @Environment(\.listRowMargin) private var rowMargin
 
   var body: some View {
     List {
       // Row and section traits reach a list's rows only from inside it. A separator tint set here
       // would bring back the hairline a footer hides above itself, so hairlines keep the system's.
       // Main's 11pt sits outside a 20pt line, which centers Geist's own 18pt line at 14pt.
+      // A row as wide as the list's column, so its hairline ends where the column does even when
+      // its words are short.
       content
+        .frame(maxWidth: .infinity, alignment: .leading)
         .listRowInsets(.vertical, 12)
+        .listRowInsets(.horizontal, rowMargin)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+        // With a margin of its own, a row's hairline ends where its content does, not at the
+        // system's.
+        .alignmentGuide(.listRowSeparatorTrailing) {
+          rowMargin == nil ? $0[.listRowSeparatorTrailing] : $0.width
+        }
+        .rowLabelColumn()
     }
     .listStyle(.plain)
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)
-    .readableColumn(
-      readableWidth ?? ListColumn.width(horizontalSizeClass),
-      alignment: alignment ?? columnAlignment)
+    .pageColumn()
+    .headsPage()
   }
 }
 
 extension View {
-  /// As wide as a `ZoonkList`'s column, for what lines up with its rows from outside the list, such
-  /// as the buttons pinned under it.
-  func listColumnWidth() -> some View {
-    modifier(ListColumnWidth())
+  /// The one column every page keeps where the width is regular: main's tablet column, 768pt in
+  /// the middle of the room. A sheet is a column already, so what's in one fills it
+  /// (`sheetColumn()`).
+  func pageColumn() -> some View {
+    modifier(PageColumn())
+  }
+
+  /// For a sheet's root: its pages fill the sheet's width, less its margins, instead of keeping the
+  /// page's column inside a sheet wider than it.
+  func sheetColumn() -> some View {
+    environment(\.pageColumnFillsRoom, true)
+  }
+
+  /// As wide as the page's column, for what lines up with a page from outside a list, such as the
+  /// bar under a page's empty state.
+  func pageColumnFrame() -> some View {
+    modifier(PageColumnFrame())
   }
 }
 
-private struct ListColumnWidth: ViewModifier {
+extension EnvironmentValues {
+  @Entry fileprivate var pageColumnFillsRoom = false
+}
+
+private struct PageColumn: ViewModifier {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.pageColumnFillsRoom) private var fillsRoom
 
   func body(content: Content) -> some View {
-    content.frame(maxWidth: ListColumn.width(horizontalSizeClass))
+    content.readableColumn(pageColumnWidth(horizontalSizeClass, fillsRoom: fillsRoom))
   }
 }
 
-private enum ListColumn {
-  static func width(_ sizeClass: UserInterfaceSizeClass?) -> CGFloat {
-    sizeClass == .regular ? 768 : .infinity
+private struct PageColumnFrame: ViewModifier {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.pageColumnFillsRoom) private var fillsRoom
+
+  func body(content: Content) -> some View {
+    content
+      .frame(maxWidth: pageColumnWidth(horizontalSizeClass, fillsRoom: fillsRoom))
+      .frame(maxWidth: .infinity)
   }
+}
+
+private func pageColumnWidth(_ sizeClass: UserInterfaceSizeClass?, fillsRoom: Bool) -> CGFloat {
+  sizeClass == .regular && !fillsRoom ? 768 : .infinity
 }
 
 extension View {
-  /// The learner's row, as main's `aria-current`: `muted` behind it, reaching a little past the
-  /// column's edges, without the hairlines that would cross it.
+  /// The learner's row, as main's `aria-current`: `muted` behind it, 10pt past the column's edges
+  /// at every margin, without the hairlines that would cross it.
   func currentRow(_ isCurrent: Bool = true) -> some View {
-    listRowBackground(
-      isCurrent
-        ? RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
-          .fill(.muted)
-          .padding(.horizontal, 6)
-          .padding(.vertical, 2)
-        : nil
-    )
-    .listRowSeparator(isCurrent ? .hidden : .automatic)
+    frame(maxWidth: .infinity, alignment: .leading)
+      .background {
+        if isCurrent {
+          RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+            .fill(.muted)
+            .padding(-10)
+        }
+      }
+      .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
@@ -79,14 +110,14 @@ extension View {
   func pickedRow(_ isPicked: Bool) -> some View {
     // Behind the row's content rather than in `listRowBackground`, which keeps the colors it first
     // drew in: a row picked before a switch to dark mode stayed near-white under white text.
-    background {
-      if isPicked {
-        Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
-          .containerRelativeFrame(.horizontal) { width, _ in width - 12 }
-          .padding(.vertical, -10)
+    frame(maxWidth: .infinity, alignment: .leading)
+      .background {
+        if isPicked {
+          Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
+            .padding(-10)
+        }
       }
-    }
-    .modifier(HidesSeparators(isHidden: isPicked))
+      .modifier(HidesSeparators(isHidden: isPicked))
   }
 }
 

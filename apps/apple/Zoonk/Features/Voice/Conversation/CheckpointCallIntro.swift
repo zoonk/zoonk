@@ -46,7 +46,7 @@ struct CheckpointCallIntro: View {
     case .loaded(.preparing) where needsPlus, .loaded(.plusRequired):
       lockedCall
     case .loaded(.preparing(let preparing)):
-      ContentUnavailableView {
+      StateMessage {
         Label(preparing.unitTitle, systemImage: "phone")
       } description: {
         Text(
@@ -85,7 +85,7 @@ struct CheckpointCallIntro: View {
 
   /// The screen form of the gate: what stopped, why the plan doesn't need it, and "Subscribe".
   private var lockedCall: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         CallStartFooter.lockedTitle
       } icon: {

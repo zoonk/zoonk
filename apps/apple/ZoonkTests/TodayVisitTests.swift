@@ -7,6 +7,39 @@ import XCTest
 /// gone when they come back, and one that lands after they left says nothing.
 @MainActor
 final class TodayVisitTests: XCTestCase {
+  func testReturningWhileKeepStudyingSavesDoesNotSendAnotherChange() async throws {
+    let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
+    let label = String(localized: "Keep studying", table: "Plan")
+    try await visit.activate(label)
+    await visit.server.waitForHeldRequest()
+    try await visit.leaveAndComeBack()
+    if spoken(in: visit.window).contains(label) {
+      try activate(label, in: visit.window)
+    }
+    await visit.server.release()
+    try await visit.settle()
+    let changes = await visit.server.writes.filter { $0 == "createPlanChange" }
+    XCTAssertEqual(changes.count, 1)
+  }
+
+  func testAnExamKeepStudyingFailureEndsWithTheVisit() async throws {
+    let visit = try await todayVisit(try day(pastDate: true))
+    try await visit.settle()
+    try await visit.activate(String(localized: "Keep studying", table: "Plan"))
+    try await visit.settle()
+    visit.assertSays(Self.suggestionFailure)
+    try await visit.leaveAndComeBack()
+    visit.assertSaysNothingOf(Self.suggestionFailure)
+  }
+
+  func testAnExamKeepStudyingFailureAfterLeavingSaysNothing() async throws {
+    let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
+    try await visit.settle()
+    try await visit.activate(String(localized: "Keep studying", table: "Plan"))
+    try await visit.failAfterLeaving()
+    visit.assertSaysNothingOf(Self.suggestionFailure)
+  }
+
   // MARK: Catch-up
 
   func testACatchUpFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
@@ -170,7 +203,9 @@ final class TodayVisitTests: XCTestCase {
       visit.window.rootViewController?.presentedViewController, "The Focus test's sheet opens")
   }
 
-  private func day(catchUp: Bool = false, notice: TodayView.Notice? = nil) throws -> TodayView {
+  private func day(catchUp: Bool = false, notice: TodayView.Notice? = nil, pastDate: Bool = false)
+    throws -> TodayView
+  {
     func decode<Value: Decodable>(_ json: String) throws -> Value {
       try JSONDecoder().decode(Value.self, from: Data(json.utf8))
     }
@@ -199,7 +234,12 @@ final class TodayVisitTests: XCTestCase {
           message: "Review before bed.", planChange: nil, status: .pending, studyTime: nil)
         : nil,
       lessonStatus: [:], mockFunding: nil, notice: notice, pattern: nil, planChange: nil,
-      progress: nil,
+      progress: pastDate
+        ? TodayView.Progress(
+          lessons: nil, measure: "lessons",
+          status: TodayView.PlanStatus(
+            challenges: nil, days: nil, kind: "pastDate", lessons: nil), value: 0, weekGain: nil)
+        : nil,
       session: try decode(
         #"""
         {"blocks":[],"brainPower":0,"catchUp":\#(catchUp ? later : "null"),"current":true,
@@ -210,7 +250,7 @@ final class TodayVisitTests: XCTestCase {
         "lessonsComing":false,"lessonsToPrepare":false,"localDate":"2026-11-15",
         "minutes":{"dailyGoal":30,"done":0,"left":30,"planned":30},"missions":[],
         "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
-        "state":"underway","week":{"days":[],"nextStudyDate":null},"status":"active"}
+        "state":"\#(pastDate ? "rest" : "underway")","week":{"days":[],"nextStudyDate":null},"status":"active"}
         """#),
       sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: uploadRequest,
       weeklyChallenge: nil)

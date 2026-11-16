@@ -290,7 +290,7 @@ struct AccountSheet: View {
         .toolbarTitleDisplayMode(.inline)
       }
     case .unavailable:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "Account unavailable",

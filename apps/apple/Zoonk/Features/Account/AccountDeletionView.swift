@@ -274,7 +274,7 @@ struct AccountDeletionView: View {
   }
 
   private var deletedContent: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         accountDeleted
       } icon: {
@@ -289,7 +289,7 @@ struct AccountDeletionView: View {
   }
 
   private var manualAppleRevocationContent: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         accountDeleted
       } icon: {

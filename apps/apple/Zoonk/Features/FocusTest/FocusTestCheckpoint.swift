@@ -158,7 +158,7 @@ struct FocusTestCheckpoint: View {
     .environment(\.isSavingAnswer, pressed != nil)
     .sheet(isPresented: $showsSubjects) {
       FocusTestSubjectsSheet(subjects: focusTest.subjects)
-        .zoonkStyles()
+        .zoonkSheet()
     }
   }
 

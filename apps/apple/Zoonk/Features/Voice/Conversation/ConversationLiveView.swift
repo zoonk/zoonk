@@ -63,15 +63,10 @@ struct ConversationLiveView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .scenePadding()
         }
-        .toolbar {
-          ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) {
-              isShowingPhrases = false
-            }
-          }
-        }
+        .sheetClose { isShowingPhrases = false }
       }
       .presentationDetents([.medium, .large])
+      .zoonkSheet()
     }
     .modifier(CallAnnouncements(call: call, name: conversation.character.name))
   }

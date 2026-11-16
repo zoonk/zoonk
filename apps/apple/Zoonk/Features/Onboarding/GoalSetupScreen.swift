@@ -53,7 +53,7 @@ struct GoalLoadFailure: View {
   let retry: () async -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Text(
         "We couldn't load your goal", tableName: "Onboarding",
         comment: "A goal's onboarding failed to load")
@@ -150,7 +150,7 @@ private struct GoalSteps: View {
   @State private var revisiting: Components.Schemas.OnboardingStep?
   @State private var scheduleDraft: ScheduleQuestion.Draft?
   @State private var isSaving = false
-  @State private var failed = false
+  @State private var failures = GoalSetupFailures()
   /// Why the last save was refused, when the answer itself was.
   @State private var refusal: OnboardingError?
   @State private var confirmingStartOver = false
@@ -158,7 +158,7 @@ private struct GoalSteps: View {
   /// a Setup closed meanwhile keeps the answer and opens nothing.
   @State private var savedBeforeLesson: String?
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
-  @State private var startingOver: Task<Void, Never>?
+  private var startingOver: VisitRequest<Bool> { failures.startingOver }
   @State private var conditionPicks: [String] = []
 
   init(
@@ -220,7 +220,8 @@ private struct GoalSteps: View {
 
   var body: some View {
     StepScreen(
-      step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
+      step: step, view: view, isSaving: isSaving, failed: failures.failed,
+      refusal: refusal,
       scheduleDraft: scheduleDraft,
       profile: profile,
       onAnswer: { answer($0) },
@@ -298,7 +299,7 @@ private struct GoalSteps: View {
       isPresented: $confirmingStartOver, titleVisibility: .visible
     ) {
       Button(role: .destructive) {
-        startingOver = Task { await startOver() }
+        startingOver.run { await startOver() }
       } label: {
         Text(
           "Start over", tableName: "Onboarding",
@@ -310,7 +311,10 @@ private struct GoalSteps: View {
         tableName: "Onboarding",
         comment: "What starting over does")
     }
-    .onDisappear { startingOver?.cancel() }
+    .onDisappear {
+      startingOver.leave()
+      isSaving = false
+    }
     .onChange(of: savedBeforeLesson) { _, lesson in
       if let lesson {
         savedBeforeLesson = nil
@@ -343,7 +347,7 @@ private struct GoalSteps: View {
     }
 
     isSaving = true
-    failed = false
+    failures.clear()
 
     Task {
       defer { isSaving = false }
@@ -353,7 +357,7 @@ private struct GoalSteps: View {
         savedBeforeLesson = lesson
       } catch is CancellationError {
       } catch {
-        failed = true
+        failures.answerFailed = true
         refusal = error as? OnboardingError
       }
     }
@@ -452,7 +456,7 @@ private struct GoalSteps: View {
       scheduleDraft = nil
     }
 
-    failed = false
+    failures.clear()
     revisiting = previous
   }
 
@@ -460,20 +464,20 @@ private struct GoalSteps: View {
   private func changeDate(_ draft: ScheduleQuestion.Draft) {
     scheduleDraft = draft
     history.append(step)
-    failed = false
+    failures.clear()
     revisiting = .targetDate
   }
 
-  private func startOver() async {
+  private func startOver() async -> Bool? {
     isSaving = true
-    defer { isSaving = false }
+    defer { if !Task.isCancelled { isSaving = false } }
 
     do {
       try await onboarding.startOver(goalIDs: view.goalIds.isEmpty ? [view.goal.id] : view.goalIds)
 
       // Closed meanwhile: whatever is on screen now isn't this setup's to replace.
       guard !Task.isCancelled else {
-        return
+        return nil
       }
 
       if let onStartOver {
@@ -485,8 +489,9 @@ private struct GoalSteps: View {
       }
     } catch is CancellationError {
     } catch {
-      failed = true
+      return true
     }
+    return nil
   }
 
   /// So Back returns to them after coming back later.
@@ -595,5 +600,18 @@ extension View {
             goalID: view.goal.id, onboardingID: view.onboardingID, question: step.rawValue),
           at: .now))
     }
+  }
+}
+
+@MainActor
+@Observable
+final class GoalSetupFailures {
+  var answerFailed = false
+  let startingOver = VisitRequest<Bool>()
+  var failed: Bool { answerFailed || startingOver.outcome == true }
+
+  func clear() {
+    answerFailed = false
+    startingOver.outcome = nil
   }
 }

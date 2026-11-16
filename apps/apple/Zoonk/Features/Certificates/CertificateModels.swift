@@ -121,7 +121,7 @@ extension CertificateFacts {
   var name: String {
     if let title, let courseLevel {
       return String(
-        localized: "\(title) · \(String(localized: courseLevel.localizedTitle))",
+        localized: "\(title)\u{00A0}· \(String(localized: courseLevel.localizedTitle))",
         table: "Certificates",
         comment:
           "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name."
