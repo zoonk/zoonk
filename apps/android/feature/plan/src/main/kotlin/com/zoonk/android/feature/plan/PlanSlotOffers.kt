@@ -407,7 +407,7 @@ private fun DateOverSuggestion(
 ) {
     val page = slot.page
     val state = slot.state
-    val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.plan == page.plan }
+    val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.plan.samePreviewPlan(page.plan) }
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
 

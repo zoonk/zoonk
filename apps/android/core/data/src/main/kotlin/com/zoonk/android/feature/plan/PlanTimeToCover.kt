@@ -17,6 +17,7 @@ fun planAdviceRevision(plan: Plan): List<Any?> =
             .firstOrNull { it.state == PlanDay.State.TODAY }
             ?.date ?: plan.week.startDate,
         plan.planId,
+        plan.estimate,
         plan.schedule,
         plan.feasibility,
         plan.steering,

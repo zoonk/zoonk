@@ -57,12 +57,15 @@ sealed class PlanPreviewState {
     ) : Asked(operations, plan)
 }
 
+/** Focus test progress doesn't change the work a plan edit previews. */
+internal fun Plan.samePreviewPlan(other: Plan?): Boolean = other != null && copy(focusTest = null) == other.copy(focusTest = null)
+
 /** Idle unless it previews [operations] on [plan]; a refresh that reads the same plan again keeps it. */
 internal fun PlanPreviewState.of(
     operations: List<PlanOp>,
     plan: Plan,
 ): PlanPreviewState =
-    if (this is PlanPreviewState.Asked && this.plan == plan &&
+    if (this is PlanPreviewState.Asked && this.plan.samePreviewPlan(plan) &&
         this.operations == operations
     ) {
         this
