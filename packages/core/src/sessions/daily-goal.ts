@@ -60,14 +60,16 @@ export function getWeekDays({
   finishedDates = [],
   getPlanDay,
   today,
+  weekStart = getStartOfWeek(today),
 }: {
   days: readonly { date: Date; seconds: number }[];
   /** Days whose study session finished, as UTC-midnight labels. */
   finishedDates?: readonly Date[];
   getPlanDay: (date: Date) => PlanDay;
   today: Date;
+  weekStart?: Date;
 }): WeekDay[] {
-  const start = getStartOfWeek(today).getTime();
+  const start = weekStart.getTime();
 
   return Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
     const date = new Date(start + index * MS_PER_DAY);

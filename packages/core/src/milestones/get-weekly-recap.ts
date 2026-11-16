@@ -5,7 +5,9 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLocalDateInstants, getStartOfLocalDay } from "../learner/_utils/local-time";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
+import { loadStudyWeek } from "../progress/_utils/load-study-week";
 import { loadTomorrow } from "../sessions/_utils/load-summary-parts";
+import { type WeekDay, getWeekDays } from "../sessions/daily-goal";
 import { getSession } from "../users/get-session";
 import { type BuddyDiet, loadBuddyDiet } from "./_utils/buddy-diet";
 import { loadPhasesFinished } from "./_utils/recap-goal";
@@ -25,6 +27,7 @@ type TurnaroundReason = "gold" | "practice" | "solid";
 
 type WeeklyRecap = {
   badges: Milestone[];
+  days: WeekDay[];
   comparison: ReturnType<typeof compareWeeks>;
   lastWeek: WeekNumbers;
   nextFocus: { title: string } | null;
@@ -90,7 +93,15 @@ async function loadTurnaround({ userId, weekStart }: { userId: string; weekStart
   return { ...turnaround, name: skill?.name ?? "", reason: getReason(state), state };
 }
 
-async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Date }) {
+async function loadWeeks({
+  userId,
+  weekStart,
+  today,
+}: {
+  userId: string;
+  weekStart: Date;
+  today: Date;
+}) {
   const lastWeekStart = new Date(weekStart.getTime() - DAYS_PER_WEEK * MS_PER_DAY);
 
   const days = await prisma.dailyProgress.findMany({
@@ -110,7 +121,17 @@ async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Dat
   const week = summarizeWeek({ days: recapDays, weekStart });
   const lastWeek = summarizeWeek({ days: recapDays, weekStart: lastWeekStart });
 
-  return { comparison: compareWeeks({ current: week, previous: lastWeek }), lastWeek, week };
+  return {
+    comparison: compareWeeks({ current: week, previous: lastWeek }),
+    days: getWeekDays({
+      days: recapDays,
+      getPlanDay: () => ({ goalMinutes: 0, kind: "study" }),
+      today,
+      weekStart,
+    }),
+    lastWeek,
+    week,
+  };
 }
 
 /** Before Sunday, default to last week; new learners use their first week, marked not ready until Sunday. */
@@ -167,23 +188,26 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
   const from = getStartOfLocalDay({ localDate: weekStart, timeZone });
   const to = getStartOfLocalDay({ localDate: new Date(weekEnd.getTime() + MS_PER_DAY), timeZone });
 
-  const [weeks, turnaround, badges, buddyAte, phasesFinished, nextFocus] = await Promise.all([
-    loadWeeks({ userId, weekStart }),
-    loadTurnaround({ userId, weekStart }),
-    prisma.milestone.findMany({
-      orderBy: { earnedAt: "asc" },
-      where: { earnedAt: { gte: from, lt: to }, kind: "badge", userId },
-    }),
-    loadBuddyDiet({ from, to, userId }),
-    goal ? loadPhasesFinished({ from, goalId: goal.id, to }) : [],
-    loadTomorrow({ session: { goal, goalId: goal?.id ?? null, localDate: today } }),
-  ]);
+  const [weeks, turnaround, badges, buddyAte, phasesFinished, nextFocus, studyWeek] =
+    await Promise.all([
+      loadWeeks({ today, userId, weekStart }),
+      loadTurnaround({ userId, weekStart }),
+      prisma.milestone.findMany({
+        orderBy: { earnedAt: "asc" },
+        where: { earnedAt: { gte: from, lt: to }, kind: "badge", userId },
+      }),
+      loadBuddyDiet({ from, to, userId }),
+      goal ? loadPhasesFinished({ from, goalId: goal.id, to }) : [],
+      loadTomorrow({ session: { goal, goalId: goal?.id ?? null, localDate: today } }),
+      goal ? loadStudyWeek({ goal, localDate: today, weekStart }) : null,
+    ]);
 
   return {
     recap: {
       ...weeks,
       badges,
       buddyAte,
+      days: studyWeek?.days ?? weeks.days,
       nextFocus,
       phasesFinished,
       ready: today.getTime() >= weekEnd.getTime(),

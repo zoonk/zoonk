@@ -38,14 +38,14 @@ export async function loadStudyWeek({
   goal,
   localDate,
   planSettings,
+  weekStart = getStartOfWeek(localDate),
 }: {
   goal: WeekGoal;
   localDate: Date;
+  weekStart?: Date;
   /** The plan the request shows, such as a choice not saved yet; the saved plan's otherwise. */
   planSettings?: unknown;
 }): Promise<StudyWeek> {
-  const weekStart = getStartOfWeek(localDate);
-
   const weekDates = { gte: weekStart, lt: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY) };
   const where = { goalId: goal.id, localDate: weekDates, userId: goal.userId };
 
@@ -97,6 +97,7 @@ export async function loadStudyWeek({
       kind: getWeekDayKind({ date, goal: weekGoal, goalMinutes: getPlanMinutes(date) }),
     }),
     today: localDate,
+    weekStart,
   });
 
   return {

@@ -29,6 +29,7 @@ function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
       languageFlag,
       status,
       targetDate,
+      targetDateEstimated,
       targetLanguage,
       targetRegion,
     }) =>
@@ -43,6 +44,7 @@ function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
               languageFlag,
               status,
               targetDate,
+              targetDateEstimated,
               targetLanguage,
               targetRegion,
             },

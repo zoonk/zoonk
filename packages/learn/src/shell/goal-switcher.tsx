@@ -41,6 +41,7 @@ type SwitcherGoal = {
   languageFlag: string | null;
   status: "active" | "completed" | "paused";
   targetDate: string | null;
+  targetDateEstimated: boolean;
   targetLanguage: string | null;
   targetRegion: string | null;
   displayName: string;
@@ -101,7 +102,7 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
 
   const active = [
     t("{time} a day", { time: formatDuration(goal.dailyMinutes) }),
-    days !== null && daysLeftText(days),
+    days !== null && daysLeftText(days, { estimated: goal.targetDateEstimated }),
   ].filter((fact): fact is string => Boolean(fact));
 
   const facts = { active, completed: [t("Finished")], paused: [t("Paused")] }[goal.status];

@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { getWeeklyRecap } from "../milestones/get-weekly-recap";
 import { getStudySession } from "../sessions/get-study-session";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { getTodayView } from "../view-models/today/get-today-view";
@@ -97,6 +98,13 @@ describe("weekly study time", () => {
     }
 
     expect(today.today.session.week).not.toHaveProperty("time");
+
+    const recap = await getWeeklyRecap({ goalId: goal.id, weekStart: "2026-10-12" });
+
+    expect(recap).toMatchObject({
+      recap: { days: today.today.session.week.days },
+      status: "ready",
+    });
 
     expect(
       today.today.session.week.days.map(({ goalMinutes, kind, minutes }) => ({
