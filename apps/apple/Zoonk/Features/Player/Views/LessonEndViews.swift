@@ -15,9 +15,9 @@ struct LessonCompletionView: View {
   let finish: () -> Void
   let close: () -> Void
 
-  @State private var isStopping = false
-  @State private var stopFailed = false
-  @State private var stopping: Task<Void, Never>?
+  private var isStopping: Bool { stopping.isRunning }
+  private var stopFailed: Bool { stopping.outcome ?? false }
+  @State private var stopping = VisitRequest<Bool>()
 
   var body: some View {
     PaneSplit {
@@ -58,7 +58,7 @@ struct LessonCompletionView: View {
       }
     }
     .onDisappear {
-      stopping?.cancel()
+      stopping.leave()
     }
   }
 
@@ -360,20 +360,22 @@ struct LessonCompletionView: View {
 
   /// The session's screen under the lesson then shows the day's summary.
   private func stopForToday(sessionID: String) {
-    isStopping = true
-    stopFailed = false
 
-    stopping = Task {
-      switch await sessions.stop(sessionID: sessionID, in: router.playback) {
+    stopping.run {
+      var outcome: Bool = false
+
+      let result = await sessions.stop(sessionID: sessionID, in: router.playback)
+      guard !Task.isCancelled else { return nil }
+      switch result {
       case .done:
         close()
       case .failed:
-        stopFailed = true
+        outcome = true
       case .obsolete:
         break
       }
 
-      isStopping = false
+      return outcome
     }
   }
 
@@ -1003,9 +1005,9 @@ private struct LessonWaitAlternative: View {
 struct LessonGuestGateView: View {
   @Environment(\.lessonGuestStart) private var guestStart
   @Environment(\.lessonPlayerRoutes) private var routes
-  @State private var isStarting = false
-  @State private var startFailed = false
-  @State private var starting: Task<Void, Never>?
+  private var isStarting: Bool { starting.isRunning }
+  private var startFailed: Bool { starting.outcome ?? false }
+  @State private var starting = VisitRequest<Bool>()
 
   let outline: LessonOutline
   let reload: () -> Void
@@ -1016,15 +1018,19 @@ struct LessonGuestGateView: View {
     } actions: {
       if let start = guestStart.start {
         BusyButton(isBusy: isStarting, icon: .play) {
-          isStarting = true
-          startFailed = false
-          starting = Task {
-            if await start() {
+
+          starting.run {
+            var outcome: Bool = false
+
+            let saved = await start()
+            guard !Task.isCancelled else { return nil }
+            if saved {
               reload()
             } else {
-              startFailed = true
+              outcome = true
             }
-            isStarting = false
+
+            return outcome
           }
         } label: {
           Text(LessonWaitWords.lesson.start)
@@ -1049,7 +1055,7 @@ struct LessonGuestGateView: View {
       }
     }
     .onDisappear {
-      starting?.cancel()
+      starting.leave()
     }
   }
 }

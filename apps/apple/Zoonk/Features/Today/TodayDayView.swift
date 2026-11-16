@@ -10,8 +10,9 @@ struct TodayDayView: View {
   let view: TodayView
 
   @State private var busy: Tap?
-  @State private var failed: Tap?
-  @State private var tapTask: Task<Void, Never>?
+  @State private var tapTask = VisitRequest<Tap>()
+
+  private var failed: Tap? { tapTask.outcome }
   @State private var disclosures = TodayDisclosures()
   @State private var writingStalled = false
   /// The notice Today opened with stays while the learner is here, so answering it shows what the
@@ -83,7 +84,7 @@ struct TodayDayView: View {
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
       if isCovered {
-        tapTask?.cancel()
+        tapTask.leave()
       } else {
         startVisit()
       }
@@ -121,7 +122,7 @@ struct TodayDayView: View {
       await rereadWhileOutlining()
     }
     .onDisappear {
-      tapTask?.cancel()
+      tapTask.leave()
       examChoice?.cancel()
       focusTestDismissal.leave()
       insightAnswer.leave()
@@ -434,7 +435,7 @@ struct TodayDayView: View {
       return
     }
 
-    failed = nil
+    tapTask.outcome = nil
     router.showIntro(of: block)
   }
 
@@ -446,38 +447,28 @@ struct TodayDayView: View {
     }
 
     busy = tap
-    failed = nil
-
-    tapTask = Task {
+    tapTask.run {
       let result = await action()
       busy = nil
-
+      guard !Task.isCancelled else { return nil }
       switch result {
-      case .done(let destination) where !Task.isCancelled:
-        router.openStudy(destination)
-      case .failed:
-        failed = tap
-      case .done, .obsolete:
-        break
+      case .done(let destination): router.openStudy(destination)
+      case .failed: return tap
+      case .obsolete: break
       }
+      return nil
     }
   }
 
   private func perform(_ tap: Tap, _ action: @escaping () async -> MutationResult<Void>) {
-    guard busy == nil else {
-      return
-    }
-
+    guard busy == nil else { return }
     busy = tap
-    failed = nil
-
-    tapTask = Task {
+    tapTask.run {
       let result = await action()
       busy = nil
-
-      if case .failed = result {
-        failed = tap
-      }
+      guard !Task.isCancelled else { return nil }
+      if case .failed = result { return tap }
+      return nil
     }
   }
 
@@ -547,7 +538,7 @@ struct TodayDayView: View {
     disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
-    failed = nil
+    tapTask.outcome = nil
     answeredUpload = nil
     answeredInsight = nil
     insightAnswers = [:]

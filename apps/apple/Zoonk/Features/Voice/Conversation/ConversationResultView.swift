@@ -9,10 +9,10 @@ struct ConversationResultView: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
-  @State private var isStartingAgain = false
+  private var isStartingAgain: Bool { again.isRunning }
   @State private var isWritingAgain = false
-  @State private var again: Task<Void, Never>?
-  @State private var startFailure: StartFailure?
+  @State private var again = VisitRequest<StartFailure>()
+  private var startFailure: StartFailure? { again.outcome }
   let conversation: LanguageConversation
   /// Nil for a call opened later, which shows only its own result.
   var day: DayResult?
@@ -48,11 +48,14 @@ struct ConversationResultView: View {
       }
     }
     .completionMoments(day)
-    .onDisappear { again?.cancel() }
+    .onDisappear {
+      again.leave()
+      isWritingAgain = false
+    }
     .bottomBar(note: barNote) {
       if let input = againInput {
         BusyButton(isBusy: isStartingAgain, icon: .retry) {
-          again = Task { await startAgain(input) }
+          again.run { await startAgain(input) }
         } label: {
           if conversation.kind == .speakingMock {
             Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
@@ -154,28 +157,37 @@ struct ConversationResultView: View {
   }
 
   /// Only on the learner's tap.
-  private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async {
-    isStartingAgain = true
-    startFailure = nil
+  private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async
+    -> StartFailure?
+  {
+    var outcome: StartFailure? = nil
+
     defer {
-      isStartingAgain = false
-      isWritingAgain = false
+      if !Task.isCancelled { isWritingAgain = false }
     }
 
-    switch await voice.startConversation(input, whileWriting: { isWritingAgain = true }) {
+    let result = await voice.startConversation(
+      input,
+      whileWriting: {
+        if !Task.isCancelled { isWritingAgain = true }
+      })
+    guard !Task.isCancelled else { return nil }
+    switch result {
     case .done(.done(let id)):
       onStartedAgain(id)
     case .done(.refused(let refusal)):
       if case .limit(let limit) = CallReservation(refusal: refusal) {
-        startFailure = .limit(limit)
+        outcome = .limit(limit)
       } else {
-        startFailure = .failed
+        outcome = .failed
       }
     case .failed:
-      startFailure = .failed
+      outcome = .failed
     case .obsolete:
       break
     }
+
+    return outcome
   }
 
   /// An exam task or speaking mock is rated on its exam's criteria instead.
