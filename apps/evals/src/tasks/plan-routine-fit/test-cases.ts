@@ -50,7 +50,7 @@ export const TEST_CASES: PlanRoutineFitTestCase[] = [
     changes: [],
     id: "routine-time-of-day-only",
     learnerKey: "maya",
-    requires: "7:30 am",
+    requires: "7:30 AM",
   }),
   routineCase({
     changes: [{ kind: "setWeekdayMinutes", minutes: { max: 25, min: 0 }, weekdays: [6] }],
