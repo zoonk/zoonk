@@ -5,12 +5,59 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { loadStudyWeek } from "../progress/_utils/load-study-week";
 import { getWeeklyRecap } from "./get-weekly-recap";
 
 const MONDAY = new Date("2026-10-12T00:00:00Z");
 
 describe(getWeeklyRecap, () => {
   afterEach(() => vi.useRealTimers());
+
+  it.each([
+    { minutes: 10, seconds: 630, withGoal: true },
+    { minutes: 1, seconds: 20, withGoal: true },
+    { minutes: 10, seconds: 630, withGoal: false },
+    { minutes: 1, seconds: 20, withGoal: false },
+  ])(
+    "uses the study-week minute rule for both recap weeks: %j",
+    async ({ minutes, seconds, withGoal }) => {
+      const user = await userFixture();
+      mockSession(user.id);
+
+      const goal = await goalFixture({
+        createdAt: new Date("2026-10-01T00:00:00Z"),
+        timezone: "UTC",
+        userId: user.id,
+      });
+
+      const previous = new Date("2026-10-05T00:00:00Z");
+
+      await Promise.all([
+        planFixture({ goalId: goal.id }),
+        learningEventFixture({ goalId: goal.id, localDate: MONDAY, seconds, userId: user.id }),
+        learningEventFixture({ goalId: goal.id, localDate: previous, seconds, userId: user.id }),
+        dailyProgressFixtureMany(
+          [MONDAY, previous].map((date) => ({ date, timeSpentSeconds: seconds, userId: user.id })),
+        ),
+      ]);
+
+      const result = await getWeeklyRecap({
+        ...(withGoal && { goalId: goal.id }),
+        timeZone: "UTC",
+        weekStart: "2026-10-12",
+      });
+
+      if (result.status !== "ready") {
+        throw new Error(result.status);
+      }
+
+      const todayWeek = await loadStudyWeek({ goal, localDate: MONDAY });
+      expect(result.recap.week).toMatchObject({ averageMinutes: minutes, minutes });
+      expect(result.recap.lastWeek).toMatchObject({ averageMinutes: minutes, minutes });
+      expect(result.recap.days[0]?.minutes).toBe(minutes);
+      expect(todayWeek.time.studiedMinutes).toBe(minutes);
+    },
+  );
 
   it("never assigns planned study to a learner without a goal, and keeps their studied day", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });

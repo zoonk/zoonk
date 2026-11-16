@@ -1,7 +1,7 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { toStudiedMinutes } from "../sessions/daily-goal";
 
 const DAYS_PER_WEEK = 7;
-const SECONDS_PER_MINUTE = 60;
 
 const MIN_TURNAROUND_GAIN = 0.2;
 
@@ -46,7 +46,7 @@ export function summarizeWeekTotals({
   questions: number;
   seconds: number;
 }): WeekNumbers {
-  const minutes = Math.round(seconds / SECONDS_PER_MINUTE);
+  const minutes = toStudiedMinutes(seconds);
 
   return {
     averageMinutes: daysStudied.length > 0 ? Math.round(minutes / daysStudied.length) : 0,
