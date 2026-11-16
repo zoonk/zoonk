@@ -94,4 +94,80 @@ class CentralizedFormattingDetectorTest : LintDetectorTest() {
             ).run()
             .expectClean()
     }
+
+    fun testReportsDisplayNames() {
+        lint()
+            .files(
+                kotlin(
+                    """
+            package test.pkg
+            import java.time.DayOfWeek
+            import java.time.Month
+            import java.time.ZoneId
+            import java.time.format.TextStyle
+            import java.util.Locale
+            fun day() = DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.US)
+            fun month() = Month.JANUARY.getDisplayName(TextStyle.FULL, Locale.US)
+            fun zone() = ZoneId.of("UTC").getDisplayName(TextStyle.FULL, Locale.US)
+        """,
+                ).indented(),
+            ).run()
+            .expectErrorCount(3)
+    }
+
+    fun testReportsOneSitePerFormatterChain() {
+        lint()
+            .files(
+                kotlin(
+                    """
+            package test.pkg
+            import java.time.LocalDate
+            import java.time.format.DateTimeFormatter
+            import java.time.format.FormatStyle
+            import java.util.Locale
+            fun date(value: LocalDate) = DateTimeFormatter
+                .ofLocalizedDate(FormatStyle.MEDIUM)
+                .withLocale(Locale.US)
+                .format(value)
+        """,
+                ).indented(),
+            ).run()
+            .expectErrorCount(1)
+    }
+
+    fun testKeepsSeparateSitesAndGroupsConfiguredChains() {
+        lint()
+            .files(
+                kotlin(
+                    """
+            package test.pkg
+            import java.text.SimpleDateFormat
+            import java.util.Date
+            import java.util.TimeZone
+            fun values(date: Date) = listOf(
+                SimpleDateFormat("yyyy-MM-dd").apply { timeZone = TimeZone.getTimeZone("UTC") }.format(date),
+                SimpleDateFormat("HH:mm").format(date)
+            )
+        """,
+                ).indented(),
+            ).run()
+            .expectErrorCount(2)
+    }
+
+    fun testAllowsSharedWeekdayNames() {
+        lint()
+            .files(
+                kotlin(
+                    "src/com/zoonk/android/ui/format/WeekdayNames.kt",
+                    """
+            package com.zoonk.android.ui.format
+            import java.time.DayOfWeek
+            import java.time.format.TextStyle
+            import java.util.Locale
+            fun day() = DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.US)
+        """,
+                ).indented(),
+            ).run()
+            .expectClean()
+    }
 }

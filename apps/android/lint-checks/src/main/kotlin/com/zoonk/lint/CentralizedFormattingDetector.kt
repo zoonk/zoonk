@@ -10,6 +10,8 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
@@ -24,14 +26,16 @@ class CentralizedFormattingDetector :
 
     override fun createUastHandler(context: JavaContext): UElementHandler? {
         if (ALLOWED_FILES.any { context.file.invariantSeparatorsPath.endsWith(it) }) return null
+        val reportedSites = mutableSetOf<Int>()
         return object : UElementHandler() {
             override fun visitCallExpression(node: UCallExpression) {
                 val method = node.resolve() ?: return
                 val owner = method.containingClass?.qualifiedName ?: return
                 val direct =
-                    (owner in FORMATTERS && method.name !in setOf("parse", "parseObject")) ||
+                    (owner in FORMATTERS && method.name !in setOf("parse", "parseObject") && !method.name.startsWith("set")) ||
                         (owner == "android.text.format.DateFormat" && method.name != "is24HourFormat") ||
-                        (owner == "android.text.format.DateUtils" && method.name in DATE_UTILS_METHODS)
+                        (owner == "android.text.format.DateUtils" && method.name in DATE_UTILS_METHODS) ||
+                        (method.name == "getDisplayName" && owner in DISPLAY_TYPES)
                 val duration =
                     method.name == "format" &&
                         (node.valueArguments + listOfNotNull(node.receiver)).any {
@@ -43,15 +47,15 @@ class CentralizedFormattingDetector :
                             it.getExpressionType()?.canonicalText == "java.time.format.DateTimeFormatter"
                         }
                 val temporalReceiver = method.name == "format" && node.receiver?.getExpressionType()?.canonicalText in FORMATTERS
-                if (direct || duration || temporalArgument || temporalReceiver) report(context, node)
+                if (direct || duration || temporalArgument || temporalReceiver) report(context, node, reportedSites)
             }
 
             override fun visitPolyadicExpression(node: UPolyadicExpression) {
-                if (node.operands.size >= 2) checkDuration(context, node)
+                if (node.operands.size >= 2) checkDuration(context, node, reportedSites)
             }
 
             override fun visitBinaryExpression(node: UBinaryExpression) {
-                checkDuration(context, node)
+                checkDuration(context, node, reportedSites)
             }
         }
     }
@@ -59,17 +63,31 @@ class CentralizedFormattingDetector :
     private fun checkDuration(
         context: JavaContext,
         node: UExpression,
+        reportedSites: MutableSet<Int>,
     ) {
         if (node.uastParent is UPolyadicExpression || node.uastParent is UBinaryExpression) return
         if (node.getExpressionType()?.canonicalText != "java.lang.String") return
         val source = node.sourcePsi?.text ?: return
-        if (listOf(DURATION_PATTERN, CLOCK_TEMPLATE, CONCATENATED_UNIT).any { it.containsMatchIn(source) }) report(context, node)
+        if (listOf(
+                DURATION_PATTERN,
+                CLOCK_TEMPLATE,
+                CONCATENATED_UNIT,
+            ).any { it.containsMatchIn(source) }
+        ) {
+            report(context, node, reportedSites)
+        }
     }
 
     private fun report(
         context: JavaContext,
         node: UElement,
+        reportedSites: MutableSet<Int>,
     ) {
+        val site =
+            generateSequence(node.sourcePsi) { element ->
+                element.parent.takeIf { it is KtQualifiedExpression || it is KtParenthesizedExpression }
+            }.lastOrNull() ?: return
+        if (!reportedSites.add(site.textRange.startOffset)) return
         context.report(
             ISSUE,
             node,
@@ -83,11 +101,13 @@ class CentralizedFormattingDetector :
     }
 
     companion object {
+        private val DISPLAY_TYPES = setOf("java.time.DayOfWeek", "java.time.Month", "java.time.ZoneId")
         private val DATE_UTILS_METHODS = setOf("formatDateTime", "getRelativeTimeSpanString", "formatElapsedTime")
         private val ALLOWED_FILES =
             setOf(
                 "/com/zoonk/android/ui/format/Formatters.kt",
                 "/com/zoonk/android/ui/format/Clock.kt",
+                "/com/zoonk/android/ui/format/WeekdayNames.kt",
             )
         private val FORMATTERS =
             setOf(

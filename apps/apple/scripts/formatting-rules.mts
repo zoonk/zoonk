@@ -4,8 +4,33 @@ import path from "node:path";
 export const FORMATTING_MODULE = "Features/Plan/PlanModels.swift";
 export const FORMATTING_SEVERITY: "warning" | "error" = "warning";
 
-const DIRECT_FORMAT =
-  /\b(?:DateFormatter|DateComponentsFormatter|RelativeDateTimeFormatter|MeasurementFormatter)\s*(?=[(.])|\b(?:Date|Duration)\s*\.\s*(?:FormatStyle|ISO8601FormatStyle|VerbatimFormatStyle|UnitsFormatStyle|TimeFormatStyle)\b|\.\s*formatted\s*\(\s*(?:\.(?:dateTime|studyDay|relative|units|time|iso8601)\b|date\s*:)/gu;
+const STYLE = "(?:dateTime|studyDay|relative|units|time|iso8601|interval|components)";
+
+const DIRECT_FORMAT = new RegExp(
+  String.raw`\b(?:ISO8601DateFormatter|DateIntervalFormatter|DateFormatter|DateComponentsFormatter|RelativeDateTimeFormatter|MeasurementFormatter)\s*(?=[(.])|` +
+    String.raw`\b(?:Date|Duration)\s*\.\s*(?:FormatStyle|ISO8601FormatStyle|VerbatimFormatStyle|UnitsFormatStyle|TimeFormatStyle)\b|` +
+    String.raw`\.\s*formatted\s*\(\s*(?:\.${STYLE}\b|date\s*:|\))|` +
+    String.raw`\bformat\s*:\s*\.${STYLE}\b|` +
+    String.raw`\bText\s*\(\s*(?:timerInterval\s*:|[^,()]+,\s*style\s*:)|` +
+    String.raw`\b(?:weekdaySymbols|shortWeekdaySymbols|veryShortWeekdaySymbols|standaloneWeekdaySymbols|shortStandaloneWeekdaySymbols|veryShortStandaloneWeekdaySymbols)\b|` +
+    String.raw`\bString\s*\(\s*format\s*:`,
+  "gu",
+);
+
+const DURATION_STRING =
+  /%[\d$.]*[df]\s*(?:h|hr|hrs|hours?|min|mins|minutes?|s|sec|secs|seconds?)\b|%[\d$.]*d:%[\d$.]*d/u;
+
+function isFormattingSite(match: RegExpExecArray, source: string): boolean {
+  if (!match[0].startsWith("String")) {
+    return true;
+  }
+
+  const literal = /^\s*"(?<value>(?:\\.|[^"\\])*)"/u.exec(
+    source.slice(match.index + match[0].length),
+  );
+
+  return DURATION_STRING.test(literal?.groups?.value ?? "");
+}
 
 export function formattingViolations(source: string, file: string) {
   if (file === FORMATTING_MODULE) {
@@ -14,11 +39,13 @@ export function formattingViolations(source: string, file: string) {
 
   const code = swiftCode(source);
 
-  return [...code.matchAll(DIRECT_FORMAT)].map((match) => ({
-    call: match[0].replaceAll(/\s+/gu, " "),
-    file,
-    line: code.slice(0, match.index).split("\n").length,
-  }));
+  return [...code.matchAll(DIRECT_FORMAT)]
+    .filter((match) => isFormattingSite(match, source))
+    .map((match) => ({
+      call: match[0].replaceAll(/\s+/gu, " "),
+      file,
+      line: code.slice(0, match.index).split("\n").length,
+    }));
 }
 
 export async function scanFormatting(directory: string, relative = "") {
