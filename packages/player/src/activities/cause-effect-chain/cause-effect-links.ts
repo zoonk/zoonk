@@ -39,15 +39,18 @@ export function compareLinks(learner: readonly Link[], expected: readonly Link[]
 export function arcPath({
   from,
   gutter,
+  headReach = 0,
   span,
   to,
 }: {
   from: number;
   gutter: number;
+  /** How far the arrowhead's tip reaches past the path's end, so the tip stops at the card. */
+  headReach?: number;
   span: number;
   to: number;
 }): string {
   const depth = Math.min(ARC_BASE + ARC_STEP * Math.max(span - 1, 0), gutter - 2);
   const bend = gutter - depth;
-  return `M${gutter} ${from} C${bend} ${from} ${bend} ${to} ${gutter} ${to}`;
+  return `M${gutter} ${from} C${bend} ${from} ${bend} ${to} ${gutter - headReach} ${to}`;
 }

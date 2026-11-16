@@ -60,4 +60,10 @@ describe(arcPath, () => {
     expect(arcPath({ from: 20, gutter: 48, span: 3, to: 200 })).toBe("M48 20 C20 20 20 200 48 200");
     expect(arcPath({ from: 20, gutter: 48, span: 9, to: 400 })).toBe("M48 20 C2 20 2 400 48 400");
   });
+
+  it("stops the arrow short of the effect's card by its head's reach, so the tip meets the border", () => {
+    expect(arcPath({ from: 20, gutter: 48, headReach: 3.5, span: 1, to: 80 })).toBe(
+      "M48 20 C34 20 34 80 44.5 80",
+    );
+  });
 });

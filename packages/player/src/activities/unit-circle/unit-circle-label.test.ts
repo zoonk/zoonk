@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type DialLabelPlacement, sinLabelPlacement } from "./unit-circle-label";
+import { touchesSegment } from "../_utils/drawing-label";
+import { type DialLabelPlacement, angleLabelPoint, sinLabelPlacement } from "./unit-circle-label";
 
 const HALF_TURN = 180;
 const center = { x: 155, y: 150 };
@@ -84,5 +85,54 @@ describe(sinLabelPlacement, () => {
       baseline: "middle",
       point: { x: point.x + 26, y: point.y },
     });
+  });
+});
+
+describe(angleLabelPoint, () => {
+  const size = { height: 17, width: 28 };
+  const zeroRay = { from: center, to: { x: center.x + radius, y: center.y } };
+
+  function angleBox(degrees: number) {
+    const point = onCircle(degrees);
+    const cosPoint = { x: (center.x + point.x) / 2, y: center.y + 16 };
+    const cos = { point: cosPoint, size: { height: 17, width: 66 } };
+    const at = angleLabelPoint({ center, cos, degrees, from: 38, radius, size });
+
+    return {
+      box: {
+        bottom: at.y + size.height / 2,
+        left: at.x - size.width / 2,
+        right: at.x + size.width / 2,
+        top: at.y - size.height / 2,
+      },
+      direction: (Math.atan2(center.y - at.y, at.x - center.x) * 180) / Math.PI,
+      radiusLine: { from: center, to: point },
+      sinLeg: { from: { x: point.x, y: center.y }, to: point },
+    };
+  }
+
+  it("sets the angle inside its wedge, off the radius and the axis", () => {
+    const { box, direction, radiusLine, sinLeg } = angleBox(30);
+
+    expect(direction).toBeGreaterThan(0);
+    expect(direction).toBeLessThan(30);
+
+    expect(touchesSegment(box, radiusLine)).toBe(false);
+    expect(touchesSegment(box, zeroRay)).toBe(false);
+    expect(touchesSegment(box, sinLeg)).toBe(false);
+  });
+
+  it("sets a wedge too thin for it just past the radius, still off both lines", () => {
+    const { box, radiusLine } = angleBox(8);
+
+    expect(touchesSegment(box, radiusLine)).toBe(false);
+    expect(touchesSegment(box, zeroRay)).toBe(false);
+  });
+
+  it("keeps a wide angle on its bisector, off both lines", () => {
+    const { box, radiusLine } = angleBox(300);
+
+    expect(touchesSegment(box, radiusLine)).toBe(false);
+    expect(touchesSegment(box, zeroRay)).toBe(false);
   });
 });

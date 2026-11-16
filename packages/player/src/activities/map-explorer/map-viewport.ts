@@ -198,3 +198,38 @@ export function placeMapLabels({
     { placed: [], spots: [] },
   ).spots;
 }
+
+type MapRegion = { id: string; name: string; tone: string };
+
+const UNTINTED_TONES = new Set(["context", "focus"]);
+
+/**
+ * The tinted regions to draw plain: one whose name was left out and whose tint the legend doesn't
+ * explain would read as a stray shape.
+ */
+export function plainRegions({
+  labels,
+  legendTones,
+  regions,
+  spots,
+}: {
+  labels: readonly { kind: "region" | "street"; text: string }[];
+  legendTones: readonly string[];
+  regions: readonly MapRegion[];
+  spots: readonly (MapPoint | null)[];
+}): string[] {
+  const unnamed = new Set(
+    labels.flatMap((label, index) =>
+      label.kind === "region" && spots[index] === null ? [label.text] : [],
+    ),
+  );
+
+  return regions
+    .filter(
+      (region) =>
+        !UNTINTED_TONES.has(region.tone) &&
+        !legendTones.includes(region.tone) &&
+        unnamed.has(region.name),
+    )
+    .map((region) => region.id);
+}

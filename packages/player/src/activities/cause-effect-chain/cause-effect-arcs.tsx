@@ -7,6 +7,14 @@ import { type Link, type LinkResult, arcPath } from "./cause-effect-links";
 export const ARC_GUTTER = 48;
 
 const END_OFFSET = 5;
+const ARC_STROKE = 2.5;
+const MARKER_SIZE = 7;
+const MARKER_BOX = 10;
+const MARKER_REF_X = 8;
+const MARKER_TIP_EDGE = 10;
+
+/** The head's rounded tip reaches past the path's end: marker units scale with the stroke. */
+const HEAD_REACH = ((MARKER_TIP_EDGE - MARKER_REF_X) * MARKER_SIZE * ARC_STROKE) / MARKER_BOX;
 
 type ArcState = LinkResult["state"] | "pending" | "made";
 
@@ -43,17 +51,18 @@ export function CauseEffectArcs({
             className={ARC_CLASS[state]}
             id={`${markerId}-${state}`}
             key={state}
-            markerHeight={7}
-            markerWidth={7}
+            markerHeight={MARKER_SIZE}
+            markerWidth={MARKER_SIZE}
             orient="auto"
-            refX={8}
+            refX={MARKER_REF_X}
             refY={5}
-            viewBox="0 0 10 10"
+            viewBox={`0 0 ${MARKER_BOX} ${MARKER_BOX}`}
           >
             <path
               className="fill-none stroke-current"
               d="M1 1 L9 5 L1 9"
               strokeLinecap="round"
+              strokeLinejoin="round"
               strokeWidth={2}
             />
           </marker>
@@ -75,12 +84,18 @@ export function CauseEffectArcs({
         return (
           <path
             className={cn("fill-none stroke-current", ARC_CLASS[link.state])}
-            d={arcPath({ from: from - END_OFFSET, gutter: ARC_GUTTER, span, to: to + END_OFFSET })}
+            d={arcPath({
+              from: from - END_OFFSET,
+              gutter: ARC_GUTTER,
+              headReach: HEAD_REACH,
+              span,
+              to: to + END_OFFSET,
+            })}
             key={`${link.from}-${link.to}-${link.state}`}
             markerEnd={`url(#${markerId}-${link.state})`}
             strokeDasharray={isDashed ? "5 5" : undefined}
             strokeLinecap="round"
-            strokeWidth={2.5}
+            strokeWidth={ARC_STROKE}
           />
         );
       })}

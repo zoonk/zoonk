@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import { type MapBox, type MapPoint, placeMapLabels } from "./map-viewport";
+import { type MapBox, type MapPoint, placeMapLabels, plainRegions } from "./map-viewport";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -38,6 +38,13 @@ function MapShapes({
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
 }) {
+  const plain = plainRegions({
+    labels: drawing.labels,
+    legendTones: drawing.legend.map((item) => item.tone),
+    regions: drawing.regions,
+    spots: labelSpots,
+  });
+
   return (
     <>
       {drawing.sphere && <path className="fill-viz-secondary-soft" d={drawing.sphere} />}
@@ -45,7 +52,7 @@ function MapShapes({
       <g className="stroke-viz-grid" strokeLinejoin="round">
         {drawing.regions.map((region) => (
           <path
-            className={REGION_CLASS[region.tone]}
+            className={REGION_CLASS[plain.includes(region.id) ? "context" : region.tone]}
             d={region.path}
             key={region.id}
             strokeWidth={0.75}

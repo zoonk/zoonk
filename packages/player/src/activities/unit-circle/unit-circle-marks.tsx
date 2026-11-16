@@ -3,7 +3,12 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef, useState } from "react";
 import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
-import { type LabelBaseline, sinLabelPlacement } from "./unit-circle-label";
+import {
+  type LabelBaseline,
+  angleLabelPoint,
+  onCircle,
+  sinLabelPlacement,
+} from "./unit-circle-label";
 import { type TrigName } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
@@ -13,8 +18,6 @@ type DrawnSizes = Record<"angle" | "cos" | "sin", Size>;
 const HALF_TURN = 180;
 const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
-const ANGLE_LABEL_STEP = 2;
-const ANGLE_LABEL_STEPS = 30;
 const NOTHING: Size = { height: 0, width: 0 };
 const NOTHING_DRAWN: DrawnSizes = { angle: NOTHING, cos: NOTHING, sin: NOTHING };
 
@@ -23,11 +26,6 @@ const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
   sin: { stroke: "stroke-viz-highlight", text: "fill-viz-highlight" },
   tan: { stroke: "stroke-viz-accent", text: "fill-viz-accent" },
 };
-
-export function onCircle(center: Vector, radius: number, degrees: number): Vector {
-  const radians = (degrees * Math.PI) / HALF_TURN;
-  return { x: center.x + Math.cos(radians) * radius, y: center.y - Math.sin(radians) * radius };
-}
 
 export function arcPath(center: Vector, radius: number, degrees: number): string {
   const end = onCircle(center, radius, degrees);
@@ -118,36 +116,6 @@ function sizeOf(node: SVGTextElement | null): Size {
   return box ? { height: box.height, width: box.width } : NOTHING;
 }
 
-function isApart(first: Vector, firstSize: Size, second: Vector, secondSize: Size): boolean {
-  return (
-    Math.abs(first.x - second.x) >= (firstSize.width + secondSize.width) / 2 + LABEL_GAP / 2 ||
-    Math.abs(first.y - second.y) >= (firstSize.height + secondSize.height) / 2 + LABEL_GAP / 2
-  );
-}
-
-/** The angle sits on its arc's bisector, pushed out along it until it clears the cos value. */
-function angleLabelPoint({
-  angle,
-  center,
-  cos,
-  size,
-}: {
-  angle: { direction: number; distance: number };
-  center: Vector;
-  cos: { point: Vector; size: Size } | null;
-  size: Size;
-}): Vector {
-  const reach = Array.from(
-    { length: ANGLE_LABEL_STEPS + 1 },
-    (_, step) => angle.distance + step * ANGLE_LABEL_STEP,
-  ).find(
-    (distance) =>
-      !cos || isApart(onCircle(center, distance, angle.direction), size, cos.point, cos.size),
-  );
-
-  return onCircle(center, reach ?? angle.distance, angle.direction);
-}
-
 export function TrigLegsAndAngle({
   angle,
   canvas,
@@ -160,7 +128,7 @@ export function TrigLegsAndAngle({
   target,
   values,
 }: {
-  angle: { direction: number; distance: number; label: string };
+  angle: { degrees: number; distance: number; label: string };
   canvas: { width: number };
   center: Vector;
   formatValue: (value: number | null) => string;
@@ -221,9 +189,11 @@ export function TrigLegsAndAngle({
   };
 
   const anglePoint = angleLabelPoint({
-    angle,
     center,
     cos: show.includes("cos") ? { point: cosPoint, size: sizes.cos } : null,
+    degrees: angle.degrees,
+    from: angle.distance,
+    radius,
     size: sizes.angle,
   });
 

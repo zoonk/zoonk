@@ -5,6 +5,7 @@ import {
   type MapPoint,
   fitViewport,
   placeMapLabels,
+  plainRegions,
   spreadPins,
 } from "./map-viewport";
 
@@ -167,5 +168,33 @@ describe(placeMapLabels, () => {
     expect(first).not.toBeNull();
     expect(second).not.toBeNull();
     expect(gap).toBeGreaterThan(LABEL_HEIGHT);
+  });
+});
+
+describe(plainRegions, () => {
+  const regions = [
+    { id: "soho", name: "Soho", tone: "context" },
+    { id: "golden-square", name: "Golden Square", tone: "groupC" },
+    { id: "soho-square", name: "Soho Square", tone: "groupC" },
+  ];
+
+  const labels = [
+    { kind: "region" as const, text: "Golden Square" },
+    { kind: "region" as const, text: "Soho Square" },
+    { kind: "street" as const, text: "Oxford Street" },
+  ];
+
+  it("draws a tinted region plain when its name has no room on the map", () => {
+    const spots = [{ x: 10, y: 10 }, null, { x: 50, y: 50 }];
+
+    expect(plainRegions({ labels, legendTones: [], regions, spots })).toStrictEqual([
+      "soho-square",
+    ]);
+  });
+
+  it("keeps a region's tint when the legend says what it means", () => {
+    const spots = [{ x: 10, y: 10 }, null, { x: 50, y: 50 }];
+
+    expect(plainRegions({ labels, legendTones: ["groupC"], regions, spots })).toStrictEqual([]);
   });
 });

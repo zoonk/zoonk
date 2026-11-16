@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
 import { edgeAnchor, estimatedLabelWidth } from "../_utils/drawing-label";
-import { PLOT_TICK_ROOM } from "../_utils/plot-ticks";
+import { PLOT_DOT_RADIUS, PLOT_DOT_STROKE, PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
@@ -15,10 +15,7 @@ type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScal
 const FALLBACK_WIDTH = 318;
 export const PLOT_LINE_WIDTH = 3;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
-const LABEL_GAP = 6;
 const X_LABEL_OFFSET = 18;
-const DOT_RADIUS = 6;
-const DOT_STROKE = 2.5;
 const GUIDE_STROKE = 1.5;
 
 const PlotContext = createContext<PlotScales | null>(null);
@@ -96,7 +93,7 @@ export function ActivityPlotGridY({
           <text
             className="fill-muted-foreground"
             dominantBaseline="middle"
-            x={left - LABEL_GAP}
+            x={left - TICK_GAP}
             y={y.toPixel(tick)}
             textAnchor="end"
           >
@@ -215,7 +212,7 @@ export function ActivityPlotGuide({
 
 export function ActivityPlotDot({
   className,
-  radius = DOT_RADIUS,
+  radius = PLOT_DOT_RADIUS,
   x: dataX,
   y: dataY,
 }: {
@@ -233,7 +230,7 @@ export function ActivityPlotDot({
       cx={x.toPixel(dataX)}
       cy={y.toPixel(dataY)}
       r={radius}
-      strokeWidth={DOT_STROKE}
+      strokeWidth={PLOT_DOT_STROKE}
     />
   );
 }
