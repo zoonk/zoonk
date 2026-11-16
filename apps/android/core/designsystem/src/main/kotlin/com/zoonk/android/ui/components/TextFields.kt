@@ -3,7 +3,9 @@ package com.zoonk.android.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -229,23 +231,26 @@ private fun ZoonkField(
                     }
                 }
             LabeledField(look.label, look.enabled, supporting) {
-                OutlinedTextFieldDefaults.DecorationBox(
-                    value = text,
-                    innerTextField = innerTextField,
-                    enabled = look.enabled,
-                    singleLine = look.singleLine,
-                    visualTransformation = visualTransformation,
-                    interactionSource = interaction,
-                    isError = look.isError,
-                    placeholder = look.placeholder,
-                    leadingIcon = look.leadingIcon,
-                    trailingIcon = look.trailingIcon,
-                    prefix = look.prefix,
-                    suffix = look.suffix,
-                    colors = colors,
-                    contentPadding = FIELD_PADDING,
-                    container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
-                )
+                // As tall as Material's icon slot, so a mark coming into the field (a wrong answer's ✕) moves nothing.
+                Box(Modifier.heightIn(min = FIELD_MIN_HEIGHT), propagateMinConstraints = true) {
+                    OutlinedTextFieldDefaults.DecorationBox(
+                        value = text,
+                        innerTextField = innerTextField,
+                        enabled = look.enabled,
+                        singleLine = look.singleLine,
+                        visualTransformation = visualTransformation,
+                        interactionSource = interaction,
+                        isError = look.isError,
+                        placeholder = look.placeholder,
+                        leadingIcon = look.leadingIcon,
+                        trailingIcon = look.trailingIcon,
+                        prefix = look.prefix,
+                        suffix = look.suffix,
+                        colors = colors,
+                        contentPadding = FIELD_PADDING,
+                        container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
+                    )
+                }
             }
         }
     }
@@ -431,6 +436,8 @@ private val INVALID_RING = 3.dp
 private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
+
+private val FIELD_MIN_HEIGHT = 48.dp
 
 /** Material's gap over a field's supporting text. */
 private val SUPPORTING_GAP = 4.dp
