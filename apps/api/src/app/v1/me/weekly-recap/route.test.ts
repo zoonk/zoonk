@@ -59,7 +59,22 @@ describe("GET /v1/me/weekly-recap", () => {
 
     expect(response.status).toBe(200);
     const body = weeklyRecapResponseSchema.parse(await response.json());
-    expect(body.week.daysStudied).toStrictEqual([]);
+
+    expect(body.week).toStrictEqual({
+      averageMinutes: 0,
+      daysStudied: [],
+      minutes: 0,
+      questions: 0,
+    });
+
+    expect(body.lastWeek).toStrictEqual({
+      averageMinutes: 0,
+      daysStudied: [],
+      minutes: 0,
+      questions: 0,
+    });
+
+    expect(body.comparison).toStrictEqual({ days: 0, minutes: 0, questions: 0 });
     expect(body.days.filter((day) => day.studied)).toStrictEqual([]);
   });
 

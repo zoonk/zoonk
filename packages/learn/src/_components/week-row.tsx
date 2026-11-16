@@ -37,14 +37,14 @@ export function WeekDayLetterSkeleton() {
   return <span className={DAY_LETTER_CLASS}>{"\u00A0"}</span>;
 }
 
-/** A day the plan gave no time that the learner studied anyway fills whole. */
+/** Core marks completed study, including study without planned time, through hitGoal. */
 export function getDayShare(day: WeekDay): number {
   if (day.hitGoal) {
     return 1;
   }
 
   if (day.goalMinutes === 0) {
-    return day.studied ? 1 : 0;
+    return 0;
   }
 
   return Math.min(1, day.minutes / day.goalMinutes);

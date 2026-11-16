@@ -19,6 +19,7 @@ export type StudyWeek = {
   /** Next local study day within a week, even beyond this week's end; null without one. */
   nextStudyDate: Date | null;
   time: WeeklyStudyTime;
+  totals: { questions: number; seconds: number };
 };
 
 type WeekGoal = Pick<
@@ -33,26 +34,23 @@ async function loadSavedSettings(goalId: string): Promise<unknown> {
   return plan?.settings;
 }
 
-/** One goal's week: its plan's days, its sessions and the time recorded for it, never another goal's. */
-export async function loadStudyWeek({
+async function loadWeekFacts({
   goal,
-  localDate,
+  from,
+  until,
   planSettings,
-  weekStart = getStartOfWeek(localDate),
 }: {
   goal: WeekGoal;
-  localDate: Date;
-  weekStart?: Date;
-  /** The plan the request shows, such as a choice not saved yet; the saved plan's otherwise. */
+  from: Date;
+  until: Date;
   planSettings?: unknown;
-}): Promise<StudyWeek> {
-  const weekDates = { gte: weekStart, lt: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY) };
-  const where = { goalId: goal.id, localDate: weekDates, userId: goal.userId };
+}) {
+  const where = { goalId: goal.id, localDate: { gte: from, lt: until }, userId: goal.userId };
 
   const [days, sessions, settings] = await Promise.all([
-    // Session rows repeat their blocks' seconds.
+    // Session rows repeat their blocks' seconds and answers.
     prisma.learningEvent.groupBy({
-      _sum: { seconds: true },
+      _sum: { correctAnswers: true, incorrectAnswers: true, seconds: true },
       by: ["localDate"],
       where: { ...where, kind: { not: "session" } },
     }),
@@ -63,6 +61,23 @@ export async function loadStudyWeek({
     planSettings === undefined ? loadSavedSettings(goal.id) : Promise.resolve(planSettings),
   ]);
 
+  return { days, sessions, settings };
+}
+
+function buildStudyWeek({
+  goal,
+  localDate,
+  weekStart,
+  facts,
+}: {
+  goal: WeekGoal;
+  localDate: Date;
+  weekStart: Date;
+  facts: Awaited<ReturnType<typeof loadWeekFacts>>;
+}): StudyWeek {
+  const until = new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY);
+  const days = facts.days.filter((day) => day.localDate >= weekStart && day.localDate < until);
+  const { sessions, settings } = facts;
   const timeZone = getAnswerTimeZone({ goal });
 
   // Dates before the goal existed must not appear as missed study or chosen rest days.
@@ -100,12 +115,66 @@ export async function loadStudyWeek({
     weekStart,
   });
 
+  const seconds = studied.reduce((total, day) => total + day.seconds, 0);
+
   return {
     days: week,
     nextStudyDate: getNextStudyDate({ getMinutes: getPlanMinutes, today: localDate }),
     time: {
-      studiedMinutes: toStudiedMinutes(studied.reduce((total, day) => total + day.seconds, 0)),
+      studiedMinutes: toStudiedMinutes(seconds),
       targetMinutes: week.reduce((total, day) => total + day.goalMinutes, 0),
     },
+    totals: {
+      questions: days.reduce(
+        (total, day) => total + (day._sum.correctAnswers ?? 0) + (day._sum.incorrectAnswers ?? 0),
+        0,
+      ),
+      seconds,
+    },
+  };
+}
+
+/** One goal's week: its plan's days, its sessions and its recorded study. */
+export async function loadStudyWeek({
+  goal,
+  localDate,
+  planSettings,
+  weekStart = getStartOfWeek(localDate),
+}: {
+  goal: WeekGoal;
+  localDate: Date;
+  planSettings?: unknown;
+  weekStart?: Date;
+}): Promise<StudyWeek> {
+  const facts = await loadWeekFacts({
+    from: weekStart,
+    goal,
+    planSettings,
+    until: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY),
+  });
+
+  return buildStudyWeek({ facts, goal, localDate, weekStart });
+}
+
+export async function loadStudyWeekPair({
+  goal,
+  localDate,
+  weekStart,
+}: {
+  goal: WeekGoal;
+  localDate: Date;
+  weekStart: Date;
+}): Promise<{ week: StudyWeek; lastWeek: StudyWeek }> {
+  const lastWeekStart = new Date(weekStart.getTime() - WEEK_DAYS * MS_PER_DAY);
+
+  const facts = await loadWeekFacts({
+    from: lastWeekStart,
+    goal,
+    until: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY),
+  });
+
+  return {
+    lastWeek: buildStudyWeek({ facts, goal, localDate, weekStart: lastWeekStart }),
+    week: buildStudyWeek({ facts, goal, localDate, weekStart }),
   };
 }
