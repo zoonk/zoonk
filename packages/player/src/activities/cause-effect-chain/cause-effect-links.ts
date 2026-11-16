@@ -36,10 +36,14 @@ export function compareLinks(learner: readonly Link[], expected: readonly Link[]
   ];
 }
 
+const HEAD_GAP = 4;
+
 /**
- * How far below its card's middle each arrow ends. Arrows into one card end a head apart, closer when
- * the card is short, and nest instead of crossing: those from above end above those from below, and
- * the farther an arrow comes from, the farther from that side it ends.
+ * How far below its card's middle each arrow ends (negative: above it). Arrows into one card end a
+ * head and a gap apart, around its middle when the card leads nowhere and below its own arrow's start
+ * when it does, closer when the card is short so each head stays beside it. They nest instead of
+ * crossing: those from above end above those from below, and the farther an arrow comes from, the
+ * farther from that side it ends.
  */
 export function arcEndOffsets({
   base,
@@ -67,9 +71,13 @@ export function arcEndOffsets({
       return base;
     }
 
-    const room = (cards[link.to]?.half ?? Number.POSITIVE_INFINITY) - base - headHeight / 2;
-    const spread = Math.max(0, Math.min(headHeight + 2, room / (into.length - 1)));
-    return base + into.indexOf(link) * spread;
+    const leadsOn = links.some((item) => item.from === link.to);
+    const bottom = (cards[link.to]?.half ?? Number.POSITIVE_INFINITY) - headHeight / 2;
+    const top = leadsOn ? base : -bottom;
+    const steps = into.length - 1;
+    const spread = Math.max(0, Math.min(headHeight + HEAD_GAP, (bottom - top) / steps));
+    const first = leadsOn ? top : -(spread * steps) / 2;
+    return first + into.indexOf(link) * spread;
   });
 }
 

@@ -69,14 +69,14 @@ describe(arcPath, () => {
 });
 
 describe(arcEndOffsets, () => {
-  const order = ["plow", "drought", "storms"];
+  const order = ["plow", "drought", "storms", "famine"];
 
   const intoStorms = [
     { from: "plow", to: "storms" },
     { from: "drought", to: "storms" },
   ];
 
-  it("ends arrows into one card a head apart, the one from farther away lower so they nest", () => {
+  it("spreads arrows into a card that leads nowhere around its middle, a head and a gap apart", () => {
     expect(
       arcEndOffsets({
         base: 5,
@@ -85,7 +85,7 @@ describe(arcEndOffsets, () => {
         links: intoStorms,
         order,
       }),
-    ).toStrictEqual([21, 5]);
+    ).toStrictEqual([9, -9]);
   });
 
   it("ends arrows from above over arrows from below", () => {
@@ -102,19 +102,31 @@ describe(arcEndOffsets, () => {
         links: intoDrought,
         order,
       }),
-    ).toStrictEqual([21, 5]);
+    ).toStrictEqual([9, -9]);
   });
 
   it("keeps every head beside a short card, closer together", () => {
     expect(
       arcEndOffsets({
         base: 5,
-        cards: { storms: { half: 20 } },
+        cards: { storms: { half: 14 } },
         headHeight: 14,
         links: intoStorms,
         order,
       }),
-    ).toStrictEqual([13, 5]);
+    ).toStrictEqual([7, -7]);
+  });
+
+  it("keeps arrows into a card that leads on below the start of its own arrow", () => {
+    expect(
+      arcEndOffsets({
+        base: 5,
+        cards: { famine: { half: 31 }, storms: { half: 31 } },
+        headHeight: 14,
+        links: [...intoStorms, { from: "storms", to: "famine" }],
+        order,
+      }),
+    ).toStrictEqual([23, 5, 5]);
   });
 
   it("ends a lone arrow at the base", () => {
