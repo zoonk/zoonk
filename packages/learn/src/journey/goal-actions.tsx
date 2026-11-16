@@ -172,7 +172,6 @@ export function GoalMenuDialogs({ goalTitle, menu }: { goalTitle: string; menu: 
       )}
 
       <ArchiveGoalDialog
-        goalTitle={goalTitle}
         onArchive={menu.archive}
         onOpenChange={menu.setArchiving}
         open={menu.archiving}
@@ -180,7 +179,6 @@ export function GoalMenuDialogs({ goalTitle, menu }: { goalTitle: string; menu: 
 
       {control.resume && (
         <ResumeGoalDialog
-          goalTitle={goalTitle}
           onOpenChange={menu.setResuming}
           onResume={menu.resume}
           open={menu.resuming}
@@ -191,12 +189,10 @@ export function GoalMenuDialogs({ goalTitle, menu }: { goalTitle: string; menu: 
 }
 
 function ResumeGoalDialog({
-  goalTitle,
   onOpenChange,
   onResume,
   open,
 }: {
-  goalTitle: string;
   onOpenChange: (open: boolean) => void;
   onResume: () => void;
   open: boolean;
@@ -208,7 +204,7 @@ function ResumeGoalDialog({
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Resume your {goal} goal?", { goal: goalTitle })}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Resume this goal?")}</AlertDialogTitle>
           <AlertDialogDescription>{effectText}</AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -222,12 +218,10 @@ function ResumeGoalDialog({
 }
 
 export function ArchiveGoalDialog({
-  goalTitle,
   onArchive,
   onOpenChange,
   open,
 }: {
-  goalTitle: string;
   onArchive: () => void;
   onOpenChange: (open: boolean) => void;
   open: boolean;
@@ -238,9 +232,9 @@ export function ArchiveGoalDialog({
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Archive your {goal} goal?", { goal: goalTitle })}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Archive this goal?")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t("It leaves your goals and its plan stops. What you learned stays in your progress.")}
+            {t("Archived goals leave Today and the Plan. What you learned stays in your progress.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -9,7 +9,7 @@ import { TodayBar } from "./today-bar";
 import { useTodayScreen } from "./today-context";
 
 export function TodayExamOver() {
-  const { actions, today } = useTodayScreen();
+  const { actions } = useTodayScreen();
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
@@ -29,7 +29,6 @@ export function TodayExamOver() {
   return (
     <TodayBar>
       <ExamOverActions
-        goalTitle={today.goal.displayName}
         keeping={isPending}
         onArchive={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
         onKeepStudying={keepStudying}
