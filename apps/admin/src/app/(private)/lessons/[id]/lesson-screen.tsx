@@ -32,6 +32,11 @@ function answersLabel(answers?: StepAnswers): string | null {
     : `${formatCount(answers.total, "answer")} · ${formatPercent((answers.correct / answers.total) * PERCENT)} right`;
 }
 
+/** A lesson in the learner's own language translates a word to itself, which says nothing. */
+function otherWords(translation: string | undefined, word: string): string | null {
+  return translation && translation !== word ? translation : null;
+}
+
 function ScreenLinks({ step }: { step: LibraryLessonStep }) {
   if (!(step.item || step.mediaAsset)) {
     return null;
@@ -98,13 +103,17 @@ export function LessonScreen({
           {step.word && step.kind === "vocabulary" ? (
             <>
               <p>{step.word.word}</p>
-              <ContentAnswer label="Translation">{translation ?? null}</ContentAnswer>
+              <ContentAnswer label="Translation">
+                {otherWords(translation, step.word.word)}
+              </ContentAnswer>
             </>
           ) : null}
           {step.word && step.kind === "translation" ? (
             <>
-              {translation ? <p>{translation}</p> : null}
-              <ContentAnswer label="Answer">{step.word.word}</ContentAnswer>
+              <p>{otherWords(translation, step.word.word) ?? step.word.word}</p>
+              <ContentAnswer label="Answer">
+                {otherWords(translation, step.word.word) && step.word.word}
+              </ContentAnswer>
             </>
           ) : null}
           {step.sentence && (step.kind === "reading" || step.kind === "listening") ? (
