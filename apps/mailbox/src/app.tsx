@@ -132,7 +132,9 @@ function EmailListMessage({
   return (
     <MailboxListItem>
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
-        <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
+        <span className="line-clamp-2 text-sm font-semibold tracking-[-0.01em]">
+          {email.subject}
+        </span>
         <time
           className="text-muted-foreground justify-self-end text-xs tabular-nums"
           dateTime={email.receivedAt}
@@ -246,7 +248,7 @@ function EmailBody({ email }: { email: CapturedEmail }) {
   return (
     <div className="border-border rounded-xl border bg-white p-5">
       <iframe
-        className="block min-h-95 w-full border-0 bg-white md:min-h-105"
+        className="block w-full border-0 bg-white"
         ref={frame}
         referrerPolicy="no-referrer"
         sandbox="allow-same-origin"

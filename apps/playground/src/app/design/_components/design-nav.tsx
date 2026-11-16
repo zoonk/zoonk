@@ -12,7 +12,7 @@ export function DesignNav() {
 
   return (
     <HorizontalScroll
-      className="max-lg:-mx-4 max-lg:-my-1.5 lg:sticky lg:top-6 lg:-mx-2.5 lg:self-start"
+      className="min-w-0 max-lg:-mx-4 max-lg:-my-1.5 lg:sticky lg:top-6 lg:-mx-2.5 lg:self-start"
       labels={SCROLL_LABELS}
     >
       <TabNav

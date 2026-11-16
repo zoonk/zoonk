@@ -73,7 +73,7 @@ export function TaskModelFileActions({
           disabled={disabled}
           onClick={() => setDeleteOpen(true)}
           size="bar"
-          variant="destructive"
+          variant="outline"
           icon={<Trash2Icon />}
         >
           Delete results
