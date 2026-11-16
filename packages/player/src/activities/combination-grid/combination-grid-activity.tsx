@@ -176,44 +176,40 @@ export function CombinationGridActivity({
   useCanvasQuestion(fillsFirst({ answer, content, fill, isLocked }));
 
   return (
-    <>
-      <ActivityCanvas className="gap-4" labelId={labelId}>
-        <GridBoard
-          activeCell={isLocked ? null : activeCell}
-          cells={cells}
-          checked={counted ? { counted, expected: right } : null}
-          columnLabel={fields.columns.label}
-          fill={isChecked && isReadOnly ? cells.map(() => null) : fill}
-          isAllele={isAllele}
-          onSelectCell={isLocked ? null : setActiveCell}
-          rowLabel={fields.rows.label}
+    <ActivityCanvas className="gap-4" labelId={labelId}>
+      <GridBoard
+        activeCell={isLocked ? null : activeCell}
+        cells={cells}
+        checked={counted ? { counted, expected: right } : null}
+        columnLabel={fields.columns.label}
+        fill={isChecked && isReadOnly ? cells.map(() => null) : fill}
+        isAllele={isAllele}
+        onSelectCell={isLocked ? null : setActiveCell}
+        rowLabel={fields.rows.label}
+        traits={traits}
+      />
+
+      {(!isReadOnly || (counted && counted.size > 0) || (isAllele && phase === "explore")) && (
+        <GridCaption
+          counted={counted && content.check.kind !== "interaction" ? counted.size : null}
+          expected={isChecked && !isReadOnly ? right : []}
+          fill={fill}
+          outputName={outputName(fields, output)}
           traits={traits}
         />
+      )}
 
-        {(!isReadOnly || (counted && counted.size > 0) || (isAllele && phase === "explore")) && (
-          <GridCaption
-            counted={counted && content.check.kind !== "interaction" ? counted.size : null}
-            expected={isChecked && !isReadOnly ? right : []}
-            fill={fill}
-            outputName={outputName(fields, output)}
-            traits={traits}
-          />
-        )}
+      {!isLocked && (
+        <GridPalette
+          activeCell={activeCell}
+          isAllele={isAllele}
+          onPick={handlePick}
+          options={cellOptions(fields, right)}
+          traits={traits}
+        />
+      )}
 
-        <ActivityTextAlternative>{description}</ActivityTextAlternative>
-      </ActivityCanvas>
-      <div className="pt-2 empty:hidden">
-        {" "}
-        {!isLocked && (
-          <GridPalette
-            activeCell={activeCell}
-            isAllele={isAllele}
-            onPick={handlePick}
-            options={cellOptions(fields, right)}
-            traits={traits}
-          />
-        )}
-      </div>
-    </>
+      <ActivityTextAlternative>{description}</ActivityTextAlternative>
+    </ActivityCanvas>
   );
 }

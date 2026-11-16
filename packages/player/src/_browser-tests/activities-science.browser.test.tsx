@@ -278,7 +278,7 @@ describe("science activities", () => {
     await page.getByRole("radio", { name: /1 in 2/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Purple: 2 of 4 · White: 2 of 4")).toBeVisible();
+    await expect.element(page.getByText("White: 2 of 4 squares")).toBeVisible();
   });
 
   it("Punnett grid: the share is asked once the square is filled, one question at a time", async () => {
@@ -325,7 +325,7 @@ describe("science activities", () => {
     await valueInput().fill("0.1667");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("6 of 36 squares show 7")).toBeVisible();
+    await expect.element(page.getByText("7: 6 of 36 squares")).toBeVisible();
   });
 });
 
