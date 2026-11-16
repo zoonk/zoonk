@@ -369,7 +369,7 @@ private struct ExamDateTag: View {
             .sheetClose { isOpen = false }
         }
         .presentationDetents([.fraction(0.3), .medium])
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
   }

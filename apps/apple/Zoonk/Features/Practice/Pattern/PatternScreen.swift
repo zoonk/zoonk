@@ -219,9 +219,10 @@ struct PatternScreen: View {
           Text("The rule", tableName: "Practice", comment: "Title of a pattern's rule.")
         )
         .navigationBarTitleDisplayMode(.inline)
+        .sheetClose { showsRule = false }
       }
       .presentationDetents([.medium, .large])
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 

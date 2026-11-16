@@ -42,11 +42,8 @@ struct CountryPickerSheet: View {
       )
       .navigationTitle(title)
       .toolbarTitleDisplayMode(.inline)
+      .sheetClose { dismiss() }
       .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-
         if saving != nil {
           ToolbarItem(placement: .status) {
             ProgressView()

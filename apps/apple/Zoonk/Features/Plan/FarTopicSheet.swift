@@ -29,11 +29,7 @@ struct FarTopicSheet: View {
       .announcesStatus(announcement(outline))
       .navigationTitle(Text(title))
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-      }
+      .sheetClose { dismiss() }
       .loads(outline, refreshable: false)
     }
     .presentationDetents([.medium, .large])

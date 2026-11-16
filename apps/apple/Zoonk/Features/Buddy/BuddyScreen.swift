@@ -138,7 +138,7 @@ private struct BuddyContent: View {
       }
       .presentationDetents([.medium, .large])
       .closesOnNavigation()
-      .zoonkStyles()
+      .zoonkSheet()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -148,11 +148,11 @@ private struct BuddyContent: View {
         },
         save: { choice in saving.run { [store] in await store.save(choice) } }
       )
-      .zoonkStyles()
+      .zoonkSheet()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in

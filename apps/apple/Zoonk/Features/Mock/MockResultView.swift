@@ -118,7 +118,7 @@ struct MockResultView: View {
     .sheet(isPresented: $choices.showsDetails) { details }
     .sheet(item: $choices.speakingTask) { task in
       ConversationScreen(conversationId: task.conversationId)
-        .zoonkStyles()
+        .zoonkSheet()
     }
   }
 
@@ -178,7 +178,7 @@ struct MockResultView: View {
       .toolbarTitleDisplayMode(.inline)
       .sheetClose { choices.showsDetails = false }
     }
-    .zoonkStyles()
+    .zoonkSheet()
   }
 
   @ViewBuilder

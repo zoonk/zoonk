@@ -23,7 +23,7 @@ struct TutorPanel: View {
           .navigationBarTitleDisplayMode(.inline)
           .sheetClose { dismiss() }
       }
-      .zoonkStyles()
+      .zoonkSheet()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
       .closesOnNavigation()

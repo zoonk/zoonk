@@ -119,6 +119,7 @@ private struct CertificateDetail: View {
     }
     .sheet(isPresented: $isLinkedInShown) {
       CertificateLinkedInSheet(certificate: certificate)
+        .zoonkSheet()
     }
     .onDisappear {
       nameSave.leave()

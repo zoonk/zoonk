@@ -791,14 +791,3 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   return days.map { symbols[$0] }.formatted(.list(type: .and, width: .narrow))
 }
 
-struct PlanSheetDoneButton: View {
-  @Environment(\.dismiss) private var dismiss
-
-  var body: some View {
-    Button(role: .confirm) {
-      dismiss()
-    } label: {
-      Text("Done", tableName: "Plan", comment: "Closes a sheet")
-    }
-  }
-}

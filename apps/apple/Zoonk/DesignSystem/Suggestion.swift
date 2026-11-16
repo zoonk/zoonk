@@ -96,7 +96,7 @@ struct SuggestionOpen<Content: View, Actions: View>: View {
           actions
         }
       }
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 }

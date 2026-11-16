@@ -269,7 +269,7 @@ private struct PlanContent: View {
     .loads(courseEnd, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .feedbackSheet(
       isPresented: $isReporting,

@@ -379,7 +379,7 @@ private struct PlanToolsSection: View {
     }
     .sheet(item: $choosing) { tool in
       PlanToolChoiceSheet(editor: editor, goal: goal, tool: tool)
-        .zoonkStyles()
+        .zoonkSheet()
     }
   }
 

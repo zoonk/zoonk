@@ -107,7 +107,7 @@ private struct PlanSheets: ViewModifier {
             self.sheet = nil
           }
         )
-        .zoonkStyles()
+        .zoonkSheet()
       }
   }
 
@@ -140,6 +140,7 @@ private struct PlanSheets: ViewModifier {
 
 /// A far topic's outline opens over the path, so closing it comes back to the path.
 private struct PlanPathSheet: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(\.planSheetOpen) private var sheetOpen
   @State private var outline: PlanSheet?
   @State private var pendingRoute: AppRoute?
@@ -158,11 +159,7 @@ private struct PlanPathSheet: View {
         Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-      }
+      .sheetClose { dismiss() }
     }
     // The whole path at once; the grabber still says it closes with a swipe down.
     .presentationDetents([.large])
@@ -177,7 +174,7 @@ private struct PlanPathSheet: View {
               outline = nil
             }
           )
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
   }

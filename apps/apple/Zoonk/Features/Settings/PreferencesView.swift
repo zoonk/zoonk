@@ -141,7 +141,7 @@ struct PreferencesView: View {
 
           return true
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
     .sheet(isPresented: $isEditingBuddy) {
@@ -150,7 +150,7 @@ struct PreferencesView: View {
           choice in
           save(.buddy(choice))
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
   }

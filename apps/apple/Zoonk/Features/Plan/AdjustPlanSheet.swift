@@ -17,6 +17,7 @@ struct AdjustPlanSheet: View {
     var id: Self { self }
   }
 
+  @Environment(\.dismiss) private var dismiss
   @State private var editor: PlanEditor
   /// The weekend switch answers at once, while the plan it changed is read again; until it's
   /// touched, it shows whether the plan's weekend has its own time.
@@ -89,11 +90,8 @@ struct AdjustPlanSheet: View {
         Text("Adjust your plan", tableName: "Plan", comment: "Navigation title of the plan editor")
       )
       .toolbarTitleDisplayMode(.inline)
+      .sheetClose { dismiss() }
       .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-
         if editor.isSaving {
           ToolbarItem(placement: .status) {
             ProgressView()

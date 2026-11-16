@@ -635,7 +635,7 @@ private struct PlanReveal: View {
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
-        .zoonkStyles()
+        .zoonkSheet()
     }
   }
 
