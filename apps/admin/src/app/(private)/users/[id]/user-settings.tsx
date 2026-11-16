@@ -5,6 +5,7 @@ import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 import { getUserStudyReminder } from "@/data/users/get-user-study-reminder";
 import { toWords } from "@/lib/format";
 import { type PushPlatform } from "@zoonk/db/enums";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   BellOffIcon,
   BrainIcon,
@@ -38,7 +39,7 @@ export async function UserSettings({ userId }: { userId: string }) {
           <DetailField icon={<SmileIcon aria-hidden="true" />} label="Buddy">
             {[profile.buddyName, profile.buddyKind && toWords(profile.buddyKind)]
               .filter(Boolean)
-              .join(" · ") || "—"}
+              .join(FACT_SEPARATOR) || "—"}
           </DetailField>
           <DetailField icon={<BrainIcon aria-hidden="true" />} label="Memory">
             <OnOff on={profile.memoryEnabled} />

@@ -3,6 +3,7 @@
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -36,7 +37,7 @@ function usePoints(progress: Progress): ProgressPoint[] {
     const name = t("Mock exam {number}", { number: String(mock.number) });
 
     return {
-      detail: [name, date(mock), shape].filter(Boolean).join(" · "),
+      detail: [name, date(mock), shape].filter(Boolean).join(FACT_SEPARATOR),
       key: String(mock.number),
       label: `${mock.percent}%`,
       value: mock.percent,
@@ -127,7 +128,7 @@ function useLatestMock(progress: Progress) {
 
   const name = [t("Mock exam {number}", { number: String(latest.number) }), getMockSubject(latest)]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 
   return {
     change: first && progress.mocks.length > 1 ? latest.percent - first.percent : null,

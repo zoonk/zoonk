@@ -27,7 +27,7 @@ function useDateNote() {
   }): string | null {
     return namedMonth && targetDate
       ? t("{month} for now. Pick the day when you know it.", {
-          month: formatDate(targetDate, "month"),
+          month: formatDate(targetDate, "sentenceMonth", { year: "always" }),
         })
       : null;
   };

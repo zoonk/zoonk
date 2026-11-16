@@ -1,5 +1,6 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
+import { getMomentDateFormatter } from "@/lib/dates";
 import { type getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
@@ -11,7 +12,7 @@ import {
   PageSubtitle,
 } from "@zoonk/learn/page";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { KeepPlusButton } from "./keep-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
@@ -22,10 +23,8 @@ function renderDate(chunks: React.ReactNode) {
 
 async function getStoreDateLine(subscription: Subscription): Promise<React.ReactNode> {
   const t = await getExtracted();
-  const format = await getFormatter();
-
-  const toDate = (date: Date) =>
-    format.dateTime(new Date(date), { day: "numeric", month: "short", year: "numeric" });
+  const formatDate = await getMomentDateFormatter();
+  const toDate = (date: Date) => formatDate(new Date(date), { year: "always" });
 
   const endingAt =
     subscription.cancelAt ?? (subscription.cancelAtPeriodEnd ? subscription.periodEnd : null);
@@ -75,8 +74,8 @@ async function getWebDateLine(web: WebSubscription) {
     return null;
   }
 
-  const format = await getFormatter();
-  const date = format.dateTime(web.periodEnd, { day: "numeric", month: "short", year: "numeric" });
+  const formatDate = await getMomentDateFormatter();
+  const date = formatDate(web.periodEnd, { year: "always" });
 
   return web.state === "ending"
     ? t.rich("Plus ends on <mono>{date}</mono>.", { date, mono: renderDate })

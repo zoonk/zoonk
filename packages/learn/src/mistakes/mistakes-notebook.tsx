@@ -8,6 +8,7 @@ import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
@@ -80,7 +81,7 @@ const INBOX_QUERY = "(min-width: 64rem)";
 function NotebookHero({ goalTitle, notebook }: { goalTitle: string | null; notebook: Notebook }) {
   const t = useExtracted();
   const availability = useNotebookAvailabilityText(notebook.availability);
-  const subtitle = [goalTitle, availability].filter(Boolean).join(" · ");
+  const subtitle = [goalTitle, availability].filter(Boolean).join(FACT_SEPARATOR);
 
   return (
     <DetailHero>

@@ -19,6 +19,7 @@ import {
   renderStepNumber,
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
+import { useFormatRange } from "../_utils/range";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useEssayScreen } from "./essay-context";
 import { CriteriaRows } from "./essay-criteria-rows";
@@ -53,6 +54,7 @@ export function EssayGradeCard({
   rubric: string;
 }) {
   const t = useExtracted();
+  const formatRange = useFormatRange();
   const formatScore = useFormatScore();
   const writingName = useWritingName();
 
@@ -72,10 +74,7 @@ export function EssayGradeCard({
       <StepHeader>
         <LabeledStepTitle label={writingName(rubric)}>
           <StepTitleNumber>
-            {t("{low}–{high}", {
-              high: formatScore(grade.range.high),
-              low: formatScore(grade.range.low),
-            })}
+            {formatRange(formatScore(grade.range.low), formatScore(grade.range.high))}
           </StepTitleNumber>
         </LabeledStepTitle>
         <StepDetail className="text-sm">

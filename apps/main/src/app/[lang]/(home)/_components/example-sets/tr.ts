@@ -23,10 +23,11 @@ export const tr: ExampleSet = {
     goal: () => "Haziran’daki YKS’ye hazırlanmak",
     headline: "YKS’ye hazırlanmak",
     mock: {
-      details: "120 soru · 165 dk",
       firm: ["Paragraf", "Basınç"],
+      minutes: 165,
       mistakes: 3,
       name: "TYT",
+      questions: "120 soru",
       review: ["Problemler", "Üslü sayılar"],
       scores: [{ label: "TYT", range: "395–420" }],
     },

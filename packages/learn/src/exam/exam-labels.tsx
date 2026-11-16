@@ -37,7 +37,7 @@ export function useExamDayText() {
   const formatTimeOfDay = useFormatTimeOfDay();
 
   return (day: ExamDay): string => {
-    const date = formatDate(day.date, "weekdayLongYear");
+    const date = formatDate(day.date, "sentence", { weekday: true, year: "always" });
 
     if (!day.startTime) {
       return date;

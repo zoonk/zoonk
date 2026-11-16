@@ -1,4 +1,5 @@
 import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CheckIcon } from "lucide-react";
 
@@ -135,7 +136,7 @@ export function ContentWords({ content }: { content: unknown }) {
       <Prose>{text(content.result) ?? text(content.reveal)}</Prose>
       <Answer label="Answer">{blanks.join(", ") || text(content.targetText)}</Answer>
       <Answer label="Also offered">{strings(content.distractors).join(", ") || null}</Answer>
-      <Answer label="Accepted">{accepted.join(" · ") || null}</Answer>
+      <Answer label="Accepted">{accepted.join(FACT_SEPARATOR) || null}</Answer>
       <Prose quiet>{text(content.translation) ?? text(content.feedback)}</Prose>
     </>
   );

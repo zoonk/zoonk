@@ -1,7 +1,8 @@
 "use client";
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { useExtracted, useFormatter } from "next-intl";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
+import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import {
   ListRow,
@@ -11,6 +12,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { useFormatWeekday } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
@@ -47,8 +49,8 @@ export function useChallengeDayName() {
 }
 
 export function useWeekdayLabel() {
-  const format = useFormatter();
-  return (date: Date) => toLabelCase(format.dateTime(date, { timeZone: "UTC", weekday: "long" }));
+  const formatWeekday = useFormatWeekday();
+  return (date: Date) => toLabelCase(formatWeekday(date));
 }
 
 function ChallengeLine({ facts, name }: { facts: string; name: string }) {
@@ -70,7 +72,7 @@ function FullReviewRow({ date }: { date: Date }) {
         <KindDot kind="review" />
       </ListRowLeading>
       <ChallengeLine
-        facts={[weekdayLabel(date), t("every topic")].join(" · ")}
+        facts={[weekdayLabel(date), t("every topic")].join(FACT_SEPARATOR)}
         name={t("Review")}
       />
     </ListRow>
@@ -102,7 +104,7 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
       <ListRowLeading>
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
-      <ChallengeLine facts={facts.join(" · ")} name={name} />
+      <ChallengeLine facts={facts.join(FACT_SEPARATOR)} name={name} />
     </>
   );
 
