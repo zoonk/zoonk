@@ -29,6 +29,7 @@ function TranslationOptionContent({ word }: { word: TranslationOption }) {
   return (
     <>
       <PlayerChoiceSceneOptionText>{word.word}</PlayerChoiceSceneOptionText>
+      {word.romanization && <br />}
       <RomanizationText>{word.romanization}</RomanizationText>
     </>
   );

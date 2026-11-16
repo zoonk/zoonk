@@ -65,7 +65,7 @@ export function MistakeAnswer({
   return (
     <p
       className={cn(
-        "text-reading w-full rounded-xl px-3.5 py-3 leading-6 font-medium wrap-break-word",
+        "text-reading w-full rounded-xl px-4 py-3 leading-6 font-medium wrap-break-word",
         right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
       )}
       data-slot="mistake-answer"
