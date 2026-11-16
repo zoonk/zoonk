@@ -333,6 +333,8 @@ class CheckpointScreenshots {
                 "checkpoint" to JsonObject(ended + ("answers" to answers)),
                 "missions" to missions(missionKind, missionDone),
                 "completedMissions" to JsonArray(if (missionDone) listOf(JsonPrimitive(missionKind)) else emptyList()),
+                // Core pays the day's bonus only once every mission is done, and the review mission never is here.
+                "fullMeal" to JsonObject(mapOf("bonus" to JsonPrimitive(20), "paid" to JsonPrimitive(false))),
                 "reached" to
                     JsonObject(
                         mapOf(

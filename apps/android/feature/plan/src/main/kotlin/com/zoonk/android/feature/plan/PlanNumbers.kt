@@ -198,7 +198,7 @@ internal fun PlanNumbers(
 }
 
 @Composable
-private fun standingTitle(standing: Standing) =
+internal fun standingTitle(standing: Standing) =
     stringResource(
         when (standing) {
             is Standing.Preparation -> R.string.plan_your_preparation
@@ -384,13 +384,24 @@ private fun DetailsSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
-        ) {
-            Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            content()
-        }
+        DetailsSheetBody(
+            title,
+            Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
+            content,
+        )
+    }
+}
+
+/** A number's details sheet below its handle: its title over its content. */
+@Composable
+internal fun DetailsSheetBody(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(28.dp)) {
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        content()
     }
 }
 
