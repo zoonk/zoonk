@@ -98,7 +98,9 @@ function MindMapText({ outline }: { outline: Outline }) {
 function StateHeading({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-baseline gap-3">
-      <KindDot className="-translate-y-px" kind="mindMap" />
+      <span className="flex w-4 shrink-0 justify-center">
+        <KindDot className="-translate-y-px" kind="mindMap" />
+      </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">{children}</div>
     </div>
   );

@@ -5,7 +5,8 @@ import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
-import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
+import { FactSegments } from "../_components/task-meta";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -73,20 +74,11 @@ function RoadmapCompact({
           className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}
           data-slot="plan-roadmap-line"
         >
-          {/* Too narrow for one line (large text), the place, the phase's name and its end each take a line of their own. */}
-          <span className="stacked:flex-col flex min-w-0 flex-wrap items-baseline">
-            <span className="font-medium">{position.place}</span>
-            {position.name && (
-              <span
-                className={cn(
-                  TRUNCATED_TITLE_CLASS,
-                  "text-muted-foreground stacked:basis-auto max-w-max min-w-0 grow basis-24 text-pretty",
-                )}
-              >
-                <span className="stacked:hidden whitespace-pre">{" · "}</span>
-                {position.name}
-              </span>
-            )}
+          <span className="text-muted-foreground text-balance">
+            <FactSegments
+              facts={[position.name]}
+              lead={<span className="text-foreground font-medium">{position.place}</span>}
+            />
           </span>
           <span
             className="text-muted-foreground ms-auto flex items-center gap-3"

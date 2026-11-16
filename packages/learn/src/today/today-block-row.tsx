@@ -226,7 +226,7 @@ export function PlanLessonRow({
   const isNext = onOpen !== null;
 
   const name = (
-    <span className={cn(TRUNCATED_TITLE_CLASS, "min-w-0 flex-1 text-sm leading-5 font-medium")}>
+    <span className="line-clamp-2 min-w-0 flex-1 text-sm leading-5 font-medium text-pretty">
       {title}
     </span>
   );
