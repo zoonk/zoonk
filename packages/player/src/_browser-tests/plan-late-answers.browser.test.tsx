@@ -242,6 +242,43 @@ describe("the Plan's offer to fit more lessons", () => {
     });
   });
 
+  it("drops a fit check on a changed plan and checks the new plan on the next tap", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromSheet(held);
+
+      held.showPlan({ ...PLAN, schedule: { ...PLAN.schedule, dailyMinutes: 45 } });
+      const add = page.getByRole("dialog").getByRole("button", { name: "Add to my plan" });
+      await expect.element(add).toBeEnabled();
+      held.release();
+      await settle();
+
+      expect(held.change).not.toHaveBeenCalled();
+      await expect.element(add).toBeEnabled();
+      await add.click();
+      await expect.poll(() => held.preview).toHaveBeenCalledTimes(2);
+      held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
+      await expect.element(page.getByRole("dialog").getByText(REPRICED)).toBeVisible();
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+
+  it("keeps a fit check through an unchanged plan refresh", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromSheet(held);
+
+      held.showPlan(structuredClone(PLAN));
+      held.release();
+
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+      expect(held.preview).toHaveBeenCalledOnce();
+      held.releaseChange();
+      held.screen.unmount();
+    });
+  });
+
   it("changes nothing when the learner closes the sheet before the check answers", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
