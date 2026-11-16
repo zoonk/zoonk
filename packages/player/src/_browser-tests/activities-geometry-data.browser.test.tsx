@@ -254,14 +254,15 @@ describe("geometry and data activities", () => {
     await expect.element(valueInput()).toHaveValue("95.45");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
+    await expect.element(page.getByText("70 to 130: 95.45%")).not.toBeInTheDocument();
   });
 
-  it("distribution explorer: half the range gives the wrong share", async () => {
+  it("distribution explorer: half the range gives the wrong share and shows the target", async () => {
     openActivity({ template: "distributionExplorer" });
     await pressOnSlider("Lower handle", "ArrowLeft", 4);
     await checkActivity();
     await expectVerdict("Not quite");
+    await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
   });
 
   it("random simulation by sampling: bigger samples bunch up", async () => {

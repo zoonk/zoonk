@@ -61,8 +61,8 @@ describe(getRevealDelta, () => {
       visible,
     });
 
-    expect(delta).toBe(38);
-    expect(chip.bottom - delta).toBeLessThanOrEqual(visible.top);
+    expect(delta).toBe(40);
+    expect(chip.bottom - delta).toBeLessThan(visible.top);
   });
 
   it("keeps a chip that stays whole", () => {

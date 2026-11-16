@@ -79,7 +79,9 @@ export const societyReasoningActivities = {
     template: "causeEffectChain",
   },
   findError: {
-    check: explained("120 × 0.8 is 96, not 100: the 20% off is taken from the bigger number."),
+    check: explained(
+      "Taking 20% off 120 removes 24, more than the 20 the rise added, so the price ends at $96.",
+    ),
     fields: {
       correction: "120 × 0.8 = 96, not 100.",
       errorStepId: "s2",
@@ -178,7 +180,10 @@ export const societyReasoningActivities = {
           date: "April 1775",
           excerpt: "The regulars fired on us without any provocation.",
           id: "parker",
-          passages: [{ id: "p1", isTarget: true, text: "The regulars fired on us" }],
+          passages: [
+            { id: "p1", isTarget: true, text: "The regulars fired on us" },
+            { id: "p1b", isTarget: false, text: "without any provocation" },
+          ],
         },
         {
           author: "A British officer",
@@ -186,7 +191,10 @@ export const societyReasoningActivities = {
           date: "April 1775",
           excerpt: "Some of the rebels fired first from behind a wall.",
           id: "pitcairn",
-          passages: [{ id: "p2", isTarget: true, text: "the rebels fired first" }],
+          passages: [
+            { id: "p2", isTarget: true, text: "the rebels fired first" },
+            { id: "p2b", isTarget: false, text: "from behind a wall" },
+          ],
         },
       ],
     },

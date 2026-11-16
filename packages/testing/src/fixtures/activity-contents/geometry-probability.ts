@@ -55,7 +55,7 @@ export const geometryProbabilityActivities = {
   },
   geometryBoard: {
     check: numericCheck(180, {
-      explanation: "However you drag the corners, the three angles add up to 180°.",
+      explanation: "When one corner opens up, the other two together close by just as much.",
       question: "What do the three angles add up to?",
       unit: "°",
     }),
@@ -88,12 +88,12 @@ export const geometryProbabilityActivities = {
       {
         isCorrect: true,
         reason: "252 of the 1,024 ways 10 flips can land have exactly 5 heads.",
-        text: "About 1 in 4",
+        text: "About 25% of the time",
         value: 0.25,
       },
       {
         isCorrect: false,
-        reason: "It's the most likely single count, about 1 time in 4.",
+        reason: "It's the most likely single count, about 25% of the time.",
         text: "Rarely",
         value: 0.05,
       },

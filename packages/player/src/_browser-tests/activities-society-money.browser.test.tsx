@@ -460,6 +460,7 @@ describe("money and society activities with a keyboard only", () => {
     await focusOn(page.getByRole("checkbox", { name: "The regulars fired on us" }));
     await press("Space");
     await press("Tab");
+    await press("Tab");
     await press("Enter");
 
     await expect

@@ -4,9 +4,9 @@ import { numericCheck, reasonedChoice } from "./activity-checks";
 export const musicAnySubjectActivities = {
   beforeAfter: {
     check: numericCheck(0.12, {
-      explanation: "1.5 hours is 0.12 of 12.5 hours: about 8 times less.",
+      explanation: "1.5 ÷ 12.5 = 0.12: in 1914 a car took about an eighth of the 1912 time.",
       output: "hours",
-      question: "What fraction of the 1912 time did a car take in 1914?",
+      question: "Divide the 1914 time by the 1912 time. What do you get?",
     }),
     data: { source: { title: "Ford Motor Company production records" } },
     fields: {

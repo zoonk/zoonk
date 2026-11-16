@@ -12,7 +12,7 @@ export const scienceMoneyActivities = {
       },
       {
         isCorrect: true,
-        reason: "Two of the four squares are pp, and only pp grows white.",
+        reason: "2 of the 4 squares are pp, and only pp grows white.",
         text: "1 in 2",
         value: 0.5,
       },

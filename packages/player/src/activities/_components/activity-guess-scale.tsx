@@ -16,6 +16,7 @@ import {
   shareOfValue,
   valueAtPosition,
 } from "../_utils/guess-scale";
+import { tickLabels } from "../_utils/plot-ticks";
 
 const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
@@ -97,6 +98,11 @@ export function ActivityGuessScale({
   const ticks = scaleTicks(scale);
   const isMoney = splitMoneyUnit(unit) !== null;
 
+  const { isShort } = tickLabels({
+    format: (value, compact) => format(value, { compact, unit: isMoney ? unit : undefined }),
+    ticks,
+  });
+
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
   }
@@ -170,7 +176,7 @@ export function ActivityGuessScale({
           >
             {/* The scale says what it counts before any guess: money on every tick, a word once, at its end. */}
             {format(tick, {
-              compact: true,
+              compact: isShort,
               unit: isMoney || index === ticks.length - 1 ? unit : undefined,
             })}
           </span>

@@ -74,7 +74,7 @@ function PictureOptionContent({
     return (
       <p
         className={cn(
-          "bg-muted/50 text-muted-foreground flex items-center p-3 text-sm leading-snug",
+          "bg-muted/50 flex items-center justify-center p-3 text-center text-sm leading-snug",
           OPTION_PICTURE_BOX_CLASS,
         )}
         style={OPTION_PICTURE_BOX_STYLE}

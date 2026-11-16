@@ -6,7 +6,7 @@ export const engineModeFixtures = {
     dice: {
       check: {
         ...numericCheck(0.1667, {
-          explanation: "6 of the 36 squares add up to 7, and 6 ÷ 36 is about 0.17.",
+          explanation: "6 of the 36 squares add up to 7, and 6 ÷ 36 is about 0.167.",
           question: "What is the chance of a 7, as a decimal?",
         }),
         output: "7",
@@ -36,7 +36,7 @@ export const engineModeFixtures = {
     calculator: {
       check: numericCheck(251.54, {
         explanation:
-          "With $200 extra a month the loan is paid off in about 252 months, 9 years sooner than with no extra.",
+          "With $200 extra a month the loan is paid off in 251.54 months, about 9 years sooner than with no extra.",
         inputs: [{ name: "extra", value: 200 }],
         question: "How many months does it take with $200 extra a month?",
       }),
@@ -162,7 +162,8 @@ export const engineModeFixtures = {
         max: 30,
         min: 1,
         scale: "linear",
-        takeaway: "The map stretches land near the poles.",
+        takeaway:
+          "The usual world map stretches land near the poles, so Greenland looks far bigger than it is.",
         truth: { kind: "cited", value: 14 },
         unit: "times",
       },
@@ -231,24 +232,24 @@ export const engineModeFixtures = {
   },
   randomSimulation: {
     sampling: {
-      check: reasonedChoice("Asking 4 times the people makes the error…", [
+      check: reasonedChoice("Asking 4 times the people makes the margin of error…", [
         {
           isCorrect: true,
           reason:
-            "The error shrinks with the square root of the sample: 4 times the people, half the error.",
+            "The margin shrinks with the square root of the sample: 4 times the people, half the margin.",
           text: "Half as big",
           value: 0.5,
         },
         {
           isCorrect: false,
           reason:
-            "The error shrinks more slowly than the sample grows: 4 times the people only halves it.",
+            "The margin shrinks more slowly than the sample grows: 4 times the people only halves it.",
           text: "A quarter as big",
           value: 0.25,
         },
         {
           isCorrect: false,
-          reason: "A bigger sample lands closer to the true value, so the error shrinks.",
+          reason: "A bigger sample lands closer to the town's true share, so the margin shrinks.",
           text: "The same",
           value: 1,
         },
@@ -262,7 +263,7 @@ export const engineModeFixtures = {
         sampleSizes: [100, 400],
         sizeLabel: "People per sample",
       },
-      prompt: "Take 200 samples of each size.",
+      prompt: "Poll the town 200 times with each sample size and see how far the results spread.",
       template: "randomSimulation",
     },
   },

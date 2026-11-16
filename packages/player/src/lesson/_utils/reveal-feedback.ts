@@ -2,6 +2,9 @@ type Span = { bottom: number; top: number };
 
 const MARGIN = 16;
 
+/** A chip's ring and a fraction of a pixel sit outside its box. */
+const CLEAR = 2;
+
 function getWholeFeedbackDelta(feedback: Span, visible: Span): number {
   if (feedback.top < visible.top) {
     return feedback.top - visible.top - MARGIN;
@@ -44,8 +47,7 @@ export function getRevealDelta({
     return whole;
   }
 
-  const keepsTitle =
-    title.top - visible.top - (chip ? Math.min(MARGIN, title.top - chip.bottom) : 0);
+  const chipOut = chip ? Math.ceil(chip.bottom - visible.top) + CLEAR : 0;
 
-  return chip && whole <= keepsTitle ? keepsTitle : title.bottom - visible.top;
+  return chip && whole <= chipOut ? chipOut : title.bottom - visible.top;
 }

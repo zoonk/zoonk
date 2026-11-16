@@ -261,7 +261,7 @@
     "baseMap": null,
     "content": {
       "check": {
-        "explanation": "The discount comes first: $60 less 25% is $45. The tax is 8% of $45, which is $3.60, so you pay $48.60.",
+        "explanation": "The discount comes first: $60 less 25% is $45. Then the tax is added to $45, so you pay $48.60.",
         "kind": "interaction"
       },
       "fields": {
@@ -447,7 +447,7 @@
     "content": {
       "check": {
         "answer": 180,
-        "explanation": "However you drag the corners, the three angles add up to 180°.",
+        "explanation": "When one corner opens up, the other two together close by just as much.",
         "kind": "numeric",
         "question": "What do the three angles add up to?",
         "tolerance": { "kind": "absolute", "value": 0.01 },
@@ -509,13 +509,13 @@
             "id": "o2",
             "isCorrect": true,
             "reason": "252 of the 1,024 ways 10 flips can land have exactly 5 heads.",
-            "text": "About 1 in 4",
+            "text": "About 25% of the time",
             "value": 0.25
           },
           {
             "id": "o3",
             "isCorrect": false,
-            "reason": "It's the most likely single count, about 1 time in 4.",
+            "reason": "It's the most likely single count, about 25% of the time.",
             "text": "Rarely",
             "value": 0.05
           }
@@ -614,7 +614,7 @@
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "Two of the four squares are pp, and only pp grows white.",
+            "reason": "2 of the 4 squares are pp, and only pp grows white.",
             "text": "1 in 2",
             "value": 0.5
           },
@@ -1504,7 +1504,7 @@
     "baseMap": null,
     "content": {
       "check": {
-        "explanation": "120 × 0.8 is 96, not 100: the 20% off is taken from the bigger number.",
+        "explanation": "Taking 20% off 120 removes 24, more than the 20 the rise added, so the price ends at $96.",
         "kind": "interaction"
       },
       "fields": {
@@ -1793,7 +1793,10 @@
             "date": "April 1775",
             "excerpt": "The regulars fired on us without any provocation.",
             "id": "parker",
-            "passages": [{ "id": "p1", "isTarget": true, "text": "The regulars fired on us" }]
+            "passages": [
+              { "id": "p1", "isTarget": true, "text": "The regulars fired on us" },
+              { "id": "p1b", "isTarget": false, "text": "without any provocation" }
+            ]
           },
           {
             "author": "A British officer",
@@ -1801,7 +1804,10 @@
             "date": "April 1775",
             "excerpt": "Some of the rebels fired first from behind a wall.",
             "id": "pitcairn",
-            "passages": [{ "id": "p2", "isTarget": true, "text": "the rebels fired first" }]
+            "passages": [
+              { "id": "p2", "isTarget": true, "text": "the rebels fired first" },
+              { "id": "p2b", "isTarget": false, "text": "from behind a wall" }
+            ]
           }
         ]
       },
@@ -1858,9 +1864,9 @@
       "check": {
         "output": "hours",
         "answer": 0.12,
-        "explanation": "1.5 hours is 0.12 of 12.5 hours: about 8 times less.",
+        "explanation": "1.5 ÷ 12.5 = 0.12: in 1914 a car took about an eighth of the 1912 time.",
         "kind": "numeric",
-        "question": "What fraction of the 1912 time did a car take in 1914?",
+        "question": "Divide the 1914 time by the 1912 time. What do you get?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
       },
       "data": { "source": { "title": "Ford Motor Company production records" } },
@@ -2022,7 +2028,7 @@
       "check": {
         "output": "7",
         "answer": 0.1667,
-        "explanation": "6 of the 36 squares add up to 7, and 6 ÷ 36 is about 0.17.",
+        "explanation": "6 of the 36 squares add up to 7, and 6 ÷ 36 is about 0.167.",
         "kind": "numeric",
         "question": "What is the chance of a 7, as a decimal?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
@@ -2095,7 +2101,7 @@
       "check": {
         "inputs": [{ "name": "extra", "value": 200 }],
         "answer": 251.54,
-        "explanation": "With $200 extra a month the loan is paid off in about 252 months, 9 years sooner than with no extra.",
+        "explanation": "With $200 extra a month the loan is paid off in 251.54 months, about 9 years sooner than with no extra.",
         "kind": "numeric",
         "question": "How many months does it take with $200 extra a month?",
         "tolerance": { "kind": "absolute", "value": 0.01 }
@@ -2352,7 +2358,7 @@
         "max": 30,
         "min": 1,
         "scale": "linear",
-        "takeaway": "The map stretches land near the poles.",
+        "takeaway": "The usual world map stretches land near the poles, so Greenland looks far bigger than it is.",
         "truth": { "kind": "cited", "value": 14 },
         "unit": "times"
       },
@@ -2504,26 +2510,26 @@
           {
             "id": "o0",
             "isCorrect": true,
-            "reason": "The error shrinks with the square root of the sample: 4 times the people, half the error.",
+            "reason": "The margin shrinks with the square root of the sample: 4 times the people, half the margin.",
             "text": "Half as big",
             "value": 0.5
           },
           {
             "id": "o1",
             "isCorrect": false,
-            "reason": "The error shrinks more slowly than the sample grows: 4 times the people only halves it.",
+            "reason": "The margin shrinks more slowly than the sample grows: 4 times the people only halves it.",
             "text": "A quarter as big",
             "value": 0.25
           },
           {
             "id": "o2",
             "isCorrect": false,
-            "reason": "A bigger sample lands closer to the true value, so the error shrinks.",
+            "reason": "A bigger sample lands closer to the town's true share, so the margin shrinks.",
             "text": "The same",
             "value": 1
           }
         ],
-        "question": "Asking 4 times the people makes the error…"
+        "question": "Asking 4 times the people makes the margin of error…"
       },
       "data": { "isExample": true },
       "fields": {
@@ -2534,7 +2540,7 @@
         "sampleSizes": [100, 400],
         "sizeLabel": "People per sample"
       },
-      "prompt": "Take 200 samples of each size.",
+      "prompt": "Poll the town 200 times with each sample size and see how far the results spread.",
       "template": "randomSimulation"
     },
     "expected": { "kind": "choice", "optionId": "o0" },

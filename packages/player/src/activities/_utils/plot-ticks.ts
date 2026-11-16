@@ -16,12 +16,13 @@ export function tickLabels({
 }: {
   format: (value: number, isShort: boolean) => string;
   ticks: readonly number[];
-}): { format: (value: number) => string; room: number } {
+}): { format: (value: number) => string; isShort: boolean; room: number } {
   const longest = Math.max(0, ...ticks.map((tick) => format(tick, false).length));
   const isShort = longest > LONGEST_FULL_LABEL;
 
   return {
     format: (value) => format(value, isShort),
+    isShort,
     room: isShort ? PLOT_TICK_ROOM : Math.max(PLOT_TICK_ROOM, longest * CHARACTER_WIDTH + TICK_GAP),
   };
 }

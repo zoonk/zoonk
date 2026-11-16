@@ -125,6 +125,7 @@ export function DistributionExplorerActivity({
     });
 
   const targetShare = percentBetween(content, fields.target);
+  const isOnTarget = handles.from === fields.target.from && handles.to === fields.target.to;
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -153,7 +154,7 @@ export function DistributionExplorerActivity({
           ticks={distributionTicks(distribution, domain)}
         />
 
-        {isChecked && (
+        {isChecked && !isOnTarget && (
           <DistributionTarget
             label={t("{from} to {to}: {share}", {
               from: format(fields.target.from),

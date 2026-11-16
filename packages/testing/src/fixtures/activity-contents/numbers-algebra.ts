@@ -128,7 +128,7 @@ export const numbersAlgebraActivities = {
   },
   stepSolver: {
     check: explained(
-      "The discount comes first: $60 less 25% is $45. The tax is 8% of $45, which is $3.60, so you pay $48.60.",
+      "The discount comes first: $60 less 25% is $45. Then the tax is added to $45, so you pay $48.60.",
     ),
     fields: {
       problem: "A $60 jacket is 25% off. With 8% sales tax, what do you pay?",

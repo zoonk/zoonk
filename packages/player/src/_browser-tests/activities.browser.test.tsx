@@ -112,7 +112,7 @@ describe("lesson activities", () => {
       .element(page.getByText("Pick your guess, then check it to run the simulation."))
       .toBeVisible();
 
-    await page.getByRole("radio", { name: /About 1 in 4/u }).click();
+    await page.getByRole("radio", { name: /About 25% of the time/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
@@ -141,7 +141,7 @@ describe("lesson activities", () => {
       template: "randomSimulation",
     });
 
-    await page.getByRole("radio", { name: /About 1 in 4/u }).click();
+    await page.getByRole("radio", { name: /About 25% of the time/u }).click();
     await checkActivity();
 
     await expect.element(page.getByText("No", { exact: true })).toBeVisible();

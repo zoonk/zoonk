@@ -68,11 +68,18 @@ export function isExploreBadge(kind: ActivityBadgeKind): boolean {
   return !ASKS_FIRST.has(kind);
 }
 
-export function ActivityBadge({ kind, title }: { kind: ActivityBadgeKind; title?: string }) {
+/** `over` is the lines the chip sits over: a chip that only repeats how one of them opens is dropped. */
+export function ActivityBadge({
+  kind,
+  over,
+}: {
+  kind: ActivityBadgeKind;
+  over: readonly string[];
+}) {
   const Icon = BADGE_ICONS[kind];
   const label = useBadgeLabel(kind);
 
-  if (title !== undefined && opensTitle({ label, title })) {
+  if (over.some((title) => opensTitle({ label, title }))) {
     return null;
   }
 

@@ -26,7 +26,7 @@ export function ActivityModelSliders({
   disabled: boolean;
   onChange: (name: string, value: number) => void;
   output: { label: string; value: string };
-  /** The variable on the axis of the chart right above, which already prints this slider's scale. */
+  /** The variable on the axis of the chart right above, which prints a lone slider's scale for it. */
   scaledAbove: string;
   values: ModelValues;
   variables: readonly Variable[];
@@ -49,7 +49,7 @@ export function ActivityModelSliders({
             min={variable.min}
             onValueChange={(next) => onChange(variable.name, next)}
             scale={
-              variable.name !== scaledAbove && (
+              (variables.length > 1 || variable.name !== scaledAbove) && (
                 <div
                   aria-hidden="true"
                   className="text-muted-foreground flex justify-between text-xs tabular-nums"

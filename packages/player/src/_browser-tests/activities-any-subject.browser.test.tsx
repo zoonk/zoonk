@@ -24,7 +24,10 @@ describe("any-subject activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("Real value: 14 times")).toBeVisible();
-    await expect.element(page.getByText("The map stretches land near the poles.")).toBeVisible();
+
+    await expect
+      .element(page.getByText(/The usual world map stretches land near the poles/u))
+      .toBeVisible();
   });
 
   it("guess then reveal: the guess on the scale is the answer, with no second field to fill", async () => {
