@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -29,6 +31,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -36,7 +39,20 @@ class PlanArchiveWindowTest {
     @get:Rule val rule: ComposeTestRule = createEmptyComposeRule()
 
     @Test
-    fun anArchiveCompletedBetweenWindowsLeavesPlanAfterItsGoalDisappears() {
+    fun anArchiveCompletedBetweenWindowsLeavesPlanAfterItsGoalDisappears() = archiveBetweenWindows(Change.NoGoal)
+
+    @Test
+    fun aPendingArchiveDoesNotLeaveTheGoalSwitchedToBeforeItSaves() = archiveBetweenWindows(Change.SwitchBeforeSave)
+
+    @Test
+    fun anArchiveCompletedBetweenWindowsLeavesPlanAfterItsRefreshSelectsAnotherGoal() = archiveBetweenWindows(Change.NextGoal)
+
+    @Test
+    fun aSavedArchiveDoesNotLeaveAGoalSwitchedToBetweenWindows() = archiveBetweenWindows(Change.SwitchAfterSave)
+
+    private enum class Change { NoGoal, NextGoal, SwitchBeforeSave, SwitchAfterSave }
+
+    private fun archiveBetweenWindows(change: Change) {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -49,10 +65,13 @@ class PlanArchiveWindowTest {
         val api = FakePlanApi().apply { statusGate = held }
         val summary = learnerSummary()
         val goal = summary.goals.first()
+        val other = goal.copy(id = UUID.fromString("00000000-0000-0000-0000-000000000002"), isActive = false, displayName = "Learn French")
+        val switched = summary.copy(activeGoalId = other.id, goals = listOf(goal.copy(isActive = false), other.copy(isActive = true)))
         val app = AppContainer.preview(application)
-        app.learnerSummary.summary.replace(summary)
+        app.learnerSummary.summary.replace(summary.copy(goals = listOf(goal, other)))
         val cache = AppCache(FakeSession(AuthenticatedSession("ana", "token", "local")), scope)
-        val navigation = PlanNavigationModel()
+        val switching = GoalSwitch { true }
+        val navigation = PlanNavigationModel(switching)
         val model = PlanViewModel(PlanStore(api, cache), goal.id, app.writingWaits, navigation)
         PlanArchiveWindow.app = app
         val scenario = ActivityScenario.launch(PlanArchiveTestActivity::class.java)
@@ -64,20 +83,44 @@ class PlanArchiveWindowTest {
             }
             rule.waitForIdle()
             scenario.onActivity { model.setStatus(LearnerSummaryGoal.Status.ARCHIVED) }
+
+            fun switchGoal() {
+                scenario.onActivity {
+                    scope.launch {
+                        switching.select(other.id, shown = emptyList(), shows = { true })
+                        app.learnerSummary.summary.replace(switched)
+                    }
+                }
+                rule.waitForIdle()
+            }
+            if (change == Change.SwitchBeforeSave) {
+                switchGoal()
+                assertEquals(AppTab.Plan, PlanArchiveWindow.navigator.selectedTab)
+            }
             RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
             scenario.recreate()
             held.complete(Unit)
             shadowOf(android.os.Looper.getMainLooper()).idle()
-            app.learnerSummary.summary.replace(summary.copy(goals = emptyList()))
+            if (change == Change.SwitchAfterSave) switchGoal()
+            app.learnerSummary.summary.replace(
+                if (change ==
+                    Change.NoGoal
+                ) {
+                    summary.copy(goals = emptyList())
+                } else {
+                    switched.copy(goals = listOf(other.copy(isActive = true)))
+                },
+            )
+            val expected = if (change == Change.SwitchBeforeSave || change == Change.SwitchAfterSave) AppTab.Plan else AppTab.Today
             scenario.onActivity { it.compose() }
             rule.waitForIdle()
-            assertEquals(AppTab.Today, PlanArchiveWindow.navigator.selectedTab)
+            assertEquals(expected, PlanArchiveWindow.navigator.selectedTab)
             assertNull(model.event.value)
             RuntimeEnvironment.setQualifiers("w411dp-h891dp")
             scenario.recreate()
             scenario.onActivity { it.compose() }
             rule.waitForIdle()
-            assertEquals(AppTab.Today, PlanArchiveWindow.navigator.selectedTab)
+            assertEquals(expected, PlanArchiveWindow.navigator.selectedTab)
         } finally {
             scenario.close()
             scope.cancel()

@@ -75,9 +75,9 @@ fun PlanScreen(
     navigator: AppNavigator,
     focus: String? = null,
 ) {
-    val navigation = viewModel { PlanNavigationModel() }
+    val navigation = viewModel { PlanNavigationModel(app.goalSwitch) }
     VisitOf(navigation.visit)
-    ActOn(navigation.event) { navigator.select(com.zoonk.android.navigation.AppTab.Today) }
+    ActOn(navigation.event) { if (navigation.isCurrent(it)) navigator.select(com.zoonk.android.navigation.AppTab.Today) }
     val summary by app.learnerSummary.summary.collectShown()
     val scope = rememberCoroutineScope()
 
@@ -241,7 +241,7 @@ private fun planViewModel(
     app: AppContainer,
     goalId: UUID,
 ): PlanViewModel {
-    val navigation = viewModel { PlanNavigationModel() }
+    val navigation = viewModel { PlanNavigationModel(app.goalSwitch) }
     return viewModel(key = "plan-$goalId") { PlanViewModel(app.plans, goalId, app.writingWaits, navigation) }
 }
 
