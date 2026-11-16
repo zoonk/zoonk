@@ -2,9 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -12,7 +10,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
 import com.zoonk.android.ui.ActOn
-import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
@@ -27,7 +24,6 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -324,7 +320,6 @@ internal fun FitLessonsSuggestion(slot: Slot) {
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
         // The sheet or panel asks: its check adds only while this opening lasts, so one a recreated layout no longer shows adds nothing.
         VisitOf(slot.edits.outcomes.suggestion)
-        CancelCheckWhenGone(slot, offer)
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
         // check's answer takes, so its buttons stay put when the answer is a failure.
         if (preview == PlanPreviewState.Idle || checking) {
@@ -352,19 +347,6 @@ internal fun FitLessonsSuggestion(slot: Slot) {
             )
         }
     }
-}
-
-/**
- * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check at once, as Not now does, so the card
- * opens fresh. A recreated window keeps it; one that no longer shows the card ends its opening, and the answer then adds nothing.
- */
-@Composable
-private fun CancelCheckWhenGone(
-    slot: Slot,
-    offer: PlanFitOffer,
-) {
-    val current by rememberUpdatedState(slot)
-    OnVisitEnd(Unit) { current.host.dropCheck(offer.operations.map { it.op }) }
 }
 
 private const val NAMED_TOPICS = 2
@@ -431,7 +413,6 @@ private fun DateOverSuggestion(
     ) {
         // The sheet or panel asks: closing it while the date is found stops the wait, and its answer does nothing.
         VisitOf(slot.edits.outcomes.suggestion)
-        OnVisitEnd(Unit) { if (state.dateSearch == DateSearch.Finding) stopWaiting() }
         ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
             if (state.waiting != request) return@ActOn
             state.waiting = 0

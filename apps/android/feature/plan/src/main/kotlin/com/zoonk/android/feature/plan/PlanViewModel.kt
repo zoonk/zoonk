@@ -114,7 +114,18 @@ class PlanViewModel(
     val event = navigation.event
 
     /** What the editor's and the slot's saves and searches lead to, while the visit that asked lasts. */
-    internal val outcomes = PlanOutcomes(visit, endTools = { setupLessons.clear() })
+    internal val outcomes =
+        PlanOutcomes(
+            visit,
+            endTools = { setupLessons.clear() },
+            endSuggestion = {
+                clearSlotPreview()
+                slotState.asking = null
+                slotState.intent = CoverageIntent.Time
+                slotState.waiting = 0
+                if (slotState.dateSearch == DateSearch.Finding) slotState.dateSearch = null
+            },
+        )
 
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
@@ -567,11 +578,6 @@ class PlanViewModel(
 
     fun clearSlotPreview() {
         slotPreviewState.value = PlanPreviewState.Idle
-    }
-
-    /** Leaving the card drops its check of [operations], so a late answer adds and says nothing; another card's check stays. */
-    fun dropSlotCheck(operations: List<PlanOp>) {
-        slotPreviewState.update { if (it is PlanPreviewState.Asked && it.operations == operations) PlanPreviewState.Idle else it }
     }
 
     /**
