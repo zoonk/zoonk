@@ -8944,10 +8944,11 @@ msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "설명 보기"
 
+#. Offers a quick explanation of the learner's question, written once they tap Explain it
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "dl1he3"
-msgid "A short explanation written for you, about 5 minutes."
-msgstr "약 5분이면 읽을 수 있는 짧은 맞춤 설명이에요."
+msgctxt "lYNT_n"
+msgid "We'll write you a short explanation that takes about 5 minutes to read."
+msgstr "읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "PDFZz6"
@@ -10554,11 +10555,6 @@ msgstr "집중할 과목 선택"
 msgctxt "gUh9a6"
 msgid "The subjects you pick get more of your time."
 msgstr "선택한 과목에 학습 시간을 더 배정해요."
-
-#: src/plan/plan-full-course.tsx
-msgctxt "OgQI8B"
-msgid "You finish in {month}."
-msgstr "{month}에 마쳐요."
 
 #: src/plan/plan-full-course.tsx
 #: src/today/today-falling-behind.tsx

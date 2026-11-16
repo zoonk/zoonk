@@ -129,7 +129,7 @@
     <string name="onboarding_row_guide_says">The exam\'s official calendar says %1$s.</string>
 
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">A short explanation written for you, about %1$s.</string>
+    <string name="onboarding_explain_description">We\'ll write you a short explanation that takes about %1$s to read.</string>
     <string name="onboarding_explain_it">Explain it</string>
     <string name="onboarding_declined_title">We can\'t help with this goal</string>
     <string name="onboarding_declined_description">Zoonk doesn\'t teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you\'d like to learn?</string>

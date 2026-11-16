@@ -8944,10 +8944,11 @@ msgctxt "n-6wcY"
 msgid "Explain it"
 msgstr "Explique-moi"
 
+#. Offers a quick explanation of the learner's question, written once they tap Explain it
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "dl1he3"
-msgid "A short explanation written for you, about 5 minutes."
-msgstr "Une courte explication préparée pour toi, en 5 minutes environ."
+msgctxt "lYNT_n"
+msgid "We'll write you a short explanation that takes about 5 minutes to read."
+msgstr "On te préparera une courte explication qui se lit en 5 minutes environ."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "PDFZz6"
@@ -10554,11 +10555,6 @@ msgstr "Sur quoi te concentrer"
 msgctxt "gUh9a6"
 msgid "The subjects you pick get more of your time."
 msgstr "Tu consacres plus de temps aux matières que tu choisis."
-
-#: src/plan/plan-full-course.tsx
-msgctxt "OgQI8B"
-msgid "You finish in {month}."
-msgstr "Tu termines en {month}."
 
 #: src/plan/plan-full-course.tsx
 #: src/today/today-falling-behind.tsx

@@ -866,8 +866,9 @@ private struct ExplainOutcome: View {
         systemImage: "lightbulb",
         title: Text(question),
         description: Text(
-          "A short explanation written for you, about 5 minutes.", tableName: "Onboarding",
-          comment: "What a quick explanation is"))
+          "We'll write you a short explanation that takes about 5 minutes to read.",
+          tableName: "Onboarding",
+          comment: "Offers a quick explanation of the learner's question, written once they tap Explain it"))
 
       TypedGoalSection(goal: goal)
 

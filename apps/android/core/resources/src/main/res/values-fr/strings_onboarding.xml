@@ -78,7 +78,7 @@
   "onboarding_exam_on_two": "ea75f059b14b21853fbd0f80e066876f9f02a1cfc068a2a4ddfc7e47d4fef8ad",
   "onboarding_exam_ready": "aaf348c741a1ecf69e96d5d9a328f84046ca1041afb1eeb84c58ebcf976d3f7d",
   "onboarding_exam_ready_first_day": "37873f102e85e0ef7ba3a80725c58f1a5d19a5bc83fd32efcfc0cbeb35b7ae51",
-  "onboarding_explain_description": "9059c1b5795621352d59a07184854565e5e78d5dd79f43a4aece5b3f93cee314",
+  "onboarding_explain_description": "689d2890d5b3b6cfc051d0d2262d91b618fe6200e79bbfad6e56086569f02148",
   "onboarding_explain_it": "0a380006f96473d5e817cb187fd5102c0698896f935a38f287612a113fe419bb",
   "onboarding_finish_later": "5252cd1b1e50dd66862986664fcf2881e1bb0e599ffb3450837d74f28d4d5587",
   "onboarding_finish_later_description": "abddf07131cba39f1adafd033c04cba6df70ea08cceb3b9bc7c1ede315d7c97d",
@@ -566,7 +566,7 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">Le calendrier officiel de l’examen indique le %1$s.</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">Une courte explication préparée pour toi, à lire en %1$s environ.</string>
+    <string name="onboarding_explain_description">On va te préparer une courte explication qui se lit en environ %1$s.</string>
     <string name="onboarding_explain_it">Explique-moi</string>
     <string name="onboarding_declined_title">Nous ne pouvons pas t’aider avec cet objectif</string>
     <string name="onboarding_declined_description">Zoonk n’enseigne rien qui puisse te faire du mal ou en faire aux autres, ni les jeux d’argent ni les moyens de tricher. Y a-t-il autre chose que tu aimerais apprendre ?</string>

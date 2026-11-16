@@ -140,7 +140,11 @@ export function ExplainGoal({
       <OnboardingHeading>
         <OnboardingTitle>{question}</OnboardingTitle>
         <OnboardingDescription>
-          {t("A short explanation written for you, about 5 minutes.")}
+          {t({
+            description:
+              "Offers a quick explanation of the learner's question, written once they tap Explain it",
+            message: "We'll write you a short explanation that takes about 5 minutes to read.",
+          })}
         </OnboardingDescription>
       </OnboardingHeading>
 
