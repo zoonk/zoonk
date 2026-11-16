@@ -92,7 +92,12 @@ internal fun ScoreChart(
 
         axis.forEachIndexed { index, day ->
             val label = axisLabels[index]
-            val start = (x.toPixel(window.position(day)) - label.size.width / 2f).coerceIn(left, size.width - label.size.width)
+            val start =
+                when (index) {
+                    0 -> left
+                    axis.lastIndex -> size.width - label.size.width
+                    else -> (x.toPixel(window.position(day)) - label.size.width / 2f).coerceIn(left, size.width - label.size.width)
+                }
             drawText(label, topLeft = Offset(start, bottom + gap))
         }
 

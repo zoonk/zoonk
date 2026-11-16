@@ -387,17 +387,33 @@ private fun ChoiceRow(
     onClick: () -> Unit,
 ) {
     val labelStyle = MaterialTheme.typography.bodyLarge.copy(lineBreak = LineBreak.Heading)
-    Row(
+    // A one-line choice sits in the middle of its row's height; a longer one starts at the top.
+    Box(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 64.dp)
             .onFocusChanged { if (it.isFocused && !selected) onClick() }
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .padding(vertical = 12.dp),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        ChoiceRowContent(choice, selected, stacked, labelStyle)
+    }
+}
+
+@Composable
+private fun ChoiceRowContent(
+    choice: RowChoice,
+    selected: Boolean,
+    stacked: Boolean,
+    labelStyle: TextStyle,
+) {
+    Row(
+        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(Modifier.weight(1f).alignByBaseline(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(choice.label, style = labelStyle)
             choice.description?.let {
                 Text(
@@ -408,7 +424,7 @@ private fun ChoiceRow(
             }
             if (stacked) ChoiceSize(choice, MaterialTheme.typography.bodySmall)
         }
-        if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium)
+        if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium, Modifier.alignByBaseline())
         // The radio stands at the row's end, beside the label's first line however many lines follow.
         Box(Modifier.height(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
             RadioButton(selected = selected, onClick = null)
@@ -420,9 +436,11 @@ private fun ChoiceRow(
 private fun ChoiceSize(
     choice: RowChoice,
     style: TextStyle,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         choice.trailing,
+        modifier = modifier,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = style.withTabularFigures(),
     )
