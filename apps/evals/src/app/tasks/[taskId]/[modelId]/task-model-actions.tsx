@@ -15,11 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { EllipsisIcon, FileTextIcon, Trash2Icon } from "lucide-react";
+import { DownloadIcon, EllipsisIcon, FileTextIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
-import { type OutputExportEntry, OutputsExport } from "./outputs-export";
+import { type OutputExportEntry, exportOutputs } from "./outputs-export";
 import { ReasoningSelect } from "./reasoning-select";
 import { ReviewPdfExport } from "./review-pdf-export";
 
@@ -46,40 +46,52 @@ export function TaskModelFileActions({
   const [reviewOpen, setReviewOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const disabled = summary.attempted === 0;
+  const exportAll = () => exportOutputs({ entries: exportEntries, failedRuns, summary });
 
   return (
     <>
+      <div className="contents max-sm:hidden">
+        <Button
+          disabled={disabled}
+          icon={<DownloadIcon />}
+          onClick={exportAll}
+          size="bar"
+          variant="outline"
+        >
+          Export outputs
+        </Button>
+        <Button
+          disabled={disabled}
+          onClick={() => setReviewOpen(true)}
+          size="bar"
+          variant="outline"
+          icon={<FileTextIcon />}
+        >
+          Export review PDF
+        </Button>
+        <Button
+          disabled={disabled}
+          onClick={() => setDeleteOpen(true)}
+          size="bar"
+          variant="destructive"
+          icon={<Trash2Icon />}
+        >
+          Delete results
+        </Button>
+      </div>
       <DropdownMenu>
-        <div className="contents max-sm:hidden">
-          <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
-          <Button
-            disabled={disabled}
-            onClick={() => setReviewOpen(true)}
-            size="bar"
-            variant="outline"
-            icon={<FileTextIcon />}
-          >
-            Export review PDF
-          </Button>
-          <Button
-            disabled={disabled}
-            onClick={() => setDeleteOpen(true)}
-            size="bar"
-            variant="destructive"
-            icon={<Trash2Icon />}
-          >
-            Delete results
-          </Button>
-        </div>
         <DropdownMenuTrigger
           className="sm:hidden"
           render={<Button edge="end" size="icon-bar" variant="ghost" />}
         >
-          <EllipsisIcon />
+          <EllipsisIcon aria-hidden="true" />
           <span className="sr-only">More</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-60 sm:hidden">
-          <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} menu />
+          <DropdownMenuItem disabled={disabled} onClick={exportAll}>
+            <DownloadIcon />
+            Export outputs
+          </DropdownMenuItem>
           <DropdownMenuItem disabled={disabled} onClick={() => setReviewOpen(true)}>
             <FileTextIcon />
             Export review PDF
