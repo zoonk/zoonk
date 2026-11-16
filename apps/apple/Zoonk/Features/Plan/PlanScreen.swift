@@ -275,6 +275,9 @@ private struct PlanContent: View {
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
     )
+    // Putting the suggestion off or paging past it, in this window or another, ends its opening.
+    .onChange(of: store.suggestionState(goalId: goal.id).dismissed) { slotChecks.leave() }
+    .onChange(of: store.suggestionState(goalId: goal.id).position) { slotChecks.leave() }
     .onDisappear {
       slotAnswer?.editor.cancel()
       slotAnswer = nil

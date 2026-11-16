@@ -701,8 +701,9 @@ extension PlanContext {
 /// What the Plan's suggestion cards are checking and what they found, kept by the Plan above its
 /// panes: a card is drawn again as the Plan splits into panes or joins them, and its check goes on
 /// and shows there, or in the sheet the line opens. A check is an answer about one plan: once the
-/// Plan shows another (Adjust plan, a refresh that read a change), the card starts clean. The Plan
-/// calls `leave()` as it closes.
+/// Plan shows another (Adjust plan, a refresh that read a change), the card starts clean. A check
+/// also belongs to the suggestion's opening: the Plan calls `leave()` as that ends (put off, paged
+/// past, its sheet closed) and as the Plan closes, so a check still out applies and shows nothing.
 @MainActor
 final class PlanSlotChecks {
   private struct Key: Hashable {
@@ -730,8 +731,8 @@ final class PlanSlotChecks {
     return check
   }
 
-  /// Leaving the Plan ends its checks: what one was waiting for, found or failed at shows
-  /// nothing on the next visit.
+  /// Ends every check: what one was waiting for, found or failed at shows nothing afterward. One
+  /// suggestion shows at a time, so its opening's end ends them all.
   func leave() {
     for kept in checks.values {
       kept.check.leave()
