@@ -41,12 +41,21 @@ function getScrollReveal({
 
   const boxes = parts.map((part) => part.getBoundingClientRect());
 
+  const captions = [
+    ...stage.querySelectorAll<HTMLElement>(
+      '[data-slot="activity-canvas"] p, [data-slot="activity-canvas"] button',
+    ),
+  ]
+    .map((part) => part.getBoundingClientRect())
+    .filter((box) => box.height > 0);
+
   return getReveal({
     chip: stage.querySelector(CHIP_SELECTOR)?.getBoundingClientRect() ?? null,
     feedback: {
       bottom: Math.max(...boxes.map((box) => box.bottom)),
       top: Math.min(...boxes.map((box) => box.top)),
     },
+    parts: captions,
     room: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
     title: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect() ?? null,
     visible: getVisibleArea(scroller),

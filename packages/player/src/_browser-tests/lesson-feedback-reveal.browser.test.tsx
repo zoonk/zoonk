@@ -1,3 +1,4 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
@@ -5,6 +6,7 @@ import {
   checkActivity,
   expectVerdict,
   openActivity,
+  openActivityToResume,
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
@@ -34,6 +36,43 @@ function nextFrame() {
 }
 
 describe("feedback after a check", () => {
+  it.each([836, 844, 900])(
+    "keeps a reopened map caption whole at phone height %i",
+    async (height) => {
+      await onDevice({ reducedMotion: "reduce" }, () =>
+        atViewport({ height, width: 390 }, async () => {
+          const { reopenSaved } = openActivityToResume(activityContentFixtures.mapExplorer);
+          await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
+
+          await page
+            .getByRole("radio", { name: "Their water didn't come from the Broad Street pump" })
+            .click();
+
+          await checkActivity();
+          await expectVerdict("Correct!");
+          await reopenSaved();
+          await expectVerdict("Correct!");
+          await nextFrame();
+          await nextFrame();
+
+          const top = page
+            .getByRole("main", { name: "Lesson content" })
+            .element()
+            .getBoundingClientRect().top;
+
+          const sliced = [...document.querySelectorAll('[data-slot="activity-canvas"] p')]
+            .filter((element) => {
+              const box = element.getBoundingClientRect();
+              return box.top < top - 1 && box.bottom > top + 1;
+            })
+            .map((element) => element.textContent);
+
+          expect(sliced).toStrictEqual([]);
+        }),
+      );
+    },
+  );
+
   it("shows the whole feedback on a tablet, leaving no sliver of the chip over the question", async () => {
     await onDevice({ reducedMotion: "reduce" }, () =>
       atViewport(LANDSCAPE_TABLET, async () => {

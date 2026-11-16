@@ -40,12 +40,14 @@ export type Reveal = {
  */
 export function getReveal({
   chip,
+  parts = [],
   feedback,
   room,
   title,
   visible,
 }: {
   chip: Span | null;
+  parts?: readonly Span[];
   feedback: Span;
   room: number;
   title: Span | null;
@@ -53,11 +55,11 @@ export function getReveal({
 }): Reveal {
   const whole = getWholeFeedbackDelta(feedback, visible);
 
-  function leaveWhole(span: Span, clear: number): Reveal | null {
+  function leaveWhole(span: Span, clear: number, delta = whole): Reveal | null {
     const top = span.top - visible.top;
     const out = Math.ceil(span.bottom - visible.top) + clear;
 
-    if (whole <= top || whole >= out) {
+    if (delta <= top || delta >= out) {
       return null;
     }
 
@@ -70,8 +72,10 @@ export function getReveal({
     return { delta: out, extraRoom: Math.max(0, out - room) };
   }
 
-  return (
-    (title && leaveWhole(title, 0)) ??
-    (chip && leaveWhole(chip, CLEAR)) ?? { delta: whole, extraRoom: 0 }
-  );
+  const initial = (title && leaveWhole(title, 0)) ??
+    (chip && leaveWhole(chip, CLEAR)) ?? { delta: whole, extraRoom: 0 };
+
+  return parts
+    .toSorted((first, second) => first.top - second.top)
+    .reduce((reveal, part) => leaveWhole(part, 0, reveal.delta) ?? reveal, initial);
 }
