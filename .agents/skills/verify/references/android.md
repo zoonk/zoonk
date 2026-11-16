@@ -30,7 +30,7 @@ To put renders in a PR, `pnpm pr:media adopt <before|after> <render.json>...` co
 
 What it can't measure, as the capture states:
 
-- A part whose parent replaced its children's semantics (`clearAndSetSemantics`, so TalkBack reads one phrase): written as an unmeasured area, which fails inside a declared group.
+- A text whose own semantics were cleared (`clearAndSetSemantics`, so TalkBack does not repeat the chart summary): its layout action is unavailable and is recorded as an `unmeasured` area with a reason. Unmerged descendants below a cleared container are still read; this recovers chart legends and list-row parts. Missing metrics inside a declared alignment group still fail that group.
 - The middle of text a fallback font drew with no capitals and no ideographic face (Arabic in a Geist style, or a span in another family), so that row's line isn't measured. Japanese and Korean are measured by their ideographic face.
 - Ink of text that is clipped, covered (wholly, partly or by a gradient), drawn with a brush, or dimmed by its parent so no pixel is its own color; and of a dimmed part whose faint edge doesn't reach its box, such as a disabled outline button.
 - Lazy rows that weren't composed.
@@ -121,3 +121,5 @@ TalkBack: boot the emulator with a window (without `-no-window`), turn TalkBack 
 ## Report
 
 For each screen or flow the change touches: the JVM renders you checked (sizes, dark, contrast, font scale), requests on first open, on return and on each tab switch (before and after), `TOTAL PSS` after one and ten loops, LeakCanary's result, idle CPU ticks, janky frames for scrolls and tab switches, and what survived rotation and process death. Save the commands' output next to the screenshots.
+
+Version 2 also records each exposed text's actual `TextLayoutResult` line strings, its known role (heading, shared label or value, button; no role for running text), and button and editable-field control frames regardless of button look. It records detectable text overflow and horizontal scrollers without `fadingHorizontalScroll`'s Debug marker. The text and control nodes' clipped bounds include containers without semantics; scroller ancestors and `TextLayoutInput.maxLines` or ellipsis declare allowed overflow. A node whose own layout and control semantics were erased by `clearAndSetSemantics` is recorded as an `unmeasured` area with its reason; the page rules stay measured for every other element on the screen. Its unmerged descendants are still read, so a cleared legend container does not hide its text from the capture. The recorder always declares all four rules in `measuredRules` (Android has no page-level limit), so an old capture or a missing required record still fails. Chart axis captions and multi-series legends intentionally clear their semantics because the chart supplies a complete TalkBack summary.

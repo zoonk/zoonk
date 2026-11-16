@@ -14,7 +14,7 @@ export function EraseMemoryFactButton({ factId, userId }: { factId: string; user
       destructive
       title="Erase this fact?"
       trigger={
-        <Button size="sm" variant="outline">
+        <Button className="shrink-0" size="sm" variant="outline">
           Erase
         </Button>
       }

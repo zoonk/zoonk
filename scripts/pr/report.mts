@@ -90,6 +90,7 @@ export type CheckResult = {
   /** The pictures under the device heading with a device record, and what was verified of each. */
   devices?: { line: string; picture: string }[];
   nothingDeclared?: number;
+  limits?: string[];
   notMeasured: number;
   problems: Problem[];
   reads: Reads;
@@ -102,7 +103,15 @@ function kindOf(kind: Kind) {
 }
 
 export function formatCheck(
-  { checked, devices = [], nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
+  {
+    checked,
+    devices = [],
+    limits = [],
+    nothingDeclared = 0,
+    notMeasured,
+    problems,
+    reads,
+  }: CheckResult,
   root: string,
 ): string {
   if (checked === 0 && problems.length === 0) {
@@ -169,5 +178,7 @@ export function formatCheck(
     reads.carried + reads.new + reads.missing > 0 &&
     `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
 
-  return [...lines, ...deviceLines, readLine, summary].filter(Boolean).join("\n");
+  const limitLine = limits.length > 0 && `Layout limits: ${[...new Set(limits)].join("; ")}`;
+
+  return [...lines, ...deviceLines, limitLine, readLine, summary].filter(Boolean).join("\n");
 }

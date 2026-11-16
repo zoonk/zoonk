@@ -13,7 +13,6 @@ import { SkillRow } from "./skill-row";
 
 const columns: AdminTableColumn[] = [
   { label: "Skill", twoLines: true },
-  { label: "Level" },
   { align: "right", label: "Lessons" },
   { align: "right", label: "Practice questions", size: "wide" },
   { align: "right", label: "Learners" },

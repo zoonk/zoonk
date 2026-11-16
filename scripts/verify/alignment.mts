@@ -4,6 +4,8 @@ import {
   type AlignmentFinding,
   type Capture,
   type CaptureElement,
+  PAGE_RULES,
+  PLATFORM_LIMITS,
 } from "./alignment-capture.mts";
 import { heightLeads } from "./alignment-controls.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
@@ -228,26 +230,54 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
 }
 
 function missingMeasurements(context: Context): AlignmentFinding[] {
-  const required = {
-    cut: "clipping",
-    "line-end": "text-flows",
-    "lone-word": "text-flows",
-    "one-height": "controls",
-  } as const;
+  return PAGE_RULES.flatMap((rule) => {
+    const reason =
+      context.capture.version === 2 && PLATFORM_LIMITS[context.capture.platform].includes(rule)
+        ? context.capture.notMeasurable?.[rule]
+        : undefined;
 
-  return Object.entries(required).flatMap(([rule, measurement]) =>
-    context.capture.version === 2 && context.capture.measurements?.includes(measurement)
-      ? []
-      : [
-          finding(context, {
-            detail: `capture version ${context.capture.version}: ${measurement} were not recorded`,
-            level: "not-measured",
-            message: `${rule} measurements were not recorded`,
-            piece: "page",
-            rule,
-          }),
-        ],
-  );
+    if (reason) {
+      return [
+        finding(context, {
+          detail: context.capture.elements
+            .filter((element) => element.part === "unmeasured")
+            .map(
+              (element) =>
+                `${element.name ?? element.id} (${element.bounds.join(", ")}): ${element.reason ?? reason}`,
+            )
+            .join("; "),
+          level: "not-measurable",
+          message: `not measurable on ${context.capture.platform}: ${reason}`,
+          piece: "page",
+          rule,
+        }),
+      ];
+    }
+
+    const incomplete = context.capture.elements.some((element) =>
+      (rule === "line-end" || rule === "lone-word") && element.part === "text"
+        ? !element.lineTexts
+        : rule === "cut" && element.part === "cut" && !element.overflow,
+    );
+
+    if (
+      !incomplete &&
+      context.capture.version === 2 &&
+      context.capture.measuredRules?.includes(rule)
+    ) {
+      return [];
+    }
+
+    return [
+      finding(context, {
+        detail: `capture version ${context.capture.version}: ${rule} was not recorded`,
+        level: "not-measured",
+        message: `${rule} measurements were not recorded`,
+        piece: "page",
+        rule,
+      }),
+    ];
+  });
 }
 
 export function evaluateCapture(capture: Capture): AlignmentFinding[] {

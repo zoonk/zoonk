@@ -82,3 +82,5 @@ For each screen or flow the change touches: requests on first open, on return an
 ## Generated API client
 
 The app imports the local `apps/apple/ZoonkAPI` package. Its generator inputs live in `apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json` and `openapi-generator-config.yaml`; regenerate the contract with `pnpm openapi:generate`. Include the package sources in Apple formatting checks.
+
+The version 2 capture declares its measured page rules in `measuredRules` and its platform limits in `notMeasurable`, with a one-line reason per rule. Every shared action's control frame and kind, including outline and ghost actions, is measured for `one-height`. `line-end` and `lone-word` are **not measurable on apple**: `Text.Layout` exposes glyph character indices but not the resolved source string, and a localization key is not the drawn text. `cut` is **not measurable on apple**: the UIKit host tree does not expose SwiftUI masks, declared clamps or the kit's continuation sign reliably. These declared limits appear in the report and summary without failing. An old capture or a missing required record still fails as not measured.

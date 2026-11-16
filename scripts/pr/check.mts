@@ -376,6 +376,9 @@ export async function checkPictures({
   return {
     checked: unique.length,
     devices: [...devices].map(([picture, item]) => ({ line: deviceLine(item), picture })),
+    limits: judgedManifests
+      .filter(({ alignment }) => alignment.captures?.length && !alignment.refused)
+      .flatMap(({ alignment }) => alignment.summary?.notMeasurable ?? []),
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])

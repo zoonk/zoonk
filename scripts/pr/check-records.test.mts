@@ -3,6 +3,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import CASES from "../verify/alignment-cases.json" with { type: "json" };
+import APPLE from "../verify/fixtures/apple-platform-limits.json" with { type: "json" };
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type ManifestItem } from "./media.mts";
@@ -264,5 +265,57 @@ describe("pr:media check, on a capture's measured layout", () => {
     );
 
     assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
+  });
+});
+
+describe("pr:media check with declared platform limits", () => {
+  it("allows declared platform limits while still failing an old Apple capture", async () => {
+    const current = capture([shot({ file: "a.png" })], { alignment: { captures: [APPLE] } });
+
+    const old = capture([shot({ file: "a.png" })], {
+      alignment: { captures: [{ ...APPLE, version: 1 }] },
+    });
+
+    const currentResult = await current.check();
+    const oldResult = await old.check();
+
+    assert.deepEqual(currentResult.problems, []);
+    const printed = formatCheck(currentResult, fixture.repository);
+
+    assert.match(
+      printed,
+      /Layout limits:.*line-end not measurable on apple: SwiftUI Text.Layout doesn't expose resolved strings/u,
+    );
+
+    assert.match(printed, /lone-word not measurable on apple/u);
+    assert.match(printed, /cut not measurable on apple/u);
+    assert.ok(oldResult.problems.some((problem) => problem.kind === "alignment"));
+  });
+
+  it("prints limits only from captures the evaluator judged", async () => {
+    const stored = capture([shot({ file: "a.png" })], {
+      alignment: {
+        findings: [],
+        summary: { notMeasurable: ["one-height not measurable on android: stored claim"] },
+      },
+    });
+
+    const printed = formatCheck(await stored.check(), fixture.repository);
+
+    assert.doesNotMatch(printed, /stored claim/u);
+  });
+
+  it("prints no limits from a refused capture", async () => {
+    const refused = capture([shot({ file: "a.png" })], {
+      alignment: {
+        captures: [{ ...APPLE, version: 999 }],
+        summary: { notMeasurable: ["one-height not measurable on android: stored claim"] },
+      },
+    });
+
+    const printed = formatCheck(await refused.check(), fixture.repository);
+
+    assert.match(printed, /isn't a capture the evaluator reads/u);
+    assert.doesNotMatch(printed, /stored claim/u);
   });
 });

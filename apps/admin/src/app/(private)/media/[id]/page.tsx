@@ -99,7 +99,10 @@ async function MediaDetailContent({ params, searchParams }: PageProps<"/media/[i
         />
 
         {tab === "overview" ? (
-          <AdminDetailColumns aside={<MediaUsage asset={asset} />}>
+          <AdminDetailColumns
+            aside={<MediaUsage asset={asset} />}
+            className="xl:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]"
+          >
             {/* Its own box, so the column doesn't stretch the picture to its width. */}
             <div>
               <MediaPreview asset={asset} size="full" />

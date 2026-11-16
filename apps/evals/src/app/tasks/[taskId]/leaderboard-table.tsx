@@ -8,6 +8,7 @@ import {
   getDefaultSortDirection,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
 import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
@@ -216,7 +217,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
       </div>
 
       {/* Each column keeps its content's width and a wide table scrolls, so "More columns" moves no column. */}
-      <Table className="w-max">
+      <Table scrollLabels={SCROLL_LABELS} className="w-max">
         <TableHeader>
           <TableRow>
             {shownColumns.map((column) => (
