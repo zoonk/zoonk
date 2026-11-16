@@ -87,7 +87,7 @@ fun AnswerOption(
                         Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
-                ).padding(horizontal = 14.dp, vertical = 13.dp),
+                ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
         tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
         leading = { NumberKey(marker, glyph, Modifier) },
