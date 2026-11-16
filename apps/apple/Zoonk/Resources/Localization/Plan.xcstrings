@@ -34752,7 +34752,7 @@
       }
     },
     "You finish around %@." : {
-      "comment" : "When a plan without a date finishes, as a month and year",
+      "comment" : "When the plan finishes, as a month and year",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -34806,65 +34806,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planını %@ civarında bitirirsin."
-          }
-        }
-      }
-    },
-    "You finish in %@." : {
-      "comment" : "When a plan that goes on after the exam finishes, as a month and year",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du bist im %@ fertig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminas en %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu termines en %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completi il piano a %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画は%@に完了します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획은 %@에 끝나요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Koniec planu: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você termina em %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planını %@ içinde bitirirsin."
           }
         }
       }

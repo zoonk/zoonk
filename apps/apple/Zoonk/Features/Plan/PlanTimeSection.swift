@@ -144,7 +144,7 @@ struct PlanTimeSection: View {
         comment: "While a change to the time saves, in place of when the plan finishes")
       : String(
         localized: "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
-        table: "Plan", comment: "When a plan without a date finishes, as a month and year")
+        table: "Plan", comment: "When the plan finishes, as a month and year")
   }
 
   private func moveDate(to fittingDate: String) -> some View {
@@ -228,9 +228,9 @@ struct PlanFullCourseSection: View {
         if on, let end = plan.estimate.endDate {
           SectionFooter {
             Text(
-              "You finish in \(PlanDate.text(end, today: plan.today, month: true)).",
+              "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
               tableName: "Plan",
-              comment: "When a plan that goes on after the exam finishes, as a month and year")
+              comment: "When the plan finishes, as a month and year")
           }
         }
       }
