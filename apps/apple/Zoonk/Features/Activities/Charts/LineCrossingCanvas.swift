@@ -122,19 +122,18 @@ struct LineCrossingCanvas: View {
           .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
           .lineStyle(StrokeStyle(lineWidth: 2.5))
 
+        // On the side of its end away from its own line: above a rising line, below a falling one.
         PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
           .opacity(0)
-          .annotation(position: .topLeading, spacing: 2) {
+          .annotation(
+            position: segment.to.y >= segment.from.y ? .topLeading : .bottomLeading, spacing: 4
+          ) {
             Text(verbatim: field.label)
               .typeStyle(.meta.weight(.semibold))
               .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
               .chartsLabelHalo()
           }
       }
-
-      PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
-        .foregroundStyle(.primary)
-        .symbolSize(70)
 
       RuleMark(
         x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
@@ -148,6 +147,11 @@ struct LineCrossingCanvas: View {
       )
       .foregroundStyle(.mutedForeground)
       .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+
+      // After its guide lines, so their dashes end under it instead of across it.
+      PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
+        .foregroundStyle(.primary)
+        .symbolSize(70)
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)

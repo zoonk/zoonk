@@ -241,8 +241,12 @@ private struct ProcessStepMarks: View {
         .background(fill, in: .circle)
 
       if let symbol = ProcessIcons.symbol(for: icon) {
+        // In one square box, as Lucide draws every icon, so a wide one (a battery) isn't wider.
         Image(systemName: symbol)
+          .resizable()
+          .scaledToFit()
           .foregroundStyle(.mutedForeground)
+          .frame(width: badge * 0.7, height: badge * 0.7)
           .frame(width: badge)
       }
     }

@@ -315,16 +315,6 @@ private struct CauseEffectCanvas: View {
     let showsWhy = (isGuided || isLocked) && state != .incorrect
 
     return HStack(alignment: .firstTextBaseline, spacing: 8) {
-      Group {
-        switch state {
-        case .correct: Image(systemName: "checkmark").foregroundStyle(Color.success)
-        case .incorrect: Image(systemName: "xmark").foregroundStyle(Color.destructive)
-        case .missed: Image(systemName: "circle.dashed").foregroundStyle(Color.success)
-        case .made: Image(systemName: "arrow.right").foregroundStyle(.mutedForeground)
-        }
-      }
-      .accessibilityHidden(true)
-
       VStack(alignment: .leading, spacing: 2) {
         LessonRichText("\(fields.label(link.from)) → \(fields.label(link.to))")
           .typeWeight(.medium)
@@ -356,6 +346,17 @@ private struct CauseEffectCanvas: View {
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+
+      // A link's one arrow is in its words; its mark after Check sits at the row's end, as main's.
+      Group {
+        switch state {
+        case .correct: Image(systemName: "checkmark").foregroundStyle(Color.successText)
+        case .incorrect: Image(systemName: "xmark").foregroundStyle(Color.destructiveText)
+        case .missed: Image(systemName: "circle.dashed").foregroundStyle(Color.successText)
+        case .made: EmptyView()
+        }
+      }
+      .accessibilityHidden(true)
 
       if !isLocked, !isGuided {
         Button {

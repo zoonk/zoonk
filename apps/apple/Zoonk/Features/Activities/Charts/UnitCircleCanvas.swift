@@ -282,7 +282,7 @@ struct UnitCircleCanvas: View {
       Path(
         ellipseIn: CGRect(
           x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)),
-      with: .style(.vizGrid), lineWidth: 1.5)
+      with: .style(.mutedForeground), lineWidth: 2)
 
     canvas.stroke(
       Path { path in

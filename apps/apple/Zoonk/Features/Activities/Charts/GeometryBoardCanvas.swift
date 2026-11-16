@@ -237,7 +237,9 @@ struct GeometryBoardCanvas: View {
         path.addLine(to: transform.point(bounds.maxX, y))
       }
     }
-    canvas.stroke(grid, with: .style(Color.vizGrid.opacity(0.5)), lineWidth: 0.5)
+    // The learner moves corners by its steps, so it reads on the card, where the grid role (made for
+    // a white page) almost vanishes.
+    canvas.stroke(grid, with: .style(Color.mutedForeground.opacity(0.2)), lineWidth: 1)
 
     if fields.measure == .pythagoras {
       for (index, square) in GeometryBoardModel.sideSquares(points).enumerated() {
