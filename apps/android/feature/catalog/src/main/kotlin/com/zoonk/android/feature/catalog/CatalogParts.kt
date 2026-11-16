@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -55,8 +53,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.ActOn
-import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
@@ -286,12 +282,7 @@ internal fun StartActions(
     val follows = goal != null
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
     val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
-    // Each place the actions show is its own asker, so two on one page don't end each other's visit.
-    val continuing = viewModel(key = "switch-then-today:$currentCompositeKeyHashCode") { SwitchThenToday(app.scope, app::switchGoal) }
-    VisitOf(continuing.visit)
-    ActOn(
-        continuing.switched,
-    ) { saved -> if (saved) navigator.showRoot(AppTab.Today) else app.snackbars.show(R.string.goal_switcher_failed) }
+    val continuing = LocalCatalogContinuation.current
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

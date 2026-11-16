@@ -95,7 +95,16 @@ fun ChapterScreen(
     val report = FeedbackTarget("chapter", FeedbackSubmissionContext.ContentKind.CHAPTER, route.chapterId.toUuidOrNull())
 
     if (shown is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.chapterId, AnalyticsEvent.PublicPage.Chapter))
-    CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report, alsoShown = listOf(chapter)) { value, layout ->
+    CatalogPage(
+        app,
+        navigator,
+        "chapter:${route.courseId}:${route.chapterId}",
+        detail,
+        shown,
+        place?.chapter?.title,
+        report,
+        alsoShown = listOf(chapter),
+    ) { value, layout ->
         placeOf(
             value,
             route.chapterId,

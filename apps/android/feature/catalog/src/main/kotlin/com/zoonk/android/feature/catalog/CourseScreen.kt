@@ -73,7 +73,15 @@ fun CourseScreen(
     val report = FeedbackTarget("course", FeedbackSubmissionContext.ContentKind.COURSE, route.courseId.toUuidOrNull())
 
     if (state is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.courseId, AnalyticsEvent.PublicPage.Course))
-    CatalogPage(app, navigator, detail, state, title, report) { value, layout -> courseBlocks(app, navigator, value, started, layout) }
+    CatalogPage(
+        app,
+        navigator,
+        "course:${route.courseId}",
+        detail,
+        state,
+        title,
+        report,
+    ) { value, layout -> courseBlocks(app, navigator, value, started, layout) }
 }
 
 private fun courseBlocks(
