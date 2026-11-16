@@ -152,7 +152,7 @@ export function ContributionCalendarGrid({
     <ChartInspectorPoints
       className={cn(
         "flex w-max min-w-full justify-between gap-(--calendar-gap) focus-visible:ring-0 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
-        "max-sm:in-data-recent-on-phone:[&>:nth-last-child(-n+26):nth-last-child(n+25)_[data-slot=contribution-calendar-period]]:hidden max-sm:in-data-recent-on-phone:[&>:nth-last-child(n+27)]:hidden",
+        "max-sm:in-data-recent-on-phone:[&>:nth-last-child(n+27)]:hidden",
         DAY_RING_CLASS,
         className,
       )}
