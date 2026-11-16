@@ -5,6 +5,7 @@ import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_PANEL_CLASS } from "../../../activities/_components/activity-canvas";
 import { type StepOf } from "../lesson-step-view-props";
 
 type ChallengeContent = StepOf<"challenge">["content"];
@@ -113,7 +114,7 @@ export function ChallengeMeters({
     <section
       aria-label={t("How the case is going")}
       aria-live="polite"
-      className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4"
+      className={cn(ACTIVITY_PANEL_CLASS, "flex w-full flex-col gap-3")}
       data-slot="challenge-meters"
     >
       {meters.map((meter) => (
