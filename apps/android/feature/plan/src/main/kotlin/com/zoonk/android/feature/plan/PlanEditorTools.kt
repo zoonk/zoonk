@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -270,6 +271,7 @@ internal fun ColumnScope.ToolChoiceForm(
     onDraft: (ToolDraft) -> Unit,
     onDone: () -> Unit,
 ) {
+    VisitOf(edits.outcomes.tools)
     val setupLessons = edits.setupLessons
     if (setupLessons != null && setupLessons.generationId.collectAsStateWithLifecycle().value != null) {
         WritingWait(

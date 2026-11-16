@@ -30,10 +30,12 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -57,6 +59,13 @@ class CheckpointCallModel(
 ) : ViewModel() {
     enum class Start { Idle, Starting, Failed, PlusRequired }
 
+    val visit =
+        Visit {
+            writing.clear()
+            opened = null
+            start = Start.Idle
+        }
+
     val call = store.checkpointCall(blockId)
 
     var start by mutableStateOf(Start.Idle)
@@ -72,12 +81,18 @@ class CheckpointCallModel(
      * own intro. The intro shows only once the call is written, so a run answering its Start means
      * it isn't any more: the checkpoint is read again, which then offers to get it ready.
      */
-    fun start(microphone: Boolean?) {
+    fun start(microphone: Boolean?) = start(microphone, visit.number)
+
+    private fun start(
+        microphone: Boolean?,
+        asked: Int,
+    ) {
         start = Start.Starting
         viewModelScope.launch {
             val started = store.startCheckpoint(blockId)
+            if (asked != visit.number) return@launch
             val generationId = (started as? CheckpointStart.Writing)?.generationId?.takeIf { microphone == null }
-            val answer = writing.answered(generationId) { start(microphone) }
+            val answer = writing.answered(generationId) { start(microphone, asked) }
             start =
                 when {
                     answer == ContentWritingWait.Answer.Waiting -> {
@@ -153,6 +168,7 @@ internal fun CheckpointCallContent(
     conversation: @Composable (id: UUID, startWith: Boolean?) -> Unit,
     otherwise: @Composable () -> Unit,
 ) {
+    VisitOf(model.visit)
     model.opened?.let { opened ->
         conversation(opened.conversationId, opened.startWith)
         return

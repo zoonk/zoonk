@@ -83,7 +83,11 @@ class CallStartModel(
     private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
     /** The visit of the screen that asked: the call it started opens, or its failure shows, only on it. */
-    val visit = Visit()
+    val visit =
+        Visit {
+            writing.clear()
+            phase = State.Idle
+        }
 
     enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
@@ -116,6 +120,8 @@ class CallStartModel(
         failure.clear()
         viewModelScope.launch {
             val started = starter.start(request)
+            if (started == CallStart.PlusRequired) refused()
+            if (asked != visit.number) return@launch
             val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, asked) }
             phase =
                 when {
@@ -141,7 +147,6 @@ class CallStartModel(
                         State.Idle
                     }
                 }
-            if (started == CallStart.PlusRequired) refused()
         }
     }
 }

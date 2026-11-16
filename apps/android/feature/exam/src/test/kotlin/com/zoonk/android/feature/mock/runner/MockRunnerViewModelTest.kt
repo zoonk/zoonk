@@ -7,6 +7,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.HeldRuns
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.writingWaits
@@ -66,10 +68,10 @@ class MockRunnerViewModelTest {
         return (read.state.value as LoadState.Loaded).value
     }
 
-    private suspend fun MockRunStore.runner() =
+    private suspend fun MockRunStore.runner(source: GenerationSource = runs) =
         MockRunnerViewModel(this, session, RUN_BLOCK, opened(), reread = {
             rereads++
-        }, writingWaits = writingWaits(runs, session))
+        }, writingWaits = writingWaits(source, session))
 
     private suspend fun MockRunStore.kept() = unsent(ana, RUN_BLOCK).value.first().orEmpty()
 
@@ -222,6 +224,39 @@ class MockRunnerViewModelTest {
             assertEquals(listOf("run-1"), runs.followed)
             assertNull(viewModel.speakingPaper.generationId.value)
             assertFalse(viewModel.state.value.error)
+        }
+
+    @Test
+    fun leavingASpeakingPaperWaitClearsItAndDoesNotRestartSpeaking() =
+        runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = "", kind = "\"speaking\""))
+            api.paperWritings += "run-1"
+            val held = HeldRuns()
+            val viewModel = store().runner(held)
+            viewModel.startSpeaking()
+            runCurrent()
+            assertEquals("run-1", viewModel.speakingPaper.generationId.value)
+            viewModel.visit.end()
+            held.write()
+            runCurrent()
+            assertNull(viewModel.speakingPaper.generationId.value)
+            assertEquals(1, api.speakingStarts)
+        }
+
+    @Test
+    fun aLateSpeakingPaperAnswerCannotInstallAnotherWait() =
+        runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = "", kind = "\"speaking\""))
+            val gate = CompletableDeferred<Unit>().also { api.speakingGate = it }
+            api.paperWritings += "run-1"
+            val viewModel = store().runner()
+            viewModel.startSpeaking()
+            runCurrent()
+            viewModel.visit.end()
+            gate.complete(Unit)
+            runCurrent()
+            assertNull(viewModel.speakingPaper.generationId.value)
+            assertEquals(1, api.speakingStarts)
         }
 
     @Test

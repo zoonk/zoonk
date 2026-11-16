@@ -2,14 +2,24 @@ package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.HeldRuns
+import com.zoonk.android.data.writingWaits
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +47,50 @@ class CheckpointCallTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun leavingCheckpointPreparationClearsItsWaitBeforeReturning() {
+        val runs = HeldRuns()
+        val sessions = FakeSession(AuthenticatedSession("ana", "token", "local"))
+        val store = ConversationStore(harness.api, AppCache(sessions, harness.scope), writingWaits(runs, sessions))
+        val model = CheckpointCallModel(block, store)
+        harness.api.writings += "run-1"
+        var shown by mutableStateOf(true)
+        compose.setContent {
+            if (shown) {
+                ZoonkTheme {
+                    CheckpointCallContent(model, harness.exits, {}, { _, _ -> }, {})
+                }
+            }
+        }
+        compose.runOnIdle { model.start(null) }
+        compose.waitForIdle()
+        assertEquals("run-1", model.writing.generationId.value)
+        shown = false
+        compose.waitForIdle()
+        shown = true
+        compose.waitForIdle()
+        runs.write()
+        compose.waitForIdle()
+        assertNull(model.writing.generationId.value)
+        assertNull(model.opened)
+        assertEquals(1, harness.api.starts.size)
+    }
+
+    @Test
+    fun aLateCheckpointGenerationAnswerCannotInstallAnotherWait() {
+        val gate = CompletableDeferred<Unit>().also { harness.api.startGate = it }
+        harness.api.writings += "run-1"
+        val model = CheckpointCallModel(block, harness.store)
+        compose.runOnIdle { model.start(null) }
+        compose.waitForIdle()
+        compose.runOnIdle { model.visit.end() }
+        gate.complete(Unit)
+        compose.waitForIdle()
+        assertNull(model.writing.generationId.value)
+        assertNull(model.opened)
+        assertEquals(CheckpointCallModel.Start.Idle, model.start)
     }
 
     @Test
