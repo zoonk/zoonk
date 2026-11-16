@@ -1,8 +1,4 @@
-import {
-  certificateFactsShape,
-  certificateProgressSchema,
-  ownedCertificateShape,
-} from "@zoonk/core/certificates/contract";
+import { certificateFactsShape, ownedCertificateShape } from "@zoonk/core/certificates/contract";
 import { z } from "zod";
 
 const certificateLinksShape = {
@@ -72,7 +68,3 @@ export const goalCertificatesResponseSchema = z
       }),
   })
   .meta({ id: "GoalCertificates" });
-
-export const certificateProgressResponseSchema = z
-  .object({ upNext: z.array(certificateProgressSchema) })
-  .meta({ id: "CertificateProgressList" });

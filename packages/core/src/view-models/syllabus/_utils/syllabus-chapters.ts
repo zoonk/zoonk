@@ -8,7 +8,7 @@ import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { isWritingItem } from "../../../plans/planner/plan-item-rules";
 import { type SyllabusChapter } from "../syllabus-contract";
 import { uniquePlanItems } from "./subject-progress";
-import { type SyllabusItem } from "./syllabus-input";
+import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 
 export type KeyedChapter = SyllabusChapter & { key: string };
 
@@ -122,4 +122,28 @@ export function buildChapters({
 
 export function withoutKey({ key: _key, ...chapter }: KeyedChapter): SyllabusChapter {
   return chapter;
+}
+
+export function getItemAreas({
+  items,
+  skills,
+}: {
+  items: readonly SyllabusItem[];
+  skills: readonly SyllabusSkill[];
+}): (item: SyllabusItem) => string | null {
+  const skillAreas = new Map(skills.map((skill) => [skill.skillId, skill.area]));
+  const areaOf = (item: SyllabusItem) => (item.skillId ? skillAreas.get(item.skillId) : undefined);
+
+  const chapterAreas = new Map(
+    items
+      .flatMap((item) => {
+        const area = areaOf(item);
+        return item.chapterId && area ? [[item.chapterId, area] as const] : [];
+      })
+      .toReversed(),
+  );
+
+  return function itemArea(item) {
+    return areaOf(item) ?? (item.chapterId ? chapterAreas.get(item.chapterId) : undefined) ?? null;
+  };
 }

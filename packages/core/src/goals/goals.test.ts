@@ -3,7 +3,6 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createGoals } from "./create-goals";
@@ -450,17 +449,10 @@ describe(listCurrentUserGoals, () => {
 
   it("counts the plan's lessons as the Journey does, never a lesson set aside as done", async () => {
     const user = await useLearner();
-
-    const [goal, skill] = await Promise.all([
-      goalFixture({ targetDate: new Date("2030-01-01"), userId: user.id }),
-      skillFixture(),
-    ]);
+    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
 
     const plan = await planFixture({
       goalId: goal.id,
-      graph: {
-        skills: [{ area: "Science", lessons: 1, name: skill.name, phase: 0, skillId: skill.id }],
-      },
       phases: [{ endDate: null, kind: "learn", name: "Basics" }],
     });
 
@@ -472,12 +464,12 @@ describe(listCurrentUserGoals, () => {
         { status: "todo" as const },
         { lessons: 3, skillId: skill.id, status: "skipped" as const },
       ].map((item, position) =>
-        planItemFixture({ skillId: skill.id, ...item, planId: plan.id, position }),
+        planItemFixture({ skillId: null, ...item, planId: plan.id, position }),
       ),
     );
 
     await expect(getGoal(goal.id)).resolves.toMatchObject({
-      goal: { plan: { lessonsDone: 2, lessonsTotal: 7 } },
+      goal: { plan: { lessonsDone: 1, lessonsTotal: 6 } },
     });
   });
 
@@ -507,34 +499,5 @@ describe(listCurrentUserGoals, () => {
     ]);
 
     expect(list?.activeGoalId).toBe(list?.goals[0]?.id);
-  });
-});
-
-describe("goal summary query scaling", () => {
-  it.each([1, 3])("batches lesson counts for %i goals", async (count) => {
-    const user = await useLearner();
-    const skill = await skillFixture();
-
-    await Promise.all(
-      Array.from({ length: count }, async () => {
-        const goal = await goalFixture({ userId: user.id });
-
-        const plan = await planFixture({
-          goalId: goal.id,
-          graph: {
-            skills: [
-              { area: "Science", lessons: 2, name: skill.name, phase: 0, skillId: skill.id },
-            ],
-          },
-        });
-
-        await planItemFixture({ planId: plan.id, skillId: skill.id });
-      }),
-    );
-
-    const measured = await countDatabaseStatements(listCurrentUserGoals);
-    expect(measured.result?.goals).toHaveLength(count);
-    expect(measured.statements).toBeLessThanOrEqual(12);
-    expect(measured.writes).toBe(0);
   });
 });

@@ -122,15 +122,13 @@ export const planPhaseSchema = z
     kind: phaseKindSchema.meta({
       description: "Exam phases have no name; clients name them by kind",
     }),
-    lessonsDone: z
-      .int()
-      .min(0)
-      .meta({ description: "Its lessons the learner studied or already knew" }),
+    lessonsDone: z.int().min(0).meta({ description: "Its lessons the learner studied" }),
     lessonsTotal: z
       .int()
       .min(0)
       .meta({
-        description: "Its lessons in the Plan's scope, including studied and already-known lessons",
+        description:
+          "Its lessons in the plan: every one but those tested out, which are off the plan",
       }),
     milestone: z.string().nullable(),
     mocks: z

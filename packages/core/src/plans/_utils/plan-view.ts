@@ -9,7 +9,6 @@ import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
-import { readPlanLessonItems } from "../../learner/facts/plan-lesson-items";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
@@ -190,7 +189,6 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
     challengeResults,
-    progressItems,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -216,7 +214,6 @@ export async function buildPlanView({
         item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
       ),
     ),
-    readPlanLessonItems(goal.userId, goal.id),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -289,7 +286,6 @@ export async function buildPlanView({
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
-      progressItems,
       shortPlan,
       skillAreas,
       taughtSkillIds,

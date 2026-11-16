@@ -37,12 +37,13 @@ export const goalSchema = z
         lessonsDone: z
           .int()
           .min(0)
-          .meta({ description: "Studied and already-known lessons in the Plan's lesson scope" }),
+          .meta({ description: "Lessons the learner studied; lessons set aside never count" }),
         lessonsTotal: z
           .int()
           .min(0)
           .meta({
-            description: "The Plan's lesson scope, including studied and already-known lessons",
+            description:
+              "Lessons in the plan: every one but those tested out, which are off the plan",
           }),
         phaseCount: z.int().min(0),
         ready: z.boolean().meta({ description: "False while the planner is building the plan" }),

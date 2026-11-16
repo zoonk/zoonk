@@ -57,12 +57,38 @@ struct CertificatesAPI: CertificatesAPIClient {
 
   func upNext(token: String) async throws -> [CertificateUpNext] {
     try await clients.perform(token: token) { client in
-      switch try await client.listCertificateProgress() {
+      switch try await client.listGoals() {
       case .ok(let response):
-        return try StudyJSON.recode(try response.body.json.upNext)
+        return makeCertificateUpNext(try response.body.json.goals)
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
+    }
+  }
+}
+
+/// Main's rule: active course and exam goals whose plan has lessons, and active language goals.
+private func makeCertificateUpNext(_ goals: [Components.Schemas.Goal]) -> [CertificateUpNext] {
+  goals.compactMap { goal in
+    guard goal.status == .active else {
+      return nil
+    }
+
+    switch goal.kind {
+    case .language:
+      return CertificateUpNext(
+        id: goal.id, displayName: goal.displayName, languageFlag: goal.languageFlag,
+        targetLanguage: goal.targetLanguage, targetRegion: goal.targetRegion, progress: nil)
+    case .learn, .exam:
+      guard let plan = goal.plan, plan.lessonsTotal > 0 else {
+        return nil
+      }
+
+      return CertificateUpNext(
+        id: goal.id, displayName: goal.displayName,
+        progress: Double(plan.lessonsDone) / Double(plan.lessonsTotal))
+    case .explain:
+      return nil
     }
   }
 }
