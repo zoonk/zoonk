@@ -128,7 +128,7 @@ export function CodeRunnerActivity({
           )}
         </div>
 
-        <ActivityCodeBlock aria-label={t("Code")} role="group">
+        <ActivityCodeBlock label={t("Code")}>
           {lines.map((line, index) => {
             const number = index + 1;
 

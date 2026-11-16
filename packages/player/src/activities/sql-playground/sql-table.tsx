@@ -7,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
+import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { keyedByPosition } from "../_utils/position-keys";
 
 type RowState = "extra" | "missing" | "plain" | "right";
@@ -83,13 +84,7 @@ export function SqlRowsTable({
         className,
       )}
     >
-      <div
-        aria-label={caption}
-        className="scroll-fade-x overflow-x-auto outline-none"
-        role="region"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
-        tabIndex={0}
-      >
+      <ActivityHorizontalScroll box={{ label: caption }}>
         <table className="w-full text-sm">
           <caption className="sr-only">{caption}</caption>
           <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
@@ -115,7 +110,7 @@ export function SqlRowsTable({
             ))}
           </tbody>
         </table>
-      </div>
+      </ActivityHorizontalScroll>
     </div>
   );
 }
@@ -136,10 +131,11 @@ export function SqlTableViewer({ table }: { table: Table }) {
       <summary className="focus-visible:ring-ring/50 flex min-h-11 cursor-pointer list-none items-center gap-2.5 rounded-xl px-3.5 py-2 outline-none select-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
-        <span className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs">
+        {/* Open, the table's own header names the columns. */}
+        <span className="text-muted-foreground min-w-0 flex-1 font-mono text-xs text-pretty group-open:hidden">
           {table.columns.map((column) => column.name).join(", ")}
         </span>
-        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
+        <span className="text-muted-foreground ms-auto shrink-0 text-xs tabular-nums">
           {t("{count, plural, one {# row} other {# rows}}", { count: table.rows.length })}
         </span>
         <FoldChevron />

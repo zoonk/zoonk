@@ -9,7 +9,11 @@ const buttonVariants = cva(
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
-      edge: { end: "edge -me-(--edge-pull)", start: "edge -ms-(--edge-start)" },
+      // Hung past its column, so its focus ring is drawn inside the box, never past the screen's edge.
+      edge: {
+        end: "edge -me-(--edge-pull) focus-visible:ring-inset",
+        start: "edge -ms-(--edge-start) focus-visible:ring-inset",
+      },
       size: {
         bar: "text-reading h-11 gap-1.5 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3.5)+1px)] has-data-[icon=inline-start]:pl-3.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3.5)+1px)] lg:h-10 lg:text-sm",
         default:

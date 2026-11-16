@@ -139,6 +139,7 @@ export function SqlPlaygroundActivity({
           <ActivityCodeEditor
             editorRef={fieldRef}
             id={editorId}
+            label={t("Query")}
             language="sql"
             onChange={change}
             onSubmit={() => void handleRun()}
