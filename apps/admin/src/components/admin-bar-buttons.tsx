@@ -27,13 +27,13 @@ export function AdminBarMenu({ children, label }: { children: React.ReactNode; l
   );
 }
 
-/** Where the sidebar is hidden, the page's bar opens the menu from its start. */
+/** Where the sidebar is hidden, the page's bar opens the menu from its end. */
 export function AdminBarMenuButton() {
   return (
     <Button
       aria-haspopup="dialog"
       className="lg:hidden"
-      edge="start"
+      edge="end"
       onClick={openAdminMenu}
       size="icon-bar"
       variant="ghost"
@@ -44,7 +44,7 @@ export function AdminBarMenuButton() {
   );
 }
 
-/** And search from its end, in place of the sidebar's search field. */
+/** And search beside it, in place of the sidebar's search field. */
 export function AdminBarSearchButton() {
-  return <BarSearch className="lg:hidden" edge="end" label="Search" onClick={openCommandPalette} />;
+  return <BarSearch className="lg:hidden" label="Search" onClick={openCommandPalette} />;
 }

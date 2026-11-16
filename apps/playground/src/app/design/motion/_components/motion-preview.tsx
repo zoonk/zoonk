@@ -34,7 +34,7 @@ export function MotionPreview({ children }: React.PropsWithChildren) {
           <span className="text-muted-foreground text-sm">
             {device
               ? "This device asks for less motion, so every demo shows its calm version."
-              : "Shows every demo as a device that asks for less motion sees it."}
+              : "Shows every demo as it looks when a device asks for less motion."}
           </span>
         </div>
       </div>

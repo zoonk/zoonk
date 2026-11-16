@@ -48,7 +48,7 @@ export function MailboxInbox({ className, ...props }: ComponentProps<"nav">) {
   return (
     <nav
       className={cn(
-        "border-border bg-muted/30 max-h-[38svh] min-h-0 overflow-y-auto border-b md:max-h-none md:border-r md:border-b-0",
+        "border-border bg-muted/30 min-h-0 border-b md:overflow-y-auto md:border-r md:border-b-0",
         className,
       )}
       {...props}

@@ -8,7 +8,7 @@ async function LoggedInAs() {
 
   return session ? (
     <>
-      You&apos;re logged in as <span className="whitespace-nowrap">{session.user.email}</span>.{" "}
+      You&apos;re logged in as <span className="block wrap-anywhere">{session.user.email}.</span>
     </>
   ) : null;
 }

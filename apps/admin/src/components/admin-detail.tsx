@@ -5,6 +5,7 @@ import { PageTitle } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { AdminHeader, type AdminParent } from "./admin-header";
+import { AdminDisclosure } from "./admin-json";
 
 export function AdminDetailPage({ children }: { children: React.ReactNode }) {
   return <Container className="flex-1 gap-8">{children}</Container>;
@@ -39,23 +40,31 @@ export function AdminDetailBody({
 
 /**
  * A record's first tab on a wide window: what staff came for on the left, the short facts beside it.
- * Narrower, the facts follow below.
+ * Narrower, the facts follow below; a long tab's facts (`foldedAside`, their name) fold into one row
+ * above it instead, so they are first without pushing what staff came for down a screen.
  */
 export function AdminDetailColumns({
   aside,
   children,
-  factsFirst = false,
   className,
+  foldedAside,
 }: {
-  className?: string;
-  factsFirst?: boolean;
   aside: React.ReactNode;
   children: React.ReactNode;
+  className?: string;
+  foldedAside?: string;
 }) {
   return (
     <div className={cn("grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-10", className)}>
+      {foldedAside ? (
+        <div className="-mb-4 xl:hidden">
+          <AdminDisclosure label={foldedAside}>
+            <div className="flex flex-col gap-8 pt-2 pb-4 text-sm">{aside}</div>
+          </AdminDisclosure>
+        </div>
+      ) : null}
       <div className="flex min-w-0 flex-col gap-8">{children}</div>
-      <aside className={cn("flex min-w-0 flex-col gap-8", factsFirst && "max-xl:-order-1")}>
+      <aside className={cn("flex min-w-0 flex-col gap-8", foldedAside && "max-xl:hidden")}>
         {aside}
       </aside>
     </div>
