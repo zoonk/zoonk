@@ -325,14 +325,16 @@ internal class GoalSetupViewModel(
         update(flow.copy(current = view.steps.firstOrNull() ?: OnboardingStep.PLAN, history = answeredScreens(view)))
     }
 
-    /** "Save and start lesson 1": the save, then the start once it saved, while the visit that tapped it lasts. */
-    val startLesson = visit.outcome<Unit>()
+    private val lessonStartVisit = visit.opening()
+
+    /** "Save and start lesson 1": survives recreation, but Back ends the question's pending start. */
+    val startLesson = lessonStartVisit.outcome<Unit>()
 
     fun answerThenStartLesson(
         input: OnboardingAnswerInput,
         profileAnswer: ProfileDraft,
     ) {
-        val started = visit.number
+        val started = lessonStartVisit.number
         val saving = answer(input, profileAnswer = profileAnswer) ?: return
         viewModelScope.launch { if (saving.await() is WriteOutcome.Done) startLesson.send(started, Unit) }
     }
@@ -402,6 +404,7 @@ internal class GoalSetupViewModel(
 
     fun back() {
         val previous = flow.goingBack() ?: return
+        lessonStartVisit.end()
         clearFailure()
         update(previous)
     }
