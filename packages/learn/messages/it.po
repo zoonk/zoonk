@@ -1032,6 +1032,8 @@ msgid "Different time on weekends"
 msgstr "Tempo di studio diverso nel fine settimana"
 
 #: src/_utils/iso-date.ts
+#: src/exam/exam-labels.tsx
+#: src/exam/exam-screen.tsx
 #: src/journey/phase-when.tsx
 #: src/plan/plan-date-text.tsx
 msgctxt "7KwTGn"
@@ -3372,14 +3374,6 @@ msgstr "Quello che l’insegnante ti permette di portare, come una penna o una c
 msgctxt "SI6y4w"
 msgid "{date} · {time}"
 msgstr "{date} · {time}"
-
-#: src/exam/exam-labels.tsx
-#: src/exam/exam-screen.tsx
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
 
 #: src/exam/exam-map-section.tsx
 msgctxt "lIEwYT"

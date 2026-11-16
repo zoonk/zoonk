@@ -1032,6 +1032,8 @@ msgid "Different time on weekends"
 msgstr "주말 학습 시간 따로 설정"
 
 #: src/_utils/iso-date.ts
+#: src/exam/exam-labels.tsx
+#: src/exam/exam-screen.tsx
 #: src/journey/phase-when.tsx
 #: src/plan/plan-date-text.tsx
 msgctxt "7KwTGn"
@@ -3372,14 +3374,6 @@ msgstr "펜이나 계산기 등 선생님이 허락한 준비물"
 msgctxt "SI6y4w"
 msgid "{date} · {time}"
 msgstr "{date} · {time}"
-
-#: src/exam/exam-labels.tsx
-#: src/exam/exam-screen.tsx
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}쯤"
 
 #: src/exam/exam-map-section.tsx
 msgctxt "lIEwYT"
