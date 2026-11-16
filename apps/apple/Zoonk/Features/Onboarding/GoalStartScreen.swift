@@ -161,24 +161,34 @@ private struct GoalStartFlow: View {
     } else {
       NavigationStack(path: $path) {
         ZoonkList {
-          StepHeader(
-            title: Text(
-              "What do you want to achieve?", tableName: "Onboarding",
-              comment: "Title of the start flow's first screen"),
-            description: Text(
-              "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
-              comment: "Under the start flow's first title"))
+          if let gate = limitGate {
+            StepHeader(title: gate.title, description: gate.line)
+              .announcesAlert(gate.said)
+          } else {
+            StepHeader(
+              title: Text(
+                "What do you want to achieve?", tableName: "Onboarding",
+                comment: "Title of the start flow's first screen"),
+              description: Text(
+                "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
+                comment: "Under the start flow's first title"))
 
-          GoalEntrySections(
-            words: $words, error: error, limit: limit,
-            canSubmitEmpty: !material.isEmpty && intent != nil,
-            onSubmit: submit,
-            attach: {
-              GoalMaterialButton(material: $material, draft: $materialDraft)
-            },
-            attachment: {
-              GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
-            })
+            GoalEntrySections(
+              words: $words, error: error,
+              canSubmitEmpty: !material.isEmpty && intent != nil,
+              onSubmit: submit,
+              attach: {
+                GoalMaterialButton(material: $material, draft: $materialDraft)
+              },
+              attachment: {
+                GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
+              })
+          }
+        }
+        .bottomBar {
+          if limitGate != nil {
+            GoalLimitActions(limit: .activeGoals)
+          }
         }
         .onboardingColumn()
         .closesTask()
@@ -227,6 +237,12 @@ private struct GoalStartFlow: View {
         sending?.cancel()
       }
     }
+  }
+
+  /// Main's: at the goals studied at once, the screen is only the gate, with no box to type in. A
+  /// month's new goals used up shows after a try.
+  private var limitGate: GoalLimitGate? {
+    limit == .activeGoals ? GoalLimitGate(limit, at: .now) : nil
   }
 
   private var title: Text {

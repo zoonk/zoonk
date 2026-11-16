@@ -59,16 +59,8 @@ private struct SpeakingPaperView: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      StateMessage {
-        Label {
-          Text(
-            "No speaking practice for this goal", tableName: "Voice",
-            comment: "No exam format fits the goal")
-        } icon: {
-          Image(systemName: "mic.slash")
-        }
-      }
-      .lonePage()
+      // Main's: a goal with no speaking format has no such page.
+      NotFoundView()
     case .failed:
       StateMessage {
         Label {
