@@ -87,6 +87,32 @@ fun GoalSwitcher(
     ActOn(viewModel.started) { navigator.open(AppRoute.GoalSetup(it)) }
     ActOn(viewModel.failed) { app.snackbars.show(it.message) }
 
+    if (makingRoomFor != null) {
+        VisitOf(viewModel.makeRoomSheet)
+        val close = {
+            makingRoomFor = null
+            viewModel.forgetMakeRoomFailure()
+        }
+        ActOn(viewModel.startedFromSheet) {
+            close()
+            navigator.open(AppRoute.GoalSetup(it))
+        }
+        learner.waitingGoals.firstOrNull { it.id == makingRoomFor && it.locked }?.let { waiting ->
+            MakeRoomSheet(
+                waitingName = waiting.displayName,
+                active = followed.filter { it.status == LearnerSummaryGoal.Status.ACTIVE },
+                pausing = viewModel.pausing,
+                failed = viewModel.makeRoomFailed,
+                onPause = { goalId -> viewModel.start(waiting, pauseGoalId = goalId) },
+                onSubscribe = {
+                    close()
+                    navigator.open(AppRoute.Subscription)
+                },
+                onDismiss = close,
+            )
+        }
+    }
+
     if (selected == null && explanations.isEmpty()) {
         TextButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
@@ -121,30 +147,6 @@ fun GoalSwitcher(
                 viewModel = viewModel,
             )
         }
-    }
-
-    learner.waitingGoals.firstOrNull { it.id == makingRoomFor && it.locked }?.let { waiting ->
-        VisitOf(viewModel.makeRoomSheet)
-        val close = {
-            makingRoomFor = null
-            viewModel.forgetMakeRoomFailure()
-        }
-        ActOn(viewModel.startedFromSheet) {
-            close()
-            navigator.open(AppRoute.GoalSetup(it))
-        }
-        MakeRoomSheet(
-            waitingName = waiting.displayName,
-            active = followed.filter { it.status == LearnerSummaryGoal.Status.ACTIVE },
-            pausing = viewModel.pausing,
-            failed = viewModel.makeRoomFailed,
-            onPause = { goalId -> viewModel.start(waiting, pauseGoalId = goalId) },
-            onSubscribe = {
-                close()
-                navigator.open(AppRoute.Subscription)
-            },
-            onDismiss = close,
-        )
     }
 }
 
