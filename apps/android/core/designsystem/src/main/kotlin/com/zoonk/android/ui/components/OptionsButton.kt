@@ -1,8 +1,11 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,4 +44,34 @@ fun OptionsButton(
     }
 }
 
+/**
+ * Main's quiet "⋯" opening a screen's menu where it has no box: in a top bar's actions, or at a row's end. "More" is
+ * this one glyph on every screen, as Apple's `ellipsis`; [quiet] draws it in the muted ink, as a row's own menu.
+ */
+@Composable
+fun MoreButton(
+    onClick: () -> Unit,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    quiet: Boolean = false,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.offset(x = MORE_INK_BLANK),
+        enabled = enabled,
+        colors =
+            if (quiet) {
+                IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else {
+                IconButtonDefaults.iconButtonColors()
+            },
+    ) {
+        Icon(painterResource(R.drawable.ic_more_horiz), contentDescription = contentDescription)
+    }
+}
+
 private val ICON = 16.dp
+
+/** `ic_more_horiz` leaves 4dp blank after its last dot; pushed by it, the dots end where the bar's or row's edge is, as the back arrow's ink starts on it. */
+private val MORE_INK_BLANK = 4.dp

@@ -178,13 +178,8 @@ fun TagBesideOrUnder(
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
         val besideWidth = max(0, contentWidth - gap - tagWidth)
-        val beside =
-            tagPlaceable == null ||
-                text == null ||
-                (
-                    text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth &&
-                        max(text.minIntrinsicHeight(besideWidth), tagHeight) <= text.minIntrinsicHeight(contentWidth) + gap / 2 + tagHeight
-                )
+        // Beside whenever the words' longest word fits there, so the options of one list never put it two ways.
+        val beside = tagPlaceable == null || text == null || text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
         val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
         val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0

@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -61,6 +56,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.hasWayOn
@@ -392,23 +388,11 @@ private fun LengthChoices(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             choices.forEach { minutes ->
-                FilterChip(
+                SelectionChip(
+                    text = formatMinutes(minutes.toInt(), locale),
                     selected = minutes == selected,
                     onClick = { onChange(minutes) },
-                    label = { Text(formatMinutes(minutes.toInt(), locale)) },
-                    leadingIcon =
-                        if (minutes == selected) {
-                            {
-                                Icon(
-                                    painterResource(R.drawable.ic_check),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                    modifier = Modifier.semantics { role = Role.RadioButton },
+                    role = Role.RadioButton,
                 )
             }
         }

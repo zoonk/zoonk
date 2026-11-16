@@ -17,8 +17,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -82,6 +80,7 @@ import com.zoonk.android.ui.characters.rememberBuddyActorState
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -410,11 +409,7 @@ private fun BuddyMenu(
     val more = stringResource(R.string.buddy_page_more, name)
 
     Box {
-        IconButton(onClick = {
-            open = true
-        }, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = more)
-        }
+        MoreButton(onClick = { open = true }, contentDescription = more, quiet = true)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = {

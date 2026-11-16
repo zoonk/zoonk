@@ -58,6 +58,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -78,7 +79,6 @@ import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -321,7 +321,7 @@ private fun ChapterHero(
                 percentDone(done.toDouble() / lessons.size),
             )
         }
-    val facts = (listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts).factsLine()
+    val facts = listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts
 
     DetailHero(menu) {
         Text(
@@ -329,7 +329,7 @@ private fun ChapterHero(
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
-        Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
+        Facts(facts)
     }
 }
 

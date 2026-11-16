@@ -15,7 +15,6 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -43,7 +42,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
@@ -416,7 +414,7 @@ private fun TaskRow(
             }
         }
     ListRow(
-        headline = { Text(inLanguage(task.name, paper.language), style = LocalTextStyle.current.copy(lineBreak = LineBreak.Heading)) },
+        headline = { Text(inLanguage(task.name, paper.language)) },
         modifier = Modifier.bringIntoViewRequester(requester).bleed(LIST_ITEM_INSET),
         onClick = { open = !open },
         expanded = open,

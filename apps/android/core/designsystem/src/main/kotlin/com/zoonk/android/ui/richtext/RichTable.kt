@@ -70,8 +70,8 @@ private fun arrowStep(
 /**
  * A table of data in learner text with its header row (main's `RichTable`). Columns are as wide as
  * their content when that fits and share the frame's width like an HTML table; when even the
- * longest words don't fit (a phone, a large font), the table scrolls sideways inside its frame
- * instead of squeezing them. Numbers in right or centered columns line up on their digits.
+ * longest words or a header's whole line don't fit (a phone, a large font), the table scrolls sideways
+ * inside its frame instead of squeezing them. Numbers in right or centered columns line up on their digits.
  * TalkBack reads it as a table, each cell with its row and column.
  */
 @Composable
@@ -214,7 +214,13 @@ private fun TableGrid(
         modifier = Modifier.semantics { collectionInfo = CollectionInfo(rowCount = rowCount + 1, columnCount = columns) },
     ) { (backgrounds, lines, cellMeasurables), _ ->
         val grid: List<List<Measurable>> = cellMeasurables.chunked(columns)
-        val minimums = List(columns) { column -> grid.maxOf { it[column].minIntrinsicWidth(Constraints.Infinity) } }
+        val minimums =
+            List(columns) { column ->
+                maxOf(
+                    grid.first()[column].maxIntrinsicWidth(Constraints.Infinity),
+                    grid.maxOf { it[column].minIntrinsicWidth(Constraints.Infinity) },
+                )
+            }
         val maximums = List(columns) { column -> grid.maxOf { it[column].maxIntrinsicWidth(Constraints.Infinity) } }
         val widths = columnWidths(minimums, maximums, available)
         val width = widths.sum()

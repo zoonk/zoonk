@@ -66,6 +66,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.GenerationFailureNotice
@@ -424,23 +425,7 @@ private fun QuizSkeleton(wait: WaitPresentation) {
 
 @Composable
 private fun Title(wait: WaitPresentation) {
-    Row(
-        Modifier.semantics(mergeDescendants = true) { heading() },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painterResource(R.drawable.ic_auto_awesome),
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            stringResource(wait.quizTitle),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
-    }
+    Eyebrow(stringResource(wait.quizTitle), Modifier.semantics(mergeDescendants = true) { heading() })
 }
 
 /** The answers lock at the first tap, which shows the right one and why; a guess is never wrong, only shown its answer. */

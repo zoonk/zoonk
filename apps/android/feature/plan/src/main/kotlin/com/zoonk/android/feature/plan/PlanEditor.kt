@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -528,6 +529,6 @@ internal fun ChoiceRow(
         }
         trailing?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         // The choice's mark at the row's end, as every choice list draws it.
-        RadioButton(selected = selected, onClick = null, enabled = enabled)
+        RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk(), enabled = enabled)
     }
 }

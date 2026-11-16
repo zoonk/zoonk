@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -77,6 +74,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -619,9 +617,7 @@ private fun MoreMenu(
     var confirming by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { open = true }, enabled = !disabled) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.onboarding_more))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.onboarding_more), enabled = !disabled)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             if (onNeverAsk != null) {
                 DropdownMenuItem(text = {

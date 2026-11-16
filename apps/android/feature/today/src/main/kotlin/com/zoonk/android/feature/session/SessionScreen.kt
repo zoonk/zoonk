@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -84,6 +83,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -520,17 +520,17 @@ internal fun NextStop(
                     if (fold ==
                         null
                     ) {
-                        SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+                        SessionSegments(day, step, Modifier.taskColumn())
                     }
                     Column(
                         modifier =
                             Modifier
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState())
-                                .padding(horizontal = 16.dp, vertical = 24.dp),
+                                .padding(vertical = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Eyebrow(stringResource(R.string.session_next_eyebrow))
                             Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                             blockDetail(step)?.let {
@@ -700,4 +700,3 @@ private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 
 /** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
 private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 600_000L)
-private val CONTENT_WIDTH = 640.dp

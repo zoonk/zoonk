@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "b4facf0d66c9920a9aaac7d5376306da2cafe9ca0f07c6cf929b2694a6bb07b9",
   "onboarding_reveal_modules": "a476ceb7a34051675daa887cefb9978366cf3694538da34f1e7e858bb7cbe994",
   "onboarding_reveal_more_chapters": "2f3d0b662cc74df7bd6e2889886d44dd01d53c740b985e71456e3660da8c2b2e",
-  "onboarding_reveal_more_kinds": "176103af9cc5f8d5efab90dcba4d6442bbb21edcd1ca6cb32b9fcca3e9f3329d",
   "onboarding_reveal_more_lessons": "83da9ece431d3ffae8d51d7a7d4e9ebf842800da58420e8a985d924acd154a2c",
   "onboarding_reveal_most_questions": "fd66edef6b8aaa9c90397fb638455067a6801360a56c184c23c05dd3e0b081c9",
   "onboarding_reveal_no_sitting": "78685708d962d460ca04327910f20dad18acbdf6596e619e495c5d7a7e59bd8a",
@@ -985,7 +984,6 @@
     <string name="onboarding_reveal_estimated_finish">完了の目安</string>
     <string name="onboarding_whats_next">次にすること</string>
     <string name="onboarding_your_plan_ready">学習計画ができました</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">旅行に必要な会話をする</string>
     <string name="onboarding_aim_talk">日常会話</string>
     <string name="onboarding_aim_work">仕事や勉強で使う</string>

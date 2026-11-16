@@ -55,6 +55,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.barButtonEnd
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -294,7 +295,7 @@ internal fun MockResult(
                 TaskScaffold(
                     onClose = if (placement) onContinue else navigator::closeTask,
                     title = { StepDots(shown.size, position) },
-                    actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
+                    actions = { Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) } },
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {

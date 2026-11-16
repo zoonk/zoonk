@@ -3,6 +3,7 @@ package com.zoonk.android.feature.exam
 import android.text.format.DateFormat
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -68,12 +70,15 @@ fun ExamMomentCard(
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(
-                painter = painterResource(moment.stage.icon),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            // In a list row's mark slot, so its words start where the rows' labels do.
+            Box(Modifier.size(MARK_SLOT), contentAlignment = Alignment.Center) {
+                Icon(
+                    painter = painterResource(moment.stage.icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(examMomentTitle(moment), Modifier.semantics { heading() }, style = titleStyle)
                 moment.day?.takeUnless { afterExam }?.let {
@@ -204,7 +209,7 @@ fun ExamChecklist(
                         color = if (checked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Checkbox(checked = checked, onCheckedChange = null)
+                    Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk())
                 }
             }
         }
@@ -232,3 +237,5 @@ private fun checklistLabel(item: ExamMoment.Checklist): String =
             ExamMoment.Checklist.MATERIALS -> R.string.exam_checklist_materials
         },
     )
+
+private val MARK_SLOT = 24.dp

@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "5f5b17dc80700b6ee7d63135e04c0e09d2f76b93dbfd66e9854a949b05828ff7",
   "onboarding_reveal_modules": "9fc5534eee6934193de23442da2c6455e7633817dbff8177a8100b16d0f788fa",
   "onboarding_reveal_more_chapters": "3c269d2f4a4918702357c2dda9ffa9e7521487668614d0edb0e055c9424a85d0",
-  "onboarding_reveal_more_kinds": "a66b9475e29f86fe3a0e7308296d045400f3aa3c269f39b8bbb643e50a604a3b",
   "onboarding_reveal_more_lessons": "93dab0fd90ed6076bc98d251c5e5c1627afc195c6d00898eb1c91aca974d0f59",
   "onboarding_reveal_most_questions": "29887559ecd0a865b6ee6f3568c49c233b330d59d891c2e106f99b9846e27313",
   "onboarding_reveal_no_sitting": "631998b16663b7179a6dc430d3602a14c061586748433b8d5aeaba701217734a",
@@ -1010,7 +1009,6 @@
     <string name="onboarding_reveal_estimated_finish">tahmini bitiş</string>
     <string name="onboarding_whats_next">Sıradaki adımlar</string>
     <string name="onboarding_your_plan_ready">Planın hazır</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">Seyahatlerde anlaşabilmek</string>
     <string name="onboarding_aim_talk">Günlük sohbetler</string>
     <string name="onboarding_aim_work">İş veya eğitim için kullanmak</string>

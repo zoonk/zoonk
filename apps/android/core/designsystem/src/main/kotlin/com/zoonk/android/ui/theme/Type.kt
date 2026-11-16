@@ -58,6 +58,9 @@ private fun TextStyle.role(
         letterSpacing = tracking.em,
     )
 
+/** Main's titles balance their lines (`text-balance`), so a wrapped title never leaves one word alone. */
+private fun TextStyle.balanced(): TextStyle = copy(lineBreak = LineBreak.Heading)
+
 private val material = Typography()
 
 /** Material's slots, so its components (bars, buttons, navigation, dialogs, fields) take main's roles. */
@@ -65,15 +68,15 @@ internal val ZoonkMaterialTypography =
     with(material) {
         Typography(
             // A moment's or a result's leading number (main's `text-[2.5rem]` readouts).
-            displayLarge = displayLarge.role(40f, 600, 44f, -0.04f),
-            displayMedium = displayMedium.role(40f, 600, 44f, -0.04f),
+            displayLarge = displayLarge.role(40f, 600, 44f, -0.04f).balanced(),
+            displayMedium = displayMedium.role(40f, 600, 44f, -0.04f).balanced(),
             // `text-headline`: a course's, chapter's or lesson's name, a ceremony.
-            displaySmall = displaySmall.role(34f, 640, 38f, -0.035f),
+            displaySmall = displaySmall.role(34f, 640, 38f, -0.035f).balanced(),
             // `text-title`: a page's title (`PageTitle`).
-            headlineLarge = headlineLarge.role(30f, 620, 33f, -0.035f),
-            headlineMedium = headlineMedium.role(30f, 620, 33f, -0.035f),
+            headlineLarge = headlineLarge.role(30f, 620, 33f, -0.035f).balanced(),
+            headlineMedium = headlineMedium.role(30f, 620, 33f, -0.035f).balanced(),
             // `text-readout` at a block's size (`BigQuantity`), and headings that size.
-            headlineSmall = headlineSmall.role(24f, 600, 30f, -0.04f),
+            headlineSmall = headlineSmall.role(24f, 600, 30f, -0.04f).balanced(),
             // `text-section`, and a top app bar's title.
             titleLarge = titleLarge.role(20f, 600, 26f, -0.02f),
             // A card's or a block's title at reading size, at Material's weight.

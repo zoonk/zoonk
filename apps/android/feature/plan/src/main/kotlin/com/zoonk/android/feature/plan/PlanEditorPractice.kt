@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.SelectionChip
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanSteering
 import com.zoonk.api.models.WrittenPractice
@@ -107,7 +108,7 @@ internal fun WrittenCadenceChoice(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(cadenceLabel(cadence), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                    RadioButton(selected = cadence == shown, onClick = null, enabled = !pending)
+                    RadioButton(selected = cadence == shown, onClick = null, modifier = Modifier.controlInk(), enabled = !pending)
                 }
             }
         }

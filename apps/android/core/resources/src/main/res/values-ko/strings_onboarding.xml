@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "8d6d62d9f1270262f96edf80e611e16570b5e72e72a387bd697335bd46eea3e8",
   "onboarding_reveal_modules": "451f06e8c85afe24c4c6e3d9fc36ff51368464fcbf282884733091af940bb9f6",
   "onboarding_reveal_more_chapters": "dd1d668ef8ad68020968c96aa82ca65f5af402c12a8815e43369f408f0b4e8a1",
-  "onboarding_reveal_more_kinds": "a76af6afbdd973b41cea255807e6fa9b85048a1806deafafc52a0c494a02aa62",
   "onboarding_reveal_more_lessons": "3706c9578842c21be163cad3f440e612658c2b37774962b6ff77549375535a4a",
   "onboarding_reveal_most_questions": "60041a16529598dd029c4195363de683a33ef54b399544c5a30c573e72d78c92",
   "onboarding_reveal_no_sitting": "ad4bbd500f5419e0ddbe235976cf0e9483d1b2583c656f0c9381c7b2e790d4cf",
@@ -985,7 +984,6 @@
     <string name="onboarding_reveal_estimated_finish">예상 완료일</string>
     <string name="onboarding_whats_next">다음 할 일</string>
     <string name="onboarding_your_plan_ready">계획이 준비됐어요</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">여행지에서 간단히 대화하기</string>
     <string name="onboarding_aim_talk">일상 대화</string>
     <string name="onboarding_aim_work">일이나 공부에 쓰기</string>

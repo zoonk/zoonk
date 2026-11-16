@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -52,6 +51,7 @@ import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -300,9 +300,7 @@ fun ReportProblemMenu(
         if (inPage) {
             OptionsButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more), size = ButtonSize.Large)
         } else {
-            IconButton(onClick = { isOpen = true }) {
-                Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
-            }
+            MoreButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more))
         }
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             ReportProblemItem(report) { isOpen = false }

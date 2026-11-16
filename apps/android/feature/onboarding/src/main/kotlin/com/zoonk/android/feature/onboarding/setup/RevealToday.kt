@@ -16,17 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.session.DayStep
@@ -36,9 +33,7 @@ import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
-import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
@@ -52,7 +47,6 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -236,8 +230,8 @@ internal fun RevealToday(
 
 /**
  * Main's `RevealWeek`: the six days after today. Each row reads as a table row: the date is a lead as
- * wide as the week's longest, never wrapping, and it, the first name and the kinds share the first line;
- * the names follow one per line. The kinds show only in a window wider than a phone's (main's `max-sm:hidden`).
+ * wide as the week's longest, never wrapping, and it and the first name share the first line; the names
+ * follow one per line, with no kind marks (Today's rows lead with theirs).
  */
 @Composable
 internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
@@ -257,7 +251,6 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                     formatMinutes(reveal.week.minutes.toInt(), locale),
                 ).factsLine(),
         )
-        val kinds = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             days.forEachIndexed { index, day ->
                 val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
@@ -285,34 +278,12 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                             Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
                         }
                     },
-                    trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
                 )
-                ListDivider()
+                if (index != days.lastIndex) ListDivider()
             }
         }
     }
 }
-
-/** Main's `DayKinds`: up to four kinds, then "+N", which TalkBack skips: the names already say them. */
-@Composable
-private fun DayKinds(items: List<PlanItem>) {
-    Row(
-        Modifier.clearAndSetSemantics {},
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        items.take(KINDS_SHOWN).forEach { KindMark(it.revealKind(), Modifier.size(12.dp)) }
-        if (items.size > KINDS_SHOWN) {
-            Text(
-                stringResource(R.string.onboarding_reveal_more_kinds, formatNumber((items.size - KINDS_SHOWN).toDouble(), currentLocale())),
-                color = MaterialTheme.zoonk.faint,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-    }
-}
-
-private const val KINDS_SHOWN = 4
 
 /** Main's `gap-1.5` between a day's names. */
 private val NAME_GAP = 6.dp
@@ -324,14 +295,6 @@ private fun revealItemTitle(item: PlanItem): String =
         PlanItem.Kind.MOCK -> stringResource(R.string.onboarding_reveal_mock)
         PlanItem.Kind.CHECKPOINT, PlanItem.Kind.BOSS -> stringResource(R.string.onboarding_reveal_challenge)
         else -> item.title.ifBlank { stringResource(R.string.onboarding_reveal_more_lessons) }
-    }
-
-private fun PlanItem.revealKind(): LearnKind =
-    when (kind) {
-        PlanItem.Kind.REVIEW -> LearnKind.Review
-        PlanItem.Kind.MOCK -> LearnKind.Mock
-        PlanItem.Kind.CHECKPOINT, PlanItem.Kind.BOSS -> LearnKind.Challenge
-        else -> LearnKind.Lesson
     }
 
 @Composable

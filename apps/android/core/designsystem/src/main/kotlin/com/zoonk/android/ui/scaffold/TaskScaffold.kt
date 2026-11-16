@@ -261,5 +261,5 @@ private val ASIDE_MARGIN = 24.dp
 
 @Composable
 private fun TaskBottomBar(content: @Composable () -> Unit) {
-    BottomBar { content() }
+    BottomBar(columnMargin = TASK_MARGIN) { content() }
 }

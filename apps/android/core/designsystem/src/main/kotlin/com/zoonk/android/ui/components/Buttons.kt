@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -386,7 +387,13 @@ fun Modifier.iconButtonEdge(edge: ButtonEdge): Modifier =
         layout(placeable.width - pull, placeable.height) { placeable.placeRelative(if (edge == ButtonEdge.Start) -pull else 0, 0) }
     }
 
-private val ICON_BUTTON_BLANK = (48.dp - 24.dp) / 2
+/**
+ * A boxed button (one drawing its border or fill) at the end of a top bar's actions keeps the room an icon button keeps
+ * past its glyph, so its box ends on the page's margin where a bare glyph does (main's `edge="end"`).
+ */
+fun Modifier.barButtonEnd(): Modifier = padding(end = ICON_BUTTON_BLANK)
+
+internal val ICON_BUTTON_BLANK = (48.dp - 24.dp) / 2
 
 /** The box gives up the padding on [edge]'s side and the button draws past it there, so the ink starts or ends the box. */
 private fun Modifier.onEdge(
