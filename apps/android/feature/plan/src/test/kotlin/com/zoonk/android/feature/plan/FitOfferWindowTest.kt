@@ -171,6 +171,7 @@ class FitOfferWindowTest {
                 PlanStore(api, cache),
                 page.goal.id,
                 writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
+                PlanNavigationModel(),
             )
         scenario = ActivityScenario.launch(FitOfferTestActivity::class.java)
         return held to api

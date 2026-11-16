@@ -72,7 +72,7 @@ class PlanExamOverWindowTest {
         val page = PlanPageState(summary.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), summary)
         PlanExamOverTest.app = AppContainer.preview(application)
         PlanExamOverTest.page = page
-        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits)
+        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits, PlanNavigationModel())
         PlanExamOverTest.farTopics = FarTopicViewModel(store, page.goal.id)
         scenario = ActivityScenario.launch(PlanExamOverTestActivity::class.java)
 

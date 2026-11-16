@@ -67,6 +67,7 @@ class FitOfferCheckTest {
             ),
             page.goal.id,
             writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
+            PlanNavigationModel(),
         )
     private var shown by mutableStateOf(true)
     private var cardWidth by mutableStateOf(411.dp)

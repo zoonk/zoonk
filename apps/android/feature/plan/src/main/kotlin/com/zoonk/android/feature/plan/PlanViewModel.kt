@@ -79,7 +79,7 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
-    navigation: PlanNavigationModel? = null,
+    navigation: PlanNavigationModel,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
@@ -107,8 +107,8 @@ class PlanViewModel(
     val resumeFailure: ResumeFailure? get() = resumeFailed.value
 
     /** What a write did that the screen acts on, while the visit that made it lasts. */
-    private val navigationVisit = navigation?.visit ?: visit
-    val event = navigation?.event ?: visit.outcome<PlanEvent>()
+    private val navigationVisit = navigation.visit
+    val event = navigation.event
 
     /** What the editor's and the slot's saves and searches lead to, while the visit that asked lasts. */
     internal val outcomes = PlanOutcomes(visit)
