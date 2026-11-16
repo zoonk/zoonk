@@ -1,6 +1,6 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { type UserMemory, listUserMemory } from "@/data/users/list-user-memory";
-import { formatDate, toWords } from "@/lib/format";
+import { formatDate, formatDay, toWords } from "@/lib/format";
 import { type MemoryCategory } from "@zoonk/db/enums";
 import { FactSegments } from "@zoonk/learn/facts";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
@@ -128,7 +128,7 @@ export async function UserMemorySection({ userId }: { userId: string }) {
                 <span className="flex flex-col gap-0.5">
                   <span className="max-w-3xl">{insight.message}</span>
                   <span className="text-muted-foreground text-xs">
-                    {[formatDate(insight.localDate), insight.kind, insight.status]
+                    {[formatDay(insight.localDate), insight.kind, insight.status]
                       .flatMap((value) => (value ? [toWords(value)] : []))
                       .join(FACT_SEPARATOR)}
                   </span>

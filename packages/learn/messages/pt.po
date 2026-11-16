@@ -5198,10 +5198,11 @@ msgctxt "P7djTu"
 msgid "Phases"
 msgstr "Fases"
 
+#. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
-msgctxt "yXPFJy"
-msgid "<date></date> · exam"
-msgstr "<date></date> · prova"
+msgctxt "pwcc1H"
+msgid "exam"
+msgstr "prova"
 
 #: src/journey/schedule-details.tsx
 #: src/today/today-week-day.tsx
@@ -9746,6 +9747,11 @@ msgstr "até a prova"
 msgctxt "RokfZv"
 msgid "until your date"
 msgstr "até a data escolhida"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "aio5sH"
+msgid "{days, plural, one {~# day} other {~# days}}"
+msgstr "{days, plural, one {~# dia} other {~# dias}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "4OjqDe"

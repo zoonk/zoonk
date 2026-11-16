@@ -33,7 +33,8 @@ function Fact({
 /**
  * The facts of one line with a dot between them ("4 lessons · 12 min"). A line that wraps never
  * ends or starts on a dot, and the line's own `text-balance` keeps its last line from holding one
- * fact alone.
+ * fact alone. For lines that start on their column's start edge: an end-aligned line's first dot
+ * would fall inside the line, where nothing cuts it.
  */
 export function FactSegments({
   extra,

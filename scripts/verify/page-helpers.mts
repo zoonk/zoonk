@@ -8,8 +8,9 @@ declare global {
     /**
      * What it draws: its text by its line boxes, a Lucide glyph by its drawn shape, a picture by
      * its frame, and the boxes it or its children paint. Null when it draws nothing.
+     * An optional predicate excludes subtrees from the measurement.
      */
-    ink: (element: Element) => InkBox | null;
+    ink: (element: Element, include?: (element: Element) => boolean) => InkBox | null;
     label: (element: Element, visibleOnly?: boolean) => string;
     /** It draws a box: a fill that differs from what's behind it, a border on these sides, or a ring. */
     paints: (element: Element, sides?: readonly ("bottom" | "left" | "right" | "top")[]) => boolean;
@@ -203,7 +204,11 @@ export function installPageHelpers() {
   }
 
   /** What an element draws: its text, its glyphs and pictures, and the boxes it or its children paint. */
-  function ink(element: Element): InkBox | null {
+  function ink(element: Element, include?: (element: Element) => boolean): InkBox | null {
+    if (include && !include(element)) {
+      return null;
+    }
+
     const style = getComputedStyle(element);
     // A `display: contents` wrapper has no box of its own; what it holds still draws.
     const contents = style.display === "contents";
@@ -240,7 +245,7 @@ export function installPageHelpers() {
       .flatMap((node) => textRects(node));
 
     const children = [...element.children].flatMap((child) => {
-      const drawn = ink(child);
+      const drawn = ink(child, include);
       return drawn ? [drawn] : [];
     });
 

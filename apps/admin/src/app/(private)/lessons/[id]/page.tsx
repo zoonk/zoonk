@@ -10,6 +10,7 @@ import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { ReviewFlagNotice } from "@/components/review-flag-notice";
 import { getLibraryLesson } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatDate, toWords } from "@/lib/format";
+import { formatMinutes } from "@/lib/format-duration";
 import { languagePairName } from "@/lib/language-filter";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -82,7 +83,7 @@ async function LessonContent({ params, searchParams }: PageProps<"/lessons/[id]"
         facts={[
           languagePairName(lesson),
           toWords(lesson.level),
-          `${lesson.estimatedMinutes} min`,
+          formatMinutes(lesson.estimatedMinutes),
           formatCount(lesson.steps.length, "screen"),
           `Updated ${formatDate(lesson.updatedAt)}`,
         ]}

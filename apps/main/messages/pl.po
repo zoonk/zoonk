@@ -2432,11 +2432,6 @@ msgctxt "_knGOK"
 msgid "Check the link. It ends in a code like {example}."
 msgstr "Sprawdź link. Kończy się kodem takim jak {example}."
 
-#: src/app/[lang]/c/[code]/certificate-not-found.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Przejdź do Zoonka"
-
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "4566_7"
 msgid "A certificate issued by Zoonk. Anyone with its link can check it."

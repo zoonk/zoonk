@@ -19,11 +19,14 @@ export const ELEMENT_PARTS = [
   "action",
   "anchor",
   "bar",
+  "control",
+  "cut",
   "fill",
   "group",
   "holder",
   "pinned",
   "row",
+  "text",
 ] as const;
 
 export type CaptureElement = {
@@ -70,6 +73,9 @@ export type CaptureElement = {
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
   variant?: string;
   surface?: string;
+  controlParent?: string;
+  /** Column sides a ghost control hangs over; its content ink must meet those edges. */
+  hangEdges?: ("end" | "start")[];
   /** An action's destination, when it is a link: the same words to the same place are one action. */
   target?: string;
   /**
@@ -90,12 +96,20 @@ export type CaptureElement = {
   source?: "piece" | "picture" | "stack";
   /** A row's: the one the learner is on (current, picked), which may set its words apart. */
   current?: boolean;
+  /** A group's: the pinned bar (`pinned.N`) it is drawn in, which carries it over the page. */
+  pinnedIn?: string;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */
   middle?: number | NotMeasured;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
   stacked?: boolean;
   /** An area the platform couldn't read (`"part": "unmeasured"`): why. */
   reason?: string;
+  /** A text's: each line's words as drawn, when it wraps or ends with a separator. */
+  lineTexts?: string[];
+  /** A text's: a title, facts line, label or button, which never leaves one word alone. */
+  textRole?: "button" | "facts" | "label" | "title";
+  /** A cut's (what a box clips): how far its content passes the box, across and down. */
+  overflow?: [number, number];
 };
 
 export type Configuration = {
@@ -109,7 +123,9 @@ export type Configuration = {
 };
 
 export type Capture = {
-  version: 1;
+  version: 1 | 2;
+  /** Measurements completed, including when a screen has no matching text or controls. */
+  measurements?: ("clipping" | "controls" | "text-flows")[];
   platform: "android" | "apple" | "web";
   scenario: string | null;
   screen: string;
@@ -123,8 +139,16 @@ export type Capture = {
   activeSurface: string;
   /** False when the run reached the screen but not its scenario's proof (its words never showed). */
   reached?: boolean;
-  /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
+  /**
+   * A gallery of the pieces shown side by side, not a screen (the design site): one filled action
+   * and the page's column aren't judged.
+   */
   specimen?: boolean;
+  /**
+   * A marketing page (the landing, the catalog and its course pages, pricing, the blog): it repeats
+   * its one action in the same words by rule, so the same words count once wherever they go.
+   */
+  marketing?: boolean;
   elements: CaptureElement[];
 };
 
