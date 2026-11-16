@@ -63,7 +63,7 @@ struct SessionScreen: View {
               // Covering Today, it holds Today's read itself, so a Start the day refused reads it again.
               .loads(today.today)
             } else {
-              ContentUnavailableView {
+              StateMessage {
                 Label {
                   Text(
                     "No session open yet", tableName: "Session",
@@ -125,7 +125,7 @@ private struct SessionContent: View {
             moment: playback.moment)
         }
       } else if case .failed(let error) = session.state, error != .unauthorized {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text("The session didn't load", tableName: "Session", comment: "Load failed")
           } icon: {
@@ -359,7 +359,7 @@ private struct NextStopView: View {
         }
       } else if writing == .setAside {
         Section {
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(Self.setAsideTitle)
             } icon: {

@@ -85,6 +85,86 @@ struct ButtonRow<Content: View>: View {
   }
 }
 
+/// Buttons that split a row in equal parts, one height, as main's two-column actions. When a label
+/// wouldn't fit its part on one line, or text is at an accessibility size, each takes a line of its
+/// own at full width, as the bottom bar's do: no label wraps to stay beside another.
+struct EqualButtonRow<Content: View>: View {
+  @Environment(\.stacksContent) private var isStacked
+
+  var spacing: CGFloat = 8
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    EqualRowLayout(spacing: spacing, isStacked: isStacked) { content }
+      .buttonSizing(.flexible)
+      .controlsShareHeight()
+  }
+}
+
+private struct EqualRowLayout: Layout {
+  let spacing: CGFloat
+  let isStacked: Bool
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let width = proposal.width ?? subviews.map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
+
+    if let part = part(of: width, subviews) {
+      return CGSize(width: width, height: rowHeight(part, subviews))
+    }
+
+    let heights = subviews.map {
+      $0.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+    }
+    return CGSize(
+      width: width, height: heights.reduce(0, +) + spacing * CGFloat(max(0, subviews.count - 1)))
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    if let part = part(of: bounds.width, subviews) {
+      let height = rowHeight(part, subviews)
+
+      for (index, subview) in subviews.enumerated() {
+        subview.place(
+          at: CGPoint(x: bounds.minX + CGFloat(index) * (part + spacing), y: bounds.minY),
+          proposal: ProposedViewSize(width: part, height: height))
+      }
+    } else {
+      var y = bounds.minY
+
+      for subview in subviews {
+        let height = subview.sizeThatFits(ProposedViewSize(width: bounds.width, height: nil)).height
+        subview.place(
+          at: CGPoint(x: bounds.minX, y: y),
+          proposal: ProposedViewSize(width: bounds.width, height: height))
+        y += height + spacing
+      }
+    }
+  }
+
+  /// Each button's part of the row, or nil when a label takes more lines in its part than on a
+  /// line of its own. A button's ideal width can't say: its label reports the stacked size.
+  private func part(of width: CGFloat, _ subviews: Subviews) -> CGFloat? {
+    guard !isStacked, !subviews.isEmpty else {
+      return nil
+    }
+
+    let count = CGFloat(subviews.count)
+    let part = (width - spacing * (count - 1)) / count
+    let wraps = subviews.contains {
+      $0.sizeThatFits(ProposedViewSize(width: part, height: nil)).height
+        > $0.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+    }
+
+    return wraps ? nil : part
+  }
+
+  private func rowHeight(_ part: CGFloat, _ subviews: Subviews) -> CGFloat {
+    subviews.map { $0.sizeThatFits(ProposedViewSize(width: part, height: nil)).height }.max() ?? 0
+  }
+}
+
 extension View {
   /// The styles that don't reach into a presentation, so the app's root and the root of each
   /// presented screen apply them: the button shape and label style for accessibility sizes,
@@ -96,6 +176,8 @@ extension View {
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
       .environment(\.barHoldsMainAction, false)
+      .outsideReadableColumns()
+      .environment(\.isTaskScreen, false)
       .layoutSurface()
   }
 }

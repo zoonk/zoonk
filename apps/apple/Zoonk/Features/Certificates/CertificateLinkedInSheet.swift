@@ -75,11 +75,7 @@ struct CertificateLinkedInSheet: View {
           "Add to your LinkedIn profile", tableName: "Certificates")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(role: .close, action: dismiss.callAsFunction)
-        }
-      }
+      .sheetClose(dismiss.callAsFunction)
       .sensoryFeedback(.success, trigger: copied) { _, copied in copied != nil }
       .task(id: copied) {
         // SwiftUI cancels this wait when another field is copied; clearing then hides its "Copied".

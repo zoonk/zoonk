@@ -72,7 +72,7 @@ private struct MockStage: View {
       NotFoundView()
         .navigationTitle(untitledMock)
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("The mock exam didn't load", tableName: "Mock", comment: "Loading a mock failed")
         } icon: {
@@ -212,7 +212,7 @@ private struct MockStepCard: View {
   var detail: Text?
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         title
       } icon: {

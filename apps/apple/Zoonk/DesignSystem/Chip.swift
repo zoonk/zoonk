@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Main's `Eyebrow`: the one small line over a title, as a chip with an optional mark before its
 /// words (rule 7). It holds a label of a few words, never a control or a sentence; `success` is main's
-/// `SuccessEyebrow`, green with a check, for what just finished. Over a task's, a card's, a sheet's
+/// `SuccessEyebrow`, green with a check (or the mark it's given), for what just finished or holds. Over a task's, a card's, a sheet's
 /// or a step's title only: a page that has the app's bar has no line over its title.
 struct Chip: View {
   enum Tone {
@@ -16,7 +16,7 @@ struct Chip: View {
 
   init(_ text: Text, systemImage: String? = nil, tone: Tone = .neutral) {
     self.text = text
-    self.systemImage = tone == .success ? "checkmark" : systemImage
+    self.systemImage = tone == .success ? systemImage ?? "checkmark" : systemImage
     self.tone = tone
   }
 

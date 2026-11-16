@@ -22,17 +22,19 @@ struct BeltDrawing: View {
       let bandEnd = size.width * columns.band
       let barEnd = bandEnd + size.width * columns.bar
       let band = CGRect(x: 0, y: 0, width: bandEnd, height: bandHeight)
+      let bandShape = UnevenRoundedRectangle(topLeadingRadius: 6, bottomLeadingRadius: 6).path(
+        in: band)
       let end = CGRect(x: barEnd, y: 0, width: size.width - barEnd, height: bandHeight)
       let endShape = UnevenRoundedRectangle(bottomTrailingRadius: 6, topTrailingRadius: 6).path(
         in: end)
       let beltColor = level.belt == .black ? Color.black : level.belt.color
 
-      context.fill(Path(band), with: .color(beltColor))
+      context.fill(bandShape, with: .color(beltColor))
       context.fill(endShape, with: .color(beltColor))
-      drawEdges(in: context, band: band, end: end, endShape: endShape)
+      drawEdges(in: context, bandShape: bandShape, endShape: endShape)
 
       let stitch = isLight ? Color.black.opacity(0.15) : Color.white.opacity(0.25)
-      drawStitching(in: context, from: 0, to: bandEnd - 8, color: stitch)
+      drawStitching(in: context, from: 10, to: bandEnd - 8, color: stitch)
       drawStitching(in: context, from: barEnd + 8, to: size.width - 10, color: stitch)
 
       let bar = CGRect(x: bandEnd, y: 0, width: barEnd - bandEnd, height: bandHeight)
@@ -50,7 +52,7 @@ struct BeltDrawing: View {
   }
 
   /// White would vanish into a light panel and Black into a dark one without an edge.
-  private func drawEdges(in context: GraphicsContext, band: CGRect, end: CGRect, endShape: Path) {
+  private func drawEdges(in context: GraphicsContext, bandShape: Path, endShape: Path) {
     let edge: Color? =
       switch level.belt {
       case .white: colorScheme == .dark ? nil : Color.primary.opacity(0.4)
@@ -62,12 +64,7 @@ struct BeltDrawing: View {
       return
     }
 
-    var lines = Path()
-    lines.move(to: CGPoint(x: band.minX, y: band.minY + 0.5))
-    lines.addLine(to: CGPoint(x: band.maxX, y: band.minY + 0.5))
-    lines.move(to: CGPoint(x: band.minX, y: band.maxY - 0.5))
-    lines.addLine(to: CGPoint(x: band.maxX, y: band.maxY - 0.5))
-    context.stroke(lines, with: .color(edge), lineWidth: 1)
+    context.stroke(bandShape, with: .color(edge), lineWidth: 1)
     context.stroke(endShape, with: .color(edge), lineWidth: 1)
   }
 

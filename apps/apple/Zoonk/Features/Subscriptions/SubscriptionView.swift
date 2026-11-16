@@ -42,13 +42,7 @@ struct SubscriptionScreen: View {
         }
       }
       .subscriptionPageTitle()
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
+      .sheetClose { dismiss() }
     }
   }
 

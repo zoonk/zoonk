@@ -49,25 +49,25 @@ struct ShellGate<Content: View>: View {
       content
     case (_, .restoring):
       Color.clear
-        .navigationTitle(Text(title))
+        .barTitleAfterHero(String(localized: title))
     case (_, .visitor), (_, .sessionEnded):
       SignInGate(sessionEnded: access == .sessionEnded)
         .described(by: description)
         .lonePage()
-        .navigationTitle(Text(title))
+        .barTitleAfterHero(String(localized: title))
     case (.goal, .noGoal) where startsGoalHere:
       goalBox
-        .navigationTitle(Text(title))
+        .barTitleAfterHero(String(localized: title))
     case (.goal, .noGoal):
       startGoalGate
         .described(by: description)
         .lonePage()
-        .navigationTitle(Text(title))
+        .barTitleAfterHero(String(localized: title))
     }
   }
 
   private var startGoalGate: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Start with a goal", tableName: "Navigation",
@@ -80,7 +80,9 @@ struct ShellGate<Content: View>: View {
         "Tell us what you want to learn, and we'll plan every day until you get there.",
         tableName: "Navigation",
         comment: "Explains what starting a goal does, on a page that needs one")
-    } actions: {
+    }
+    // Main's: the way on is the page's main action, in its bar.
+    .bottomBar {
       Button {
         router.showRoot(of: .today)
       } label: {
@@ -102,14 +104,13 @@ struct ShellGate<Content: View>: View {
     } content: { _ in
       ZoonkList {
         Section {
-          Text(
-            "Tell us what you want to learn, and we'll plan every day until you get there.",
-            tableName: "Navigation",
-            comment: "Explains what starting a goal does, on a page that needs one"
-          )
-          .foregroundStyle(.mutedForeground)
+          PageHeader(
+            Text(title),
+            supporting: Text(
+              "Tell us what you want to learn, and we'll plan every day until you get there.",
+              tableName: "Navigation",
+              comment: "Explains what starting a goal does, on a page that needs one"))
         }
-        .listRowBackground(Color.clear)
 
         GoalStartEntry(part: .box, goal: $goal)
       }
@@ -124,7 +125,7 @@ struct SignInGate: View {
   let sessionEnded: Bool
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         sessionEnded
           ? Text(
@@ -162,26 +163,6 @@ struct SignInGate: View {
         }
         .buttonStyle(.outline)
       }
-    }
-  }
-}
-
-extension View {
-  /// A navigation subtitle is cut to one line on a phone; the page's first line wraps.
-  @ViewBuilder
-  func described(by description: LocalizedStringResource?) -> some View {
-    if let description {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 24) {
-          Text(description)
-            .foregroundStyle(.mutedForeground)
-
-          self
-        }
-        .scenePadding(.horizontal)
-      }
-    } else {
-      self
     }
   }
 }

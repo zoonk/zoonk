@@ -46,6 +46,7 @@ extension LanguageStanding.Level {
 }
 
 struct LanguageLevelSheet: View {
+  @Environment(\.dismiss) private var dismiss
   let standing: LanguageStanding
 
   var body: some View {
@@ -73,11 +74,7 @@ struct LanguageLevelSheet: View {
       Text("Your level", tableName: "Plan", comment: "Title of the language level sheet")
     )
     .toolbarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        PlanSheetDoneButton()
-      }
-    }
+    .sheetClose { dismiss() }
   }
 }
 

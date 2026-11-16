@@ -61,14 +61,7 @@ struct MakeRoomSheet: View {
             "Title of the sheet where a learner pauses a goal to start the waiting goal named here")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-          .disabled(pausingGoalID != nil)
-        }
-      }
+      .sheetClose(isDisabled: pausingGoalID != nil) { dismiss() }
     }
     .presentationDetents([.medium, .large])
     .interactiveDismissDisabled(pausingGoalID != nil)

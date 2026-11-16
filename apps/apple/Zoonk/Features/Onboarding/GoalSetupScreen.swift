@@ -53,7 +53,7 @@ struct GoalLoadFailure: View {
   let retry: () async -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Text(
         "We couldn't load your goal", tableName: "Onboarding",
         comment: "A goal's onboarding failed to load")
