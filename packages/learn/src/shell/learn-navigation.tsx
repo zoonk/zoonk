@@ -194,13 +194,14 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
 
 function BottomTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & { tab: LearnTab }) {
   const routes = useLearnRoutes();
+  const customName = tab === "buddy" && Boolean(buddy?.name);
 
   return (
     <LearnLink
       aria-current={tab === activeTab ? "page" : undefined}
       className={cn(
         TAB_ITEM_CLASS,
-        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 @max-xs/tabs:px-0",
+        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 @max-xs/tabs:min-w-[44px] @max-xs/tabs:px-0",
       )}
       href={routes[tab]}
     >
@@ -208,7 +209,12 @@ function BottomTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & {
         <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
       </span>
       <span
-        className="max-w-full overflow-clip text-center text-balance wrap-anywhere hyphens-auto [hyphenate-limit-chars:6_3_3] @max-xs/tabs:min-h-[2lh] @max-xs/tabs:overflow-visible"
+        className={cn(
+          "max-w-full overflow-clip text-center text-balance hyphens-auto whitespace-nowrap [hyphenate-limit-chars:5_2_2] @max-xs/tabs:min-h-[2lh] @max-xs/tabs:overflow-visible @max-xs/tabs:whitespace-normal",
+          customName &&
+            "truncate @max-xs/tabs:line-clamp-2 @max-xs/tabs:max-h-[2lh] @max-xs/tabs:overflow-hidden @max-xs/tabs:text-wrap @max-xs/tabs:wrap-anywhere @max-xs/tabs:hyphens-none",
+        )}
+        data-custom={customName || undefined}
         data-slot="tab-title"
       >
         <TabLabel buddy={buddy} tab={tab} />
@@ -232,11 +238,16 @@ export function LearnBottomNavigation({
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      {/* One gap between every item, search included; tabs shrink below 72px when large text needs the room. */}
-      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8 @max-xs/tabs:min-h-16 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
-        <ul className="flex min-w-0 flex-1 justify-between">
+      <div className="mx-auto flex h-16 items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
+        <ul className="flex min-w-0 flex-1 justify-between @max-xs/tabs:gap-1">
           {LEARN_TABS.map((tab) => (
-            <li className="flex max-w-18 min-w-0 flex-1" key={tab}>
+            <li
+              className={cn(
+                "flex max-w-18 min-w-0 flex-1",
+                tab !== "buddy" && "@max-xs/tabs:min-w-max @max-xs/tabs:flex-none",
+              )}
+              key={tab}
+            >
               <BottomTab {...props} tab={tab} />
             </li>
           ))}

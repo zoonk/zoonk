@@ -181,7 +181,9 @@ export function JourneyChapters({
               <span>
                 {showAll
                   ? t("Show fewer chapters")
-                  : t("Show all {count, number}", { count: rows.length })}
+                  : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                      count: hidden,
+                    })}
               </span>
             </PathRowBody>
           </button>

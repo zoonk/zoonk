@@ -4767,10 +4767,11 @@ msgid "Show fewer chapters"
 msgstr "Mostrar menos capítulos"
 
 #: src/journey/journey-chapters.tsx
-#: src/mind-maps/mind-map-index.tsx
-msgctxt "s0s9cE"
-msgid "Show all {count, number}"
-msgstr "Mostrar los {count, number}"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "E7pYSQ"
+msgid "{count, plural, one {# more chapter} other {# more chapters}}"
+msgstr "{count, plural, one {# capítulo más} other {# capítulos más}}"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -7143,6 +7144,11 @@ msgstr "Mapa de la lección"
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Quitar"
+
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "Mostrar los {count, number}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -9574,12 +9580,6 @@ msgstr "Estamos eligiendo qué aprenderás primero y distribuyéndolo entre tus 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Se interrumpió la preparación de tu plan"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "E7pYSQ"
-msgid "{count, plural, one {# more chapter} other {# more chapters}}"
-msgstr "{count, plural, one {# capítulo más} other {# capítulos más}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"

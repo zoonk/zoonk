@@ -68,6 +68,17 @@ test("a bottom tab name cannot hide its words behind an ellipsis", () => {
   assert.equal(evaluateCapture(read()).filter((part) => part.rule === "cut").length, 1);
 });
 
+test("a learner-chosen buddy name may end its last tab line with an ellipsis", () => {
+  document.body.innerHTML = `<nav data-slot="learn-bottom-navigation" data-box="0,0,390,65">
+    <a data-box="16,0,80,64"><span data-box="16,0,20,20"></span>
+      <span data-custom="true" data-slot="tab-title" style="overflow-x:hidden; text-overflow:ellipsis" data-box="16,24,60,20">
+        <span data-box="16,24,180,20">Professor Bartholomew Jr</span>
+      </span>
+    </a></nav>`;
+
+  assert.equal(evaluateCapture(read()).filter((part) => part.rule === "cut").length, 0);
+});
+
 test("a path row's title is judged even when it is a plain span", () => {
   document.body.innerHTML = `<span data-slot="path-row-words" style="display:flex; flex-direction:column" data-box="88,0,214,120">
     <span data-box="88,0,214,120">Master quantum physics, from scratch</span>

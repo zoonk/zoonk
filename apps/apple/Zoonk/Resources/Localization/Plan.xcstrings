@@ -6276,13 +6276,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld autre chapitre"
+                  "value" : "%lld chapitre de plus"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld autres chapitres"
+                  "value" : "%lld chapitres de plus"
                 }
               }
             }

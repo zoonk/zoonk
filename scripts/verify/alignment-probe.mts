@@ -1421,7 +1421,7 @@ export function readAlignment({
   }
 
   function textRole(flow: Element): CaptureElement["textRole"] {
-    if (flow.closest("[data-slot=list-row-description]")) {
+    if (flow.closest("[data-slot=list-row-description],[data-slot=tab-title][data-custom=true]")) {
       return undefined;
     }
 
@@ -1538,7 +1538,10 @@ export function readAlignment({
 
   /** A declared clamp and a scrollable ancestor give content a deliberate way to continue. */
   function allowsOverflow(element: Element): boolean {
-    if (element.matches("[data-slot=learn-bottom-navigation] a > span")) {
+    if (
+      element.matches("[data-slot=learn-bottom-navigation] a > span") &&
+      !element.matches("[data-slot=tab-title][data-custom=true]")
+    ) {
       return false;
     }
 

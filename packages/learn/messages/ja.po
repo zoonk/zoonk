@@ -4767,10 +4767,11 @@ msgid "Show fewer chapters"
 msgstr "章の表示を減らす"
 
 #: src/journey/journey-chapters.tsx
-#: src/mind-maps/mind-map-index.tsx
-msgctxt "s0s9cE"
-msgid "Show all {count, number}"
-msgstr "全{count, number}件を表示する"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "E7pYSQ"
+msgid "{count, plural, one {# more chapter} other {# more chapters}}"
+msgstr "{count, plural, other {ほか#章}}"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -7143,6 +7144,11 @@ msgstr "レッスンのマップ"
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "保存を解除する"
+
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "全{count, number}件を表示する"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -9574,12 +9580,6 @@ msgstr "最初に学ぶ内容を選び、毎日の予定に合わせて調整し
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "学習計画の作成が途中で止まりました"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "E7pYSQ"
-msgid "{count, plural, one {# more chapter} other {# more chapters}}"
-msgstr "{count, plural, other {ほか#章}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"

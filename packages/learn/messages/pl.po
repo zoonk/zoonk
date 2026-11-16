@@ -4767,10 +4767,11 @@ msgid "Show fewer chapters"
 msgstr "Pokaż mniej rozdziałów"
 
 #: src/journey/journey-chapters.tsx
-#: src/mind-maps/mind-map-index.tsx
-msgctxt "s0s9cE"
-msgid "Show all {count, number}"
-msgstr "Pokaż wszystkie {count, number}"
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "E7pYSQ"
+msgid "{count, plural, one {# more chapter} other {# more chapters}}"
+msgstr "{count, plural, one {Jeszcze # rozdział} few {Jeszcze # rozdziały} other {Jeszcze # rozdziałów}}"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -7143,6 +7144,11 @@ msgstr "Mapa lekcji"
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Usuń"
+
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "Pokaż wszystkie {count, number}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -9574,12 +9580,6 @@ msgstr "Wybieramy, od czego zacząć naukę, i rozkładamy ją na poszczególne 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Przerwano przygotowywanie twojego planu"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "E7pYSQ"
-msgid "{count, plural, one {# more chapter} other {# more chapters}}"
-msgstr "{count, plural, one {Jeszcze # rozdział} few {Jeszcze # rozdziały} other {Jeszcze # rozdziałów}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
