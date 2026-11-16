@@ -200,9 +200,8 @@ private struct PlanContent: View {
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
       slotChecks: slotChecks, alphabetSkip: alphabetSkip)
-    let shown = context.suggestions(in: store).shown
     let opening = SuggestionOpening(
-      item: shown, offer: shown == .fitLessons ? plan.fitOffer : nil,
+      item: context.suggestions(in: store).shown, plan: plan,
       inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
 
     PaneSplit(primaryShare: 0.55) {
@@ -413,14 +412,42 @@ struct PlanContext {
 /// that shows another, its sheet closed, another goal, the editor opened) ends what the opening
 /// asked for. Nothing else does: the rest of the plan can change under it.
 private struct SuggestionOpening: Equatable {
+  /// What a found date or a "what changes" preview is worked out from.
+  struct Schedule: Equatable {
+    let dailyMinutes: Int
+    let weekdayMinutes: [Int]
+    let studyDays: Int
+    let targetDate: String?
+  }
+
   /// The suggestion shown, with what it says (a coverage line's time and share).
   let item: PlanSlotItem?
-  /// What the fit offer's check previewed; a claim and the next level depend on nothing in the plan.
+  /// What the fit offer's check previewed.
   let offer: GoalPlan.FitOffer?
+  /// The past date's found date and coverage's preview come from the time a day, the study days and
+  /// the date: other ones would make the card state numbers about a plan that's gone.
+  let schedule: Schedule?
   /// Its sheet: closing it ends what was asked in it.
   let inSheet: Bool
   /// The Plan's editor: the learner changes the plan by hand, and nothing lands under it.
   let editing: Bool
+
+  /// A claim and the next level depend on nothing in the plan.
+  init(item: PlanSlotItem?, plan: GoalPlan, inSheet: Bool, editing: Bool) {
+    self.item = item
+    self.inSheet = inSheet
+    self.editing = editing
+    offer = item == .fitLessons ? plan.fitOffer : nil
+
+    switch item {
+    case .pastDate?, .coverage?:
+      schedule = Schedule(
+        dailyMinutes: plan.schedule.dailyMinutes, weekdayMinutes: plan.schedule.weekdayMinutes,
+        studyDays: plan.schedule.studyDays, targetDate: plan.schedule.targetDate)
+    default:
+      schedule = nil
+    }
+  }
 }
 
 /// Main's notice above the roadmap while the plan is rebuilt for a new content country: the old plan

@@ -195,7 +195,7 @@ final class PhaseEndTests: XCTestCase {
 func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
-  fitOffer: String? = nil
+  fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
   let over = planEnd.map { #"{"kind": "\#($0)"}"# } ?? "null"
@@ -205,12 +205,13 @@ func goalPlanFixture(
       "access": { "mocksRequirePlus": false },
       "areas": [], "bases": null, "course": null, "end": \(over),
       "estimate": { "endDate": \(end), "fullCourseEndDate": null },
-      "examChoices": [], "examDocument": "notice", "feasibility": null,
+      "examChoices": [], "examDocument": "notice", "feasibility": \(feasibility ?? "null"),
       "fitOffer": \(fitOffer ?? "null"),
       "goalId": "goal", "phases": [\(phases.joined(separator: ","))], "planId": "plan",
       "ready": true,
       "schedule": {
-        "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,
+        "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false,
+        "studyDays": \(studyDays),
         "targetDate": \(target), "targetDateEstimated": \(targetDateEstimated),
         "targetDateNamedMonth": false,
         "shape": {

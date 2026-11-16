@@ -259,6 +259,100 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes.count, 1, "The offer adds once")
   }
 
+  /// The past date's found date is in its opening's schedule: another number of study days ends it,
+  /// and nothing applies.
+  func testAScheduleChangeEndsAFoundDate() async throws {
+    let api = try await pastDate()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertTrue(shows(Self.changePlan, in: window), "The date found: \(spoken(in: window))")
+
+    try await readAgain(api, plan: goalPlanFixture(status: "pastDate", studyDays: 5))
+    XCTAssertFalse(shows(Self.changePlan, in: window), "Gone: \(spoken(in: window))")
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [])
+  }
+
+  /// Not in it: the Focus test changing elsewhere keeps the found date, which applies once.
+  func testAnUnrelatedPlanChangeKeepsAFoundDate() async throws {
+    let api = try await pastDate()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await settle()
+    try await dismissFocusTestElsewhere(api)
+    try activate(Self.changePlan, in: window)
+    try await settle()
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "The found date applies once")
+  }
+
+  /// Coverage's "what changes" is in its opening's schedule too, even when the line it shows
+  /// doesn't change: other study days end it.
+  func testAScheduleChangeEndsCoveragesPreview() async throws {
+    let api = try await coverage()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertTrue(shows(Self.changePlan, in: window), "What changes: \(spoken(in: window))")
+
+    try await readAgain(
+      api, plan: goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short, studyDays: 5))
+    XCTAssertFalse(shows(Self.changePlan, in: window), "Gone: \(spoken(in: window))")
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [])
+  }
+
+  /// Not in it: the Focus test changing elsewhere keeps the preview, which applies once.
+  func testAnUnrelatedPlanChangeKeepsCoveragesPreview() async throws {
+    let api = try await coverage()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await settle()
+    try await dismissFocusTestElsewhere(api)
+    try activate(Self.changePlan, in: window)
+    try await settle()
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "The preview applies once")
+  }
+
+  private static let changePlan = String(localized: "Change my plan", table: "Plan")
+  /// A date the plan's time doesn't cover.
+  private static let short = """
+    {"coreFits": false, "coveredShare": 0.6, "deadline": "2027-06-01", "deepensMostAsked": false,
+     "fits": false, "measure": "goal", "timeCovers": false}
+    """
+
+  /// A plan whose date passed; a later one fits.
+  private func pastDate() async throws -> PlanAPIStub {
+    let api = PlanAPIStub()
+    await api.setPlan(try goalPlanFixture(status: "pastDate"))
+    await api.setFittingDate("2027-12-01")
+    await api.setPreview(try Self.preview(lessons: 2))
+    return api
+  }
+
+  /// A plan whose time a day doesn't cover its date; 60 minutes would.
+  private func coverage() async throws -> PlanAPIStub {
+    let api = PlanAPIStub()
+    await api.setPlan(try goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short))
+    await api.setSuggested(
+      TimeToCover.Suggested(
+        coveredShare: 1, everyTopic: true, kind: .everything, minutes: 60, split: nil))
+    await api.setPreview(try Self.preview(lessons: 2))
+    return api
+  }
+
+  private func shows(_ line: String, in window: UIWindow) -> Bool {
+    spoken(in: window).contains(line)
+  }
+
   private static let claim = String(localized: "Get your certificate", table: "Plan")
   private static let add = String(localized: "Add to my plan", table: "Plan")
   /// The pager, with one other suggestion.
