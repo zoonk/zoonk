@@ -349,3 +349,13 @@ describe("science activities with a keyboard only", () => {
     await expectVerdict("Correct!");
   });
 });
+
+describe("numeric answer guidance", () => {
+  it("numeric checks say how many decimal places the dice answer needs", async () => {
+    openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
+    await expect.element(page.getByText("Round to 2 decimal places.")).toBeVisible();
+    await valueInput().fill("0.17");
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
+});

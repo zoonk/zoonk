@@ -19,9 +19,10 @@ function ActivityCheckArea({
   answer,
   className,
   content,
+  isCorrect,
   onAnswerChange,
   phase,
-}: Pick<ActivityStepProps, "answer" | "content" | "onAnswerChange" | "phase"> & {
+}: Pick<ActivityStepProps, "answer" | "content" | "isCorrect" | "onAnswerChange" | "phase"> & {
   className?: string;
 }) {
   const { check } = content;
@@ -41,6 +42,7 @@ function ActivityCheckArea({
   if (check.kind === "numeric") {
     return (
       <ActivityNumericCheck
+        isCorrect={isCorrect}
         answer={answer}
         check={check}
         className={className}
@@ -98,6 +100,7 @@ export function ActivityStep({
 
       {!canvasAsks && !answersOnCanvas && (
         <ActivityCheckArea
+          isCorrect={isCorrect}
           answer={answer}
           className="pt-2"
           content={content}

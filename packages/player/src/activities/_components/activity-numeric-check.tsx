@@ -2,8 +2,9 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { useAppLocale } from "@zoonk/learn/locale";
-import { Input } from "@zoonk/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   exactFractionDigitsFor,
@@ -11,6 +12,7 @@ import {
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
 import { getUnitPosition } from "@zoonk/utils/math-answer";
+import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { type ActivityPhase } from "../activity-renderer";
 import { ActivityCheckQuestion } from "./activity-check-question";
@@ -21,20 +23,47 @@ function answerValue(answer: ActivityAnswer | null): number | null {
   return answer?.kind === "numeric" ? answer.value : null;
 }
 
+const MAX_DECIMAL_PLACES = 15;
+
+function roundingPlaces(check: NumericCheck): number | null {
+  const allowed =
+    check.tolerance.kind === "absolute"
+      ? check.tolerance.value
+      : check.tolerance.value * Math.abs(check.answer);
+
+  if (Number.isInteger(check.answer) || allowed <= 0) {
+    return null;
+  }
+
+  const places = Math.max(0, Math.ceil(-Math.log10(allowed)));
+  return places > 0 && places <= MAX_DECIMAL_PLACES ? places : null;
+}
+
+function numericTone(isCorrect: boolean | null) {
+  if (isCorrect === null) {
+    return null;
+  }
+
+  return isCorrect ? ANSWER_TONE.right : ANSWER_TONE.wrong;
+}
+
 export function ActivityNumericCheck({
   answer,
   check,
   className,
   onAnswerChange,
   phase,
+  isCorrect,
 }: {
   answer: ActivityAnswer | null;
   className?: string;
   check: NumericCheck;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: ActivityPhase;
+  isCorrect: boolean | null;
 }) {
   const locale = useAppLocale();
+  const t = useExtracted();
   const [inputId, unitId] = [useId(), useId()];
   const value = answerValue(answer);
   const unitPosition = check.unit ? getUnitPosition({ language: locale, unit: check.unit }) : null;
@@ -70,6 +99,9 @@ export function ActivityNumericCheck({
     onAnswerChange(parsed === null ? null : { kind: "numeric", value: parsed });
   }
 
+  const places = roundingPlaces(check);
+  const checkedTone = phase === "checked" ? numericTone(isCorrect) : null;
+
   const unit = check.unit && (
     <span className="text-muted-foreground text-base" id={unitId}>
       {check.unit}
@@ -80,21 +112,39 @@ export function ActivityNumericCheck({
     <div className={cn("flex flex-col gap-3", className)} data-slot="activity-numeric-check">
       <ActivityCheckQuestion htmlFor={inputId}>{check.question}</ActivityCheckQuestion>
 
-      <div className="flex items-center gap-2">
-        {unitPosition === "prefix" && unit}
+      {places !== null && (
+        <p className="text-muted-foreground text-sm">
+          {t(
+            "Round to {digits, plural, =0 {# decimal places} one {# decimal place} other {# decimal places}}.",
+            { digits: places },
+          )}
+        </p>
+      )}
+      <div className="flex items-center gap-3">
+        <InputGroup className={cn("w-40", checkedTone)}>
+          {unitPosition === "prefix" && <InputGroupAddon>{unit}</InputGroupAddon>}
 
-        <Input
-          aria-describedby={check.unit ? unitId : undefined}
-          autoComplete="off"
-          className="h-11 w-40 text-base tabular-nums md:text-base"
-          id={inputId}
-          inputMode="decimal"
-          onChange={(event) => handleChange(event.target.value)}
-          readOnly={phase === "checked"}
-          value={display}
-        />
+          <InputGroupInput
+            aria-describedby={check.unit ? unitId : undefined}
+            autoComplete="off"
+            className="text-base tabular-nums md:text-base"
+            id={inputId}
+            inputMode="decimal"
+            onChange={(event) => handleChange(event.target.value)}
+            readOnly={phase === "checked"}
+            value={display}
+          />
 
-        {unitPosition === "suffix" && unit}
+          {unitPosition === "suffix" && (
+            <InputGroupAddon align="inline-end">{unit}</InputGroupAddon>
+          )}
+        </InputGroup>
+        <span
+          className={cn("text-muted-foreground text-xs", phase !== "checked" && "invisible")}
+          aria-hidden={phase !== "checked"}
+        >
+          {t("Your answer")}
+        </span>
       </div>
     </div>
   );
