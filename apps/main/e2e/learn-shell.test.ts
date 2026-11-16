@@ -6,6 +6,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
+import { createUnstartedDay } from "./unstarted-day-fixtures";
 
 async function createTwoGoalLearner() {
   const user = await createE2EUser(getBaseURL());
@@ -91,3 +92,54 @@ test.describe("The way back on a computer", () => {
     await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeVisible();
   });
 });
+
+for (const textScale of [1, 2]) {
+  // oxlint-disable-next-line vitest/prefer-each -- Playwright does not provide test.each.
+  for (const buddyName of ["Professor Bartholomew Jr", "abcdefghijklmnopqrstuvwx"]) {
+    test(`a 24-character buddy name keeps the action above the tabs at text x${textScale}: ${buddyName}`, async ({
+      browser,
+    }) => {
+      const day = await createUnstartedDay();
+      await learningProfileFixture({ buddyKind: "zu", buddyName, userId: day.user.id });
+      const page = await openAs(browser, day.user);
+      await page.setViewportSize({ height: 844, width: 390 });
+      const standardTextPx = 16;
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send("Page.setFontSizes", { fontSizes: { standard: standardTextPx * textScale } });
+      await page.goto("/today");
+      const navigation = page.getByRole("navigation", { name: "Learning tabs" });
+
+      await expect(
+        navigation.getByRole("link", { name: new RegExp(buddyName, "u") }),
+      ).toBeVisible();
+
+      const action = page.getByRole("button", { name: /^Start\b/u });
+      await expect(action).toBeVisible();
+      const bar = await navigation.boundingBox();
+
+      if (!bar) {
+        throw new Error("The bottom navigation must be present");
+      }
+
+      const geometry = await action.evaluate((button) => {
+        const box = button.getBoundingClientRect();
+        const fractions = [0.25, 0.5, 0.75];
+
+        const exposed = fractions.every((part) => {
+          const hit = document.elementFromPoint(box.left + box.width * part, box.bottom - 2);
+          return hit === button || (hit !== null && button.contains(hit));
+        });
+
+        return { actionBottom: box.bottom, actionTop: box.top, exposed };
+      });
+
+      const tabBarRem = 4;
+      const borderPx = 1;
+      expect(bar.height).toBeCloseTo(tabBarRem * standardTextPx * textScale + borderPx, 1);
+      expect(geometry.actionTop).toBeGreaterThanOrEqual(0);
+      expect(geometry.actionBottom).toBeLessThanOrEqual(bar.y);
+      expect(geometry.exposed).toBe(true);
+      await page.context().close();
+    });
+  }
+}

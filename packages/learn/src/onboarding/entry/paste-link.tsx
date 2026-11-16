@@ -41,6 +41,7 @@ export function PasteLink({ onAdd, pending }: { onAdd: (url: string) => void; pe
         focusableWhenDisabled
         size="sm"
         type="submit"
+        variant="outline"
       >
         {t("Add link")}
       </Button>

@@ -4782,7 +4782,7 @@ msgstr "Afficher moins de chapitres"
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
-msgstr "{count, plural, one {# chapitre supplémentaire} other {# chapitres supplémentaires}}"
+msgstr "{count, plural, one {# chapitre de plus} other {# chapitres de plus}}"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx

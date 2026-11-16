@@ -60,6 +60,22 @@ describe("a wrapped title, facts line or button label never leaves one word alon
     assert.deepEqual(findings("lone-word", [text(["A sentence that wraps", "here"])]), []);
   });
 
+  it("passes one word on every line when large text leaves no better break (FS-D35)", () => {
+    assert.deepEqual(findings("lone-word", [text(["Explore", "courses"], "title")]), []);
+
+    assert.deepEqual(
+      findings("lone-word", [text(["Advanced", "quantum", "physics"], "button")]),
+      [],
+    );
+  });
+
+  it("still fails a lone last word after a multiword line (FS-D35)", () => {
+    assert.equal(
+      findings("lone-word", [text(["Advanced quantum", "physics"], "button")]).length,
+      1,
+    );
+  });
+
   it("counts a number as a word and a separator alone as none", () => {
     assert.equal(findings("lone-word", [text(["Level A2 ·", "+200"], "facts")]).length, 1);
     assert.deepEqual(findings("lone-word", [text(["Level A2 · 4", "·"], "facts")]), []);

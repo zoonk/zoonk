@@ -101,6 +101,7 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         focusableWhenDisabled
         size="sm"
         type="submit"
+        variant="outline"
       >
         {t("Add text")}
       </Button>

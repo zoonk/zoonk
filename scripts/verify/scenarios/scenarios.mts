@@ -39,6 +39,8 @@ export const SCENARIOS: Scenario[] = [
       { locale: "de", pointer: "touch", size: "phone" },
       { locale: "ja", pointer: "touch", size: "phone" },
       { pointer: "touch", size: "phone", textScale: 2 },
+      { locale: "fr", pointer: "touch", size: "phone", textScale: 2 },
+      { locale: "ja", pointer: "touch", size: "phone", textScale: 2 },
       LAPTOP_TEXT_2X,
     ],
   },
