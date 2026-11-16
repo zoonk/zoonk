@@ -45,7 +45,7 @@ export async function UserAccount({ userId }: { userId: string }) {
         <DetailField icon={<AtSignIcon aria-hidden="true" />} label="Username">
           {user.username ? `@${user.username}` : "—"}
         </DetailField>
-        <DetailField icon={<KeyRoundIcon aria-hidden="true" />} label="Signs in with">
+        <DetailField icon={<KeyRoundIcon aria-hidden="true" />} label="Logs in with">
           {providers.join(", ") || "—"}
         </DetailField>
         <DetailField icon={<LogInIcon aria-hidden="true" />} label="Last login">
