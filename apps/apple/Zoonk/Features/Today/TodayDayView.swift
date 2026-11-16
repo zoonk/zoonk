@@ -111,9 +111,8 @@ struct TodayDayView: View {
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
-        .zoonkStyles()
+        .zoonkSheet()
     }
-    .barTitleAfterHero(String(localized: "Today", table: "Today", comment: "Today tab's title"))
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
     }

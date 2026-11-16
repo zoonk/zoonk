@@ -15617,7 +15617,7 @@
       }
     },
     "Done" : {
-      "comment" : "Closes a sheet\nSpoken state of a lesson done",
+      "comment" : "Spoken state of a lesson done",
       "localizations" : {
         "de" : {
           "stringUnit" : {

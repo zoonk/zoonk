@@ -19,7 +19,7 @@ struct EssayScreen: View {
         case .empty, .failed(.notFound):
           NotFoundView()
         case .failed:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text("The essay didn't load", tableName: "Essay", comment: "Loading failed")
             } icon: {

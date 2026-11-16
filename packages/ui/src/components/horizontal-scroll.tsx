@@ -16,12 +16,15 @@ const SCROLL_BUTTON_CLASS = cn(
 
 const BUTTON_PLACE_CLASS = { box: "top-1/2 -translate-y-1/2", row: "top-0" } as const;
 
+const FOCUSABLE = "a[href],button,input,select,textarea,[tabindex]";
+
 /**
  * The one way the web says something is wider than its room: the cut edge fades out, and with a
  * mouse a chevron button on that edge scrolls it (`labels` name the two). A row of chips keeps the
  * buttons on the chips' line. A `box` (a table, a code block, a keyboard) centers them on its
- * height and takes keyboard focus itself, since nothing inside it does; its `label` says what
- * scrolls.
+ * height and, while it scrolls and nothing inside it takes focus, takes keyboard focus itself; its
+ * `label` says what scrolls. What scrolls is measured from its children's boxes, so a child is as
+ * wide as its content (`w-max` or `min-w-max`), not cut by its own width.
  */
 function HorizontalScroll({
   box,
@@ -36,6 +39,7 @@ function HorizontalScroll({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [holdsFocus, setHoldsFocus] = useState(false);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -56,12 +60,19 @@ function HorizontalScroll({
 
       setCanScrollLeft(el.scrollLeft > 1);
       setCanScrollRight(el.scrollLeft < reach - el.clientWidth - 1);
+      setHoldsFocus(el.querySelector(FOCUSABLE) !== null);
     };
 
     checkScroll();
 
+    // The content is watched too: typing a longer line widens it without resizing the box.
     const observer = new ResizeObserver(checkScroll);
     observer.observe(el);
+
+    for (const child of el.children) {
+      observer.observe(child);
+    }
+
     el.addEventListener("scroll", checkScroll, { passive: true });
 
     return () => {
@@ -71,6 +82,7 @@ function HorizontalScroll({
   }, []);
 
   const place = box ? "box" : "row";
+  const takesFocus = Boolean(box) && (canScrollLeft || canScrollRight) && !holdsFocus;
 
   function scroll(direction: "left" | "right") {
     scrollRef.current?.scrollBy({ behavior: "smooth", left: direction === "left" ? -200 : 200 });
@@ -96,7 +108,7 @@ function HorizontalScroll({
         ref={scrollRef}
         role={box ? "group" : undefined}
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- What scrolls must be reachable by keyboard when nothing inside it takes focus.
-        tabIndex={box ? 0 : undefined}
+        tabIndex={takesFocus ? 0 : undefined}
       >
         {children}
       </div>

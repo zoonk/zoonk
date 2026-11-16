@@ -93,12 +93,14 @@ export function CauseEffectLinkList({
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <p className="flex flex-wrap items-center gap-x-1.5 font-medium">
                 <span>{labelOf(link.from)}</span>
-                <ArrowRight
-                  aria-label={t("led to")}
-                  className="text-muted-foreground size-3.5"
-                  role="img"
-                />
-                <span>{labelOf(link.to)}</span>
+                <span className="flex min-w-0 items-center gap-x-1.5">
+                  <ArrowRight
+                    aria-label={t("led to")}
+                    className="text-muted-foreground size-3.5 shrink-0"
+                    role="img"
+                  />
+                  <span>{labelOf(link.to)}</span>
+                </span>
               </p>
 
               {note && <p className="text-muted-foreground text-xs">{note}</p>}

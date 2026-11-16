@@ -3,6 +3,7 @@
 {
   "session_block_bonus_practice": "8e383e8c1bf854e22fb0e4349c2c4c29555355105675ab8ebec1c6b86e38e96b",
   "session_block_bonus_practice_areas": "dd7d39d98d9ec0c0e81e6f81fd716131e8f4b52441e1b54fbcf8bbdcfbd3a589",
+  "session_block_bonus_practice_topic": "8bfdc627c1f509cc743dcd62bb0ad62768f9dc9ecf6b128bc339623a615267a5",
   "session_block_call": "7d00940da9d0a472dca137d102f64b7b667e518cf769fac984dd45dfdeebb4e4",
   "session_block_full_review_questions": "c8d6a72f6ebb16724b9bdc167ef883cfb53698d5843ecaad9c69fa0fda797080",
   "session_block_mixed_practice": "2d286e8c58747b942d78450048a1ded1e1aa421532554835732b50be00951702",
@@ -10,6 +11,7 @@
   "session_block_new_lesson": "012b8afe3e4a820f645bcb0a1ebab3593ffeda29900cfb7ffba72a9256259e8e",
   "session_block_practice_areas": "cacb3d3f817713d3559abce36554daddb74d8a09595fd6fadc7776c341d08805",
   "session_block_practice_mistakes": "39fb8deac9f6d72514ca750630c57498c745c4196e28844245e9495a1c76de58",
+  "session_block_practice_topic": "edab2b6b1bd3419acd03d097eafebcbcbaa5401da733e77123e1350bed8ac448",
   "session_block_questions": "19a794b7faf89c0a67ea3d017cea54e88034da483af3d7094e6b714b872e9340",
   "session_block_rematch": "c04e54d8410d7e10fcd1fd427d2db969a52b710e578fd5945a90bc9d31a2f0ef",
   "session_block_rematch_lesson": "eb631647b8056ee099a86527f811c375a903bd3e705aa4a23968e856f1b8b655",
@@ -107,6 +109,10 @@
     <string name="session_block_practice_areas">연습: %1$s</string>
     <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_bonus_practice_areas">추가 연습: %1$s</string>
+    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_practice_topic">연습: %1$s</string>
+    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_bonus_practice_topic">추가 연습: %1$s</string>
     <string name="session_block_rematch_lesson">재도전 전 짧은 레슨</string>
     <plurals name="session_block_questions">
         <item quantity="other">%d문제</item>

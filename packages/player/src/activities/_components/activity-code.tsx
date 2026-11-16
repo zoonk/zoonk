@@ -12,6 +12,7 @@ import {
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
 import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
+import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   builtin: "text-viz-secondary",
@@ -37,24 +38,19 @@ export function ActivityCodeTokens({ tokens }: { tokens: readonly CodeToken[] })
   ));
 }
 
-export function ActivityCodeBlock({ className, children, ...props }: React.ComponentProps<"div">) {
+export function ActivityCodeBlock({
+  children,
+  className,
+  label,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  label: string;
+}) {
   return (
-    <div
-      className={cn(
-        "has-focus-visible:ring-ring/50 -mx-1 rounded-md has-focus-visible:ring-[3px]",
-        className,
-      )}
-      data-slot="activity-code-block"
-    >
-      <div
-        className="scroll-fade-x overflow-x-auto px-1 pb-1 outline-none"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A scrolling region needs focus to scroll by keyboard.
-        tabIndex={0}
-        {...props}
-      >
-        <div className={cn("flex w-max min-w-full flex-col", CODE_TEXT)}>{children}</div>
-      </div>
-    </div>
+    <ActivityHorizontalScroll box={{ label }} className={cn("-mx-1", className)}>
+      <div className={cn("flex w-max min-w-full flex-col px-1 pb-1", CODE_TEXT)}>{children}</div>
+    </ActivityHorizontalScroll>
   );
 }
 
@@ -110,7 +106,7 @@ export function ActivityCodeListing({
   toneOf?: (lineNumber: number) => CodeLineTone;
 }) {
   return (
-    <ActivityCodeBlock aria-label={label} role="group">
+    <ActivityCodeBlock label={label}>
       {keyedByPosition(highlightCode(code, language), lineText).map(({ item, key }, index) => {
         const tone = toneOf?.(index + 1) ?? "plain";
 
@@ -170,6 +166,7 @@ export function ActivityCodeLineInput({
 export function ActivityCodeEditor({
   className,
   editorRef,
+  label,
   language,
   onChange,
   onSubmit,
@@ -177,6 +174,7 @@ export function ActivityCodeEditor({
   ...props
 }: Omit<React.ComponentProps<"textarea">, "onChange" | "value"> & {
   editorRef?: React.Ref<HTMLTextAreaElement>;
+  label: string;
   language: CodeLanguage;
   onChange: (value: string) => void;
   onSubmit?: () => void;
@@ -187,8 +185,8 @@ export function ActivityCodeEditor({
 
   return (
     <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
-      <div className="scroll-fade-x overflow-x-auto px-4 py-3">
-        <div className={cn("grid w-max min-w-full", CODE_TEXT)}>
+      <ActivityHorizontalScroll box={{ label }}>
+        <div className={cn("grid w-max min-w-full px-4 py-3", CODE_TEXT)}>
           <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">
             {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
               <div key={key}>
@@ -218,7 +216,7 @@ export function ActivityCodeEditor({
             {...kept}
           />
         </div>
-      </div>
+      </ActivityHorizontalScroll>
     </div>
   );
 }
@@ -282,27 +280,24 @@ export function ActivitySnippetBar({
   snippets: readonly (CodeSnippet & { label: string; name: string })[];
 }) {
   return (
-    <div
-      aria-label={label}
-      className="scroll-fade-x flex gap-2 overflow-x-auto pb-1"
-      data-slot="activity-snippet-bar"
-      role="toolbar"
-    >
-      {snippets.map((snippet) => (
-        <button
-          aria-label={
-            snippet.name === snippet.label ? undefined : `${snippet.label}, ${snippet.name}`
-          }
-          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-3 font-mono text-sm outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
-          disabled={disabled}
-          key={snippet.label}
-          onClick={() => onInsert(snippet)}
-          onMouseDown={(event) => event.preventDefault()}
-          type="button"
-        >
-          {snippet.label}
-        </button>
-      ))}
-    </div>
+    <ActivityHorizontalScroll box={{ label }}>
+      <div className="flex w-max min-w-full gap-2" data-slot="activity-snippet-bar">
+        {snippets.map((snippet) => (
+          <button
+            aria-label={
+              snippet.name === snippet.label ? undefined : `${snippet.label}, ${snippet.name}`
+            }
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-3 font-mono text-sm outline-none select-none focus-visible:ring-[3px] focus-visible:ring-inset disabled:opacity-50"
+            disabled={disabled}
+            key={snippet.label}
+            onClick={() => onInsert(snippet)}
+            onMouseDown={(event) => event.preventDefault()}
+            type="button"
+          >
+            {snippet.label}
+          </button>
+        ))}
+      </div>
+    </ActivityHorizontalScroll>
   );
 }

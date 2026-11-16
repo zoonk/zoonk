@@ -15,7 +15,7 @@ struct CatalogFailureRecoveryView: View {
   let retry: @MainActor () async -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         title
       } icon: {

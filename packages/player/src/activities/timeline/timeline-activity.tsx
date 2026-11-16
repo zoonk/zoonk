@@ -24,12 +24,13 @@ const CHARACTER_WIDTH = 7.2;
 const CARD_CHROME = 150;
 const LINE_HEIGHT = 20;
 const CARD_BASE = 34;
+const NO_BREAK_SPACE = "\u00A0";
 
 function useFormatYear(start: number) {
   const t = useExtracted();
   const format = useFormatNumber();
 
-  return (year: number) => {
+  function written(year: number): string {
     const label = yearLabel(year, { start });
     const value = format(label.year, { grouping: false });
 
@@ -38,7 +39,10 @@ function useFormatYear(start: number) {
     }
 
     return label.era === "ce" ? t("{year} CE", { year: value }) : value;
-  };
+  }
+
+  // A year and its era wrap as one word.
+  return (year: number) => written(year).replaceAll(" ", NO_BREAK_SPACE);
 }
 
 function cardGap(labels: readonly string[], width: number): number {
@@ -118,6 +122,7 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (dated.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 
@@ -178,6 +183,7 @@ function TimelineQuestion({
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (labels.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 

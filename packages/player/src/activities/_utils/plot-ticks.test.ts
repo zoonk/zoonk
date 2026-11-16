@@ -8,6 +8,14 @@ function dollars(value: number, isShort: boolean): string {
 }
 
 describe(tickLabels, () => {
+  it("leaves a dot at the axis start clear of the longest tick", () => {
+    const { room } = tickLabels({ format: dollars, ticks: [0, 5000, 10_000] });
+    const dotReach = 6 + 2.5 / 2;
+    const clearance = 3;
+
+    expect(room - "$10,000".length * 7).toBeGreaterThanOrEqual(dotReach + clearance);
+  });
+
   it("writes ticks the way the readout beside them does, and makes room for the longest", () => {
     const ticks = [0, 5000, 10_000];
     const { format, room } = tickLabels({ format: dollars, ticks });

@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import { type MapBox, type MapPoint } from "./map-viewport";
+import { type MapBox, type MapPoint, placeMapLabels, strayRegions } from "./map-viewport";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -29,27 +29,38 @@ export type MapPin = {
 
 function MapShapes({
   drawing,
+  labelSpots,
   labelText,
   pixelSize,
 }: {
   drawing: BaseMapDrawing;
+  labelSpots: readonly (MapPoint | null)[];
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
 }) {
+  const stray = strayRegions({
+    labels: drawing.labels,
+    legendTones: drawing.legend.map((item) => item.tone),
+    regions: drawing.regions,
+    spots: labelSpots,
+  });
+
   return (
     <>
       {drawing.sphere && <path className="fill-viz-secondary-soft" d={drawing.sphere} />}
 
       <g className="stroke-viz-grid" strokeLinejoin="round">
-        {drawing.regions.map((region) => (
-          <path
-            className={REGION_CLASS[region.tone]}
-            d={region.path}
-            key={region.id}
-            strokeWidth={0.75}
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
+        {drawing.regions
+          .filter((region) => !stray.includes(region.id))
+          .map((region) => (
+            <path
+              className={REGION_CLASS[region.tone]}
+              d={region.path}
+              key={region.id}
+              strokeWidth={0.75}
+              vectorEffect="non-scaling-stroke"
+            />
+          ))}
       </g>
 
       <g className="stroke-background fill-none" strokeLinecap="round">
@@ -76,28 +87,36 @@ function MapShapes({
         />
       ))}
 
-      {drawing.labels.map((label) => (
-        <text
-          className={cn(
-            "stroke-background",
-            label.kind === "street"
-              ? "fill-muted-foreground font-medium"
-              : "fill-foreground/75 font-semibold",
-          )}
-          dominantBaseline="middle"
-          fontSize={LABEL_SIZE * pixelSize}
-          key={`${label.text}-${label.x}-${label.y}`}
-          paintOrder="stroke"
-          strokeLinejoin="round"
-          strokeWidth={LABEL_HALO * pixelSize}
-          textAnchor="middle"
-          transform={label.angle ? `rotate(${label.angle} ${label.x} ${label.y})` : undefined}
-          x={label.x}
-          y={label.y}
-        >
-          {labelText(label.key, label.text)}
-        </text>
-      ))}
+      {drawing.labels.map((label, index) => {
+        const spot = labelSpots[index];
+
+        if (!spot) {
+          return null;
+        }
+
+        return (
+          <text
+            className={cn(
+              "stroke-background",
+              label.kind === "street"
+                ? "fill-muted-foreground font-medium"
+                : "fill-foreground/75 font-semibold",
+            )}
+            dominantBaseline="middle"
+            fontSize={LABEL_SIZE * pixelSize}
+            key={`${label.text}-${label.x}-${label.y}`}
+            paintOrder="stroke"
+            strokeLinejoin="round"
+            strokeWidth={LABEL_HALO * pixelSize}
+            textAnchor="middle"
+            transform={label.angle ? `rotate(${label.angle} ${spot.x} ${spot.y})` : undefined}
+            x={spot.x}
+            y={spot.y}
+          >
+            {labelText(label.key, label.text)}
+          </text>
+        );
+      })}
     </>
   );
 }
@@ -126,6 +145,18 @@ export function BaseMapView({
     y: crop.y + point.y * pixelSize,
   });
 
+  const labelSpots = placeMapLabels({
+    frame: { height, width },
+    labels: drawing.labels.map((label) => ({
+      angle: label.angle,
+      kind: label.kind,
+      text: labelText(label.key, label.text),
+      x: (label.x - crop.x) / pixelSize,
+      y: (label.y - crop.y) / pixelSize,
+    })),
+    pins: pins.map((pin) => pin.shown),
+  }).map((spot) => spot && toMap(spot));
+
   return (
     <div
       className={cn(
@@ -142,7 +173,12 @@ export function BaseMapView({
         viewBox={`${crop.x} ${crop.y} ${crop.width} ${crop.height}`}
         width={width}
       >
-        <MapShapes drawing={drawing} labelText={labelText} pixelSize={pixelSize} />
+        <MapShapes
+          drawing={drawing}
+          labelSpots={labelSpots}
+          labelText={labelText}
+          pixelSize={pixelSize}
+        />
 
         {pins.map((pin) => {
           const [spot, shown] = [toMap(pin.spot), toMap(pin.shown)];

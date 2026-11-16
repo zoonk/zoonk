@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
-import { type LabelSize, placeLineLabels } from "./line-crossing-labels";
+import { type LabelSize, changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
 import {
   Axes,
   CROSSING_RADIUS,
@@ -14,7 +14,7 @@ import {
   CrossingGuide,
   LineLabel,
   LineMark,
-  changeArrowBoxes,
+  yTitleBox,
 } from "./line-crossing-marks";
 import {
   type ChartDomain,
@@ -32,7 +32,8 @@ import {
 type ChartLine = Line & { id: string; label: string };
 
 const PLOT_HEIGHT = 248;
-const PADDING = { bottom: 30, left: 22, right: 18, top: 26 };
+// The axis's stroke starts on the card's text edge and the plot runs to its far edge.
+const PADDING = { bottom: 30, left: 1, right: 0, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
@@ -55,6 +56,7 @@ function LineLabels({
   lines,
   offsets,
   slides,
+  yLabel,
 }: {
   answerLine: Line | null;
   axis: ShiftAxis;
@@ -63,6 +65,7 @@ function LineLabels({
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   slides: readonly LineAndSlide[];
+  yLabel: string;
 }) {
   const t = useExtracted();
   const scales = usePlotScales();
@@ -70,11 +73,12 @@ function LineLabels({
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const pixel = (point: Point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) });
 
+  // A line that leaves through the chart's top keeps its name over its end, in the room above the chart.
   const area = {
     bottom: scales.y.range[0],
     left: scales.x.range[0],
-    right: scales.width,
-    top: scales.y.range[1],
+    right: scales.x.range[1],
+    top: 0,
   };
 
   const handles = slides.map(({ line, slide }) => {
@@ -89,13 +93,21 @@ function LineLabels({
   );
 
   const marks = {
-    arrows: crossings.before
-      ? changeArrowBoxes({ after: crossings.after, before: crossings.before, ...scales })
-      : [],
+    boxes: [
+      yTitleBox({ left: scales.x.range[0], title: yLabel, top: scales.y.range[1] }),
+      ...(crossings.before
+        ? changeArrowBoxes({
+            after: pixel(crossings.after),
+            before: pixel(crossings.before),
+            bottom: scales.y.range[0],
+            left: scales.x.range[0],
+          })
+        : []),
+    ],
     circles: [...handles, ...dots],
   };
 
-  const labels: ChartLabel[] = [
+  const shown: ChartLabel[] = [
     ...lines.map((line, index) => ({
       className: LINE_TEXT_CLASSES[index] ?? "",
       id: line.id,
@@ -103,17 +115,6 @@ function LineLabels({
       label: line.label,
       line: movedLine(line, offsetOf(line), axis),
     })),
-    ...(answerLine
-      ? [
-          {
-            className: "text-success-text",
-            id: "answer",
-            isUpper: false,
-            label: t("What happened"),
-            line: answerLine,
-          },
-        ]
-      : []),
     ...lines
       .filter((line) => offsetOf(line) !== 0)
       .map((line) => ({
@@ -126,30 +127,48 @@ function LineLabels({
       })),
   ];
 
-  const measured = labels.flatMap((label) => {
-    const size = sizes[label.id];
-    const { from, to } = visibleSegment(label.line, domain);
+  const revealed: ChartLabel[] = answerLine
+    ? [
+        {
+          className: "text-success-text",
+          id: "answer",
+          isUpper: false,
+          label: t("What happened"),
+          line: answerLine,
+        },
+      ]
+    : [];
 
-    return size
-      ? [
-          {
-            isOptional: label.isOptional,
-            isUpper: label.isUpper,
-            segment: { from: pixel(from), to: pixel(to) },
-            size,
-          },
-        ]
-      : [];
-  });
+  const labels = [...shown, ...revealed];
 
-  const boxes =
-    measured.length === labels.length
-      ? placeLineLabels({
-          area,
-          labels: measured,
-          marks: { ...marks, lines: measured.map((label) => label.segment) },
-        })
-      : [];
+  const measure = (list: readonly ChartLabel[]) =>
+    list.flatMap((label) => {
+      const size = sizes[label.id];
+      const { from, to } = visibleSegment(label.line, domain);
+
+      return size
+        ? [
+            {
+              isOptional: label.isOptional,
+              isUpper: label.isUpper,
+              segment: { from: pixel(from), to: pixel(to) },
+              size,
+            },
+          ]
+        : [];
+    });
+
+  const isMeasured = (list: readonly ChartLabel[]) => list.every((label) => sizes[label.id]);
+
+  // The answer's name is measured once Check shows it; the names already shown keep their spots meanwhile.
+  const boxes = isMeasured(shown)
+    ? placeChartLabels({
+        area,
+        marks,
+        revealed: isMeasured(revealed) ? measure(revealed) : [],
+        shown: measure(shown),
+      })
+    : [];
 
   return labels.map((label, index) => (
     <LineLabel
@@ -239,6 +258,7 @@ export function LineCrossingChart({
         lines={lines}
         offsets={offsets}
         slides={slides}
+        yLabel={yLabel}
       />
 
       {moved.length > 0 && (

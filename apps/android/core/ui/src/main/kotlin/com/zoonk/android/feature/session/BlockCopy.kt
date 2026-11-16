@@ -101,6 +101,13 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_practice_mistakes)
         }
 
+        step.topics.isNotEmpty() -> {
+            stringResource(
+                if (step.extra) R.string.session_block_bonus_practice_topic else R.string.session_block_practice_topic,
+                step.topics.first(),
+            )
+        }
+
         step.areas.isNotEmpty() -> {
             stringResource(
                 if (step.extra) R.string.session_block_bonus_practice_areas else R.string.session_block_practice_areas,

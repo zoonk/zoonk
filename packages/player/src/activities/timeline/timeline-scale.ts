@@ -18,8 +18,11 @@ export function yearLabel(year: number, axis: { start: number }): YearLabel {
   return { era: axis.start < 0 ? "ce" : null, year };
 }
 
+/** There is no year 0, so the turn of the era is labeled with its first year, 1 CE. */
 export function yearTicks(start: number, end: number): number[] {
-  return niceTicks([start, end], TICK_COUNT).filter((tick) => tick !== 0 && Number.isInteger(tick));
+  return niceTicks([start, end], TICK_COUNT)
+    .filter((tick) => Number.isInteger(tick))
+    .map((tick) => (tick === 0 ? 1 : tick));
 }
 
 export function yearStep(start: number, end: number): number {

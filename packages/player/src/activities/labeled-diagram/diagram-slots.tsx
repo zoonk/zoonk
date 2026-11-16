@@ -92,8 +92,8 @@ function CheckedSlot({
     >
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <SpotNumber number={slot.number} state={state} />
-        {correct && <span className="font-medium">{slot.label}</span>}
-        {correct && <Check aria-hidden="true" className="text-success-text size-4" />}
+        {correct && <span className="min-w-0 flex-1 font-medium">{slot.label}</span>}
+        {correct && <Check aria-hidden="true" className="text-success-text size-4 shrink-0" />}
 
         {!correct && name && (
           <span className="text-muted-foreground line-through">

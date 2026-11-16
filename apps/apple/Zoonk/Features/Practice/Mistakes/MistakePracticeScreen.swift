@@ -293,7 +293,7 @@ struct MistakePracticeScreen: View {
   }
 
   private var nothingToPractice: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Nothing to practice yet", tableName: "Practice",

@@ -1,15 +1,18 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
+  ACTIVITY_CARD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { ActivityDragDrop } from "../_components/activity-drag-drop";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { ArgumentCandidates } from "./argument-candidates";
@@ -89,9 +92,18 @@ export function ArgumentBuilderActivity({
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <ActivityDragDrop onDrop={handleDrop}>
         <div className="flex flex-col gap-2">
-          <section aria-label={t("Claim")} className="bg-viz-accent-soft rounded-xl px-3.5 py-3">
-            <p className="text-viz-accent text-xs font-semibold">{t("Claim")}</p>
-            <p className="mt-0.5 text-base leading-snug font-medium">
+          <section
+            aria-label={t("Claim")}
+            className={cn(
+              ACTIVITY_CARD_CLASS,
+              ACTIVITY_COLOR.data.soft,
+              "flex flex-col gap-1.5 border-transparent",
+            )}
+          >
+            <p className="text-viz-accent flex min-h-6 items-center text-xs font-semibold">
+              {t("Claim")}
+            </p>
+            <p className="text-base leading-snug font-medium">
               <LessonRichText text={fields.claim} />
             </p>
           </section>

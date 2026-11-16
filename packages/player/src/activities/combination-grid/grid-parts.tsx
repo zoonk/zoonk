@@ -81,6 +81,7 @@ export function GridHeader({
       className={cn(
         ACTIVITY_BOX_CLASS,
         "flex min-h-11 items-center justify-center motion-safe:transition-colors",
+        isCompact && "rounded-lg",
         isAllele ? "text-xl" : numberSize,
         isLit && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft"),
       )}

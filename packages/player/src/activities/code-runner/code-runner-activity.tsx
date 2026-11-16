@@ -113,7 +113,7 @@ export function CodeRunnerActivity({
   return (
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-2 px-3 pt-3 pb-3.5")}>
-        <div className="flex items-center justify-between gap-3 px-1.5">
+        <div className="flex items-center justify-between gap-3">
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}
           </p>
@@ -128,7 +128,7 @@ export function CodeRunnerActivity({
           )}
         </div>
 
-        <ActivityCodeBlock aria-label={t("Code")} role="group">
+        <ActivityCodeBlock label={t("Code")}>
           {lines.map((line, index) => {
             const number = index + 1;
 

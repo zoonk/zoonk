@@ -55,7 +55,7 @@ struct MindMapScreen: View {
               .taskColumn(alignment: .leading)
           }
         } else {
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "The mind map couldn't be made this time.", tableName: "MindMaps",
@@ -108,7 +108,7 @@ struct MindMapUnreachable: View {
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "We couldn't reach the server.", tableName: "MindMaps",
@@ -237,7 +237,7 @@ struct ZoomableRemoteImage: View {
             }
           }
       } else if failed {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
               "We couldn't reach the server.", tableName: "MindMaps",

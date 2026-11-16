@@ -3,6 +3,7 @@
 {
   "session_block_bonus_practice": "06916cc5bcde1dbef1b34b5340b3ec248bb83955fd11b4a9ded5a4ea7d4c5066",
   "session_block_bonus_practice_areas": "6a51967c50c26d52deeaf8d0cad38c7f5a55dbc74aa70139f1c5d8bccab2f045",
+  "session_block_bonus_practice_topic": "3ef744b8a0925d017709b2b40cbafc6952c500d69cc7edaa0cd666692ddfd0d9",
   "session_block_call": "4b42cc87234c734491ce5db302371c242c03e70156efe6dee734701b0238df9d",
   "session_block_full_review_questions": "1bd0397878fa4b173b9bdf1c51410b6119373931861041f8b4b72a6d121c39b5",
   "session_block_mixed_practice": "5c827997dc2b82b6f9396abb4e5ac9e0edbcad345eff42233a991e79b8d43a4a",
@@ -10,6 +11,7 @@
   "session_block_new_lesson": "58856249e2f03d803085ca9a23d02f3f05e4b72185dc2edb18e5b9b5a9580f9a",
   "session_block_practice_areas": "b215ac12082ee9d235a1c685ae859623bc1b1a498b932481723e297a073c1d2d",
   "session_block_practice_mistakes": "6524d90127d8cada2fb7c902691a7d971884b4552e52f746181f5103d2878bb7",
+  "session_block_practice_topic": "113ff1e426310b4e57ddb704c5796114ab583fead87b42776e5f5938c6c5a2c1",
   "session_block_questions": "5e6e40a7b318dbddd4629890da4baa6ecfdbe565509edb62acd2a5ab711a3169",
   "session_block_rematch": "d186ec0e0805bf56fc3a3f06a3c6d8f43351f436188ed05ff2ecb5eec9b7df20",
   "session_block_rematch_lesson": "e45c1a45a7c5a8470bc6b96ca18b174375a34113039178cf5f7726558ea9a439",
@@ -107,6 +109,10 @@
     <string name="session_block_practice_areas">Alıştırma: %1$s</string>
     <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_bonus_practice_areas">Ek alıştırma: %1$s</string>
+    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_practice_topic">Alıştırma: %1$s</string>
+    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_bonus_practice_topic">Ek alıştırma: %1$s</string>
     <string name="session_block_rematch_lesson">Tekrar denemeden önce kısa bir ders</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d soru</item>

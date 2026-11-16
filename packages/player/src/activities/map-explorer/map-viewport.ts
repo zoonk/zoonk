@@ -1,3 +1,4 @@
+import { estimatedLabelWidth } from "../_utils/drawing-label";
 import { clamp } from "../_utils/snap-value";
 
 export type MapPoint = { x: number; y: number };
@@ -108,4 +109,127 @@ export function spreadPins({
     (current) => relax(current),
     [...points],
   );
+}
+
+export type MapLabelSpot = { angle: number; kind: "region" | "street"; text: string } & MapPoint;
+
+const LABEL_HEIGHT = 12;
+const LABEL_REACH = LABEL_HEIGHT / 2;
+const LABEL_CLEARANCE = 3;
+const PIN_RADIUS = 20;
+const SLIDE_STEP = 4;
+const HALF_TURN = 180;
+
+/** The name's ink as a row of circles along its baseline, which a rotated name's box can't follow. */
+function labelInk(label: MapLabelSpot, at: MapPoint): MapPoint[] {
+  const reach = Math.max(estimatedLabelWidth(label.text) / 2 - LABEL_REACH, 0);
+  const radians = (label.angle * Math.PI) / HALF_TURN;
+  const count = Math.ceil((reach * 2) / LABEL_REACH);
+
+  return Array.from({ length: count + 1 }, (_, index) => {
+    const along = count === 0 ? 0 : -reach + (reach * 2 * index) / count;
+    return { x: at.x + Math.cos(radians) * along, y: at.y + Math.sin(radians) * along };
+  });
+}
+
+function slides(label: MapLabelSpot): number[] {
+  const most = label.kind === "street" ? estimatedLabelWidth(label.text) : 0;
+  const steps = Math.floor(most / SLIDE_STEP);
+
+  return [
+    0,
+    ...Array.from({ length: steps }, (_, index) => [
+      (index + 1) * SLIDE_STEP,
+      -(index + 1) * SLIDE_STEP,
+    ]).flat(),
+  ];
+}
+
+/**
+ * Where each of the map's names is drawn, in frame pixels: at its own spot when the map's edges,
+ * the pins and the names before it leave that clear; a street's name otherwise slides along its
+ * street to the nearest clear spot, within its own length. A name with no clear spot is left out,
+ * as null, rather than drawn cut or covered.
+ */
+export function placeMapLabels({
+  frame,
+  labels,
+  pins,
+}: {
+  frame: { height: number; width: number };
+  labels: readonly MapLabelSpot[];
+  pins: readonly MapPoint[];
+}): (MapPoint | null)[] {
+  const isClear = (ink: readonly MapPoint[], placed: readonly MapPoint[]) =>
+    ink.every(
+      (point) =>
+        point.x - LABEL_REACH >= 0 &&
+        point.x + LABEL_REACH <= frame.width &&
+        point.y - LABEL_REACH >= 0 &&
+        point.y + LABEL_REACH <= frame.height &&
+        pins.every(
+          (pin) =>
+            Math.hypot(point.x - pin.x, point.y - pin.y) >=
+            LABEL_REACH + PIN_RADIUS + LABEL_CLEARANCE,
+        ) &&
+        placed.every(
+          (other) =>
+            Math.hypot(point.x - other.x, point.y - other.y) >= LABEL_HEIGHT + LABEL_CLEARANCE,
+        ),
+    );
+
+  return labels.reduce<{ placed: MapPoint[]; spots: (MapPoint | null)[] }>(
+    ({ placed, spots }, label) => {
+      const radians = (label.angle * Math.PI) / HALF_TURN;
+
+      const spot =
+        slides(label)
+          .map((slide) => ({
+            x: label.x + Math.cos(radians) * slide,
+            y: label.y + Math.sin(radians) * slide,
+          }))
+          .find((at) => isClear(labelInk(label, at), placed)) ?? null;
+
+      return {
+        placed: spot ? [...placed, ...labelInk(label, spot)] : placed,
+        spots: [...spots, spot],
+      };
+    },
+    { placed: [], spots: [] },
+  ).spots;
+}
+
+type MapRegion = { id: string; name: string; tone: string };
+
+const UNTINTED_TONES = new Set(["context", "focus"]);
+
+/**
+ * The tinted regions to leave off the map: one whose name was left out and whose tint the legend
+ * doesn't explain would read as a stray shape.
+ */
+export function strayRegions({
+  labels,
+  legendTones,
+  regions,
+  spots,
+}: {
+  labels: readonly { kind: "region" | "street"; text: string }[];
+  legendTones: readonly string[];
+  regions: readonly MapRegion[];
+  spots: readonly (MapPoint | null)[];
+}): string[] {
+  const unnamed = new Set(
+    labels.flatMap((label, index) =>
+      label.kind === "region" && spots[index] === null ? [label.text] : [],
+    ),
+  );
+
+  return regions
+    .filter(
+      (region) =>
+        !UNTINTED_TONES.has(region.tone) &&
+        !legendTones.includes(region.tone) &&
+        unnamed.has(region.name),
+    )
+    .map((region) => region.id);
 }

@@ -4,6 +4,7 @@ import {
   checkedMarks,
   fretWindowStart,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
@@ -89,5 +90,45 @@ describe(initialPitches, () => {
         phase: "explore",
       }),
     ).toStrictEqual([0, 3, 7]);
+  });
+});
+
+describe(keyboardHeading, () => {
+  const change = {
+    check: { kind: "interaction" },
+    fields: { start: cMajor, target: cMinor },
+  } as const;
+
+  it("names the start chord while the keys still show it", () => {
+    expect(keyboardHeading({ content: change, phase: "answering", shown: [0, 4, 7] })).toBe(
+      "start",
+    );
+  });
+
+  it("never names the target while the learner builds it, even once the keys match it", () => {
+    expect(keyboardHeading({ content: change, phase: "answering", shown: [0, 3, 7] })).toBe(
+      "yours",
+    );
+
+    expect(keyboardHeading({ content: change, phase: "answering", shown: [0, 7] })).toBe("yours");
+  });
+
+  it("names the target when the keys show it and nothing is being built", () => {
+    expect(keyboardHeading({ content: change, phase: "checked", shown: [7, 0, 3] })).toBe("target");
+
+    expect(
+      keyboardHeading({
+        content: { check: { kind: "choice" }, fields: { target: cMinor } },
+        phase: "answering",
+        shown: [0, 3, 7],
+      }),
+    ).toBe("target");
+  });
+
+  it("keeps a sound heard by ear unnamed until it's revealed", () => {
+    const byEar = { check: { kind: "choice" }, fields: { byEar: true, target: cMinor } } as const;
+
+    expect(keyboardHeading({ content: byEar, phase: "answering", shown: [] })).toBe("byEar");
+    expect(keyboardHeading({ content: byEar, phase: "checked", shown: [0, 3, 7] })).toBe("target");
   });
 });

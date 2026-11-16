@@ -1,8 +1,14 @@
+import { LABEL_CLEARANCE, estimatedLabelWidth } from "./drawing-label";
+
 /** The room a plot keeps at its start for its value axis's labels. */
 export const PLOT_TICK_ROOM = 44;
 
-const TICK_GAP = 6;
-const CHARACTER_WIDTH = 7;
+export const PLOT_DOT_RADIUS = 6;
+export const PLOT_DOT_STROKE = 2.5;
+
+/** Between a value axis's labels and the plot: a dot at the axis start stays clear of them. */
+export const TICK_GAP = PLOT_DOT_RADIUS + PLOT_DOT_STROKE / 2 + LABEL_CLEARANCE;
+
 const LONGEST_FULL_LABEL = 8;
 
 /**
@@ -23,6 +29,11 @@ export function tickLabels({
   return {
     format: (value) => format(value, isShort),
     isShort,
-    room: isShort ? PLOT_TICK_ROOM : Math.max(PLOT_TICK_ROOM, longest * CHARACTER_WIDTH + TICK_GAP),
+    room: isShort
+      ? PLOT_TICK_ROOM
+      : Math.max(
+          PLOT_TICK_ROOM,
+          ...ticks.map((tick) => estimatedLabelWidth(format(tick, false)) + TICK_GAP),
+        ),
   };
 }

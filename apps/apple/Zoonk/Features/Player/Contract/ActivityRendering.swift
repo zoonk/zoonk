@@ -80,7 +80,7 @@ struct ActivityFallbackCanvas: View {
 
   var body: some View {
     if case .interaction = context.check {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "This activity isn't available in the app yet", tableName: "Player",

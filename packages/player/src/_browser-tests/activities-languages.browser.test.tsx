@@ -1,10 +1,18 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { checkActivity, expectVerdict, openActivity } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { recordPlayedClips, speechClips } from "../_test-utils/speech-clips";
 
 async function pickEnding(ending: string) {
   await page.getByRole("button", { exact: true, name: ending }).click();
+}
+
+function rowHeights() {
+  return [...document.querySelectorAll("tbody tr")].map(
+    (row) => row.getBoundingClientRect().height,
+  );
 }
 
 describe("language activities", () => {
@@ -25,6 +33,29 @@ describe("language activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Correct answer: coméis")).toBeVisible();
+  });
+
+  it("pattern table: on a small phone, a wrong ending and its correction move no row on Check", async () => {
+    const fixture = activityContentFixtures.patternTable;
+
+    const rows = fixture.fields.rows.map((row) =>
+      row.blank ? { ...row, labelMeaning: undefined } : row,
+    );
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      openActivity({
+        content: { ...fixture, fields: { ...fixture.fields, rows } },
+        template: "patternTable",
+      });
+
+      await pickEnding("-áis");
+      await pickEnding("-ís");
+
+      const answering = rowHeights();
+      await checkActivity();
+      await expectVerdict("Not quite");
+      expect(rowHeights()).toStrictEqual(answering);
+    });
   });
 
   it("dialogue: the polite reply is best and every reply says why", async () => {

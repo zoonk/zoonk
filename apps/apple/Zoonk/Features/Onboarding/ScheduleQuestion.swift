@@ -386,7 +386,7 @@ struct ScheduleQuestion: View {
       ) { picked in
         await changeAim(picked)
       }
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 

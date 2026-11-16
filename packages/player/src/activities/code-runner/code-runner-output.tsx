@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
+import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { type ProgramRun } from "../_sandbox/run-program";
 
 const MS_PER_SECOND = 1000;
@@ -21,16 +22,18 @@ function OutputCell({
   label: string;
 }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-0.5 px-4 py-3", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-0.5 px-3 py-3", className)}>
       <p className="text-muted-foreground text-xs font-medium">{label}</p>
-      <div className="scroll-fade-x overflow-x-auto">{children}</div>
+      <ActivityHorizontalScroll box={{ label }}>{children}</ActivityHorizontalScroll>
     </div>
   );
 }
 
 function OutputText({ className, text }: { className?: string; text: string }) {
   return (
-    <pre className={cn("font-mono text-lg font-semibold whitespace-pre", className)}>{text}</pre>
+    <pre className={cn("min-w-max font-mono text-lg font-semibold whitespace-pre", className)}>
+      {text}
+    </pre>
   );
 }
 
@@ -80,11 +83,15 @@ function PrintedOutput({
   const t = useExtracted();
 
   if (run === null) {
-    return <p className="text-muted-foreground py-1 text-sm">{t("Run the code to see it")}</p>;
+    return (
+      <p className="text-muted-foreground py-1 text-sm text-pretty">
+        {t("Run the code to see it")}
+      </p>
+    );
   }
 
   if (run.output === "") {
-    return <p className="text-muted-foreground py-1 text-sm">{t("Nothing printed")}</p>;
+    return <p className="text-muted-foreground py-1 text-sm text-pretty">{t("Nothing printed")}</p>;
   }
 
   return (
@@ -145,9 +152,11 @@ export function CodeRunnerOutput({
       {run && !isStale && <StopNotice language={language} run={run} />}
 
       {run?.errorOutput && !isStale && (
-        <pre className="text-muted-foreground scroll-fade-x overflow-x-auto font-mono text-xs whitespace-pre">
-          {run.errorOutput}
-        </pre>
+        <ActivityHorizontalScroll box={{ label: t("Error") }}>
+          <pre className="text-muted-foreground min-w-max font-mono text-xs whitespace-pre">
+            {run.errorOutput}
+          </pre>
+        </ActivityHorizontalScroll>
       )}
 
       {mistake && !isStale && (
