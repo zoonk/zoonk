@@ -111,6 +111,7 @@ async function LessonContent({ params, searchParams }: PageProps<"/lessons/[id]"
               json={readQueryParam(query.json) === "1"}
               lessonId={lesson.id}
               steps={lesson.steps}
+              translations={new Map(lesson.words.map((word) => [word.wordId, word.translation]))}
             />
           </AdminDetailColumns>
         ) : null}

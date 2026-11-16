@@ -65,7 +65,7 @@ function Options({ options }: { options: Fields[] }) {
   );
 }
 
-function Answer({ children, label }: { children: string | null; label: string }) {
+export function ContentAnswer({ children, label }: { children: string | null; label: string }) {
   if (!children) {
     return null;
   }
@@ -126,9 +126,11 @@ export function ContentWords({ content }: { content: unknown }) {
 
       <Options options={list(content.options)} />
       <Prose>{text(content.result) ?? text(content.reveal)}</Prose>
-      <Answer label="Answer">{blanks.join(", ") || text(content.targetText)}</Answer>
-      <Answer label="Also offered">{strings(content.distractors).join(", ") || null}</Answer>
-      <Answer label="Accepted">{accepted.join(FACT_SEPARATOR) || null}</Answer>
+      <ContentAnswer label="Answer">{blanks.join(", ") || text(content.targetText)}</ContentAnswer>
+      <ContentAnswer label="Also offered">
+        {strings(content.distractors).join(", ") || null}
+      </ContentAnswer>
+      <ContentAnswer label="Accepted">{accepted.join(FACT_SEPARATOR) || null}</ContentAnswer>
       <Prose quiet>
         {text(content.translation) === text(content.targetText)
           ? text(content.feedback)

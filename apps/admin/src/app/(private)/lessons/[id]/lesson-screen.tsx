@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { ContentWords } from "@/components/content-words";
+import { ContentAnswer, ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
@@ -72,11 +72,14 @@ export function LessonScreen({
   answers,
   json,
   step,
+  translation,
 }: {
   answers?: StepAnswers;
   /** Shows what is stored under the words, for a screen whose words don't say everything. */
   json: boolean;
   step: LibraryLessonStep;
+  /** The lesson's translation of the screen's word. */
+  translation?: string;
 }) {
   return (
     <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-5 first:pt-0">
@@ -92,8 +95,17 @@ export function LessonScreen({
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
-          {step.word && (step.kind === "vocabulary" || step.kind === "translation") ? (
-            <p>{step.word.word}</p>
+          {step.word && step.kind === "vocabulary" ? (
+            <>
+              <p>{step.word.word}</p>
+              <ContentAnswer label="Translation">{translation ?? null}</ContentAnswer>
+            </>
+          ) : null}
+          {step.word && step.kind === "translation" ? (
+            <>
+              {translation ? <p>{translation}</p> : null}
+              <ContentAnswer label="Answer">{step.word.word}</ContentAnswer>
+            </>
           ) : null}
           {step.sentence && (step.kind === "reading" || step.kind === "listening") ? (
             <p>{step.sentence.sentence}</p>

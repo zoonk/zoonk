@@ -57,7 +57,7 @@ export function AdminDetailColumns({
   return (
     <div className={cn("grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-10", className)}>
       {foldedAside ? (
-        <div className="-mb-4 xl:hidden">
+        <div className="-mt-3 -mb-4 xl:hidden">
           <AdminDisclosure label={foldedAside}>
             <div className="flex flex-col gap-8 pt-2 pb-4 text-sm">{aside}</div>
           </AdminDisclosure>

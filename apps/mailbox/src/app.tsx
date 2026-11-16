@@ -20,11 +20,11 @@ import { type CapturedEmail } from "./email";
 import { type EmailInboxStatus, clearEmailInbox, useEmailInbox } from "./email-store";
 import { findSignInCode } from "./sign-in-code";
 
-const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" });
+const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
 
 const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
-  hour: "2-digit",
+  hour: "numeric",
   minute: "2-digit",
   month: "short",
 });

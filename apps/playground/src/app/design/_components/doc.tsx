@@ -98,7 +98,8 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
   );
 }
 
-const CODE_CHIP = "bg-muted rounded px-1 py-0.5 font-mono text-xs leading-none whitespace-nowrap";
+const CODE_CHIP =
+  "bg-muted rounded px-1 py-0.5 font-mono text-xs leading-none box-decoration-clone";
 
 export function renderCode(text: string): React.ReactNode {
   return text.split(/(?<code>`[^`]+`)/u).map((part, index) =>
