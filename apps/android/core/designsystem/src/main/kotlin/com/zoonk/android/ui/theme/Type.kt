@@ -56,7 +56,6 @@ private fun TextStyle.role(
         fontWeight = FontWeight(weight),
         lineHeight = lineHeight.sp,
         letterSpacing = tracking.em,
-        lineBreak = LineBreak.Paragraph,
     )
 
 /** Main's titles balance their lines (`text-balance`), so a wrapped title never leaves one word alone. */
