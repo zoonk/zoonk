@@ -166,6 +166,15 @@ export function CauseEffectChainActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
+      {!isExploring && (
+        <p
+          aria-live="polite"
+          aria-hidden={isLocked}
+          className={cn("text-muted-foreground text-sm text-pretty", isLocked && "invisible")}
+        >
+          {notice || t("Pick a cause, then pick what it led to.")}
+        </p>
+      )}
       {!isLessonChain && check.kind === "interaction" && (
         <ActivityCanvasLabel className="self-end tabular-nums">
           {t("{count} of {total, plural, one {# link} other {# links}}", {
@@ -215,13 +224,6 @@ export function CauseEffectChainActivity({
           onRemove={(link) => update(toggleLink(links, link))}
           showWhy={isGuided || isLocked}
         />
-
-        {/* Last in the card, so it can go once checked without moving anything above it. */}
-        {!isLocked && (
-          <p aria-live="polite" className="text-muted-foreground text-sm">
-            {notice || t("Pick a cause, then pick what it led to.")}
-          </p>
-        )}
       </div>
 
       <ActivityTextAlternative>
