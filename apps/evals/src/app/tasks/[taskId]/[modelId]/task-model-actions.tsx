@@ -1,3 +1,5 @@
+"use client";
+
 import { FormMainButton } from "@/components/form-main-button";
 import { type EvalSummary } from "@/lib/eval-summary";
 import { DEFAULT_REASONING, type ModelConfig } from "@/lib/models";
@@ -5,10 +7,19 @@ import { type OutputProgress } from "@/lib/output-loader";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { type FailedRun } from "@/lib/types";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { DownloadIcon, EllipsisIcon, FileTextIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
-import { type OutputExportEntry, OutputsExport } from "./outputs-export";
+import { type OutputExportEntry, exportOutputs } from "./outputs-export";
 import { ReasoningSelect } from "./reasoning-select";
 import { ReviewPdfExport } from "./review-pdf-export";
 
@@ -32,10 +43,69 @@ export function TaskModelFileActions({
   taskId: string;
   taskName: string;
 }) {
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const disabled = summary.attempted === 0;
+  const exportAll = () => exportOutputs({ entries: exportEntries, failedRuns, summary });
+
   return (
     <>
-      <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
-
+      <div className="contents max-sm:hidden">
+        <Button
+          disabled={disabled}
+          icon={<DownloadIcon />}
+          onClick={exportAll}
+          size="bar"
+          variant="outline"
+        >
+          Export outputs
+        </Button>
+        <Button
+          disabled={disabled}
+          onClick={() => setReviewOpen(true)}
+          size="bar"
+          variant="outline"
+          icon={<FileTextIcon />}
+        >
+          Export review PDF
+        </Button>
+        <Button
+          disabled={disabled}
+          onClick={() => setDeleteOpen(true)}
+          size="bar"
+          variant="outline"
+          icon={<Trash2Icon />}
+        >
+          Delete results
+        </Button>
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="sm:hidden"
+          render={<Button edge="end" size="icon-bar" variant="ghost" />}
+        >
+          <EllipsisIcon aria-hidden="true" />
+          <span className="sr-only">More</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-60 sm:hidden">
+          <DropdownMenuItem disabled={disabled} onClick={exportAll}>
+            <DownloadIcon />
+            Export outputs
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled={disabled} onClick={() => setReviewOpen(true)}>
+            <FileTextIcon />
+            Export review PDF
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={disabled}
+            onClick={() => setDeleteOpen(true)}
+            variant="destructive"
+          >
+            <Trash2Icon />
+            Delete results
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ReviewPdfExport
         entries={reviewEntries}
         key={`${taskId}-${modelId}`}
@@ -43,9 +113,15 @@ export function TaskModelFileActions({
         summary={summary}
         taskId={taskId}
         taskName={taskName}
+        open={reviewOpen}
+        onOpenChange={setReviewOpen}
       />
-
-      <DeleteModelDataDialog disabled={summary.attempted === 0} modelId={modelId} taskId={taskId} />
+      <DeleteModelDataDialog
+        modelId={modelId}
+        taskId={taskId}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </>
   );
 }

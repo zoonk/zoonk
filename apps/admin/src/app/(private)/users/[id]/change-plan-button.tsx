@@ -22,7 +22,7 @@ export function ChangePlanButton({
       description={
         hasPlus
           ? "The Plus you gave them ends today."
-          : "They get Plus at no charge until you remove it, and the certificates they've earned."
+          : "They get Plus at no charge until you remove it, and the certificates they've earned are issued."
       }
       destructive={hasPlus}
       title={hasPlus ? `Remove ${userName}'s Plus?` : `Give ${userName} Plus?`}

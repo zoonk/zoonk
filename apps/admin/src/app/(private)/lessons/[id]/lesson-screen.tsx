@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { ContentWords } from "@/components/content-words";
+import { ContentAnswer, ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
@@ -32,18 +32,18 @@ function answersLabel(answers?: StepAnswers): string | null {
     : `${formatCount(answers.total, "answer")} · ${formatPercent((answers.correct / answers.total) * PERCENT)} right`;
 }
 
+/** A lesson in the learner's own language translates a word to itself, which says nothing. */
+function otherWords(translation: string | undefined, word: string): string | null {
+  return translation && translation !== word ? translation : null;
+}
+
 function ScreenLinks({ step }: { step: LibraryLessonStep }) {
-  if (!(step.skill || step.item || step.mediaAsset)) {
+  if (!(step.item || step.mediaAsset)) {
     return null;
   }
 
   return (
     <p className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
-      {step.skill ? (
-        <Link className={LINK_CLASS} href={`/skills/${step.skill.id}`}>
-          {step.skill.name}
-        </Link>
-      ) : null}
       {step.item ? (
         <Link className={LINK_CLASS} href={`/items/${step.item.id}`}>
           Practice question
@@ -61,7 +61,7 @@ function ScreenLinks({ step }: { step: LibraryLessonStep }) {
 function ScreenJson({ step }: { step: LibraryLessonStep }) {
   return (
     <div className="flex flex-col">
-      <AdminJson label="JSON" open value={step.content} />
+      <AdminJson label="Technical details" open value={step.content} />
       {step.variants.map((variant) => (
         <AdminJson
           key={variant.id}
@@ -77,11 +77,14 @@ export function LessonScreen({
   answers,
   json,
   step,
+  translation,
 }: {
   answers?: StepAnswers;
   /** Shows what is stored under the words, for a screen whose words don't say everything. */
   json: boolean;
   step: LibraryLessonStep;
+  /** The lesson's translation of the screen's word. */
+  translation?: string;
 }) {
   return (
     <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-5 first:pt-0">
@@ -97,6 +100,25 @@ export function LessonScreen({
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
+          {step.word && step.kind === "vocabulary" ? (
+            <>
+              <p>{step.word.word}</p>
+              <ContentAnswer label="Translation">
+                {otherWords(translation, step.word.word)}
+              </ContentAnswer>
+            </>
+          ) : null}
+          {step.word && step.kind === "translation" ? (
+            <>
+              <p>{otherWords(translation, step.word.word) ?? step.word.word}</p>
+              <ContentAnswer label="Answer">
+                {otherWords(translation, step.word.word) && step.word.word}
+              </ContentAnswer>
+            </>
+          ) : null}
+          {step.sentence && (step.kind === "reading" || step.kind === "listening") ? (
+            <p>{step.sentence.sentence}</p>
+          ) : null}
           <ContentWords content={step.content} />
         </div>
 

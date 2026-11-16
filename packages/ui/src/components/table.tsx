@@ -1,22 +1,27 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { HorizontalScroll } from "./horizontal-scroll";
 import type * as React from "react";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+/** Wider than its room, it scrolls with the scroll sign; `scrollLabels` name the box and its buttons. */
+function Table({
+  className,
+  scrollLabels,
+  ...props
+}: React.ComponentProps<"table"> & { scrollLabels: { box: string; left: string; right: string } }) {
   return (
-    <div
-      className="relative w-full overflow-x-auto overscroll-x-contain"
-      data-slot="table-container"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Overflowing tables need a keyboard scroll target.
-      tabIndex={0}
+    <HorizontalScroll
+      box={{ label: scrollLabels.box }}
+      className="w-full min-w-0"
+      labels={scrollLabels}
     >
       <table
         className={cn("w-full caption-bottom text-sm tabular-nums", className)}
         data-slot="table"
         {...props}
       />
-    </div>
+    </HorizontalScroll>
   );
 }
 

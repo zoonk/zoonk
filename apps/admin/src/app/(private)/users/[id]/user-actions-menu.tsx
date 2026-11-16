@@ -40,7 +40,7 @@ export function UserActionsMenu({
       <AdminBarMenu label="User actions">
         <DropdownMenuItem onClick={() => setDialog("signOut")}>
           <LogOutIcon aria-hidden="true" />
-          Sign out everywhere
+          Log out everywhere
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => setDialog("analytics")}>
@@ -64,9 +64,9 @@ export function UserActionsMenu({
       <AdminConfirmDialog
         {...dialogProps("signOut")}
         action={revokeSessionsAction}
-        confirmLabel="Sign out"
-        description="They'll need to sign in again on every device."
-        title={`Sign ${userName} out everywhere?`}
+        confirmLabel="Log out"
+        description="They'll need to log in again on every device."
+        title={`Log ${userName} out everywhere?`}
       >
         {userField}
       </AdminConfirmDialog>
@@ -94,7 +94,7 @@ export function UserActionsMenu({
         {...dialogProps("unban")}
         action={unbanUserAction}
         confirmLabel="Unban"
-        description="They can sign in again."
+        description="They can log in again."
         title={`Unban ${userName}?`}
       >
         {userField}
@@ -104,7 +104,7 @@ export function UserActionsMenu({
         {...dialogProps("ban")}
         action={banUserAction}
         confirmLabel="Ban"
-        description="They're signed out everywhere and can't sign back in until you unban them."
+        description="They're logged out everywhere and can't log back in until you unban them."
         destructive
         title={`Ban ${userName}?`}
       >

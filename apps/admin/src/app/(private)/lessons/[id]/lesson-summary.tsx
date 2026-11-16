@@ -3,7 +3,7 @@ import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type LibraryLessonDetail } from "@/data/lessons/get-library-lesson";
-import { formatCount, formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 import { LessonHeldBack } from "./lesson-held-back";
@@ -71,9 +71,9 @@ export function LessonAbout({ lesson }: { lesson: Lesson }) {
 
       <AdminSection title="Learners">
         <DetailFields>
-          <DetailField label="In plans">
-            {formatCount(lesson._count.planItems, "plan")} ·{" "}
-            {formatCount(lesson._count.studyBlocks, "session")}
+          <DetailField label="Plans">{lesson._count.planItems.toLocaleString("en")}</DetailField>
+          <DetailField label="Sessions">
+            {lesson._count.studyBlocks.toLocaleString("en")}
           </DetailField>
           <DetailField label="Buddy questions">
             {lesson._count.questionThreads.toLocaleString("en")}

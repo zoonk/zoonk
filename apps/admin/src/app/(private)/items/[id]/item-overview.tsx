@@ -35,7 +35,7 @@ export function ItemQuestion({ item }: { item: AdminItem }) {
       <div className="flex max-w-2xl flex-col gap-4 text-sm leading-6">
         <ContentWords content={item.content} />
       </div>
-      <AdminJson label="JSON" value={item.content} />
+      <AdminJson label="Technical details" value={item.content} />
     </AdminSection>
   );
 }

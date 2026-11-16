@@ -53,8 +53,8 @@ function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
   const origin = ORIGINS[fact.origin];
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-3 py-2.5">
-      <span className="flex max-w-3xl flex-col gap-0.5 text-sm">
+    <li className="flex items-center justify-between gap-3 py-2.5">
+      <span className="flex max-w-3xl min-w-0 flex-1 flex-col gap-0.5 text-sm">
         <FactStatement fact={fact} />
         <span className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
           <origin.icon aria-hidden="true" className="size-3.5" />
