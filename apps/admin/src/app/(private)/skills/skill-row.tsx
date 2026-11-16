@@ -13,6 +13,7 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
         href={`/skills/${skill.id}`}
         note={[
           languageName(skill.language),
+          skill.level && toWords(skill.level),
           skill.visibility === "private" && "Private",
           skill.mergedIntoId && "Merged into another skill",
         ]
@@ -20,7 +21,6 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
           .join(FACT_SEPARATOR)}
         title={skill.name}
       />
-      <TableCell>{skill.level ? toWords(skill.level) : null}</TableCell>
       <TableCell numeric>{skill._count.lessons.toLocaleString("en")}</TableCell>
       <TableCell numeric>{skill._count.items.toLocaleString("en")}</TableCell>
       <TableCell numeric>{skill._count.learnerSkills.toLocaleString("en")}</TableCell>

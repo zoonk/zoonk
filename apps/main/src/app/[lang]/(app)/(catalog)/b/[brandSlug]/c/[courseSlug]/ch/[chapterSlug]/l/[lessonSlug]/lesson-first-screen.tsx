@@ -62,7 +62,7 @@ export async function LessonFirstScreen({
     <>
       {t("{minutes, plural, one {# minute} other {# minutes}}.", { minutes })}
       {space}
-      <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
+      <NoSessionNote>{t("No account needed.")}</NoSessionNote>
     </>
   );
 

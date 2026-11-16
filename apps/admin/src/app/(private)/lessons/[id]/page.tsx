@@ -102,12 +102,16 @@ async function LessonContent({ params, searchParams }: PageProps<"/lessons/[id]"
         />
 
         {tab === "screens" ? (
-          <AdminDetailColumns aside={<LessonAbout lesson={lesson} />}>
+          <AdminDetailColumns
+            aside={<LessonAbout lesson={lesson} />}
+            foldedAside="About this lesson"
+          >
             <LessonScreens
               answers={detail.answers}
               json={readQueryParam(query.json) === "1"}
               lessonId={lesson.id}
               steps={lesson.steps}
+              translations={new Map(lesson.words.map((word) => [word.wordId, word.translation]))}
             />
           </AdminDetailColumns>
         ) : null}

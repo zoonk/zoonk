@@ -374,7 +374,10 @@ fun LessonPlayer(
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
 
-    SpreadScreen(result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused) {
+    SpreadScreen(
+        result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused,
+        spreads = state?.run !is LessonRun.Refused,
+    ) {
         TaskScaffold(
             onClose = exits::close,
             modifier =

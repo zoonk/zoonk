@@ -1,7 +1,7 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { toStudiedMinutes } from "../sessions/daily-goal";
 
 const DAYS_PER_WEEK = 7;
-const SECONDS_PER_MINUTE = 60;
 
 const MIN_TURNAROUND_GAIN = 0.2;
 
@@ -30,15 +30,29 @@ export function summarizeWeek({
 
   const studied = inWeek.filter((day) => day.seconds > 0);
 
-  const minutes = Math.round(
-    inWeek.reduce((sum, day) => sum + day.seconds, 0) / SECONDS_PER_MINUTE,
-  );
+  return summarizeWeekTotals({
+    daysStudied: studied.map((day) => day.date),
+    questions: inWeek.reduce((sum, day) => sum + day.correct + day.incorrect, 0),
+    seconds: inWeek.reduce((sum, day) => sum + day.seconds, 0),
+  });
+}
+
+export function summarizeWeekTotals({
+  daysStudied,
+  questions,
+  seconds,
+}: {
+  daysStudied: Date[];
+  questions: number;
+  seconds: number;
+}): WeekNumbers {
+  const minutes = toStudiedMinutes(seconds);
 
   return {
-    averageMinutes: studied.length > 0 ? Math.round(minutes / studied.length) : 0,
-    daysStudied: studied.map((day) => day.date).toSorted((a, b) => a.getTime() - b.getTime()),
+    averageMinutes: daysStudied.length > 0 ? Math.round(minutes / daysStudied.length) : 0,
+    daysStudied: daysStudied.toSorted((a, b) => a.getTime() - b.getTime()),
     minutes,
-    questions: inWeek.reduce((sum, day) => sum + day.correct + day.incorrect, 0),
+    questions,
   };
 }
 

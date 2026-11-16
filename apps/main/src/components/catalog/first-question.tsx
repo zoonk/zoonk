@@ -93,7 +93,7 @@ async function QuestionScreen({
           ? t("Your answer starts the {minutes}-minute lesson.", { minutes: String(minutes) })
           : t("Your answer starts the lesson.")}
         {space}
-        <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
+        <NoSessionNote>{t("No account needed.")}</NoSessionNote>
       </StartNote>
     </>
   );

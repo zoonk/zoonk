@@ -1,6 +1,5 @@
 "use client";
 
-import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import { type EvalSummary } from "@/lib/eval-summary";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { Button } from "@zoonk/ui/components/button";
@@ -13,9 +12,8 @@ import {
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
-  DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { FileTextIcon, PrinterIcon } from "lucide-react";
+import { PrinterIcon } from "lucide-react";
 import { useState } from "react";
 import { printReviewOutputs } from "./review-print-document";
 
@@ -29,7 +27,11 @@ export function ReviewPdfExport({
   summary,
   modelId,
   taskId,
+  open,
+  onOpenChange,
 }: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   entries: ReviewExportEntry[];
   taskName: string;
   summary: EvalSummary;
@@ -39,11 +41,10 @@ export function ReviewPdfExport({
   const languages = [...new Set(entries.map((entry) => entry.language))].toSorted();
   const [selectedLanguages, setSelectedLanguages] = useState(languages);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
   const selectedEntries = entries.filter((entry) => selectedLanguages.includes(entry.language));
 
   function handleOpenChange(nextOpen: boolean) {
-    setOpen(nextOpen);
+    onOpenChange(nextOpen);
 
     if (nextOpen) {
       setError(null);
@@ -75,7 +76,7 @@ export function ReviewPdfExport({
         return;
       }
 
-      setOpen(false);
+      onOpenChange(false);
     } catch {
       setError("The review could not be prepared. Try again.");
     }
@@ -83,20 +84,6 @@ export function ReviewPdfExport({
 
   return (
     <Drawer onOpenChange={handleOpenChange} open={open}>
-      <DrawerTrigger
-        render={
-          <Button
-            {...BAR_GLYPH_ACTION}
-            disabled={summary.attempted === 0}
-            type="button"
-            variant="outline"
-          />
-        }
-      >
-        <FileTextIcon />
-        <BarActionLabel>Export review PDF</BarActionLabel>
-      </DrawerTrigger>
-
       <DrawerPopup>
         <DrawerHeader closeLabel="Close">
           <DrawerTitle>Export review PDF</DrawerTitle>

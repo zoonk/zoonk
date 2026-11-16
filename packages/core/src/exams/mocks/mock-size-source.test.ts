@@ -42,7 +42,12 @@ const PAST = {
 describe(getMockSizeSource, () => {
   it("says nothing more when the notice states the size, the time and each subject's share", () => {
     expect(
-      getMockSizeSource({ noticeQuestions: null, ownerId: null, structure: STATED }),
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: null,
+        ownerId: null,
+        structure: STATED,
+      }),
     ).toStrictEqual({
       formats: null,
       material: false,
@@ -60,7 +65,9 @@ describe(getMockSizeSource, () => {
       subjects: [subject("Direito Civil", null), subject("Direito Penal", null)],
     };
 
-    expect(getMockSizeSource({ noticeQuestions: null, ownerId: null, structure })).toMatchObject({
+    expect(
+      getMockSizeSource({ examName: "ENEM", noticeQuestions: null, ownerId: null, structure }),
+    ).toMatchObject({
       pastEdition: { edition: "42º Exame de Ordem", title: "Folha Dirigida" },
       questions: "notice",
       subjects: "pastEdition",
@@ -73,10 +80,9 @@ describe(getMockSizeSource, () => {
       subjects: [subject("Direito Civil", null), subject("Direito Penal", null)],
     };
 
-    expect(getMockSizeSource({ noticeQuestions: null, ownerId: null, structure })).toMatchObject({
-      pastEdition: null,
-      subjects: "even",
-    });
+    expect(
+      getMockSizeSource({ examName: "ENEM", noticeQuestions: null, ownerId: null, structure }),
+    ).toMatchObject({ pastEdition: null, subjects: "even" });
   });
 
   it("takes the size from the notice's edition, and says when nothing states it or its time", () => {
@@ -87,11 +93,16 @@ describe(getMockSizeSource, () => {
     };
 
     expect(
-      getMockSizeSource({ noticeQuestions: 60, ownerId: null, structure: cold }),
+      getMockSizeSource({ examName: "ENEM", noticeQuestions: 60, ownerId: null, structure: cold }),
     ).toMatchObject({ questions: "notice", time: "unstated" });
 
     expect(
-      getMockSizeSource({ noticeQuestions: null, ownerId: null, structure: cold }),
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: null,
+        ownerId: null,
+        structure: cold,
+      }),
     ).toMatchObject({ questions: "unstated", time: "unstated" });
   });
 
@@ -99,7 +110,12 @@ describe(getMockSizeSource, () => {
     const material = { ...STATED, mock: null, subjects: [subject("Biologia", null)] };
 
     expect(
-      getMockSizeSource({ noticeQuestions: null, ownerId: "learner", structure: material }),
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: null,
+        ownerId: "learner",
+        structure: material,
+      }),
     ).toMatchObject({ material: true, questions: "unstated", subjects: null });
   });
 });
@@ -146,7 +162,12 @@ describe(toMockStructure, () => {
     expect(unstated.mock).toMatchObject({ timeLimitMinutes: 30, totalQuestions: 10 });
 
     expect(
-      getMockSizeSource({ noticeQuestions: 20, ownerId: "learner", structure: material }),
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: 20,
+        ownerId: "learner",
+        structure: material,
+      }),
     ).toMatchObject({ material: true, questions: "notice", time: "unstated" });
   });
 });

@@ -291,7 +291,9 @@ describe("phases of a finished plan", () => {
         goalKind: "learn",
         items,
         phases: [phase(), phase()],
-        skillAreas: new Map(),
+        skillAreas: new Map(
+          items.flatMap((item) => (item.skillId ? [[item.skillId, "Science"] as const] : [])),
+        ),
         targetDate,
         today: TODAY,
         upNextItemId: null,
@@ -352,7 +354,7 @@ function nextPhaseLesson(position: number): ExistingPlanItem {
 describe("a phase the plan moved past before the learner finished it", () => {
   const examDate = new Date("2026-12-01T00:00:00.000Z");
 
-  it("stays unfinished, saying the lessons studied of the ones the plan gave it", () => {
+  it("stays unfinished, counting studied and known lessons of the ones the plan gave it", () => {
     const items = [
       chapterLesson(0, "ch-a", "done"),
       setAsideLesson(1, "ch-a"),
@@ -372,7 +374,9 @@ describe("a phase the plan moved past before the learner finished it", () => {
       goalKind: "learn",
       items,
       phases: [phase(), phase()],
-      skillAreas: new Map(),
+      skillAreas: new Map(
+        items.flatMap((item) => (item.skillId ? [[item.skillId, "Science"] as const] : [])),
+      ),
       targetDate: examDate,
       upNextItemId: "item-4",
     });
@@ -380,7 +384,7 @@ describe("a phase the plan moved past before the learner finished it", () => {
     expect(
       views.map(({ lessonsDone, lessonsTotal, state }) => ({ lessonsDone, lessonsTotal, state })),
     ).toStrictEqual([
-      { lessonsDone: 1, lessonsTotal: 3, state: "unfinished" },
+      { lessonsDone: 2, lessonsTotal: 4, state: "unfinished" },
       { lessonsDone: 0, lessonsTotal: 1, state: "current" },
     ]);
 
@@ -617,5 +621,29 @@ describe(findCurrentPhase, () => {
     expect(
       findCurrentPhase({ items: [...items, { ...lesson(2, 1), lessonId: "w" }], phaseCount: 2 }),
     ).toBe(0);
+  });
+});
+
+describe("phase chapter progress", () => {
+  it("counts chapter work alongside lessons", () => {
+    const items = [
+      { ...lesson(0, 0), kind: "chapter" as const, status: "testedOut" as const },
+      lesson(1, 0),
+    ];
+
+    const views = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "learn",
+      items,
+      phases: [phase()],
+      skillAreas: new Map([
+        ["skill-0", "Science"],
+        ["skill-1", "Science"],
+      ]),
+      upNextItemId: "item-1",
+    });
+
+    expect(views[0]).toMatchObject({ lessonsDone: 1, lessonsTotal: 2 });
   });
 });

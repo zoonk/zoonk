@@ -1,4 +1,4 @@
-import { formatDateWithoutYear, getPostsByYear } from "@/lib/posts";
+import { formatPostDate, getPostsByYear } from "@/lib/posts";
 import Link from "next/link";
 
 export function PostList() {
@@ -23,7 +23,7 @@ export function PostList() {
                     </span>
 
                     <span className="text-muted-foreground shrink-0 text-xs">
-                      {formatDateWithoutYear(post.date)}
+                      {formatPostDate({ isoDate: post.date, year: "never" })}
                     </span>
                   </Link>
                 </li>

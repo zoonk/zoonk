@@ -59,6 +59,15 @@ export function formatDateTime(date: Date | string | null | undefined): string {
     : "—";
 }
 
+/** Takes a time of day as "21:00", as reminders store it. */
+export function formatTimeOfDay(time: string): string {
+  return new Date(`1970-01-01T${time}:00.000Z`).toLocaleTimeString("en", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
+}
+
 const PERCENT_DIGITS = 1;
 
 export function formatPercent(value: number | null): string {

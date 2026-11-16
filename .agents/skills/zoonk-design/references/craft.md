@@ -444,6 +444,19 @@ The craft read takes one screen. The role read takes one role on every screen, b
 2. A reader that built none of them gets the sheets and this file, and nothing else. Per sheet it answers: which instances differ from the rest, in what (place, size, gap, glyph, words, what a key or a tap does), and by how much.
 3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`). A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
 
+### The sweep read
+
+The read of [the sweep](../../verify/SKILL.md#7-sweep-every-screen-the-branch-touches): many screens, read by someone who sees only the pictures and this file. You design and fix nothing, and you read no code, spec or plan.
+
+1. **Read in number order.** Pictures that share a number are one screen at other sizes, schemes or languages; a number is a moment in a learner's path, not a hint about what the screen should show. If you can't tell what a screen is for, that is a finding.
+2. **See every pixel.** Look at the whole screen, then its parts, at a size where its smallest text reads. Crop and enlarge a tall or wide picture instead of guessing; at 3× a 1 px offset is 3 image pixels.
+3. **Per picture,** answer [the first-glance test](../SKILL.md#the-first-glance-test)'s questions to yourself, then [the craft read](#the-craft-read). Also look for an empty or broken state: a blank area, an error where content belongs, a placeholder left on, a missing picture, a screen that looks unfinished.
+4. **Across the pictures,** compare what repeats: one date, time, number, unit or range written two ways ("Nov 16" and "16 November", "15 min" and "15 minutes"); one action or thing named two ways; and one piece (a page top, a back link, a bottom bar, a sheet, a list row, an empty state, a wait) drawn, placed or worded differently from one picture to another, on any platform.
+5. **Leave the [deliberate choices](#deliberate-choices) and the [exceptions the user granted](#exceptions-the-user-granted).** A dialog or a sheet pictured alone, on transparent corners, is how the capture draws it. On Apple and Android, the platform's chrome isn't judged ([iOS and Android](../SKILL.md#ios-and-android)).
+6. **Write each fault as [a finding](#a-finding)** as you go, with `confidence` `measured` where you took the numbers from the pixels. A word or a format fault that no rule names takes `rule: none` and the principle. Report only what you can point at.
+
+End with the counts (pictures read, findings by rule), one line per picture ("fine" or its findings), and the ten findings a first-time learner would trip on first.
+
 ### A finding
 
 ```json

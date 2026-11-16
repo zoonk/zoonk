@@ -1,10 +1,13 @@
 import { AppEntryName } from "@zoonk/learn/bar";
 import {
+  MEASURED_CLASS,
   PAGE_COLUMN_CLASS,
   PageHeader,
   PageHeaderContent,
+  type PageMeasure,
   PageSubtitle,
   PageTitle,
+  pageMeasureClass,
 } from "@zoonk/learn/page";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -14,6 +17,7 @@ export function SectionPage({
   children,
   end,
   hub,
+  measure,
   nav,
   note,
   parents,
@@ -22,6 +26,8 @@ export function SectionPage({
   children: React.ReactNode;
   end?: React.ReactNode;
   hub: SectionLink;
+  /** The section's one column: its bar's actions, title, tabs and pages all end on its edge. */
+  measure?: PageMeasure;
   nav: React.ReactNode;
   /** One line under the section's name, from a tablet up. */
   note?: React.ReactNode;
@@ -31,10 +37,20 @@ export function SectionPage({
   root?: boolean;
 }) {
   return (
-    <div className={cn(PAGE_COLUMN_CLASS, "flex flex-1 flex-col")} data-slot="section-page">
+    <div
+      className={cn(
+        PAGE_COLUMN_CLASS,
+        "flex flex-1 flex-col",
+        measure && [
+          pageMeasureClass(measure),
+          "[&_[data-slot=page-top-bar]>div]:max-w-(--page-measure)",
+        ],
+      )}
+      data-slot="section-page"
+    >
       <SectionBarFrame end={end} hub={hub} parents={parents} root={root} />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", measure && MEASURED_CLASS)}>
         <div className="hidden flex-col gap-3 border-b pb-3 md:flex">
           <div className={PAGE_HEADER_CLASS}>
             <p className="text-title" data-slot="section-title">

@@ -38,7 +38,7 @@ export function PlacementIntro({
     >
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
-        <OnboardingTitle>{t("Skip what you already know")}</OnboardingTitle>
+        <OnboardingTitle>{t("Already know some of this?")}</OnboardingTitle>
         <OnboardingDescription>
           {t("A short test finds the lessons you don't need.")}
         </OnboardingDescription>

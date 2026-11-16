@@ -31,8 +31,9 @@ const libraryLessonInclude = {
     include: {
       item: { select: { format: true, id: true } },
       mediaAsset: { select: { id: true, kind: true, url: true } },
-      skill: { select: { id: true, name: true } },
+      sentence: { select: { sentence: true } },
       variants: { orderBy: [{ kind: "asc" as const }, { key: "asc" as const }] },
+      word: { select: { word: true } },
     },
     orderBy: { position: "asc" as const },
     where: CURRENT_STEPS,

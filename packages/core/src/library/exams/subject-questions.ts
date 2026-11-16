@@ -156,9 +156,23 @@ export function getPlannedSubjectQuestions({
   );
 }
 
-export function getPastQuestionsSource(
-  structure: ExamStructure,
-): { edition: string | null; title: string | null; url: string } | null {
+/** The edition's label is a lookup's own words: the exam's name in it is spelled as the exam is ("Enem 2025" → "ENEM 2025"). */
+function spellExamName({ edition, examName }: { edition: string; examName: string }): string {
+  const name = new RegExp(
+    String.raw`(?<![\p{L}\p{N}])${RegExp.escape(examName)}(?![\p{L}\p{N}])`,
+    "iu",
+  );
+
+  return edition.replace(name, examName);
+}
+
+export function getPastQuestionsSource({
+  examName,
+  structure,
+}: {
+  examName: string;
+  structure: ExamStructure;
+}): { edition: string | null; title: string | null; url: string } | null {
   const past = structure.pastQuestions;
 
   const counted =
@@ -167,7 +181,14 @@ export function getPastQuestionsSource(
       (subject) => subject.questions === null && findPastCount({ structure, subject }),
     );
 
-  return counted && past.source ? { edition: past.edition, ...past.source } : null;
+  if (!counted || !past.source) {
+    return null;
+  }
+
+  return {
+    edition: past.edition && spellExamName({ edition: past.edition, examName }),
+    ...past.source,
+  };
 }
 
 function isRecent({ checkedAt, now }: { checkedAt: string; now: Date }): boolean {

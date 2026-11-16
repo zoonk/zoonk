@@ -100,7 +100,7 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 }
 
 /// A goal that can still earn a certificate.
-struct CertificateUpNext: Equatable, Identifiable, Sendable {
+struct CertificateUpNext: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let displayName: String
   /// A language goal's flag, as the API names it (`us`, `es-ct`); nil for other goals.
@@ -108,7 +108,7 @@ struct CertificateUpNext: Equatable, Identifiable, Sendable {
   var targetLanguage: String?
   /// The country the learner chose for a language goal, such as `AR`; nil without one.
   var targetRegion: String?
-  /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.
+  /// The certificate's studied share of its full lesson coverage; nil for a language or unknown coverage.
   let progress: Double?
 }
 

@@ -3,9 +3,9 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
 import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 import { getUserStudyReminder } from "@/data/users/get-user-study-reminder";
-import { toWords } from "@/lib/format";
+import { formatTimeOfDay, toWords } from "@/lib/format";
 import { type PushPlatform } from "@zoonk/db/enums";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
+import { getTimeZoneName } from "@zoonk/utils/time-zone";
 import {
   BellOffIcon,
   BrainIcon,
@@ -17,6 +17,20 @@ import {
 } from "lucide-react";
 
 const PLATFORM_NAMES = { android: "Android", ios: "iOS" } satisfies Record<PushPlatform, string>;
+
+function buddyCharacter({ name, kind }: { name: string | null; kind: string | null }) {
+  if (!kind) {
+    return name || "—";
+  }
+
+  const character = toWords(kind);
+
+  if (!name || name === character) {
+    return `${character} (character)`;
+  }
+
+  return `${name} (${character} character)`;
+}
 
 /** A switch as its state's mark: on is the blue check, off is gray. */
 function OnOff({ on }: { on: boolean }) {
@@ -37,9 +51,7 @@ export async function UserSettings({ userId }: { userId: string }) {
       {profile ? (
         <DetailFields>
           <DetailField icon={<SmileIcon aria-hidden="true" />} label="Buddy">
-            {[profile.buddyName, profile.buddyKind && toWords(profile.buddyKind)]
-              .filter(Boolean)
-              .join(FACT_SEPARATOR) || "—"}
+            {buddyCharacter({ kind: profile.buddyKind, name: profile.buddyName })}
           </DetailField>
           <DetailField icon={<BrainIcon aria-hidden="true" />} label="Memory">
             <OnOff on={profile.memoryEnabled} />
@@ -82,7 +94,10 @@ export async function UserReminders({ userId }: { userId: string }) {
           <OnOff on={email.on} />
         </DetailField>
         <DetailField icon={<ClockIcon aria-hidden="true" />} label="Time">
-          {time} <span className="text-muted-foreground">· {timeZone}</span>
+          {formatTimeOfDay(time)}{" "}
+          <span className="text-muted-foreground">
+            · {getTimeZoneName({ locale: "en", timeZone })}
+          </span>
         </DetailField>
 
         {quiet && (

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.components.DailyTimePicker
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.WeekdayPicker
 import com.zoonk.android.ui.components.WeekendTime
 import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.currentLocale
@@ -123,95 +124,27 @@ private fun StudyDays(
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
     val asked = edits.asked(PlanPart.Schedule).filterIsInstance<PlanOp.WeekdayMinutes>()
-    val locale = currentLocale()
     val studies =
         (0 until DAYS_PER_WEEK).map {
             page.plan.schedule.weekdayMinutes
                 .getOrElse(it) { 0L } > 0
         }
-    val firstDay = WeekFields.of(locale).firstDayOfWeek.value % DAYS_PER_WEEK
 
     fun minutesFor(weekday: Int) = (shape.weekend?.takeIf { isWeekend(weekday) } ?: shape.weekdays).toInt()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(stringResource(R.string.plan_study_days))
-        BoxWithConstraints {
-            val names = dayNames(maxWidth, locale)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(DAY_GAP)) {
-                (0 until DAYS_PER_WEEK).map { (firstDay + it) % DAYS_PER_WEEK }.forEach { weekday ->
-                    DayToggle(
-                        weekday = weekday,
-                        name = names,
-                        on = asked.firstOrNull { weekday in it.weekdays }?.let { it.minutes > 0 } ?: studies[weekday],
-                        // A plan needs at least one study day.
-                        enabled = !(studies[weekday] && studies.count { it } == 1),
-                        onToggle = { pressed ->
-                            val minutes = if (pressed) minutesFor(weekday) else 0
-                            edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes)), null)
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-        }
+        WeekdayPicker(
+            isOn = { weekday -> asked.firstOrNull { weekday in it.weekdays }?.let { it.minutes > 0 } ?: studies[weekday] },
+            onToggle = { weekday, pressed ->
+                val minutes = if (pressed) minutesFor(weekday) else 0
+                edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes)), null)
+            },
+            // A plan needs at least one study day.
+            isEnabled = { weekday -> !(studies[weekday] && studies.count { it } == 1) },
+        )
     }
 }
-
-/** Short names ("Mon") while they fit a seventh of the row, narrow ones ("M") at large text sizes. */
-@Composable
-private fun dayNames(
-    width: Dp,
-    locale: Locale,
-): TextStyle {
-    val measurer = rememberTextMeasurer()
-    val style = MaterialTheme.typography.labelLarge
-    val cell = with(LocalDensity.current) { ((width - DAY_GAP * (DAYS_PER_WEEK - 1)) / DAYS_PER_WEEK - DAY_PADDING * 2).toPx() }
-    val fits = DayOfWeek.entries.all { measurer.measure(dayName(it, TextStyle.SHORT, locale), style).size.width <= cell }
-    return if (fits) TextStyle.SHORT else TextStyle.NARROW_STANDALONE
-}
-
-/** Sunday is 0, as the plan counts weekdays. On, it's picked as an answer is: an ink line on the picked tint. */
-@Composable
-private fun DayToggle(
-    weekday: Int,
-    name: TextStyle,
-    on: Boolean,
-    enabled: Boolean,
-    onToggle: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val locale = currentLocale()
-    val day = DayOfWeek.of(if (weekday == 0) DAYS_PER_WEEK else weekday)
-    val colors = MaterialTheme.colorScheme
-    val content = if (on) colors.onSurface else colors.onSurfaceVariant
-
-    Surface(
-        checked = on,
-        onCheckedChange = onToggle,
-        modifier = modifier.heightIn(min = 48.dp).semantics { contentDescription = day.getDisplayName(TextStyle.FULL, locale) },
-        enabled = enabled,
-        shape = MaterialTheme.shapes.small,
-        color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
-        contentColor = if (enabled) content else content.copy(alpha = DISABLED_ALPHA),
-        border = if (on) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
-    ) {
-        Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
-            Text(
-                text = dayName(day, name, locale),
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-            )
-        }
-    }
-}
-
-/** Java's short names are lowercase in Portuguese, Spanish and French; main capitalizes them. */
-private fun dayName(
-    day: DayOfWeek,
-    style: TextStyle,
-    locale: Locale,
-) = day.getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
 /** Main's plan `WeekendMinutes`: switched off, the weekend takes the weekdays' time, so it waits for a change still setting it. */
 @Composable
@@ -262,6 +195,3 @@ private fun askedMinutes(
 private fun isWeekend(weekday: Int) = weekday == 0 || weekday == 6
 
 private const val DAYS_PER_WEEK = 7
-private val DAY_GAP = 4.dp
-private val DAY_PADDING = 4.dp
-private const val DISABLED_ALPHA = 0.38f

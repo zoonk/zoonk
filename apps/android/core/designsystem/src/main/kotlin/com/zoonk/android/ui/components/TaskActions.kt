@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -55,23 +56,32 @@ fun TaskActions(
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val roomy = maxWidth >= ROOMY_BAR_WIDTH
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(BAR_GAP, if (roomy) Alignment.End else Alignment.Start),
-            verticalArrangement = Arrangement.spacedBy(BAR_GAP),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (back != null) {
-                if (roomy) Box(Modifier.weight(1f)) { back() } else back()
+        CompositionLocalProvider(LocalRoomyBar provides roomy) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(BAR_GAP, if (roomy) Alignment.End else Alignment.Start),
+                verticalArrangement = Arrangement.spacedBy(BAR_GAP),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (back != null) {
+                    if (roomy) Box(Modifier.weight(1f)) { back() } else back()
+                }
+                content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
             }
-            content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
         }
     }
 }
 
-/** Main's `TASK_OPTION_CLASS`: an action beside the main one that takes a line of its own on a narrow layout ([isWideLayout]). */
+/** Whether the [TaskActions] around this has room for its buttons side by side; null outside one. */
+private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }
+
+/**
+ * Main's `TASK_OPTION_CLASS`: an action beside the main one. In [TaskActions] it follows the main action: at its own
+ * width where the bar has room, on a line of its own where the main action fills its line, so a bar's buttons never
+ * have two widths. Outside one it takes a line of its own on a narrow layout ([isWideLayout]).
+ */
 @Composable
-fun Modifier.taskOption(): Modifier = if (isWideLayout()) this else fillMaxWidth()
+fun Modifier.taskOption(): Modifier = if (LocalRoomyBar.current ?: isWideLayout()) this else fillMaxWidth()
 
 /**
  * Main's `lg` for a task: an expanded window, where its actions line up at its end and what a phone

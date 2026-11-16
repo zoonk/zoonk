@@ -70,6 +70,7 @@ import com.zoonk.android.feature.livecall.EndingReason
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -571,7 +572,7 @@ private fun CallControls(
     val calling = call.phase != LiveCallPhase.Live
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
-            FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE)) {
+            FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE), shape = ICON_BUTTON_SHAPE) {
                 Icon(painterResource(R.drawable.ic_support), contentDescription = label)
             }
         }
@@ -581,6 +582,7 @@ private fun CallControls(
                 onCheckedChange = { actions.onMute() },
                 enabled = canMute,
                 modifier = Modifier.size(CONTROL_SIZE),
+                shape = ICON_BUTTON_SHAPE,
                 // Muted reads as a pick: the ink fill, not a lighter tonal one.
                 colors =
                     IconButtonDefaults.filledTonalIconToggleButtonColors(
@@ -595,6 +597,7 @@ private fun CallControls(
             FilledIconButton(
                 onClick = actions.onEnd,
                 modifier = Modifier.size(CONTROL_SIZE),
+                shape = ICON_BUTTON_SHAPE,
                 colors =
                     IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,

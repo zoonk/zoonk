@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
 import android.view.View
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -47,21 +48,22 @@ fun SemanticsNodeInteraction.captureRender(
 
 /**
  * A dialog's own picture, cropped to the node: its window's root drawn on its own. Robolectric's PixelCopy of a dialog's
- * window returns the page behind it at the dialog's bounds, so a dialog render would show the page.
+ * window returns the page behind it at the dialog's bounds, so a dialog render would show the page. A dialog that fills
+ * the window measures a pixel taller than it there, so the node is cut to what its window shows.
  */
 private fun View.dialogWindowPicture(node: SemanticsNodeInteraction): ImageBitmap? {
     val dialog = generateSequence(this as View?) { it.parent as? View }.firstNotNullOfOrNull { it as? DialogWindowProvider } ?: return null
     val root = dialog.window.decorView
     val window = createBitmap(root.width, root.height)
     root.draw(Canvas(window))
-    val bounds = node.fetchSemanticsNode().boundsInWindow
+    val shown = node.fetchSemanticsNode().boundsInWindow.intersect(Rect(0f, 0f, root.width.toFloat(), root.height.toFloat()))
     return Bitmap
         .createBitmap(
             window,
-            bounds.left.roundToInt(),
-            bounds.top.roundToInt(),
-            bounds.width.roundToInt(),
-            bounds.height.roundToInt(),
+            shown.left.roundToInt(),
+            shown.top.roundToInt(),
+            shown.width.roundToInt(),
+            shown.height.roundToInt(),
         ).asImageBitmap()
 }
 

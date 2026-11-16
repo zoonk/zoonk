@@ -19,6 +19,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.app.rememberWindowSnackbars
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -72,7 +73,8 @@ class PlanExamOverWindowTest {
         val page = PlanPageState(summary.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), summary)
         PlanExamOverTest.app = AppContainer.preview(application)
         PlanExamOverTest.page = page
-        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits)
+        PlanExamOverTest.viewModel =
+            PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits, PlanNavigationModel(GoalSwitch { true }))
         PlanExamOverTest.farTopics = FarTopicViewModel(store, page.goal.id)
         scenario = ActivityScenario.launch(PlanExamOverTestActivity::class.java)
 
@@ -105,7 +107,7 @@ class PlanExamOverTestActivity : ComponentActivity() {
                     Box {
                         // As the Plan screen does around its page.
                         VisitOf(PlanExamOverTest.viewModel.visit)
-                        PlanEvents(PlanExamOverTest.viewModel, navigator, PlanExamOverTest.app.snackbars)
+                        PlanEvents(PlanExamOverTest.viewModel, PlanExamOverTest.app.snackbars)
                         PlanPage(
                             PlanExamOverTest.page,
                             PlanExamOverTest.app,

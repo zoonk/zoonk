@@ -117,10 +117,12 @@ function toLevel({
 }
 
 export function buildExamMap({
+  examName,
   frequency,
   skills,
   structure,
 }: {
+  examName: string;
   frequency: TopicFrequency;
   skills: readonly ExamMapSkill[];
   structure: ExamStructure;
@@ -146,7 +148,7 @@ export function buildExamMap({
 
   return {
     hasFrequency: frequency.length > 0,
-    questionsSource: getPastQuestionsSource(structure),
+    questionsSource: getPastQuestionsSource({ examName, structure }),
     subjects,
     topicCount: subjects.reduce((sum, subject) => sum + subject.topics.length, 0),
   };

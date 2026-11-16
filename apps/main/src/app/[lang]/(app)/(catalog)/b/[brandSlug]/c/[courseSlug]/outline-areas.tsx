@@ -7,7 +7,7 @@ import {
   OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
-  getZoneChapterNames,
+  ZoneChapterNames,
 } from "./outline-chapter-row";
 
 function AreaChapters({
@@ -80,7 +80,7 @@ export async function AreaOutline({
             aside={t("{count, plural, one {# chapter} other {# chapters}}", {
               count: areaChapters.length,
             })}
-            closedDetail={getZoneChapterNames(areaChapters)}
+            closedDetail={<ZoneChapterNames chapters={areaChapters} />}
             key={area}
             open={index === 0}
             summary={area}

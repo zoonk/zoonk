@@ -1,4 +1,5 @@
 import { type parseFeedbackMessageContext } from "@/data/feedback/_utils/feedback-message-context";
+import { toWords } from "@/lib/format";
 import { getLearnerLabel } from "@/lib/learner-label";
 import { type FeedbackReportType } from "@zoonk/core/feedback/contract";
 import { type FeedbackContentKind, type FeedbackStatus, type User } from "@zoonk/db";
@@ -39,7 +40,21 @@ export function getFeedbackSubject(context: FeedbackContext): string {
     return feedbackContentKindLabels[context.contentKind];
   }
 
-  return context.screen ?? context.url ?? "Not recorded";
+  const screen = getFeedbackScreen(context);
+  return screen ? `${screen} screen` : (context.url ?? "Not recorded");
+}
+
+/**
+ * The screen it was sent from, in words (apps send a code such as `lesson-completion`), when the
+ * message is about something on it rather than the screen itself.
+ */
+export function getFeedbackOrigin(context: FeedbackContext): string | null {
+  const screen = getFeedbackScreen(context);
+  return screen && (context.reportType || context.contentKind) ? screen : null;
+}
+
+function getFeedbackScreen(context: FeedbackContext): string | null {
+  return context.screen ? toWords(context.screen) : null;
 }
 
 const platformNames: Partial<Record<string, string>> = {

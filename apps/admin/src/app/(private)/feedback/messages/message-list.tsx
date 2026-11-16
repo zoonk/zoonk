@@ -1,9 +1,9 @@
-import { AdminTabs } from "@/components/admin-tabs";
 import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
+import { AdminTabs } from "@/components/admin-tabs";
 import { AdminPagination } from "@/components/pagination";
 import { listFeedbackMessages } from "@/data/feedback/list-feedback-messages";
 import { getInbox } from "@/data/inbox/get-inbox";
@@ -38,7 +38,6 @@ function messageColumns(filter: FeedbackFilter): AdminTableColumn[] {
     { label: "Message", twoLines: true },
     ...(filter === "all" ? [{ label: "State" }] : []),
     { label: "About", size: "text" },
-    { label: "App", size: "wide" },
     { label: "Sent" },
   ];
 }
