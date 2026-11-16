@@ -229,9 +229,7 @@ export const languageTodayViewSchema = z
       }),
     targetLanguage: z
       .string()
-      .meta({
-        description: 'The language the goal learns, which names its level ("English level")',
-      }),
+      .meta({ description: "The language the goal learns, whose level the goal measures" }),
   })
   .meta({ id: "LanguageToday" });
 

@@ -92,6 +92,19 @@ export function AnswerOptionGroup({
   );
 }
 
+function useResultLabels() {
+  const t = useExtracted();
+
+  return {
+    correct: t("Correct"),
+    yourAnswer: t("Your answer"),
+    yourGuess: t({
+      description: "Tags the learner's pick when it counts as neither right nor wrong.",
+      message: "Your guess",
+    }),
+  };
+}
+
 /** A right pick says whose it is, so it isn't called correct twice under its verdict. */
 function ResultTag({
   guessed,
@@ -102,25 +115,75 @@ function ResultTag({
   picked: boolean;
   result: AnswerOptionResult;
 }) {
-  const t = useExtracted();
-
-  const yourGuess = t({
-    description: "Tags the learner's pick when it counts as neither right nor wrong.",
-    message: "Your guess",
-  });
-
-  const yourPick = guessed ? yourGuess : t("Your answer");
+  const { correct, yourAnswer, yourGuess } = useResultLabels();
+  const yourPick = guessed ? yourGuess : yourAnswer;
 
   const labels: Record<AnswerOptionResult, string> = {
     guess: yourGuess,
-    right: picked ? yourPick : t("Correct"),
-    wrong: t("Your answer"),
+    right: picked ? yourPick : correct,
+    wrong: yourAnswer,
   };
 
   return (
     <span className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[result])} data-slot="answer-option-tag">
       {labels[result]}
     </span>
+  );
+}
+
+/**
+ * Before Check, the room of the widest tag a verdict can bring, unseen and the same on every
+ * option, so the tag fills it later and the answer's words never move. The labels are CSS content,
+ * not text, so nothing reads or finds the unseen ones.
+ */
+function ReservedTag({ children }: { children: React.ReactNode }) {
+  const labels = Object.entries(useResultLabels());
+
+  return (
+    <span className="grid min-w-0">
+      {labels.map(([key, label]) => (
+        <span
+          aria-hidden="true"
+          className={cn(
+            ANSWER_TAG_CLASS,
+            "invisible col-start-1 row-start-1 before:content-[attr(data-label)]",
+          )}
+          data-label={label}
+          key={key}
+        />
+      ))}
+
+      {children && <span className="col-start-1 row-start-1 min-w-0">{children}</span>}
+    </span>
+  );
+}
+
+/**
+ * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked or
+ * disabled the key does nothing, so it hides in its room and the answer stays put.
+ */
+function OptionMarker({
+  isChecked,
+  layout,
+  marker,
+}: {
+  isChecked: boolean;
+  layout: "row" | "stacked";
+  marker: React.ReactNode;
+}) {
+  const isKey = typeof marker === "number";
+
+  return (
+    <LineMarker
+      aria-hidden="true"
+      className={cn(
+        isKey && "hidden pointer-fine:flex",
+        isKey && isChecked && "invisible",
+        layout === "stacked" && "absolute top-3 left-3 z-10",
+      )}
+    >
+      <Kbd className="[&_svg]:size-3">{marker}</Kbd>
+    </LineMarker>
   );
 }
 
@@ -180,20 +243,13 @@ export function AnswerOption({
       type={picks ? "button" : "submit"}
       {...props}
     >
-      <LineMarker
-        aria-hidden="true"
-        className={cn(
-          // A number is the row's key, so a touch screen gives up its room (craft E1, B2).
-          typeof marker === "number" && "hidden pointer-fine:flex",
-          layout === "stacked" && "absolute top-3 left-3 z-10",
-        )}
-      >
-        <Kbd className="data-result:invisible [&_svg]:size-3" data-result={result}>
-          {marker}
-        </Kbd>
-      </LineMarker>
+      <OptionMarker
+        isChecked={Boolean(result) || Boolean(props.disabled)}
+        layout={layout}
+        marker={marker}
+      />
 
-      <TagBesideOrUnder layout={layout} tag={shownTag}>
+      <TagBesideOrUnder layout={layout} reservesTag={picks && tag === undefined} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
     </button>
@@ -202,52 +258,53 @@ export function AnswerOption({
 
 /**
  * The answer is sized by its words, where a percentage can't cap a formula, so a row holding one is
- * a container and a formula wider than it scrolls inside it. A container's smallest width is zero,
- * so a long formula stays beside the mark and only the tag moves under it; a row of words keeps its
- * longest word whole.
+ * a container and a formula wider than it scrolls inside it.
  */
 const ROW_FORMULA_CLASS =
   "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /**
- * The tag moves under the answer rather than leave it less than half the row or narrower than its
- * longest word.
+ * The tag ends the answer's last line, or starts a line of its own when the last line has no room
+ * for it. `reservesTag` holds its room from the start for a tag that comes with a verdict. The tag
+ * is inline, not floated, since a float turns off balanced wrapping and leaves a lone last word, and
+ * a wide space parts it from the words, so a tag that starts its own line starts at its edge. A
+ * row's answer flows as text: a caller whose answer has several lines makes each one a block or
+ * breaks them with `<br>`.
  */
 export function TagBesideOrUnder({
   children,
   layout = "row",
+  reservesTag = false,
   tag,
 }: {
   children: React.ReactNode;
   layout?: "row" | "stacked";
+  reservesTag?: boolean;
   tag: React.ReactNode;
 }) {
-  return (
-    <span
-      className={cn(
-        "flex w-full grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
-        layout === "row" && ROW_FORMULA_CLASS,
-        layout === "stacked" && "contents",
-      )}
-    >
-      <span
-        className={cn(
-          "flex flex-col",
-          layout === "stacked" ? "min-w-0 flex-1" : "w-full max-w-max grow basis-1/2",
-        )}
-      >
-        {children}
-      </span>
+  if (layout === "stacked") {
+    return (
+      <span className="contents">
+        <span className="flex min-w-0 flex-1 flex-col">{children}</span>
 
-      {/* The tag ends the option: the row's end in a list, the card's end under a picture. */}
-      {tag && (
-        <LineMarker
-          className={cn(
-            "h-auto min-h-lh min-w-0 flex-initial",
-            layout === "stacked" && "justify-end px-1 pb-0.5",
-          )}
-        >
-          {tag}
+        {/* Under a picture, the tag ends the card. */}
+        {tag && (
+          <LineMarker className="h-auto min-h-lh min-w-0 flex-initial justify-end px-1 pb-0.5">
+            {tag}
+          </LineMarker>
+        )}
+      </span>
+    );
+  }
+
+  return (
+    <span className={cn("block w-full grow basis-1/2 text-balance", ROW_FORMULA_CLASS)}>
+      {children}
+
+      {(tag || reservesTag) && <span className="[word-spacing:0.5rem]"> </span>}
+      {(tag || reservesTag) && (
+        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top">
+          {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
         </LineMarker>
       )}
     </span>

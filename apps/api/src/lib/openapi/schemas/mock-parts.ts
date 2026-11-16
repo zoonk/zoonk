@@ -8,13 +8,13 @@ export const mockScoreNotesSchema = z
       .nullable()
       .meta({
         description:
-          "The notice's own sentence on how the exam is scored, where the mock only counts right answers: show it with the result",
+          "The notice's own sentence on how the exam is scored, where the mock only counts right answers",
       }),
     relative: z
       .boolean()
       .meta({
         description:
-          "The real result depends on everyone in the sitting (a percentile, a standardized score): say the mock shows right answers only",
+          "The real result depends on everyone in the sitting (a percentile, a standardized score), as the notice says",
       }),
     scale: z
       .object({
@@ -89,7 +89,7 @@ export const mockSizeSourceSchema = z
       .nullable()
       .meta({
         description:
-          "How the questions split by answer format: the notice's counts, or evenly because it counts none (say so); null for an exam of one format",
+          "How the questions split by answer format: the notice's counts, or evenly because it counts none; null for an exam of one format",
       }),
     material: z
       .boolean()
@@ -104,7 +104,7 @@ export const mockSizeSourceSchema = z
       .enum(["notice", "pastEdition", "unstated"])
       .meta({
         description:
-          "Where the number of questions comes from: the notice, a past edition, or nowhere (say the mock's length is the app's own)",
+          "Where the number of questions comes from: the notice, a past edition, or nowhere (the mock's length is the app's own)",
       }),
     subjects: z
       .enum(["even", "notice", "pastEdition"])
@@ -120,7 +120,6 @@ export const mockSizeSourceSchema = z
       }),
   })
   .meta({
-    description:
-      "Where a mock's size comes from: say so on the mock whenever it isn't the notice, never inventing a number",
+    description: "Where a mock's size comes from, whether or not it's the notice",
     id: "MockSizeSource",
   });

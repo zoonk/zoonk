@@ -260,7 +260,7 @@ struct AnswerOptionStyle: ButtonStyle {
     configuration.label
       .typeStyle(.button)
       .foregroundStyle(Color(.foreground))
-      .padding(.horizontal, 14)
+      .padding(.horizontal, 16)
       .padding(.vertical, 13)
       .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
       .answerSurface(tone, isPressed: configuration.isPressed)

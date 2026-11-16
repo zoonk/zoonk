@@ -194,7 +194,7 @@ export function useLessonPlayerActions({
 
     dispatch({
       counts: true,
-      result: { ...fromLocalGrade(graded), attemptId },
+      result: { ...fromLocalGrade(graded), attemptId, savePending: true },
       stepId: step.id,
       type: "checkResolved",
     });

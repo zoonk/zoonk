@@ -215,7 +215,7 @@ export const onboardingPaths = {
   "/goals/{goalId}/plan-reveal/today": {
     get: {
       description:
-        "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson shows once and every number matches what's listed, so draw them as given. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+        "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson is listed once and every number matches what's listed. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
       operationId: "getPlanRevealToday",
       requestParams: { path: goalPathParamsSchema, query: studySessionTimeZoneInputSchema },
       responses: {

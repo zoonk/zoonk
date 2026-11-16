@@ -15,7 +15,7 @@ const planChangeInvalidErrorSchema = errorSchema
         unfundedMove: unfundedMoveSchema
           .optional()
           .describe(
-            "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
+            "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved, and the move needs a later day.",
           ),
       }),
     }),

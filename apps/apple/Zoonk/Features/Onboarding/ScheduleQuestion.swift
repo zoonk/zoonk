@@ -347,13 +347,9 @@ struct ScheduleQuestion: View {
     Section {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(
-            "Level to reach", tableName: "Onboarding",
-            comment:
-              "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Text(languageAim.title)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
 
           AimName(aim: languageAim.name(of: aim))
             .typeStyle(.rowTitle)

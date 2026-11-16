@@ -35,6 +35,22 @@ function runFromAnswer(answer: CodeRunnerProps["answer"]): ProgramRun | null {
     : null;
 }
 
+/** A right answer opened again keeps only its output, so the program that prints it is the solution. */
+function baseProgram({
+  edited,
+  fields,
+  matches,
+  phase,
+}: {
+  edited: boolean;
+  fields: CodeRunnerProps["content"]["fields"];
+  matches: boolean;
+  phase: CodeRunnerProps["phase"];
+}): string {
+  const reopenedRight = phase === "checked" && matches && !edited;
+  return phase === "explore" || reopenedRight ? fields.solution : fields.starterCode;
+}
+
 export function CodeRunnerActivity({
   answer,
   content,
@@ -52,12 +68,13 @@ export function CodeRunnerActivity({
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
   const editorRun = useEditorRun({ isChecked });
   const { isRunning, isStale } = editorRun;
-  const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
+  const matches = run !== null && sameOutput(run.output, fields.expectedOutput);
+  const edited = Object.keys(edits).length > 0;
+  const program = programWithEdits(baseProgram({ edited, fields, matches, phase }), edits);
   const lines = program.split("\n");
   const highlighted = highlightCode(program, fields.language);
   const editable = new Set(fields.editableLines);
   const runtimeName = RUNTIME_NAMES[fields.language];
-  const matches = run !== null && sameOutput(run.output, fields.expectedOutput);
 
   const mistake =
     run && !matches && !isExploring

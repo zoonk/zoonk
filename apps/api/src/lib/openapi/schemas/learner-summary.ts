@@ -70,7 +70,7 @@ const learnerSummaryGoalSchema = z
       .nullable()
       .meta({
         description:
-          'A language goal\'s country, a two-letter code, only when the learner asked for one: name the language with it ("Spanish (Argentina)"), and without it name only the language',
+          "A language goal's country, a two-letter code, only when the learner asked for one",
       }),
     title: z.string(),
   })

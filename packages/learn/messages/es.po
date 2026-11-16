@@ -11,11 +11,12 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Opciones de respuesta"
 
-#. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
-msgctxt "ihtBFm"
-msgid "Your guess"
-msgstr "Tu suposición"
+#: src/checkpoints/checkpoint-review.tsx
+#: src/mistakes/mistake-entry.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correcta"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
@@ -28,12 +29,11 @@ msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Tu respuesta"
 
+#. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
-#: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correcta"
+msgctxt "ihtBFm"
+msgid "Your guess"
+msgstr "Tu suposición"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
@@ -5387,10 +5387,11 @@ msgctxt "7ncC9e"
 msgid "Around {month}"
 msgstr "Hacia {month}"
 
+#. Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".
 #: src/language-aim/use-aim-words.ts
-msgctxt "7T7vIF"
-msgid "Level to reach"
-msgstr "Nivel que quieres alcanzar"
+msgctxt "hFWAQd"
+msgid "{language} level to reach"
+msgstr "Nivel de {language} que quieres alcanzar"
 
 #: src/language-aim/use-reason-copy.ts
 msgctxt "IZU_K4"
@@ -11264,9 +11265,9 @@ msgid "More explanation from now on."
 msgstr "Más explicaciones a partir de ahora."
 
 #: src/plan/use-operation-statement.ts
-msgctxt "ennIrt"
-msgid "Level to reach: {level}."
-msgstr "Nivel a alcanzar: {level}."
+msgctxt "0Ar6uy"
+msgid "You now study up to {level}."
+msgstr "Ahora estudias hasta el nivel {level}."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "IQ6KGj"

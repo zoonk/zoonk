@@ -14,7 +14,7 @@ export const itemImageSchema = z
     url: z.string(),
     width: z.int().nullable(),
   })
-  .meta({ description: "Show it with the question: its words point at it", id: "QuestionImage" });
+  .meta({ description: "The question's picture, which its words point at", id: "QuestionImage" });
 
 export type ItemImage = z.infer<typeof itemImageSchema>;
 

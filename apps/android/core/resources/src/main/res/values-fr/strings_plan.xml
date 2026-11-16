@@ -89,7 +89,7 @@
   "plan_change_adds": "aee4acb8322bba60a9b6ed3b4339e46dccbaef0fd5b220f7c03ce1fb598c1143",
   "plan_change_adds_about": "880016076f493a4373e7c18b86854d78be155f2d8b35859066816be876696510",
   "plan_change_adds_and_leaves_out": "2348dd681581d98052bd74562505b8f08d39e4c4ccaf70485934d0d084139c61",
-  "plan_change_aim": "75a7f92cda73b8b444d71864a62ea648fecf4d284881a25bb65e244dbe0ebba1",
+  "plan_change_aim": "ad47adbc4310e4f83b49fdb94d47c9758ad56b537dfe703382366d46e8527077",
   "plan_change_area_from_basics": "77059b7f66ae8938901d1e15d70cc251b11a3a7156832e71cb318c9d872df434",
   "plan_change_area_left_out": "7bbbce780a31b6d9c0b93c7f4b71208262d39a9d521fb21cb714649445414603",
   "plan_change_areas_from_basics": "c1b17cf13a53b6df8506272c2d16b5a150147891ca5f5d177cada29805c6235b",
@@ -1415,7 +1415,7 @@
     <string name="plan_effect_row_review_on">Révision le %1$s</string>
     <string name="plan_effect_row_starts_with">Commence par %1$s</string>
     <string name="plan_effect_row_new_lessons_start">Début des nouvelles leçons</string>
-    <string name="plan_change_aim">Niveau à atteindre : %1$s.</string>
+    <string name="plan_change_aim">Tu vises maintenant le niveau %1$s.</string>
     <string name="plan_change_topics_added">Ton plan inclut maintenant %1$s.</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">Ton plan n’inclut pas %1$s.</string>

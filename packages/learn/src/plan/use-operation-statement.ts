@@ -229,7 +229,7 @@ function useSettingStatement() {
     }
 
     if (operation.kind === "setAim") {
-      return t("Level to reach: {level}.", { level: operation.aim });
+      return t("You now study up to {level}.", { level: operation.aim });
     }
 
     if (operation.kind === "setWrittenCadence") {

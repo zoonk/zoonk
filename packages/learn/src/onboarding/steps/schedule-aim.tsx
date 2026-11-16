@@ -44,7 +44,9 @@ export function ScheduleAim({
   return (
     <div className="flex items-center gap-3 border-y py-3">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-muted-foreground text-compact">{words.title}</span>
+        <span className="text-muted-foreground text-compact">
+          {words.title(languageAim.targetLanguage)}
+        </span>
         <span className="text-reading font-medium text-pretty">
           <AimName aim={named} />
         </span>

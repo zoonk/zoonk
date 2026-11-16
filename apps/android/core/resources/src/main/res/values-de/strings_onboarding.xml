@@ -20,6 +20,7 @@
   "onboarding_aim_hours_more": "666a9fc919f05b3832168293d74eb1f68f6f203e40f4e7f67136418e58e64f1f",
   "onboarding_aim_picker_title": "1e373cadbf0bbba566e98e664cbb80363668fff9009c17f951b5da6e09349d75",
   "onboarding_aim_talk": "f2f0013aeaec7564a491998898b59fba9ab0ad7e7d2a3a0661a3971f8a886558",
+  "onboarding_aim_title": "215e82b7f4c37b21ae67e5b855d6f7f5a5dc35fb211c0c92036a865a9b8bc306",
   "onboarding_aim_travel": "64aa81fa2759a648263b948acfa78118bacd3d1dcf31c8a956600374355b7f24",
   "onboarding_aim_work": "a7a6431ce4b43c8f4aa21d08930f2c2b078a16aaf4e13b60e746385c4dc01baa",
   "onboarding_another_date": "dd08d2a340b3bed8b8e64c83f3153d571e9cd0059f23d3d47d3c54b8c4c4fe8b",
@@ -359,7 +360,6 @@
   "onboarding_row_language": "730a80e658f1fbc7d64c324b94c3e002b341dd6892518de6f1728ecbe37f94ba",
   "onboarding_row_last_cutoff": "d3716a7354d6d1c1d74af996e53d4d682fd6e4654a8d694684f5eea111f1e0cb",
   "onboarding_row_level": "5acf4681319f93c3972182e60b2b9959da94b3e7d646be013ca34fc70c2655e7",
-  "onboarding_row_level_aiming": "8356b011f6b0461a8f15d637886782d16555b05d785945440797b4d9eac1c4bd",
   "onboarding_row_material": "ff51052151f49962abebee7c9083bc20dcd9ceb6224cf88fc86ae05cd16ca2b2",
   "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
   "onboarding_row_minutes_a_day": "2355fcb7b285f271debd6edce0c0496b376f823b116d5d428851f69f7f1a3cd6",
@@ -432,7 +432,6 @@
   "onboarding_whats_next": "0b98f446c274371331aa1011c3dc34bd439e5a2384b2c0ed245de7e1f5801f2c",
   "onboarding_write_again": "3aeba6aa478261e7d7a79859d591fe7fdaef8b339877ecd09bb90be657f83e8d",
   "onboarding_you_picked": "80b58f2f9a1f49b10203805749e135575605aef78d51238b8450a8803ee602db",
-  "onboarding_your_aim": "f509322f9ba8568d082e998f7fde1e3d1f145bac388ca08258302a2f2dca6ca7",
   "onboarding_your_answer": "f5be2adfde7648c54e0d905621f362160c96d1b150341968fc8d65b64de6fc88",
   "onboarding_your_plan_ready": "86e2cd202782fd96191e2a7ab80e5957d13e562304ed99f9e58233cab817de04",
   "onboarding_your_question": "f514b9a0b9ca30212d86bbe73e89923eb9024d442d429f1b33aa8672b670bca2",
@@ -526,7 +525,6 @@
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">Deine Wunschstelle</string>
     <string name="onboarding_row_position">Stelle</string>
-    <string name="onboarding_row_level_aiming">Angestrebtes Level</string>
     <string name="onboarding_row_target_score">Angestrebter Score</string>
     <string name="onboarding_row_last_cutoff">Letzte Punktegrenze</string>
     <!-- A score on an exam's scale, like "712 out of 1,000". -->
@@ -1016,7 +1014,8 @@
     <string name="onboarding_aim_talk">Gespräche im Alltag</string>
     <string name="onboarding_aim_work">Im Beruf oder Studium nutzen</string>
     <string name="onboarding_aim_fluent">Fließend sprechen</string>
-    <string name="onboarding_your_aim">Dein Ziel</string>
+    <!-- Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English". -->
+    <string name="onboarding_aim_title">Ziellevel für %1$s</string>
     <string name="onboarding_aim_change">Ändern</string>
     <string name="onboarding_aim_picker_title">Wie weit möchtest du kommen?</string>
     <!-- %1$s is hours of study, such as "190 hr". -->

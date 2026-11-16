@@ -89,7 +89,7 @@
   "plan_change_adds": "3c2ddbbd9862c618fc4bd29f022c4153148c4a9098e0cce02ee3b4f2b481f49f",
   "plan_change_adds_about": "a02743cf302e3343db2ff1632bb6538eaec0731cf2a7e473966606504968b1f5",
   "plan_change_adds_and_leaves_out": "72ba547b326295074fc590c83fb324c828a09ca85bf5860d99889bb9ceb7683c",
-  "plan_change_aim": "df12f1ad0fd7c0e7f564fa9bd6eeef8230bc087c322c0a0fc7e13c96ce90b1a5",
+  "plan_change_aim": "d2bf23cde403108ee0a11f16ef00ef35b695a256f5f3e9105b854734b3261628",
   "plan_change_area_from_basics": "a35cad5a8134abb7d746e7d4d6ebf853b7dad7c01075dbc849af2a211aa01e87",
   "plan_change_area_left_out": "b0e70099b13168b065d720abdcdc937284a828d54a74b028f587ba5f4975f136",
   "plan_change_areas_from_basics": "1952b90ea6aeec506c943cd896c1224d45debc81a1dc6a002443c04be27f6a5d",
@@ -1277,7 +1277,7 @@
     <string name="plan_effect_row_review_on">%1$s 복습</string>
     <string name="plan_effect_row_starts_with">%1$s부터 시작</string>
     <string name="plan_effect_row_new_lessons_start">새 레슨 시작</string>
-    <string name="plan_change_aim">목표 레벨: %1$s.</string>
+    <string name="plan_change_aim">이제 %1$s까지 공부해요.</string>
     <string name="plan_change_topics_added">%1$s을(를) 계획에 추가했어요.</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">%1$s 과목은 계획에 포함되지 않아요.</string>

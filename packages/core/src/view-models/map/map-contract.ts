@@ -13,7 +13,7 @@ const phaseStateSchema = z
   .enum(["done", "unfinished", "current", "upcoming", "leftOut"])
   .meta({
     description:
-      "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done. `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done",
+      "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back), which isn't done. `leftOut`: the plan holds none of its work (a date too near for its topics), and it doesn't count among the phases done",
   });
 
 export const mapSkillSchema = z
@@ -142,7 +142,7 @@ export const fieldMapViewSchema = z
       .object({
         emphasized: z
           .boolean()
-          .meta({ description: "The goal is to refresh what the learner knew: lead with this" }),
+          .meta({ description: "The goal is to refresh what the learner knew" }),
         skills: z
           .array(
             z.object({

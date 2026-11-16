@@ -28,6 +28,4 @@ export const mockLeftOutSchema = z
       })
       .meta({ id: "MockLeftOut" }),
   )
-  .meta({
-    description: "What it leaves out of the real exam, each with why: say each on the mock",
-  });
+  .meta({ description: "What it leaves out of the real exam, each with why" });

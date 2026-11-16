@@ -140,7 +140,8 @@ function MapCanvas({
   content,
   drawing,
   labelId,
-}: Pick<MapExplorerProps, "content" | "labelId"> & { drawing: BaseMapDrawing }) {
+  phase,
+}: Pick<MapExplorerProps, "content" | "labelId" | "phase"> & { drawing: BaseMapDrawing }) {
   const t = useExtracted();
   const format = useFormatNumber();
   const labelText = useBaseMapLabels();
@@ -173,12 +174,14 @@ function MapCanvas({
     <ActivityCanvas labelId={labelId}>
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-pretty">{name}</p>
-        <ActivityCanvasLabel className="shrink-0 tabular-nums">
-          {t("{count} of {total} explored", {
-            count: format(visited.length),
-            total: format(fields.places.length),
-          })}
-        </ActivityCanvasLabel>
+        {phase !== "checked" && (
+          <ActivityCanvasLabel className="shrink-0 tabular-nums">
+            {t("{count} of {total} explored", {
+              count: format(visited.length),
+              total: format(fields.places.length),
+            })}
+          </ActivityCanvasLabel>
+        )}
       </div>
 
       <div ref={ref}>
@@ -225,11 +228,11 @@ function MapUnavailable({ labelId }: { labelId: string }) {
   );
 }
 
-export function MapExplorerActivity({ content, labelId }: MapExplorerProps) {
+export function MapExplorerActivity({ content, labelId, phase }: MapExplorerProps) {
   const drawing = use(loadBaseMap(content.fields.baseMapId));
 
   return drawing ? (
-    <MapCanvas content={content} drawing={drawing} labelId={labelId} />
+    <MapCanvas content={content} drawing={drawing} labelId={labelId} phase={phase} />
   ) : (
     <MapUnavailable labelId={labelId} />
   );

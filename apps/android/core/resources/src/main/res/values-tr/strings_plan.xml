@@ -89,7 +89,7 @@
   "plan_change_adds": "b616d2d6bec3180c512e6365313198f8f234e007f6f54116111917fd52766bc4",
   "plan_change_adds_about": "e7bb464e1829bf04b1b69b0b961eb3a971d1618a09cab9fe1a13246a228fe5a3",
   "plan_change_adds_and_leaves_out": "2c50a462000e9548ee039fc1a9296c1fa40c7bf9dc3896cef5b680ab58b1f697",
-  "plan_change_aim": "8cf33e563333ded219ca03e42c573ff9b6ad197f498ad468c705c94fc379584a",
+  "plan_change_aim": "0920c54914c5c7b2e3a5ed58512910aaa5216d33ab22b86b5ad854e1803be98c",
   "plan_change_area_from_basics": "f03540c868b0f91b8fe525ac3728d00084822779407eac23d657bbc3897070b1",
   "plan_change_area_left_out": "3a008d341cd99510a9d57aa859a2c2f9376e12a6140880b9792a9694fc0f0506",
   "plan_change_areas_from_basics": "852565f27b82e81d5b8fede388c4b0a389ccb3bc0bc3cde197228d13e2fdb0a7",
@@ -1346,7 +1346,7 @@
     <string name="plan_effect_row_review_on">%1$s tarihinde tekrar</string>
     <string name="plan_effect_row_starts_with">%1$s ile başlar</string>
     <string name="plan_effect_row_new_lessons_start">Yeni derslerin başlangıcı</string>
-    <string name="plan_change_aim">Hedef seviye: %1$s.</string>
+    <string name="plan_change_aim">Artık %1$s seviyesine kadar çalışıyorsun.</string>
     <string name="plan_change_topics_added">%1$s planına eklendi.</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">%1$s planında yer almıyor.</string>

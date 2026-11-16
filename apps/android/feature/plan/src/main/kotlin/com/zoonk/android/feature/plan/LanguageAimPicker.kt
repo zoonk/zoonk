@@ -30,6 +30,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
 
@@ -61,6 +62,8 @@ fun LanguageAimRow(
     aim: String,
     /** The aim as the rest of the plan names it ("B1+"), which its row and choice show. */
     label: String?,
+    /** The goal's language, which names the row: "English level to reach". */
+    targetLanguage: String?,
     choices: List<LanguageAimChoicesInner>,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
@@ -75,7 +78,7 @@ fun LanguageAimRow(
 ) {
     if (choices.isEmpty()) return
     ListRow(
-        headline = { Text(stringResource(R.string.onboarding_your_aim)) },
+        headline = { Text(stringResource(R.string.onboarding_aim_title, languageName(targetLanguage.orEmpty(), currentLocale()))) },
         supporting = {
             Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }

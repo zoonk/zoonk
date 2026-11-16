@@ -56,13 +56,16 @@ export function PlanAim() {
     return null;
   }
 
+  const title = words.title(languageAim.targetLanguage);
+
   return (
     <section aria-labelledby={labelId} className="flex flex-col gap-2">
       <h3 className="text-sm font-medium" id={labelId}>
-        {words.title}
+        {title}
       </h3>
 
       <AimChoices
+        label={title}
         numberKeys={false}
         onPick={(aim) => {
           if (aim !== languageAim.aim) {

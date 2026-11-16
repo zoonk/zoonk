@@ -272,7 +272,7 @@ export async function buildPlanView({
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)
-        ? toLanguageAimView(goal.details)
+        ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: summary ? buildSavedPlanNumbersView(context) : null,

@@ -44,7 +44,7 @@ export const planStatusSchema = z
         .nullable()
         .meta({
           description:
-            "Lessons earlier days left that the learner hasn't caught up on: they come first in the plan, and the learner is behind until they're done. Say this count instead of days when present",
+            "Lessons earlier days left that the learner hasn't caught up on: they come first in the plan, and the learner is behind until they're done. When present, it measures how far behind the learner is, and `days` is 0",
         }),
     }),
     z
@@ -58,7 +58,7 @@ export const planStatusSchema = z
       })
       .meta({
         description:
-          "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left",
+          "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews",
       }),
     z
       .object({ kind: z.literal("finished") })
@@ -73,7 +73,7 @@ export const planStatusSchema = z
       })
       .meta({
         description:
-          "The plan no longer fits the time before its date: offer to adjust it (`options`). Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, so say it needs more study days before the date or a later date",
+          "The plan no longer fits the time before its date; `options` are the ways to adjust it. Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, and only more study days before the date or a later date make room",
       }),
     z
       .object({
@@ -86,7 +86,7 @@ export const planStatusSchema = z
       })
       .meta({
         description:
-          "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the change that keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)",
+          "The plan's date came with lessons left, and the plan doesn't end: one change keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)",
       }),
   ])
   .meta({ id: "PlanStatus" });
@@ -129,7 +129,7 @@ const componentsSchema = z
           .nullable()
           .meta({
             description:
-              "Accuracy on questions never seen before, each answer counting by its skill's importance. Null until a section has the few answers mastery needs: show that it comes after a few practice questions",
+              "Accuracy on questions never seen before, each answer counting by its skill's importance. Null until a section has the few answers mastery needs, which a few practice questions give",
           }),
       })
       .meta({
@@ -177,7 +177,7 @@ export const goalPreparationResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
+          "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range and always an estimate. Null before that, including after a mock (components.mocks.taken > 0): more mocks of the whole exam or half of it bring the estimate",
       }),
     goalId: uuidSchema(),
     sections: z

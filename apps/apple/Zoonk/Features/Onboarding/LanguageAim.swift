@@ -16,8 +16,15 @@ struct LanguageAimView: Codable, Equatable, Sendable {
   let aim: String?
   /// The aim as the rest of the plan names it, half bands included ("B1+").
   let label: String?
+  /// The goal's language, which names the aim's title.
+  let targetLanguage: String?
   let choices: [Choice]
   var reasons: [Reason]?
+
+  /// Main's `useAimWords().title`: "English level to reach", so it isn't read as the game's level.
+  var title: String {
+    aimTitle(language: targetLanguage)
+  }
 
   /// The picked choice says the aim as the plan does ("B1+"), the others their own level.
   func name(of choice: String) -> String {
@@ -121,6 +128,15 @@ func languageReasonLabel(_ reason: String) -> String? {
   default:
     nil
   }
+}
+
+/// "English level to reach": a language aim's title, named with its language.
+func aimTitle(language: String?) -> String {
+  String(
+    localized: "\(Locale.current.languageName(language ?? "")) level to reach", table: "Onboarding",
+    comment:
+      "Titles the language level a learner picks to reach, like \"B2\". {language} is a language name as in a sentence, like \"English\"."
+  )
 }
 
 /// "B1 · Everyday conversations", the level in mono.

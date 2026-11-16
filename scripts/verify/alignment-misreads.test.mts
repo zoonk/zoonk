@@ -82,7 +82,7 @@ test("code ids may wrap at hyphens, while a title leaving one word still fails",
   assert.equal(faults("lone-word").length, 1);
 });
 
-test("a title's whitespace survives the lone-word decision across three trimmed lines", () => {
+test("a title's whitespace survives three single-word lines without a fixable orphan (FS-D35)", () => {
   document.body.innerHTML = '<h2 data-box="16,0,120,60">Review self-study</h2>';
 
   vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
@@ -100,12 +100,12 @@ test("a title's whitespace survives the lone-word decision across three trimmed 
 
   assert.equal(
     evaluateCapture(capture).filter((finding) => finding.rule === "lone-word").length,
-    1,
+    0,
   );
 });
 
 test.each([8, 9])(
-  "a single token is exempt only when every break is at a hyphen (first break %s)",
+  "one token broken across lines never has a multiword line above its last (first break %s)",
   (firstBreak) => {
     document.body.innerHTML = '<h2 data-box="16,0,120,60">describe-function-output</h2>';
 
@@ -114,6 +114,6 @@ test.each([8, 9])(
       return rectList(new DOMRect(16, top, 8, 20));
     });
 
-    assert.equal(faults("lone-word").length, firstBreak === 9 ? 0 : 1);
+    assert.equal(faults("lone-word").length, 0);
   },
 );

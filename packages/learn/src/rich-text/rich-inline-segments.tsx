@@ -49,7 +49,7 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
 
   if (segment.kind === "code") {
     return (
-      <code className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]">
+      <code className="bg-muted text-foreground inline-block max-w-full rounded-sm px-1 py-0.5 font-mono text-[0.85em] leading-tight wrap-break-word">
         {segment.text}
       </code>
     );

@@ -29,7 +29,7 @@ const mockOptionSchema = mockShapeSchema
       .nullable()
       .meta({
         description:
-          "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking): say what it covers. Null when it sits every such section, and for a subject's mock",
+          "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking). Null when it sits every such section, and for a subject's mock",
       }),
     estimatedMinutes: estimatedMinutesSchema,
     leftOut: mockLeftOutSchema,
@@ -60,7 +60,7 @@ export const mockOptionsResponseSchema = z
       .enum(["open", "plusRequired"])
       .meta({
         description:
-          "`plusRequired`: every mock exam comes with Plus; show the options with what it takes",
+          "`plusRequired`: every mock exam comes with Plus, and the learner's plan doesn't include them",
       }),
     examDocument: examDocumentSchema,
     examName: z.string(),

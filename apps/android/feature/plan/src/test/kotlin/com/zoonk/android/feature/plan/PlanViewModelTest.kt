@@ -71,6 +71,131 @@ class PlanViewModelTest {
     fun stop() = Dispatchers.resetMain()
 
     @Test
+    fun aPastDateSearchLeftBehindByRecreationReopensFreshAndCanFindAgain() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            val state = viewModel.slotState
+            val suggestion = viewModel.outcomes.suggestion
+            suggestion.hold()
+            state.waiting = ++state.searches
+            state.dateSearch = DateSearch.Finding
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(state.waiting))
+            suggestion.release(ending = false)
+            viewModel.visit.endOpeningsLeftBehind()
+            assertNull(state.dateSearch)
+            assertEquals(0, state.waiting)
+            held.complete(Unit)
+            assertNull(actOnPastDate())
+            suggestion.hold()
+            state.waiting = ++state.searches
+            state.dateSearch = DateSearch.Finding
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(state.waiting))
+            assertEquals(TimeFound(state.waiting, TimeToCoverOutcome.Answered(api.timeToCover)), actOnPastDate())
+        }
+
+    @Test
+    fun aCoveragePreviewLeftBehindByRecreationReopensWithoutChecking() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val suggestion = viewModel.outcomes.suggestion
+            suggestion.hold()
+            viewModel.slotState.asking = CoverageIntent.Date
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            suggestion.release(ending = false)
+            viewModel.visit.endOpeningsLeftBehind()
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertNull(viewModel.slotState.asking)
+            held.complete(Unit)
+            suggestion.hold()
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(60)))
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aFitCheckLeftBehindByRecreationReopensWithoutCheckingOrAdding() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            api.preview = checked(plan.fitOffer!!.effect)
+            val suggestion = viewModel.outcomes.suggestion
+            suggestion.hold()
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+            suggestion.release(ending = false)
+            viewModel.visit.endOpeningsLeftBehind()
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            held.complete(Unit)
+            assertTrue(api.changes.isEmpty())
+            suggestion.hold()
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+            assertEquals(listOf(FIT_OPERATIONS), api.changes)
+        }
+
+    @Test
+    fun endingThePlanClearsItsSuggestionsPendingSearchAndPreview() =
+        runTest {
+            val plan = shown()
+            val search = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            val preview = CompletableDeferred<Unit>().also { api.previewGate = it }
+            viewModel.slotState.waiting = 1
+            viewModel.slotState.dateSearch = DateSearch.Finding
+            viewModel.slotState.asking = CoverageIntent.Date
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(1))
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            viewModel.visit.end()
+            assertNull(viewModel.slotState.dateSearch)
+            assertEquals(0, viewModel.slotState.waiting)
+            assertNull(viewModel.slotState.asking)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            search.complete(Unit)
+            preview.complete(Unit)
+            assertNull(actOnPastDate())
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun aSuggestionStillHeldAfterRecreationKeepsItsSearchAndPreview() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            val preview = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val suggestion = viewModel.outcomes.suggestion
+            suggestion.hold()
+            viewModel.slotState.waiting = 1
+            viewModel.slotState.dateSearch = DateSearch.Finding
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(1))
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            suggestion.release(ending = false)
+            suggestion.hold()
+            viewModel.visit.endOpeningsLeftBehind()
+            assertEquals(DateSearch.Finding, viewModel.slotState.dateSearch)
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Loading)
+            held.complete(Unit)
+            preview.complete(Unit)
+            assertEquals(TimeFound(1, TimeToCoverOutcome.Answered(api.timeToCover)), actOnPastDate())
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aMoveDateSearchLeftBehindByRecreationCanBeAskedAgain() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            val editor = viewModel.outcomes.editor
+            editor.hold()
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            editor.release(ending = false)
+            viewModel.visit.endOpeningsLeftBehind()
+            held.complete(Unit)
+            assertNull(actOnMoveDate())
+            editor.hold()
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            assertEquals(TimeToCoverOutcome.Answered(api.timeToCover), actOnMoveDate())
+        }
+
+    @Test
     fun archivingLeavesThePlanOnceSaved() =
         runTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)

@@ -60,7 +60,7 @@ export const studyBlockQuestionSchema = z.object({
     .boolean()
     .meta({
       description:
-        "A real past exam question copied as printed, where its organizer allows it: show `citation` with it before it's answered",
+        "A real past exam question copied as printed, where its organizer allows it, with its source in `citation`",
     }),
   right: z.array(z.string()).nullable().meta({ description: "Match pairs: the right column" }),
   select: questionSelectSchema

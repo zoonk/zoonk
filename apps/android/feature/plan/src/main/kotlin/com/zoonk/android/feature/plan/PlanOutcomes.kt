@@ -68,6 +68,7 @@ internal class TimeAsk(
 internal class PlanOutcomes(
     visit: Visit = Visit(),
     endTools: () -> Unit = {},
+    endSuggestion: () -> Unit = {},
 ) {
     /** The Adjust plan editor's opening, whose Move date asks and whose pickers open inside it: it ends when the editor closes. */
     val editor = visit.opening()
@@ -75,7 +76,7 @@ internal class PlanOutcomes(
     val tools = editor.opening(endTools)
 
     /** The suggestion slot's item while its sheet or panel shows, whose searches ask: it ends when that goes. */
-    val suggestion = visit.opening()
+    val suggestion = visit.opening(endSuggestion)
 
     /** The aim's picker inside the editor while it shows: an aim it applied closes it, and closing it ends it. */
     val aimPicker = editor.opening()

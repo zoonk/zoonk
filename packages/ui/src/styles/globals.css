@@ -783,8 +783,8 @@
  * the box. `--edge-start` starts one: the letters under the glyph start inside their box (Geist's
  * "S" by 0.053em, a stem by 0.08em, a diagonal by 0.02em), so the glyph stops that far short of the
  * box to sit with them; `--edge-under` is the size of the text on that edge. A text button stops
- * short the same way when a glyph leads its label. Both round down to a whole pixel, so no part of
- * the glyph crosses the edge at any pixel density.
+ * short the same way when a glyph leads its label. The end rounds down to a whole pixel; the start
+ * does too unless a glyph needs rounding toward the column to avoid an inward gap.
  */
 @utility edge {
   --glyph-blank: 0;
@@ -808,7 +808,7 @@
   );
   --edge-short: calc(var(--edge-under, 1rem) * 0.053);
   --edge-start: round(
-    down,
+    var(--edge-start-round, down),
     var(
         --edge-text-start,
         var(
@@ -841,6 +841,11 @@
 
   &:has(.lucide-x) {
     --glyph-blank: 5;
+  }
+
+  &:has(.lucide-paperclip) {
+    --glyph-blank: 2;
+    --edge-start-round: up;
   }
 
   &:has(.lucide-check) {

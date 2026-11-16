@@ -23,6 +23,23 @@ function scrollersBetween(drawing: Element, box: Element): Element[] {
   return scrollers;
 }
 
+function wordBoxes(answer: Element) {
+  const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
+
+  if (!text?.textContent) {
+    throw new Error("The answer must contain text.");
+  }
+
+  const range = document.createRange();
+
+  return [...text.textContent.matchAll(/\S+/gu)].map((word) => {
+    range.setStart(text, word.index);
+    range.setEnd(text, word.index + word[0].length);
+    const { left, top } = range.getBoundingClientRect();
+    return { left: Math.round(left), top: Math.round(top), word: word[0] };
+  });
+}
+
 function lessonWithAnswer(text: string, question = "Onde está o par de elétrons compartilhado?") {
   return buildLesson(
     [
@@ -165,6 +182,32 @@ describe("checked answer readability", () => {
         } finally {
           document.documentElement.style.fontSize = fontSize;
         }
+      });
+    },
+  );
+
+  it.each([
+    { answer: "Their water didn't come from the Broad Street pump", width: 420 },
+    { answer: "Their water didn't come from the Broad Street pump", width: 440 },
+    { answer: ANSWER, width: 450 },
+  ])(
+    "keeps two words on the last line of $answer and moves none when Check adds the tag at $width px",
+    async ({ answer, width }) => {
+      await atViewport({ height: 844, width }, async () => {
+        renderLessonPlayer({ lesson: lessonWithAnswer(answer) });
+
+        const option = page.getByRole("radio", { name: answer });
+        const words = option.getByText(answer, { exact: true }).element();
+        const before = wordBoxes(words);
+        const lastTop = before.at(-1)?.top;
+
+        expect(before.filter((word) => word.top === lastTop).length).toBeGreaterThan(1);
+
+        await option.click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await expect.element(option.getByText("Your answer")).toBeVisible();
+
+        expect(wordBoxes(words)).toStrictEqual(before);
       });
     },
   );

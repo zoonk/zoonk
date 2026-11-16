@@ -50,11 +50,12 @@ export function loneWordLeads(context: Context): AlignmentFinding[] {
     const last = wordsOf(lines.at(-1) ?? "");
     const word = last[0] ?? "";
 
-    const hyphenatedToken =
-      /^[\p{L}\p{N}_-]+$/u.test(text.text ?? "") &&
-      lines.slice(0, -1).every((line) => line.endsWith("-"));
-
-    if (!text.textRole || lines.length < 2 || last.length !== 1 || hyphenatedToken) {
+    if (
+      !text.textRole ||
+      lines.length < 2 ||
+      last.length !== 1 ||
+      wordsOf(lines.slice(0, -1).at(-1) ?? "").length < 2
+    ) {
       return [];
     }
 

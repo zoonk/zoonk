@@ -225,7 +225,10 @@ export async function getOnboarding({
       goalIds,
       languageAim:
         goal.kind === "language"
-          ? { ...toLanguageAimView(details), reasons: LANGUAGE_REASON_VIEWS }
+          ? {
+              ...toLanguageAimView({ details, targetLanguage: goal.targetLanguage }),
+              reasons: LANGUAGE_REASON_VIEWS,
+            }
           : null,
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },

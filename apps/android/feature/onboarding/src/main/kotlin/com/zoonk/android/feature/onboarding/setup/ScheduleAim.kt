@@ -69,6 +69,7 @@ internal fun ScheduleAim(
     LanguageAimRow(
         aim,
         languageAim.label,
+        languageAim.targetLanguage,
         languageAim.choices,
         aimOpen,
         { aimOpen = it },

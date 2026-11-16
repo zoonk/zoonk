@@ -90,7 +90,7 @@ export const planPhaseSchema = z
           .nullable()
           .meta({
             description:
-              "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
+              "The approximate phase-challenge date in the Plan, an estimate rather than a fixed day. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
           }),
         locked: z
           .boolean()

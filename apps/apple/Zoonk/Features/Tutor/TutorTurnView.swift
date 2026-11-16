@@ -267,6 +267,7 @@ struct TutorAnswerText: View {
           .foregroundStyle(.mutedForeground)
       }
     }
+    .onDisappear { blockOpen?.cancel() }
   }
 
   static func said(_ blocks: [TutorAnswerBlock], buddyName: String?) -> String {
@@ -325,8 +326,8 @@ struct TutorAnswerText: View {
     return .handled
   }
 
-  /// One at a time, so two opens never race. The open outlives the answer's view, which a resize or
-  /// a scroll can take away; the opener opens and says nothing once the learner went elsewhere.
+  /// One at a time, so two opens never race. An answer that leaves the screen takes its open with
+  /// it, so nothing is said over what the learner went to.
   private func open(blockID: String) {
     guard blockOpen == nil else {
       return
@@ -338,6 +339,10 @@ struct TutorAnswerText: View {
     blockOpen = Task {
       let result = await router.openAnswerLink(blockID: blockID)
       blockOpen = nil
+
+      guard !Task.isCancelled else {
+        return
+      }
 
       switch result {
       case .failed:

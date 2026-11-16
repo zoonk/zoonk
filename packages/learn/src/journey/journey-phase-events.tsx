@@ -40,7 +40,10 @@ export function PathRowBody({
 }) {
   return (
     <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
-      <span className="flex min-w-0 flex-col text-pretty" data-slot="path-row-words">
+      <span
+        className="flex min-w-0 flex-col text-pretty *:first:text-balance"
+        data-slot="path-row-words"
+      >
         {children}
       </span>
       {value && (

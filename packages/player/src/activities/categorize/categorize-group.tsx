@@ -13,7 +13,7 @@ import { useActivityDropTarget } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string; rule: string };
 
-const RULE_CLASS = "text-muted-foreground text-compact leading-snug font-normal";
+const RULE_CLASS = "block text-muted-foreground text-compact leading-snug font-normal";
 
 /** Reserved before any card lands, so a group never grows under the learner's thumb. */
 function CategorizePreview({ latest, others }: { latest: string | null; others: number }) {
@@ -76,7 +76,7 @@ export function CategorizeGroupOption({
       ref={dropRef}
       role="button"
     >
-      <span>
+      <span className="block">
         <LessonRichText text={group.label} />
       </span>
 
@@ -108,7 +108,7 @@ export function CategorizeGroupList({
     <section
       aria-labelledby={headingId}
       className={cn(
-        "flex flex-col gap-0.5 rounded-xl px-3.5 py-3.25",
+        "flex flex-col gap-0.5 rounded-xl px-4 py-3.25",
         isOver ? ANSWER_TONE.picked : ANSWER_TONE.idle,
       )}
       data-slot="categorize-group"

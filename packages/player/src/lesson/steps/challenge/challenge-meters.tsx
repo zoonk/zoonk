@@ -82,12 +82,12 @@ export function ChallengeEffectsView({
   return (
     <li
       aria-hidden="true"
-      className="flex flex-wrap justify-end gap-x-4 gap-y-1 text-xs"
+      className="grid grid-cols-[auto_auto] items-center justify-end gap-x-1.5 gap-y-1 text-xs"
       data-slot="challenge-effects"
     >
       {moved.map((meter) => (
-        <span className="flex items-center gap-1.5" key={meter.id}>
-          <span className="text-muted-foreground">{fill(meter.label)}</span>
+        <span className="contents" key={meter.id}>
+          <span className="text-muted-foreground text-end">{fill(meter.label)}</span>
           <MeterChange meter={meter} />
         </span>
       ))}

@@ -112,6 +112,8 @@ export type LanguageAimView = {
   aim: CefrLevel | null;
   /** The aim as the rest of the plan names it, half bands included ("B1+"). */
   label: string | null;
+  /** The language the aim is a level of. */
+  targetLanguage: string | null;
   /** The aims above the learner's level, lowest first. */
   choices: LanguageAimChoice[];
 };
@@ -126,7 +128,13 @@ export type LanguageReasonView = {
   reason: LanguageReason;
 };
 
-export function toLanguageAimView(details: Record<string, unknown>): LanguageAimView {
+export function toLanguageAimView({
+  details,
+  targetLanguage,
+}: {
+  details: Record<string, unknown>;
+  targetLanguage: string | null;
+}): LanguageAimView {
   const start = getStartHours(details.level) ?? 0;
   const label = readLanguageAim(details);
   const score = parseCefrScore(label);
@@ -138,6 +146,7 @@ export function toLanguageAimView(details: Record<string, unknown>): LanguageAim
       return hours > 0 ? [{ aim, hours }] : [];
     }),
     label,
+    targetLanguage,
   };
 }
 

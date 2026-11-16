@@ -92,9 +92,12 @@ function BlankSlot({
         message: "Blank {position}",
         values: { position: String(index + 1) },
       })}
-      className="border-muted-foreground/30 inline-flex min-w-16 border-b-2"
+      className="border-muted-foreground/30 inline-flex min-w-16 border-b-2 px-1"
       role="img"
-    />
+    >
+      {/* A line of text's height and baseline, as a filled blank has, so filling it moves nothing. */}
+      {"\u00A0"}
+    </span>
   );
 }
 

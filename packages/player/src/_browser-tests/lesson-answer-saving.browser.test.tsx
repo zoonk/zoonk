@@ -101,6 +101,10 @@ function keepOnDevice({
   return kept;
 }
 
+function feedbackCardHeight() {
+  return document.querySelector('[data-slot="feedback-panel"]')?.getBoundingClientRect().height;
+}
+
 function sentOptions(checkStep: Mock<LessonPlayerAdapters["checkStep"]>) {
   return checkStep.mock.calls.map(([input]) =>
     input.answer.kind === "check" ? input.answer.optionId : null,
@@ -177,6 +181,44 @@ describe("saving answers", () => {
     await expect
       .element(page.getByText("Saved to your mistakes", { exact: false }))
       .not.toBeInTheDocument();
+  });
+
+  it("keeps the saved-mistake line's room while its save is pending, so the line moves nothing", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const saved = buildAdapters(lesson).checkStep;
+    const reply = Promise.withResolvers<LessonCheckOutcome>();
+
+    const checkStep = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockImplementationOnce(saved)
+      .mockReturnValueOnce(reply.promise);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await answer(WRONG_OPTION, "Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await answer(WRONG_OPTION, "Not quite");
+
+    const pending = feedbackCardHeight();
+
+    reply.resolve({
+      result: {
+        checked: true,
+        correctAnswer: RIGHT_OPTION,
+        corrections: [],
+        expected: null,
+        feedback: null,
+        isCorrect: false,
+        keyPoints: null,
+        savedMistake: true,
+        score: null,
+        spelling: null,
+      },
+      status: "checked",
+    });
+
+    await expect.element(page.getByText("Saved to your mistakes", { exact: true })).toBeVisible();
+    expect(feedbackCardHeight()).toBe(pending);
   });
 
   it("saves a screen's answers in the order they were given", async () => {

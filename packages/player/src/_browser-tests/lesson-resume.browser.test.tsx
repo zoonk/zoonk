@@ -253,6 +253,52 @@ describe("coming back to a lesson", () => {
     expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 
+  it("shows a reopened code runner's right output beside a program that prints it", async () => {
+    const runner = activityStep({ content: activityContentFixtures.codeRunner });
+    const lesson = buildLesson([runner, teachingStep("explanation"), teachingStep("check")]);
+
+    const resume = [
+      runAnswer({
+        answer: { answer: { kind: "output", output: "5050" }, kind: "activity" },
+        stepId: runner.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(page.getByRole("textbox", { name: "Line 2, yours to edit" }))
+      .toHaveValue("for n in range(1, 101):");
+  });
+
+  it("shows a reopened code tracer as its trace ended", async () => {
+    const tracer = activityStep({ content: activityContentFixtures.codeTracer });
+    const lesson = buildLesson([tracer, teachingStep("explanation"), teachingStep("check")]);
+
+    const resume = [
+      runAnswer({
+        answer: { answer: { kind: "assignment", pairs: { "0": "b" } }, kind: "activity" },
+        stepId: tracer.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByText("Step 4 of 4", { exact: true })).toBeVisible();
+  });
+
   it("continues a lesson left days ago, with Hyperdrive counting only this sitting's answers", async () => {
     const lesson = buildLesson([
       teachingStep("check"),

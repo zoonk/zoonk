@@ -15,6 +15,42 @@ function rowHeights() {
   );
 }
 
+/**
+ * Where an answer's tag sits: "placed" after the last word, or at the start of a line of its own,
+ * otherwise how far off it is.
+ */
+function tagPlacement(row: Element): string | null {
+  const tag = row.querySelector('[data-slot="answer-option-tag"]')?.getBoundingClientRect();
+
+  const text = document
+    .createTreeWalker(row, NodeFilter.SHOW_TEXT, (node) =>
+      node.parentElement?.closest('[data-slot="line-marker"]')
+        ? NodeFilter.FILTER_REJECT
+        : NodeFilter.FILTER_ACCEPT,
+    )
+    .nextNode();
+
+  if (!tag || !text) {
+    return null;
+  }
+
+  const range = document.createRange();
+  range.selectNodeContents(text);
+  const lines = [...range.getClientRects()];
+  const first = lines[0];
+  const last = lines.at(-1);
+
+  if (!first || !last) {
+    return "no lines";
+  }
+
+  const tagMiddle = (tag.top + tag.bottom) / 2;
+  const sharesLastLine = tagMiddle > last.top && tagMiddle < last.bottom;
+  const gap = sharesLastLine ? tag.left - last.right : Math.abs(tag.left - first.left);
+
+  return gap <= (sharesLastLine ? 16 : 1) ? "placed" : `${Math.round(gap)} px off`;
+}
+
 describe("language activities", () => {
   it("pattern table: each blank takes its ending", async () => {
     openActivity({ template: "patternTable" });
@@ -72,6 +108,18 @@ describe("language activities", () => {
     await expect
       .element(page.getByText("Good morning. Do you have anything for a sore throat?"))
       .toBeVisible();
+
+    const rows = page.getByRole("radio").elements();
+    const keys = rows.flatMap((row) => [...row.querySelectorAll("kbd")]);
+
+    expect(keys.map((key) => getComputedStyle(key).visibility)).toStrictEqual(
+      keys.map(() => "hidden"),
+    );
+
+    const tags = rows.map((row) => tagPlacement(row)).filter((placement) => placement !== null);
+
+    expect(tags.length).toBeGreaterThan(0);
+    expect(tags).toStrictEqual(tags.map(() => "placed"));
   });
 
   it("dialogue: a line's voice shows it's loading the first time, then plays it", async () => {

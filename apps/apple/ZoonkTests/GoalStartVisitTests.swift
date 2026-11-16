@@ -26,7 +26,7 @@ final class GoalStartVisitTests: XCTestCase {
 
     try activate(String(localized: "Add your material", table: "Onboarding"), in: window)
     try await settle()
-    try activateInAnyWindow(String(localized: "Paste a link", table: "Onboarding"))
+    try activateMenuItem(String(localized: "Paste a link", table: "Onboarding"), in: window)
     try await settle()
     let link = try XCTUnwrap(views(UITextField.self, in: window).first, "The link's box")
     link.becomeFirstResponder()
@@ -56,14 +56,14 @@ final class GoalStartVisitTests: XCTestCase {
   private static let failure = String(
     localized: "We couldn't add that. Try again in a moment.", table: "Onboarding")
 
-  /// A menu's items open in a window of their own, which VoiceOver's activation doesn't reach from
-  /// a hosted window: the test runs the item's action itself, or selects its row in the open menu.
-  private func activateInAnyWindow(_ label: String) throws {
+  /// Hosted tests leave hidden windows in the scene. The source menu belongs to this window;
+  /// its rows may appear in a separate visible window.
+  private func activateMenuItem(_ label: String, in window: UIWindow) throws {
     let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-      .flatMap(\.windows)
+      .flatMap(\.windows).filter { !$0.isHidden && $0.alpha > 0 }
     let all = windows.flatMap { views(UIView.self, in: $0) }
 
-    for button in all.compactMap({ $0 as? UIButton }) {
+    for button in views(UIButton.self, in: window) {
       if let action = button.menu.flatMap({ action(label, in: $0) }) {
         for name in ["performWithSender:target:", "_performActionWithSender:"]
         where action.responds(to: NSSelectorFromString(name)) {
