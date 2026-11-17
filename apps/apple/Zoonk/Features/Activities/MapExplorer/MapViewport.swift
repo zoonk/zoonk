@@ -24,6 +24,59 @@ enum MapViewport {
     return (label.size.width / 2 + 1.5) * abs(directions[0].x * axis.x + directions[0].y * axis.y)
       + (label.size.height / 2 + 1.5) * abs(directions[1].x * axis.x + directions[1].y * axis.y)
   }
+  private static func clearOfPin(_ label: Label, _ pin: CGPoint) -> Bool {
+    let directions = axes(label)
+    let dx = pin.x - label.center.x
+    let dy = pin.y - label.center.y
+    return hypot(
+      max(abs(dx * directions[0].x + dy * directions[0].y) - label.size.width / 2 - 1.5, 0),
+      max(abs(dx * directions[1].x + dy * directions[1].y) - label.size.height / 2 - 1.5, 0)) >= 23
+  }
+  private static func clearOfLabel(_ label: Label, _ other: Label) -> Bool {
+    (axes(label) + axes(other)).contains { axis in
+      abs((label.center.x - other.center.x) * axis.x + (label.center.y - other.center.y) * axis.y)
+        >= projection(label, axis) + projection(other, axis) + 3
+    }
+  }
+  private static func inFrame(_ label: Label, _ frame: CGSize) -> Bool {
+    let rx = projection(label, CGPoint(x: 1, y: 0))
+    let ry = projection(label, CGPoint(x: 0, y: 1))
+    return label.center.x >= rx && label.center.x + rx <= frame.width && label.center.y >= ry
+      && label.center.y + ry <= frame.height
+  }
+  private static func namedSpot(
+    _ label: Label, candidates: [CGPoint], placed: [Label], pins: [CGPoint], frame: CGSize
+  ) -> Label {
+    let rx = projection(label, CGPoint(x: 1, y: 0))
+    let ry = projection(label, CGPoint(x: 0, y: 1))
+    let neighbors = placed.flatMap { other in
+      let dx = rx + projection(other, CGPoint(x: 1, y: 0)) + 3
+      let dy = ry + projection(other, CGPoint(x: 0, y: 1)) + 3
+      return [
+        CGPoint(x: other.center.x - dx, y: other.center.y),
+        CGPoint(x: other.center.x + dx, y: other.center.y),
+        CGPoint(x: other.center.x, y: other.center.y - dy),
+        CGPoint(x: other.center.x, y: other.center.y + dy),
+      ]
+    }
+    func score(_ spot: Label) -> (Int, Int, Double) {
+      (
+        placed.filter { !clearOfLabel(spot, $0) }.count,
+        pins.filter { !clearOfPin(spot, $0) }.count,
+        hypot(spot.center.x - label.center.x, spot.center.y - label.center.y)
+      )
+    }
+    return (candidates + [label.center] + neighbors).map { point in
+      label.at(
+        CGPoint(
+          x: clamp(point.x, min(rx, frame.width / 2), max(frame.width - rx, frame.width / 2)),
+          y: clamp(point.y, min(ry, frame.height / 2), max(frame.height - ry, frame.height / 2))))
+    }.min { score($0) < score($1) }!
+  }
+  static func isNamed(references: String, source: String, text: String) -> Bool {
+    let named = references.lowercased()
+    return [source, text].contains { !$0.isEmpty && named.contains($0.lowercased()) }
+  }
   static func placeLabels(_ labels: [Label], pins: [CGPoint], frame: CGSize) -> [CGPoint?] {
     var spots = [CGPoint?](repeating: nil, count: labels.count)
     var placed: [Label] = []
@@ -38,34 +91,15 @@ enum MapViewport {
         let second = hypot($1.element.x - label.center.x, $1.element.y - label.center.y)
         return first == second ? $0.offset < $1.offset : first < second
       }.map(\.element)
-      let spot = candidates.map {
-        label.at($0)
-      }.first { candidate in
-        let rx = projection(candidate, CGPoint(x: 1, y: 0))
-        let ry = projection(candidate, CGPoint(x: 0, y: 1))
-        return candidate.center.x >= rx && candidate.center.x + rx <= frame.width
-          && candidate.center.y >= ry && candidate.center.y + ry <= frame.height
-          && pins.allSatisfy { pin in
-            let directions = axes(candidate)
-            let dx = pin.x - candidate.center.x
-            let dy = pin.y - candidate.center.y
-            return hypot(
-              max(
-                abs(dx * directions[0].x + dy * directions[0].y) - candidate.size.width / 2 - 1.5, 0
-              ),
-              max(
-                abs(dx * directions[1].x + dy * directions[1].y) - candidate.size.height / 2 - 1.5,
-                0)) >= 23
-          }
-          && placed.allSatisfy { other in
-            (axes(candidate) + axes(other)).contains { axis in
-              abs(
-                (candidate.center.x - other.center.x) * axis.x
-                  + (candidate.center.y - other.center.y) * axis.y) >= projection(candidate, axis)
-                + projection(other, axis) + 3
-            }
-          }
+      let clear = candidates.map { label.at($0) }.first { candidate in
+        inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
+          && placed.allSatisfy { clearOfLabel(candidate, $0) }
       }
+      let spot =
+        clear
+        ?? (label.priority
+          ? namedSpot(label, candidates: candidates, placed: placed, pins: pins, frame: frame)
+          : nil)
       if let spot {
         placed.append(spot)
         spots[index] = spot.center

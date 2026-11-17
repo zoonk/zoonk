@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { measureDrawingLabel } from "../_utils/drawing-label";
 import { type MapPoint } from "./map-viewport";
 
 const STREET_SAMPLE_STEP = 4;
-
-const rounded = (value: number) => Number(value.toFixed(3));
 
 type MapLabelSize = {
   positions?: readonly MapPoint[];
@@ -36,10 +35,10 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
     const measure = () => {
       const sizes = Object.fromEntries(
         [...elements.current].map(([index, element]) => {
-          const box = element.getBBox();
-
           const street = [
-            ...(element.ownerSVGElement?.querySelectorAll<SVGPathElement>("[data-street]") ?? []),
+            ...(element
+              .closest('[data-slot="base-map"]')
+              ?.querySelectorAll<SVGPathElement>("[data-street]") ?? []),
           ].find((path) => path.dataset.street === element.dataset.streetLabel);
 
           const bounds = street?.getBBox();
@@ -60,20 +59,7 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
               return { x: point.x, y: point.y };
             });
 
-          return [
-            index,
-            {
-              height: rounded(box.height / pixelSize),
-              offsetX: rounded(
-                (box.x + box.width / 2 - Number(element.getAttribute("x"))) / pixelSize,
-              ),
-              offsetY: rounded(
-                (box.y + box.height / 2 - Number(element.getAttribute("y"))) / pixelSize,
-              ),
-              positions,
-              width: rounded(box.width / pixelSize),
-            },
-          ];
+          return [index, { ...measureDrawingLabel({ element, pixelSize }), positions }];
         }),
       );
 

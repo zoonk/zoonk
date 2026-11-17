@@ -219,7 +219,7 @@ private fun MapView(
                     isTraversalGroup = true
                 },
         ) {
-            MapDrawing(map, layout, references, Modifier.matchParentSize())
+            MapDrawing(map, layout, Modifier.matchParentSize())
             Layout(
                 content = {
                     layout.pins.forEach { pin ->
@@ -238,23 +238,19 @@ private fun MapView(
                     }
                 }
             }
+            MapLabels(map, layout, references, Modifier.matchParentSize())
         }
     }
 }
 
-/** Main's `BaseMapView` drawing: the base map's shapes, streets and labels, and a line from each moved pin to its true spot. */
 @Composable
-private fun MapDrawing(
+private fun MapLabels(
     map: BaseMap,
     layout: MapLayout,
     references: String,
     modifier: Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val guide = MaterialTheme.zoonk.vizGrid
-    val accent = MaterialTheme.zoonk.vizAccent
-    val tones = regionTones()
-    val sea = tones.getValue(RegionTone.GroupC)
     val measurer = rememberTextMeasurer()
     val fontScale = LocalDensity.current.fontScale
     val labelSize = MaterialTheme.typography.labelMedium.fontSize * (min(fontScale, MAX_LABEL_SCALE) / fontScale)
@@ -267,34 +263,11 @@ private fun MapDrawing(
                 label to measurer.measure(labelTexts[index], if (label.kind == LabelKind.Street) streetStyle else regionStyle)
             }
         }
-    val regionLabel = colors.onSurface.copy(alpha = REGION_LABEL_ALPHA)
 
+    val regionLabel = colors.onSurface.copy(alpha = REGION_LABEL_ALPHA)
     Canvas(modifier.clearAndSetSemantics {}) {
         val crop = layout.crop
         val zoom = (size.width / crop.width).toFloat()
-        if (map.sphere == null) drawRect(sea)
-        withTransform({
-            translate((-crop.x * zoom).toFloat(), (-crop.y * zoom).toFloat())
-            scale(zoom, zoom, Offset.Zero)
-        }) {
-            map.sphere?.let { drawPath(it, sea) }
-            val hairline = Stroke(0.75.dp.toPx() / zoom, join = StrokeJoin.Round)
-            map.regions.forEach { (path, tone) ->
-                drawPath(path, tones.getValue(tone))
-                drawPath(path, guide, style = hairline)
-            }
-            val street = Stroke(STREET_WIDTH.toPx() / zoom, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            map.streets.forEach { drawPath(it, colors.surface, style = street) }
-            map.drawing.insets.forEach {
-                drawRect(
-                    guide,
-                    topLeft = Offset(it.x.toFloat(), it.y.toFloat()),
-                    size = Size(it.width.toFloat(), it.height.toFloat()),
-                    style = Stroke(1.dp.toPx() / zoom),
-                )
-            }
-        }
-
         val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
         val spots =
             placeMapLabels(
@@ -326,7 +299,7 @@ private fun MapDrawing(
                         text.size.height.toDouble() / density,
                         label.angle,
                         label.kind == LabelKind.Street,
-                        references.contains(label.text, ignoreCase = true) || references.contains(labelTexts[index], ignoreCase = true),
+                        isMapLabelNamed(references, label.text, labelTexts[index]),
                         positions,
                     )
                 },
@@ -341,6 +314,45 @@ private fun MapDrawing(
             rotate(label.angle.toFloat(), pivot = center) {
                 drawText(text, colors.surface, topLeft, drawStyle = halo)
                 drawText(text, if (label.kind == LabelKind.Street) colors.onSurfaceVariant else regionLabel, topLeft, drawStyle = Fill)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapDrawing(
+    map: BaseMap,
+    layout: MapLayout,
+    modifier: Modifier,
+) {
+    val colors = MaterialTheme.colorScheme
+    val guide = MaterialTheme.zoonk.vizGrid
+    val accent = MaterialTheme.zoonk.vizAccent
+    val tones = regionTones()
+    val sea = tones.getValue(RegionTone.GroupC)
+    Canvas(modifier.clearAndSetSemantics {}) {
+        val crop = layout.crop
+        val zoom = (size.width / crop.width).toFloat()
+        if (map.sphere == null) drawRect(sea)
+        withTransform({
+            translate((-crop.x * zoom).toFloat(), (-crop.y * zoom).toFloat())
+            scale(zoom, zoom, Offset.Zero)
+        }) {
+            map.sphere?.let { drawPath(it, sea) }
+            val hairline = Stroke(0.75.dp.toPx() / zoom, join = StrokeJoin.Round)
+            map.regions.forEach { (path, tone) ->
+                drawPath(path, tones.getValue(tone))
+                drawPath(path, guide, style = hairline)
+            }
+            val street = Stroke(STREET_WIDTH.toPx() / zoom, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            map.streets.forEach { drawPath(it, colors.surface, style = street) }
+            map.drawing.insets.forEach {
+                drawRect(
+                    guide,
+                    topLeft = Offset(it.x.toFloat(), it.y.toFloat()),
+                    size = Size(it.width.toFloat(), it.height.toFloat()),
+                    style = Stroke(1.dp.toPx() / zoom),
+                )
             }
         }
 

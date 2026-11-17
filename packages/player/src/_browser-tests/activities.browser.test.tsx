@@ -96,6 +96,13 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
   });
 
+  it("money ticks in millions shorten without giving adjacent ticks the same number", async () => {
+    const content = engineModeFixtures.guessReveal.moneyMillions;
+    openActivity({ content, template: "guessReveal" });
+    await expect.element(page.getByText("R$1.5M", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("R$2M", { exact: true })).toBeVisible();
+  });
+
   it("money guess retains currency in readouts, ticks, the difference and the accessible scale", async () => {
     const content = engineModeFixtures.guessReveal.money;
     openActivity({ content, template: "guessReveal" });

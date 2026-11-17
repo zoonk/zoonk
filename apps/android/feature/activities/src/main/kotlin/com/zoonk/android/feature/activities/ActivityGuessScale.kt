@@ -235,12 +235,28 @@ private fun ScaleTicks(
     unit: String?,
 ) {
     val locale = currentLocale()
-    val ticks = scale.ticks()
+    val labels =
+        scale.tickLabels { value, compact ->
+            formatAmount(
+                value,
+                locale,
+                currencyUnit(unit),
+                compact = compact,
+                maximumFractionDigits =
+                    if (compact &&
+                        currencyUnit(unit) != null
+                    ) {
+                        1
+                    } else {
+                        null
+                    },
+            )
+        }
     Layout(
         content = {
-            ticks.forEach {
+            labels.forEach {
                 Text(
-                    formatAmount(it, locale, currencyUnit(unit), compact = currencyUnit(unit) == null),
+                    it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall.withTabularFigures(),
                 )
@@ -251,15 +267,9 @@ private fun ScaleTicks(
         val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0)) }
         val width = constraints.maxWidth
         layout(width, placeables.maxOfOrNull { it.height } ?: 0) {
-            placeables.zip(ticks).forEach { (placeable, tick) ->
-                val share = scale.shareOf(tick)
-                val x =
-                    when {
-                        share < TICK_EDGE_SHARE -> 0
-                        share > 1 - TICK_EDGE_SHARE -> width - placeable.width
-                        else -> (share * width - placeable.width / 2).roundToInt()
-                    }
-                placeable.placeRelative(x, 0)
+            val positions = scale.tickPlacements(width, placeables.map { it.width })
+            placeables.forEachIndexed { index, placeable ->
+                positions[index]?.let { placeable.placeRelative(it, 0) }
             }
         }
     }
@@ -267,7 +277,6 @@ private fun ScaleTicks(
 
 private const val HALF = 0.5
 private const val SOFT = 0.18f
-private const val TICK_EDGE_SHARE = 0.04
 private val DOT = 8.dp
 private val RING = 4.dp
 

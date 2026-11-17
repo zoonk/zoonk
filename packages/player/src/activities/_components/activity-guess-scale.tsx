@@ -98,8 +98,13 @@ export function ActivityGuessScale({
 
   const ticks = scaleTicks(scale);
 
-  const { isShort } = tickLabels({
-    format: (value, compact) => format(value, { compact, unit: money ? unit : undefined }),
+  const { format: formatTick } = tickLabels({
+    format: (value, compact) =>
+      format(value, {
+        compact,
+        maximumFractionDigits: money && compact ? 1 : undefined,
+        unit: money ? unit : undefined,
+      }),
     ticks,
   });
 
@@ -180,7 +185,7 @@ export function ActivityGuessScale({
               key={tick}
               style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
             >
-              {format(tick, { compact: isShort, unit: money ? unit : undefined })}
+              {formatTick(tick)}
             </span>
           ))}
         </div>

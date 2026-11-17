@@ -119,6 +119,13 @@ class ActivityScreenshots {
     @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w320dp-h2400dp-xxhdpi")
+    fun narrowPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("narrow-phone-font200")
+    }
+
     private fun started(step: LessonStep) =
         reduce(
             LessonPlayerState.initial(LESSON_ID, listOf(step), now = 0),
@@ -156,16 +163,19 @@ class ActivityScreenshots {
                 val step = ActivityFixtures.exploreStep(name, id = "explore")
                 Triple("$name-explore", playable(listOf(step)), started(step))
             }
+        val captureFilter = System.getenv("ZOONK_ACTIVITY_CAPTURE_FILTER")?.toRegex()
         val screens =
-            shots.flatMap { shot ->
-                states(shot).map { (state, player) ->
-                    Triple(
-                        state.replace(shot.fixture, shot.name),
-                        playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))),
-                        player,
-                    )
-                }
-            } + explored
+            (
+                shots.flatMap { shot ->
+                    states(shot).map { (state, player) ->
+                        Triple(
+                            state.replace(shot.fixture, shot.name),
+                            playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))),
+                            player,
+                        )
+                    }
+                } + explored
+            ).filter { captureFilter?.containsMatchIn(it.first) != false }
         val viewModel =
             LessonPlayerViewModel(
                 LESSON_ID,

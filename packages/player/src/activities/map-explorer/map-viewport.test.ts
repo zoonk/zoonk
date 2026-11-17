@@ -4,6 +4,7 @@ import {
   type MapLabelSpot,
   type MapPoint,
   fitViewport,
+  isMapLabelNamed,
   placeMapLabels,
   spreadPins,
   strayRegions,
@@ -132,6 +133,49 @@ function gapBetween(first: MapPoint[], second: MapPoint[]): number {
 }
 
 describe(placeMapLabels, () => {
+  const named = {
+    angle: 0,
+    height: 12,
+    kind: "street" as const,
+    positions: [{ x: 160, y: 120 }],
+    priority: true,
+    text: "Broad Street",
+    width: 80,
+    x: 160,
+    y: 120,
+  };
+
+  it("keeps a named street even when its only spot is under a pin", () => {
+    expect(
+      placeMapLabels({
+        frame: { height: 240, width: 320 },
+        labels: [named],
+        pins: [{ x: 160, y: 120 }],
+      })[0],
+    ).not.toBeNull();
+  });
+
+  it("keeps two named labels on one segment readable", () => {
+    const spots = placeMapLabels({
+      frame: { height: 240, width: 320 },
+      labels: [named, { ...named, text: "Wardour Street" }],
+      pins: [],
+    });
+
+    expect(spots.every(Boolean)).toBe(true);
+    expect(spots[0]).not.toStrictEqual(spots[1]);
+  });
+
+  it("keeps a named region even when a pin covers its spot", () => {
+    expect(
+      placeMapLabels({
+        frame: { height: 240, width: 320 },
+        labels: [{ ...named, kind: "region" }],
+        pins: [{ x: 160, y: 120 }],
+      })[0],
+    ).not.toBeNull();
+  });
+
   it("hides a street name when avoiding its pin would move it beyond the drawn street", () => {
     const [spot] = placeMapLabels({
       frame: { height: 250, width: 210 },
@@ -358,5 +402,23 @@ describe("measured map labels", () => {
     expect(spots[1]).not.toBeNull();
     expect(spots[1]?.x).toBeGreaterThan(130);
     expect(spots[0]).toBeNull();
+  });
+});
+
+describe(isMapLabelNamed, () => {
+  it("matches the source or translated name in a Portuguese course", () => {
+    for (const references of ["Onde fica a América do Norte?", "Onde fica North America?"]) {
+      expect(
+        isMapLabelNamed({ references, source: "North America", text: "América do Norte" }),
+      ).toBe(true);
+    }
+
+    expect(
+      isMapLabelNamed({
+        references: "Onde fica a Europa?",
+        source: "North America",
+        text: "América do Norte",
+      }),
+    ).toBe(false);
   });
 });

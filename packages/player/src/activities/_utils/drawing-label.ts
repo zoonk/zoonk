@@ -78,3 +78,21 @@ export function sideOffLine({
 
   return touchesLine(above, line) && !touchesLine(below, line) ? "below" : "above";
 }
+
+export function measureDrawingLabel({
+  element,
+  pixelSize = 1,
+}: {
+  element: SVGTextElement;
+  pixelSize?: number;
+}): { height: number; width: number; offsetX: number; offsetY: number } {
+  const box = element.getBBox();
+  const inPixels = (value: number) => Number((value / pixelSize).toFixed(3));
+
+  return {
+    height: inPixels(box.height),
+    offsetX: inPixels(box.x + box.width / 2 - Number(element.getAttribute("x"))),
+    offsetY: inPixels(box.y + box.height / 2 - Number(element.getAttribute("y"))),
+    width: inPixels(box.width),
+  };
+}

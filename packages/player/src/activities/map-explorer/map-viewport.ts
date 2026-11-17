@@ -163,6 +163,86 @@ function clearOfPin(label: MapLabelSpot, pin: MapPoint): boolean {
     PIN_RADIUS + LABEL_CLEARANCE
   );
 }
+
+function inFrame(label: MapLabelSpot, frame: { height: number; width: number }): boolean {
+  const rx = projection(label, { x: 1, y: 0 });
+  const ry = projection(label, { x: 0, y: 1 });
+
+  return (
+    label.x >= rx && label.x + rx <= frame.width && label.y >= ry && label.y + ry <= frame.height
+  );
+}
+
+function namedSpot({
+  label,
+  candidates,
+  frame,
+  pins,
+  placed,
+}: {
+  label: MapLabelSpot;
+  candidates: readonly MapLabelSpot[];
+  frame: { height: number; width: number };
+  pins: readonly MapPoint[];
+  placed: readonly MapLabelSpot[];
+}): MapLabelSpot {
+  const rx = projection(label, { x: 1, y: 0 });
+  const ry = projection(label, { x: 0, y: 1 });
+
+  const neighbors = placed.flatMap((other) => {
+    const dx = rx + projection(other, { x: 1, y: 0 }) + LABEL_CLEARANCE;
+    const dy = ry + projection(other, { x: 0, y: 1 }) + LABEL_CLEARANCE;
+
+    return [
+      { x: other.x - dx, y: other.y },
+      { x: other.x + dx, y: other.y },
+      { x: other.x, y: other.y - dy },
+      { x: other.x, y: other.y + dy },
+    ];
+  });
+
+  const score = (spot: MapLabelSpot): [number, number, number] => [
+    placed.filter((other) => !clearOfLabel(spot, other)).length,
+    pins.filter((pin) => !clearOfPin(spot, pin)).length,
+    Math.hypot(spot.x - label.x, spot.y - label.y),
+  ];
+
+  return (
+    [...candidates, label, ...neighbors]
+      .map((point) => ({
+        ...label,
+        x: clamp(
+          point.x,
+          Math.min(rx, frame.width / 2),
+          Math.max(frame.width - rx, frame.width / 2),
+        ),
+        y: clamp(
+          point.y,
+          Math.min(ry, frame.height / 2),
+          Math.max(frame.height - ry, frame.height / 2),
+        ),
+      }))
+      .toSorted((a, b) => {
+        const first = score(a);
+        const second = score(b);
+        return first[0] - second[0] || first[1] - second[1] || first[2] - second[2];
+      })[0] ?? label
+  );
+}
+
+export function isMapLabelNamed({
+  references,
+  source,
+  text,
+}: {
+  references: string;
+  source: string;
+  text: string;
+}): boolean {
+  const named = references.toLowerCase();
+  return [source, text].some((value) => value.length > 0 && named.includes(value.toLowerCase()));
+}
+
 export function placeMapLabels({
   frame,
   labels,
@@ -182,25 +262,20 @@ export function placeMapLabels({
   for (const { index, label } of order) {
     const candidates = label.kind === "street" ? (label.positions ?? []) : [label];
 
-    const spot = candidates
+    const options = candidates
       .toSorted(
         (a, b) =>
           Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
       )
-      .map((point) => ({ ...label, ...point }))
-      .find((candidate) => {
-        const rx = projection(candidate, { x: 1, y: 0 });
-        const ry = projection(candidate, { x: 0, y: 1 });
+      .map((point) => ({ ...label, ...point }));
 
-        return (
-          candidate.x >= rx &&
-          candidate.x + rx <= frame.width &&
-          candidate.y >= ry &&
-          candidate.y + ry <= frame.height &&
+    const spot =
+      options.find(
+        (candidate) =>
+          inFrame(candidate, frame) &&
           pins.every((pin) => clearOfPin(candidate, pin)) &&
-          placed.every((other) => clearOfLabel(candidate, other))
-        );
-      });
+          placed.every((other) => clearOfLabel(candidate, other)),
+      ) ?? (label.priority ? namedSpot({ candidates: options, frame, label, pins, placed }) : null);
 
     if (spot) {
       placed.push(spot);

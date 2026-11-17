@@ -157,7 +157,6 @@ private struct MapExplorerCanvas: View {
     ZStack(alignment: .topLeading) {
       MapShapes(
         map: map, crop: crop, scale: scale,
-        references: references,
         pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
       )
       .accessibilityElement()
@@ -167,6 +166,12 @@ private struct MapExplorerCanvas: View {
         self.pin(pin.place, number: pin.index + 1)
           .position(shown[order])
       }
+      MapLabels(
+        map: map, crop: crop, scale: scale, references: references,
+        pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
+      )
+      .allowsHitTesting(false)
+      .accessibilityHidden(true)
     }
     .frame(width: width, height: height)
     .background(map.sphere == nil ? ActivityBaseMap.Tone.water : .clear)
@@ -227,7 +232,6 @@ private struct MapShapes: View {
   let map: ActivityBaseMap
   let crop: CGRect
   let scale: Double
-  let references: String
   let pins: [(spot: CGPoint, shown: CGPoint)]
 
   var body: some View {
@@ -265,6 +269,33 @@ private struct MapShapes: View {
           with: .color(Color.border), lineWidth: 1)
       }
 
+      for pin in pins {
+        if pin.spot != pin.shown {
+          var line = Path()
+          line.move(to: pin.spot)
+          line.addLine(to: pin.shown)
+          context.stroke(line, with: .color(ActivityBaseMap.Tone.pin), lineWidth: 1.5)
+        }
+
+        context.fill(
+          Path(ellipseIn: CGRect(x: pin.spot.x - 3.5, y: pin.spot.y - 3.5, width: 7, height: 7)),
+          with: .color(ActivityBaseMap.Tone.pin))
+      }
+    }
+  }
+}
+
+private struct MapLabels: View {
+  let map: ActivityBaseMap
+  let crop: CGRect
+  let scale: Double
+  let references: String
+  let pins: [(spot: CGPoint, shown: CGPoint)]
+  var body: some View {
+    Canvas { context, size in
+      let transform = CGAffineTransform(scaleX: scale, y: scale).translatedBy(
+        x: -crop.minX, y: -crop.minY)
+      func path(_ data: String) -> Path { svg(data).applying(transform) }
       let texts = map.labels.map { label in
         MapWords.label(key: label.key, text: label.text).font(
           (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
@@ -279,11 +310,11 @@ private struct MapShapes: View {
           size: context.resolve(texts[index]).measure(
             in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
           street: label.kind == .street,
-          priority: references.localizedCaseInsensitiveContains(label.text)
-            || references.localizedCaseInsensitiveContains(
-              String(
-                localized: String.LocalizationValue(label.text), table: "Activities",
-                locale: context.environment.locale)),
+          priority: MapViewport.isNamed(
+            references: references, source: label.text,
+            text: String(
+              localized: String.LocalizationValue(label.text), table: "Activities",
+              locale: context.environment.locale)),
           positions: positions
         )
       }
@@ -310,18 +341,6 @@ private struct MapShapes: View {
           at: .zero)
       }
 
-      for pin in pins {
-        if pin.spot != pin.shown {
-          var line = Path()
-          line.move(to: pin.spot)
-          line.addLine(to: pin.shown)
-          context.stroke(line, with: .color(ActivityBaseMap.Tone.pin), lineWidth: 1.5)
-        }
-
-        context.fill(
-          Path(ellipseIn: CGRect(x: pin.spot.x - 3.5, y: pin.spot.y - 3.5, width: 7, height: 7)),
-          with: .color(ActivityBaseMap.Tone.pin))
-      }
     }
   }
 }
@@ -334,7 +353,7 @@ extension ActivityBaseMap.Tone {
 
   var fill: Color {
     switch self {
-    case .context: Color.card
+    case .context: Color.muted
     case .focus: Color(.systemBackground)
     case .groupA: .vizAccent.opacity(0.22)
     case .groupB: .vizHighlight.opacity(0.22)

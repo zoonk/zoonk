@@ -1,6 +1,26 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { exampleData, explained, numericCheck, reasonedChoice } from "./activity-checks";
 
+function moneyGuess(actual: number, max: number) {
+  return {
+    check: numericCheck(actual, { explanation: "Cost", question: "Your guess", unit: "R$" }),
+    fields: {
+      max,
+      min: 0,
+      scale: "linear",
+      takeaway: "Cost",
+      truth: {
+        expression: String(actual),
+        kind: "computed",
+        workings: [{ expression: String(actual), label: "Cost" }],
+      },
+      unit: "R$",
+    },
+    prompt: "Drag to guess",
+    template: "guessReveal",
+  } as const;
+}
+
 export const engineModeFixtures = {
   combinationGrid: {
     dice: {
@@ -170,23 +190,8 @@ export const engineModeFixtures = {
       prompt: "How many Greenlands fit in Africa?",
       template: "guessReveal",
     },
-    money: {
-      check: numericCheck(1200, { explanation: "Cost", question: "Your guess" }),
-      fields: {
-        max: 2000,
-        min: 0,
-        scale: "linear",
-        takeaway: "Cost",
-        truth: {
-          expression: "1200",
-          kind: "computed",
-          workings: [{ expression: "1200", label: "Cost" }],
-        },
-        unit: "R$",
-      },
-      prompt: "Drag to guess",
-      template: "guessReveal",
-    },
+    money: moneyGuess(1200, 2000),
+    moneyMillions: moneyGuess(1_200_000, 2_000_000),
   },
   keyboardFretboard: {
     byEar: {

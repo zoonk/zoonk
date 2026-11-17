@@ -32,6 +32,19 @@ struct GuessScale: Hashable, Sendable {
     return Swift.min(Swift.max(share, 0), 1)
   }
 
+  func tickLabels(unit: String?, locale: Locale = .courseLanguage) -> [String] {
+    let currency = ActivityNumberFormat.currencyUnit(unit)
+    let values = [min, max]
+    let compact = values.contains {
+      ActivityNumberFormat.format($0, unit: currency, locale: locale).count > 8
+    }
+    return values.map {
+      ActivityNumberFormat.format(
+        $0, unit: currency, digits: compact && currency != nil ? 1 : nil, compact: compact,
+        locale: locale)
+    }
+  }
+
   static func roundGuess(_ value: Double) -> Double {
     FactChange.twoDigits(value)
   }
@@ -109,9 +122,9 @@ struct ActivityGuessScaleView: View {
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
         } minimumValueLabel: {
-          Text(format(scale.min)).typeStyle(.data)
+          Text(verbatim: scale.tickLabels(unit: unit)[0]).typeStyle(.data)
         } maximumValueLabel: {
-          Text(format(scale.max)).typeStyle(.data)
+          Text(verbatim: scale.tickLabels(unit: unit)[1]).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map {
@@ -133,9 +146,9 @@ struct ActivityGuessScaleView: View {
       .accessibilityHidden(true)
 
       HStack {
-        Text(format(scale.min))
+        Text(verbatim: scale.tickLabels(unit: unit)[0])
         Spacer()
-        Text(format(scale.max))
+        Text(verbatim: scale.tickLabels(unit: unit)[1])
       }
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)

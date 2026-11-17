@@ -42,6 +42,28 @@ data class GuessScale(
         return if (powers.size < 2) listOf(min, max) else powers.filterIndexed { index, _ -> index % every == 0 }
     }
 
+    fun tickLabels(format: (Double, Boolean) -> String): List<String> {
+        val values = ticks()
+        val compact = values.any { format(it, false).length > 8 }
+        return values.map { format(it, compact) }
+    }
+
+    fun tickPlacements(
+        width: Int,
+        widths: List<Int>,
+    ): List<Int?> {
+        val values = ticks()
+        val spots = MutableList<Int?>(values.size) { null }
+        val order = listOf(0, values.lastIndex).distinct() + (1 until values.lastIndex).toList()
+        for (index in order) {
+            val x = (shareOf(values[index]) * width - widths[index] / 2.0).toInt().coerceIn(0, maxOf(0, width - widths[index]))
+            if (spots.indices.all { other -> spots[other]?.let { x + widths[index] + 4 <= it || it + widths[other] + 4 <= x } ?: true }) {
+                spots[index] = x
+            }
+        }
+        return spots
+    }
+
     companion object {
         const val POSITIONS = 200
         private const val END_ROOM = 0.08

@@ -4,6 +4,38 @@ import XCTest
 @testable import Zoonk
 
 final class MapViewportTests: XCTestCase {
+  func testTranslatedCourseMatchesSourceOrTranslatedName() {
+    for references in ["Onde fica a América do Norte?", "Onde fica North America?"] {
+      XCTAssertTrue(
+        MapViewport.isNamed(
+          references: references, source: "North America", text: "América do Norte"))
+    }
+    XCTAssertFalse(
+      MapViewport.isNamed(
+        references: "Onde fica a Europa?", source: "North America", text: "América do Norte"))
+  }
+  private let named = MapViewport.Label(
+    center: CGPoint(x: 160, y: 120), size: CGSize(width: 80, height: 12), angle: 0, street: true,
+    priority: true, positions: [CGPoint(x: 160, y: 120)])
+  func testNamedStreetSurvivesItsOnlySpotBeingUnderAPin() {
+    XCTAssertNotNil(
+      MapViewport.placeLabels(
+        [named], pins: [named.center], frame: CGSize(width: 320, height: 240))[0])
+  }
+  func testTwoNamedLabelsOnOneSegmentStayReadable() {
+    let spots = MapViewport.placeLabels(
+      [named, named], pins: [], frame: CGSize(width: 320, height: 240))
+    XCTAssertTrue(spots.allSatisfy { $0 != nil })
+    XCTAssertNotEqual(spots[0], spots[1])
+  }
+  func testNamedRegionSurvivesAPinAtItsSpot() {
+    let region = MapViewport.Label(
+      center: named.center, size: named.size, angle: 0, street: false, priority: true)
+    XCTAssertNotNil(
+      MapViewport.placeLabels(
+        [region], pins: [named.center], frame: CGSize(width: 320, height: 240))[0])
+  }
+
   func testNamedStreetMovesOffItsPinBeforeAnOptionalLabel() {
     let labels = [
       MapViewport.Label(

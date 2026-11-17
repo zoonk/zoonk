@@ -148,6 +148,68 @@ private fun clearOfMapLabel(
         gap >= labelProjection(label, axis) + labelProjection(other, axis) + 3
     }
 
+private fun inMapFrame(
+    label: MapLabelSpot,
+    width: Double,
+    height: Double,
+): Boolean {
+    val rx = labelProjection(label, MapPoint(1.0, 0.0))
+    val ry = labelProjection(label, MapPoint(0.0, 1.0))
+    return label.center.x >= rx && label.center.x + rx <= width && label.center.y >= ry && label.center.y + ry <= height
+}
+
+private fun namedMapSpot(
+    label: MapLabelSpot,
+    candidates: List<MapLabelSpot>,
+    placed: List<MapLabelSpot>,
+    pins: List<MapPoint>,
+    width: Double,
+    height: Double,
+): MapLabelSpot {
+    val rx = labelProjection(label, MapPoint(1.0, 0.0))
+    val ry = labelProjection(label, MapPoint(0.0, 1.0))
+    val neighbors =
+        placed.flatMap { other ->
+            val dx = rx + labelProjection(other, MapPoint(1.0, 0.0)) + 3
+            val dy = ry + labelProjection(other, MapPoint(0.0, 1.0)) + 3
+            listOf(
+                MapPoint(other.center.x - dx, other.center.y),
+                MapPoint(other.center.x + dx, other.center.y),
+                MapPoint(
+                    other.center.x,
+                    other.center.y - dy,
+                ),
+                MapPoint(other.center.x, other.center.y + dy),
+            )
+        }
+    return (candidates.map { it.center } + label.center + neighbors)
+        .map { point ->
+            label.copy(
+                center =
+                    MapPoint(
+                        point.x.coerceIn(min(rx, width / 2), max(width - rx, width / 2)),
+                        point.y.coerceIn(
+                            min(ry, height / 2),
+                            max(height - ry, height / 2),
+                        ),
+                    ),
+            )
+        }.minWith(
+            compareBy<MapLabelSpot> { candidate -> placed.count { !clearOfMapLabel(candidate, it) } }
+                .thenBy { candidate -> pins.count { !clearOfMapPin(candidate, it) } }
+                .thenBy { hypot(it.center.x - label.center.x, it.center.y - label.center.y) },
+        )
+}
+
+internal fun isMapLabelNamed(
+    references: String,
+    source: String,
+    text: String,
+): Boolean {
+    val named = references.lowercase(java.util.Locale.ROOT)
+    return listOf(source, text).any { it.isNotEmpty() && named.contains(it.lowercase(java.util.Locale.ROOT)) }
+}
+
 internal fun placeMapLabels(
     labels: List<MapLabelSpot>,
     pins: List<MapPoint>,
@@ -162,12 +224,10 @@ internal fun placeMapLabels(
         val candidates = points.sortedBy { kotlin.math.hypot(it.x - label.center.x, it.y - label.center.y) }.map { label.copy(center = it) }
         val spot =
             candidates.firstOrNull { candidate ->
-                val rx = labelProjection(candidate, MapPoint(1.0, 0.0))
-                val ry = labelProjection(candidate, MapPoint(0.0, 1.0))
-                candidate.center.x >= rx && candidate.center.x + rx <= width &&
-                    candidate.center.y >= ry && candidate.center.y + ry <= height &&
-                    pins.all { clearOfMapPin(candidate, it) } && placed.all { clearOfMapLabel(candidate, it) }
-            }
+                inMapFrame(candidate, width, height) && pins.all { clearOfMapPin(candidate, it) } &&
+                    placed.all { clearOfMapLabel(candidate, it) }
+            } ?: if (label.priority) namedMapSpot(label, candidates, placed, pins, width, height) else null
+
         if (spot != null) {
             placed.add(spot)
             spots[index] = spot.center

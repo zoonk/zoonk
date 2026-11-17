@@ -5,6 +5,29 @@ import org.junit.Test
 
 /** Main's `map-viewport.test.ts`, with the values its `fitViewport` and `spreadPins` return. */
 class MapViewportTest {
+    @Test fun translatedCourseMatchesEitherTheSourceOrTranslatedName() {
+        for (references in listOf("Onde fica a América do Norte?", "Onde fica North America?")) {
+            org.junit.Assert.assertTrue(isMapLabelNamed(references, "North America", "América do Norte"))
+        }
+        org.junit.Assert.assertFalse(isMapLabelNamed("Onde fica a Europa?", "North America", "América do Norte"))
+    }
+
+    private val named = MapLabelSpot(MapPoint(160.0, 120.0), 80.0, 12.0, 0.0, true, true, listOf(MapPoint(160.0, 120.0)))
+
+    @Test fun namedStreetSurvivesItsOnlySpotBeingUnderAPin() {
+        org.junit.Assert.assertNotNull(placeMapLabels(listOf(named), listOf(named.center), 320.0, 240.0)[0])
+    }
+
+    @Test fun twoNamedLabelsOnOneSegmentStayReadable() {
+        val spots = placeMapLabels(listOf(named, named), emptyList(), 320.0, 240.0)
+        org.junit.Assert.assertTrue(spots.all { it != null })
+        org.junit.Assert.assertNotEquals(spots[0], spots[1])
+    }
+
+    @Test fun namedRegionSurvivesAPinAtItsSpot() {
+        org.junit.Assert.assertNotNull(placeMapLabels(listOf(named.copy(street = false)), listOf(named.center), 320.0, 240.0)[0])
+    }
+
     @Test
     fun namedStreetMovesOffItsPinBeforeAnOptionalLabel() {
         val labels =

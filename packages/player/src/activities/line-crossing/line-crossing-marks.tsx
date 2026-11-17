@@ -1,9 +1,13 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
+import { useEffectEvent, useId, useLayoutEffect, useRef, useState } from "react";
 import { ActivityPlotAxisX, ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
-import { DRAWING_LABEL_HALO, estimatedLabelWidth } from "../_utils/drawing-label";
+import {
+  DRAWING_LABEL_HALO,
+  estimatedLabelWidth,
+  measureDrawingLabel,
+} from "../_utils/drawing-label";
 import {
   ARROW_HEAD,
   ARROW_STROKE,
@@ -56,17 +60,33 @@ export function LineLabel({
 }) {
   const ref = useRef<SVGTextElement>(null);
   const measured = useEffectEvent(onMeasure);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   useLayoutEffect(() => {
     const node = ref.current;
 
-    if (node) {
-      measured({
-        height: Number(getComputedStyle(node).fontSize.replace("px", "")),
-        width: node.getBBox().width,
-      });
+    if (!node) {
+      return;
     }
-  }, []);
+
+    const measure = () => {
+      const size = measureDrawingLabel({ element: node });
+      const next = { x: size.offsetX - size.width / 2, y: size.offsetY };
+      setOffset((known) => (known.x === next.x && known.y === next.y ? known : next));
+      measured({ height: size.height, width: size.width });
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    document.fonts.addEventListener("loadingdone", measure);
+
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", measure);
+    };
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Same-size translations can change ink bearings without resizing the observed box.
+  }, [label]);
 
   return (
     <text
@@ -75,8 +95,8 @@ export function LineLabel({
       dominantBaseline="central"
       ref={ref}
       visibility={box ? undefined : "hidden"}
-      x={box?.left ?? 0}
-      y={box ? (box.top + box.bottom) / 2 : 0}
+      x={box ? box.left - offset.x : 0}
+      y={box ? (box.top + box.bottom) / 2 - offset.y : 0}
     >
       {label}
     </text>

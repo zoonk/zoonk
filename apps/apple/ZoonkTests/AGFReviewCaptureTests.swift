@@ -19,28 +19,56 @@ final class AGFReviewCaptureTests: XCTestCase {
     defer { window.rootViewController = previous }
     let folder = URL(fileURLWithPath: output, isDirectory: true)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-    for (name, fixture, answer) in [
-      ("guess-one", "guessReveal", 1.0), ("guess-off", "guessReveal", 10.0),
-      ("guess-money", "guessReveal.money", 900.0), ("map", "mapExplorer", 0.0),
-    ] {
+    let scenarios: [(String, String, Double, Bool, Bool)] =
+      environment["AGF_CAPTURE_SET"] == "r4"
+      ? [
+        ("map-light", "mapExplorer", 0, false, false),
+        ("map-dark", "mapExplorer", 0, true, false),
+        ("line-crossing", "lineCrossing", 0, false, false),
+        ("break-even", "lineCrossing.breakEven", 0, false, false),
+        ("line-crossing-narrow-large", "lineCrossing", 0, false, true),
+        ("break-even-narrow-large", "lineCrossing.breakEven", 0, false, true),
+        ("guess-money", "guessReveal.money", 900, false, false),
+        ("guess-money-millions", "guessReveal.moneyMillions", 900_000, false, false),
+      ]
+      : [
+        ("guess-one", "guessReveal", 1, false, false),
+        ("guess-off", "guessReveal", 10, false, false),
+        ("guess-money", "guessReveal.money", 900, false, false),
+        ("map", "mapExplorer", 0, false, false),
+      ]
+    for (name, fixture, answer, dark, large) in scenarios {
       let data = try XCTUnwrap(fixtures[fixture])
       let content = try XCTUnwrap(data["content"]).decode(as: ActivityStepContent.self)
       let map = try? data["baseMap"]?.decode(as: ActivityBaseMap.self)
       let isMap = fixture == "mapExplorer"
+      let isLine = fixture.hasPrefix("lineCrossing")
       let context = ActivityCanvasContext(
         template: content.template, payload: content.payload, check: content.check,
-        phase: isMap ? .answering : .checked(isCorrect: false),
-        answer: isMap ? nil : .numeric(answer), setAnswer: { _ in }, baseMap: map)
-      let renderer = isMap ? ActivityRenderer.mapExplorer : ActivityRenderer.guessReveal
+        phase: isMap || isLine ? .answering : .checked(isCorrect: false),
+        answer: isMap || isLine ? nil : .numeric(answer), setAnswer: { _ in }, baseMap: map)
+      let renderer: ActivityRenderer
+      if isMap {
+        renderer = .mapExplorer
+      } else if isLine {
+        renderer = try XCTUnwrap(ChartsActivities.renderers.first { $0.template == "lineCrossing" })
+      } else {
+        renderer = .guessReveal
+      }
       let host = UIHostingController(
         rootView: NavigationStack {
           ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-              Text(verbatim: content.prompt).typeStyle(.body.weight(.semibold))
+              if !large { Text(verbatim: content.prompt).typeStyle(.body.weight(.semibold)) }
               renderer.canvas(context)
             }.padding()
           }
-        }.environment(ActivityWork()).zoonkStyles())
+        }.frame(maxWidth: large ? 320 : .infinity)
+          .environment(\.dynamicTypeSize, large ? .accessibility2 : .large)
+          .environment(\.colorScheme, dark ? .dark : .light)
+          .environment(ActivityWork()).zoonkStyles())
+      host.overrideUserInterfaceStyle = dark ? .dark : .light
+      host.traitOverrides.preferredContentSizeCategory = large ? .accessibilityExtraLarge : .large
       window.rootViewController = host
       window.makeKeyAndVisible()
       try await Task.sleep(for: .milliseconds(600))
