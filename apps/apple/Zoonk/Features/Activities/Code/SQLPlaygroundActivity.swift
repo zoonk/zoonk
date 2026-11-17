@@ -456,6 +456,12 @@ private struct SQLTableViewer: View {
         .frame(minHeight: 44)
         .contentShape(.rect)
       }
+      .accessibilityLabel(
+        Text(verbatim: table.name) + Text(verbatim: ", ")
+          + Text(
+            "\(table.rows.count) rows", tableName: "ActivitiesCode",
+            comment: "How many rows a SQL table has")
+      )
       .tint(.mutedForeground)
       .padding(.trailing, 14)
       if isExpanded {

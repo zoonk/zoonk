@@ -446,7 +446,8 @@ private struct SidewaysBars: View {
     let labels = scale.ticks.map { tick in
       let text = format.tick(tick)
       let labelWidth = format.width(LessonChartFormat.label, text)
-      let left = ChartsMath.clamp(x(tick) - labelWidth / 2, 0, max(width - labelWidth, 0))
+      let anchor = ChartsAxis.anchor(at: x(tick), plotWidth: width, labelWidth: labelWidth)
+      let left = x(tick) - labelWidth * anchor.x
 
       return (text: text, left: left, right: left + labelWidth)
     }

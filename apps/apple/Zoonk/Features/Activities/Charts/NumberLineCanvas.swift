@@ -134,7 +134,7 @@ struct NumberLineCanvas: View {
     .chartXScale(domain: fields.min...fields.max)
     .chartYScale(domain: 0...1)
     .chartYAxis(.hidden)
-    .chartsXAxis {
+    .chartXAxis {
       AxisMarks(preset: .aligned, position: .bottom, values: fields.ticks.map(\.value)) { value in
         AxisTick(
           length: value.as(Double.self) == 0 ? 12 : 6,
@@ -145,7 +145,7 @@ struct NumberLineCanvas: View {
         {
           let label = ActivityNumberFormat.format(tick)
 
-          ChartsAxis.bottomLabel(value: tick, spacing: 16) {
+          AxisValueLabel(centered: false, verticalSpacing: 16) {
             Text(verbatim: label)
               .typeWeight(tick == 0 ? .semibold : .regular)
           }

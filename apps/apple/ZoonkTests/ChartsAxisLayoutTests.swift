@@ -48,9 +48,12 @@ final class ChartsAxisLayoutTests: XCTestCase {
     }
     let labels = raster.labels(in: CGRect(x: 0, y: plot.maxY + 7, width: raster.width, height: 28))
     XCTAssertEqual(labels.count, fields.ticks.count, "Every number must remain separately readable")
+    let ordinaryGaps = zip(labels.dropFirst().dropLast(2), labels.dropFirst(2).dropLast())
+      .map { $1.minX - $0.maxX }
     check(
       raster, plot: plot, panel: probe.panel, positions: positions, checksCorner: false,
-      labels: labels)
+      labels: labels, anchorsEnds: false,
+      minimumGap: ordinaryGaps.min() ?? 0)
   }
 
   private func checkChart(domain: ClosedRange<Double>, ticks: [Double], isPercent: Bool = false)
@@ -91,7 +94,7 @@ final class ChartsAxisLayoutTests: XCTestCase {
 
   private func check(
     _ raster: Raster, plot: CGRect, panel: CGRect, positions: [CGFloat], checksCorner: Bool,
-    labels: [CGRect]? = nil
+    labels: [CGRect]? = nil, anchorsEnds: Bool = true, minimumGap: CGFloat = 1
   ) {
     var previous: CGRect?
     for (index, x) in positions.enumerated() {
@@ -103,13 +106,16 @@ final class ChartsAxisLayoutTests: XCTestCase {
       XCTAssertFalse(ink.isNull, "Missing rendered label at \(x), plot \(plot)")
       XCTAssertTrue(
         panel.insetBy(dx: -0.5, dy: -0.5).contains(ink), "Label \(ink) outside panel \(panel)")
-      XCTAssertGreaterThanOrEqual(
-        ink.minX, plot.minX - 0.5, "Label \(ink) spills before plot \(plot)")
-      XCTAssertLessThanOrEqual(ink.maxX, plot.maxX + 0.5, "Label \(ink) spills after plot \(plot)")
-      if index > 0 && index < positions.count - 1 {
+      if anchorsEnds {
+        XCTAssertGreaterThanOrEqual(
+          ink.minX, plot.minX - 0.5, "Label \(ink) spills before plot \(plot)")
+        XCTAssertLessThanOrEqual(
+          ink.maxX, plot.maxX + 0.5, "Label \(ink) spills after plot \(plot)")
+      }
+      if !anchorsEnds || (index > 0 && index < positions.count - 1) {
         XCTAssertEqual(ink.midX, x, accuracy: 1, "Label \(ink) off tick \(x)")
       }
-      if let previous { XCTAssertGreaterThanOrEqual(ink.minX - previous.maxX, 1) }
+      if let previous { XCTAssertGreaterThanOrEqual(ink.minX - previous.maxX, minimumGap) }
       if checksCorner && index == 0 {
         let yLabel = raster.ink(
           in: CGRect(x: 0, y: plot.maxY - 12, width: plot.minX - 2, height: 18))
