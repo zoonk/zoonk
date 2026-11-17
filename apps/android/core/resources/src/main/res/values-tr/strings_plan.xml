@@ -336,7 +336,6 @@
   "plan_next_review_forgetting": "c0da8853567254bcb6a09bac1056b090585b676dd7b974c0731a018f0629c421",
   "plan_next_topics_count_most": "49240227cebaf9c6870ee7e57aa678cd14bd8ee0a6f34a998761efdf61d5cd6b",
   "plan_next_topics_in_reviews": "0285a2719a92ed51ddaa4be601a645dd87db6fe9bda00339a68336ae949cadb7",
-  "plan_no_date": "70aec569587e16ea3c7e8a92644db6f392d1aa77d7682bf2fe29c69338cc14bd",
   "plan_no_deadline_note": "8759ec062355f45690d995f6a0437e2fb5f592e6eb1540feffd7403492518e4c",
   "plan_no_goal_description": "ce4e0b0aa7dc0b8e2db0c72e19f52c0cfca73770c251b59d7cd4d9b00b10954c",
   "plan_no_lessons_studied_yet": "391f36cc4e6350b70d20a983b5170a2c304faf0fe0941cc51aa212855a25c3bb",
@@ -725,7 +724,6 @@
     <string name="plan_practice">Pratik yap</string>
     <string name="plan_everything">Hepsi</string>
     <string name="plan_to_be_confirmed">Henüz kesinleşmedi</string>
-    <string name="plan_no_date">Tarih yok</string>
     <string name="plan_time_weekends">%1$s · hafta sonları %2$s</string>
     <string name="plan_every_day">Her gün</string>
     <string name="plan_day_range">%1$s – %2$s</string>

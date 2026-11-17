@@ -336,7 +336,6 @@
   "plan_next_review_forgetting": "716a947a53f9e8c7cb16375806eed983d85d1da8f193988323dd905968920454",
   "plan_next_topics_count_most": "528bda95c682bc9319b163848d5c3fc13bf615e1a7d97f59ab39d0112570a26e",
   "plan_next_topics_in_reviews": "cd54cfee5502ede67bbeedbf6055bf18fd358ea093183e7d1e259e7e992a6b89",
-  "plan_no_date": "d80087b9e8ede4c9f36d71054fa8d1529c357b627a21943ec243a4b4177ffd29",
   "plan_no_deadline_note": "a4c07fbf02c760e9e28c8cc77c892aa10e8e8ea94918731d74fc6785be07d6ff",
   "plan_no_goal_description": "6a9d227c639a8f9eefa25066e39163f0c121bd389d7ade58fd761fbe173f13c5",
   "plan_no_lessons_studied_yet": "241bddc9961ba93a7b34eea8e601a982a28d658c595fedcd19fdda3219044f8d",
@@ -711,7 +710,6 @@
     <string name="plan_practice">演習</string>
     <string name="plan_everything">すべて</string>
     <string name="plan_to_be_confirmed">未確定</string>
-    <string name="plan_no_date">日付なし</string>
     <string name="plan_time_weekends">%1$s · 週末は%2$s</string>
     <string name="plan_every_day">毎日</string>
     <string name="plan_day_range">%1$s〜%2$s</string>

@@ -20,7 +20,6 @@
   "search_group_goals": "99e08e61a0d0bc7f83b8129f036f2cb1d470f25545ba383705fef7dd97a74ca8",
   "search_group_help": "23c0a3f71cfffb730fbc5a67ade140242e87805766dc23990dbee48a6b48fa23",
   "search_group_mocks": "e86f8026f5e720fc4d803eef0f0dbfbc779da950fa4b5c10155ac8d24cc3ae2b",
-  "search_group_new_goal": "913f9636ffbe0be8c1ecc3285da66a0e0eecccc0d9f4c9604da9f797a5c51b7c",
   "search_group_plan": "2a56e71381d35ae62ed63346c4d0e898722d0d816aad430c5bea93b668b92f21",
   "search_help": "e3dabf1ad85703c52e2fb58f32d43ab60c8e00db5c5c2fea2561e01640558380",
   "search_home": "55399e43f18e43cb89826a640b04f8e46d09fffec3710cc1a7b918cc88d748c9",
@@ -65,7 +64,6 @@
     <string name="search_group_account">내 계정</string>
     <string name="search_group_help">도움말</string>
     <string name="search_group_ask">질문하기</string>
-    <string name="search_group_new_goal">새 목표</string>
     <string name="search_continue">오늘의 학습 이어가기</string>
     <string name="search_take_mock">모의고사 보기</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->

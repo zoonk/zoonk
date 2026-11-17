@@ -336,7 +336,6 @@
   "plan_next_review_forgetting": "472b9e9c22bdceff7d0232a47a4cf408054a62a6f8f39975b0cb28de948ac9f0",
   "plan_next_topics_count_most": "993fd38abda727307a0b3c8a90fe28a6befe8255a746f27230b153aa9289d39a",
   "plan_next_topics_in_reviews": "115ff8b458bc2ccc448d23d5f83c740c558f56ac75c5caeee33252d8f57a80ea",
-  "plan_no_date": "a64c4305505c6972c6ad7a5d003ff16dc6df63912f445a8495b19b934c110e81",
   "plan_no_deadline_note": "a0b9359c6594862ba4f628e306e719517acdf1ea5f1c760fd3090692236253b1",
   "plan_no_goal_description": "a03213fffbcb57ba977c3c255d2e8343616e70ef7a0b90cdca7d43173a1f5a36",
   "plan_no_lessons_studied_yet": "c52eefcb33545749dbc7f50d4cfaef75abf7dfc17e49ea40139593c9dba02dc0",
@@ -711,7 +710,6 @@
     <string name="plan_practice">연습하기</string>
     <string name="plan_everything">모두</string>
     <string name="plan_to_be_confirmed">추후 확정</string>
-    <string name="plan_no_date">날짜 없음</string>
     <string name="plan_time_weekends">%1$s · 주말 %2$s</string>
     <string name="plan_every_day">매일</string>
     <string name="plan_day_range">%1$s ~ %2$s</string>

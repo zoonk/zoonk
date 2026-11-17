@@ -188,7 +188,6 @@
     <string name="plan_practice">Practice</string>
     <string name="plan_everything">Everything</string>
     <string name="plan_to_be_confirmed">To be confirmed</string>
-    <string name="plan_no_date">No date</string>
     <string name="plan_time_weekends">%1$s · %2$s weekends</string>
     <string name="plan_every_day">Every day</string>
     <string name="plan_day_range">%1$s – %2$s</string>

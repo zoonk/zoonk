@@ -336,7 +336,6 @@
   "plan_next_review_forgetting": "3d54e1f7e2748f3b9fb23834b1a6e3ab7f756e33cb9ae52fbb29124052385ec3",
   "plan_next_topics_count_most": "4275360cdbbab7f6ca70b344f193406ee26545712098f8b598244dbf5ade758f",
   "plan_next_topics_in_reviews": "bf80e8760c15ebe6025f692e0f136ef4acf023d2f1571f4ab9ed7eb80a49f789",
-  "plan_no_date": "aaa70661b2d901147ed8a6e0103427c9d17edf1a62fd4690cecbf11b7056d650",
   "plan_no_deadline_note": "0ddf291db0edb4f757dd60bcd1cd0428689d8c7f1dc9ba1bcbd7ededd7230840",
   "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
   "plan_no_lessons_studied_yet": "c597f000a0c37038c51970286f4c829d6494ad0bc794a3a05da48d13d049ef06",
@@ -725,7 +724,6 @@
     <string name="plan_practice">Üben</string>
     <string name="plan_everything">Alles</string>
     <string name="plan_to_be_confirmed">Noch nicht bestätigt</string>
-    <string name="plan_no_date">Kein Datum</string>
     <string name="plan_time_weekends">%1$s · %2$s am Wochenende</string>
     <string name="plan_every_day">Jeden Tag</string>
     <string name="plan_day_range">%1$s – %2$s</string>
