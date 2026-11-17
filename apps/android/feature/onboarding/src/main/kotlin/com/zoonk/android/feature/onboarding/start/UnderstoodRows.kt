@@ -517,7 +517,7 @@ class UnderstoodRows(
 
     private companion object {
         const val SITTING_CHOICES = 3
-        const val NO_BREAK_SPACE = ' '
+        const val NO_BREAK_SPACE = '\u00a0'
     }
 }
 
