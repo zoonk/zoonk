@@ -212,6 +212,8 @@ extension AppNavigationTests {
       try captureCallsRoundTwo("level-chip-\(size)")
       XCTAssertTrue(spoken(in: window).contains("Yellow belt, Level 2"), "\(spoken(in: window))")
       XCTAssertFalse(spoken(in: window).contains("Statistics"), "\(spoken(in: window))")
+      XCTAssertFalse(
+        spokenValues(in: window).contains { $0.contains("Level") }, "\(spokenValues(in: window))")
     }
     try activate("Yellow belt, Level 2", in: window)
     XCTAssertEqual(router.selectedTab, .stats(.level))

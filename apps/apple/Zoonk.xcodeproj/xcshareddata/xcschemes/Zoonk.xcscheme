@@ -29,15 +29,8 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       language = "en"
       region = "US"
-      shouldUseLaunchSchemeArgsEnv = "NO"
+      shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <CommandLineArguments>
-         <CommandLineArgument argument = "-ZOONK_LAYOUT_CAPTURE" isEnabled = "YES"/>
-         <CommandLineArgument argument = "1" isEnabled = "YES"/>
-      </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable key = "ZOONK_CALLS_CAPTURE" value = "/Users/will/zoonk-review/ux-clarity-audit/build/SWEEP/fix/CALLS/before-r4/apple" isEnabled = "YES"/>
-      </EnvironmentVariables>
       <Testables>
          <TestableReference
             skipped = "NO"

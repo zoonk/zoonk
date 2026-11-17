@@ -136,8 +136,8 @@ class WebPlusCancellationTest {
             .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         val actual = layouts.single().layoutInput.style
         assertEquals(
-            listOf(expectedColor, expectedStyle.fontSize, expectedStyle.lineHeight),
-            listOf(actual.color, actual.fontSize, actual.lineHeight),
+            listOf(expectedColor, expectedStyle.fontSize, expectedStyle.lineHeight, expectedStyle.fontWeight, expectedStyle.letterSpacing),
+            listOf(actual.color, actual.fontSize, actual.lineHeight, actual.fontWeight, actual.letterSpacing),
         )
     }
 

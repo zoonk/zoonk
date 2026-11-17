@@ -699,7 +699,7 @@
       }
     },
     "%@, Level %@" : {
-      "comment" : "Accessible value of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation.",
+      "comment" : "Accessible label of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation.",
       "localizations" : {
         "en" : {
           "stringUnit" : {

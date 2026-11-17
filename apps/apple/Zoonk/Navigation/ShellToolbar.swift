@@ -140,13 +140,12 @@ private struct LevelButton: View {
         }
       }
     }
-    .accessibilityLabel(Text("Level", tableName: "Progress"))
-    .accessibilityValue(
+    .accessibilityLabel(
       Text(
         "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted())",
         tableName: "Progress",
         comment:
-          "Accessible value of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation."
+          "Accessible label of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation."
       ))
   }
 }

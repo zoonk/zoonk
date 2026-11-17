@@ -38,6 +38,11 @@ extension XCTestCase {
   }
 
   @MainActor
+  func spokenValues(in element: Any) -> [String] {
+    accessibilityElements(in: element).compactMap(\.accessibilityValue).filter { !$0.isEmpty }
+  }
+
+  @MainActor
   func spokenHints(in element: Any) -> [String] {
     accessibilityElements(in: element).compactMap(\.accessibilityHint).filter { !$0.isEmpty }
   }
