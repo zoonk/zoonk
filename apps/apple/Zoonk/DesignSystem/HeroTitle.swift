@@ -61,6 +61,7 @@ private struct BarTitleAfterHero: ViewModifier {
           ZoonkList {
             Section {
               PageHeader(Text(title), supporting: head.line.map { Text($0) })
+                .environment(\.isHeroTitleShown, .constant(true))
             }
           }
           .scrollDisabled(true)

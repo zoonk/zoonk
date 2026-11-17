@@ -1,5 +1,6 @@
 import StoreKitTest
 import UIKit
+import Vision
 import XCTest
 
 private enum UITestScenario {
@@ -50,6 +51,50 @@ final class ZoonkUITests: XCTestCase {
     storeKitSession?.resetToDefaultState()
     storeKitSession = nil
     super.tearDown()
+  }
+
+  @MainActor
+  func testCertificatesTitleStaysOutOfBarAfterLoadingEmptyList() throws {
+    try checkCertificatesTitle(json: "[]", loadedText: "No certificates yet")
+  }
+
+  @MainActor
+  func testCertificatesTitleStaysOutOfBarAfterLoadingCertificate() throws {
+    try checkCertificatesTitle(
+      json: """
+        [{"code":"APCERT000001","kind":"course","recipientName":"UI Test User",
+          "completedOn":"2026-11-03","title":"Quantum physics from scratch",
+          "topics":[],"canDo":[],"locked":true}]
+        """, loadedText: "Quantum physics from scratch")
+  }
+
+  @MainActor
+  private func checkCertificatesTitle(json: String, loadedText: String) throws {
+    continueAfterFailure = false
+    let app = makeApp(for: .freeSubscription)
+    app.launchEnvironment["ZOONK_UI_TEST_CERTIFICATES"] = json
+    addTeardownBlock { app.terminate() }
+    launch(app)
+    openAccount(in: app)
+    let certificates = app.buttons["Certificates"].firstMatch
+    XCTAssertTrue(certificates.waitForExistence(timeout: 5))
+    certificates.tap()
+    XCTAssertTrue(app.staticTexts[loadedText].firstMatch.waitForExistence(timeout: 5))
+    let header = app.staticTexts["Certificates"].firstMatch
+    XCTAssertTrue(header.exists)
+    let screenshot = app.screenshot()
+    let evidence = XCTAttachment(screenshot: screenshot)
+    evidence.lifetime = .keepAlways
+    add(evidence)
+    let barImage = try XCTUnwrap(screenshot.image.cgImage)
+    let recognition = VNRecognizeTextRequest()
+    recognition.recognitionLevel = .accurate
+    recognition.recognitionLanguages = ["en-US"]
+    try VNImageRequestHandler(cgImage: barImage).perform([recognition])
+    let barWords = recognition.results?.compactMap { $0.topCandidates(1).first?.string } ?? []
+    XCTAssertEqual(
+      barWords.filter { $0 == "Certificates" }.count, 1,
+      "The visible page header must be the only Certificates title after loading: \(barWords)")
   }
 
   @MainActor
