@@ -238,15 +238,19 @@ private struct MindMapCreateSection: View {
     let ready = notMade.filter(\.canMakeNow)
     let others = notMade.filter { !$0.canMakeNow }
 
-    Section {
-      ForEach(ready) { map in
-        MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+    if !ready.isEmpty {
+      Section {
+        ForEach(ready) { map in
+          MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+        }
       }
+    }
 
-      // A stop the page holds takes "Create all" too: each map it would start is refused.
-      let offersAll = offer.startable > 1 && canStart
+    // A stop the page holds takes "Create all" too: each map it would start is refused.
+    let offersAll = offer.startable > 1 && canStart
 
-      if offersAll || line != nil || showedStop {
+    if offersAll || line != nil || showedStop {
+      Section {
         HeldSlot(gated: isStopped) {
           VStack(alignment: .leading, spacing: 12) {
             if offersAll {
@@ -275,8 +279,10 @@ private struct MindMapCreateSection: View {
         .listRowSeparator(.hidden)
         .announcesStatus(note(line))
       }
+    }
 
-      if !others.isEmpty {
+    if !others.isEmpty {
+      Section {
         FoldRow(isUnfolded: $showsChapters) {
           // Centered, not on one baseline: a small count's capitals sit low on the label's.
           HStack(spacing: 8) {
