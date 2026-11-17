@@ -91,7 +91,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
         if isStacked {
           column
         } else {
-          HStack(spacing: 12) {
+          HStack(alignment: alignment, spacing: 12) {
             column
               .frame(maxWidth: .infinity, alignment: .leading)
 

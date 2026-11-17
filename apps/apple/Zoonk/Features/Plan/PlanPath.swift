@@ -8,7 +8,7 @@ struct PlanPathSection: View {
   var focusTest: PlanFocusTestRow?
 
   var body: some View {
-    Section {
+    PageSection {
       focusTest
 
       if context.goal.kind == .language,
@@ -503,22 +503,26 @@ struct PlanSyllabusSection: View {
     // since neither is a subject with a preparation. Each is its own group: a row with a mark and a
     // sentence don't share one label edge.
     if let focusTest {
-      Section {
+      PageSection {
         focusTest
+      } header: {
+        EmptyView()
       }
     }
 
     if choices.contains(where: { $0.followingLine != nil }) {
-      Section {
+      PageSection {
         ForEach(choices) { choice in
           if let line = choice.followingLine {
             PlanChoiceLine(line: line) { change(choice.group) }
           }
         }
+      } header: {
+        EmptyView()
       }
     }
 
-    Section {
+    PageSection {
       SharedExamsNote(exams: syllabus.sharedExams)
 
       ForEach(syllabus.subjects) { subject in

@@ -55,28 +55,40 @@ struct PlanRoadmapSection: View {
     let phases = context.plan.roadPhases
 
     if !phases.isEmpty {
-      Section {
-        if listsPhases {
+      if listsPhases {
+        Section {
           RoadmapCompact(context: context, opens: false, hasLine: false)
-
           ForEach(phases) { phase in
             RoadmapPhaseRow(phase: phase, end: context.plan.phaseEnd(phase))
           }
-        } else if structure != nil {
-          Button {
-            context.show(.path)
-          } label: {
-            RoadmapCompact(context: context, opens: true)
-          }
-          .foregroundStyle(.primary)
-        } else {
-          RoadmapCompact(context: context, opens: false)
-        }
-      } header: {
-        if listsPhases {
+        } header: {
           SectionTitle(
             Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
         }
+      } else {
+        Section {
+          PlanRoadmapContent(context: context, structure: structure)
+        }
+      }
+    }
+  }
+}
+
+struct PlanRoadmapContent: View {
+  let context: PlanContext
+  let structure: GoalSyllabus?
+
+  var body: some View {
+    if !context.plan.roadPhases.isEmpty {
+      if structure != nil {
+        Button {
+          context.show(.path)
+        } label: {
+          RoadmapCompact(context: context, opens: true)
+        }
+        .foregroundStyle(.primary)
+      } else {
+        RoadmapCompact(context: context, opens: false)
       }
     }
   }
@@ -141,7 +153,7 @@ private struct RoadmapCompact: View {
       if let currentIndex {
         let phase = phases[currentIndex]
 
-        RowLayout {
+        RowLayout(alignment: .firstTextBaseline) {
         } words: {
           position(phase: phase, number: currentIndex + 1, count: phases.count)
         } value: {
@@ -180,7 +192,7 @@ private struct RoadmapCompact: View {
     .typeWeight(.medium, legibility: legibilityWeight)
     .foregroundStyle(Color(.foreground))
 
-    guard phase.hasOwnName else {
+    guard phase.hasOwnName || phase.kind != .learn else {
       return place
     }
 
@@ -311,7 +323,7 @@ struct PlanNumbersSection: View {
   var body: some View {
     let standing = standingNumber
 
-    Section {
+    PageSection {
       StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
         if let standing {
           tile(standing) { context.show(.standing) }
@@ -322,6 +334,8 @@ struct PlanNumbersSection: View {
         }
       }
       .buttonStyle(.plain)
+    } header: {
+      EmptyView()
     }
   }
 
@@ -633,7 +647,7 @@ struct PlanSettingsSection: View {
   var body: some View {
     let schedule = context.plan.schedule
 
-    Section {
+    PageSection {
       setting(
         label: context.goal.kind == .exam
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")

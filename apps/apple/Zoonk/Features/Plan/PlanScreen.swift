@@ -170,6 +170,7 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
@@ -199,53 +200,63 @@ private struct PlanContent: View {
       item: context.suggestions(in: store).shown, plan: plan,
       inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
 
-    PaneSplit(primaryShare: 0.55) {
-      ZoonkList {
-        header(context)
-        rebuildNotice
-        PlanRoadmapSection(context: context, structure: structure)
-        structureSections(context: context, structure: structure, namesChoices: false)
-      }
-    } secondary: {
-      ZoonkList {
-        PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
-
-        if structure != nil {
-          NextOnPathSection(context: context)
-        }
-
-        PlanMoreSection(goal: goal)
-        PlanSettingsSection(context: context)
-      }
-    } single: {
-      ZoonkList {
-        header(context)
-        rebuildNotice
-        PlanRoadmapSection(context: context, structure: structure)
-        PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, answer: $slotAnswer)
-        structureSections(context: context, structure: structure, namesChoices: true)
-
-        // What's next shows only where no path does: a path's next row is already its highlighted
-        // one. Main's tablet column puts it beside the other places.
-        if horizontalSizeClass == .regular {
+    GeometryReader { proxy in
+      if PaneSpace(proxy).pages(primaryShare: 0.5, stacked: isStacked) != nil {
+        ZoonkList {
+          rebuildNotice
           BlockGridSection {
+            PageSection {
+              PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
+                PlanHeaderActions(context: context)
+              }
+              PlanRoadmapContent(context: context, structure: structure)
+            } header: {
+              EmptyView()
+            }
+            PlanNumbersSection(context: context, syllabus: syllabus)
+          }
+          BlockGridSection {
+            VStack(alignment: .leading, spacing: 24) {
+              structureSections(context: context, structure: structure, namesChoices: false)
+            }
+            PlanSettingsSection(context: context)
+          }
+          BlockGridSection {
+            PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
+            if structure != nil { NextOnPathSection(context: context) }
+            PlanMoreSection(goal: goal)
+          }
+        }
+        .sheetColumn()
+        .paneSplit(true)
+      } else {
+        ZoonkList {
+          header(context, structure: structure)
+          rebuildNotice
+          PlanNumbersSection(context: context, syllabus: syllabus)
+          PlanSuggestionSection(context: context, answer: $slotAnswer)
+          structureSections(context: context, structure: structure, namesChoices: true)
+
+          // What's next shows only where no path does: a path's next row is already its highlighted
+          // one. Main's tablet column puts it beside the other places.
+          if horizontalSizeClass == .regular {
+            BlockGridSection {
+              if structure != nil {
+                NextOnPathSection(context: context)
+              }
+
+              PlanMoreSection(goal: goal)
+            }
+          } else {
             if structure != nil {
               NextOnPathSection(context: context)
             }
 
             PlanMoreSection(goal: goal)
           }
-        } else {
-          if structure != nil {
-            NextOnPathSection(context: context)
-          }
 
-          PlanMoreSection(goal: goal)
+          PlanSettingsSection(context: context)
         }
-
-        PlanSettingsSection(context: context)
       }
     }
     .resumeGoalBar(isShown: goal.status == .paused)
@@ -313,11 +324,13 @@ private struct PlanContent: View {
     }
   }
 
-  private func header(_ context: PlanContext) -> some View {
+  private func header(_ context: PlanContext, structure: GoalSyllabus?) -> some View {
     Section {
       PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
         PlanHeaderActions(context: context)
       }
+      PlanRoadmapContent(context: context, structure: structure)
+        .listRowSeparator(.hidden)
     }
   }
 

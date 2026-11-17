@@ -170,7 +170,7 @@ struct PlanSuggestionSection: View {
     let paged = items.indices.contains(index) ? items[index] : nil
 
     if let item = applied == nil ? paged : answer?.item {
-      Section {
+      PageSection {
         // One row whichever shows, so a pointer resting on it stays on it.
         VStack(alignment: .leading, spacing: 8) {
           if let answer, let applied {
