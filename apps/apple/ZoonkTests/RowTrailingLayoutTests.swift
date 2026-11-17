@@ -132,6 +132,18 @@ final class RowTrailingLayoutTests: XCTestCase {
       try edge("row", probes: probes, window: window, direction: .rightToLeft), accuracy: 0.5)
   }
 
+  func testAControlDoesNotMoveTheChevronValueColumn() async throws {
+    let probes = Probes()
+    let window = try show(ControlFixture(probes: probes, showsToggle: false))
+    try await settle(window)
+    let expected = try edge("custom", probes: probes, window: window)
+    let host = try XCTUnwrap(window.rootViewController as? UIHostingController<ControlFixture>)
+    host.rootView = ControlFixture(probes: probes, showsToggle: true)
+    try await settle(window)
+    XCTAssertEqual(try edge("custom", probes: probes, window: window), expected, accuracy: 0.5)
+    XCTAssertEqual(try edge("plain", probes: probes, window: window), expected, accuracy: 0.5)
+  }
+
   private enum Kind { case custom, group }
 
   private func check(kind: Kind, direction: LayoutDirection = .leftToRight) async throws {
@@ -201,5 +213,28 @@ private struct Probe: UIViewRepresentable {
   }
 
   func updateUIView(_ uiView: UIView, context: Context) {
+  }
+}
+
+private struct ControlFixture: View {
+  let probes: Probes
+  let showsToggle: Bool
+
+  var body: some View {
+    ZoonkList {
+      Section {
+        ListRow(Text(verbatim: "Plain")) {
+        } trailing: {
+          Text(verbatim: "16 Feb").background(Probe(id: "plain", probes: probes))
+        }
+        ListRow(Text(verbatim: "Custom")) {
+        } trailing: {
+          Text(verbatim: "16 Feb").background(Probe(id: "custom", probes: probes))
+        }.disclosureChevron()
+        if showsToggle {
+          SettingToggle(isOn: .constant(true), title: Text(verbatim: "Sounds"))
+        }
+      }
+    }.environment(\.horizontalSizeClass, .compact).zoonkStyles()
   }
 }

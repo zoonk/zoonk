@@ -29,9 +29,8 @@ private struct RowTrailingAlignment: Equatable {
 
   func inset(for id: Namespace.ID) -> CGFloat {
     guard let row = rows[id] else { return 0 }
-    let siblings = rows.values.filter { $0.group == row.group }
-    guard siblings.contains(where: \.hasChevron) else { return 0 }
-    let edges = siblings.map(\.edge)
+    let edges = rows.values.filter { $0.group == row.group && $0.hasChevron }.map(\.edge)
+    guard !edges.isEmpty else { return 0 }
     let end = row.isRTL ? edges.max() ?? row.edge : edges.min() ?? row.edge
     return max(0, row.isRTL ? end - row.edge : row.edge - end)
   }
