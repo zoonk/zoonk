@@ -279,10 +279,7 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                             // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
                             Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) {
                                 names.forEach { item ->
-                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-                                        if (names.size > 1) Text("•")
-                                        Text(revealItemTitle(item))
-                                    }
+                                    Text(revealItemTitle(item))
                                 }
                             }
                         }
