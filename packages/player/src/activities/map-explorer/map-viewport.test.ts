@@ -313,7 +313,7 @@ describe(placeMapLabels, () => {
     ).not.toBeNull();
   });
 
-  it("hides a street name when avoiding its pin would move it beyond the drawn street", () => {
+  it("keeps a short street label beside its path when the pin fills its inline space", () => {
     const [spot] = placeMapLabels({
       frame: { height: 250, width: 210 },
       labels: [
@@ -334,7 +334,11 @@ describe(placeMapLabels, () => {
       pins: [{ x: 70, y: 100 }],
     });
 
-    expect(spot).toBeNull();
+    expect(spot).not.toBeNull();
+    expect(Math.abs(spot!.x - 70)).toBeLessThanOrEqual(32);
+    expect(spot!.y).toBeGreaterThanOrEqual(50);
+    expect(spot!.y).toBeLessThanOrEqual(120);
+    expect(Math.abs(spot!.x - 70)).toBeGreaterThan(12 / 2 + 20);
   });
 
   it("slides a street farther than its text width when the visible part has room", () => {

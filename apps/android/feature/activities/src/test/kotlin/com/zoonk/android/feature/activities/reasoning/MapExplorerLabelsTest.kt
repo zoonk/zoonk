@@ -41,6 +41,8 @@ class MapExplorerLabelsTest {
             val index = map.drawing.labels.indexOfFirst { it.text == "Broad Street" }
             val spot = labels.spots[index]
             assertNotNull("Broad Street must remain named in the London explore map", spot)
+            val wardour = map.drawing.labels.indexOfFirst { it.text == "Wardour Street" }
+            assertNotNull("Wardour Street has room beside its path", labels.spots[wardour])
             spot!!
             assertTrue(labels.labels[index].priority)
             val street = labels.labels[index]
@@ -52,18 +54,22 @@ class MapExplorerLabelsTest {
                     kotlin.math.hypot(spot.x - a.x - t * dx, spot.y - a.y - t * dy)
                 }
             assertTrue("Broad Street must be on its own street", distance < 0.01)
-            val angle = street.angle * Math.PI / 180
-            val halfWidth = street.width * spot.scale / 2 + 1.5
-            val halfHeight = street.height * spot.scale / 2 + 1.5
-            val rx = halfWidth * abs(cos(angle)) + halfHeight * abs(sin(angle))
-            val ry = halfWidth * abs(sin(angle)) + halfHeight * abs(cos(angle))
-            assertTrue(spot.x >= rx && spot.x + rx <= frame.width && spot.y >= ry && spot.y + ry <= frame.height)
-            labels.pinNumbers.forEach { number ->
-                assertTrue(
-                    "Broad Street's halo must clear every pin number",
-                    spot.x + rx <= number.x || spot.x - rx >= number.x + number.width ||
-                        spot.y + ry <= number.y || spot.y - ry >= number.y + number.height,
-                )
+            listOf(index, wardour).forEach { labelIndex ->
+                val label = labels.labels[labelIndex]
+                val placed = labels.spots[labelIndex]!!
+                val angle = label.angle * Math.PI / 180
+                val halfWidth = label.width * placed.scale / 2 + 1.5
+                val halfHeight = label.height * placed.scale / 2 + 1.5
+                val rx = halfWidth * abs(cos(angle)) + halfHeight * abs(sin(angle))
+                val ry = halfWidth * abs(sin(angle)) + halfHeight * abs(cos(angle))
+                assertTrue(placed.x >= rx && placed.x + rx <= frame.width && placed.y >= ry && placed.y + ry <= frame.height)
+                labels.pinNumbers.forEach { number ->
+                    assertTrue(
+                        "Street labels' halos must clear every pin number",
+                        placed.x + rx <= number.x || placed.x - rx >= number.x + number.width ||
+                            placed.y + ry <= number.y || placed.y - ry >= number.y + number.height,
+                    )
+                }
             }
         }
     }

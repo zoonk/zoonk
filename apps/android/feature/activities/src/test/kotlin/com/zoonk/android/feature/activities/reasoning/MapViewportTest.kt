@@ -171,11 +171,14 @@ class MapViewportTest {
     }
 
     @Test
-    fun hidesStreetWhenAvoidingItsPinWouldMoveItBeyondTheDrawnStreet() {
+    fun shortStreetLabelFitsBesideItsPathWhenAPinFillsTheInlineSpace() {
         val labels =
             listOf(MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 90.0, true, false, listOf(MapPoint(70.0, 50.0), MapPoint(70.0, 120.0))))
         val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 250.0)
-        org.junit.Assert.assertNull(spots[0])
+        val spot = requireNotNull(spots[0])
+        org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - 70) <= 32)
+        org.junit.Assert.assertTrue(spot.y in 50.0..120.0)
+        org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - 70) > 12 / 2 + 20)
     }
 
     private fun assertPoints(

@@ -250,10 +250,15 @@ export function placeMapLabels({
   for (const { index, label } of order.filter(
     ({ label: item }) => !item.priority && !item.question,
   )) {
-    const spot = (label.kind === "street" ? (label.positions ?? []) : [label])
-      .toSorted(
-        (a, b) =>
-          Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
+    const candidates =
+      label.kind === "street" ? [label.positions ?? [], streetCandidates(label)] : [[label]];
+
+    const spot = candidates
+      .flatMap((points) =>
+        points.toSorted(
+          (a, b) =>
+            Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
+        ),
       )
       .map((point) => ({ ...label, ...point }))
       .find((candidate) => clear(candidate, chosen.placed));

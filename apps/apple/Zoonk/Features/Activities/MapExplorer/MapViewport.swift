@@ -252,9 +252,13 @@ enum MapViewport {
     }
     for index in order where !labels[index].priority && !labels[index].question {
       let label = labels[index]
-      let spot = (label.street ? (label.positions ?? []) : [label.center]).sorted {
-        hypot($0.x - label.center.x, $0.y - label.center.y)
-          < hypot($1.x - label.center.x, $1.y - label.center.y)
+      let candidates =
+        label.street ? [label.positions ?? [], streetCandidates(label)] : [[label.center]]
+      let spot = candidates.flatMap { points in
+        points.sorted {
+          hypot($0.x - label.center.x, $0.y - label.center.y)
+            < hypot($1.x - label.center.x, $1.y - label.center.y)
+        }
       }.map { label.at($0) }.first { candidate in
         inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
           && besideOwnStreet(candidate, streetPaths)

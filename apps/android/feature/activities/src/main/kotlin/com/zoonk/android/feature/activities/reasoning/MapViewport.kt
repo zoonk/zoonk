@@ -404,10 +404,12 @@ internal fun placeMapLabels(
     }
     for (index in order.filter { !labels[it].priority && !labels[it].question }) {
         val label = labels[index]
+        val candidates =
+            if (label.street) listOf(label.positions.orEmpty(), mapStreetCandidates(label)) else listOf(listOf(label.center))
         val spot =
-            (if (label.street) label.positions.orEmpty() else listOf(label.center))
-                .sortedBy {
-                    hypot(it.x - label.center.x, it.y - label.center.y)
+            candidates
+                .flatMap { points ->
+                    points.sortedBy { hypot(it.x - label.center.x, it.y - label.center.y) }
                 }.map { label.copy(center = it) }
                 .firstOrNull { candidate ->
                     inMapFrame(candidate, width, height) &&

@@ -169,7 +169,7 @@ final class MapViewportTests: XCTestCase {
     XCTAssertLessThan(spot.y, 130)
   }
 
-  func testHidesStreetWhenAvoidingItsPinWouldMoveItBeyondTheDrawnStreet() {
+  func testShortStreetLabelFitsBesideItsPathWhenAPinFillsTheInlineSpace() throws {
     let labels = [
       MapViewport.Label(
         center: CGPoint(x: 70, y: 100), size: CGSize(width: 80, height: 12), angle: 90,
@@ -177,7 +177,11 @@ final class MapViewportTests: XCTestCase {
     ]
     let spots = MapViewport.placeLabels(
       labels, pins: [CGPoint(x: 70, y: 100)], frame: CGSize(width: 210, height: 250))
-    XCTAssertNil(spots[0])
+    let spot = try XCTUnwrap(spots[0])
+    XCTAssertLessThanOrEqual(abs(spot.x - 70), 32)
+    XCTAssertGreaterThanOrEqual(spot.y, 50)
+    XCTAssertLessThanOrEqual(spot.y, 120)
+    XCTAssertGreaterThan(abs(spot.x - 70), 12 / 2 + 20)
   }
 
   private let map = CGSize(width: 1000, height: 800)
