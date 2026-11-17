@@ -65,7 +65,7 @@ class VoiceAnswerRecorderTest {
         shown = true
 
         rule.onNodeWithText("Record").assertIsDisplayed()
-        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText("Press Record and say it out loud").assertIsDisplayed()
     }
 
     /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */
@@ -143,7 +143,7 @@ class VoiceAnswerRecorderTest {
         rule.runOnIdle { navigator.back() }
 
         rule.onNodeWithText("Create a free account").assertDoesNotExist()
-        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText("Press Record and say it out loud").assertIsDisplayed()
     }
 
     private companion object {

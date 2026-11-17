@@ -131,6 +131,7 @@
   "conversation_take_your_time": "01c3e6641dce80c2f584c88f4c643e6f8d8e029506bc6435d41a24f78c2fa8da",
   "conversation_taken_over": "d1aad89f61ab8168f28365184ba22e29f616828aa34f9d686038faefa4091513",
   "conversation_talking": "b533904749173cc3e82a9c5c164353a6383023be33aff2d2f8dd1147d7a59511",
+  "conversation_time_used": "fb50d47d04bdb18bade1cf9d97d05255949d844ba4c3b0dd51df9866a9fdd835",
   "conversation_tip": "5952bf2dbe034de2363cee13ed48628c42174ae9860c97fa7116a3aaee6d5dea",
   "conversation_to_improve": "742aa076ebf44a770d963836c74d2bce64298f035e53877be33db40e7de4142a",
   "conversation_toefl_mock": "853d009b2f6d95bb6d134816aa859388e16e92ab886687fc34241c706a86ecd3",
@@ -370,4 +371,5 @@
     <string name="conversation_writing_task_line_2">Przygotowujemy polecenia na karcie…</string>
     <string name="conversation_writing_task_line_3">Przygotowujemy wypowiedzi egzaminatora…</string>
     <string name="conversation_writing_task_line_4">Dodajemy zwroty, które ci pomogą…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

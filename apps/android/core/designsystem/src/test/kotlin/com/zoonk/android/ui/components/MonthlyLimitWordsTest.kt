@@ -52,7 +52,9 @@ class MonthlyLimitWordsTest {
         rule.onNodeWithText("You've used your free lessons").assertExists()
         rule
             .onNodeWithText(
-                "More on ${day.format(DateTimeFormatter.ofPattern("MMMM d", Locale.ENGLISH))}, or subscribe to keep going.",
+                "More on ${day.format(
+                    DateTimeFormatter.ofPattern("MMMM d", Locale.ENGLISH),
+                ).replace(' ', '\u00a0')}, or subscribe to keep going.",
             ).assertExists()
     }
 

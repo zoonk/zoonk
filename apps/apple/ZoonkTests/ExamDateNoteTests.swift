@@ -28,15 +28,19 @@ final class ExamDateNoteTests: XCTestCase {
       .environment(AppRouter())
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Estimated dates", table: "Exam"), in: window)
-    try await settle()
+    try await activate(String(localized: "Estimated dates", table: "Exam"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      (window.rootViewController?.presentedViewController) != nil
+    }
     XCTAssertNotNil(window.rootViewController?.presentedViewController, "The note opens")
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
-
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      (window.rootViewController?.presentedViewController) != nil
+    }
     XCTAssertNotNil(window.rootViewController?.presentedViewController, "The note stays")
   }
 
@@ -57,10 +61,6 @@ final class ExamDateNoteTests: XCTestCase {
          "sessionsDone": 0, "speaking": null, "speakingMock": null, "speakingMockPaused": false,
          "stage": "preparing", "targetScore": null, "timeZone": null, "tools": []}
         """#.utf8))
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
   }
 
 }

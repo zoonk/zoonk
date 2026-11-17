@@ -193,7 +193,7 @@ private fun TracerVariables(values: List<WatchedValue>) {
                     .clip(RoundedCornerShape(ZoonkRadius.option))
                     .then(if (item.changed) Modifier.background(highlight.copy(alpha = SOFT_ALPHA)) else Modifier)
                     .semantics(mergeDescendants = true) {}
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(vertical = 6.dp),
             ) {
                 Text(
                     item.name,
@@ -245,7 +245,7 @@ private fun TracerPanel(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
-            Modifier.padding(start = 8.dp),
+            Modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {

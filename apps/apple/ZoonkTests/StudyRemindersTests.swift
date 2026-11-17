@@ -203,23 +203,23 @@ final class StudyRemindersTests: XCTestCase {
 
 @MainActor
 private final class RegistrationGate {
-  private var continuation: CheckedContinuation<Void, Never>?
-  private var started: CheckedContinuation<Void, Never>?
+  private var continuation: TestContinuation<Void>?
+  private var started: TestContinuation<Void>?
 
-  func wait() async {
-    await withCheckedContinuation { continuation in
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
+    await withTestVoidContinuation(file: file, line: line) { continuation in
       self.continuation = continuation
       started?.resume()
       started = nil
     }
   }
 
-  func waitUntilStarted() async {
+  func waitUntilStarted(file: StaticString = #filePath, line: UInt = #line) async {
     guard continuation == nil else {
       return
     }
 
-    await withCheckedContinuation { started = $0 }
+    await withTestVoidContinuation(file: file, line: line) { started = $0 }
   }
 
   func finish() {

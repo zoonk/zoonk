@@ -66,7 +66,7 @@ private val NOT_MADE =
 /** The Chapters tab's index: the ready maps, by subject. */
 internal fun GoalMindMaps.chapterIndex(): List<IndexGroup<GoalMindMap>> =
     chapters
-        .filter { it.status == GoalMindMap.Status.READY }
+        .filter { it.status == GoalMindMap.Status.READY || it.canMakeNow() }
         .groupBy { it.subject?.key.orEmpty() }
         .map { (key, maps) -> IndexGroup(key, maps.first().subject?.name, maps) }
 
@@ -97,7 +97,7 @@ internal fun LazyListScope.chaptersTab(
     actions: TabActions,
 ) {
     val groups = mindMaps.chapterIndex()
-    val notMade = mindMaps.chapters.filter { it.status in NOT_MADE }
+    val notMade = mindMaps.chapters.filter { it.status in NOT_MADE && !it.canMakeNow() }
 
     if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
@@ -109,7 +109,7 @@ internal fun LazyListScope.chaptersTab(
     }
 
     index(StudyTab.Chapters, boundedIndex(groups, shown.opened, shown.showAll), actions, { it.chapterId.toString() }) { map, divided ->
-        Divided(divided) { ChapterRow(map, actions) }
+        Divided(divided) { ChapterRow(map, actions, stop = mindMaps.createOffer.stop) }
     }
 
     if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
@@ -196,11 +196,16 @@ private fun LazyListScope.notMadeBlock(
     if (later.isEmpty()) return
     item(key = "not-made-toggle", contentType = "toggle") {
         ListRow(
-            headline = { Text(stringResource(R.string.mindmaps_other_chapters)) },
-            modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 4.dp),
+            headline = { Text(stringResource(R.string.mindmaps_other_chapters), style = MaterialTheme.zoonkType.sectionTitle) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 24.dp),
             onClick = actions.toggleNotMade,
             expanded = open,
-            meta = { Text(formatNumber(later.size.toDouble(), currentLocale()), style = MaterialTheme.zoonkType.data) },
+            meta = {
+                Text(
+                    pluralStringResource(R.plurals.mindmaps_chapter_count, later.size, later.size),
+                    style = MaterialTheme.zoonkType.data,
+                )
+            },
         )
     }
     if (open) {

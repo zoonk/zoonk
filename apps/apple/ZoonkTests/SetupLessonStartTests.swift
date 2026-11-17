@@ -14,6 +14,8 @@ final class SetupLessonStartTests: XCTestCase {
     let server = HeldAnswer()
     let router = AppRouter()
     let dependencies = AppDependencies.hosted(transport: server)
+    let consumed = dependencies.cache.resource(audience: .signedIn, domains: [.goals]) { _ in 1 }
+    await consumed.load()
     let setup = Shown()
     try readsWhatVoiceOverReads()
 
@@ -22,14 +24,15 @@ final class SetupLessonStartTests: XCTestCase {
         .appDependencies(dependencies)
         .environment(router)
         .zoonkStyles())
-    try await settle()
 
-    try activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
+    try await activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
     try await waitUntilAnswering(server, in: window)
     setup.isShown = false
-    try await settle()
+    try await waitForTestCondition("Setup did not close") { spoken(in: window).isEmpty }
     await server.release()
-    try await settle()
+    try await waitForTestCondition("The answer did not complete") {
+      await server.finished && consumed.isInvalidated
+    }
 
     XCTAssertEqual(router.tasks, [], "Nothing opens once Setup is closed")
   }
@@ -45,12 +48,13 @@ final class SetupLessonStartTests: XCTestCase {
         .appDependencies(dependencies)
         .environment(router)
         .zoonkStyles())
-    try await settle()
 
-    try activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
+    try await activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
     try await waitUntilAnswering(server, in: window)
     await server.release()
-    try await settle()
+    try await waitForTestCondition("Lesson one did not open") {
+      router.tasks == [.lesson(lessonId: HeldAnswer.lessonID)]
+    }
 
     XCTAssertEqual(router.tasks, [.lesson(lessonId: HeldAnswer.lessonID)])
   }
@@ -63,19 +67,10 @@ final class SetupLessonStartTests: XCTestCase {
     XCTAssertFalse(failures.failed)
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(500))
-  }
-
-  private func waitUntilAnswering(_ server: HeldAnswer, in window: UIWindow) async throws {
-    let deadline = ContinuousClock.now + .seconds(5)
-
-    while await !server.isAnswering, ContinuousClock.now < deadline {
-      try await Task.sleep(for: .milliseconds(100))
-    }
-
-    let answering = await server.isAnswering ? true : nil
-    _ = try XCTUnwrap(answering, "The answer never went out: \(spoken(in: window))")
+  private func waitUntilAnswering(
+    _ server: HeldAnswer, in window: UIWindow, file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await waitForTestCondition("The answer never went out") { await server.isAnswering }
   }
 
 }
@@ -103,7 +98,8 @@ private actor HeldAnswer: ClientTransport {
   static let goalID = "00000000-0000-4000-8000-000000000001"
   static let lessonID = "00000000-0000-4000-8000-0000000000f1"
 
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private(set) var finished = false
 
   var isAnswering: Bool { held != nil }
 
@@ -114,7 +110,8 @@ private actor HeldAnswer: ClientTransport {
     case "getOnboarding":
       return Self.json(Self.onboarding)
     case "answerOnboardingQuestion":
-      await withCheckedContinuation { held = $0 }
+      await withTestVoidContinuation { held = $0 }
+      finished = true
       return Self.json(Self.onboarding)
     default:
       throw APIError.network

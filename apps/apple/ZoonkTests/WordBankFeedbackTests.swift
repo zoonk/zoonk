@@ -35,12 +35,18 @@ final class WordBankFeedbackTests: XCTestCase {
     let made = MadeStates()
 
     try show(BankHost(layout: layout, made: made))
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("Feedback did not render") {
+      !made.ids.isEmpty && made.renderedAbove == layout.isAbove
+    }
 
     layout.isAbove = true
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("Feedback did not render") {
+      !made.ids.isEmpty && made.renderedAbove == layout.isAbove
+    }
     layout.isAbove = false
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("Feedback did not render") {
+      !made.ids.isEmpty && made.renderedAbove == layout.isAbove
+    }
 
     XCTAssertFalse(made.ids.isEmpty, "The feedback never showed")
     XCTAssertEqual(Set(made.ids).count, 1, "The feedback was made anew: \(made.ids)")
@@ -54,6 +60,7 @@ private final class BankLayout {
 
 private final class MadeStates {
   var ids: [UUID] = []
+  var renderedAbove: Bool?
 }
 
 private struct BankHost: View {
@@ -69,6 +76,7 @@ private struct BankHost: View {
       WordBankAdded(view: AnyView(StateProbe(made: made)), isAbove: layout.isAbove)
     )
     .frame(width: 320, height: 600)
+    .onChange(of: layout.isAbove, initial: true) { made.renderedAbove = layout.isAbove }
   }
 }
 

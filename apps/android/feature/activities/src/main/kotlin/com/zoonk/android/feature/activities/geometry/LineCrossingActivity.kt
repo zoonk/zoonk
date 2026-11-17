@@ -318,7 +318,7 @@ private fun LineCrossingChart(
                             LineLabel(
                                 name.isUpper,
                                 segment(name.line),
-                                Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
+                                Size(texts[index].size.width.toFloat(), texts[index].size.height.toFloat()),
                                 name.isOptional,
                             )
                         },

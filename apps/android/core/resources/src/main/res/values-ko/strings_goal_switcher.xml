@@ -6,7 +6,7 @@
   "goal_switcher_explore_courses": "e8e7eb866134c1764f0239481cd1d9a870505de8431454cba13e7263a65f9b5d",
   "goal_switcher_failed": "35b8b7b5eb0403df6631f4557848ebeb3f8eebbe5c88356702076d9fb89ed610",
   "goal_switcher_finished": "a4975bfd831f6ec0cfff927cf2daf13b807e013ecf61ac8ce1e2d3cceed1511c",
-  "goal_switcher_make_room_description": "968bbf1be97232b3fd533dabb8e04356422872beff65dd4996ba264913d98dac",
+  "goal_switcher_make_room_description": "1921e275a813f70d04c2f02f335073304ce83a4459f85b3c0a116aa68fc749e5",
   "goal_switcher_make_room_title": "010df4274e5d3e40e64d0edae0ae08190fae2b565fd931f48df0e8e03a627dc6",
   "goal_switcher_new_goal": "134561d48407695cc799ca4899627b2174b0ed962ab266c4fde1e65aac0ffada",
   "goal_switcher_pause": "f51acec5fdea104301c50bc3927f6b3653a1eb586daf5b3b80f6855b76067b41",
@@ -44,7 +44,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s 목표를 위한 자리 만들기</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">동시에 학습할 수 있는 목표 수를 다 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요.</string>
+    <string name="goal_switcher_make_room_description">동시에 진행할 수 있는 목표 수를 모두 채웠어요. 다른 목표 하나를 일시 중지하면 이 목표를 시작할 수 있어요. 구독하면 더 많은 목표를 동시에 진행할 수 있어요.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">일시 정지</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

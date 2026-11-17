@@ -23,6 +23,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -31,6 +32,7 @@ import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.CourseChapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -78,6 +80,17 @@ class CatalogScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    fun wrappedChapterLesson() = captureAll("wrapped-phone", wrappedLesson = true)
+
+    @Test
+    @Config(qualifiers = "w700dp-h2600dp-xxhdpi")
+    fun wrappedChapterLessonAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureAll("wrapped-medium-font200", wrappedLesson = true)
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h2000dp-xhdpi")
     fun tablet() = captureAll("tablet")
 
@@ -100,6 +113,7 @@ class CatalogScreenshots {
         moreContrast: Boolean = false,
         page: Dp = Dp.Unspecified,
         fold: Boolean = false,
+        wrappedLesson: Boolean = false,
     ) {
         val screens: List<Pair<String, @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit>> =
             listOf(
@@ -130,8 +144,25 @@ class CatalogScreenshots {
                     val app = remember { AppContainer.preview(context) }
                     val store =
                         remember {
+                            val api = FakeCatalogApi()
                             CatalogStore(
-                                FakeCatalogApi(),
+                                if (wrappedLesson) {
+                                    object : CatalogApi by api {
+                                        override suspend fun chapters(
+                                            session: AuthenticatedSession?,
+                                            courseId: String,
+                                        ): List<CourseChapter> =
+                                            api.chapters(session, courseId).map { chapter ->
+                                                if (chapter.id.toString() == CHAPTER_TWO) {
+                                                    chapter.copy(lessons = chapter.lessons.map { it.copy(title = chapter.description) })
+                                                } else {
+                                                    chapter
+                                                }
+                                            }
+                                    }
+                                } else {
+                                    api
+                                },
                                 AppCache(
                                     FakeSession(null),
                                     CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),

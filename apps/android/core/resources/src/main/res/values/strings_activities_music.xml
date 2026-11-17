@@ -167,4 +167,5 @@
     <string name="activities_music_sound_check_start">Start</string>
     <string name="activities_music_skip_for_now">Skip for now</string>
     <string name="activities_music_continue">Continue</string>
+    <string name="activities_music_hear_your_notes">Hear your notes</string>
 </resources>

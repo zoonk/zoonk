@@ -133,18 +133,24 @@ class FormattersTest {
     }
 
     @Test
+    fun datesKeepTheirWordsTogether() {
+        assertEquals("January\u00a031,\u00a02027", formatDate(LocalDate.of(2027, 1, 31), en, DateStyle.LongYear))
+        assertEquals("31\u00a0de\u00a0janeiro\u00a0de\u00a02027", formatDate(LocalDate.of(2027, 1, 31), pt, DateStyle.LongYear))
+    }
+
+    @Test
     fun datesNameTheYearOnlyWhenItIsAnotherYear() {
         val today = LocalDate.of(2026, 10, 28)
         val day = LocalDate.of(2026, 10, 26)
 
-        assertEquals("Oct 26", formatDate(day, en, today = today))
-        assertEquals("Jan 5, 2027", formatDate(LocalDate.of(2027, 1, 5), en, today = today))
-        assertEquals("26 de out.", formatDate(day, pt, today = today))
-        assertEquals("26. Okt.", formatDate(day, de, today = today))
-        assertEquals("Monday, October 26", formatDate(day, en, DateStyle.WeekdayDay, today))
-        assertEquals("segunda-feira, 26 de outubro", formatDate(day, pt, DateStyle.WeekdayDay, today))
-        assertEquals("October 2026", formatDate(day, en, DateStyle.Month, today))
-        assertEquals("October 26", formatDate(LocalDate.of(2027, 10, 26), en, DateStyle.DayMonth, today))
+        assertEquals("Oct 26", formatDate(day, en, today = today))
+        assertEquals("Jan 5, 2027", formatDate(LocalDate.of(2027, 1, 5), en, today = today))
+        assertEquals("26 de out.", formatDate(day, pt, today = today))
+        assertEquals("26. Okt.", formatDate(day, de, today = today))
+        assertEquals("Monday, October 26", formatDate(day, en, DateStyle.WeekdayDay, today))
+        assertEquals("segunda-feira, 26 de outubro", formatDate(day, pt, DateStyle.WeekdayDay, today))
+        assertEquals("October 2026", formatDate(day, en, DateStyle.Month, today))
+        assertEquals("October 26", formatDate(LocalDate.of(2027, 10, 26), en, DateStyle.DayMonth, today))
     }
 
     /** Main's `iso-date.test.ts`: a challenge moved past New Year, a mock's or memory's day from last year. */
@@ -152,19 +158,19 @@ class FormattersTest {
     fun everyDayInAnotherYearNamesIt() {
         val newYearsEve = LocalDate.of(2026, 12, 31)
 
-        assertEquals("Monday, January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDay, newYearsEve))
-        assertEquals("Thursday, December 31", formatDate(newYearsEve, en, DateStyle.WeekdayDay, newYearsEve))
-        assertEquals("January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.Long, newYearsEve))
-        assertEquals("Mon, Jan 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDayShort, newYearsEve))
-        assertEquals("Thu, Dec 31", formatDate(newYearsEve, en, DateStyle.WeekdayDayShort, newYearsEve))
+        assertEquals("Monday, January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDay, newYearsEve))
+        assertEquals("Thursday, December 31", formatDate(newYearsEve, en, DateStyle.WeekdayDay, newYearsEve))
+        assertEquals("January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.Long, newYearsEve))
+        assertEquals("Mon, Jan 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDayShort, newYearsEve))
+        assertEquals("Thu, Dec 31", formatDate(newYearsEve, en, DateStyle.WeekdayDayShort, newYearsEve))
         val week = { start: LocalDate -> formatDayRange(start, start.plusDays(6), en, newYearsEve).replace(' ', ' ') }
         assertEquals("Dec 28, 2026 – Jan 3, 2027", week(LocalDate.of(2026, 12, 28)))
         assertEquals("Dec 21 – 27", week(LocalDate.of(2026, 12, 21)))
         val utc = java.time.ZoneOffset.UTC
         val lastYear = kotlin.time.Instant.parse("2025-11-08T12:00:00Z")
-        assertEquals("Nov 8, 2025", formatMomentDay(lastYear, en, utc, today = LocalDate.of(2026, 11, 14)))
+        assertEquals("Nov 8, 2025", formatMomentDay(lastYear, en, utc, today = LocalDate.of(2026, 11, 14)))
         assertEquals(
-            "Nov 8",
+            "Nov 8",
             formatMomentDay(kotlin.time.Instant.parse("2026-11-08T12:00:00Z"), en, utc, today = LocalDate.of(2026, 11, 14)),
         )
     }

@@ -30,6 +30,7 @@
   "account_menu_subscription": "6d617322af0513eea71ac1b24b6de8204801d2e3243ab0cd2cbda44c99d434d0",
   "account_name": "a971d665052f1cea5a5fa46427cc8b6566eb89ff45ae67cdf7140b08e23e3639",
   "account_name_description": "98b3286ae4d160ae093bf3a2b64b68d977d3d7b77ad20539236b4c77285e6387",
+  "account_name_required": "d2263a53dd605e83453e0d6fba640ee2bb223d183aa43cfcdca62ef87b2328d5",
   "account_name_too_long": "097d61277cca2dd3b6e22a84d03c4160c556afc32e9182c58178ca688e446393",
   "account_new_code_failed": "b0f17daf116254d6c8483e0f461e4fece62dd6ca671833f13e433168b30cef00",
   "account_new_code_sent": "44f922d7e20c9c4e9247d8a6300d00be3d2c50a36745487360366504bb1de7af",
@@ -48,6 +49,7 @@
   "account_username_available": "0bfdd26903fef343d48c49b74c088289bd34b4be002838275d854eb4b45b587e",
   "account_username_checking": "df653cce097b9f04307e1302b338d53a63b38e11da88ba4b0f0ad79c5461cfcc",
   "account_username_line": "cc5ab9817ec8596f662cbb9ac20f1c645dbb94a47e67bb12a1564fe9c712651e",
+  "account_username_required": "c66480e83142e9ec2e00be13081ccbb1bae243c3d6cc38c2cceeeb41875eac79",
   "account_username_rules": "ea54270e98801e83b04fc02fa91eee0f4ea7f9007d6771ceb2446c5ebcd3f149",
   "account_username_taken": "05110d5bed96879c0fefc0a6b8f9f521f5e5a75c22c64850ce618f425825d8fd",
   "account_welcome_description": "16bfa6b6e6243d6e5b237938198edeac759b057746b442b8ca5060cc8c8f440d",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">ログアウト</string>
     <string name="account_menu_create_account">アカウントを作成する</string>
     <string name="account_sign_out_failed">Zoonkからログアウトできませんでした。通信状況を確認して、もう一度お試しください。</string>
+    <string name="account_name_required">名前</string>
+    <string name="account_username_required">ユーザー名</string>
 </resources>

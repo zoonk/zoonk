@@ -163,23 +163,23 @@ final class MutationTests: XCTestCase {
 /// Not cancellation-aware, like a URL request that's already sent.
 @MainActor
 private final class WriteGate {
-  private var started: CheckedContinuation<Void, Never>?
+  private var started: TestContinuation<Void>?
   private var isStarted = false
-  private var waiting: CheckedContinuation<Void, Never>?
+  private var waiting: TestContinuation<Void>?
 
-  func wait() async {
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
     isStarted = true
     started?.resume()
     started = nil
-    await withCheckedContinuation { waiting = $0 }
+    await withTestVoidContinuation(file: file, line: line) { waiting = $0 }
   }
 
-  func waitUntilStarted() async {
+  func waitUntilStarted(file: StaticString = #filePath, line: UInt = #line) async {
     guard !isStarted else {
       return
     }
 
-    await withCheckedContinuation { started = $0 }
+    await withTestVoidContinuation(file: file, line: line) { started = $0 }
   }
 
   func open() {

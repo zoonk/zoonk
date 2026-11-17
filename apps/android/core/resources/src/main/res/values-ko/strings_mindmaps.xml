@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "73ed29db0209177a40fe7af37cf0111cd93220f3ee22390c912b3d8ca055d98f",
   "mindmaps_alt_sentence": "b3c0115c00ba8e9f7c6e2f687dd38e34292418ec4c9ba936ec06da4408f6325c",
   "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
-  "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
+  "mindmaps_as_text_note": "34194cb99777be1e8d549ada6b42f3fab33e22fd735bc6620814de7458e88d90",
   "mindmaps_being_made": "a35ebfceeaa88b4c2b0d3f3fa4a3d0c8a40205cedfeafc35b9312a272ac2b55c",
   "mindmaps_can_make_more": "11d43acdcfac7996b45d948e3ea2cdf76ae1b704d7801fdec200c2bec1011ee5",
   "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
@@ -121,7 +121,7 @@
     <string name="mindmaps_try_again_spoken">%1$s의 마인드맵 다시 만들기</string>
     <string name="mindmaps_failed">이번에는 만들지 못했어요.</string>
     <string name="mindmaps_unreachable">서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요.</string>
-    <string name="mindmaps_as_text_note">그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요.</string>
+    <string name="mindmaps_as_text_note">이 마인드맵은 텍스트로 표시돼요.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">다운로드</string>
     <string name="mindmaps_saved">마인드맵을 저장했어요</string>

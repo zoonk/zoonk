@@ -10,6 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
@@ -134,7 +137,11 @@ class StatsScreenshots {
             INSPECTED[page].orEmpty().forEach { (state, point) ->
                 compose
                     .onAllNodes(
-                        hasContentDescription(point, substring = true),
+                        SemanticsMatcher("chart point $point") { node ->
+                            node.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty().any {
+                                it.replace('\u00a0', ' ').replace('\u202f', ' ').contains(point)
+                            }
+                        },
                     ).onFirst()
                     .performSemanticsAction(SemanticsActions.OnClick)
                 capture("$name-$state")

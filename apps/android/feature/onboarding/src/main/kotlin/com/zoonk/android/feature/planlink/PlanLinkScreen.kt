@@ -98,13 +98,43 @@ internal fun PlanLinkScreen(
 
     LaunchedEffect(link?.owner) { if (link?.owner != null) navigator.showRoot(AppTab.Plan) }
 
-    PageScaffold(onBack = navigator::back) { padding ->
+    PageScaffold(
+        onBack = navigator::back,
+        barWidth = FORM_WIDTH + 48.dp,
+        bottomBar =
+            link?.takeIf { it.owner == null }?.let { shared ->
+                {
+                    Button(busy = vm.isStarting, modifier = Modifier.fillMaxWidth(), onClick = {
+                        if (signedIn) {
+                            vm.start(route.planId)
+                        } else {
+                            navigator.open(
+                                AppRoute.StartGoal(
+                                    goal =
+                                        shared.outline.subject
+                                            ?.title
+                                            .orEmpty(),
+                                    planId = route.planId,
+                                ),
+                            )
+                        }
+                    }) { Text(stringResource(R.string.planlink_start)) }
+                }
+            },
+    ) { padding ->
         when (val shown = state) {
             is LoadState.Loaded -> {
                 if (shown.value.owner != null) return@PageScaffold
                 TrackShown(AnalyticsEvent.PlanLinkOpened(route.planId))
                 PageWithSupportingPane(
-                    supportingPane = { Phases(shown.value.outline, Modifier.verticalScroll(rememberScrollState()).padding(24.dp)) },
+                    supportingPane = {
+                        Phases(
+                            shown.value.outline,
+                            Modifier.verticalScroll(rememberScrollState()).padding(horizontal = pageMargin(), vertical = 24.dp),
+                        )
+                    },
+                    panesTouch = true,
+                    halfWidth = true,
                     modifier = Modifier.padding(padding),
                 ) { beside ->
                     Column(
@@ -113,18 +143,8 @@ internal fun PlanLinkScreen(
                     ) {
                         Heading(shown.value)
                         if (signedIn) {
-                            StartForm(vm, shown.value.dailyTimes, onStart = { vm.start(route.planId) })
+                            StartForm(vm, shown.value.dailyTimes)
                         } else {
-                            val title =
-                                shown.value.outline.subject
-                                    ?.title
-                                    .orEmpty()
-                            Button(
-                                onClick = { navigator.open(AppRoute.StartGoal(goal = title, planId = route.planId)) },
-                                modifier = Modifier.widthIn(max = FORM_WIDTH).fillMaxWidth(),
-                            ) {
-                                Text(stringResource(R.string.planlink_start))
-                            }
                             MakeItYours()
                         }
                         if (!beside) Phases(shown.value.outline)
@@ -182,18 +202,10 @@ private fun Heading(link: PlanLink) {
 private fun StartForm(
     vm: PlanLinkViewModel,
     times: List<Long>,
-    onStart: () -> Unit,
 ) {
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
         DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
-        Button(
-            busy = vm.isStarting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(stringResource(R.string.planlink_start))
-        }
         vm.failure?.let {
             Text(
                 stringResource(if (it == StartFailure.Refused) R.string.planlink_refused else R.string.planlink_failed),
@@ -255,10 +267,8 @@ private fun PhaseRow(
     val name = phase.name.ifEmpty { phaseKindName(PlanPhase.Kind.LEARN, number) }
     val minutes = approximateMinutes(phase.hours)
 
-    // The plan starts at its first phase, marked as the row the learner is on.
     ListRow(
         headline = { Text(name) },
-        highlighted = index == 0,
         leading = {
             Text(
                 number.toString(),

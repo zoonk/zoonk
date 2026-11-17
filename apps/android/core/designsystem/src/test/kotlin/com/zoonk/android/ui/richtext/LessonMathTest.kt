@@ -28,6 +28,19 @@ private const val GAP = "\u2005"
 class LessonMathTest {
     private fun math(latex: String) = typesetMath(latex, ENGLISH)
 
+    @Test fun aRootKeepsItsEntireFractionAsOneDrawing() {
+        val formula = math("\\sqrt{\\frac{GM}{r}}")
+        val root = formula.text.getStringAnnotations("math-root", 0, formula.text.length).single()
+        assertEquals("√GM⁄r", formula.text.text.substring(root.start, root.end))
+    }
+
+    @Test fun punctuationAfterDisplayMathStaysWithTheFormula() {
+        val parts =
+            splitAtDisplayMath(listOf(RichSegment(SegmentKind.DisplayMath, "x = 1"), RichSegment(SegmentKind.Text, ", then continue.")))
+        assertEquals("x = 1\\text{,}", parts.first().single().text)
+        assertEquals("then continue.", parts.last().single().text)
+    }
+
     @Test
     fun setsOperatorsAndRelationsApartAndKeepsASignWithItsNumber() {
         assertEquals("0.75$GAP×${GAP}80$GAP=${GAP}60", math("0.75 \\times 80 = 60").text.text)
@@ -65,7 +78,7 @@ class LessonMathTest {
 
     @Test
     fun readsRootsUnitsAndSymbolsFromTheSeededLessons() {
-        assertEquals("v$GAP=$GAP√(GM\u2044r)", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
+        assertEquals("v$GAP=$GAP√GM\u2044r", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
         assertEquals("v = square root of GM over r", math("v = \\sqrt{\\frac{GM}{r}}").spoken)
         assertEquals("λ$GAP=${GAP}1240\u20441,89", math("\\lambda = \\dfrac{1240}{1{,}89}").text.text)
         assertEquals("λ (nm) = 1240 over E (eV)", math("\\lambda\\ (\\text{nm}) = \\dfrac{1240}{E\\ (\\text{eV})}").spoken)

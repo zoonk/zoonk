@@ -86,6 +86,7 @@
   "session_summary_so_far": "984f49186956dd59c62429a23f34bee7bcbad733062e697f47165e7336683382",
   "session_summary_streak": "0fa307839f71f31a224d6fafb57ba39f9cd7bfcd2d5e62864a0cd7668f7ed4c6",
   "session_summary_to_review": "5798f7a336fcd1cccc23dab6f881cb27a76cb5f0b166fa70094669bbbba8642b",
+  "session_summary_to_review_detail": "61fce3f59763f516408fa5e39cfa524cc519db23f9f62b589715dab2cb424418",
   "session_summary_tomorrow": "1c0ce29a9efe0feacc34ead9e3d1cb74630d6e141e9e3cc813876802b8df3f2f",
   "session_summary_up_from": "57678a88222bafcfe229da3a35fc68687a55b28db8cd5fbd3e1f7c384aa76b6a",
   "session_topics_and_more": "52a446c4d3c6457f68ff0f0ae0a553a4ba09252c6eb6a7b8a31a2873b560270a"
@@ -274,4 +275,5 @@
         <item quantity="many">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
         <item quantity="other">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
     </plurals>
+    <string name="session_summary_to_review_detail">Da ripassare</string>
 </resources>

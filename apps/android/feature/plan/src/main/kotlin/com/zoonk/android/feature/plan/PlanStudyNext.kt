@@ -44,6 +44,11 @@ internal fun StudyNextSuggestion(
         if (next.nextLevel != null || next.related.isNotEmpty()) SuggestionDescription(stringResource(R.string.plan_study_next))
         if (certificates != null || next.nextLevel != null) {
             SuggestionActions {
+                next.nextLevel?.let { level ->
+                    SuggestionAction(onClick = host.onContinue, busy = starting, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
+                        Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
+                    }
+                }
                 certificates?.let {
                     SuggestionAction(
                         onClick = host.onCertificate,
@@ -51,11 +56,6 @@ internal fun StudyNextSuggestion(
                         secondary = next.nextLevel != null,
                         leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
                     ) { Text(it.actionLabel()) }
-                }
-                next.nextLevel?.let { level ->
-                    SuggestionAction(onClick = host.onContinue, busy = starting, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
-                        Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
-                    }
                 }
             }
             if (start == NextLevelStart.Failed || host.claimFailed) SuggestionSaveError()
@@ -67,7 +67,7 @@ internal fun StudyNextSuggestion(
                     ListRow(
                         headline = { Text(course.title) },
                         onClick = { links.course(course.courseId.toString()) },
-                        leading = { MarkIcon(R.drawable.ic_library_books) },
+                        leading = { MarkIcon(R.drawable.ic_menu_book) },
                     )
                 }
             }

@@ -100,11 +100,27 @@ internal fun ProgressLineChart(
     val chartHeight = CHART_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f)
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier.height(chartHeight).widthIn(min = 36.dp).clearAndSetSemantics {},
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            ticks.forEach { Text(formatPercent(it / TOP.toDouble(), locale), color = axisColor, style = axis, textAlign = TextAlign.End) }
+        Layout(
+            content = {
+                ticks.forEach {
+                    Text(
+                        formatPercent(it / TOP.toDouble(), locale),
+                        color = axisColor,
+                        style = axis,
+                        textAlign = TextAlign.End,
+                    )
+                }
+            },
+            modifier = Modifier.height(chartHeight).widthIn(min = 36.dp).clearAndSetSemantics {},
+        ) { measurables, constraints ->
+            val labels = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+            val width = maxOf(constraints.minWidth, labels.maxOfOrNull { it.width } ?: 0)
+            val height = constraints.maxHeight
+            layout(width, height) {
+                labels.forEachIndexed { index, label ->
+                    label.placeRelative(width - label.width, (toY(ticks[index], floor) * height - label.height / 2).roundToInt())
+                }
+            }
         }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {

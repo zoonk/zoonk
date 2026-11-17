@@ -37,9 +37,17 @@ fun StandingBuddy(
     look: BuddyLook,
     height: Dp,
     modifier: Modifier = Modifier,
+    expression: BuddyExpression = look.everydayExpression,
+    reaction: ActReaction<BuddyAct>? = null,
+    label: String? = null,
 ) {
     val ink = look.bodyInk
-    Buddy(look, modifier.size(height * (ink.width / BODY_BOX_HEIGHT), height * (ink.height / BODY_BOX_HEIGHT)), crop = BuddyCrop.Ink)
+    val frame = modifier.size(height * (ink.width / BODY_BOX_HEIGHT), height * (ink.height / BODY_BOX_HEIGHT))
+    if (reaction == null) {
+        Buddy(look, frame, expression, crop = BuddyCrop.Ink, label = label)
+    } else {
+        BuddyActor(look, frame, expression, crop = BuddyCrop.Ink, reaction = reaction, label = label)
+    }
 }
 
 /**

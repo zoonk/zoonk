@@ -72,28 +72,34 @@ final class WebPlusVisitTests: XCTestCase {
       .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 250)
     try readsWhatVoiceOverReads()
-    try await Task.sleep(for: .milliseconds(600))
+    try await waitForTestCondition("The subscription scroll view did not appear") {
+      !requestViews(UIScrollView.self, in: window).isEmpty
+    }
     let scroll = try XCTUnwrap(requestViews(UIScrollView.self, in: window).first)
-    scroll.setContentOffset(
-      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-    try await Task.sleep(for: .milliseconds(600))
-    try activate(String(localized: "Keep Plus", table: "Subscriptions"), in: window)
-    await server.waitForRequest()
+    try await waitForTestCondition("Keep Plus did not appear at the end of the page") {
+      scroll.setContentOffset(
+        CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
+      return spoken(in: window).contains(String(localized: "Keep Plus", table: "Subscriptions"))
+    }
+    try await activate(String(localized: "Keep Plus", table: "Subscriptions"), in: window)
+    try await server.waitForRequest()
     scroll.setContentOffset(.zero, animated: false)
-    try await Task.sleep(for: .milliseconds(600))
+    try await waitForTestCondition("Keep Plus did not scroll out of view") {
+      !spoken(in: window).contains(String(localized: "Keep Plus", table: "Subscriptions"))
+    }
     await server.release()
-    try await Task.sleep(for: .milliseconds(600))
-    scroll.setContentOffset(
-      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-    try await Task.sleep(for: .milliseconds(600))
+    try await waitForTestCondition("Renewal failure did not appear") {
+      scroll.setContentOffset(
+        CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
+      return spoken(in: window).contains { $0.contains("We couldn't keep Plus") }
+    }
     XCTAssertTrue(
       spoken(in: window).contains { $0.contains("We couldn't keep Plus") }, "\(spoken(in: window))")
   }
 }
 
 private actor RenewalFailure: ClientTransport {
-  private var held: CheckedContinuation<Void, Never>?
-  private var waiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
     -> (HTTPResponse, HTTPBody?)
   {
@@ -104,15 +110,19 @@ private actor RenewalFailure: ClientTransport {
       )
     }
     if operationID == "resumeStripeSubscription" {
-      await withCheckedContinuation {
+      await withTestVoidContinuation {
         held = $0
-        waiter?.resume()
-        waiter = nil
       }
     }
     throw APIError.network
   }
-  func waitForRequest() async { if held == nil { await withCheckedContinuation { waiter = $0 } } }
+  func waitForRequest(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("Renewal was not requested", file: file, line: line) {
+      await self.isHeld
+    }
+  }
+
+  private var isHeld: Bool { held != nil }
   func release() {
     held?.resume()
     held = nil

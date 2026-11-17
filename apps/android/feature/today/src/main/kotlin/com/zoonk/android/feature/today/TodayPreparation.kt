@@ -44,6 +44,7 @@ import com.zoonk.android.feature.plan.studiedLessonsLine
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
@@ -65,9 +66,10 @@ internal fun TodayPreparation(
     syllabus: Syllabus?,
     onOpenPlan: () -> Unit,
     modifier: Modifier = Modifier,
+    goalTitle: String? = null,
 ) {
     when (progress) {
-        is TodayProgress.TodayProgressOneOfValue -> PreparationCard(progress.value, onOpenPlan, modifier)
+        is TodayProgress.TodayProgressOneOfValue -> PreparationCard(progress.value, onOpenPlan, modifier, goalTitle)
         is TodayProgress.TodayProgressOneOf1Value -> LessonsCard(progress.value, syllabus, onOpenPlan, modifier)
         null -> Unit
     }
@@ -78,9 +80,10 @@ private fun PreparationCard(
     progress: TodayProgressOneOf,
     onOpenPlan: () -> Unit,
     modifier: Modifier,
+    goalTitle: String?,
 ) {
     ProgressCard(
-        title = stringResource(R.string.today_preparation),
+        title = listOfNotNull(stringResource(R.string.today_preparation), goalTitle).factsLine(),
         detail = weekGain(progress.weekGain),
         value = formatPercent(progress.value, currentLocale()),
         onOpenPlan = onOpenPlan,

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_guess_in_unit": "ff30021a3e34a71263b196f8d8fa30d37af079210bae067a97d0534eded003f2",
   "answer_tag_correct": "64f9d75800e72dc02df3fc0a747acac6b20dc8026b66e9b499711db79d6254ba",
   "answer_tag_your_answer": "5fb162b668b6b79bf950d6abfd25117233a69e151e9f2ebaec4ae488a5543a8c",
   "answer_tag_your_guess": "f3e4feb8ce0a141b7a8d3bdd7b58f3deb9d246621d345990f204c595dc7be34a",
@@ -183,4 +184,6 @@
     <string name="citation_slide">%1$s, slide %2$s</string>
     <string name="player_not_saved">Ainda não foi salvo</string>
     <string name="player_not_saved_description">Algumas respostas ainda não foram salvas. A gente vai continuar tentando enquanto a aula estiver aberta.</string>
+    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
+    <string name="activities_guess_in_unit">em %1$s</string>
 </resources>

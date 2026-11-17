@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -105,19 +106,34 @@ private fun PatternTableActivity(props: ActivityProps) {
                                     Form(row.answer, newStem)
                                 }
 
-                                props.isChecked -> {
-                                    CheckedBlank(blankStem(fields.choices, row.answer), filled["$index"], expected["$index"])
-                                }
-
                                 else -> {
-                                    OpenBlank(
-                                        row,
-                                        blankStem(fields.choices, row.answer),
-                                        filled["$index"],
-                                        active == index,
-                                        !props.isLocked,
-                                    ) {
-                                        active = index
+                                    Box {
+                                        Box(
+                                            Modifier
+                                                .alpha(
+                                                    if (props.isChecked) 0f else 1f,
+                                                ).then(if (props.isChecked) Modifier.clearAndSetSemantics {} else Modifier),
+                                        ) {
+                                            OpenBlank(
+                                                row,
+                                                blankStem(fields.choices, row.answer),
+                                                filled["$index"],
+                                                active == index,
+                                                !props.isLocked && !props.isChecked,
+                                            ) { active = index }
+                                        }
+                                        Box(
+                                            Modifier
+                                                .alpha(
+                                                    if (props.isChecked) 1f else 0f,
+                                                ).then(if (props.isChecked) Modifier else Modifier.clearAndSetSemantics {}),
+                                        ) {
+                                            CheckedBlank(
+                                                blankStem(fields.choices, row.answer),
+                                                filled["$index"],
+                                                if (props.isChecked) expected["$index"] else patternEnding(fields.choices, row.answer),
+                                            )
+                                        }
                                     }
                                 }
                             }

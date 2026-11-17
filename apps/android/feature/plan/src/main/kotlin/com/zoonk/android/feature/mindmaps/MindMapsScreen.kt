@@ -279,7 +279,12 @@ internal fun MindMapsPage(
                     item(key = "hero", contentType = "hero") {
                         PageHeader(title, supporting = mindMaps.goal.displayName, modifier = Modifier.padding(bottom = 16.dp))
                     }
-                    stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
+                    stickyHeader(key = "tabs", contentType = "tabs") {
+                        MindMapsTabs(
+                            tab,
+                            decks + (StudyTab.Chapters to mindMaps.chapters.size),
+                        ) { picked = it.key }
+                    }
 
                     val shown = IndexState(opened.toSet(), tab.key in showAll)
                     when (tab) {

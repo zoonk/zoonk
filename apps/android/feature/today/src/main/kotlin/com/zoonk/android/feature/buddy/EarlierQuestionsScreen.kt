@@ -193,7 +193,9 @@ private fun OlderQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        TextButton(busy = isLoading, onClick = onLoad, edge = ButtonEdge.Start) { Text(stringResource(R.string.earlier_questions_older)) }
+        TextButton(busy = isLoading, onClick = onLoad, edge = ButtonEdge.Start, forward = true) {
+            Text(stringResource(R.string.earlier_questions_older))
+        }
     }
 }
 

@@ -30,6 +30,7 @@
   "account_menu_subscription": "d7e90662d8e8acba7ac394d47d73d535879fea5bc9bdd3fa2e22435baaf47108",
   "account_name": "87240420ee765577badd845ac53744667eddf2d8a741c2349227ec48392a9cd7",
   "account_name_description": "a3f7ada9d86f3d4fd0d314cbdf8ca195ed16893a662766af6b914c35d99218b7",
+  "account_name_required": "57e346af27bdc068a8e1ddc8a26779653bbd062a2767021d2df96e349e86972d",
   "account_name_too_long": "f63019b62a7a63d3136edc302f48c721b1409bd3fd0193e8f962dc71bf241b74",
   "account_new_code_failed": "edd975b301424acd76170bde276fe73339a2910ef11799f564473968adadfe67",
   "account_new_code_sent": "7e54006401c7c74c18946743b590f385c8c819f9c998c4ab2b2927baece89844",
@@ -48,6 +49,7 @@
   "account_username_available": "66fdb8556eb7a0b55597c626cf4ba25effeff3ca916879a6196ab3bb66472194",
   "account_username_checking": "5a8fd0d9e4421dc83d5c7f81e4b765c06886b4848d2b3937827693debefb0eb7",
   "account_username_line": "e4dbb46744123e31df05b0ca6d609b9902a4231276392718e7903118ab8318f9",
+  "account_username_required": "c467b3bdc2ebc311a0435b97458b6fcc22d8e97dfe2277fbfb475f35627a2e00",
   "account_username_rules": "ac20034fdf3c0ee63800c1a46e737f829eec67adc6509310e254d157f30d06c6",
   "account_username_taken": "9f6364387f52f361dc8ea70286611ec00425b2d19eb5a039025da05d3f9895b4",
   "account_welcome_description": "313d5f83ce56ea798caa3a756f3ca9160f3f1b2a704eded5d121cdff9862d374",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">Çıkış yap</string>
     <string name="account_menu_create_account">Hesap oluştur</string>
     <string name="account_sign_out_failed">Zoonk oturumunu kapatamadı. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="account_name_required">Ad</string>
+    <string name="account_username_required">Kullanıcı adı</string>
 </resources>

@@ -17,7 +17,16 @@ internal fun yearLabel(
 internal fun yearTicks(
     start: Long,
     end: Long,
-): List<Long> = niceTicks(start.toDouble()..end.toDouble(), TICK_COUNT).filter { it != 0.0 && it % 1.0 == 0.0 }.map { it.toLong() }
+): List<Long> =
+    niceTicks(start.toDouble()..end.toDouble(), TICK_COUNT).filter { it % 1.0 == 0.0 }.map {
+        if (it ==
+            0.0
+        ) {
+            1L
+        } else {
+            it.toLong()
+        }
+    }
 
 /** About a hundredth of the axis, in a round number of years. */
 internal fun yearStep(

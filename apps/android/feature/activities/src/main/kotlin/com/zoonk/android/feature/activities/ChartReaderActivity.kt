@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.activities
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,7 +52,7 @@ private fun ChartReaderActivity(props: ActivityProps) {
     val yDomain = niceDomain(fields.points.map { it.y }, includeZero = false)
     val plainX = xs.all { it == floor(it) && abs(it) < PLAIN_NUMBER_LIMIT }
     val formatX = { value: Double -> formatNumber(value, locale, fractionDigitsFor(value), grouping = !plainX) }
-    val shown = fields.spans.filter { it.id in selected || (props.isChecked && props.expected.numericValue != null && it.id == targetId) }
+    val shown = fields.spans.filter { it.id in selected || (props.isChecked && it.id == targetId) }
     val measures = shown.mapNotNull { span -> measureSpan(fields, span.id)?.let { span to formatMeasure(fields, it, locale) } }
     val accent = MaterialTheme.zoonk.vizSecondary
     val description =
@@ -94,14 +96,24 @@ private fun ChartReaderActivity(props: ActivityProps) {
         )
         ActivitySelectGrid(fields.spans, label = stringResource(R.string.activities_chart_spans)) { span ->
             ActivityTile(
-                picked = span.id in selected,
+                picked = span.id in selected || (props.isChecked && span.id == targetId),
                 result = AnswerResult.Right.takeIf { props.isChecked && span.id == targetId },
                 enabled = !props.isLocked,
                 onClick = {
                     selected = if (span.id in selected) selected - span.id else selected + span.id
                     if (numeric != null) props.onAnswerChange(selected.lastOrNull()?.let { measureSpan(fields, it) }?.let(::numericAnswer))
                 },
-            ) { Text(span.label) }
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(span.label)
+                    Text(
+                        formatAmount(pointAt(fields, span.from), locale, fields.yUnit) + " → " +
+                            formatAmount(pointAt(fields, span.to), locale, fields.yUnit),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }

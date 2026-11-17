@@ -168,4 +168,5 @@
         <item quantity="one">%1$s lesson moved to another day to fit your %2$s today.</item>
         <item quantity="other">%1$s lessons moved to another day to fit your %2$s today.</item>
     </plurals>
+    <string name="session_summary_to_review_detail">To review</string>
 </resources>

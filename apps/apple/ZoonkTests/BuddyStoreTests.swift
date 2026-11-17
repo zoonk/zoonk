@@ -151,10 +151,14 @@ extension CurrentAccount {
 final class BuddyDayOpeningTests: XCTestCase {
   func testClosingDayBeforeAMissionAnswersOpensNothingThenOrLater() async throws {
     let (window, api, opened) = try await waitingMission()
-    try closeRequestSheet(in: window)
-    try await settle()
+    try await closeRequestSheet(in: window)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
     await api.releaseHeldCall()
-    try await settle()
+    // A closed day sheet must not open a mission after its response.
+    let closedDayWindow: Duration = .milliseconds(200)
+    try await Task.sleep(for: closedDayWindow)
     XCTAssertEqual(opened.count, 0)
     try await showDay(in: window)
     XCTAssertEqual(opened.count, 0)
@@ -162,10 +166,11 @@ final class BuddyDayOpeningTests: XCTestCase {
 
   func testClosingDayBeforeAMissionFailsLeavesTheNextOpeningClean() async throws {
     let (window, api, _) = try await waitingMission(fails: true)
-    try closeRequestSheet(in: window)
-    try await settle()
+    try await closeRequestSheet(in: window)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
     await api.releaseHeldCall()
-    try await settle()
     try await showDay(in: window)
     XCTAssertFalse(
       spoken(in: window).contains { $0.contains(Self.failure) },
@@ -175,21 +180,24 @@ final class BuddyDayOpeningTests: XCTestCase {
   func testMovingDayFromSheetIntoPaneKeepsTheMissionAndOpensOnce() async throws {
     let (window, api, opened) = try await waitingMission()
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
     XCTAssertEqual(opened.count, 1)
+    try await waitForTestCondition("The day sheet did not dismiss after moving into the pane") {
+      window.rootViewController?.presentedViewController == nil
+    }
     XCTAssertNil(window.rootViewController?.presentedViewController)
   }
 
   func testMovingDayIntoPaneAndBackKeepsTheMissionAndOpensOnce() async throws {
     let (window, api, opened) = try await waitingMission()
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
     XCTAssertEqual(opened.count, 1)
   }
 
@@ -235,22 +243,21 @@ final class BuddyDayOpeningTests: XCTestCase {
         .environment(\.tutorPlaces, TutorPlaces { _ in opened.count += 1 })
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
     try await showDay(in: window)
-    try activate(
+    try await activate(
       where: { $0.contains(String(localized: "Do a new lesson", table: "Today")) }, in: window)
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     return (window, api, opened)
   }
 
   private func showDay(in window: UIWindow) async throws {
-    try activate(where: { $0.hasPrefix("Energy ") && $0.contains("mission") }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix("Energy ") && $0.contains("mission") }, in: window)
+    try await waitForTestCondition("The day sheet did not appear") {
+      window.rootViewController?.presentedViewController != nil
+    }
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
 }
 
 @MainActor

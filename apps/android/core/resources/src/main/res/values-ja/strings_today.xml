@@ -92,7 +92,6 @@
   "today_save_failed": "62afa501eeb9717c3f297c31bd8f498206e5352af6ff171b6fdccef8faaee2bc",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
-  "today_see_plan": "6799ba80460d5c54a6ccf987d49efde0a732f781e70f21f667ff429cf7a33902",
   "today_see_summary": "00f4d50d9702dc15e08d746fc8ce04bb441f451e806a9a1ffe1587dac1ed2d58",
   "today_see_your_plan": "3446780f55c43c9d5f708ed8eee6a8790594f2e8919072bc8abdac153794db78",
   "today_segment_challenge_note": "e58766748c440531efcd175f9499b1e8779b8b3d6f3ac797969622102aa337af",
@@ -216,7 +215,6 @@
     <string name="today_continue_session">続ける</string>
     <string name="today_keep_learning">学習を続ける</string>
     <string name="today_practice_minutes">%1$s分練習する</string>
-    <string name="today_see_plan">学習計画を見る</string>
     <string name="today_lessons_not_written">今日のレッスンはまだ準備ができていません。</string>
     <string name="today_get_lessons">今日のレッスンを準備する</string>
     <string name="today_open_failed">次のステップを開けませんでした。もう一度お試しください。</string>

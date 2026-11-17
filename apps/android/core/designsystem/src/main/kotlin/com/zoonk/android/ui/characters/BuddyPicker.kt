@@ -69,7 +69,7 @@ fun BuddyPicker(
             onValueChange = { onNameChange(it.take(MAX_NAME_LENGTH)) },
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.buddy_picker_name),
-            placeholder = { Text(buddyName(kind, null)) },
+            placeholder = { Text(buddyName(kind, null), color = MaterialTheme.colorScheme.onSurface) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
         )

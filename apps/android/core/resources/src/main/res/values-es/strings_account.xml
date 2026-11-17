@@ -30,6 +30,7 @@
   "account_menu_subscription": "bc84494ab056102f473ab4601db3bb5ca34f9046292ecb1afefb5697579ccec7",
   "account_name": "5118c593cbc9fd62ba338856e789559394e766fe333346462d7ab41f3746a3a1",
   "account_name_description": "8c43efa59110466eaf2392013e5d2b4daf98ac618e0f5e4e456e1d1bc7ff1614",
+  "account_name_required": "3ba803e5c274949861a6787d0dc705edc30aa76aba1ce443dc0f53848a8993e6",
   "account_name_too_long": "6cff3e79b00f66fe68e9295384f2f41ee69852aeb12572a2741168cb4f0ceb4b",
   "account_new_code_failed": "1e909cddf55014dc6e775b630ed31bc7dfbcb39b63d6e652a5a038cc27cd68b1",
   "account_new_code_sent": "325fda4a4ae302f99afadfc6af42aa57e3e6b2eb6e757d85cbc01a5905c918eb",
@@ -48,6 +49,7 @@
   "account_username_available": "07a542184504047216c861cf36bac708fab42eafc6b2d44a714d716729f12ee1",
   "account_username_checking": "2b01c556ab97b1f76494afeb4c6302fb42df9ef351d007d359ae7a8e9b314670",
   "account_username_line": "24dfc39542992c216e474c700c9c6afe1a2faee0b1531cfd60779f03f5b48dd9",
+  "account_username_required": "9bd504a04b3ac9b775a126cf3dc069877259ad05039dd7cd658abc6302a4ae3e",
   "account_username_rules": "e87988c7156bf7e4e92672877e7fb7c015b353b8c02eb94a36cc6ad0b2002d37",
   "account_username_taken": "c9396008475a27be2e961af8ac200061c5fc33e769e37e4e44707d508ca7a42f",
   "account_welcome_description": "8d1678f3b46ca5c827f7ae53ea7bcf630cc10c7cfc082fd667e7c8ccf738e80f",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">Cerrar sesión</string>
     <string name="account_menu_create_account">Crear una cuenta</string>
     <string name="account_sign_out_failed">Zoonk no pudo cerrar tu sesión. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="account_name_required">Nombre</string>
+    <string name="account_username_required">Nombre de usuario</string>
 </resources>

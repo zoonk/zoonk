@@ -189,7 +189,7 @@ private fun chapterBlocks(
                     val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
 
                     if (layout.beside && chapter.objectives.isNotEmpty()) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
                             lessons(Modifier.weight(1f))
                             ChapterObjectives(chapter.objectives, Modifier.weight(1f))
                         }
@@ -281,7 +281,6 @@ internal fun CourseEyebrow(
         text = detail.course.title,
         modifier =
             Modifier
-                .minimumInteractiveComponentSize()
                 .clickable(onClickLabel = stringResource(R.string.catalog_open_course)) {
                     navigator.open(AppRoute.CatalogCourse(detail.course.id.toString()))
                 },
@@ -513,7 +512,12 @@ internal fun ChapterLessonRows(
                         { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
                     },
                 highlighted = isCurrent,
-                leading = { Text(formatNumber((index + 1).toDouble(), locale), style = MaterialTheme.zoonkType.data) },
+                leading = {
+                    Text(
+                        formatNumber((index + 1).toDouble(), locale),
+                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+                    )
+                },
                 leadOnFirstLine = true,
                 meta = { Text(formatMinutes(lesson.estimatedMinutes.toInt(), locale)) },
                 chevronSpace = true,
