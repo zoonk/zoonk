@@ -358,13 +358,11 @@ struct UnitCircleCanvas: View {
     }
     .chartXScale(domain: 0...360)
     .chartYScale(domain: -1...1)
-    .chartXAxis {
-      AxisMarks(values: [0, 90, 180, 270, 360]) { value in
+    .chartsXAxis {
+      AxisMarks(preset: .aligned, position: .bottom, values: [0, 90, 180, 270, 360]) { value in
         AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: angleText(x))
-          }
+        if let x = value.as(Double.self) {
+          ChartsAxis.bottomLabel(value: x) { Text(verbatim: angleText(x)) }
         }
       }
     }

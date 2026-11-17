@@ -196,10 +196,10 @@ private struct GuessTickLayout: Layout {
   ) {
     for (view, share) in zip(subviews, positions) {
       let width = view.sizeThatFits(.unspecified).width
-      let x = Swift.min(
-        Swift.max(bounds.minX + share * bounds.width, bounds.minX + width / 2),
-        bounds.maxX - width / 2)
-      view.place(at: CGPoint(x: x, y: bounds.minY), anchor: .top, proposal: .unspecified)
+      let x = share * bounds.width
+      let anchor = ChartsAxis.anchor(at: x, plotWidth: bounds.width, labelWidth: width)
+      view.place(
+        at: CGPoint(x: bounds.minX + x, y: bounds.minY), anchor: anchor, proposal: .unspecified)
     }
   }
 }

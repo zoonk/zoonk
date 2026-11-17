@@ -228,11 +228,10 @@ private struct ChanceSimulationView: View {
     .chartXScale(domain: (Double(first) - 0.5)...(Double(last) + 0.5))
     .chartYScale(domain: 0...peak)
     .chartYAxis(.hidden)
-    .chartXAxis {
-      AxisMarks(values: ticks) { value in
-        // Under its bar's middle.
-        AxisValueLabel(anchor: .top) {
-          if let outcome = value.as(Int.self) {
+    .chartsXAxis {
+      AxisMarks(preset: .aligned, position: .bottom, values: ticks) { value in
+        if let outcome = value.as(Int.self) {
+          ChartsAxis.bottomLabel(value: Double(outcome)) {
             if isBinary {
               ChanceModel.isHit(fields.model, outcome)
                 ? Text("Yes", tableName: "ActivitiesCharts", comment: "A run that hit")
@@ -279,7 +278,7 @@ private struct ChanceSimulationView: View {
         ActivityNumberFormat.format($0 * 100, unit: "%", digits: 0)
       }
     }
-    .chartXAxis {
+    .chartsXAxis {
       ChartsAxis.bottom(
         ticks: [0, Double(fields.runs)], showsGrid: false
       ) {
@@ -461,7 +460,7 @@ private struct SamplingSimulationView: View {
       .chartXScale(domain: domain)
       .chartYScale(domain: 0...peak)
       .chartYAxis(.hidden)
-      .chartXAxis {
+      .chartsXAxis {
         ChartsAxis.bottom(ticks: ChartsAxis.ticks(domain)) {
           valueText($0, digits: digits)
         }

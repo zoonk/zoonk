@@ -159,7 +159,7 @@ struct LineCrossingCanvas: View {
     .chartPlotStyle { plot in plot.clipped() }
     .chartXAxisLabel(fields.xLabel, alignment: .trailing)
     .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
-    .chartXAxis {
+    .chartsXAxis {
       ChartsAxis.bottom(ticks: ChartsAxis.ticks(0...domain.x)) {
         ActivityNumberFormat.format($0)
       }

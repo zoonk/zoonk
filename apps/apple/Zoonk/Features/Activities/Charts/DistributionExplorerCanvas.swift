@@ -242,7 +242,7 @@ struct DistributionExplorerCanvas: View {
       }
       .chartXScale(domain: domain)
       .chartYAxis(.hidden)
-      .chartXAxis {
+      .chartsXAxis {
         // Below the handles that sit on the baseline.
         ChartsAxis.bottom(ticks: ticks, labelSpacing: 16) {
           ActivityNumberFormat.format($0)

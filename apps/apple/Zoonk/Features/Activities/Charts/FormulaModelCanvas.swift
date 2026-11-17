@@ -208,7 +208,7 @@ struct FormulaModelCanvas: View {
     }
     .chartXScale(domain: view.axis.min...view.axis.max)
     .chartYScale(domain: domain)
-    .chartXAxis {
+    .chartsXAxis {
       ChartsAxis.bottom(
         ticks: [view.axis.min, view.axis.max], showsGrid: false
       ) {

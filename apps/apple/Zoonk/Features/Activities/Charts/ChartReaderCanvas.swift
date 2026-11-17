@@ -162,7 +162,7 @@ struct ChartReaderCanvas: View {
     }
     .chartXScale(domain: xDomain)
     .chartYScale(domain: yDomain)
-    .chartXAxis {
+    .chartsXAxis {
       ChartsAxis.bottom(
         ticks: ChartsAxis.ticks(xDomain, count: 3),
       ) {

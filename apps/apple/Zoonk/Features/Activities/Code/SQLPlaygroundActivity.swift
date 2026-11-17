@@ -424,8 +424,8 @@ private struct SQLTableViewer: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      Button {
-        isExpanded.toggle()
+      DisclosureGroup(isExpanded: $isExpanded) {
+        EmptyView()
       } label: {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Image(systemName: "tablecells")
@@ -449,18 +449,14 @@ private struct SQLTableViewer: View {
           )
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
-
-          Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-            .foregroundStyle(.mutedForeground)
-            .accessibilityHidden(true)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .frame(minHeight: 44)
         .contentShape(.rect)
       }
-      .buttonStyle(.plain)
-
+      .tint(.mutedForeground)
+      .padding(.trailing, 14)
       if isExpanded {
         SQLRowsTable(
           caption: Text(
