@@ -317,7 +317,7 @@ private struct GoalSwitcher: View {
           } label: {
             Label {
               Text(
-                "New goal", tableName: "Navigation",
+                "Start a goal", tableName: "Navigation",
                 comment: "Goal switcher option that starts another goal")
             } icon: {
               Image(systemName: "plus")

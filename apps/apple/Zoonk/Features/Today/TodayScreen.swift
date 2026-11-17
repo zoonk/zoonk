@@ -459,7 +459,7 @@ private struct TodayGoalPaused: View {
     let button = Button {
       router.open(.startGoal())
     } label: {
-      Text("New goal", tableName: "Today", comment: "Starts a new goal")
+      Text("Start a goal", tableName: "Navigation")
     }
 
     if prominent {

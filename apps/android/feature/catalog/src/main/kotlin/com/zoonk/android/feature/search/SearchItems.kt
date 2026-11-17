@@ -537,7 +537,7 @@ private fun fallbackGroup(
 
     return SearchGroup(
         FALLBACK_GROUP,
-        stringResource(if (ask != null) R.string.search_group_ask else R.string.search_group_new_goal),
+        stringResource(if (ask != null) R.string.search_group_ask else R.string.search_start_goal),
         listOfNotNull(ask, start),
     )
 }

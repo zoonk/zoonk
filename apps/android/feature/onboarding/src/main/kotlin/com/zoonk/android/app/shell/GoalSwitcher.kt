@@ -258,7 +258,7 @@ private fun MenuItems(
 
     HorizontalDivider()
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.goal_switcher_new_goal)) },
+        text = { Text(stringResource(R.string.goal_switcher_start_goal)) },
         leadingIcon = { Icon(painterResource(R.drawable.ic_add), contentDescription = null) },
         onClick = {
             onDismiss()
