@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "14ae4e310757e4a82bdc6da5f7dee4a9f02da03ae9e5f04e076836b9d2641bdd",
   "plan_effect_topics_leave": "b2fe3e2d4821d9c1f14a767841e54235f1a2616949e86f3c8ef4b7a27b57497e",
   "plan_effect_weekly_challenge_on": "f2039da5ccfc79383d65089ebbfd673eac70c55b5c7d3d56a47ef2172c4a1506",
+  "plan_end_none_set": "62f81f5f616d4aafff308fa488f1fed20db4376ade52d18b2a43428be13b75ff",
+  "plan_end_none_set_estimate": "177effbe43c3ace40d56e680e176ea792e23ea1794c4be457b875675e843613c",
   "plan_ends": "4a924e83f3621bbdf901b3640177d687f24312e7b616dbcddeda9affd6f28af7",
   "plan_ends_about": "55d47b0fee6c8c2839068bf294f5478715064380f60f8aa8aa055e307cc0df81",
   "plan_ends_about_month": "10ceffe8cfbc0c2d7c60197d732ae411223cf40c0b6fc59f74b1bc3f0cc82518",
@@ -1412,4 +1414,6 @@
     <string name="plan_ask_phase_dates_off_rest">Aşama tarihlerini dinlenme günleri dışına alalım mı?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s aşamasının bitişini %2$s yerine başka bir güne alalım mı?</string>
     <string name="plan_why_phase_end_off_rest">%1$s günü çalışmıyorsun.</string>
+    <string name="plan_end_none_set">Belirlenmedi</string>
+    <string name="plan_end_none_set_estimate">Belirlenmedi · %1$s</string>
 </resources>

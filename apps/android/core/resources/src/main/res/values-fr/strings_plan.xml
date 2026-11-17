@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "3c61dc7faed7a2563d0c3294554b4422a496caf2b807a88ae26816b11c8f1a41",
   "plan_effect_topics_leave": "3b1fee796a2c188ad3221aee90f26742e0107dda5def1eff6d6ed7f6b642a436",
   "plan_effect_weekly_challenge_on": "d07dda9ec56bc876544e8ea9c2026b7ea680ad8504a34e22a7e191b2d7c7a2e3",
+  "plan_end_none_set": "5417d908584651283f61877e6b66f1e17e0ef8564f3cbfc2bc17ef2c093c5048",
+  "plan_end_none_set_estimate": "81a938ad242a5e1f28250a03fe5ca70b5079eb4baa5dbe624b5324bb49e0a7a8",
   "plan_ends": "807874bc604aa565610eb80d92503e04783e5f8e8458376720673fcca5ac7f84",
   "plan_ends_about": "1ea5a7eb8c6dafa6248bc9aedfa42d257a09df8df8ee4f7ad33b7ce5018581a1",
   "plan_ends_about_month": "39d2eaa909291a194dae1359d73384d65e99412e1289a36a56440aefc7d99dfc",
@@ -1482,4 +1484,6 @@
     <string name="plan_ask_phase_dates_off_rest">Décaler les dates de tes phases pour éviter les jours de repos ?</string>
     <string name="plan_ask_phase_end_off_rest">Décaler la fin de %1$s à un autre jour que %2$s ?</string>
     <string name="plan_why_phase_end_off_rest">%1$s est un jour où tu n’étudies pas.</string>
+    <string name="plan_end_none_set">Non définie</string>
+    <string name="plan_end_none_set_estimate">À définir · %1$s</string>
 </resources>

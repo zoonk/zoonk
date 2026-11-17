@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "51e3e95cbec196371aa2721e0aae6ce794f5c1eea2c2329b84c4ce860263176f",
   "plan_effect_topics_leave": "6c5bedb3311d979c0c57a2da653652496c7206b6201470a5945233602d17ce73",
   "plan_effect_weekly_challenge_on": "ad50d13aba67eb67730e3aca7bae765d3255542d914f12badd1f028af77ba334",
+  "plan_end_none_set": "1deb6dd04fd454d65bfc5a7215e5a00b6cc355fc77fc8ace8dffd9780aebd7b1",
+  "plan_end_none_set_estimate": "6cea15e300306dc29f1079606d5e1073d64e38052ecde0dd1cbca4b9da79f274",
   "plan_ends": "e54e21cd2972e710e82370fd6e7ce7ae437d1d5c7d8a299032ec105582e45651",
   "plan_ends_about": "0e9bdc96d7e7427b02f9db80e638e4aab3fbe92b8e0bd55cdf354a63c787b718",
   "plan_ends_about_month": "85e8b3f4095f83db883da533cb001e63bbf3a1f08abf03909f0f763a677edcb5",
@@ -1342,4 +1344,6 @@
     <string name="plan_ask_phase_dates_off_rest">各フェーズの終了日を休みの日以外に変更しますか？</string>
     <string name="plan_ask_phase_end_off_rest">%1$sの終了日を%2$s以外の日に変更しますか？</string>
     <string name="plan_why_phase_end_off_rest">%1$sは学習しない日です。</string>
+    <string name="plan_end_none_set">未設定</string>
+    <string name="plan_end_none_set_estimate">未設定 · %1$s</string>
 </resources>

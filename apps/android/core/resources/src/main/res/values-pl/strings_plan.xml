@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "f48224cbb1811617db82c0d65f6242093c4f09a2eb3ffa9ae53cab83cc597731",
   "plan_effect_topics_leave": "82186ce12909dfb0775f2459fc32c133760467189f7d2a741768a1f969d8e555",
   "plan_effect_weekly_challenge_on": "cc5a59abae731588852c76979b0d70740a1053ba352ba2bd2b39e19ca22a5668",
+  "plan_end_none_set": "ddacf4747d9b678c29e09987c08dad6acafb000052773afca8a9a11b85e9dbf3",
+  "plan_end_none_set_estimate": "5868b6dd0d13c0bff7f30bece7522c65d3492e0c7ff321a7624b05eb1e4ad14d",
   "plan_ends": "5def049b873d9eb1880115107b6ffd84a23a7bfbf127ae18502644934fe76f84",
   "plan_ends_about": "b19f89fa742b76235a2417e1db38dbd2d54324f91aebbaeb55564d0525c277d7",
   "plan_ends_about_month": "b4ec1f6c804f1783fc97b314ef4aa7ced8ead6aa40eb83f2a93e7221d9e0dbd0",
@@ -1552,4 +1554,6 @@
     <string name="plan_ask_phase_dates_off_rest">Przesunąć terminy etapów na dni nauki?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s: przesunąć koniec na inny dzień niż %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s to dzień bez nauki.</string>
+    <string name="plan_end_none_set">Nie ustawiono</string>
+    <string name="plan_end_none_set_estimate">Nie ustawiono · %1$s</string>
 </resources>

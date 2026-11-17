@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "8a6403dbbf37a2cdf0d71c4a70f51363f895c8e74d50468428e729c712de5463",
   "plan_effect_topics_leave": "e49231670521d6e5f6b0901dc2a7f3bc8e0b2974a13c9e4a2f0f1777a2fe0106",
   "plan_effect_weekly_challenge_on": "d4b529a5104c56a954edecd7f9208e46c4215c90f16dfacb550221cb15d65c3c",
+  "plan_end_none_set": "6c5f3c641f29c6d3d30ea6786d3102546a9b672c97f9ed2840a2838b49e06a34",
+  "plan_end_none_set_estimate": "519708bc9c69ca5848acc6cf0d1eb7069d0f23ad70f48302491e3dd1d29a93be",
   "plan_ends": "128311fbce2a11ac8cc0fc579e329ac4cf8322ed8fad61625e4c703b4206c288",
   "plan_ends_about": "863ea67538a2e0fb68ef83c071418f8bda4185682bf20f5448d056f03f7af789",
   "plan_ends_about_month": "768e50827622e19e6758c7b99974be4dd292ba52743149c60ac079fe13740a7c",
@@ -1342,4 +1344,6 @@
     <string name="plan_ask_phase_dates_off_rest">단계별 종료일이 쉬는 날과 겹치지 않게 조정할까요?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s 종료일을 %2$s 말고 다른 날로 옮길까요?</string>
     <string name="plan_why_phase_end_off_rest">%1$s에는 공부하지 않아요.</string>
+    <string name="plan_end_none_set">설정 안 됨</string>
+    <string name="plan_end_none_set_estimate">설정 안 됨 · %1$s</string>
 </resources>

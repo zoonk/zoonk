@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "d8c31a2e670b27304fb32a79247d695b5b2d35d60fc20d820f2ce1f4ebf9b684",
   "plan_effect_topics_leave": "239a0498f2979816ddbe11d819f5f48d5a21a46e441a51539d36a554858b55e1",
   "plan_effect_weekly_challenge_on": "f60b8b4c04d9ba2e77412448e26293b6fec1797b46c41d3adf741ed798ab8559",
+  "plan_end_none_set": "d9dbe65c08a236418fbdd816c1f085270990ab99b3ee78e3346d55bef56af2ed",
+  "plan_end_none_set_estimate": "e109868f5ca47cdc8edf5278dcc84281cbc4ced4e1909e071be08d4f391a4065",
   "plan_ends": "84793f5146c0697a6236a8ea0dcd77e031415b5003cc27a09795913442c855ca",
   "plan_ends_about": "871461889b9cd311113750c13773aaf99741e85a2906b269357790a91d2fc265",
   "plan_ends_about_month": "bf39dce54464d5ce0b22e81f1f910bec473a3d3dc732b1b5ca933f957b2ce15b",
@@ -1482,4 +1484,6 @@
     <string name="plan_ask_phase_dates_off_rest">Mudar as datas das fases para dias de estudo?</string>
     <string name="plan_ask_phase_end_off_rest">Mudar o fim de %1$s para outro dia em vez de %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s é um dia em que você não estuda.</string>
+    <string name="plan_end_none_set">Não definida</string>
+    <string name="plan_end_none_set_estimate">Sem definir · %1$s</string>
 </resources>
