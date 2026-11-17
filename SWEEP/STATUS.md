@@ -5,7 +5,8 @@ The handoff for whoever continues this PR, on any machine. Read this, `SWEEP/DEC
 ## Where it stands
 
 - **Head:** see `git log -1 origin/cw/ux-clarity-audit`. Each landing is a `Merge FX-<LANE>: …` commit.
-- **Landing now (FS-D47):** the six lane branches land one after another: NX, AG2, AP, CALLS, AGF, then W4's two integration commits if the others don't already cover them. Each landed branch is deleted from origin.
+- **Landing now (FS-D47):** landed so far: Android fixes, then the plan, level and subscription explanations. Next, each merged onto the newest head: the Apple activity fixes (`cw/fx-ag2` at `fe8e9cfc44`), the Apple screen fixes (`cw/fx-ap`), then the map and guess-scale fixes (`cw/fx-agf`), then whatever `cw/fx-w4`'s two integration commits (`7cb63f5639`, `ac720298ba`) still add. A branch is deleted from origin once it has landed. A lane branch that merged an unpushed commit with an internal name gets its merge redone on a fresh branch, reusing its resolutions.
+- **In progress:** the follow-up for the line-crossing activity (FS-D48: a revealed line never runs through a name; guide lines count; the Before/After card uses the shared box), on `cw/fx-ag2` after it lands.
 - **Still to do, in order:**
   1. The words pass (Claude): revise the English the second sweep wired as stubs (`SWEEP/WORDS.md`) and re-translate what changes through Eloqnt. It also settles FS-D43's unit label ("in days" reads right; "in times" doesn't).
   2. Web triage of the blind reads (web-01 to web-29), then web fix slices.
@@ -24,6 +25,7 @@ The handoff for whoever continues this PR, on any machine. Read this, `SWEEP/DEC
 
 ## Rules that hold until the end
 
+- Commit and merge messages describe the change in plain words, never the process (FS-D49).
 - Never merge the PR, never deploy production, never force-push, amend or stash.
 - Codex writes code, tests and captures; Claude writes the words and reviews every diff a learner sees, once per slice.
 - At most 3 simulators and 2 emulators on one machine.

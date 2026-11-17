@@ -105,10 +105,10 @@ A guess's unit is free text written in the content's language ("days", "km/h", "
 
 The founder, through the lead: "We have three providers with available Claude usage limits. For this task, we can make an exception and use them all... you are allowed to use all their limits, 100% of their limits, from all providers."
 
-- For this task only, the rule that "an account at 2% or less of its week takes nothing" is lifted. three Claude accounts may each go to 100%. Nothing is held in reserve.
+- For this task only, the rule that "an account at 2% or less of its week takes nothing" is lifted. Three Claude accounts may each go to 100%. Nothing is held in reserve.
 - Order of use:
-  - two Claude accounts take the web reads (web-06 onward), one folder per delegation.
-  - a Claude account takes the Claude work that blocks a landing (reviews, the words pass), then any web reads left.
+  - Two Claude accounts take the web reads (web-06 onward), one folder per delegation.
+  - One Claude account takes the Claude work that blocks a landing (reviews, the words pass), then any web reads left.
 - When the limits run out, the work pauses. It resumes on a Claude account at Nov 17 20:00, then on another Claude account at Nov 18 01:00.
 - Before FS's own account runs out, STATUS "RESUME HERE" says exactly what's read, what was cut off, which lanes are READY and unreviewed, and what each Codex lane is doing.
 - Everything else stands: never merge, no force, amend or stash, at most 3 simulators and 2 emulators, and Codex writes no words.
@@ -147,3 +147,7 @@ From the AG2 round-7 review (`fix/AG2/REVIEW-R7.md`). On every app (web, Apple, 
 - **Guide lines count.** "Nearest its own line" measures against every other drawn line, dotted guides and dashed lines included. A name that sits nearer a guide than its own line moves to a clear spot nearer its own.
 - Every activity box, the Before/After cards included, goes through the shared box (`activityBox()` on Apple); only the after card keeps its tint.
   Also accepted from AGF round 8: the lesson task scaffold's side gutters are a fixed 16 px (24 px on large screens) at every text size, the same as Apple and Android, so 200% text keeps its room instead of the gutter doubling.
+
+## FS-D49 (Nov 17, 21:0x, the founder): commit and merge messages carry no internal names
+
+"No internal names in commit messages." No lane or agent codes, no "sweep", "round N", "review round", "lane" or "blind reads". A message says what changed for a learner or a developer, in the commit skill's format, for someone who never saw this PR's process. Merge commits FS writes describe the change in plain words. Lane commits already carrying an internal name may be merged as they are; nothing pushed is rewritten. The commit skill says so in one sentence, landed with the next landing.
