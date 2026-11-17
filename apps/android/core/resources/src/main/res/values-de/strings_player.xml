@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "eba62fe36785c815af831576e4c7065acdc0fbe31178139434ebf832596c236a",
   "player_next_lesson": "a686aba05df320bb7261ba0442876fb13bfc67e3135c6866dbc7ad540ec5318f",
   "player_next_step_failed": "e78d09a4c5149441b066530580a8a00b12371814267c9d1e56519c69f542d9a2",
+  "player_not_found_description": "6d9f5d454b42f880edb0c0cd74bd29db2d849c9b2cc6c13bcd61b609f9b918de",
   "player_not_found_title": "aee3867d9c7b469ac5bf5313d7fa987afcce4ba9315e06fe20d26a2651f55123",
   "player_not_in_app_description": "dc4e45014d3e2e84dac285ff3c046fa262757319c16886aee2fb4df7d5ab264b",
   "player_not_in_app_title": "038da0eaf561c2a8a7a86c56fbac437f142b43c8861a063408a5238580cf6595",
@@ -432,4 +433,5 @@
     <string name="player_citation_from_material">Aus deinem Material: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Nicht in deinem Material</string>
+    <string name="player_not_found_description">Der Link ist vielleicht veraltet oder falsch eingegeben.</string>
 </resources>

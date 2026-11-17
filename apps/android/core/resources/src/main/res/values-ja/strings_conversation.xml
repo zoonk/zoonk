@@ -131,6 +131,7 @@
   "conversation_take_your_time": "90be5ab34a633d501f509236445f5e536d633480dd2c54ac8d0e3751b1ba7549",
   "conversation_taken_over": "0233f0cf67d5f777b1e65464a8f06b5f624a5b9d267ef16bc006aba4005ed86a",
   "conversation_talking": "227fda9f983f90d331ec1f32abff8e9f6f5a9f58b29255e7645cd4e8938c673f",
+  "conversation_time_used": "73e56b304d286346bb40c0dcfc0b879f1550b0ea0920ac3a9305852113b69737",
   "conversation_tip": "21f4592127e2325f8248f7edc812f3bf97657913435981a30cd9bff30e965a77",
   "conversation_to_improve": "f69786c962575df361c97d42108e0fe611b023acae0e469861828cedcaa2bab4",
   "conversation_toefl_mock": "286044fea36a4187ed8f1690d62c8bd9c66e030142ad1177d25818b3d321e7f8",
@@ -367,4 +368,5 @@
     <string name="conversation_writing_task_line_2">カードの指示文を作成しています…</string>
     <string name="conversation_writing_task_line_3">試験官が話す内容を準備しています…</string>
     <string name="conversation_writing_task_line_4">役立つフレーズを追加しています…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

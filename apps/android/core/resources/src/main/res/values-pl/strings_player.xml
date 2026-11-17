@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "8749b436ae7d1defa548a70b265d132c7b9ce2de19907149bb1c8f77fd7611cc",
   "player_next_lesson": "7dbea98773de00436b9f0efc53e36ff1366a4bf5112a52e8c90d8afd5cde27aa",
   "player_next_step_failed": "bb023063d7cd9ab5ff6e01fab9e17f63b3c7284c07506464b1da237ec1d9e205",
+  "player_not_found_description": "3a09e0cf3f1f29e0c56324ea934a0edb8850c45c9acddc3b778370e7056e82e2",
   "player_not_found_title": "07e93956bf27a316ffb3554c5f4b4d8de0a60209a7b9b756c45198f74b7bb699",
   "player_not_in_app_description": "6b8378bbd48dad912bab36d42c8cbdd210fb3cc712700814c6e05e030dc0b175",
   "player_not_in_app_title": "b764a77e67d8ce5de8294e55454b9c81a59f1a1b851540cd11c8fd4066e61fa4",
@@ -444,4 +445,5 @@
     <string name="player_citation_from_material">Z twoich materiałów: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Brak w twoich materiałach</string>
+    <string name="player_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
 </resources>

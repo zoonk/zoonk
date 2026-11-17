@@ -30,6 +30,7 @@
   "account_menu_subscription": "19cf487a1f7d14a8d33903d6b4f90e8bd6436d894f1fb5b5ec5994b131db11b4",
   "account_name": "53c31f36b0d11eec2f9ab0daf3fd55ddf069bd8178b36519ab0dc42792d79052",
   "account_name_description": "08874a05c871e367e095a624ceaa44f72b168362fa2001574c3d2542e3db6426",
+  "account_name_required": "d5edfb9af95d91ef3a1cecde1f3a8289c181f7bb5f9887f6b3540d8273296904",
   "account_name_too_long": "88599f27c6e9860851a50989068a41bb3a7eb21242d4ca12fa2856cf3344baeb",
   "account_new_code_failed": "862693e386a592cca3c50744615b1971c48e2e4c23edbde7b96e7f92ffb75f97",
   "account_new_code_sent": "2c3e843a47db8234a43f399a8ec3d1a30940540428b0fe8e9ed4b43ca569bd48",
@@ -48,6 +49,7 @@
   "account_username_available": "28dc88738b72409979adbbaa57bef7c832b8ebc861710e1d03d591d2811debf7",
   "account_username_checking": "bfc172866735014513d8665182de533258661705874661956747f7fa1ed959f9",
   "account_username_line": "74544e383fdf647f18edf60cda27fc1c20b5ab711dd36d7132896ca3534919ec",
+  "account_username_required": "e593f6b64980b7a77f8b398b2de43c9483cc4a873065b7a489732d0d5ef80129",
   "account_username_rules": "b44e851c0f342349a06212a725a737bc2bb65f1577c5211104f9b28015cffbd6",
   "account_username_taken": "70c59a8dde53bbf197070d4a4117aa5b5697f6f758dbf2b82ed96decb5e822b0",
   "account_welcome_description": "7479f9c2a2f88016dbae0e7395771f5830d808e15a00036771d5f2a7cf3c51b0",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">Abmelden</string>
     <string name="account_menu_create_account">Konto erstellen</string>
     <string name="account_sign_out_failed">Zoonk konnte dich nicht abmelden. Prüf deine Verbindung und versuch es noch einmal.</string>
+    <string name="account_name_required">Name</string>
+    <string name="account_username_required">Benutzername</string>
 </resources>

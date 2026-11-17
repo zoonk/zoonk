@@ -69,9 +69,9 @@
   "onboarding_error_could_not_read": "8a3b08bda0df882ceb1e8a0cffe27db4906906f25495b6097e3c3409caad1ec9",
   "onboarding_error_could_not_save": "1a9adc1081056cc5bdfba2ad4e277f9971bb189fce5885ad664e1467cde618f8",
   "onboarding_error_one_moment": "a5598ccb4431e1639e377fbfe4930697bf1fd8077e27f79ec4d8e6332ccb0e0e",
-  "onboarding_exam_choice_choices": "ee775325914ce8985f0cbd119441d04edde2dfd08563080b6991e3cf491eb244",
-  "onboarding_exam_choice_options": "069028321659c1888b7f47c6f5cb12474431340bd6280f79c2094cdd62090320",
-  "onboarding_exam_choice_options_take": "3eb3d5551414e531380492782bc83cac9953b1e94b36cf1ee00571cdc50e14be",
+  "onboarding_exam_choice_choices": "c0d6d63e6af7675b16b3d115c91853f430cd2fb799b59402e39e7d5bedb92202",
+  "onboarding_exam_choice_options": "f2c00b77838c8f017b429cc906f1e953c973dfd35776dcbb52586c99adc3dc3e",
+  "onboarding_exam_choice_options_take": "085c3ad16a48d50e2033c0e572a0e16cced0164a9853f080f241997effcdfe8a",
   "onboarding_exam_choice_title_one": "ca6cd1a89ece4da14ccb6727f407102b5581b824a901fa84d984d3c87a6e9254",
   "onboarding_exam_choice_title_other": "0bdaa5f477ffce9af2062a1939b77b0dacb5a13c1a5959d482fc22bc7e7a64d3",
   "onboarding_exam_expected": "b79bfedb9c7b24cba95ae38e05509ee1f4202972c4eefa4ce86cdd62dfc0514b",
@@ -314,8 +314,8 @@
   "onboarding_reveal_reading_line_dates": "3e9fcef8350a32531740da5762ea3416aea037534a9accd0f922b25004a5dc60",
   "onboarding_reveal_reading_line_fit": "e6dfea17527b563f6c66e41eb842faae16f0bce08ef76b1f2b4929909fcaacc5",
   "onboarding_reveal_reading_line_guide": "2ea213050344b462f5bc8a4b56df65d90af838968e05f203a4c188e221df7455",
-  "onboarding_reveal_reading_line_notice": "284157f5b29b27c7a6a59afbe9154a99693b7cd95c5c43e9c28b1740ba695b2a",
-  "onboarding_reveal_reading_notice": "c46beff9b8bda19bbf5092b0e8d78ed88af24160508f36dfc113cf5ca5079429",
+  "onboarding_reveal_reading_line_notice": "7c06fb0192dc16fa3ad1414c026bdf4910dd97127918647417503fb0e219611e",
+  "onboarding_reveal_reading_notice": "fc62f6d4ecf8b968f8edbd489f48c8a4d76259c44f2774b194b237158d395b94",
   "onboarding_reveal_reading_step": "15b2f9596ca81afcde6e05a3e0169468deee743ee2a337ac2aea0af93c265f6e",
   "onboarding_reveal_reading_title": "3cb3ec943f10e8de51068d0cbd2758996ce7b0d0bc504fc825178cafab74ba58",
   "onboarding_reveal_rest_day": "87d4607fa29ff67e8ee120a194241665bc57451a07287f1f8dcc993905f24565",
@@ -407,6 +407,19 @@
   "onboarding_subjects_title": "2f94e6baf6d8627a9b4a0846d388e91396a8aef928c7e591f393ba10c56f8c64",
   "onboarding_target_description": "9157c0c2300e16cba3e4b5a66544b54661a091957fbf44a3e895beda9e76b919",
   "onboarding_target_label": "b4719d97b03a91c89709308054dcf1b8a6a9d57a681dd8b3fbf8d7792f0bbc4b",
+  "onboarding_test_level_a1": "52e625fc5f94ae3ddfc1dc326ccd55845d5c26195336eebec2da0b8d6aa63e7f",
+  "onboarding_test_level_a1_plus": "01a94d57ab34a68d23b9b9aea672bc1cda9dcb8b6cb7d1c24ca5b0c8987f1851",
+  "onboarding_test_level_a2": "04db4354a57043a3008ff9caa8478cd42a82cce89e7d22487f06701c483a4e2d",
+  "onboarding_test_level_a2_plus": "94ebb99f62973e8c4c06ee20cbd0446bea0e35a110f4003e9784baa7faaf43d7",
+  "onboarding_test_level_b1": "bdc3c52486df21cf9d331464e3c86446d0f18b947de7745be867708e7d117078",
+  "onboarding_test_level_b1_plus": "028c2b5e47ac6ede2c51877c43aa0b859b4f4e24733ef32e7b638c737e6045b0",
+  "onboarding_test_level_b2": "d810ce833036c3fa39314daf55ad0822dd9a156b23461bb2a046340b9c9c8adc",
+  "onboarding_test_level_b2_plus": "463fcce46a00f1296f94832338de399a76180e08c311545db44fc8d1c42e5bc3",
+  "onboarding_test_level_c1": "ac488143e1c41bd690ad99d44032202b1b13b0039c179c16001fa11ab561df0c",
+  "onboarding_test_level_c1_plus": "76e97f9105eb4e9be6c8021a01956f6c7e3f3d7e93ebca6337d8df79b7e10f62",
+  "onboarding_test_level_c2": "0c8788c8aa56f1bc6d39aa0f6b29f46391df4d72b1aab56ac1d9594d71cf518a",
+  "onboarding_test_level_c2_plus": "5cba18032ac8a662d04e146a0fe2e824cd4018ffd9f9729685a55439bef28af6",
+  "onboarding_test_question_progress": "7979ea4a8a543dd0f958d2e17d80ae4420389d23d7c0be847a5223dbd2d10415",
   "onboarding_time_a_day": "c2dfba49c44a666784d295350d1e779dc8368c99af2534d5c34bf47a185a644a",
   "onboarding_try_another_goal": "3cd09f030edd36ba6bfd42e051dc6626b46d4ee56af3b4ee1a865607ba8902de",
   "onboarding_unclear_description": "5bfc811da91f5fe8985cd45af857fc5460e894cd0676ef7c5a743bcce37e82dd",
@@ -706,7 +719,7 @@
     <string name="onboarding_library_course_fits">Um curso da Biblioteca combina com seu objetivo. Comece agora</string>
     <string name="onboarding_reveal_reading_title">Lendo os documentos oficiais da prova</string>
     <string name="onboarding_reveal_reading_last_title">Lendo os documentos oficiais da última edição</string>
-    <string name="onboarding_reveal_reading_notice">Seu plano vai seguir as matérias, os tópicos e as datas do edital. Isso costuma levar alguns minutos.</string>
+    <string name="onboarding_reveal_reading_notice">Seu plano vai seguir as matérias, os tópicos e as datas da prova.</string>
     <string name="onboarding_reveal_reading_guide">Seu plano vai seguir as partes, os tópicos e as datas do guia oficial. Isso costuma levar alguns minutos.</string>
     <string name="onboarding_reveal_reading_last">Os documentos da próxima edição ainda não saíram, então seu plano segue as matérias e os tópicos da última edição. A gente te avisa quando os novos documentos saírem. Isso costuma levar alguns minutos.</string>
     <string name="onboarding_reveal_reading_done_step">Seu plano, com base no que você contou</string>
@@ -947,9 +960,9 @@
     </plurals>
     <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
     <plurals name="onboarding_exam_choice_options_take">
-        <item quantity="one">A prova oferece %1$d opção para %2$s, e cada participante faz %3$d delas. Seu plano e seus simulados seguem as opções que você escolher, e você pode mudar essas escolhas no seu plano.</item>
-        <item quantity="many">A prova oferece %1$d opções para %2$s, e cada participante faz %3$d delas. Seu plano e seus simulados seguem as opções que você escolher, e você pode mudar essas escolhas no seu plano.</item>
-        <item quantity="other">A prova oferece %1$d opções para %2$s, e cada participante faz %3$d delas. Seu plano e seus simulados seguem as opções que você escolher, e você pode mudar essas escolhas no seu plano.</item>
+        <item quantity="one">A prova oferece %1$d opção para %2$s, e você precisa escolher %3$d delas. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no seu plano.</item>
+        <item quantity="many">A prova oferece %1$d opções para %2$s, e você precisa escolher %3$d delas. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no seu plano.</item>
+        <item quantity="other">A prova oferece %1$d opções para %2$s, e você precisa escolher %3$d delas. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no seu plano.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">
@@ -1003,7 +1016,7 @@
     <string name="onboarding_plan_stopped">A criação do seu plano parou</string>
     <string name="onboarding_plan_answers_saved">Suas respostas estão salvas. Tente de novo para seu plano ficar pronto quando você terminar.</string>
     <!-- Detail lines while an exam's official documents are read. -->
-    <string name="onboarding_reveal_reading_line_notice">Buscando as matérias e os tópicos do edital…</string>
+    <string name="onboarding_reveal_reading_line_notice">Encontrando as matérias e os tópicos da prova…</string>
     <string name="onboarding_reveal_reading_line_guide">Buscando as partes e os tópicos do guia oficial…</string>
     <string name="onboarding_reveal_reading_line_dates">Conferindo as datas e o formato da prova…</string>
     <string name="onboarding_reveal_reading_line_fit">Incluindo essas informações no seu plano…</string>
@@ -1099,4 +1112,17 @@
     <string name="onboarding_country_skip_default">Se você pular: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">onde você mora</string>
+    <string name="onboarding_test_question_progress">Pergunta %1$d de %2$d</string>
+    <string name="onboarding_test_level_a1">A1</string>
+    <string name="onboarding_test_level_a1_plus">A1+</string>
+    <string name="onboarding_test_level_a2">A2</string>
+    <string name="onboarding_test_level_a2_plus">A2+</string>
+    <string name="onboarding_test_level_b1">B1</string>
+    <string name="onboarding_test_level_b1_plus">B1+</string>
+    <string name="onboarding_test_level_b2">B2</string>
+    <string name="onboarding_test_level_b2_plus">B2+</string>
+    <string name="onboarding_test_level_c1">C1</string>
+    <string name="onboarding_test_level_c1_plus">C1+</string>
+    <string name="onboarding_test_level_c2">C2</string>
+    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

@@ -5,7 +5,7 @@
   "planlink_eyebrow": "d0b28be7b994c108aada64f872854bd5969cd45ed6b3539ddd925e5840ee44fd",
   "planlink_facts": "fa21706a41c49d7184908b12ca5ed350d1fe48a4a900ca5e9e06a11e9661c214",
   "planlink_failed": "f26c9424ef498b6555eaec79e529888ba1f6d1739764b52d6121542292a2aa79",
-  "planlink_make_it_yours": "1d9c41e541bde67f459721d4edee33ac0d67d66419f7b251b9843c30db78192f",
+  "planlink_make_it_yours": "4612ea931348a8cff233ac7b7aac564c588ad07656ed0ec7ad6bc3005a549804",
   "planlink_minutes_label": "959b12f72d12667f043d7c7087b3699f37cc9a246f6735db758ad88fa1af0944",
   "planlink_not_found": "12a5f20b0725b4c3aeb83a1a5bfacb6b35f64b7daa833b968979770cefeb6416",
   "planlink_not_found_description": "11273670f8423aeafd67d579fb9d4a0df592912680655aac801352771503182a",
@@ -24,7 +24,7 @@
     <string name="planlink_minutes_label">Wie viel Zeit pro Tag?</string>
     <!-- Starts the learner's own plan from a shared one. -->
     <string name="planlink_start">Mit diesem Plan starten</string>
-    <string name="planlink_make_it_yours">Du bekommst deinen eigenen Plan für dasselbe Thema, in deinem eigenen Tempo. Ein paar Fragen helfen dabei, zu überspringen, was du schon weißt.</string>
+    <string name="planlink_make_it_yours">Du bekommst deinen eigenen Plan für dasselbe Fach und lernst in deinem Tempo. Du beantwortest ein paar Fragen, dann überspringt dein Plan, was du schon weißt.</string>
     <string name="planlink_refused">Du kannst gerade kein weiteres Ziel starten. Schließe zuerst eines ab oder pausiere es.</string>
     <string name="planlink_failed">Das hat nicht geklappt. Versuch es gleich noch einmal.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->

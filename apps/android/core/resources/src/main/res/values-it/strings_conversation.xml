@@ -131,6 +131,7 @@
   "conversation_take_your_time": "5adc53a3d92030a23f8cc5f9ca21b959b23eeef85c4d39be78abb5d578981a29",
   "conversation_taken_over": "e695e3277e6f5f5393a5204250423c3d22f4b2fdfbb54371488e70609723d64e",
   "conversation_talking": "5b37131d1b5db2f0119c5ad22811ef826efec5420c99e21617911b8cba1f53fe",
+  "conversation_time_used": "cdbc281889cdc2f1f282c8fb246194452f0c3128abc54f1ca78955a35eec3b79",
   "conversation_tip": "19d9694ab48fedce3a120921402493e27249c451224137f79351b4302db51a6a",
   "conversation_to_improve": "6d245c12632a57d77d8462df5daf116998360051e20759d86a9d307288434b60",
   "conversation_toefl_mock": "d4cdfa74c9187253992dcc13cc8fa24dc071198b3f2f58f6d7c8bd63c4db39e2",
@@ -369,4 +370,5 @@
     <string name="conversation_writing_task_line_2">Stiamo preparando le istruzioni della scheda…</string>
     <string name="conversation_writing_task_line_3">Stiamo preparando le battute dell’esaminatore…</string>
     <string name="conversation_writing_task_line_4">Stiamo aggiungendo frasi per aiutarti…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

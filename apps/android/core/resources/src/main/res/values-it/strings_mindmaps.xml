@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "95999db912e6908c704879b775fdfb53c03dbed0f782fda948b52fc3a65c6678",
   "mindmaps_alt_sentence": "fbeed92c8a0cc83e3184cf9e7be23c1d26383698d01121512449bcd22eb586d8",
   "mindmaps_as_text": "2489ca2e6710497acbfb80d9e358d5856ba0190d25ce45ff2ed41cde4a9d27a6",
-  "mindmaps_as_text_note": "9608cdb9faa6bb5a166a483548fd262cc99104cfb0c8214307de776582de90b7",
+  "mindmaps_as_text_note": "f13a96e6689b5f0e87540df03c76e1d66b8d046426feef638c14f7db153f0d94",
   "mindmaps_being_made": "d856b461d54da7036f395958aee0683f87f702c9e709287aa3e0c9960510b916",
   "mindmaps_can_make_more": "5a804c47418f3e3c4fe587a6c91d832234dfb52a533c127bc298ca6d078f909f",
   "mindmaps_chapter_count": "03a0e78adcd0c0b03312cf5bb80f11a86f0c74cec18ca2c18ffb42c6d55c5195",
@@ -125,7 +125,7 @@
     <string name="mindmaps_try_again_spoken">Riprova a creare la mappa mentale di %1$s</string>
     <string name="mindmaps_failed">Questa volta non siamo riusciti a crearla.</string>
     <string name="mindmaps_unreachable">Non siamo riusciti a contattare il server. Controlla la connessione.</string>
-    <string name="mindmaps_as_text_note">L’immagine conteneva errori, quindi ecco la mappa mentale in versione testuale.</string>
+    <string name="mindmaps_as_text_note">Questa mappa è visualizzata come testo.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Scarica</string>
     <string name="mindmaps_saved">Mappa mentale salvata</string>

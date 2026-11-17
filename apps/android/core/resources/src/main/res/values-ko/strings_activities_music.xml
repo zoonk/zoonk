@@ -29,6 +29,7 @@
   "activities_music_get_ready": "03b2484f030e649c31cc1186a52e71d92dea47a4510a02b2f45ad16ec137e449",
   "activities_music_guitar_strings": "9806939a9d7cd04483f7504c70f7839b2e1c6a363743234d024f4385752004fc",
   "activities_music_hear_it": "23fc9a99fa9ccd169af8096ddeaf70dfa5beca00dc077662830b6ce9e3c85b12",
+  "activities_music_hear_your_notes": "730fe47f49b1e685d731b344e494f535ea5a89047cf8a7eadaf4691ea29d1c82",
   "activities_music_higher_frets": "9a3544ccbdb5ac80bc07f11ea7f7ba199b16c8144201793186c6327f4aa7136a",
   "activities_music_listen_first": "418c5d8da6ad0aba9c209aac653d3abf49e0d08673857821955e314f11e4a829",
   "activities_music_lower_frets": "150637b68b42786dba57722bd4ff93f3c39a7d20b01a7179ad84deb686dffee4",
@@ -238,4 +239,5 @@
     <string name="activities_music_sound_check_start">시작하기</string>
     <string name="activities_music_skip_for_now">지금은 건너뛰기</string>
     <string name="activities_music_continue">계속하기</string>
+    <string name="activities_music_hear_your_notes">선택한 음 듣기</string>
 </resources>

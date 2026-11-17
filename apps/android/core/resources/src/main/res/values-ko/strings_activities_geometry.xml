@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "b59726d20b837ff9310f832a5cfa45504ff5037e72b4c161e62401c90187f515",
   "activities_geometry_badge_drag_corner": "4f3aba1f5d81d1cd798f14d70e14f55bfc2e97dd1561673d0bbf5bdfaef40dc2",
-  "activities_geometry_badge_move_curve": "467038672bb344224b9570c01c6de0f103c37cb9992354b7d772c75fbfdcd783",
+  "activities_geometry_badge_move_curve": "63963ed017d84580866e1c4e13c83e392108ec3258a83ac8319439c255f2ee63",
   "activities_geometry_badge_turn_it": "fa34bcd476cd0d683885dee77dc40674be650e124e4baad06322e4990f33e6b3",
   "activities_geometry_board_angles": "516d4ee42bcedc3ba37798c5d624684888bbb1d211c8026035375cc3006dc564",
   "activities_geometry_board_angles_total": "083e0ae35bb86c506b4290be48de6bbd594b032e4701dbc35f2fbfc95663d824",
@@ -224,7 +224,7 @@
         <item quantity="other">결합은 총 %1$d개예요. 이중 결합은 두 개로 세요.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">곡선 옮기기</string>
+    <string name="activities_geometry_badge_move_curve">선 옮기기</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">%1$s 선 옮기기</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

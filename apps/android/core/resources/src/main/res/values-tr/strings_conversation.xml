@@ -131,6 +131,7 @@
   "conversation_take_your_time": "f9c538ef19e9c6009815fcf6b188ce017965057748e02cf0d0b120292eaf783b",
   "conversation_taken_over": "582e54c33f5b59139fb1a0532eb660b95ed0b2c08a52ebd73a698cccfaa97f43",
   "conversation_talking": "0d9f48be85ac58407464fe0753bb4a8de2abbb90ec481c4a7df3d597b1db2aa5",
+  "conversation_time_used": "1e26213f2c4d874cfcabc00a9fb4134f4c433f48bac8192638d203410b258a22",
   "conversation_tip": "8cf10a2c07b697ac9899da479f35cec8d3d774874d7ee167e9173850a3494429",
   "conversation_to_improve": "d6650a87e38113b15214d64cf39a3bdea7b9fdde7823819f5f92e550b187ab7e",
   "conversation_toefl_mock": "03cc9ef9f9163eab3b5e47cdceb38012e78700dd930967c9f25a099a94a0bec2",
@@ -368,4 +369,5 @@
     <string name="conversation_writing_task_line_2">Kartın yönergelerini hazırlıyoruz…</string>
     <string name="conversation_writing_task_line_3">Değerlendiricinin söyleyeceklerini hazırlıyoruz…</string>
     <string name="conversation_writing_task_line_4">Yardımcı olacak ifadeler ekliyoruz…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "6d2a5c12e3556cab84f0c472afedd736f6aae045e3a2a331945a062b737d997d",
   "activities_geometry_badge_drag_corner": "e67f4f18de055090a423abb57209f4edc63ab798aa5f24520432b9e2dc5d9826",
-  "activities_geometry_badge_move_curve": "76f87a4d54e46637f222c902de896a56f6b2bdcc0a0f1cabd9abbee6453df2b7",
+  "activities_geometry_badge_move_curve": "68d6921995d95316540c3120ad664036b6ab82146e644ffc9c2a2cf45f6daaaf",
   "activities_geometry_badge_turn_it": "490c068a489b7aaad81c0132fc532dfc42875da0ebcc82cea55ffa4f195ed62d",
   "activities_geometry_board_angles": "1b53938e75b0fc32c05ed25461ee4bc32d8fd789ac62022912ea081101812e7d",
   "activities_geometry_board_angles_total": "7f782e4cb54654238a9d4442bb3a9c2423260d76fe92cdc68a4ded4a853a75cd",
@@ -236,7 +236,7 @@
         <item quantity="other">%1$d enlaces en total, contando un enlace doble como dos.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">Mueve una curva</string>
+    <string name="activities_geometry_badge_move_curve">Mueve una línea</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Mover la línea %1$s</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->
