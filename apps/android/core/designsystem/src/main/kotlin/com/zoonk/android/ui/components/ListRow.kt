@@ -64,7 +64,7 @@ import kotlin.math.roundToInt
  * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
  * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
- * spans the list. [verticalAlignment] `Top` keeps the leading mark on the first line; the value
+ * spans the list. [leadOnFirstLine] keeps the leading mark on the first line; the value
  * and end stay centered on the row. A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
  * is a value rather than a control passes `true`; a row that can't open in a list whose other rows end with
@@ -93,7 +93,6 @@ fun ListRow(
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
     chevronSpace: Boolean = false,
 ) {
@@ -158,7 +157,7 @@ fun ListRow(
         RowContent(
             parts = parts,
             firstLine = MaterialTheme.typography.titleSmall,
-            leadOnFirstLine = leadOnFirstLine || verticalAlignment == Alignment.Top,
+            leadOnFirstLine = leadOnFirstLine,
             modifier = Modifier.weight(1f),
             mark =
                 leading?.let { mark ->
@@ -233,18 +232,14 @@ fun ListRow(
 
 @Composable
 internal fun OnFirstLine(
-    box: Dp?,
+    box: Dp,
     content: @Composable () -> Unit,
 ) {
-    if (box == null) {
-        content()
-    } else {
-        Layout(content) { measurables, constraints ->
-            val parts = measurables.map { it.measure(constraints.copy(minHeight = 0)) }
-            val height = box.roundToPx()
-            layout(parts.maxOfOrNull { it.width } ?: 0, height) {
-                parts.forEach { it.placeRelative(0, (height - it.height) / 2) }
-            }
+    Layout(content) { measurables, constraints ->
+        val parts = measurables.map { it.measure(constraints.copy(minHeight = 0)) }
+        val height = box.roundToPx()
+        layout(parts.maxOfOrNull { it.width } ?: 0, height) {
+            parts.forEach { it.placeRelative(0, (height - it.height) / 2) }
         }
     }
 }

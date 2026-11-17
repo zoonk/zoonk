@@ -386,7 +386,7 @@ internal fun PracticeChapterRow(
             )
         },
         onClick = onPractice,
-        verticalAlignment = Alignment.Top,
+        leadOnFirstLine = true,
         busy = practice.running,
         leading = { KindDot(LearnKind.Practice) },
     )

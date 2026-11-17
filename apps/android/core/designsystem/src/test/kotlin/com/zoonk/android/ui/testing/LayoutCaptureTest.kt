@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.android.ui.theme.withTabularFigures
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.After
@@ -120,7 +121,7 @@ class LayoutCaptureTest {
             capture {
                 ListRow(
                     headline = { Text("How atoms share or transfer electrons to form bonds.") },
-                    leading = { Text("1") },
+                    leading = { Text("1", style = MaterialTheme.typography.bodyMedium.withTabularFigures()) },
                     leadOnFirstLine = true,
                     meta = { Text("7 min") },
                     onClick = {},
@@ -135,9 +136,11 @@ class LayoutCaptureTest {
         val labelBounds = label.getJSONArray("bounds")
         val valueBounds = value.getJSONArray("bounds")
         val endBounds = end.getJSONArray("bounds")
+        val numberBounds = own.first { it.optString("part") == "mark" }.getJSONArray("bounds")
         val middle = rowBounds.getDouble(1) + rowBounds.getDouble(3) / 2
         assertEquals("The title wraps to two lines", 2, label.getInt("lines"))
         assertTrue("The value stays beside the title", valueBounds.getDouble(0) >= labelBounds.getDouble(0) + labelBounds.getDouble(2))
+        assertEquals("Number starts on the title’s first line", labelBounds.getDouble(1), numberBounds.getDouble(1), 1.0)
         assertEquals("Value centre", middle, valueBounds.getDouble(1) + valueBounds.getDouble(3) / 2, 1.0)
         assertEquals("Chevron centre", middle, endBounds.getDouble(1) + endBounds.getDouble(3) / 2, 1.0)
     }

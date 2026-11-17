@@ -8,7 +8,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -172,7 +171,7 @@ fun DayQueueRow(
             leading = leading,
             supporting = supporting,
             meta = meta,
-            verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
+            leadOnFirstLine = isNext,
             chevron = false,
         )
         if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
