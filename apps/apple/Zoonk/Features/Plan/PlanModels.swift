@@ -808,7 +808,7 @@ enum PlanDate {
     _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
   ) -> String {
     month
-      ? format(isoDate, .sentenceMonth, today: today, year: .always)
+      ? format(isoDate, .rowMonth, today: today, year: .always)
       : format(isoDate, .row, today: today, weekday: weekday)
   }
 

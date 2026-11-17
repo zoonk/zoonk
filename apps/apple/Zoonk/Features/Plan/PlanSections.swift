@@ -740,7 +740,11 @@ struct PlanSettingsSection: View {
     .accessibilityElement(children: .combine)
   }
 
-  private var dateValue: Text {
+  private var dateValue: some View {
+    dateText.typeStyle(.data)
+  }
+
+  private var dateText: Text {
     if context.plan.schedule.targetDate == nil {
       return context.goal.kind == .exam
         ? Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
@@ -759,13 +763,17 @@ struct PlanSettingsSection: View {
     return Text(picked)
   }
 
-  private func setting(label: Text, value: Text, section: AdjustPlanSheet.Section) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, section: AdjustPlanSheet.Section)
+    -> some View
+  {
     setting(label: label, value: value) {
       context.adjust(section)
     }
   }
 
-  private func setting(label: Text, value: Text, action: @escaping () -> Void) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, action: @escaping () -> Void)
+    -> some View
+  {
     Button(action: action) {
       LabeledContent {
         value

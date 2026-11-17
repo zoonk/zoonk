@@ -548,16 +548,16 @@ struct MockSummaryRow: View {
     } label: {
       ListRow(
         Text(MockLabels.title(number: mock.number)),
-        description: Text(
-          [
-            PlanDate.momentDay(mock.finishedAt),
-            mock.shape?.kind == .area ? mock.shape?.area : nil,
-          ]
-          .compactMap { $0 }.joinedFacts())
+        description: mock.shape?.kind == .area ? (mock.shape?.area).map { Text($0) } : nil,
+        alignment: .firstTextBaseline
       ) {
         StatusMark(status: .done)
       } trailing: {
-        Text(score)
+        VStack(alignment: .trailing, spacing: 2) {
+          Text(score)
+          Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
+            .typeStyle(.data)
+        }
       }
       .disclosureChevron()
     }

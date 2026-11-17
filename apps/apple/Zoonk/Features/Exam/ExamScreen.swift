@@ -308,7 +308,7 @@ private struct ExamHero: View {
     let days = dates.map { day, _ in
       // An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet.
       let date = PlanDate.text(
-        day.date, today: today, weekday: dates.count == 1 && !exam.daysEstimated)
+        day.date, today: today, weekday: !exam.daysEstimated)
       let text = exam.daysEstimated ? "~" + date : date
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
@@ -609,7 +609,8 @@ private struct ExamMocksSection: View {
                 isNext: exam.runningMocks.isEmpty),
               description: Text(
                 "\(next.questions) questions", tableName: "Exam",
-                comment: "The number of questions in an exam or a mock exam.")
+                comment: "The number of questions in an exam or a mock exam."),
+              alignment: .firstTextBaseline
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
@@ -824,15 +825,15 @@ private struct ExamFormatSection: View {
   @ViewBuilder
   private func title(_ day: ExamView.FormatDay) -> some View {
     HStack(alignment: .firstTextBaseline) {
-      if exam.format.count > 1, day.date != nil {
-        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
-          .foregroundStyle(.mutedForeground)
-      }
+      Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+        .foregroundStyle(.mutedForeground)
+
+      Spacer(minLength: 12)
 
       if let date = day.date {
-        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
-      } else {
-        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: !exam.daysEstimated))
+          .typeStyle(.data)
+          .capitalsLevel(.data, with: .body)
       }
     }
   }
