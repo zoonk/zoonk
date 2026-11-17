@@ -8,7 +8,6 @@ struct ChartsCanvas<Content: View>: View {
       content
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .activityPanel()
     .accessibilityElement(children: .contain)
   }
 }

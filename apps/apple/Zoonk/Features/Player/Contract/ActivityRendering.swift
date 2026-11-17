@@ -55,7 +55,12 @@ struct ActivityRenderer: Sendable {
     self.showsCheckFirst = showsCheckFirst
     self.answersOnCanvas = answersOnCanvas
     self.grade = grade
-    self.canvas = { context in AnyView(canvas(context)) }
+    self.canvas = { context in
+      AnyView(
+        canvas(context)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .activityPanel())
+    }
   }
 }
 

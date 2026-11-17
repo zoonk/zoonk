@@ -423,15 +423,9 @@ private struct SQLTableViewer: View {
   }
 
   var body: some View {
-    GroupBox {
-      DisclosureGroup(isExpanded: $isExpanded) {
-        SQLRowsTable(
-          caption: Text(
-            "Table \(table.name)", tableName: "ActivitiesCode",
-            comment: "VoiceOver: one of a lesson's SQL tables"),
-          columns: table.columns.map(\.name), rows: table.rows
-        )
-        .padding(.top, 8)
+    VStack(spacing: 0) {
+      Button {
+        isExpanded.toggle()
       } label: {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Image(systemName: "tablecells")
@@ -440,11 +434,14 @@ private struct SQLTableViewer: View {
           Text(verbatim: table.name)
             .typeStyle(.body.weight(.semibold).monospaced())
 
-          Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-            .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
+          if !isExpanded {
+            Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .lineLimit(1)
+          }
+
+          Spacer(minLength: 0)
 
           Text(
             "\(table.rows.count) rows", tableName: "ActivitiesCode",
@@ -452,9 +449,29 @@ private struct SQLTableViewer: View {
           )
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
+
+          Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+            .foregroundStyle(.mutedForeground)
+            .accessibilityHidden(true)
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .frame(minHeight: 44)
+        .contentShape(.rect)
+      }
+      .buttonStyle(.plain)
+
+      if isExpanded {
+        SQLRowsTable(
+          caption: Text(
+            "Table \(table.name)", tableName: "ActivitiesCode",
+            comment: "VoiceOver: one of a lesson's SQL tables"),
+          columns: table.columns.map(\.name), rows: table.rows, isEmbedded: true)
       }
     }
+    .background(Color(.background))
+    .clipShape(.rect(cornerRadius: Radius.xl))
+    .overlay { RoundedRectangle(cornerRadius: Radius.xl).strokeBorder(.border) }
   }
 }
 
@@ -467,14 +484,17 @@ private struct SQLRowsTable: View {
   let columns: [String]
   let rows: [[JSONValue]]
   var marks: [Mark]?
+  var isEmbedded = false
 
   var body: some View {
     ActivityHorizontalScroll {
       grid
         .overlay {
-          RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
+          if !isEmbedded {
+            RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
+          }
         }
-        .clipShape(.rect(cornerRadius: Radius.lg))
+        .clipShape(.rect(cornerRadius: isEmbedded ? 0 : Radius.lg))
     }
     .accessibilityElement(children: .contain)
     .accessibilityLabel(caption)
@@ -483,21 +503,21 @@ private struct SQLRowsTable: View {
   private var grid: some View {
     Grid(alignment: .leading, horizontalSpacing: 0, verticalSpacing: 0) {
       GridRow {
-        ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
+        ForEach(Array(columns.enumerated()), id: \.offset) { index, column in
           Text(verbatim: column)
             .fixedSize()
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .gridColumnAlignment(isNumberColumn(index) ? .trailing : .leading)
         }
       }
-      .background { Rectangle().fill(.muted) }
+      .anchorPreference(key: SQLRowBounds.self, value: .bounds) { [-1: [$0]] }
       .accessibilityHidden(true)
 
       ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
-        let mark = marks.flatMap { $0.indices.contains(index) ? $0[index] : nil } ?? .plain
+        let mark = mark(at: index)
 
         Divider()
 
@@ -507,15 +527,36 @@ private struct SQLRowsTable: View {
               .fixedSize()
               .padding(.horizontal, 12)
               .padding(.vertical, 8)
-              .frame(maxWidth: .infinity, alignment: value.isNumber ? .trailing : .leading)
+              .gridCellAnchor(value.isNumber ? .trailing : .leading)
           }
         }
-        .background(markColor(mark))
+        .anchorPreference(key: SQLRowBounds.self, value: .bounds) { [index: [$0]] }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(rowLabel(row, mark: mark))
       }
     }
     .typeStyle(.body)
+    // GridRow distributes backgrounds to intrinsic cells, leaving gaps across wider tracks.
+    .backgroundPreferenceValue(SQLRowBounds.self) { rows in
+      GeometryReader { geometry in
+        ForEach(rows.keys.sorted(), id: \.self) { row in
+          let bounds = (rows[row] ?? []).reduce(CGRect.null) { $0.union(geometry[$1]) }
+          Rectangle()
+            .fill(row == -1 ? Color.muted : markColor(mark(at: row)))
+            .frame(height: bounds.height)
+            .offset(y: bounds.minY)
+        }
+      }
+    }
+  }
+
+  private func mark(at index: Int) -> Mark {
+    marks.flatMap { $0.indices.contains(index) ? $0[index] : nil } ?? .plain
+  }
+
+  private func isNumberColumn(_ index: Int) -> Bool {
+    let values = rows.map { $0.indices.contains(index) ? $0[index] : .null }.filter { $0 != .null }
+    return !values.isEmpty && values.allSatisfy(\.isNumber)
   }
 
   private func markColor(_ mark: Mark) -> Color {
@@ -541,6 +582,16 @@ private struct SQLRowsTable: View {
         "\(cells), missing from your result", tableName: "ActivitiesCode",
         comment: "VoiceOver: an expected row the learner's result doesn't have")
     }
+  }
+}
+
+private struct SQLRowBounds: PreferenceKey {
+  static var defaultValue: [Int: [Anchor<CGRect>]] { [:] }
+
+  static func reduce(
+    value: inout [Int: [Anchor<CGRect>]], nextValue: () -> [Int: [Anchor<CGRect>]]
+  ) {
+    value.merge(nextValue()) { $0 + $1 }
   }
 }
 
