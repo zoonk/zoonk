@@ -623,7 +623,7 @@ internal fun sessionSegments(
     steps.map {
         when {
             it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
-            !counted && it.position == position -> TaskSegment.Current
+            it.position == position -> TaskSegment.Current
             else -> TaskSegment.Ahead
         }
     }
@@ -652,7 +652,10 @@ private fun SessionSegments(
             TaskSegments(segments, weights = weights)
         }
     } else {
-        TaskSegments(segments, modifier, weights = weights, contentDescription = progress)
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+            TaskSegments(segments, weights = weights)
+        }
     }
 }
 

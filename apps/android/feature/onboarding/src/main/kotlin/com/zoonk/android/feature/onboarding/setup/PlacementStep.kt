@@ -267,7 +267,11 @@ internal fun ColumnScope.PlacementWaiting(
     }
 
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
-    val title = stringResource(if (hold.holding) R.string.onboarding_placement_ready else R.string.generation_placement)
+    val title =
+        stringResource(
+            com.zoonk.android.feature.warmup
+                .placementWaitTitle(hold.holding, shown.status == GenerationRun.Status.Failed),
+        )
     SetupWait(
         shown,
         GenerationKind.Placement,
@@ -306,7 +310,7 @@ internal fun ColumnScope.PlacementWaiting(
             OnboardingHeading(
                 title,
                 when {
-                    hold.holding -> null
+                    hold.holding || shown.status == GenerationRun.Status.Failed -> null
                     READS_MATERIAL_STEP in run.steps -> stringResource(R.string.onboarding_placement_waiting_material)
                     else -> stringResource(R.string.onboarding_placement_waiting_time)
                 },
