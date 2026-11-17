@@ -14,6 +14,7 @@ struct SearchScreen: View {
   @State private var query = ""
   @State private var isFeedbackPresented = false
   @State private var goalSwitch = GoalSwitch()
+  @ScaledMetric(relativeTo: .subheadline) private var symbolSize = 16.0
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -106,8 +107,10 @@ struct SearchScreen: View {
                 .frame(width: 20, height: 20)
               } else {
                 Image(systemName: item.systemImage)
-                  .typeStyle(.rowTitle)
-                  .imageScale(.medium)
+                  .resizable()
+                  .scaledToFit()
+                  .fontWeight(.medium)
+                  .frame(width: symbolSize, height: symbolSize)
               }
             }
           }
