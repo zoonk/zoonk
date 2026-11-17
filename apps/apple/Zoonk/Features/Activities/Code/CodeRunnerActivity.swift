@@ -195,7 +195,7 @@ private struct CodeRunnerCanvas: View {
     let colored = CodeHighlight.lines(
       of: lines.joined(separator: "\n"), language: fields.language.highlight)
 
-    return VStack(alignment: .leading, spacing: 2) {
+    return ActivityCodeBlock {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
         let number = index + 1
 

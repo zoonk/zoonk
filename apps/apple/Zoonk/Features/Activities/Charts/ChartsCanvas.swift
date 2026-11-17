@@ -8,8 +8,7 @@ struct ChartsCanvas<Content: View>: View {
       content
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
+    .activityPanel()
     .accessibilityElement(children: .contain)
   }
 }
@@ -35,7 +34,7 @@ struct ChartsChoiceStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospaced())
+      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospacedDigit())
       .foregroundStyle(foreground)
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity, minHeight: 44)

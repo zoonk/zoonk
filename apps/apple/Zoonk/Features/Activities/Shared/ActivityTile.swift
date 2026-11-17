@@ -122,7 +122,7 @@ struct ActivityCaption: View {
 
   var body: some View {
     text
-      .typeStyle(.data)
+      .typeStyle(.meta.monospacedDigit())
       .foregroundStyle(.mutedForeground)
   }
 }

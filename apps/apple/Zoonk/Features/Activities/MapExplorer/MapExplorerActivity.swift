@@ -235,7 +235,7 @@ private struct MapShapes: View {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
-          shape, with: .color(Color.border),
+          shape, with: .color(Color.vizGrid),
           style: StrokeStyle(lineWidth: 0.75, lineJoin: .round))
       }
 
@@ -250,7 +250,7 @@ private struct MapShapes: View {
           Path(
             CGRect(x: inset.x, y: inset.y, width: inset.width, height: inset.height).applying(
               transform)),
-          with: .color(Color.border), lineWidth: 1)
+          with: .color(Color.vizGrid), lineWidth: 1)
       }
 
       for label in map.labels {
@@ -302,7 +302,7 @@ extension ActivityBaseMap.Tone {
 
   var fill: Color {
     switch self {
-    case .context: Color.card
+    case .context: Color.muted
     case .focus: Color(.systemBackground)
     case .groupA: .vizAccent.opacity(0.22)
     case .groupB: .vizHighlight.opacity(0.22)

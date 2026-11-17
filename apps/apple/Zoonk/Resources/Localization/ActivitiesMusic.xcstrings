@@ -770,6 +770,9 @@
         }
       }
     },
+    "%lld beats/min" : {
+      "extractionState" : "manual"
+    },
     "%lld bpm" : {
       "comment" : "A rhythm's tempo in beats per minute",
       "localizations" : {
@@ -2306,6 +2309,9 @@
         }
       }
     },
+    "Guitar frets" : {
+      "extractionState" : "manual"
+    },
     "Guitar strings" : {
       "comment" : "VoiceOver name of the guitar neck",
       "localizations" : {
@@ -3071,6 +3077,13 @@
           }
         }
       }
+    },
+    "Notes" : {
+      "comment" : "Shows the melody as music notes on five lines, rather than numbered guitar frets.",
+      "extractionState" : "manual"
+    },
+    "Your notes" : {
+      "extractionState" : "manual"
     },
     "none" : {
       "comment" : "No notes are on the keys",

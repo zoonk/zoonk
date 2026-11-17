@@ -28,7 +28,7 @@ struct StatTile<Icon: View, Value: View>: View {
   var detail: Text?
   /// From 0 to 1.
   var meter: Double?
-  var meterFill: Color = .brain
+  var meterFill: Color = .success
   let spokenValue: Text
 
   @Environment(\.statTileOpens) private var opens
@@ -91,7 +91,7 @@ extension StatTile where Value == Text {
   init(
     label: Text, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil,
-    meterFill: Color = .brain
+    meterFill: Color = .success
   ) {
     self.init(
       label: label, value: value, tone: tone, icon: icon, detail: detail, meter: meter,

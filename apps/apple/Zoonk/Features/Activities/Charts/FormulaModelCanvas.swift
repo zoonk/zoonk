@@ -285,7 +285,7 @@ struct FormulaModelCanvas: View {
         Text(verbatim: variable.label).typeStyle(.body)
         Spacer()
         Text(verbatim: ActivityNumberFormat.format(value, unit: variable.unit))
-          .typeStyle(.body.weight(.medium).monospaced())
+          .typeStyle(.body.weight(.semibold).monospacedDigit())
       }
       .accessibilityHidden(true)
 

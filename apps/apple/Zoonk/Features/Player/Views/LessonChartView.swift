@@ -262,9 +262,9 @@ private struct UprightChart: View {
         }
         .chartYAxis {
           if let scale {
-            AxisMarks(values: scale.ticks) { valueMark($0) }
+            AxisMarks(position: .leading, values: scale.ticks) { valueMark($0) }
           } else {
-            AxisMarks { valueMark($0) }
+            AxisMarks(position: .leading) { valueMark($0) }
           }
         }
         .frame(minHeight: 200)

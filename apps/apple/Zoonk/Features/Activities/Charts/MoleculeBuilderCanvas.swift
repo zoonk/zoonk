@@ -52,9 +52,10 @@ struct MoleculeBuilderCanvas: View {
     header(build)
 
     // The elements to tap come first, so the first screen shows what to do before an empty board.
-    if !isChecked {
-      palette(selectedName: selectedName)
-    }
+    palette(selectedName: selectedName)
+      .opacity(isChecked ? 0 : 1)
+      .disabled(isChecked)
+      .accessibilityHidden(isChecked)
 
     drawing(build)
     status(build, selectedName: selectedName)
@@ -100,6 +101,8 @@ struct MoleculeBuilderCanvas: View {
       build: build, layout: state.layout, selectedId: isChecked ? nil : state.selectedId,
       atomLabel: { atomLabel($0, in: $1) }, onPress: onPress
     )
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("molecule-drawing")
     .animation(reduceMotion ? nil : .snappy, value: state.layout)
   }
 

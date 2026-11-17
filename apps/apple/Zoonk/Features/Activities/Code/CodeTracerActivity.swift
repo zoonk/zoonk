@@ -164,7 +164,7 @@ private struct CodeTracerCanvas: View {
         let current =
           step >= 0 && fields.trace.indices.contains(step) ? fields.trace[step].line : nil
 
-        VStack(alignment: .leading, spacing: 2) {
+        ActivityCodeBlock {
           ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
             CodeLine(
               number: index + 1, digits: String(lines.count).count,

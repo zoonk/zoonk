@@ -112,6 +112,7 @@
           .id(run)
         }
       }
+      .pageColumn()
       .environment(work)
       // The page's own title, on the column's edge as every page's is, not the bar's large title.
       .navigationBarTitleDisplayMode(.inline)

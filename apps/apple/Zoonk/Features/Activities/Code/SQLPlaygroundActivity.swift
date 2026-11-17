@@ -493,7 +493,7 @@ private struct SQLRowsTable: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
-      .background(Color.muted)
+      .background { Rectangle().fill(.muted) }
       .accessibilityHidden(true)
 
       ForEach(Array(rows.enumerated()), id: \.offset) { index, row in

@@ -165,7 +165,7 @@ struct UnitCircleCanvas: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 
-      HStack(spacing: 16) {
+      HStack(alignment: .firstTextBaseline, spacing: 16) {
         Text(verbatim: angleText(degrees))
           .typeStyle(.readout)
         ForEach(fields.show, id: \.self) { trig in

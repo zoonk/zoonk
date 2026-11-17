@@ -323,13 +323,9 @@
       }
       .disabled(true)
 
-      Button {
+      BusyButton(isBusy: true, icon: .play, isRow: true) {
       } label: {
-        Label {
-          Text(verbatim: "Study 10 more minutes")
-        } icon: {
-          Image(systemName: ActionIcon.play.rawValue).coveredBySpinner(true)
-        }
+        Text(verbatim: "Study 10 more minutes")
       }
 
       BusyButton(isBusy: true, isRow: true) {
@@ -638,7 +634,9 @@
         // A phase with a line under its name, and a folded one, as the path draws them.
         ListRow(
           Text(verbatim: "Foundations").fontWeight(.semibold),
-          description: Text(verbatim: "Continues Nov 16")
+          description: Text(
+            "Continues \(PlanDate.text("2026-11-16", today: "2026-11-14"))",
+            tableName: "Plan")
         ) {
           StatusMark(status: .next)
         } trailing: {

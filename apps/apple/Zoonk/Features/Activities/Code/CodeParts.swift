@@ -1,6 +1,19 @@
 import SwiftUI
 
-/// Long lines wrap under their own text, so the numbers stay in one column.
+struct ActivityCodeBlock<Content: View>: View {
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    ActivityHorizontalScroll {
+      VStack(alignment: .leading, spacing: 2) {
+        content
+      }
+      .fixedSize(horizontal: true, vertical: false)
+    }
+  }
+}
+
+/// Each source line keeps its indentation; the block scrolls long lines as main does.
 struct CodeLine<Content: View>: View {
   enum Tone {
     /// `editable` marks the learner's line around its code, never by moving it: in Python, a moved

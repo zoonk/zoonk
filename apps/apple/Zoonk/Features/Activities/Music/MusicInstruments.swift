@@ -24,8 +24,7 @@ struct MusicCanvas<Content: View>: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .panel()
+    .activityPanel()
     .announcesStatus(soundNote)
   }
 }

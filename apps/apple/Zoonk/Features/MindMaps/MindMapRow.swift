@@ -127,7 +127,7 @@ struct MindMapRow: View {
       MindMapSlot {
         switch shown {
         case .writingLessons, .drawing:
-          ProgressView()
+          ProgressView().controlSize(.small)
         default:
           KindMark(kind: .mindMap)
         }
