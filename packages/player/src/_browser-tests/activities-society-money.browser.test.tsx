@@ -298,7 +298,12 @@ describe("money and society activities", () => {
       expect(label.top).toBeGreaterThanOrEqual(map.top);
       expect(label.bottom).toBeLessThanOrEqual(map.bottom);
 
-      expect(map.width).toBe(320);
+      const column = text.closest(".max-w-column")!;
+      const gutter = Number(getComputedStyle(column).paddingLeft.replace("px", ""));
+      const pageBounds = column.getBoundingClientRect();
+      expect(gutter).toBeGreaterThanOrEqual(16);
+      expect(map.left).toBeGreaterThanOrEqual(pageBounds.left + gutter);
+      expect(map.right).toBeLessThanOrEqual(pageBounds.right - gutter);
 
       const overlapsCircle = document.querySelector<SVGTextElement>(
         '[data-street-label="Broad Street"]',

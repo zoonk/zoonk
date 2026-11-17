@@ -343,54 +343,63 @@ describe("line crossing chart", () => {
     });
   });
 
-  it("keeps break-even x numbers apart at 320 pixels and twice the text size", async () => {
-    document.documentElement.style.fontSize = "200%";
+  it.each([
+    { ticks: ["0", "100", "200", "300"], width: 320 },
+    { ticks: ["0", "200"], width: 288 },
+  ])(
+    "keeps break-even x numbers apart at $width pixels and twice the text size",
+    async ({ width, ticks }) => {
+      document.documentElement.style.fontSize = "200%";
 
-    onTestFinished(() => {
-      document.documentElement.style.removeProperty("font-size");
-    });
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
+      });
 
-    await atViewport(NARROW, async () => {
-      openActivity({ content: breakEven, template: "lineCrossing" });
-      await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+      await atViewport({ ...NARROW, width }, async () => {
+        openActivity({ content: breakEven, template: "lineCrossing" });
 
-      await expect
-        .poll(() =>
-          [...document.querySelectorAll('[data-slot="plot-axis-x"] text')].map(
-            (node) => node.textContent,
-          ),
-        )
-        .toStrictEqual(["0", "200"]);
+        await expect
+          .element(page.getByRole("slider", { name: "Move the line Cost" }))
+          .toBeVisible();
 
-      const labels = [
-        ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
-      ].filter(
-        (node) =>
-          ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
-          node.getBoundingClientRect().top >
-            document.querySelector("figure svg clipPath rect")!.getBoundingClientRect().bottom &&
-          getComputedStyle(node).visibility !== "hidden",
-      );
+        await expect
+          .poll(() =>
+            [...document.querySelectorAll('[data-slot="plot-axis-x"] text')].map(
+              (node) => node.textContent,
+            ),
+          )
+          .toStrictEqual(ticks);
 
-      const boxes = labels
-        .map((node) => node.getBoundingClientRect())
-        .toSorted((a, b) => a.left - b.left);
+        const labels = [
+          ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
+        ].filter(
+          (node) =>
+            ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
+            node.getBoundingClientRect().top >
+              document.querySelector("figure svg clipPath rect")!.getBoundingClientRect().bottom &&
+            getComputedStyle(node).visibility !== "hidden",
+        );
 
-      expect(boxes.length).toBeGreaterThanOrEqual(2);
+        const boxes = labels
+          .map((node) => node.getBoundingClientRect())
+          .toSorted((a, b) => a.left - b.left);
 
-      for (let index = 1; index < boxes.length; index += 1) {
-        expect(boxes[index]!.left).toBeGreaterThanOrEqual(boxes[index - 1]!.right + 4);
-      }
+        expect(boxes.length).toBeGreaterThanOrEqual(2);
 
-      expect(labels.map((node) => node.textContent)).toContain("0");
-      const title = document.querySelector('[data-slot="plot-axis-title-y"]')!;
-      const card = document.querySelector('[data-slot="activity-plot"]')!.getBoundingClientRect();
-      const box = title.getBoundingClientRect();
-      expect(box.left).toBeGreaterThanOrEqual(card.left);
-      expect(box.right).toBeLessThanOrEqual(card.right);
-      expect(labels.map((node) => node.textContent)).toStrictEqual(["0", "200"]);
-    });
-  });
+        for (let index = 1; index < boxes.length; index += 1) {
+          expect(boxes[index]!.left).toBeGreaterThanOrEqual(boxes[index - 1]!.right + 4);
+        }
+
+        expect(labels.map((node) => node.textContent)).toContain("0");
+        const title = document.querySelector('[data-slot="plot-axis-title-y"]')!;
+        const card = document.querySelector('[data-slot="activity-plot"]')!.getBoundingClientRect();
+        const box = title.getBoundingClientRect();
+        expect(box.left).toBeGreaterThanOrEqual(card.left);
+        expect(box.right).toBeLessThanOrEqual(card.right);
+        expect(labels.map((node) => node.textContent)).toStrictEqual(ticks);
+      });
+    },
+  );
 
   it("keeps each line's name off its own line when explored", async () => {
     const entry = previewEntries.find((item) => item.id === "activity-lineCrossing-breakEven");

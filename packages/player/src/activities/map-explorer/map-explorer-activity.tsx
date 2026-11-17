@@ -180,7 +180,7 @@ function MapCanvas({
   }
 
   return (
-    <ActivityCanvas className="max-[360px]:-mx-4" labelId={labelId}>
+    <ActivityCanvas labelId={labelId}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-pretty">{name}</p>
         {phase !== "checked" && (
@@ -197,7 +197,10 @@ function MapCanvas({
         <BaseMapView
           crop={crop}
           drawing={drawing}
-          references={questionReferences(content.check)}
+          references={[
+            questionReferences(content.check),
+            ...fields.places.map((place) => place.label),
+          ].join(" ")}
           question={
             content.check.kind === "choice" || content.check.kind === "numeric"
               ? content.check.question

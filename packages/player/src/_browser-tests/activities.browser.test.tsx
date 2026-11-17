@@ -104,37 +104,43 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("R$2M", { exact: true })).toBeVisible();
   });
 
-  it("money guesses at 320 pixels and 200 percent use fewer round ticks without overlaps", async () => {
-    document.documentElement.style.fontSize = "200%";
+  it.each([
+    { ticks: ["R$0", "R$1M", "R$2M"], width: 320 },
+    { ticks: ["R$0", "R$2M"], width: 288 },
+  ])(
+    "money guesses at $width pixels and 200 percent use fitting round ticks without overlaps",
+    async ({ width, ticks }) => {
+      document.documentElement.style.fontSize = "200%";
 
-    onTestFinished(() => {
-      document.documentElement.style.removeProperty("font-size");
-    });
-
-    await atViewport({ height: 1000, width: 320 }, async () => {
-      openActivity({
-        content: engineModeFixtures.guessReveal.moneyMillions,
-        template: "guessReveal",
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
       });
 
-      await expect.element(page.getByRole("slider")).toBeVisible();
+      await atViewport({ height: 1000, width }, async () => {
+        openActivity({
+          content: engineModeFixtures.guessReveal.moneyMillions,
+          template: "guessReveal",
+        });
 
-      await expect
-        .poll(() =>
-          [...document.querySelectorAll('[data-slot="guess-ticks"] span')].map(
-            (node) => node.textContent,
-          ),
-        )
-        .toStrictEqual(["R$0", "R$2M"]);
+        await expect.element(page.getByRole("slider")).toBeVisible();
 
-      const nodes = [...document.querySelectorAll('[data-slot="guess-ticks"] span')];
-      const bounds = nodes.map((node) => node.getBoundingClientRect());
+        await expect
+          .poll(() =>
+            [...document.querySelectorAll('[data-slot="guess-ticks"] span')].map(
+              (node) => node.textContent,
+            ),
+          )
+          .toStrictEqual(ticks);
 
-      for (let index = 1; index < bounds.length; index += 1) {
-        expect(bounds[index]!.left).toBeGreaterThanOrEqual(bounds[index - 1]!.right + 4);
-      }
-    });
-  });
+        const nodes = [...document.querySelectorAll('[data-slot="guess-ticks"] span')];
+        const bounds = nodes.map((node) => node.getBoundingClientRect());
+
+        for (let index = 1; index < bounds.length; index += 1) {
+          expect(bounds[index]!.left).toBeGreaterThanOrEqual(bounds[index - 1]!.right + 4);
+        }
+      });
+    },
+  );
 
   it("money guess retains currency in readouts, ticks, the difference and the accessible scale", async () => {
     const content = engineModeFixtures.guessReveal.money;

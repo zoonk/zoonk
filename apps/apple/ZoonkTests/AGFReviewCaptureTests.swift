@@ -10,6 +10,7 @@ final class AGFReviewCaptureTests: XCTestCase {
     guard let output = environment["AGF_CAPTURE_OUT"] else {
       throw XCTSkip("On-demand review capture")
     }
+    let exploring = environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
     let input = try XCTUnwrap(environment["AGF_CAPTURE_INPUT"])
     let fixtureData = try Data(contentsOf: URL(fileURLWithPath: input))
     let fixtures = try JSONDecoder().decode([String: JSONValue].self, from: fixtureData)
@@ -50,8 +51,9 @@ final class AGFReviewCaptureTests: XCTestCase {
       let isMap = fixture == "mapExplorer"
       let isLine = fixture.hasPrefix("lineCrossing")
       let context = ActivityCanvasContext(
-        template: content.template, payload: content.payload, check: content.check,
-        phase: isMap || isLine ? .answering : .checked(isCorrect: false),
+        template: content.template, payload: content.payload,
+        check: exploring ? nil : content.check,
+        phase: exploring ? .explore : (isMap || isLine ? .answering : .checked(isCorrect: false)),
         answer: isMap || isLine ? nil : .numeric(answer), setAnswer: { _ in }, baseMap: map)
       let renderer: ActivityRenderer
       if isMap {
