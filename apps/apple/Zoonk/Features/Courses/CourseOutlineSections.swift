@@ -195,7 +195,7 @@ private struct CourseLevelOutline: View {
 
           if !isExpanded.wrappedValue {
             Text(
-              verbatim: band.chapters.prefix(Self.named).map(\.title).formatted(.list(type: .and))
+              verbatim: band.chapters.prefix(Self.named).map(\.title).joinedFacts()
             )
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
@@ -367,8 +367,7 @@ private struct CourseAreaOutline: View {
 
               if !isExpanded.wrappedValue {
                 Text(
-                  verbatim: areaChapters.prefix(Self.named).map(\.title).formatted(
-                    .list(type: .and))
+                  verbatim: areaChapters.prefix(Self.named).map(\.title).joinedFacts()
                 )
                 .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
@@ -441,7 +440,7 @@ private struct OutlineChapterRow: View {
         }
 
         if !chapter.lessons.isEmpty {
-          Text(verbatim: chapter.lessons.map(\.title).formatted(.list(type: .and)))
+          Text(verbatim: chapter.lessons.map(\.title).joinedFacts())
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
