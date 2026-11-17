@@ -56,6 +56,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
@@ -420,7 +421,19 @@ internal fun WorkedExampleView(
                 Eyebrow(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
+            TeachingText(
+                title = null,
+                text = worked.problem,
+                marks =
+                    step.marks.takeIf {
+                        marking != null
+                    },
+                marksTerms = marksTerms,
+                textStyle =
+                    MaterialTheme.zoonkType.lessonText.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+            )
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
