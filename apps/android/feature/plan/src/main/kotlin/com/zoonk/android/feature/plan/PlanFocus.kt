@@ -198,7 +198,8 @@ private fun FocusTestLink(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            com.zoonk.android.ui.components
+                .ListRowChevron()
         }
     }
 }

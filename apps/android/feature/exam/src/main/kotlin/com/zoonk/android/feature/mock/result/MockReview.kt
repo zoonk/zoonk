@@ -66,9 +66,11 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTag
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures

@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -288,6 +289,8 @@ internal fun LibraryCourseOffer(
 ) {
     ListRow(
         onClick = onOpen,
+        modifier = Modifier.bleed(com.zoonk.android.ui.components.LIST_ITEM_INSET),
+        verticalAlignment = Alignment.Top,
         headline = { Text(course.title) },
         supporting = { Text(stringResource(R.string.onboarding_library_course_fits)) },
         leading = { MarkIcon(R.drawable.ic_menu_book) },

@@ -32,6 +32,7 @@ import com.zoonk.android.ui.characters.ActReaction
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -74,9 +75,9 @@ internal fun RevealHero(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(goal.displayName, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium)
             CelebrationScope(play) {
-                BuddyActor(
+                StandingBuddy(
                     buddy.look,
-                    Modifier.size(80.dp),
+                    height = 80.dp,
                     reaction = ActReaction(BuddyAct.Cheer, 3 * ZoonkMotion.BEAT_MILLIS),
                     label = buddy.name,
                 )

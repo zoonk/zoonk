@@ -50,6 +50,7 @@ import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -311,7 +312,7 @@ private fun SubjectDetails(
 
 @Composable
 private fun MindMapsLink(onClick: () -> Unit) {
-    TextButton(onClick = onClick, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {
+    TextButton(onClick = onClick, edge = ButtonEdge.End, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {
         Text(stringResource(R.string.navigation_mind_maps))
     }
 }

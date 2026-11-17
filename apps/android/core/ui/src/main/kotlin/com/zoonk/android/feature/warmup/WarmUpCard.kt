@@ -336,7 +336,10 @@ private fun WaitStrip(
                 }
             }
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-            Icon(painterResource(R.drawable.ic_chevron_right), null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (!ready) {
+                com.zoonk.android.ui.components
+                    .ListRowChevron()
+            }
         }
         lessonLine?.let {
             Row(

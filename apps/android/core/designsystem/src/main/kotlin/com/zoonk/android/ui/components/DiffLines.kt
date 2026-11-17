@@ -50,6 +50,7 @@ fun DiffLines(
     added: String,
     modifier: Modifier = Modifier,
     removed: String? = null,
+    trailing: (@Composable (DiffLine) -> Unit)? = null,
 ) {
     val shape = MaterialTheme.shapes.medium
 
@@ -74,22 +75,25 @@ fun DiffLines(
                 Modifier
                     .fillMaxWidth()
                     .background(container)
-                    .padding(horizontal = 12.dp, vertical = 3.dp)
-                    .clearAndSetSemantics { text = spoken },
+                    .padding(horizontal = 12.dp, vertical = 3.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
-                val style = MaterialTheme.typography.bodySmall.withTabularFigures()
-                when (line.kind) {
-                    DiffKind.Added -> Text("+ ", style = style, color = content)
-                    DiffKind.Removed -> Text("− ", style = style, color = content)
-                    DiffKind.Context -> Unit
+                Row(Modifier.weight(1f).clearAndSetSemantics { text = spoken }) {
+                    val style = MaterialTheme.typography.bodySmall.withTabularFigures()
+                    when (line.kind) {
+                        DiffKind.Added -> Text("+ ", style = style, color = content)
+                        DiffKind.Removed -> Text("− ", style = style, color = content)
+                        DiffKind.Context -> Unit
+                    }
+                    Text(
+                        line.text,
+                        style = style,
+                        color = content,
+                        textDecoration =
+                            if (line.tone == DiffTone.Neutral && line.kind == DiffKind.Removed) TextDecoration.LineThrough else null,
+                    )
                 }
-                Text(
-                    line.text,
-                    style = style,
-                    color = content,
-                    textDecoration =
-                        if (line.tone == DiffTone.Neutral && line.kind == DiffKind.Removed) TextDecoration.LineThrough else null,
-                )
+                trailing?.invoke(line)
             }
         }
     }
