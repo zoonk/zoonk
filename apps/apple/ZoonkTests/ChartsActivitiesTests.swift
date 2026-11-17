@@ -5,6 +5,13 @@ import XCTest
 /// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
 /// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
+  func testCrowdedAxisKeepsEvenStepsAndBothEnds() {
+    XCTAssertEqual(ChartsAxis.ticks(0...375), [0, 100, 200, 300])
+    XCTAssertEqual(ChartsAxis.ticks(0...5625), [0, 2000, 4000])
+    XCTAssertEqual(
+      LessonChartTicks.labeled([(0, 14), (20, 63), (59, 102), (98, 141)], keepingEnds: true),
+      [0, 3])
+  }
   func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
     let labels = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear).tickLabels(
       unit: "R$", locale: Locale(identifier: "en_US"))

@@ -318,6 +318,67 @@ async function expectNamesOffTheirLines() {
 }
 
 describe("line crossing chart", () => {
+  it("keeps the normal-width break-even axis values", async () => {
+    await atViewport(WIDE, async () => {
+      openActivity({ content: breakEven, template: "lineCrossing" });
+      await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+      const plot = document.querySelector("figure svg clipPath rect");
+
+      if (!plot) {
+        throw new Error("No plot");
+      }
+
+      const values = [
+        ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
+      ]
+        .filter(
+          (node) =>
+            node.getBoundingClientRect().top > plot.getBoundingClientRect().bottom &&
+            ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
+            getComputedStyle(node).visibility !== "hidden",
+        )
+        .map((node) => node.textContent);
+
+      expect(values).toStrictEqual(["0", "100", "200", "300"]);
+    });
+  });
+
+  it("keeps break-even x numbers apart at 320 pixels and twice the text size", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(NARROW, async () => {
+      openActivity({ content: breakEven, template: "lineCrossing" });
+      await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+
+      const labels = [
+        ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
+      ].filter(
+        (node) =>
+          ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
+          node.getBoundingClientRect().top >
+            document.querySelector("figure svg clipPath rect")!.getBoundingClientRect().bottom &&
+          getComputedStyle(node).visibility !== "hidden",
+      );
+
+      const boxes = labels
+        .map((node) => node.getBoundingClientRect())
+        .toSorted((a, b) => a.left - b.left);
+
+      expect(boxes.length).toBeGreaterThanOrEqual(2);
+
+      for (let index = 1; index < boxes.length; index += 1) {
+        expect(boxes[index]!.left).toBeGreaterThanOrEqual(boxes[index - 1]!.right + 4);
+      }
+
+      expect(labels.map((node) => node.textContent)).toContain("0");
+      expect(labels.map((node) => node.textContent)).toContain("300");
+    });
+  });
+
   it("keeps each line's name off its own line when explored", async () => {
     const entry = previewEntries.find((item) => item.id === "activity-lineCrossing-breakEven");
 

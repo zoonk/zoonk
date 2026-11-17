@@ -3,6 +3,7 @@ import {
   type LinearScale,
   type NumericDomain,
   createLinearScale,
+  fittingTickIndices,
   niceDomain,
   niceTicks,
 } from "@zoonk/utils/plot-scale";
@@ -174,13 +175,8 @@ function thinTicks({ ticks, width, x }: { ticks: Tick[]; width: number; x: Linea
     return { left: center - half, right: center + half };
   });
 
-  const step =
-    bounds.findIndex((_, index) => {
-      const kept = bounds.filter((__, tick) => tick % (index + 1) === 0);
-      return kept.every((bound, at) => at === 0 || bound.left >= (kept[at - 1]?.right ?? 0));
-    }) + 1;
-
-  return ticks.filter((_, index) => index % Math.max(step, 1) === 0);
+  const indices = fittingTickIndices(bounds, 0, false);
+  return ticks.filter((_, index) => indices.includes(index));
 }
 
 function getRowLayout({

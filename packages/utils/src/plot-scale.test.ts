@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createLinearScale, niceDomain, niceTicks } from "./plot-scale";
+import { createLinearScale, fittingTickIndices, niceDomain, niceTicks } from "./plot-scale";
 
 describe(createLinearScale, () => {
   it("maps data onto pixels and back, including flipped ranges", () => {
@@ -47,5 +47,27 @@ describe(niceDomain, () => {
     expect(niceDomain([Number.NaN, 4])).toStrictEqual([0, 4]);
     expect(niceDomain([])).toStrictEqual([0, 1]);
     expect(niceDomain([], { includeZero: false })).toStrictEqual([0, 1]);
+  });
+});
+
+describe("even tick thinning", () => {
+  it("keeps both end labels and equal round intervals when crowded", () => {
+    expect(
+      fittingTickIndices([
+        { left: 0, right: 14 },
+        { left: 20, right: 63 },
+        { left: 59, right: 102 },
+        { left: 98, right: 141 },
+      ]),
+    ).toStrictEqual([0, 3]);
+
+    expect(
+      fittingTickIndices([
+        { left: 0, right: 14 },
+        { left: 60, right: 103 },
+        { left: 120, right: 163 },
+        { left: 180, right: 223 },
+      ]),
+    ).toStrictEqual([0, 1, 2, 3]);
   });
 });

@@ -7,6 +7,7 @@ import { createContext, use } from "react";
 import { edgeAnchor, estimatedLabelWidth } from "../_utils/drawing-label";
 import { PLOT_DOT_RADIUS, PLOT_DOT_STROKE, PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
+import { useAxisLabels } from "./use-axis-labels";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
 
@@ -131,22 +132,29 @@ export function ActivityPlotAxisX({
   const { x, y } = usePlotScales();
   const [bottom] = y.range;
 
+  const ref = useAxisLabels({
+    labelKey: JSON.stringify(ticks.map((tick) => [x.toPixel(tick), format(tick)])),
+    range: x.range,
+  });
+
   return (
-    <g aria-hidden="true">
+    <g aria-hidden="true" data-slot="plot-axis-x" ref={ref}>
       {ticks.map((tick) => {
         const label = format(tick);
         const at = x.toPixel(tick);
 
         return (
-          <text
-            className="fill-muted-foreground"
-            key={tick}
-            textAnchor={edgeAnchor({ at, range: x.range, width: estimatedLabelWidth(label) })}
-            x={at}
-            y={bottom + X_LABEL_OFFSET}
-          >
-            {label}
-          </text>
+          <g key={tick}>
+            <path className="stroke-foreground/40" d={`M${at} ${bottom} v4`} strokeWidth={1} />
+            <text
+              className="fill-muted-foreground"
+              textAnchor={edgeAnchor({ at, range: x.range, width: estimatedLabelWidth(label) })}
+              x={at}
+              y={bottom + X_LABEL_OFFSET}
+            >
+              {label}
+            </text>
+          </g>
         );
       })}
     </g>

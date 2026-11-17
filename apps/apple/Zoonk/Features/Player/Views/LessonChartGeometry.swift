@@ -32,8 +32,10 @@ struct LessonChartScale {
 enum LessonChartTicks {
   static let gap = 4.0
 
-  static func labeled(_ frames: [(left: Double, right: Double)]) -> [Int] {
+  static func labeled(_ frames: [(left: Double, right: Double)], keepingEnds: Bool = false) -> [Int]
+  {
     for step in 1..<max(frames.count, 1) {
+      if keepingEnds && (frames.count - 1) % step != 0 { continue }
       let kept = Array(stride(from: 0, to: frames.count, by: step))
 
       if zip(kept, kept.dropFirst()).allSatisfy({ frames[$0].right + gap <= frames[$1].left }) {
@@ -41,7 +43,7 @@ enum LessonChartTicks {
       }
     }
 
-    return frames.isEmpty ? [] : [0]
+    return frames.isEmpty ? [] : keepingEnds ? Array(Set([0, frames.count - 1])).sorted() : [0]
   }
 }
 

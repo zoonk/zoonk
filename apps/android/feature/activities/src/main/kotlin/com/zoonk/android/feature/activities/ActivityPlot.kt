@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
+import com.zoonk.android.ui.components.fittingTickIndices
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.max
@@ -271,8 +272,14 @@ internal fun DrawScope.drawPlotAxes(
         drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
         drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
     }
-    xLabels.forEach { (tick, label) ->
-        val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, max(0f, size.width - label.size.width))
-        drawText(label, topLeft = Offset(start, bottom + gap))
+    val frames =
+        xLabels.map { (tick, label) ->
+            val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, max(0f, size.width - label.size.width))
+            start to start + label.size.width
+        }
+    val shown = fittingTickIndices(frames, 4.dp.toPx())
+    xLabels.forEachIndexed { index, (tick, label) ->
+        drawLine(gridColor, Offset(x.toPixel(tick), bottom), Offset(x.toPixel(tick), bottom + 4.dp.toPx()), 1.dp.toPx())
+        if (index in shown) drawText(label, topLeft = Offset(frames[index].first, bottom + gap))
     }
 }

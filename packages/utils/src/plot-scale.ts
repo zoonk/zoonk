@@ -97,3 +97,33 @@ export function niceDomain(
   // Rounding out to a whole step can pass the largest number a double holds.
   return rounded.every((bound) => Number.isFinite(bound)) ? rounded : [low, high];
 }
+
+const TICK_LABEL_GAP = 4;
+
+export function fittingTickIndices(
+  frames: readonly { left: number; right: number }[],
+  gap = TICK_LABEL_GAP,
+  keepEnds = true,
+): number[] {
+  const last = frames.length - 1;
+
+  if (last < 1) {
+    return frames.map((_, index) => index);
+  }
+
+  const strides = Array.from(
+    { length: keepEnds ? last : frames.length },
+    (_, index) => index + 1,
+  ).filter((step) => !keepEnds || last % step === 0);
+
+  const step =
+    strides.find((stride) => {
+      const kept = frames.filter((_, index) => index % stride === 0);
+
+      return kept.every(
+        (frame, index) => index === 0 || frame.left >= (kept[index - 1]?.right ?? 0) + gap,
+      );
+    }) ?? (keepEnds ? last : frames.length);
+
+  return frames.flatMap((_, index) => (index % step === 0 ? [index] : []));
+}
