@@ -384,7 +384,7 @@ private struct BuddyContent: View {
               "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
               tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
           } icon: {
-            Image(systemName: "target")
+            Image(systemName: "checklist")
           }
         }
       }

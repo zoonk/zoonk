@@ -451,7 +451,7 @@ struct BlockRow: View {
     if !block.isFinished {
       HStack(spacing: 6) {
         if countsTowardMission {
-          Image(systemName: "target")
+          Image(systemName: "checklist")
             .foregroundStyle(.brain)
             .accessibilityLabel(
               Text(

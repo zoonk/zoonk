@@ -98,7 +98,18 @@ struct SearchScreen: View {
           Button {
             perform(item.action)
           } label: {
-            Label(item.title, systemImage: item.systemImage)
+            ListRow(Text(item.title)) {
+              if item.id == "buddy" {
+                BuddyCharacter(
+                  look: learner.summary.value?.buddy ?? BuddyLook(), expression: .happy, crop: .face
+                )
+                .frame(width: 20, height: 20)
+              } else {
+                Image(systemName: item.systemImage)
+                  .typeStyle(.rowTitle)
+                  .imageScale(.medium)
+              }
+            }
           }
           .badge(item.badge)
           .foregroundStyle(.primary)
