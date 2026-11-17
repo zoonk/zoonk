@@ -296,6 +296,7 @@ internal class GoalSetupViewModel(
         private set
 
     /** How far a placement test is while it asks, which takes the step dots' place and Back's. */
+    var placementProgressLabel by mutableStateOf<String?>(null)
     var placementProgress by mutableStateOf<Float?>(null)
 
     val goalId: String get() = flow.goalId

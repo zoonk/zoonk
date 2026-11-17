@@ -218,12 +218,7 @@ fun GoalSetupScreen(
         title = {
             when {
                 testing != null -> {
-                    Meter(
-                        share = testing,
-                        modifier = Modifier.width(STEP_DOTS_WIDTH),
-                        color = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(R.string.onboarding_placement_progress),
-                    )
+                    Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
                 }
 
                 else -> {
@@ -533,6 +528,7 @@ private fun ColumnScope.QuestionStep(
                     store = store,
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
+                    onProgressLabel = { vm.placementProgressLabel = it },
                     onDone = placed,
                     onReportSaveFailure = onReportLevelTest,
                 )
@@ -545,6 +541,7 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
+                    onProgressLabel = { vm.placementProgressLabel = it },
                     handBack = placed,
                     onReportSaveFailure = onReportPlacement,
                 )
@@ -557,6 +554,7 @@ private fun ColumnScope.QuestionStep(
                     onRetryRun = onRetryRun,
                     store = store,
                     onProgress = { vm.placementProgress = it },
+                    onProgressLabel = { vm.placementProgressLabel = it },
                     onDone = placed,
                     onReportSaveFailure = onReportPlacement,
                 )

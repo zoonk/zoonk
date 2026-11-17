@@ -104,6 +104,7 @@ fun ColumnScope.LanguageLevelTestStep(
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
+    onProgressLabel: (String?) -> Unit = {},
 ) {
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle(), onDone) }
     VisitOf(vm.visit)
@@ -122,8 +123,22 @@ fun ColumnScope.LanguageLevelTestStep(
             is LevelTestPhase.Speaking -> phase.progress
             else -> null
         }
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val progressLabel =
+        when (phase) {
+            is LevelTestPhase.Question -> stringResource(R.string.onboarding_test_question_progress, phase.number, phase.total)
+            is LevelTestPhase.Speaking -> stringResource(R.string.onboarding_test_question_progress, phase.number, phase.total)
+            else -> null
+        }
+    LaunchedEffect(progress, progressLabel) {
+        onProgress(progress)
+        onProgressLabel(progressLabel)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onProgress(null)
+            onProgressLabel(null)
+        }
+    }
     val finish = { vm.finish() }
 
     when (shown) {
