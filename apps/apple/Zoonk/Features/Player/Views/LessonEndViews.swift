@@ -838,7 +838,7 @@ struct LessonWaitingView: View {
   private var page: some View {
     VStack(alignment: .leading, spacing: 24) {
       Text(outline.description)
-        .typeStyle(.reading)
+        .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
 
       status
@@ -857,7 +857,7 @@ struct LessonWaitingView: View {
       LessonNoticeText(title: Text(Self.setAsideTitle), description: Text(Self.setAsideLine))
     case (nil, .failed):
       Text(kind.stopped)
-        .typeStyle(.rowTitle)
+        .typeStyle(.screenTitle)
 
       // A run that reported a phase stopped there; otherwise it never got going.
       GenerationTimeline(
@@ -870,7 +870,7 @@ struct LessonWaitingView: View {
           LessonNoticeText(title: Text(kind.gettingReady), description: Text(Self.takesMinutes))
         } else {
           Text(kind.ready)
-            .typeStyle(.rowTitle)
+            .typeStyle(.screenTitle)
         }
 
         GenerationTimeline(
@@ -926,10 +926,11 @@ private struct LessonNoticeText: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       title
-        .typeStyle(.rowTitle)
+        .typeStyle(.screenTitle)
         .foregroundStyle(Color(.foreground))
 
       description
+        .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
