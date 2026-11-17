@@ -367,7 +367,7 @@ private fun BeltProgression(
 
         val next = level.nextBelt
         if (nextBelt != null && next != null && level.level < LEVELS_PER_BELT) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
                 BeltDot(nextBelt)
                 StatsLine(
                     stringResource(

@@ -157,12 +157,19 @@ fun ListRow(
         // A row with a text lead reads as a table row: top-aligned as a whole, its end on the first entry's line.
         verticalAlignment = if (leadOnFirstLine) Alignment.Top else verticalAlignment,
     ) {
-        val firstLineBox = if (leadOnFirstLine) maxOf(markSize(), lineHeight(MaterialTheme.typography.titleSmall)) else null
+        val firstLineBox =
+            if (leadOnFirstLine ||
+                verticalAlignment == Alignment.Top
+            ) {
+                maxOf(markSize(), lineHeight(MaterialTheme.typography.titleSmall))
+            } else {
+                null
+            }
         val parts = remember { RowParts() }
         RowContent(
             parts = parts,
             firstLine = MaterialTheme.typography.titleSmall,
-            leadOnFirstLine = leadOnFirstLine,
+            leadOnFirstLine = leadOnFirstLine || verticalAlignment == Alignment.Top,
             modifier = Modifier.weight(1f),
             mark =
                 leading?.let { mark ->
@@ -243,8 +250,24 @@ internal fun OnFirstLine(
     box: Dp?,
     content: @Composable () -> Unit,
 ) {
-    if (box == null) content() else Box(Modifier.heightIn(min = box), contentAlignment = Alignment.Center) { content() }
+    if (box == null) {
+        content()
+    } else {
+        Layout(content) { measurables, constraints ->
+            val parts = measurables.map { it.measure(constraints.copy(minHeight = 0)) }
+            val height = box.roundToPx()
+            layout(parts.maxOfOrNull { it.width } ?: 0, height) {
+                parts.forEach { it.placeRelative(0, (height - it.height) / 2) }
+            }
+        }
+    }
 }
+
+@Composable
+fun OnFirstLine(
+    style: TextStyle,
+    content: @Composable () -> Unit,
+) = OnFirstLine(lineHeight(style), content)
 
 /** A line of [style] as the text lays it out at this text size, nonlinear scaling included. */
 @Composable
@@ -382,16 +405,18 @@ private fun RowContent(
                 y += it.height
             }
             notesPlaceable?.placeRelative(wordsStart, y)
-            if (beside) valuePlaceable?.let {
-                val titleBaseline = titlePlaceable[FirstBaseline]
-                val valueBaseline = it[FirstBaseline]
-                val top =
-                    if (titleBaseline != AlignmentLine.Unspecified && valueBaseline != AlignmentLine.Unspecified) {
-                        inset + wordsTop + titleBaseline - valueBaseline
-                    } else {
-                        inset + wordsTop + (line - it.height) / 2
-                    }
-                it.placeRelative(constraints.maxWidth - it.width, top)
+            if (beside) {
+                valuePlaceable?.let {
+                    val titleBaseline = titlePlaceable[FirstBaseline]
+                    val valueBaseline = it[FirstBaseline]
+                    val top =
+                        if (titleBaseline != AlignmentLine.Unspecified && valueBaseline != AlignmentLine.Unspecified) {
+                            inset + wordsTop + titleBaseline - valueBaseline
+                        } else {
+                            inset + wordsTop + (line - it.height) / 2
+                        }
+                    it.placeRelative(constraints.maxWidth - it.width, top)
+                }
             }
         }
     }

@@ -68,6 +68,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTag
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OnFirstLine
 import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.iconButtonEdge
@@ -276,7 +277,7 @@ private fun ReviewEntry(
     val muted = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
     Column(modifier.padding(vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
             Text(
                 entry.area?.let { stringResource(R.string.mock_result_question_area, number, it) }
                     ?: stringResource(R.string.mock_result_question, number),
@@ -284,7 +285,11 @@ private fun ReviewEntry(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
-            ReportProblemMenu(app, FeedbackTarget("mock-review", FeedbackSubmissionContext.ContentKind.ITEM, entry.itemId))
+            OnFirstLine(MaterialTheme.typography.labelMedium) {
+                Box(Modifier.iconButtonEdge(ButtonEdge.End)) {
+                    ReportProblemMenu(app, FeedbackTarget("mock-review", FeedbackSubmissionContext.ContentKind.ITEM, entry.itemId))
+                }
+            }
         }
         entry.set?.let { ItemSetText(it.recode<_, ItemSet>(), continued = continued) }
         entry.context?.let { ItemText(it, style = muted) }
