@@ -46,6 +46,7 @@ import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyExpression
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
@@ -265,8 +266,8 @@ private fun EarnedToday(
     buddyName: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionLabel(stringResource(R.string.session_summary_earned_today))
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.session_summary_earned_today))
         Rewards(summary, facts, buddy, buddyName, title = null)
     }
 }
@@ -333,7 +334,13 @@ private fun SessionNumbers(
             }
             add { modifier ->
                 val skills = summary.comesBack.sumOf { it.skills }
-                StatTile(reviewLabel, formatNumber(skills.toDouble(), locale), modifier, icon = summaryIcon(R.drawable.ic_replay))
+                StatTile(
+                    reviewLabel,
+                    formatNumber(skills.toDouble(), locale),
+                    modifier,
+                    detail = stringResource(R.string.session_summary_to_review_detail),
+                    icon = summaryIcon(R.drawable.ic_replay),
+                )
             }
             if (brainPowerTile) {
                 add { modifier -> StatTile(brainLabel, earned, modifier, belt, StatTone.Brain, summaryIcon(R.drawable.ic_psychology)) }
@@ -449,11 +456,10 @@ private fun Rewards(
     val streak = summary.bestStreak.takeIf { it >= SHOWN_STREAK }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        BuddyActor(
+        StandingBuddy(
             look = buddy,
-            modifier = Modifier.size(96.dp),
+            height = 96.dp,
             expression = BuddyExpression.Happy,
-            crop = BuddyCrop.Whole,
             reaction = if (celebrates()) ActReaction(BuddyAct.Proud, ZoonkMotion.BEAT_MILLIS) else null,
             label = stringResource(R.string.session_summary_buddy_happy, buddyName),
         )
@@ -604,7 +610,7 @@ private fun SummaryBar(
             TextButton(
                 busy = busy == SessionAction.ExtraTime,
                 onClick = actions.extraTime,
-                modifier = Modifier.taskOption(),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = busy == null,
                 leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
