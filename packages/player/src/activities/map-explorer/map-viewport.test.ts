@@ -217,23 +217,6 @@ describe(placeMapLabels, () => {
     expect(scale).toBeGreaterThanOrEqual(0.8);
   });
 
-  it.each([8, 12])("keeps the full line-height margin when glyph ink is %i px high", (height) => {
-    const labels = [50, 63].map((y) => ({
-      ...named,
-      height,
-      lineHeight: 28,
-      positions: [
-        { x: 80, y },
-        { x: 160, y },
-        { x: 240, y },
-      ],
-      priority: false,
-      y,
-    }));
-
-    expect(placeMapLabels({ frame: { height: 100, width: 320 }, labels, pins: [] })[0]).toBeNull();
-  });
-
   it("keeps a named label box clear of every pin box", () => {
     const pins = [
       { x: 160, y: 120 },

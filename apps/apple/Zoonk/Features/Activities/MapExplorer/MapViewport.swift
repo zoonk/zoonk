@@ -238,9 +238,9 @@ enum MapViewport {
           inFrame(candidate, frame) && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
             && pinNumbers.allSatisfy { box in
               abs(candidate.center.x - box.midX) >= projection(candidate, CGPoint(x: 1, y: 0)) + box
-                .width / 2
+                .width / 2 + 3
                 || abs(candidate.center.y - box.midY) >= projection(candidate, CGPoint(x: 0, y: 1))
-                  + box.height / 2
+                  + box.height / 2 + 3
             }
         }
         if let spot {

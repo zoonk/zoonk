@@ -19,7 +19,6 @@ import {
   valueInput,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
-import { measureDrawingInk } from "../activities/_utils/drawing-label";
 
 const fixtures = activityContentFixtures;
 
@@ -263,28 +262,8 @@ describe("money and society activities", () => {
       const map = document.querySelector('[data-slot="base-map"]')!.getBoundingClientRect();
 
       const text = document.querySelector<SVGTextElement>('[data-street-label="Broad Street"]')!;
+      const label = text.getBoundingClientRect();
       const matrix = text.getScreenCTM()!;
-
-      const ink = measureDrawingInk({
-        context: document.createElement("canvas").getContext("2d")!,
-        element: text,
-      });
-
-      const screen = new DOMPoint(
-        Number(text.getAttribute("x")) + ink.offsetX,
-        Number(text.getAttribute("y")) + ink.offsetY,
-      ).matrixTransform(matrix);
-
-      const reachX = (Math.abs(matrix.a) * ink.width + Math.abs(matrix.c) * ink.height) / 2;
-      const reachY = (Math.abs(matrix.b) * ink.width + Math.abs(matrix.d) * ink.height) / 2;
-
-      const label = {
-        bottom: screen.y + reachY,
-        left: screen.x - reachX,
-        right: screen.x + reachX,
-        top: screen.y - reachY,
-      };
-
       const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
 
       const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
@@ -306,7 +285,7 @@ describe("money and society activities", () => {
       const own = streets.find((street) => street.name === "Broad Street")!;
       expect(own.distance).toBeLessThanOrEqual(40);
 
-      const lineHeight = ink.lineHeight * Math.hypot(matrix.c, matrix.d);
+      const lineHeight = text.getBBox().height * Math.hypot(matrix.c, matrix.d);
 
       const nearestOther = Math.min(
         ...streets.filter((street) => street !== own).map((street) => street.distance),
@@ -319,7 +298,7 @@ describe("money and society activities", () => {
       expect(label.top).toBeGreaterThanOrEqual(map.top);
       expect(label.bottom).toBeLessThanOrEqual(map.bottom);
 
-      expect(map.width).toBe(256);
+      expect(map.width).toBe(320);
 
       const overlapsCircle = document.querySelector<SVGTextElement>(
         '[data-street-label="Broad Street"]',

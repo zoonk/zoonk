@@ -9,7 +9,6 @@ export type MapLabelSpot = {
   text: string;
   width: number;
   height: number;
-  lineHeight?: number;
   priority?: boolean;
   question?: boolean;
 } & MapPoint;
@@ -73,7 +72,7 @@ export function besideOwnStreet(
           other.every(
             (point, index) => point.x === path[index]?.x && point.y === path[index]?.y,
           )) ||
-        distance + (label.lineHeight ?? label.height) / 2 <= pathDistance(label, other),
+        distance + label.height / 2 <= pathDistance(label, other),
     )
   );
 }

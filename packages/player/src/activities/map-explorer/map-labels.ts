@@ -145,9 +145,9 @@ export function placeMapLabels({
       ? numbers.every(
           (box) =>
             Math.abs(candidate.x - box.x - box.width / 2) >=
-              labelProjection(candidate, { x: 1, y: 0 }) + box.width / 2 ||
+              labelProjection(candidate, { x: 1, y: 0 }) + box.width / 2 + LABEL_CLEARANCE ||
             Math.abs(candidate.y - box.y - box.height / 2) >=
-              labelProjection(candidate, { x: 0, y: 1 }) + box.height / 2,
+              labelProjection(candidate, { x: 0, y: 1 }) + box.height / 2 + LABEL_CLEARANCE,
         )
       : pins.every((pin) => clearOfPin(candidate, pin))) &&
     (onPath || besideOwnStreet(candidate, streets)) &&
@@ -158,12 +158,7 @@ export function placeMapLabels({
     const spots: (MapLabelPlacement | null)[] = labels.map(() => null);
 
     for (const { index, label: original } of named) {
-      const label = {
-        ...original,
-        height: original.height * scale,
-        lineHeight: (original.lineHeight ?? original.height) * scale,
-        width: original.width * scale,
-      };
+      const label = { ...original, height: original.height * scale, width: original.width * scale };
 
       const points = namedCandidates(label, placed, pins, frame).toSorted((a, b) =>
         pack
@@ -224,7 +219,6 @@ export function placeMapLabels({
       const label = {
         ...original,
         height: original.height * MIN_LABEL_SCALE,
-        lineHeight: (original.lineHeight ?? original.height) * MIN_LABEL_SCALE,
         width: original.width * MIN_LABEL_SCALE,
       };
 

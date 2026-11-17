@@ -391,9 +391,9 @@ internal fun placeMapLabels(
                             chosen.placed.all { clearOfMapLabel(candidate, it) } &&
                             pinNumbers.all { box ->
                                 kotlin.math.abs(candidate.center.x - box.x - box.width / 2) >=
-                                    labelProjection(candidate, MapPoint(1.0, 0.0)) + box.width / 2 ||
+                                    labelProjection(candidate, MapPoint(1.0, 0.0)) + box.width / 2 + 3 ||
                                     kotlin.math.abs(candidate.center.y - box.y - box.height / 2) >=
-                                    labelProjection(candidate, MapPoint(0.0, 1.0)) + box.height / 2
+                                    labelProjection(candidate, MapPoint(0.0, 1.0)) + box.height / 2 + 3
                             }
                     }
             if (spot != null) {

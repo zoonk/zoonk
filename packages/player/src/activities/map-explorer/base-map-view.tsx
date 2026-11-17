@@ -194,9 +194,9 @@ export function BaseMapView({
   );
 
   const measured = drawing.labels.map((label, index) => ({
-    ...label,
+    angle: label.angle,
     height: sizes[index]?.height ?? 0,
-    lineHeight: sizes[index]?.lineHeight ?? 0,
+    kind: label.kind,
     positions: streetPaths[label.text],
     priority: isMapLabelNamed({
       references,

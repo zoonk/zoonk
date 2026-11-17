@@ -180,7 +180,7 @@ function MapCanvas({
   }
 
   return (
-    <ActivityCanvas labelId={labelId}>
+    <ActivityCanvas className="max-[360px]:-mx-4" labelId={labelId}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-pretty">{name}</p>
         {phase !== "checked" && (

@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { measureDrawingInk } from "../_utils/drawing-label";
+import { measureDrawingLabel } from "../_utils/drawing-label";
 import { MAP_STREET_SAMPLE_STEP } from "./map-label-geometry";
 import { type MapBox, type MapPoint } from "./map-viewport";
 
-type MapLabelSize = ReturnType<typeof measureDrawingInk>;
+type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
 
 export function useMapLabelSizes(labelKey: string, pixelSize: number) {
   const elements = useRef(new Map<number, SVGTextElement>());
@@ -28,12 +28,6 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
 
   useLayoutEffect(() => {
     const measure = () => {
-      const context = document.createElement("canvas").getContext("2d");
-
-      if (!context) {
-        return;
-      }
-
       const map = [...elements.current.values()][0]?.closest('[data-slot="base-map"]');
       const paths = map?.querySelectorAll<SVGPathElement>("[data-street]") ?? [];
 
@@ -61,11 +55,16 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
       const sizes = Object.fromEntries(
         [...elements.current].map(([index, element]): [number, MapLabelSize] => [
           index,
-          measureDrawingInk({ context, element, pixelSize }),
+          measureDrawingLabel({ element, pixelSize }),
         ]),
       );
 
       const bounds = map?.getBoundingClientRect();
+      const context = document.createElement("canvas").getContext("2d");
+
+      if (!context) {
+        return;
+      }
 
       const pinNumbers = [
         ...(map?.querySelectorAll<HTMLElement>('[data-slot="map-pin"] > span') ?? []),
