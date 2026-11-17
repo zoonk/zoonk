@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.compositeOver
@@ -298,6 +299,24 @@ private fun MapDrawing(
         val spots =
             placeMapLabels(
                 labels.mapIndexed { index, (label, text) ->
+                    val streetIndex = map.drawing.streets.indexOfFirst { it.name == label.text }
+                    val path = map.streets.getOrNull(streetIndex)
+                    val positions =
+                        path
+                            ?.let {
+                                val bounds = it.getBounds()
+                                val steps =
+                                    kotlin.math
+                                        .ceil(
+                                            (bounds.width + bounds.height) * zoom / density / STREET_SAMPLE_STEP,
+                                        ).toInt()
+                                        .coerceAtLeast(1)
+                                val measure = PathMeasure().apply { setPath(it, false) }
+                                (0..steps).map { step ->
+                                    val point = measure.getPosition(measure.length * step / steps)
+                                    MapPoint((point.x - crop.x) * zoom / density, (point.y - crop.y) * zoom / density)
+                                }
+                            }.orEmpty()
                     MapLabelSpot(
                         MapPoint(
                             (label.x - crop.x) * zoom / density,
@@ -308,6 +327,7 @@ private fun MapDrawing(
                         label.angle,
                         label.kind == LabelKind.Street,
                         references.contains(label.text, ignoreCase = true) || references.contains(labelTexts[index], ignoreCase = true),
+                        positions,
                     )
                 },
                 layout.pins.map { it.shown },
@@ -563,3 +583,5 @@ private val TRUE_SPOT = 3.5.dp
 private val RING = 4.dp
 private val PIN_SHADOW = 4.dp
 private val PIN_FACE = 32.dp
+
+private const val STREET_SAMPLE_STEP = 4

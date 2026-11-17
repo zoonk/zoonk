@@ -109,6 +109,7 @@ internal data class MapLabelSpot(
     val angle: Double,
     val street: Boolean,
     val priority: Boolean,
+    val positions: List<MapPoint>? = null,
 )
 
 private fun labelAxes(label: MapLabelSpot): List<MapPoint> {
@@ -157,10 +158,8 @@ internal fun placeMapLabels(
     val placed = mutableListOf<MapLabelSpot>()
     labels.indices.sortedByDescending { labels[it].priority }.forEach { index ->
         val label = labels[index]
-        val along = labelAxes(label)[0]
-        val steps = if (label.street) kotlin.math.floor(label.width / 4).toInt() else 0
-        val slides = listOf(0.0) + (1..steps).flatMap { listOf(it * 4.0, -it * 4.0) }
-        val candidates = slides.map { label.copy(center = MapPoint(label.center.x + along.x * it, label.center.y + along.y * it)) }
+        val points = if (label.street) label.positions.orEmpty() else listOf(label.center)
+        val candidates = points.sortedBy { kotlin.math.hypot(it.x - label.center.x, it.y - label.center.y) }.map { label.copy(center = it) }
         val spot =
             candidates.firstOrNull { candidate ->
                 val rx = labelProjection(candidate, MapPoint(1.0, 0.0))

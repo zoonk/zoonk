@@ -10,7 +10,7 @@ class MapViewportTest {
         val labels =
             listOf(
                 MapLabelSpot(MapPoint(138.0, 100.0), 80.0, 12.0, 0.0, false, false),
-                MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 0.0, true, true),
+                MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 0.0, true, true, listOf(MapPoint(70.0, 100.0), MapPoint(138.0, 100.0))),
             )
         val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 200.0)
         org.junit.Assert.assertNotNull(spots[1])
@@ -27,6 +27,33 @@ class MapViewportTest {
                 MapLabelSpot(MapPoint(12.0, 30.0), 20.0, 12.0, 0.0, false, false),
             )
         assertEquals(listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)), placeMapLabels(labels, emptyList(), 210.0, 200.0))
+    }
+
+    @Test
+    fun streetCanSlideFartherThanItsTextWidthIntoTheVisibleFrame() {
+        val labels =
+            listOf(
+                MapLabelSpot(
+                    MapPoint(70.0, 300.0),
+                    80.0,
+                    12.0,
+                    90.0,
+                    true,
+                    false,
+                    listOf(MapPoint(70.0, 50.0), MapPoint(70.0, 124.0), MapPoint(70.0, 300.0)),
+                ),
+            )
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 190.0)), 210.0, 200.0)
+        org.junit.Assert.assertNotNull(spots[0])
+        org.junit.Assert.assertTrue(spots[0]!!.y < 130)
+    }
+
+    @Test
+    fun hidesStreetWhenAvoidingItsPinWouldMoveItBeyondTheDrawnStreet() {
+        val labels =
+            listOf(MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 90.0, true, false, listOf(MapPoint(70.0, 50.0), MapPoint(70.0, 120.0))))
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 250.0)
+        org.junit.Assert.assertNull(spots[0])
     }
 
     private fun assertPoints(

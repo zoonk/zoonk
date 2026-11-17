@@ -34,6 +34,7 @@ internal data class BaseMapRegion(
 
 @Serializable
 internal data class BaseMapStreet(
+    val name: String,
     val path: String,
 )
 
