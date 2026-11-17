@@ -32,13 +32,12 @@
   "memory_updated": "ac602a4e7c0f66fb45d940ed4290840dbbd81cfb3c2045d524b879e7b6c8fdff",
   "memory_updated_more": "3914d990c58e02e19a95c59ab322cfdf5662c343e86a6bde605dad9d2b10fdd3",
   "memory_use": "297c66e29db9f2d54b3fc26538ee0bdc4ee18b6df1a56806e7d6ef1baa921137",
-  "memory_use_off": "3b2364d7ffaf5be9045c5cd511b0b736a0b9b0f2bb478124fe304c3f7c8590e5"
+  "memory_use_description": "d3dcaaec0fa1e3846d7dea4d2d35d8388710d9b0252b489949d80f27eebc9c85"
 }
 -->
 <resources>
     <string name="memory_description">Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları.</string>
     <string name="memory_use">Belleği kullan</string>
-    <string name="memory_use_off">Bu ayar kapalıyken hiçbir bilgi hatırlanmaz veya kullanılmaz.</string>
     <string name="memory_empty">Henüz bir şey yok. Çalıştıkça ve sohbet ettikçe notlar burada görünür.</string>
     <string name="memory_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <string name="memory_category_goals">Hedefler</string>
@@ -76,4 +75,6 @@
     <string name="memory_change_undone">Değişiklik geri alındı</string>
     <string name="memory_undo_failed">Geri alınamadı. Bu bilgi sonradan değişti.</string>
     <string name="memory_undo_retry">Geri alınamadı. Tekrar dene.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan %1$s ile sohbetler</string>
 </resources>

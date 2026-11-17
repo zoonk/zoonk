@@ -2069,3 +2069,29 @@ describe("docked beside the lesson", () => {
     await expect.element(asideComposer()).toHaveValue("");
   });
 });
+
+describe("explanation help at every layout", () => {
+  it.each([null, "es"] as const)(
+    "keeps a phone ask entry with target language %s",
+    async (targetLanguage) => {
+      await atViewport(PHONE, async () => {
+        const lesson = buildLesson([teachingStep("explanation")], { targetLanguage });
+        stubTutorApi({ lesson });
+        playLesson({ lesson });
+        await expect.element(page.getByRole("button", { name: "Ask Pip" })).toBeVisible();
+        await page.getByRole("button", { name: "Ask Pip" }).click();
+
+        await expect
+          .element(page.getByRole("dialog").getByRole("textbox", { name: "Ask a question" }))
+          .toBeVisible();
+      });
+    },
+  );
+
+  it("keeps one ask beside a wide explanation", async () => {
+    const { lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    playLesson({ lesson });
+    await expect.element(asideComposer()).toBeVisible();
+    expect(page.getByRole("button", { name: "Ask Pip" }).query()).toBeNull();
+  });
+});

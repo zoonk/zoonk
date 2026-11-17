@@ -590,26 +590,8 @@ private struct SubjectTopicRow: View {
   }
 
   private var note: Text? {
-    switch topic.notPlannedReason {
-    case "time"?:
-      return Text(
-        "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
-        comment: "A topic the plan leaves out: no time for it by the date")
-    case "skipped"?:
-      return Text(
-        "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",
-        comment: "A topic the plan leaves out: the learner took its subject out")
-    case "missing"?:
-      return Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
-    case .some:
-      return Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-    case nil:
-      return topic.status == "known"
-        ? Text(
-          "Skipped\u{00A0}· you already know it", tableName: "Plan",
-          comment: "A chapter the learner tested out of")
-        : nil
-    }
+    let reason = topic.status == "known" ? "known" : topic.notPlannedReason
+    return reason.map { planOutsideReason($0) }
   }
 
   private var status: StatusMark.Status {

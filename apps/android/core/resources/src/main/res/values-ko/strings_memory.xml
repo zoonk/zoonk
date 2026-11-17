@@ -32,13 +32,12 @@
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
   "memory_updated_more": "f8c2d97214f2be28037800d695c393137bc9afe6e75ee22f810e77810927fe11",
   "memory_use": "3ffead7c761f1704ad003c12bd057f7a0564ae47e18238e3764703bd1a215372",
-  "memory_use_off": "c1facda3e2a8d061669dd33d989d685eee4139ab7b9c170459b5b479277c52d4"
+  "memory_use_description": "29a266a4e871998bdd8563df382d19caabc6c257d946f64f174edbf09270b857"
 }
 -->
 <resources>
     <string name="memory_description">내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요.</string>
     <string name="memory_use">메모리 사용</string>
-    <string name="memory_use_off">이 기능이 꺼져 있는 동안에는 아무것도 기억하거나 사용하지 않아요.</string>
     <string name="memory_empty">아직 메모가 없어요. 학습하고 대화하다 보면 여기에 메모가 표시돼요.</string>
     <string name="memory_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <string name="memory_category_goals">목표</string>
@@ -75,4 +74,6 @@
     <string name="memory_change_undone">변경 사항을 되돌렸어요</string>
     <string name="memory_undo_failed">그사이 내용이 바뀌어서 되돌릴 수 없어요.</string>
     <string name="memory_undo_retry">되돌리지 못했어요. 다시 시도해 보세요.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 %1$s와(과)의 대화</string>
 </resources>

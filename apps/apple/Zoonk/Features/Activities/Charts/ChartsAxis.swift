@@ -125,13 +125,12 @@ private struct ChartsAxisTitles: ViewModifier {
   @Environment(\.dynamicTypeSize) private var textSize
   @Environment(\.legibilityWeight) private var legibility
   func body(content: Content) -> some View {
-    let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
+    let font = TypeStyle.data.uiFont(min(textSize, ChartsPlot.maxTextSize), legibility: legibility)
     let left =
       (values.map { ($0 as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0) + 8
-    let annotationHeight = TypeStyle.meta.uiFont(textSize, legibility: legibility).lineHeight
     VStack(alignment: .leading, spacing: 4) {
       ChartsAxis.title(y, alignment: .leading).padding(.leading, left)
-      content.padding(.top, annotationHeight)
+      content
       ChartsAxis.title(x, alignment: .trailing).padding(.leading, left)
     }
   }
@@ -213,6 +212,7 @@ private struct ChartsAxisEdgeLabel<Content: View>: View {
     content.visualEffect { content, geometry in
       let anchor = ChartsAxis.anchor(
         at: plot.position(value), plotWidth: plot.width, labelWidth: geometry.size.width)
+      // Aligned axis marks center the container even when an explicit anchor is supplied.
       return content.offset(x: geometry.size.width * (0.5 - anchor.x))
     }
   }

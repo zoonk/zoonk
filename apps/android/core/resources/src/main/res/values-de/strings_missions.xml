@@ -4,8 +4,6 @@
   "missions_after_lessons": "8a546d2c9fa7679afc15e0f3038bc1a583e4da26db9c8c43e0d566ea38436a72",
   "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
   "missions_brain_power": "86997b83168b52a5096e6188ab9f26ec032565367c9795f849707ce2276e768b",
-  "missions_brain_power_about": "995734769b9419b7bf9b2be9f96e4befcf6879ea668b6c5ecd7c7aa0bd28c4ba",
-  "missions_brain_power_total": "c6e21d9072b23d90952e9263e4a4f1832e32b29727f844db02567150508ebf9a",
   "missions_call": "8830973c5ed65ba99f6b7f4514d1a55eaeed97ac3ec785a68d128f51947ce07b",
   "missions_challenge": "d48d6dde7a90a66bb42fa264842af8cd4c4d362633275d4059be5a2ff84572ea",
   "missions_done": "e1ee8e2d02b01f206fc1c87976b623d29dcec7f92b8375a3ecb01c1d4e8406ca",
@@ -26,7 +24,7 @@
   "missions_open_challenge": "3ac2e798c5837063ba6f8d5950d0e1d26c46057533a85035cd278cf4407ab759",
   "missions_open_chapter": "5ef32e1613a7269b6c6ac4e3bd24fbddb549b0a05f59bfc354ed6b430952949f",
   "missions_open_essay": "79e664e0b9d127787b51698f6fac5f13bbbe09b28c3bd8e3f81aba843b97f153",
-  "missions_open_mistakes": "35c6fc8451b1a3d2d5d83bd2b63ab8f2f8037d33fb66b8c31700a53861102235",
+  "missions_open_mistakes": "a13f62fd9b6bcc4f04cae11719b64372f79ffaf2aa21845ed9f7c8351fc4f150",
   "missions_open_mock": "9dffc22c23ae0ade511d96ba436ae2922a1c01c9090c58d3ec6bc8c5d8c268dd",
   "missions_open_mock_chooser": "05668ec63bf1749eef887240ed2557685680b3637117a2bf5c1db6e388ff092f",
   "missions_open_new_lesson": "3758303fff3341c6e776596a9bbfde590f8baf1eec9928b8527d9db255e938ca",
@@ -68,8 +66,6 @@
     <string name="missions_brain_power">Brain Power</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">Punkte für alles, was du lernst. Sie bringen dich zum nächsten Gürtel und lassen deinen Kumpel wachsen.</string>
-    <string name="missions_brain_power_total">Du hast %1$s</string>
     <string name="missions_review">Wiederholen</string>
     <string name="missions_something_new">Eine neue Lektion machen</string>
     <!-- %1$s is a chapter's title. -->
@@ -105,7 +101,7 @@
     <string name="missions_open_mock">Zur heutigen Probeprüfung</string>
     <string name="missions_open_essay">Zum heutigen Aufsatz</string>
     <string name="missions_open_practice">Zur heutigen Übung</string>
-    <string name="missions_open_mistakes">Übe deine Fehler</string>
+    <string name="missions_open_mistakes">Deine Fehler üben</string>
     <string name="missions_open_pattern">Zum Muster</string>
     <string name="missions_open_pronunciation">Zur Ausspracheübung</string>
     <string name="missions_open_call">Ein Gespräch auswählen</string>

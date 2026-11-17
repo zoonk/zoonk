@@ -164,7 +164,7 @@ private struct CodeTracerCanvas: View {
         let current =
           step >= 0 && fields.trace.indices.contains(step) ? fields.trace[step].line : nil
 
-        VStack(alignment: .leading, spacing: 2) {
+        ActivityCodeBlock {
           ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
             CodeLine(
               number: index + 1, digits: String(lines.count).count,
@@ -200,6 +200,7 @@ private struct CodeTracerCanvas: View {
         variableCells
       }
     }
+    .padding(.horizontal, -8)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -240,11 +241,12 @@ private struct CodeTracerCanvas: View {
           }
         }
       }
-      .padding(.horizontal, 10)
+      .padding(.horizontal, 8)
       .padding(.vertical, 6)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
-        changed ? Color.vizHighlight.opacity(0.15) : .clear, in: .rect(cornerRadius: Radius.lg)
+        changed ? Color.vizHighlight.opacity(0.15) : .clear,
+        in: .rect(cornerRadius: Radius.xl)
       )
       .accessibilityElement(children: .combine)
     }

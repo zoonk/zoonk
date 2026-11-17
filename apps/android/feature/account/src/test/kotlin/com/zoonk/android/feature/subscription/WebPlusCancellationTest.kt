@@ -5,13 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
@@ -22,6 +25,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
@@ -68,15 +74,8 @@ class WebPlusCancellationTest {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var response: suspend () -> StripeSubscriptionCancellation? = { web(State.RENEWING) }
-    private var answer: MutationResult<StripeSubscriptionCancellationReceipt> =
-        MutationResult.Done(
-            StripeSubscriptionCancellationReceipt(ENDS),
-        )
-    private var cancellationArrives: CompletableDeferred<Unit>? = null
     private var darkTheme = false
     private var higherContrast = false
-    private var sent = 0
-    private var keepAnswer: MutationResult<Unit> = MutationResult.Done(Unit)
     private var reads = 0
     private var profile by mutableStateOf(false)
     private var subscription by mutableStateOf<MeSubscription?>(plan())
@@ -93,18 +92,6 @@ class WebPlusCancellationTest {
         rule.setContent {
             ZoonkTheme(darkTheme = darkTheme, moreContrast = higherContrast) {
                 Surface {
-                    val cancellation =
-                        viewModel {
-                            WebPlusCancellationViewModel(
-                                send = {
-                                    sent++
-                                    cancellationArrives?.await()
-                                    answer
-                                },
-                                keepPlus = { keepAnswer },
-                            )
-                        }
-                    WebPlusCancellationDialog(cancellation)
                     if (profile) {
                         deletionPlusNotices(website, provider = null).forEach { Text(it) }
                     } else {
@@ -114,7 +101,6 @@ class WebPlusCancellationTest {
                                 subscription,
                                 state,
                                 rememberAppNavigator(),
-                                cancellation,
                                 onRetryWebsite = { scope.launch { website.refresh() } },
                                 offer = { Text("Free offer") },
                             )
@@ -125,44 +111,71 @@ class WebPlusCancellationTest {
         }
     }
 
-    private fun inDialog(text: String) = rule.onNode(hasText(text) and hasAnyAncestor(isDialog()))
-
     private fun update(state: State) {
         response = { web(state) }
         rule.runOnIdle { scope.launch { website.refresh() } }
     }
 
     @Test
-    fun anUnpaidWebsitePlanIsShownWithoutAnActivePlanAndCanStopRetries() {
-        subscription = null
-        response = { web(State.UNPAID) }
-        show()
-        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
-        rule.onNodeWithText("Free offer").assertDoesNotExist()
-        rule.onNodeWithText("Active").assertDoesNotExist()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        assertEquals(1, sent)
+    fun theZoonkManagedLineKeepsItsMutedBodyStyle() {
+        subscription = plan("zoonk")
         response = { null }
-        rule.runOnIdle { scope.launch { website.refresh() } }
-        rule.onNodeWithText("Free offer").assertExists()
-        rule.onNodeWithText(RENEWAL_FAILED).assertDoesNotExist()
+        var expectedColor = Color.Unspecified
+        var expectedStyle = TextStyle.Default
+        rule.setContent {
+            ZoonkTheme {
+                expectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                expectedStyle = MaterialTheme.typography.bodyMedium
+                val state by website.collectShown()
+                AccountPlans(subscription, state, rememberAppNavigator(), onRetryWebsite = {}, offer = {})
+            }
+        }
+        val layouts = mutableListOf<TextLayoutResult>()
+        rule
+            .onNodeWithText("To change or cancel Plus, write to us.")
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val actual = layouts.single().layoutInput.style
+        assertEquals(
+            listOf(expectedColor, expectedStyle.fontSize, expectedStyle.lineHeight, expectedStyle.fontWeight, expectedStyle.letterSpacing),
+            listOf(actual.color, actual.fontSize, actual.lineHeight, actual.fontWeight, actual.letterSpacing),
+        )
     }
 
     @Test
-    fun theConfirmationPreventsAnotherCancellationWhileSending() {
-        cancellationArrives = CompletableDeferred()
+    fun twoSubscriptionsEachOpenTheirOwnManagementPlace() {
+        subscription = plan("google")
+        response = { web(State.UNPAID) }
         show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        inDialog("Cancel Plus").assertIsNotEnabled()
-        inDialog("Go back").assertIsNotEnabled()
-        rule.waitForIdle()
-        assertEquals(1, sent)
-        cancellationArrives?.complete(Unit)
-        rule.onNode(isDialog()).assertDoesNotExist()
+        rule.onNodeWithText("Through Google Play").assertExists()
+        rule.onNodeWithText("Manage in Google Play").assertExists()
+        rule.onNodeWithText("Through the website").assertExists()
+        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
+    }
+
+    @Test
+    fun aRenewingWebsiteSubscriptionOpensManagement() = websiteAction(State.RENEWING, "Manage on the website")
+
+    @Test
+    fun anEndingWebsiteSubscriptionOpensManagement() = websiteAction(State.ENDING, "Manage on the website")
+
+    @Test
+    fun aFailedWebsiteRenewalOpensPayment() = websiteAction(State.UNPAID, "Update your payment on the website, where you subscribed.")
+
+    private fun websiteAction(
+        state: State,
+        label: String,
+    ) {
+        subscription = null
+        response = { web(state) }
+        show()
+        rule.onNodeWithText(label).assertExists()
+        rule.onNodeWithText(label).performClick()
+        val intent =
+            org.robolectric.Shadows
+                .shadowOf(rule.activity)
+                .nextStartedActivity
+        assertEquals("https://www.zoonk.com/subscription", intent.dataString)
     }
 
     @Test
@@ -174,42 +187,8 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Free offer").assertDoesNotExist()
         response = { web(State.UNPAID) }
         rule.onNodeWithText("Try again").performClick()
-        rule.onNodeWithText("Cancel Plus").assertExists()
+        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
         assertEquals(2, reads)
-    }
-
-    @Test
-    fun aConflictClosesTheDialogWithoutAFalseFailure() {
-        answer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
-        show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        rule.onNodeWithText(FAILED).assertDoesNotExist()
-    }
-
-    @Test
-    fun aFailedCancellationCanBeRetried() {
-        answer = MutationResult.Failed(ApiError.Unavailable, status = 500)
-        show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        inDialog(FAILED).assertExists()
-        inDialog("Cancel Plus").assertIsEnabled()
-        answer = MutationResult.Done(StripeSubscriptionCancellationReceipt(ENDS))
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        assertEquals(2, sent)
-    }
-
-    @Test
-    fun keepingPlusThatFailsCanBeRetried() {
-        keepAnswer = MutationResult.Failed(ApiError.Unavailable, status = 500)
-        response = { web(State.ENDING) }
-        show()
-        rule.onNodeWithText("Keep Plus").performScrollTo().performClick()
-        rule.onNodeWithText(KEEP_FAILED).assertExists()
-        rule.onNodeWithText("Keep Plus").assertIsEnabled()
     }
 
     @Test
@@ -248,8 +227,7 @@ class WebPlusCancellationTest {
         val folder = System.getProperty("zoonk.shots").orEmpty()
         assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
         show()
-        rule.onNodeWithText(rule.activity.getString(R.string.subscription_cancel)).performScrollTo().performClick()
-        capture(folder, "polish-paid-dialog", dialog = true)
+        capture(folder, "polish-website")
     }
 
     private fun renderStates(
@@ -261,27 +239,23 @@ class WebPlusCancellationTest {
         assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
         darkTheme = dark
         higherContrast = moreContrast
+        subscription = plan("zoonk")
+        response = { null }
         show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        capture(folder, "$prefix-paid-dialog", dialog = true)
-        inDialog("Go back").performClick()
+        rule.onNodeWithText("To change or cancel Plus, write to us.").assertExists()
+        capture(folder, "$prefix-zoonk")
+        subscription = plan()
+        update(State.RENEWING)
         capture(folder, "$prefix-renewing")
         update(State.ENDING)
-        rule.onNodeWithText("Keep Plus").assertExists()
         capture(folder, "$prefix-ending")
         subscription = null
         update(State.UNPAID)
         rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         capture(folder, "$prefix-unpaid")
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        capture(folder, "$prefix-unpaid-dialog", dialog = true)
-        inDialog("Go back").performClick()
         subscription = plan("google")
-        rule.onNodeWithText("Cancel Plus").performScrollTo()
+        rule.onNodeWithText("Through Google Play").assertExists()
         capture(folder, "$prefix-store-and-website")
-        rule.onNodeWithText("Cancel Plus").performClick()
-        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
-        inDialog("Go back").performClick()
         profile = true
         rule.onNodeWithText("Deleting your account ends Plus right away.").assertExists()
         capture(folder, "$prefix-deletion-notice")
@@ -301,8 +275,6 @@ class WebPlusCancellationTest {
     }
 
     private companion object {
-        const val FAILED = "We couldn't cancel Plus. Try again or email hello@zoonk.com."
-        const val KEEP_FAILED = "We couldn't keep Plus. Try again or email hello@zoonk.com."
         val ENDS: Instant = Instant.parse("2026-12-01T12:00:00Z")
 
         fun web(state: State) = StripeSubscriptionCancellation(if (state == State.UNPAID) null else ENDS, state)
@@ -321,4 +293,4 @@ class WebPlusCancellationTest {
     }
 }
 
-internal const val RENEWAL_FAILED = "Your last renewal payment failed. Update your payment on the website, where you subscribed."
+internal const val RENEWAL_FAILED = "Your last renewal payment failed."

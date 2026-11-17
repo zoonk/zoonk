@@ -106,7 +106,7 @@ struct ActivityReasonList: View {
         .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .panel(cornerRadius: Radius.option)
+        .activityBox(cornerRadius: Radius.option)
         .accessibilityElement(children: .combine)
       }
     }
@@ -122,7 +122,7 @@ struct ActivityCaption: View {
 
   var body: some View {
     text
-      .typeStyle(.data)
+      .typeStyle(.meta.monospacedDigit())
       .foregroundStyle(.mutedForeground)
   }
 }

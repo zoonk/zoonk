@@ -18,7 +18,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltLevel
 import com.zoonk.android.ui.components.TextButton
 
-/** The tab roots' belt and level (main's `LevelLink`), which open Statistics; nothing until the summary says them. */
+/** The tab roots' belt and level (main's `LevelLink`), which open Level; nothing until the summary says them. */
 @Composable
 fun LevelButton(
     app: AppContainer,
@@ -27,8 +27,8 @@ fun LevelButton(
     val summary by app.learnerSummary.summary.collectShown()
     val level = summary.value?.level ?: return
     val belt = Belt.entries.first { it.name.equals(level.color.value, ignoreCase = true) }
-    val open = { navigator.open(AppRoute.Statistics) }
-    val action = stringResource(R.string.stats_open)
+    val open = { navigator.open(AppRoute.StatsLevel) }
+    val action = stringResource(R.string.stats_level)
 
     TextButton(
         onClick = open,

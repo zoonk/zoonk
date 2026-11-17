@@ -1,5 +1,5 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -15,6 +15,7 @@ import { readFocusTestSummary } from "../../learner/placement/focus-test-summary
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { readSyllabusInput } from "../../view-models/syllabus/_utils/read-syllabus-input";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanDayView, type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
@@ -189,6 +190,7 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
     challengeResults,
+    syllabus,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -214,6 +216,7 @@ export async function buildPlanView({
         item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
       ),
     ),
+    readSyllabusInput(goal.userId, goal.id),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -288,6 +291,7 @@ export async function buildPlanView({
       phaseChallengesRequired,
       shortPlan,
       skillAreas,
+      syllabus,
       taughtSkillIds,
       today,
     }),

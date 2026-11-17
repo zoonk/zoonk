@@ -53,7 +53,11 @@ openApiGenerate {
             "__schema1",
         ).associateWith { "kotlinx.serialization.json.JsonElement" } +
         // The response's copy of `LessonStepAnswer`, which differs only in refusing extra keys.
-        mapOf("LessonStepAnswerOutput" to "com.zoonk.api.models.LessonStepAnswer")
+        mapOf(
+            "LessonStepAnswerOutput" to "com.zoonk.api.models.LessonStepAnswer",
+            // A new reason still means outside the plan; the UI gives it the plain label.
+            "NotPlannedReason" to "kotlin.String",
+        )
     // The plugin passes its own supporting-file list, which skips any ignore file; the app builds its
     // own client, so only the serializers the models use are listed.
     globalProperties =

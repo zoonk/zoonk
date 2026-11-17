@@ -228,6 +228,7 @@ function getPhaseMinutes({
 }
 
 export function buildPhaseViews({
+  phaseReasons = new Map(),
   phaseChallengesRequired = true,
   challengesOpen = true,
   chapterTitles,
@@ -249,6 +250,7 @@ export function buildPhaseViews({
   todayItemKeys = new Set(),
   upNextItemId,
 }: {
+  phaseReasons?: ReadonlyMap<number, PlanPhaseView["notPlannedReason"]>;
   phaseChallengesRequired?: boolean;
   challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
@@ -289,6 +291,8 @@ export function buildPhaseViews({
     const lessons = inPhase.filter((item) => item.kind === "lesson");
     const minutes = getPhaseMinutes({ estimateMinutes, index, items, phase });
 
+    const reason = phaseReasons.has(index) ? (phaseReasons.get(index) ?? null) : "time";
+
     return {
       challengeLeftOut: phase.challengeLeftOut === true,
       chapterCount: new Set(lessons.map((item) => getGroupKey({ item, skillAreas }))).size,
@@ -314,6 +318,7 @@ export function buildPhaseViews({
       milestone: phase.milestone,
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
+      notPlannedReason: states[index] === "leftOut" ? reason : null,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,
       state: states[index] ?? "upcoming",

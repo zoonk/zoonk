@@ -107,13 +107,7 @@ export function BuddyDay({
   return (
     <>
       <BuddyEnergy className="-my-2" href={hrefs.energy} name={name} status={status} />
-      <MissionsCard
-        brainPower={status.belt.totalBrainPower}
-        showBuddy={false}
-        buddy={buddy}
-        links={missionLinks}
-        today={status.today}
-      />
+      <MissionsCard showBuddy={false} buddy={buddy} links={missionLinks} today={status.today} />
       <FirstStepsSection buddy={buddy} firstSteps={status.firstSteps} links={missionLinks} />
       <BuddyRows
         hrefs={hrefs}

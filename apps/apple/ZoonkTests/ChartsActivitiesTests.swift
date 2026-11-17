@@ -31,10 +31,7 @@ final class ChartsActivitiesTests: XCTestCase {
   @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
     let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
     let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
-    let format: (Double) -> String = {
-      ActivityNumberFormat.format(
-        $0, unit: "R$", digits: 1, compact: true, locale: Locale(identifier: "en_US"))
-    }
+    let format = scale.tickFormatter(unit: "R$", locale: Locale(identifier: "en_US"))
     let ticks = ChartsAxis.fittingTicks(
       0...2_000_000,
       frame: { value in
@@ -46,12 +43,15 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(ticks.map(format), ["R$0", "R$2M"])
   }
   func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
-    let labels = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear).tickLabels(
-      unit: "R$", locale: Locale(identifier: "en_US"))
-    XCTAssertEqual(labels, ["R$1.5M", "R$2M"])
+    let english = Locale(identifier: "en_US")
+    let millions = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear)
     XCTAssertEqual(
-      GuessScale(min: 0, max: 100, kind: .linear).tickLabels(
-        unit: "R$", locale: Locale(identifier: "en_US")), ["R$0", "R$100"])
+      [millions.min, millions.max].map(millions.tickFormatter(unit: "R$", locale: english)),
+      ["R$1.5M", "R$2M"])
+    let hundreds = GuessScale(min: 0, max: 100, kind: .linear)
+    XCTAssertEqual(
+      [hundreds.min, hundreds.max].map(hundreds.tickFormatter(unit: "R$", locale: english)),
+      ["R$0", "R$100"])
   }
 
   func testGuessMoneyRetainsItsCurrencyWhileWordCountsStayBare() {
@@ -125,7 +125,7 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(format(7, "R$ por metro", false, nil, true), "R$7 por metro")
     XCTAssertEqual(format(0.000075, nil, false, nil, true), "0.000075")
     XCTAssertEqual(format(49.4567, "%", false, 1, true), "49.5%")
-    XCTAssertEqual(ActivityNumberFormat.format(1_200_000, compact: true, locale: english), "1M")
+    XCTAssertEqual(ActivityNumberFormat.format(1_200_000, compact: true, locale: english), "1.2M")
     XCTAssertEqual(
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }

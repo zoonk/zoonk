@@ -58,6 +58,7 @@ private struct BusyButtonLabel<Title: View>: View {
   private func image(_ icon: ActionIcon) -> some View {
     Image(systemName: icon.rawValue)
       .accessibilityHidden(true)
+      .markColumn()
       .coveredBySpinner(isBusy)
   }
 }

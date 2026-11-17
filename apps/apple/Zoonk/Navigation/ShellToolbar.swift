@@ -125,7 +125,7 @@ private struct LevelButton: View {
     let belt = level.belt
 
     Button {
-      router.open(.statistics())
+      router.open(.statistics(section: .level))
     } label: {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
@@ -142,9 +142,10 @@ private struct LevelButton: View {
     }
     .accessibilityLabel(
       Text(
-        "\(Text(belt.localizedTitle)) \(level.level). Statistics", tableName: "Navigation",
+        "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted())",
+        tableName: "Progress",
         comment:
-          "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
+          "Accessible label of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation."
       ))
   }
 }

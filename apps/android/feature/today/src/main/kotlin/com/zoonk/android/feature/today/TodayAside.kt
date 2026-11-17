@@ -22,7 +22,6 @@ import com.zoonk.api.models.TodayGoal
 internal class TodayAsideState(
     val buddy: BuddyLook,
     val buddyName: String,
-    val brainPower: Long?,
     val practice: @Composable () -> Unit,
     val notice: @Composable (SuggestionLayout) -> Unit,
     val onMission: (MissionOpens) -> Unit,
@@ -51,7 +50,7 @@ internal fun TodayAside(
             buddy = aside.buddy,
             buddyName = aside.buddyName,
             onOpen = aside.onMission,
-            brainPower = aside.brainPower,
+            onLevel = { aside.navigate(AppRoute.StatsLevel) },
             opening = { mission -> model.missionTap(mission)?.equals(aside.pending()) == true },
             openFailed = { mission -> model.missionTap(mission)?.equals(aside.failed()) == true },
             foldRows = true,

@@ -132,7 +132,7 @@ private struct MapExplorerCanvas: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .panel(cornerRadius: Radius.option)
+      .activityBox(cornerRadius: Radius.option)
     }
   }
 
@@ -262,7 +262,7 @@ private struct MapShapes: View {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
-          shape, with: .color(Color.border),
+          shape, with: .color(Color.vizGrid),
           style: StrokeStyle(lineWidth: 0.75, lineJoin: .round))
       }
 
@@ -277,7 +277,7 @@ private struct MapShapes: View {
           Path(
             CGRect(x: inset.x, y: inset.y, width: inset.width, height: inset.height).applying(
               transform)),
-          with: .color(Color.border), lineWidth: 1)
+          with: .color(Color.vizGrid), lineWidth: 1)
       }
 
       for pin in pins {

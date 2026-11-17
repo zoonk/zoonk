@@ -90,7 +90,7 @@ fun MissionsCard(
     buddyName: String,
     onOpen: (MissionOpens) -> Unit,
     modifier: Modifier = Modifier,
-    brainPower: Long? = null,
+    onLevel: () -> Unit,
     opening: (DayMission) -> Boolean = { false },
     openFailed: (DayMission) -> Boolean = { false },
     foldRows: Boolean = false,
@@ -116,7 +116,7 @@ fun MissionsCard(
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            BrainPowerReward(points, earned = true, brainPower)
+            BrainPowerReward(points, earned = true, onLevel)
         }
         return
     }
@@ -129,7 +129,7 @@ fun MissionsCard(
                     MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         MissionsStatus(missions, Modifier.weight(1f))
-                        BrainPowerReward(points, earned = won, brainPower)
+                        BrainPowerReward(points, earned = won, onLevel)
                     }
                 }
             }
@@ -368,81 +368,59 @@ fun MissionListRow(
     }
 }
 
-/** The day's bonus; a tap explains Brain Power and, when known, says how much the learner has. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrainPowerReward(
     points: String,
     earned: Boolean,
-    brainPower: Long?,
+    onLevel: () -> Unit,
 ) {
-    val state = rememberTooltipState(isPersistent = true)
-    val scope = rememberCoroutineScope()
-    val locale = currentLocale()
     val label = stringResource(R.string.missions_brain_power)
 
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-        tooltip = {
-            RichTooltip(title = { Text(label) }) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.missions_brain_power_about))
-                    if (brainPower !=
-                        null
-                    ) {
-                        Text(stringResource(R.string.missions_brain_power_total, formatNumber(brainPower.toDouble(), locale)))
-                    }
-                }
-            }
-        },
-        state = state,
+    Row(
+        modifier =
+            Modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable(role = Role.Button, onClick = onLevel)
+                .semantics(mergeDescendants = true) {}
+                .heightIn(min = 32.dp)
+                .padding(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        // brainText, since the page's color on brain is under AA in light.
+        val fill = MaterialTheme.zoonk.brainText
         Row(
             modifier =
-                Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(role = Role.Button) { scope.launch { state.show() } }
-                    .semantics(mergeDescendants = true) {}
-                    .heightIn(min = 32.dp)
-                    .padding(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                if (earned) {
+                    Modifier
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .background(fill)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                } else {
+                    Modifier
+                },
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // brainText, since the page's color on brain is under AA in light.
-            val fill = MaterialTheme.zoonk.brainText
-            Row(
-                modifier =
-                    if (earned) {
-                        Modifier
-                            .clip(MaterialTheme.shapes.extraSmall)
-                            .background(fill)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                    } else {
-                        Modifier
-                    },
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
-                    contentDescription = null,
-                    modifier = Modifier.size(14.dp),
-                    tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
-                )
-                Text(
-                    text = stringResource(R.string.missions_points, points),
-                    color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.zoonkType.data.withTabularFigures(),
-                )
-            }
+            Icon(
+                painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
+            )
             Text(
-                label,
-                modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(R.string.missions_points, points),
+                color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.zoonkType.data.withTabularFigures(),
             )
         }
+        Text(
+            label,
+            modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 

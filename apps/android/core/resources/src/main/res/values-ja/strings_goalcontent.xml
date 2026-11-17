@@ -84,13 +84,6 @@
   "goalcontent_topic_count": "c9a4e00051563881849f2779505b8c94fd779e8770c7db1cf2d062cbf107058b",
   "goalcontent_topic_in_progress": "8ea300674144ddaba9b472f9876fe0a7d28a7439e45e9851b84b423ebc44dc26",
   "goalcontent_topic_known": "fb1bb996d16f4216b0a3ac9881321c3bc2b83ca90421c1867cdffd69941b8fb0",
-  "goalcontent_topic_known_practice": "d035beb52a32e696e53b8980086d6ebf70a3f1f9ab7e180217d61975b2a4cf3e",
-  "goalcontent_topic_known_reviews": "6d5cb5f9347b5d16e05ea35c8acafd64e50a464a9d4f015397649c5cb588225a",
-  "goalcontent_topic_missing": "f47e7e0f1ce50bb6228bd08dba7db3344791b5dbfe101f61cf3680ff282de93e",
-  "goalcontent_topic_past_basics": "16f5b1a63274cc65d3814c4846432c4b3fd514b55abccd39cf0d7716d49eee70",
-  "goalcontent_topic_skipped": "c5e333bcc37e5701aaa89b2786eee0722fc9c34e14a4f9b226ab09cc040ea5b1",
-  "goalcontent_topic_skipped_base": "e35f35094b14afd939070698edb251016e026f645b34545bec0b4bfe6405d2e1",
-  "goalcontent_topic_time": "c33f29ca985cdcd3048892d5febd3c102c14c5f70d84179c497462cb3a2aea49",
   "goalcontent_topic_to_study": "8fd499420b0c3702d8c0c9abd18c5fa003f2c8715a943f9dbc4c11f5390e28cc",
   "goalcontent_topics": "e3301ed55ebece3353714443e0f486d2717a054478632308f42d8e6b8d89480b",
   "goalcontent_topics_in_guide": "d131edf796644b12f51a746e6d6784f74a4d2a68deaa0994eb5d87a72699c1b2",
@@ -241,13 +234,6 @@
     <string name="goalcontent_topic_known">すでに知っています</string>
     <string name="goalcontent_topic_in_progress">学習中</string>
     <string name="goalcontent_topic_to_study">これから学習</string>
-    <string name="goalcontent_topic_known_reviews">すでに知っています · 復習でまた出てきます</string>
-    <string name="goalcontent_topic_known_practice">すでに知っています · 練習でまた出てきます</string>
-    <string name="goalcontent_topic_skipped">この科目を学習計画から外しました</string>
-    <string name="goalcontent_topic_past_basics">基礎より先の内容から始めます</string>
-    <string name="goalcontent_topic_skipped_base">この前提知識をスキップすることにしました</string>
-    <string name="goalcontent_topic_time">予定の学習時間では計画に入りきりません</string>
-    <string name="goalcontent_topic_missing">このトピックのレッスンはまだありません</string>
     <!-- Marks a topic that comes up often in the exam. -->
     <string name="goalcontent_asked_a_lot">よく出る</string>
     <!-- %1$s is the "Asked a lot" mark. -->

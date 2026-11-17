@@ -15,12 +15,6 @@ protocol SettingsAPIClient: Sendable {
   func getAllowance(token: String) async throws -> PlanAllowance
   func getFreePlan() async throws -> FreePlan
   func getWebPlus(token: String) async throws -> WebPlus
-  /// Ends with the paid period, or right away when unpaid. Returns without throwing when there's
-  /// nothing to cancel anymore: the caller reads the plan again either way.
-  func cancelWebPlus(token: String) async throws
-  /// Turns a stopped renewal back on. Returns without throwing when Plus isn't ending anymore: the
-  /// caller reads the plan again either way.
-  func keepWebPlus(token: String) async throws
   func exportMemory(token: String) async throws -> Data
   func exportAccountData(token: String) async throws -> Data
   func getProfileQuestions(token: String) async throws -> ProfileQuestions
@@ -203,32 +197,6 @@ struct SettingsAPI: SettingsAPIClient {
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
-      default:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func cancelWebPlus(token: String) async throws {
-    try await clients.perform(token: token) { client in
-      switch try await client.cancelStripeSubscription() {
-      case .ok, .conflict, .notFound:
-        return
-      case .unauthorized:
-        throw APIError.unauthorized
-      default:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func keepWebPlus(token: String) async throws {
-    try await clients.perform(token: token) { client in
-      switch try await client.resumeStripeSubscription() {
-      case .noContent, .conflict, .notFound:
-        return
-      case .unauthorized:
-        throw APIError.unauthorized
       default:
         throw APIError.unavailable
       }

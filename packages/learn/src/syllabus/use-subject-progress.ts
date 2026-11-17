@@ -3,6 +3,7 @@
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 import { type SyllabusSectionSubject } from "./syllabus-section-view";
+import { useNotPlannedReason } from "./topic-note";
 
 export type SubjectBar = { known: number; studied: number };
 
@@ -52,12 +53,13 @@ export function useKnownLine() {
 export function useSubjectProgress() {
   const t = useExtracted();
   const knownLine = useKnownLine();
+  const reasonText = useNotPlannedReason();
 
   return (subject: SyllabusSectionSubject): SubjectProgress => {
     const total = subject.topics.length;
 
     if (subject.notPlannedReason) {
-      return { bar: null, known: null, label: t("Not in your plan") };
+      return { bar: null, known: null, label: reasonText(subject.notPlannedReason) ?? "" };
     }
 
     const known = knownLine(subject);

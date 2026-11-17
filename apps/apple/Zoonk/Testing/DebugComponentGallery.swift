@@ -323,13 +323,9 @@
       }
       .disabled(true)
 
-      Button {
+      BusyButton(isBusy: true, icon: .play, isRow: true) {
       } label: {
-        Label {
-          Text(verbatim: "Study 10 more minutes")
-        } icon: {
-          Image(systemName: ActionIcon.play.rawValue).coveredBySpinner(true)
-        }
+        Text(verbatim: "Study 10 more minutes")
       }
 
       BusyButton(isBusy: true, isRow: true) {
@@ -638,7 +634,9 @@
         // A phase with a line under its name, and a folded one, as the path draws them.
         ListRow(
           Text(verbatim: "Foundations").fontWeight(.semibold),
-          description: Text(verbatim: "Continues Nov 16")
+          description: Text(
+            "Continues \(PlanDate.text("2026-11-16", today: "2026-11-14"))",
+            tableName: "Plan")
         ) {
           StatusMark(status: .next)
         } trailing: {
@@ -687,7 +685,7 @@
 
     private static func phase(_ index: Int) -> PlanPhase {
       let json = """
-        { "challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
+        { "notPlannedReason":null,"challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
           "index": \(index), "kind": "learn", "lessonsDone": 0, "lessonsTotal": 10,
           "mocks": { "count": 0, "nextDate": null }, "name": "\(index == 0 ? "Foundations" : "Fill the gaps")",
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }

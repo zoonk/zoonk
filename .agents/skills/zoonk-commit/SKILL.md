@@ -13,7 +13,7 @@ Commit each change's own files as it lands. Stage only that change's paths; neve
 
 Before each commit, run the change's relevant checks: format and lint the touched files, typecheck their packages, and run the affected tests, where applicable. Report the checks and results, and include the final ones in the PR's verification section; CI runs the full suites on the PR ([root PR verification gate](../../../AGENTS.md#pr-verification-gate)).
 
-Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
+Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period. Commit and merge messages describe the change for someone who never saw how it was made, never the process that produced it (agent or lane names, review rounds, task codes).
 
 | Type       | Use                                                  |
 | ---------- | ---------------------------------------------------- |

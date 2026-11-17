@@ -14,6 +14,11 @@ enum ActivityNumberFormat {
 
   private static let attachedUnits: Set<String> = ["%", "°", "‰"]
 
+  /// Unless the caller asks for digits, a short number keeps the ones that tell it from its
+  /// neighbors on an axis: 2.5K and 1.25M, not 2K and 1M.
+  private static let compactDigits = NumberFormatStyleConfiguration.Precision.significantDigits(
+    1...3)
+
   /// - Parameters:
   ///   - digits: The most decimals to show, instead of the ones the value's size needs.
   ///   - grouping: Off for values like years, which read wrong as "1,960".
@@ -41,6 +46,9 @@ enum ActivityNumberFormat {
 
     if compact {
       style = style.notation(.compactName)
+      if digits == nil {
+        style = style.precision(Self.compactDigits)
+      }
     }
 
     let number = display(value, style)
@@ -93,6 +101,9 @@ enum ActivityNumberFormat {
 
     if compact {
       style = style.notation(.compactName)
+      if digits == nil {
+        style = style.precision(Self.compactDigits)
+      }
     }
 
     return display(value, style)

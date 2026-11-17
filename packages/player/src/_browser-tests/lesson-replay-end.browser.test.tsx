@@ -7,6 +7,7 @@ import { teachingStep } from "../preview/preview-steps";
 const ROUTES = {
   exit: "/chapter",
   exitTo: "chapter" as const,
+  mistakes: "/mistakes",
   nextLesson: "/learn/next",
   seePlan: (goalId: string) => `/start/${goalId}`,
   signUp: "/login",

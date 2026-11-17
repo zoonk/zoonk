@@ -335,6 +335,7 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   }
 
   /// The phase keeps lessons but its challenge has no room before the plan's date.
+  let notPlannedReason: String?
   let challengeLeftOut: Bool
   let chapters: [PlanChapter]
   let checkpoint: Checkpoint?

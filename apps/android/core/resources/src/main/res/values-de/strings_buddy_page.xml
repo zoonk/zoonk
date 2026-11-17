@@ -30,11 +30,8 @@
   "buddy_page_goal_placeholder": "8a9f1af2bcd8d4b300b0401f0f32537b758f3a9fa1fbf6418e2b9b2b71dc5d65",
   "buddy_page_greeting": "2913127098b179e5c14613d83d366a91391e3265ce2b306a3ae086b668821f18",
   "buddy_page_grows": "c1a7575dc4527b7e39ef2b23cb77d66ea43fcf57ab9a58d43bf3156355d65b4f",
-  "buddy_page_missions": "a19eff2b03e5b8eea8bd7e157f3fb4d018b338dd22321ffab9622ca19c01af61",
   "buddy_page_missions_count": "68dcd11d4b2f4c0b96066ce5624040d33f558b27f5abb40190188eb21dd0ef02",
-  "buddy_page_missions_done": "02cd476655a292720d2831dabf896b1e8d8d6bab7b0f1760fec1f9701d0dcd53",
   "buddy_page_more": "a224f7a0872df540ada5c9b74117306021790fb337e940ad0297659d6aa06625",
-  "buddy_page_not_yet": "45f5e2d187c1986eb270d2dfb8305c2b7ebd06fa7f6c42f07466a17fa6e31592",
   "buddy_page_placeholder": "79edfb1f8ed18302379d62a4e36b190ddda301be9771d9840e7777f74a6b7210",
   "buddy_page_remembers": "1a3a50148b621ea0cd9ba98a4273d0f43437c8d9ad317085931770cd8857b36e",
   "buddy_page_save_failed": "8fe0c98e2359543eb35841d3413781c6acd21685b9806f54dcd20104000a4b27",
@@ -82,15 +79,12 @@
     <string name="buddy_page_energy_starts">Mit deiner ersten Lektion geht’s los.</string>
     <string name="buddy_page_energy_napping">%1$s macht ein Nickerchen. Lern, um deinen Kumpel aufzuwecken.</string>
     <string name="buddy_page_energy_study">Lern heute, damit die Energie hoch bleibt.</string>
-    <string name="buddy_page_not_yet">Noch nicht</string>
-    <string name="buddy_page_missions">Missionen</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d von %2$d Mission</item>
         <item quantity="other">%1$d von %2$d Missionen</item>
     </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
-    <string name="buddy_page_missions_done">Missionen abgeschlossen: %1$d von %2$d</string>
     <string name="buddy_page_fully_grown">Ausgewachsen</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Wächst, sobald du diesen Gürtel erreichst: %1$s</string>

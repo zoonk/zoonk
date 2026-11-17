@@ -47,15 +47,14 @@ struct GuessScale: Hashable, Sendable {
       ? [min, max] : powers.enumerated().filter { $0.offset % every == 0 }.map(\.element)
   }
 
-  func tickLabels(unit: String?, locale: Locale = .courseLanguage) -> [String] {
+  func tickFormatter(unit: String?, locale: Locale = .courseLanguage) -> (Double) -> String {
     let currency = ActivityNumberFormat.currencyUnit(unit)
-    let values = [min, max]
-    let compact = values.contains {
-      ActivityNumberFormat.format($0, unit: currency, locale: locale).count > 8
+    let compact = ChartsAxis.isShort([min, max]) { value, compact in
+      ActivityNumberFormat.format(value, unit: currency, compact: compact, locale: locale)
     }
-    return values.map {
+    return { value in
       ActivityNumberFormat.format(
-        $0, unit: currency, digits: compact && currency != nil ? 1 : nil, compact: compact,
+        value, unit: currency, digits: compact && currency != nil ? 1 : nil, compact: compact,
         locale: locale)
     }
   }
@@ -183,17 +182,10 @@ private struct GuessScaleAxis: View {
     let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
     return GeometryReader { geometry in
       axis(width: geometry.size.width, font: font)
-    }.frame(height: font.lineHeight).accessibilityHidden(true)
+    }.frame(height: font.lineHeight + 8).accessibilityHidden(true)
   }
   private func axis(width: Double, font: UIFont) -> some View {
-    let money = ActivityNumberFormat.currencyUnit(unit)
-    let compact = [scale.min, scale.max].contains {
-      ActivityNumberFormat.format($0, unit: money).count > 8
-    }
-    let format: (Double) -> String = {
-      ActivityNumberFormat.format(
-        $0, unit: money, digits: compact && money != nil ? 1 : nil, compact: compact)
-    }
+    let format = scale.tickFormatter(unit: unit)
     func left(_ value: Double) -> Double {
       let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
       return Swift.max(
@@ -206,12 +198,23 @@ private struct GuessScaleAxis: View {
         let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
         return (left: start, right: start + textWidth)
       }, values: { scale.ticks(count: $0) })
-    return ZStack(alignment: .topLeading) {
-      ForEach(ticks, id: \.self) { value in
-        Text(verbatim: format(value)).typeStyle(.data).foregroundStyle(.mutedForeground).fixedSize()
-          .offset(x: left(value))
+    return VStack(spacing: 4) {
+      Canvas { context, size in
+        for tick in ticks {
+          let x = scale.share(of: tick) * size.width
+          context.fill(Path(CGRect(x: x - 0.5, y: 0, width: 1, height: 4)), with: .color(.vizGrid))
+        }
       }
-    }.frame(maxWidth: .infinity, alignment: .leading)
+      .frame(height: 4)
+
+      ZStack(alignment: .topLeading) {
+        ForEach(ticks, id: \.self) { value in
+          Text(verbatim: format(value)).typeStyle(.data).foregroundStyle(.mutedForeground)
+            .fixedSize().offset(x: left(value))
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
   }
 }
 
