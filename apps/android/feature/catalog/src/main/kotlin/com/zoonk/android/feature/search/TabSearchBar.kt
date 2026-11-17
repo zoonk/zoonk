@@ -450,13 +450,13 @@ private fun SearchResults(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val label = MaterialTheme.zoonkType.label
+    val label = MaterialTheme.typography.labelMedium
 
     LazyColumn(modifier.fillMaxSize()) {
         groups.forEach { group ->
             item(key = "group-${group.id}", contentType = "header") {
                 Text(
-                    group.label.uppercase(locale),
+                    group.label,
                     modifier =
                         Modifier
                             .padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, top = 14.dp, bottom = 6.dp)
