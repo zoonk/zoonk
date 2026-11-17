@@ -154,7 +154,6 @@ struct DistributionExplorerCanvas: View {
   let fields: DistributionExplorerFields
 
   @ActivityState private var handles: DistributionExplorerFields.Interval
-  @State private var plotWidth: CGFloat = 0
 
   init(context: ActivityCanvasContext, fields: DistributionExplorerFields) {
     self.context = context
@@ -245,12 +244,12 @@ struct DistributionExplorerCanvas: View {
       .chartYAxis(.hidden)
       .chartXAxis {
         // Below the handles that sit on the baseline.
-        ChartsAxis.bottom(ticks: ticks, domain: domain, plotWidth: plotWidth, labelSpacing: 16) {
+        ChartsAxis.bottom(ticks: ticks, labelSpacing: 16) {
           ActivityNumberFormat.format($0)
         }
       }
       .chartsMarksHidden()
-      .chartsPlotWidth($plotWidth)
+
       .chartOverlay { proxy in
         GeometryReader { geometry in
           if let plot = proxy.plotFrame.map({ geometry[$0] }) {

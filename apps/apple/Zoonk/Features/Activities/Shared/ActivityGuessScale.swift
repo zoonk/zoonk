@@ -13,6 +13,23 @@ struct GuessScale: Hashable, Sendable {
   let max: Double
   let kind: Kind
 
+  var ticks: [Double] {
+    if kind == .linear {
+      let room = (max - min) * 0.08
+      return [min]
+        + ChartsAxis.ticks(min...max).filter {
+          $0 - min > room && max - $0 > room
+        } + [max]
+    }
+
+    let first = ceil(log10(min))
+    let last = floor(log10(max))
+    let powers = (0..<Swift.max(Int(last - first + 1), 0)).map { pow(10, first + Double($0)) }
+    guard powers.count >= 2 else { return [min, max] }
+    let every = Int(ceil(Double(powers.count) / 6))
+    return powers.enumerated().compactMap { $0.offset % every == 0 ? $0.element : nil }
+  }
+
   func value(atPosition position: Double) -> Double {
     let share = Swift.min(Swift.max(position, 0), Self.positions) / Self.positions
 
@@ -32,14 +49,14 @@ struct GuessScale: Hashable, Sendable {
     return Swift.min(Swift.max(share, 0), 1)
   }
 
-  /// The scale's ends as main writes its ticks: money on each, any other unit once, at the end.
-  func endLabels(unit: String?, locale: Locale = .courseLanguage) -> (min: String, max: String) {
+  func tickLabel(_ tick: Double, unit: String?, locale: Locale = .courseLanguage) -> String {
     let isMoney = unit.map(ActivityNumberFormat.isMoney) ?? false
-
-    return (
-      ActivityNumberFormat.format(min, unit: isMoney ? unit : nil, locale: locale),
-      ActivityNumberFormat.format(max, unit: unit, locale: locale)
-    )
+    let isShort = ChartsAxis.isShort(ticks) { value, compact in
+      ActivityNumberFormat.format(
+        value, unit: isMoney ? unit : nil, compact: compact, locale: locale)
+    }
+    return ActivityNumberFormat.format(
+      tick, unit: isMoney || tick == ticks.last ? unit : nil, compact: isShort, locale: locale)
   }
 
   static func roundGuess(_ value: Double) -> Double {
@@ -116,7 +133,7 @@ struct ActivityGuessScaleView: View {
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
 
-        ends
+        tickLabels
       }
     }
   }
@@ -128,7 +145,7 @@ struct ActivityGuessScaleView: View {
       )
       .accessibilityHidden(true)
 
-      ends
+      tickLabels
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
@@ -139,14 +156,51 @@ struct ActivityGuessScaleView: View {
     }
   }
 
-  private var ends: some View {
-    let labels = scale.endLabels(unit: unit)
+  private var tickLabels: some View {
+    let ticks = scale.ticks
+    return VStack(spacing: 4) {
+      Canvas { context, size in
+        for tick in ticks {
+          let x = scale.share(of: tick) * size.width
+          context.fill(Path(CGRect(x: x - 0.5, y: 0, width: 1, height: 4)), with: .color(.vizGrid))
+        }
+      }
+      .frame(height: 4)
 
-    return ChartsSliderScale(min: labels.min, max: labels.max)
+      GuessTickLayout(positions: ticks.map(scale.share(of:))) {
+        ForEach(ticks, id: \.self) { tick in
+          Text(verbatim: scale.tickLabel(tick, unit: unit))
+            .typeStyle(.meta.monospacedDigit())
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+    }
   }
 
   private func format(_ value: Double) -> String {
     ActivityNumberFormat.format(value, unit: unit)
+  }
+}
+
+private struct GuessTickLayout: Layout {
+  let positions: [Double]
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    CGSize(
+      width: proposal.width ?? 0,
+      height: subviews.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    for (view, share) in zip(subviews, positions) {
+      let width = view.sizeThatFits(.unspecified).width
+      let x = Swift.min(
+        Swift.max(bounds.minX + share * bounds.width, bounds.minX + width / 2),
+        bounds.maxX - width / 2)
+      view.place(at: CGPoint(x: x, y: bounds.minY), anchor: .top, proposal: .unspecified)
+    }
   }
 }
 

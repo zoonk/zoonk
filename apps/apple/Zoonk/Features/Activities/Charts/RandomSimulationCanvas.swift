@@ -68,7 +68,6 @@ private struct ChanceSimulationView: View {
   @ActivityState("runIndex") private var runIndex = 0
   @ActivityState("revealed") private var revealed = 0
   @ActivityState("simulated") private var simulated: ChanceRun? = nil
-  @State private var plotWidth: CGFloat = 0
 
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
@@ -282,13 +281,11 @@ private struct ChanceSimulationView: View {
     }
     .chartXAxis {
       ChartsAxis.bottom(
-        ticks: [0, Double(fields.runs)], domain: 0...Double(fields.runs), plotWidth: plotWidth,
-        showsGrid: false
+        ticks: [0, Double(fields.runs)], showsGrid: false
       ) {
         ActivityNumberFormat.format($0)
       }
     }
-    .chartsPlotWidth($plotWidth)
     .frame(minHeight: 160)
     .chartsMarksHidden()
     .chartsPlotText()
@@ -324,7 +321,6 @@ private struct SamplingSimulationView: View {
   @ActivityState("runIndex") private var runIndex = 0
   @ActivityState("revealed") private var revealed = 0
   @ActivityState("simulated") private var simulated: SamplingRun? = nil
-  @State private var plotWidth: CGFloat = 0
 
   init(context: ActivityCanvasContext, fields: RandomSimulationFields.Sampling, fieldsJSON: String)
   {
@@ -466,11 +462,10 @@ private struct SamplingSimulationView: View {
       .chartYScale(domain: 0...peak)
       .chartYAxis(.hidden)
       .chartXAxis {
-        ChartsAxis.bottom(ticks: ChartsAxis.ticks(domain), domain: domain, plotWidth: plotWidth) {
+        ChartsAxis.bottom(ticks: ChartsAxis.ticks(domain)) {
           valueText($0, digits: digits)
         }
       }
-      .chartsPlotWidth($plotWidth)
       .frame(minHeight: 180)
       .padding(.top, 16)
       .chartsMarksHidden()

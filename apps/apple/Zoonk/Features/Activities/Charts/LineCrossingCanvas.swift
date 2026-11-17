@@ -117,16 +117,17 @@ struct LineCrossingCanvas: View {
 
       ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
         let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
+        let end = segment.from.y > segment.to.y ? segment.from : segment.to
 
         segmentMarks(line(field, offsets), domain: domain, series: field.id)
           .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
           .lineStyle(StrokeStyle(lineWidth: 2.5))
 
-        // On the side of its end away from its own line: above a rising line, below a falling one.
-        PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
+        PointMark(x: .value(verbatim: "x", end.x), y: .value(verbatim: "y", end.y))
           .opacity(0)
           .annotation(
-            position: segment.to.y >= segment.from.y ? .topLeading : .bottomLeading, spacing: 4
+            position: end.x < domain.x / 2 ? .topTrailing : .topLeading, spacing: 8,
+            overflowResolution: .init(x: .fit(to: .plot), y: .fit(to: .plot))
           ) {
             Text(verbatim: field.label)
               .typeStyle(.meta.weight(.semibold))

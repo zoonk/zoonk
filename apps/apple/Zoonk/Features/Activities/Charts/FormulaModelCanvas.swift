@@ -8,7 +8,6 @@ struct FormulaModelCanvas: View {
 
   @ActivityState private var sliders: [String: Double]
   @ActivityState private var events: [String: Double]
-  @State private var plotWidth: CGFloat = 0
 
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
@@ -211,8 +210,7 @@ struct FormulaModelCanvas: View {
     .chartYScale(domain: domain)
     .chartXAxis {
       ChartsAxis.bottom(
-        ticks: [view.axis.min, view.axis.max], domain: view.axis.min...view.axis.max,
-        plotWidth: plotWidth, showsGrid: false
+        ticks: [view.axis.min, view.axis.max], showsGrid: false
       ) {
         ActivityNumberFormat.format($0, unit: view.axis.unit)
       }
@@ -226,7 +224,6 @@ struct FormulaModelCanvas: View {
 
       ChartsAxis.values(ticks: ticks) { format($0, isShort) }
     }
-    .chartsPlotWidth($plotWidth)
     .frame(minHeight: 200)
     .chartsMarksHidden()
     .chartsPlotText()

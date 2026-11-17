@@ -59,7 +59,6 @@ struct ChartReaderCanvas: View {
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @ActivityState("selected") private var selected: [String] = []
-  @State private var plotWidth: CGFloat = 0
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
@@ -165,7 +164,7 @@ struct ChartReaderCanvas: View {
     .chartYScale(domain: yDomain)
     .chartXAxis {
       ChartsAxis.bottom(
-        ticks: ChartsAxis.ticks(xDomain, count: 3), domain: xDomain, plotWidth: plotWidth
+        ticks: ChartsAxis.ticks(xDomain, count: 3),
       ) {
         ActivityNumberFormat.format($0, grouping: !fields.hasPlainX)
       }
@@ -175,7 +174,6 @@ struct ChartReaderCanvas: View {
         ActivityNumberFormat.format($0, compact: true)
       }
     }
-    .chartsPlotWidth($plotWidth)
     .chartsPlotText()
     .frame(minHeight: 184)
   }

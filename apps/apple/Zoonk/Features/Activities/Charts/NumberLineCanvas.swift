@@ -39,7 +39,6 @@ struct NumberLineCanvas: View {
   let fields: NumberLineFields
 
   @ActivityState("explored") private var explored: Double? = nil
-  @State private var plotWidth: CGFloat = 0
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
@@ -136,7 +135,7 @@ struct NumberLineCanvas: View {
     .chartYScale(domain: 0...1)
     .chartYAxis(.hidden)
     .chartXAxis {
-      AxisMarks(values: fields.ticks.map(\.value)) { value in
+      AxisMarks(preset: .aligned, position: .bottom, values: fields.ticks.map(\.value)) { value in
         AxisTick(
           length: value.as(Double.self) == 0 ? 12 : 6,
           stroke: StrokeStyle(lineWidth: value.as(Double.self) == 0 ? 2 : 1.5)
@@ -146,11 +145,7 @@ struct NumberLineCanvas: View {
         {
           let label = ActivityNumberFormat.format(tick)
 
-          AxisValueLabel(
-            anchor: ChartsAxis.anchor(
-              of: tick, in: fields.min...fields.max, plotWidth: plotWidth, label: label),
-            verticalSpacing: 16
-          ) {
+          ChartsAxis.bottomLabel(spacing: 16) {
             Text(verbatim: label)
               .typeWeight(tick == 0 ? .semibold : .regular)
           }
@@ -158,7 +153,7 @@ struct NumberLineCanvas: View {
       }
     }
     .chartsMarksHidden()
-    .chartsPlotWidth($plotWidth)
+
     .chartOverlay { proxy in
       GeometryReader { geometry in
         if let plot = proxy.plotFrame.map({ geometry[$0] }) {
