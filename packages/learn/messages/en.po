@@ -13074,6 +13074,7 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, one {# module} other {# modules}}"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
@@ -13089,6 +13090,7 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "Skipped · your choice"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"

@@ -13074,10 +13074,11 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, one {# modulo} other {# moduli}}"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
-msgstr "Non è nel tuo piano · hai tolto questa materia"
+msgstr "Non è nel tuo piano · hai tolto questa materia"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "Wz9Y3H"
@@ -13089,10 +13090,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "Saltato · per tua scelta"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
-msgstr "Non è nel tuo piano · il tempo non basta"
+msgstr "Non è nel tuo piano · il tempo non basta"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx

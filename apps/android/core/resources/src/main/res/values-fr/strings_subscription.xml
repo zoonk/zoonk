@@ -50,6 +50,7 @@
   "subscription_keep_failed": "a8e9295e28b57d2afb24cd2f58b868caf4612cf47b7f7cf8353a45b6c2a15bcc",
   "subscription_keep_plus": "134656c65b1feea9a9b3c4bb44f79337549350aa5ad3431afb069e8913a72d32",
   "subscription_keep_plus_description": "4719b7c3ba251f804a2b8ad94a3bd66e68baf0b1a72e241ce3a1149c527234f1",
+  "subscription_manage_apple": "7b3b1415cad87256b72a9ad1ce628988f7db4d464581d400eb15b24f31d90494",
   "subscription_manage_google": "dd534b011c2d612956bd9acb735d1df4b0acdbd0a4afc98cb7e9004938396782",
   "subscription_managed_apple": "5e9a1ddafea2f1b36b0ca4b2ebd66b1d019c2e7b12d5f182b5d9aa53c9fea9a1",
   "subscription_managed_google": "12074a8688364aac90663ec45b5d4a6e2db7066748fb368bce12d506c112a0a5",
@@ -79,6 +80,9 @@
   "subscription_show_answer": "eb7289559a3dc18c0df8ae4c883228306ee02f7b508a8849d9738c49318a3971",
   "subscription_start_free": "6959777fcc6384725d80c2c8baa1164fc80358dfb3a8664747c5f40f55419105",
   "subscription_subscribe": "ef2e7ab2071a28ef90ad6a2da9fe7f10d39fb90ee347d49b242fbfc8747175e0",
+  "subscription_through_apple": "8f4abe161df214d9b64f9f2184c5b87478a4a303999321c3d175623ca2fc47cd",
+  "subscription_through_google": "cba65c641a7bdb55a188e40a9f8d96bce6694eca32bbd9343b3667109c9270dc",
+  "subscription_through_website": "823bc6b2289b2b7fd6a00148d916b0b99c82beef47d7b717096a77980b5314ee",
   "subscription_unavailable": "e03f6252a367cd197a35017e070d097ec59ada25fac317cd571e02e3384b7748",
   "subscription_website": "6bca936b9e681452934e8557a2aa076277476d855969e247ccf362bb92a1275a",
   "subscription_yearly": "a01d217d21ebd632f5aa36631833f38c5bbf5a47d392456886ff6e2a7260f611",
@@ -222,4 +226,11 @@
     <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée. Ensuite, tu repasses à la formule gratuite et tu conserves tes objectifs et ta progression.</string>
     <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>
     <string name="subscription_answer_refund">Google Play gère les remboursements des abonnements Plus souscrits sur sa plateforme : fais ta demande sur Google Play. Si tu as souscrit ton abonnement sur notre site, écris-nous à hello@zoonk.com et nous examinerons ta demande.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Via Google Play</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">Via l’App Store</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">Via le site web</string>
+    <string name="subscription_manage_apple">Gérer dans l’App Store</string>
 </resources>

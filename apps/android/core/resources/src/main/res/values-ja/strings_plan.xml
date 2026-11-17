@@ -347,6 +347,8 @@
   "plan_not_yet": "ff5d5c1da4878899e7fbc38e98f94e062f3fcc1336b355fa2eaaae9c425afb62",
   "plan_nothing_planned_until_resume": "bacb95752bb9f0edd29215f8c1cca716d72f90ad13601641d4b3128ec8766f1e",
   "plan_options": "adb6f1c7e8160b647a1c0163c2b3d05224011ee6fbb752eab272eff5ee2c8e36",
+  "plan_outside_skipped": "d9078f7e7831244ed866f4f28c80e1db40a7004fbc244e2f9ef9d6f2abe45594",
+  "plan_outside_time": "865c81d634c2bbe24a5bad1bee7e0a731fa3cf25cf8be565961791f3a39b149f",
   "plan_pace": "130246beb5f281bf1e48421de624c139097fb5b182acb66860908e7d33b7005e",
   "plan_pace_challenges_to_go": "9c326580b985fbe8f39e38839daba86b1d98e77a0109f1479cc421ba848eb909",
   "plan_pace_date_passed": "ffb70dad29d1278b1652fc395df411e0edc5e446bb804bdbae211194371e5e36",
@@ -1342,4 +1344,8 @@
     <string name="plan_ask_phase_dates_off_rest">各フェーズの終了日を休みの日以外に変更しますか？</string>
     <string name="plan_ask_phase_end_off_rest">%1$sの終了日を%2$s以外の日に変更しますか？</string>
     <string name="plan_why_phase_end_off_rest">%1$sは学習しない日です。</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">学習計画に含まれていません・学習時間が足りません</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">学習計画に含まれていません・この科目を外しました</string>
 </resources>

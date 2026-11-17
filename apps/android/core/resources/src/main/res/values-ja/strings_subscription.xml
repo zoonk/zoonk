@@ -50,6 +50,7 @@
   "subscription_keep_failed": "534095a4387cace2ec7822bd4985aeabaf0621900b3e2ad5ffe539a152256153",
   "subscription_keep_plus": "b4d93b75a06450667ae7242f237994e9a9766022d98f481fd4a643e0f070134e",
   "subscription_keep_plus_description": "0948f9db2505d8f6ee77690d711681b748405e08d5fb8f2aa566568ccf92b1ea",
+  "subscription_manage_apple": "1da7f3e5563ead5d95039546cddaff3ce2af287bff0f65d3543be9586d47cfef",
   "subscription_manage_google": "203f57bf90846fb2ab671556f0c1952e90d3d302de603b542968c5271f99df70",
   "subscription_managed_apple": "b80bdee2252167b56e39c983bfe9f76292e902710e2e549ce0ebd2f9674dec12",
   "subscription_managed_google": "cd95079de19b08a6f51dd08e7fcac05890ea3e906b786bff674209937e1f2b54",
@@ -79,6 +80,9 @@
   "subscription_show_answer": "8071113b2b2c8e15621c1ce0f6738d226ebf288a9df42a376301d44f8a938db1",
   "subscription_start_free": "e464253357d1b0d217140bcf872c6ac65785ce0df8292eb210270f13c972dcb3",
   "subscription_subscribe": "7a28b6c07f996c2259c167433907ac04f39fecc4a4944366cb15def15e47677a",
+  "subscription_through_apple": "927ff7b6c663dffae04ff03f071cae25c071236766435287eb909811f1020d5c",
+  "subscription_through_google": "bc513355a984a6f553def61b55c24866b8535fbfb4075bc15b840ed82bb4239c",
+  "subscription_through_website": "6ea8941e22d93a446ff6a87dece387cfdc3e9fa0d985715e039b7bb7e607179b",
   "subscription_unavailable": "8c999a3ba8217eb9c0c8777fe459b081cdb0d52e081c079c770257ac0158bb45",
   "subscription_website": "2fe30f9dacda06d4f4f9394557fd9134d4f7e27600a23341d398a5cb9a1029cd",
   "subscription_yearly": "d3890f92a1536f9e7de590075a988ef1c9130acc594f1d7bd85cf1e58d9a33f2",
@@ -206,4 +210,11 @@
     <string name="subscription_answer_cancel">支払い済みの期間が終わるまではPlusを使えます。その後は無料プランに戻りますが、目標と学習の進捗はそのまま残ります。</string>
     <string name="subscription_question_refund">返金は受けられますか？</string>
     <string name="subscription_answer_refund">Google Playで購入したPlusの払い戻しは、Google Playが対応します。Google Playから申請してください。Zoonkのウェブサイトで登録した場合は、hello@zoonk.comまでメールでご連絡ください。こちらで確認します。</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Google Play経由</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">App Store経由</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">ウェブサイト経由</string>
+    <string name="subscription_manage_apple">App Storeで管理する</string>
 </resources>

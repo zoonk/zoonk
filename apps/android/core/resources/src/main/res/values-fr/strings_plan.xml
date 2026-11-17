@@ -347,6 +347,8 @@
   "plan_not_yet": "56b07d40c84af024f552a94f8a5a9274e545c9fbf2bdacfb18fa390cd6a1ad8d",
   "plan_nothing_planned_until_resume": "e846a044bebbe200844d9ee6a51b17163feb205f426eb7137241e7e43ae45068",
   "plan_options": "25cc1fa435a90e191ea0de80f1d69a644c653dce9628ff89ee44bca2e2c2068e",
+  "plan_outside_skipped": "7ba46b950952eb06f5176adcd5aca260646d5c6e42509d76657498d017fa6355",
+  "plan_outside_time": "d6b9954cac5a4e1b6f9439ba8dfabe0bf6b5c236f3bfb7cfc9784a682a2d50ad",
   "plan_pace": "e1900a5335fed57f41a36ecf5fd796f56b70b24d9e9b5fc17185e26627c76875",
   "plan_pace_challenges_to_go": "75990ba5cbb0877f9d9585738eb0a7c1328ec2dd000603290fc060e16506ef77",
   "plan_pace_date_passed": "e2d84f874a30724a4450f1f2b3603d93df1ebe32de3381f518461e8b67802fc0",
@@ -1482,4 +1484,8 @@
     <string name="plan_ask_phase_dates_off_rest">Décaler les dates de tes phases pour éviter les jours de repos ?</string>
     <string name="plan_ask_phase_end_off_rest">Décaler la fin de %1$s à un autre jour que %2$s ?</string>
     <string name="plan_why_phase_end_off_rest">%1$s est un jour où tu n’étudies pas.</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">Pas dans ton plan · le temps prévu ne suffit pas</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">Pas dans ton plan · tu as retiré cette matière</string>
 </resources>

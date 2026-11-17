@@ -50,6 +50,7 @@
   "subscription_keep_failed": "759eb2e683794057b181bcb2f5b77319a8d5f45ad52271c7f54d895995555fe6",
   "subscription_keep_plus": "5b7b090c5d2d1b3fadd1641a59568a0c2607f98e7b4268983dcfa4dd03e0767c",
   "subscription_keep_plus_description": "1ba1df81bae5acb6214fda0d8ebd820636ad6a9cce70c1b2870c000fded8dbaf",
+  "subscription_manage_apple": "763f9c6a2ab2ff16975fd387936bbca588ff6bef0616d90c57c1bc3b500728f7",
   "subscription_manage_google": "ae3d8ea5838e871ee1a2576a1c53ae6faa3acf43460ea10a90c61ea61502620d",
   "subscription_managed_apple": "e3ee28acc04a3002fc239086c444007a2b9328be01117f8bdc662e5d5f7e8926",
   "subscription_managed_google": "bf8adece16d22a40e113a16f6bcf36d4ad514236cb4417b9345ce0f4685da6ac",
@@ -79,6 +80,9 @@
   "subscription_show_answer": "e7a5f0c2e6887f3ec0d9825589ad1bdfed3215094ed552a12029fa1e8a6dd9c2",
   "subscription_start_free": "e9c2f8a89e00eaee04e2c60f2f5d0847b92a4eb93fc671d3b6a6379cae04b494",
   "subscription_subscribe": "7d981773a0577e824dd75894dff92172935683f365a1f268b4d4eac56739c726",
+  "subscription_through_apple": "c3c1d2a6faa2a439728ec25454b7a3b980faf2a058665d5b1b6c401cc35b0d49",
+  "subscription_through_google": "0d4c674ac6233419f5a2c2fc0000025170a2ac585edd52a17b6cb7fefc92259f",
+  "subscription_through_website": "608002de4aacbdd16fa55a5d9316ad6960c1d017fa8554eecb23446842d80cf5",
   "subscription_unavailable": "a2745cab686169e6507892ce258349924920fbf9ba32a7074211b9f972ff9d4c",
   "subscription_website": "675e03431ac4a14b3d1a5434fb32db7d06c88bd546a91c7537ab0705bfb8ca40",
   "subscription_yearly": "08b6faca888c087cdd5fc6a438e0b06b28448d9d7b5fc756a62436d65b5e53a9",
@@ -206,4 +210,11 @@
     <string name="subscription_answer_cancel">이미 결제한 기간이 끝날 때까지 Plus를 계속 이용할 수 있어요. 그 후에는 무료 요금제로 돌아가고, 목표와 진도는 그대로 유지돼요.</string>
     <string name="subscription_question_refund">환불받을 수 있나요?</string>
     <string name="subscription_answer_refund">Google Play에서 구매한 Plus의 환불은 Google Play에서 처리해요. Google Play에서 환불을 요청해 주세요. 저희 웹사이트에서 구독했다면 hello@zoonk.com으로 이메일을 보내 주세요. 확인해 드릴게요.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Google Play에서 구독</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">App Store에서 구독</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">웹사이트에서 구독</string>
+    <string name="subscription_manage_apple">App Store에서 관리하기</string>
 </resources>

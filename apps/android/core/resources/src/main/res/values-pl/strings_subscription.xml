@@ -50,6 +50,7 @@
   "subscription_keep_failed": "78c21fd1682602599180fc9ca6b619619fa4485ec22a8276a2ff297c56f2d2a8",
   "subscription_keep_plus": "bb6e14b834b4a321bd4a7b2e97e9a97a6895e9e7d22098fb5db4460c8df689c7",
   "subscription_keep_plus_description": "98b47054358a2d49ba2a8f5051175990569ca2124b19df1f491cb924a9f4e1d7",
+  "subscription_manage_apple": "9e5693a8e4708ccc4875c4d543fe019d8967402fb2fecb77a5a2beaf0ca24424",
   "subscription_manage_google": "c41317ca14bc99784838ddd6c22123e6ab5ada33064b8ec67aa097cb79d4fb85",
   "subscription_managed_apple": "5d440abda1d832ccc3d0117b9e5578a6ca9539f71c727d69bdf609c052d77776",
   "subscription_managed_google": "a4e2016be277c49dd2f7aad72ca096dd7a277c9748bf695ab210b2eccb4e169d",
@@ -79,6 +80,9 @@
   "subscription_show_answer": "3685ebb222c2d3ff12985a433ddba3be91bf656d6d01801e6ffbb0371f29844d",
   "subscription_start_free": "372bade4e22ab81c0315a4a1292d0dce8e9e621a19cc4fcc4b590801c789f11f",
   "subscription_subscribe": "2d65042e31d04c1f73447eea510c816abc4199b3d02e4e20f2edd10af711d9c5",
+  "subscription_through_apple": "48864faa86394fa59afe224f8a7d3957b7a2b2d103240fdec3f197e6d7db5725",
+  "subscription_through_google": "2733cc2d366c90e25ee974f9cc7d96f04b9793538c63d45392f4b9ec5657907b",
+  "subscription_through_website": "7343afc47035f49f0bb15e43cc0e6fd0f0fdc86c436bc71a26aae771bd12de99",
   "subscription_unavailable": "b2efe0fb42d30057cba5422701dab4618b130b0ac901da4948238055df34e3d1",
   "subscription_website": "3debb1e8392735c07cac11731574d48a62f34bb925eaa3b91446732e0dda62d9",
   "subscription_yearly": "a86872f0fa09976ff371e09a07f46b1f7b872cbd9e22c07191617689e381f925",
@@ -230,4 +234,11 @@
     <string name="subscription_answer_cancel">Zachowasz Plus do końca opłaconego okresu. Potem wrócisz do pakietu Free, a twoje cele i postępy pozostaną bez zmian.</string>
     <string name="subscription_question_refund">Czy mogę otrzymać zwrot pieniędzy?</string>
     <string name="subscription_answer_refund">Google Play zajmuje się zwrotami za kupiony tam pakiet Plus: poproś o zwrot w Google Play. Jeśli subskrypcja została wykupiona na naszej stronie, napisz do nas na hello@zoonk.com, a przyjrzymy się sprawie.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Przez Google Play</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">Przez App Store</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">Przez stronę internetową</string>
+    <string name="subscription_manage_apple">Zarządzaj w App Store</string>
 </resources>

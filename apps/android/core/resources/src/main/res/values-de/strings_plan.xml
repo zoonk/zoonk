@@ -347,6 +347,8 @@
   "plan_not_yet": "3f0ef141931fec72d2100faead4f88e470d379014ef9781061de8355659ada0b",
   "plan_nothing_planned_until_resume": "5b23eadc600a9721616bc7a523a7d5593c901ad118d10aba930d48fb01aad1aa",
   "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
+  "plan_outside_skipped": "ebee463bc3c8f1ee3bc461c16633c6859bc2163cc1a4641a9338e9266833e24d",
+  "plan_outside_time": "bb8ea53e379a55dbc8530687d3a2300d9997255c3fde4ace93b0095b82058845",
   "plan_pace": "624a3f71e74a04bd3f1f6f5dd01794e645c400de482b0eaff03c1ddc01b025a1",
   "plan_pace_challenges_to_go": "a03da8857241790dafb4e2f49d1b3badba9df5aa58464a2faa499d916603a9c7",
   "plan_pace_date_passed": "b7527e06b3673fee740bb2352f1c3574086594e6db948fcfe67a898631c3ba92",
@@ -1412,4 +1414,8 @@
     <string name="plan_ask_phase_dates_off_rest">Deine Phasentermine so verschieben, dass sie nicht auf Pausentage fallen?</string>
     <string name="plan_ask_phase_end_off_rest">Den Endtermin für %1$s von %2$s auf einen anderen Tag verschieben?</string>
     <string name="plan_why_phase_end_off_rest">Am %1$s lernst du nicht.</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">Nicht in deinem Plan · deine Lernzeit reicht dafür nicht</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">Nicht in deinem Plan · du hast dieses Fach entfernt</string>
 </resources>

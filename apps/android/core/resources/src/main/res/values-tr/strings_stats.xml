@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "aebeee5b512d1b45cb40c144fd6aa9988e18e3333275d3fc61c50e81a5406819",
   "stats_belt_current": "6ea9c24370d561fe6672990ee6962d211ab0fff2e1f128ec2ea19c4545ae6bf1",
   "stats_belt_earned": "d9f0b7f03c8db5a7ddd09191bb632b3af5f1fd081ef0b1cbfb8120e974f8d075",
+  "stats_belt_level": "6efc09db7697428dc63c952565c3919ee22f93f8423827dda60e88fc48b7cdf4",
   "stats_belt_line": "6fb0ad0958766d3022dce61dc348d1e628c99d62fd4ecec37fead35857b53074",
   "stats_best_day": "f79eaed07fc3bb59c4d47f5a94ed8aa32c7b8bad1984326713fe982a4c04ba7c",
   "stats_best_day_is": "e1b11224c185773ab444f32123fd7bfb48ae094d536f1e2d70f58b64caa4f06c",
@@ -176,5 +177,6 @@
     <string name="stats_afternoon">Öğleden sonra</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Akşam</string>
-    <string name="stats_belt_level">%1$s · Seviye %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Seviye %2$s</string>
 </resources>

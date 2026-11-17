@@ -186,7 +186,12 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
         <div className="relative flex flex-col gap-4 [--faint:var(--muted-foreground)]">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
             <p className="text-lg font-semibold tracking-tight">
-              {t("{belt} · Level {level}", { belt: belt.label, level: String(currentBelt.level) })}
+              {t({
+                description:
+                  "A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page.",
+                message: "{belt} · Level {level}",
+                values: { belt: belt.label, level: String(currentBelt.level) },
+              })}
             </p>
 
             <p className="text-brain-text text-sm font-medium tabular-nums">

@@ -347,6 +347,8 @@
   "plan_not_yet": "39234a1ce9464579d7e0321c151147fc99268627164b10f5288fe336f8faac68",
   "plan_nothing_planned_until_resume": "25d01992c9aec48c87528ea92a3e09acea22ed1a7771d5ffedc915124fe0b563",
   "plan_options": "0ab0904d38b130834c08c677a870b42596577759d08f0a93ca8bf8221de48890",
+  "plan_outside_skipped": "9d7473d664f2df57efaab6b64e8af0ff21d36f2922afa655b68d99aa1b9a0183",
+  "plan_outside_time": "603b9be41134b83343f5e400630558db03772e4422cbd9ed4d24068f7955412f",
   "plan_pace": "413fbf8565e8c9fa50735fc75d7d3297874560d7ccbabd2fd862d4d516b685da",
   "plan_pace_challenges_to_go": "a283638043651cef7c79ba9a7614be08259d59ac95452e690f4d6aa67abd4ff3",
   "plan_pace_date_passed": "23d637eff382e5d621cad318eba6954f3d3fe3456d168e798befa58552db2c77",
@@ -1412,4 +1414,8 @@
     <string name="plan_ask_phase_dates_off_rest">Aşama tarihlerini dinlenme günleri dışına alalım mı?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s aşamasının bitişini %2$s yerine başka bir güne alalım mı?</string>
     <string name="plan_why_phase_end_off_rest">%1$s günü çalışmıyorsun.</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">Planında yok · çalışma süren yetmiyor</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">Planında yok · bu branşı plandan çıkardın</string>
 </resources>

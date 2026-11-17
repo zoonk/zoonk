@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "d06cbbf6264d4e06abc47823139611ff52f98c4aa64b4f713f1d6d4433009765",
   "stats_belt_current": "16be4194d9d62ed609d28c2f6a761fb297e9f7fd95bf63b1b8d3e01cd9508630",
   "stats_belt_earned": "8a7000ac32c84aeea779133d91a5dfca4e6cbd4db03eef87d720f53d1460775f",
+  "stats_belt_level": "95a22bd363711678bd87b6a3a7ccee83dc48586cc2136726a1be9dfadcaa18e9",
   "stats_belt_line": "560dccf5ad73489144a031aa5fd2b2db26067524741aefe06b113c4cb04eb3b1",
   "stats_best_day": "625f136a5c0832cf6c95bb5aa974ab8f6c1d2c123c066319a8e8a4a264199d21",
   "stats_best_day_is": "033f885ad22402e6f9e5966a89b0ae4a7289d32f1e43d907aac9ec60c58d5fc2",
@@ -183,5 +184,6 @@
     <string name="stats_afternoon">Tarde</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Noche</string>
-    <string name="stats_belt_level">%1$s · Nivel %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Nivel %2$s</string>
 </resources>

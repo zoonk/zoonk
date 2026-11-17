@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "8a3874bfe0869e1b8ec314164f8a2cd1a90d3a396e98c992cde8d81caff5965b",
   "stats_belt_current": "aa0eaab3e40f7736af08fdc56d79184a6d8a04ba618921aee73c3dd6770e01b1",
   "stats_belt_earned": "05fc50e0deb9697919a0fd4f9bb97c72ac133c18f95d7a32255bc4da7a536716",
+  "stats_belt_level": "da53c886cff1ecfe3d7469ffdfcc30dd0f1b6a9114f54dc3f13e99e49c20febe",
   "stats_belt_line": "169050d76f730f29b5698d0a19ef336c8193f47758c383d2d9f9690c96a45479",
   "stats_best_day": "0be8deb6de8033eb9278196bede0e121f70af99417a5a5d07a8d59880fe9110f",
   "stats_best_day_is": "054ad37dfd6f12e4ab260340888f2432ebb78980f3fde095b162e6cdac91c0f5",
@@ -183,5 +184,6 @@
     <string name="stats_afternoon">Pomeriggio</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Sera</string>
-    <string name="stats_belt_level">%1$s · Livello %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Livello %2$s</string>
 </resources>

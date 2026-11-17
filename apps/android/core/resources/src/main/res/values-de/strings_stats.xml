@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "fb6902f39728cb83f2651e9373b7f297b974dc93c400daf5c0d86252d77242e3",
   "stats_belt_current": "4645e6f2c4b1ce6d3b483b287c3800936e3613a810869e18ae33d749b96a5276",
   "stats_belt_earned": "095bb351d98a38ec750ac05f06be1228a02d793d10a8f188a72749f8ece79609",
+  "stats_belt_level": "3978cf8c7fcff32347c987a05bfbe5f86ceaa7aadbac424d7f61c0e3f4e58ae5",
   "stats_belt_line": "960b12f6063abb9bbf93a3f4f43da796e494c7094d9921b0b01577d36b2ba62b",
   "stats_best_day": "5a67aa4753fece136ad7447ff57e2781e46180814114568139ffeb3ce0edfdb3",
   "stats_best_day_is": "08adb72275bf81a947573fa0bd7e781cd8ad048fd79bc2f8893c3e47516fcaed",
@@ -176,5 +177,6 @@
     <string name="stats_afternoon">Nachmittag</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Abend</string>
-    <string name="stats_belt_level">%1$s · Level %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Level %2$s</string>
 </resources>

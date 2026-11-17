@@ -1449,10 +1449,11 @@ msgctxt "HkeWp4"
 msgid "Your last renewal payment failed."
 msgstr "No pudimos procesar tu último pago de renovación."
 
+#. On the subscription page, labels Plus bought on the Zoonk website, where it's managed.
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "gTWrWX"
 msgid "Through the website"
-msgstr ""
+msgstr "A través del sitio web"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1502,15 +1503,17 @@ msgctxt "tiFovn"
 msgid "Manage in Google Play"
 msgstr "Administrar en Google Play"
 
+#. On the subscription page, labels Plus bought in the App Store, where it's managed.
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "eHa_2N"
 msgid "Through the App Store"
-msgstr ""
+msgstr "A través del App Store"
 
+#. On the subscription page, labels Plus bought in Google Play, where it's managed.
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "4n7IeB"
 msgid "Through Google Play"
-msgstr ""
+msgstr "A través de Google Play"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "i6lXik"
@@ -1763,6 +1766,7 @@ msgctxt "kWRGGq"
 msgid "<mono>{points}</mono> Brain Power to level {level}"
 msgstr "<mono>{points}</mono> de Poder Mental para llegar al nivel {level}"
 
+#. A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "TeeyjQ"
 msgid "{belt} · Level {level}"

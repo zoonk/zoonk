@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "d835bfa896e91e7e459fa823e2c8b54df8011ebb51d6e228e54c0015bec01115",
   "stats_belt_current": "5d7e0335808f5749a38b2897e3a8811ce247f4d02b3075f784aa837b4fb1f67c",
   "stats_belt_earned": "cabe57bbbc81f9c849950a0a2f319ca7f80f840eca63cbcb0e689bbbbf2d9715",
+  "stats_belt_level": "36c9ca8b57b224adc55aa8f891875891f8d89e08a195928cd3029d5dc204622d",
   "stats_belt_line": "4ef7c177ce4745438a652cbd269ef5174a5705a75dd6fbd720b3e128772cc015",
   "stats_best_day": "5594002f27e440769998407d05d75bfca5c7c26b77dd7206c12e030b91f58323",
   "stats_best_day_is": "a3fe8ffe1908ddf2ac9debff6c83bbcb7e075c2d26937160f7415eb1e38f3f7e",
@@ -169,5 +170,6 @@
     <string name="stats_afternoon">오후</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">저녁</string>
-    <string name="stats_belt_level">%1$s · 레벨 %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · 레벨 %2$s</string>
 </resources>

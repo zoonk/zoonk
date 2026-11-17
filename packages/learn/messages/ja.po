@@ -13074,10 +13074,11 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, other {#単元}}"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
-msgstr "学習計画に含まれません・この科目を外しました"
+msgstr "学習計画に含まれていません・この科目を外しました"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "Wz9Y3H"
@@ -13089,10 +13090,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "スキップ・自分で選びました"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
-msgstr "学習計画に含まれません・学習時間が足りません"
+msgstr "学習計画に含まれていません・学習時間が足りません"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx

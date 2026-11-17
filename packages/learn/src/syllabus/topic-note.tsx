@@ -16,13 +16,21 @@ export function useNotPlannedReason() {
 
     switch (reason) {
       case "skipped":
-        return t("Not in your plan · you took this subject out");
+        return t({
+          description:
+            "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
+          message: "Not in your plan · you took this subject out",
+        });
       case "pastBasics":
         return t("Skipped · you already know the basics");
       case "skippedBase":
         return t("Skipped · your choice");
       case "time":
-        return t("Not in your plan · your time doesn't cover it");
+        return t({
+          description:
+            "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.",
+          message: "Not in your plan · your time doesn't cover it",
+        });
       case "missing":
         return t("Not ready yet");
       default:

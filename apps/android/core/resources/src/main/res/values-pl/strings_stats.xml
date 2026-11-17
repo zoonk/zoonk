@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "56133b40cdae95a9f2714c46bf75a2e1f4a9c77e00a8d304f1098b459ea8f559",
   "stats_belt_current": "9a9c9eae51f44a79da935b65589096cbf16a40defefb0c14d9f0120e965c3176",
   "stats_belt_earned": "7838ffeaaee83f8ec3329e42e8a508c3a39d66dba827578c7ffc7f8bb6b8dc31",
+  "stats_belt_level": "d134dc55404ca192dbc7aeeee1d1da31d3ecb4f4473cf17f94b32ba036f84fe1",
   "stats_belt_line": "9dc20a8097f06028b2ad74558a0efe33e2418f80d60a185f674fb9ba489a3d6f",
   "stats_best_day": "c2342a40d00cd96ad8c1e1e12dec9cc4f876c5036270c146ac3992329ce26eff",
   "stats_best_day_is": "5297cd2e3258ded4421b2284eb4f93f4e288e4c35041ee1483b1f9d8265fcbed",
@@ -190,5 +191,6 @@
     <string name="stats_afternoon">Popołudnie</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Wieczór</string>
-    <string name="stats_belt_level">%1$s · Poziom %2$s</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Poziom %2$s</string>
 </resources>

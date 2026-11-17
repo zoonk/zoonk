@@ -347,6 +347,8 @@
   "plan_not_yet": "f0e4e8c0e2ebd841c29e3a0dc0b7467773d4275e5020da1b5fc394283e3ecce8",
   "plan_nothing_planned_until_resume": "2988f75d8e8eb6464e912f0ca9b5835e43be8cbb1e2507d71ff14c3d7acc3079",
   "plan_options": "3081bf9f165dda733291b7b65b67327040f2170a20e2f7bfa8e9a4e1a89841b1",
+  "plan_outside_skipped": "7928e9afde9124c0bcc48b284b4ff84bc720498f1216599b35f4df79245b4bac",
+  "plan_outside_time": "dd5df126b38bbe1d588f4ad1201cd36e3962e75ed58a6c2f61d7f0c36d27655b",
   "plan_pace": "ab43e71f17e75d3a1a2f758c75bc7443834117848ebb4f8878abf60fb1e464e8",
   "plan_pace_challenges_to_go": "c9460ddbb10361942ec87d063ab526f4160e0f050d250a55bd1444a48c3bcff4",
   "plan_pace_date_passed": "9a9231ad3cd68e5c112557b06a419763cfd1b286c0cbf3fb5ee5ff23396d19fb",
@@ -1552,4 +1554,8 @@
     <string name="plan_ask_phase_dates_off_rest">Przesunąć terminy etapów na dni nauki?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s: przesunąć koniec na inny dzień niż %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s to dzień bez nauki.</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">Poza twoim planem · nie wystarczy na to czasu</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">Poza twoim planem · usunięto ten przedmiot</string>
 </resources>

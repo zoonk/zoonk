@@ -464,7 +464,11 @@ private struct LessonUnavailableBody: View {
             Button {
               router.open(.mistakes)
             } label: {
-              Text("Practice your mistakes", tableName: "Search")
+              Text(
+                "Practice your mistakes", tableName: "Search",
+                comment:
+                  "A button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes."
+              )
             }
             .buttonStyle(.ghost)
           }

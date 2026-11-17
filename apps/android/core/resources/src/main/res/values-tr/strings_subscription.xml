@@ -50,6 +50,7 @@
   "subscription_keep_failed": "767f74a89da525fdcfbb295d4d4fb0c6a00fb15f345d8e4e1ea967a6020fd8e0",
   "subscription_keep_plus": "efbbcff99e28e963c54c5912f63a4f16de48988cd166e1c8d78f104b0efbba27",
   "subscription_keep_plus_description": "d9a3a968c34031e72598c58e1998118917cb89a0d16fcd64fe74c275edc91d9a",
+  "subscription_manage_apple": "2089d9b49177a1827441460dcc584e92f83c0ebc1c2983d16c1e2c01ae812719",
   "subscription_manage_google": "66817ecbbc77b214339a036c43f3c92b6f115eafaf3bd0c5b9eef245ae1e74fd",
   "subscription_managed_apple": "0a005504b19a6205ad2bdf990695974eaa531adc0838587f269f95e9499ba17b",
   "subscription_managed_google": "f8e22bc45632e23c7bc37888f9fc308a3205c2ae818fb3a1f229b337517a97c7",
@@ -79,6 +80,9 @@
   "subscription_show_answer": "c36735a5eda68ff750f3e54f11d11ba8f430f6e490c3742cd7ad894c2adbe58b",
   "subscription_start_free": "22ba21e1b5d3170ff65712d72726f5ca17f40772b9281b67a207b0958e278d49",
   "subscription_subscribe": "4b1cdc763f772d12701a001aa49ed1ee291e7537362e2453113426fb94331a27",
+  "subscription_through_apple": "94b26c7ebcafbdc3f7d780541c897cc9c51af6c62007cc3e34e9a1fdb840ce58",
+  "subscription_through_google": "aa2cf238e2daa78cf86d071d77a5a877c126398e74f4fa6965cba08ad9091b5f",
+  "subscription_through_website": "eb0a7c1a0cc3431828e6cbedaa04afcdca39f03cac774d26130c784f347a04a3",
   "subscription_unavailable": "b178f31398ccfa7b1f2ae05b33e2454635434c9583b32a489ba2aae8f0fb8217",
   "subscription_website": "fc726d368b6775dd2e75eba63df20237808ed6e8c05c3ae88a996834efa1b830",
   "subscription_yearly": "7e420b12f56c492f02e92edfc79833f1d1ffdbc574302cb5a337b5d1545e71a1",
@@ -214,4 +218,11 @@
     <string name="subscription_answer_cancel">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin. Ardından Ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur.</string>
     <string name="subscription_question_refund">Ücret iadesi alabilir miyim?</string>
     <string name="subscription_answer_refund">Google Play’den alınan Plus aboneliklerinin iade işlemlerini Google Play yürütür: iade talebini Google Play üzerinden ilet. Web sitemizden abone olduysan hello@zoonk.com adresine yaz, durumu inceleyelim.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Google Play üzerinden</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">App Store üzerinden</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">Web sitesi üzerinden</string>
+    <string name="subscription_manage_apple">App Store’da yönet</string>
 </resources>

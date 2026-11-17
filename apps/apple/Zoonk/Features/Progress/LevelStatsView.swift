@@ -112,6 +112,6 @@ private struct BeltProgression: View {
       localized: "\(String(localized: belt.localizedTitle))\u{00A0}· Level \(number)",
       table: "Progress",
       comment:
-        "A belt and its number from 1 to 10, as in White belt 4")
+        "A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page.")
   }
 }
