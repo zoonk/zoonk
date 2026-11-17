@@ -238,6 +238,7 @@ internal fun MindMapRow(
     val library = place == MindMapPlace.Library
     val toggleSave = actions.toggleSave?.takeIf { shown == MindMapShown.Ready }
     var menu by remember { mutableStateOf(false) }
+    val failed = shown == MindMapShown.Failed || shown == MindMapShown.Unreachable
     val rowClick =
         actions.open.takeIf { library && shown == MindMapShown.Ready }
 
@@ -250,13 +251,29 @@ internal fun MindMapRow(
                 onLongClickLabel = toggleSave?.let { stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save) },
                 onLongClick = toggleSave?.let { { menu = true } },
                 leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
-                supporting = listRowDescription(supporting),
-                meta = if (saved) ({ SavedMark() }) else null,
-                trailing = rowAction(map, place, shown, local, shownCap, retry, actions),
+                supporting = listRowDescription(if (failed) (chapterNumber(map.position).takeIf { numbered }) else supporting),
+                trailing =
+                    if (saved) {
+                        ({ SavedMark() })
+                    } else if (failed) {
+                        null
+                    } else {
+                        rowAction(map, place, shown, local, shownCap, retry, actions)
+                    },
+                chevron = rowClick != null,
             )
             if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
         }
 
+        if (failed) {
+            Column(
+                Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                status?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
+                rowAction(map, place, shown, local, shownCap, retry, actions)?.invoke()
+            }
+        }
         HeldSlot(gated = notice != null) {
             if (notice != null) {
                 MindMapLimit(
