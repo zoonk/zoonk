@@ -464,7 +464,7 @@ private fun PlanWeek(page: PlanPageState) {
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 text = stringResource(R.string.plan_this_week),
-                modifier = Modifier.weight(1f).semantics { heading() },
+                modifier = Modifier.weight(1f).alignByBaseline().semantics { heading() },
                 style = MaterialTheme.typography.titleMedium,
             )
             if (time.targetMinutes > 0) {
@@ -475,6 +475,7 @@ private fun PlanWeek(page: PlanPageState) {
                             formatMinutes(time.studiedMinutes.toInt(), locale),
                             formatMinutes(time.targetMinutes.roundToInt(), locale),
                         ),
+                    modifier = Modifier.alignByBaseline(),
                     style = MaterialTheme.zoonkType.data,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -426,8 +426,15 @@ private fun ChallengeMessageView(
         ChallengeAvatar(name, slot)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(name, style = MaterialTheme.typography.labelLarge)
-                role?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
+                Text(name, Modifier.alignByBaseline(), style = MaterialTheme.typography.labelLarge)
+                role?.let {
+                    Text(
+                        it,
+                        Modifier.alignByBaseline(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
             RichText(text = names.fill(message.text), style = MaterialTheme.typography.bodyLarge)
         }
