@@ -17,7 +17,7 @@ import {
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { BaseMapView, type MapPin } from "./base-map-view";
+import { BaseMapView, MapFrame, type MapPin } from "./base-map-view";
 import { MAP_MAX_ASPECT, fitViewport, spreadPins } from "./map-viewport";
 import { useBaseMapLabels, useBaseMapName, useBaseMapNote } from "./use-base-map-words";
 
@@ -193,7 +193,7 @@ function MapCanvas({
         )}
       </div>
 
-      <div ref={ref}>
+      <MapFrame ref={ref}>
         <BaseMapView
           crop={crop}
           drawing={drawing}
@@ -209,7 +209,7 @@ function MapCanvas({
           pins={pins}
           width={width}
         />
-      </div>
+      </MapFrame>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <MapLegend drawing={drawing} labelText={labelText} />

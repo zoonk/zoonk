@@ -72,13 +72,15 @@ private struct MapExplorerCanvas: View {
             comment: "How many places of a map the learner has looked at"))
       }
 
-      drawing(width: width)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .onGeometryChange(for: Double.self) {
-          $0.size.width
-        } action: {
-          width = max($0, 1)
-        }
+      MapFrame {
+        drawing(width: width)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .onGeometryChange(for: Double.self) {
+            $0.size.width
+          } action: {
+            width = max($0, 1)
+          }
+      }
 
       if !map.legend.isEmpty {
         FlowLayout(spacing: 12) {
@@ -211,7 +213,7 @@ private struct MapExplorerCanvas: View {
       announcePolitely(LessonRichText.spoken(place.reveals))
     } label: {
       Text(number, format: .number)
-        .typeStyle(.body.weight(.semibold).monospaced())
+        .typeStyle(mapPinNumberStyle)
         .foregroundStyle(isSelected ? Color(.systemBackground) : ActivityBaseMap.Tone.pin)
         .frame(width: 32, height: 32)
         .background(
@@ -311,10 +313,9 @@ private struct MapLabels: View {
           (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
             in: context.environment))
       }
+      let streetPaths = map.streets.map { streetPositions(path($0.path)) }
       let labels = map.labels.enumerated().map { index, label in
-        let positions = map.streets.first { $0.name == label.text }.map {
-          streetPositions(path($0.path))
-        }
+        let positions = map.streets.firstIndex { $0.name == label.text }.map { streetPaths[$0] }
         return MapViewport.Label(
           center: CGPoint(x: label.x, y: label.y).applying(transform),
           size: context.resolve(texts[index]).measure(
@@ -333,7 +334,16 @@ private struct MapLabels: View {
               locale: context.environment.locale))
         )
       }
-      let spots = MapViewport.placeLabels(labels, pins: pins.map(\.shown), frame: size)
+      let pinFont = mapPinNumberStyle.uiFont(
+        context.environment.dynamicTypeSize, legibility: context.environment.legibilityWeight)
+      let pinNumbers = pins.enumerated().map { index, pin in
+        let size = (String(index + 1) as NSString).size(withAttributes: [.font: pinFont])
+        return CGRect(
+          x: pin.shown.x - size.width / 2, y: pin.shown.y - size.height / 2, width: size.width,
+          height: size.height)
+      }
+      let spots = MapViewport.placeLabels(
+        labels, pins: pins.map(\.shown), frame: size, streets: streetPaths, pinNumbers: pinNumbers)
       for (index, label) in map.labels.enumerated() {
         guard let point = spots[index] else { continue }
         let text = texts[index]
@@ -379,8 +389,6 @@ extension ActivityBaseMap.Tone {
 }
 
 /// Mirrors main's `use-base-map-words`.
-private let streetSampleStep = 4.0
-
 private func streetPositions(_ path: Path) -> [CGPoint] {
   var start: CGPoint?
   path.cgPath.applyWithBlock { pointer in
@@ -388,7 +396,7 @@ private func streetPositions(_ path: Path) -> [CGPoint] {
     if start == nil, element.type == .moveToPoint { start = element.points.pointee }
   }
   let bounds = path.boundingRect
-  let steps = max(1, Int(ceil((bounds.width + bounds.height) / streetSampleStep)))
+  let steps = max(1, Int(ceil((bounds.width + bounds.height) / MapViewport.streetSampleStep)))
   let rest = (1...steps).compactMap {
     path.trimmedPath(from: 0, to: CGFloat($0) / CGFloat(steps)).currentPoint
   }
@@ -458,4 +466,11 @@ private enum MapWords {
     default: Text(verbatim: text)
     }
   }
+}
+
+private let mapPinNumberStyle = TypeStyle.body.weight(.semibold).monospaced()
+
+private struct MapFrame<Content: View>: View {
+  @ViewBuilder let content: () -> Content
+  var body: some View { content().padding(.horizontal, -16) }
 }

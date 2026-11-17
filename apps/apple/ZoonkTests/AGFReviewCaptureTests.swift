@@ -20,7 +20,7 @@ final class AGFReviewCaptureTests: XCTestCase {
     let folder = URL(fileURLWithPath: output, isDirectory: true)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     let scenarios: [(String, String, Double, Bool, Bool)] =
-      ["r4", "r5"].contains(environment["AGF_CAPTURE_SET"] ?? "")
+      ["r4", "r5", "r6"].contains(environment["AGF_CAPTURE_SET"] ?? "")
       ? [
         ("map-light", "mapExplorer", 0, false, false),
         ("map-dark", "mapExplorer", 0, true, false),
@@ -40,7 +40,10 @@ final class AGFReviewCaptureTests: XCTestCase {
         ("guess-money", "guessReveal.money", 900, false, false),
         ("map", "mapExplorer", 0, false, false),
       ]
-    for (name, fixture, answer, dark, large) in scenarios {
+    let selected =
+      environment["AGF_CAPTURE_SET"] == "r6"
+      ? scenarios.filter { $0.1 == "mapExplorer" } : scenarios
+    for (name, fixture, answer, dark, large) in selected {
       let data = try XCTUnwrap(fixtures[fixture])
       let content = try XCTUnwrap(data["content"]).decode(as: ActivityStepContent.self)
       let map = try? data["baseMap"]?.decode(as: ActivityBaseMap.self)

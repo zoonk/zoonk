@@ -162,9 +162,72 @@ private fun inMapFrame(
 internal data class MapLabelPlacement(
     val center: MapPoint,
     val scale: Double = 1.0,
+    val overPinCircle: Boolean = false,
 ) {
     val x get() = center.x
     val y get() = center.y
+}
+
+private const val MIN_MAP_LABEL_SCALE = 0.8
+private const val MAX_STREET_OFFSET = 40.0
+internal const val MAP_STREET_SAMPLE_STEP = 4.0
+
+private fun mapPathDistance(
+    point: MapPoint,
+    path: List<MapPoint>,
+): Double =
+    path.indices.minOfOrNull { index ->
+        val from = path[index]
+        val to = path.getOrElse(index + 1) { from }
+        val dx = to.x - from.x
+        val dy = to.y - from.y
+        val t =
+            if (dx == 0.0 &&
+                dy == 0.0
+            ) {
+                0.0
+            } else {
+                (((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx * dx + dy * dy)).coerceIn(0.0, 1.0)
+            }
+        hypot(point.x - from.x - t * dx, point.y - from.y - t * dy)
+    } ?: Double.POSITIVE_INFINITY
+
+private fun besideOwnMapStreet(
+    label: MapLabelSpot,
+    streets: List<List<MapPoint>>,
+): Boolean {
+    if (!label.street) return true
+    val path = label.positions.orEmpty()
+    val distance = mapPathDistance(label.center, path)
+    return distance <= MAX_STREET_OFFSET && streets.all { it == path || distance < mapPathDistance(label.center, it) }
+}
+
+private fun mapStreetCandidates(label: MapLabelSpot): List<MapPoint> {
+    val normal = labelAxes(label)[1]
+    val offset = min(MAX_STREET_OFFSET, labelProjection(label, normal) + 23)
+    val path = label.positions.orEmpty()
+    val offsets =
+        listOf(0.0, -offset, offset) +
+            (1..(MAX_STREET_OFFSET / MAP_STREET_SAMPLE_STEP).toInt()).flatMap {
+                listOf(
+                    -it * MAP_STREET_SAMPLE_STEP,
+                    it * MAP_STREET_SAMPLE_STEP,
+                )
+            }
+    return path.flatMapIndexed { index, from ->
+        val to = path.getOrElse(index + 1) { from }
+        val steps =
+            kotlin.math
+                .ceil(hypot(to.x - from.x, to.y - from.y) / MAP_STREET_SAMPLE_STEP)
+                .toInt()
+                .coerceAtLeast(1)
+        (0 until steps).flatMap { step ->
+            val point = MapPoint(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps)
+            offsets.map { across ->
+                MapPoint(point.x + normal.x * across, point.y + normal.y * across)
+            }
+        }
+    }
 }
 
 private fun namedMapCandidates(
@@ -174,6 +237,7 @@ private fun namedMapCandidates(
     width: Double,
     height: Double,
 ): List<MapPoint> {
+    if (label.street) return mapStreetCandidates(label)
     val rx = labelProjection(label, MapPoint(1.0, 0.0))
     val ry = labelProjection(label, MapPoint(0.0, 1.0))
     if (rx * 2 > width || ry * 2 > height) return emptyList()
@@ -212,6 +276,8 @@ internal fun placeMapLabels(
     pins: List<MapPoint>,
     width: Double,
     height: Double,
+    streets: List<List<MapPoint>> = labels.filter { it.street }.mapNotNull { it.positions },
+    pinNumbers: List<MapBox>? = null,
 ): List<MapLabelPlacement?> {
     val order = labels.indices.sortedWith(compareByDescending<Int> { labels[it].question }.thenByDescending { labels[it].priority })
     val named = order.filter { labels[it].priority || labels[it].question }
@@ -247,6 +313,7 @@ internal fun placeMapLabels(
                 (if (pack) points else original + points).map { label.copy(center = it) }.firstOrNull { candidate ->
                     inMapFrame(candidate, width, height) &&
                         pins.all { clearOfMapPin(candidate, it) } &&
+                        besideOwnMapStreet(candidate, streets) &&
                         placed.all { clearOfMapLabel(candidate, it) }
                 }
             if (spot != null) {
@@ -257,7 +324,7 @@ internal fun placeMapLabels(
         return Layout(placed, spots)
     }
     val layouts = mutableListOf<Layout>()
-    for (scale in listOf(1.0, 0.9, 0.8)) {
+    for (scale in listOf(1.0, (1.0 + MIN_MAP_LABEL_SCALE) / 2, MIN_MAP_LABEL_SCALE)) {
         layouts.add(arrange(scale, false))
         if (layouts.last().placed.size == named.size) break
         layouts.add(arrange(scale, true))
@@ -271,6 +338,32 @@ internal fun placeMapLabels(
                         named.count { labels[it].question && layout.spots[it] != null }
                     }.thenByDescending { it.placed.size },
                 ).first()
+    // At minimum size, a named street may cover a pin's circle, but never its number.
+    if (pinNumbers?.size == pins.size) {
+        for (index in named) {
+            val original = labels[index]
+            if (chosen.spots[index] != null || !original.street) continue
+            val label = original.copy(width = original.width * MIN_MAP_LABEL_SCALE, height = original.height * MIN_MAP_LABEL_SCALE)
+            val spot =
+                mapStreetCandidates(label)
+                    .sortedBy { hypot(it.x - label.center.x, it.y - label.center.y) }
+                    .map { label.copy(center = it) }
+                    .firstOrNull { candidate ->
+                        inMapFrame(candidate, width, height) && besideOwnMapStreet(candidate, streets) &&
+                            chosen.placed.all { clearOfMapLabel(candidate, it) } &&
+                            pinNumbers.all { box ->
+                                kotlin.math.abs(candidate.center.x - box.x - box.width / 2) >=
+                                    labelProjection(candidate, MapPoint(1.0, 0.0)) + box.width / 2 + 3 ||
+                                    kotlin.math.abs(candidate.center.y - box.y - box.height / 2) >=
+                                    labelProjection(candidate, MapPoint(0.0, 1.0)) + box.height / 2 + 3
+                            }
+                    }
+            if (spot != null) {
+                chosen.placed.add(spot)
+                chosen.spots[index] = MapLabelPlacement(spot.center, MIN_MAP_LABEL_SCALE, overPinCircle = true)
+            }
+        }
+    }
     for (index in order.filter { !labels[it].priority && !labels[it].question }) {
         val label = labels[index]
         val spot =
@@ -281,6 +374,7 @@ internal fun placeMapLabels(
                 .firstOrNull { candidate ->
                     inMapFrame(candidate, width, height) &&
                         pins.all { clearOfMapPin(candidate, it) } &&
+                        besideOwnMapStreet(candidate, streets) &&
                         chosen.placed.all { clearOfMapLabel(candidate, it) }
                 }
         if (spot != null) {

@@ -265,14 +265,69 @@ describe("money and society activities", () => {
         .querySelector('[data-street-label="Broad Street"]')!
         .getBoundingClientRect();
 
+      const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
+
+      const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
+        (path) => {
+          const matrix = path.getScreenCTM()!;
+
+          const distance = Math.min(
+            ...Array.from({ length: 501 }, (_, index) => {
+              const at = path.getPointAtLength((path.getTotalLength() * index) / 500);
+              const point = new DOMPoint(at.x, at.y).matrixTransform(matrix);
+              return Math.hypot(center.x - point.x, center.y - point.y);
+            }),
+          );
+
+          return { distance, name: path.dataset.street };
+        },
+      );
+
+      const own = streets.find((street) => street.name === "Broad Street")!;
+      expect(own.distance).toBeLessThanOrEqual(40);
+
+      expect(
+        streets
+          .filter((street) => street !== own)
+          .every((street) => own.distance < street.distance),
+      ).toBe(true);
+
       expect(label.left).toBeGreaterThanOrEqual(map.left);
       expect(label.right).toBeLessThanOrEqual(map.right);
       expect(label.top).toBeGreaterThanOrEqual(map.top);
       expect(label.bottom).toBeLessThanOrEqual(map.bottom);
 
-      for (const face of document.querySelectorAll('[data-slot="map-pin"] > span')) {
-        const pin = face.getBoundingClientRect();
+      expect(map.width).toBeGreaterThanOrEqual(256);
 
+      const overlapsCircle = document.querySelector<SVGTextElement>(
+        '[data-street-label="Broad Street"]',
+      )?.dataset.pinCircleOverlap;
+
+      const guarded = [
+        ...document.querySelectorAll<HTMLElement>('[data-slot="map-pin"] > span'),
+      ].map((element) => {
+        const face = element.getBoundingClientRect();
+
+        if (!overlapsCircle) {
+          return face;
+        }
+
+        const style = getComputedStyle(element);
+        const context = document.createElement("canvas").getContext("2d")!;
+        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const metrics = context.measureText(element.textContent!);
+        const width = metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
+        const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+        return {
+          bottom: (face.top + face.bottom + height) / 2,
+          left: (face.left + face.right - width) / 2,
+          right: (face.left + face.right + width) / 2,
+          top: (face.top + face.bottom - height) / 2,
+        };
+      });
+
+      for (const pin of guarded) {
         expect(
           label.right <= pin.left ||
             pin.right <= label.left ||

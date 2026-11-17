@@ -17,6 +17,49 @@ final class MapViewportTests: XCTestCase {
   private let named = MapViewport.Label(
     center: CGPoint(x: 160, y: 120), size: CGSize(width: 80, height: 12), angle: 0, street: true,
     priority: true, positions: [CGPoint(x: 160, y: 120)])
+  func testNamedStreetStaysBesideItsOwnPathAtNormalAndTwiceTheTextSize() throws {
+    for width in [100.0, 200.0] {
+      let broad = MapViewport.Label(
+        center: CGPoint(x: 160, y: 120),
+        size: CGSize(width: width, height: width * 0.12), angle: 0, street: true,
+        priority: true, positions: [CGPoint(x: 20, y: 120), CGPoint(x: 300, y: 120)])
+      let oxford = MapViewport.Label(
+        center: CGPoint(x: 160, y: 83), size: broad.size,
+        angle: 0, street: true, priority: false,
+        positions: [CGPoint(x: 20, y: 83), CGPoint(x: 300, y: 83)])
+      let spot = try XCTUnwrap(
+        MapViewport.placeLabels(
+          [broad, oxford],
+          pins: [CGPoint(x: 160, y: 120)], frame: CGSize(width: 320, height: 240))[0])
+      XCTAssertLessThanOrEqual(abs(spot.y - 120), 40)
+      XCTAssertLessThan(abs(spot.y - 120), abs(spot.y - 83))
+      XCTAssertTrue(
+        abs(spot.x - 160) >= width * spot.scale / 2 + 20
+          || abs(spot.y - 120) >= broad.size.height * spot.scale / 2 + 20)
+    }
+  }
+  func testNarrowAndWidenedStreetFramesKeepPinNumbersClear() throws {
+    for width in [192.0, 320.0] {
+      let center = CGPoint(x: width / 2, y: 90)
+      let labels = [90.0, 25.0, 155.0].enumerated().map { index, y in
+        MapViewport.Label(
+          center: CGPoint(x: center.x, y: y), size: CGSize(width: 120, height: 24),
+          angle: 0, street: true, priority: index == 0,
+          positions: [CGPoint(x: 0, y: y), CGPoint(x: width, y: y)])
+      }
+      let spot = try XCTUnwrap(
+        MapViewport.placeLabels(
+          labels, pins: [center],
+          frame: CGSize(width: width, height: 180),
+          pinNumbers: [CGRect(x: center.x - 8, y: 80, width: 16, height: 20)])[0])
+      XCTAssertLessThanOrEqual(abs(spot.y - 90), 40)
+      XCTAssertLessThan(abs(spot.y - 90), min(abs(spot.y - 25), abs(spot.y - 155)))
+      XCTAssertTrue(
+        abs(spot.x - center.x) >= 60 * spot.scale + 8 || abs(spot.y - 90) >= 12 * spot.scale + 10)
+      XCTAssertEqual(spot.overPinCircle, width == 192)
+      if width == 192 { XCTAssertEqual(spot.scale, 0.8) }
+    }
+  }
   func testNamedLabelBoxClearsEveryPinBox() throws {
     let pins = [CGPoint(x: 160, y: 120), CGPoint(x: 190, y: 155)]
     let label = MapViewport.Label(

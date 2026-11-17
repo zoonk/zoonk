@@ -44,12 +44,63 @@ enum MapViewport {
   struct Placement: Equatable {
     let center: CGPoint
     var scale: Double = 1
+    var overPinCircle = false
     var x: Double { center.x }
     var y: Double { center.y }
+  }
+  private static let minLabelScale = 0.8
+  private static let maxStreetOffset = 40.0
+  static let streetSampleStep = 4.0
+  private static func pathDistance(_ point: CGPoint, _ path: [CGPoint]) -> Double {
+    path.indices.map { index in
+      let from = path[index]
+      let to = index + 1 < path.count ? path[index + 1] : from
+      let dx = to.x - from.x
+      let dy = to.y - from.y
+      let t =
+        dx == 0 && dy == 0
+        ? 0
+        : clamp(
+          ((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx * dx + dy * dy), 0, 1)
+      return hypot(point.x - from.x - t * dx, point.y - from.y - t * dy)
+    }.min() ?? .infinity
+  }
+  private static func besideOwnStreet(_ label: Label, _ streets: [[CGPoint]]) -> Bool {
+    if !label.street { return true }
+    let path = label.positions ?? []
+    let distance = pathDistance(label.center, path)
+    return distance <= maxStreetOffset
+      && streets.allSatisfy {
+        $0 == path || distance < pathDistance(label.center, $0)
+      }
+  }
+  private static func streetCandidates(_ label: Label) -> [CGPoint] {
+    let normal = axes(label)[1]
+    let offset = min(maxStreetOffset, projection(label, normal) + 23)
+    let path = label.positions ?? []
+    var offsets: [Double] = [0, -offset, offset]
+    for step in 1...Int(maxStreetOffset / streetSampleStep) {
+      offsets.append(-Double(step) * streetSampleStep)
+      offsets.append(Double(step) * streetSampleStep)
+    }
+    return path.indices.flatMap { index -> [CGPoint] in
+      let from = path[index]
+      let to = index + 1 < path.count ? path[index + 1] : from
+      let steps = max(1, Int(ceil(hypot(to.x - from.x, to.y - from.y) / streetSampleStep)))
+      return (0..<steps).flatMap { step -> [CGPoint] in
+        let point = CGPoint(
+          x: from.x + (to.x - from.x) * Double(step) / Double(steps),
+          y: from.y + (to.y - from.y) * Double(step) / Double(steps))
+        return offsets.map { across in
+          CGPoint(x: point.x + normal.x * across, y: point.y + normal.y * across)
+        }
+      }
+    }
   }
   private static func namedCandidates(
     _ label: Label, placed: [Label], pins: [CGPoint], frame: CGSize
   ) -> [CGPoint] {
+    if label.street { return streetCandidates(label) }
     let rx = projection(label, CGPoint(x: 1, y: 0))
     let ry = projection(label, CGPoint(x: 0, y: 1))
     if rx * 2 > frame.width || ry * 2 > frame.height { return [] }
@@ -76,7 +127,11 @@ enum MapViewport {
     let named = references.lowercased()
     return [source, text].contains { !$0.isEmpty && named.contains($0.lowercased()) }
   }
-  static func placeLabels(_ labels: [Label], pins: [CGPoint], frame: CGSize) -> [Placement?] {
+  static func placeLabels(
+    _ labels: [Label], pins: [CGPoint], frame: CGSize, streets: [[CGPoint]]? = nil,
+    pinNumbers: [CGRect]? = nil
+  ) -> [Placement?] {
+    let streetPaths = streets ?? labels.filter(\.street).compactMap(\.positions)
     let order = labels.indices.sorted { a, b in
       if labels[a].question != labels[b].question { return labels[a].question }
       if labels[a].priority != labels[b].priority { return labels[a].priority }
@@ -114,6 +169,7 @@ enum MapViewport {
         let spot = (pack ? points : originalPoints + points).map { label.at($0) }.first {
           candidate in
           inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
+            && besideOwnStreet(candidate, streetPaths)
             && placed.allSatisfy { clearOfLabel(candidate, $0) }
         }
         if let spot {
@@ -124,7 +180,7 @@ enum MapViewport {
       return Layout(placed: placed, spots: spots)
     }
     var layouts: [Layout] = []
-    for scale in [1.0, 0.9, 0.8] {
+    for scale in [1.0, (1 + minLabelScale) / 2, minLabelScale] {
       layouts.append(arrange(scale, false))
       if layouts.last!.placed.count == named.count { break }
       layouts.append(arrange(scale, true))
@@ -141,6 +197,37 @@ enum MapViewport {
         }
         return a.offset < b.offset
       }.first!.element
+    // At minimum size, a named street may cover a pin's circle, but never its number.
+    if let pinNumbers, pinNumbers.count == pins.count {
+      for index in named where chosen.spots[index] == nil && labels[index].street {
+        let original = labels[index]
+        let label = Label(
+          center: original.center,
+          size: CGSize(
+            width: original.size.width * minLabelScale, height: original.size.height * minLabelScale
+          ),
+          angle: original.angle, street: true, priority: original.priority,
+          positions: original.positions, question: original.question)
+        let spot = streetCandidates(label).sorted {
+          hypot($0.x - label.center.x, $0.y - label.center.y)
+            < hypot($1.x - label.center.x, $1.y - label.center.y)
+        }.map { label.at($0) }.first { candidate in
+          inFrame(candidate, frame) && besideOwnStreet(candidate, streetPaths)
+            && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
+            && pinNumbers.allSatisfy { box in
+              abs(candidate.center.x - box.midX) >= projection(candidate, CGPoint(x: 1, y: 0)) + box
+                .width / 2 + 3
+                || abs(candidate.center.y - box.midY) >= projection(candidate, CGPoint(x: 0, y: 1))
+                  + box.height / 2 + 3
+            }
+        }
+        if let spot {
+          chosen.placed.append(spot)
+          chosen.spots[index] = Placement(
+            center: spot.center, scale: minLabelScale, overPinCircle: true)
+        }
+      }
+    }
     for index in order where !labels[index].priority && !labels[index].question {
       let label = labels[index]
       let spot = (label.street ? (label.positions ?? []) : [label.center]).sorted {
@@ -148,6 +235,7 @@ enum MapViewport {
           < hypot($1.x - label.center.x, $1.y - label.center.y)
       }.map { label.at($0) }.first { candidate in
         inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
+          && besideOwnStreet(candidate, streetPaths)
           && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
       }
       if let spot {

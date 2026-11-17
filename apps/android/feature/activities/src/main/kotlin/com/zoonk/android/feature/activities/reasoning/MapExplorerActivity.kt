@@ -70,6 +70,7 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -231,7 +232,7 @@ private fun MapView(
     onSelect: (String) -> Unit,
 ) {
     val description = pluralStringResource(R.plurals.activities_reasoning_map_description, places.size, name, places.size)
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
+    BoxWithConstraints(Modifier.bleed(16.dp).fillMaxWidth()) {
         val width = maxWidth.value.toDouble()
         val layout = remember(map, places, width) { layoutPins(map.drawing, places, width) }
         Box(
@@ -278,6 +279,7 @@ private fun MapLabels(
 ) {
     val colors = MaterialTheme.colorScheme
     val measurer = rememberTextMeasurer()
+    val numberStyle = mapPinNumberStyle()
     val fontScale = LocalDensity.current.fontScale
     val labelSize = MaterialTheme.typography.labelMedium.fontSize * (min(fontScale, MAX_LABEL_SCALE) / fontScale)
     val regionStyle = MaterialTheme.typography.labelMedium.copy(fontSize = labelSize, fontWeight = FontWeight.SemiBold)
@@ -295,27 +297,25 @@ private fun MapLabels(
         val crop = layout.crop
         val zoom = (size.width / crop.width).toFloat()
         val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
+        val streetPaths =
+            map.streets.map { path ->
+                val bounds = path.getBounds()
+                val steps =
+                    kotlin.math
+                        .ceil((bounds.width + bounds.height) * zoom / density / MAP_STREET_SAMPLE_STEP)
+                        .toInt()
+                        .coerceAtLeast(1)
+                val measure = PathMeasure().apply { setPath(path, false) }
+                (0..steps).map { step ->
+                    val point = measure.getPosition(measure.length * step / steps)
+                    MapPoint((point.x - crop.x) * zoom / density, (point.y - crop.y) * zoom / density)
+                }
+            }
         val spots =
             placeMapLabels(
                 labels.mapIndexed { index, (label, text) ->
                     val streetIndex = map.drawing.streets.indexOfFirst { it.name == label.text }
-                    val path = map.streets.getOrNull(streetIndex)
-                    val positions =
-                        path
-                            ?.let {
-                                val bounds = it.getBounds()
-                                val steps =
-                                    kotlin.math
-                                        .ceil(
-                                            (bounds.width + bounds.height) * zoom / density / STREET_SAMPLE_STEP,
-                                        ).toInt()
-                                        .coerceAtLeast(1)
-                                val measure = PathMeasure().apply { setPath(it, false) }
-                                (0..steps).map { step ->
-                                    val point = measure.getPosition(measure.length * step / steps)
-                                    MapPoint((point.x - crop.x) * zoom / density, (point.y - crop.y) * zoom / density)
-                                }
-                            }.orEmpty()
+                    val positions = streetPaths.getOrNull(streetIndex).orEmpty()
                     MapLabelSpot(
                         MapPoint(
                             (label.x - crop.x) * zoom / density,
@@ -333,6 +333,14 @@ private fun MapLabels(
                 layout.pins.map { it.shown },
                 size.width.toDouble() / density,
                 size.height.toDouble() / density,
+                streets = streetPaths,
+                pinNumbers =
+                    layout.pins.map { pin ->
+                        val number = measurer.measure(pin.number.toString(), numberStyle)
+                        val w = number.size.width.toDouble() / density
+                        val h = number.size.height.toDouble() / density
+                        MapBox(pin.shown.x - w / 2, pin.shown.y - h / 2, w, h)
+                    },
             )
         labels.forEachIndexed { index, (label, text) ->
             val spot = spots[index] ?: return@forEachIndexed
@@ -486,9 +494,7 @@ private fun PlaceNumber(
             "$number",
             color = content,
             style =
-                MaterialTheme.typography.labelLarge
-                    .withTabularFigures()
-                    .copy(fontWeight = FontWeight.SemiBold),
+                mapPinNumberStyle(),
         )
     }
 }
@@ -625,4 +631,8 @@ private val RING = 4.dp
 private val PIN_SHADOW = 4.dp
 private val PIN_FACE = 32.dp
 
-private const val STREET_SAMPLE_STEP = 4
+@Composable
+private fun mapPinNumberStyle() =
+    MaterialTheme.typography.labelLarge
+        .withTabularFigures()
+        .copy(fontWeight = FontWeight.SemiBold)

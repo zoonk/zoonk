@@ -2,17 +2,10 @@
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { measureDrawingLabel } from "../_utils/drawing-label";
-import { type MapPoint } from "./map-viewport";
+import { MAP_STREET_SAMPLE_STEP } from "./map-labels";
+import { type MapBox, type MapPoint } from "./map-viewport";
 
-const STREET_SAMPLE_STEP = 4;
-
-type MapLabelSize = {
-  positions?: readonly MapPoint[];
-  height: number;
-  offsetX: number;
-  offsetY: number;
-  width: number;
-};
+type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
 
 export function useMapLabelSizes(labelKey: string, pixelSize: number) {
   const elements = useRef(new Map<number, SVGTextElement>());
@@ -21,6 +14,8 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
     labelKey: string;
     pixelSize: number;
     sizes: Readonly<Record<number, MapLabelSize>>;
+    streets: Readonly<Record<string, readonly MapPoint[]>>;
+    pinNumbers: readonly MapBox[];
   } | null>(null);
 
   const measureLabel = useCallback((index: number, element: SVGTextElement | null) => {
@@ -33,37 +28,63 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
 
   useLayoutEffect(() => {
     const measure = () => {
-      const sizes = Object.fromEntries(
-        [...elements.current].map(([index, element]) => {
-          const street = [
-            ...(element
-              .closest('[data-slot="base-map"]')
-              ?.querySelectorAll<SVGPathElement>("[data-street]") ?? []),
-          ].find((path) => path.dataset.street === element.dataset.streetLabel);
+      const map = [...elements.current.values()][0]?.closest('[data-slot="base-map"]');
+      const paths = map?.querySelectorAll<SVGPathElement>("[data-street]") ?? [];
 
-          const bounds = street?.getBBox();
+      const streets = Object.fromEntries(
+        [...paths].map((street): [string, readonly MapPoint[]] => {
+          const bounds = street.getBBox();
 
-          const steps = bounds
-            ? Math.max(
-                1,
-                Math.ceil((bounds.width + bounds.height) / pixelSize / STREET_SAMPLE_STEP),
-              )
-            : 0;
+          const steps = Math.max(
+            1,
+            Math.ceil((bounds.width + bounds.height) / pixelSize / MAP_STREET_SAMPLE_STEP),
+          );
 
-          const length = street?.getTotalLength() ?? 0;
+          const length = street.getTotalLength();
 
-          const positions =
-            street &&
+          return [
+            street.dataset.street ?? "",
             Array.from({ length: steps + 1 }, (_, step) => {
               const point = street.getPointAtLength((length * step) / steps);
               return { x: point.x, y: point.y };
-            });
-
-          return [index, { ...measureDrawingLabel({ element, pixelSize }), positions }];
+            }),
+          ];
         }),
       );
 
-      const next = { labelKey, pixelSize, sizes };
+      const sizes = Object.fromEntries(
+        [...elements.current].map(([index, element]): [number, MapLabelSize] => [
+          index,
+          measureDrawingLabel({ element, pixelSize }),
+        ]),
+      );
+
+      const bounds = map?.getBoundingClientRect();
+      const context = document.createElement("canvas").getContext("2d");
+
+      if (!context) {
+        return;
+      }
+
+      const pinNumbers = [
+        ...(map?.querySelectorAll<HTMLElement>('[data-slot="map-pin"] > span') ?? []),
+      ].map((element) => {
+        const style = getComputedStyle(element);
+        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const ink = context.measureText(element.textContent ?? "");
+        const box = element.getBoundingClientRect();
+        const width = ink.actualBoundingBoxLeft + ink.actualBoundingBoxRight;
+        const height = ink.actualBoundingBoxAscent + ink.actualBoundingBoxDescent;
+
+        return {
+          height,
+          width,
+          x: (box.left + box.right - width) / 2 - (bounds?.left ?? 0),
+          y: (box.top + box.bottom - height) / 2 - (bounds?.top ?? 0),
+        };
+      });
+
+      const next = { labelKey, pinNumbers, pixelSize, sizes, streets };
       setCache((known) => (JSON.stringify(known) === JSON.stringify(next) ? known : next));
     };
 
@@ -85,5 +106,11 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
   const sizes: Readonly<Record<number, MapLabelSize>> =
     cache?.labelKey === labelKey && cache.pixelSize === pixelSize ? cache.sizes : {};
 
-  return { measureLabel, sizes };
+  const streets =
+    cache?.labelKey === labelKey && cache.pixelSize === pixelSize ? cache.streets : {};
+
+  const pinNumbers =
+    cache?.labelKey === labelKey && cache.pixelSize === pixelSize ? cache.pinNumbers : undefined;
+
+  return { measureLabel, pinNumbers, sizes, streets };
 }

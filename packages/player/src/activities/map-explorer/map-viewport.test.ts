@@ -138,6 +138,88 @@ describe(placeMapLabels, () => {
     y: 120,
   };
 
+  it("keeps a named street beside its own path at normal and 200 percent text", () => {
+    for (const width of [100, 200]) {
+      const broad = {
+        ...named,
+        height: width * 0.12,
+        positions: [
+          { x: 20, y: 120 },
+          { x: 300, y: 120 },
+        ],
+        width,
+      };
+
+      const oxford = {
+        ...broad,
+        positions: [
+          { x: 20, y: 83 },
+          { x: 300, y: 83 },
+        ],
+        priority: false,
+        y: 83,
+      };
+
+      const [spot] = placeMapLabels({
+        frame: { height: 240, width: 320 },
+        labels: [broad, oxford],
+        pins: [{ x: 160, y: 120 }],
+      });
+
+      expect(spot).not.toBeNull();
+      expect(Math.abs(spot!.y - 120)).toBeLessThanOrEqual(40);
+      expect(Math.abs(spot!.y - 120)).toBeLessThan(Math.abs(spot!.y - 83));
+      const scale = spot!.scale ?? 1;
+
+      expect(
+        Math.abs(spot!.x - 160) >= (width * scale) / 2 + 20 ||
+          Math.abs(spot!.y - 120) >= (broad.height * scale) / 2 + 20,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps 192 px and widened street frames readable, using only number clearance as a last resort", () => {
+    for (const width of [192, 320]) {
+      const center = { x: width / 2, y: 90 };
+
+      const labels = [90, 25, 155].map((y, index) => ({
+        ...named,
+        height: 24,
+        positions: [
+          { x: 0, y },
+          { x: width, y },
+        ],
+        priority: index === 0,
+        width: 120,
+        x: center.x,
+        y,
+      }));
+
+      const [spot] = placeMapLabels({
+        frame: { height: 180, width },
+        labels,
+        pinNumbers: [{ height: 20, width: 16, x: center.x - 8, y: 80 }],
+        pins: [center],
+      });
+
+      expect(spot).not.toBeNull();
+      expect(Math.abs(spot!.y - 90)).toBeLessThanOrEqual(40);
+
+      expect(Math.abs(spot!.y - 90)).toBeLessThan(
+        Math.min(Math.abs(spot!.y - 25), Math.abs(spot!.y - 155)),
+      );
+
+      const scale = spot!.scale ?? 1;
+
+      expect(
+        Math.abs(spot!.x - center.x) >= 60 * scale + 8 || Math.abs(spot!.y - 90) >= 12 * scale + 10,
+      ).toBe(true);
+
+      expect(Boolean(spot!.overPinCircle)).toBe(width === 192);
+      expect(scale).toBe(width === 192 ? 0.8 : 1);
+    }
+  });
+
   it("keeps a named label box clear of every pin box", () => {
     const pins = [
       { x: 160, y: 120 },

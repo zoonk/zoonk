@@ -120,6 +120,7 @@ function MapLabels({
               visibility: spot ? "visible" : "hidden",
             }}
             ref={(element) => measureLabel(index, element)}
+            data-pin-circle-overlap={spot?.overPinCircle || undefined}
             data-street-label={label.kind === "street" ? label.text : undefined}
             dominantBaseline="middle"
             key={`${label.text}-${label.x}-${label.y}`}
@@ -180,16 +181,23 @@ export function BaseMapView({
     streets: drawing.streets,
   });
 
-  const { sizes, measureLabel } = useMapLabelSizes(labelKey, pixelSize);
+  const { sizes, measureLabel, streets, pinNumbers } = useMapLabelSizes(labelKey, pixelSize);
+
+  const streetPaths = Object.fromEntries(
+    Object.entries(streets).map(([name, points]) => [
+      name,
+      points.map((point) => ({
+        x: (point.x - crop.x) / pixelSize,
+        y: (point.y - crop.y) / pixelSize,
+      })),
+    ]),
+  );
 
   const measured = drawing.labels.map((label, index) => ({
     angle: label.angle,
     height: sizes[index]?.height ?? 0,
     kind: label.kind,
-    positions: sizes[index]?.positions?.map((point) => ({
-      x: (point.x - crop.x) / pixelSize,
-      y: (point.y - crop.y) / pixelSize,
-    })),
+    positions: streetPaths[label.text],
     priority: isMapLabelNamed({
       references,
       source: label.text,
@@ -213,10 +221,12 @@ export function BaseMapView({
       ? placeMapLabels({
           frame: { height, width },
           labels: measured,
+          pinNumbers,
           pins: pins.map((pin) => pin.shown),
+          streets: Object.values(streetPaths),
         })
       : drawing.labels.map(() => null)
-  ).map((spot) => spot && { ...toMap(spot), scale: spot.scale });
+  ).map((spot) => spot && { ...toMap(spot), overPinCircle: spot.overPinCircle, scale: spot.scale });
 
   return (
     <div
@@ -301,4 +311,8 @@ export function BaseMapView({
       </svg>
     </div>
   );
+}
+
+export function MapFrame(props: React.ComponentProps<"div">) {
+  return <div className="-mx-4" {...props} />;
 }
