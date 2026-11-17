@@ -471,7 +471,8 @@ private fun DrawScope.drawMathRoots(
         val argument = (root.start + 1 until root.end).map(layout::getBoundingBox)
         val top = argument.minOf { it.top } + sign.height * 0.12f
         val bottom = argument.maxOf { it.bottom } - sign.height * 0.12f
-        val end = argument.maxOf { it.right }
+        // Italic radicands paint past their character advances.
+        val end = argument.maxOf { it.right } + sign.width / 4
         val path =
             Path().apply {
                 moveTo(sign.left, top + (bottom - top) * 0.6f)
