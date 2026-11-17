@@ -1444,21 +1444,16 @@ msgid "{buddy} today"
 msgstr "오늘의 {buddy}"
 
 #: src/buddies/buddy-today.tsx
-msgctxt "6Fd8_d"
-msgid "Missions"
-msgstr "미션"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {미션 #개 완료 / 전체 {total}개} other {완료한 미션 #개 / 전체 {total}개}}"
-
-#: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
 #: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
+
+#: src/buddies/buddy-today.tsx
+msgctxt "xlYYsb"
+msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
+msgstr "{done, plural, =0 {미션 #개 완료 / 전체 {total}개} other {완료한 미션 #개 / 전체 {total}개}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"

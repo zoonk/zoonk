@@ -1444,21 +1444,16 @@ msgid "{buddy} today"
 msgstr "{buddy} hoje"
 
 #: src/buddies/buddy-today.tsx
-msgctxt "6Fd8_d"
-msgid "Missions"
-msgstr "Missões"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {# de {total} missões} other {# de {total} missões}}"
-
-#: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
 #: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Ainda não"
+
+#: src/buddies/buddy-today.tsx
+msgctxt "xlYYsb"
+msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
+msgstr "{done, plural, =0 {# de {total} missões} other {# de {total} missões}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
