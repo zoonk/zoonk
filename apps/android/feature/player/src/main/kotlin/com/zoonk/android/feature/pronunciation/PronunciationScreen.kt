@@ -303,6 +303,7 @@ private fun WordStep(
                 Modifier.fillMaxSize().padding(padding),
                 meter = { RoundMeter(round) },
                 word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
+                feedback = step.grade != null,
             ) {
                 val grade = step.grade
                 val issue = round.issue
@@ -343,6 +344,7 @@ private fun WordPages(
     modifier: Modifier,
     meter: @Composable () -> Unit,
     word: @Composable () -> Unit,
+    feedback: Boolean,
     turn: @Composable ColumnScope.() -> Unit,
 ) {
     // The one column and the word's page share their scroll, so the reading place keeps as the book opens or closes.
@@ -368,14 +370,17 @@ private fun WordPages(
                     if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                 ) {
                     if (fold == null) word()
-                    turn()
+                    if (fold == null || feedback) turn()
                 }
                 if (fold != null) {
                     WordPage(
                         Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
                         scroll,
                         Alignment.End,
-                    ) { word() }
+                    ) {
+                        word()
+                        if (!feedback) turn()
+                    }
                 }
             }
         }
