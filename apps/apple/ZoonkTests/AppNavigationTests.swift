@@ -196,7 +196,7 @@ extension AppNavigationTests {
         baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
       session: .preview(account: .planTestAccount), imageLoader: .live(),
       subscriptionStore: .live(),
-      learnerSummaryAPI: OneGoalSummary(kind: .learn, level: .init(belt: .white, level: 2)))
+      learnerSummaryAPI: OneGoalSummary(kind: .learn, level: .init(belt: .yellow, level: 2)))
     await dependencies.learnerSummaryStore.summary.load()
     let router = AppRouter()
     router.sidebarTabs = [.stats(.level)]
@@ -210,10 +210,10 @@ extension AppNavigationTests {
         width > 700 ? .regular : .compact
       try await Task.sleep(for: .milliseconds(600))
       try captureCallsRoundTwo("level-chip-\(size)")
-      XCTAssertTrue(spoken(in: window).contains("Level"), "\(spoken(in: window))")
+      XCTAssertTrue(spoken(in: window).contains("Yellow belt, Level 2"), "\(spoken(in: window))")
       XCTAssertFalse(spoken(in: window).contains("Statistics"), "\(spoken(in: window))")
     }
-    try activate("Level", in: window)
+    try activate("Yellow belt, Level 2", in: window)
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 }

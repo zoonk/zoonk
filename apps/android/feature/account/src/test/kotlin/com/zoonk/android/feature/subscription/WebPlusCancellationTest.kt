@@ -5,13 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
@@ -22,6 +25,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
@@ -108,6 +114,31 @@ class WebPlusCancellationTest {
     private fun update(state: State) {
         response = { web(state) }
         rule.runOnIdle { scope.launch { website.refresh() } }
+    }
+
+    @Test
+    fun theZoonkManagedLineKeepsItsMutedBodyStyle() {
+        subscription = plan("zoonk")
+        response = { null }
+        var expectedColor = Color.Unspecified
+        var expectedStyle = TextStyle.Default
+        rule.setContent {
+            ZoonkTheme {
+                expectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                expectedStyle = MaterialTheme.typography.bodyMedium
+                val state by website.collectShown()
+                AccountPlans(subscription, state, rememberAppNavigator(), onRetryWebsite = {}, offer = {})
+            }
+        }
+        val layouts = mutableListOf<TextLayoutResult>()
+        rule
+            .onNodeWithText("To change or cancel Plus, write to us.")
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val actual = layouts.single().layoutInput.style
+        assertEquals(
+            listOf(expectedColor, expectedStyle.fontSize, expectedStyle.lineHeight),
+            listOf(actual.color, actual.fontSize, actual.lineHeight),
+        )
     }
 
     @Test
