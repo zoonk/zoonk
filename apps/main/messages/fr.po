@@ -1503,21 +1503,6 @@ msgid "Manage in Google Play"
 msgstr "Gérer dans Google Play"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "L-MTMb"
-msgid "You subscribed in the App Store."
-msgstr "Tu as souscrit ton abonnement dans l’App Store."
-
-#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "9SMM0b"
-msgid "You subscribed in Google Play."
-msgstr "Tu as souscrit ton abonnement sur Google Play."
-
-#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "i6lXik"
-msgid "Zoonk added Plus to your account. To change it, write to us."
-msgstr "Zoonk a ajouté Plus à ton compte. Pour modifier cet abonnement, écris-nous."
-
-#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "eHa_2N"
 msgid "Through the App Store"
 msgstr ""
@@ -1526,6 +1511,11 @@ msgstr ""
 msgctxt "4n7IeB"
 msgid "Through Google Play"
 msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "i6lXik"
+msgid "Zoonk added Plus to your account. To change it, write to us."
+msgstr "Zoonk a ajouté Plus à ton compte. Pour modifier cet abonnement, écris-nous."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "2OvvJx"
