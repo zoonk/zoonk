@@ -374,7 +374,7 @@ private fun ChapterPractice(
 }
 
 @Composable
-private fun PracticeChapterRow(
+internal fun PracticeChapterRow(
     practice: PracticeState,
     onPractice: () -> Unit,
 ) {
@@ -397,7 +397,7 @@ private fun PracticeChapterRow(
         } else {
             Text(
                 it,
-                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp),
+                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )

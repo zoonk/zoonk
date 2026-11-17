@@ -19,8 +19,9 @@ import com.zoonk.android.R
 fun InlineFailure(
     text: String,
     modifier: Modifier = Modifier,
+    politeness: LiveRegionMode = LiveRegionMode.Polite,
 ) {
-    Row(modifier.semantics { liveRegion = LiveRegionMode.Polite }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier.semantics { liveRegion = politeness }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Icon(
             painterResource(R.drawable.ic_error),
             contentDescription = null,

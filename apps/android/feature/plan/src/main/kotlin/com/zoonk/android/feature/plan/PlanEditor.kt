@@ -484,7 +484,7 @@ private fun LatestChange(
 @Composable
 internal fun SaveFailedText(modifier: Modifier = Modifier) {
     com.zoonk.android.ui.components
-        .InlineFailure(stringResource(R.string.plan_save_failed), modifier)
+        .InlineFailure(stringResource(R.string.plan_save_failed), modifier, politeness = LiveRegionMode.Assertive)
 }
 
 @Composable
