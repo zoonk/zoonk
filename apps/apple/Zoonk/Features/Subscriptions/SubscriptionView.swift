@@ -595,11 +595,14 @@ struct PlusStatusView: View {
           case .apple:
             Text(
               "Through the App Store", tableName: "Subscriptions",
-              comment: "On the subscription page, labels Plus bought in the App Store, where it's managed.")
+              comment:
+                "On the subscription page, labels Plus bought in the App Store, where it's managed."
+            )
           case .google:
             Text(
               "Through Google Play", tableName: "Subscriptions",
-              comment: "On the subscription page, labels Plus bought in Google Play, where it's managed.")
+              comment:
+                "On the subscription page, labels Plus bought in Google Play, where it's managed.")
           case nil:
             Text(
               "Zoonk added Plus to your account. To change it, write to us.",
@@ -688,7 +691,9 @@ private struct WebPlusSection: View {
       SectionTitle(
         Text(
           "Through the website", tableName: "Subscriptions",
-          comment: "On the subscription page, labels Plus bought on the Zoonk website, where it's managed."))
+          comment:
+            "On the subscription page, labels Plus bought on the Zoonk website, where it's managed."
+        ))
     }
   }
 }

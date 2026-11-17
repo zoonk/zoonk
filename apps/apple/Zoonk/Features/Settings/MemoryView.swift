@@ -30,7 +30,9 @@ struct MemoryView: View {
               ? Text(
                 "Personal examples, plans that fit your week and calls with \(learner.buddyDisplayName) that remember your news",
                 tableName: "Settings",
-                comment: "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.")
+                comment:
+                  "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it."
+              )
               : Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",
                 tableName: "Settings", comment: "What happens while memory is off"))

@@ -774,12 +774,16 @@ func planOutsideReason(_ reason: String?) -> Text {
   case "skipped":
     Text(
       "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",
-      comment: "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.")
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out."
+    )
   case "missing":
     Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
   default:
     Text(
       "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
-      comment: "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.")
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it."
+    )
   }
 }
