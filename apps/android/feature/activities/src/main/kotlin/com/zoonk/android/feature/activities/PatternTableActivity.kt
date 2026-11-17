@@ -128,7 +128,11 @@ private fun PatternTableActivity(props: ActivityProps) {
                                                     if (props.isChecked) 1f else 0f,
                                                 ).then(if (props.isChecked) Modifier else Modifier.clearAndSetSemantics {}),
                                         ) {
-                                            CheckedBlank(blankStem(fields.choices, row.answer), filled["$index"], row.answer)
+                                            CheckedBlank(
+                                                blankStem(fields.choices, row.answer),
+                                                filled["$index"],
+                                                if (props.isChecked) expected["$index"] else patternEnding(fields.choices, row.answer),
+                                            )
                                         }
                                     }
                                 }
