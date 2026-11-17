@@ -6,10 +6,6 @@ struct EnergyStatsView: View {
   var body: some View {
     StatsContent(state: progress.energy.state, retry: { await progress.energy.refresh() }) {
       energy in
-      StatsLine(
-        text: Text(
-          "Energy goes up with every lesson and drops a little on days off.",
-          tableName: "Progress", comment: "Under the Energy page's title: how Energy moves"))
       EnergyTiles(energy: energy)
       EnergyCalendar(energy: energy)
     }

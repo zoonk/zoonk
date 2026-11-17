@@ -137,7 +137,11 @@ struct BeltRack: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack(alignment: .top, spacing: 0) {
         ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-          VStack(spacing: 6) {
+          VStack(
+            alignment: index == 0
+              ? .leading : index == ProgressBelt.allCases.count - 1 ? .trailing : .center,
+            spacing: 6
+          ) {
             RackBelt(belt: belt, isTied: index <= currentIndex)
               .frame(
                 width: sizeClass == .regular ? 52 : 32, height: sizeClass == .regular ? 38 : 26
@@ -160,7 +164,11 @@ struct BeltRack: View {
                 .lineLimit(1)
             }
           }
-          .frame(maxWidth: .infinity)
+          .frame(
+            maxWidth: .infinity,
+            alignment: index == 0
+              ? .leading : index == ProgressBelt.allCases.count - 1 ? .trailing : .center
+          )
           .accessibilityElement(children: .ignore)
           .accessibilityLabel(Text(belt.localizedTitle))
           .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
@@ -195,11 +203,16 @@ private struct RackBelt: View {
 
   var body: some View {
     Canvas { context, size in
-      let scale = min(size.width * 0.8 / 44, size.height * 0.8 / 30)
-      let origin = CGPoint(x: (size.width - 44 * scale) / 2, y: (size.height - 30 * scale) / 2)
+      let drawing = isTied ? Self.tied : Self.folded
+      let bounds = drawing.boundingRect.insetBy(
+        dx: outline == nil ? 0 : -1.5, dy: outline == nil ? 0 : -1.5)
+      let scale = min(size.width / bounds.width, size.height / bounds.height)
+      let origin = CGPoint(
+        x: (size.width - bounds.width * scale) / 2 - bounds.minX * scale,
+        y: (size.height - bounds.height * scale) / 2 - bounds.minY * scale)
       let transform = CGAffineTransform(translationX: origin.x, y: origin.y).scaledBy(
         x: scale, y: scale)
-      let shape = (isTied ? Self.tied : Self.folded).applying(transform)
+      let shape = drawing.applying(transform)
 
       if let outline {
         context.stroke(
