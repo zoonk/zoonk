@@ -17,6 +17,8 @@ import kotlin.math.min
 import kotlin.math.pow
 import java.math.BigDecimal as JvmDecimal
 
+fun currencyUnit(unit: String?): String? = unit?.takeIf { moneyUnit(it) != null }
+
 /**
  * A value with the unit content gives it, as main's `useFormatNumber` writes it: money in the
  * currency's own format ("R$ 2.000", "$3.50"), any other unit after the number ("12%", "3 km").
@@ -136,8 +138,6 @@ internal data class MoneyUnit(
     val currency: String,
     val rest: String,
 )
-
-fun isMoneyUnit(unit: String?): Boolean = moneyUnit(unit) != null
 
 /** "R$" is money, and so is "R$ per month", whose words stay after the amount. */
 internal fun moneyUnit(unit: String?): MoneyUnit? {
