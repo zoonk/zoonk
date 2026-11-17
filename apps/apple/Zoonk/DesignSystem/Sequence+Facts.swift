@@ -1,9 +1,8 @@
 import SwiftUI
 
 extension Sequence<String> {
-  /// Joins facts with “ · ”. A no-break space holds the dot to the fact before it, so a wrapped line
-  /// never starts with it or leaves it alone, and a fact that leads with its number ("23 short
-  /// lessons") keeps to one line, so the number never parts from its noun.
+  /// Plain text for VoiceOver, editor values and names interpolated into sentences.
+  /// Visible metadata uses `FactSegments` so wrapping happens between facts.
   func joinedFacts() -> String {
     map(\.asFact).joined(separator: "\u{00A0}· ")
   }
@@ -18,9 +17,16 @@ extension String {
 }
 
 struct FactSegments: View {
-  let facts: [String]
+  struct Fact {
+    let text: String
+    var compact: String?
+    var color: Color?
+  }
 
-  init(_ facts: [String]) { self.facts = facts }
+  let facts: [Fact]
+
+  init(_ facts: [String]) { self.facts = facts.map { Fact(text: $0) } }
+  init(facts: [Fact]) { self.facts = facts }
 
   var body: some View {
     FlowLayout(spacing: 5, alignment: .firstTextBaseline, rowSpacing: 4) {
@@ -34,11 +40,17 @@ struct FactSegments: View {
           .layoutValue(key: FlowLayout.Separator.self, value: true)
           .accessibilityHidden(true)
         }
-        Text(verbatim: fact.replacing(" ", with: "\u{00A0}"))
-          .fixedSize(horizontal: false, vertical: true)
+        ViewThatFits(in: .horizontal) {
+          text(fact.text, color: fact.color).fixedSize()
+          if let compact = fact.compact { text(compact, color: fact.color).fixedSize() }
+        }
       }
     }
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(Text(verbatim: facts.joinedFacts()))
+    .accessibilityLabel(Text(verbatim: facts.map(\.text).joinedFacts()))
+  }
+
+  @ViewBuilder private func text(_ words: String, color: Color?) -> some View {
+    if let color { Text(verbatim: words).foregroundStyle(color) } else { Text(verbatim: words) }
   }
 }

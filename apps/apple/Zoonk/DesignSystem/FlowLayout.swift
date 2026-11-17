@@ -45,6 +45,24 @@ struct FlowLayout: Layout {
     }
   }
 
+  func explicitAlignment(
+    of guide: VerticalAlignment, in bounds: CGRect, proposal: ProposedViewSize,
+    subviews: Subviews, cache: inout ()
+  ) -> CGFloat? {
+    guard guide == .firstTextBaseline || guide == .lastTextBaseline else { return nil }
+    var baselines: [CGFloat] = []
+    var y = bounds.minY
+    for row in arrange(subviews, width: bounds.width) {
+      for item in row.items where !subviews[item.index][Separator.self] {
+        if let baseline = subviews[item.index].dimensions(in: item.proposal)[explicit: guide] {
+          baselines.append(y + row.line - item.line + baseline)
+        }
+      }
+      y += row.height + (rowSpacing ?? spacing)
+    }
+    return guide == .firstTextBaseline ? baselines.min() : baselines.max()
+  }
+
   private struct Item {
     let index: Int
     /// What the item was measured with, and so is placed with: proposing exactly its measured size

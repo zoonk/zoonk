@@ -145,11 +145,15 @@ struct MindMapRow: View {
         .typeStyle(.rowTitle)
         .foregroundStyle(Color(.foreground))
 
-      ForEach(lines, id: \.self) { line in
-        Text(line)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
+      Group {
+        switch place {
+        case .library, .notMade: FactSegments(lines)
+        case .chapter, .finish:
+          ForEach(lines, id: \.self) { Text($0) }
+        }
       }
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -205,7 +209,7 @@ struct MindMapRow: View {
           localized: "Chapter \(map.position)", table: "MindMaps", comment: "A chapter's number")
         : nil
 
-      return [[number, words].compactMap(\.self).joinedFacts()]
+      return [number, words].compactMap(\.self)
     }
   }
 

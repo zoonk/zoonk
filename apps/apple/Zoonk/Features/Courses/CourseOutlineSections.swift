@@ -194,9 +194,11 @@ private struct CourseLevelOutline: View {
           }
 
           if !isExpanded.wrappedValue {
-            FactSegments(band.chapters.prefix(Self.named).map(\.title))
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
+            Text(
+              verbatim: band.chapters.prefix(Self.named).map(\.title).formatted(.list(type: .and))
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
           }
         }
         .accessibilityElement(children: .combine)
@@ -364,9 +366,12 @@ private struct CourseAreaOutline: View {
               }
 
               if !isExpanded.wrappedValue {
-                FactSegments(areaChapters.prefix(Self.named).map(\.title))
-                  .typeStyle(.note)
-                  .foregroundStyle(.mutedForeground)
+                Text(
+                  verbatim: areaChapters.prefix(Self.named).map(\.title).formatted(
+                    .list(type: .and))
+                )
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
               }
             }
             .accessibilityElement(children: .combine)
@@ -436,7 +441,7 @@ private struct OutlineChapterRow: View {
         }
 
         if !chapter.lessons.isEmpty {
-          FactSegments(chapter.lessons.map(\.title))
+          Text(verbatim: chapter.lessons.map(\.title).formatted(.list(type: .and)))
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }

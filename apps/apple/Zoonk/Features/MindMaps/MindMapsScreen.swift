@@ -439,7 +439,7 @@ private struct LessonGroupRow: View {
             .typeStyle(.rowTitle)
             .foregroundStyle(Color(.foreground))
 
-          Text(verbatim: facts)
+          FactSegments(facts)
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
         }
@@ -452,7 +452,7 @@ private struct LessonGroupRow: View {
   }
 
   /// "Chapter 5 · 6 lesson maps".
-  private var facts: String {
+  private var facts: [String] {
     [
       String(
         localized: "Chapter \(item.chapter.position)", table: "MindMaps",
@@ -460,7 +460,7 @@ private struct LessonGroupRow: View {
       String(
         localized: "\(item.group.count) lesson maps", table: "MindMaps",
         comment: "How many of a chapter's lessons have a map"),
-    ].joinedFacts()
+    ]
   }
 }
 

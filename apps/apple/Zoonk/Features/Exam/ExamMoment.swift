@@ -37,8 +37,8 @@ struct ExamMomentSection<Action: View>: View {
         Label {
           VStack(alignment: .leading, spacing: 4) {
             Text(words.title).typeStyle(.body.weight(.semibold))
-            if let day = moment.dayLine {
-              Text(verbatim: day)
+            if let day = moment.dayFacts {
+              FactSegments(facts: day)
                 .typeStyle(.data)
             }
             ExamMomentBody(words: words)
@@ -109,15 +109,18 @@ struct ExamChecklistRows: View {
 
 extension ExamMoment {
   /// The exam's date and start time, until it's over.
-  var dayLine: String? {
+  var dayFacts: [FactSegments.Fact]? {
     guard stage != .afterExam, let day, studyDate(day.date) != nil else {
       return nil
     }
 
-    return [
-      PlanDate.format(day.date, .sentence, today: PlanDate.today(), weekday: true),
-      day.startTime.flatMap(examTimeOfDay),
-    ].compactMap(\.self).joinedFacts()
+    var facts = [
+      FactSegments.Fact(
+        text: PlanDate.format(day.date, .sentence, today: PlanDate.today(), weekday: true),
+        compact: PlanDate.format(day.date, .sentence, today: PlanDate.today(), weekday: false))
+    ]
+    if let time = day.startTime.flatMap(examTimeOfDay) { facts.append(.init(text: time)) }
+    return facts
   }
 
   /// Under the checklist, the tools the exam allows.

@@ -125,7 +125,7 @@ struct ChallengeScreen: View {
       }
 
       if !won, let meta = meta(challenge) {
-        Text(meta)
+        FactSegments(facts: meta)
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
@@ -395,14 +395,13 @@ struct ChallengeScreen: View {
   }
 
   /// A mock always says when it is; a weekly challenge only once it has a start time, as on main.
-  private func when(_ challenge: Components.Schemas.Challenge) -> String? {
+  private func when(_ challenge: Components.Schemas.Challenge) -> [String]? {
     guard let date = challenge.date, challenge.mock || challenge.startTime != nil else {
       return nil
     }
 
     return [dayLabel(date, today: challenge.today), challenge.startTime.flatMap(clockTime)]
       .compactMap(\.self)
-      .joinedFacts()
   }
 
   private func clockTime(_ text: String) -> String? {
@@ -504,7 +503,7 @@ struct ChallengeScreen: View {
   }
 
   /// Main's `TaskMeta`: the facts in mono, then the Brain Power a win brings in its color.
-  private func meta(_ challenge: Components.Schemas.Challenge) -> AttributedString? {
+  private func meta(_ challenge: Components.Schemas.Challenge) -> [FactSegments.Fact]? {
     let facts = facts(challenge)
     let reward =
       challenge.reward.brainPower > 0 && !challenge.mock
@@ -517,14 +516,8 @@ struct ChallengeScreen: View {
       return nil
     }
 
-    var line = AttributedString(facts.joinedFacts())
-
-    if let reward {
-      var earned = AttributedString(reward)
-      earned.foregroundColor = .brainText
-      line += facts.isEmpty ? earned : AttributedString("\u{00A0}· ") + earned
-    }
-
+    var line = facts.map { FactSegments.Fact(text: $0) }
+    if let reward { line.append(.init(text: reward, color: Color(.brainText))) }
     return line
   }
 
@@ -533,7 +526,7 @@ struct ChallengeScreen: View {
     var facts: [String] = []
 
     if let when = when(challenge) {
-      facts.append(when)
+      facts.append(contentsOf: when)
     }
 
     if isTrickster(challenge) {

@@ -296,7 +296,7 @@ struct QuestionBlockView: View {
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
-        run.detail.isNetScored(question) ? run.state.netTally.line : nil,
+        run.detail.isNetScored(question) ? run.state.netTally.line.joinedFacts() : nil,
       ].compactMap(\.self).joined(separator: "\n")
     default:
       return nil
@@ -502,7 +502,7 @@ struct QuestionBlockView: View {
 }
 
 extension NetTally {
-  fileprivate var line: String {
+  fileprivate var line: [String] {
     [
       right == 0
         ? String(
@@ -522,7 +522,6 @@ extension NetTally {
         localized: "net \(net)", table: "Practice",
         comment: "A net-scored block's score: right answers minus wrong ones."),
     ]
-    .joinedFacts()
   }
 }
 
@@ -531,7 +530,7 @@ private struct NetScoreLine: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(tally.line)
+      FactSegments(tally.line)
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
 
