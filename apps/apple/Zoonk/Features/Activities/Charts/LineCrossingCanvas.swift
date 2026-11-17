@@ -156,14 +156,17 @@ struct LineCrossingCanvas: View {
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
+    .chartPlotStyle { plot in plot.clipped() }
     .chartXAxisLabel(fields.xLabel, alignment: .trailing)
     .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
     .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
+      ChartsAxis.bottom(ticks: ChartsAxis.ticks(0...domain.x)) {
+        ActivityNumberFormat.format($0)
       }
     }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
+      ChartsAxis.values(ticks: ChartsAxis.ticks(0...domain.y)) {
+        ActivityNumberFormat.format($0)
       }
     }
     .chartsMarksHidden()
