@@ -406,7 +406,7 @@ private fun UnitMistakes(mistakes: List<LanguageUnitMistakesInner>) {
     Column {
         mistakes.forEachIndexed { index, mistake ->
             if (index > 0) HorizontalDivider()
-            Column(Modifier.padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     skillLabel(mistake.skill),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

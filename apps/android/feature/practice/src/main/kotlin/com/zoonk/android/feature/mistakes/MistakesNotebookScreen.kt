@@ -591,7 +591,7 @@ private fun Entries(
                         ?.set
                         ?.id == setId,
                 actions = actions,
-                modifier = Modifier.padding(top = if (index == 0) 0.dp else 16.dp, bottom = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
             )
         }
     }

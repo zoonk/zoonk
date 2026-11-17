@@ -229,49 +229,51 @@ private fun ChallengeConversation(
 
     LaunchedEffect(moves.size) { if (moves.isNotEmpty()) newest.bringIntoView() }
     // Main's conversation log reads out what a decision brings, in the order it shows.
-    if (part.showsScreen) {
-        ActivityAnnouncement(
-            if (latest == null) {
-                ""
-            } else {
-                val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
-                (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
-            },
-        )
-    }
+    Box {
+        if (part.showsScreen) {
+            ActivityAnnouncement(
+                if (latest == null) {
+                    ""
+                } else {
+                    val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
+                    (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
+                },
+            )
+        }
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
 
-        Box(Modifier.bringIntoViewRequester(newest)) {
-            if (progress is ChallengeProgress.Deciding) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (part.showsScreen) {
-                        RichText(
-                            text = names.fill(progress.walk.node.prompt),
-                            modifier = Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        )
+            Box(Modifier.bringIntoViewRequester(newest)) {
+                if (progress is ChallengeProgress.Deciding) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        if (part.showsScreen) {
+                            RichText(
+                                text = names.fill(progress.walk.node.prompt),
+                                modifier = Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                        }
+                        if (part.showsTurn) {
+                            ChoiceOptions(
+                                options =
+                                    progress.walk.node.choices
+                                        .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
+                                selectedId = progress.pendingChoiceId,
+                                isChecked = false,
+                                isGuess = false,
+                                locked = state.phase != LessonPhase.Playing,
+                                onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
+                                label = stringResource(R.string.player_challenge_your_options),
+                            )
+                        }
                     }
-                    if (part.showsTurn) {
-                        ChoiceOptions(
-                            options =
-                                progress.walk.node.choices
-                                    .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
-                            selectedId = progress.pendingChoiceId,
-                            isChecked = false,
-                            isGuess = false,
-                            locked = state.phase != LessonPhase.Playing,
-                            onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
-                            label = stringResource(R.string.player_challenge_your_options),
-                        )
-                    }
-                }
-            } else if (progress is ChallengeProgress.Ended && showsOutcome) {
-                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
-                    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ChallengeLabel(stringResource(R.string.player_challenge_what_happened), heading = true)
-                        RichText(text = names.fill(progress.walk.ending.outcome), style = MaterialTheme.typography.bodyLarge)
+                } else if (progress is ChallengeProgress.Ended && showsOutcome) {
+                    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
+                        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            ChallengeLabel(stringResource(R.string.player_challenge_what_happened), heading = true)
+                            RichText(text = names.fill(progress.walk.ending.outcome), style = MaterialTheme.typography.bodyLarge)
+                        }
                     }
                 }
             }

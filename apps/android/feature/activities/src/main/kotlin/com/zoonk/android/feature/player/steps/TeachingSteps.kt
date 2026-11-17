@@ -310,7 +310,7 @@ private fun HookScene(
         val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
         val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
         val rows =
-            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to 0)
+            listOf(chipParts to partGap, pictureParts to sceneGap, questionParts to partGap, optionParts to 0)
                 .filter { (parts, _) -> parts.any { it.height > 0 } }
         val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
 
