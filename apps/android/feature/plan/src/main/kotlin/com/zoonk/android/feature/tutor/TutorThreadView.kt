@@ -68,6 +68,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LearnerBubble
 import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
@@ -372,12 +373,8 @@ private fun TurnLayout(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-            Surface(
-                modifier = Modifier.widthIn(max = BUBBLE_MAX_WIDTH),
-                shape = BUBBLE_SHAPE,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ) {
-                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.zoonkType.message)
+            LearnerBubble {
+                Text(question, style = MaterialTheme.zoonkType.message)
             }
         }
 
@@ -675,11 +672,7 @@ private fun ConversationLoading(modifier: Modifier = Modifier) {
 private const val SENDING = "sending"
 private val AVATAR_SIZE = 32.dp
 
-/** Main's `LearnerBubble`: its corner nearest the learner's side tucked in. */
-private val BUBBLE_SHAPE =
-    RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
 private val EMPTY_BUDDY_HEIGHT = 96.dp
-private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp
 
 /** A card that saves a setting: what its save shows, and its tap; other cards save nothing. */
