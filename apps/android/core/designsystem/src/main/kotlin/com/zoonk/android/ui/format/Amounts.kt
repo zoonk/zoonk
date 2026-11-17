@@ -137,6 +137,8 @@ internal data class MoneyUnit(
     val rest: String,
 )
 
+fun isMoneyUnit(unit: String?): Boolean = moneyUnit(unit) != null
+
 /** "R$" is money, and so is "R$ per month", whose words stay after the amount. */
 internal fun moneyUnit(unit: String?): MoneyUnit? {
     currencyFor(unit)?.let { return MoneyUnit(it, "") }

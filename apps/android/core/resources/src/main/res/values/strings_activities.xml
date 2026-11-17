@@ -13,6 +13,7 @@
     <!-- The guess scale once checked; the last value is the real one. -->
     <string name="activities_guess_scale_revealed">A scale from %1$s to %2$s. The real value is %3$s.</string>
     <string name="activities_guess_real_value">Real value: %1$s</string>
+    <string name="activities_guess_unit">in %1$s</string>
     <string name="activities_guess_drag">Drag to guess</string>
     <string name="activities_guess_yours">Your guess: %1$s</string>
     <!-- The guess slider's name, for TalkBack. -->

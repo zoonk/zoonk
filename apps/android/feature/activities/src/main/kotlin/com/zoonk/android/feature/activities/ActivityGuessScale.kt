@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.isMoneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.abs
@@ -55,7 +56,7 @@ fun ActivityGuessReveal(
     explains: @Composable ColumnScope.() -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatGuessAmount(value, locale, unit) }
     val revealed = actual.takeIf { props.isChecked }
     val description =
         if (revealed == null) {
@@ -85,7 +86,7 @@ fun ActivityGuessScale(
     onGuessChange: (Double) -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatGuessAmount(value, locale, unit) }
     val share = guess?.let(scale::shareOf) ?: HALF
     val actualShare = actual?.let(scale::shareOf)
     val highlight = MaterialTheme.zoonk.vizHighlight
@@ -93,6 +94,13 @@ fun ActivityGuessScale(
     val guessValue = guess?.let(format) ?: stringResource(R.string.activities_guess_none)
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (!unit.isNullOrBlank() && !isMoneyUnit(unit)) {
+            Text(
+                stringResource(R.string.activities_guess_unit, unit),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
         if (actual != null && actualShare != null) {
             AtShare(actualShare) {
                 ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
@@ -162,7 +170,7 @@ fun ActivityGuessComparison(
     unit: String?,
 ) {
     val locale = currentLocale()
-    if (formatAmount(actual, locale, unit) == formatAmount(guess, locale, unit)) return
+    if (formatGuessAmount(actual, locale, unit) == formatGuessAmount(guess, locale, unit)) return
     val text =
         when (val comparison = compareGuess(actual, guess, isCorrect)) {
             GuessComparison.Close -> {
@@ -172,7 +180,7 @@ fun ActivityGuessComparison(
             is GuessComparison.Off -> {
                 stringResource(
                     R.string.activities_guess_off_by,
-                    formatAmount(abs(comparison.difference), locale, unit),
+                    formatGuessAmount(abs(comparison.difference), locale, unit),
                 )
             }
 
@@ -234,7 +242,7 @@ private fun ScaleTicks(
         content = {
             ticks.forEach {
                 Text(
-                    formatAmount(it, locale, unit, compact = true),
+                    formatGuessAmount(it, locale, unit, compact = true),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall.withTabularFigures(),
                 )
