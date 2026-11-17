@@ -4,8 +4,6 @@
   "missions_after_lessons": "8a546d2c9fa7679afc15e0f3038bc1a583e4da26db9c8c43e0d566ea38436a72",
   "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
   "missions_brain_power": "86997b83168b52a5096e6188ab9f26ec032565367c9795f849707ce2276e768b",
-  "missions_brain_power_about": "995734769b9419b7bf9b2be9f96e4befcf6879ea668b6c5ecd7c7aa0bd28c4ba",
-  "missions_brain_power_total": "c6e21d9072b23d90952e9263e4a4f1832e32b29727f844db02567150508ebf9a",
   "missions_call": "8830973c5ed65ba99f6b7f4514d1a55eaeed97ac3ec785a68d128f51947ce07b",
   "missions_challenge": "d48d6dde7a90a66bb42fa264842af8cd4c4d362633275d4059be5a2ff84572ea",
   "missions_done": "e1ee8e2d02b01f206fc1c87976b623d29dcec7f92b8375a3ecb01c1d4e8406ca",
@@ -68,8 +66,6 @@
     <string name="missions_brain_power">Brain Power</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">Punkte für alles, was du lernst. Sie bringen dich zum nächsten Gürtel und lassen deinen Kumpel wachsen.</string>
-    <string name="missions_brain_power_total">Du hast %1$s</string>
     <string name="missions_review">Wiederholen</string>
     <string name="missions_something_new">Eine neue Lektion machen</string>
     <!-- %1$s is a chapter's title. -->

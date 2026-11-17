@@ -77,7 +77,6 @@
   "plan_cadence_final_weeks_effect": "b21ae7b31b69c5fa864c823cd1043d223aa1a81d2ed8ce4a08e48d45ef5430fb",
   "plan_cadence_weekly": "c231275879c99b347940b74b1ac3b4825e6e2df95fc79fe034810465420aba0c",
   "plan_cadence_weekly_effect": "30ef6e67fdb9cc733732635231fed6e5d83aa95c850abd304cc6c759983128e6",
-  "plan_call_not_in_plan": "0e3f89203d71f1ff23d1ced8e20d4bcef2477464b3b5d1886427eac6e41a8c13",
   "plan_cancel": "cabd34e89ddd2d27312bbed403c2c3c296a60d264568707cf9af27ed58f67706",
   "plan_challenge_live_call": "d38265fa77f8c1d05497ab497ce594ac21cc1eba0d0064bedde2f7219ee568a6",
   "plan_challenge_next_session": "acf42c16e8387437b070e32f31d4d16f3c7a6d27fc880e984d4dcfd4fdb9ac04",
@@ -514,7 +513,6 @@
   "plan_tools_title": "62f0a775b5355993fa93a607061e354aad6d0924309af5375b9143f353c61598",
   "plan_tools_without": "604a370f40a049bc1a0e66cc9886fa3b672ba464d9b54cc70627416f7d95a45e",
   "plan_topics_studied": "d48af310ae1a8726448767d73a17e67989002ffa23d2abd7a1b5609062662697",
-  "plan_trickster_not_in_plan": "e5daca43aea0feffe2a12457cf1dee90754e765761d0a41f1c9f880459a33719",
   "plan_try_again": "baa3c7b71a4b469ac86ea64ef2586ed7705e320ff2b0ff9e3488d30095c6a388",
   "plan_tuesdays": "30781e115fd7b863ab193b1574c4573939746d04b2513cc48b2940a67f5a26c6",
   "plan_undo": "cda6f251fd92fe01aeba0cc26f47eb069a94f835678716857307cea32bd61c1c",
@@ -644,10 +642,6 @@
         <item quantity="many">%d leçons non étudiées</item>
         <item quantity="other">%d leçons non étudiées</item>
     </plurals>
-    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
-    <string name="plan_trickster_not_in_plan">Le Farceur n’est pas prévu dans ton plan</string>
-    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
-    <string name="plan_call_not_in_plan">L’appel n’est pas prévu dans ton plan</string>
     <!-- The phase the learner is in, out of the plan's phases. -->
     <string name="plan_roadmap_phase_number">Phase %1$d sur %2$d</string>
     <string name="plan_continues_today">Suite aujourd’hui</string>

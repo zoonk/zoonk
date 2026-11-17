@@ -34,7 +34,6 @@
   "buddy_page_missions_count": "be6acb394ae6e7741c36b89b1dc7552a09d99bc3e0361d22c46c1c29c99badcf",
   "buddy_page_missions_done": "958f08a1c630a50d1360fb941e92fdfd4cef480fb0f0492d1d81bab451308ba3",
   "buddy_page_more": "97ed9e9460c35f1b5d691bd6a51a3ad41071e7a60270c28dc5856217d09b0f59",
-  "buddy_page_not_yet": "562afc1c4315d03d9179b2e8a42ffac032af4842f86efa51a044a0ad123c9125",
   "buddy_page_placeholder": "9d7c4d53a0fc88d844fe8f2728dfffd75e71c4bad809740f4b81e7b8d46a5672",
   "buddy_page_remembers": "d09e1f99e35e8870b6fffedc2514aeabbf111b96249bed6e127002c01b23e6bf",
   "buddy_page_save_failed": "da96c6c1c1a3c2a5618882c626aa1f8552550013539c2b1eec617cb81f6011b8",
@@ -82,7 +81,6 @@
     <string name="buddy_page_energy_starts">첫 레슨을 하면 시작돼요.</string>
     <string name="buddy_page_energy_napping">%1$s(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세요.</string>
     <string name="buddy_page_energy_study">오늘 공부해서 에너지를 유지해 보세요.</string>
-    <string name="buddy_page_not_yet">아직이에요</string>
     <string name="buddy_page_missions">미션</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">

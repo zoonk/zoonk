@@ -20,8 +20,6 @@
     <string name="missions_brain_power">Brain Power</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">Points for what you learn. They raise your belt and grow your buddy.</string>
-    <string name="missions_brain_power_total">You have %1$s</string>
 
     <string name="missions_review">Review</string>
     <string name="missions_something_new">Do a new lesson</string>

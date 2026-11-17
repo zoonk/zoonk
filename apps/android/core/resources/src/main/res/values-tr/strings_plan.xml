@@ -77,7 +77,6 @@
   "plan_cadence_final_weeks_effect": "3922e0771ee0cd5bfd7ff941e7bbeac06d8e85884735c3cc949d1283d7068dd3",
   "plan_cadence_weekly": "061509e2f4899fb9f485a5031c22844ff1fa5df514f66115d0dffb2928fecfbd",
   "plan_cadence_weekly_effect": "acd809c5dcdad1a6f43b8b724e94f91d0b1f2e2a141b26be1b41175b548e61b2",
-  "plan_call_not_in_plan": "c96253c962f81966285269c78bee8848863bf440b17dc981bd2c195ea701c66e",
   "plan_cancel": "a536b26bc303dc48560bdeae1df9b6360c6cc2914ab85b40b57afc2744866b7d",
   "plan_challenge_live_call": "ebb386320c58684873ed554ba9537dca1a1961bc5ee3e825a9f7f5eb6f9a0397",
   "plan_challenge_next_session": "3cbffcbfcf55abd1dd75eb3dd2a6651fd342113ae8d9d62af4936a2e63399d06",
@@ -514,7 +513,6 @@
   "plan_tools_title": "d2bf63f9fd6ba66dae899de4c40ae35a8a66e7cb35a0b49752ee27e1f7f419b3",
   "plan_tools_without": "b7431ff5a4e46a1493469e7727a5b551c6c8f22e5b317243017de124d5a2d7a6",
   "plan_topics_studied": "e1a300fa446e01cda154edd09207bd1c4b5bc82b48bea23d161e46ad4144bf7b",
-  "plan_trickster_not_in_plan": "323e7d53c9101f3036b356a41b04f22cff5a7ca40e8db712a6fd3ecae50603ea",
   "plan_try_again": "50e02d0d3e47d8caa6a659dc55954ac010d31d3325bb5159c45e4891d509fb84",
   "plan_tuesdays": "9a3111d3e87d051c2cd00f248ca46da5915610fc9c46657aac3a3dec3724d56b",
   "plan_undo": "28728aeba8c09e920c42f4047c90175c836be9d323cfdd4d0dd7e295ed0089f9",
@@ -638,10 +636,6 @@
         <item quantity="one">%d ders çalışılmadı</item>
         <item quantity="other">%d ders çalışılmadı</item>
     </plurals>
-    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
-    <string name="plan_trickster_not_in_plan">Hilebaz planında yer almıyor</string>
-    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
-    <string name="plan_call_not_in_plan">Sohbet planında yer almıyor</string>
     <!-- The phase the learner is in, out of the plan's phases. -->
     <string name="plan_roadmap_phase_number">Aşama %1$d / %2$d</string>
     <string name="plan_continues_today">Bugün devam edecek</string>

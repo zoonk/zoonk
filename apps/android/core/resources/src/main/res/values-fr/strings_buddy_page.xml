@@ -34,7 +34,6 @@
   "buddy_page_missions_count": "23497ac4a22e38f3a1b6bf9059d6c8537f291147430e8c5a714eda598c88b8c1",
   "buddy_page_missions_done": "813e3a8aa8d5318288ea6e0faddfae2a756b112b060d936b6997df48085d27c4",
   "buddy_page_more": "d2e2efbe8b325c0e96c19db10f02fd7ac1940a54d670b9f3e5c8c71c0b86ef6a",
-  "buddy_page_not_yet": "1263ae6921dbdff59f8c9dbc5710b953ec5eb49e4bff902393609994baee5d4a",
   "buddy_page_placeholder": "29ac2f7fa059256a1540af53f90099b32d9cb7bbc521cece44f3b71663a308cc",
   "buddy_page_remembers": "7b78494209f08566a61bd1aa290c3c37d3c92599bd991518a555807f3523d52c",
   "buddy_page_save_failed": "0ad54fbc0b82bd698b3439de229e5ae88c9e2307d00a4eb2c99a73e086de2d70",
@@ -82,7 +81,6 @@
     <string name="buddy_page_energy_starts">Ça commence dès ta première leçon.</string>
     <string name="buddy_page_energy_napping">C’est la sieste pour %1$s. Étudie pour sonner le réveil.</string>
     <string name="buddy_page_energy_study">Étudie aujourd’hui pour garder ce niveau d’énergie.</string>
-    <string name="buddy_page_not_yet">Pas encore</string>
     <string name="buddy_page_missions">Missions</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">

@@ -4,8 +4,6 @@
   "missions_after_lessons": "216725e0704cf61e49ae0cb1b8540fe60a3927c258e4fcb78f2ced8cabe252ec",
   "missions_ask_buddy": "7fdd7d5d956f56c8878691677b0a5b6d93bbafc26b59a4c93b8bfba8337ddf7a",
   "missions_brain_power": "004a8dc5df946b0d4c6e1091c4e8a845e801b06a41204b5c3829580c8f5368e8",
-  "missions_brain_power_about": "68bd7b273f3b3bea9ff30db67679fc47d6e7271bbfa6c4a237a8c89bc2f9baf0",
-  "missions_brain_power_total": "1a6bc3ce7bbc88cfecedba01faac0fcea17e083805ead07068b496f7a9a166f6",
   "missions_call": "93dd78fd39fcbd203b93ed97f4d1abb3f3994f49f12f5c2a6de50d62ffdab09b",
   "missions_challenge": "d85836f8048ffd3e5c3e4cff33b292b0ecffe28a5b422c302e936a62b4c5faed",
   "missions_done": "fd57e3a8c15426189e3deb233f06125d2852515180be61635011eb7fd56cb24e",
@@ -68,8 +66,6 @@
     <string name="missions_brain_power">Beyin Gücü</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">Öğrendikçe puan kazanırsın. Bu puanlarla kuşağın yükselir, ders arkadaşın büyür.</string>
-    <string name="missions_brain_power_total">Toplam %1$s var</string>
     <string name="missions_review">Tekrar yap</string>
     <string name="missions_something_new">Yeni bir ders bitir</string>
     <!-- %1$s is a chapter's title. -->

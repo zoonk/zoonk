@@ -26,11 +26,6 @@
   "subscription_billing_period": "bc3a89a3fe251c0b1626350a3459e4be3bab34375abb16e15e5bb4917d886ee2",
   "subscription_cancel": "78aff38aa1afaca033a8697b24d085e1983d78050d3c268dfd8621b4984fbe42",
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
-  "subscription_cancel_at_period_end": "fe4bca69159f6bc358820009c88a036deea08af3fa08681c322265f198292c97",
-  "subscription_cancel_back": "29faa5e1f4c153c98e4d7d8409d71a7b9373789f7629eea9d827b921f74a5f9a",
-  "subscription_cancel_failed": "54a35da35ba4e505cb35ab9c4a1bf9531fb08ff00312d66d8334dc2dc73561fd",
-  "subscription_cancel_title": "caed509f6cc8d72feb8e996950180fbc7f7e5b50d9e0020a95d9855c428c9082",
-  "subscription_cancel_unpaid": "a450e0c05ad6ee5e59ac581bf10d64bd0bda8159b6a211374f46f1ccb4e80932",
   "subscription_contact_support": "113f34d5b3304c0384f27e242338c47e4cfb6b46a91f39b38c6fa7b893cf0f10",
   "subscription_current_plan": "c0c880e21da7133a521ab461808c031bd40a7145d1ff82d7e1c6aca4a02695de",
   "subscription_deletion_app_store": "97094c11da311d0648a76df8cd466fa2a2bd600ffae0ccb7cc3933579087cabd",
@@ -47,9 +42,6 @@
   "subscription_free_plan": "d95676a9d48ded424ed5bd97e7e1bd6523578256adb3a8262a35b6045367ab99",
   "subscription_free_summary": "2b8b64ebff1e4c36f9dfe3bb5562fde00f47adf67c7678cba2f6eb747f066afa",
   "subscription_hide_answer": "6dc13c62d64c74f2654a96a7c0b8dbef17a9ebaf031b422a3d06ec62df0a92b6",
-  "subscription_keep_failed": "534095a4387cace2ec7822bd4985aeabaf0621900b3e2ad5ffe539a152256153",
-  "subscription_keep_plus": "b4d93b75a06450667ae7242f237994e9a9766022d98f481fd4a643e0f070134e",
-  "subscription_keep_plus_description": "0948f9db2505d8f6ee77690d711681b748405e08d5fb8f2aa566568ccf92b1ea",
   "subscription_manage_apple": "1da7f3e5563ead5d95039546cddaff3ce2af287bff0f65d3543be9586d47cfef",
   "subscription_manage_google": "203f57bf90846fb2ab671556f0c1952e90d3d302de603b542968c5271f99df70",
   "subscription_managed_apple": "b80bdee2252167b56e39c983bfe9f76292e902710e2e549ce0ebd2f9674dec12",
@@ -84,7 +76,6 @@
   "subscription_through_google": "bc513355a984a6f553def61b55c24866b8535fbfb4075bc15b840ed82bb4239c",
   "subscription_through_website": "6ea8941e22d93a446ff6a87dece387cfdc3e9fa0d985715e039b7bb7e607179b",
   "subscription_unavailable": "8c999a3ba8217eb9c0c8777fe459b081cdb0d52e081c079c770257ac0158bb45",
-  "subscription_website": "2fe30f9dacda06d4f4f9394557fd9134d4f7e27600a23341d398a5cb9a1029cd",
   "subscription_yearly": "d3890f92a1536f9e7de590075a988ef1c9130acc594f1d7bd85cf1e58d9a33f2",
   "subscription_yearly_per_month": "ea75f3890722c31b3c6e922d55e17f8e59db256ca2142b68cfbae75b4874e5a3"
 }
@@ -106,20 +97,9 @@
     <string name="subscription_contact_support">問い合わせる</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Plusの解約</string>
-    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
-    <string name="subscription_cancel_failed">Plusを解約できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。</string>
-    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
-    <string name="subscription_cancel_title">Plusを解約しますか？</string>
-    <string name="subscription_cancel_at_period_end">お支払い済みの期間が終わるまで、引き続きPlusを利用できます。</string>
-    <string name="subscription_website">ウェブサイトで購入</string>
     <string name="subscription_renewal_failed">前回の更新料金を決済できませんでした。</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">登録したウェブサイトでお支払い方法を更新してください。</string>
-    <string name="subscription_cancel_unpaid">Plusはすぐに終了し、今後料金は請求されません。</string>
-    <string name="subscription_cancel_back">戻る</string>
-    <string name="subscription_keep_plus">Plusを続ける</string>
-    <string name="subscription_keep_plus_description">Plusを継続すると、これまでどおり更新されます。</string>
-    <string name="subscription_keep_failed">Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。</string>
     <string name="subscription_deletion_notice">アカウントを削除すると、Plusもすぐに終了します。</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">App Storeで登録したPlusは、App Storeで解約するまで請求が続きます。</string>

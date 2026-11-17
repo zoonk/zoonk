@@ -34,7 +34,6 @@
   "buddy_page_missions_count": "6c101c5c3c3ca9d46f24817d1e9b4b106e4d955037196da9bbf09041d44024d8",
   "buddy_page_missions_done": "0253950800870a0fe55feb4e0caa872eef2a516d5f5c1e2414e621fbb866dd51",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
-  "buddy_page_not_yet": "0120f0123b9c46090939fd5b4dd507668bd753155eedb13f2ee91893cdb1da41",
   "buddy_page_placeholder": "01f1dd536ef0424dca1d0c0ade7c85d3c1a83e80a74e8ece4f7f40ed726426a9",
   "buddy_page_remembers": "e2fc572bb233ad191a4a725dbfa3083846c1ba7fe561ae07c97ef87a3fb6cecb",
   "buddy_page_save_failed": "53ad0f143bab00d950a2aeabd46b9e8629922a75ef5109dba6452bcefddb218a",
@@ -82,7 +81,6 @@
     <string name="buddy_page_energy_starts">İlk dersinle başlar.</string>
     <string name="buddy_page_energy_napping">%1$s şekerleme yapıyor. Uyandırmak için ders çalış.</string>
     <string name="buddy_page_energy_study">Enerjisini korumak için bugün ders çalış.</string>
-    <string name="buddy_page_not_yet">Henüz değil</string>
     <string name="buddy_page_missions">Görevler</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">

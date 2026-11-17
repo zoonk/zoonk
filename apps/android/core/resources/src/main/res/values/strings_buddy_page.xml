@@ -27,7 +27,6 @@
     <string name="buddy_page_energy_starts">It starts with your first lesson.</string>
     <string name="buddy_page_energy_napping">%1$s is napping. Study to wake it up.</string>
     <string name="buddy_page_energy_study">Study today to keep it up.</string>
-    <string name="buddy_page_not_yet">Not yet</string>
     <string name="buddy_page_missions">Missions</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">

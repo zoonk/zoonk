@@ -16,20 +16,9 @@
     <string name="subscription_contact_support">Get help</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Cancel Plus</string>
-    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
-    <string name="subscription_cancel_failed">We couldn\'t cancel Plus. Try again or email hello@zoonk.com.</string>
-    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
-    <string name="subscription_cancel_title">Cancel Plus?</string>
-    <string name="subscription_cancel_at_period_end">You keep Plus until the end of the period you already paid for.</string>
-    <string name="subscription_website">Bought on the website</string>
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Update your payment on the website, where you subscribed.</string>
-    <string name="subscription_cancel_unpaid">Plus ends right away, and you won\'t be charged again.</string>
-    <string name="subscription_cancel_back">Go back</string>
-    <string name="subscription_keep_plus">Keep Plus</string>
-    <string name="subscription_keep_plus_description">Keep Plus, and it renews as before.</string>
-    <string name="subscription_keep_failed">We couldn\'t keep Plus. Try again or email hello@zoonk.com.</string>
     <string name="subscription_deletion_notice">Deleting your account ends Plus right away.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">Plus from the App Store keeps charging until you cancel it there.</string>

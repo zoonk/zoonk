@@ -26,11 +26,6 @@
   "subscription_billing_period": "e922481b89bfdc4ee50eefce439c78f2825fb121396726b4b16fd3acb35d4b3a",
   "subscription_cancel": "1b16da962a35a7147682af435d8f31438fdfd4a0e103d95a1110cfe2f81b92ae",
   "subscription_cancel_anytime": "01286831343c40949bbf7a456c5f87613dc7d964751f59b9dfec6c177a87dd59",
-  "subscription_cancel_at_period_end": "af39e6a650a736bc792296e09bde5ef019c0271c6e063c0436885d8947531c93",
-  "subscription_cancel_back": "fd327cec635b7fe4465f582b03d996f088f99416395e6fc4f74d78fe98bf85e2",
-  "subscription_cancel_failed": "588031c9df267b47495834bbbfe97c03f4c48037fd1d9dad1bdcf874c8f32c4b",
-  "subscription_cancel_title": "4c3f641394553f7213fb3baba6c1e9c3df22f78145d7a347ff21fc7177a6e609",
-  "subscription_cancel_unpaid": "c81b58831e2c7b4b93559692e09f939240b6d96e9f847b00d0a704d2c38950a0",
   "subscription_contact_support": "8064f05f931c772f3742264a14010577184faa0e6d2b2463b73ef442933f4e8d",
   "subscription_current_plan": "88443b10dadd6a449d5632a55d43abb90aed882f672aa0c173fbab9ec993bea4",
   "subscription_deletion_app_store": "0dd35d74d41343e97c88fb43d95a90bf5f4b3f067c8e0531dc092f23a9931500",
@@ -47,9 +42,6 @@
   "subscription_free_plan": "fc1c5f19add4fcf1f572383da20da9c843584fecec225cc1f017b2692ad28669",
   "subscription_free_summary": "626eabfbc625d0e1249bda58b927f6f69ce0dfafd390fc791dfcab79cc763931",
   "subscription_hide_answer": "43b3a8f01149ff422fe93a58d9907f7bdd16549100b84f9d1622feaabcf655f0",
-  "subscription_keep_failed": "767f74a89da525fdcfbb295d4d4fb0c6a00fb15f345d8e4e1ea967a6020fd8e0",
-  "subscription_keep_plus": "efbbcff99e28e963c54c5912f63a4f16de48988cd166e1c8d78f104b0efbba27",
-  "subscription_keep_plus_description": "d9a3a968c34031e72598c58e1998118917cb89a0d16fcd64fe74c275edc91d9a",
   "subscription_manage_apple": "2089d9b49177a1827441460dcc584e92f83c0ebc1c2983d16c1e2c01ae812719",
   "subscription_manage_google": "66817ecbbc77b214339a036c43f3c92b6f115eafaf3bd0c5b9eef245ae1e74fd",
   "subscription_managed_apple": "0a005504b19a6205ad2bdf990695974eaa531adc0838587f269f95e9499ba17b",
@@ -84,7 +76,6 @@
   "subscription_through_google": "aa2cf238e2daa78cf86d071d77a5a877c126398e74f4fa6965cba08ad9091b5f",
   "subscription_through_website": "eb0a7c1a0cc3431828e6cbedaa04afcdca39f03cac774d26130c784f347a04a3",
   "subscription_unavailable": "b178f31398ccfa7b1f2ae05b33e2454635434c9583b32a489ba2aae8f0fb8217",
-  "subscription_website": "fc726d368b6775dd2e75eba63df20237808ed6e8c05c3ae88a996834efa1b830",
   "subscription_yearly": "7e420b12f56c492f02e92edfc79833f1d1ffdbc574302cb5a337b5d1545e71a1",
   "subscription_yearly_per_month": "46b896d9645e204a0b5d128dd20bd972bf59ad9a1ec9f47797400243c265bb07"
 }
@@ -106,20 +97,9 @@
     <string name="subscription_contact_support">Yardım al</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_cancel">Plus’ı iptal et</string>
-    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
-    <string name="subscription_cancel_failed">Plus’ı iptal edemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder.</string>
-    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
-    <string name="subscription_cancel_title">Plus iptal edilsin mi?</string>
-    <string name="subscription_cancel_at_period_end">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin.</string>
-    <string name="subscription_website">Web sitesinden satın alındı</string>
     <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Ödemeni, abone olduğun web sitesinden güncelle.</string>
-    <string name="subscription_cancel_unpaid">Plus hemen sona erer ve senden tekrar ücret alınmaz.</string>
-    <string name="subscription_cancel_back">Geri dön</string>
-    <string name="subscription_keep_plus">Plus’a devam et</string>
-    <string name="subscription_keep_plus_description">Plus’ı koru, eskisi gibi yenilensin.</string>
-    <string name="subscription_keep_failed">Plus’ı koruyamadık. Tekrar dene veya hello@zoonk.com adresine e-posta gönder.</string>
     <string name="subscription_deletion_notice">Hesabını sildiğinde Plus hemen sona erer.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder.</string>

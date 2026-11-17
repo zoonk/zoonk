@@ -96,10 +96,6 @@
         <item quantity="one">%d lesson not studied</item>
         <item quantity="other">%d lessons not studied</item>
     </plurals>
-    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
-    <string name="plan_trickster_not_in_plan">The Trickster isn\'t in your plan</string>
-    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
-    <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <!-- The phase the learner is in, out of the plan's phases. -->
     <string name="plan_roadmap_phase_number">Phase %1$d of %2$d</string>
     <string name="plan_continues_today">Continues today</string>
