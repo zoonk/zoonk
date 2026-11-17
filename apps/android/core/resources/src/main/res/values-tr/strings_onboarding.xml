@@ -69,9 +69,9 @@
   "onboarding_error_could_not_read": "0df012cdc1046ab7f4b194a96de7fa07d7df6db2b417ebe0b529cd4685f82f7b",
   "onboarding_error_could_not_save": "e0aa3ddcb0df279dd1f8a41104b50bbcd5a5492cb47f996234378b075582ec01",
   "onboarding_error_one_moment": "0a33d5eff996f065a55b48ae48f960b20a56e7a90deb9851e28ab7392b8d8d9f",
-  "onboarding_exam_choice_choices": "f83f949d2cbe1090e954236c7156a08747a3a71fd6eaddd9bc31f4003e008085",
-  "onboarding_exam_choice_options": "b9b0e9207db4e6da16ac615ecf5aba23c2a068d72deb49fcfcd4f2f012c0a70d",
-  "onboarding_exam_choice_options_take": "e37961297d307bf62c3ba91cf9ff448bb78a409a9032a21a6d98c3aabc2ea5db",
+  "onboarding_exam_choice_choices": "60d40814b4970055dc363f93b3991b4b5c0143f7ae573d2607a84397c33e7ade",
+  "onboarding_exam_choice_options": "cc06bfcf8de93da4a11726546b993780f75ea6361396a3b088bab172c1eda775",
+  "onboarding_exam_choice_options_take": "95b11c3f8291f90454c9105d5e4f8ace0657cfef56f63fff85f5b5d7de3960ab",
   "onboarding_exam_choice_title_one": "26950cd3c3461fc6ad4c7c3e5d37cf027e15302b09f74cacd3cfa3695f4233be",
   "onboarding_exam_choice_title_other": "07fb2722ce558c5467e58e30ce5ed86ac2614cecebc8165a0af58247ace6f098",
   "onboarding_exam_expected": "3cbb2e4ac6c21f6b4fba065b2fb796a7cfbcc6cc7e6ac2b53aa3f522d02264ff",
@@ -314,8 +314,8 @@
   "onboarding_reveal_reading_line_dates": "6c775481101a9cfea22d24b995ea127d8bed56a4582e1e67f633c24df832e07a",
   "onboarding_reveal_reading_line_fit": "ad65b033940c9f562899ae8c64ad1ed884193b63ac368bd8c049c5def49b6226",
   "onboarding_reveal_reading_line_guide": "fd0e29716681ea4e1aeedc89e3e755a734f0e532eff793f78cd571229122a752",
-  "onboarding_reveal_reading_line_notice": "2af8ad98c5ecac3e292e619f4c323aa3085edc522699990880e443e9db2455c0",
-  "onboarding_reveal_reading_notice": "72518e58aca98382897acdb1abbeefcec8c37ef84395ada97efdfe43fa317c44",
+  "onboarding_reveal_reading_line_notice": "3ea85c0666ab5971fc43d6609faed75349c83c91821d7c493494eafa1a6e3acf",
+  "onboarding_reveal_reading_notice": "59d536343c30355c542a6fcb5a97cd17f3faf5a1b0fd361b4cde0cd8021270aa",
   "onboarding_reveal_reading_step": "67e051345fd77857bbb9c78cb32c5000ccff533a2bbe87f6e661adef8179d4a4",
   "onboarding_reveal_reading_title": "c2285c245d9bff6d15a8613b5b4b6bff0d0882429d5cf64ba3f29c35f0cfd6ca",
   "onboarding_reveal_rest_day": "453c921dc44fd55f8cd05f97f7d679f28c5dd624e3d321a599c44556c2818813",
@@ -407,6 +407,19 @@
   "onboarding_subjects_title": "d537620e5ed0dc0b589560440eaa4c2c78ab788d8f86922331568577cfe68dd2",
   "onboarding_target_description": "5a5f5bf90715810de39bd437cb4c225dec1296ad0df7152e4b7bc7bfd912e9c5",
   "onboarding_target_label": "af6eee1ad4d31df0dde87601bd20bdf084bcff1453b4197950941f8a0fe38364",
+  "onboarding_test_level_a1": "a728af02066ead173b0f856effc58a76e4d0e5f622d14b8f98ee0799194a6f31",
+  "onboarding_test_level_a1_plus": "6c799c2c66dcda940e74783241feab91c4c66d813af4883ccd6b83b8cb23d7b3",
+  "onboarding_test_level_a2": "c7ef2c18d2d2d214b954ce970ce50ea34cd790adf9086165774544ac7271ab97",
+  "onboarding_test_level_a2_plus": "9feea9340daae5f20f1992d397c966ca78413e96aa015ab6092b47c64b20fde5",
+  "onboarding_test_level_b1": "95b105299d7e5e00dfb10213bb02d8d3053fba16d17add7079a6a0ceb4d6d637",
+  "onboarding_test_level_b1_plus": "ff63494303a6b6e4c16bc228dfe4d32eface73d0d6075dd8befea85459b9d252",
+  "onboarding_test_level_b2": "8df7f134063effdef810ddf0c62bd2d654e1fd30242ccd0e86ac2d9d7de43bd9",
+  "onboarding_test_level_b2_plus": "3b7d260cbbe310117ce89b076cde29b7e84062d83e99b4cfafc33df9ba6940c6",
+  "onboarding_test_level_c1": "6f05ececb242022c302d55122618c50d3bf16cf5ef002bdbd1f3417d93a1ee49",
+  "onboarding_test_level_c1_plus": "4812ce9c84094ba28422b42ddbc4519553b62abd8f09de376c29ef3f314d804d",
+  "onboarding_test_level_c2": "7df04552cba67bb984a11cc183e554fc2cc822d75e44a94ef67fe16bcb13e29b",
+  "onboarding_test_level_c2_plus": "1843d816450c54165d0d17209131c07766413b47c97c4f8f5466843b2c8590f5",
+  "onboarding_test_question_progress": "998615036612e27be138670e7500f1911e16125b6c29fb6f37a35e5a2825d1ac",
   "onboarding_time_a_day": "44a0aa6538be83a822276c7e825eeacb74b2e522df32e51a3ab8ee6d6ecba9b9",
   "onboarding_try_another_goal": "3cff1a67307f31c690cfda7263250604117bc19b21777edd2e3c9cf220230cdd",
   "onboarding_unclear_description": "adba79e14f9d39e59ea943311f7e0be7b303c0836c947b80ff62acb4f4740182",
@@ -702,7 +715,7 @@
     <string name="onboarding_library_course_fits">Kütüphanede hedefine uygun bir kurs var. Hemen başla</string>
     <string name="onboarding_reveal_reading_title">Sınavın resmî belgelerini okuyoruz</string>
     <string name="onboarding_reveal_reading_last_title">Bir önceki sınavın resmî belgelerini okuyoruz</string>
-    <string name="onboarding_reveal_reading_notice">Planını ilandaki branşlara, konulara ve tarihlere göre hazırlıyoruz. Bu genellikle birkaç dakika sürer.</string>
+    <string name="onboarding_reveal_reading_notice">Planın sınavın branşlarına, konularına ve tarihlerine göre hazırlanacak.</string>
     <string name="onboarding_reveal_reading_guide">Planın resmî kılavuzdaki bölümlere, konulara ve tarihlere göre hazırlanacak. Bu genellikle birkaç dakika sürer.</string>
     <string name="onboarding_reveal_reading_last">Bir sonraki sınavın belgeleri henüz yayımlanmadığı için planın bir önceki sınavın branş ve konularını temel alıyor. Yeni belgeler yayımlandığında sana haber vereceğiz. Belgeleri okumamız genellikle birkaç dakika sürer.</string>
     <string name="onboarding_reveal_reading_done_step">Bize anlattıklarına göre hazırlanan planın</string>
@@ -928,8 +941,8 @@
     </plurals>
     <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
     <plurals name="onboarding_exam_choice_options_take">
-        <item quantity="one">Sınavda %1$d farklı %2$s seçeneği var ve her aday bunlardan %3$d tanesini seçiyor. Planın ve deneme sınavların seçimlerine göre hazırlanıyor ve seçimlerini planında değiştirebilirsin.</item>
-        <item quantity="other">Sınavda %1$d farklı %2$s seçeneği var ve her aday bunlardan %3$d tanesini seçiyor. Planın ve deneme sınavların seçimlerine göre hazırlanıyor ve seçimlerini planında değiştirebilirsin.</item>
+        <item quantity="one">Sınavda %1$d %2$s seçeneği var ve her aday bunlardan %3$d tanesi için sınava girer. Planın ve deneme sınavların seçimlerine göre hazırlanır. Seçimlerini planından değiştirebilirsin.</item>
+        <item quantity="other">Sınavda %1$d %2$s seçeneği var ve her aday bunlardan %3$d tanesi için sınava girer. Planın ve deneme sınavların seçimlerine göre hazırlanır. Seçimlerini planından değiştirebilirsin.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">
@@ -980,7 +993,7 @@
     <string name="onboarding_plan_stopped">Planını hazırlamaya devam edemedik</string>
     <string name="onboarding_plan_answers_saved">Cevapların kaydedildi. Soruları bitirdiğinde planın hazır olsun diye tekrar dene.</string>
     <!-- Detail lines while an exam's official documents are read. -->
-    <string name="onboarding_reveal_reading_line_notice">İlanda belirtilen branşları ve konuları buluyoruz…</string>
+    <string name="onboarding_reveal_reading_line_notice">Sınavdaki branşları ve konuları buluyoruz…</string>
     <string name="onboarding_reveal_reading_line_guide">Resmî kılavuzdaki bölümleri ve konuları buluyoruz…</string>
     <string name="onboarding_reveal_reading_line_dates">Sınavın tarihlerini ve formatını kontrol ediyoruz…</string>
     <string name="onboarding_reveal_reading_line_fit">Bunları planına yerleştiriyoruz…</string>
@@ -1072,4 +1085,17 @@
     <string name="onboarding_country_skip_default">Atlarsan: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">yaşadığın ülke</string>
+    <string name="onboarding_test_question_progress">Soru %1$d / %2$d</string>
+    <string name="onboarding_test_level_a1">A1</string>
+    <string name="onboarding_test_level_a1_plus">A1+</string>
+    <string name="onboarding_test_level_a2">A2</string>
+    <string name="onboarding_test_level_a2_plus">A2+</string>
+    <string name="onboarding_test_level_b1">B1</string>
+    <string name="onboarding_test_level_b1_plus">B1+</string>
+    <string name="onboarding_test_level_b2">B2</string>
+    <string name="onboarding_test_level_b2_plus">B2+</string>
+    <string name="onboarding_test_level_c1">C1</string>
+    <string name="onboarding_test_level_c1_plus">C1+</string>
+    <string name="onboarding_test_level_c2">C2</string>
+    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

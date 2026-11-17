@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "111ea4ab86b5b4b431d34e8736dea5270cede274dbc8b37c08c20811b680b619",
   "activities_geometry_badge_drag_corner": "674f1f4114069f1a1d6cf328106408d882c1210ba0df9cafa6425c9f9a12b7de",
-  "activities_geometry_badge_move_curve": "60d433a53dde4484e7acdb3b9b0ff94ee8a1f424879f46c3e2016eb47ac00516",
+  "activities_geometry_badge_move_curve": "8438f204ae34cdbd2a67a3794b8fac87805f5cb60622cd2ad718343acedde641",
   "activities_geometry_badge_turn_it": "fcc83adf91d372f9d7ed5d37def5aeb768c49e56ebb5d446155a46151cf2760f",
   "activities_geometry_board_angles": "6728e6a1ff7f3d88fffd86c41cc8561e662ae9f579beb9825c15903318b77e2b",
   "activities_geometry_board_angles_total": "e1acacd063cd55d476f8ac3dbf7ade15d66a051b6765828373832fc2fc6a785d",
@@ -224,7 +224,7 @@
         <item quantity="other">結合は全部で%1$d本です。二重結合は2本と数えます。</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">曲線を動かす</string>
+    <string name="activities_geometry_badge_move_curve">線を動かす</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">%1$sの線を動かす</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

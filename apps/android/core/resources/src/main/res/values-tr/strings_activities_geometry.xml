@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "c9215e58c8debab91416329ba09adfddcfd373ac0ff2b6e464c202cce15b9785",
   "activities_geometry_badge_drag_corner": "17dda8c3829d715d8da0bc8be71835ce529a72600ac2524d249a1032d98de9b0",
-  "activities_geometry_badge_move_curve": "2ec8e19cd15cb9be80acd22bd43b4d38f28d29a84f6610ffd9f659683b316165",
+  "activities_geometry_badge_move_curve": "d73c34ffb9571e09dcdd0acf031ae1f93a2e3cc6eb8977de29af0c267b5977ab",
   "activities_geometry_badge_turn_it": "30bb6c57d7f8bfd8e64ac86bbbaf63d146249fb01cd719468dc8a15b8188e7ed",
   "activities_geometry_board_angles": "3982d9cdba603089997ac8ad3998b6458ce78d2df9e8e2bd9962fa7f967b5762",
   "activities_geometry_board_angles_total": "fa40980819354a6f1084d4232d6d35c7a0faa75773ed50a9c586255177e1deac",
@@ -230,7 +230,7 @@
         <item quantity="other">Çift bağları iki sayınca toplam %1$d bağ.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">Bir eğriyi kaydır</string>
+    <string name="activities_geometry_badge_move_curve">Bir çizgiyi kaydır</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">%1$s çizgisini kaydır</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

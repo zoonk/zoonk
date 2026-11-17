@@ -37,7 +37,7 @@
   "checkpoint_removed_detail": "6d0f97d29ba5f7e96439b65b25e234c7c90462e979b8dced5a04d7b3bd1b4643",
   "checkpoint_removed_title": "3207b4d02e5695e39d7de11b3d6d0c429811d26275e62fc91d9b7903d738921c",
   "checkpoint_retry_after_lessons": "87fbfb353d725c2e3c70c0a3180a3f36b147d7c9431db22eb3a83849905b7fc1",
-  "checkpoint_retry_tomorrow": "5196a5c98a99082a44c80e2e0a9d0197cad6f44c08ef1122cb9d0d0c2dfe26b8",
+  "checkpoint_retry_tomorrow": "a2960eb897817a9287a59187f818afef28fc876bb4eb3ded9dc2d74ea81c4fcc",
   "checkpoint_review": "1239b6d6c37b608755862389c43715c99a0f88338317d6785c5aea380c136ca6",
   "checkpoint_rewards": "2192af6a53970dc6bd45cf06f50042c6627f1f4d2b640a4b956740260f5e7361",
   "checkpoint_right_to_win": "7815f14d073074f2b3ab6324ecf3f028897e58b2fe3149956592ab56b8d21ca6",
@@ -67,7 +67,7 @@
     <string name="checkpoint_why_later">Nedenini en sonda göreceksin.</string>
     <string name="checkpoint_won_line">Kalkanı kırıldı. Kazandın!</string>
     <string name="checkpoint_lost_line">Bu kez kalkanı dayandı.</string>
-    <string name="checkpoint_retry_tomorrow">Yarın yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</string>
+    <string name="checkpoint_retry_tomorrow">Yarın tekrar dene. İlerlemen kaydedildi.</string>
     <plurals name="checkpoint_retry_after_lessons">
         <item quantity="one">Yarın %d kısa dersten sonra yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</item>
         <item quantity="other">Yarın %d kısa dersten sonra yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</item>

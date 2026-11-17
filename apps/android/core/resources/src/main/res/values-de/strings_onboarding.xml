@@ -69,9 +69,9 @@
   "onboarding_error_could_not_read": "ad735f44bb63cfa14219a258b87b85f4d37c2e84942303d775918271bf72fdc6",
   "onboarding_error_could_not_save": "d543733c5cbc67da37e76c27f09d6755e808b0d5c45a617f3dd3edb7700cfd84",
   "onboarding_error_one_moment": "a0bd75621bae3f72d13d3d6257be248c2aafd51b0d88393d2dec7eb6177786cc",
-  "onboarding_exam_choice_choices": "fd09bd7cc0d3c44582b1d84004d4ea724ab6edc1f03e8d2adf7486f680b28819",
-  "onboarding_exam_choice_options": "973aec11edc96a0e7b98c5e7a08870e784de80b341bcef5616ee7367c2a23bdc",
-  "onboarding_exam_choice_options_take": "09250f7888bf9012edfa9466ebe0bc804aaeed66ad77b360d1595a29fa757415",
+  "onboarding_exam_choice_choices": "e208b454c8d7d8a144e90567d412f7f17aedb8d3f1e5637ce67bb2e471115c26",
+  "onboarding_exam_choice_options": "0444757291f738410fdbd6293f960de2c96fa41b3f0d24b09c57119af50720c3",
+  "onboarding_exam_choice_options_take": "f4ef703ee39b4b26831113d4438ccbcd64c65e2ae9cab868a5c76494b78fab90",
   "onboarding_exam_choice_title_one": "69732332a98a94a2494a63e98a78a81d82eb8a2363af16c1dff3cd22cfbf7bdc",
   "onboarding_exam_choice_title_other": "64140cc186bbead128781c4ebc6afeecf554dd055b864617bfe852f6fa42a178",
   "onboarding_exam_expected": "086a306c3064eb2e9b2cf6ac93351a7bec8e45d1b748dcd49c0e1e53f95b0b13",
@@ -314,8 +314,8 @@
   "onboarding_reveal_reading_line_dates": "c6c59af1b3bbd97fcc8a074448fa5c9b13222410aea8ff637546959743647263",
   "onboarding_reveal_reading_line_fit": "a71c81d16b6b23aae912e8539e1ec194454be49f04dcb1dd77da5aa1c273aa13",
   "onboarding_reveal_reading_line_guide": "7d6185d967e9f64d2295d3650b2817badec0034d23229baacff260b8021e5d2a",
-  "onboarding_reveal_reading_line_notice": "71f4d8c7e2b409533b159513ef1ac60de3321fb63a784b294bd8529598341797",
-  "onboarding_reveal_reading_notice": "b808b47c28ee1e51395c787ddc613bb271a8aacadcbe6c619a0a7629e54d7b77",
+  "onboarding_reveal_reading_line_notice": "4d46c1293aa896ca8989568c4de258690521a7fdf2c6403edcc42213daf934d5",
+  "onboarding_reveal_reading_notice": "5e94d8a2d6e899086663d0b62091492db8fade8a74cd29aef3feddb5cbe63ebe",
   "onboarding_reveal_reading_step": "5430dbc2ff39162dcbac9c898d00893058f9f1992a367f6bc01496fe23129d79",
   "onboarding_reveal_reading_title": "d7b3ea5914b4afc1c4ae13f4640929c8da3b9d5b5ab949b104b61733d0c9d522",
   "onboarding_reveal_rest_day": "afebf174f8292c026482c39fa59cb4e354dd3e5ed16f8e600b9a1df4d4e41c65",
@@ -407,6 +407,19 @@
   "onboarding_subjects_title": "80f7e0693f0153461498e6e468ed42099c9bd4a909b4f173c89b065550874cc2",
   "onboarding_target_description": "53eb81a6b46c4009b5e76ae1e4fe96c79f641e4bbbd90e7a7f5191e64555ee3d",
   "onboarding_target_label": "fe79b49b1aff02ce96dc8de87efec63e9149fd3868ec1543ac1c04d9620692e9",
+  "onboarding_test_level_a1": "7b71429fbd8f4b2b423ad7f4eae8d692ef235516eb26a891cf17a4501491327b",
+  "onboarding_test_level_a1_plus": "751ba92f4a1c2c1a9f3b99baa20352bcdb11041a142539de0abe432785315005",
+  "onboarding_test_level_a2": "c48d11ec922e52bb232a870d06bf0f56a7e81ec3a1c82ad59c3b4c071a207929",
+  "onboarding_test_level_a2_plus": "35b61aa888c348e2f210810420afe65ab61cb642f31a9fef66fbb6fa88eb272c",
+  "onboarding_test_level_b1": "2bd433d83051d01993a474ad331c96f43687771687f3101a244a827fd116b372",
+  "onboarding_test_level_b1_plus": "6044d89cf26d225981e56910980850395f715af928869fae6f9fe4f9aa67ae02",
+  "onboarding_test_level_b2": "97109faa98294c664958e504696dedcf0f61eb7b85d12441061b8f35e10ba460",
+  "onboarding_test_level_b2_plus": "c7d61b29e5e86638f82be86d43fd94b7a2924ddd8c0d29fc8a6c5d487dfceb95",
+  "onboarding_test_level_c1": "809bb41608c58791a1ab039d89e550c31c9b923dd759eb28245ff07971196e7e",
+  "onboarding_test_level_c1_plus": "e366d22f9dc77e9e7f041755ff44acba0f51fe7411b441d213bac4664f2422e2",
+  "onboarding_test_level_c2": "3fc14f2eb2a054a9a767ecb7621c995f92e4b7436770df15b5f0823504384158",
+  "onboarding_test_level_c2_plus": "5a8090451a53314ef5cd16f5e1de73401ca1259a3922557635ccda6e0b2038bc",
+  "onboarding_test_question_progress": "a76059752a9a7aa5ddf17613a156c59c1c00530574c0831611e98565936d7b72",
   "onboarding_time_a_day": "aaec93030512e483125164b045c28e26d11fda0bd123ab09c22cc83b3f041bbe",
   "onboarding_try_another_goal": "305cc511b608611bde2ec748786c7e6dca5abdbfe5efde64c3ea76c46cdd8f63",
   "onboarding_unclear_description": "c9e553e6e54c7ebe40099c8b1934dbb0451d1a34a235d7d885b32769dc1163e2",
@@ -702,7 +715,7 @@
     <string name="onboarding_library_course_fits">Ein Kurs aus der Bibliothek passt zu deinem Ziel. Jetzt starten</string>
     <string name="onboarding_reveal_reading_title">Wir lesen die offiziellen Prüfungsunterlagen</string>
     <string name="onboarding_reveal_reading_last_title">Wir lesen die offiziellen Unterlagen der letzten Prüfung</string>
-    <string name="onboarding_reveal_reading_notice">Dein Plan richtet sich nach den Fächern, Themen und Terminen der Prüfungsausschreibung. Das dauert normalerweise ein paar Minuten.</string>
+    <string name="onboarding_reveal_reading_notice">Dein Plan wird sich nach den Fächern, Themen und Terminen der Prüfung richten.</string>
     <string name="onboarding_reveal_reading_guide">Dein Plan richtet sich nach den Teilen, Themen und Terminen des offiziellen Leitfadens. Das dauert normalerweise ein paar Minuten.</string>
     <string name="onboarding_reveal_reading_last">Die Unterlagen für die nächste Prüfung sind noch nicht veröffentlicht. Deshalb richtet sich dein Plan nach den Fächern und Themen der letzten Prüfung. Wir sagen dir Bescheid, wenn die neuen Unterlagen da sind. Das dauert normalerweise ein paar Minuten.</string>
     <string name="onboarding_reveal_reading_done_step">Dein Plan auf Grundlage deiner Angaben</string>
@@ -923,18 +936,18 @@
     <string name="onboarding_exam_choice_title_other">Welche wirst du ablegen?</string>
     <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
     <plurals name="onboarding_exam_choice_options">
-        <item quantity="one">Die Prüfung bietet %1$d Option für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
-        <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
+        <item quantity="one">Die Prüfung bietet %1$d Option für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
+        <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
     </plurals>
     <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
     <plurals name="onboarding_exam_choice_options_take">
-        <item quantity="one">Die Prüfung bietet %1$d Option für %2$s. Alle Teilnehmenden wählen jeweils %3$d davon aus. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern.</item>
-        <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s. Alle Teilnehmenden wählen jeweils %3$d davon aus. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern.</item>
+        <item quantity="one">Die Prüfung bietet %1$d Option für %2$s, und du wählst %3$d davon. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
+        <item quantity="other">Die Prüfung bietet %1$d Optionen für %2$s, und du wählst %3$d davon. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">
-        <item quantity="one">Für die Prüfung musst du %1$d Entscheidung treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
-        <item quantity="other">Für die Prüfung musst du %1$d Entscheidungen treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du im Plan ändern kannst.</item>
+        <item quantity="one">Für die Prüfung musst du %1$d Entscheidung treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
+        <item quantity="other">Für die Prüfung musst du %1$d Entscheidungen treffen. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst.</item>
     </plurals>
     <string name="onboarding_decide_later">Später entscheiden</string>
     <string name="onboarding_buddy_title">Wähle deinen Kumpel</string>
@@ -980,7 +993,7 @@
     <string name="onboarding_plan_stopped">Die Erstellung deines Plans wurde unterbrochen</string>
     <string name="onboarding_plan_answers_saved">Deine Antworten sind gespeichert. Versuch es noch einmal, damit dein Plan fertig ist, wenn du alle Fragen beantwortet hast.</string>
     <!-- Detail lines while an exam's official documents are read. -->
-    <string name="onboarding_reveal_reading_line_notice">Wir suchen die Fächer und Themen aus der Ausschreibung…</string>
+    <string name="onboarding_reveal_reading_line_notice">Wir ermitteln die Fächer und Themen der Prüfung…</string>
     <string name="onboarding_reveal_reading_line_guide">Wir suchen die Prüfungsbereiche und Themen aus dem offiziellen Leitfaden…</string>
     <string name="onboarding_reveal_reading_line_dates">Wir prüfen die Termine und das Format der Prüfung…</string>
     <string name="onboarding_reveal_reading_line_fit">Wir berücksichtigen sie in deinem Plan…</string>
@@ -1072,4 +1085,17 @@
     <string name="onboarding_country_skip_default">Wenn du diesen Schritt überspringst: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">wo du lebst</string>
+    <string name="onboarding_test_question_progress">Frage %1$d von %2$d</string>
+    <string name="onboarding_test_level_a1">A1</string>
+    <string name="onboarding_test_level_a1_plus">A1+</string>
+    <string name="onboarding_test_level_a2">A2</string>
+    <string name="onboarding_test_level_a2_plus">A2+</string>
+    <string name="onboarding_test_level_b1">B1</string>
+    <string name="onboarding_test_level_b1_plus">B1+</string>
+    <string name="onboarding_test_level_b2">B2</string>
+    <string name="onboarding_test_level_b2_plus">B2+</string>
+    <string name="onboarding_test_level_c1">C1</string>
+    <string name="onboarding_test_level_c1_plus">C1+</string>
+    <string name="onboarding_test_level_c2">C2</string>
+    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

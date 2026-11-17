@@ -131,6 +131,7 @@
   "conversation_take_your_time": "ef4d27273f9ebfde44351e91ef00e9d9d27a2a372529c4158d8d11171d5cb4db",
   "conversation_taken_over": "5a13ba92e3666c2402d3b76b5a9a870ef91cd3c8429e73fa3c96df102155a800",
   "conversation_talking": "d64fe6268d183ce10460e39ad4e78c45103e33e27f7a7e81fef01ac2595843d5",
+  "conversation_time_used": "c72c6554a12829ed54f556b2f10aa4ffefbddb53ea3ff93474af6f6f6ee5a757",
   "conversation_tip": "588eee25a24a5db0315209a551fb445b9d378f8cf9de684b626b2e3eb38b5833",
   "conversation_to_improve": "ff897e983a319d7a0895842c4e8ebd32b4005eb37e272adf6fdfe875e248145e",
   "conversation_toefl_mock": "22a27295ced8a5136f63b58842ae0baec1a5bb95922372175274fca1b62af60a",
@@ -369,4 +370,5 @@
     <string name="conversation_writing_task_line_2">Criando as instruções do cartão…</string>
     <string name="conversation_writing_task_line_3">Preparando o que o examinador vai dizer…</string>
     <string name="conversation_writing_task_line_4">Adicionando frases para te ajudar…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

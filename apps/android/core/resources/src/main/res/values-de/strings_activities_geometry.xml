@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "fe2d38fdd92f223f055f86f11925c7e57d75fa9ff0bd4e87c7a22a41f5bc3270",
   "activities_geometry_badge_drag_corner": "86fdad4950d6fd1bd47c7f85702bc3f630f44b9bc7152da22d943c10b761487e",
-  "activities_geometry_badge_move_curve": "9b8d280660b2fd2c3e8d24767f7e342b8e87be33143a56a3edf153a24c2b11a0",
+  "activities_geometry_badge_move_curve": "aa047a91ec52d60cd2ad4b0d87cd13fd03025d67bf4f6a27a1ba05a5fe5637b8",
   "activities_geometry_badge_turn_it": "7970607b9c95fddf8f05696bf4991663fdc22645fba837a9e287fb9af6dd8211",
   "activities_geometry_board_angles": "f7d9cfdce0ec9938a33763ccbd1d0f79c09fcbfd6045fa13b092ce59f8dde68f",
   "activities_geometry_board_angles_total": "37ac8e89bbe267d57bdd7ed0cb7338a0ba475ff71e429b7a2d5f43a093c31547",
@@ -230,7 +230,7 @@
         <item quantity="other">%1$d Bindungen insgesamt, wobei eine Doppelbindung als zwei zählt.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">Verschieb eine Kurve</string>
+    <string name="activities_geometry_badge_move_curve">Linie verschieben</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Linie %1$s verschieben</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "96f35d86a81b2d8aad0eb2394a43227a46916e8205c9e315767d45bccf39f45c",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
   "player_next_step_failed": "56042968d7471d3d94379487efa5ed4a37345ebc8ba8b62ceee1b54820f29480",
+  "player_not_found_description": "8fd57e8aac9aedac567f162217a14b94c25363a0295a4fde5a2a3cf73f2bc9a4",
   "player_not_found_title": "d6e87de68c4066695e211eb4c9485578244688289171a15b76d105bab45aef8f",
   "player_not_in_app_description": "878f74b57d84d0eb05e7f18cfc3c82578a21fcac5edb0e9a19f9937bacaca898",
   "player_not_in_app_title": "42fdb383b6154eb32cd4bf621c7246fb598a247aac7fe8c0c70e27616eaba825",
@@ -426,4 +427,5 @@
     <string name="player_citation_from_material">내 자료에서 가져왔어요: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">내 자료에 없는 내용</string>
+    <string name="player_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
 </resources>

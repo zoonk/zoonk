@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "bcc6a326d7f6cfc8e9227abd06f5f1b647bb3f0b91ae5901bc51a7c80ae8e254",
   "activities_geometry_badge_drag_corner": "ced10f61d5134bcf9ae236f44c5da4e49129d217dead07d7108e4791296138cd",
-  "activities_geometry_badge_move_curve": "9af839aba0f81eeed34de9c4774b89133773bf69bf93b5780100326bd9bca5d4",
+  "activities_geometry_badge_move_curve": "c634560fedd68dcf89b0cb488dcde329071f555863c31103b938c20b53573457",
   "activities_geometry_badge_turn_it": "f4c3c2260e6c72ed48f1fe9e87d03197d64187c09c655e23dc8cdba4795f61a0",
   "activities_geometry_board_angles": "e8d7f42278e912018034181ed9f61452cf322c615ec8f147b7ef1a6e6d33c1b4",
   "activities_geometry_board_angles_total": "10a74aabc58d073a4c3cb65973c8ce09fb7a13a7d9bf2cfd72c8724f4825117f",
@@ -242,7 +242,7 @@
         <item quantity="other">Łącznie %1$d wiązania, licząc wiązanie podwójne jako dwa.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">Przesuń krzywą</string>
+    <string name="activities_geometry_badge_move_curve">Przesuń linię</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Przesuń linię: %1$s</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->
