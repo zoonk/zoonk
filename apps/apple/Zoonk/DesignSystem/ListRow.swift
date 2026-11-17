@@ -99,7 +99,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
           }
         }
       } else {
-        HStack(spacing: 12) {
+        HStack(alignment: alignment, spacing: 12) {
           MarkedRow(alignment: alignment, stackedSpacing: 4) {
             mark
               .markColumn()

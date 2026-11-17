@@ -101,7 +101,7 @@ struct RoadmapPhaseRow: View {
   let end: PhaseEnd?
 
   var body: some View {
-    ListRow(Text(phase.title)) {
+    ListRow(Text(phase.title), alignment: .firstTextBaseline) {
       StatusMark(status: phase.mark)
     } trailing: {
       if let end {
@@ -192,7 +192,7 @@ private struct RoadmapCompact: View {
     .typeWeight(.medium, legibility: legibilityWeight)
     .foregroundStyle(Color(.foreground))
 
-    guard phase.hasOwnName || phase.kind != .learn else {
+    guard phase.hasOwnName else {
       return place
     }
 

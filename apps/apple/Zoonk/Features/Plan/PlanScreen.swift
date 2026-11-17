@@ -210,6 +210,9 @@ private struct PlanContent: View {
                 PlanHeaderActions(context: context)
               }
               PlanRoadmapContent(context: context, structure: structure)
+              if structure != nil, let focusTest = context.plan.focusTest {
+                PlanFocusTestRow(goalId: goal.id, summary: focusTest)
+              }
             } header: {
               EmptyView()
             }
@@ -217,7 +220,9 @@ private struct PlanContent: View {
           }
           BlockGridSection {
             VStack(alignment: .leading, spacing: 24) {
-              structureSections(context: context, structure: structure, namesChoices: false)
+              structureSections(
+                context: context, structure: structure, namesChoices: false,
+                includesFocusTest: structure == nil)
             }
             PlanSettingsSection(context: context)
           }
@@ -369,9 +374,10 @@ private struct PlanContent: View {
 
   @ViewBuilder
   private func structureSections(
-    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
+    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool,
+    includesFocusTest: Bool = true
   ) -> some View {
-    let focusTest = context.plan.focusTest.map {
+    let focusTest = (includesFocusTest ? context.plan.focusTest : nil).map {
       PlanFocusTestRow(goalId: goal.id, summary: $0)
     }
 

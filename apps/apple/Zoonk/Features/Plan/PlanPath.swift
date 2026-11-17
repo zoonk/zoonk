@@ -104,22 +104,21 @@ private struct PlanPhaseRow: View {
         route: context.goal.kind == .language
           ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
       ) {
-        header(byPlace: false, next: own.state == .current)
+        header(next: own.state == .current)
       }
 
       if isOpen {
         events
       }
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
-      header(byPlace: false, next: false)
+      header(next: false)
         .chevronSlot()
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
         events
       } label: {
-        // Open over a chapter of its name, it goes by its place, so the name never shows twice.
-        header(byPlace: isExpanded && namedLikeAChapter, next: false)
+        header(next: false)
       }
     }
   }
@@ -192,27 +191,17 @@ private struct PlanPhaseRow: View {
     return only
   }
 
-  private var namedLikeAChapter: Bool {
-    phase.chapters.contains { Self.isSameName($0.title, phase.title) }
-  }
-
   private static func isSameName(_ first: String, _ second: String) -> Bool {
     first.compare(second, options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive])
       == .orderedSame
   }
 
-  private func header(byPlace: Bool, next: Bool) -> some View {
-    let title = Text(
-      byPlace
-        ? String(
-          localized: "Phase \(phase.index + 1)", table: "Plan",
-          comment: "Name of an unnamed phase by its number")
-        : phase.title
-    )
-    .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
-    .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
+  private func header(next: Bool) -> some View {
+    let title = Text(phase.title)
+      .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
+      .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
-    return ListRow(title, description: meta) {
+    return ListRow(title, description: meta, alignment: .firstTextBaseline) {
       StatusMark(status: next ? .next : phase.mark)
     } trailing: {
       if let end {
