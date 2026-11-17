@@ -19,6 +19,7 @@ import {
   valueInput,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { measureDrawingInk } from "../activities/_utils/drawing-label";
 
 const fixtures = activityContentFixtures;
 
@@ -241,13 +242,13 @@ describe("money and society activities", () => {
   });
 
   it("keeps the named street inside a narrow large-text map and clear of the pin faces", async () => {
-    document.documentElement.style.fontSize = "200%";
-
     onTestFinished(() => {
       document.documentElement.style.removeProperty("font-size");
     });
 
     await atViewport({ height: 1100, width: 320 }, async () => {
+      document.documentElement.style.fontSize = "200%";
+      expect(getComputedStyle(document.documentElement).fontSize).toBe("32px");
       openActivity({ template: "mapExplorer" });
       await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
 
@@ -261,20 +262,39 @@ describe("money and society activities", () => {
 
       const map = document.querySelector('[data-slot="base-map"]')!.getBoundingClientRect();
 
-      const label = document
-        .querySelector('[data-street-label="Broad Street"]')!
-        .getBoundingClientRect();
+      const text = document.querySelector<SVGTextElement>('[data-street-label="Broad Street"]')!;
+      const matrix = text.getScreenCTM()!;
+
+      const ink = measureDrawingInk({
+        context: document.createElement("canvas").getContext("2d")!,
+        element: text,
+      });
+
+      const screen = new DOMPoint(
+        Number(text.getAttribute("x")) + ink.offsetX,
+        Number(text.getAttribute("y")) + ink.offsetY,
+      ).matrixTransform(matrix);
+
+      const reachX = (Math.abs(matrix.a) * ink.width + Math.abs(matrix.c) * ink.height) / 2;
+      const reachY = (Math.abs(matrix.b) * ink.width + Math.abs(matrix.d) * ink.height) / 2;
+
+      const label = {
+        bottom: screen.y + reachY,
+        left: screen.x - reachX,
+        right: screen.x + reachX,
+        top: screen.y - reachY,
+      };
 
       const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
 
       const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
         (path) => {
-          const matrix = path.getScreenCTM()!;
+          const pathMatrix = path.getScreenCTM()!;
 
           const distance = Math.min(
             ...Array.from({ length: 501 }, (_, index) => {
               const at = path.getPointAtLength((path.getTotalLength() * index) / 500);
-              const point = new DOMPoint(at.x, at.y).matrixTransform(matrix);
+              const point = new DOMPoint(at.x, at.y).matrixTransform(pathMatrix);
               return Math.hypot(center.x - point.x, center.y - point.y);
             }),
           );
@@ -286,18 +306,20 @@ describe("money and society activities", () => {
       const own = streets.find((street) => street.name === "Broad Street")!;
       expect(own.distance).toBeLessThanOrEqual(40);
 
-      expect(
-        streets
-          .filter((street) => street !== own)
-          .every((street) => own.distance < street.distance),
-      ).toBe(true);
+      const lineHeight = ink.lineHeight * Math.hypot(matrix.c, matrix.d);
+
+      const nearestOther = Math.min(
+        ...streets.filter((street) => street !== own).map((street) => street.distance),
+      );
+
+      expect(own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther).toBe(true);
 
       expect(label.left).toBeGreaterThanOrEqual(map.left);
       expect(label.right).toBeLessThanOrEqual(map.right);
       expect(label.top).toBeGreaterThanOrEqual(map.top);
       expect(label.bottom).toBeLessThanOrEqual(map.bottom);
 
-      expect(map.width).toBeGreaterThanOrEqual(256);
+      expect(map.width).toBe(256);
 
       const overlapsCircle = document.querySelector<SVGTextElement>(
         '[data-street-label="Broad Street"]',

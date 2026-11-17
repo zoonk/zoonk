@@ -1,60 +1,39 @@
 import { LABEL_CLEARANCE } from "../_utils/drawing-label";
 import { clamp } from "../_utils/snap-value";
+import {
+  MAP_PIN_RADIUS,
+  type MapLabelSpot,
+  besideOwnStreet,
+  labelProjection,
+  streetCandidates,
+} from "./map-label-geometry";
 import { type MapBox, type MapPoint } from "./map-viewport";
-
-export type MapLabelSpot = {
-  positions?: readonly MapPoint[];
-  angle: number;
-  kind: "region" | "street";
-  text: string;
-  width: number;
-  height: number;
-  priority?: boolean;
-  question?: boolean;
-} & MapPoint;
-const LABEL_HALO = 1.5;
-const PIN_RADIUS = 20;
-const HALF_TURN = 180;
-export const MAP_STREET_SAMPLE_STEP = 4;
-const MAX_STREET_OFFSET = 40;
-
-function axes(label: MapLabelSpot): readonly [MapPoint, MapPoint] {
-  const angle = (label.angle * Math.PI) / HALF_TURN;
-
-  return [
-    { x: Math.cos(angle), y: Math.sin(angle) },
-    { x: -Math.sin(angle), y: Math.cos(angle) },
-  ];
-}
-
-function projection(label: MapLabelSpot, axis: MapPoint): number {
-  const [along, across] = axes(label);
-
-  return (
-    (label.width / 2 + LABEL_HALO) * Math.abs(along.x * axis.x + along.y * axis.y) +
-    (label.height / 2 + LABEL_HALO) * Math.abs(across.x * axis.x + across.y * axis.y)
-  );
-}
 
 function clearOfLabel(label: MapLabelSpot, other: MapLabelSpot): boolean {
   return (
     Math.abs(label.x - other.x) >=
-      projection(label, { x: 1, y: 0 }) + projection(other, { x: 1, y: 0 }) + LABEL_CLEARANCE ||
+      labelProjection(label, { x: 1, y: 0 }) +
+        labelProjection(other, { x: 1, y: 0 }) +
+        LABEL_CLEARANCE ||
     Math.abs(label.y - other.y) >=
-      projection(label, { x: 0, y: 1 }) + projection(other, { x: 0, y: 1 }) + LABEL_CLEARANCE
+      labelProjection(label, { x: 0, y: 1 }) +
+        labelProjection(other, { x: 0, y: 1 }) +
+        LABEL_CLEARANCE
   );
 }
 
 function clearOfPin(label: MapLabelSpot, pin: MapPoint): boolean {
   return (
-    Math.abs(label.x - pin.x) >= projection(label, { x: 1, y: 0 }) + PIN_RADIUS + LABEL_CLEARANCE ||
-    Math.abs(label.y - pin.y) >= projection(label, { x: 0, y: 1 }) + PIN_RADIUS + LABEL_CLEARANCE
+    Math.abs(label.x - pin.x) >=
+      labelProjection(label, { x: 1, y: 0 }) + MAP_PIN_RADIUS + LABEL_CLEARANCE ||
+    Math.abs(label.y - pin.y) >=
+      labelProjection(label, { x: 0, y: 1 }) + MAP_PIN_RADIUS + LABEL_CLEARANCE
   );
 }
 
 function inFrame(label: MapLabelSpot, frame: { height: number; width: number }): boolean {
-  const rx = projection(label, { x: 1, y: 0 });
-  const ry = projection(label, { x: 0, y: 1 });
+  const rx = labelProjection(label, { x: 1, y: 0 });
+  const ry = labelProjection(label, { x: 0, y: 1 });
 
   return (
     label.x >= rx && label.x + rx <= frame.width && label.y >= ry && label.y + ry <= frame.height
@@ -64,79 +43,6 @@ function inFrame(label: MapLabelSpot, frame: { height: number; width: number }):
 export type MapLabelPlacement = MapPoint & { scale?: number; overPinCircle?: boolean };
 const MIN_LABEL_SCALE = 0.8;
 const LABEL_SCALES = [1, (1 + MIN_LABEL_SCALE) / 2, MIN_LABEL_SCALE] as const;
-
-function pathDistance(point: MapPoint, path: readonly MapPoint[]): number {
-  return Math.min(
-    ...path.map((from, index) => {
-      const to = path[index + 1] ?? from;
-      const dx = to.x - from.x;
-      const dy = to.y - from.y;
-
-      const t =
-        dx === 0 && dy === 0
-          ? 0
-          : clamp(((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx * dx + dy * dy), 0, 1);
-
-      return Math.hypot(point.x - from.x - t * dx, point.y - from.y - t * dy);
-    }),
-  );
-}
-
-function besideOwnStreet(label: MapLabelSpot, streets: readonly (readonly MapPoint[])[]): boolean {
-  if (label.kind !== "street") {
-    return true;
-  }
-
-  const path = label.positions ?? [];
-  const distance = pathDistance(label, path);
-
-  return (
-    distance <= MAX_STREET_OFFSET &&
-    streets.every(
-      (other) =>
-        (other.length === path.length &&
-          other.every(
-            (point, index) => point.x === path[index]?.x && point.y === path[index]?.y,
-          )) ||
-        distance < pathDistance(label, other),
-    )
-  );
-}
-
-function streetCandidates(label: MapLabelSpot): MapPoint[] {
-  const [, normal] = axes(label);
-
-  const offset = Math.min(
-    MAX_STREET_OFFSET,
-    projection(label, normal) + PIN_RADIUS + LABEL_CLEARANCE,
-  );
-
-  const offsets = [
-    0,
-    -offset,
-    offset,
-    ...Array.from(
-      { length: MAX_STREET_OFFSET / MAP_STREET_SAMPLE_STEP },
-      (_, index) => (index + 1) * MAP_STREET_SAMPLE_STEP,
-    ).flatMap((across) => [-across, across]),
-  ];
-
-  return (label.positions ?? []).flatMap((from, index, path) => {
-    const to = path[index + 1] ?? from;
-
-    const steps = Math.max(
-      1,
-      Math.ceil(Math.hypot(to.x - from.x, to.y - from.y) / MAP_STREET_SAMPLE_STEP),
-    );
-
-    return Array.from({ length: steps }, (_, step) => ({
-      x: from.x + ((to.x - from.x) * step) / steps,
-      y: from.y + ((to.y - from.y) * step) / steps,
-    })).flatMap((point) =>
-      offsets.map((across) => ({ x: point.x + normal.x * across, y: point.y + normal.y * across })),
-    );
-  });
-}
 
 function namedCandidates(
   label: MapLabelSpot,
@@ -148,8 +54,8 @@ function namedCandidates(
     return streetCandidates(label);
   }
 
-  const rx = projection(label, { x: 1, y: 0 });
-  const ry = projection(label, { x: 0, y: 1 });
+  const rx = labelProjection(label, { x: 1, y: 0 });
+  const ry = labelProjection(label, { x: 0, y: 1 });
 
   if (rx * 2 > frame.width || ry * 2 > frame.height) {
     return [];
@@ -159,12 +65,12 @@ function namedCandidates(
 
   const obstacles = [
     ...placed.map((other) => ({
-      rx: projection(other, { x: 1, y: 0 }),
-      ry: projection(other, { x: 0, y: 1 }),
+      rx: labelProjection(other, { x: 1, y: 0 }),
+      ry: labelProjection(other, { x: 0, y: 1 }),
       x: other.x,
       y: other.y,
     })),
-    ...pins.map((pin) => ({ ...pin, rx: PIN_RADIUS, ry: PIN_RADIUS })),
+    ...pins.map((pin) => ({ ...pin, rx: MAP_PIN_RADIUS, ry: MAP_PIN_RADIUS })),
   ];
 
   const xs = [
@@ -232,18 +138,19 @@ export function placeMapLabels({
     candidate: MapLabelSpot,
     placed: readonly MapLabelSpot[],
     numbers?: readonly MapBox[],
+    onPath = false,
   ) =>
     inFrame(candidate, frame) &&
     (numbers
       ? numbers.every(
           (box) =>
             Math.abs(candidate.x - box.x - box.width / 2) >=
-              projection(candidate, { x: 1, y: 0 }) + box.width / 2 + LABEL_CLEARANCE ||
+              labelProjection(candidate, { x: 1, y: 0 }) + box.width / 2 ||
             Math.abs(candidate.y - box.y - box.height / 2) >=
-              projection(candidate, { x: 0, y: 1 }) + box.height / 2 + LABEL_CLEARANCE,
+              labelProjection(candidate, { x: 0, y: 1 }) + box.height / 2,
         )
       : pins.every((pin) => clearOfPin(candidate, pin))) &&
-    besideOwnStreet(candidate, streets) &&
+    (onPath || besideOwnStreet(candidate, streets)) &&
     placed.every((other) => clearOfLabel(candidate, other));
 
   function arrange(scale: number, pack: boolean) {
@@ -251,7 +158,12 @@ export function placeMapLabels({
     const spots: (MapLabelPlacement | null)[] = labels.map(() => null);
 
     for (const { index, label: original } of named) {
-      const label = { ...original, height: original.height * scale, width: original.width * scale };
+      const label = {
+        ...original,
+        height: original.height * scale,
+        lineHeight: (original.lineHeight ?? original.height) * scale,
+        width: original.width * scale,
+      };
 
       const points = namedCandidates(label, placed, pins, frame).toSorted((a, b) =>
         pack
@@ -304,7 +216,7 @@ export function placeMapLabels({
     }
   }
 
-  // At minimum size, a named street may cover a pin's circle, but never its number.
+  // The last resort stays on the street's line and may cover a circle, never its number.
   if (pinNumbers?.length === pins.length) {
     for (const { index, label: original } of named.filter(
       (item) => !chosen.spots[item.index] && item.label.kind === "street",
@@ -312,16 +224,27 @@ export function placeMapLabels({
       const label = {
         ...original,
         height: original.height * MIN_LABEL_SCALE,
+        lineHeight: (original.lineHeight ?? original.height) * MIN_LABEL_SCALE,
         width: original.width * MIN_LABEL_SCALE,
       };
 
-      const spot = streetCandidates(label)
+      const spot = streetCandidates(label, {
+        boxes: [
+          ...pinNumbers,
+          ...chosen.placed.map((other) => {
+            const rx = labelProjection(other, { x: 1, y: 0 }) + LABEL_CLEARANCE;
+            const ry = labelProjection(other, { x: 0, y: 1 }) + LABEL_CLEARANCE;
+            return { height: ry * 2, width: rx * 2, x: other.x - rx, y: other.y - ry };
+          }),
+        ],
+        frame,
+      })
         .toSorted(
           (a, b) =>
             Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
         )
         .map((point) => ({ ...label, ...point }))
-        .find((candidate) => clear(candidate, chosen.placed, pinNumbers));
+        .find((candidate) => clear(candidate, chosen.placed, pinNumbers, true));
 
       if (spot) {
         chosen.placed.push(spot);

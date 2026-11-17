@@ -72,15 +72,13 @@ private struct MapExplorerCanvas: View {
             comment: "How many places of a map the learner has looked at"))
       }
 
-      MapFrame {
-        drawing(width: width)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .onGeometryChange(for: Double.self) {
-            $0.size.width
-          } action: {
-            width = max($0, 1)
-          }
-      }
+      drawing(width: width)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onGeometryChange(for: Double.self) {
+          $0.size.width
+        } action: {
+          width = max($0, 1)
+        }
 
       if !map.legend.isEmpty {
         FlowLayout(spacing: 12) {
@@ -469,8 +467,3 @@ private enum MapWords {
 }
 
 private let mapPinNumberStyle = TypeStyle.body.weight(.semibold).monospaced()
-
-private struct MapFrame<Content: View>: View {
-  @ViewBuilder let content: () -> Content
-  var body: some View { content().padding(.horizontal, -16) }
-}

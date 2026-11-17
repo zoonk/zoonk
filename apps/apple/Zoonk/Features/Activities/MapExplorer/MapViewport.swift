@@ -71,10 +71,12 @@ enum MapViewport {
     let distance = pathDistance(label.center, path)
     return distance <= maxStreetOffset
       && streets.allSatisfy {
-        $0 == path || distance < pathDistance(label.center, $0)
+        $0 == path || distance + label.size.height / 2 <= pathDistance(label.center, $0)
       }
   }
-  private static func streetCandidates(_ label: Label) -> [CGPoint] {
+  private static func streetCandidates(
+    _ label: Label, inlineFrame: CGSize? = nil, boxes: [CGRect] = []
+  ) -> [CGPoint] {
     let normal = axes(label)[1]
     let offset = min(maxStreetOffset, projection(label, normal) + 23)
     let path = label.positions ?? []
@@ -87,11 +89,24 @@ enum MapViewport {
       let from = path[index]
       let to = index + 1 < path.count ? path[index + 1] : from
       let steps = max(1, Int(ceil(hypot(to.x - from.x, to.y - from.y) / streetSampleStep)))
-      return (0..<steps).flatMap { step -> [CGPoint] in
-        let point = CGPoint(
-          x: from.x + (to.x - from.x) * Double(step) / Double(steps),
-          y: from.y + (to.y - from.y) * Double(step) / Double(steps))
-        return offsets.map { across in
+      let rx = projection(label, CGPoint(x: 1, y: 0))
+      let ry = projection(label, CGPoint(x: 0, y: 1))
+      let xs: [Double] =
+        inlineFrame.map { [rx, $0.width - rx] + boxes.flatMap { [$0.minX - rx, $0.maxX + rx] } }
+        ?? []
+      let ys: [Double] =
+        inlineFrame.map { [ry, $0.height - ry] + boxes.flatMap { [$0.minY - ry, $0.maxY + ry] } }
+        ?? []
+      let regular = (0..<steps).map { Double($0) / Double(steps) }
+      let alongX = xs.map { ($0 - from.x) / (to.x - from.x) }
+      let alongY = ys.map { ($0 - from.y) / (to.y - from.y) }
+      let fractions = (regular + alongX + alongY).filter { $0 >= 0 && $0 <= 1 }
+      let cuts = fractions.sorted()
+      let midpoints = zip(cuts, cuts.dropFirst()).map { ($0 + $1) / 2 }
+      let candidates = inlineFrame == nil ? fractions : cuts + midpoints
+      return candidates.flatMap { t -> [CGPoint] in
+        let point = CGPoint(x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t)
+        return (inlineFrame == nil ? offsets : [0]).map { across in
           CGPoint(x: point.x + normal.x * across, y: point.y + normal.y * across)
         }
       }
@@ -197,7 +212,7 @@ enum MapViewport {
         }
         return a.offset < b.offset
       }.first!.element
-    // At minimum size, a named street may cover a pin's circle, but never its number.
+    // The last resort stays on the street's line and may cover a circle, never its number.
     if let pinNumbers, pinNumbers.count == pins.count {
       for index in named where chosen.spots[index] == nil && labels[index].street {
         let original = labels[index]
@@ -208,17 +223,24 @@ enum MapViewport {
           ),
           angle: original.angle, street: true, priority: original.priority,
           positions: original.positions, question: original.question)
-        let spot = streetCandidates(label).sorted {
+        let boxes =
+          pinNumbers
+          + chosen.placed.map { other in
+            let rx = projection(other, CGPoint(x: 1, y: 0)) + 3
+            let ry = projection(other, CGPoint(x: 0, y: 1)) + 3
+            return CGRect(
+              x: other.center.x - rx, y: other.center.y - ry, width: rx * 2, height: ry * 2)
+          }
+        let spot = streetCandidates(label, inlineFrame: frame, boxes: boxes).sorted {
           hypot($0.x - label.center.x, $0.y - label.center.y)
             < hypot($1.x - label.center.x, $1.y - label.center.y)
         }.map { label.at($0) }.first { candidate in
-          inFrame(candidate, frame) && besideOwnStreet(candidate, streetPaths)
-            && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
+          inFrame(candidate, frame) && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
             && pinNumbers.allSatisfy { box in
               abs(candidate.center.x - box.midX) >= projection(candidate, CGPoint(x: 1, y: 0)) + box
-                .width / 2 + 3
+                .width / 2
                 || abs(candidate.center.y - box.midY) >= projection(candidate, CGPoint(x: 0, y: 1))
-                  + box.height / 2 + 3
+                  + box.height / 2
             }
         }
         if let spot {

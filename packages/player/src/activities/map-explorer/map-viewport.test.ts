@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { estimatedLabelWidth } from "../_utils/drawing-label";
-import { type MapLabelSpot, isMapLabelNamed, placeMapLabels } from "./map-labels";
+import { type MapLabelSpot } from "./map-label-geometry";
+import { isMapLabelNamed, placeMapLabels } from "./map-labels";
 import { type MapPoint, fitViewport, spreadPins, strayRegions } from "./map-viewport";
 
 const map = { height: 500, width: 1000 };
@@ -178,46 +179,59 @@ describe(placeMapLabels, () => {
     }
   });
 
-  it("keeps 192 px and widened street frames readable, using only number clearance as a last resort", () => {
-    for (const width of [192, 320]) {
-      const center = { x: width / 2, y: 90 };
+  it.each([192, 320])("keeps a half-line street margin or an inline label at %i px", (width) => {
+    const labelWidth = width === 192 ? 120 : 220;
+    const center = { x: width / 2, y: 62 };
 
-      const labels = [90, 25, 155].map((y, index) => ({
-        ...named,
-        height: 24,
-        positions: [
-          { x: 0, y },
-          { x: width, y },
-        ],
-        priority: index === 0,
-        width: 120,
-        x: center.x,
-        y,
-      }));
+    const labels = [90, 25, 105].map((y, index) => ({
+      ...named,
+      height: 24,
+      positions: [
+        { x: 0, y },
+        { x: width, y },
+      ],
+      priority: index === 0,
+      width: labelWidth,
+      x: center.x,
+      y: index === 0 ? 98 : y,
+    }));
 
-      const [spot] = placeMapLabels({
-        frame: { height: 180, width },
-        labels,
-        pinNumbers: [{ height: 20, width: 16, x: center.x - 8, y: 80 }],
-        pins: [center],
-      });
+    const [spot] = placeMapLabels({
+      frame: { height: 180, width },
+      labels,
+      pinNumbers: [{ height: 20, width: 16, x: center.x - 8, y: center.y - 10 }],
+      pins: [center],
+    });
 
-      expect(spot).not.toBeNull();
-      expect(Math.abs(spot!.y - 90)).toBeLessThanOrEqual(40);
+    expect(spot).not.toBeNull();
+    const own = Math.abs(spot!.y - 90);
+    const other = Math.min(Math.abs(spot!.y - 25), Math.abs(spot!.y - 105));
+    const scale = spot!.scale ?? 1;
+    expect(own < 0.01 || own + 12 * scale <= other).toBe(true);
 
-      expect(Math.abs(spot!.y - 90)).toBeLessThan(
-        Math.min(Math.abs(spot!.y - 25), Math.abs(spot!.y - 155)),
-      );
+    expect(
+      Math.abs(spot!.x - center.x) >= (labelWidth * scale) / 2 + 8 ||
+        Math.abs(spot!.y - center.y) >= 12 * scale + 10,
+    ).toBe(true);
 
-      const scale = spot!.scale ?? 1;
+    expect(scale).toBeGreaterThanOrEqual(0.8);
+  });
 
-      expect(
-        Math.abs(spot!.x - center.x) >= 60 * scale + 8 || Math.abs(spot!.y - 90) >= 12 * scale + 10,
-      ).toBe(true);
+  it.each([8, 12])("keeps the full line-height margin when glyph ink is %i px high", (height) => {
+    const labels = [50, 63].map((y) => ({
+      ...named,
+      height,
+      lineHeight: 28,
+      positions: [
+        { x: 80, y },
+        { x: 160, y },
+        { x: 240, y },
+      ],
+      priority: false,
+      y,
+    }));
 
-      expect(Boolean(spot!.overPinCircle)).toBe(width === 192);
-      expect(scale).toBe(width === 192 ? 0.8 : 1);
-    }
+    expect(placeMapLabels({ frame: { height: 100, width: 320 }, labels, pins: [] })[0]).toBeNull();
   });
 
   it("keeps a named label box clear of every pin box", () => {

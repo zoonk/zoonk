@@ -96,3 +96,36 @@ export function measureDrawingLabel({
     width: inPixels(box.width),
   };
 }
+
+export function measureDrawingInk({
+  element,
+  context,
+  pixelSize = 1,
+}: {
+  element: SVGTextElement;
+  context: CanvasRenderingContext2D;
+  pixelSize?: number;
+}) {
+  const box = element.getBBox();
+  const style = getComputedStyle(element);
+  context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const metrics = context.measureText(element.textContent ?? "");
+  const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+  return {
+    height: height / pixelSize,
+    lineHeight: box.height / pixelSize,
+    offsetX:
+      (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft - metrics.width) /
+      2 /
+      pixelSize,
+    offsetY:
+      (box.y +
+        metrics.fontBoundingBoxAscent -
+        metrics.actualBoundingBoxAscent +
+        height / 2 -
+        Number(element.getAttribute("y"))) /
+      pixelSize,
+    width: (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) / pixelSize,
+  };
+}

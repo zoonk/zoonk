@@ -199,10 +199,14 @@ private fun besideOwnMapStreet(
     if (!label.street) return true
     val path = label.positions.orEmpty()
     val distance = mapPathDistance(label.center, path)
-    return distance <= MAX_STREET_OFFSET && streets.all { it == path || distance < mapPathDistance(label.center, it) }
+    return distance <= MAX_STREET_OFFSET && streets.all { it == path || distance + label.height / 2 <= mapPathDistance(label.center, it) }
 }
 
-private fun mapStreetCandidates(label: MapLabelSpot): List<MapPoint> {
+private fun mapStreetCandidates(
+    label: MapLabelSpot,
+    inlineFrame: MapBox? = null,
+    boxes: List<MapBox> = emptyList(),
+): List<MapPoint> {
     val normal = labelAxes(label)[1]
     val offset = min(MAX_STREET_OFFSET, labelProjection(label, normal) + 23)
     val path = label.positions.orEmpty()
@@ -221,9 +225,34 @@ private fun mapStreetCandidates(label: MapLabelSpot): List<MapPoint> {
                 .ceil(hypot(to.x - from.x, to.y - from.y) / MAP_STREET_SAMPLE_STEP)
                 .toInt()
                 .coerceAtLeast(1)
-        (0 until steps).flatMap { step ->
-            val point = MapPoint(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps)
-            offsets.map { across ->
+        val rx = labelProjection(label, MapPoint(1.0, 0.0))
+        val ry = labelProjection(label, MapPoint(0.0, 1.0))
+        val xs =
+            if (inlineFrame ==
+                null
+            ) {
+                emptyList()
+            } else {
+                listOf(rx, inlineFrame.width - rx) + boxes.flatMap { listOf(it.x - rx, it.x + it.width + rx) }
+            }
+        val ys =
+            if (inlineFrame ==
+                null
+            ) {
+                emptyList()
+            } else {
+                listOf(ry, inlineFrame.height - ry) + boxes.flatMap { listOf(it.y - ry, it.y + it.height + ry) }
+            }
+        val fractions =
+            (
+                (0 until steps).map { it.toDouble() / steps } + xs.map { (it - from.x) / (to.x - from.x) } +
+                    ys.map { (it - from.y) / (to.y - from.y) }
+            ).filter { it >= 0 && it <= 1 }
+        val cuts = fractions.sorted()
+        val candidates = if (inlineFrame == null) fractions else cuts + cuts.zipWithNext { left, right -> (left + right) / 2 }
+        candidates.flatMap { t ->
+            val point = MapPoint(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t)
+            (if (inlineFrame != null) listOf(0.0) else offsets).map { across ->
                 MapPoint(point.x + normal.x * across, point.y + normal.y * across)
             }
         }
@@ -338,24 +367,33 @@ internal fun placeMapLabels(
                         named.count { labels[it].question && layout.spots[it] != null }
                     }.thenByDescending { it.placed.size },
                 ).first()
-    // At minimum size, a named street may cover a pin's circle, but never its number.
+    // The last resort stays on the street's line and may cover a circle, never its number.
     if (pinNumbers?.size == pins.size) {
         for (index in named) {
             val original = labels[index]
             if (chosen.spots[index] != null || !original.street) continue
             val label = original.copy(width = original.width * MIN_MAP_LABEL_SCALE, height = original.height * MIN_MAP_LABEL_SCALE)
             val spot =
-                mapStreetCandidates(label)
-                    .sortedBy { hypot(it.x - label.center.x, it.y - label.center.y) }
+                mapStreetCandidates(
+                    label,
+                    inlineFrame = MapBox(0.0, 0.0, width, height),
+                    boxes =
+                        pinNumbers +
+                            chosen.placed.map { other ->
+                                val rx = labelProjection(other, MapPoint(1.0, 0.0)) + 3
+                                val ry = labelProjection(other, MapPoint(0.0, 1.0)) + 3
+                                MapBox(other.center.x - rx, other.center.y - ry, rx * 2, ry * 2)
+                            },
+                ).sortedBy { hypot(it.x - label.center.x, it.y - label.center.y) }
                     .map { label.copy(center = it) }
                     .firstOrNull { candidate ->
-                        inMapFrame(candidate, width, height) && besideOwnMapStreet(candidate, streets) &&
+                        inMapFrame(candidate, width, height) &&
                             chosen.placed.all { clearOfMapLabel(candidate, it) } &&
                             pinNumbers.all { box ->
                                 kotlin.math.abs(candidate.center.x - box.x - box.width / 2) >=
-                                    labelProjection(candidate, MapPoint(1.0, 0.0)) + box.width / 2 + 3 ||
+                                    labelProjection(candidate, MapPoint(1.0, 0.0)) + box.width / 2 ||
                                     kotlin.math.abs(candidate.center.y - box.y - box.height / 2) >=
-                                    labelProjection(candidate, MapPoint(0.0, 1.0)) + box.height / 2 + 3
+                                    labelProjection(candidate, MapPoint(0.0, 1.0)) + box.height / 2
                             }
                     }
             if (spot != null) {

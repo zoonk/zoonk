@@ -35,37 +35,43 @@ class MapViewportTest {
         }
     }
 
-    @Test fun narrowAndWidenedStreetFramesKeepPinNumbersClear() {
-        for (width in listOf(192.0, 320.0)) {
-            val center = MapPoint(width / 2, 90.0)
-            val labels =
-                listOf(90.0, 25.0, 155.0).mapIndexed { index, y ->
-                    named.copy(
-                        center = MapPoint(center.x, y),
-                        width = 120.0,
-                        height = 24.0,
-                        priority = index == 0,
-                        positions = listOf(MapPoint(0.0, y), MapPoint(width, y)),
-                    )
-                }
-            val spot =
-                placeMapLabels(
-                    labels,
-                    listOf(center),
-                    width,
-                    180.0,
-                    pinNumbers = listOf(MapBox(center.x - 8, 80.0, 16.0, 20.0)),
-                )[0]
-            org.junit.Assert.assertNotNull(spot)
-            spot!!
-            org.junit.Assert.assertTrue(kotlin.math.abs(spot.y - 90) <= 40)
-            org.junit.Assert.assertTrue(kotlin.math.abs(spot.y - 90) < minOf(kotlin.math.abs(spot.y - 25), kotlin.math.abs(spot.y - 155)))
-            org.junit.Assert.assertTrue(
-                kotlin.math.abs(spot.x - center.x) >= 60 * spot.scale + 8 || kotlin.math.abs(spot.y - 90) >= 12 * spot.scale + 10,
-            )
-            assertEquals(width == 192.0, spot.overPinCircle)
-            if (width == 192.0) assertEquals(0.8, spot.scale, 0.0)
-        }
+    @Test fun narrowFrameKeepsStreetMarginOrInlineLabel() = verifyStreetMargin(192.0, 120.0)
+
+    @Test fun widenedFrameKeepsStreetMarginOrInlineLabel() = verifyStreetMargin(320.0, 220.0)
+
+    private fun verifyStreetMargin(
+        width: Double,
+        labelWidth: Double,
+    ) {
+        val center = MapPoint(width / 2, 62.0)
+        val labels =
+            listOf(90.0, 25.0, 105.0).mapIndexed { index, y ->
+                named.copy(
+                    center = MapPoint(center.x, if (index == 0) 98.0 else y),
+                    width = labelWidth,
+                    height = 24.0,
+                    priority = index == 0,
+                    positions = listOf(MapPoint(0.0, y), MapPoint(width, y)),
+                )
+            }
+        val spot =
+            placeMapLabels(
+                labels,
+                listOf(center),
+                width,
+                180.0,
+                pinNumbers = listOf(MapBox(center.x - 8, center.y - 10, 16.0, 20.0)),
+            )[0]
+        org.junit.Assert.assertNotNull(spot)
+        spot!!
+        val own = kotlin.math.abs(spot.y - 90)
+        val other = minOf(kotlin.math.abs(spot.y - 25), kotlin.math.abs(spot.y - 105))
+        org.junit.Assert.assertTrue(own < 0.01 || own + 12 * spot.scale <= other)
+        org.junit.Assert.assertTrue(
+            kotlin.math.abs(spot.x - center.x) >= labelWidth * spot.scale / 2 + 8 ||
+                kotlin.math.abs(spot.y - center.y) >= 12 * spot.scale + 10,
+        )
+        org.junit.Assert.assertTrue(spot.scale >= 0.8)
     }
 
     @Test fun namedLabelBoxesClearEveryPinBox() {
