@@ -113,6 +113,36 @@ class LayoutCaptureTest {
     }
 
     @Test
+    @Config(qualifiers = "w700dp-h900dp-xxhdpi")
+    fun aNumberedWrappedRowKeepsItsValueAndChevronAtTheRowCenter() {
+        RuntimeEnvironment.setFontScale(2f)
+        val elements =
+            capture {
+                ListRow(
+                    headline = { Text("How atoms share or transfer electrons to form bonds.") },
+                    leading = { Text("1") },
+                    leadOnFirstLine = true,
+                    meta = { Text("7 min") },
+                    onClick = {},
+                )
+            }.elements()
+        val row = elements.first { it.optString("part") == "row" }
+        val own = elements.filter { it.optString("row") == row.getString("id") }
+        val label = own.first { it.optString("part") == "label" }
+        val value = own.first { it.optString("part") == "value" }
+        val end = own.first { it.optString("part") == "end" }
+        val rowBounds = row.getJSONArray("bounds")
+        val labelBounds = label.getJSONArray("bounds")
+        val valueBounds = value.getJSONArray("bounds")
+        val endBounds = end.getJSONArray("bounds")
+        val middle = rowBounds.getDouble(1) + rowBounds.getDouble(3) / 2
+        assertEquals("The title wraps to two lines", 2, label.getInt("lines"))
+        assertTrue("The value stays beside the title", valueBounds.getDouble(0) >= labelBounds.getDouble(0) + labelBounds.getDouble(2))
+        assertEquals("Value centre", middle, valueBounds.getDouble(1) + valueBounds.getDouble(3) / 2, 1.0)
+        assertEquals("Chevron centre", middle, endBounds.getDouble(1) + endBounds.getDouble(3) / 2, 1.0)
+    }
+
+    @Test
     fun clearedContainersStillExposeTheirDescendantsToTheUnmergedCapture() {
         val parts =
             capture {
