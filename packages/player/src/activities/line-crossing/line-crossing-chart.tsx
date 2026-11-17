@@ -1,8 +1,11 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
+import { estimatedLabelWidth } from "../_utils/drawing-label";
+import { PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
 import { type LabelSize, changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
 import {
@@ -32,8 +35,7 @@ import {
 type ChartLine = Line & { id: string; label: string };
 
 const PLOT_HEIGHT = 248;
-// The axis's stroke starts on the card's text edge and the plot runs to its far edge.
-const PADDING = { bottom: 30, left: 1, right: 0, top: 26 };
+const PADDING = { bottom: 50, left: PLOT_TICK_ROOM, right: 0, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
@@ -207,7 +209,8 @@ export function LineCrossingChart({
   yLabel: string;
 }) {
   const clipId = useId();
-  const { domain, slides } = chartSlides({ amount, axis, lines, real });
+  const format = useFormatNumber();
+  const { domain, slides, xTicks, yTicks } = chartSlides({ amount, axis, lines, real });
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const shown = lines.map((line) => movedLine(line, offsetOf(line), axis));
   const moved = lines.filter((line) => offsetOf(line) !== 0);
@@ -218,12 +221,18 @@ export function LineCrossingChart({
   return (
     <ActivityPlot
       height={PLOT_HEIGHT}
-      padding={PADDING}
+      padding={{
+        ...PADDING,
+        left: Math.max(
+          PLOT_TICK_ROOM,
+          ...yTicks.map((tick) => estimatedLabelWidth(format(tick)) + TICK_GAP),
+        ),
+      }}
       xDomain={[domain.min.x, domain.max.x]}
       yDomain={[domain.min.y, domain.max.y]}
     >
       <ClipArea id={clipId} />
-      <Axes xLabel={xLabel} yLabel={yLabel} />
+      <Axes format={format} xLabel={xLabel} xTicks={xTicks} yLabel={yLabel} yTicks={yTicks} />
 
       <g clipPath={`url(#${clipId})`}>
         {moved.map((line) => (

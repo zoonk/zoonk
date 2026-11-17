@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -219,19 +220,7 @@ fun ActivityPlot(
         val bottom = size.height - max(MIN_BOTTOM.toPx(), (xLabels.maxOfOrNull { it.size.height } ?: 0) + gap)
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
-        val baseline = yTicks.minOrNull()
-        val dashes = PathEffect.dashPathEffect(floatArrayOf(DASH.toPx(), DASH_GAP.toPx()))
-
-        yTicks.zip(yLabels).forEach { (tick, label) ->
-            val py = y.toPixel(tick)
-            val effect = if (tick == baseline) null else dashes
-            drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
-            drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
-        }
-        xTicks.zip(xLabels).forEach { (tick, label) ->
-            val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, size.width - label.size.width)
-            drawText(label, topLeft = Offset(start, bottom + gap))
-        }
+        drawPlotAxes(x, y, xTicks.zip(xLabels), yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
@@ -262,3 +251,28 @@ private val GUIDE_DASH = 3.dp
 private val GUIDE_WIDTH = 1.5.dp
 private val MAX_BAR_RADIUS = 3.dp
 private const val BAR_ROUNDING = 0.25f
+
+internal fun DrawScope.drawPlotAxes(
+    x: LinearScale,
+    y: LinearScale,
+    xLabels: List<Pair<Double, TextLayoutResult>>,
+    yLabels: List<Pair<Double, TextLayoutResult>>,
+    gridColor: Color,
+) {
+    val gap = LABEL_GAP.toPx()
+    val left = x.range.first
+    val right = x.range.second
+    val bottom = y.range.first
+    val baseline = yLabels.minOfOrNull { it.first }
+    val dashes = PathEffect.dashPathEffect(floatArrayOf(DASH.toPx(), DASH_GAP.toPx()))
+    yLabels.forEach { (tick, label) ->
+        val py = y.toPixel(tick)
+        val effect = if (tick == baseline) null else dashes
+        drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
+        drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
+    }
+    xLabels.forEach { (tick, label) ->
+        val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, max(0f, size.width - label.size.width))
+        drawText(label, topLeft = Offset(start, bottom + gap))
+    }
+}

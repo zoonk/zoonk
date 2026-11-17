@@ -47,6 +47,7 @@ import com.zoonk.android.feature.activities.ActivityPlaceTrack
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.PlaceOrientation
+import com.zoonk.android.feature.activities.drawPlotAxes
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -226,7 +227,9 @@ private fun LineCrossingChart(
     onMove: (FieldLine, Double) -> Unit,
 ) {
     val density = LocalDensity.current
+    val locale = currentLocale()
     val measurer = rememberTextMeasurer()
+    val gridColor = MaterialTheme.zoonk.vizGrid
     val axisStyle = MaterialTheme.typography.labelMedium
     val lineStyle = axisStyle.copy(fontWeight = FontWeight.SemiBold)
     val colors =
@@ -242,6 +245,10 @@ private fun LineCrossingChart(
     val whatHappened = stringResource(R.string.activities_geometry_line_what_happened)
     val lines = fields.lines.map { it.line() }
     val domain = chart.domain
+    val xTicks = chart.xTicks
+    val yTicks = chart.yTicks
+    val xLabels = xTicks.map { it to measurer.measure(formatAmount(it, locale), axisStyle.copy(color = colors.muted)) }
+    val yLabels = yTicks.map { it to measurer.measure(formatAmount(it, locale), axisStyle.copy(color = colors.muted)) }
     val shown = fields.lines.map { LineCrossingModel.moved(it.line(), offsetOf(it), axis) }
     val movedLines = fields.lines.filter { offsetOf(it) != 0.0 }.map { it.line() }
     val before = LineCrossingModel.crossing(lines[0], lines[1])
@@ -254,11 +261,15 @@ private fun LineCrossingChart(
                 .toDp()
         } + AXIS_LABEL_GAP
 
-    BoxWithConstraints(Modifier.fillMaxWidth().height(PLOT_AREA * density.fontScale.coerceIn(1f, MAX_PLOT_GROWTH) + band * 2)) {
-        val left = with(density) { PADDING_LEFT.toPx() }
+    BoxWithConstraints(Modifier.fillMaxWidth().height(PLOT_AREA * density.fontScale.coerceIn(1f, MAX_PLOT_GROWTH) + band * 3)) {
+        val left =
+            maxOf(
+                with(density) { PADDING_LEFT.toPx() },
+                yLabels.maxOf { it.second.size.width } + with(density) { AXIS_LABEL_GAP.toPx() },
+            )
         val right = constraints.maxWidth - with(density) { PADDING_RIGHT.toPx() }
         val top = with(density) { band.toPx() }
-        val bottom = constraints.maxHeight - top
+        val bottom = constraints.maxHeight - top * 2
         val x = LinearScale(domain.min.x..domain.max.x, left to right)
         val y = LinearScale(domain.min.y..domain.max.y, bottom to top)
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
@@ -302,10 +313,11 @@ private fun LineCrossingChart(
             )
 
         Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
+            drawPlotAxes(x, y, xLabels, yLabels, gridColor)
             drawAxes(left, right, top, bottom, colors.ink)
             drawText(measurer.measure(fields.yLabel, axisStyle.copy(color = colors.muted)), topLeft = Offset(left, 0f))
             measurer.measure(fields.xLabel, axisStyle.copy(color = colors.muted)).let {
-                drawText(it, topLeft = Offset(right - it.size.width, bottom + AXIS_LABEL_GAP.toPx()))
+                drawText(it, topLeft = Offset(right - it.size.width, bottom + band.toPx() + AXIS_LABEL_GAP.toPx()))
             }
 
             clipRect(left, top, right, bottom) {

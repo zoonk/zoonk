@@ -4,6 +4,7 @@ import com.zoonk.android.feature.activities.PlaceOrientation
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.clamp
 import com.zoonk.android.feature.activities.snapToStep
+import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -37,7 +38,10 @@ internal data class ChartDomain(
 internal class ChartSlides(
     val domain: ChartDomain,
     val slides: List<LineSlide>,
-)
+) {
+    val xTicks = niceTicks(domain.min.x..domain.max.x)
+    val yTicks = niceTicks(domain.min.y..domain.max.y)
+}
 
 /** Main's `line-crossing-model.ts` with core's `shiftLine` and `crossing`. Offsets are right or up when positive. */
 internal object LineCrossingModel {

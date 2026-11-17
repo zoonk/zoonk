@@ -172,6 +172,13 @@ describe("money and society activities", () => {
 
   it("line crossing: moving the cost line up gives the new break-even", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
+    await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+    const plot = document.querySelector('[data-slot="activity-plot"]');
+
+    expect(
+      [...(plot?.querySelectorAll("text") ?? [])].map((text) => text.textContent),
+    ).toStrictEqual(expect.arrayContaining(["0", "100", "200", "300", "2,000", "4,000"]));
+
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
     await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");

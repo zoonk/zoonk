@@ -1,4 +1,5 @@
 import { crossing, shiftLine } from "@zoonk/core/library/activities/line-crossing";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 import { type SnapRange, clamp, snapToStep } from "../_utils/snap-value";
 
 export type Line = { intercept: number; slope: number };
@@ -338,7 +339,12 @@ export function chartSlides<TLine extends NamedLine>({
   axis: ShiftAxis;
   lines: readonly [TLine, TLine];
   real: LineOffsets;
-}): { domain: ChartDomain; slides: { line: TLine; slide: LineSlide }[] } {
+}): {
+  domain: ChartDomain;
+  slides: { line: TLine; slide: LineSlide }[];
+  xTicks: number[];
+  yTicks: number[];
+} {
   const domain = chartDomain({ amount, axis, lines, real });
   const [first, second] = lines;
   const rest = crossingPoint(first, second);
@@ -367,5 +373,7 @@ export function chartSlides<TLine extends NamedLine>({
       { line: first, slide: chosen.first.slide },
       { line: second, slide: chosen.second.slide },
     ],
+    xTicks: niceTicks([domain.min.x, domain.max.x]),
+    yTicks: niceTicks([domain.min.y, domain.max.y]),
   };
 }

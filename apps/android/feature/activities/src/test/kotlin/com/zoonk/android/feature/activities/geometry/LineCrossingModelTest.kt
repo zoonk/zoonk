@@ -13,6 +13,19 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
 class LineCrossingModelTest {
+    @Test
+    fun breakEvenAxesHaveReadableRoundTicks() {
+        val chart =
+            LineCrossingModel.slides(
+                500.0,
+                PlaceOrientation.Vertical,
+                listOf(Line(2000.0, 5.0), Line(0.0, 15.0)),
+                listOf(500.0, 0.0),
+            )
+        assertEquals(listOf(0.0, 100.0, 200.0, 300.0), chart.xTicks)
+        assertEquals(listOf(0.0, 2000.0, 4000.0), chart.yTicks)
+    }
+
     private val supply = Line(intercept = 1.0, slope = 0.5)
     private val demand = Line(intercept = 10.0, slope = -1.0)
     private val cost = Line(intercept = 2000.0, slope = 5.0)

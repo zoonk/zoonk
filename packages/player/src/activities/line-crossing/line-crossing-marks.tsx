@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
-import { usePlotScales } from "../_components/activity-plot";
+import { ActivityPlotAxisX, ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
 import { DRAWING_LABEL_HALO, estimatedLabelWidth } from "../_utils/drawing-label";
 import {
   ARROW_HEAD,
@@ -15,7 +15,7 @@ import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-
 
 const DOT_RADIUS = 6;
 const Y_LABEL_RISE = 12;
-const X_LABEL_DROP = 20;
+const X_LABEL_DROP = 42;
 
 export function LineMark({
   className,
@@ -183,13 +183,27 @@ export function yTitleBox({
   };
 }
 
-export function Axes({ xLabel, yLabel }: { xLabel: string; yLabel: string }) {
+export function Axes({
+  format,
+  xLabel,
+  xTicks,
+  yLabel,
+  yTicks,
+}: {
+  format: (value: number) => string;
+  xLabel: string;
+  xTicks: readonly number[];
+  yLabel: string;
+  yTicks: readonly number[];
+}) {
   const { x, y } = usePlotScales();
   const [left, right] = x.range;
   const [bottom, top] = y.range;
 
   return (
     <g aria-hidden="true">
+      <ActivityPlotGridY format={format} ticks={yTicks} />
+      <ActivityPlotAxisX format={format} ticks={xTicks} />
       <path
         className="stroke-foreground/40 fill-none"
         d={`M${left} ${top} V${bottom} H${right}`}
