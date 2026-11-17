@@ -96,26 +96,45 @@ final class PlanSlotOpeningTests: XCTestCase {
   func testClosingTheSheetDropsAClaimStillWaiting() async throws {
     let claims = HeldClaims()
     let router = AppRouter()
-    let api = try await finishedPlan()
-    let window = try await showPlan(
-      api: api, width: .narrow, claims: claims, router: router)
+    let dependencies = AppDependencies.hosted()
+    let certificates = CertificatesStore(api: claims, cache: dependencies.cache)
+    let goal = LearnerGoal(
+      dailyMinutes: 30, id: "goal", kind: .learn, language: "en", status: .active,
+      targetDate: nil, displayName: "Finance", title: "Finance")
+    let context = PlanContext(
+      goal: goal, plan: try goalPlanFixture(end: "finished"), adjust: { _ in }, show: { _ in },
+      claimCertificate: {
+        // A sent claim can answer independently of the canceled opening; its landing must reject it.
+        let result = await Task { await certificates.claim(goalID: goal.id) }.value
+        guard case .done = result else { return nil }
+        return .certificates
+      },
+      showClaim: { _ in router.present(.account(.certificates)) })
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      ClaimOpening(context: context)
+        .environment(PlanStore(api: try await finishedPlan(), cache: dependencies.cache))
+        .appDependencies(dependencies)
+        .environment(router)
+        .zoonkStyles())
+    window.frame = Width.narrow.frame
 
     try await activate(String(localized: "View", table: "Plan"), in: window)
     try await activate(Self.claim, in: window)
     try await claims.waitUntilAsked()
+    weak let consumer = context.slotCheck(.finished, request: .claim)
+    XCTAssertTrue(consumer?.isWorking == true)
     try await closeRequestSheet(in: window)
-    let read = plans.plan(goalId: "goal")
-    let revision = read.revision
+    XCTAssertNotNil(consumer, "The pending consumer still owns its check after the sheet closes")
     await claims.answer()
-    try await waitForTestCondition("The claim result was not consumed and refreshed") {
-      await claims.completed == 1 && read.revision > revision
-        && !read.isInvalidated && !read.isRefreshing
+    // The opening drops the check on close; only its running consumer retains it afterward.
+    try await waitForTestCondition("The closed opening's claim consumer did not finish") {
+      consumer == nil
     }
     XCTAssertNil(router.sheet, "Nothing opens once its sheet closed")
 
     try await activate(String(localized: "View", table: "Plan"), in: window)
     try await closeRequestSheet(in: window)
-    try await waitForTestCondition("Expected state did not arrive") { (router.sheet) == nil }
     XCTAssertNil(router.sheet, "Nor when a later sheet closes")
   }
 
@@ -569,11 +588,31 @@ final class PlanSlotOpeningTests: XCTestCase {
 
 }
 
+/// Keeps the real sheet modifier across openings while exposing the opening owner to the test.
+private struct ClaimOpening: View {
+  let context: PlanContext
+  @State private var sheet: PlanSheet?
+  @State private var answer: PlanSlotAnswer?
+
+  var body: some View {
+    Button {
+      sheet = .suggestion(.finished)
+    } label: {
+      Text("View", tableName: "Plan")
+    }
+    .planSheets($sheet, context: context, syllabus: nil, slotAnswer: $answer)
+    .onChange(of: sheet) { old, new in
+      if old?.isSuggestion == true && new?.isSuggestion != true {
+        context.slotChecks.leave()
+      }
+    }
+  }
+}
+
 /// A claim that answers when the test says, with two certificates already shown before, so the
 /// Plan opens the learner's certificates.
 private actor HeldClaims: CertificatesAPIClient {
   private var asked: TestContinuation<Void>?
-  private(set) var completed = 0
 
   func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
     try await waitForTestCondition("The fixture request never arrived", file: file, line: line) {
@@ -589,7 +628,6 @@ private actor HeldClaims: CertificatesAPIClient {
   }
 
   func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] {
-    defer { completed += 1 }
     await withTestVoidContinuation { continuation in
       asked = continuation
     }
