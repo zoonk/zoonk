@@ -155,7 +155,7 @@ private struct PlanSetupLeft: View {
     StateMessage {
       Label {
         Text(
-          "Your \(goal.displayName) goal is paused", tableName: "Plan",
+          "This goal is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal")
       } icon: {
         Image(systemName: "pause.circle")
