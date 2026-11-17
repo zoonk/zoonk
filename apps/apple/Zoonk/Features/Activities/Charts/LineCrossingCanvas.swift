@@ -100,7 +100,7 @@ struct LineCrossingCanvas: View {
 
     return Chart {
       if isMoved {
-        ForEach(fields.lines) { field in
+        ForEach(fields.lines.filter { offsets[$0.id, default: 0] != 0 }) { field in
           segmentMarks(line(field, [:]), domain: domain, series: "before-\(field.id)")
             .foregroundStyle(Color.mutedForeground.opacity(0.5))
             .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
@@ -142,7 +142,7 @@ struct LineCrossingCanvas: View {
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
-    .chartPlotStyle { plot in plot.clipped() }
+    .chartPlotStyle { plot in plot.frame(minHeight: 248).clipped() }
     .chartXAxisLabel(fields.xLabel, alignment: .trailing)
     .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
     .chartsXAxis {
@@ -170,14 +170,24 @@ struct LineCrossingCanvas: View {
           }
           let names = fields.lines.enumerated().map { index, field in
             LineCrossingLabels.Item(
-              id: field.id, text: field.label, segment: segment(line(field, offsets)),
+              id: field.id, text: Text(verbatim: field.label),
+              segment: segment(line(field, offsets)),
               color: index == 0 ? .vizAccent : .vizSecondary)
           }
-          let beforeLines = isMoved ? fields.lines.map { segment(line($0, [:])) } : []
-          let answerLines =
-            shifted.map { field in
-              showsAnswer ? [segment(line(field, [field.id: realOffset]))] : []
-            } ?? []
+          let beforeNames = fields.lines.filter { offsets[$0.id, default: 0] != 0 }.map { field in
+            LineCrossingLabels.Item(
+              id: "before-\(field.id)", text: Text("Before", tableName: "ActivitiesCharts"),
+              segment: segment(line(field, [:])), color: .mutedForeground,
+              isUpper: false, isOptional: true)
+          }
+          let revealed =
+            shifted.flatMap { field -> LineCrossingLabels.Item? in
+              guard showsAnswer else { return nil }
+              return .init(
+                id: "answer", text: Text("What happened", tableName: "ActivitiesCharts"),
+                segment: segment(line(field, [field.id: realOffset])), color: .vizHighlight,
+                isUpper: false)
+            }.map { [$0] } ?? []
           let handles = names.enumerated().map { index, name in
             let share = index == 0 ? 0.8 : 0.2
             let x = name.segment.from.x + (name.segment.to.x - name.segment.from.x) * share
@@ -186,8 +196,9 @@ struct LineCrossingCanvas: View {
           }
           let cross = point(after)
           LineCrossingLabels(
-            items: names, plot: plot,
-            otherLines: beforeLines + answerLines + [
+            items: names + beforeNames + revealed, shownCount: names.count + beforeNames.count,
+            plot: plot,
+            guides: [
               .init(from: CGPoint(x: cross.x, y: plot.maxY), to: cross),
               .init(from: CGPoint(x: plot.minX, y: cross.y), to: cross),
             ], obstacles: handles + [CGRect(x: cross.x - 7, y: cross.y - 7, width: 14, height: 14)])
@@ -199,7 +210,6 @@ struct LineCrossingCanvas: View {
       .coordinateSpace(.named(ChartsPlot.space))
     }
     .chartsPlotText()
-    .frame(minHeight: 240)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text(verbatim: summary(changes: changes)))
   }
@@ -392,26 +402,29 @@ struct LineCrossingCanvas: View {
 private struct LineCrossingLabels: View {
   struct Item: Identifiable {
     let id: String
-    let text: String
+    let text: Text
     let segment: LineCrossingLabelLayout.Segment
     let color: Color
+    var isUpper = true
+    var isOptional = false
   }
 
   let items: [Item]
+  let shownCount: Int
   let plot: CGRect
-  let otherLines: [LineCrossingLabelLayout.Segment]
+  let guides: [LineCrossingLabelLayout.Segment]
   let obstacles: [CGRect]
 
   var body: some View {
     LineCrossingNamesLayout(
-      segments: items.map(\.segment), plot: plot,
-      lines: items.map(\.segment) + otherLines, obstacles: obstacles
+      items: items, shownCount: shownCount, plot: plot, guides: guides, obstacles: obstacles
     ) {
       ForEach(items) { item in
-        Text(verbatim: item.text)
+        item.text
           .typeStyle(.meta.weight(.semibold))
           .foregroundStyle(item.color)
           .chartsLabelHalo()
+          .clipped()
       }
     }
     .allowsHitTesting(false)
@@ -420,9 +433,10 @@ private struct LineCrossingLabels: View {
 }
 
 private struct LineCrossingNamesLayout: Layout {
-  let segments: [LineCrossingLabelLayout.Segment]
+  let items: [LineCrossingLabels.Item]
+  let shownCount: Int
   let plot: CGRect
-  let lines: [LineCrossingLabelLayout.Segment]
+  let guides: [LineCrossingLabelLayout.Segment]
   let obstacles: [CGRect]
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
@@ -433,13 +447,20 @@ private struct LineCrossingNamesLayout: Layout {
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
     let area = plot.insetBy(dx: 3, dy: 3)
-    let labels = zip(segments, subviews).map { segment, view in
+    let labels = zip(items, subviews).map { item, view in
       LineCrossingLabelLayout.Label(
-        segment: segment,
-        size: view.sizeThatFits(ProposedViewSize(width: max(1, area.width), height: nil)))
+        segment: item.segment,
+        size: view.sizeThatFits(ProposedViewSize(width: max(1, area.width), height: nil)),
+        isUpper: item.isUpper, isOptional: item.isOptional)
     }
-    let boxes = LineCrossingLabelLayout.place(labels, in: area, lines: lines, obstacles: obstacles)
+    let boxes = LineCrossingLabelLayout.chart(
+      shown: Array(labels.prefix(shownCount)), revealed: Array(labels.dropFirst(shownCount)),
+      in: area, guides: guides, obstacles: obstacles)
     for (view, box) in zip(subviews, boxes) {
+      guard let box else {
+        view.place(at: .zero, proposal: .zero)
+        continue
+      }
       view.place(
         at: CGPoint(x: bounds.minX + box.minX, y: bounds.minY + box.minY), anchor: .topLeading,
         proposal: ProposedViewSize(width: box.width, height: box.height))

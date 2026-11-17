@@ -29,7 +29,9 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
               width: ceil(style.width(of: text, dynamicTypeSize: size, legibility: nil)),
               height: ceil(style.uiFont(size, legibility: nil).lineHeight)))
         }
-        let boxes = LineCrossingLabelLayout.place(labels, in: area, lines: lines, obstacles: [])
+        let boxes = LineCrossingLabelLayout.place(
+          labels, in: area, lines: lines, obstacles: [], nearestLines: [cost, revenue, before]
+        ).map { $0! }
         XCTAssertEqual(boxes.count, 2)
         XCTAssertFalse(boxes[0].insetBy(dx: -3, dy: -3).intersects(boxes[1]))
         for box in boxes {
@@ -40,7 +42,9 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
               let point = CGPoint(
                 x: line.from.x + (line.to.x - line.from.x) * t,
                 y: line.from.y + (line.to.y - line.from.y) * t)
-              XCTAssertFalse(box.insetBy(dx: -2.9, dy: -2.9).contains(point))
+              XCTAssertFalse(
+                box.insetBy(dx: -2.9, dy: -2.9).contains(point),
+                "\(width), \(size), \(box), line \(line), labels \(labels.map(\.size))")
             }
           }
         }

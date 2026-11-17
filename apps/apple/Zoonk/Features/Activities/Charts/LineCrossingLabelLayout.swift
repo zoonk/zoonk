@@ -9,54 +9,84 @@ enum LineCrossingLabelLayout {
   struct Label {
     let segment: Segment
     let size: CGSize
+    var isUpper = true
+    var isOptional = false
+  }
+
+  // Check reveals a new name around the saved names, without moving any of them.
+  static func chart(
+    shown: [Label], revealed: [Label], in area: CGRect, guides: [Segment], obstacles: [CGRect]
+  ) -> [CGRect?] {
+    let shownLines = shown.map(\.segment)
+    let placed = place(
+      shown, in: area, lines: shownLines + guides, obstacles: obstacles, nearestLines: shownLines)
+    return placed
+      + place(
+        revealed, in: area, lines: (shown + revealed).map(\.segment) + guides,
+        obstacles: obstacles, placed: placed.compactMap { $0 },
+        nearestLines: (shown + revealed).map(\.segment))
   }
 
   static func place(
-    _ labels: [Label], in area: CGRect, lines: [Segment], obstacles: [CGRect]
-  ) -> [CGRect] {
-    var placed: [CGRect] = []
-    for (index, label) in labels.enumerated() {
+    _ labels: [Label], in area: CGRect, lines: [Segment], obstacles: [CGRect],
+    placed initial: [CGRect] = [], nearestLines: [Segment]? = nil
+  ) -> [CGRect?] {
+    let namedLines = nearestLines ?? lines
+    var placed = initial
+    var result: [CGRect?] = []
+    for label in labels {
       let end = label.segment.from.y < label.segment.to.y ? label.segment.from : label.segment.to
       let start = CGRect(
         x: end.x < area.midX ? end.x + 8 : end.x - 8 - label.size.width,
-        y: end.y - 8 - label.size.height, width: label.size.width, height: label.size.height)
+        y: label.isUpper ? end.y - 8 - label.size.height : end.y + 8, width: label.size.width,
+        height: label.size.height)
       let step = max(2, label.size.height / 6)
       let width = max(0, area.width - label.size.width)
       let height = max(0, area.height - label.size.height)
       let blocked = obstacles + placed
-      var best: CGRect?
-      var distance = CGFloat.infinity
-      for row in 0...Int(ceil(height / step)) {
-        for column in 0...Int(ceil(width / step)) {
-          let box = CGRect(
-            origin: CGPoint(
+      func search(clearsMarks: Bool) -> CGRect? {
+        var best: CGRect?
+        var distance = CGFloat.infinity
+        for row in 0...Int(ceil(height / step)) {
+          for column in 0...Int(ceil(width / step)) {
+            let box = CGRect(
               x: area.minX + min(width, CGFloat(column) * step),
-              y: area.minY + min(height, CGFloat(row) * step)), size: label.size)
-          guard area.contains(box),
-            lines.allSatisfy({ !touches(box.insetBy(dx: -3, dy: -3), $0) }),
-            blocked.allSatisfy({ !box.insetBy(dx: -3, dy: -3).intersects($0) })
-          else { continue }
-          let own = gapSquared(box, label.segment)
-          guard
-            labels.indices.allSatisfy({ index == $0 || own <= gapSquared(box, labels[$0].segment) })
-          else { continue }
-          let dx = box.midX - start.midX
-          let dy = box.midY - start.midY
-          let cost = dx * dx + dy * dy
-          if cost < distance {
-            best = box
-            distance = cost
+              y: area.minY + min(height, CGFloat(row) * step),
+              width: label.size.width, height: label.size.height)
+            let own = gapSquared(box, label.segment)
+            guard area.contains(box), !touches(box.insetBy(dx: -3, dy: -3), label.segment),
+              namedLines.allSatisfy({ $0 == label.segment || own < gapSquared(box, $0) })
+            else { continue }
+            if clearsMarks {
+              guard lines.allSatisfy({ !touches(box.insetBy(dx: -3, dy: -3), $0) }),
+                blocked.allSatisfy({ !box.insetBy(dx: -3, dy: -3).intersects($0) })
+              else { continue }
+            }
+            let dx = box.midX - start.midX
+            let dy = box.midY - start.midY
+            let cost = dx * dx + dy * dy
+            if cost < distance {
+              best = box
+              distance = cost
+            }
           }
         }
+        return best
       }
-      placed.append(
-        best
-          ?? CGRect(
-            x: min(max(start.minX, area.minX), area.maxX - label.size.width),
-            y: min(max(start.minY, area.minY), area.maxY - label.size.height),
-            width: label.size.width, height: label.size.height))
+      var best = search(clearsMarks: true)
+      if best == nil && !label.isOptional {
+        best = search(clearsMarks: false)
+      }
+      if best == nil && !label.isOptional {
+        best = CGRect(
+          x: min(max(start.minX, area.minX), area.maxX - label.size.width),
+          y: min(max(start.minY, area.minY), area.maxY - label.size.height),
+          width: label.size.width, height: label.size.height)
+      }
+      result.append(best)
+      if let best { placed.append(best) }
     }
-    return placed
+    return result
   }
 
   private static func gapSquared(_ box: CGRect, _ line: Segment) -> CGFloat {
