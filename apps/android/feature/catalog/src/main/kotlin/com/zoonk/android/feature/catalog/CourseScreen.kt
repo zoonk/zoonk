@@ -271,7 +271,22 @@ private fun CourseFit(
             Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
                 audience.forEachIndexed { index, line ->
                     if (index > 0) HorizontalDivider()
-                    Text(line, modifier = Modifier.padding(vertical = 12.dp), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        line,
+                        modifier =
+                            Modifier.padding(
+                                top =
+                                    if (index ==
+                                        0
+                                    ) {
+                                        0.dp
+                                    } else {
+                                        12.dp
+                                    },
+                                bottom = 12.dp,
+                            ),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
         }
@@ -293,7 +308,7 @@ private fun CourseFit(
         }
 
         beside -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
                 audienceSection(Modifier.weight(1f))
                 outcomesSection(Modifier.weight(1f))
             }
