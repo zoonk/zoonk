@@ -155,9 +155,16 @@ private fun PatternTesterActivity(props: ActivityProps) {
         if (regex != null) RegexExamples(regex, value.text)
         if (formula != null) FormulaExamples(formula, value.text)
         if (!props.isExploring) {
-            PatternHints(regex?.hints ?: formula?.hints.orEmpty(), props.isChecked, props.isLocked, literalNumbers = regex != null)
+            PatternHints(
+                regex?.hints ?: formula?.hints.orEmpty(),
+                props.isChecked,
+                props.isLocked,
+                props.isCorrect,
+                literalNumbers =
+                    regex != null,
+            )
         }
-        if (props.isChecked) {
+        if (props.isChecked && props.isCorrect != true) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 ActivityCanvasLabel(
                     stringResource(
@@ -463,11 +470,12 @@ private fun PatternHints(
     hints: List<PatternHint>,
     isChecked: Boolean,
     isLocked: Boolean,
+    correct: Boolean?,
     literalNumbers: Boolean,
 ) {
     var shown by rememberSaveable { mutableIntStateOf(0) }
     if (hints.isEmpty()) return
-    val visible = if (isChecked) hints else hints.take(shown)
+    val visible = hints.take(patternHintCount(hints.size, shown, isChecked, correct))
     val style = MaterialTheme.typography.bodyMedium
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -509,3 +517,15 @@ private fun PatternHints(
 
 private const val CHECKED_ALPHA = 0.8f
 private const val FAILING_EDGE_ALPHA = 0.5f
+
+internal fun patternHintCount(
+    total: Int,
+    shown: Int,
+    checked: Boolean,
+    correct: Boolean?,
+): Int =
+    if (checked) {
+        if (correct == true) 0 else total
+    } else {
+        shown.coerceIn(0, total)
+    }

@@ -193,7 +193,7 @@ internal fun CodeLine(
         Text(
             number.toString().padStart(digits),
             Modifier
-                .padding(start = 8.dp, end = 12.dp)
+                .padding(end = 12.dp)
                 .clearAndSetSemantics {},
             color = colors.onSurfaceVariant,
             style = codeTextStyle(),
@@ -291,6 +291,7 @@ internal fun CodeEditor(
     onSubmit: () -> Unit,
     readOnly: Boolean,
     modifier: Modifier = Modifier,
+    wrap: Boolean = false,
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
@@ -308,9 +309,9 @@ internal fun CodeEditor(
             onValueChange = onValueChange,
             modifier =
                 Modifier
-                    .fadingHorizontalScroll(rememberScrollState())
-                    .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
-                    .widthIn(min = inner)
+                    .then(
+                        if (wrap) Modifier.fillMaxWidth() else Modifier.fadingHorizontalScroll(rememberScrollState()).widthIn(min = inner),
+                    ).padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
                     .heightIn(min = 48.dp)
                     .focusRequester(focusRequester)
                     .semantics { contentDescription = label }

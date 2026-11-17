@@ -283,8 +283,15 @@ private fun NumericCheckField(
             modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
             readOnly = locked,
             label = stringResource(R.string.player_your_answer),
-            leadingIcon = unit?.takeIf { unitFirst }?.let { { UnitText(it) } },
-            trailingIcon = unit?.takeUnless { unitFirst }?.let { { UnitText(it, Modifier.padding(end = 12.dp)) } },
+            visualTransformation =
+                unit?.let {
+                    com.zoonk.android.ui.components.NumberUnitTransformation(
+                        it,
+                        unitFirst,
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                    ?: androidx.compose.ui.text.input.VisualTransformation.None,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
@@ -292,15 +299,6 @@ private fun NumericCheckField(
     }
 }
 
-@Composable
-private fun UnitText(
-    unit: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(unit, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-}
-
-/** The difference a numeric answer may have from the expected one and still be right. */
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
@@ -308,7 +306,6 @@ internal val NumericCheck.allowed: Double
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
 
-/** Main's `ActivityExplore`: an explanation's activity, its canvas to explore with nothing to answer. */
 @Composable
 internal fun ExploredActivityCanvas(
     explore: ExploredActivity,

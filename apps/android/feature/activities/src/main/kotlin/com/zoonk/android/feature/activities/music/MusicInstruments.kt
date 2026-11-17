@@ -56,7 +56,7 @@ internal fun NoteMark(
     val (fill, text, border) =
         when (kind) {
             NoteMarkKind.Correct -> Triple(colors.tertiary, colors.onTertiary, null)
-            NoteMarkKind.Heard, NoteMarkKind.New -> Triple(accent, colors.surface, null)
+            NoteMarkKind.Heard, NoteMarkKind.New -> Triple(colors.tertiary, colors.onTertiary, null)
             NoteMarkKind.Kept -> Triple(colors.onSurface, colors.surface, null)
             NoteMarkKind.Missed -> Triple(colors.surface, colors.tertiary, colors.tertiary)
             NoteMarkKind.Removed -> Triple(colors.surface, colors.onSurfaceVariant, colors.onSurfaceVariant)

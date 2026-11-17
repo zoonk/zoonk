@@ -2,10 +2,12 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,8 +60,7 @@ fun DiffLines(
         modifier
             .fillMaxWidth()
             .clip(shape)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
-            .padding(vertical = 4.dp),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
     ) {
         lines.forEach { line ->
             val (container, content) = line.colors()
@@ -80,10 +81,12 @@ fun DiffLines(
             ) {
                 Row(Modifier.weight(1f).clearAndSetSemantics { text = spoken }) {
                     val style = MaterialTheme.typography.bodySmall.withTabularFigures()
-                    when (line.kind) {
-                        DiffKind.Added -> Text("+ ", style = style, color = content)
-                        DiffKind.Removed -> Text("− ", style = style, color = content)
-                        DiffKind.Context -> Unit
+                    Box(Modifier.width(20.dp)) {
+                        when (line.kind) {
+                            DiffKind.Added -> Text("+", style = style, color = content)
+                            DiffKind.Removed -> Text("−", style = style, color = content)
+                            DiffKind.Context -> Unit
+                        }
                     }
                     Text(
                         line.text,
