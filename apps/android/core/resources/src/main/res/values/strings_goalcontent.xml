@@ -197,4 +197,5 @@
     <string name="goalcontent_skill_learning">Learning</string>
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
+    <string name="goalcontent_chapter_progress">%1$s of %2$s chapters</string>
 </resources>

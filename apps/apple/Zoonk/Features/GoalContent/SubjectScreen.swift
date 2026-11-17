@@ -273,7 +273,7 @@ private struct SubjectContent: View {
         ) {
           HStack(spacing: 12) {
             Text(
-              "\(done.count { !$0.known }) of \(chapters.count)", tableName: "Plan",
+              "\(done.count { !$0.known }) of \(chapters.count) chapters", tableName: "Plan",
               comment: "Chapters done of the subject's chapters"
             )
             .monospacedDigit()

@@ -149,7 +149,7 @@ export function SubjectChapters({
         <PageSectionTitle id={CHAPTERS_TITLE_ID}>{t("Chapters")}</PageSectionTitle>
         <span className="flex items-center gap-3">
           <PageSectionDetail>
-            {t("{done, number} of {total, number}", {
+            {t("{done, number} of {total, number} chapters", {
               done: studied.length,
               total: chapters.length,
             })}

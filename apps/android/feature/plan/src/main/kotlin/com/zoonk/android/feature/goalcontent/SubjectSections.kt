@@ -293,7 +293,7 @@ private fun SubjectDetails(
             val done = subject.chapters.count { it.state == SyllabusChapter.State.DONE }
             PropertyRow(
                 stringResource(R.string.goalcontent_chapters),
-                stringResource(R.string.goalcontent_count_of, number(done), number(subject.chapters.size)),
+                stringResource(R.string.goalcontent_chapter_progress, number(done), number(subject.chapters.size)),
             )
         }
         if (nextDate != null) {
@@ -334,7 +334,7 @@ internal fun LazyListScope.subjectChapters(
         detail = {
             val locale = currentLocale()
             stringResource(
-                R.string.goalcontent_count_of,
+                R.string.goalcontent_chapter_progress,
                 formatNumber(studied.toDouble(), locale),
                 formatNumber(chapters.size.toDouble(), locale),
             )
