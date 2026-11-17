@@ -11,6 +11,8 @@ typeOverrides:
     LessonStepAnswer: LessonAnswer
     LessonStepAnswerOutput: LessonAnswer
     PlayableLibraryStep: LessonStep
+    # A new reason keeps the row outside the plan, with the plain label.
+    NotPlannedReason: Swift.String
 filter:
   operations:
     - acknowledgeTodayPlanChange

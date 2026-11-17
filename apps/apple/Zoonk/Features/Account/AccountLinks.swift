@@ -5,6 +5,7 @@ enum AccountLinks {
   static var blog: URL { mainPage("/blog") }
   static var fairUse: URL { mainPage("/terms#fair-use") }
   static var privacy: URL { mainPage("/privacy") }
+  static var subscription: URL { mainPage("/subscription") }
   static var support: URL { mainPage("/support") }
   static var terms: URL { mainPage("/terms") }
 

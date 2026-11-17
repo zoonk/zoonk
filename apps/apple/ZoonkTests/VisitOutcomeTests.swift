@@ -498,8 +498,6 @@ private actor VisitSettingsAPI: SettingsAPIClient {
   func getAllowance(token: String) async throws -> PlanAllowance { throw APIError.notFound }
   func getFreePlan() async throws -> FreePlan { throw APIError.notFound }
   func getWebPlus(token: String) async throws -> WebPlus { throw APIError.notFound }
-  func cancelWebPlus(token: String) async throws {}
-  func keepWebPlus(token: String) async throws {}
   func exportMemory(token: String) async throws -> Data { Data() }
   func exportAccountData(token: String) async throws -> Data { Data() }
 

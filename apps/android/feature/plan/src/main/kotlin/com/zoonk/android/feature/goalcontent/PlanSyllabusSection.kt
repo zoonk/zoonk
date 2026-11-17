@@ -135,7 +135,7 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                stringResource(R.string.goalcontent_not_in_plan),
+                planOutsideReason(subject.notPlannedReason),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -160,12 +160,12 @@ private fun SubjectRow(
                             maxLines = 1,
                         )
                     }
-                    progress(Modifier.width(barWidth))
+                    if (!notPlanned) progress(Modifier.width(barWidth))
                 }
             }
         },
         onClick = onClick,
-        supporting = if (layout == RowLayout.Stacked) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        supporting = if (layout == RowLayout.Stacked || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
         meta = {
             Text(
                 text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
@@ -265,3 +265,17 @@ private val BAR_MIN = 112.dp
 private val BAR_MAX = 224.dp
 private val QUESTIONS_WIDTH = 104.dp
 private val SHARE_WIDTH = 40.dp
+
+@Composable
+internal fun planOutsideReason(reason: String?): String =
+    stringResource(
+        when (reason) {
+            "skipped" -> R.string.plan_outside_skipped
+            "known" -> R.string.plan_skipped_known
+            "pastBasics" -> R.string.plan_outside_past_basics
+            "skippedBase" -> R.string.plan_outside_skipped_base
+            "missing" -> R.string.today_coming_not_written
+            "time" -> R.string.plan_outside_time
+            else -> R.string.plan_not_in_your_plan
+        },
+    )

@@ -30,11 +30,8 @@
   "buddy_page_goal_placeholder": "e2feed397b66608f79ad47a983aa305e046d2b5c057bf2478ad681cdb7b25eb8",
   "buddy_page_greeting": "d09cba01c158c3852d92b7b4fe0710a4403eb11fefa00717186e8356a52295cf",
   "buddy_page_grows": "dc1ea3918c6d1fd34ef188043791ef404d83003c87f2203acf420c5d8e6166cb",
-  "buddy_page_missions": "7fd8567f3fb4adfb353b645d8c46b4c0fdb3cf88360676940e54c1f1bfd5210d",
   "buddy_page_missions_count": "b9ee76963fb545401a1e26f083cc3664f9d91f19c6d69d736dd9ddb585b0b008",
-  "buddy_page_missions_done": "734911a39908f6f6b25a434ba899374d5eb7d669ca397d8d9e039c4e79497a50",
   "buddy_page_more": "0b47818c6aed813b95c2eb5b7d8f89719f864b520b2c631250f7fbe2ed495603",
-  "buddy_page_not_yet": "a7696bb641980aeb19f789e2be2303a88f86236bc6200d675823b3e25eb7bc55",
   "buddy_page_placeholder": "5be72e8a7a7f8b6b6ac18506d79c0dc5b50ad0db8126d96638bc4c59de90fab2",
   "buddy_page_remembers": "56b804a68b2f92b4c156fb8ccd761e0958eb8a3f5420bd55c8af2df7231502c8",
   "buddy_page_save_failed": "9960137f530a08385b3fbe910aaf4af870682f090571db5ca42f8aaf7f4c2655",
@@ -82,8 +79,6 @@
     <string name="buddy_page_energy_starts">Si attiva con la tua prima lezione.</string>
     <string name="buddy_page_energy_napping">%1$s sta facendo un pisolino. Studia e si sveglierà.</string>
     <string name="buddy_page_energy_study">Studia oggi per mantenerla alta.</string>
-    <string name="buddy_page_not_yet">Non ancora</string>
-    <string name="buddy_page_missions">Missioni</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d su %2$d missione</item>
@@ -91,7 +86,6 @@
         <item quantity="other">%1$d su %2$d missioni</item>
     </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
-    <string name="buddy_page_missions_done">Missioni completate: %1$d di %2$d</string>
     <string name="buddy_page_fully_grown">Crescita completata</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Cresce quando raggiungi la %1$s</string>

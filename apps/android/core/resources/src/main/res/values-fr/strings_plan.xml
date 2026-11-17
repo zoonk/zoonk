@@ -345,6 +345,10 @@
   "plan_not_yet": "56b07d40c84af024f552a94f8a5a9274e545c9fbf2bdacfb18fa390cd6a1ad8d",
   "plan_nothing_planned_until_resume": "e846a044bebbe200844d9ee6a51b17163feb205f426eb7137241e7e43ae45068",
   "plan_options": "25cc1fa435a90e191ea0de80f1d69a644c653dce9628ff89ee44bca2e2c2068e",
+  "plan_outside_past_basics": "0eb7ad9fc06bfe158aa3d0a98b47bf1c1d1bc181189960175ab4c80aa3bc1e97",
+  "plan_outside_skipped": "7ba46b950952eb06f5176adcd5aca260646d5c6e42509d76657498d017fa6355",
+  "plan_outside_skipped_base": "3f32e7608fad19b0cd09172b63b8cb2016df3072d54377a5aef82f8a98dcce88",
+  "plan_outside_time": "d6b9954cac5a4e1b6f9439ba8dfabe0bf6b5c236f3bfb7cfc9784a682a2d50ad",
   "plan_pace": "e1900a5335fed57f41a36ecf5fd796f56b70b24d9e9b5fc17185e26627c76875",
   "plan_pace_challenges_to_go": "75990ba5cbb0877f9d9585738eb0a7c1328ec2dd000603290fc060e16506ef77",
   "plan_pace_date_passed": "e2d84f874a30724a4450f1f2b3603d93df1ebe32de3381f518461e8b67802fc0",
@@ -640,10 +644,6 @@
         <item quantity="many">%d leçons non étudiées</item>
         <item quantity="other">%d leçons non étudiées</item>
     </plurals>
-    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
-    <string name="plan_trickster_not_in_plan">Le Farceur n’est pas prévu dans ton plan</string>
-    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
-    <string name="plan_call_not_in_plan">L’appel n’est pas prévu dans ton plan</string>
     <!-- The phase the learner is in, out of the plan's phases. -->
     <string name="plan_roadmap_phase_number">Phase %1$d sur %2$d</string>
     <string name="plan_continues_today">Suite aujourd’hui</string>
@@ -1478,4 +1478,14 @@
     <string name="plan_why_phase_end_off_rest">%1$s est un jour où tu n’étudies pas.</string>
     <string name="plan_end_none_set">Non définie</string>
     <string name="plan_end_none_set_estimate">À définir · %1$s</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
+    <string name="plan_outside_time">Pas dans ton plan · le temps prévu ne suffit pas</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
+    <string name="plan_outside_skipped">Pas dans ton plan · tu as retiré cette matière</string>
+    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
+    <string name="plan_trickster_not_in_plan">Le Farceur n’est pas prévu dans ton plan</string>
+    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
+    <string name="plan_call_not_in_plan">L’appel n’est pas prévu dans ton plan</string>
+    <string name="plan_outside_past_basics">Sauté · tu connais déjà les bases</string>
+    <string name="plan_outside_skipped_base">Sauté · à ta demande</string>
 </resources>

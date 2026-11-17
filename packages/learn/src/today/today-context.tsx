@@ -86,7 +86,6 @@ export const NO_TODAY_HOST_NOTICES: TodayHostNotices = {
 
 type TodayScreenValue = {
   actions: TodayActions;
-  brainPower: number | null;
   buddy: LearnBuddy | null;
   missions: MissionsDay | null;
   notices: TodayHostNotices;

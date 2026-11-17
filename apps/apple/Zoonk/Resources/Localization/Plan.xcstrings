@@ -24227,7 +24227,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Absent de ton plan"
+            "value" : "Pas dans ton plan"
           }
         },
         "it" : {
@@ -24239,13 +24239,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "計画に含まれていません"
+            "value" : "学習計画に含まれていません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획에 없음"
+            "value" : "계획에 없어요"
           }
         },
         "pl" : {
@@ -24269,7 +24269,7 @@
       }
     },
     "Not in your plan · you took this subject out" : {
-      "comment" : "A topic the plan leaves out: the learner took its subject out",
+      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24280,7 +24280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuera de tu plan · quitaste esta materia"
+            "value" : "No está en tu plan · quitaste esta materia"
           }
         },
         "fr" : {
@@ -24292,25 +24292,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuori dal tuo piano · hai escluso questa materia"
+            "value" : "Non è nel tuo piano · hai tolto questa materia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "計画に入っていません・この科目を外したため"
+            "value" : "学習計画に含まれていません・この科目を外しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획에서 제외 · 이 과목을 직접 뺐어요"
+            "value" : "계획에 없어요 · 직접 뺀 과목이에요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poza planem · usunięto ten przedmiot"
+            "value" : "Poza twoim planem · usunięto ten przedmiot"
           }
         },
         "pt" : {
@@ -24322,13 +24322,13 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planında yok · bu branşı çıkardın"
+            "value" : "Planında yok · bu branşı plandan çıkardın"
           }
         }
       }
     },
     "Not in your plan · your time doesn't cover it" : {
-      "comment" : "A topic the plan leaves out: no time for it by the date",
+      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24339,7 +24339,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuera de tu plan · no hay tiempo suficiente"
+            "value" : "No está en tu plan · no te alcanza el tiempo"
           }
         },
         "fr" : {
@@ -24351,37 +24351,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuori dal tuo piano · il tempo non basta"
+            "value" : "Non è nel tuo piano · il tempo non basta"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "計画に入っていません・学習時間が足りないため"
+            "value" : "学習計画に含まれていません・学習時間が足りません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획에서 제외 · 학습 시간이 부족해요"
+            "value" : "계획에 없어요 · 학습 시간이 부족해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poza planem · nie mieści się w dostępnym czasie"
+            "value" : "Poza twoim planem · nie wystarczy na to czasu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fora do seu plano · não cabe no seu tempo"
+            "value" : "Fora do seu plano · não cabe no tempo que você tem"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planında yok · süren yetmiyor"
+            "value" : "Planında yok · çalışma süren yetmiyor"
           }
         }
       }
@@ -28597,6 +28597,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlandı · zaten biliyordun"
+          }
+        }
+      }
+    },
+    "Skipped · you already know the basics" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersprungen · du kennst die Grundlagen schon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltado · ya sabes lo básico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauté · tu connais déjà les bases"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltato · conosci già le basi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキップ · 基礎はすでに身についています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "건너뜀 · 기초는 이미 알고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięte · znasz już podstawy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulado · você já sabe o básico"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atlandı · temel bilgileri zaten biliyorsun"
+          }
+        }
+      }
+    },
+    "Skipped · your choice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersprungen · auf deinen Wunsch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltado · por decisión tuya"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauté · par choix"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltato · per tua scelta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキップ · 自分で選びました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "건너뜀 · 직접 선택했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięte · twój wybór"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulado · por sua escolha"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atlandı · senin seçimin"
           }
         }
       }

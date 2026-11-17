@@ -145,7 +145,7 @@ fun phaseOf(
     chapters: String = "[]",
 ) = """
     {"chapterCount":0,"chapters":$chapters,"hours":20,"index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":12,
-     "mocks":{"count":0,"nextDate":null},"name":"","state":"$state","startDate":"$start","endDate":"$end"}
+     "mocks":{"count":0,"nextDate":null},"name":"","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state","startDate":"$start","endDate":"$end"}
     """.trimIndent()
 
 fun chapterOf(title: String) =

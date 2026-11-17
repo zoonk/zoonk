@@ -216,7 +216,7 @@ private struct BuddyContent: View {
           PageHeader(Text(name))
 
           if opensDay {
-            dayLine()
+            dayLine
           }
         }
         .listRowEdges()
@@ -338,53 +338,55 @@ private struct BuddyContent: View {
     ]
   }
 
-  @ViewBuilder
-  private func dayLine() -> some View {
-    Button {
-      isDayShown = true
-    } label: {
-      dayLineLabel
-    }
-    .buttonStyle(.plain)
-    .accessibilityLabel(dayLabel)
-    .accessibilityHint(
-      Text(
-        "Shows \(name)'s day", tableName: "Buddy",
-        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-    )
-  }
-
   private var face: some View {
     BuddyCharacter(look: look, crop: .face, cue: faceCue)
       .frame(width: 32, height: 32)
   }
 
-  private var dayLineLabel: some View {
+  private var dayLine: some View {
     HStack(spacing: 16) {
-      face
+      Button {
+        isDayShown = true
+      } label: {
+        face
+      }
+      .accessibilityLabel(Text(name))
+      .accessibilityHint(
+        Text(
+          "Shows \(name)'s day", tableName: "Buddy",
+          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+      )
 
       AccessibilityStack(spacing: 16, stackedSpacing: 4) {
-        Label {
-          if let current = status.energy.current {
-            Text(
-              "\((current / 100).formatted(.percent.precision(.fractionLength(0)))) Energy",
-              tableName: "Buddy",
-              comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
-          } else {
-            Text(verbatim: "–")
+        Button {
+          places.open(.energy)
+        } label: {
+          Label {
+            if let current = status.energy.current {
+              Text(
+                "\((current / 100).formatted(.percent.precision(.fractionLength(0)))) Energy",
+                tableName: "Buddy",
+                comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
+            } else {
+              Text("Energy", tableName: "Progress")
+            }
+          } icon: {
+            Image(systemName: "bolt.fill")
+              .foregroundStyle(.energy)
           }
-        } icon: {
-          Image(systemName: "bolt.fill")
-            .foregroundStyle(.energy)
         }
 
         if let today = status.today, !today.missions.isEmpty {
-          Label {
-            Text(
-              "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
-              tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
-          } icon: {
-            Image(systemName: "checklist")
+          Button {
+            isDayShown = true
+          } label: {
+            Label {
+              Text(
+                "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
+                tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
+            } icon: {
+              Image(systemName: "checklist")
+            }
           }
         }
       }
@@ -394,29 +396,12 @@ private struct BuddyContent: View {
 
       DisclosureChevron()
     }
+    .buttonStyle(.plain)
     .labelStyle(.titleAndIcon)
     .typeStyle(.note)
     .monospacedDigit()
     .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
-  }
-
-  private var dayLabel: Text {
-    let energy =
-      status.energy.current.map { ($0 / 100).formatted(.percent.precision(.fractionLength(0))) }
-      ?? String(
-        localized: "Not yet", table: "Buddy", comment: "VoiceOver: Energy before the first lesson")
-
-    guard let today = status.today, !today.missions.isEmpty else {
-      return Text(
-        "Energy \(energy)", tableName: "Buddy", comment: "VoiceOver: the buddy's day button")
-    }
-
-    let done = today.missions.filter { $0.status == .done }.count
-
-    return Text(
-      "Energy \(energy), \(done) of \(today.missions.count) missions", tableName: "Buddy",
-      comment: "VoiceOver: the buddy's day button, with Energy and today's missions")
   }
 
   @ViewBuilder

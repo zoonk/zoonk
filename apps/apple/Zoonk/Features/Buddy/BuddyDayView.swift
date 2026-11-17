@@ -153,21 +153,25 @@ struct BuddyDayView: View {
         }
         .foregroundStyle(.primary)
       } else {
-        VStack(alignment: .leading, spacing: 4) {
-          Label {
-            energyTitle
-          } icon: {
-            Image(systemName: "bolt.fill")
-              .foregroundStyle(.energy)
-          }
+        Button {
+          places.open(.energy)
+        } label: {
+          VStack(alignment: .leading, spacing: 4) {
+            Label {
+              energyTitle
+            } icon: {
+              Image(systemName: "bolt.fill")
+                .foregroundStyle(.energy)
+            }
 
-          Text(
-            "It starts with your first lesson.", tableName: "Buddy",
-            comment: "The buddy's Energy before the first lesson"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
+            Text(
+              "It starts with your first lesson.", tableName: "Buddy",
+              comment: "The buddy's Energy before the first lesson"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+          }
+        }.buttonStyle(.plain)
       }
     }
   }

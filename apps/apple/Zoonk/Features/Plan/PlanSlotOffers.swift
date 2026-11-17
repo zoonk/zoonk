@@ -529,6 +529,9 @@ struct PlanCoverageSlot: View {
         } label: {
           Text(FocusTestCopy.takeTest)
         }
+        Text("The Focus test shows what to study most.", tableName: "Today")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if !context.plan.schedule.fullCourse {

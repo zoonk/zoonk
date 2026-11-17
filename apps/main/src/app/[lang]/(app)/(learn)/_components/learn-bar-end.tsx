@@ -66,9 +66,9 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
         LEVEL_BOX_CLASS,
         "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex rounded-lg transition-colors outline-none focus-visible:ring-[3px]",
       )}
-      href={getMenu("stats").url}
+      href={getMenu("level").url}
       prefetch
-      title={t("Statistics")}
+      title={t("Level")}
     >
       <LevelRoom>
         <BeltLevel
@@ -78,7 +78,12 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
         />
       </LevelRoom>
       <span className="sr-only">
-        {t("{belt}, level {level}. Statistics", { belt, level: levelNumber })}
+        {t({
+          description:
+            "Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.",
+          message: "{belt}, Level {level}",
+          values: { belt, level: levelNumber },
+        })}
       </span>
     </Link>
   );

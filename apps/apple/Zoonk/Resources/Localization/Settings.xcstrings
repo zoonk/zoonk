@@ -1365,64 +1365,6 @@
         }
       }
     },
-    "Download my memory" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Erinnerungen herunterladen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descargar mi memoria"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Télécharger ma mémoire"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scarica la mia memoria"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモリをダウンロードする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 메모리 다운로드"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pobierz zawartość pamięci"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Baixar minha memória"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Belleğimi indir"
-          }
-        }
-      }
-    },
     "Download your memory" : {
       "localizations" : {
         "de" : {
@@ -1595,65 +1537,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek kaydını düzenle"
-          }
-        }
-      }
-    },
-    "Everything in your memory, as one file" : {
-      "comment" : "What the memory download contains",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle deine Erinnerungen in einer Datei"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todo el contenido de tu memoria en un solo archivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout le contenu de ta mémoire dans un seul fichier"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutto il contenuto della tua memoria, in un unico file"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモリの内容をすべて1つのファイルに"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "메모리의 모든 내용을 파일 하나로"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cała zawartość pamięci w jednym pliku"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toda a sua memória em um só arquivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Belleğindeki her şey tek bir dosyada"
           }
         }
       }
@@ -2423,65 +2306,6 @@
         }
       }
     },
-    "Memory is off. Nothing new is learned, and these facts aren't used." : {
-      "comment" : "What happens while memory is off",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erinnerungen sind ausgeschaltet. Es wird nichts Neues gespeichert und diese Angaben werden nicht verwendet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La memoria está desactivada. No se aprende nada nuevo sobre ti ni se usan estos datos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La mémoire est désactivée. Rien de nouveau n’est retenu et ces informations ne sont pas utilisées."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La memoria è disattivata. Non memorizziamo nuove informazioni né usiamo quelle presenti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "메모리가 꺼져 있어요. 새로운 정보를 기억하지 않고, 저장된 정보도 사용하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pamięć jest wyłączona. Nie zapamiętujemy nic nowego i nie korzystamy z tych informacji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A memória está desligada. Nada novo é aprendido e esses dados não são usados."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bellek kapalı. Seninle ilgili yeni bir şey öğrenmiyoruz ve bu bilgileri kullanmıyoruz."
-          }
-        }
-      }
-    },
     "Memory updated:" : {
       "comment" : "Starts the line saying a fact was deleted",
       "localizations" : {
@@ -3011,61 +2835,67 @@
         }
       }
     },
-    "Personal examples, plans that fit your week and calls that remember your news" : {
-      "comment" : "What memory does while it's on",
+    "Personal examples, plans that fit your week and calls with %@ that remember your news" : {
+      "comment" : "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche, die an deine Neuigkeiten anknüpfen"
+            "value" : "Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %@, die an deine Neuigkeiten anknüpfen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal examples, plans that fit your week and calls with %@ that remember your news"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejemplos de tu vida, planes que se adaptan a tu semana y llamadas que recuerdan lo que nos cuentas"
+            "value" : "Ejemplos de tu vida, planes que se adaptan a tu semana y llamadas con %@ que recuerdan lo que le cuentas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où l’on se souvient de ce que tu as raconté"
+            "value" : "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où %@ se souvient de ce que tu as raconté"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esempi su misura per te, piani adatti alla tua settimana e conversazioni che tengono conto delle tue novità"
+            "value" : "Esempi su misura per te, piani adatti alla tua settimana e conversazioni con %@ che tengono conto delle tue novità"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "身近な例、1週間の予定に合った学習計画、近況を踏まえた会話"
+            "value" : "身近な例、1週間の予定に合った学習計画、近況を踏まえた%@との会話"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 대화"
+            "value" : "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 %@와(과)의 대화"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których pamiętamy, co u ciebie nowego"
+            "value" : "Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których %@ pamięta, co u ciebie nowego"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exemplos personalizados, planos que cabem na sua semana e conversas que lembram das suas novidades"
+            "value" : "Exemplos personalizados, planos que cabem na sua semana e conversas com %@ que lembram das suas novidades"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan sohbetler"
+            "value" : "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan %@ ile sohbetler"
           }
         }
       }

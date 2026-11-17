@@ -37,7 +37,6 @@ msgstr "予想"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
 msgid "Brain Power"
@@ -1444,21 +1443,16 @@ msgid "{buddy} today"
 msgstr "今日の{buddy}"
 
 #: src/buddies/buddy-today.tsx
-msgctxt "6Fd8_d"
-msgid "Missions"
-msgstr "ミッション"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {#個のミッションを完了（全{total}個）} other {ミッションを#個完了（全{total}個）}}"
-
-#: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
 #: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだです"
+
+#: src/buddies/buddy-today.tsx
+msgctxt "xlYYsb"
+msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
+msgstr "{done, plural, =0 {#個のミッションを完了（全{total}個）} other {ミッションを#個完了（全{total}個）}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -4896,15 +4890,6 @@ msgstr "、完了"
 
 #: src/journey/journey-path.tsx
 #: src/journey/path-phase-row.tsx
-#: src/journey/phase-details.tsx
-#: src/plan-diff/use-change-rows.ts
-#: src/syllabus/use-subject-progress.ts
-msgctxt "L_oGIZ"
-msgid "Not in your plan"
-msgstr "学習計画に含まれていません"
-
-#: src/journey/journey-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, other {未学習の#レッスン}}"
@@ -5025,6 +5010,12 @@ msgstr "、次のフェーズ"
 msgctxt "sFnTpp"
 msgid "<start></start> – <end></end>"
 msgstr "<start></start>〜<end></end>"
+
+#: src/journey/phase-details.tsx
+#: src/plan-diff/use-change-rows.ts
+msgctxt "L_oGIZ"
+msgid "Not in your plan"
+msgstr "学習計画に含まれていません"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
@@ -6965,10 +6956,11 @@ msgctxt "nxU2W7"
 msgid "From a call"
 msgstr "会話から"
 
+#. What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.
 #: src/memory/memory-screen.tsx
-msgctxt "LwVSHh"
-msgid "When off, notes aren't saved or used"
-msgstr "オフにすると、メモは保存も使用もされません"
+msgctxt "EDgENy"
+msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
+msgstr "身近な例、1週間の予定に合った学習計画、近況を踏まえた{buddy}との会話"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -7291,16 +7283,6 @@ msgstr "このマップを保存できませんでした。もう一度試して
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "このマップの保存を解除できませんでした。もう一度お試しください。"
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "HCrEOP"
-msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "学ぶともらえるポイントです。帯のランクが上がり、相棒が成長します。"
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "JGTjfj"
-msgid "You have <mono>{points}</mono>"
-msgstr "現在の脳力は<mono>{points}</mono>"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -10456,6 +10438,12 @@ msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
 msgstr "新しい国：{country}。この国に合わせて学習計画を作り直します。完了したレッスンはそのまま引き継がれます。"
 
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "重点診断で、重点的に学ぶ科目がわかります。"
+
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -13096,10 +13084,11 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, other {#単元}}"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
-msgstr "学習計画に含まれません・この科目を外しました"
+msgstr "学習計画に含まれていません・この科目を外しました"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "Wz9Y3H"
@@ -13111,10 +13100,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "スキップ・自分で選びました"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
-msgstr "学習計画に含まれません・学習時間が足りません"
+msgstr "学習計画に含まれていません・学習時間が足りません"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx
@@ -13336,11 +13326,6 @@ msgstr "学習計画の変更"
 msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "わかりました。テストは学習計画から受けられます。"
-
-#: src/today/today-focus-test.tsx
-msgctxt "KYliMN"
-msgid "The Focus test shows what to study most."
-msgstr "重点診断で、重点的に学ぶ科目がわかります。"
 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"

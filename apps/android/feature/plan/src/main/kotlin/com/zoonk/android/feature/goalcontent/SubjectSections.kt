@@ -177,9 +177,9 @@ internal fun NotPlannedNotice(
 ) {
     val words =
         when (subject.notPlannedReason) {
-            SyllabusSubject.NotPlannedReason.SKIPPED -> R.string.goalcontent_subject_skipped
-            SyllabusSubject.NotPlannedReason.TIME -> R.string.goalcontent_subject_time
-            SyllabusSubject.NotPlannedReason.MISSING -> R.string.goalcontent_subject_missing
+            "skipped" -> R.string.goalcontent_subject_skipped
+            "time" -> R.string.goalcontent_subject_time
+            "missing" -> R.string.goalcontent_subject_missing
             else -> return
         }
 
@@ -194,7 +194,7 @@ internal fun NotPlannedNotice(
                 Text(stringResource(words), style = MaterialTheme.typography.bodyMedium)
 
                 when (subject.notPlannedReason) {
-                    SyllabusSubject.NotPlannedReason.SKIPPED -> {
+                    "skipped" -> {
                         OutlinedButton(
                             onClick = { actions.restore(subject.areas) },
                             busy = writes.restoring,
@@ -205,7 +205,7 @@ internal fun NotPlannedNotice(
                         if (writes.restoreFailed) SaveFailed()
                     }
 
-                    SyllabusSubject.NotPlannedReason.TIME -> {
+                    "time" -> {
                         TextButton(onClick = actions.adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
                     }
 
@@ -535,7 +535,7 @@ internal fun LazyListScope.subjectTopics(
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
                     if (index > 0) ListDivider()
-                    TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions, topics.size.toString().length)
+                    TopicGroupRow(group, showFrequency, actions, topics.size.toString().length)
                 }
             }
         }
@@ -550,7 +550,6 @@ internal fun LazyListScope.subjectTopics(
 private fun TopicGroupRow(
     group: TopicGroup<SyllabusTopic>,
     showFrequency: Boolean,
-    knownReturn: Syllabus.KnownTopicsReturn,
     actions: SubjectActions,
     countDigits: Int,
 ) {
@@ -564,7 +563,7 @@ private fun TopicGroupRow(
         )
     }
     val supporting: (@Composable () -> Unit)? =
-        if (group.children.isEmpty()) topicNote(group.topic, knownReturn)?.let { note -> { Text(note) } } else null
+        if (group.children.isEmpty()) topicNote(group.topic)?.let { note -> { Text(note) } } else null
     val frequent = showFrequency && group.frequency == SyllabusTopic.Frequency.HIGH
     val count = group.studiedCount
     val meta: (@Composable () -> Unit)? =
@@ -604,7 +603,7 @@ private fun TopicGroupRow(
         )
         if (expanded) {
             Column(Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 8.dp)) {
-                group.children.forEach { child -> ChildTopic(child, knownReturn) }
+                group.children.forEach { child -> ChildTopic(child) }
                 if (chapters.isNotEmpty()) {
                     if (group.children.isNotEmpty()) HorizontalDivider(Modifier.padding(vertical = 4.dp))
                     chapters.forEach { TopicChapterLink(it, actions) }
@@ -630,13 +629,10 @@ private fun GroupCount(
 }
 
 @Composable
-private fun ChildTopic(
-    child: TopicChild<SyllabusTopic>,
-    knownReturn: Syllabus.KnownTopicsReturn,
-) {
+private fun ChildTopic(child: TopicChild<SyllabusTopic>) {
     val mark = child.topic.mark
     val status = topicMarkWords(mark)
-    val note = topicNote(child.topic, knownReturn)
+    val note = topicNote(child.topic)
 
     Row(
         modifier =
@@ -723,29 +719,9 @@ private fun numberedTopic(
 ): AnnotatedString = if (number == null) AnnotatedString(text) else numberedTitle(number, text)
 
 @Composable
-private fun topicNote(
-    topic: SyllabusTopic,
-    knownReturn: Syllabus.KnownTopicsReturn,
-): String? {
-    if (topic.status == SyllabusTopic.Status.KNOWN) {
-        return stringResource(
-            if (knownReturn ==
-                Syllabus.KnownTopicsReturn.REVIEWS
-            ) {
-                R.string.goalcontent_topic_known_reviews
-            } else {
-                R.string.goalcontent_topic_known_practice
-            },
-        )
-    }
-    return when (topic.notPlannedReason) {
-        null -> null
-        SyllabusTopic.NotPlannedReason.SKIPPED -> stringResource(R.string.goalcontent_topic_skipped)
-        SyllabusTopic.NotPlannedReason.PAST_BASICS -> stringResource(R.string.goalcontent_topic_past_basics)
-        SyllabusTopic.NotPlannedReason.SKIPPED_BASE -> stringResource(R.string.goalcontent_topic_skipped_base)
-        SyllabusTopic.NotPlannedReason.TIME -> stringResource(R.string.goalcontent_topic_time)
-        SyllabusTopic.NotPlannedReason.MISSING -> stringResource(R.string.goalcontent_topic_missing)
-    }
+private fun topicNote(topic: SyllabusTopic): String? {
+    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known")
+    return topic.notPlannedReason?.let { planOutsideReason(it) }
 }
 
 @Composable
@@ -780,7 +756,7 @@ private fun TopicFrequencyNote(
             else -> {
                 val publisher = sourceHost(source.url)
                 val link = publisher to LinkTarget(source.url)
-                val waits = subject.topics.any { it.notPlannedReason == SyllabusTopic.NotPlannedReason.TIME }
+                val waits = subject.topics.any { it.notPlannedReason == "time" }
                 when {
                     tagged && waits -> {
                         annotate(

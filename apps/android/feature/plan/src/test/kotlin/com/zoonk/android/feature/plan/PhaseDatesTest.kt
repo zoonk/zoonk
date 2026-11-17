@@ -291,7 +291,7 @@ class PhaseDatesTest {
         checkpoint: String? = null,
         short: String? = null,
     ) = """{"chapterCount":0,"chapters":[],"checkpoint":${checkpoint ?: "null"},"startDate":null,"endDate":${end.json()},"hours":10,
-        "index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":0,"mocks":{"count":0},"name":"Phase $index","state":"$state",
+        "index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":0,"mocks":{"count":0},"name":"Phase $index","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state",
         "short":${short ?: "null"}}"""
 
     private fun challenge(

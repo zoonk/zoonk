@@ -11,6 +11,7 @@ import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
 import {
@@ -73,9 +74,7 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
         {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
         {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       </span>
-      {phase.state === "leftOut" && (
-        <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>
-      )}
+      {phase.state === "leftOut" && <ReasonText reason={phase.notPlannedReason} />}
       {phase.state === "unfinished" && lessonsLeft > 0 && (
         <span className="text-muted-foreground text-xs">
           {t("{count, plural, one {# lesson not studied} other {# lessons not studied}}", {

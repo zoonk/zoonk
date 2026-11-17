@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -68,6 +70,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
@@ -194,13 +197,19 @@ private fun FreeLessonsBar(
 ) {
     TaskActionBar {
         TaskActions { main ->
-            if (freeLessonReady(reached)) {
-                Button(onClick = onRetry, modifier = main) { Text(stringResource(R.string.player_start_the_lesson)) }
-            } else {
-                Button(
-                    onClick = { exits.open(AppRoute.Subscription) },
-                    modifier = main,
-                ) { Text(stringResource(R.string.subscription_subscribe)) }
+            Column(
+                main.width(IntrinsicSize.Max),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (freeLessonReady(reached)) {
+                    Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_start_the_lesson)) }
+                } else {
+                    Button(onClick = {
+                        exits.open(AppRoute.Subscription)
+                    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
+                }
+                TextButton(onClick = { exits.open(AppRoute.Mistakes) }) { Text(stringResource(R.string.missions_open_mistakes)) }
             }
         }
     }

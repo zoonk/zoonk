@@ -6,32 +6,47 @@ import {
 } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 
-function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
+export function useNotPlannedReason() {
   const t = useExtracted();
 
-  if (!reason) {
-    return null;
-  }
+  return function reasonText(reason: NotPlannedReason | null): string | null {
+    if (reason === null) {
+      return null;
+    }
 
-  return (
-    <span className="text-muted-foreground text-xs">
-      {reason === "skipped" && t("Not in your plan · you took this subject out")}
-      {reason === "pastBasics" && t("Skipped · you already know the basics")}
-      {reason === "skippedBase" && t("Skipped · your choice")}
-      {reason === "time" && t("Not in your plan · your time doesn't cover it")}
-      {reason === "missing" && t("Not ready yet")}
-    </span>
-  );
+    switch (reason) {
+      case "skipped":
+        return t({
+          description:
+            "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
+          message: "Not in your plan · you took this subject out",
+        });
+      case "known":
+        return t("Skipped · you already know it");
+      case "pastBasics":
+        return t("Skipped · you already know the basics");
+      case "skippedBase":
+        return t("Skipped · your choice");
+      case "time":
+        return t({
+          description:
+            "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.",
+          message: "Not in your plan · your time doesn't cover it",
+        });
+      case "missing":
+        return t("Not ready yet");
+      default:
+        return null;
+    }
+  };
+}
+
+export function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
+  const reasonText = useNotPlannedReason();
+  const text = reasonText(reason);
+  return text ? <span className="text-muted-foreground text-xs">{text}</span> : null;
 }
 
 export function TopicNote({ topic }: { topic: SyllabusTopic }) {
-  const t = useExtracted();
-
-  if (topic.status === "known") {
-    return (
-      <span className="text-muted-foreground text-xs">{t("Skipped · you already know it")}</span>
-    );
-  }
-
-  return <ReasonText reason={topic.notPlannedReason} />;
+  return <ReasonText reason={topic.status === "known" ? "known" : topic.notPlannedReason} />;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { type MemoryView } from "@zoonk/core/memory/contract";
 import { type MemoryActions, MemoryScreen } from "@zoonk/learn/memory";
 import {
@@ -11,6 +12,8 @@ import {
 } from "./actions";
 
 export function MemorySettings({ memory }: { memory: MemoryView }) {
+  const learner = useFrameLearner();
+
   const actions: MemoryActions = {
     deleteFact: deleteMemoryFactAction,
     exportMemory: exportMemoryAction,
@@ -19,5 +22,11 @@ export function MemorySettings({ memory }: { memory: MemoryView }) {
     updateFact: updateMemoryFactAction,
   };
 
-  return <MemoryScreen actions={actions} memory={memory} />;
+  return (
+    <MemoryScreen
+      actions={actions}
+      buddy={learner.status === "ready" ? learner.summary.buddy : null}
+      memory={memory}
+    />
+  );
 }

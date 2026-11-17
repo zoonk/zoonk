@@ -426,6 +426,7 @@ struct LessonUnavailableView: View {
 
 /// Once a free learner's next lesson has opened, "Start the lesson" asks again where "Subscribe" was.
 private struct LessonUnavailableBody: View {
+  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
 
   let refusal: LessonRunRefusal
@@ -457,8 +458,21 @@ private struct LessonUnavailableBody: View {
         }
       }
       .bottomBar {
-        action
-          .buttonStyle(.mainAction)
+        VStack(spacing: 8) {
+          action.buttonStyle(.mainAction)
+          if case .limitReached(tier: .free, _) = refusal {
+            Button {
+              router.open(.mistakes)
+            } label: {
+              Text(
+                "Practice your mistakes", tableName: "Search",
+                comment:
+                  "A button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes."
+              )
+            }
+            .buttonStyle(.ghost)
+          }
+        }
       }
       .task(id: refusal) {
         // Main's `LessonSlowDown`: the lesson opens on its own once the break is over.

@@ -137,6 +137,7 @@ function CoverageBody({
   onStop: () => void;
   preview: SlotPreview;
 }) {
+  const t = useExtracted();
   const texts = useTimeToCoverTexts();
   const keepStudying = useKeepStudyingLabel();
   const coverage = usePlanCoverage();
@@ -201,9 +202,14 @@ function CoverageBody({
       }
     >
       {focusTestHref && (
-        <SuggestionLinkAction href={focusTestHref} variant="outline">
-          {takeFocusTest}
-        </SuggestionLinkAction>
+        <div className="flex flex-col gap-1">
+          <SuggestionLinkAction href={focusTestHref} variant="outline">
+            {takeFocusTest}
+          </SuggestionLinkAction>
+          <p className="text-muted-foreground text-sm">
+            {t("The Focus test shows what to study most.")}
+          </p>
+        </div>
       )}
     </SuggestionActions>
   );
