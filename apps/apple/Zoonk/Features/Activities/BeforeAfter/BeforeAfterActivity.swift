@@ -145,9 +145,15 @@ private struct BeforeAfterCanvas: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(
-      isAfter ? Color.vizAccent.opacity(0.15) : Color.card,
+      isAfter ? Color.vizAccent.opacity(0.15) : Color.boxBackground,
       in: .rect(cornerRadius: Radius.xl)
     )
+    // The before state is the activity box, so its inset words sit inside a visible edge.
+    .overlay {
+      if !isAfter {
+        RoundedRectangle(cornerRadius: Radius.xl).strokeBorder(.border)
+      }
+    }
     .accessibilityElement(children: .contain)
   }
 

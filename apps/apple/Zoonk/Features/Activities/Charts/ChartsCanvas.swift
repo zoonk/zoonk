@@ -8,8 +8,6 @@ struct ChartsCanvas<Content: View>: View {
       content
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
     .accessibilityElement(children: .contain)
   }
 }
@@ -35,7 +33,7 @@ struct ChartsChoiceStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospaced())
+      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospacedDigit())
       .foregroundStyle(foreground)
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity, minHeight: 44)
@@ -135,6 +133,23 @@ struct ChartsHandle: View {
       .frame(width: 44, height: 44)
       .contentShape(.circle)
       .opacity(isEnabled ? 1 : 0.6)
+  }
+}
+
+/// A slider's ends, under its track, so every track in a card starts and ends on the same edges.
+struct ChartsSliderScale: View {
+  let min: String
+  let max: String
+
+  var body: some View {
+    HStack {
+      Text(verbatim: min)
+      Spacer()
+      Text(verbatim: max)
+    }
+    .typeStyle(.meta.monospacedDigit())
+    .foregroundStyle(.mutedForeground)
+    .accessibilityHidden(true)
   }
 }
 

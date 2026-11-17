@@ -107,22 +107,16 @@ enum TimelineScale {
     return size < 100 ? size : Int(FactChange.twoDigits(Double(size)))
   }
 
-  /// Round year ticks along the axis; year 0 is skipped because there was no year 0.
-  static func ticks(start: Int, end: Int, count: Int = 5) -> [Int] {
-    let range = Double(end - start)
-
-    guard range > 0 else {
+  /// Round year ticks along the axis (main's `yearTicks`). There was no year 0, so the turn of the
+  /// era is labeled with its first year, 1 CE.
+  static func ticks(start: Int, end: Int) -> [Int] {
+    guard end > start else {
       return []
     }
 
-    let rough = range / Double(count)
-    let magnitude = pow(10, floor(log10(rough)))
-    let step = [1.0, 2, 5, 10].map { $0 * magnitude }.first { $0 >= rough } ?? 10 * magnitude
-    let first = (Double(start) / step).rounded(.up) * step
-
-    return stride(from: first, through: Double(end), by: step)
-      .map { Int($0) }
-      .filter { $0 != 0 }
+    return ChartsAxis.ticks(Double(start)...Double(end), count: 5)
+      .filter { $0 == $0.rounded() }
+      .map { $0 == 0 ? 1 : Int($0) }
   }
 
   enum Era {
