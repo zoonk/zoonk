@@ -489,17 +489,19 @@ private struct SQLRowsTable: View {
   var isEmbedded = false
 
   var body: some View {
-    ActivityHorizontalScroll {
+    let table = ActivityHorizontalScroll {
       grid
-        .overlay {
-          if !isEmbedded {
-            RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
-          }
-        }
-        .clipShape(.rect(cornerRadius: isEmbedded ? 0 : Radius.lg))
     }
     .accessibilityElement(children: .contain)
     .accessibilityLabel(caption)
+
+    if isEmbedded {
+      table
+    } else {
+      table
+        .activityBox()
+        .clipShape(.rect(cornerRadius: Radius.xl))
+    }
   }
 
   private var grid: some View {

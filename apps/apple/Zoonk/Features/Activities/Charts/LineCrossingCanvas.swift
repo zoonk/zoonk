@@ -447,10 +447,13 @@ private struct LineCrossingNamesLayout: Layout {
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
     let area = plot.insetBy(dx: 3, dy: 3)
-    let labels = zip(items, subviews).map { item, view in
-      LineCrossingLabelLayout.Label(
+    let labels = zip(items, subviews).enumerated().map { index, pair in
+      let (item, view) = pair
+      // The revealed name can wrap into the space between the names already shown.
+      let width = index < shownCount ? area.width : area.width / 2
+      return LineCrossingLabelLayout.Label(
         segment: item.segment,
-        size: view.sizeThatFits(ProposedViewSize(width: max(1, area.width), height: nil)),
+        size: view.sizeThatFits(ProposedViewSize(width: max(1, width), height: nil)),
         isUpper: item.isUpper, isOptional: item.isOptional)
     }
     let boxes = LineCrossingLabelLayout.chart(

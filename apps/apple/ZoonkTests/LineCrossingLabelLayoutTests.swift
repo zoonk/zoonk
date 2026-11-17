@@ -60,7 +60,11 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
     try await checkNarrow(moved: true)
   }
 
-  private func checkNarrow(moved: Bool) async throws {
+  func testRevealedBreakEvenNameClearsEveryLine() async throws {
+    try await checkNarrow(moved: true, revealed: true)
+  }
+
+  private func checkNarrow(moved: Bool, revealed: Bool = false) async throws {
     let fields = LineCrossingFields(
       change: "The rent for the workshop goes up by $500 a month.",
       feedback: .init(
@@ -74,12 +78,14 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
       xLabel: "Lamps sold", yLabel: "Dollars per month")
     let answer =
       moved
-      ? try ActivityAnswer(encoding: LineShiftAnswer(curve: "cost", direction: .up)) : nil
+      ? try ActivityAnswer(
+        encoding: LineShiftAnswer(curve: "cost", direction: revealed ? .down : .up)) : nil
     let window = try show(
       ScrollView {
         LineCrossingCanvas(
           context: ActivityCanvasContext(
-            template: "lineCrossing", payload: .null, check: nil, phase: .answering,
+            template: "lineCrossing", payload: .null, check: nil,
+            phase: revealed ? .checked(isCorrect: false) : .answering,
             answer: answer, setAnswer: { _ in }), fields: fields
         )
         .activityPanel().padding(16)
@@ -120,8 +126,13 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
         bytesPerRow: cg.width * 4, space: CGColorSpaceCreateDeviceRGB(),
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
     context.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
-    for name in ["Cost", "Revenue"] {
-      let box = try XCTUnwrap(words.first { $0.0 == name }?.1, "Rendered words: \(words)")
+    for name in revealed ? ["Cost", "Revenue", "What happened"] : ["Cost", "Revenue"] {
+      let matching = words.filter {
+        $0.0 == name || (name == "What happened" && ["What", "happened"].contains($0.0))
+      }
+      let box = matching.reduce(CGRect.null) { $0.union($1.1) }
+      XCTAssertFalse(box.isNull, "Rendered words: \(words)")
+      guard !box.isNull else { continue }
       var otherLinePixels = 0
       for y in max(0, Int(box.minY) - 6)..<min(cg.height, Int(box.maxY) + 6) {
         for x in max(0, Int(box.minX) - 6)..<min(cg.width, Int(box.maxX) + 6) {
@@ -131,7 +142,9 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
           let b = Int(rgba[index + 2])
           let purple = r > g + 35 && b > g + 35 && r > 70
           let teal = g > r + 25 && b > r + 15 && g > 65
-          if name == "Cost" ? purple : teal { otherLinePixels += 1 }
+          if name == "What happened" ? (purple || teal) : (name == "Cost" ? purple : teal) {
+            otherLinePixels += 1
+          }
         }
       }
       XCTAssertEqual(otherLinePixels, 0, "\(name) rectangle \(box) crosses another line")
