@@ -181,7 +181,12 @@ export function placeMapLabels({
 
   for (const { index, label } of order) {
     const along = axes(label)[0];
-    const steps = label.kind === "street" ? Math.floor(label.width / SLIDE_STEP) : 0;
+
+    const reach =
+      Math.hypot(label.x - frame.width / 2, label.y - frame.height / 2) +
+      Math.hypot(frame.width, frame.height) / 2;
+
+    const steps = label.kind === "street" ? Math.ceil(reach / SLIDE_STEP) : 0;
 
     const slides = [
       0,

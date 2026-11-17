@@ -132,6 +132,19 @@ function gapBetween(first: MapPoint[], second: MapPoint[]): number {
 }
 
 describe(placeMapLabels, () => {
+  it("slides a street farther than its text width when the visible part has room", () => {
+    const [spot] = placeMapLabels({
+      frame: { height: 200, width: 210 },
+      labels: [
+        { angle: 90, height: 12, kind: "street", text: "Wardour Street", width: 80, x: 70, y: 300 },
+      ],
+      pins: [{ x: 70, y: 190 }],
+    });
+
+    expect(spot).not.toBeNull();
+    expect(spot!.y).toBeLessThan(130);
+  });
+
   const frame = { height: 300, width: 400 };
 
   it("slides a street's name along its street, off a pin", () => {

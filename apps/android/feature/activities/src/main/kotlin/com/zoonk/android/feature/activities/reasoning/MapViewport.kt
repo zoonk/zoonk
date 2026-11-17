@@ -158,7 +158,9 @@ internal fun placeMapLabels(
     labels.indices.sortedByDescending { labels[it].priority }.forEach { index ->
         val label = labels[index]
         val along = labelAxes(label)[0]
-        val steps = if (label.street) kotlin.math.floor(label.width / 4).toInt() else 0
+        val reach =
+            kotlin.math.hypot(label.center.x - width / 2, label.center.y - height / 2) + kotlin.math.hypot(width, height) / 2
+        val steps = if (label.street) kotlin.math.ceil(reach / 4).toInt() else 0
         val slides = listOf(0.0) + (1..steps).flatMap { listOf(it * 4.0, -it * 4.0) }
         val candidates = slides.map { label.copy(center = MapPoint(label.center.x + along.x * it, label.center.y + along.y * it)) }
         val spot =

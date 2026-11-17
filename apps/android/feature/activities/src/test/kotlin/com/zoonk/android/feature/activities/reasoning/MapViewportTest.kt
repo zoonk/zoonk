@@ -29,6 +29,14 @@ class MapViewportTest {
         assertEquals(listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)), placeMapLabels(labels, emptyList(), 210.0, 200.0))
     }
 
+    @Test
+    fun streetCanSlideFartherThanItsTextWidthIntoTheVisibleFrame() {
+        val labels = listOf(MapLabelSpot(MapPoint(70.0, 300.0), 80.0, 12.0, 90.0, true, false))
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 190.0)), 210.0, 200.0)
+        org.junit.Assert.assertNotNull(spots[0])
+        org.junit.Assert.assertTrue(spots[0]!!.y < 130)
+    }
+
     private fun assertPoints(
         expected: List<MapPoint>,
         actual: List<MapPoint>,
