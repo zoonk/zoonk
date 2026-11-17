@@ -221,7 +221,7 @@ private fun AreaChoice(
         border = if (checked) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
     ) {
         Row(
-            modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {

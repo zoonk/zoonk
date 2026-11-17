@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -70,6 +71,8 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -251,7 +254,13 @@ private fun ColumnScope.Entry(
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
             IconButton(onClick = vm::toggleAttach) {
-                Icon(painterResource(R.drawable.ic_attach_file), contentDescription = stringResource(R.string.onboarding_study_material))
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+                    Icon(
+                        painterResource(R.drawable.ic_attach_file),
+                        contentDescription = stringResource(R.string.onboarding_study_material),
+                        modifier = Modifier.glyphInk(R.drawable.ic_attach_file).size(24.dp),
+                    )
+                }
             }
         },
     )

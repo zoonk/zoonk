@@ -59,6 +59,11 @@ class UnderstoodRowsTest {
         assertEquals(EditableField.TargetScore, row.editable)
     }
 
+    @Test fun aPastExamDateNeverShowsNegativeDaysLeft() {
+        val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-10-20")}]", targetDate = "2026-10-20")))
+        assertNull(row.note)
+    }
+
     @Test
     fun anOfficialDateCountsDownWithItsSource() {
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-11-08")}]", targetDate = "2026-11-08")))

@@ -121,7 +121,10 @@ internal fun PlanNumbers(
     onAdjust: (() -> Unit)? = null,
 ) {
     var open by rememberSaveable { mutableStateOf<NumberSheet?>(null) }
-    val pace = page.plan.status?.pace
+    val pace =
+        page.plan.status
+            ?.pace
+            ?.takeUnless { page.isPaused }
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
     if (standing == null && pace == null) return
 

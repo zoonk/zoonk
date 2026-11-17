@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
@@ -276,7 +277,14 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                             )
                         } else {
                             // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
-                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
+                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) {
+                                names.forEach { item ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
+                                        if (names.size > 1) Text("•")
+                                        Text(revealItemTitle(item))
+                                    }
+                                }
+                            }
                         }
                     },
                 )

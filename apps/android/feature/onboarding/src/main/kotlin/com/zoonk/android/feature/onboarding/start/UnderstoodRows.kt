@@ -474,8 +474,9 @@ class UnderstoodRows(
         formatDate(date, locale, DateStyle.Long, today),
     )
 
-    private fun daysLeft(date: LocalDate): String {
+    private fun daysLeft(date: LocalDate): String? {
         val days = ChronoUnit.DAYS.between(today, date).toInt()
+        if (days < 0) return null
         return resources.getQuantityString(R.plurals.onboarding_row_days_left, days, days)
     }
 
