@@ -84,7 +84,7 @@ private struct GuessRevealCanvas: View {
               }
             }
             .padding(12)
-            .panel(cornerRadius: Radius.option)
+            .activityBox(cornerRadius: Radius.option)
           }
 
           if let comparison = fields.comparison {

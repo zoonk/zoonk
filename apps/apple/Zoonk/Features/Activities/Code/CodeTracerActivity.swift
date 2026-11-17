@@ -245,7 +245,7 @@ private struct CodeTracerCanvas: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       // Boxed, so its inset words never make a second start edge beside the column's.
       .background(
-        changed ? Color.vizHighlight.opacity(0.15) : Color.card, in: .rect(cornerRadius: Radius.lg)
+        changed ? Color.vizHighlight.opacity(0.15) : Color.boxBackground, in: .rect(cornerRadius: Radius.lg)
       )
       .overlay(RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border))
       .accessibilityElement(children: .combine)

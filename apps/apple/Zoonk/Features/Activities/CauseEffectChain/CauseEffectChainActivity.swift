@@ -377,7 +377,7 @@ private struct CauseEffectCanvas: View {
     }
     .typeStyle(.note)
     .padding(12)
-    .panel(cornerRadius: Radius.option)
+    .activityBox(cornerRadius: Radius.option)
     .overlay {
       if state == .missed {
         RoundedRectangle(cornerRadius: Radius.option)

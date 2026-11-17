@@ -350,7 +350,7 @@ private struct ArgumentBuilderCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(12)
-    .panel(cornerRadius: Radius.option)
+    .activityBox(cornerRadius: Radius.option)
     .accessibilityElement(children: .combine)
   }
 }

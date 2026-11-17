@@ -158,7 +158,7 @@ private struct TimelineCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color.card
+    default: Color.boxBackground
     }
   }
 

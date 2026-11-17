@@ -112,7 +112,7 @@ private struct MapExplorerCanvas: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .panel(cornerRadius: Radius.option)
+      .activityBox(cornerRadius: Radius.option)
     }
   }
 

@@ -289,7 +289,7 @@ private struct CategorizeCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .panel()
+    .activityBox()
   }
 
   private func movableRow(_ item: CategorizeFields.Item, from group: CategorizeFields.Group)

@@ -308,7 +308,7 @@ private struct CodeRunnerOutput: View {
         }
       }
       .fixedSize(horizontal: false, vertical: true)
-      .panel(cornerRadius: Radius.option)
+      .activityBox(cornerRadius: Radius.option)
 
       if let run {
         if isStale {
