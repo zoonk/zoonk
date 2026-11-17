@@ -82,6 +82,7 @@ internal fun PatternChart(
     fullBar: Dp,
     inspector: ChartInspector,
     modifier: Modifier = Modifier,
+    legend: Boolean = true,
 ) {
     if (columns.isEmpty()) return
 
@@ -115,7 +116,7 @@ internal fun PatternChart(
             }
         }
 
-        if (columns.any { it.state == PatternState.Few }) StatsLine(stringResource(R.string.stats_few_answers_legend))
+        if (legend && columns.any { it.state == PatternState.Few }) StatsLine(stringResource(R.string.stats_few_answers_legend))
     }
 }
 

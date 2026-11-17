@@ -43,7 +43,7 @@ fun WeekdayPicker(
 ) {
     val locale = currentLocale()
 
-    BoxWithConstraints(modifier.widthIn(max = WEEK_WIDTH)) {
+    BoxWithConstraints(modifier.fillMaxWidth()) {
         val names = dayNames(maxWidth, locale)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(DAY_GAP)) {
             MONDAY_TO_SUNDAY.forEach { weekday ->

@@ -93,7 +93,7 @@ final class FactsLayoutTests: XCTestCase {
     let labels = spoken(in: window).map { $0.replacing("\u{00A0}", with: " ") }
     XCTAssertTrue(
       labels.contains { $0.contains("12 questions") && $0.contains("5 min") }, "\(labels)")
-    try activate(where: { $0.contains("Focus test") }, in: window)
+    try await activate(where: { $0.contains("Focus test") }, in: window)
     XCTAssertEqual(opens, 1)
   }
 

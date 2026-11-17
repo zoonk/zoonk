@@ -146,6 +146,7 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
 
     val drag = rememberActivityDragDrop { itemId, part -> if (editable && part == openPart?.name) choose(itemId) }
 
+    ActivityAnnouncement(if (props.isChecked) "" else announcement)
     ActivityCanvas(gap = 16.dp) {
         ActivityDragDrop(drag) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -261,7 +262,6 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                 }
             }
         }
-        ActivityAnnouncement(if (props.isChecked) "" else announcement)
     }
 }
 

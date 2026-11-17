@@ -160,7 +160,7 @@ fun AttachControls(
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = { picker.launch(ACCEPTED_TYPES) },
                 enabled = enabled,

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -138,7 +140,7 @@ fun TutorPanel(
     val suggestions = page?.suggestions ?: tutorSuggestions(vm.scope, lessonSuggestions)
     val composerPadding = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
 
-    Column(modifier) {
+    Column(modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 720.dp)) {
         if (access != TutorAccess.Ask && page != null) {
             TutorThreadView(
                 vm,

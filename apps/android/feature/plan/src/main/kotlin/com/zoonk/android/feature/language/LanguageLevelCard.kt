@@ -12,7 +12,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonEdge
-import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.languageName
@@ -32,7 +32,7 @@ fun LanguageLevelCard(
     val spoken = if (target == null) level.label else stringResource(R.string.language_level_toward_spoken, level.label, target)
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.language_level, languageName(targetLanguage, currentLocale())))
+        Eyebrow(stringResource(R.string.language_level, languageName(targetLanguage, currentLocale())))
         Text(
             value,
             Modifier.semantics { contentDescription = spoken },

@@ -317,12 +317,7 @@ private fun Outline(titles: List<String>) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(R.drawable.ic_help),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            MarkIcon(R.drawable.ic_help)
             Text(
                 stringResource(R.string.explain_one_question),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

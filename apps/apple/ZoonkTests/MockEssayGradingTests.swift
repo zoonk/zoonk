@@ -77,7 +77,7 @@ private final class TestClock {
 /// Every grading answers that the day's essay grades are used up.
 private actor GradesUsedUpTransport: ClientTransport {
   private let holdsGrading: Bool
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   init(holdsGrading: Bool) {
     self.holdsGrading = holdsGrading
@@ -92,7 +92,7 @@ private actor GradesUsedUpTransport: ClientTransport {
     let grading = operationID == "gradeMockEssays"
 
     if grading, holdsGrading {
-      await withCheckedContinuation { held = $0 }
+      await withTestVoidContinuation { held = $0 }
     }
 
     let status: HTTPResponse.Status = grading ? .tooManyRequests : .notFound
@@ -103,10 +103,9 @@ private actor GradesUsedUpTransport: ClientTransport {
     )
   }
 
-  func waitForHeldGrading() async {
-    while held == nil {
-      await Task.yield()
-    }
+  func waitForHeldGrading(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldGrading did not arrive", file: file, line: line)
+    { await self.held != nil }
   }
 
   func release() {

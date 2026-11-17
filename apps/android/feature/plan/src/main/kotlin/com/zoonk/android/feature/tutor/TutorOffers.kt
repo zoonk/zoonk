@@ -235,12 +235,10 @@ private fun CatalogCourseRow(
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
             }
-            Icon(
-                painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterVertically),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Box(Modifier.align(Alignment.CenterVertically)) {
+                com.zoonk.android.ui.components
+                    .ListRowChevron()
+            }
         }
     }
 }

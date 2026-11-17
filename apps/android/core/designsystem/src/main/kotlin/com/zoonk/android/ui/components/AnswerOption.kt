@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,12 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
@@ -73,6 +76,7 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
 
     TagBesideOrUnder(
         modifier =
@@ -90,7 +94,14 @@ fun AnswerOption(
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
         tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
-        leading = { NumberKey(marker, glyph, Modifier) },
+        leading =
+            if (key ==
+                AnswerKey.None
+            ) {
+                null
+            } else {
+                { NumberKey(marker, glyph, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
+            },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(MaterialTheme.typography.labelLarge, reading) } },
         onReadingOverflow = onReadingOverflow,
@@ -214,3 +225,16 @@ fun TagBesideOrUnder(
         }
     }
 }
+
+internal enum class AnswerKey { None, Hidden, Visible }
+
+internal fun answerKey(
+    keyboard: Int,
+    checked: Boolean,
+    ordered: Boolean,
+): AnswerKey =
+    when {
+        keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
+        checked -> AnswerKey.Hidden
+        else -> AnswerKey.Visible
+    }

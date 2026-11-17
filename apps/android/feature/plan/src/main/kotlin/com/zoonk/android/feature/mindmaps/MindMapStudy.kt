@@ -312,7 +312,11 @@ internal fun MindMapStudy(
 
     val goTo = { index: Int -> scope.launch { pager.animateScrollToPage(index.coerceIn(0, deck.lastIndex)) } }
     val previous = { goTo(page - 1) }
-    val next = { if (last) actions.close() else goTo(page + 1) }
+    val next = {
+        if (current.canAdvance) {
+            if (last) actions.close() else goTo(page + 1)
+        }
+    }
     val toggleSave = { target?.let { actions.save(it, chapterOf(current), !saved) } }
 
     LaunchedEffect(pager) { snapshotFlow { pager.settledPage }.collect { actions.settled(deck[it]) } }
@@ -357,6 +361,7 @@ internal fun MindMapStudy(
                     ) { main ->
                         Button(
                             onClick = { next() },
+                            enabled = current.canAdvance,
                             modifier = main,
                         ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
                     }
@@ -579,3 +584,5 @@ private fun LessonSlide(content: StepContent.Map) {
         }
     }
 }
+
+internal val Slide.canAdvance: Boolean get() = this is Slide.Chapter || this is Slide.Lesson

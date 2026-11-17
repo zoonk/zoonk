@@ -25,7 +25,7 @@ final class BarMainActionTests: XCTestCase {
       .environment(AppRouter())
       .environment(PlanStore(api: PlanAPIStub(), cache: AppCache(session: session))))
 
-    try await Task.sleep(for: .seconds(0.5))
+    try await waitForTestCondition("The bar did not hold the main action") { holds.last == true }
 
     XCTAssertEqual(holds.last, true)
   }

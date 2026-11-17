@@ -52,15 +52,15 @@ final class TutorPracticeCallTests: XCTestCase {
       .environment(VoiceServices(clients: clients, cache: AppCache(session: session)))
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Practice", table: "Tutor"), in: window)
-    try await settle()
+    try await activate(String(localized: "Practice", table: "Tutor"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") { callShows(in: window) }
     XCTAssertTrue(callShows(in: window), "The call's sheet opens")
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
-
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("Expected state did not arrive") { callShows(in: window) }
     XCTAssertTrue(callShows(in: window), "The call's sheet stays")
   }
 
@@ -70,10 +70,6 @@ final class TutorPracticeCallTests: XCTestCase {
     }
 
     return spoken(in: sheet.view).contains { $0.contains("At the market") }
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
   }
 
   private static let account = CurrentAccount(

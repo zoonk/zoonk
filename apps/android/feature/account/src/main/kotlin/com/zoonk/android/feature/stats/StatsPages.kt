@@ -48,6 +48,7 @@ import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -89,7 +90,7 @@ private fun whole(
 
 @Composable
 private fun icon(id: Int): @Composable (Modifier) -> Unit =
-    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier) }
+    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = Modifier.glyphInk(id).then(modifier)) }
 
 private fun beltOf(color: String) = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 
@@ -195,7 +196,7 @@ private fun OverviewContent(
         // Main shows the trend and the patterns from `md`, side by side from `lg`; narrower, a row leads to the patterns.
         when {
             context.expanded -> {
-                Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(40.dp), verticalAlignment = Alignment.Top) {
                     Column(Modifier.weight(1.25f)) { Beside(context.stats.score) { ScoreTrend(it) } }
                     Column(Modifier.weight(1f)) { Beside(context.stats.patterns) { PatternsOverview(context, it) } }
                 }
@@ -254,7 +255,14 @@ private fun ScoreTrend(score: CurrentUserScoreResponseScore?) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // As tall as the patterns' "See all" beside it, so the two headers line up.
         Box(Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current), contentAlignment = Alignment.CenterStart) {
-            SectionHeader(stringResource(R.string.stats_score_90), detail = score?.let { metricPercent(it.score, currentLocale()) })
+            SectionHeader(
+                stringResource(R.string.stats_score_90),
+                Modifier.heightIn(min = 32.dp),
+                detail =
+                    score?.let {
+                        metricPercent(it.score, currentLocale())
+                    },
+            )
         }
 
         if (score == null) StatsLine(stringResource(R.string.stats_score_after_answers)) else ScoreChart(score)
@@ -356,7 +364,7 @@ private fun BeltProgression(
                     belt,
                     level.level.toInt(),
                     share = if (level.isMaxLevel) null else level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1),
-                    modifier = Modifier.bleedStart(16.dp),
+                    modifier = Modifier,
                 )
                 NextStep(level, name, nextBelt)
             }
@@ -366,7 +374,7 @@ private fun BeltProgression(
 
         val next = level.nextBelt
         if (nextBelt != null && next != null && level.level < LEVELS_PER_BELT) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
                 BeltDot(nextBelt)
                 StatsLine(
                     stringResource(
@@ -570,7 +578,7 @@ internal fun ScorePage(context: StatsContext) {
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
         StatTile(
-            label = stringResource(R.string.stats_score),
+            label = stringResource(R.string.session_summary_right),
             value = metricPercent(score.score, locale),
             modifier = Modifier.fillMaxWidth(),
             detail =
@@ -621,6 +629,7 @@ internal fun PatternsPage(context: StatsContext) {
             fullBar = fullBar,
             inspector = context.inspector,
             modifier = modifier,
+            legend = false,
         )
     }
     val day: @Composable (Modifier) -> Unit = { modifier ->
@@ -641,6 +650,7 @@ internal fun PatternsPage(context: StatsContext) {
             fullBar = fullBar,
             inspector = context.inspector,
             modifier = modifier,
+            legend = false,
         )
     }
 
@@ -659,6 +669,13 @@ internal fun PatternsPage(context: StatsContext) {
                     day(Modifier)
                 }
             }
+        }
+        if ((
+                patterns.weekdays.any { it.totalAnswers in 1 until patterns.minimumAnswers } ||
+                    patterns.times.any { it.totalAnswers in 1 until patterns.minimumAnswers }
+            )
+        ) {
+            StatsLine(stringResource(R.string.stats_few_answers_legend))
         }
     }
 }

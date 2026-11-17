@@ -137,7 +137,14 @@ private fun ViewToggle(
             SegmentedButton(
                 selected = showsTab == isTab,
                 onClick = { if (showsTab != isTab) onChange(isTab) },
-                shape = SegmentedButtonDefaults.itemShape(index, views.size),
+                shape =
+                    SegmentedButtonDefaults.itemShape(
+                        index,
+                        views.size,
+                        baseShape =
+                            androidx.compose.foundation.shape
+                                .RoundedCornerShape(com.zoonk.android.ui.theme.ZoonkRadius.md),
+                    ),
             ) {
                 Text(stringResource(text))
             }

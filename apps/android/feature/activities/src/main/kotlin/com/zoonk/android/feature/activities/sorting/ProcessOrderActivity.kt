@@ -123,7 +123,7 @@ private fun OrderedStep(
             .background(tone.container, shape)
             .border(tone.border, shape)
             .semantics(mergeDescendants = true) { collectionItemInfo = CollectionItemInfo(index, 1, 0, 1) }
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         StepMarks(step.icon, index + 1, outcome)

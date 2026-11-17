@@ -278,7 +278,7 @@ final class SettingsStoreTests: XCTestCase {
     await api.waitForHeldDelete()
     changes.save(.memorySwitch) { await store.setMemoryEnabled(false) }
     await api.releaseDeletes(throwing: APIError.network)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The save failure did not arrive") { changes.saveFailed }
 
     XCTAssertTrue(changes.saveFailed)
   }
@@ -446,12 +446,12 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(reads, 1)
   }
 
-  private func waitUntil(_ condition: () -> Bool) async {
-    for _ in 0..<10_000 where !condition() {
-      await Task.yield()
+  private func waitUntil(
+    file: StaticString = #filePath, line: UInt = #line, _ condition: () -> Bool
+  ) async {
+    _ = try? await waitForTestCondition("The state did not arrive", file: file, line: line) {
+      condition()
     }
-
-    XCTAssertTrue(condition(), "the change never showed")
   }
 
   private func makeStore(api: SettingsAPIStub) -> SettingsStore {
@@ -470,16 +470,16 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var webPlus: WebPlus?
   private let webPlusChangeError: Error?
   private var holdsWebPlusChangeAnswers = false
-  private var heldWebPlusChangeAnswer: CheckedContinuation<Void, Never>?
+  private var heldWebPlusChangeAnswer: TestContinuation<Void>?
   private var beforeDelete: (@MainActor @Sendable () async -> Void)?
   private var holdsDeletes = false
-  private var heldDelete: CheckedContinuation<Void, Error>?
+  private var heldDelete: TestContinuation<Void>?
   private var heldUpdate: PreferencesUpdate?
-  private var heldUpdateResponse: CheckedContinuation<Void, Error>?
+  private var heldUpdateResponse: TestContinuation<Void>?
   private var holdsEdits = false
-  private var heldEdit: CheckedContinuation<Void, Error>?
+  private var heldEdit: TestContinuation<Void>?
   private var heldPreferencesToken: String?
-  private var heldPreferences: CheckedContinuation<Void, Never>?
+  private var heldPreferences: TestContinuation<Void>?
 
   private let preferencesError: Error?
   private let updateError: Error?
@@ -512,7 +512,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   func getPreferences(token: String) async throws -> LearningPreferences {
     if token == heldPreferencesToken {
       heldPreferencesToken = nil
-      await withCheckedContinuation { heldPreferences = $0 }
+      await withTestVoidContinuation { heldPreferences = $0 }
     }
 
     if let preferencesError {
@@ -530,7 +530,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
 
     if update == heldUpdate {
       heldUpdate = nil
-      try await withCheckedThrowingContinuation { heldUpdateResponse = $0 }
+      try await withTestContinuation { heldUpdateResponse = $0 }
     }
 
     if let updateError {
@@ -544,10 +544,10 @@ private actor SettingsAPIStub: SettingsAPIClient {
     heldPreferencesToken = token
   }
 
-  func waitForHeldPreferences() async {
-    while heldPreferences == nil {
-      await Task.yield()
-    }
+  func waitForHeldPreferences(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition(
+      "waitForHeldPreferences did not arrive", file: file, line: line
+    ) { await self.heldPreferences != nil }
   }
 
   func releasePreferences() {
@@ -559,10 +559,9 @@ private actor SettingsAPIStub: SettingsAPIClient {
     heldUpdate = update
   }
 
-  func waitForHeldUpdate() async {
-    while heldUpdateResponse == nil {
-      await Task.yield()
-    }
+  func waitForHeldUpdate(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldUpdate did not arrive", file: file, line: line)
+    { await self.heldUpdateResponse != nil }
   }
 
   func releaseHeldUpdate(throwing error: Error) {
@@ -582,7 +581,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     -> MemoryFact
   {
     if holdsEdits {
-      try await withCheckedThrowingContinuation { heldEdit = $0 }
+      try await withTestContinuation { heldEdit = $0 }
     }
 
     return .evenings
@@ -592,9 +591,9 @@ private actor SettingsAPIStub: SettingsAPIClient {
     holdsEdits = true
   }
 
-  func waitForHeldEdit() async {
-    while heldEdit == nil {
-      await Task.yield()
+  func waitForHeldEdit(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldEdit did not arrive", file: file, line: line) {
+      await self.heldEdit != nil
     }
   }
 
@@ -607,7 +606,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     await beforeDelete?()
 
     if holdsDeletes {
-      try await withCheckedThrowingContinuation { heldDelete = $0 }
+      try await withTestContinuation { heldDelete = $0 }
     }
 
     if let deleteError {
@@ -621,10 +620,9 @@ private actor SettingsAPIStub: SettingsAPIClient {
     holdsDeletes = true
   }
 
-  func waitForHeldDelete() async {
-    while heldDelete == nil {
-      await Task.yield()
-    }
+  func waitForHeldDelete(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldDelete did not arrive", file: file, line: line)
+    { await self.heldDelete != nil }
   }
 
   func releaseDeletes(throwing error: Error?) {
@@ -685,10 +683,10 @@ private actor SettingsAPIStub: SettingsAPIClient {
     holdsWebPlusChangeAnswers = true
   }
 
-  func waitForHeldWebPlusChangeAnswer() async {
-    while heldWebPlusChangeAnswer == nil {
-      await Task.yield()
-    }
+  func waitForHeldWebPlusChangeAnswer(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition(
+      "waitForHeldWebPlusChangeAnswer did not arrive", file: file, line: line
+    ) { await self.heldWebPlusChangeAnswer != nil }
   }
 
   func releaseWebPlusChangeAnswer() {
@@ -706,7 +704,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     webPlus = webPlus.flatMap(change)
 
     if holdsWebPlusChangeAnswers {
-      await withCheckedContinuation { heldWebPlusChangeAnswer = $0 }
+      await withTestVoidContinuation { heldWebPlusChangeAnswer = $0 }
     }
   }
 

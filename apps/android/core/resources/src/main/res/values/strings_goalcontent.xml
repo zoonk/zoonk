@@ -66,7 +66,7 @@
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Also in your plan</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">Beyond the notice</string>
+    <string name="goalcontent_beyond_notice">Beyond the exam</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
     <string name="goalcontent_beyond_guide">Beyond the official guide</string>
     <!-- %1$s is a link to the site that counted the questions. -->
@@ -110,7 +110,7 @@
     <!-- Opens the first chapter or lesson. -->
     <string name="goalcontent_start">Start</string>
     <string name="goalcontent_topics_in_material">Topics in your material</string>
-    <string name="goalcontent_topics_in_notice">Topics in the notice</string>
+    <string name="goalcontent_topics_in_notice">Topics on the exam</string>
     <string name="goalcontent_topics_in_guide">Topics in the official guide</string>
     <string name="goalcontent_details">Details</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
@@ -197,5 +197,5 @@
     <string name="goalcontent_skill_learning">Learning</string>
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
-    <string name="goalcontent_chapter_progress">%1$s of %2$s chapters</string>
+    <string name="goalcontent_chapters_progress">%1$s of %2$s</string>
 </resources>

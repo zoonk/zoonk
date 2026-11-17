@@ -109,7 +109,12 @@ private fun TaskTopBar(
                     }
                 }
             },
-            actions = actions,
+            actions = {
+                Row(
+                    Modifier.offset(x = 4.dp + com.zoonk.android.ui.components.ICON_BUTTON_BLANK - TASK_MARGIN),
+                    content = actions,
+                )
+            },
         )
     }
 }

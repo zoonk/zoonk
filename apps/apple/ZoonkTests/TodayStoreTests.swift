@@ -216,14 +216,14 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.sessionID, "s9", "the session screen shows the session it opened in")
   }
 
-  func testABlockLinkThatFailsSaysSoOnlyWhileTheLearnerStaysWhereTheyTapped() async {
+  func testABlockLinkThatFailsSaysSoOnlyWhileTheLearnerStaysWhereTheyTapped() async throws {
     let api = StudyAPIStub(openError: .network, holdsOpening: true)
     let router = AppRouter(
       openBlock: AppRouter.openingTodayBlocks(
         today: TodayStore(api: api, cache: signedInCache())))
 
     let stayed = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await api.releaseHeldCall()
 
     guard case .failed = await stayed.value else {
@@ -231,7 +231,7 @@ final class TodayStoreTests: XCTestCase {
     }
 
     let left = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     router.select(.plan)
     await api.releaseHeldCall()
 
@@ -240,7 +240,7 @@ final class TodayStoreTests: XCTestCase {
     }
 
     let covered = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     router.present(.account())
     await api.releaseHeldCall()
 
@@ -308,7 +308,7 @@ final class TodayStoreTests: XCTestCase {
     let store = TodayStore(api: api, cache: cache)
 
     let opening = Task { await store.open(lesson, as: .block, in: view) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
     await api.releaseHeldCall()
     let result = await opening.value
@@ -495,14 +495,14 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(lesson, "another learner may be signed in by now")
   }
 
-  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async {
+  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async throws {
     let api = StudyAPIStub(holdsStop: true)
     let cache = signedInCache()
     let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
     let playback = SessionPlayback()
 
     let stop = Task { await store.stop(sessionID: "s1", in: playback) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     playback.play(blockID: "b2")
     stop.cancel()
     await api.releaseHeldCall()
@@ -617,7 +617,7 @@ final class TodayStoreTests: XCTestCase {
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
 
     let opening = Task { await store.open(view.session.blocks[0], as: .next, in: view) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
     await api.releaseHeldCall()
     let result = await opening.value
@@ -1031,28 +1031,22 @@ final class SuggestedGoalAnswerTests: XCTestCase {
       .environment(router)
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
     let start = String(localized: "Start", table: "Today")
-    try activate(start, in: window)
+    try await activate(start, in: window)
     await api.waitForHeldSuggestedAnswer()
 
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldSuggestedAnswer()
-    try await settle()
+    try await waitForTestCondition("Setup did not open") { !router.tasks.isEmpty }
 
     let accepted = await api.acceptedSuggestions
     XCTAssertEqual(accepted, ["s1"], "The server took the answer")
     XCTAssertEqual(router.tasks, [.startGoal(goal: "Microeconomics")], "Setup opens")
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(300))
-  }
-
-  /// Leaving Today ends the visit: an answer that failed before shows nothing on the next one, and
-  /// neither does one that fails after.
   func testLeavingTodayShowsNothingOfAnAnswerThatFailed() async throws {
     let api = StudyAPIStub()
     await api.failSuggestedAnswers()
@@ -1061,45 +1055,46 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     let answer = SuggestedGoalAnswer()
 
     answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { answer.failed }
     XCTAssertTrue(answer.failed)
 
     answer.leave()
     XCTAssertFalse(answer.failed, "A failure before leaving")
 
-    await api.holdNextSuggestedAnswer()
-    answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
-    await api.waitForHeldSuggestedAnswer()
-    answer.leave()
-    await api.releaseHeldSuggestedAnswer()
-    try await settle()
-    XCTAssertFalse(answer.failed, "A failure after leaving")
   }
 
   /// Start, leave Today and come back while it saves, Start again: the first answer finishing
   /// belongs to the visit that left, so the second stays busy and opens Setup once.
   func testAnAnswerFromAVisitThatLeftLeavesTheNextVisitsAnswerAlone() async throws {
+    for failed in [false, true] {
+      try await answerFromLeftVisit(failed: failed)
+    }
+  }
+
+  private func answerFromLeftVisit(failed: Bool) async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
     let router = AppRouter()
     let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
     let answer = SuggestedGoalAnswer()
 
+    await api.failSuggestedAnswers(failed)
     await api.holdNextSuggestedAnswer()
     answer.respond(to: suggestion, accepted: true, store: store, router: router)
     await api.waitForHeldSuggestedAnswer()
     answer.leave()
+    await api.failSuggestedAnswers(false)
 
     answer.respond(to: suggestion, accepted: true, store: store, router: router)
     await api.holdNextSuggestedAnswer()
     await api.releaseHeldSuggestedAnswer()
     await api.waitForHeldSuggestedAnswer()
-    try await settle()
+    XCTAssertFalse(answer.failed, "The old answer leaves no failure on the next visit")
     XCTAssertEqual(answer.answering, true, "The next visit's answer is still saving")
     XCTAssertEqual(router.tasks, [], "The first visit's answer opens nothing")
 
     await api.releaseHeldSuggestedAnswer()
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { (answer.answering) == nil }
     XCTAssertNil(answer.answering)
     XCTAssertEqual(
       router.tasks, [.startGoal(goal: "Microeconomics")], "The next visit's opens Setup")
@@ -1138,14 +1133,14 @@ final class BuddyMissionTapTests: XCTestCase {
       }
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForLayout(in: window)
 
-    try activate("Open the mission", in: window)
-    await api.waitForHeldCall()
+    try await activate("Open the mission", in: window)
+    try await api.waitForHeldCall()
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The mission never opened") { opened == 1 }
 
     XCTAssertEqual(opened, 1, "The mission opens")
   }
@@ -1156,7 +1151,7 @@ final class BuddyMissionTapTests: XCTestCase {
     let today = TodayStore(api: StudyAPIStub(openError: .network), cache: signedInCache())
 
     tap.open("b1", today: today, places: .unavailable) {}
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The failure never arrived") { tap.failed == "b1" }
     XCTAssertEqual(tap.failed, "b1")
 
     tap.cancel()
@@ -1168,13 +1163,16 @@ final class BuddyMissionTapTests: XCTestCase {
   func testATapFromAVisitThatLeftLeavesTheNextVisitsTapAlone() async throws {
     let opening = try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#)
     let api = StudyAPIStub(openings: [opening, opening], holdsOpening: true)
-    let today = TodayStore(api: api, cache: signedInCache())
+    let cache = signedInCache()
+    let consumed = cache.resource(audience: .signedIn, domains: [.userProgress]) { _ in 1 }
+    await consumed.load()
+    let today = TodayStore(api: api, cache: cache)
     let tap = BuddyMissionTap()
     var opened = 0
     let places = TutorPlaces { _ in opened += 1 }
 
     tap.open("b1", today: today, places: places) {}
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     tap.cancel()
     let cleared = tap.opening == nil
     XCTAssertTrue(cleared, "The next visit starts with no tap")
@@ -1184,14 +1182,16 @@ final class BuddyMissionTapTests: XCTestCase {
     }
 
     tap.open("b1", today: today, places: places) {}
-    await api.waitForHeldCall(count: 2)
+    try await api.waitForHeldCall(count: 2)
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The first opening did not finish") {
+      await api.completedOpenings == 1 && consumed.isInvalidated
+    }
     XCTAssertEqual(tap.opening, "b1", "The next visit's tap is still opening")
     XCTAssertEqual(opened, 0, "The first visit's tap opens nothing")
 
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The opening never finished") { tap.opening == nil }
     XCTAssertNil(tap.opening)
     XCTAssertEqual(opened, 1, "The next visit's tap opens its mission")
   }
@@ -1234,16 +1234,14 @@ final class TodayExamSheetTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "See your exam", table: "Today"), in: window)
-    try await settle()
+    try await activate(String(localized: "See your exam", table: "Today"), in: window)
     let pen = String(localized: "A black pen with a clear barrel", table: "Exam")
-    try activate(pen, in: window)
-    try await settle()
+    try await activate(pen, in: window)
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
     let sheet = try XCTUnwrap(
       window.rootViewController?.presentedViewController?.view, "The sheet stays open")
@@ -1305,9 +1303,6 @@ final class TodayExamSheetTests: XCTestCase {
       weeklyChallenge: nil)
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
 }
 
 actor StudyAPIStub: StudyAPIClient {
@@ -1323,11 +1318,10 @@ actor StudyAPIStub: StudyAPIClient {
   private let holdsOpening: Bool
   private let holdsStop: Bool
   /// Held calls, released in the order they came.
-  private var heldCalls: [CheckedContinuation<Void, Never>] = []
-  private var heldCallWaiter: (count: Int, continuation: CheckedContinuation<Void, Never>)?
+  private var heldCalls: [TestContinuation<Void>] = []
   private let holdsReadiness: Bool
-  private var heldReadiness: CheckedContinuation<Void, Never>?
-  private var readinessWaiter: CheckedContinuation<Void, Never>?
+  private var heldReadiness: TestContinuation<Void>?
+  private var readinessWaiter: TestContinuation<Void>?
   private(set) var openedTargets: [String] = []
   private(set) var stoppedSessions: [String] = []
   private(set) var openedBlocks: [String] = []
@@ -1339,12 +1333,12 @@ actor StudyAPIStub: StudyAPIClient {
   private let readiness: Components.Schemas.LessonReadiness
   private var holdsNextTodayRead = false
   private var failsTodayReads = false
-  private var heldTodayRead: CheckedContinuation<Void, Never>?
-  private var todayReadWaiter: CheckedContinuation<Void, Never>?
+  private var heldTodayRead: TestContinuation<Void>?
+  private var todayReadWaiter: TestContinuation<Void>?
   private var holdsSuggestedAnswer = false
   private var failsSuggestedAnswer = false
-  private var heldSuggestedAnswer: CheckedContinuation<Void, Never>?
-  private var suggestedAnswerWaiter: CheckedContinuation<Void, Never>?
+  private var heldSuggestedAnswer: TestContinuation<Void>?
+  private var suggestedAnswerWaiter: TestContinuation<Void>?
   private(set) var acceptedSuggestions: [String] = []
 
   init(
@@ -1382,21 +1376,31 @@ actor StudyAPIStub: StudyAPIClient {
   }
 
   /// Until `count` calls are held.
-  func waitForHeldCall(count: Int = 1) async {
-    guard heldCalls.count < count else {
-      return
+  func waitForHeldCall(
+    count: Int = 1, file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await waitForTestCondition(
+      "Study API never received the held calls", file: file, line: line
+    ) {
+      await self.heldCallCount >= count
     }
-
-    await withCheckedContinuation { heldCallWaiter = (count, $0) }
   }
 
-  /// The first call still held goes on.
-  func releaseHeldCall() {
-    guard !heldCalls.isEmpty else {
-      return
-    }
+  var heldCallCount: Int { heldCalls.count }
+  private(set) var completedOpenings = 0
+  private var completedStops = 0
+  private var completedSuggestedAnswers = 0
 
+  /// The first call still held goes on.
+  func releaseHeldCall(file: StaticString = #filePath, line: UInt = #line) async {
+    guard !heldCalls.isEmpty else { return }
+    let before = completedOpenings + completedStops
     heldCalls.removeFirst().resume()
+    _ = try? await waitForTestCondition(
+      "The released study operation did not finish", file: file, line: line
+    ) {
+      await self.completedOpenings + self.completedStops > before
+    }
   }
 
   private func holdIfAsked() async {
@@ -1407,22 +1411,18 @@ actor StudyAPIStub: StudyAPIClient {
 
   /// One call waits here until `releaseHeldCall()`.
   private func hold() async {
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation { continuation in
       heldCalls.append(continuation)
 
-      if let waiter = heldCallWaiter, heldCalls.count >= waiter.count {
-        waiter.continuation.resume()
-        heldCallWaiter = nil
-      }
     }
   }
 
-  func waitForHeldReadiness() async {
+  func waitForHeldReadiness(file: StaticString = #filePath, line: UInt = #line) async {
     guard heldReadiness == nil else {
       return
     }
 
-    await withCheckedContinuation { readinessWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { readinessWaiter = $0 }
   }
 
   func releaseReadiness() {
@@ -1438,12 +1438,12 @@ actor StudyAPIStub: StudyAPIClient {
     holdsNextTodayRead = true
   }
 
-  func waitForHeldTodayRead() async {
+  func waitForHeldTodayRead(file: StaticString = #filePath, line: UInt = #line) async {
     guard heldTodayRead == nil else {
       return
     }
 
-    await withCheckedContinuation { todayReadWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { todayReadWaiter = $0 }
   }
 
   func releaseTodayRead() {
@@ -1462,7 +1462,7 @@ actor StudyAPIStub: StudyAPIClient {
     if holdsNextTodayRead {
       holdsNextTodayRead = false
 
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         heldTodayRead = continuation
         todayReadWaiter?.resume()
         todayReadWaiter = nil
@@ -1481,6 +1481,7 @@ actor StudyAPIStub: StudyAPIClient {
     case nil: openedTargets.append("none")
     }
 
+    defer { completedOpenings += 1 }
     await holdIfAsked()
 
     guard let opened else {
@@ -1500,6 +1501,7 @@ actor StudyAPIStub: StudyAPIClient {
     case .mission(let mission): openedBlocks.append("mission:\(mission.blockId)")
     }
 
+    defer { completedOpenings += 1 }
     await holdIfAsked()
 
     if let openError {
@@ -1524,6 +1526,7 @@ actor StudyAPIStub: StudyAPIClient {
 
   func catchUp(token: String, sessionID: String, timeZone: String) async throws {}
   func stop(token: String, sessionID: String, timeZone: String) async throws {
+    defer { completedStops += 1 }
     if holdsStop {
       await hold()
     }
@@ -1549,7 +1552,7 @@ actor StudyAPIStub: StudyAPIClient {
     -> Components.Schemas.LessonReadiness
   {
     if holdsReadiness {
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         heldReadiness = continuation
         readinessWaiter?.resume()
         readinessWaiter = nil
@@ -1586,16 +1589,18 @@ actor StudyAPIStub: StudyAPIClient {
   func dismissUploadRequest(token: String, goalID: String) async throws {}
 
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
+    defer { completedSuggestedAnswers += 1 }
+    let fails = failsSuggestedAnswer
     if holdsSuggestedAnswer {
       holdsSuggestedAnswer = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         heldSuggestedAnswer = continuation
         suggestedAnswerWaiter?.resume()
         suggestedAnswerWaiter = nil
       }
     }
 
-    if failsSuggestedAnswer {
+    if fails {
       throw APIError.network
     }
 
@@ -1604,23 +1609,29 @@ actor StudyAPIStub: StudyAPIClient {
     }
   }
 
-  func failSuggestedAnswers() {
-    failsSuggestedAnswer = true
+  func failSuggestedAnswers(_ fails: Bool = true) {
+    failsSuggestedAnswer = fails
   }
 
   func holdNextSuggestedAnswer() {
     holdsSuggestedAnswer = true
   }
 
-  func waitForHeldSuggestedAnswer() async {
+  func waitForHeldSuggestedAnswer(file: StaticString = #filePath, line: UInt = #line) async {
     if heldSuggestedAnswer == nil {
-      await withCheckedContinuation { suggestedAnswerWaiter = $0 }
+      await withTestVoidContinuation(file: file, line: line) { suggestedAnswerWaiter = $0 }
     }
   }
 
-  func releaseHeldSuggestedAnswer() {
+  func releaseHeldSuggestedAnswer(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completedSuggestedAnswers
     heldSuggestedAnswer?.resume()
     heldSuggestedAnswer = nil
+    _ = try? await waitForTestCondition(
+      "The released suggestion answer did not finish", file: file, line: line
+    ) {
+      await self.completedSuggestedAnswers > before
+    }
   }
   func markMilestoneShown(token: String, milestoneID: String) async throws {}
 

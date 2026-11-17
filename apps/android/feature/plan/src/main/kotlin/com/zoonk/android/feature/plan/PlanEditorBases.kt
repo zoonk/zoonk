@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -160,7 +161,7 @@ private fun AllBasesChoice(
 ) {
     val locale = currentLocale()
 
-    Column {
+    Column(Modifier.padding(top = 8.dp)) {
         SectionLabel(stringResource(R.string.plan_all_prerequisites))
         Column(Modifier.selectableGroup()) {
             openChoices(items).forEach { choice ->

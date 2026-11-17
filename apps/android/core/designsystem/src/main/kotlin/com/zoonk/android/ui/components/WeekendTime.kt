@@ -79,9 +79,8 @@ fun WeekendTime(
             )
             Switch(checked = on, onCheckedChange = null, enabled = missing == null)
         }
-        // The reason takes the time's room, which stays laid out under it, so a day's pick moves nothing. It sits at
-        // the room's top, next to the switch it explains.
-        Box(contentAlignment = Alignment.TopStart) {
+        // The time stays laid out under the reason, so a day's pick moves nothing.
+        Box(contentAlignment = Alignment.BottomStart) {
             TimeSelect(
                 label = stringResource(R.string.weekend_time_label),
                 times = times,

@@ -181,9 +181,9 @@ class PracticeConversationTest {
         compose.onNodeWithText("Subscribe").assertExists()
     }
 
-    /** A Plus learner's Start waits, disabled, while the lengths stay pickable; the pick is the one that starts. */
+    /** A Plus learner's lengths wait with Start; the existing pick starts once the limit lifts. */
     @Test
-    fun aPickMadeWhileTheLimitHoldsStartsOnceItLifts() {
+    fun thePickStaysDisabledWhileTheLimitHolds() {
         show(
             callStarter(HeldRuns()) { request ->
                 requests += request
@@ -194,7 +194,7 @@ class PracticeConversationTest {
 
         compose.onNodeWithText("Start the call").assertIsNotEnabled()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
-        compose.onNodeWithText(minutes(2)).performClick()
+        compose.onNodeWithText(minutes(2)).assertIsNotEnabled()
 
         clock.passOpening()
         compose.waitUntil(LIFT_TIMEOUT) {
@@ -206,7 +206,7 @@ class PracticeConversationTest {
         compose.onNodeWithText("Start the call").performClick()
         compose.waitForIdle()
 
-        assertEquals(2L, (requests.single() as CallRequest.Practice).minutes)
+        assertEquals(3L, (requests.single() as CallRequest.Practice).minutes)
     }
 
     /** At the instant the action takes Subscribe's box and nothing in the sheet moves. */

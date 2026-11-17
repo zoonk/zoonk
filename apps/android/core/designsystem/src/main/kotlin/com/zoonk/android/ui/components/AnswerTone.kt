@@ -37,7 +37,7 @@ fun answerTone(
     val (border, container) =
         when {
             result == AnswerResult.Right -> BorderStroke(CHECKED, colors.tertiary) to colors.tertiaryContainer
-            result == AnswerResult.Wrong -> BorderStroke(CHECKED, colors.error) to colors.errorContainer
+            result == AnswerResult.Wrong -> BorderStroke(CHECKED, MaterialTheme.zoonk.destructive) to colors.errorContainer
             result == AnswerResult.Guess -> BorderStroke(CHECKED, colors.onSurfaceVariant) to Color.Transparent
             picked -> BorderStroke(2.dp, colors.primary) to MaterialTheme.zoonk.selectedTint
             else -> BorderStroke(1.dp, colors.outline) to Color.Transparent

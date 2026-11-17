@@ -59,12 +59,17 @@ class UnderstoodRowsTest {
         assertEquals(EditableField.TargetScore, row.editable)
     }
 
+    @Test fun aPastExamDateNeverShowsNegativeDaysLeft() {
+        val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-10-20")}]", targetDate = "2026-10-20")))
+        assertNull(row.note)
+    }
+
     @Test
     fun anOfficialDateCountsDownWithItsSource() {
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-11-08")}]", targetDate = "2026-11-08")))
 
         assertEquals("Exam date", row.label)
-        assertEquals("Nov 8, 2026", row.value)
+        assertEquals("Nov\u00a08,\u00a02026", row.value)
         assertEquals("11 days left", row.note)
         assertEquals(RowSource("Edital 2026", "https://exam.gov/edital.pdf"), row.source)
         assertNull(row.suggestedDate)
@@ -91,8 +96,8 @@ class UnderstoodRowsTest {
                 ),
             )
 
-        assertEquals("December 2026", row.value)
-        assertEquals("The exam notice says November 8.", row.note)
+        assertEquals("December\u00a02026", row.value)
+        assertEquals("The exam notice says November\u00a08.", row.note)
         assertEquals(LocalDate.of(2026, 11, 8), row.suggestedDate)
     }
 
@@ -101,7 +106,7 @@ class UnderstoodRowsTest {
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-11-08")},${day("2026-11-15")}]")))
 
         assertEquals("Exam dates", row.label)
-        assertEquals("Nov 8 and Nov 15, 2026", row.value.plain())
+        assertEquals("Nov\u00a08 and Nov\u00a015,\u00a02026", row.value)
         assertEquals("11 days left", row.note)
     }
 

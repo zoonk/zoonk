@@ -17,11 +17,9 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .learn) {
       ChapterScreen(chapterId: PageServer.chapterID)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Practice this chapter", table: "Plan"))
-    try await visit.settle()
-    visit.assertSays(Self.chapterFailure)
+    try await visit.assertSays(Self.chapterFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.chapterFailure)
@@ -33,11 +31,9 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam) {
       SubjectScreen(subjectKey: PageServer.subjectKey)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Add it back", table: "Plan"))
-    try await visit.settle()
-    visit.assertSays(Self.subjectFailure)
+    try await visit.assertSays(Self.subjectFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.subjectFailure)
@@ -47,7 +43,6 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam, holding: "createPlanChange") {
       SubjectScreen(subjectKey: PageServer.subjectKey)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Add it back", table: "Plan"))
     try await visit.failAfterLeaving()
@@ -61,11 +56,9 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam) {
       ExamList(exam: exam, options: nil)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Use this date", table: "Exam"))
-    try await visit.settle()
-    visit.assertSays(Self.examFailure)
+    try await visit.assertSays(Self.examFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.examFailure)
@@ -76,7 +69,6 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam, holding: "createPlanChange") {
       ExamList(exam: exam, options: nil)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Use this date", table: "Exam"))
     try await visit.failAfterLeaving()
@@ -90,11 +82,9 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam) {
       ExamList(exam: exam, options: nil)
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Start", table: "Exam"))
-    try await visit.settle()
-    visit.assertSays(Self.mockFailure)
+    try await visit.assertSays(Self.mockFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.mockFailure)
@@ -106,11 +96,9 @@ final class PageVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .language, router: router) {
       SpeakingScreen()
     }
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Start", table: "Voice"))
-    try await visit.settle()
-    visit.assertSays(Self.taskFailure)
+    try await visit.assertSays(Self.taskFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.taskFailure)
@@ -163,39 +151,42 @@ struct PageVisit {
     self.window = window
   }
 
-  func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
-
   /// Taps what reads `label` once the page has drawn it: a cold simulator under load reads the
   /// page later than a settle.
   func activate(_ label: String) async throws {
-    for _ in 0..<50 where !test.spoken(in: window).contains(label) {
-      try await Task.sleep(for: .milliseconds(100))
-    }
-
-    try test.activate(label, in: window)
+    try await test.activate(label, in: window)
   }
 
   func leaveAndComeBack() async throws {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      !tabs.pageVisible && test.spoken(in: window).contains("Elsewhere")
+    }
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
+    }
   }
 
   /// The held write goes out, the learner leaves, then it fails, and the learner comes back.
   func failAfterLeaving() async throws {
-    await server.waitForHeldRequest()
+    try await server.waitForHeldRequest()
     tabs.selected = 1
-    try await settle()
-    await server.release()
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      !tabs.pageVisible && test.spoken(in: window).contains("Elsewhere")
+    }
+    try await server.release()
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
+    }
   }
 
-  func assertSays(_ words: String, file: StaticString = #filePath, line: UInt = #line) {
+  func assertSays(_ words: String, file: StaticString = #filePath, line: UInt = #line) async throws
+  {
+    try await waitForTestCondition("The page never showed \(words)", file: file, line: line) {
+      test.spoken(in: window).contains { $0.contains(words) }
+    }
     let spoken = test.spoken(in: window)
     XCTAssertTrue(
       spoken.contains { $0.contains(words) }, "It shows: \(spoken)", file: file, line: line)
@@ -213,6 +204,7 @@ struct PageVisit {
 @Observable
 private final class VisitTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 private struct VisitHost<Page: View>: View {
@@ -223,6 +215,8 @@ private struct VisitHost<Page: View>: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         page()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 
@@ -248,9 +242,9 @@ actor PageServer: ClientTransport {
   func setFocusTestResult(_ result: String) { focusTestResult = result }
 
   private(set) var writes: [String] = []
+  private var completedWrites = 0
   private var holding: String?
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   init(holding: String?) {
     self.holding = holding
@@ -266,13 +260,12 @@ actor PageServer: ClientTransport {
       )
     }
 
+    defer { completedWrites += 1 }
     writes.append(operationID)
     if operationID == holding {
       holding = nil
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
-        heldWaiter?.resume()
-        heldWaiter = nil
       }
     }
 
@@ -292,17 +285,20 @@ actor PageServer: ClientTransport {
     throw APIError.network
   }
 
-  func waitForHeldRequest() async {
-    guard held == nil else {
-      return
-    }
-
-    await withCheckedContinuation { heldWaiter = $0 }
+  func waitForHeldRequest(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture never received its request", file: file, line: line)
+    { await self.isHeld }
   }
 
-  func release() {
+  private var isHeld: Bool { held != nil }
+
+  func release() async throws {
+    let before = completedWrites
     held?.resume()
     held = nil
+    try await waitForTestCondition("The released response never completed") {
+      await self.completedWrites > before
+    }
   }
 
   private static let reads = [

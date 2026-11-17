@@ -194,10 +194,10 @@ private fun CountryRow(
     ListRow(
         headline = { Text(choice.name, Modifier.semantics { if (choice.home) contentDescription = spoken }) },
         busy = busy,
+        highlighted = selected,
         supporting = if (choice.home) ({ Text(home, Modifier.clearAndSetSemantics {}) }) else null,
         modifier =
             Modifier
-                .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                 .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),
         trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
     )

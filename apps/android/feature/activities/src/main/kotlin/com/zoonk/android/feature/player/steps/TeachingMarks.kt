@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
@@ -155,6 +156,7 @@ internal fun TeachingText(
     text: String,
     marks: StepMarks?,
     marksTerms: Boolean,
+    textStyle: TextStyle = MaterialTheme.zoonkType.lessonText,
 ) {
     val example = remember(text, marks?.example) { splitExample(text, marks?.example) }
     val underline = marks?.underline?.takeIf { it.isNotBlank() }
@@ -164,7 +166,7 @@ internal fun TeachingText(
         @Composable { part: String, at: Int ->
             RichText(
                 text = part,
-                style = MaterialTheme.zoonkType.lessonText,
+                style = textStyle,
                 underline = underline.takeIf { at == underlined },
                 marksTerms = marksTerms,
             )
