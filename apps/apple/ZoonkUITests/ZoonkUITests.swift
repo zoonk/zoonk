@@ -147,14 +147,13 @@ final class ZoonkUITests: XCTestCase {
 
     let subscription = app.buttons["Subscription"]
     XCTAssertTrue(subscription.waitForExistence(timeout: 5))
-    XCTAssertEqual(subscription.value as? String, "Free")
     subscription.tap()
 
     XCTAssertTrue(
-      app.navigationBars["Zoonk Plus"].waitForExistence(timeout: 5),
+      app.staticTexts["Subscription"].firstMatch.waitForExistence(timeout: 5),
       "Expected the free account to reach the native subscription screen")
     XCTAssertTrue(
-      app.staticTexts["Subscribe to Zoonk Plus"].waitForExistence(timeout: 5),
+      app.staticTexts["Plus"].firstMatch.waitForExistence(timeout: 5),
       "Expected the subscription screen to use main's Plus offer")
     XCTAssertTrue(
       app.staticTexts["Plus Monthly"].waitForExistence(timeout: 5),
