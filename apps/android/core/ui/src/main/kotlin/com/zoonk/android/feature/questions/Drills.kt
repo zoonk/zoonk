@@ -43,6 +43,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -319,7 +320,7 @@ private fun NoteIcon(
     Icon(
         painterResource(icon),
         contentDescription = null,
-        modifier = Modifier.size(size).padding(2.dp),
+        modifier = Modifier.glyphInk(icon).size(size),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }

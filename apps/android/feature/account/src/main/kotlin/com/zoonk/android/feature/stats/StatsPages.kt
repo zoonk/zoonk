@@ -48,6 +48,7 @@ import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -89,7 +90,7 @@ private fun whole(
 
 @Composable
 private fun icon(id: Int): @Composable (Modifier) -> Unit =
-    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier) }
+    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = Modifier.glyphInk(id).then(modifier)) }
 
 private fun beltOf(color: String) = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 

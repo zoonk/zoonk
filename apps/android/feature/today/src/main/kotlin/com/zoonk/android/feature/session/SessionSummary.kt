@@ -66,6 +66,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -342,7 +343,8 @@ private fun SessionNumbers(
     StatTiles(columns = 2, tiles = tiles)
 }
 
-private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit = { modifier -> Icon(painterResource(icon), null, modifier) }
+private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit =
+    { modifier -> Icon(painterResource(icon), null, Modifier.glyphInk(icon).then(modifier)) }
 
 @Composable
 private fun rightDetail(summary: StudySessionSummary): CharSequence? {

@@ -357,23 +357,44 @@ private fun PhaseIndicator(status: PhaseStatus) {
     val ink = MaterialTheme.colorScheme.onSurface
     val faint = MaterialTheme.colorScheme.onSurface.copy(alpha = FAINT_ALPHA)
 
-    Box(Modifier.size(box), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(box), contentAlignment = Alignment.CenterStart) {
         when (status) {
             PhaseStatus.Pending -> {
                 Canvas(Modifier.size(box)) {
-                    drawCircle(faint, radius = size.minDimension * DOT_SHARE / 2, style = Stroke(1.dp.toPx()))
+                    drawCircle(
+                        faint,
+                        center =
+                            androidx.compose.ui.geometry
+                                .Offset(size.width * ICON_SHARE / 2, size.height / 2),
+                        radius =
+                            size.minDimension * DOT_SHARE / 2,
+                        style = Stroke(1.dp.toPx()),
+                    )
                 }
             }
 
             PhaseStatus.Active -> {
-                Canvas(Modifier.size(box)) { drawCircle(ink, radius = size.minDimension * DOT_SHARE / 2) }
+                Canvas(Modifier.size(box)) {
+                    drawCircle(
+                        ink,
+                        center =
+                            androidx.compose.ui.geometry.Offset(
+                                size.width * ICON_SHARE / 2,
+                                size.height / 2,
+                            ),
+                        radius = size.minDimension * DOT_SHARE / 2,
+                    )
+                }
             }
 
             PhaseStatus.Completed -> {
                 Icon(
                     painterResource(R.drawable.ic_check),
                     contentDescription = null,
-                    modifier = Modifier.size(box * ICON_SHARE),
+                    modifier =
+                        Modifier
+                            .glyphInk(R.drawable.ic_check)
+                            .size(box * ICON_SHARE),
                     tint = MaterialTheme.colorScheme.tertiary,
                 )
             }
@@ -382,7 +403,10 @@ private fun PhaseIndicator(status: PhaseStatus) {
                 Icon(
                     painterResource(R.drawable.ic_error),
                     contentDescription = null,
-                    modifier = Modifier.size(box * ICON_SHARE),
+                    modifier =
+                        Modifier
+                            .glyphInk(R.drawable.ic_error)
+                            .size(box * ICON_SHARE),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }
