@@ -141,9 +141,15 @@ internal fun PlanPreviewResult(
         }
 
         is PlanPreviewState.Failed -> {
-            EffectRoom(roomLines, heldRoom) { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
+            EffectRoom(
+                roomLines,
+                heldRoom,
+            ) {
+                com.zoonk.android.ui.components
+                    .InlineFailure(stringResource(R.string.plan_couldnt_check_changes))
+            }
             SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
+                SuggestionAction(stringResource(R.string.plan_try_again), onRetry, secondary = true)
                 SuggestionAction(notNow, onDismiss, secondary = true)
             }
         }

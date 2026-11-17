@@ -178,7 +178,6 @@ private fun PlanStartNotice() {
                 },
             ),
         description = stringResource(R.string.onboarding_plan_answers_saved),
-        mainActionInBar = true,
     )
 }
 

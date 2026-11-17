@@ -391,22 +391,17 @@ private fun PracticeChapterRow(
         leading = { KindDot(LearnKind.Practice) },
     )
     practiceMessage(practice.outcome)?.let {
-        Text(
-            text = it,
-            modifier =
-                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics {
-                    liveRegion = LiveRegionMode.Polite
-                },
-            color =
-                if (practice.outcome ==
-                    PracticeOutcome.Failed
-                ) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (practice.outcome == PracticeOutcome.Failed) {
+            com.zoonk.android.ui.components
+                .InlineFailure(it, Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp))
+        } else {
+            Text(
+                it,
+                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 

@@ -471,7 +471,9 @@ private fun LatestChange(
             dateKind = page.dateKind,
         )
         if (latest.change.canUndo) {
-            TextButton(busy = latest.undoing, onClick = { onUndo(latest.change) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
+            TextButton(edge = com.zoonk.android.ui.components.ButtonEdge.Start, busy = latest.undoing, onClick = {
+                onUndo(latest.change)
+            }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
                 Text(stringResource(R.string.plan_undo))
             }
         }
@@ -481,12 +483,8 @@ private fun LatestChange(
 
 @Composable
 internal fun SaveFailedText(modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(R.string.plan_save_failed),
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.error,
-    )
+    com.zoonk.android.ui.components
+        .InlineFailure(stringResource(R.string.plan_save_failed), modifier)
 }
 
 @Composable

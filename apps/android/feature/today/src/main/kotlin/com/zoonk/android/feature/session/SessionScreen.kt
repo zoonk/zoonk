@@ -76,7 +76,6 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.LocalMainActionInBar
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
@@ -576,34 +575,32 @@ internal fun NextStop(
                                         shown,
                                     )
                                 val words = lessonWaitWords(waitKind)
-                                CompositionLocalProvider(LocalMainActionInBar provides (startsFor != null || instead != null)) {
-                                    WaitContent(
-                                        quiz,
-                                        hold,
-                                        AnalyticsEvent.WarmUpSurface.LessonWait,
+                                WaitContent(
+                                    quiz,
+                                    hold,
+                                    AnalyticsEvent.WarmUpSurface.LessonWait,
+                                    waitKind,
+                                    shown,
+                                    stringResource(if (ready) words.ready else words.gettingReady),
+                                    goalId = goalId?.toString(),
+                                    progressShare = share,
+                                    onRetry = { retry() },
+                                ) {
+                                    LessonWritingProgress(
                                         waitKind,
                                         shown,
-                                        stringResource(if (ready) words.ready else words.gettingReady),
-                                        goalId = goalId?.toString(),
+                                        {
+                                            if (run.failure ==
+                                                GenerationFailure.Connection
+                                            ) {
+                                                viewModel.reconnect()
+                                            } else {
+                                                retry()
+                                            }
+                                        },
+                                        stringResource(R.string.session_next_writing_note).takeUnless { ready },
                                         progressShare = share,
-                                        onRetry = { retry() },
-                                    ) {
-                                        LessonWritingProgress(
-                                            waitKind,
-                                            shown,
-                                            {
-                                                if (run.failure ==
-                                                    GenerationFailure.Connection
-                                                ) {
-                                                    viewModel.reconnect()
-                                                } else {
-                                                    retry()
-                                                }
-                                            },
-                                            stringResource(R.string.session_next_writing_note).takeUnless { ready },
-                                            progressShare = share,
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         }

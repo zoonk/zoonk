@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,6 +55,7 @@ import com.zoonk.android.data.progress
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
 import kotlin.math.exp
@@ -193,12 +193,6 @@ fun WritingWait(
     }
 }
 
-/**
- * True where the screen's bar holds its main action, so a failure notice's Try again there takes
- * the secondary look: a screen has one filled button. Elsewhere Try again is the screen's main action.
- */
-val LocalMainActionInBar = compositionLocalOf { false }
-
 @Composable
 fun GenerationFailureNotice(
     failure: GenerationFailure,
@@ -206,7 +200,6 @@ fun GenerationFailureNotice(
     modifier: Modifier = Modifier,
     title: String? = null,
     description: String? = null,
-    mainActionInBar: Boolean = LocalMainActionInBar.current,
 ) {
     // Main's two failures read as one: the failure was ours, and Try again is the way on.
     val (icon, titleRes, descriptionRes) =
@@ -248,11 +241,7 @@ fun GenerationFailureNotice(
                                 R.string.generation_try_again
                             },
                         )
-                    if (mainActionInBar) {
-                        OutlinedButton(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
-                    } else {
-                        Button(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
-                    }
+                    OutlinedButton(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
                 }
             }
         }
@@ -294,7 +283,7 @@ private fun WaitProgress(
         Text(
             text = percent,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.zoonkType.data,
+            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         )
     }
 }
