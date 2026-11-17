@@ -331,7 +331,6 @@ private struct SubjectChapterRow: View {
       }
     } else {
       content
-        .chevronSlot()
     }
   }
 

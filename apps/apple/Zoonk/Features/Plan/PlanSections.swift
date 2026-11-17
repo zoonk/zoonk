@@ -731,13 +731,13 @@ struct PlanSettingsSection: View {
   /// Read-only: not a button, read as one label. It keeps the chevron's slot, so its value ends
   /// where the settings' values do.
   private func fact(label: Text, value: Text) -> some View {
-    LabeledContent {
+    IconLabeledContent {
       value
-    } label: {
+    } title: {
       label.foregroundStyle(.primary)
+    } icon: {
+      EmptyView()
     }
-    .chevronSlot()
-    .accessibilityElement(children: .combine)
   }
 
   private var dateValue: some View {

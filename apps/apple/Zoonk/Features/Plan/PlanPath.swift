@@ -54,7 +54,6 @@ struct PlanPathRows: View {
     PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
-    .chevronSlot()
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
@@ -112,7 +111,6 @@ private struct PlanPhaseRow: View {
       }
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
       header(next: false)
-        .chevronSlot()
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
@@ -290,7 +288,6 @@ private struct PlanChapterRow: View {
       }
     } else {
       content(isMuted: true)
-        .chevronSlot()
     }
   }
 
@@ -680,18 +677,6 @@ struct SyllabusSubjectRow: View {
           alignment: .trailing)
     }
     .accessibilityElement(children: .combine)
-  }
-}
-
-extension View {
-  /// A row without a chevron in a list where others have one keeps the chevron's slot, so values
-  /// end on one edge.
-  func chevronSlot() -> some View {
-    HStack(spacing: 12) {
-      self
-      DisclosureChevron()
-        .hidden()
-    }
   }
 }
 

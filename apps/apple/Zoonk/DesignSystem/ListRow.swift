@@ -115,6 +115,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
         }
       }
     }
+    .modifier(ListRowTrailing())
     .layoutStacks(isStacked)
     .layoutRow(.listGroup)
   }
