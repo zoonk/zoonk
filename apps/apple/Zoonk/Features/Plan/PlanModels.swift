@@ -704,6 +704,10 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
+extension Array where Element == SyllabusSubject.Chapter {
+  var doneChapters: [Element] { filter { $0.state == .done } }
+}
+
 struct GoalStanding: Decodable, Equatable, Sendable {
   struct Preparation: Decodable, Equatable, Sendable {
     struct Area: Decodable, Equatable, Identifiable, Sendable {

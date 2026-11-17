@@ -27,6 +27,7 @@ import {
 } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
+import { getDoneChapters } from "./done-chapters";
 import { SyllabusChapterRow } from "./syllabus-chapter-row";
 
 const CHAPTERS_TITLE_ID = "subject-chapters-title";
@@ -133,8 +134,7 @@ export function SubjectChapters({
 }) {
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
-  const done = chapters.filter((chapter) => chapter.state === "done");
-  const studied = done.filter((chapter) => !chapter.known);
+  const done = getDoneChapters(chapters);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
   const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
   const hidden = ahead.length - shown.length;
@@ -150,7 +150,7 @@ export function SubjectChapters({
         <span className="flex items-center gap-3">
           <PageSectionDetail>
             {t("{done, number} of {total, number} chapters", {
-              done: studied.length,
+              done: done.length,
               total: chapters.length,
             })}
           </PageSectionDetail>

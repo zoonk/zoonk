@@ -11,6 +11,7 @@ import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useFormatPlanDate } from "../plan/plan-date-text";
+import { getDoneChapters } from "./done-chapters";
 
 function getCoverage(subject: SyllabusSubject) {
   if (subject.lessonsTotal === 0) {
@@ -154,7 +155,7 @@ function SubjectDetails({
   const formatPlanDate = useFormatPlanDate();
   const questions = useQuestionsValue({ source: questionsSource, subject });
   const questionsLabel = useExamQuestionsLabel();
-  const chaptersDone = subject.chapters.filter((chapter) => chapter.state === "done").length;
+  const chaptersDone = getDoneChapters(subject.chapters).length;
 
   return (
     <DetailProperties>
