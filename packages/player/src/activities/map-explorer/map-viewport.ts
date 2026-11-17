@@ -4,7 +4,7 @@ export type MapPoint = { x: number; y: number };
 export type MapBox = { height: number; width: number; x: number; y: number };
 
 const MIN_ASPECT = 0.62;
-const MAX_ASPECT = 1.05;
+export const MAP_MAX_ASPECT = 1.05;
 const SPREAD_PADDING = 0.6;
 const EDGE_PADDING = 0.06;
 const RELAX_ROUNDS = 40;
@@ -12,9 +12,10 @@ const RELAX_ROUNDS = 40;
 function withAspect(
   box: { height: number; width: number },
   maxAspect: number,
+  wantedMinAspect = MIN_ASPECT,
 ): { height: number; width: number } {
   const aspect = box.height / box.width;
-  const minAspect = Math.min(MIN_ASPECT, maxAspect);
+  const minAspect = Math.min(wantedMinAspect, maxAspect);
 
   if (aspect > maxAspect) {
     return { height: box.height, width: box.height / maxAspect };
@@ -25,13 +26,15 @@ function withAspect(
 
 export function fitViewport({
   map,
-  maxAspect = MAX_ASPECT,
+  maxAspect = MAP_MAX_ASPECT,
   maxZoom,
+  minAspect,
   points,
 }: {
   map: { height: number; width: number };
   maxAspect?: number;
   maxZoom: number;
+  minAspect?: number;
   points: readonly MapPoint[];
 }): MapBox {
   if (points.length === 0) {
@@ -55,7 +58,8 @@ export function fitViewport({
       height: Math.max((bottom - top) * (1 + SPREAD_PADDING) + edge * 2, map.height / maxZoom),
       width: Math.max((right - left) * (1 + SPREAD_PADDING) + edge * 2, map.width / maxZoom),
     },
-    Math.min(maxAspect, MAX_ASPECT),
+    Math.min(maxAspect, MAP_MAX_ASPECT),
+    minAspect,
   );
 
   const [width, height] = [Math.min(wanted.width, map.width), Math.min(wanted.height, map.height)];

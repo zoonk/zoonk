@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -18,6 +18,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const fixtures = activityContentFixtures;
 
@@ -237,6 +238,49 @@ describe("money and society activities", () => {
     await page.getByRole("radio", { name: /The Moon landing/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("keeps the named street inside a narrow large-text map and clear of the pin faces", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 1100, width: 320 }, async () => {
+      openActivity({ template: "mapExplorer" });
+      await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
+
+      await expect
+        .poll(
+          () =>
+            getComputedStyle(document.querySelector('[data-street-label="Broad Street"]')!)
+              .visibility,
+        )
+        .toBe("visible");
+
+      const map = document.querySelector('[data-slot="base-map"]')!.getBoundingClientRect();
+
+      const label = document
+        .querySelector('[data-street-label="Broad Street"]')!
+        .getBoundingClientRect();
+
+      expect(label.left).toBeGreaterThanOrEqual(map.left);
+      expect(label.right).toBeLessThanOrEqual(map.right);
+      expect(label.top).toBeGreaterThanOrEqual(map.top);
+      expect(label.bottom).toBeLessThanOrEqual(map.bottom);
+
+      for (const face of document.querySelectorAll('[data-slot="map-pin"] > span')) {
+        const pin = face.getBoundingClientRect();
+
+        expect(
+          label.right <= pin.left ||
+            pin.right <= label.left ||
+            label.bottom <= pin.top ||
+            pin.bottom <= label.top,
+        ).toBe(true);
+      }
+    });
   });
 
   it("map explorer: tapping places uncovers what's there", async () => {

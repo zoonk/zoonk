@@ -159,14 +159,14 @@ enum MapViewport {
   }
 
   private static let minAspect = 0.62
-  private static let maxAspect = 1.05
+  static let maxAspect = 1.05
   private static let spreadPadding = 0.6
   private static let edgePadding = 0.06
   private static let relaxRounds = 40
 
   static func fit(
     map: CGSize, maxAspect wantedMaxAspect: Double = maxAspect, maxZoom: Double,
-    points: [CGPoint]
+    points: [CGPoint], minAspect wantedMinAspect: Double? = nil
   ) -> CGRect {
     guard let left = points.map(\.x).min(), let right = points.map(\.x).max(),
       let top = points.map(\.y).min(), let bottom = points.map(\.y).max()
@@ -179,7 +179,7 @@ enum MapViewport {
       CGSize(
         width: max((right - left) * (1 + spreadPadding) + edge * 2, map.width / maxZoom),
         height: max((bottom - top) * (1 + spreadPadding) + edge * 2, map.height / maxZoom)),
-      maxAspect: min(wantedMaxAspect, maxAspect))
+      maxAspect: min(wantedMaxAspect, maxAspect), minAspect: wantedMinAspect ?? minAspect)
     let size = CGSize(width: min(wanted.width, map.width), height: min(wanted.height, map.height))
 
     return CGRect(
@@ -217,9 +217,11 @@ enum MapViewport {
     }
   }
 
-  private static func withAspect(_ box: CGSize, maxAspect: Double) -> CGSize {
+  private static func withAspect(
+    _ box: CGSize, maxAspect: Double, minAspect wantedMinAspect: Double = minAspect
+  ) -> CGSize {
     let aspect = box.height / box.width
-    let floor = min(minAspect, maxAspect)
+    let floor = min(wantedMinAspect, maxAspect)
 
     if aspect > maxAspect {
       return CGSize(width: box.height / maxAspect, height: box.height)

@@ -26,7 +26,8 @@ internal fun fitViewport(
     mapHeight: Double,
     maxZoom: Double,
     points: List<MapPoint>,
-    maxAspect: Double = MAX_ASPECT,
+    maxAspect: Double = MAP_MAX_ASPECT,
+    minAspect: Double? = null,
 ): MapBox {
     if (points.isEmpty()) return MapBox(0.0, 0.0, mapWidth, mapHeight)
 
@@ -39,7 +40,8 @@ internal fun fitViewport(
         withAspect(
             width = max((right - left) * (1 + SPREAD_PADDING) + edge * 2, mapWidth / maxZoom),
             height = max((bottom - top) * (1 + SPREAD_PADDING) + edge * 2, mapHeight / maxZoom),
-            maxAspect = min(maxAspect, MAX_ASPECT),
+            maxAspect = min(maxAspect, MAP_MAX_ASPECT),
+            wantedMinAspect = minAspect ?: MIN_ASPECT,
         )
     val width = min(wanted.first, mapWidth)
     val height = min(wanted.second, mapHeight)
@@ -56,9 +58,10 @@ private fun withAspect(
     width: Double,
     height: Double,
     maxAspect: Double,
+    wantedMinAspect: Double = MIN_ASPECT,
 ): Pair<Double, Double> {
     val aspect = height / width
-    val minAspect = min(MIN_ASPECT, maxAspect)
+    val minAspect = min(wantedMinAspect, maxAspect)
     return when {
         aspect > maxAspect -> height / maxAspect to height
         aspect < minAspect -> width to width * minAspect
@@ -97,7 +100,7 @@ internal fun spreadPins(
 }
 
 private const val MIN_ASPECT = 0.62
-private const val MAX_ASPECT = 1.05
+internal const val MAP_MAX_ASPECT = 1.05
 private const val SPREAD_PADDING = 0.6
 private const val EDGE_PADDING = 0.06
 private const val RELAX_ROUNDS = 40

@@ -106,7 +106,10 @@ describe("lesson activities", () => {
 
   it("money guesses at 320 pixels and 200 percent use fewer round ticks without overlaps", async () => {
     document.documentElement.style.fontSize = "200%";
-    onTestFinished(() => document.documentElement.style.removeProperty("font-size"));
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
 
     await atViewport({ height: 1000, width: 320 }, async () => {
       openActivity({

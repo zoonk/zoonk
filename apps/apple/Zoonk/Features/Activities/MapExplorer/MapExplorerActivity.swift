@@ -143,7 +143,8 @@ private struct MapExplorerCanvas: View {
   private func crop(width: Double) -> CGRect {
     MapViewport.fit(
       map: CGSize(width: map.width, height: map.height), maxAspect: Self.maxHeight / width,
-      maxZoom: map.maxZoom, points: points)
+      maxZoom: map.maxZoom, points: points,
+      minAspect: map.streets.isEmpty ? nil : MapViewport.maxAspect)
   }
 
   @ViewBuilder

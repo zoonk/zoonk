@@ -264,7 +264,7 @@ export function BaseMapView({
         <button
           aria-label={`${pin.number}. ${pin.label}`}
           aria-pressed={pin.isSelected}
-          className="focus-visible:ring-ring/50 absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full outline-none select-none focus-visible:ring-[3px]"
+          className="focus-visible:ring-ring/50 absolute flex size-[44px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full outline-none select-none focus-visible:ring-[3px]"
           data-slot="map-pin"
           key={pin.id}
           onClick={() => onSelect(pin.id)}
@@ -273,7 +273,7 @@ export function BaseMapView({
         >
           <span
             className={cn(
-              "border-viz-accent flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums shadow-md motion-safe:transition-colors",
+              "border-viz-accent flex size-[32px] items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums shadow-md motion-safe:transition-colors",
               pin.isSelected && "bg-viz-accent text-background ring-viz-accent/30 ring-4",
               !pin.isSelected && pin.isVisited && "bg-viz-accent-soft text-viz-accent",
               !pin.isSelected && !pin.isVisited && "bg-background text-viz-accent",

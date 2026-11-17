@@ -18,7 +18,7 @@ import {
 } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BaseMapView, type MapPin } from "./base-map-view";
-import { fitViewport, spreadPins } from "./map-viewport";
+import { MAP_MAX_ASPECT, fitViewport, spreadPins } from "./map-viewport";
 import { useBaseMapLabels, useBaseMapName, useBaseMapNote } from "./use-base-map-words";
 
 type MapExplorerProps = ActivityRendererProps<"mapExplorer">;
@@ -110,6 +110,7 @@ function layoutPins({
     map: drawing,
     maxAspect: MAX_MAP_HEIGHT / width,
     maxZoom: drawing.maxZoom,
+    minAspect: drawing.streets.length > 0 ? MAP_MAX_ASPECT : undefined,
     points: projected.map((item) => item.point),
   });
 
@@ -180,10 +181,10 @@ function MapCanvas({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-pretty">{name}</p>
         {phase !== "checked" && (
-          <ActivityCanvasLabel className="shrink-0 tabular-nums">
+          <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
             {t("{count} of {total} explored", {
               count: format(visited.length),
               total: format(fields.places.length),

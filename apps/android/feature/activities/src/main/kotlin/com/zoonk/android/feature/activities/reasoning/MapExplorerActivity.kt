@@ -200,7 +200,17 @@ private fun layoutPins(
         places.withIndex().mapNotNull { (index, place) ->
             drawing.places.find { it.id == place.id }?.let { index to MapPoint(it.x, it.y) }
         }
-    val crop = fitViewport(drawing.width, drawing.height, drawing.maxZoom, projected.map { it.second }, maxAspect = MAX_MAP_HEIGHT / width)
+    val crop =
+        fitViewport(
+            drawing.width,
+            drawing.height,
+            drawing.maxZoom,
+            projected.map {
+                it.second
+            },
+            maxAspect = MAX_MAP_HEIGHT / width,
+            minAspect = if (drawing.streets.isEmpty()) null else MAP_MAX_ASPECT,
+        )
     val zoom = width / crop.width
     val height = floor(crop.height * zoom + 0.5)
     val spots = projected.map { (_, point) -> MapPoint((point.x - crop.x) * zoom, (point.y - crop.y) * zoom) }
