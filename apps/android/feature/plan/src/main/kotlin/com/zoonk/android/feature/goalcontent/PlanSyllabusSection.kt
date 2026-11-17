@@ -166,12 +166,12 @@ private fun SubjectRow(
                             maxLines = 1,
                         )
                     }
-                    progress(Modifier.width(barWidth))
+                    if (!notPlanned) progress(Modifier.width(barWidth))
                 }
             }
         },
         onClick = onClick,
-        supporting = if (layout == RowLayout.Stacked) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        supporting = if (layout == RowLayout.Stacked || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
         meta = {
             Text(
                 text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
