@@ -8,8 +8,11 @@ enum MapViewport {
     let angle: Double
     let street: Bool
     let priority: Bool
+    var positions: [CGPoint]? = nil
     func at(_ center: CGPoint) -> Label {
-      Label(center: center, size: size, angle: angle, street: street, priority: priority)
+      Label(
+        center: center, size: size, angle: angle, street: street, priority: priority,
+        positions: positions)
     }
   }
   private static func axes(_ label: Label) -> [CGPoint] {
@@ -29,12 +32,14 @@ enum MapViewport {
     }
     for index in order {
       let label = labels[index]
-      let along = axes(label)[0]
-      let steps = label.street ? Int(floor(label.size.width / 4)) : 0
-      let slides =
-        [0.0] + (steps > 0 ? (1...steps).flatMap { [Double($0) * 4, -Double($0) * 4] } : [])
-      let spot = slides.map {
-        label.at(CGPoint(x: label.center.x + along.x * $0, y: label.center.y + along.y * $0))
+      let points = label.street ? (label.positions ?? []) : [label.center]
+      let candidates = points.enumerated().sorted {
+        let first = hypot($0.element.x - label.center.x, $0.element.y - label.center.y)
+        let second = hypot($1.element.x - label.center.x, $1.element.y - label.center.y)
+        return first == second ? $0.offset < $1.offset : first < second
+      }.map(\.element)
+      let spot = candidates.map {
+        label.at($0)
       }.first { candidate in
         let rx = projection(candidate, CGPoint(x: 1, y: 0))
         let ry = projection(candidate, CGPoint(x: 0, y: 1))

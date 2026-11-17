@@ -271,14 +271,20 @@ private struct MapShapes: View {
             in: context.environment))
       }
       let labels = map.labels.enumerated().map { index, label in
-        MapViewport.Label(
+        let positions = map.streets.first { $0.name == label.text }.map {
+          streetPositions(path($0.path))
+        }
+        return MapViewport.Label(
           center: CGPoint(x: label.x, y: label.y).applying(transform),
           size: context.resolve(texts[index]).measure(
             in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
           street: label.kind == .street,
           priority: references.localizedCaseInsensitiveContains(label.text)
             || references.localizedCaseInsensitiveContains(
-              String(localized: String.LocalizationValue(label.text), table: "Activities"))
+              String(
+                localized: String.LocalizationValue(label.text), table: "Activities",
+                locale: context.environment.locale)),
+          positions: positions
         )
       }
       let spots = MapViewport.placeLabels(labels, pins: pins.map(\.shown), frame: size)
@@ -338,6 +344,22 @@ extension ActivityBaseMap.Tone {
 }
 
 /// Mirrors main's `use-base-map-words`.
+private let streetSampleStep = 4.0
+
+private func streetPositions(_ path: Path) -> [CGPoint] {
+  var start: CGPoint?
+  path.cgPath.applyWithBlock { pointer in
+    let element = pointer.pointee
+    if start == nil, element.type == .moveToPoint { start = element.points.pointee }
+  }
+  let bounds = path.boundingRect
+  let steps = max(1, Int(ceil((bounds.width + bounds.height) / streetSampleStep)))
+  let rest = (1...steps).compactMap {
+    path.trimmedPath(from: 0, to: CGFloat($0) / CGFloat(steps)).currentPoint
+  }
+  return [start].compactMap { $0 } + rest
+}
+
 private enum MapWords {
   static func name(_ id: String) -> Text {
     switch id {

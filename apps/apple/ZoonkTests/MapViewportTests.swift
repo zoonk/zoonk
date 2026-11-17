@@ -11,7 +11,7 @@ final class MapViewportTests: XCTestCase {
         street: false, priority: false),
       MapViewport.Label(
         center: CGPoint(x: 70, y: 100), size: CGSize(width: 80, height: 12), angle: 0, street: true,
-        priority: true),
+        priority: true, positions: [CGPoint(x: 70, y: 100), CGPoint(x: 138, y: 100)]),
     ]
     let spots = MapViewport.placeLabels(
       labels, pins: [CGPoint(x: 70, y: 100)], frame: CGSize(width: 210, height: 200))
@@ -35,6 +35,30 @@ final class MapViewportTests: XCTestCase {
     XCTAssertEqual(
       MapViewport.placeLabels(labels, pins: [], frame: CGSize(width: 210, height: 200)),
       [nil, CGPoint(x: 100, y: 100), CGPoint(x: 12, y: 30)])
+  }
+
+  func testStreetCanSlideFartherThanItsTextWidthIntoTheVisibleFrame() throws {
+    let labels = [
+      MapViewport.Label(
+        center: CGPoint(x: 70, y: 300), size: CGSize(width: 80, height: 12), angle: 90,
+        street: true, priority: false,
+        positions: [CGPoint(x: 70, y: 50), CGPoint(x: 70, y: 124), CGPoint(x: 70, y: 300)])
+    ]
+    let spots = MapViewport.placeLabels(
+      labels, pins: [CGPoint(x: 70, y: 190)], frame: CGSize(width: 210, height: 200))
+    let spot = try XCTUnwrap(spots[0])
+    XCTAssertLessThan(spot.y, 130)
+  }
+
+  func testHidesStreetWhenAvoidingItsPinWouldMoveItBeyondTheDrawnStreet() {
+    let labels = [
+      MapViewport.Label(
+        center: CGPoint(x: 70, y: 100), size: CGSize(width: 80, height: 12), angle: 90,
+        street: true, priority: false, positions: [CGPoint(x: 70, y: 50), CGPoint(x: 70, y: 120)])
+    ]
+    let spots = MapViewport.placeLabels(
+      labels, pins: [CGPoint(x: 70, y: 100)], frame: CGSize(width: 210, height: 250))
+    XCTAssertNil(spots[0])
   }
 
   private let map = CGSize(width: 1000, height: 800)
