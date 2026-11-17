@@ -170,6 +170,23 @@ export const engineModeFixtures = {
       prompt: "How many Greenlands fit in Africa?",
       template: "guessReveal",
     },
+    money: {
+      check: numericCheck(1200, { explanation: "Cost", question: "Your guess" }),
+      fields: {
+        max: 2000,
+        min: 0,
+        scale: "linear",
+        takeaway: "Cost",
+        truth: {
+          expression: "1200",
+          kind: "computed",
+          workings: [{ expression: "1200", label: "Cost" }],
+        },
+        unit: "R$",
+      },
+      prompt: "Drag to guess",
+      template: "guessReveal",
+    },
   },
   keyboardFretboard: {
     byEar: {

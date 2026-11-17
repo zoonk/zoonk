@@ -4,7 +4,6 @@ import {
   type MapLabelSpot,
   type MapPoint,
   fitViewport,
-  mapLabelFits,
   placeMapLabels,
   spreadPins,
   strayRegions,
@@ -136,7 +135,16 @@ describe(placeMapLabels, () => {
   const frame = { height: 300, width: 400 };
 
   it("slides a street's name along its street, off a pin", () => {
-    const broad = { angle: 0, kind: "street" as const, text: "Broad Street", x: 200, y: 150 };
+    const broad = {
+      angle: 0,
+      height: 12,
+      kind: "street" as const,
+      text: "Broad Street",
+      width: estimatedLabelWidth("Broad Street"),
+      x: 200,
+      y: 150,
+    };
+
     const pin = { x: 170, y: 150 };
     const [spot] = placeMapLabels({ frame, labels: [broad], pins: [pin] });
 
@@ -145,7 +153,16 @@ describe(placeMapLabels, () => {
   });
 
   it("slides a street's name back inside the map where an edge would cut it", () => {
-    const wardour = { angle: 90, kind: "street" as const, text: "Wardour Street", x: 380, y: 290 };
+    const wardour = {
+      angle: 90,
+      height: 12,
+      kind: "street" as const,
+      text: "Wardour Street",
+      width: estimatedLabelWidth("Wardour Street"),
+      x: 380,
+      y: 290,
+    };
+
     const [spot] = placeMapLabels({ frame, labels: [wardour], pins: [] });
     const lowest = Math.max(...(spot ? inkOf(wardour, spot) : []).map((point) => point.y));
 
@@ -154,14 +171,40 @@ describe(placeMapLabels, () => {
   });
 
   it("leaves out a region's name that the map's edge cuts", () => {
-    const soho = { angle: 0, kind: "region" as const, text: "Soho Square", x: 395, y: 60 };
+    const soho = {
+      angle: 0,
+      height: 12,
+      kind: "region" as const,
+      text: "Soho Square",
+      width: estimatedLabelWidth("Soho Square"),
+      x: 395,
+      y: 60,
+    };
 
     expect(placeMapLabels({ frame, labels: [soho], pins: [] })).toStrictEqual([null]);
   });
 
   it("keeps two names from running into each other", () => {
-    const oxford = { angle: -8, kind: "street" as const, text: "Oxford Street", x: 150, y: 50 };
-    const berwick = { angle: 88, kind: "street" as const, text: "Berwick Street", x: 196, y: 80 };
+    const oxford = {
+      angle: -8,
+      height: 12,
+      kind: "street" as const,
+      text: "Oxford Street",
+      width: estimatedLabelWidth("Oxford Street"),
+      x: 150,
+      y: 50,
+    };
+
+    const berwick = {
+      angle: 88,
+      height: 12,
+      kind: "street" as const,
+      text: "Berwick Street",
+      width: estimatedLabelWidth("Berwick Street"),
+      x: 196,
+      y: 80,
+    };
+
     const [first, second] = placeMapLabels({ frame, labels: [oxford, berwick], pins: [] });
 
     const gap = second ? gapBetween(inkOf(oxford, first ?? oxford), inkOf(berwick, second)) : 0;
@@ -200,24 +243,53 @@ describe(strayRegions, () => {
   });
 });
 
-describe(mapLabelFits, () => {
-  it("rejects measured text cut at an edge, including rotated text and its halo", () => {
-    const frame = { height: 100, width: 200 };
+describe("measured map labels", () => {
+  it("a dropped measured label frees its space, and no second edge margin hides a fitting label", () => {
+    const labels = [
+      { angle: 0, height: 12, kind: "region" as const, text: "Wide", width: 500, x: 100, y: 100 },
+      { angle: 0, height: 12, kind: "region" as const, text: "Soho", width: 40, x: 100, y: 100 },
+      { angle: 0, height: 12, kind: "region" as const, text: "Edge", width: 20, x: 12, y: 30 },
+    ];
 
-    expect(
-      mapLabelFits({ angle: 0, center: { x: 100, y: 50 }, frame, height: 14, width: 80 }),
-    ).toBe(true);
+    expect(placeMapLabels({ frame: { height: 200, width: 210 }, labels, pins: [] })).toStrictEqual([
+      null,
+      { x: 100, y: 100 },
+      { x: 12, y: 30 },
+    ]);
+  });
 
-    expect(mapLabelFits({ angle: 0, center: { x: 20, y: 50 }, frame, height: 14, width: 80 })).toBe(
-      false,
-    );
+  it("moves a named street off its pin before placing an optional name", () => {
+    const labels = [
+      {
+        angle: 0,
+        height: 12,
+        kind: "region" as const,
+        priority: false,
+        text: "Park",
+        width: 80,
+        x: 138,
+        y: 100,
+      },
+      {
+        angle: 0,
+        height: 12,
+        kind: "street" as const,
+        priority: true,
+        text: "Broad Street",
+        width: 80,
+        x: 70,
+        y: 100,
+      },
+    ];
 
-    expect(
-      mapLabelFits({ angle: 90, center: { x: 100, y: 20 }, frame, height: 14, width: 80 }),
-    ).toBe(false);
+    const spots = placeMapLabels({
+      frame: { height: 200, width: 210 },
+      labels,
+      pins: [{ x: 70, y: 100 }],
+    });
 
-    expect(
-      mapLabelFits({ angle: 45, center: { x: 100, y: 50 }, frame, height: 14, width: 400 }),
-    ).toBe(false);
+    expect(spots[1]).not.toBeNull();
+    expect(spots[1]?.x).toBeGreaterThan(130);
+    expect(spots[0]).toBeNull();
   });
 });

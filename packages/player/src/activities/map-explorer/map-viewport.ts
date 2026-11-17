@@ -1,4 +1,3 @@
-import { estimatedLabelWidth } from "../_utils/drawing-label";
 import { clamp } from "../_utils/snap-value";
 
 export type MapPoint = { x: number; y: number };
@@ -111,46 +110,59 @@ export function spreadPins({
   );
 }
 
-export type MapLabelSpot = { angle: number; kind: "region" | "street"; text: string } & MapPoint;
-
-const LABEL_HEIGHT = 12;
-const LABEL_REACH = LABEL_HEIGHT / 2;
+export type MapLabelSpot = {
+  angle: number;
+  kind: "region" | "street";
+  text: string;
+  width: number;
+  height: number;
+  priority?: boolean;
+} & MapPoint;
 const LABEL_CLEARANCE = 3;
+const LABEL_HALO = 1.5;
 const PIN_RADIUS = 20;
 const SLIDE_STEP = 4;
 const HALF_TURN = 180;
 
-/** The name's ink as a row of circles along its baseline, which a rotated name's box can't follow. */
-function labelInk(label: MapLabelSpot, at: MapPoint): MapPoint[] {
-  const reach = Math.max(estimatedLabelWidth(label.text) / 2 - LABEL_REACH, 0);
-  const radians = (label.angle * Math.PI) / HALF_TURN;
-  const count = Math.ceil((reach * 2) / LABEL_REACH);
-
-  return Array.from({ length: count + 1 }, (_, index) => {
-    const along = count === 0 ? 0 : -reach + (reach * 2 * index) / count;
-    return { x: at.x + Math.cos(radians) * along, y: at.y + Math.sin(radians) * along };
-  });
-}
-
-function slides(label: MapLabelSpot): number[] {
-  const most = label.kind === "street" ? estimatedLabelWidth(label.text) : 0;
-  const steps = Math.floor(most / SLIDE_STEP);
+function axes(label: MapLabelSpot): readonly [MapPoint, MapPoint] {
+  const angle = (label.angle * Math.PI) / HALF_TURN;
 
   return [
-    0,
-    ...Array.from({ length: steps }, (_, index) => [
-      (index + 1) * SLIDE_STEP,
-      -(index + 1) * SLIDE_STEP,
-    ]).flat(),
+    { x: Math.cos(angle), y: Math.sin(angle) },
+    { x: -Math.sin(angle), y: Math.cos(angle) },
   ];
 }
 
-/**
- * Where each of the map's names is drawn, in frame pixels: at its own spot when the map's edges,
- * the pins and the names before it leave that clear; a street's name otherwise slides along its
- * street to the nearest clear spot, within its own length. A name with no clear spot is left out,
- * as null, rather than drawn cut or covered.
- */
+function projection(label: MapLabelSpot, axis: MapPoint): number {
+  const [along, across] = axes(label);
+
+  return (
+    (label.width / 2 + LABEL_HALO) * Math.abs(along.x * axis.x + along.y * axis.y) +
+    (label.height / 2 + LABEL_HALO) * Math.abs(across.x * axis.x + across.y * axis.y)
+  );
+}
+
+function clearOfLabel(label: MapLabelSpot, other: MapLabelSpot): boolean {
+  return [...axes(label), ...axes(other)].some(
+    (axis) =>
+      Math.abs((label.x - other.x) * axis.x + (label.y - other.y) * axis.y) >=
+      projection(label, axis) + projection(other, axis) + LABEL_CLEARANCE,
+  );
+}
+
+function clearOfPin(label: MapLabelSpot, pin: MapPoint): boolean {
+  const [along, across] = axes(label);
+  const dx = pin.x - label.x;
+  const dy = pin.y - label.y;
+
+  return (
+    Math.hypot(
+      Math.max(Math.abs(dx * along.x + dy * along.y) - label.width / 2 - LABEL_HALO, 0),
+      Math.max(Math.abs(dx * across.x + dy * across.y) - label.height / 2 - LABEL_HALO, 0),
+    ) >=
+    PIN_RADIUS + LABEL_CLEARANCE
+  );
+}
 export function placeMapLabels({
   frame,
   labels,
@@ -160,43 +172,48 @@ export function placeMapLabels({
   labels: readonly MapLabelSpot[];
   pins: readonly MapPoint[];
 }): (MapPoint | null)[] {
-  const isClear = (ink: readonly MapPoint[], placed: readonly MapPoint[]) =>
-    ink.every(
-      (point) =>
-        point.x - LABEL_REACH >= 0 &&
-        point.x + LABEL_REACH <= frame.width &&
-        point.y - LABEL_REACH >= 0 &&
-        point.y + LABEL_REACH <= frame.height &&
-        pins.every(
-          (pin) =>
-            Math.hypot(point.x - pin.x, point.y - pin.y) >=
-            LABEL_REACH + PIN_RADIUS + LABEL_CLEARANCE,
-        ) &&
-        placed.every(
-          (other) =>
-            Math.hypot(point.x - other.x, point.y - other.y) >= LABEL_HEIGHT + LABEL_CLEARANCE,
-        ),
-    );
+  const placed: MapLabelSpot[] = [];
+  const spots: (MapPoint | null)[] = labels.map(() => null);
 
-  return labels.reduce<{ placed: MapPoint[]; spots: (MapPoint | null)[] }>(
-    ({ placed, spots }, label) => {
-      const radians = (label.angle * Math.PI) / HALF_TURN;
+  const order = labels
+    .map((label, index) => ({ index, label }))
+    .toSorted((a, b) => Number(Boolean(b.label.priority)) - Number(Boolean(a.label.priority)));
 
-      const spot =
-        slides(label)
-          .map((slide) => ({
-            x: label.x + Math.cos(radians) * slide,
-            y: label.y + Math.sin(radians) * slide,
-          }))
-          .find((at) => isClear(labelInk(label, at), placed)) ?? null;
+  for (const { index, label } of order) {
+    const along = axes(label)[0];
+    const steps = label.kind === "street" ? Math.floor(label.width / SLIDE_STEP) : 0;
 
-      return {
-        placed: spot ? [...placed, ...labelInk(label, spot)] : placed,
-        spots: [...spots, spot],
-      };
-    },
-    { placed: [], spots: [] },
-  ).spots;
+    const slides = [
+      0,
+      ...Array.from({ length: steps }, (_, step) => [
+        (step + 1) * SLIDE_STEP,
+        -(step + 1) * SLIDE_STEP,
+      ]).flat(),
+    ];
+
+    const spot = slides
+      .map((slide) => ({ ...label, x: label.x + along.x * slide, y: label.y + along.y * slide }))
+      .find((candidate) => {
+        const rx = projection(candidate, { x: 1, y: 0 });
+        const ry = projection(candidate, { x: 0, y: 1 });
+
+        return (
+          candidate.x >= rx &&
+          candidate.x + rx <= frame.width &&
+          candidate.y >= ry &&
+          candidate.y + ry <= frame.height &&
+          pins.every((pin) => clearOfPin(candidate, pin)) &&
+          placed.every((other) => clearOfLabel(candidate, other))
+        );
+      });
+
+    if (spot) {
+      placed.push(spot);
+      spots[index] = { x: spot.x, y: spot.y };
+    }
+  }
+
+  return spots;
 }
 
 type MapRegion = { id: string; name: string; tone: string };
@@ -232,37 +249,4 @@ export function strayRegions({
         unnamed.has(region.name),
     )
     .map((region) => region.id);
-}
-
-const LABEL_FRAME_INSET = 12;
-
-export function mapLabelFits({
-  frame,
-  center,
-  width,
-  height,
-  angle,
-}: {
-  frame: { width: number; height: number };
-  center: MapPoint;
-  width: number;
-  height: number;
-  angle: number;
-}): boolean {
-  const radians = (angle * Math.PI) / HALF_TURN;
-
-  const halfWidth =
-    (Math.abs(Math.cos(radians)) * width + Math.abs(Math.sin(radians)) * height) / 2 +
-    LABEL_FRAME_INSET;
-
-  const halfHeight =
-    (Math.abs(Math.sin(radians)) * width + Math.abs(Math.cos(radians)) * height) / 2 +
-    LABEL_FRAME_INSET;
-
-  return (
-    center.x >= halfWidth &&
-    center.x + halfWidth <= frame.width &&
-    center.y >= halfHeight &&
-    center.y + halfHeight <= frame.height
-  );
 }

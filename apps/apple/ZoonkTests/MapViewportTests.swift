@@ -4,15 +4,37 @@ import XCTest
 @testable import Zoonk
 
 final class MapViewportTests: XCTestCase {
-  func testMeasuredLabelMustFitWholeWithItsHalo() {
-    let frame = CGSize(width: 200, height: 100)
-    let text = CGSize(width: 80, height: 14)
-    XCTAssertTrue(
-      MapViewport.labelFits(center: CGPoint(x: 100, y: 50), text: text, angle: 0, frame: frame))
-    XCTAssertFalse(
-      MapViewport.labelFits(center: CGPoint(x: 20, y: 50), text: text, angle: 0, frame: frame))
-    XCTAssertFalse(
-      MapViewport.labelFits(center: CGPoint(x: 100, y: 20), text: text, angle: 90, frame: frame))
+  func testNamedStreetMovesOffItsPinBeforeAnOptionalLabel() {
+    let labels = [
+      MapViewport.Label(
+        center: CGPoint(x: 138, y: 100), size: CGSize(width: 80, height: 12), angle: 0,
+        street: false, priority: false),
+      MapViewport.Label(
+        center: CGPoint(x: 70, y: 100), size: CGSize(width: 80, height: 12), angle: 0, street: true,
+        priority: true),
+    ]
+    let spots = MapViewport.placeLabels(
+      labels, pins: [CGPoint(x: 70, y: 100)], frame: CGSize(width: 210, height: 200))
+    XCTAssertNotNil(spots[1])
+    XCTAssertGreaterThan(spots[1]!.x, 130)
+    XCTAssertNil(spots[0])
+  }
+
+  func testDroppedLabelFreesItsSpaceAndOneEdgeRuleKeepsWhatFits() {
+    let labels = [
+      MapViewport.Label(
+        center: CGPoint(x: 100, y: 100), size: CGSize(width: 500, height: 12), angle: 0,
+        street: false, priority: false),
+      MapViewport.Label(
+        center: CGPoint(x: 100, y: 100), size: CGSize(width: 40, height: 12), angle: 0,
+        street: false, priority: false),
+      MapViewport.Label(
+        center: CGPoint(x: 12, y: 30), size: CGSize(width: 20, height: 12), angle: 0, street: false,
+        priority: false),
+    ]
+    XCTAssertEqual(
+      MapViewport.placeLabels(labels, pins: [], frame: CGSize(width: 210, height: 200)),
+      [nil, CGPoint(x: 100, y: 100), CGPoint(x: 12, y: 30)])
   }
 
   private let map = CGSize(width: 1000, height: 800)

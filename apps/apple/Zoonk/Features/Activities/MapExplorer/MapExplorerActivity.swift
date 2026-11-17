@@ -5,7 +5,16 @@ extension ActivityRenderer {
     context in
     if let fields = try? context.fields(as: MapExplorerFields.self) {
       if let map = context.baseMap {
-        MapExplorerCanvas(fields: fields, map: map)
+        MapExplorerCanvas(
+          fields: fields, map: map,
+          references: {
+            switch context.check {
+            case .choice(let question, let options, _, _):
+              return ([question] + options.map(\.text)).joined(separator: " ")
+            case .numeric(let question, _, _, _, _, _, _): return question
+            default: return ""
+            }
+          }())
       } else {
         Text(
           "This map can't be shown. Continue to the next screen.", tableName: "Activities",
@@ -32,6 +41,7 @@ struct MapExplorerFields: Decodable, Hashable, Sendable {
 private struct MapExplorerCanvas: View {
   let fields: MapExplorerFields
   let map: ActivityBaseMap
+  let references: String
 
   @ActivityState("selectedId") private var selectedId: String? = nil
   @ActivityState("visited") private var visited: [String] = []
@@ -147,6 +157,7 @@ private struct MapExplorerCanvas: View {
     ZStack(alignment: .topLeading) {
       MapShapes(
         map: map, crop: crop, scale: scale,
+        references: references,
         pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
       )
       .accessibilityElement()
@@ -216,6 +227,7 @@ private struct MapShapes: View {
   let map: ActivityBaseMap
   let crop: CGRect
   let scale: Double
+  let references: String
   let pins: [(spot: CGPoint, shown: CGPoint)]
 
   var body: some View {
@@ -253,16 +265,26 @@ private struct MapShapes: View {
           with: .color(Color.border), lineWidth: 1)
       }
 
-      for label in map.labels {
-        let point = CGPoint(x: label.x, y: label.y).applying(transform)
-        let text = MapWords.label(key: label.key, text: label.text)
-          .font(
-            (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold))
-              .font(in: context.environment))
-        let measured = context.resolve(text).measure(
-          in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity))
-        guard MapViewport.labelFits(center: point, text: measured, angle: label.angle, frame: size)
-        else { continue }
+      let texts = map.labels.map { label in
+        MapWords.label(key: label.key, text: label.text).font(
+          (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
+            in: context.environment))
+      }
+      let labels = map.labels.enumerated().map { index, label in
+        MapViewport.Label(
+          center: CGPoint(x: label.x, y: label.y).applying(transform),
+          size: context.resolve(texts[index]).measure(
+            in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
+          street: label.kind == .street,
+          priority: references.localizedCaseInsensitiveContains(label.text)
+            || references.localizedCaseInsensitiveContains(
+              String(localized: String.LocalizationValue(label.text), table: "Activities"))
+        )
+      }
+      let spots = MapViewport.placeLabels(labels, pins: pins.map(\.shown), frame: size)
+      for (index, label) in map.labels.enumerated() {
+        guard let point = spots[index] else { continue }
+        let text = texts[index]
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))

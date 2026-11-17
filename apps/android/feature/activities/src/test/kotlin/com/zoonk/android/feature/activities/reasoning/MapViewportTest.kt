@@ -6,10 +6,27 @@ import org.junit.Test
 /** Main's `map-viewport.test.ts`, with the values its `fitViewport` and `spreadPins` return. */
 class MapViewportTest {
     @Test
-    fun measuredLabelsMustFitWholeWithTheirHalo() {
-        assertEquals(true, mapLabelFits(MapPoint(100.0, 50.0), 80.0, 14.0, 0.0, 200.0, 100.0))
-        assertEquals(false, mapLabelFits(MapPoint(20.0, 50.0), 80.0, 14.0, 0.0, 200.0, 100.0))
-        assertEquals(false, mapLabelFits(MapPoint(100.0, 20.0), 80.0, 14.0, 90.0, 200.0, 100.0))
+    fun namedStreetMovesOffItsPinBeforeAnOptionalLabel() {
+        val labels =
+            listOf(
+                MapLabelSpot(MapPoint(138.0, 100.0), 80.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 0.0, true, true),
+            )
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 200.0)
+        org.junit.Assert.assertNotNull(spots[1])
+        org.junit.Assert.assertTrue(spots[1]!!.x > 130)
+        org.junit.Assert.assertNull(spots[0])
+    }
+
+    @Test
+    fun droppedLabelFreesItsSpaceAndOneEdgeRuleKeepsWhatFits() {
+        val labels =
+            listOf(
+                MapLabelSpot(MapPoint(100.0, 100.0), 500.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(100.0, 100.0), 40.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(12.0, 30.0), 20.0, 12.0, 0.0, false, false),
+            )
+        assertEquals(listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)), placeMapLabels(labels, emptyList(), 210.0, 200.0))
     }
 
     private fun assertPoints(

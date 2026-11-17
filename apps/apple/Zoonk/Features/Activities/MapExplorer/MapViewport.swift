@@ -2,12 +2,71 @@ import CoreGraphics
 
 /// Mirrors main's `map-viewport`.
 enum MapViewport {
-  static func labelFits(center: CGPoint, text: CGSize, angle: Double, frame: CGSize) -> Bool {
-    let radians = angle * .pi / 180
-    let halfWidth = (abs(cos(radians)) * text.width + abs(sin(radians)) * text.height) / 2 + 12
-    let halfHeight = (abs(sin(radians)) * text.width + abs(cos(radians)) * text.height) / 2 + 12
-    return center.x >= halfWidth && center.x + halfWidth <= frame.width
-      && center.y >= halfHeight && center.y + halfHeight <= frame.height
+  struct Label {
+    let center: CGPoint
+    let size: CGSize
+    let angle: Double
+    let street: Bool
+    let priority: Bool
+    func at(_ center: CGPoint) -> Label {
+      Label(center: center, size: size, angle: angle, street: street, priority: priority)
+    }
+  }
+  private static func axes(_ label: Label) -> [CGPoint] {
+    let angle = label.angle * .pi / 180
+    return [CGPoint(x: cos(angle), y: sin(angle)), CGPoint(x: -sin(angle), y: cos(angle))]
+  }
+  private static func projection(_ label: Label, _ axis: CGPoint) -> Double {
+    let directions = axes(label)
+    return (label.size.width / 2 + 1.5) * abs(directions[0].x * axis.x + directions[0].y * axis.y)
+      + (label.size.height / 2 + 1.5) * abs(directions[1].x * axis.x + directions[1].y * axis.y)
+  }
+  static func placeLabels(_ labels: [Label], pins: [CGPoint], frame: CGSize) -> [CGPoint?] {
+    var spots = [CGPoint?](repeating: nil, count: labels.count)
+    var placed: [Label] = []
+    let order = labels.indices.sorted {
+      labels[$0].priority == labels[$1].priority ? $0 < $1 : labels[$0].priority
+    }
+    for index in order {
+      let label = labels[index]
+      let along = axes(label)[0]
+      let steps = label.street ? Int(floor(label.size.width / 4)) : 0
+      let slides =
+        [0.0] + (steps > 0 ? (1...steps).flatMap { [Double($0) * 4, -Double($0) * 4] } : [])
+      let spot = slides.map {
+        label.at(CGPoint(x: label.center.x + along.x * $0, y: label.center.y + along.y * $0))
+      }.first { candidate in
+        let rx = projection(candidate, CGPoint(x: 1, y: 0))
+        let ry = projection(candidate, CGPoint(x: 0, y: 1))
+        return candidate.center.x >= rx && candidate.center.x + rx <= frame.width
+          && candidate.center.y >= ry && candidate.center.y + ry <= frame.height
+          && pins.allSatisfy { pin in
+            let directions = axes(candidate)
+            let dx = pin.x - candidate.center.x
+            let dy = pin.y - candidate.center.y
+            return hypot(
+              max(
+                abs(dx * directions[0].x + dy * directions[0].y) - candidate.size.width / 2 - 1.5, 0
+              ),
+              max(
+                abs(dx * directions[1].x + dy * directions[1].y) - candidate.size.height / 2 - 1.5,
+                0)) >= 23
+          }
+          && placed.allSatisfy { other in
+            (axes(candidate) + axes(other)).contains { axis in
+              abs(
+                (candidate.center.x - other.center.x) * axis.x
+                  + (candidate.center.y - other.center.y) * axis.y) >= projection(candidate, axis)
+                + projection(other, axis) + 3
+            }
+          }
+      }
+      if let spot {
+        placed.append(spot)
+        spots[index] = spot.center
+      }
+    }
+    return spots
   }
 
   private static let minAspect = 0.62

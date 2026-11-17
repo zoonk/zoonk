@@ -13,6 +13,14 @@ import java.util.Locale
  */
 @RunWith(AndroidJUnit4::class)
 class AmountsTest {
+    @Test
+    fun guessMoneyRetainsCurrencyAndWordCountsStayBare() {
+        assertEquals("R$", currencyUnit("R$"))
+        assertEquals(null, currencyUnit("days"))
+        assertEquals("R$ 1.200", formatAmount(1200.0, Locale.forLanguageTag("pt-BR"), currencyUnit("R$")).replace('\u00a0', ' '))
+        assertEquals("1", formatAmount(1.0, Locale.ENGLISH, currencyUnit("days")))
+    }
+
     private val en = Locale.ENGLISH
     private val pt = Locale.forLanguageTag("pt")
     private val fr = Locale.FRENCH

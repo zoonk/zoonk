@@ -66,11 +66,17 @@ private class Shot(
     val fixture: String,
     val answer: ActivityAnswer?,
     val isCorrect: Boolean,
+    val name: String = fixture,
 )
 
 /** Every fixture of a template with a renderer, checked right, and one wrong guess to show a miss. */
 private val shots =
-    listOf(Shot("guessReveal", numericAnswer(40.0), isCorrect = false)) +
+    listOf(
+        Shot("guessReveal", numericAnswer(40.0), isCorrect = false),
+        Shot("guessReveal", numericAnswer(1.0), false, "guess-one"),
+        Shot("guessReveal", numericAnswer(10.0), false, "guess-off"),
+        Shot("guessReveal.money", numericAnswer(900.0), false, "guess-money"),
+    ) +
         ActivityFixtures.names
             .filter { it.substringBefore('.') in activityRenderers }
             .sorted()
@@ -153,7 +159,11 @@ class ActivityScreenshots {
         val screens =
             shots.flatMap { shot ->
                 states(shot).map { (state, player) ->
-                    Triple(state, playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))), player)
+                    Triple(
+                        state.replace(shot.fixture, shot.name),
+                        playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))),
+                        player,
+                    )
                 }
             } + explored
         val viewModel =

@@ -136,6 +136,14 @@ function layoutPins({
   return { crop, height, pins };
 }
 
+function questionReferences(check: MapExplorerProps["content"]["check"]): string {
+  if (check.kind === "choice") {
+    return [check.question, ...check.options.map((option) => option.text)].join(" ");
+  }
+
+  return check.kind === "numeric" ? check.question : "";
+}
+
 function MapCanvas({
   content,
   drawing,
@@ -188,6 +196,7 @@ function MapCanvas({
         <BaseMapView
           crop={crop}
           drawing={drawing}
+          references={questionReferences(content.check)}
           height={height}
           labelText={labelText}
           onSelect={select}

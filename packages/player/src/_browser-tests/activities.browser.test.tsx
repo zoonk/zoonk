@@ -1,4 +1,7 @@
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -93,6 +96,25 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
   });
 
+  it("money guess retains currency in readouts, ticks, the difference and the accessible scale", async () => {
+    const content = engineModeFixtures.guessReveal.money;
+    openActivity({ content, template: "guessReveal" });
+    await guessOnScale(content.fields, 900);
+    await checkActivity();
+    await expect.element(page.getByText(/Real value: R\$1,200/u)).toBeVisible();
+    await expect.element(page.getByText(/Your guess is off by R\$300/u)).toBeVisible();
+    await expect.element(page.getByText("R$0", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("R$2,000", { exact: true })).toBeVisible();
+
+    expect(
+      document.querySelector('[data-slot="activity-text-alternative"]')?.textContent,
+    ).toContain("R$1,200");
+
+    await expect
+      .element(page.getByRole("slider", { name: "Your guess" }))
+      .toHaveAttribute("aria-valuetext", "R$900");
+  });
+
   it("guess readouts do not attach a free-text plural unit to one", async () => {
     const source = activityContentFixtures.guessReveal;
 
@@ -103,7 +125,11 @@ describe("lesson activities", () => {
 
     await guessOnScale(source.fields, 1);
     await expect.element(page.getByText("Your guess: 1", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("days", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("in days", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Your guess" }))
+      .toHaveAttribute("aria-valuetext", "1. in days");
   });
 
   it("guess then reveal: the computed value shows next to the guess, with its workings", async () => {

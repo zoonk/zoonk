@@ -16,6 +16,8 @@ import {
   valueAtPosition,
 } from "../_utils/guess-scale";
 import { tickLabels } from "../_utils/plot-ticks";
+import { ActivityCanvasLabel } from "./activity-canvas";
+import { useGuessFormat } from "./guess-format";
 
 const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
@@ -91,12 +93,15 @@ export function ActivityGuessScale({
   const format = useFormatNumber();
   const share = guess === null ? HALF : shareOfValue(scale, guess);
   const actualShare = actual === null ? null : shareOfValue(scale, actual);
-  const formatValue = (value: number) => format(value);
+  const { accessible, label, money, value: formatValue } = useGuessFormat(unit);
   const { ref: trackRef, width: trackWidth } = useMeasuredWidth<HTMLDivElement>(0);
 
   const ticks = scaleTicks(scale);
 
-  const { isShort } = tickLabels({ format: (value, compact) => format(value, { compact }), ticks });
+  const { isShort } = tickLabels({
+    format: (value, compact) => format(value, { compact, unit: money ? unit : undefined }),
+    ticks,
+  });
 
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
@@ -104,7 +109,6 @@ export function ActivityGuessScale({
 
   return (
     <div className="flex flex-col gap-2">
-      {unit && <p className="text-muted-foreground text-xs">{unit}</p>}
       <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
         {actual !== null && actualShare !== null && (
           <ScaleChip
@@ -132,6 +136,7 @@ export function ActivityGuessScale({
             : t("Your guess: {value}", { value: formatValue(guess) })}
         </ScaleChip>
 
+        {label && <ActivityCanvasLabel>{label}</ActivityCanvasLabel>}
         <Slider
           disabled={disabled}
           max={SCALE_POSITIONS}
@@ -158,7 +163,11 @@ export function ActivityGuessScale({
 
               <SliderThumb
                 aria-label={t("Your guess")}
-                aria-valuetext={guess === null ? t("No guess yet") : formatValue(guess)}
+                aria-valuetext={
+                  guess === null
+                    ? [t("No guess yet"), label].filter(Boolean).join(". ")
+                    : accessible(guess)
+                }
               />
             </SliderTrack>
           </SliderControl>
@@ -171,7 +180,7 @@ export function ActivityGuessScale({
               key={tick}
               style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
             >
-              {format(tick, { compact: isShort })}
+              {format(tick, { compact: isShort, unit: money ? unit : undefined })}
             </span>
           ))}
         </div>

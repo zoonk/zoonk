@@ -62,6 +62,15 @@ struct GuessScale: Hashable, Sendable {
   }
 }
 
+func guessUnitLabel(_ unit: String?) -> Text? {
+  guard let unit, !unit.isEmpty, ActivityNumberFormat.currencyUnit(unit) == nil else { return nil }
+  return Text(
+    "in \(unit)", tableName: "Activities",
+    comment:
+      "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h"
+  )
+}
+
 struct ActivityGuessScaleView: View {
   let scale: GuessScale
   let unit: String?
@@ -71,7 +80,6 @@ struct ActivityGuessScaleView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      if let unit { Text(verbatim: unit).typeStyle(.meta).foregroundStyle(.mutedForeground) }
       Group {
         if let guess {
           Text(
@@ -84,6 +92,9 @@ struct ActivityGuessScaleView: View {
         }
       }
       .typeStyle(.readout)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
+
+      if let label = guessUnitLabel(unit) { ActivityCaption(label) }
 
       if let actual {
         revealed(actual: actual)
@@ -103,7 +114,10 @@ struct ActivityGuessScaleView: View {
           Text(format(scale.max)).typeStyle(.data)
         }
         .accessibilityValue(
-          guess.map { Text(verbatim: format($0)) }
+          guess.map {
+            Text(verbatim: format($0))
+              + (guessUnitLabel(unit).map { Text(verbatim: ". ") + $0 } ?? Text(verbatim: ""))
+          }
             ?? Text(
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
@@ -133,11 +147,12 @@ struct ActivityGuessScaleView: View {
       )
       .typeStyle(.body.weight(.semibold).monospaced())
       .foregroundStyle(Color.successText)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
     }
   }
 
   private func format(_ value: Double) -> String {
-    ActivityNumberFormat.format(value)
+    ActivityNumberFormat.guess(value, unit: unit)
   }
 }
 

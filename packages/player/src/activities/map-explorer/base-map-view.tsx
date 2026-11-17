@@ -1,15 +1,9 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useLayoutEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import {
-  type MapBox,
-  type MapPoint,
-  mapLabelFits,
-  placeMapLabels,
-  strayRegions,
-} from "./map-viewport";
+import { type MapBox, type MapPoint, placeMapLabels, strayRegions } from "./map-viewport";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -18,6 +12,8 @@ const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   groupB: "fill-viz-highlight-soft",
   groupC: "fill-viz-secondary-soft",
 };
+
+const rounded = (value: number) => Number(value.toFixed(3));
 
 const LABEL_SIZE = 12;
 const LABEL_HALO = 3;
@@ -39,50 +35,16 @@ function MapShapes({
   labelSpots,
   labelText,
   pixelSize,
+  measureLabel,
+  labelSizes,
 }: {
   drawing: BaseMapDrawing;
   labelSpots: readonly (MapPoint | null)[];
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
+  labelSizes: Readonly<Record<number, { offsetX: number; offsetY: number }>>;
+  measureLabel: (index: number, element: SVGTextElement | null) => void;
 }) {
-  const labelsRef = useRef<SVGGElement>(null);
-
-  useLayoutEffect(() => {
-    const group = labelsRef.current;
-    const svg = group?.ownerSVGElement;
-
-    if (!group || !svg) {
-      return;
-    }
-
-    const measure = () => {
-      const frame = svg.getBoundingClientRect();
-
-      for (const label of group.querySelectorAll("text")) {
-        const bounds = label.getBoundingClientRect();
-
-        label.style.visibility = mapLabelFits({
-          angle: 0,
-          center: {
-            x: (bounds.left + bounds.right) / 2 - frame.left,
-            y: (bounds.top + bounds.bottom) / 2 - frame.top,
-          },
-          frame,
-          height: bounds.height,
-          width: bounds.width,
-        })
-          ? "visible"
-          : "hidden";
-      }
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(group);
-    observer.observe(svg);
-    return () => observer.disconnect();
-  });
-
   const stray = strayRegions({
     labels: drawing.labels,
     legendTones: drawing.legend.map((item) => item.tone),
@@ -132,13 +94,11 @@ function MapShapes({
         />
       ))}
 
-      <g ref={labelsRef}>
+      <g>
         {drawing.labels.map((label, index) => {
           const spot = labelSpots[index];
 
-          if (!spot) {
-            return null;
-          }
+          const at = spot ?? label;
 
           return (
             <text
@@ -148,7 +108,8 @@ function MapShapes({
                   ? "fill-muted-foreground font-medium"
                   : "fill-foreground/75 font-semibold",
               )}
-              style={{ visibility: "hidden" }}
+              style={{ visibility: spot ? "visible" : "hidden" }}
+              ref={(element) => measureLabel(index, element)}
               dominantBaseline="middle"
               fontSize={LABEL_SIZE * pixelSize}
               key={`${label.text}-${label.x}-${label.y}`}
@@ -156,9 +117,9 @@ function MapShapes({
               strokeLinejoin="round"
               strokeWidth={LABEL_HALO * pixelSize}
               textAnchor="middle"
-              transform={label.angle ? `rotate(${label.angle} ${spot.x} ${spot.y})` : undefined}
-              x={spot.x}
-              y={spot.y}
+              transform={label.angle ? `rotate(${label.angle} ${at.x} ${at.y})` : undefined}
+              x={at.x - (labelSizes[index]?.offsetX ?? 0) * pixelSize}
+              y={at.y - (labelSizes[index]?.offsetY ?? 0) * pixelSize}
             >
               {labelText(label.key, label.text)}
             </text>
@@ -169,6 +130,72 @@ function MapShapes({
   );
 }
 
+type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
+
+function useMapLabelSizes(labelKey: string, pixelSize: number) {
+  const elements = useRef(new Map<number, SVGTextElement>());
+
+  const [cache, setCache] = useState<{
+    labelKey: string;
+    pixelSize: number;
+    sizes: Readonly<Record<number, MapLabelSize>>;
+  } | null>(null);
+
+  const measureLabel = useCallback((index: number, element: SVGTextElement | null) => {
+    if (element) {
+      elements.current.set(index, element);
+    } else {
+      elements.current.delete(index);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const sizes = Object.fromEntries(
+        [...elements.current].map(([index, element]) => {
+          const box = element.getBBox();
+
+          return [
+            index,
+            {
+              height: rounded(box.height / pixelSize),
+              offsetX: rounded(
+                (box.x + box.width / 2 - Number(element.getAttribute("x"))) / pixelSize,
+              ),
+              offsetY: rounded(
+                (box.y + box.height / 2 - Number(element.getAttribute("y"))) / pixelSize,
+              ),
+              width: rounded(box.width / pixelSize),
+            },
+          ];
+        }),
+      );
+
+      const next = { labelKey, pixelSize, sizes };
+      setCache((known) => (JSON.stringify(known) === JSON.stringify(next) ? known : next));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+
+    for (const element of elements.current.values()) {
+      observer.observe(element);
+    }
+
+    document.fonts.addEventListener("loadingdone", measure);
+
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", measure);
+    };
+  }, [labelKey, pixelSize]);
+
+  const sizes: Readonly<Record<number, MapLabelSize>> =
+    cache?.labelKey === labelKey && cache.pixelSize === pixelSize ? cache.sizes : {};
+
+  return { measureLabel, sizes };
+}
+
 export function BaseMapView({
   crop,
   drawing,
@@ -177,6 +204,7 @@ export function BaseMapView({
   onSelect,
   pins,
   width,
+  references,
 }: {
   crop: MapBox;
   drawing: BaseMapDrawing;
@@ -185,6 +213,7 @@ export function BaseMapView({
   onSelect: (id: string) => void;
   pins: readonly MapPin[];
   width: number;
+  references: string;
 }) {
   const pixelSize = crop.width / width;
 
@@ -193,17 +222,42 @@ export function BaseMapView({
     y: crop.y + point.y * pixelSize,
   });
 
-  const labelSpots = placeMapLabels({
-    frame: { height, width },
-    labels: drawing.labels.map((label) => ({
-      angle: label.angle,
-      kind: label.kind,
-      text: labelText(label.key, label.text),
-      x: (label.x - crop.x) / pixelSize,
-      y: (label.y - crop.y) / pixelSize,
-    })),
-    pins: pins.map((pin) => pin.shown),
-  }).map((spot) => spot && toMap(spot));
+  const labelKey = JSON.stringify(
+    drawing.labels.map((label) => [
+      label.text,
+      label.kind,
+      label.x,
+      label.y,
+      labelText(label.key, label.text),
+    ]),
+  );
+
+  const { sizes, measureLabel } = useMapLabelSizes(labelKey, pixelSize);
+
+  const measured = drawing.labels.map((label, index) => ({
+    angle: label.angle,
+    height: sizes[index]?.height ?? 0,
+    kind: label.kind,
+    priority: references
+      .toLocaleLowerCase()
+      .includes(labelText(label.key, label.text).toLocaleLowerCase()),
+    text: labelText(label.key, label.text),
+    width: sizes[index]?.width ?? 0,
+    x: (label.x - crop.x) / pixelSize,
+    y: (label.y - crop.y) / pixelSize,
+  }));
+
+  const labelSpots = (
+    drawing.labels.every(
+      (_, index) => (sizes[index]?.width ?? 0) > 0 && (sizes[index]?.height ?? 0) > 0,
+    )
+      ? placeMapLabels({
+          frame: { height, width },
+          labels: measured,
+          pins: pins.map((pin) => pin.shown),
+        })
+      : drawing.labels.map(() => null)
+  ).map((spot) => spot && toMap(spot));
 
   return (
     <div
@@ -226,6 +280,8 @@ export function BaseMapView({
           labelSpots={labelSpots}
           labelText={labelText}
           pixelSize={pixelSize}
+          measureLabel={measureLabel}
+          labelSizes={sizes}
         />
 
         {pins.map((pin) => {

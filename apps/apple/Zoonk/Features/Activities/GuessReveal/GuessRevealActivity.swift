@@ -125,7 +125,7 @@ private struct GuessRevealCanvas: View {
         comment: "After the check: how many times smaller the guess was than the real value")
     case .off(let difference):
       Text(
-        "Your guess is off by \(ActivityNumberFormat.format(abs(difference))).",
+        "Your guess is off by \(ActivityNumberFormat.guess(abs(difference), unit: fields.unit)).",
         tableName: "Activities",
         comment: "After the check: how far the guess was from the real value")
     }

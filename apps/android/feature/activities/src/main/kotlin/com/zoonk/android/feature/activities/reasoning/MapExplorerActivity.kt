@@ -89,7 +89,24 @@ private typealias Place = PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInne
 
 @Composable
 private fun MapExplorerActivity(props: ActivityProps) {
-    val fields = (props.content as MapExplorerContent).value.fields
+    val content = (props.content as MapExplorerContent).value
+    val fields = content.fields
+    val references =
+        when (val check = content.check) {
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue -> {
+                check.value.question +
+                    " " +
+                    check.value.options.joinToString(" ") { it.text }
+            }
+
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value -> {
+                check.value.question
+            }
+
+            else -> {
+                ""
+            }
+        }
     val map = remember(props.baseMap) { props.baseMap?.toBaseMap() }
 
     if (map == null) {
@@ -134,7 +151,7 @@ private fun MapExplorerActivity(props: ActivityProps) {
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
         }
-        MapView(map, places, name, selectedId, visited, enabled = !props.isLocked, onSelect = ::select)
+        MapView(map, places, name, selectedId, visited, references, enabled = !props.isLocked, onSelect = ::select)
         if (map.drawing.legend.isNotEmpty() || note != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 map.drawing.legend.forEach { LegendItem(it) }
@@ -183,6 +200,7 @@ private fun MapView(
     name: String,
     selectedId: String?,
     visited: List<String>,
+    references: String,
     enabled: Boolean,
     onSelect: (String) -> Unit,
 ) {
@@ -200,7 +218,7 @@ private fun MapView(
                     isTraversalGroup = true
                 },
         ) {
-            MapDrawing(map, layout, Modifier.matchParentSize())
+            MapDrawing(map, layout, references, Modifier.matchParentSize())
             Layout(
                 content = {
                     layout.pins.forEach { pin ->
@@ -228,6 +246,7 @@ private fun MapView(
 private fun MapDrawing(
     map: BaseMap,
     layout: MapLayout,
+    references: String,
     modifier: Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -276,20 +295,28 @@ private fun MapDrawing(
         }
 
         val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
-        labels.forEach { (label, text) ->
-            val center = Offset(((label.x - crop.x) * zoom).toFloat(), ((label.y - crop.y) * zoom).toFloat())
-            if (!mapLabelFits(
-                    MapPoint(center.x.toDouble(), center.y.toDouble()),
-                    text.size.width.toDouble(),
-                    text.size.height.toDouble(),
-                    label.angle,
-                    size.width.toDouble(),
-                    size.height.toDouble(),
-                    12.dp.toPx().toDouble(),
-                )
-            ) {
-                return@forEach
-            }
+        val spots =
+            placeMapLabels(
+                labels.mapIndexed { index, (label, text) ->
+                    MapLabelSpot(
+                        MapPoint(
+                            (label.x - crop.x) * zoom / density,
+                            (label.y - crop.y) * zoom / density,
+                        ),
+                        text.size.width.toDouble() / density,
+                        text.size.height.toDouble() / density,
+                        label.angle,
+                        label.kind == LabelKind.Street,
+                        references.contains(label.text, ignoreCase = true) || references.contains(labelTexts[index], ignoreCase = true),
+                    )
+                },
+                layout.pins.map { it.shown },
+                size.width.toDouble() / density,
+                size.height.toDouble() / density,
+            )
+        labels.forEachIndexed { index, (label, text) ->
+            val spot = spots[index] ?: return@forEachIndexed
+            val center = Offset((spot.x * density).toFloat(), (spot.y * density).toFloat())
             val topLeft = center - Offset(text.size.width / 2f, text.size.height / 2f)
             rotate(label.angle.toFloat(), pivot = center) {
                 drawText(text, colors.surface, topLeft, drawStyle = halo)

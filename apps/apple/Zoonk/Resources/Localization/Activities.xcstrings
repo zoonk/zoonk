@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "in %@" : {
+      "comment" : "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in %@"
+          }
+        }
+      }
+    },
     "“%@” has no match." : {
       "comment" : "Says that the trap card the learner picked has no match",
       "localizations" : {
