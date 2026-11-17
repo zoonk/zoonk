@@ -101,3 +101,55 @@ private const val MAX_ASPECT = 1.05
 private const val SPREAD_PADDING = 0.6
 private const val EDGE_PADDING = 0.06
 private const val RELAX_ROUNDS = 40
+
+internal data class MapTextLabel(
+    val center: MapPoint,
+    val width: Double,
+    val height: Double,
+    val angle: Double,
+    val street: Boolean,
+)
+
+internal fun placeMapLabels(
+    width: Double,
+    height: Double,
+    labels: List<MapTextLabel>,
+    pins: List<MapPoint>,
+    unit: Double,
+): List<MapPoint?> {
+    val placed = mutableListOf<Pair<MapPoint, Double>>()
+    return labels.map { label ->
+        val radius = label.height / 2
+        val reach = (label.width / 2 - radius).coerceAtLeast(0.0)
+        val count = kotlin.math.ceil(reach * 2 / radius.coerceAtLeast(1.0)).toInt()
+        val radians = Math.toRadians(label.angle)
+
+        fun ink(at: MapPoint): List<MapPoint> =
+            (0..count).map { index ->
+                val along = if (count == 0) 0.0 else -reach + reach * 2 * index / count
+                MapPoint(at.x + kotlin.math.cos(radians) * along, at.y + kotlin.math.sin(radians) * along)
+            }
+
+        fun clear(at: MapPoint): Boolean =
+            ink(at).all { point ->
+                point.x - radius >= 0 && point.x + radius <= width && point.y - radius >= 0 && point.y + radius <= height &&
+                    pins.all { kotlin.math.hypot(point.x - it.x, point.y - it.y) >= radius + 23 * unit } &&
+                    placed.all { (other, otherRadius) ->
+                        kotlin.math.hypot(point.x - other.x, point.y - other.y) >=
+                            radius + otherRadius + 3 * unit
+                    }
+            }
+        val steps = if (label.street) kotlin.math.floor(label.width / (4 * unit)).toInt() else 0
+        val shifts = listOf(0.0) + (1..steps).flatMap { listOf(it * 4 * unit, -it * 4 * unit) }
+        val spot =
+            shifts
+                .map { slide ->
+                    MapPoint(
+                        label.center.x + kotlin.math.cos(radians) * slide,
+                        label.center.y + kotlin.math.sin(radians) * slide,
+                    )
+                }.firstOrNull(::clear)
+        spot?.let { placed.addAll(ink(it).map { point -> point to radius }) }
+        spot
+    }
+}

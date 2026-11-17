@@ -312,8 +312,12 @@ private fun KeyboardFretboardHeader(
             )
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            onPlayTarget?.let { MusicSoundButton(stringResource(R.string.activities_music_play_sound), it) }
-            MusicSoundButton(stringResource(R.string.activities_music_hear_it), onHear, enabled = notes.isNotEmpty())
+            onPlayTarget?.takeIf { isHidden }?.let { MusicSoundButton(stringResource(R.string.activities_music_play_sound), it) }
+            MusicSoundButton(
+                stringResource(if (isHidden) R.string.activities_music_hear_your_notes else R.string.activities_music_hear_it),
+                onHear,
+                enabled = notes.isNotEmpty(),
+            )
         }
     }
 }

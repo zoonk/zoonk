@@ -276,8 +276,34 @@ private fun MapDrawing(
         }
 
         val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
-        labels.forEach { (label, text) ->
-            val center = Offset(((label.x - crop.x) * zoom).toFloat(), ((label.y - crop.y) * zoom).toFloat())
+        val spots =
+            placeMapLabels(
+                size.width.toDouble(),
+                size.height.toDouble(),
+                labels.map { (label, text) ->
+                    MapTextLabel(
+                        MapPoint((label.x - crop.x) * zoom, (label.y - crop.y) * zoom),
+                        text.size.width.toDouble(),
+                        text.size.height.toDouble(),
+                        label.angle,
+                        label.kind == LabelKind.Street,
+                    )
+                },
+                layout.pins.map {
+                    MapPoint(
+                        it.shown.x.dp
+                            .toPx()
+                            .toDouble(),
+                        it.shown.y.dp
+                            .toPx()
+                            .toDouble(),
+                    )
+                },
+                density.toDouble(),
+            )
+        labels.forEachIndexed { index, (label, text) ->
+            val spot = spots[index] ?: return@forEachIndexed
+            val center = Offset(spot.x.toFloat(), spot.y.toFloat())
             val topLeft = center - Offset(text.size.width / 2f, text.size.height / 2f)
             rotate(label.angle.toFloat(), pivot = center) {
                 drawText(text, colors.surface, topLeft, drawStyle = halo)

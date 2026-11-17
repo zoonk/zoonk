@@ -108,9 +108,6 @@ fun ActivityGuessScale(
         }
         AtShare(share) {
             ScaleChip(container = MaterialTheme.colorScheme.surface, content = MaterialTheme.colorScheme.onSurface, outlined = true) {
-                if (disabled && guess != null) {
-                    Icon(painterResource(R.drawable.ic_lock), contentDescription = null, modifier = Modifier.size(12.dp))
-                }
                 Text(
                     if (guess ==
                         null
@@ -153,7 +150,7 @@ fun ActivityGuessScale(
                 drawCircle(highlight, radius = DOT.toPx(), center = center)
             },
         )
-        ScaleTicks(scale)
+        ScaleTicks(scale, unit)
     }
 }
 
@@ -165,6 +162,7 @@ fun ActivityGuessComparison(
     unit: String?,
 ) {
     val locale = currentLocale()
+    if (formatAmount(actual, locale, unit) == formatAmount(guess, locale, unit)) return
     val text =
         when (val comparison = compareGuess(actual, guess, isCorrect)) {
             GuessComparison.Close -> {
@@ -226,14 +224,17 @@ private fun AtShare(
 }
 
 @Composable
-private fun ScaleTicks(scale: GuessScale) {
+private fun ScaleTicks(
+    scale: GuessScale,
+    unit: String?,
+) {
     val locale = currentLocale()
     val ticks = scale.ticks()
     Layout(
         content = {
             ticks.forEach {
                 Text(
-                    formatAmount(it, locale, compact = true),
+                    formatAmount(it, locale, unit, compact = true),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall.withTabularFigures(),
                 )

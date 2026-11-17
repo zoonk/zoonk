@@ -230,7 +230,7 @@ private fun GridBoard(
                 Text(grid.columns.label, Modifier.weight(1f), color = muted, textAlign = TextAlign.Center, style = label)
             }
             Row(Modifier.height(IntrinsicSize.Min).clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-                Box(Modifier.width(side).fillMaxHeight().padding(bottom = 4.dp), contentAlignment = Alignment.BottomCenter) {
+                Box(Modifier.width(side).fillMaxHeight(), contentAlignment = Alignment.Center) {
                     Text(grid.rows.label, color = muted, textAlign = TextAlign.Center, style = label)
                 }
                 grid.columns.values.forEachIndexed { index, value ->
