@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.CollectionItemInfo
@@ -311,7 +317,7 @@ private fun RichLines(
     }
 }
 
-private fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegment>> {
+internal fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegment>> {
     val parts = mutableListOf<List<RichSegment>>()
     var current = mutableListOf<RichSegment>()
 
@@ -332,7 +338,16 @@ private fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegme
             close()
             parts += listOf(segment)
         } else {
-            current += segment
+            val previous = parts.lastOrNull()?.singleOrNull()
+            val punctuation = segment.text.takeWhile { it in ",.;:!?" }
+            if (current.isEmpty() && segment.kind == SegmentKind.Text && previous?.kind == SegmentKind.DisplayMath &&
+                punctuation.isNotEmpty()
+            ) {
+                parts[parts.lastIndex] = listOf(previous.copy(text = previous.text + "\\text{" + punctuation + "}"))
+                segment.copy(text = segment.text.drop(punctuation.length)).takeIf { it.text.isNotBlank() }?.let { current += it }
+            } else {
+                current += segment
+            }
         }
     }
 
@@ -348,6 +363,7 @@ fun RichTextLine(
     maxLines: Int = Int.MAX_VALUE,
 ) {
     val spoken = text.spoken
+    val rootInk = if (style.color == Color.Unspecified) LocalContentColor.current else style.color
     val marks = remember(text.text) { textMarks(text.text) }
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
     val highlight = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
@@ -358,7 +374,10 @@ fun RichTextLine(
         text = text.text,
         modifier =
             (if (spoken == null) modifier else modifier.semantics { contentDescription = spoken })
-                .then(
+                .drawWithContent {
+                    drawContent()
+                    layout?.let { drawMathRoots(it, rootInk) }
+                }.then(
                     if (marks.isEmpty()) {
                         Modifier
                     } else {
@@ -378,7 +397,7 @@ fun RichTextLine(
         style = style,
         overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
         maxLines = maxLines,
-        onTextLayout = { if (marks.isNotEmpty()) layout = it },
+        onTextLayout = { layout = it },
     )
 }
 
@@ -388,10 +407,17 @@ private fun DisplayMath(
     modifier: Modifier,
     style: TextStyle,
 ) {
+    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+    val ink = if (style.color == Color.Unspecified) LocalContentColor.current else style.color
     Box(modifier.fillMaxWidth().fadingHorizontalScroll(rememberScrollState()), contentAlignment = Alignment.Center) {
         Text(
             text = math.text,
-            modifier = Modifier.semantics { contentDescription = math.spoken },
+            modifier =
+                Modifier.semantics { contentDescription = math.spoken }.drawWithContent {
+                    drawContent()
+                    layout?.let { drawMathRoots(it, ink) }
+                },
+            onTextLayout = { layout = it },
             style = style,
             softWrap = false,
         )
@@ -431,5 +457,29 @@ private fun RichList(
                 RichTextLine(richText(item, marksTerms), Modifier.weight(1f).alignByBaseline(), style)
             }
         }
+    }
+}
+
+private fun DrawScope.drawMathRoots(
+    layout: TextLayoutResult,
+    color: Color,
+) {
+    val text = layout.layoutInput.text
+    text.getStringAnnotations("math-root", 0, text.length).forEach { root ->
+        if (root.end <= root.start + 1) return@forEach
+        val sign = layout.getBoundingBox(root.start)
+        val argument = (root.start + 1 until root.end).map(layout::getBoundingBox)
+        val top = argument.minOf { it.top } + sign.height * 0.12f
+        val bottom = argument.maxOf { it.bottom } - sign.height * 0.12f
+        val end = argument.maxOf { it.right }
+        val path =
+            Path().apply {
+                moveTo(sign.left, top + (bottom - top) * 0.6f)
+                lineTo(sign.left + sign.width * 0.25f, top + (bottom - top) * 0.5f)
+                lineTo(sign.left + sign.width * 0.5f, bottom)
+                lineTo(sign.right, top)
+                lineTo(end, top)
+            }
+        drawPath(path, color, style = Stroke(maxOf(1.dp.toPx(), sign.height * 0.04f)))
     }
 }
