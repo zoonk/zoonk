@@ -29,6 +29,7 @@
   "activities_music_get_ready": "42050f053fd42e58a8fd171d329f6d7e64d43759d0fba404c90324460aa878d9",
   "activities_music_guitar_strings": "d26d764b33f5846791f043d0b9b6a436035b2259c7b39bed521346ccd5fedd6b",
   "activities_music_hear_it": "14cad8093d297399f54bd7c1715cb6609b0cbe8e4da33a57830d04a7aeeeba8d",
+  "activities_music_hear_your_notes": "3e84206428921a1f5422c99ce6fd8e6525b8af027b8f98f993bd97e77273e280",
   "activities_music_higher_frets": "d5a714b1a7b2989868ae73367307ccc069c29cd15a550b9a7506678df95db0d6",
   "activities_music_listen_first": "8b8a00523f0fdd163cb1f758c095828584ebef289855930c0217d1b89a98626f",
   "activities_music_lower_frets": "d5d4f2d29c4748011ab7b7cd1294509f3156aaaabf6575844a9553926cd541bb",
@@ -252,4 +253,5 @@
     <string name="activities_music_sound_check_start">Inizia</string>
     <string name="activities_music_skip_for_now">Salta per ora</string>
     <string name="activities_music_continue">Continua</string>
+    <string name="activities_music_hear_your_notes">Ascolta le tue note</string>
 </resources>

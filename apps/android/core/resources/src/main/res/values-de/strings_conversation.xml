@@ -131,6 +131,7 @@
   "conversation_take_your_time": "55be5aea7d3165e8afe63e5fc3d4d5db2ce8b1956afdc519b338cf676723dcbc",
   "conversation_taken_over": "a998162b0d0a55e292cef204ce55e2124e22319be1a12cfd82e1b162ca4ef310",
   "conversation_talking": "6970826661b21adf28e44e67b3e470ceee151cdc3e7765584b5c577ff6a5b06c",
+  "conversation_time_used": "8525280f04c4a48da581e870a34200e3ef001d83e066110d218c6cd627049393",
   "conversation_tip": "16c5940a6149a298f992262e554a4f4fb6bb0d94e6097c9b18f944cad2101e35",
   "conversation_to_improve": "c51083daa5c5057f539e3c5bf009ef796bcbd2c5c8d885d6eed60ee924a9981d",
   "conversation_toefl_mock": "f229563f310bf5053028f0bcaf0024f3898a2eaa2e7f4c899e3ff0ad8f0e24e3",
@@ -368,4 +369,5 @@
     <string name="conversation_writing_task_line_2">Wir erstellen die Anweisungen für die Karte…</string>
     <string name="conversation_writing_task_line_3">Wir bereiten vor, was die prüfende Person sagt…</string>
     <string name="conversation_writing_task_line_4">Wir ergänzen hilfreiche Redewendungen…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

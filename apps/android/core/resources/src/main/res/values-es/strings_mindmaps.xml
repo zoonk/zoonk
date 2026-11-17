@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "8ca4bf16608552c6187d201f2b8b12caca8ac3c9289d8e3c47da81b73de2ad45",
   "mindmaps_alt_sentence": "355b46110ea7869c4740a78aeed8bfff37618b727c902d8bc2d117ad260c774e",
   "mindmaps_as_text": "8e03e2b9a4842b313266c1d5e9bbd048ce96fed0ceb07606ff21b8eb6af5dab3",
-  "mindmaps_as_text_note": "14645a25c2f4545f2d7bd026513b9de16f5687ff3b2121e36f2f7e022dbad49e",
+  "mindmaps_as_text_note": "037e951f107d24ff1f241300785987fa3b560ac2f5787b0c06dbc871cf3e1591",
   "mindmaps_being_made": "7b14eb9b34f6678beef01e95226f851ce525f75c3d170d0b606222d715b1a8d2",
   "mindmaps_can_make_more": "1954db2a507b3d52d212664ada3200280d3c936da28e8014b24dd004f2aeeeef",
   "mindmaps_chapter_count": "b7e5c090f0daf77e73238c8e613586ddb8c116dec996e1597a01fb10b4f1ecc4",
@@ -125,7 +125,7 @@
     <string name="mindmaps_try_again_spoken">Volver a intentar crear el mapa mental de %1$s</string>
     <string name="mindmaps_failed">Esta vez no se pudo crear.</string>
     <string name="mindmaps_unreachable">No pudimos conectarnos con el servidor. Revisa tu conexión.</string>
-    <string name="mindmaps_as_text_note">La imagen tenía errores, así que aquí tienes el mapa mental en texto.</string>
+    <string name="mindmaps_as_text_note">Este mapa se muestra como texto.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Descargar</string>
     <string name="mindmaps_saved">Mapa mental guardado</string>

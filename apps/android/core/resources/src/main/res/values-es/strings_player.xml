@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "cb06b5f3ec32202e67e3c132169ee49ed3f77a20022e652fcfb472ed5ff176e3",
   "player_next_lesson": "8e219129fcc6c3abcaf36cc94eab9f574ec949d29ce3912ccd22c1da52b8f07a",
   "player_next_step_failed": "45ef95312b0c194767275264e2fefd174f68f672b45594bc11e60018471e0fed",
+  "player_not_found_description": "f34568552d68bf59dc1a5cc7a82629907bb6a4bf49bbcaf3ad8b47837fe4138f",
   "player_not_found_title": "57f0c9e20822870ac89202a3fce3674217d2ab538e16bf80756b0053d69c2e30",
   "player_not_in_app_description": "278306a0d3f533c0c585443747d842b96936bf9ac34da689096977e03a88d6d9",
   "player_not_in_app_title": "109416d983034ec6263c8c4bd5b68e97a87e3c49af5cc58852a328d0579313a5",
@@ -438,4 +439,5 @@
     <string name="player_citation_from_material">De tu material: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">No aparece en tu material</string>
+    <string name="player_not_found_description">El enlace puede estar desactualizado o mal escrito.</string>
 </resources>

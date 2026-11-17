@@ -37,7 +37,7 @@
   "checkpoint_removed_detail": "96f3f1b1d7dbfe966e11864bfa86cf487d9dea29cc97e45055d6f2ab5fe3d003",
   "checkpoint_removed_title": "78e2766bf05b2c8da4d8a0a36902f2cdd07b9b483ac3ab7095d36a52e2b24fe6",
   "checkpoint_retry_after_lessons": "1833b1b211bcc243d84c0cc2ea66d5f38a26ab7bb3be5b0a15408b65e3205b52",
-  "checkpoint_retry_tomorrow": "55c0d899d080a996ff38b630fdb0c439a1f5200a45619d4ca079207a1cde8445",
+  "checkpoint_retry_tomorrow": "dfa40935958314c3b6c690a8174e2305f6ab4e9204f48047cb6c1647d9177914",
   "checkpoint_review": "07a127ae176d1ec834234e2ac606305c97cc9591c7f5b12af9fdd228d46f318e",
   "checkpoint_rewards": "0910641bf0b0a82bb34827febf4a498fbb58347c3bb7b6611609de3cf297c773",
   "checkpoint_right_to_win": "181a1c27692c2c1fad31489117194dc6f3bc46a559c97a28bf2bfc6705a550a3",
@@ -67,7 +67,7 @@
     <string name="checkpoint_why_later">Am Ende erfährst du, warum.</string>
     <string name="checkpoint_won_line">Sein Schild ist zerbrochen. Du hast gewonnen!</string>
     <string name="checkpoint_lost_line">Sein Schild hat diesmal gehalten.</string>
-    <string name="checkpoint_retry_tomorrow">Morgen gibt es einen neuen Versuch. Nichts geht verloren.</string>
+    <string name="checkpoint_retry_tomorrow">Versuch es morgen noch einmal. Dein Fortschritt bleibt erhalten.</string>
     <plurals name="checkpoint_retry_after_lessons">
         <item quantity="one">Morgen kannst du es nach %d kurzer Lektion noch einmal versuchen. Nichts geht verloren.</item>
         <item quantity="other">Morgen kannst du es nach %d kurzen Lektionen noch einmal versuchen. Nichts geht verloren.</item>

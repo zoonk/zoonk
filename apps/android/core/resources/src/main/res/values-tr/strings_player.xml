@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "54d6475c830558a4e912fc07daf453612fbb75294e35e5a551669475887b6d85",
   "player_next_lesson": "583121a7d9e9b9f39395ad7a06c87700ce3481b968ed7a23fd5b050ab4fb6554",
   "player_next_step_failed": "4ddec6a37ae918efcb2f45be3d5e408cebeec412b0bf2b9e8b24a133f752a720",
+  "player_not_found_description": "2ef200e6d51d0748325fe27340f8ebea2ddb0e2743a63edd97e9e4a3728b7b6a",
   "player_not_found_title": "cef14f7bb3b69349de0c49c32091ef6c303022a034551c263b1f91a35e17e7ce",
   "player_not_in_app_description": "f80e3e2550b248b67d55849787e23a78c759949ee6c141ac952c1395e3ede22c",
   "player_not_in_app_title": "b0b55f8ba9360f1a1ba3f63bb8bf4d0110c1e29b715edcddd95ebede0fe5d194",
@@ -432,4 +433,5 @@
     <string name="player_citation_from_material">Materyalinden: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Materyalinde yer almıyor</string>
+    <string name="player_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
 </resources>

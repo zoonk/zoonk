@@ -86,6 +86,7 @@
   "session_summary_so_far": "60fc3d782eba0a5d85e3c882022692b2478baa9dd86f2b23627b1b1323c8eeb1",
   "session_summary_streak": "11468261c46cadf1aa4153f0df9fc5d77fb09d215368ea78a0ef574ede3a31ea",
   "session_summary_to_review": "dc677f149b97547fa7f979b888de6a31ffa91b8ba2f0df58066ffe2acc863130",
+  "session_summary_to_review_detail": "7d16d48ca591edbfd5886016f37a84c4ff6d40a9824fdf1a702b9632dd4e52b9",
   "session_summary_tomorrow": "c5243c03faac18ea255ac3a6101abd7fea2af629c9773a6223c2d0d74d91e9cb",
   "session_summary_up_from": "0deb7a9f44ea18b6094d11f0fee72f96d80da3663c40e081313fc5cf190be319",
   "session_topics_and_more": "77069b768e5329f2101edc2287dd832ac70385f3df25061c7439a94da17195ad"
@@ -274,4 +275,5 @@
         <item quantity="many">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
         <item quantity="other">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
     </plurals>
+    <string name="session_summary_to_review_detail">Por repasar</string>
 </resources>

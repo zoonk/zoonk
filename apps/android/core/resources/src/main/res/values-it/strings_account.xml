@@ -30,6 +30,7 @@
   "account_menu_subscription": "3723c36c5adfa467726faa66ebc9e7ca48c35fa6eafc5052128af6e8a265f65e",
   "account_name": "94a2e2991f869c7c0400426ef285bb4fd45217ed623c61dc7eeceb7408ff61e4",
   "account_name_description": "078822851cab6eb8ebb48d5cc3ebf06d01f1c23a30477d502c38eb21b6697287",
+  "account_name_required": "8e5308d06051be20e29c3b659836c644db4835f31b1a22cb3e234d0f5de84785",
   "account_name_too_long": "40104c35c51c2cebd3d1dc4592dd8cc81c622089642c998bb4f088cdfa72badf",
   "account_new_code_failed": "b130098326014220eadb5ecce8605429a5b47678e9bef0603f6ad8df57c09f7e",
   "account_new_code_sent": "c548bcf57f192eefbb2b8511bd2b77f92083f77c2c1a4c86a2b08b122b7c9f5e",
@@ -48,6 +49,7 @@
   "account_username_available": "da8f401057f06e825c8e9dd4dd0eb1fea7554b79ece85483420cb6033434094f",
   "account_username_checking": "0702d55723094a40b73f360054c3b3714166e8039cb8153fa59fe413d7c586aa",
   "account_username_line": "866768d58832e5bcd681207d2484e9ce80d0016834d919047967492f0f1f70cb",
+  "account_username_required": "4f4ed692db2d88e034801c398d98f28214939eea17575e3b9ec75b1b5db32462",
   "account_username_rules": "38c4c0a75abc489c4aa27cb4edac87ed96182ddbd9bda3590c3684ee4cb2310c",
   "account_username_taken": "e17d9ba4950ee2b2c3740e4f1e3986010238601814bfb774512333f4a24b317b",
   "account_welcome_description": "b180bc2779945024fe05e188767851dfc2dd84fbdfba719be7d16341ecc89c52",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">Esci</string>
     <string name="account_menu_create_account">Crea un account</string>
     <string name="account_sign_out_failed">Zoonk non riesce a disconnetterti. Controlla la connessione e riprova.</string>
+    <string name="account_name_required">Nome</string>
+    <string name="account_username_required">Nome utente</string>
 </resources>

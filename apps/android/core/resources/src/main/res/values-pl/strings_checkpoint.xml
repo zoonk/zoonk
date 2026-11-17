@@ -37,7 +37,7 @@
   "checkpoint_removed_detail": "d16e36be31d27625e9f77bf4f9e042c1b9be60757ea12dc6626fa2c740bee41c",
   "checkpoint_removed_title": "bf86265b5987155b564d1d395a0bee3e2862f2e32a3a6c8c808648997002595a",
   "checkpoint_retry_after_lessons": "4571dfc4f6498aa1fa6a77e5089b4433687c4397c9126b97143e78d35d5e506d",
-  "checkpoint_retry_tomorrow": "79f7e348597ad6ec42c01562ed9c8e3711dc6633a3f8dfefa2660e616dcccb58",
+  "checkpoint_retry_tomorrow": "ecc27c7b52f822fddcf0afa9268f7d8aef9b8345c2c99c91a12c1f042a25791d",
   "checkpoint_review": "a8be73e4a3f095ab252c81bff3501a2cd28a50c0a66ef6e0f9e99a08d21ac1a5",
   "checkpoint_rewards": "179b94bb09d317eed2a848ef43cf678b8cff7d855e7171542a075cfa5d69f586",
   "checkpoint_right_to_win": "b2a662e62272da839bd69b5c78570db7c884d6d09698507860b8bb1f41b8a2bd",
@@ -67,7 +67,7 @@
     <string name="checkpoint_why_later">Na końcu dowiesz się dlaczego.</string>
     <string name="checkpoint_won_line">Jego tarcza jest rozbita. Zwycięstwo!</string>
     <string name="checkpoint_lost_line">Tym razem jego tarcza wytrzymała.</string>
-    <string name="checkpoint_retry_tomorrow">Kolejna próba jutro. Nic straconego.</string>
+    <string name="checkpoint_retry_tomorrow">Spróbuj ponownie jutro. Twoje postępy nie przepadły.</string>
     <plurals name="checkpoint_retry_after_lessons">
         <item quantity="one">Kolejna próba jutro, po %d krótkiej lekcji. Nic straconego.</item>
         <item quantity="few">Kolejna próba jutro, po %d krótkich lekcjach. Nic straconego.</item>

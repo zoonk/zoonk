@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "efb3ea461cbe640e34042e21e349a98b79ac894a10719d7b9e4ba64960b20fe6",
   "mindmaps_alt_sentence": "621b4f34b62d7f3f2e0c6c45d0f0ed0374c364fd1a54f1bf4687187f29e79717",
   "mindmaps_as_text": "df22cfa3d091a3c3670fb3b5331483dcbfd8fae9a6d33a5712746f9b952950f4",
-  "mindmaps_as_text_note": "9c97e18de39b24b735c81ba66ed6103e923d3c756558113520fc45346a473a91",
+  "mindmaps_as_text_note": "822006941db6c9e2ef18efd6bdeb1599292e8abf6800025559ab2262dc001527",
   "mindmaps_being_made": "bfb5acd34a02ab135938c28d9728de0dc9497306a56b8a10e67499b574126439",
   "mindmaps_can_make_more": "f35f6c4643aceb456fecb06e83ecef27441b1a5cbc44dd39e45cd0f99088436c",
   "mindmaps_chapter_count": "ff6f716cb1955b1b6665b7cbf339c6a5cedb6c9e055fcb46ef6031b20e9e50f9",
@@ -123,7 +123,7 @@
     <string name="mindmaps_try_again_spoken">%1$s için zihin haritası oluşturmayı tekrar dene</string>
     <string name="mindmaps_failed">Bu kez oluşturulamadı.</string>
     <string name="mindmaps_unreachable">Sunucuya ulaşamadık. Bağlantını kontrol et.</string>
-    <string name="mindmaps_as_text_note">Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz.</string>
+    <string name="mindmaps_as_text_note">Bu harita metin olarak gösteriliyor.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">İndir</string>
     <string name="mindmaps_saved">Zihin haritası kaydedildi</string>

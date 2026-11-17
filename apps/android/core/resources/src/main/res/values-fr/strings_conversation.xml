@@ -131,6 +131,7 @@
   "conversation_take_your_time": "2f1e5904ed836a234152d966fb7243b13150cb76ca51e77d5402cbcc67c3a77e",
   "conversation_taken_over": "153273ebe7c6256aaffaeb256de1e8952e17174d91ba212a160d81a19eb04715",
   "conversation_talking": "8a43fb8f73a218aea4b32ff99138782e1ed100f09b012649f76bf36848c37985",
+  "conversation_time_used": "8aaf95d6ca0982df9160f261777d5a1fcf2c3db53f0ba743d9663bc8f9cd8f9c",
   "conversation_tip": "49e1449ca32e7926e1f8834b02b90ef65275eb4672e064e75991a9affc631bb9",
   "conversation_to_improve": "e936a757b79b8d91eb8aad9846be08725aeae6ff1c41c326c00d91b700868f00",
   "conversation_toefl_mock": "d02391876d8e3b9de0dbd1e27b61df47c4ec7080bf34cacd30bf50501d93b976",
@@ -369,4 +370,5 @@
     <string name="conversation_writing_task_line_2">Préparation des consignes de la fiche…</string>
     <string name="conversation_writing_task_line_3">Préparation des paroles de l’examinateur…</string>
     <string name="conversation_writing_task_line_4">Ajout d’expressions pour t’aider…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

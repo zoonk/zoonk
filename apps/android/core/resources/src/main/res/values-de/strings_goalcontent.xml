@@ -8,7 +8,7 @@
   "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
   "goalcontent_asked_a_lot": "6cd96110390465ff7596adab5e83f579f88e99834c7905e40775df82559b7ac5",
   "goalcontent_beyond_guide": "4cd619bc3347242e1bc1dca0abc7fcdc3eca8b668dbcde6364e8385759825364",
-  "goalcontent_beyond_notice": "f8b26d3c70cacac174b8937489e978db8cf9ac86a174d02a1c63ba1a75a86522",
+  "goalcontent_beyond_notice": "f4187f3f7c9d417e230002f0bef64536b737d087e56a804f8c12c810ba27ef29",
   "goalcontent_bring_back": "9e0fcdb79b177344330ebab800560a23d819a83c70b92cf3134f705d446605eb",
   "goalcontent_chapter_count": "49c1500f546cc4f2104b2cf71b56139a4f44fff70ff13e588e39f8d8f4cc5966",
   "goalcontent_chapter_number": "b9a1166ee675087897c76b3af0cb159045ac1d8bade50a9de04220452d5963b1",
@@ -17,6 +17,7 @@
   "goalcontent_chapters_done": "a55cb0f6d5129ba24824bfb0a1acee391f9310951f51148126dd49cda18cb7de",
   "goalcontent_chapters_known": "f827e5750090fd5ffcdec26a35d42ff2f37fbeaf5239bcd999abbde3b02218a8",
   "goalcontent_chapters_known_after_done": "1a1675ddce07533fcd566d01e96f3c43e4e6268c79a4cf5295a55108919733b9",
+  "goalcontent_chapters_progress": "a2072e2351134c8e61e9f3a44e97b2888c78a7477112d34c29e28b9325cc95a2",
   "goalcontent_continue": "6790170687e620707a85fba4c290d6b4026f4c803ee1882630209925b95bc1c9",
   "goalcontent_count_of": "91eb8d20037cd23099dfd219e0083a4031713a79e195deee74c3cfcdcabe20b4",
   "goalcontent_course_weights_even": "a70a2b2c5c6512ac40998ffff028054bc50eb4e7282eab511ed41b9707e974b8",
@@ -87,7 +88,7 @@
   "goalcontent_topics": "38cd3c62311206481457771305c5539cdedd0523b87527efc69a8220573d89b4",
   "goalcontent_topics_in_guide": "778fa49f54a6ad2a3fabcf1e6bc4c8f802ebfd397c6a9ab960ab6780b1228d5f",
   "goalcontent_topics_in_material": "fb61ef1f7c93d0e572fa9a4d6b4f7aca112d6fd86f89f3d3d10dd7df601312d2",
-  "goalcontent_topics_in_notice": "ccbefe7993ee2d6e2e4a658ea6b74ef9224d7726b9d3ec525b4adba1575e6637",
+  "goalcontent_topics_in_notice": "40daaf9976984a4e08c1ffdfdd7d76d2735edc0521e3835209c7fedd495494f3",
   "goalcontent_topics_known_skipped": "c739bf3228749f10741b78903b616d5905b8bb7c344f3358866324d64a3d89cd",
   "goalcontent_topics_studied_of": "4226deaf96b1643246476fa6ff916c5a26ed4898b34411cfa3a2fa161bf612c4",
   "goalcontent_topics_studied_spoken": "64dc0baa03601e8f5cb5dafcf76367f2389fd7eb21cf61c962884c9612b90a92"
@@ -160,7 +161,7 @@
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Auch in deinem Plan</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">Über die Ausschreibung hinaus</string>
+    <string name="goalcontent_beyond_notice">Über die Prüfung hinaus</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
     <string name="goalcontent_beyond_guide">Über den offiziellen Leitfaden hinaus</string>
     <!-- %1$s is a link to the site that counted the questions. -->
@@ -203,7 +204,7 @@
     <!-- Opens the first chapter or lesson. -->
     <string name="goalcontent_start">Starten</string>
     <string name="goalcontent_topics_in_material">Themen in deinem Material</string>
-    <string name="goalcontent_topics_in_notice">Themen in der Ausschreibung</string>
+    <string name="goalcontent_topics_in_notice">Prüfungsthemen</string>
     <string name="goalcontent_topics_in_guide">Themen im offiziellen Leitfaden</string>
     <string name="goalcontent_details">Details</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
@@ -282,4 +283,5 @@
     <string name="goalcontent_skill_learning">Im Aufbau</string>
     <string name="goalcontent_skill_solid">Sicher</string>
     <string name="goalcontent_skill_mastered">Gemeistert</string>
+    <string name="goalcontent_chapters_progress">%1$s von %2$s</string>
 </resources>
