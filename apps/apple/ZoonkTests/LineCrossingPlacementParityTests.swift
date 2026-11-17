@@ -166,7 +166,8 @@ final class LineCrossingPlacementParityTests: XCTestCase {
 
   private func inkBounds(image: CGImage, near rough: CGRect, name: String) throws -> CGRect {
     let scale = CGFloat(image.width) / 375
-    let region = rough.insetBy(dx: -12, dy: -12).applying(.init(scaleX: scale, y: scale))
+    let wordBounds = rough.applying(.init(scaleX: scale, y: scale))
+    let region = wordBounds.insetBy(dx: -12 * scale, dy: -12 * scale)
       .intersection(CGRect(x: 0, y: 0, width: image.width, height: image.height)).integral
     let left = Int(region.minX)
     let top = Int(region.minY)
@@ -216,8 +217,10 @@ final class LineCrossingPlacementParityTests: XCTestCase {
           }
         }
       }
-      // A line crossing the OCR region reaches its edge; the enclosed glyphs do not.
-      if !touchesEdge && component.width > 1 && component.height > 1 {
+      // The padded crop can include detached chart ink outside the recognized word.
+      if !touchesEdge && component.width > 1 && component.height > 1
+        && wordBounds.intersects(component)
+      {
         ink = ink.union(component)
       }
     }
