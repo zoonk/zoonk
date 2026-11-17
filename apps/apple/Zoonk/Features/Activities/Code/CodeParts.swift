@@ -60,7 +60,7 @@ struct CodeLine<Content: View>: View {
     switch tone {
     case .plain: .clear
     case .current: .vizHighlight.opacity(0.15)
-    case .editable: Color(.background)
+    case .editable: .boxBackground
     case .error: Color.destructive.opacity(0.12)
     }
   }

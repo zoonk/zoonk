@@ -132,7 +132,7 @@ private struct CategorizeCanvas: View {
     }
     .multilineTextAlignment(.leading)
     .padding()
-    .background(Color(.background), in: .rect(cornerRadius: Radius.xl))
+    .background(.boxBackground, in: .rect(cornerRadius: Radius.xl))
     .overlay {
       RoundedRectangle(cornerRadius: Radius.xl)
         .strokeBorder(.border)
@@ -279,7 +279,7 @@ private struct CategorizeCanvas: View {
             row(item)
           }
         }
-        .background(Color(.background))
+        .background(.boxBackground)
         .clipShape(.rect(cornerRadius: Radius.option))
         .overlay {
           RoundedRectangle(cornerRadius: Radius.option)
@@ -453,7 +453,7 @@ extension View {
   fileprivate func previewChip() -> some View {
     padding(.horizontal, 8)
       .padding(.vertical, 3)
-      .background(Color(.background), in: .rect(cornerRadius: Radius.sm))
+      .background(.boxBackground, in: .rect(cornerRadius: Radius.sm))
       .overlay {
         RoundedRectangle(cornerRadius: Radius.sm)
           .strokeBorder(.border)

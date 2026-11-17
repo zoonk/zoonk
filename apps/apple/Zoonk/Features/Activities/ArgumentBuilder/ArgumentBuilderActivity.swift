@@ -244,7 +244,7 @@ private struct ArgumentBuilderCanvas: View {
     switch verdict {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: isFilled ? Color(.background) : .clear
+    default: isFilled ? .boxBackground : .clear
     }
   }
 
