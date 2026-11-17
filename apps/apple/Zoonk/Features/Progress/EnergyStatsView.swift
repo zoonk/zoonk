@@ -49,8 +49,6 @@ private struct EnergyCalendar: View {
     let today = PlanDate.today()
 
     StatsCalendar(
-      title: Text(
-        "Past 12 months", tableName: "Progress"),
       gridLabel: Text(
         "Energy by day", tableName: "Progress"),
       legendLabel: Text(
@@ -85,10 +83,13 @@ private struct EnergyCalendar: View {
       chartTitle: String(
         localized: "Energy by day", table: "Progress", comment: "Spoken name of the Energy calendar"
       ),
-      chartSummary: energy.insights.map {
-        String(
-          localized: "Average \(metricPercent($0.averageEnergy))", table: "Progress",
+      chartSummary: { visibleDays, _ in
+        let values = visibleDays.compactMap(\.value)
+        guard !values.isEmpty else { return "" }
+        let average = values.reduce(0, +) / Double(values.count)
+        return String(
+          localized: "Average \(metricPercent(average))", table: "Progress",
           comment: "The learner's average Energy")
-      } ?? "")
+      })
   }
 }
