@@ -49,8 +49,7 @@ struct ShellToolbar: ViewModifier {
       return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
     }
 
-    return max(
-      shortestName, barWidth - besideName)
+    return max(0, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -245,6 +244,7 @@ private struct GoalSwitcher: View {
           if !isCompact {
             startGoalTitle
               .lineLimit(1)
+              .frame(maxWidth: maxTitleWidth)
           }
         }
         .typeWeight(.semibold)
@@ -347,6 +347,8 @@ private struct GoalSwitcher: View {
                 .frame(maxWidth: maxTitleWidth)
             } else {
               startGoalTitle
+                .lineLimit(1)
+                .frame(maxWidth: maxTitleWidth)
             }
 
             Image(systemName: "chevron.down")
