@@ -4,6 +4,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
+import { tickCounts } from "@zoonk/utils/plot-scale";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
@@ -18,18 +19,10 @@ import {
 import { tickLabels } from "../_utils/plot-ticks";
 import { ActivityCanvasLabel } from "./activity-canvas";
 import { useGuessFormat } from "./guess-format";
+import { useAxisLabels } from "./use-axis-labels";
 
-const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
 const PERCENT = 100;
-
-function edgeAlign(share: number): string {
-  if (share < TICK_EDGE_SHARE) {
-    return "translate-x-0";
-  }
-
-  return share > 1 - TICK_EDGE_SHARE ? "-translate-x-full" : "-translate-x-1/2";
-}
 
 function ScaleChip({
   children,
@@ -108,6 +101,18 @@ export function ActivityGuessScale({
     ticks,
   });
 
+  const {
+    ref: tickRef,
+    shown: visibleTicks,
+    starts,
+  } = useAxisLabels<HTMLDivElement>({
+    choices: tickCounts().map((count) => scaleTicks(scale, count)),
+    domain: [scale.min, scale.max],
+    format: formatTick,
+    position: (value) => shareOfValue(scale, value) * trackWidth,
+    range: [0, trackWidth],
+  });
+
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
   }
@@ -178,12 +183,18 @@ export function ActivityGuessScale({
           </SliderControl>
         </Slider>
 
-        <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
-          {ticks.map((tick) => (
+        <div
+          aria-hidden="true"
+          data-slot="guess-ticks"
+          ref={tickRef}
+          style={{ visibility: trackWidth > 0 ? "visible" : "hidden" }}
+          className="text-muted-foreground relative h-5 text-xs tabular-nums"
+        >
+          {visibleTicks.map((tick) => (
             <span
-              className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
+              className="absolute top-0 whitespace-nowrap"
               key={tick}
-              style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
+              style={{ left: starts[tick] ?? shareOfValue(scale, tick) * trackWidth }}
             >
               {formatTick(tick)}
             </span>

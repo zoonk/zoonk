@@ -4,10 +4,9 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
-import { edgeAnchor, estimatedLabelWidth } from "../_utils/drawing-label";
 import { PLOT_DOT_RADIUS, PLOT_DOT_STROKE, PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
-import { useAxisLabels } from "./use-axis-labels";
+import { ActivityCanvasLabel } from "./activity-canvas";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
 
@@ -16,7 +15,6 @@ type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScal
 const FALLBACK_WIDTH = 318;
 export const PLOT_LINE_WIDTH = 3;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
-const X_LABEL_OFFSET = 18;
 const GUIDE_STROKE = 1.5;
 
 const PlotContext = createContext<PlotScales | null>(null);
@@ -39,6 +37,7 @@ export function ActivityPlot({
   xDomain,
   xLabel,
   yDomain,
+  yLabel,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -46,6 +45,7 @@ export function ActivityPlot({
   padding?: Partial<PlotPadding>;
   xDomain: NumericDomain;
   xLabel?: string;
+  yLabel?: string;
   yDomain: NumericDomain;
 }) {
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
@@ -65,6 +65,15 @@ export function ActivityPlot({
       data-slot="activity-plot"
       ref={ref}
     >
+      {yLabel && (
+        <ActivityCanvasLabel
+          data-slot="plot-axis-title-y"
+          className="min-w-0 wrap-break-word"
+          style={{ marginLeft: inset.left, marginRight: inset.right }}
+        >
+          {yLabel}
+        </ActivityCanvasLabel>
+      )}
       <svg
         className="block overflow-visible text-xs tabular-nums select-none"
         height={height}
@@ -74,12 +83,13 @@ export function ActivityPlot({
         <PlotContext value={scales}>{children}</PlotContext>
       </svg>
       {xLabel && (
-        <p
-          className="text-muted-foreground text-right text-xs text-balance"
+        <ActivityCanvasLabel
+          data-slot="plot-axis-title-x"
+          className="min-w-0 text-right text-balance wrap-break-word"
           style={{ marginLeft: inset.left, marginRight: inset.right }}
         >
           {xLabel}
-        </p>
+        </ActivityCanvasLabel>
       )}
     </div>
   );
@@ -118,45 +128,6 @@ export function ActivityPlotGridY({
           </text>
         </g>
       ))}
-    </g>
-  );
-}
-
-export function ActivityPlotAxisX({
-  format,
-  ticks,
-}: {
-  format: (value: number) => string;
-  ticks: readonly number[];
-}) {
-  const { x, y } = usePlotScales();
-  const [bottom] = y.range;
-
-  const ref = useAxisLabels({
-    labelKey: JSON.stringify(ticks.map((tick) => [x.toPixel(tick), format(tick)])),
-    range: x.range,
-  });
-
-  return (
-    <g aria-hidden="true" data-slot="plot-axis-x" ref={ref}>
-      {ticks.map((tick) => {
-        const label = format(tick);
-        const at = x.toPixel(tick);
-
-        return (
-          <g key={tick}>
-            <path className="stroke-foreground/40" d={`M${at} ${bottom} v4`} strokeWidth={1} />
-            <text
-              className="fill-muted-foreground"
-              textAnchor={edgeAnchor({ at, range: x.range, width: estimatedLabelWidth(label) })}
-              x={at}
-              y={bottom + X_LABEL_OFFSET}
-            >
-              {label}
-            </text>
-          </g>
-        );
-      })}
     </g>
   );
 }

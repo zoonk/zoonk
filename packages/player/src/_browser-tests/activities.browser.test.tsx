@@ -2,7 +2,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -12,6 +12,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep } from "../preview/preview-steps";
@@ -101,6 +102,35 @@ describe("lesson activities", () => {
     openActivity({ content, template: "guessReveal" });
     await expect.element(page.getByText("R$1.5M", { exact: true })).toBeVisible();
     await expect.element(page.getByText("R$2M", { exact: true })).toBeVisible();
+  });
+
+  it("money guesses at 320 pixels and 200 percent use fewer round ticks without overlaps", async () => {
+    document.documentElement.style.fontSize = "200%";
+    onTestFinished(() => document.documentElement.style.removeProperty("font-size"));
+
+    await atViewport({ height: 1000, width: 320 }, async () => {
+      openActivity({
+        content: engineModeFixtures.guessReveal.moneyMillions,
+        template: "guessReveal",
+      });
+
+      await expect.element(page.getByRole("slider")).toBeVisible();
+
+      await expect
+        .poll(() =>
+          [...document.querySelectorAll('[data-slot="guess-ticks"] span')].map(
+            (node) => node.textContent,
+          ),
+        )
+        .toStrictEqual(["R$0", "R$2M"]);
+
+      const nodes = [...document.querySelectorAll('[data-slot="guess-ticks"] span')];
+      const bounds = nodes.map((node) => node.getBoundingClientRect());
+
+      for (let index = 1; index < bounds.length; index += 1) {
+        expect(bounds[index]!.left).toBeGreaterThanOrEqual(bounds[index - 1]!.right + 4);
+      }
+    });
   });
 
   it("money guess retains currency in readouts, ticks, the difference and the accessible scale", async () => {

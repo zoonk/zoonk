@@ -1,3 +1,4 @@
+import { LABEL_CLEARANCE } from "../_utils/drawing-label";
 import { clamp } from "../_utils/snap-value";
 import { type MapPoint } from "./map-viewport";
 
@@ -11,7 +12,6 @@ export type MapLabelSpot = {
   priority?: boolean;
   question?: boolean;
 } & MapPoint;
-const LABEL_CLEARANCE = 3;
 const LABEL_HALO = 1.5;
 const PIN_RADIUS = 20;
 const HALF_TURN = 180;
@@ -143,6 +143,11 @@ export function placeMapLabels({
 
   const named = order.filter(({ label }) => label.priority || label.question);
 
+  const clear = (candidate: MapLabelSpot, placed: readonly MapLabelSpot[]) =>
+    inFrame(candidate, frame) &&
+    pins.every((pin) => clearOfPin(candidate, pin)) &&
+    placed.every((other) => clearOfLabel(candidate, other));
+
   function arrange(scale: number, pack: boolean) {
     const placed: MapLabelSpot[] = [];
     const spots: (MapLabelPlacement | null)[] = labels.map(() => null);
@@ -163,12 +168,7 @@ export function placeMapLabels({
 
       const spot = (pack ? points : [...originalPoints, ...points])
         .map((point) => ({ ...label, ...point }))
-        .find(
-          (candidate) =>
-            inFrame(candidate, frame) &&
-            pins.every((pin) => clearOfPin(candidate, pin)) &&
-            placed.every((other) => clearOfLabel(candidate, other)),
-        );
+        .find((candidate) => clear(candidate, placed));
 
       if (spot) {
         placed.push(spot);
@@ -215,12 +215,7 @@ export function placeMapLabels({
           Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
       )
       .map((point) => ({ ...label, ...point }))
-      .find(
-        (candidate) =>
-          inFrame(candidate, frame) &&
-          pins.every((pin) => clearOfPin(candidate, pin)) &&
-          chosen.placed.every((other) => clearOfLabel(candidate, other)),
-      );
+      .find((candidate) => clear(candidate, chosen.placed));
 
     if (spot) {
       chosen.placed.push(spot);

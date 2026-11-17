@@ -32,6 +32,21 @@ struct GuessScale: Hashable, Sendable {
     return Swift.min(Swift.max(share, 0), 1)
   }
 
+  func ticks(count: Int = 4) -> [Double] {
+    if kind == .linear {
+      let room = (max - min) * 0.08
+      return [min]
+        + ChartsAxis.ticks(min...max, count: count).filter { $0 - min > room && max - $0 > room }
+        + [max]
+    }
+    let from = Int(ceil(log10(min)))
+    let to = Int(floor(log10(max)))
+    let powers = from <= to ? (from...to).map { pow(10, Double($0)) } : []
+    let every = Int(ceil(Double(powers.count) / Double(count == 4 ? 6 : count)))
+    return powers.count < 2
+      ? [min, max] : powers.enumerated().filter { $0.offset % every == 0 }.map(\.element)
+  }
+
   func tickLabels(unit: String?, locale: Locale = .courseLanguage) -> [String] {
     let currency = ActivityNumberFormat.currencyUnit(unit)
     let values = [min, max]
@@ -121,10 +136,6 @@ struct ActivityGuessScaleView: View {
           Text(
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
-        } minimumValueLabel: {
-          Text(verbatim: scale.tickLabels(unit: unit)[0]).typeStyle(.data)
-        } maximumValueLabel: {
-          Text(verbatim: scale.tickLabels(unit: unit)[1]).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map {
@@ -134,6 +145,7 @@ struct ActivityGuessScaleView: View {
             ?? Text(
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
+        GuessScaleAxis(scale: scale, unit: unit)
       }
     }
   }
@@ -145,14 +157,7 @@ struct ActivityGuessScaleView: View {
       )
       .accessibilityHidden(true)
 
-      HStack {
-        Text(verbatim: scale.tickLabels(unit: unit)[0])
-        Spacer()
-        Text(verbatim: scale.tickLabels(unit: unit)[1])
-      }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-      .accessibilityHidden(true)
+      GuessScaleAxis(scale: scale, unit: unit)
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
@@ -166,6 +171,47 @@ struct ActivityGuessScaleView: View {
 
   private func format(_ value: Double) -> String {
     ActivityNumberFormat.guess(value, unit: unit)
+  }
+}
+
+private struct GuessScaleAxis: View {
+  let scale: GuessScale
+  let unit: String?
+  @Environment(\.dynamicTypeSize) private var textSize
+  @Environment(\.legibilityWeight) private var legibility
+  var body: some View {
+    let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
+    return GeometryReader { geometry in
+      axis(width: geometry.size.width, font: font)
+    }.frame(height: font.lineHeight).accessibilityHidden(true)
+  }
+  private func axis(width: Double, font: UIFont) -> some View {
+    let money = ActivityNumberFormat.currencyUnit(unit)
+    let compact = [scale.min, scale.max].contains {
+      ActivityNumberFormat.format($0, unit: money).count > 8
+    }
+    let format: (Double) -> String = {
+      ActivityNumberFormat.format(
+        $0, unit: money, digits: compact && money != nil ? 1 : nil, compact: compact)
+    }
+    func left(_ value: Double) -> Double {
+      let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
+      return Swift.max(
+        0, Swift.min(scale.share(of: value) * width - textWidth / 2, width - textWidth))
+    }
+    let ticks = ChartsAxis.fittingTicks(
+      scale.min...scale.max,
+      frame: { value in
+        let start = left(value)
+        let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
+        return (left: start, right: start + textWidth)
+      }, values: { scale.ticks(count: $0) })
+    return ZStack(alignment: .topLeading) {
+      ForEach(ticks, id: \.self) { value in
+        Text(verbatim: format(value)).typeStyle(.data).foregroundStyle(.mutedForeground).fixedSize()
+          .offset(x: left(value))
+      }
+    }.frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 

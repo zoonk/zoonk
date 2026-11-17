@@ -385,7 +385,7 @@ private class SidewaysLayout(
 
     /** Every tick keeps its gridline, but only every [tickStep]th is labeled, so a large font's labels don't touch. */
     val tickStep =
-        fittingTickIndices(ticks.map { it.labelLeft to it.labelLeft + it.label.size.width }, gap, keepEnds = false)
+        fittingTickIndices(ticks.map { it.labelLeft to it.labelLeft + it.label.size.width }, gap)
             .getOrNull(1) ?: max(ticks.size, 1)
 
     val ticksTop = plotBottom + gap

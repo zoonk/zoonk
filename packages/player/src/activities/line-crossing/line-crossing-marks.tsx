@@ -2,12 +2,9 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useId, useLayoutEffect, useRef, useState } from "react";
-import { ActivityPlotAxisX, ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
-import {
-  DRAWING_LABEL_HALO,
-  estimatedLabelWidth,
-  measureDrawingLabel,
-} from "../_utils/drawing-label";
+import { ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
+import { DRAWING_LABEL_HALO, measureDrawingLabel } from "../_utils/drawing-label";
 import {
   ARROW_HEAD,
   ARROW_STROKE,
@@ -18,8 +15,6 @@ import {
 import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
-const Y_LABEL_RISE = 12;
-const X_LABEL_DROP = 42;
 
 export function LineMark({
   className,
@@ -180,40 +175,13 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
   );
 }
 
-const LABEL_ASCENT = 10;
-const LABEL_DESCENT = 3;
-
-/** Where the value axis's title sits over the chart, for the lines' names to keep clear of. */
-export function yTitleBox({
-  left,
-  title,
-  top,
-}: {
-  left: number;
-  title: string;
-  top: number;
-}): LabelBox {
-  const baseline = top - Y_LABEL_RISE;
-
-  return {
-    bottom: baseline + LABEL_DESCENT,
-    left,
-    right: left + estimatedLabelWidth(title),
-    top: baseline - LABEL_ASCENT,
-  };
-}
-
 export function Axes({
   format,
-  xLabel,
   xTicks,
-  yLabel,
   yTicks,
 }: {
   format: (value: number) => string;
-  xLabel: string;
   xTicks: readonly number[];
-  yLabel: string;
   yTicks: readonly number[];
 }) {
   const { x, y } = usePlotScales();
@@ -229,17 +197,6 @@ export function Axes({
         d={`M${left} ${top} V${bottom} H${right}`}
         strokeWidth={1.5}
       />
-      <text className="fill-muted-foreground text-xs" x={left} y={top - Y_LABEL_RISE}>
-        {yLabel}
-      </text>
-      <text
-        className="fill-muted-foreground text-xs"
-        textAnchor="end"
-        x={right}
-        y={bottom + X_LABEL_DROP}
-      >
-        {xLabel}
-      </text>
     </g>
   );
 }

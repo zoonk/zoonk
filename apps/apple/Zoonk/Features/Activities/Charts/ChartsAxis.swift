@@ -5,6 +5,21 @@ import SwiftUI
 /// chart's scale reads the same on every platform: round ticks, each label on its own tick, and
 /// numbers written in full as the readout beside the chart writes them.
 enum ChartsAxis {
+  @MainActor static func title(_ text: String, alignment: Alignment) -> some View {
+    Text(verbatim: text).typeStyle(.small).foregroundStyle(.mutedForeground)
+      .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: alignment)
+  }
+  static func fittingTicks(
+    _ domain: ClosedRange<Double>, frame: (Double) -> (left: Double, right: Double),
+    values: ((Int) -> [Double])? = nil
+  ) -> [Double] {
+    for count in stride(from: 4, through: 1, by: -1) {
+      let ticks = values?(count) ?? Self.ticks(domain, count: count)
+      let boxes = ticks.map(frame)
+      if zip(boxes, boxes.dropFirst()).allSatisfy({ $0.right + 4 <= $1.left }) { return ticks }
+    }
+    return []
+  }
   /// Main's `LONGEST_FULL_LABEL`: an axis shortens its ticks only when one would be longer.
   private static let longestFullLabel = 8
 
@@ -50,34 +65,36 @@ extension ChartsAxis {
       if let tick = value.as(Double.self) {
         let text = label(tick)
 
-        bottomLabel(value: tick, spacing: labelSpacing, ticks: ticks, labels: ticks.map(label)) {
-          Text(verbatim: text).typeStyle(.small)
+        bottomLabel(value: tick, spacing: labelSpacing) {
+          Text(verbatim: text).typeStyle(.data)
         }
       }
     }
   }
 
   @MainActor static func bottomLabel<Content: View>(
-    value: Double, spacing: CGFloat? = nil, ticks: [Double] = [], labels: [String] = [],
+    value: Double, spacing: CGFloat? = nil,
     @ViewBuilder content: () -> Content
   ) -> some AxisMark {
     AxisValueLabel(
       centered: false, collisionResolution: .disabled, horizontalSpacing: 0,
       verticalSpacing: spacing
     ) {
-      ChartsAxisEdgeLabel(value: value, ticks: ticks, labels: labels, content: content)
+      ChartsAxisEdgeLabel(value: value, content: content)
     }
   }
 
   /// The value axis along a chart's start, as main draws it: a grid line on each tick and its label
   /// ending just before the plot, so the numbers line up on their last digit.
-  static func values(ticks: [Double], label: @escaping (Double) -> String) -> some AxisContent {
+  @MainActor static func values(ticks: [Double], label: @escaping (Double) -> String)
+    -> some AxisContent
+  {
     AxisMarks(position: .leading, values: ticks) { value in
       AxisGridLine().foregroundStyle(.vizGrid)
 
       if let tick = value.as(Double.self) {
         AxisValueLabel(anchor: .trailing, horizontalSpacing: 8) {
-          Text(verbatim: label(tick))
+          Text(verbatim: label(tick)).typeStyle(.data)
         }
       }
     }
@@ -88,7 +105,58 @@ extension View {
   func chartsXAxis<Axis: AxisContent>(@AxisContentBuilder content: @escaping () -> Axis)
     -> some View
   {
-    modifier(ChartsBottomAxis(axis: content))
+    modifier(ChartsBottomAxis(axis: { _ in content() }))
+  }
+}
+
+extension View {
+  func chartsXAxis(domain: ClosedRange<Double>, label: @escaping (Double) -> String) -> some View {
+    modifier(FittedChartsXAxis(domain: domain, label: label))
+  }
+  func chartsAxisTitles(x: String, y: String, values: [String]) -> some View {
+    modifier(ChartsAxisTitles(x: x, y: y, values: values))
+  }
+}
+
+private struct ChartsAxisTitles: ViewModifier {
+  let x: String
+  let y: String
+  let values: [String]
+  @Environment(\.dynamicTypeSize) private var textSize
+  @Environment(\.legibilityWeight) private var legibility
+  func body(content: Content) -> some View {
+    let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
+    let left =
+      (values.map { ($0 as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0) + 8
+    let annotationHeight = TypeStyle.meta.uiFont(textSize, legibility: legibility).lineHeight
+    VStack(alignment: .leading, spacing: 4) {
+      ChartsAxis.title(y, alignment: .leading).padding(.leading, left)
+      content.padding(.top, annotationHeight)
+      ChartsAxis.title(x, alignment: .trailing).padding(.leading, left)
+    }
+  }
+}
+
+private struct FittedChartsXAxis: ViewModifier {
+  let domain: ClosedRange<Double>
+  let label: (Double) -> String
+  @Environment(\.dynamicTypeSize) private var textSize
+  @Environment(\.legibilityWeight) private var legibility
+  func body(content: Content) -> some View {
+    let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
+    content.modifier(
+      ChartsBottomAxis(axis: { plot in
+        let ticks = ChartsAxis.fittingTicks(
+          domain,
+          frame: { value in
+            let width = (label(value) as NSString).size(withAttributes: [.font: font]).width
+            let at = plot.position(value)
+            let anchor = ChartsAxis.anchor(at: at, plotWidth: plot.width, labelWidth: width)
+            let left = at - width * anchor.x
+            return (left: Double(left), right: Double(left + width))
+          })
+        return ChartsAxis.bottom(ticks: ticks, label: label)
+      }))
   }
 }
 
@@ -109,12 +177,12 @@ extension EnvironmentValues {
 }
 
 private struct ChartsBottomAxis<Axis: AxisContent>: ViewModifier {
-  let axis: () -> Axis
+  let axis: (ChartsAxisPlot) -> Axis
   @State private var plot = ChartsAxisPlot()
 
   func body(content: Content) -> some View {
     content
-      .chartXAxis(content: axis)
+      .chartXAxis { axis(plot) }
       .chartBackground { proxy in
         let domain = proxy.xDomain(dataType: Double.self)
         let lower = domain.first
@@ -137,30 +205,14 @@ private struct ChartsBottomAxis<Axis: AxisContent>: ViewModifier {
 
 private struct ChartsAxisEdgeLabel<Content: View>: View {
   let value: Double
-  let ticks: [Double]
-  let labels: [String]
-  @Environment(\.dynamicTypeSize) private var textSize
-  @Environment(\.legibilityWeight) private var legibility
   @ViewBuilder let content: Content
   @Environment(\.chartsAxisPlot) private var plot
-
   var body: some View {
     let plot = self.plot
     let value = self.value
-    let font = TypeStyle.small.uiFont(textSize, legibility: legibility)
-    let frames = zip(ticks, labels).map { tick, label in
-      let width = (label as NSString).size(withAttributes: [.font: font]).width
-      let at = plot.position(tick)
-      let anchor = ChartsAxis.anchor(at: at, plotWidth: plot.width, labelWidth: width)
-      let left = at - width * anchor.x
-      return (left: Double(left), right: Double(left + width))
-    }
-    let kept = LessonChartTicks.labeled(frames, keepingEnds: true)
-    let visible = ticks.isEmpty || kept.contains { ticks[$0] == value }
-    content.opacity(visible ? 1 : 0).visualEffect { content, geometry in
+    content.visualEffect { content, geometry in
       let anchor = ChartsAxis.anchor(
         at: plot.position(value), plotWidth: plot.width, labelWidth: geometry.size.width)
-      // Aligned axis marks center the container even when an explicit anchor is supplied.
       return content.offset(x: geometry.size.width * (0.5 - anchor.x))
     }
   }

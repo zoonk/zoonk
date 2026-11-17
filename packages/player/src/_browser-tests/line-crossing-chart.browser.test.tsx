@@ -354,6 +354,14 @@ describe("line crossing chart", () => {
       openActivity({ content: breakEven, template: "lineCrossing" });
       await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
 
+      await expect
+        .poll(() =>
+          [...document.querySelectorAll('[data-slot="plot-axis-x"] text')].map(
+            (node) => node.textContent,
+          ),
+        )
+        .toStrictEqual(["0", "200"]);
+
       const labels = [
         ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
       ].filter(
@@ -375,7 +383,12 @@ describe("line crossing chart", () => {
       }
 
       expect(labels.map((node) => node.textContent)).toContain("0");
-      expect(labels.map((node) => node.textContent)).toContain("300");
+      const title = document.querySelector('[data-slot="plot-axis-title-y"]')!;
+      const card = document.querySelector('[data-slot="activity-plot"]')!.getBoundingClientRect();
+      const box = title.getBoundingClientRect();
+      expect(box.left).toBeGreaterThanOrEqual(card.left);
+      expect(box.right).toBeLessThanOrEqual(card.right);
+      expect(labels.map((node) => node.textContent)).toStrictEqual(["0", "200"]);
     });
   });
 

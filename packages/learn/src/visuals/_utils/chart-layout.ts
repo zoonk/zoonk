@@ -175,7 +175,7 @@ function thinTicks({ ticks, width, x }: { ticks: Tick[]; width: number; x: Linea
     return { left: center - half, right: center + half };
   });
 
-  const indices = fittingTickIndices(bounds, 0, false);
+  const indices = fittingTickIndices(bounds, 0);
   return ticks.filter((_, index) => indices.includes(index));
 }
 

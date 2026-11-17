@@ -235,8 +235,9 @@ private fun ScaleTicks(
     unit: String?,
 ) {
     val locale = currentLocale()
+    val values = (4 downTo 1).flatMap { scale.ticks(it) }.distinct()
     val labels =
-        scale.tickLabels { value, compact ->
+        scale.tickLabels(values) { value, compact ->
             formatAmount(
                 value,
                 locale,
@@ -267,9 +268,17 @@ private fun ScaleTicks(
         val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0)) }
         val width = constraints.maxWidth
         layout(width, placeables.maxOfOrNull { it.height } ?: 0) {
-            val positions = scale.tickPlacements(width, placeables.map { it.width })
+            val shown = scale.fittedTicks(width) { value -> placeables[values.indexOf(value)].width }
             placeables.forEachIndexed { index, placeable ->
-                positions[index]?.let { placeable.placeRelative(it, 0) }
+                if (values[index] in shown) {
+                    val left =
+                        (
+                            scale.shareOf(
+                                values[index],
+                            ) * width - placeable.width / 2
+                        ).toInt().coerceIn(0, maxOf(0, width - placeable.width))
+                    placeable.placeRelative(left, 0)
+                }
             }
         }
     }

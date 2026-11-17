@@ -13,12 +13,13 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
 class LineCrossingModelTest {
-    @Test fun crowdedAxesKeepUniformStepsAndBothEnds() {
-        assertEquals(
-            listOf(0, 3),
-            com.zoonk.android.ui.components
-                .fittingTickIndices(listOf(0f to 14f, 20f to 63f, 59f to 102f, 98f to 141f)),
-        )
+    @Test fun crowdedAxesUseFewerRoundSteps() {
+        val ticks =
+            com.zoonk.android.ui.components.fittingTicks(0.0..375.0, frame = { value ->
+                val x = (value / 375 * 140).toFloat()
+                x to x + if (value == 0.0) 14f else 43f
+            })
+        assertEquals(listOf(0.0, 200.0), ticks)
     }
 
     @Test

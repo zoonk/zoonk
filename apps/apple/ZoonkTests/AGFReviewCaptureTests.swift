@@ -20,16 +20,19 @@ final class AGFReviewCaptureTests: XCTestCase {
     let folder = URL(fileURLWithPath: output, isDirectory: true)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     let scenarios: [(String, String, Double, Bool, Bool)] =
-      environment["AGF_CAPTURE_SET"] == "r4"
+      ["r4", "r5"].contains(environment["AGF_CAPTURE_SET"] ?? "")
       ? [
         ("map-light", "mapExplorer", 0, false, false),
         ("map-dark", "mapExplorer", 0, true, false),
+        ("map-narrow-large", "mapExplorer", 0, false, true),
         ("line-crossing", "lineCrossing", 0, false, false),
         ("break-even", "lineCrossing.breakEven", 0, false, false),
         ("line-crossing-narrow-large", "lineCrossing", 0, false, true),
         ("break-even-narrow-large", "lineCrossing.breakEven", 0, false, true),
         ("guess-money", "guessReveal.money", 900, false, false),
         ("guess-money-millions", "guessReveal.moneyMillions", 900_000, false, false),
+        ("guess-money-narrow-large", "guessReveal.money", 900, false, true),
+        ("guess-money-millions-narrow-large", "guessReveal.moneyMillions", 900_000, false, true),
       ]
       : [
         ("guess-one", "guessReveal", 1, false, false),
@@ -75,9 +78,19 @@ final class AGFReviewCaptureTests: XCTestCase {
       window.makeKeyAndVisible()
       try await Task.sleep(for: .milliseconds(600))
       window.layoutIfNeeded()
-      let record = LayoutCaptureWriter.capture(
+      var record = LayoutCaptureWriter.capture(
         scenario: name, screen: "activity-" + fixture,
         picture: folder.appending(path: name + ".png"))
+      record["plotLabelFont"] = [
+        "normal": TypeStyle.data.uiFont(.large, legibility: nil).pointSize,
+        "actual": TypeStyle.data.uiFont(large ? .accessibility2 : .large, legibility: nil)
+          .pointSize,
+      ]
+      if large {
+        XCTAssertGreaterThanOrEqual(
+          TypeStyle.data.uiFont(.accessibility2, legibility: nil).pointSize,
+          TypeStyle.data.uiFont(.large, legibility: nil).pointSize * 2)
+      }
       XCTAssertNil(record["error"])
       try JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]).write(
         to: folder.appending(path: name + ".json"))

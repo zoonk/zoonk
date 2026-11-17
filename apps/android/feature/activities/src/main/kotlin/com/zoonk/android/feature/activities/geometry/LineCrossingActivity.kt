@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities.geometry
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,7 +48,9 @@ import com.zoonk.android.feature.activities.ActivityPlaceTrack
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.PlaceOrientation
+import com.zoonk.android.feature.activities.axisTitle
 import com.zoonk.android.feature.activities.drawPlotAxes
+import com.zoonk.android.feature.activities.fittedPlotTicks
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -249,7 +252,6 @@ private fun LineCrossingChart(
     val domain = chart.domain
     val xTicks = chart.xTicks
     val yTicks = chart.yTicks
-    val xLabels = xTicks.map { it to measurer.measure(formatAmount(it, locale), axisStyle.copy(color = colors.muted)) }
     val yLabels = yTicks.map { it to measurer.measure(formatAmount(it, locale), axisStyle.copy(color = colors.muted)) }
     val shown = fields.lines.map { LineCrossingModel.moved(it.line(), offsetOf(it), axis) }
     val movedLines = fields.lines.filter { offsetOf(it) != 0.0 }.map { it.line() }
@@ -263,129 +265,141 @@ private fun LineCrossingChart(
                 .toDp()
         } + AXIS_LABEL_GAP
 
-    BoxWithConstraints(Modifier.fillMaxWidth().height(PLOT_AREA * density.fontScale.coerceIn(1f, MAX_PLOT_GROWTH) + band * 3)) {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
         val left =
             maxOf(
                 with(density) { PADDING_LEFT.toPx() },
                 yLabels.maxOf { it.second.size.width } + with(density) { AXIS_LABEL_GAP.toPx() },
             )
         val right = constraints.maxWidth - with(density) { PADDING_RIGHT.toPx() }
-        val top = with(density) { band.toPx() }
-        val bottom = constraints.maxHeight - top * 2
-        val x = LinearScale(domain.min.x..domain.max.x, left to right)
-        val y = LinearScale(domain.min.y..domain.max.y, bottom to top)
-        val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
-        val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
-        val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
-        val fitted =
-            LineCrossingModel.slides(
-                fields.shift.amount,
-                axis,
-                lines,
-                real,
-                Vec(((right - left) / density.density).toDouble(), ((bottom - top) / density.density).toDouble()),
-            )
-        val handles =
-            fields.lines.zip(fitted.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
-        val names =
-            fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
-                listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
-                movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false, isOptional = true) }
-        val texts = names.map { measurer.measure(it.text, lineStyle) }
-        val unit = density.density
-        val arrows = if (movedLines.isEmpty()) emptyList() else changeArrowSegments(pixel(before), pixel(after), left, bottom, unit)
-        val arrowReach = (ARROW_HEAD.value * ARROW_SPREAD + ARROW_STROKE.value / 2) * unit
-        val dots = listOfNotNull(pixel(after), pixel(before).takeIf { movedLines.isNotEmpty() })
-        val boxes =
-            placeLineLabels(
-                area = Rect(left, top, constraints.maxWidth.toFloat(), bottom),
-                labels =
-                    names.mapIndexed { index, name ->
-                        LineLabel(
-                            name.isUpper,
-                            segment(name.line),
-                            Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
-                            name.isOptional,
-                        )
-                    },
-                marks =
-                    LabelMarks(
-                        arrows =
-                            arrows.map { (from, to) ->
-                                Rect(minOf(from.x, to.x), minOf(from.y, to.y), maxOf(from.x, to.x), maxOf(from.y, to.y)).inflate(arrowReach)
-                            },
-                        circles =
-                            handles.map { LabelCircle(it.center, knob) } +
-                                dots.map { LabelCircle(it, (DOT_RADIUS + DOT_STROKE / 2).value * unit) },
-                        lines = names.map { segment(it.line) },
-                    ),
-                unit = unit,
-            )
+        val yTitle = measurer.axisTitle(fields.yLabel, axisStyle.copy(color = colors.muted), right - left)
+        val xTitle = measurer.axisTitle(fields.xLabel, axisStyle.copy(color = colors.muted), right - left)
+        val top = yTitle.size.height + with(density) { AXIS_LABEL_GAP.toPx() }
+        val bottom = top + with(density) { (PLOT_AREA * density.fontScale.coerceIn(1f, MAX_PLOT_GROWTH)).toPx() }
+        val height =
+            with(density) {
+                val pixels = bottom + band.toPx() + xTitle.size.height + AXIS_LABEL_GAP.toPx() * 2
+                pixels.toDp()
+            }
+        Box(Modifier.fillMaxWidth().height(height)) {
+            val x = LinearScale(domain.min.x..domain.max.x, left to right)
+            val y = LinearScale(domain.min.y..domain.max.y, bottom to top)
+            val xLabels = measurer.fittedPlotTicks(x, axisStyle.copy(color = colors.muted)) { formatAmount(it, locale) }
+            val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
+            val segment = { line: Line ->
+                val (from, to) = LineCrossingModel.segment(line, domain)
+                LabelSegment(pixel(from), pixel(to))
+            }
+            val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
+            val fitted =
+                LineCrossingModel.slides(
+                    fields.shift.amount,
+                    axis,
+                    lines,
+                    real,
+                    Vec(((right - left) / density.density).toDouble(), ((bottom - top) / density.density).toDouble()),
+                )
+            val handles =
+                fields.lines.zip(fitted.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
+            val names =
+                fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
+                    listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
+                    movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false, isOptional = true) }
+            val texts = names.map { measurer.measure(it.text, lineStyle) }
+            val unit = density.density
+            val arrows = if (movedLines.isEmpty()) emptyList() else changeArrowSegments(pixel(before), pixel(after), left, bottom, unit)
+            val arrowReach = (ARROW_HEAD.value * ARROW_SPREAD + ARROW_STROKE.value / 2) * unit
+            val dots = listOfNotNull(pixel(after), pixel(before).takeIf { movedLines.isNotEmpty() })
+            val boxes =
+                placeLineLabels(
+                    area = Rect(left, top, right, bottom),
+                    labels =
+                        names.mapIndexed { index, name ->
+                            LineLabel(
+                                name.isUpper,
+                                segment(name.line),
+                                Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
+                                name.isOptional,
+                            )
+                        },
+                    marks =
+                        LabelMarks(
+                            arrows =
+                                arrows.map { (from, to) ->
+                                    val bounds = Rect(minOf(from.x, to.x), minOf(from.y, to.y), maxOf(from.x, to.x), maxOf(from.y, to.y))
+                                    bounds.inflate(arrowReach)
+                                },
+                            circles =
+                                handles.map { LabelCircle(it.center, knob) } +
+                                    dots.map { LabelCircle(it, (DOT_RADIUS + DOT_STROKE / 2).value * unit) },
+                            lines = names.map { segment(it.line) },
+                        ),
+                    unit = unit,
+                )
 
-        Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            drawPlotAxes(x, y, xLabels, yLabels, gridColor)
-            drawAxes(left, right, top, bottom, colors.ink)
-            drawText(measurer.measure(fields.yLabel, axisStyle.copy(color = colors.muted)), topLeft = Offset(left, 0f))
-            measurer.measure(fields.xLabel, axisStyle.copy(color = colors.muted)).let {
-                drawText(it, topLeft = Offset(right - it.size.width, bottom + band.toPx() + AXIS_LABEL_GAP.toPx()))
-            }
+            Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
+                drawPlotAxes(x, y, xLabels, yLabels, gridColor)
+                drawAxes(left, right, top, bottom, colors.ink)
+                drawText(yTitle, topLeft = Offset(left, 0f))
+                drawText(xTitle, topLeft = Offset(right - xTitle.size.width, bottom + band.toPx() + AXIS_LABEL_GAP.toPx()))
 
-            clipRect(left, top, right, bottom) {
-                movedLines.forEach { drawSegment(segment(it), colors.muted, dashed = true) }
-                answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
-                shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
-            }
-            names.forEachIndexed { index, name ->
-                boxes[index]?.let { drawLabel(texts[index], Offset(it.left, it.center.y), name.color, colors.halo, LabelAnchor.Start) }
-            }
-            if (movedLines.isNotEmpty()) {
-                crossingGuide(pixel(before), left, bottom, isBefore = true, colors)
-                arrows.forEach { arrow(it.from, it.to, colors.ink) }
-            }
-            crossingGuide(pixel(after), left, bottom, isBefore = false, colors)
-        }
-
-        val reach = with(density) { TRACK_WIDTH.toPx() / 2 }
-        val along = if (axis == PlaceOrientation.Horizontal) x else y
-        val nearestOffset = { slide: LineSlide, point: Offset -> slide.offsets.minBy { (pixel(slide.at(it)) - point).getDistance() } }
-        handles.forEach { (line, slide) ->
-            val home = pixel(slide.at(0.0))
-            val spots = slide.offsets.map { pixel(slide.at(it)) }
-            val track =
-                if (axis == PlaceOrientation.Horizontal) {
-                    Rect(spots.minOf { it.x }, home.y - reach, spots.maxOf { it.x }, home.y + reach)
-                } else {
-                    Rect(home.x - reach, spots.minOf { it.y }, home.x + reach, spots.maxOf { it.y })
+                clipRect(left, top, right, bottom) {
+                    movedLines.forEach { drawSegment(segment(it), colors.muted, dashed = true) }
+                    answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
+                    shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
                 }
-            ActivityPlaceTrack(
-                track,
-                along,
-                slide.range,
-                onChange = { onMove(line, it) },
-                orientation = axis,
-                disabled = !enabled,
-                valueAt = { nearestOffset(slide, it) },
-            )
-        }
-        handles.forEachIndexed { index, (line, slide, center) ->
-            ActivityPlaceHandle(
-                center = center,
-                scale = along,
-                range = slide.range,
-                value = offsetOf(line),
-                label = stringResource(R.string.activities_geometry_line_move, line.label),
-                valueText = valueText(line),
-                onChange = { onMove(line, it) },
-                orientation = axis,
-                disabled = !enabled,
-                valueAt = { nearestOffset(slide, it) },
-            ) { LineKnob(axis, colors.tones[index], colors.halo) }
-        }
+                names.forEachIndexed { index, name ->
+                    boxes[index]?.let { drawLabel(texts[index], Offset(it.left, it.center.y), name.color, colors.halo, LabelAnchor.Start) }
+                }
+                if (movedLines.isNotEmpty()) {
+                    crossingGuide(pixel(before), left, bottom, isBefore = true, colors)
+                    arrows.forEach { arrow(it.from, it.to, colors.ink) }
+                }
+                crossingGuide(pixel(after), left, bottom, isBefore = false, colors)
+            }
 
-        // The crossings are the answer, so they show over a handle resting on them.
-        Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            if (movedLines.isNotEmpty()) crossingDot(pixel(before), isBefore = true, colors)
-            crossingDot(pixel(after), isBefore = false, colors)
+            val reach = with(density) { TRACK_WIDTH.toPx() / 2 }
+            val along = if (axis == PlaceOrientation.Horizontal) x else y
+            val nearestOffset = { slide: LineSlide, point: Offset -> slide.offsets.minBy { (pixel(slide.at(it)) - point).getDistance() } }
+            handles.forEach { (line, slide) ->
+                val home = pixel(slide.at(0.0))
+                val spots = slide.offsets.map { pixel(slide.at(it)) }
+                val track =
+                    if (axis == PlaceOrientation.Horizontal) {
+                        Rect(spots.minOf { it.x }, home.y - reach, spots.maxOf { it.x }, home.y + reach)
+                    } else {
+                        Rect(home.x - reach, spots.minOf { it.y }, home.x + reach, spots.maxOf { it.y })
+                    }
+                ActivityPlaceTrack(
+                    track,
+                    along,
+                    slide.range,
+                    onChange = { onMove(line, it) },
+                    orientation = axis,
+                    disabled = !enabled,
+                    valueAt = { nearestOffset(slide, it) },
+                )
+            }
+            handles.forEachIndexed { index, (line, slide, center) ->
+                ActivityPlaceHandle(
+                    center = center,
+                    scale = along,
+                    range = slide.range,
+                    value = offsetOf(line),
+                    label = stringResource(R.string.activities_geometry_line_move, line.label),
+                    valueText = valueText(line),
+                    onChange = { onMove(line, it) },
+                    orientation = axis,
+                    disabled = !enabled,
+                    valueAt = { nearestOffset(slide, it) },
+                ) { LineKnob(axis, colors.tones[index], colors.halo) }
+            }
+
+            // The crossings are the answer, so they show over a handle resting on them.
+            Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
+                if (movedLines.isNotEmpty()) crossingDot(pixel(before), isBefore = true, colors)
+                crossingDot(pixel(after), isBefore = false, colors)
+            }
         }
     }
 }

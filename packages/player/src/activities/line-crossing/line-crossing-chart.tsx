@@ -18,7 +18,6 @@ import {
   CrossingGuide,
   LineLabel,
   LineMark,
-  yTitleBox,
 } from "./line-crossing-marks";
 import {
   type ChartDomain,
@@ -62,7 +61,6 @@ function LineLabels({
   lines,
   offsets,
   slides,
-  yLabel,
 }: {
   answerLine: Line | null;
   axis: ShiftAxis;
@@ -71,7 +69,6 @@ function LineLabels({
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   slides: readonly LineAndSlide[];
-  yLabel: string;
 }) {
   const t = useExtracted();
   const scales = usePlotScales();
@@ -100,7 +97,6 @@ function LineLabels({
 
   const marks = {
     boxes: [
-      yTitleBox({ left: scales.x.range[0], title: yLabel, top: scales.y.range[1] }),
       ...(crossings.before
         ? changeArrowBoxes({
             after: pixel(crossings.after),
@@ -197,8 +193,6 @@ function LineCrossingPlot({
   offsets,
   onMove,
   real,
-  xLabel,
-  yLabel,
 }: {
   amount: number;
   answerLine: Line | null;
@@ -234,7 +228,7 @@ function LineCrossingPlot({
   return (
     <>
       <ClipArea id={clipId} />
-      <Axes format={format} xLabel={xLabel} xTicks={xTicks} yLabel={yLabel} yTicks={yTicks} />
+      <Axes format={format} xTicks={xTicks} yTicks={yTicks} />
 
       <g clipPath={`url(#${clipId})`}>
         {moved.map((line) => (
@@ -269,7 +263,6 @@ function LineCrossingPlot({
         lines={lines}
         offsets={offsets}
         slides={slides}
-        yLabel={yLabel}
       />
 
       {moved.length > 0 && (
@@ -308,6 +301,8 @@ export function LineCrossingChart(props: Parameters<typeof LineCrossingPlot>[0])
 
   return (
     <ActivityPlot
+      xLabel={props.xLabel}
+      yLabel={props.yLabel}
       height={PLOT_HEIGHT}
       padding={{
         ...PADDING,

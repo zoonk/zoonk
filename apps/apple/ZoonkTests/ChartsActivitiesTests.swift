@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -5,12 +6,44 @@ import XCTest
 /// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
 /// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
-  func testCrowdedAxisKeepsEvenStepsAndBothEnds() {
+  func testCrowdedAxisUsesFewerRoundSteps() {
     XCTAssertEqual(ChartsAxis.ticks(0...375), [0, 100, 200, 300])
     XCTAssertEqual(ChartsAxis.ticks(0...5625), [0, 2000, 4000])
-    XCTAssertEqual(
-      LessonChartTicks.labeled([(0, 14), (20, 63), (59, 102), (98, 141)], keepingEnds: true),
-      [0, 3])
+    let ticks = ChartsAxis.fittingTicks(
+      0...375,
+      frame: { value in
+        let x = value / 375 * 140
+        return (left: x, right: x + (value == 0 ? 14 : 43))
+      })
+    XCTAssertEqual(ticks, [0, 200])
+  }
+  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() {
+    let normal = TypeStyle.small.uiFont(.large, legibility: nil).pointSize
+    let large = TypeStyle.small.uiFont(.accessibility2, legibility: nil)
+    XCTAssertGreaterThanOrEqual(large.pointSize, normal * 2)
+    let host = UIHostingController(
+      rootView: ChartsAxis.title("Dollars per month", alignment: .leading).frame(width: 96)
+        .environment(\.dynamicTypeSize, .accessibility2))
+    let size = host.sizeThatFits(in: CGSize(width: 96, height: 1000))
+    XCTAssertLessThanOrEqual(size.width, 96)
+    XCTAssertGreaterThan(size.height, large.lineHeight)
+  }
+  @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
+    let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
+    let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
+    let format: (Double) -> String = {
+      ActivityNumberFormat.format(
+        $0, unit: "R$", digits: 1, compact: true, locale: Locale(identifier: "en_US"))
+    }
+    let ticks = ChartsAxis.fittingTicks(
+      0...2_000_000,
+      frame: { value in
+        let width = (format(value) as NSString).size(withAttributes: [.font: font]).width
+        let left = max(0, min(scale.share(of: value) * 180 - width / 2, 180 - width))
+        return (left: left, right: left + width)
+      }, values: { scale.ticks(count: $0) })
+    XCTAssertEqual(ticks, [0, 2_000_000])
+    XCTAssertEqual(ticks.map(format), ["R$0", "R$2M"])
   }
   func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
     let labels = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear).tickLabels(

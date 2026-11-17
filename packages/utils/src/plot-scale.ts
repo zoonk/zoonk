@@ -103,7 +103,6 @@ const TICK_LABEL_GAP = 4;
 export function fittingTickIndices(
   frames: readonly { left: number; right: number }[],
   gap = TICK_LABEL_GAP,
-  keepEnds = true,
 ): number[] {
   const last = frames.length - 1;
 
@@ -111,10 +110,7 @@ export function fittingTickIndices(
     return frames.map((_, index) => index);
   }
 
-  const strides = Array.from(
-    { length: keepEnds ? last : frames.length },
-    (_, index) => index + 1,
-  ).filter((step) => !keepEnds || last % step === 0);
+  const strides = Array.from({ length: frames.length }, (_, index) => index + 1);
 
   const step =
     strides.find((stride) => {
@@ -123,7 +119,38 @@ export function fittingTickIndices(
       return kept.every(
         (frame, index) => index === 0 || frame.left >= (kept[index - 1]?.right ?? 0) + gap,
       );
-    }) ?? (keepEnds ? last : frames.length);
+    }) ?? frames.length;
 
   return frames.flatMap((_, index) => (index % step === 0 ? [index] : []));
+}
+
+export function tickCounts(count = DEFAULT_TICK_COUNT): number[] {
+  return Array.from({ length: count }, (_, index) => count - index);
+}
+
+export function fittingTicks({
+  domain,
+  frame,
+  ticks = (count) => niceTicks(domain, count),
+  count = DEFAULT_TICK_COUNT,
+  gap = TICK_LABEL_GAP,
+}: {
+  domain: NumericDomain;
+  frame: (value: number) => { left: number; right: number };
+  ticks?: (count: number) => number[];
+  count?: number;
+  gap?: number;
+}): number[] {
+  for (const density of tickCounts(count)) {
+    const values = ticks(density);
+    const boxes = values.map((value) => frame(value));
+
+    if (
+      boxes.every((box, index) => index === 0 || box.left >= (boxes[index - 1]?.right ?? 0) + gap)
+    ) {
+      return values;
+    }
+  }
+
+  return [];
 }

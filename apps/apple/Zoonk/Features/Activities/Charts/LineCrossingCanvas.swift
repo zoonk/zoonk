@@ -151,11 +151,7 @@ struct LineCrossingCanvas: View {
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
-    .chartXAxisLabel(fields.xLabel, alignment: .trailing)
-    .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
-    .chartsXAxis {
-      ChartsAxis.bottom(ticks: ChartsAxis.ticks(0...domain.x)) { ActivityNumberFormat.format($0) }
-    }
+    .chartsXAxis(domain: 0...domain.x) { ActivityNumberFormat.format($0) }
     .chartYAxis {
       ChartsAxis.values(ticks: ChartsAxis.ticks(0...domain.y)) { ActivityNumberFormat.format($0) }
     }
@@ -170,10 +166,12 @@ struct LineCrossingCanvas: View {
       }
       .coordinateSpace(.named(ChartsPlot.space))
     }
-    .chartsPlotText()
     .frame(minHeight: 240)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text(verbatim: summary(changes: changes)))
+    .chartsAxisTitles(
+      x: fields.xLabel, y: fields.yLabel,
+      values: ChartsAxis.ticks(0...domain.y).map { ActivityNumberFormat.format($0) })
   }
 
   private func segmentMarks(

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities
 
+import com.zoonk.android.ui.components.fittingTicks
 import com.zoonk.android.ui.components.niceTicks
 import java.math.BigDecimal
 import java.math.MathContext
@@ -30,39 +31,35 @@ data class GuessScale(
 
     fun positionOf(value: Double): Int = jsRound(shareOf(value) * POSITIONS).toInt()
 
-    fun ticks(): List<Double> {
+    fun ticks(count: Int = LINEAR_TICKS): List<Double> {
         if (!log) {
             val room = (max - min) * END_ROOM
-            return listOf(min) + niceTicks(min..max, LINEAR_TICKS).filter { it - min > room && max - it > room } + max
+            return listOf(min) + niceTicks(min..max, count).filter { it - min > room && max - it > room } + max
         }
         val from = ceil(log10(min)).toInt()
         val to = floor(log10(max)).toInt()
         val powers = (from..to).map { 10.0.pow(it) }
-        val every = ceil(powers.size.toDouble() / MAX_LOG_TICKS).toInt()
+        val every = ceil(powers.size.toDouble() / (if (count == LINEAR_TICKS) MAX_LOG_TICKS else count)).toInt()
         return if (powers.size < 2) listOf(min, max) else powers.filterIndexed { index, _ -> index % every == 0 }
     }
 
-    fun tickLabels(format: (Double, Boolean) -> String): List<String> {
-        val values = ticks()
+    fun tickLabels(
+        values: List<Double> = ticks(),
+        format: (Double, Boolean) -> String,
+    ): List<String> {
         val compact = values.any { format(it, false).length > 8 }
         return values.map { format(it, compact) }
     }
 
-    fun tickPlacements(
+    fun fittedTicks(
         width: Int,
-        widths: List<Int>,
-    ): List<Int?> {
-        val values = ticks()
-        val spots = MutableList<Int?>(values.size) { null }
-        val order = listOf(0, values.lastIndex).distinct() + (1 until values.lastIndex).toList()
-        for (index in order) {
-            val x = (shareOf(values[index]) * width - widths[index] / 2.0).toInt().coerceIn(0, maxOf(0, width - widths[index]))
-            if (spots.indices.all { other -> spots[other]?.let { x + widths[index] + 4 <= it || it + widths[other] + 4 <= x } ?: true }) {
-                spots[index] = x
-            }
-        }
-        return spots
-    }
+        measure: (Double) -> Int,
+    ): List<Double> =
+        fittingTicks(min..max, frame = { value ->
+            val size = measure(value)
+            val left = (shareOf(value) * width - size / 2.0).coerceIn(0.0, maxOf(0.0, width - size.toDouble())).toFloat()
+            left to left + size
+        }, values = { ticks(it) })
 
     companion object {
         const val POSITIONS = 200
