@@ -183,4 +183,5 @@
     <string name="stats_afternoon">Tarde</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Noite</string>
+    <string name="stats_belt_level">%1$s · Nível %2$s</string>
 </resources>

@@ -883,4 +883,6 @@
     <string name="plan_ask_phase_dates_off_rest">Move your phase dates off rest days?</string>
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
+    <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
+    <string name="plan_outside_skipped">Not in your plan · you took this subject out</string>
 </resources>

@@ -14,6 +14,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { useFormatShare } from "../_utils/percent";
+import { LearnLink } from "../learn-link";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
@@ -156,26 +157,30 @@ export function BuddyToday({
 
   return (
     <>
-      <button
-        aria-haspopup="dialog"
-        className={cn(
-          "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area stacked:-ms-2 relative flex min-h-7 flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md px-2 py-1 text-xs tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
-          className,
-        )}
+      <div
+        className={cn("flex flex-wrap items-center gap-x-2.5 gap-y-1", className)}
         data-slot="buddy-today"
-        onClick={() => {
-          setAsked(false);
-          setOpen(true);
-        }}
-        type="button"
       >
-        <span className="flex items-center gap-1">
+        <LearnLink
+          href={energyHref}
+          className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
+        >
           <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
           <span>{t("Energy")}</span>
           {current === null ? <NotYet /> : formatShare(current / PERCENT)}
-        </span>
-
-        <span className={cn("flex items-center gap-1.5", today?.missions.length === 0 && "hidden")}>
+        </LearnLink>
+        <button
+          aria-haspopup="dialog"
+          className={cn(
+            "hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums",
+            today?.missions.length === 0 && "hidden",
+          )}
+          onClick={() => {
+            setAsked(false);
+            setOpen(true);
+          }}
+          type="button"
+        >
           {today ? (
             <MissionsRing
               className="size-3.5"
@@ -187,8 +192,8 @@ export function BuddyToday({
             <CheckIcon aria-hidden="true" className="size-3.5" />
           )}
           <span>{missionsLabel}</span>
-        </span>
-      </button>
+        </button>
+      </div>
 
       <BuddyTodaySheet
         asked={asked}

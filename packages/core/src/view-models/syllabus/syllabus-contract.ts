@@ -12,7 +12,7 @@ const countSchema = z.int().min(0);
 const shareSchema = z.number().min(0).max(1);
 const isoDateSchema = z.iso.date();
 
-const notPlannedReasonSchema = z
+export const notPlannedReasonSchema = z
   .enum(["skipped", "pastBasics", "skippedBase", "time", "missing"])
   .nullable()
   .meta({

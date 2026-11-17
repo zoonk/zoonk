@@ -51,6 +51,7 @@ internal fun TodayAside(
             buddy = aside.buddy,
             buddyName = aside.buddyName,
             onOpen = aside.onMission,
+            onLevel = { aside.navigate(AppRoute.StatsLevel) },
             brainPower = aside.brainPower,
             opening = { mission -> model.missionTap(mission)?.equals(aside.pending()) == true },
             openFailed = { mission -> model.missionTap(mission)?.equals(aside.failed()) == true },

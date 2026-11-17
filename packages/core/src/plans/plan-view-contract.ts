@@ -8,6 +8,7 @@ import { type FocusTestSummary } from "../learner/placement/focus-test-contract"
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
+import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
@@ -113,6 +114,7 @@ export type PlanPhaseCheckpointView = {
 };
 
 export type PlanPhaseView = {
+  notPlannedReason: NotPlannedReason | null;
   challengeLeftOut: boolean;
   chapterCount: number;
   chapters: PlanChapterView[];

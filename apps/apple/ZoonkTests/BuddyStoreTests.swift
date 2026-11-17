@@ -244,7 +244,7 @@ final class BuddyDayOpeningTests: XCTestCase {
   }
 
   private func showDay(in window: UIWindow) async throws {
-    try activate(where: { $0.hasPrefix("Energy ") && $0.contains("mission") }, in: window)
+    try activate(where: { $0 == "0 of 1 mission" }, in: window)
     try await settle()
   }
 

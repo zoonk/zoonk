@@ -243,18 +243,28 @@ private fun phaseMeta(
     phase: PlanPhase,
     open: Boolean,
 ): PlanDateWords? {
-    if (phase.state == PlanPhase.State.LEFT_OUT) return sameWords(stringResource(R.string.plan_not_in_your_plan))
+    if (phase.state == PlanPhase.State.LEFT_OUT) {
+        return sameWords(
+            stringResource(
+                when (phase.notPlannedReason?.value) {
+                    "skipped" -> R.string.plan_outside_skipped
+                    "missing" -> R.string.today_coming_not_written
+                    else -> R.string.plan_outside_time
+                },
+            ),
+        )
+    }
     if (phase.state == PlanPhase.State.UNFINISHED) {
         val leftOut = (phase.lessonsTotal - phase.lessonsDone).toInt()
         return sameWords(
             if (leftOut > 0) {
                 pluralStringResource(R.plurals.plan_lessons_not_studied, leftOut, leftOut)
             } else {
-                challengeNotInPlan(page)
+                challengeNotInPlan()
             },
         )
     }
-    if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
+    if (phase.challengeLeftOut) return sameWords(challengeNotInPlan())
     if (phase.state != PlanPhase.State.CURRENT || open) return null
 
     if (phase.lessonsDone < phase.lessonsTotal) {
@@ -457,16 +467,7 @@ internal fun challengeName(page: PlanPageState): String =
     stringResource(if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) R.string.session_block_call else R.string.checkpoint_trickster)
 
 @Composable
-private fun challengeNotInPlan(page: PlanPageState): String =
-    stringResource(
-        if (page.goal.kind ==
-            LearnerSummaryGoal.Kind.LANGUAGE
-        ) {
-            R.string.plan_call_not_in_plan
-        } else {
-            R.string.plan_trickster_not_in_plan
-        },
-    )
+private fun challengeNotInPlan(): String = stringResource(R.string.plan_outside_time)
 
 /** [brief] leaves out what a challenge is in a list of every phase's, where it would repeat. */
 @Composable

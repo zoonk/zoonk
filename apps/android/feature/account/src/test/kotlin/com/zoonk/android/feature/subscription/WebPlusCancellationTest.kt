@@ -93,18 +93,6 @@ class WebPlusCancellationTest {
         rule.setContent {
             ZoonkTheme(darkTheme = darkTheme, moreContrast = higherContrast) {
                 Surface {
-                    val cancellation =
-                        viewModel {
-                            WebPlusCancellationViewModel(
-                                send = {
-                                    sent++
-                                    cancellationArrives?.await()
-                                    answer
-                                },
-                                keepPlus = { keepAnswer },
-                            )
-                        }
-                    WebPlusCancellationDialog(cancellation)
                     if (profile) {
                         deletionPlusNotices(website, provider = null).forEach { Text(it) }
                     } else {
@@ -114,7 +102,6 @@ class WebPlusCancellationTest {
                                 subscription,
                                 state,
                                 rememberAppNavigator(),
-                                cancellation,
                                 onRetryWebsite = { scope.launch { website.refresh() } },
                                 offer = { Text("Free offer") },
                             )
@@ -133,36 +120,15 @@ class WebPlusCancellationTest {
     }
 
     @Test
-    fun anUnpaidWebsitePlanIsShownWithoutAnActivePlanAndCanStopRetries() {
-        subscription = null
+    fun twoSubscriptionsEachOpenTheirOwnManagementPlace() {
+        subscription = plan("google")
         response = { web(State.UNPAID) }
         show()
-        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
-        rule.onNodeWithText("Free offer").assertDoesNotExist()
-        rule.onNodeWithText("Active").assertDoesNotExist()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        assertEquals(1, sent)
-        response = { null }
-        rule.runOnIdle { scope.launch { website.refresh() } }
-        rule.onNodeWithText("Free offer").assertExists()
-        rule.onNodeWithText(RENEWAL_FAILED).assertDoesNotExist()
-    }
-
-    @Test
-    fun theConfirmationPreventsAnotherCancellationWhileSending() {
-        cancellationArrives = CompletableDeferred()
-        show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        inDialog("Cancel Plus").assertIsNotEnabled()
-        inDialog("Go back").assertIsNotEnabled()
-        rule.waitForIdle()
-        assertEquals(1, sent)
-        cancellationArrives?.complete(Unit)
-        rule.onNode(isDialog()).assertDoesNotExist()
+        rule.onNodeWithText("Through Google Play").assertExists()
+        rule.onNodeWithText("Manage in Google Play").assertExists()
+        rule.onNodeWithText("Through the website").assertExists()
+        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
+        rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
     }
 
     @Test
@@ -174,42 +140,8 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Free offer").assertDoesNotExist()
         response = { web(State.UNPAID) }
         rule.onNodeWithText("Try again").performClick()
-        rule.onNodeWithText("Cancel Plus").assertExists()
+        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
         assertEquals(2, reads)
-    }
-
-    @Test
-    fun aConflictClosesTheDialogWithoutAFalseFailure() {
-        answer = MutationResult.Failed(ApiError.Unavailable, "CONFLICT", 409)
-        show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        rule.onNodeWithText(FAILED).assertDoesNotExist()
-    }
-
-    @Test
-    fun aFailedCancellationCanBeRetried() {
-        answer = MutationResult.Failed(ApiError.Unavailable, status = 500)
-        show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Cancel Plus").performClick()
-        inDialog(FAILED).assertExists()
-        inDialog("Cancel Plus").assertIsEnabled()
-        answer = MutationResult.Done(StripeSubscriptionCancellationReceipt(ENDS))
-        inDialog("Cancel Plus").performClick()
-        rule.onNode(isDialog()).assertDoesNotExist()
-        assertEquals(2, sent)
-    }
-
-    @Test
-    fun keepingPlusThatFailsCanBeRetried() {
-        keepAnswer = MutationResult.Failed(ApiError.Unavailable, status = 500)
-        response = { web(State.ENDING) }
-        show()
-        rule.onNodeWithText("Keep Plus").performScrollTo().performClick()
-        rule.onNodeWithText(KEEP_FAILED).assertExists()
-        rule.onNodeWithText("Keep Plus").assertIsEnabled()
     }
 
     @Test
@@ -248,8 +180,7 @@ class WebPlusCancellationTest {
         val folder = System.getProperty("zoonk.shots").orEmpty()
         assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
         show()
-        rule.onNodeWithText(rule.activity.getString(R.string.subscription_cancel)).performScrollTo().performClick()
-        capture(folder, "polish-paid-dialog", dialog = true)
+        capture(folder, "polish-website")
     }
 
     private fun renderStates(
@@ -262,26 +193,16 @@ class WebPlusCancellationTest {
         darkTheme = dark
         higherContrast = moreContrast
         show()
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        capture(folder, "$prefix-paid-dialog", dialog = true)
-        inDialog("Go back").performClick()
         capture(folder, "$prefix-renewing")
         update(State.ENDING)
-        rule.onNodeWithText("Keep Plus").assertExists()
         capture(folder, "$prefix-ending")
         subscription = null
         update(State.UNPAID)
         rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         capture(folder, "$prefix-unpaid")
-        rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        capture(folder, "$prefix-unpaid-dialog", dialog = true)
-        inDialog("Go back").performClick()
         subscription = plan("google")
-        rule.onNodeWithText("Cancel Plus").performScrollTo()
+        rule.onNodeWithText("Through Google Play").assertExists()
         capture(folder, "$prefix-store-and-website")
-        rule.onNodeWithText("Cancel Plus").performClick()
-        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
-        inDialog("Go back").performClick()
         profile = true
         rule.onNodeWithText("Deleting your account ends Plus right away.").assertExists()
         capture(folder, "$prefix-deletion-notice")
@@ -321,4 +242,4 @@ class WebPlusCancellationTest {
     }
 }
 
-internal const val RENEWAL_FAILED = "Your last renewal payment failed. Update your payment on the website, where you subscribed."
+internal const val RENEWAL_FAILED = "Your last renewal payment failed."

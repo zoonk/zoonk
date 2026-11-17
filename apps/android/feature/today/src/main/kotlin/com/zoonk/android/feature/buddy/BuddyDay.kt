@@ -99,54 +99,28 @@ internal fun BuddyTodayLine(
     val today = status.today
     val done = today?.missions?.count { it.status == StudyMission.Status.DONE } ?: 0
     val energy = status.energy.current?.let { formatPercent(it / PERCENT, currentLocale()) }
-    val spoken =
-        listOfNotNull(
-            "${stringResource(R.string.buddy_page_energy)} ${energy ?: stringResource(R.string.buddy_page_not_yet)}",
-            missionsLabel(today?.missions?.size, done),
-        ).joinToString(", ")
     val number = MaterialTheme.typography.labelMedium.withTabularFigures()
 
     val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
 
-    TextButton(
-        onClick = { onOpenChange(true) },
-        modifier = Modifier.semantics { contentDescription = spoken },
-        contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING),
-    ) {
-        FlowRow(
-            Modifier.clearAndSetSemantics {},
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painterResource(R.drawable.ic_bolt),
-                    contentDescription = null,
-                    Modifier.size(icon),
-                    tint = MaterialTheme.zoonk.energy,
-                )
-                Text(stringResource(R.string.buddy_page_energy), style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(
-                    energy ?: DASH,
-                    style = number,
-                    color = if (energy == null) MaterialTheme.zoonk.faint else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (today == null || today.missions.isNotEmpty()) {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    if (today != null) {
-                        MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
-                    } else {
-                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(icon))
-                    }
-                    Text(
-                        today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
-                            ?: stringResource(R.string.buddy_page_missions),
-                        style = number,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), itemVerticalAlignment = Alignment.CenterVertically) {
+        TextButton(onClick = { navigator.open(AppRoute.StatsEnergy) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
+            Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
+            Text(stringResource(R.string.buddy_page_energy), style = number)
+            Text(energy ?: DASH, style = number)
+        }
+        if (today == null || today.missions.isNotEmpty()) {
+            TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
+                if (today != null) {
+                    MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
+                } else {
+                    Icon(painterResource(R.drawable.ic_check), null, Modifier.size(icon))
                 }
+                Text(
+                    today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
+                        ?: stringResource(R.string.buddy_page_missions),
+                    style = number,
+                )
             }
         }
     }
@@ -202,7 +176,10 @@ private fun BuddyTodaySheet(
             }
             if (status.today?.missions?.isNotEmpty() == true) {
                 HorizontalDivider()
-                BuddyMissions(status, look, name, taps)
+                BuddyMissions(status, look, name, taps) {
+                    onDismiss()
+                    navigator.open(AppRoute.StatsLevel)
+                }
             }
             if (status.firstSteps != null) {
                 HorizontalDivider()
@@ -230,7 +207,7 @@ internal fun BuddyDayPane(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         BuddyEnergy(status.energy, name) { navigator.open(AppRoute.StatsEnergy) }
-        BuddyMissions(status, look, name, taps)
+        BuddyMissions(status, look, name, taps) { navigator.open(AppRoute.StatsLevel) }
         BuddyFirstStepsSection(status.firstSteps, look, name, taps)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -286,6 +263,7 @@ private fun BuddyMissions(
     look: BuddyLook,
     name: String,
     taps: BuddyDayTaps,
+    onLevel: () -> Unit,
 ) {
     val today = status.today ?: return
 
@@ -296,6 +274,7 @@ private fun BuddyMissions(
         buddy = look,
         buddyName = name,
         onOpen = { opens -> taps.open(BuddyTap(opens)) },
+        onLevel = onLevel,
         brainPower = status.belt.totalBrainPower,
         opening = { mission -> taps.isOpening(mission.tap()) },
         openFailed = { mission -> taps.hasFailed(mission.tap()) },
@@ -314,7 +293,7 @@ private fun BuddyEnergy(
     val current = energy.current
 
     if (current == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.clickable(onClick = onOpen), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
             Text(
                 stringResource(R.string.buddy_page_energy_starts),

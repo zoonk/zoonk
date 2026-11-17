@@ -4,6 +4,7 @@ struct MemoryView: View {
   /// A fact the learner gave in About you is changed there, on its question.
   let editProfile: (ProfileQuestion) -> Void
 
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
   @State private var statement = ""
@@ -27,7 +28,7 @@ struct MemoryView: View {
               "Use memory", tableName: "Settings", comment: "Switch that turns memory on or off"),
             description: memory.enabled
               ? Text(
-                "Personal examples, plans that fit your week and calls that remember your news",
+                "Personal examples, plans that fit your week and calls with \(learner.buddyDisplayName) that remember your news",
                 tableName: "Settings", comment: "What memory does while it's on")
               : Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",

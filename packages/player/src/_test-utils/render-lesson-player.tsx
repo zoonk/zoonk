@@ -173,6 +173,7 @@ export function lessonPlayerElement({
           routes={{
             exit: EXIT_HREF,
             exitTo: null,
+            mistakes: "/mistakes",
             nextLesson: null,
             seePlan: (goalId: string) => `/start/${goalId}`,
             signUp: "/login",

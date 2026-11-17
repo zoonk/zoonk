@@ -157,3 +157,33 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertNil(router.sheet)
   }
 }
+
+extension AppNavigationTests {
+  @MainActor
+  func testUsedUpLessonsOpenTheMistakesNotebook() async throws {
+    let router = AppRouter()
+    router.sidebarTabs = [.mistakes]
+    router.open(.session)
+    router.open(.lesson(lessonId: "lesson"))
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      LessonUnavailableView(refusal: .limitReached(tier: .free, period: .day), retry: {})
+        .environment(router).zoonkStyles())
+    try await Task.sleep(for: .milliseconds(400))
+    try activate("Practice your mistakes", in: window)
+    XCTAssertEqual(router.selectedTab, .mistakes)
+    XCTAssertTrue(router.tasks.isEmpty)
+  }
+
+  @MainActor
+  func testTheMissionBonusOpensLevel() async throws {
+    let router = AppRouter()
+    router.sidebarTabs = [.stats(.level)]
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      BrainPowerReward(points: 50, earned: false).environment(router).zoonkStyles())
+    try await Task.sleep(for: .milliseconds(400))
+    try activate("50 Brain Power for finishing them", in: window)
+    XCTAssertEqual(router.selectedTab, .stats(.level))
+  }
+}

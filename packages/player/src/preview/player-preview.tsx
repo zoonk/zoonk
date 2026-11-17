@@ -43,6 +43,7 @@ const noVoice: VoiceText = () => Promise.resolve({ limit: null, status: "failed"
 const ROUTES = {
   exit: "/",
   exitTo: null,
+  mistakes: "/mistakes",
   nextLesson: null,
   seePlan: () => "/",
   signUp: "/",

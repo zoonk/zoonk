@@ -3,6 +3,7 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
+import { getNotPlannedReason } from "../../view-models/syllabus/_utils/syllabus-topics";
 import { type PlanView } from "../plan-view-contract";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
@@ -52,6 +53,24 @@ export function buildPlanPath({ access, challengeResults, context, today, ...inp
     items,
     mocksRequirePlus: access.mocksRequirePlus,
     outlinedUntil: getOutlinedUntil(context.today),
+    phaseReasons: new Map(
+      phases.map((_, index) => {
+        const skills = state.graph.skills.filter((skill) => skill.phase === index);
+
+        return [
+          index,
+          getNotPlannedReason({
+            hasItems: items.some((item) => item.phase === index && item.kind === "lesson"),
+            hasSkills: skills.length > 0,
+            skipped:
+              skills.length > 0 &&
+              skills.every(
+                (skill) => skill.area !== null && state.settings.skippedAreas.includes(skill.area),
+              ),
+          }),
+        ];
+      }),
+    ),
     phases,
     skillPhases: new Map(state.graph.skills.map((skill) => [skill.skillId, skill.phase])),
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,

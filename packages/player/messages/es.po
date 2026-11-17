@@ -2985,6 +2985,11 @@ msgid "You can still review and practice your mistakes."
 msgstr "Aún puedes repasar y practicar con tus errores."
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "AFQMLq"
+msgid "Practice your mistakes"
+msgstr "Practicar con tus errores"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "4NMpnC"
 msgid "Start the lesson"
 msgstr "Empezar la lección"

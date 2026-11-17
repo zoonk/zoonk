@@ -448,7 +448,7 @@ fun LessonPlayer(
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
                                 ) {
                                     // A screen that already offers help keeps the ask quiet.
-                                    tutor?.askButton?.invoke(
+                                    tutor?.takeUnless { screen.step?.content is StepContent.Explanation }?.askButton?.invoke(
                                         state.tutorScope(screen),
                                         state.showsMiss(screen) && screen.struggleOffer == null,
                                         asking && (spread || !askedOnSpread),

@@ -37,7 +37,6 @@ msgstr "予想"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
 msgid "Brain Power"
@@ -4897,15 +4896,6 @@ msgstr "、完了"
 
 #: src/journey/journey-path.tsx
 #: src/journey/path-phase-row.tsx
-#: src/journey/phase-details.tsx
-#: src/plan-diff/use-change-rows.ts
-#: src/syllabus/use-subject-progress.ts
-msgctxt "L_oGIZ"
-msgid "Not in your plan"
-msgstr "学習計画に含まれていません"
-
-#: src/journey/journey-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, other {未学習の#レッスン}}"
@@ -5008,16 +4998,6 @@ msgid "Continues {date}"
 msgstr "{date}に再開します"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "sk-jVa"
-msgid "The call isn't in your plan"
-msgstr "会話は学習計画に入りきりません"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "xl2sjx"
-msgid "The Trickster isn't in your plan"
-msgstr "トリックスターとの対戦は学習計画に入りきりません"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
 msgid ", up next"
 msgstr "、次のフェーズ"
@@ -5026,6 +5006,12 @@ msgstr "、次のフェーズ"
 msgctxt "sFnTpp"
 msgid "<start></start> – <end></end>"
 msgstr "<start></start>〜<end></end>"
+
+#: src/journey/phase-details.tsx
+#: src/plan-diff/use-change-rows.ts
+msgctxt "L_oGIZ"
+msgid "Not in your plan"
+msgstr "学習計画に含まれていません"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
@@ -5356,6 +5342,7 @@ msgid "Phase {number, number} of {total, number}"
 msgstr "フェーズ{number, number}（全{total, number}フェーズ）"
 
 #: src/language-aim/aim-picker.tsx
+#: src/language-aim/use-aim-words.ts
 msgctxt "OIMmZ8"
 msgid "How far do you want to go?"
 msgstr "どのレベルを目指しますか？"
@@ -7291,16 +7278,6 @@ msgstr "このマップを保存できませんでした。もう一度試して
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "このマップの保存を解除できませんでした。もう一度お試しください。"
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "HCrEOP"
-msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "学ぶともらえるポイントです。帯のランクが上がり、相棒が成長します。"
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "JGTjfj"
-msgid "You have <mono>{points}</mono>"
-msgstr "現在の脳力は<mono>{points}</mono>"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -10457,6 +10434,12 @@ msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
 msgstr "新しい国：{country}。この国に合わせて学習計画を作り直します。完了したレッスンはそのまま引き継がれます。"
 
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "重点診断で、重点的に学ぶ科目がわかります。"
+
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -13331,11 +13314,6 @@ msgstr "学習計画の変更"
 msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "わかりました。テストは学習計画から受けられます。"
-
-#: src/today/today-focus-test.tsx
-msgctxt "KYliMN"
-msgid "The Focus test shows what to study most."
-msgstr "重点診断で、重点的に学ぶ科目がわかります。"
 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"

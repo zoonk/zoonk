@@ -125,7 +125,7 @@ private struct LevelButton: View {
     let belt = level.belt
 
     Button {
-      router.open(.statistics())
+      router.open(.statistics(section: .level))
     } label: {
       HStack(spacing: 6) {
         BeltDot(belt: belt)

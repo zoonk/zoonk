@@ -69,8 +69,10 @@ extension TutorPlaces {
         router.open(.mistakes)
       case .pronunciation(let goalId):
         router.open(.pronunciation(goalId: goalId))
-      case .statistics, .energy:
+      case .statistics:
         router.open(.statistics())
+      case .energy:
+        router.open(.statistics(section: .energy))
       case .logbook:
         router.open(.logbook)
       case .earlierQuestions:

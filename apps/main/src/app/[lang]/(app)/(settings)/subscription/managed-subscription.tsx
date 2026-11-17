@@ -21,8 +21,8 @@ export async function ManagedSubscription({
   });
 
   const description = getManagedSubscriptionDescription({
-    appleDescription: t("You subscribed in the App Store."),
-    googleDescription: t("You subscribed in Google Play."),
+    appleDescription: t("Through the App Store"),
+    googleDescription: t("Through Google Play"),
     provider,
     zoonkDescription: t("Zoonk added Plus to your account. To change it, write to us."),
   });

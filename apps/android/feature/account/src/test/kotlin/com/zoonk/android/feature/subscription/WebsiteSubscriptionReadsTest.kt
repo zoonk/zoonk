@@ -75,8 +75,7 @@ class WebsiteSubscriptionReadsTest {
                     deletionPlusNotices(store.websiteSubscription, provider = null).forEach { Text(it) }
                 } else {
                     val state by store.websiteSubscription.collectShown()
-                    val cancellation = WebPlusCancellationViewModel(store::cancelWebPlus, store::keepWebPlus)
-                    AccountPlans(null, state, rememberAppNavigator(), cancellation, {}, {})
+                    AccountPlans(null, state, rememberAppNavigator(), {}, {})
                 }
             }
         }

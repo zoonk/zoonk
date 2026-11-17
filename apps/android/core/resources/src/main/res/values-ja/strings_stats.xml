@@ -169,4 +169,5 @@
     <string name="stats_afternoon">午後</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">夜</string>
+    <string name="stats_belt_level">%1$s・レベル%2$s</string>
 </resources>

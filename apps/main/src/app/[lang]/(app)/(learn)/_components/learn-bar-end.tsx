@@ -66,7 +66,7 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
         LEVEL_BOX_CLASS,
         "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex rounded-lg transition-colors outline-none focus-visible:ring-[3px]",
       )}
-      href={getMenu("stats").url}
+      href={getMenu("level").url}
       prefetch
       title={t("Statistics")}
     >

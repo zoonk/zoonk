@@ -785,7 +785,6 @@ msgid "Menu"
 msgstr "Menú"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, nivel {level}"
@@ -1451,9 +1450,9 @@ msgid "Your last renewal payment failed."
 msgstr "No pudimos procesar tu último pago de renovación."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "nQezuF"
-msgid "Bought on the website"
-msgstr "Contratado en el sitio web"
+msgctxt "gTWrWX"
+msgid "Through the website"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1517,6 +1516,16 @@ msgstr "Te suscribiste en Google Play."
 msgctxt "i6lXik"
 msgid "Zoonk added Plus to your account. To change it, write to us."
 msgstr "Zoonk agregó Plus a tu cuenta. Para hacer cambios, escríbenos."
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "eHa_2N"
+msgid "Through the App Store"
+msgstr ""
+
+#: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
+msgctxt "4n7IeB"
+msgid "Through Google Play"
+msgstr ""
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "2OvvJx"
@@ -1763,6 +1772,11 @@ msgstr "<mono>{points}</mono> de Poder Mental para alcanzar el {belt}"
 msgctxt "kWRGGq"
 msgid "<mono>{points}</mono> Brain Power to level {level}"
 msgstr "<mono>{points}</mono> de Poder Mental para llegar al nivel {level}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "TeeyjQ"
+msgid "{belt} · Level {level}"
+msgstr "{belt} · Nivel {level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "2Zh-AP"

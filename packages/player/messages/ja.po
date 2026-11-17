@@ -2985,6 +2985,11 @@ msgid "You can still review and practice your mistakes."
 msgstr "復習や間違えた問題の練習は引き続きできます。"
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "AFQMLq"
+msgid "Practice your mistakes"
+msgstr "間違えた問題を練習する"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "4NMpnC"
 msgid "Start the lesson"
 msgstr "レッスンを始める"

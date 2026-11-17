@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ · Level %lld" : {
+      "comment" : "A belt and its level from 1 to 10, at the top of the Level page.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Level %lld"
+          }
+        }
+      }
+    },
     "%@ %lld" : {
       "comment" : "A belt and its number from 1 to 10, as in White belt 4",
       "localizations" : {

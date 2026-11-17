@@ -7,6 +7,7 @@ import { page } from "vitest/browser";
 import { CallProblem } from "../../../learn/src/language/conversation/call-problem";
 import { DroppedCallScreen } from "../../../learn/src/language/conversation/dropped-call-screen";
 import { useCallConnection } from "../../../learn/src/language/conversation/use-call-connection";
+import { BrainPowerReward } from "../../../learn/src/missions/brain-power-reward";
 import { AttachControls } from "../../../learn/src/onboarding/entry/attach-panel";
 import { GoalErrorAlert } from "../../../learn/src/onboarding/entry/goal-outcomes";
 import { MaterialQuestions } from "../../../learn/src/onboarding/entry/material-questions";
@@ -216,6 +217,36 @@ describe("a limit whose day has come", () => {
 
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(page.getByRole("button", { name: /^Start the lesson/u }).query()).toBeNull();
+  });
+
+  it("opens Level from the missions reward", async () => {
+    render(
+      <LearnProvider adapters={ADAPTERS}>
+        <BrainPowerReward brainPower={50} earned={false} points={50} />
+      </LearnProvider>,
+    );
+
+    await expect.element(page.getByRole("link")).toHaveAttribute("href", "/level");
+  });
+
+  it("offers the mistakes notebook when free lessons are used up", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+
+    const startLesson = vi
+      .fn<LessonPlayerAdapters["startLesson"]>()
+      .mockResolvedValue({
+        availableAt: new Date(Date.now() + 86_400_000).toISOString(),
+        period: "rolling30Days",
+        reason: "limitReached",
+        tier: "free",
+      });
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("link", { name: "Practice your mistakes" }))
+      .toHaveAttribute("href", "/mistakes");
   });
 
   it.each([

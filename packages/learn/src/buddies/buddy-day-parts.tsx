@@ -68,7 +68,11 @@ export function BuddyEnergy({
   const line = useEnergyLine({ name, status });
 
   if (status.energy.current === null) {
-    return <EnergyStarts name={name} />;
+    return (
+      <LearnLink href={href}>
+        <EnergyStarts name={name} />
+      </LearnLink>
+    );
   }
 
   const share = status.energy.current / PERCENT;

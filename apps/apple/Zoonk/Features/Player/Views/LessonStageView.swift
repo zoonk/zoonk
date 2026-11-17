@@ -494,7 +494,7 @@ struct LessonActionBar: View {
         primaryButton
       }
 
-      if tutor.panel != nil {
+      if tutor.panel != nil, step?.kind != .explanation {
         askButton
       }
     }

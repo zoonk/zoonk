@@ -169,4 +169,5 @@
     <string name="stats_afternoon">오후</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">저녁</string>
+    <string name="stats_belt_level">%1$s · 레벨 %2$s</string>
 </resources>

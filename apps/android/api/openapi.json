@@ -85672,6 +85672,18 @@
           "name": {
             "type": "string"
           },
+          "notPlannedReason": {
+            "nullable": true,
+            "description": "Why it isn't in the plan: `skipped` (the learner took the subject out; `restoreAreas` with its `areas` brings it back), `pastBasics` (a subject's basics the plan starts past: the learner said they know them, or does well in the subject with harder lessons), `skippedBase` (a base the learner chose to skip; `setBaseChoices` with `learn` brings it back), `time` (it doesn't fit before the deadline at the current pace), `missing` (no skill of the plan teaches it yet). Null when it's in the plan",
+            "type": "string",
+            "enum": [
+              "skipped",
+              "pastBasics",
+              "skippedBase",
+              "time",
+              "missing"
+            ]
+          },
           "short": {
             "nullable": true,
             "description": "The study days the phase covers in a plan for a test days away (Days 1 to 4) and what they're for; null in any other plan",
@@ -85730,6 +85742,7 @@
           "milestone",
           "mocks",
           "name",
+          "notPlannedReason",
           "short",
           "startDate",
           "state"

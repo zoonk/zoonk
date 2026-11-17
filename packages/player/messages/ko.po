@@ -2985,6 +2985,11 @@ msgid "You can still review and practice your mistakes."
 msgstr "복습과 틀린 문제 연습은 계속할 수 있어요."
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "AFQMLq"
+msgid "Practice your mistakes"
+msgstr "틀린 문제 다시 풀기"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "4NMpnC"
 msgid "Start the lesson"
 msgstr "레슨 시작하기"

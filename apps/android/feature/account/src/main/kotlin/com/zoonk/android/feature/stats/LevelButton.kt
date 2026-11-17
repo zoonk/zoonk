@@ -27,7 +27,7 @@ fun LevelButton(
     val summary by app.learnerSummary.summary.collectShown()
     val level = summary.value?.level ?: return
     val belt = Belt.entries.first { it.name.equals(level.color.value, ignoreCase = true) }
-    val open = { navigator.open(AppRoute.Statistics) }
+    val open = { navigator.open(AppRoute.StatsLevel) }
     val action = stringResource(R.string.stats_open)
 
     TextButton(

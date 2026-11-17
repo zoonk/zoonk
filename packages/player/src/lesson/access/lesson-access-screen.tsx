@@ -2,6 +2,7 @@
 
 import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
 import { type LessonLimit, useFreeLessonReady, useLessonLimitWords } from "@zoonk/learn/help-limit";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { CircleAlertIcon, HourglassIcon, SparklesIcon, UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -28,6 +29,20 @@ function useStillFreeLine(limit: ReachedLimit): string {
   return `${t("You can still review and practice your mistakes.")} ${line}`;
 }
 
+function FreeLessonActions({ children }: { children: React.ReactNode }) {
+  const t = useExtracted();
+  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+
+  return (
+    <div className="flex w-full flex-col items-center gap-2 *:first:w-full lg:w-auto">
+      {children}
+      <LinkComponent className={buttonVariants({ variant: "ghost" })} href={routes.mistakes}>
+        {t("Practice your mistakes")}
+      </LinkComponent>
+    </div>
+  );
+}
+
 /** Once the next free lesson opens, the gate offers to start it; the server decides again. */
 function FreeLessonReady({ title }: { title: string }) {
   const t = useExtracted();
@@ -35,7 +50,11 @@ function FreeLessonReady({ title }: { title: string }) {
 
   return (
     <AccessLayout
-      actions={<EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>}
+      actions={
+        <FreeLessonActions>
+          <EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>
+        </FreeLessonActions>
+      }
       icon={<SparklesIcon aria-hidden="true" />}
       title={title}
     />
@@ -61,9 +80,11 @@ function SubscribeGateScreen({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.upgrade} link={LinkComponent}>
-          {t("Subscribe")}
-        </EnterLink>
+        <FreeLessonActions>
+          <EnterLink href={routes.upgrade} link={LinkComponent}>
+            {t("Subscribe")}
+          </EnterLink>
+        </FreeLessonActions>
       }
       description={description}
       icon={<SparklesIcon aria-hidden="true" />}

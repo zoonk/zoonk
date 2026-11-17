@@ -1,6 +1,44 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Manage in Google Play" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Manage in Google Play" } }
+      }
+    },
+    "Through the App Store" : {
+      "comment" : "Labels the subscription managed in the App Store.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Through the App Store"
+          }
+        }
+      }
+    },
+    "Through Google Play" : {
+      "comment" : "Labels the subscription managed in Google Play.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Through Google Play"
+          }
+        }
+      }
+    },
+    "Through the website" : {
+      "comment" : "Labels the subscription managed on the website.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Through the website"
+          }
+        }
+      }
+    },
     "%@ and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules." : {
       "comment" : "Answers whether Plus can be refunded; the argument is the link “Write to us”",
       "localizations" : {

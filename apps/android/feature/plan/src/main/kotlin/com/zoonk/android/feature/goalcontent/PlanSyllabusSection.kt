@@ -135,7 +135,13 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                stringResource(R.string.goalcontent_not_in_plan),
+                stringResource(
+                    when (subject.notPlannedReason) {
+                        SyllabusSubject.NotPlannedReason.SKIPPED -> R.string.plan_outside_skipped
+                        SyllabusSubject.NotPlannedReason.MISSING -> R.string.today_coming_not_written
+                        else -> R.string.plan_outside_time
+                    },
+                ),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,

@@ -244,22 +244,13 @@ private struct PlanPhaseRow: View {
   private var meta: Text? {
     switch phase.leftOut {
     case .notInPlan:
-      return Text(
-        "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
+      return planOutsideReason(phase.notPlannedReason)
     case .lessons(let count):
       return Text(
         "\(count) lessons not studied", tableName: "Plan",
         comment: "A phase the date passed with lessons not studied")
     case .challenge, .noTimeForChallenge:
-      return context.goal.kind == .language
-        ? Text(
-          "The call isn't in your plan", tableName: "Plan",
-          comment: "A language phase whose closing call has no day in the plan")
-        : Text(
-          "The Trickster isn't in your plan", tableName: "Plan",
-          comment:
-            "A phase whose closing challenge has no day in the plan. The Trickster is the name of the challenge's character"
-        )
+      return planOutsideReason("time")
     case nil:
       return phase.state == .current && !isOpen ? resumes : nil
     }
@@ -667,7 +658,7 @@ struct SyllabusSubjectRow: View {
         }
 
         if subject.notPlannedReason != nil {
-          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+          planOutsideReason(subject.notPlannedReason)
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
         } else {
@@ -775,5 +766,20 @@ struct PlanChallengeLabel: View {
       : Text(
         "Questions on this phase, with no hints", tableName: "Plan",
         comment: "What the Trickster is, under its row")
+  }
+}
+
+func planOutsideReason(_ reason: String?) -> Text {
+  switch reason {
+  case "skipped":
+    Text(
+      "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",
+      comment: "A topic the plan leaves out: the learner took its subject out")
+  case "missing":
+    Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
+  default:
+    Text(
+      "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
+      comment: "A topic the plan leaves out: no time for it by the date")
   }
 }

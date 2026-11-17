@@ -88,9 +88,9 @@ async function WebsiteSubscription({ web }: { web: WebSubscription }) {
   const dateLine = await getWebDateLine(web);
 
   return (
-    <PageSection aria-label={t("Bought on the website")}>
+    <PageSection aria-label={t("Through the website")}>
       <PageSectionHeader>
-        <PageSectionTitle>{t("Bought on the website")}</PageSectionTitle>
+        <PageSectionTitle>{t("Through the website")}</PageSectionTitle>
       </PageSectionHeader>
       {dateLine && <p className="text-muted-foreground text-sm">{dateLine}</p>}
       <WebPlanAction state={web.state} />

@@ -37,7 +37,6 @@ msgstr "Twój strzał"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
 msgid "Brain Power"
@@ -4897,15 +4896,6 @@ msgstr ", ukończono"
 
 #: src/journey/journey-path.tsx
 #: src/journey/path-phase-row.tsx
-#: src/journey/phase-details.tsx
-#: src/plan-diff/use-change-rows.ts
-#: src/syllabus/use-subject-progress.ts
-msgctxt "L_oGIZ"
-msgid "Not in your plan"
-msgstr "Poza twoim planem"
-
-#: src/journey/journey-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, one {# nieprzerobiona lekcja} few {# nieprzerobione lekcje} many {# nieprzerobionych lekcji} other {# nieprzerobionej lekcji}}"
@@ -5008,16 +4998,6 @@ msgid "Continues {date}"
 msgstr "Ciąg dalszy {date}"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "sk-jVa"
-msgid "The call isn't in your plan"
-msgstr "Twój plan nie obejmuje rozmowy"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "xl2sjx"
-msgid "The Trickster isn't in your plan"
-msgstr "Twój plan nie obejmuje Spryciarza"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
 msgid ", up next"
 msgstr ", następny"
@@ -5026,6 +5006,12 @@ msgstr ", następny"
 msgctxt "sFnTpp"
 msgid "<start></start> – <end></end>"
 msgstr "<start></start> – <end></end>"
+
+#: src/journey/phase-details.tsx
+#: src/plan-diff/use-change-rows.ts
+msgctxt "L_oGIZ"
+msgid "Not in your plan"
+msgstr "Poza twoim planem"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
@@ -5356,6 +5342,7 @@ msgid "Phase {number, number} of {total, number}"
 msgstr "Etap {number, number} z {total, number}"
 
 #: src/language-aim/aim-picker.tsx
+#: src/language-aim/use-aim-words.ts
 msgctxt "OIMmZ8"
 msgid "How far do you want to go?"
 msgstr "Jak daleko chcesz dojść?"
@@ -7291,16 +7278,6 @@ msgstr "Nie udało się zapisać tej mapy. Spróbuj ponownie."
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Nie udało się usunąć tej mapy. Spróbuj ponownie."
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "HCrEOP"
-msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Punkty za naukę. Dzięki nim zdobywasz kolejne pasy, a twój kumpel rośnie."
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "JGTjfj"
-msgid "You have <mono>{points}</mono>"
-msgstr "Masz <mono>{points}</mono>"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -10457,6 +10434,12 @@ msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
 msgstr "Nowy kraj: {country}. Przygotujemy dla niego nowy plan. Zachowamy postępy w ukończonych lekcjach."
 
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "Test priorytetów pokazuje, którym przedmiotom poświęcić najwięcej czasu."
+
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -13331,11 +13314,6 @@ msgstr "Zmiana planu"
 msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "Jasne. Możesz rozwiązać test w swoim planie."
-
-#: src/today/today-focus-test.tsx
-msgctxt "KYliMN"
-msgid "The Focus test shows what to study most."
-msgstr "Test priorytetów pokazuje, którym przedmiotom poświęcić najwięcej czasu."
 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"

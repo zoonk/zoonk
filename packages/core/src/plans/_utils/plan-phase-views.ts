@@ -228,6 +228,7 @@ function getPhaseMinutes({
 }
 
 export function buildPhaseViews({
+  phaseReasons = new Map(),
   phaseChallengesRequired = true,
   challengesOpen = true,
   chapterTitles,
@@ -249,6 +250,7 @@ export function buildPhaseViews({
   todayItemKeys = new Set(),
   upNextItemId,
 }: {
+  phaseReasons?: ReadonlyMap<number, PlanPhaseView["notPlannedReason"]>;
   phaseChallengesRequired?: boolean;
   challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
@@ -314,6 +316,7 @@ export function buildPhaseViews({
       milestone: phase.milestone,
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
+      notPlannedReason: states[index] === "leftOut" ? (phaseReasons.get(index) ?? "time") : null,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,
       state: states[index] ?? "upcoming",

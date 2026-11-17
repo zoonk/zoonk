@@ -214,6 +214,7 @@ function LessonPlayerVisit({
   const routes = useMemo(
     () => ({
       ...routing,
+      mistakes: "/mistakes",
       seePlan: (planGoalId: string) => `/start/${planGoalId}`,
       signUp,
       upgrade: "/subscription",

@@ -60,61 +60,35 @@ final class SubscriptionPageTests: XCTestCase {
   }
 }
 
-@MainActor
-final class WebPlusVisitTests: XCTestCase {
-  func testScrollingAwayWhileRenewalFailsKeepsTheFailureForReturn() async throws {
-    let server = RenewalFailure()
-    let dependencies = AppDependencies.hosted(transport: server)
+extension SubscriptionPageTests {
+  @MainActor
+  func testTwoSubscriptionsEachShowTheirOwnManagementAction() async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport())
+    try readsWhatVoiceOverReads()
     let window = try show(
       PlusStatusView(
-        subscription: AccountSubscription(plan: "plus", provider: "stripe", status: "active")
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
       )
       .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
-    window.frame = CGRect(x: 0, y: 0, width: 420, height: 250)
-    try readsWhatVoiceOverReads()
+    window.frame = CGRect(x: 0, y: 0, width: 1032, height: 1376)
     try await Task.sleep(for: .milliseconds(600))
-    let scroll = try XCTUnwrap(requestViews(UIScrollView.self, in: window).first)
-    scroll.setContentOffset(
-      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-    try await Task.sleep(for: .milliseconds(600))
-    try activate(String(localized: "Keep Plus", table: "Subscriptions"), in: window)
-    await server.waitForRequest()
-    scroll.setContentOffset(.zero, animated: false)
-    try await Task.sleep(for: .milliseconds(600))
-    await server.release()
-    try await Task.sleep(for: .milliseconds(600))
-    scroll.setContentOffset(
-      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-    try await Task.sleep(for: .milliseconds(600))
-    XCTAssertTrue(
-      spoken(in: window).contains { $0.contains("We couldn't keep Plus") }, "\(spoken(in: window))")
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains("Through the App Store"))
+    XCTAssertTrue(words.contains("Manage in App Store"))
+    XCTAssertTrue(words.contains("Through the website"))
+    XCTAssertTrue(words.contains("Update your payment on the website, where you subscribed."))
+    XCTAssertFalse(words.contains("Cancel Plus"))
   }
 }
 
-private actor RenewalFailure: ClientTransport {
-  private var held: CheckedContinuation<Void, Never>?
-  private var waiter: CheckedContinuation<Void, Never>?
+private struct UnpaidWebsiteTransport: ClientTransport {
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
     -> (HTTPResponse, HTTPBody?)
   {
-    if operationID == "getStripeSubscriptionCancellation" {
-      return (
-        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-        HTTPBody(#"{"state":"ending","periodEnd":"2027-01-01T00:00:00.000Z"}"#)
-      )
-    }
-    if operationID == "resumeStripeSubscription" {
-      await withCheckedContinuation {
-        held = $0
-        waiter?.resume()
-        waiter = nil
-      }
-    }
-    throw APIError.network
-  }
-  func waitForRequest() async { if held == nil { await withCheckedContinuation { waiter = $0 } } }
-  func release() {
-    held?.resume()
-    held = nil
+    guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(#"{"state":"unpaid","periodEnd":null}"#)
+    )
   }
 }

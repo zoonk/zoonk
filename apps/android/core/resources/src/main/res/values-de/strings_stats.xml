@@ -176,4 +176,5 @@
     <string name="stats_afternoon">Nachmittag</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Abend</string>
+    <string name="stats_belt_level">%1$s · Level %2$s</string>
 </resources>

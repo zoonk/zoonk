@@ -594,10 +594,10 @@ struct PlusStatusView: View {
           switch provider {
           case .apple:
             Text(
-              "You subscribed in the App Store.", tableName: "Subscriptions")
+              "Through the App Store", tableName: "Subscriptions")
           case .google:
             Text(
-              "You subscribed in Google Play.", tableName: "Subscriptions")
+              "Through Google Play", tableName: "Subscriptions")
           case nil:
             Text(
               "Zoonk added Plus to your account. To change it, write to us.",
@@ -618,7 +618,10 @@ struct PlusStatusView: View {
           }
           .buttonStyle(.outline)
         case .google:
-          EmptyView()
+          Link(destination: URL(string: "https://play.google.com/store/account/subscriptions")!) {
+            Text("Manage in Google Play", tableName: "Subscriptions")
+          }
+          .buttonStyle(.outline)
         case nil:
           Link(destination: AccountLinks.support) {
             Text("Write to us", tableName: "Subscriptions")
@@ -663,113 +666,25 @@ private struct UnpaidPlusView: View {
 /// Main's `CancelPlusButton` and `KeepPlusButton`. Beside a store purchase it's titled and says
 /// its own date.
 private struct WebPlusSection: View {
-  @Environment(SettingsStore.self) private var settings
-  @State private var isConfirmingCancel = false
-  private var failed: Bool { change.outcome ?? false }
-  @State private var change = VisitRequest<Bool>()
-
   let web: WebPlus
   let beside: Bool
 
   var body: some View {
     Section {
       if beside, let dateLine = web.dateLine {
-        dateLine
-          .foregroundStyle(.mutedForeground)
+        dateLine.foregroundStyle(.mutedForeground)
       }
-
-      if web.state == .ending {
+      Link(destination: AccountLinks.subscription) {
         Text(
-          "Keep Plus, and it renews as before.", tableName: "Subscriptions"
+          "Update your payment on the website, where you subscribed.", tableName: "Subscriptions",
+          comment:
+            "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update."
         )
-        .foregroundStyle(.mutedForeground)
-
-        BusyButton(isBusy: change.isRunning, isRow: true) {
-          run { await settings.keepWebPlus() }
-        } label: {
-          Text(
-            "Keep Plus", tableName: "Subscriptions",
-            comment:
-              "Turns the stopped renewal of Plus bought on the web back on, so it renews as before")
-        }
-      } else {
-        BusyButton(isBusy: change.isRunning, isRow: true) {
-          change.outcome = nil
-          isConfirmingCancel = true
-        } label: {
-          Text(
-            "Cancel Plus", tableName: "Subscriptions",
-            comment:
-              "Cancels Plus bought on the web: the button, and the confirmation in its dialog")
-        }
-        .confirmationDialog(
-          Text(
-            "Cancel Plus?", tableName: "Subscriptions",
-            comment: "Title of the dialog that cancels Plus"),
-          isPresented: $isConfirmingCancel,
-          titleVisibility: .visible
-        ) {
-          Button(role: .destructive) {
-            run { await settings.cancelWebPlus() }
-          } label: {
-            Text(
-              "Cancel Plus", tableName: "Subscriptions",
-              comment:
-                "Cancels Plus bought on the web: the button, and the confirmation in its dialog")
-          }
-
-          Button(role: .cancel) {
-          } label: {
-            Text(
-              "Go back", tableName: "Subscriptions",
-              comment: "Closes the dialog that cancels Plus without canceling it")
-          }
-        } message: {
-          if web.state == .unpaid {
-            Text(
-              "Plus ends right away, and you won't be charged again.",
-              tableName: "Subscriptions")
-          } else {
-            Text(
-              "You keep Plus until the end of the period you already paid for.",
-              tableName: "Subscriptions")
-          }
-        }
       }
+      .buttonStyle(.ghost)
     } header: {
-      if beside {
-        SectionTitle(
-          Text(
-            "Bought on the website", tableName: "Subscriptions"))
-      }
-    } footer: {
-      SectionFooter {
-        footer
-      }
+      SectionTitle(Text("Through the website", tableName: "Subscriptions"))
     }
-  }
-
-  @ViewBuilder
-  private var footer: some View {
-    if web.state == .ending {
-      if failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't keep Plus. Try again or email hello@zoonk.com.",
-            table: "Subscriptions"))
-      }
-    } else if failed {
-      FailureLine(
-        message: AttributedString(
-          localized:
-            "We couldn't cancel Plus. Try again or email \(AttributedString.supportEmail).",
-          table: "Subscriptions"
-        ))
-    }
-  }
-
-  private func run(_ write: @escaping () async -> Bool) {
-    change.run { !(await write()) }
   }
 }
 
@@ -778,13 +693,8 @@ extension WebPlus {
   fileprivate var dateLine: Text? {
     if state == .unpaid {
       let failed = Text("Your last renewal payment failed.", tableName: "Subscriptions")
-      let update = Text(
-        "Update your payment on the website, where you subscribed.", tableName: "Subscriptions",
-        comment:
-          "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update."
-      )
 
-      return Text("\(failed) \(update)")
+      return failed
     }
 
     return periodEnd.map { state == .ending ? plusEnds(on: $0) : renews(on: $0) }

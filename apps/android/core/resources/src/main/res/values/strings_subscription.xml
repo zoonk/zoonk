@@ -128,4 +128,8 @@
     <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back to free, and your goals and progress stay with you.</string>
     <string name="subscription_question_refund">Can I get a refund?</string>
     <string name="subscription_answer_refund">Google Play handles refunds for Plus bought there: ask for one in Google Play. If you subscribed on our website, write to us at hello@zoonk.com and we\'ll look into it.</string>
+    <string name="subscription_through_google">Through Google Play</string>
+    <string name="subscription_through_apple">Through the App Store</string>
+    <string name="subscription_through_website">Through the website</string>
+    <string name="subscription_manage_apple">Manage in App Store</string>
 </resources>

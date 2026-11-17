@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Personal examples, plans that fit your week and calls with %@ that remember your news" : {
+      "comment" : "What memory does while it is on; the placeholder is the learner's buddy name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal examples, plans that fit your week and calls with %@ that remember your news"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
       "localizations" : {

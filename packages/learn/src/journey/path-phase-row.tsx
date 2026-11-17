@@ -8,6 +8,7 @@ import { useIsoToday } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 
 /** A row's end: when the phase ends, on the edge every row's value ends on. */
@@ -62,11 +63,10 @@ function isLeftOut(phase: PlanPhaseView): boolean {
 
 function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
-  const { goal } = usePlanScreen();
   const lessons = phase.lessonsTotal - phase.lessonsDone;
 
   if (phase.state === "leftOut") {
-    return <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>;
+    return <ReasonText reason={phase.notPlannedReason} />;
   }
 
   if (phase.state === "unfinished" && lessons > 0) {
@@ -79,13 +79,7 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
     );
   }
 
-  return (
-    <span className="text-muted-foreground text-xs">
-      {goal.kind === "language"
-        ? t("The call isn't in your plan")
-        : t("The Trickster isn't in your plan")}
-    </span>
-  );
+  return <ReasonText reason="time" />;
 }
 
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
