@@ -1,8 +1,15 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { useLayoutEffect, useRef } from "react";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import { type MapBox, type MapPoint, placeMapLabels, strayRegions } from "./map-viewport";
+import {
+  type MapBox,
+  type MapPoint,
+  mapLabelFits,
+  placeMapLabels,
+  strayRegions,
+} from "./map-viewport";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -38,6 +45,44 @@ function MapShapes({
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
 }) {
+  const labelsRef = useRef<SVGGElement>(null);
+
+  useLayoutEffect(() => {
+    const group = labelsRef.current;
+    const svg = group?.ownerSVGElement;
+
+    if (!group || !svg) {
+      return;
+    }
+
+    const measure = () => {
+      const frame = svg.getBoundingClientRect();
+
+      for (const label of group.querySelectorAll("text")) {
+        const bounds = label.getBoundingClientRect();
+
+        label.style.visibility = mapLabelFits({
+          angle: 0,
+          center: {
+            x: (bounds.left + bounds.right) / 2 - frame.left,
+            y: (bounds.top + bounds.bottom) / 2 - frame.top,
+          },
+          frame,
+          height: bounds.height,
+          width: bounds.width,
+        })
+          ? "visible"
+          : "hidden";
+      }
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(group);
+    observer.observe(svg);
+    return () => observer.disconnect();
+  });
+
   const stray = strayRegions({
     labels: drawing.labels,
     legendTones: drawing.legend.map((item) => item.tone),
@@ -87,36 +132,39 @@ function MapShapes({
         />
       ))}
 
-      {drawing.labels.map((label, index) => {
-        const spot = labelSpots[index];
+      <g ref={labelsRef}>
+        {drawing.labels.map((label, index) => {
+          const spot = labelSpots[index];
 
-        if (!spot) {
-          return null;
-        }
+          if (!spot) {
+            return null;
+          }
 
-        return (
-          <text
-            className={cn(
-              "stroke-background",
-              label.kind === "street"
-                ? "fill-muted-foreground font-medium"
-                : "fill-foreground/75 font-semibold",
-            )}
-            dominantBaseline="middle"
-            fontSize={LABEL_SIZE * pixelSize}
-            key={`${label.text}-${label.x}-${label.y}`}
-            paintOrder="stroke"
-            strokeLinejoin="round"
-            strokeWidth={LABEL_HALO * pixelSize}
-            textAnchor="middle"
-            transform={label.angle ? `rotate(${label.angle} ${spot.x} ${spot.y})` : undefined}
-            x={spot.x}
-            y={spot.y}
-          >
-            {labelText(label.key, label.text)}
-          </text>
-        );
-      })}
+          return (
+            <text
+              className={cn(
+                "stroke-background",
+                label.kind === "street"
+                  ? "fill-muted-foreground font-medium"
+                  : "fill-foreground/75 font-semibold",
+              )}
+              style={{ visibility: "hidden" }}
+              dominantBaseline="middle"
+              fontSize={LABEL_SIZE * pixelSize}
+              key={`${label.text}-${label.x}-${label.y}`}
+              paintOrder="stroke"
+              strokeLinejoin="round"
+              strokeWidth={LABEL_HALO * pixelSize}
+              textAnchor="middle"
+              transform={label.angle ? `rotate(${label.angle} ${spot.x} ${spot.y})` : undefined}
+              x={spot.x}
+              y={spot.y}
+            >
+              {labelText(label.key, label.text)}
+            </text>
+          );
+        })}
+      </g>
     </>
   );
 }

@@ -8,12 +8,10 @@ export function ActivityGuessComparison({
   actual,
   guess,
   isCorrect,
-  unit,
 }: {
   actual: number;
   guess: number;
   isCorrect: boolean;
-  unit: string;
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
@@ -21,7 +19,7 @@ export function ActivityGuessComparison({
 
   if (comparison.kind === "close") {
     // A guess written the same as the real value needs no line: the two values already say it.
-    return format(guess, { unit }) === format(actual, { unit }) ? null : (
+    return format(guess) === format(actual) ? null : (
       <p className="text-sm font-medium">{t("Your guess is close to the real value.")}</p>
     );
   }
@@ -30,7 +28,7 @@ export function ActivityGuessComparison({
     return (
       <p className="text-sm font-medium">
         {t("Your guess is off by {difference}.", {
-          difference: format(Math.abs(comparison.difference), { unit }),
+          difference: format(Math.abs(comparison.difference)),
         })}
       </p>
     );

@@ -5,6 +5,13 @@ import org.junit.Test
 
 /** Main's `map-viewport.test.ts`, with the values its `fitViewport` and `spreadPins` return. */
 class MapViewportTest {
+    @Test
+    fun measuredLabelsMustFitWholeWithTheirHalo() {
+        assertEquals(true, mapLabelFits(MapPoint(100.0, 50.0), 80.0, 14.0, 0.0, 200.0, 100.0))
+        assertEquals(false, mapLabelFits(MapPoint(20.0, 50.0), 80.0, 14.0, 0.0, 200.0, 100.0))
+        assertEquals(false, mapLabelFits(MapPoint(100.0, 20.0), 80.0, 14.0, 90.0, 200.0, 100.0))
+    }
+
     private fun assertPoints(
         expected: List<MapPoint>,
         actual: List<MapPoint>,

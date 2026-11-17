@@ -219,7 +219,7 @@ private struct MapShapes: View {
   let pins: [(spot: CGPoint, shown: CGPoint)]
 
   var body: some View {
-    Canvas { context, _ in
+    Canvas { context, size in
       let transform = CGAffineTransform(scaleX: scale, y: scale)
         .translatedBy(x: -crop.minX, y: -crop.minY)
 
@@ -259,6 +259,10 @@ private struct MapShapes: View {
           .font(
             (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold))
               .font(in: context.environment))
+        let measured = context.resolve(text).measure(
+          in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity))
+        guard MapViewport.labelFits(center: point, text: measured, angle: label.angle, frame: size)
+        else { continue }
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))

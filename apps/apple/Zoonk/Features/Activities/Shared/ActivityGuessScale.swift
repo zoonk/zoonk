@@ -71,6 +71,7 @@ struct ActivityGuessScaleView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
+      if let unit { Text(verbatim: unit).typeStyle(.meta).foregroundStyle(.mutedForeground) }
       Group {
         if let guess {
           Text(
@@ -136,7 +137,7 @@ struct ActivityGuessScaleView: View {
   }
 
   private func format(_ value: Double) -> String {
-    ActivityNumberFormat.format(value, unit: unit)
+    ActivityNumberFormat.format(value)
   }
 }
 

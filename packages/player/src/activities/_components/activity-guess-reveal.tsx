@@ -30,7 +30,7 @@ export function ActivityGuessReveal({
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const formatValue = (value: number) => format(value, { unit });
+  const formatValue = (value: number) => format(value);
   const revealed = isChecked ? actual : null;
 
   return (
@@ -47,12 +47,7 @@ export function ActivityGuessReveal({
       {revealed !== null && (
         <div className="flex flex-col gap-3">
           {guess !== null && (
-            <ActivityGuessComparison
-              actual={revealed}
-              guess={guess}
-              isCorrect={isCorrect}
-              unit={unit}
-            />
+            <ActivityGuessComparison actual={revealed} guess={guess} isCorrect={isCorrect} />
           )}
           {children}
         </div>

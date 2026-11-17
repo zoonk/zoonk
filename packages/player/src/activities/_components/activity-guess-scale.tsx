@@ -4,7 +4,6 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
-import { splitMoneyUnit } from "@zoonk/utils/math-answer";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
@@ -92,95 +91,90 @@ export function ActivityGuessScale({
   const format = useFormatNumber();
   const share = guess === null ? HALF : shareOfValue(scale, guess);
   const actualShare = actual === null ? null : shareOfValue(scale, actual);
-  const formatValue = (value: number) => format(value, { unit });
+  const formatValue = (value: number) => format(value);
   const { ref: trackRef, width: trackWidth } = useMeasuredWidth<HTMLDivElement>(0);
 
   const ticks = scaleTicks(scale);
-  const isMoney = splitMoneyUnit(unit) !== null;
 
-  const { isShort } = tickLabels({
-    format: (value, compact) => format(value, { compact, unit: isMoney ? unit : undefined }),
-    ticks,
-  });
+  const { isShort } = tickLabels({ format: (value, compact) => format(value, { compact }), ticks });
 
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
   }
 
   return (
-    <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
-      {actual !== null && actualShare !== null && (
+    <div className="flex flex-col gap-2">
+      {unit && <p className="text-muted-foreground text-xs">{unit}</p>}
+      <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
+        {actual !== null && actualShare !== null && (
+          <ScaleChip
+            className={cn(
+              ACTIVITY_COLOR.right.soft,
+              ACTIVITY_COLOR.right.text,
+              "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold",
+            )}
+            share={actualShare}
+            trackWidth={trackWidth}
+          >
+            {t("Real value: {value}", { value: formatValue(actual) })}
+          </ScaleChip>
+        )}
+
         <ScaleChip
-          className={cn(
-            ACTIVITY_COLOR.right.soft,
-            ACTIVITY_COLOR.right.text,
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold",
-          )}
-          share={actualShare}
+          className="bg-background text-muted-foreground"
+          isLower={actualShare !== null}
+          share={share}
           trackWidth={trackWidth}
         >
-          {t("Real value: {value}", { value: formatValue(actual) })}
+          {disabled && guess !== null && <Lock aria-hidden="true" className="size-3" />}
+          {guess === null
+            ? t("Drag to guess")
+            : t("Your guess: {value}", { value: formatValue(guess) })}
         </ScaleChip>
-      )}
 
-      <ScaleChip
-        className="bg-background text-muted-foreground"
-        isLower={actualShare !== null}
-        share={share}
-        trackWidth={trackWidth}
-      >
-        {disabled && guess !== null && <Lock aria-hidden="true" className="size-3" />}
-        {guess === null
-          ? t("Drag to guess")
-          : t("Your guess: {value}", { value: formatValue(guess) })}
-      </ScaleChip>
+        <Slider
+          disabled={disabled}
+          max={SCALE_POSITIONS}
+          min={0}
+          onValueChange={(next) => handleChange(typeof next === "number" ? next : (next[0] ?? 0))}
+          step={1}
+          thumbAlignment="center"
+          value={Math.round(share * SCALE_POSITIONS)}
+        >
+          <SliderControl className="data-disabled:opacity-100">
+            <SliderTrack>
+              {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
 
-      <Slider
-        disabled={disabled}
-        max={SCALE_POSITIONS}
-        min={0}
-        onValueChange={(next) => handleChange(typeof next === "number" ? next : (next[0] ?? 0))}
-        step={1}
-        thumbAlignment="center"
-        value={Math.round(share * SCALE_POSITIONS)}
-      >
-        <SliderControl className="data-disabled:opacity-100">
-          <SliderTrack>
-            {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
+              {actualShare !== null && (
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    ACTIVITY_COLOR.right.solid,
+                    "ring-success/20 absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4",
+                  )}
+                  style={{ left: `${actualShare * PERCENT}%` }}
+                />
+              )}
 
-            {actualShare !== null && (
-              <span
-                aria-hidden="true"
-                className={cn(
-                  ACTIVITY_COLOR.right.solid,
-                  "ring-success/20 absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4",
-                )}
-                style={{ left: `${actualShare * PERCENT}%` }}
+              <SliderThumb
+                aria-label={t("Your guess")}
+                aria-valuetext={guess === null ? t("No guess yet") : formatValue(guess)}
               />
-            )}
+            </SliderTrack>
+          </SliderControl>
+        </Slider>
 
-            <SliderThumb
-              aria-label={t("Your guess")}
-              aria-valuetext={guess === null ? t("No guess yet") : formatValue(guess)}
-            />
-          </SliderTrack>
-        </SliderControl>
-      </Slider>
-
-      <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
-        {ticks.map((tick, index) => (
-          <span
-            className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
-            key={tick}
-            style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
-          >
-            {/* The scale says what it counts before any guess: money on every tick, a word once, at its end. */}
-            {format(tick, {
-              compact: isShort,
-              unit: isMoney || index === ticks.length - 1 ? unit : undefined,
-            })}
-          </span>
-        ))}
+        <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
+          {ticks.map((tick) => (
+            <span
+              className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
+              key={tick}
+              style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
+            >
+              {format(tick, { compact: isShort })}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

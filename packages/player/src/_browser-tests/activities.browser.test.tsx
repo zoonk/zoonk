@@ -93,6 +93,19 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
   });
 
+  it("guess readouts do not attach a free-text plural unit to one", async () => {
+    const source = activityContentFixtures.guessReveal;
+
+    openActivity({
+      content: { ...source, fields: { ...source.fields, unit: "days" } },
+      template: "guessReveal",
+    });
+
+    await guessOnScale(source.fields, 1);
+    await expect.element(page.getByText("Your guess: 1", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("days", { exact: true })).toBeVisible();
+  });
+
   it("guess then reveal: the computed value shows next to the guess, with its workings", async () => {
     openActivity({ template: "guessReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();

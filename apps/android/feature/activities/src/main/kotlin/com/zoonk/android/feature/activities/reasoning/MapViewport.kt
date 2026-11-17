@@ -101,3 +101,20 @@ private const val MAX_ASPECT = 1.05
 private const val SPREAD_PADDING = 0.6
 private const val EDGE_PADDING = 0.06
 private const val RELAX_ROUNDS = 40
+
+internal fun mapLabelFits(
+    center: MapPoint,
+    textWidth: Double,
+    textHeight: Double,
+    angle: Double,
+    width: Double,
+    height: Double,
+    inset: Double = 12.0,
+): Boolean {
+    val radians = angle * Math.PI / 180
+    val halfWidth =
+        (kotlin.math.abs(kotlin.math.cos(radians)) * textWidth + kotlin.math.abs(kotlin.math.sin(radians)) * textHeight) / 2 + inset
+    val halfHeight =
+        (kotlin.math.abs(kotlin.math.sin(radians)) * textWidth + kotlin.math.abs(kotlin.math.cos(radians)) * textHeight) / 2 + inset
+    return center.x >= halfWidth && center.x + halfWidth <= width && center.y >= halfHeight && center.y + halfHeight <= height
+}

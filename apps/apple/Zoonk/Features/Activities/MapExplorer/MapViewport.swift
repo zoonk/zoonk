@@ -2,6 +2,14 @@ import CoreGraphics
 
 /// Mirrors main's `map-viewport`.
 enum MapViewport {
+  static func labelFits(center: CGPoint, text: CGSize, angle: Double, frame: CGSize) -> Bool {
+    let radians = angle * .pi / 180
+    let halfWidth = (abs(cos(radians)) * text.width + abs(sin(radians)) * text.height) / 2 + 12
+    let halfHeight = (abs(sin(radians)) * text.width + abs(cos(radians)) * text.height) / 2 + 12
+    return center.x >= halfWidth && center.x + halfWidth <= frame.width
+      && center.y >= halfHeight && center.y + halfHeight <= frame.height
+  }
+
   private static let minAspect = 0.62
   private static let maxAspect = 1.05
   private static let spreadPadding = 0.6

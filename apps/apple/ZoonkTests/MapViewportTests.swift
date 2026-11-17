@@ -4,6 +4,17 @@ import XCTest
 @testable import Zoonk
 
 final class MapViewportTests: XCTestCase {
+  func testMeasuredLabelMustFitWholeWithItsHalo() {
+    let frame = CGSize(width: 200, height: 100)
+    let text = CGSize(width: 80, height: 14)
+    XCTAssertTrue(
+      MapViewport.labelFits(center: CGPoint(x: 100, y: 50), text: text, angle: 0, frame: frame))
+    XCTAssertFalse(
+      MapViewport.labelFits(center: CGPoint(x: 20, y: 50), text: text, angle: 0, frame: frame))
+    XCTAssertFalse(
+      MapViewport.labelFits(center: CGPoint(x: 100, y: 20), text: text, angle: 90, frame: frame))
+  }
+
   private let map = CGSize(width: 1000, height: 800)
 
   func testWithoutPlacesTheWholeMapShows() {

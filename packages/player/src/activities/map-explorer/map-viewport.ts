@@ -233,3 +233,36 @@ export function strayRegions({
     )
     .map((region) => region.id);
 }
+
+const LABEL_FRAME_INSET = 12;
+
+export function mapLabelFits({
+  frame,
+  center,
+  width,
+  height,
+  angle,
+}: {
+  frame: { width: number; height: number };
+  center: MapPoint;
+  width: number;
+  height: number;
+  angle: number;
+}): boolean {
+  const radians = (angle * Math.PI) / HALF_TURN;
+
+  const halfWidth =
+    (Math.abs(Math.cos(radians)) * width + Math.abs(Math.sin(radians)) * height) / 2 +
+    LABEL_FRAME_INSET;
+
+  const halfHeight =
+    (Math.abs(Math.sin(radians)) * width + Math.abs(Math.cos(radians)) * height) / 2 +
+    LABEL_FRAME_INSET;
+
+  return (
+    center.x >= halfWidth &&
+    center.x + halfWidth <= frame.width &&
+    center.y >= halfHeight &&
+    center.y + halfHeight <= frame.height
+  );
+}

@@ -278,6 +278,18 @@ private fun MapDrawing(
         val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
         labels.forEach { (label, text) ->
             val center = Offset(((label.x - crop.x) * zoom).toFloat(), ((label.y - crop.y) * zoom).toFloat())
+            if (!mapLabelFits(
+                    MapPoint(center.x.toDouble(), center.y.toDouble()),
+                    text.size.width.toDouble(),
+                    text.size.height.toDouble(),
+                    label.angle,
+                    size.width.toDouble(),
+                    size.height.toDouble(),
+                    12.dp.toPx().toDouble(),
+                )
+            ) {
+                return@forEach
+            }
             val topLeft = center - Offset(text.size.width / 2f, text.size.height / 2f)
             rotate(label.angle.toFloat(), pivot = center) {
                 drawText(text, colors.surface, topLeft, drawStyle = halo)

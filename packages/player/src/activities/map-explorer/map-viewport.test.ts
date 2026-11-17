@@ -4,6 +4,7 @@ import {
   type MapLabelSpot,
   type MapPoint,
   fitViewport,
+  mapLabelFits,
   placeMapLabels,
   spreadPins,
   strayRegions,
@@ -196,5 +197,27 @@ describe(strayRegions, () => {
     const spots = [{ x: 10, y: 10 }, null, { x: 50, y: 50 }];
 
     expect(strayRegions({ labels, legendTones: ["groupC"], regions, spots })).toStrictEqual([]);
+  });
+});
+
+describe(mapLabelFits, () => {
+  it("rejects measured text cut at an edge, including rotated text and its halo", () => {
+    const frame = { height: 100, width: 200 };
+
+    expect(
+      mapLabelFits({ angle: 0, center: { x: 100, y: 50 }, frame, height: 14, width: 80 }),
+    ).toBe(true);
+
+    expect(mapLabelFits({ angle: 0, center: { x: 20, y: 50 }, frame, height: 14, width: 80 })).toBe(
+      false,
+    );
+
+    expect(
+      mapLabelFits({ angle: 90, center: { x: 100, y: 20 }, frame, height: 14, width: 80 }),
+    ).toBe(false);
+
+    expect(
+      mapLabelFits({ angle: 45, center: { x: 100, y: 50 }, frame, height: 14, width: 400 }),
+    ).toBe(false);
   });
 });

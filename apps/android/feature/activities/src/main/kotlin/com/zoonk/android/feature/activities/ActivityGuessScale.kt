@@ -55,7 +55,7 @@ fun ActivityGuessReveal(
     explains: @Composable ColumnScope.() -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatAmount(value, locale) }
     val revealed = actual.takeIf { props.isChecked }
     val description =
         if (revealed == null) {
@@ -68,7 +68,7 @@ fun ActivityGuessReveal(
         ActivityGuessScale(scale, unit, guess, revealed, disabled = props.isLocked, onGuessChange = onGuessChange)
         if (revealed != null) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (guess != null) ActivityGuessComparison(revealed, guess, props.isCorrect == true, unit)
+                if (guess != null) ActivityGuessComparison(revealed, guess, props.isCorrect == true)
                 explains()
             }
         }
@@ -85,7 +85,7 @@ fun ActivityGuessScale(
     onGuessChange: (Double) -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatAmount(value, locale) }
     val share = guess?.let(scale::shareOf) ?: HALF
     val actualShare = actual?.let(scale::shareOf)
     val highlight = MaterialTheme.zoonk.vizHighlight
@@ -93,6 +93,7 @@ fun ActivityGuessScale(
     val guessValue = guess?.let(format) ?: stringResource(R.string.activities_guess_none)
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        unit?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         if (actual != null && actualShare != null) {
             AtShare(actualShare) {
                 ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
@@ -162,7 +163,6 @@ fun ActivityGuessComparison(
     actual: Double,
     guess: Double,
     isCorrect: Boolean,
-    unit: String?,
 ) {
     val locale = currentLocale()
     val text =
@@ -174,7 +174,7 @@ fun ActivityGuessComparison(
             is GuessComparison.Off -> {
                 stringResource(
                     R.string.activities_guess_off_by,
-                    formatAmount(abs(comparison.difference), locale, unit),
+                    formatAmount(abs(comparison.difference), locale),
                 )
             }
 
