@@ -85,7 +85,7 @@ private fun WeekHeader() {
     Text(
         stringResource(R.string.today_week_title),
         modifier = Modifier.semantics { heading() },
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.zoonkType.sectionTitle,
     )
 }
 

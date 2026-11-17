@@ -97,7 +97,7 @@ fun LanguageAimRow(
             Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }
         },
-        trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
+        trailing = { Text(stringResource(R.string.onboarding_aim_change), style = MaterialTheme.typography.labelMedium) },
         chevron = false,
         onClick = { onOpenChange(true) },
         modifier = modifier.bleed(LIST_ITEM_INSET),

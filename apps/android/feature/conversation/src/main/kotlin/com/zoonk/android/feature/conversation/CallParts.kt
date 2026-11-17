@@ -277,9 +277,9 @@ fun ChecklistRow(
     ) {
         StatusMark(if (done) MarkStatus.Done else MarkStatus.Todo)
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.bodyMedium)
             description?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -291,10 +291,8 @@ internal fun SectionTitle(
     modifier: Modifier = Modifier,
     trailing: String? = null,
 ) {
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-        trailing?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium) }
-    }
+    com.zoonk.android.ui.components
+        .SectionHeader(text, modifier = modifier, detail = trailing)
 }
 
 /** Main's `CallNote` and `MicNote`: a small line with its icon. */
