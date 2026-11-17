@@ -59,7 +59,6 @@
     <string name="catalog_quick_question">Quick question</string>
     <string name="catalog_guess_note">Your answer starts the %1$s-minute lesson.</string>
     <string name="catalog_check_note">Your choice opens the %1$s-minute lesson. Check your answer there.</string>
-    <string name="catalog_no_sign_up">No sign-up needed.</string>
 
     <string name="catalog_example_plan">How long it takes</string>
     <plurals name="catalog_plan_weeks">

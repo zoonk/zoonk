@@ -47,7 +47,6 @@
   "catalog_level_unwritten": "a12efe37060461382314a39b06bb90d4409b235741167c6b9b6a087b501a20d0",
   "catalog_load_more_failed": "74fa98ccfbd1dec5334ff8d92ecd6b2dfa0a755df2cbe9a8edd20af8d54c4a9a",
   "catalog_loading_more": "1903ec455add80f3d2bfea131637cdf34949107ce617c028c2e4d98a68a92512",
-  "catalog_no_sign_up": "867ad5a82f56198cd30b4cfec9880b148c881eba7cf4f2620ba3c5a97ab6d080",
   "catalog_open_course": "3b43fa2ef13fe5aff789edcb9c27ea7a04237810778840eab5deb34d88d48fa0",
   "catalog_outcomes": "110032a5aaa6aea620d01d7005594c7b07c91cc4baa356876c7ab9a503182fcd",
   "catalog_outline": "9c4de5447d05c85acce8e0ca483a6add9cef1b49ca3290a9f575b97fc651c310",
@@ -148,7 +147,6 @@
     <string name="catalog_quick_question">간단한 문제</string>
     <string name="catalog_guess_note">답을 고르면 %1$s분 레슨이 시작돼요.</string>
     <string name="catalog_check_note">선택하면 %1$s분 레슨이 열려요. 레슨에서 정답을 확인해 보세요.</string>
-    <string name="catalog_no_sign_up">회원 가입이 필요 없어요.</string>
     <string name="catalog_example_plan">걸리는 시간</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="other">약 %1$s주</item>

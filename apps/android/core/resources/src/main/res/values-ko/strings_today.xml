@@ -92,7 +92,6 @@
   "today_save_failed": "740763a2ae8e5f163a5da691446d97c86c21152714d7d38484a0e64738d04a31",
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
-  "today_see_plan": "9a82b9c0dcc3ae1cd4b025ea525b42b4e697f0e395a4c6a47b882b3f9be1fb38",
   "today_see_summary": "54fc12280fb64f52dfb3b9531c81e67f69e15b295405c6c0f8000141abe4aa7b",
   "today_see_your_plan": "aaf7e577a4f9b9e29179b62f635b84c5e10fe85cef60fa7a7a1726c9660cc2da",
   "today_segment_challenge_note": "b6ceb483b94a85cf0d340a45fa03e9ebe8bd25f875df662bd817c300f92782c9",
@@ -216,7 +215,6 @@
     <string name="today_continue_session">계속하기</string>
     <string name="today_keep_learning">계속 배우기</string>
     <string name="today_practice_minutes">%1$s분 연습하기</string>
-    <string name="today_see_plan">내 계획 보기</string>
     <string name="today_lessons_not_written">오늘 레슨이 아직 준비되지 않았어요.</string>
     <string name="today_get_lessons">오늘의 레슨 준비하기</string>
     <string name="today_open_failed">다음 단계를 열지 못했어요. 다시 시도해 보세요.</string>

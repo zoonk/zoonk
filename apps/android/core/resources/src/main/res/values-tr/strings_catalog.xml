@@ -47,7 +47,6 @@
   "catalog_level_unwritten": "55bcab411b2193bce8412ff6c25aa1667cf4dc9bae0ab79207bcd34f3e0f98a7",
   "catalog_load_more_failed": "99b37e54d9e0641fa4dc0f342d707bc2867715b3de13bc2aa61e53f94373f78e",
   "catalog_loading_more": "fdacc73dcdecb8d792b276f5f8896bbab37c2879360f04e50bb155276e78e0f8",
-  "catalog_no_sign_up": "0dc7a313b6f417f52abe728c29e0607db0f8c9ce6f5413778e53cbc340e58bde",
   "catalog_open_course": "c8fa13a834e3bc191c3816a37713f5707269bfa96faac4463379d33942acda3a",
   "catalog_outcomes": "88049953b795e25861e9b673adfa24f88d395816d62dbe05d1b2b22dfd03789b",
   "catalog_outline": "64aeb4ff81b23d7e9c0d781d73873c9e25e72536f22bcc61baa8a8e69cc64b6d",
@@ -151,7 +150,6 @@
     <string name="catalog_quick_question">Kısa bir soru</string>
     <string name="catalog_guess_note">Cevabın %1$s dakikalık dersi başlatır.</string>
     <string name="catalog_check_note">Seçimin %1$s dakikalık dersi açar. Cevabını orada kontrol et.</string>
-    <string name="catalog_no_sign_up">Kayıt olmana gerek yok.</string>
     <string name="catalog_example_plan">Ne kadar sürer</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s hafta</item>
