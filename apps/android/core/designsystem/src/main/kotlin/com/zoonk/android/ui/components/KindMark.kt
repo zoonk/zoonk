@@ -72,7 +72,7 @@ fun KindMark(
     Icon(
         painter = painterResource(kind.icon),
         contentDescription = null,
-        modifier = modifier.size(markSize()),
+        modifier = modifier.centerGlyphInk(kind.icon).size(markSize()),
         tint = kind.color,
     )
 }

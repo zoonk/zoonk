@@ -45,6 +45,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.FullScreenDialog
+import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
@@ -62,6 +64,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -88,6 +91,25 @@ class LayoutCaptureTest {
     @After
     fun restore() {
         shots?.let { System.setProperty("zoonk.shots", it) } ?: System.clearProperty("zoonk.shots")
+    }
+
+    @Test
+    fun enlargedKindMarksStayOnTheirLabelsCapMiddle() {
+        RuntimeEnvironment.setFontScale(2f)
+        val elements =
+            capture {
+                LearnKind.entries.forEach { kind ->
+                    ListRow(headline = { Text(kind.name) }, leading = { KindMark(kind) })
+                }
+            }.elements()
+        elements.filter { it.optString("part") == "row" }.forEach { row ->
+            val own = elements.filter { it.optString("row") == row.getString("id") }
+            val label = own.first { it.optString("part") == "label" }
+            val mark = own.first { it.optString("part") == "mark" }.getJSONArray("ink")
+            val labelMiddle = (label.getDouble("capTop") + label.getDouble("capBottom")) / 2
+            val markMiddle = mark.getDouble(1) + mark.getDouble(3) / 2
+            assertEquals(label.getString("text"), labelMiddle, markMiddle, 1.0 + 0.5 / 3)
+        }
     }
 
     @Test
