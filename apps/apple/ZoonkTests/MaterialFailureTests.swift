@@ -32,9 +32,11 @@ final class MaterialFailureTests: XCTestCase {
           .frame(width: 320)
           .environment(AppRouter()))
 
-      try await Task.sleep(for: .seconds(0.5))
+      try await waitForTestCondition("The notice did not draw") { inkedRows(window) > 0 }
       let before = inkedRows(window)
-      try await Task.sleep(for: .seconds(2))
+      try await waitForTestCondition("The notice did not lift") {
+        limit.words(kind).title == nil && inkedRows(window) < before
+      }
       let after = inkedRows(window)
 
       XCTAssertGreaterThan(before, 0, "The render is blank or misread")
