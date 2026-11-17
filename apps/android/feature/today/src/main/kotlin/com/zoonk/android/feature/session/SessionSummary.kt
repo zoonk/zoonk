@@ -647,17 +647,16 @@ private fun SharedRow(
     content: @Composable () -> Unit,
 ) {
     Layout(content, modifier) { measurables, constraints ->
-        val gap = 12.dp.roundToPx()
+        val gap = 8.dp.roundToPx()
         val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
-        val row = labels.sum() + gap * (labels.size - 1)
+        val row = (labels.maxOrNull() ?: 0) * labels.size + gap * (labels.size - 1)
 
         if (row <= constraints.maxWidth) {
             val width = max(row, constraints.minWidth)
-            val rest = width - row
+            val buttonWidth = (width - gap * (labels.size - 1)) / labels.size
             val placeables =
                 measurables.mapIndexed { index, measurable ->
-                    val share = rest / labels.size + if (index < rest % labels.size) 1 else 0
-                    measurable.measure(Constraints.fixedWidth(labels[index] + share))
+                    measurable.measure(Constraints.fixedWidth(buttonWidth))
                 }
             val height = placeables.maxOf { it.height }
             layout(width, height) {
