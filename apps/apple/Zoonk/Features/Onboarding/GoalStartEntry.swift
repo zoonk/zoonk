@@ -209,10 +209,7 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   private func submit() {
     let goal = words.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: canSubmitEmpty) else {
-      isFocused = true
-      return
-    }
+    guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: canSubmitEmpty) else { return }
 
     isFocused = false
     onSubmit(goal)
