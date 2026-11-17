@@ -200,6 +200,7 @@ private struct CodeTracerCanvas: View {
         variableCells
       }
     }
+    .padding(.horizontal, -8)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -240,15 +241,13 @@ private struct CodeTracerCanvas: View {
           }
         }
       }
-      .padding(.horizontal, 10)
+      .padding(.horizontal, 8)
       .padding(.vertical, 6)
       .frame(maxWidth: .infinity, alignment: .leading)
-      // Boxed, so its inset words never make a second start edge beside the column's.
       .background(
-        changed ? Color.vizHighlight.opacity(0.15) : Color.boxBackground,
-        in: .rect(cornerRadius: Radius.lg)
+        changed ? Color.vizHighlight.opacity(0.15) : .clear,
+        in: .rect(cornerRadius: Radius.xl)
       )
-      .overlay(RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border))
       .accessibilityElement(children: .combine)
     }
   }

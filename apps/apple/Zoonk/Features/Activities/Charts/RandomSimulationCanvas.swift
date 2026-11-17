@@ -657,8 +657,9 @@ private struct SamplingSimulationView: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
-    .padding()
+    .padding(.horizontal, 12)
+    .padding(.vertical, 10)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(.boxBackground, in: .rect(cornerRadius: Radius.option, style: .continuous))
+    .activityBox()
   }
 }

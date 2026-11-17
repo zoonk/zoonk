@@ -132,10 +132,7 @@ struct PatternTesterCanvas: View {
       .typeStyle(.section.weight(.regular).monospaced())
       .padding(.horizontal)
       .frame(minHeight: 52)
-      .background(.boxBackground, in: .rect(cornerRadius: Radius.option, style: .continuous))
-      .overlay {
-        RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(Color.border)
-      }
+      .activityBox(cornerRadius: Radius.option)
     }
     .typeStyle(.body.weight(.medium))
   }
@@ -298,8 +295,9 @@ struct PatternTesterCanvas: View {
           }
         }
         .padding(.horizontal, 12)
-        .frame(minHeight: 36)
-        .background(.boxBackground, in: .rect(cornerRadius: Radius.md, style: .continuous))
+        .padding(.vertical, 8)
+        .frame(minHeight: 44)
+        .activityBox()
         .accessibilityElement(children: .combine)
       }
     }

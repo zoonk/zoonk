@@ -472,9 +472,8 @@ private struct SQLTableViewer: View {
           columns: table.columns.map(\.name), rows: table.rows, isEmbedded: true)
       }
     }
-    .background(.boxBackground)
+    .activityBox()
     .clipShape(.rect(cornerRadius: Radius.xl))
-    .overlay { RoundedRectangle(cornerRadius: Radius.xl).strokeBorder(.border) }
   }
 }
 
