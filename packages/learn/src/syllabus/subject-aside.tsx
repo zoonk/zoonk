@@ -34,7 +34,7 @@ function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
     <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
       <span className="font-medium">{t("Right answers")}</span>
       <span className="text-muted-foreground tabular-nums">
-        {t("{done, number} of {total, number} chapters", {
+        {t("{done, number} of {total, number}", {
           done: mastery.correct,
           total: mastery.answered,
         })}
@@ -169,7 +169,7 @@ function SubjectDetails({
 
       {subject.topics.length > 0 && (
         <DetailProperty label={t("Topics")} mono>
-          {t("{done, number} of {total, number} chapters", {
+          {t("{done, number} of {total, number} topics", {
             done: subject.topicsStudied ?? 0,
             total: subject.topics.length,
           })}
