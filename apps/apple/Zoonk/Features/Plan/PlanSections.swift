@@ -741,17 +741,12 @@ struct PlanSettingsSection: View {
   }
 
   private var dateValue: some View {
-    dateText.typeStyle(.data)
-  }
-
-  private var dateText: Text {
-    if context.plan.schedule.targetDate == nil {
-      return context.goal.kind == .exam
-        ? Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
-        : Text("No date", tableName: "Plan", comment: "A goal without a date")
-    }
-
-    return planFinish(context)?.text ?? Text(verbatim: "")
+    let value = PlanEndDateValue(
+      targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
+      finish: context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
+      today: context.plan.today)
+    return Text(verbatim: value.shown).accessibilityLabel(Text(verbatim: value.spoken))
+      .typeStyle(.data)
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
