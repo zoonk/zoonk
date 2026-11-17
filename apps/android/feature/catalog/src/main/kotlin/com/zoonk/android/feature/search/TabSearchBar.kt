@@ -124,6 +124,9 @@ fun TabSearchBar(
             SearchBar(
                 state = state,
                 inputField = inputField,
+                shape =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(com.zoonk.android.ui.theme.ZoonkRadius.xl),
                 modifier = modifier.then(beforeFold).then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }
