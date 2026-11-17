@@ -26,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -294,7 +295,7 @@ private fun SubjectDetails(
             val done = subject.chapters.count { it.state == SyllabusChapter.State.DONE }
             PropertyRow(
                 stringResource(R.string.goalcontent_chapters),
-                stringResource(R.string.goalcontent_count_of, number(done), number(subject.chapters.size)),
+                stringResource(R.string.goalcontent_chapters_progress, number(done), number(subject.chapters.size)),
             )
         }
         if (nextDate != null) {
@@ -335,7 +336,7 @@ internal fun LazyListScope.subjectChapters(
         detail = {
             val locale = currentLocale()
             stringResource(
-                R.string.goalcontent_count_of,
+                R.string.goalcontent_chapters_progress,
                 formatNumber(studied.toDouble(), locale),
                 formatNumber(chapters.size.toDouble(), locale),
             )
@@ -535,7 +536,7 @@ internal fun LazyListScope.subjectTopics(
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
                     if (index > 0) ListDivider()
-                    TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions)
+                    TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions, topics.size.toString().length)
                 }
             }
         }
@@ -552,6 +553,7 @@ private fun TopicGroupRow(
     showFrequency: Boolean,
     knownReturn: Syllabus.KnownTopicsReturn,
     actions: SubjectActions,
+    countDigits: Int,
 ) {
     val mark = group.mark
     val chapters = group.chapters
@@ -570,7 +572,15 @@ private fun TopicGroupRow(
         if (frequent || count != null) {
             {
                 if (frequent) FrequencyChip()
-                count?.let { (studied, total) -> GroupCount(studied, total) }
+                Box(contentAlignment = androidx.compose.ui.Alignment.CenterEnd) {
+                    Text(
+                        "8".repeat(countDigits) + "/" + "8".repeat(countDigits),
+                        Modifier.alpha(0f).clearAndSetSemantics {
+                        },
+                        style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"),
+                    )
+                    count?.let { (studied, total) -> GroupCount(studied, total) }
+                }
             }
         } else {
             null
