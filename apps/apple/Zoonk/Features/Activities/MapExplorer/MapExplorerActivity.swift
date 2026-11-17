@@ -15,12 +15,14 @@ extension ActivityRenderer {
             }
           }(),
           references: {
-            switch context.check {
-            case .choice(let question, let options, _, _):
-              return ([question] + options.map(\.text)).joined(separator: " ")
-            case .numeric(let question, _, _, _, _, _, _): return question
-            default: return ""
-            }
+            let checkReferences =
+              switch context.check {
+              case .choice(let question, let options, _, _):
+                ([question] + options.map(\.text)).joined(separator: " ")
+              case .numeric(let question, _, _, _, _, _, _): question
+              default: ""
+              }
+            return ([checkReferences] + fields.places.map(\.label)).joined(separator: " ")
           }())
       } else {
         Text(

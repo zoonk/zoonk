@@ -38,16 +38,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -59,9 +55,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
@@ -77,7 +71,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInner
 import kotlin.math.floor
-import kotlin.math.min
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf23Value as MapExplorerContent
 
 val mapExplorerRenderer =
@@ -107,22 +100,7 @@ private fun MapExplorerActivity(props: ActivityProps) {
                 ""
             }
         }
-    val references =
-        when (val check = content.check) {
-            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue -> {
-                check.value.question +
-                    " " +
-                    check.value.options.joinToString(" ") { it.text }
-            }
-
-            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value -> {
-                check.value.question
-            }
-
-            else -> {
-                ""
-            }
-        }
+    val references = mapLabelReferences(content)
     val map = remember(props.baseMap) { props.baseMap?.toBaseMap() }
 
     if (map == null) {
@@ -178,21 +156,42 @@ private fun MapExplorerActivity(props: ActivityProps) {
     }
 }
 
-private class PinSpot(
+internal fun mapLabelReferences(content: com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf23): String {
+    val checkReferences =
+        when (val check = content.check) {
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue -> {
+                check.value.question +
+                    " " +
+                    check.value.options.joinToString(" ") { it.text }
+            }
+
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value -> {
+                check.value.question
+            }
+
+            else -> {
+                ""
+            }
+        }
+    return (listOf(checkReferences) + content.fields.places.map { it.label }).joinToString(" ")
+}
+
+internal class PinSpot(
     val number: Int,
     val place: Place,
     val spot: MapPoint,
     val shown: MapPoint,
 )
 
-private class MapLayout(
+internal class MapLayout(
+    val width: Double,
     val crop: MapBox,
     val height: Double,
     val pins: List<PinSpot>,
 )
 
 /** Main's `layoutPins`, in dp: the part of the map to show, how tall, and where each place's pin goes. */
-private fun layoutPins(
+internal fun layoutPins(
     drawing: BaseMapDrawing,
     places: List<Place>,
     width: Double,
@@ -216,7 +215,17 @@ private fun layoutPins(
     val height = floor(crop.height * zoom + 0.5)
     val spots = projected.map { (_, point) -> MapPoint((point.x - crop.x) * zoom, (point.y - crop.y) * zoom) }
     val shown = spreadPins(spots, PIN_SPACING, width, height)
-    return MapLayout(crop, height, projected.mapIndexed { at, (index, _) -> PinSpot(index + 1, places[index], spots[at], shown[at]) })
+    return MapLayout(
+        width,
+        crop,
+        height,
+        projected.mapIndexed {
+            at,
+            (index, _),
+            ->
+            PinSpot(index + 1, places[index], spots[at], shown[at])
+        },
+    )
 }
 
 @Composable
@@ -265,93 +274,6 @@ private fun MapView(
                 }
             }
             MapLabels(map, layout, references, question, Modifier.matchParentSize())
-        }
-    }
-}
-
-@Composable
-private fun MapLabels(
-    map: BaseMap,
-    layout: MapLayout,
-    references: String,
-    question: String,
-    modifier: Modifier,
-) {
-    val colors = MaterialTheme.colorScheme
-    val measurer = rememberTextMeasurer()
-    val numberStyle = mapPinNumberStyle()
-    val fontScale = LocalDensity.current.fontScale
-    val labelSize = MaterialTheme.typography.labelMedium.fontSize * (min(fontScale, MAX_LABEL_SCALE) / fontScale)
-    val regionStyle = MaterialTheme.typography.labelMedium.copy(fontSize = labelSize, fontWeight = FontWeight.SemiBold)
-    val streetStyle = MaterialTheme.typography.labelMedium.copy(fontSize = labelSize, fontWeight = FontWeight.Medium)
-    val labelTexts = map.drawing.labels.map { label -> label.key?.let(::baseMapLabel)?.let { stringResource(it) } ?: label.text }
-    val labels =
-        remember(map, labelTexts, regionStyle, streetStyle) {
-            map.drawing.labels.mapIndexed { index, label ->
-                label to measurer.measure(labelTexts[index], if (label.kind == LabelKind.Street) streetStyle else regionStyle)
-            }
-        }
-
-    val regionLabel = colors.onSurface.copy(alpha = REGION_LABEL_ALPHA)
-    Canvas(modifier.clearAndSetSemantics {}) {
-        val crop = layout.crop
-        val zoom = (size.width / crop.width).toFloat()
-        val halo = Stroke(LABEL_HALO.toPx(), join = StrokeJoin.Round)
-        val streetPaths =
-            map.streets.map { path ->
-                val bounds = path.getBounds()
-                val steps =
-                    kotlin.math
-                        .ceil((bounds.width + bounds.height) * zoom / density / MAP_STREET_SAMPLE_STEP)
-                        .toInt()
-                        .coerceAtLeast(1)
-                val measure = PathMeasure().apply { setPath(path, false) }
-                (0..steps).map { step ->
-                    val point = measure.getPosition(measure.length * step / steps)
-                    MapPoint((point.x - crop.x) * zoom / density, (point.y - crop.y) * zoom / density)
-                }
-            }
-        val spots =
-            placeMapLabels(
-                labels.mapIndexed { index, (label, text) ->
-                    val streetIndex = map.drawing.streets.indexOfFirst { it.name == label.text }
-                    val positions = streetPaths.getOrNull(streetIndex).orEmpty()
-                    MapLabelSpot(
-                        MapPoint(
-                            (label.x - crop.x) * zoom / density,
-                            (label.y - crop.y) * zoom / density,
-                        ),
-                        text.size.width.toDouble() / density,
-                        text.size.height.toDouble() / density,
-                        label.angle,
-                        label.kind == LabelKind.Street,
-                        isMapLabelNamed(references, label.text, labelTexts[index]),
-                        positions,
-                        question = isMapLabelNamed(question, label.text, labelTexts[index]),
-                    )
-                },
-                layout.pins.map { it.shown },
-                size.width.toDouble() / density,
-                size.height.toDouble() / density,
-                streets = streetPaths,
-                pinNumbers =
-                    layout.pins.map { pin ->
-                        val number = measurer.measure(pin.number.toString(), numberStyle)
-                        val w = number.size.width.toDouble() / density
-                        val h = number.size.height.toDouble() / density
-                        MapBox(pin.shown.x - w / 2, pin.shown.y - h / 2, w, h)
-                    },
-            )
-        labels.forEachIndexed { index, (label, text) ->
-            val spot = spots[index] ?: return@forEachIndexed
-            val center = Offset((spot.x * density).toFloat(), (spot.y * density).toFloat())
-            val topLeft = center - Offset(text.size.width / 2f, text.size.height / 2f)
-            rotate(label.angle.toFloat(), pivot = center) {
-                withTransform({ scale(spot.scale.toFloat(), spot.scale.toFloat(), pivot = center) }) {
-                    drawText(text, colors.surface, topLeft, drawStyle = halo)
-                    drawText(text, if (label.kind == LabelKind.Street) colors.onSurfaceVariant else regionLabel, topLeft, drawStyle = Fill)
-                }
-            }
         }
     }
 }
@@ -591,7 +513,7 @@ private fun baseMapNote(id: String): Int? =
 
 /** Main's `useBaseMapLabels`: the place names a drawing writes on itself; street names stay as written. */
 @StringRes
-private fun baseMapLabel(key: String): Int? =
+internal fun baseMapLabel(key: String): Int? =
     when (key) {
         "africa" -> R.string.activities_reasoning_map_label_africa
         "antarctica" -> R.string.activities_reasoning_map_label_antarctica
@@ -620,19 +542,15 @@ private const val MAX_MAP_HEIGHT = 440.0
 private const val PIN_SPACING = 48.0
 private const val SOFT = 0.16f
 private const val RING_ALPHA = 0.3f
-private const val REGION_LABEL_ALPHA = 0.75f
 
-/** The map's own labels are part of the drawing, which doesn't grow with the font size. */
-private const val MAX_LABEL_SCALE = 1.3f
 private val STREET_WIDTH = 9.dp
-private val LABEL_HALO = 3.dp
 private val TRUE_SPOT = 3.5.dp
 private val RING = 4.dp
 private val PIN_SHADOW = 4.dp
 private val PIN_FACE = 32.dp
 
 @Composable
-private fun mapPinNumberStyle() =
+internal fun mapPinNumberStyle() =
     MaterialTheme.typography.labelLarge
         .withTabularFigures()
         .copy(fontWeight = FontWeight.SemiBold)
