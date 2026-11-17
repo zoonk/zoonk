@@ -52,10 +52,12 @@ final class HeldSlotTests: XCTestCase {
         )
         .environment(AppRouter()))
 
-      try await Task.sleep(for: .seconds(0.5))
+      try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
       let before = try XCTUnwrap(inkTop(window))
       XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-      try await Task.sleep(for: .seconds(2))
+      // Nothing may move while the limit lifts and the view redraws.
+      let noMovementWindow: Duration = .seconds(2)
+      try await Task.sleep(for: noMovementWindow)
 
       XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
       window.isHidden = true
@@ -70,10 +72,12 @@ final class HeldSlotTests: XCTestCase {
         CallProblemView(problem: .call(.limit, limit), onAction: { _ in })
           .environment(AppRouter()))
 
-      try await Task.sleep(for: .seconds(0.5))
+      try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
       let before = try XCTUnwrap(inkTop(window))
       XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-      try await Task.sleep(for: .seconds(2))
+      // Nothing may move while the limit lifts and the view redraws.
+      let noMovementWindow: Duration = .seconds(2)
+      try await Task.sleep(for: noMovementWindow)
 
       XCTAssertNil(limit.words(.callTime).title)
       XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
@@ -91,10 +95,12 @@ final class HeldSlotTests: XCTestCase {
       }
       .environment(AppRouter()))
 
-    try await Task.sleep(for: .seconds(0.5))
+    try await waitForTestCondition("The gate did not draw") { inkTop(window) != nil }
     let before = try XCTUnwrap(inkTop(window))
     XCTAssertGreaterThan(before, 100, "The render is blank or misread")
-    try await Task.sleep(for: .seconds(2))
+    // Nothing may move while the limit lifts and the view redraws.
+    let noMovementWindow: Duration = .seconds(2)
+    try await Task.sleep(for: noMovementWindow)
 
     XCTAssertEqual(try XCTUnwrap(inkTop(window)), before)
   }
@@ -115,7 +121,9 @@ final class HeldSlotTests: XCTestCase {
       .frame(width: 320)
       .environment(AppRouter()))
 
-    try await Task.sleep(for: .seconds(2.5))
+    // Nothing may move while the limit lifts and the view redraws.
+    let noMovementWindow: Duration = .seconds(2.5)
+    try await Task.sleep(for: noMovementWindow)
     return nextRow
   }
 
@@ -131,11 +139,13 @@ final class HeldSlotTests: XCTestCase {
         .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
       })
 
-    try await Task.sleep(for: .seconds(0.5))
+    try await waitForTestCondition("The slot did not measure") { !heights.isEmpty }
     let narrow = try XCTUnwrap(heights.last)
 
     width.value = 800
-    try await Task.sleep(for: .seconds(0.5))
+    try await waitForTestCondition("The wider slot did not shrink") {
+      heights.last.map { $0 < narrow } ?? false
+    }
 
     XCTAssertLessThan(try XCTUnwrap(heights.last), narrow)
   }

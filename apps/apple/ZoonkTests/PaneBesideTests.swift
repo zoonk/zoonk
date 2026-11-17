@@ -27,10 +27,12 @@ final class PaneBesideTests: XCTestCase {
           .onChange(of: isBeside) { beside.append(isBeside) }
       })
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("Initial pane did not appear") {
+      beside.last == (from > to) && !appeared.isEmpty
+    }
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("Pane did not resize") { beside.last == (to > from) }
 
     XCTAssertEqual(Set(appeared).count, 1, "One view throughout")
     XCTAssertEqual(beside.last, to > from, "The pane did come or go: \(beside)")

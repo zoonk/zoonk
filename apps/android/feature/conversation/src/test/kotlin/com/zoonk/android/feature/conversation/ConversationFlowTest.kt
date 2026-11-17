@@ -151,7 +151,7 @@ class ConversationFlowTest {
 
         compose.onNodeWithText("Call again").performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("Calling Lucía…").assertExists()
+        compose.onNodeWithText("Reconnecting…").assertExists()
         seen("You: Un café, por favor.")
         val earlier = listOf("¡Hola! ¿Qué le pongo?", "Un café, por favor.")
         assertEquals(earlier, client.offeredTurns.last().map { it.text })

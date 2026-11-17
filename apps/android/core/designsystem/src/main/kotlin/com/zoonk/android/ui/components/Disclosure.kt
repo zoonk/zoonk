@@ -27,6 +27,6 @@ fun DisclosureRow(
             supporting = supporting,
             meta = count?.let { { Text(it.toString()) } },
         )
-        if (expanded) Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
+        if (expanded) Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)) { content() }
     }
 }

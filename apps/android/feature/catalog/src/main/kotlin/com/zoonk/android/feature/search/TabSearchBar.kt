@@ -119,11 +119,14 @@ fun TabSearchBar(
 
     SearchPanel(app, navigator, state, docked) { inputField ->
         // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
-        val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
+        val width = Modifier.fillMaxWidth()
         BeforeFold { beforeFold ->
             SearchBar(
                 state = state,
                 inputField = inputField,
+                shape =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(com.zoonk.android.ui.theme.ZoonkRadius.xl),
                 modifier = modifier.then(beforeFold).then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }
@@ -447,13 +450,13 @@ private fun SearchResults(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val label = MaterialTheme.zoonkType.label
+    val label = MaterialTheme.typography.labelMedium
 
     LazyColumn(modifier.fillMaxSize()) {
         groups.forEach { group ->
             item(key = "group-${group.id}", contentType = "header") {
                 Text(
-                    group.label.uppercase(locale),
+                    group.label,
                     modifier =
                         Modifier
                             .padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, top = 14.dp, bottom = 6.dp)

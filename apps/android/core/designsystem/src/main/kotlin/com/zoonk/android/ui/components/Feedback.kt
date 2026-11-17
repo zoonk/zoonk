@@ -2,12 +2,15 @@ package com.zoonk.android.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -22,6 +25,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
@@ -52,24 +56,38 @@ fun FeedbackVerdict(
 ) {
     val color = tone.color()
     val style = MaterialTheme.zoonkType.verdict
-    val glyph = with(LocalDensity.current) { style.fontSize.toDp() }
+    val glyph = with(LocalDensity.current) { style.lineHeight.toDp() }
+    val line =
+        with(LocalDensity.current) {
+            rememberTextMeasurer()
+                .measure("A", style)
+                .size.height
+                .toDp()
+        }
 
     Row(
         modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(
-                painter = painterResource(icon ?: tone.glyph()),
-                contentDescription = null,
-                modifier = Modifier.padding(top = 2.dp).size(glyph),
-                tint = color,
-            )
-            Text(text = text, color = color, style = style)
+        Row(Modifier.weight(1f).alignByBaseline(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Box(Modifier.height(line).width(glyph), contentAlignment = Alignment.CenterStart) {
+                Icon(
+                    painter = painterResource(icon ?: tone.glyph()),
+                    contentDescription = null,
+                    modifier = Modifier.glyphInk(icon ?: tone.glyph()).size(glyph),
+                    tint = color,
+                )
+            }
+            Text(text = text, modifier = Modifier.alignByBaseline(), color = color, style = style)
         }
         if (end != null) {
-            Text(text = end, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = end,
+                modifier = Modifier.alignByBaseline(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium,
+            )
         }
     }
 }

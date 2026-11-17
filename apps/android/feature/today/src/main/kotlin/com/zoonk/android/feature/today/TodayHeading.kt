@@ -134,7 +134,8 @@ private fun NotEnoughTime(onAdjustPlan: () -> Unit) {
         mapOf(
             CHEVRON to
                 InlineTextContent(Placeholder(1.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
-                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = ink)
+                    com.zoonk.android.ui.components
+                        .ListRowChevron()
                 },
         )
 

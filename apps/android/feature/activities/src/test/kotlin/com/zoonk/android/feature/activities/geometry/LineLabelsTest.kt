@@ -39,11 +39,11 @@ class LineLabelsTest {
     }
 
     @Test
-    fun putsALowerEndsNameUnderItsLine() {
+    fun putsADashedCopiesNameUnderTheUpperEndOfItsLine() {
         val segment = LabelSegment(Offset(22f, 150f), Offset(293f, 90f))
         val box = place(LineLabel(isUpper = false, segment, size)).single()
 
-        assertTrue("top ${box.top}", box.top > 150f)
+        assertTrue("top ${box.top}", box.top > 90f && box.top < 150f)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
     }
 

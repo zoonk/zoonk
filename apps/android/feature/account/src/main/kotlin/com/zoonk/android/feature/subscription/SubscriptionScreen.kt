@@ -82,6 +82,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -237,7 +238,7 @@ internal fun WebPlusPlan(
             Text(
                 stringResource(R.string.subscription_through_website),
                 Modifier.semantics { heading() },
-                style = if (standalone) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.zoonkType.sectionTitle,
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
@@ -312,7 +313,7 @@ internal fun CurrentPlan(
                     },
                 ),
                 Modifier.semantics { heading() },
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.zoonkType.sectionTitle,
             )
             Eyebrow(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
@@ -669,7 +670,7 @@ internal fun PlanIncludes(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(summary, style = MaterialTheme.typography.titleLarge)
+        Text(summary, style = MaterialTheme.typography.bodyMedium)
         items.forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
                 Icon(

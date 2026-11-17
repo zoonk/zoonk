@@ -42,7 +42,7 @@ final class SessionStoreTests: XCTestCase {
       let api = SessionStoreAPIStub(currentAccountResult: .success(account))
       let gate = CurrentAccountRequestGate()
       api.emailCodeHandler = { _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
       }
       let store = SessionCredentialStoreSpy(token: "old-session")
@@ -65,7 +65,7 @@ final class SessionStoreTests: XCTestCase {
     let account = makeAccount()
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     let gate = CurrentAccountRequestGate()
-    api.emailCodeHandler = { _ in _ = await gate.load() }
+    api.emailCodeHandler = { _ in _ = try await gate.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
     await session.restore()
@@ -89,7 +89,7 @@ final class SessionStoreTests: XCTestCase {
         emailSignInResult: .success("replacement-session"))
       let gate = CurrentAccountRequestGate()
       api.emailCodeHandler = { _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
       }
       let store = SessionCredentialStoreSpy(token: "old-session")
@@ -120,7 +120,7 @@ final class SessionStoreTests: XCTestCase {
         currentAccountResult: .success(account), signOutResult: .success(()))
       let gate = CurrentAccountRequestGate()
       api.emailCodeHandler = { _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
       }
       let store = SessionCredentialStoreSpy(token: "old-session")
@@ -153,11 +153,11 @@ final class SessionStoreTests: XCTestCase {
         AppleSubscriptionSynchronization(account: account, isActive: true))
       let gate = CurrentAccountRequestGate()
       api.emailCodeHandler = { _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
       }
       api.deletionHandler = { _, _, _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
         return AccountDeletionResponse(appleAuthorizationRevoked: nil)
       }
@@ -199,11 +199,11 @@ final class SessionStoreTests: XCTestCase {
       let api = SessionStoreAPIStub(currentAccountResult: .success(account))
       let gate = CurrentAccountRequestGate()
       api.emailCodeHandler = { _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
       }
       api.deletionHandler = { _, _, _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
         return AccountDeletionResponse(appleAuthorizationRevoked: nil)
       }
@@ -238,8 +238,8 @@ final class SessionStoreTests: XCTestCase {
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     let deliveryGate = CurrentAccountRequestGate()
     let profileGate = CurrentAccountRequestGate()
-    api.emailCodeHandler = { _ in _ = await deliveryGate.load() }
-    api.updateProfileHandler = { _, _, _ in await profileGate.load() }
+    api.emailCodeHandler = { _ in _ = try await deliveryGate.load() }
+    api.updateProfileHandler = { _, _, _ in try await profileGate.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
     await session.restore()
@@ -266,7 +266,7 @@ final class SessionStoreTests: XCTestCase {
       let api = SessionStoreAPIStub(currentAccountResult: .success(account))
       let gate = CurrentAccountRequestGate()
       api.deletionHandler = { _, _, _ in
-        _ = await gate.load()
+        _ = try await gate.load()
         if let error { throw error }
         return AccountDeletionResponse(appleAuthorizationRevoked: nil)
       }
@@ -340,7 +340,7 @@ final class SessionStoreTests: XCTestCase {
     let session = makeSession(api: api, credentialStore: store)
     await session.restore()
     let gate = CurrentAccountRequestGate()
-    api.currentAccountHandler = { _ in await gate.load() }
+    api.currentAccountHandler = { _ in try await gate.load() }
     let request = Task {
       await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
     }
@@ -801,7 +801,7 @@ final class SessionStoreTests: XCTestCase {
 
     let credentialRefresh = CurrentAccountRequestGate()
     api.currentAccountHandler = { _ in
-      await credentialRefresh.load()
+      try await credentialRefresh.load()
     }
     let refreshTask = Task {
       await session.reconcileSynchronizedCredential()
@@ -826,7 +826,7 @@ final class SessionStoreTests: XCTestCase {
     let appleSynchronization = AppleSubscriptionRequestGate()
     let api = SessionStoreAPIStub(currentAccountResult: .success(freeAccount))
     api.appleSubscriptionHandler = { _, _ in
-      await appleSynchronization.load()
+      try await appleSynchronization.load()
     }
     let session = makeSession(
       api: api,
@@ -842,7 +842,7 @@ final class SessionStoreTests: XCTestCase {
 
     let credentialRefresh = CurrentAccountRequestGate()
     api.currentAccountHandler = { _ in
-      await credentialRefresh.load()
+      try await credentialRefresh.load()
     }
     let refreshTask = Task {
       await session.reconcileSynchronizedCredential()
@@ -872,7 +872,7 @@ final class SessionStoreTests: XCTestCase {
       currentAccountResult: .success(freeAccount),
       updateProfileResult: .success(updatedAccount))
     api.appleSubscriptionHandler = { _, _ in
-      await appleSynchronization.load()
+      try await appleSynchronization.load()
     }
     let session = makeSession(
       api: api,
@@ -910,7 +910,7 @@ final class SessionStoreTests: XCTestCase {
       appleSubscriptionResult: .success(
         AppleSubscriptionSynchronization(account: subscribedAccount, isActive: true)),
       currentAccountResult: .success(freeAccount))
-    api.updateProfileHandler = { _, _, _ in await profileUpdate.load() }
+    api.updateProfileHandler = { _, _, _ in try await profileUpdate.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
     await session.restore()
@@ -944,7 +944,7 @@ final class SessionStoreTests: XCTestCase {
       api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
     await session.restore()
     let reconciliation = CurrentAccountRequestGate()
-    api.currentAccountHandler = { _ in await reconciliation.load() }
+    api.currentAccountHandler = { _ in try await reconciliation.load() }
 
     let deletionTask = Task {
       await session.deleteAccount(reauthorizedEmail: freeAccount.user.email, code: "123456")
@@ -990,7 +990,7 @@ final class SessionStoreTests: XCTestCase {
     let credentialStore = SessionCredentialStoreSpy(token: "stored-session")
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     api.updateProfileHandler = { _, _, _ in
-      await profileUpdate.load()
+      try await profileUpdate.load()
     }
     let session = makeSession(api: api, credentialStore: credentialStore)
     await session.restore()
@@ -1029,7 +1029,7 @@ final class SessionStoreTests: XCTestCase {
     credentialStore.token = "account-b-session"
     api.currentAccountHandler = { token in
       XCTAssertEqual(token, "account-b-session")
-      return await credentialRefresh.load()
+      return try await credentialRefresh.load()
     }
     let refreshTask = Task {
       await session.reconcileSynchronizedCredential()
@@ -1051,7 +1051,7 @@ final class SessionStoreTests: XCTestCase {
     let account = makeAccount()
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     let validation = CurrentAccountRequestGate()
-    api.currentAccountHandler = { _ in await validation.load() }
+    api.currentAccountHandler = { _ in try await validation.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
     var readTokens = [String?]()
@@ -1080,7 +1080,7 @@ final class SessionStoreTests: XCTestCase {
   func testAnUnauthorizedLaunchReadSignsOut() async {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
     let validation = CurrentAccountRequestGate()
-    api.currentAccountHandler = { _ in await validation.load() }
+    api.currentAccountHandler = { _ in try await validation.load() }
     let credentials = SessionCredentialStoreSpy(token: "stored-session")
     let session = makeSession(api: api, credentialStore: credentials)
     let today: Resource<Int> = AppCache(session: session).resource(audience: .signedIn) { _ in
@@ -1104,7 +1104,7 @@ final class SessionStoreTests: XCTestCase {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
     let validation = CurrentAccountRequestGate()
     api.currentAccountHandler = { token in
-      token == "stored-session" ? await validation.load() : other
+      token == "stored-session" ? try await validation.load() : other
     }
     let credentials = SessionCredentialStoreSpy(token: "stored-session")
     let session = makeSession(api: api, credentialStore: credentials)
@@ -1196,7 +1196,7 @@ final class SessionStoreTests: XCTestCase {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
     // As URLSession does, a request whose task is cancelled never lands.
     api.updateProfileHandler = { _, _, _ in
-      let account = await profileUpdate.load()
+      let account = try await profileUpdate.load()
       try Task.checkCancellation()
       return account
     }
@@ -1363,23 +1363,23 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
 
 @MainActor
 private final class CurrentAccountRequestGate {
-  private var requestContinuation: CheckedContinuation<CurrentAccount, Never>?
-  private var startedContinuation: CheckedContinuation<Void, Never>?
+  private var requestContinuation: TestContinuation<CurrentAccount>?
+  private var startedContinuation: TestContinuation<Void>?
 
-  func load() async -> CurrentAccount {
-    await withCheckedContinuation { continuation in
+  func load() async throws -> CurrentAccount {
+    try await withTestContinuation { continuation in
       requestContinuation = continuation
       startedContinuation?.resume()
       startedContinuation = nil
     }
   }
 
-  func waitUntilStarted() async {
+  func waitUntilStarted(file: StaticString = #filePath, line: UInt = #line) async {
     guard requestContinuation == nil else {
       return
     }
 
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation(file: file, line: line) { continuation in
       startedContinuation = continuation
     }
   }
@@ -1392,23 +1392,23 @@ private final class CurrentAccountRequestGate {
 
 @MainActor
 private final class AppleSubscriptionRequestGate {
-  private var requestContinuation: CheckedContinuation<AppleSubscriptionSynchronization, Never>?
-  private var startedContinuation: CheckedContinuation<Void, Never>?
+  private var requestContinuation: TestContinuation<AppleSubscriptionSynchronization>?
+  private var startedContinuation: TestContinuation<Void>?
 
-  func load() async -> AppleSubscriptionSynchronization {
-    await withCheckedContinuation { continuation in
+  func load() async throws -> AppleSubscriptionSynchronization {
+    try await withTestContinuation { continuation in
       requestContinuation = continuation
       startedContinuation?.resume()
       startedContinuation = nil
     }
   }
 
-  func waitUntilStarted() async {
+  func waitUntilStarted(file: StaticString = #filePath, line: UInt = #line) async {
     guard requestContinuation == nil else {
       return
     }
 
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation(file: file, line: line) { continuation in
       startedContinuation = continuation
     }
   }

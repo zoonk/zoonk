@@ -171,7 +171,12 @@ fun TodayDay(
                         }
                     } else {
                         val syllabus = plans?.syllabus?.get(read.today.goal.id)?.collectShown()
-                        TodayPreparation(read.today.progress, syllabus?.value?.value, onOpenPlan = openPlan)
+                        TodayPreparation(
+                            read.today.progress,
+                            syllabus?.value?.value,
+                            onOpenPlan = openPlan,
+                            goalTitle = read.today.goal.displayName,
+                        )
                     }
                 },
             )
@@ -289,8 +294,8 @@ private fun TodayAction(
             }
 
             model.pastDate != null -> {
-                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) {
-                    actions.navigate(AppRoute.Plan())
+                ActionButton(stringResource(R.string.plan_pick_date), busy = false, buttonModifier) {
+                    actions.navigate(AppRoute.Plan(focus = "time"))
                 }
             }
 

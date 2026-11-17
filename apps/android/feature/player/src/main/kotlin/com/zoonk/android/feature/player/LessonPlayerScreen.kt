@@ -92,6 +92,7 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
+import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
@@ -570,6 +571,7 @@ private fun Segments(
     segments: List<TaskSegment>,
     state: LessonPlayerState,
 ) {
+    if ((state.run as? LessonRun.Refused)?.refusal == LessonRefusal.NotFound) return
     val label = stringResource(R.string.player_progress)
     val done = segments.count { it != TaskSegment.Ahead && it != TaskSegment.Current }
     var span by remember { mutableStateOf<PageSpan?>(null) }

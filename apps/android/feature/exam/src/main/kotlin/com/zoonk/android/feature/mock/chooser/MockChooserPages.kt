@@ -526,7 +526,7 @@ private fun PickedName(
             .padding(vertical = 12.dp)
             .semantics(mergeDescendants = true) {},
     ) {
-        Text(name, style = MaterialTheme.typography.bodyLarge)
+        Text(name, style = MaterialTheme.typography.bodyMedium)
         detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }

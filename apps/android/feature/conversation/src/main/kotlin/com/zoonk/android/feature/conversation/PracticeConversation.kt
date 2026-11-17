@@ -297,7 +297,14 @@ private fun CallSetup(
 
         else -> {
             val locked = minutes in call.plusMinutes
-            if (call.minutes.isNotEmpty() || call.plusMinutes.isNotEmpty()) LengthChoices(call, minutes, onChange = { state.minutes = it })
+            if (call.minutes.isNotEmpty() ||
+                call.plusMinutes.isNotEmpty()
+            ) {
+                LengthChoices(call, minutes, enabled = callLengthsEnabled(limit != null), onChange = {
+                    state.minutes =
+                        it
+                })
+            }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CallSetupLine(call, limit, locked)
                 when {
@@ -376,6 +383,7 @@ private fun CallsPausedMessage() {
 private fun LengthChoices(
     call: LanguagePracticeCall,
     selected: Long,
+    enabled: Boolean,
     onChange: (Long) -> Unit,
 ) {
     val locale = currentLocale()
@@ -393,8 +401,11 @@ private fun LengthChoices(
                     selected = minutes == selected,
                     onClick = { onChange(minutes) },
                     role = Role.RadioButton,
+                    enabled = enabled,
                 )
             }
         }
     }
 }
+
+internal fun callLengthsEnabled(blocked: Boolean): Boolean = !blocked

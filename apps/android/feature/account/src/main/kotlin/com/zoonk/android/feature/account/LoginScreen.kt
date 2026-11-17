@@ -301,7 +301,12 @@ fun ProfileSetupForm(form: ProfileFormViewModel) {
     Title(stringResource(R.string.account_setup_title))
     ProfileFields(form, isSetup = true)
     ProfileSaveFailure(form)
-    WorkingButton(stringResource(R.string.account_continue), isWorking = form.isSaving, enabled = form.canSave, onClick = { form.save() })
+    WorkingButton(
+        stringResource(R.string.account_continue),
+        isWorking = form.isSaving,
+        enabled = form.canContinue,
+        onClick = form::continueSetup,
+    )
 }
 
 @Composable
@@ -400,8 +405,8 @@ private fun OrDivider() {
 /** Main's footer, with its two links opening on the web. */
 @Composable
 private fun Agreement(navigator: AppNavigator) {
-    val terms = stringResource(R.string.account_terms)
-    val privacy = stringResource(R.string.account_privacy)
+    val terms = stringResource(R.string.account_terms).replace(' ', '\u00a0')
+    val privacy = stringResource(R.string.account_privacy).replace(' ', '\u00a0')
     val sentence = stringResource(R.string.account_agreement, terms, privacy)
     val linkStyle = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
     val text =

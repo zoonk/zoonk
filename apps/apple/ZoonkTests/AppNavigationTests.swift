@@ -169,8 +169,7 @@ extension AppNavigationTests {
     let window = try show(
       LessonUnavailableView(refusal: .limitReached(tier: .free, period: .day), retry: {})
         .environment(router).zoonkStyles())
-    try await Task.sleep(for: .milliseconds(400))
-    try activate("Practice your mistakes", in: window)
+    try await activate("Practice your mistakes", in: window)
     XCTAssertEqual(router.selectedTab, .mistakes)
     XCTAssertTrue(router.tasks.isEmpty)
   }
@@ -182,8 +181,7 @@ extension AppNavigationTests {
     try readsWhatVoiceOverReads()
     let window = try show(
       BrainPowerReward(points: 50, earned: false).environment(router).zoonkStyles())
-    try await Task.sleep(for: .milliseconds(400))
-    try activate("50 Brain Power for finishing them", in: window)
+    try await activate("50 Brain Power for finishing them", in: window)
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 }
@@ -208,14 +206,17 @@ extension AppNavigationTests {
       window.frame = CGRect(x: 0, y: 0, width: width, height: height)
       window.rootViewController?.traitOverrides.horizontalSizeClass =
         width > 700 ? .regular : .compact
-      try await Task.sleep(for: .milliseconds(600))
+      try await waitForLayout(in: window)
+      try await waitForTestCondition("The Level chip did not appear") {
+        spoken(in: window).contains("Yellow belt, Level 2")
+      }
       try captureCallsRoundTwo("level-chip-\(size)")
       XCTAssertTrue(spoken(in: window).contains("Yellow belt, Level 2"), "\(spoken(in: window))")
       XCTAssertFalse(spoken(in: window).contains("Statistics"), "\(spoken(in: window))")
       XCTAssertFalse(
         spokenValues(in: window).contains { $0.contains("Level") }, "\(spokenValues(in: window))")
     }
-    try activate("Yellow belt, Level 2", in: window)
+    try await activate("Yellow belt, Level 2", in: window)
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 }

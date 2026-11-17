@@ -22,7 +22,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Make room for %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">That\'s as many goals as you can study at once. Pause one to start this one.</string>
+    <string name="goal_switcher_make_room_description">That\'s as many goals as you can study at once. Pause one to start this one, or subscribe to study more at once.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pause</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

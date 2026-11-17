@@ -109,13 +109,13 @@ fun MissionMoment(
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(if (payoff) 16.dp else 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 BuddyActor(
                     look = buddy,
-                    modifier = Modifier.size(if (payoff) 96.dp else 48.dp),
+                    modifier = Modifier.size(48.dp),
                     expression = if (payoff) BuddyExpression.Happy else BuddyExpression.Neutral,
-                    crop = if (payoff) BuddyCrop.Whole else BuddyCrop.Face,
+                    crop = BuddyCrop.Face,
                     reaction =
                         if (celebrate) {
                             if (payoff) {
@@ -178,7 +178,7 @@ private fun MomentMissionRow(
     celebrate: Boolean,
 ) {
     val now = order >= 0
-    val muted = mission.done && !now
+    val muted = mission.done
     val done = stringResource(R.string.today_step_done)
 
     Row(
@@ -205,7 +205,7 @@ private fun MomentMissionRow(
                 style = MaterialTheme.typography.titleSmall,
             )
             if (!mission.done) {
-                missionStepLine(mission)?.let {
+                (missionStepLine(mission) ?: stringResource(R.string.today_up_next)).let {
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -213,7 +213,7 @@ private fun MomentMissionRow(
         if (now) {
             Text(
                 text = stringResource(R.string.missions_just_done),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
             )
         }

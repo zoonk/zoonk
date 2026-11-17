@@ -71,7 +71,11 @@ extension SubscriptionPageTests {
       )
       .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 1032, height: 1376)
-    try await Task.sleep(for: .milliseconds(600))
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The website payment action did not appear") {
+      spoken(in: window).joined(separator: " ")
+        .contains("Update your payment on the website, where you subscribed.")
+    }
     let words = spoken(in: window).joined(separator: " ")
     XCTAssertTrue(words.contains("Through the App Store"))
     XCTAssertTrue(words.contains("Manage in App Store"))
@@ -124,7 +128,10 @@ extension SubscriptionPageTests {
       window.frame = CGRect(x: 0, y: 0, width: width, height: height)
       window.rootViewController?.traitOverrides.horizontalSizeClass =
         width > 700 ? .regular : .compact
-      try await Task.sleep(for: .milliseconds(600))
+      try await waitForLayout(in: window)
+      try await waitForTestCondition("The website action did not appear for \(state)") {
+        spoken(in: window).joined(separator: " ").contains(label)
+      }
       try captureCallsRoundTwo("website-\(state)-\(size)")
     }
     let words = spoken(in: window).joined(separator: " ")

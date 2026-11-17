@@ -8,3 +8,13 @@ data class WaitPresentation(
 ) {
     val quizTitle: Int get() = if (ready) R.string.warm_up_title_ready else R.string.warm_up_title
 }
+
+fun placementWaitTitle(
+    ready: Boolean,
+    failed: Boolean,
+): Int =
+    when {
+        ready -> R.string.onboarding_placement_ready
+        failed -> R.string.generation_failed_ours
+        else -> R.string.generation_placement
+    }

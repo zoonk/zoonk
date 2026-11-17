@@ -129,7 +129,23 @@ fun MarkIcon(
     size: Dp = MARK_ICON_SIZE,
     tint: Color = LocalContentColor.current,
 ) {
-    Icon(painterResource(id), contentDescription = null, modifier = modifier.size(size * glyphScale()), tint = tint)
+    val shownSize = if (LocalMarkEdge.current != null) MARK_ICON_SIZE else size
+    Icon(
+        painterResource(id),
+        contentDescription = null,
+        modifier =
+            modifier
+                .then(
+                    if (LocalMarkEdge.current ==
+                        null
+                    ) {
+                        Modifier.glyphInk(id)
+                    } else {
+                        Modifier
+                    },
+                ).size(shownSize * glyphScale()),
+        tint = tint,
+    )
 }
 
 private val MARK_ICON_SIZE = 24.dp

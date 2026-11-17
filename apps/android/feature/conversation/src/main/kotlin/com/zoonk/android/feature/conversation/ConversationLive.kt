@@ -71,6 +71,7 @@ import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
+import com.zoonk.android.ui.components.LearnerBubble
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -79,6 +80,7 @@ import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.SpeakingTask
@@ -229,7 +231,7 @@ private fun CallClock(
     call: LiveCallState,
     talkSeconds: Long,
 ) {
-    val started = call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle
+    val started = call.elapsedSeconds > 0 || (call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle)
     val share = if (talkSeconds > 0) call.elapsedSeconds.toFloat() / talkSeconds else 0f
     Column(
         Modifier.callItem().padding(top = 8.dp),
@@ -248,7 +250,7 @@ private fun CallClock(
                     .background(if (live) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outlineVariant, CircleShape),
             )
             Text(
-                formatClock(call.elapsedSeconds * 1000),
+                stringResource(R.string.conversation_time_used, formatClock(call.elapsedSeconds * 1000)),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
@@ -281,12 +283,8 @@ private fun Turn(
     if (speaker == Speaker.LEARNER) {
         val said = spokenAs(stringResource(R.string.conversation_you_said, WORDS_MARK), text, conversation.targetLanguage)
         Box(modifier, contentAlignment = Alignment.CenterEnd) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said },
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ) {
-                Text(words, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
+            LearnerBubble(Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said }) {
+                Text(words, style = MaterialTheme.zoonkType.message)
             }
         }
     } else {
@@ -573,7 +571,7 @@ private fun CallControls(
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
             FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE), shape = ICON_BUTTON_SHAPE) {
-                Icon(painterResource(R.drawable.ic_support), contentDescription = label)
+                Icon(painterResource(R.drawable.ic_help), contentDescription = label)
             }
         }
         Control(R.string.conversation_mute, Modifier.weight(1f)) { label ->
@@ -586,6 +584,8 @@ private fun CallControls(
                 // Muted reads as a pick: the ink fill, not a lighter tonal one.
                 colors =
                     IconButtonDefaults.filledTonalIconToggleButtonColors(
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         checkedContainerColor = MaterialTheme.colorScheme.primary,
                         checkedContentColor = MaterialTheme.colorScheme.onPrimary,
                     ),

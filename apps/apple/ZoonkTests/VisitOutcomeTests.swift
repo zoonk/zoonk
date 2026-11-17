@@ -13,11 +13,13 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(PreferencesView(), settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.sounds) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.sounds) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(shows(Self.didntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -27,9 +29,9 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(PreferencesView(), settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.sounds) }, in: window)
+    try await activate(where: { $0.hasPrefix(Self.sounds) }, in: window)
     await api.waitForHeldUpdate()
-    try await leave(tabs, meanwhile: { await api.releaseUpdate() })
+    try await leave(tabs, in: window, meanwhile: { await api.releaseUpdate() })
 
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -39,11 +41,13 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(PrivacyView(deleteAccount: nil), settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.shareUsage) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.shareUsage) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(shows(Self.didntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -53,9 +57,9 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(PrivacyView(deleteAccount: nil), settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.shareUsage) }, in: window)
+    try await activate(where: { $0.hasPrefix(Self.shareUsage) }, in: window)
     await api.waitForHeldUpdate()
-    try await leave(tabs, meanwhile: { await api.releaseUpdate() })
+    try await leave(tabs, in: window, meanwhile: { await api.releaseUpdate() })
 
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -65,11 +69,13 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(MemoryView { _ in }, settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.useMemory) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.useMemory) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(shows(Self.didntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -79,9 +85,9 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(MemoryView { _ in }, settings: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.useMemory) }, in: window)
+    try await activate(where: { $0.hasPrefix(Self.useMemory) }, in: window)
     await api.waitForHeldUpdate()
-    try await leave(tabs, meanwhile: { await api.releaseUpdate() })
+    try await leave(tabs, in: window, meanwhile: { await api.releaseUpdate() })
 
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -91,11 +97,13 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(RemindersView {}, reminders: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.email) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.email) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(shows(Self.didntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -105,9 +113,9 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(RemindersView {}, reminders: api, tabs: tabs)
 
-    try activate(where: { $0.hasPrefix(Self.email) }, in: window)
+    try await activate(where: { $0.hasPrefix(Self.email) }, in: window)
     await api.waitForHeldUpdate()
-    try await leave(tabs, meanwhile: { await api.releaseUpdate() })
+    try await leave(tabs, in: window, meanwhile: { await api.releaseUpdate() })
 
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -120,15 +128,18 @@ final class VisitOutcomeTests: XCTestCase {
     let tabs = VisitTabs()
     let window = try await host(RemindersView {}, reminders: api, tabs: tabs)
 
+    try await waitForTestCondition("The reminder time picker did not appear") {
+      !views(UIDatePicker.self, in: window).isEmpty
+    }
     let picker = try XCTUnwrap(views(UIDatePicker.self, in: window).first, "The time's picker")
     picker.date = picker.date.addingTimeInterval(3_600)
     picker.sendActions(for: .valueChanged)
     await api.waitForHeldUpdate()
-    try activate(where: { $0.hasPrefix(Self.email) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.email) }, in: window)
     await api.releaseUpdate()
-    try await settle()
-
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(
       shows(Self.didntSave, in: window), "The time's failure shows: \(spoken(in: window))")
   }
@@ -144,13 +155,13 @@ final class VisitOutcomeTests: XCTestCase {
       dependencies: dependencies, tabs: tabs)
     let blocked = String(localized: "Notifications are off for Zoonk.", table: "Reminders")
 
-    try activate(
+    try await activate(
       where: { $0.hasPrefix(String(localized: "Push notifications", table: "Reminders")) },
       in: window)
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { shows(blocked, in: window) }
     XCTAssertTrue(shows(blocked, in: window), "The notice shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(blocked, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -173,14 +184,16 @@ final class VisitOutcomeTests: XCTestCase {
       )
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Save", table: "Account"), in: window)
-    try await settle()
+    try await activate(String(localized: "Save", table: "Account"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.profileDidntSave, in: window)
+    }
     XCTAssertTrue(
       shows(Self.profileDidntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(
       shows(Self.profileDidntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
@@ -200,17 +213,23 @@ final class VisitOutcomeTests: XCTestCase {
         .appDependencies(.hosted())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(where: { $0.hasPrefix(Self.star) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.star) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.buddyDidntSave, in: window)
+    }
     XCTAssertTrue(
       shows(Self.buddyDidntSave, in: window), "The failure shows: \(spoken(in: window))")
 
     opening.selected = 1
-    try await settle()
+    try await waitForTestCondition("The closed panel did not disappear") {
+      !shows(Self.star, in: window)
+    }
     opening.selected = 0
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") {
+      !(shows(Self.buddyDidntSave, in: window))
+    }
     XCTAssertFalse(
       shows(Self.buddyDidntSave, in: window), "Gone on the next opening: \(spoken(in: window))")
   }
@@ -219,20 +238,23 @@ final class VisitOutcomeTests: XCTestCase {
   func testACertificateNameThatDidntSaveIsGoneOnReturn() async throws {
     let tabs = VisitTabs()
     let window = try await hostCertificate(tabs: tabs)
-    try activate(
+    try await activate(
       where: { $0.hasPrefix(String(localized: "Name", table: "Certificates")) }, in: window)
-    try await settle()
+    try await waitForTestCondition("The name field did not appear") {
+      !textFields(in: window).isEmpty
+    }
     let field = try XCTUnwrap(textFields(in: window).first, "The name's field")
     field.becomeFirstResponder()
     field.insertText(" Souza")
-    try await settle()
 
-    try activate(String(localized: "Save", table: "Certificates"), in: window)
-    try await settle()
+    try await activate(String(localized: "Save", table: "Certificates"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.profileDidntSave, in: window)
+    }
     XCTAssertTrue(
       shows(Self.profileDidntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(
       shows(Self.profileDidntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
@@ -243,13 +265,11 @@ final class VisitOutcomeTests: XCTestCase {
     let failure = String(
       localized: "That didn't work. Try again in a moment.", table: "Certificates")
 
-    try activate(String(localized: "Print", table: "Certificates"), in: window)
-    for _ in 0..<25 where !shows(failure, in: window) {
-      try await settle()
-    }
+    try await activate(String(localized: "Print", table: "Certificates"), in: window)
+    try await waitForTestCondition("The failure never appeared") { shows(failure, in: window) }
     XCTAssertTrue(shows(failure, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(failure, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -297,8 +317,7 @@ final class VisitOutcomeTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
-    try await settle()
+    try await waitForLayout(in: window)
     return window
   }
 
@@ -317,7 +336,7 @@ final class VisitOutcomeTests: XCTestCase {
       dependencies: dependencies, tabs: tabs)
     // Tall enough to draw the whole page, the name's row under the details included.
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 1600)
-    try await settle()
+    try await waitForLayout(in: window)
     return window
   }
 
@@ -333,29 +352,32 @@ final class VisitOutcomeTests: XCTestCase {
     spoken(in: window).contains { $0.contains(line) }
   }
 
-  private func leaveAndComeBack(_ tabs: VisitTabs) async throws {
-    try await leave(tabs, meanwhile: {})
+  private func leaveAndComeBack(_ tabs: VisitTabs, in window: UIWindow) async throws {
+    try await leave(tabs, in: window, meanwhile: {})
   }
 
   /// Goes to the other tab, lets `meanwhile` happen there, and comes back.
-  private func leave(_ tabs: VisitTabs, meanwhile: () async -> Void) async throws {
+  private func leave(_ tabs: VisitTabs, in window: UIWindow, meanwhile: () async -> Void)
+    async throws
+  {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
+    }
     await meanwhile()
-    try await settle()
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      tabs.pageVisible && !spoken(in: window).contains("Elsewhere")
+    }
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
-  }
 }
 
 @MainActor
 @Observable
 private final class VisitTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 /// The page in one tab, and somewhere else to go.
@@ -367,6 +389,8 @@ private struct VisitTabsView<Page: View>: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         page
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 
@@ -395,8 +419,9 @@ private struct GlassesSheet: View {
 private actor VisitSettingsAPI: SettingsAPIClient {
   private let failsUpdates: Bool
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(failsUpdates: Bool) {
     self.failsUpdates = failsUpdates
@@ -404,23 +429,28 @@ private actor VisitSettingsAPI: SettingsAPIClient {
 
   func holdUpdates() { holds = true }
 
-  func waitForHeldUpdate() async {
+  func waitForHeldUpdate(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseUpdate() {
+  func releaseUpdate(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   private func update() async throws {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil
@@ -491,8 +521,9 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
 
   private let fails: @Sendable (StudyReminderChange) -> Bool
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(fails: @escaping @Sendable (StudyReminderChange) -> Bool = { _ in true }) {
     self.fails = fails
@@ -500,17 +531,21 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
 
   func holdUpdates() { holds = true }
 
-  func waitForHeldUpdate() async {
+  func waitForHeldUpdate(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseUpdate() {
+  func releaseUpdate(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   func getReminder(token: String) async throws -> StudyReminder {
@@ -518,9 +553,10 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
   }
 
   func updateReminder(token: String, _ change: StudyReminderChange) async throws -> StudyReminder {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil

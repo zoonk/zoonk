@@ -136,20 +136,21 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     ActivityCanvas {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { fields.tables.forEach { SqlTableViewer(it) } }
 
-        if (!props.isChecked) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                val label = stringResource(if (props.isExploring) R.string.activities_code_query else R.string.activities_code_your_query)
-                Text(label, style = MaterialTheme.typography.titleSmall)
-                CodeEditor(
-                    value = query,
-                    onValueChange = ::change,
-                    language = CodeLanguage.Sql,
-                    label = label,
-                    placeholder = "SELECT",
-                    focusRequester = focus,
-                    onSubmit = ::runQuery,
-                    readOnly = props.isLocked,
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            val label = stringResource(if (props.isExploring) R.string.activities_code_query else R.string.activities_code_your_query)
+            Text(label, style = MaterialTheme.typography.titleSmall)
+            CodeEditor(
+                value = query,
+                onValueChange = ::change,
+                language = CodeLanguage.Sql,
+                label = label,
+                placeholder = "SELECT",
+                focusRequester = focus,
+                onSubmit = ::runQuery,
+                readOnly = props.isLocked || props.isChecked,
+                wrap = true,
+            )
+            if (!props.isChecked) {
                 SnippetBar(
                     snippets = sqlSnippets(fields.tables),
                     label = stringResource(R.string.activities_code_sql_words),

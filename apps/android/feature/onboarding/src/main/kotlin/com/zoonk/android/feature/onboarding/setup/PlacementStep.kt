@@ -99,6 +99,7 @@ internal fun ColumnScope.PlacementStep(
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
+    onProgressLabel: (String?) -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle(), onDone) }
@@ -112,8 +113,23 @@ internal fun ColumnScope.PlacementStep(
     val shown = if (hold.over) phase else PlacementPhase.Waiting
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val progressLabel =
+        (shown as? PlacementPhase.Question)?.let {
+            stringResource(
+                R.string.onboarding_placement_question_number,
+                it.number,
+            )
+        }
+    LaunchedEffect(progress, progressLabel) {
+        onProgress(progress)
+        onProgressLabel(progressLabel)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onProgress(null)
+            onProgressLabel(null)
+        }
+    }
 
     when (shown) {
         PlacementPhase.Loading -> {
@@ -251,7 +267,11 @@ internal fun ColumnScope.PlacementWaiting(
     }
 
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
-    val title = stringResource(if (hold.holding) R.string.onboarding_placement_ready else R.string.generation_placement)
+    val title =
+        stringResource(
+            com.zoonk.android.feature.warmup
+                .placementWaitTitle(hold.holding, shown.status == GenerationRun.Status.Failed),
+        )
     SetupWait(
         shown,
         GenerationKind.Placement,
@@ -290,7 +310,7 @@ internal fun ColumnScope.PlacementWaiting(
             OnboardingHeading(
                 title,
                 when {
-                    hold.holding -> null
+                    hold.holding || shown.status == GenerationRun.Status.Failed -> null
                     READS_MATERIAL_STEP in run.steps -> stringResource(R.string.onboarding_placement_waiting_material)
                     else -> stringResource(R.string.onboarding_placement_waiting_time)
                 },

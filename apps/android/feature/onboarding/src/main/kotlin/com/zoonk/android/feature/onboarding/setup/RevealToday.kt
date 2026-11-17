@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,6 +33,7 @@ import com.zoonk.android.ui.characters.ActReaction
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -74,9 +76,9 @@ internal fun RevealHero(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(goal.displayName, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium)
             CelebrationScope(play) {
-                BuddyActor(
+                StandingBuddy(
                     buddy.look,
-                    Modifier.size(80.dp),
+                    height = 80.dp,
                     reaction = ActReaction(BuddyAct.Cheer, 3 * ZoonkMotion.BEAT_MILLIS),
                     label = buddy.name,
                 )
@@ -275,7 +277,11 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                             )
                         } else {
                             // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
-                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
+                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) {
+                                names.forEach { item ->
+                                    Text(revealItemTitle(item))
+                                }
+                            }
                         }
                     },
                 )

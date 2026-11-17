@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
@@ -56,6 +57,7 @@ private fun TextStyle.role(
         fontWeight = FontWeight(weight),
         lineHeight = lineHeight.sp,
         letterSpacing = tracking.em,
+        textDirection = TextDirection.Content,
     )
 
 /** Main's titles balance their lines (`text-balance`), so a wrapped title never leaves one word alone. */

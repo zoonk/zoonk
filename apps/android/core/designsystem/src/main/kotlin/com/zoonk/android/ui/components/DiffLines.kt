@@ -2,10 +2,12 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +52,7 @@ fun DiffLines(
     added: String,
     modifier: Modifier = Modifier,
     removed: String? = null,
+    trailing: (@Composable (DiffLine) -> Unit)? = null,
 ) {
     val shape = MaterialTheme.shapes.medium
 
@@ -57,8 +60,7 @@ fun DiffLines(
         modifier
             .fillMaxWidth()
             .clip(shape)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
-            .padding(vertical = 4.dp),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
     ) {
         lines.forEach { line ->
             val (container, content) = line.colors()
@@ -74,22 +76,27 @@ fun DiffLines(
                 Modifier
                     .fillMaxWidth()
                     .background(container)
-                    .padding(horizontal = 12.dp, vertical = 3.dp)
-                    .clearAndSetSemantics { text = spoken },
+                    .padding(horizontal = 12.dp, vertical = 3.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
-                val style = MaterialTheme.typography.bodySmall.withTabularFigures()
-                when (line.kind) {
-                    DiffKind.Added -> Text("+ ", style = style, color = content)
-                    DiffKind.Removed -> Text("− ", style = style, color = content)
-                    DiffKind.Context -> Unit
+                Row(Modifier.weight(1f).clearAndSetSemantics { text = spoken }) {
+                    val style = MaterialTheme.typography.bodySmall.withTabularFigures()
+                    Box(Modifier.width(20.dp)) {
+                        when (line.kind) {
+                            DiffKind.Added -> Text("+", style = style, color = content)
+                            DiffKind.Removed -> Text("−", style = style, color = content)
+                            DiffKind.Context -> Unit
+                        }
+                    }
+                    Text(
+                        line.text,
+                        style = style,
+                        color = content,
+                        textDecoration =
+                            if (line.tone == DiffTone.Neutral && line.kind == DiffKind.Removed) TextDecoration.LineThrough else null,
+                    )
                 }
-                Text(
-                    line.text,
-                    style = style,
-                    color = content,
-                    textDecoration =
-                        if (line.tone == DiffTone.Neutral && line.kind == DiffKind.Removed) TextDecoration.LineThrough else null,
-                )
+                trailing?.invoke(line)
             }
         }
     }

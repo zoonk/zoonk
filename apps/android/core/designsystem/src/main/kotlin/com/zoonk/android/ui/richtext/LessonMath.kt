@@ -311,13 +311,18 @@ private class MathParser(
             "sqrt" -> {
                 val rootIndex = rootIndex()
                 val radicand = argument(style)
-                val open = rootIndex + run("√", style, italic = false)
+                val radical = run("√", style, italic = false)
                 val text =
-                    if (radicand.plain.length > 1) {
-                        open + run("(", style, italic = false) + radicand + run(")", style, italic = false)
-                    } else {
-                        open + radicand
-                    }
+                    Piece(
+                        buildAnnotatedString {
+                            append(rootIndex.text)
+                            val start = length
+                            withStyle(SpanStyle(color = androidx.compose.ui.graphics.Color.Transparent)) { append(radical.text) }
+                            append(radicand.text)
+                            addStringAnnotation("math-root", "", start, length)
+                        },
+                        "",
+                    )
                 Piece(text.text, " ${spokenRoot(rootIndex.spoken.trim(), radicand.spoken.trim())} ")
             }
 

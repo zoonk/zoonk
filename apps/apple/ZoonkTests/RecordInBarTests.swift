@@ -13,15 +13,17 @@ final class RecordInBarTests: XCTestCase {
     let step = SpokenStep()
 
     try show(SpokenStepHost(step: step, bar: bar))
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("The record button did not appear") { bar.button != nil }
 
     step.isChecking = true
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("The bar did not become busy") { bar.isChecking }
     XCTAssertTrue(bar.isChecking)
 
     step.isChecking = false
     step.isShown = false
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("The removed step did not clear the bar") {
+      bar.button == nil && !bar.isChecking
+    }
 
     XCTAssertNil(bar.button)
     XCTAssertFalse(bar.isChecking)

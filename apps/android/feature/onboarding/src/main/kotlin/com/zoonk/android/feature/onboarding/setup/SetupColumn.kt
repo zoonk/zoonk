@@ -294,12 +294,7 @@ internal fun ColumnScope.QuestionPages(
                     if (fold == null) read()
                     answer()
                 }
-                if (fold != null) {
-                    // Across the fold the answer's page holds its own bar at its bottom.
-                    BottomBar(columnWidth = COLUMN_WIDTH, content = actions)
-                } else {
-                    PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
-                }
+                PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
             }
 
             if (fold != null) {

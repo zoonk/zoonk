@@ -64,19 +64,23 @@ final class DraftCreationTests: XCTestCase {
     let window = try host(page, cards: [Self.draftID: card], store: store, router: AppRouter())
     // Sent here, the question's explanation starts by itself.
     await server.waitForHeldCreate()
-    try await waitUntil { Self.hidesBack(in: window) == true }
+    try await waitForTestCondition { Self.hidesBack(in: window) == true }
 
     card.invalidate()
-    let readAgain = try await waitUntil { await server.reads >= 2 && card.freshState != .loading }
+    let readAgain = try await waitForTestCondition {
+      await server.reads >= 2 && card.freshState != .loading
+    }
     XCTAssertTrue(readAgain)
     XCTAssertEqual(Self.hidesBack(in: window), true, "Back waits through the draft's read")
 
     await server.releaseHeldCreate()
-    try await waitUntil { Self.hidesBack(in: window) == false }
+    try await waitForTestCondition { Self.hidesBack(in: window) == false }
 
     let failure = String(
       localized: "We couldn't save your goal. Try again in a moment.", table: "Onboarding")
-    let saysWhy = try await waitUntil { spoken(in: window).contains { $0.contains(failure) } }
+    let saysWhy = try await waitForTestCondition {
+      spoken(in: window).contains { $0.contains(failure) }
+    }
     XCTAssertTrue(saysWhy, "The failure shows on the card: \(spoken(in: window))")
   }
 
@@ -93,18 +97,22 @@ final class DraftCreationTests: XCTestCase {
     router.open(.startGoal(draftId: Self.draftID))
     let page = Page(shown: Self.draftID)
 
-    _ = try host(page, cards: [Self.draftID: card], store: store, router: router)
+    let window = try host(page, cards: [Self.draftID: card], store: store, router: router)
     await server.waitForHeldCreate()
 
     // Closed, then another draft's start flow opened.
     page.shown = nil
     router.dismissTask()
     router.open(.startGoal(draftId: other))
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The old draft did not disappear") {
+      Self.hidesBack(in: window) != true
+    }
 
     await server.serve(try Self.explainDraft(goalID: Self.goalID))
     await server.releaseHeldCreate()
-    try await Task.sleep(for: .milliseconds(500))
+    try await waitForTestCondition("Creating the goal did not invalidate its draft") {
+      card.isInvalidated || card.value?.goalId == Self.goalID
+    }
     await card.load()
 
     XCTAssertEqual(router.tasks, [.startGoal(draftId: other)], "The newer start flow stays")
@@ -152,19 +160,6 @@ final class DraftCreationTests: XCTestCase {
     window.makeKeyAndVisible()
     addTeardownBlock { window.isHidden = true }
     return window
-  }
-
-  @discardableResult
-  private func waitUntil(_ condition: @MainActor () async -> Bool) async throws -> Bool {
-    for _ in 0..<100 {
-      if await condition() {
-        return true
-      }
-
-      try await Task.sleep(for: .milliseconds(50))
-    }
-
-    return false
   }
 
   private static func hidesBack(in window: UIWindow) -> Bool? {

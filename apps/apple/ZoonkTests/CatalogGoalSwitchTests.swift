@@ -40,20 +40,16 @@ final class CatalogGoalSwitchTests: XCTestCase {
       .environment(session)
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Continue your plan", table: "Courses"), in: window)
-    await api.waitUntilAsked()
+    try await activate(String(localized: "Continue your plan", table: "Courses"), in: window)
+    try await api.waitUntilAsked()
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.release()
-    try await settle()
+    try await waitForTestCondition("Today did not open") { router.selectedTab == .today }
 
     XCTAssertEqual(router.selectedTab, .today, "Today opens")
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
   }
 
   private static let account = CurrentAccount(
@@ -65,18 +61,15 @@ final class CatalogGoalSwitchTests: XCTestCase {
 
 /// A goal switch the server answers when the test says.
 private actor HeldSwitch: LearnerSummaryAPIClient {
-  private var held: CheckedContinuation<Void, Never>?
-  private var waiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   func getSummary(token: String) async throws -> LearnerSummary {
     throw APIError.network
   }
 
   func switchGoal(token: String, goalID: String) async throws {
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation { continuation in
       held = continuation
-      waiter?.resume()
-      waiter = nil
     }
   }
 
@@ -92,11 +85,12 @@ private actor HeldSwitch: LearnerSummaryAPIClient {
 
   func retryRebuild(token: String, goalID: String) async throws {}
 
-  func waitUntilAsked() async {
-    if held == nil {
-      await withCheckedContinuation { waiter = $0 }
-    }
+  func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture never received its request", file: file, line: line)
+    { await self.isHeld }
   }
+
+  private var isHeld: Bool { held != nil }
 
   func release() {
     held?.resume()

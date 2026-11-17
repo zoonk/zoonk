@@ -237,7 +237,7 @@ internal fun MissionTrack(
     val parts =
         missions
             .map { mission ->
-                val fill = if (mission.total > 0) (mission.progress.toFloat() / mission.total).coerceAtMost(1f) else 0f
+                val fill = missionTrackFill(mission.done, mission.progress, mission.total)
                 val start =
                     if (mission.kind in from &&
                         mission.total > 0
@@ -425,3 +425,9 @@ fun BrainPowerReward(
 }
 
 private const val TRACK_ALPHA = 0.2f
+
+internal fun missionTrackFill(
+    done: Boolean,
+    progress: Long,
+    total: Long,
+): Float = if (done) 1f else 0f

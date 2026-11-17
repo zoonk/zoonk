@@ -203,4 +203,5 @@
     <string name="conversation_writing_task_line_2">Writing the card\'s instructions…</string>
     <string name="conversation_writing_task_line_3">Preparing what the examiner says…</string>
     <string name="conversation_writing_task_line_4">Adding phrases you can lean on…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -210,7 +211,15 @@ internal fun BeltRack(current: Belt) {
         Row(Modifier.fillMaxWidth()) {
             Belt.entries.forEach { entry ->
                 val name = stringResource(entry.label)
-                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier.weight(1f),
+                    contentAlignment =
+                        when (entry) {
+                            Belt.entries.first() -> Alignment.CenterStart
+                            Belt.entries.last() -> Alignment.CenterEnd
+                            else -> Alignment.Center
+                        },
+                ) {
                     Box(
                         Modifier
                             .size(RACK_WIDTH, RACK_HEIGHT)
@@ -225,7 +234,7 @@ internal fun BeltRack(current: Belt) {
                             },
                         contentAlignment = Alignment.Center,
                     ) {
-                        RackBelt(entry, tied = entry <= current)
+                        RackBelt(entry)
                     }
                 }
             }
@@ -240,10 +249,7 @@ internal fun BeltRack(current: Belt) {
 
 /** Main's rack belt: tied once earned, folded until then; white and black keep an outline where the page would swallow them. */
 @Composable
-private fun RackBelt(
-    belt: Belt,
-    tied: Boolean,
-) {
+private fun RackBelt(belt: Belt) {
     val dark = MaterialTheme.colorScheme.background.luminance() < HALF
     val fill = if (belt == Belt.Black && dark) Color.Black else belt.color
     val outline =
@@ -253,28 +259,20 @@ private fun RackBelt(
             else -> null
         }
 
-    Canvas(Modifier.size(RACK_WIDTH * RACK_SHARE, RACK_HEIGHT * RACK_SHARE)) {
-        val scale = minOf(size.width / RACK_BOX_WIDTH, size.height / RACK_BOX_HEIGHT)
-        translate((size.width - RACK_BOX_WIDTH * scale) / 2, (size.height - RACK_BOX_HEIGHT * scale) / 2) {
+    Canvas(Modifier.fillMaxSize()) {
+        val edge = if (outline == null) 0f else RACK_OUTLINE / 2
+        val bounds = FOLDED_BOUNDS.inflate(edge)
+        val scale = minOf(size.width / bounds.width, size.height / bounds.height)
+        translate((size.width - bounds.width * scale) / 2, (size.height - bounds.height * scale) / 2) {
             scale(scale, pivot = Offset.Zero) {
-                val shapes = if (tied) TIED else FOLDED
-                outline?.let { color -> shapes.forEach { drawPath(it, color, style = Stroke(RACK_OUTLINE)) } }
-                shapes.forEach { drawPath(it, fill) }
+                translate(-bounds.left, -bounds.top) {
+                    outline?.let { color -> FOLDED.forEach { drawPath(it, color, style = Stroke(RACK_OUTLINE)) } }
+                    FOLDED.forEach { drawPath(it, fill) }
+                }
             }
         }
     }
 }
-
-/** Reaches [amount] past its column's start, as main's belt reaches its panel's edge. */
-internal fun Modifier.bleedStart(amount: Dp): Modifier =
-    layout { measurable, constraints ->
-        val extra = amount.roundToPx()
-        val placeable =
-            measurable.measure(
-                constraints.copy(minWidth = constraints.minWidth + extra, maxWidth = constraints.maxWidth + extra),
-            )
-        layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-extra, 0) }
-    }
 
 private fun roundRect(
     x: Float,
@@ -286,31 +284,14 @@ private fun roundRect(
     addRoundRect(RoundRect(x, y, x + width, y + height, CornerRadius(radius)))
 }
 
-private fun polygon(vararg points: Float) =
-    Path().apply {
-        moveTo(points[0], points[1])
-        for (index in 2 until points.size step 2) lineTo(points[index], points[index + 1])
-        close()
-    }
-
-/** Main's shapes, in its 44 × 30 box. */
-private val TIED =
-    listOf(
-        polygon(18.6f, 12.5f, 22.4f, 12.5f, 16.6f, 27.6f, 12.2f, 27.6f),
-        polygon(21.6f, 12.5f, 25.4f, 12.5f, 31.8f, 27.6f, 27.4f, 27.6f),
-        roundRect(1.5f, 6f, 41f, 8f, 2f),
-        roundRect(17f, 3.5f, 10f, 13f, 3f),
-    )
 private val FOLDED =
     listOf(
         roundRect(5f, 7.5f, 34f, 7f, 2f),
         roundRect(5f, 15.5f, 34f, 7f, 2f),
         roundRect(31f, 7.5f, 8f, 15f, 2f),
     )
-private const val RACK_BOX_WIDTH = 44f
-private const val RACK_BOX_HEIGHT = 30f
+private val FOLDED_BOUNDS = Path().apply { FOLDED.forEach { addPath(it) } }.getBounds()
 private const val RACK_OUTLINE = 3f
-private const val RACK_SHARE = 0.8f
 private val RACK_WIDTH = 32.dp
 private val RACK_HEIGHT = 26.dp
 

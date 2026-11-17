@@ -34,6 +34,7 @@ import com.zoonk.android.ui.components.Measure
 import com.zoonk.android.ui.components.MeasureRows
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -134,6 +135,7 @@ internal fun NextStepComment(grade: EssayGrade) {
         StepTitle(criterion?.let { criterionName(it) } ?: stringResource(R.string.essay_what_to_rewrite), Modifier.stepHeading())
     }
     criterion?.quote?.let { quote ->
+        SectionLabel(stringResource(R.string.essay_your_essay))
         Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             VerticalDivider(Modifier.fillMaxHeight(), thickness = 2.dp, color = MaterialTheme.zoonk.warning)
             Text(quote, fontStyle = FontStyle.Italic, style = MaterialTheme.typography.bodyLarge)

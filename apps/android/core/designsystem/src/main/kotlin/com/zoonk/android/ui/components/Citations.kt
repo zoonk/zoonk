@@ -79,7 +79,12 @@ fun SourcesChip(
     ) {
         AssistChip(
             onClick = { scope.launch { tooltip.show() } },
-            label = { Text(stringResource(R.string.citation_sources_chip, formatDate(checked, locale, DateStyle.MonthShort))) },
+            label = {
+                Text(
+                    stringResource(R.string.citation_sources_chip, formatDate(checked, locale, DateStyle.MonthShort)),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            },
             colors =
                 AssistChipDefaults.assistChipColors(
                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,

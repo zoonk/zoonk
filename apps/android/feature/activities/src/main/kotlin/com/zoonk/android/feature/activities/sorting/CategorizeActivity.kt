@@ -187,14 +187,13 @@ private fun CategorizeActivity(props: ActivityProps) {
 
     ActivityDragDrop(dragDrop) {
         ActivityCanvas {
+            Text(
+                pluralStringResource(R.plurals.activities_sorting_sorted_count, sorted, sorted, items.size),
+                Modifier.focusRequester(focus.statusLine).focusable(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            )
             if (card == null || props.isChecked) {
-                if (!props.isChecked) {
-                    Text(
-                        stringResource(R.string.activities_sorting_all_sorted),
-                        Modifier.focusRequester(focus.statusLine).focusable(),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    )
-                }
                 groups.forEach { group ->
                     SortedGroup(
                         group,
@@ -219,11 +218,6 @@ private fun CategorizeActivity(props: ActivityProps) {
                 }
                 if (expected != null) CategorizeResults(groups, items, expected, placements)
             } else {
-                Text(
-                    pluralStringResource(R.plurals.activities_sorting_sorted_count, sorted, sorted, items.size),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
                 CardInHand(items, card, dragDrop, editable)
                 ActivityCanvasHeader(
                     readout = {
@@ -580,13 +574,6 @@ private fun CategorizeResults(
     val misplaced = items.filter { placements[it.id] != expected[it.id] }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.activities_sorting_right_count, items.size - misplaced.size, items.size),
-            style =
-                MaterialTheme.typography.bodyMedium
-                    .withTabularFigures()
-                    .copy(fontWeight = FontWeight.SemiBold),
-        )
         if (misplaced.isNotEmpty()) {
             ActivityReasons {
                 misplaced.forEach { item ->

@@ -62,6 +62,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.flagEmoji
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -242,7 +243,7 @@ internal fun LineWithIcon(
         Icon(
             painterResource(icon),
             contentDescription = null,
-            modifier = Modifier.padding(top = 2.dp).size(markDp(ICON_SIZE)),
+            modifier = Modifier.glyphInk(icon).padding(top = 2.dp).size(markDp(ICON_SIZE)),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(text, color = color, style = style)
@@ -437,8 +438,7 @@ internal fun FirstQuestion(
         Spacer(Modifier.size(20.dp))
 
         val note = stringResource(if (screen.guess) R.string.catalog_guess_note else R.string.catalog_check_note, minutesText)
-        val visitor = if (isVisitor(app)) spaceAfterSentence(note) + stringResource(R.string.catalog_no_sign_up) else ""
-        LineWithIcon(R.drawable.ic_play_circle, note + visitor, style = MaterialTheme.typography.bodySmall)
+        Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 

@@ -335,6 +335,7 @@ internal fun ColumnScope.ToolChoiceForm(
                     enabled = chosen != null && !needsSystem,
                 ) { Text(stringResource(R.string.plan_save)) }
             }
+
             if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
         },
     )

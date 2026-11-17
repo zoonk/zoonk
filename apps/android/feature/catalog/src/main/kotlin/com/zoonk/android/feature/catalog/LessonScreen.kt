@@ -202,7 +202,7 @@ private fun LessonFirstScreen(
     val note =
         listOfNotNull(
             pluralStringResource(R.plurals.catalog_lesson_minutes, minutes, minutes),
-            if (isVisitor(app)) stringResource(R.string.catalog_no_sign_up) else null,
+            null,
         ).joinSentences()
     val start = @Composable {
         // A lesson not written yet says it starts writing; one with a first screen, that it opens.
@@ -342,7 +342,7 @@ private fun LessonPlanDay(
                 minutes = lesson.estimatedMinutes.toDouble(),
                 state =
                     when {
-                        position < index -> DayStepState.Done
+                        position < index -> DayStepState.Ahead
                         position == index -> DayStepState.Current
                         else -> DayStepState.Ahead
                     },
