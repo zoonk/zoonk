@@ -43,6 +43,8 @@ struct FactSegments: View {
         ViewThatFits(in: .horizontal) {
           text(fact.text, color: fact.color).fixedSize()
           if let compact = fact.compact { text(compact, color: fact.color).fixedSize() }
+          text(fact.compact ?? fact.text, color: fact.color)
+            .fixedSize(horizontal: false, vertical: true)
         }
       }
     }

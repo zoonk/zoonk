@@ -21,12 +21,12 @@ final class FactsLayoutTests: XCTestCase {
       try top("heading", probes, window), try top("fact", probes, window), accuracy: 0.5)
   }
 
-  func testOneFactDoesNotWrapInsideItself() async throws {
+  func testFittingFactStaysOnOneLine() async throws {
     let probes = FactProbes()
     let window = try show(
       VStack {
-        Text(verbatim: "Reference").background(FactProbe(id: "reference", probes: probes))
-        FactSegments(["Sunday, 14 November 2027"])
+        Text(verbatim: "X").background(FactProbe(id: "reference", probes: probes))
+        FactSegments(["14 Nov 2027"])
           .background(FactProbe(id: "fact", probes: probes))
       }.font(.system(size: 17)).frame(width: 140)
     )
@@ -34,6 +34,31 @@ final class FactsLayoutTests: XCTestCase {
     let reference = try XCTUnwrap(probes.views["reference"])
     let fact = try XCTUnwrap(probes.views["fact"])
     XCTAssertEqual(fact.bounds.height, reference.bounds.height, accuracy: 0.5)
+  }
+
+  func testLongFactWrapsWithinItsFrame() async throws {
+    try await assertWrappingFact(
+      .init(text: "Sunday, 14 November 2027"), width: 140)
+  }
+
+  func testCompactFactWrapsWhenNeitherFormFits() async throws {
+    try await assertWrappingFact(
+      .init(text: "Sunday, 14 November 2027", compact: "14 Nov 2027"), width: 60)
+  }
+
+  private func assertWrappingFact(_ value: FactSegments.Fact, width: CGFloat) async throws {
+    let probes = FactProbes()
+    let window = try show(
+      VStack {
+        Text(verbatim: "X").background(FactProbe(id: "reference", probes: probes))
+        FactSegments(facts: [value]).background(FactProbe(id: "fact", probes: probes))
+      }.font(.system(size: 17)).frame(width: width)
+    )
+    try await settle(window)
+    let reference = try XCTUnwrap(probes.views["reference"])
+    let fact = try XCTUnwrap(probes.views["fact"])
+    XCTAssertGreaterThan(fact.bounds.height, reference.bounds.height + 0.5)
+    XCTAssertLessThanOrEqual(fact.bounds.width, width)
   }
 
   func testWideDateUsesItsCompactForm() async throws {
