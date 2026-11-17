@@ -141,7 +141,7 @@ private actor EssayTransport: ClientTransport {
   private let drafted: Bool
   private let closesOnSend: Bool
   private var holdsNextRead = false
-  private var heldRead: CheckedContinuation<Void, Never>?
+  private var heldRead: TestContinuation<Void>?
   private var isSent = false
   private var readsAfterSend = 0
 
@@ -179,7 +179,7 @@ private actor EssayTransport: ClientTransport {
 
     if holdsNextRead {
       holdsNextRead = false
-      await withCheckedContinuation { heldRead = $0 }
+      await withTestVoidContinuation { heldRead = $0 }
     }
 
     return (
@@ -197,9 +197,9 @@ private actor EssayTransport: ClientTransport {
     holdsNextRead = true
   }
 
-  func waitForHeldRead() async {
-    while heldRead == nil {
-      await Task.yield()
+  func waitForHeldRead(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldRead did not arrive", file: file, line: line) {
+      await self.heldRead != nil
     }
   }
 

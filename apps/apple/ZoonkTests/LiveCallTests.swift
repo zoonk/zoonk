@@ -1224,7 +1224,7 @@ private final class FakeTransport: LiveCallTransport {
   /// What the microphone hears at every reading.
   var speaking = false
   private let holdsOffer: Bool
-  private var offerWait: CheckedContinuation<Void, any Error>?
+  private var offerWait: TestContinuation<Void>?
 
   /// `holdsOffer`: ICE gathering never finishes, and only closing ends the wait, as in WebRTC.
   init(holdsOffer: Bool = false) {
@@ -1239,7 +1239,7 @@ private final class FakeTransport: LiveCallTransport {
     offers += 1
 
     if holdsOffer {
-      try await withCheckedThrowingContinuation { offerWait = $0 }
+      try await withTestContinuation { offerWait = $0 }
     }
 
     return "offer"
@@ -1290,9 +1290,9 @@ private final class FakeServer {
   private(set) var takeovers: [Bool] = []
   private(set) var checkedConnections: [String] = []
   private let holdsChecks: Bool
-  private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
+  private var pendingCheck: TestContinuation<ObjectiveCheck?>?
   private let holdsConnects: Bool
-  private var pendingConnect: CheckedContinuation<Void, Never>?
+  private var pendingConnect: TestContinuation<Void>?
   private(set) var microphoneRequests = 0
   private(set) var redeemed: [String] = []
   /// The earlier turns each redeem sent.
@@ -1337,7 +1337,7 @@ private final class FakeServer {
         self.takeovers.append(takeover)
 
         if self.holdsConnects {
-          await withCheckedContinuation { self.pendingConnect = $0 }
+          await withTestVoidContinuation { self.pendingConnect = $0 }
         }
 
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
@@ -1363,7 +1363,7 @@ private final class FakeServer {
           return nil
         }
 
-        let check = await withCheckedContinuation { self.pendingCheck = $0 }
+        let check = await withTestOptionalContinuation { self.pendingCheck = $0 }
         // As the app's cache does: a write whose task was cancelled has no answer.
         return Task.isCancelled ? nil : check
       },

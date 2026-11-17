@@ -61,14 +61,14 @@ final class CatalogGoalSwitchTests: XCTestCase {
 
 /// A goal switch the server answers when the test says.
 private actor HeldSwitch: LearnerSummaryAPIClient {
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   func getSummary(token: String) async throws -> LearnerSummary {
     throw APIError.network
   }
 
   func switchGoal(token: String, goalID: String) async throws {
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation { continuation in
       held = continuation
     }
   }
@@ -85,8 +85,9 @@ private actor HeldSwitch: LearnerSummaryAPIClient {
 
   func retryRebuild(token: String, goalID: String) async throws {}
 
-  func waitUntilAsked() async throws {
-    try await waitForTestCondition("The fixture never received its request") { await self.isHeld }
+  func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture never received its request", file: file, line: line)
+    { await self.isHeld }
   }
 
   private var isHeld: Bool { held != nil }

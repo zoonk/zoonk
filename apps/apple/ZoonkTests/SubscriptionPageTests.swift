@@ -99,7 +99,7 @@ final class WebPlusVisitTests: XCTestCase {
 }
 
 private actor RenewalFailure: ClientTransport {
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
     -> (HTTPResponse, HTTPBody?)
   {
@@ -110,14 +110,16 @@ private actor RenewalFailure: ClientTransport {
       )
     }
     if operationID == "resumeStripeSubscription" {
-      await withCheckedContinuation {
+      await withTestVoidContinuation {
         held = $0
       }
     }
     throw APIError.network
   }
-  func waitForRequest() async throws {
-    try await waitForTestCondition("Renewal was not requested") { await self.isHeld }
+  func waitForRequest(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("Renewal was not requested", file: file, line: line) {
+      await self.isHeld
+    }
   }
 
   private var isHeld: Bool { held != nil }

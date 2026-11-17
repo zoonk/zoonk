@@ -296,7 +296,7 @@ final class TutorConversationTests: XCTestCase {
       if api.requestIDs.count == 1 {
         conversation.draft = "What's a cell wall?"
       } else {
-        await withCheckedContinuation { typed.held = $0 }
+        await withTestVoidContinuation { typed.held = $0 }
       }
     }
     api.beforeThread = {
@@ -306,9 +306,7 @@ final class TutorConversationTests: XCTestCase {
 
       typed.send = Task { await conversation.send() }
 
-      while typed.held == nil {
-        await Task.yield()
-      }
+      _ = try? await waitForTestCondition("Fixture state did not arrive") { !(typed.held == nil) }
     }
     let simpler = TutorSuggestion(
       id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
@@ -670,6 +668,7 @@ final class TutorOfferStepTests: XCTestCase {
       draft: TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
     let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
+    let oldThread = tutor.conversation(step.scope).thread
     try show(
       StepThread(step: step)
         .environment(tutor)
@@ -687,7 +686,9 @@ final class TutorOfferStepTests: XCTestCase {
       step.renderedScope == step.scope
     }
     held.release()
-    try await waitForTestCondition("The old thread read did not finish") { held.finished }
+    try await waitForTestCondition("The old thread result was not consumed") {
+      oldThread.freshValue != nil && !oldThread.isRefreshing
+    }
 
     XCTAssertTrue(api.requestIDs.isEmpty, "Nothing is asked for the step the learner left")
   }
@@ -718,23 +719,23 @@ private struct StepThread: View {
 /// A read the test lets through when it says, every read after it at once.
 @MainActor
 private final class Held {
-  private var holding: CheckedContinuation<Void, Never>?
+  private var holding: TestContinuation<Void>?
   private var released = false
-  private(set) var finished = false
 
-  func wait() async {
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
     guard !released, holding == nil else {
       return
     }
 
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation(file: file, line: line) { continuation in
       holding = continuation
     }
-    finished = true
   }
 
-  func waitUntilHeld() async throws {
-    try await waitForTestCondition("The fixture request never arrived") { self.isHeld }
+  func waitUntilHeld(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture request never arrived", file: file, line: line) {
+      self.isHeld
+    }
   }
 
   private var isHeld: Bool { holding != nil }
@@ -749,7 +750,7 @@ private final class Held {
 @MainActor
 private final class TypedDuringReread {
   var send: Task<Void, Never>?
-  var held: CheckedContinuation<Void, Never>?
+  var held: TestContinuation<Void>?
 }
 
 private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {

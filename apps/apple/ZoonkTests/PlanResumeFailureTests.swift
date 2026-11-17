@@ -28,7 +28,7 @@ final class PlanResumeFailureTests: XCTestCase {
   func testAResumeThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
     let api = PlanAPIStub()
     await api.setStatusFails(true)
-    await api.hold(.resumeChangesPlan)
+    await api.hold(.setStatus)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
 
@@ -36,12 +36,13 @@ final class PlanResumeFailureTests: XCTestCase {
     try await api.waitForHeldCall()
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     await api.releaseHeldCall()
+    try await api.waitForCompleted(.setStatus)
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      spoken(in: window).contains("Your plan")
+      tabs.pageVisible && spoken(in: window).contains("Your plan")
     }
     try await waitForTestCondition("Expected state did not arrive") {
       !(spoken(in: window).contains(Self.failure))
@@ -55,11 +56,11 @@ final class PlanResumeFailureTests: XCTestCase {
   private func leaveAndComeBack(_ tabs: Tabs, in window: UIWindow) async throws {
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      spoken(in: window).contains("Your plan")
+      tabs.pageVisible && spoken(in: window).contains("Your plan")
     }
   }
 
@@ -82,6 +83,7 @@ final class PlanResumeFailureTests: XCTestCase {
 @Observable
 private final class Tabs {
   var selected = 0
+  var pageVisible = false
 }
 
 /// A paused goal's Plan in one tab, and somewhere else to go.
@@ -96,6 +98,8 @@ private struct PausedPlan: View {
         }
         .resumeGoalBar()
         .modifier(GoalOptionsToolbar(goal: Self.goal))
+        .onAppear { tabs.pageVisible = true }
+        .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 

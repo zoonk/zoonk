@@ -678,7 +678,7 @@ private final class SuspendedSubscriptionSynchronizationSpy {
 
 @MainActor
 private final class Checkpoint {
-  private var continuation: CheckedContinuation<Void, Never>?
+  private var continuation: TestContinuation<Void>?
   private var isReached = false
 
   func reach() {
@@ -687,12 +687,12 @@ private final class Checkpoint {
     continuation = nil
   }
 
-  func wait() async {
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
     guard !isReached else {
       return
     }
 
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation(file: file, line: line) { continuation in
       self.continuation = continuation
     }
   }

@@ -183,12 +183,12 @@ final class PlanVisitTests: XCTestCase {
   {
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     await meanwhile()
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      !spoken(in: window).contains("Elsewhere")
+      tabs.pageVisible && !spoken(in: window).contains("Elsewhere")
     }
   }
 
@@ -198,6 +198,7 @@ final class PlanVisitTests: XCTestCase {
 @Observable
 private final class PlanVisitTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 /// The Plan in one tab, and somewhere else to go.
@@ -208,6 +209,8 @@ private struct PlanVisitTabsView: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         PlanScreen()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 
@@ -221,8 +224,9 @@ private struct PlanVisitTabsView: View {
 private actor RebuildSummary: LearnerSummaryAPIClient {
   private let goal: LearnerGoal
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(goal: LearnerGoal) {
     self.goal = goal
@@ -230,17 +234,21 @@ private actor RebuildSummary: LearnerSummaryAPIClient {
 
   func holdRetry() { holds = true }
 
-  func waitForHeldRetry() async {
+  func waitForHeldRetry(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseRetry() {
+  func releaseRetry(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   func getSummary(token: String) async throws -> LearnerSummary {
@@ -272,9 +280,10 @@ private actor RebuildSummary: LearnerSummaryAPIClient {
   }
 
   func retryRebuild(token: String, goalID: String) async throws {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil

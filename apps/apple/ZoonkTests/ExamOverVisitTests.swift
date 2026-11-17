@@ -47,7 +47,7 @@ final class ExamOverVisitTests: XCTestCase {
     try await api.waitForHeldCall()
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     await api.releaseHeldCall()
     try await waitForTestCondition("The change was not recorded") {
@@ -57,7 +57,7 @@ final class ExamOverVisitTests: XCTestCase {
     XCTAssertEqual(calls.changes.count, 1)
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      spoken(in: window).contains("Your plan")
+      tabs.pageVisible && spoken(in: window).contains("Your plan")
     }
     try await waitForTestCondition("Expected state did not arrive") {
       !(spoken(in: window).contains(Self.failure))
@@ -90,7 +90,7 @@ final class ExamOverVisitTests: XCTestCase {
     try await api.waitForHeldCall()
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     await api.releaseHeldCall()
     try await waitForTestCondition("Archive was not recorded") {
@@ -100,7 +100,7 @@ final class ExamOverVisitTests: XCTestCase {
     XCTAssertEqual(calls.statuses, [.archived])
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      spoken(in: window).contains("Your plan")
+      tabs.pageVisible && spoken(in: window).contains("Your plan")
     }
     try await waitForTestCondition("Expected state did not arrive") {
       !(spoken(in: window).contains(Self.failure))
@@ -118,11 +118,11 @@ final class ExamOverVisitTests: XCTestCase {
   private func leaveAndComeBack(_ tabs: Tabs, in window: UIWindow) async throws {
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
     }
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      spoken(in: window).contains("Your plan")
+      tabs.pageVisible && spoken(in: window).contains("Your plan")
     }
   }
 
@@ -145,6 +145,7 @@ final class ExamOverVisitTests: XCTestCase {
 @Observable
 private final class Tabs {
   var selected = 0
+  var pageVisible = false
 }
 
 private struct PastDatePlan: View {
@@ -158,6 +159,8 @@ private struct PastDatePlan: View {
         }
         .examOverBar(goal: Self.goal, isShown: true)
         .modifier(GoalOptionsToolbar(goal: Self.goal))
+        .onAppear { tabs.pageVisible = true }
+        .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 

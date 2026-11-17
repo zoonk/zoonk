@@ -31,25 +31,25 @@ final class PlanAskingTests: XCTestCase {
   /// Holds each request until it's released, recording what was asked.
   private final class HeldRequests {
     private(set) var asked: [String] = []
-    private var held: [CheckedContinuation<Answer, Never>] = []
-    private var waiters: [(count: Int, resume: CheckedContinuation<Void, Never>)] = []
+    private var held: [TestContinuation<Answer>] = []
+    private var waiters: [(count: Int, resume: TestContinuation<Void>)] = []
 
-    func answer(_ key: String, id: Int) async -> Answer {
+    func answer(_ key: String, id: Int) async throws -> Answer {
       asked.append(key)
       for waiter in waiters where waiter.count <= asked.count {
         waiter.resume.resume()
       }
 
       waiters.removeAll { $0.count <= asked.count }
-      return await withCheckedContinuation { held.append($0) }
+      return try await withTestContinuation { held.append($0) }
     }
 
-    func waitForAsks(_ count: Int) async {
+    func waitForAsks(_ count: Int, file: StaticString = #filePath, line: UInt = #line) async {
       guard asked.count < count else {
         return
       }
 
-      await withCheckedContinuation { waiters.append((count, $0)) }
+      await withTestVoidContinuation(file: file, line: line) { waiters.append((count, $0)) }
     }
 
     func releaseNext(ready: Bool = true) {
@@ -70,18 +70,26 @@ final class PlanAskingTests: XCTestCase {
 
     private let current = Mutex(Instant(offset: .zero))
     private let step: Duration
+    private let expireFirstTimeout: Mutex<Bool>
 
-    init(step: Duration) {
+    init(step: Duration, expireFirstTimeout: Bool = false) {
       self.step = step
+      self.expireFirstTimeout = Mutex(expireFirstTimeout)
     }
 
     var now: Instant { current.withLock { $0 } }
     var minimumResolution: Duration { .zero }
 
     func sleep(until deadline: Instant, tolerance: Duration?) async throws {
-      guard now.duration(to: deadline) <= step else {
-        try await waitForCancellation()
-        return
+      if now.duration(to: deadline) > step {
+        let expires = expireFirstTimeout.withLock { expires in
+          defer { expires = false }
+          return expires
+        }
+        if !expires {
+          try await waitForCancellation()
+          return
+        }
       }
 
       current.withLock { $0 = max($0, deadline) }
@@ -150,8 +158,8 @@ final class PlanAskingTests: XCTestCase {
     await asking.ask("a", when: true) { Answer(id: 1, ready: true) }
 
     let unready = Task { await asking.ask("b", when: true) { Answer(id: 2, ready: false) } }
-    while asking.answers["b"] == nil {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(asking.answers["b"] == nil)
     }
     unready.cancel()
     await unready.value
@@ -171,8 +179,8 @@ final class PlanAskingTests: XCTestCase {
     let unready = Task {
       await asking.ask("b", when: true) { Answer(id: 2, ready: false, readingNotice: true) }
     }
-    while asking.answers["b"] == nil {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(asking.answers["b"] == nil)
     }
     unready.cancel()
     await unready.value
@@ -236,18 +244,23 @@ final class PlanAskingTests: XCTestCase {
     XCTAssertEqual(asking.status, .idle)
   }
 
-  func testDropsAnAnswerThatComesAfterTheChoiceChanged() async {
+  func testDropsAnAnswerThatComesAfterTheChoiceChanged() async throws {
     let asking = makeAsking()
-
+    let server = HeldRequests()
+    var requestFinished = false
     let task = Task {
       await asking.ask("old", when: true) {
-        try? await waitForCancellation()
-        return Answer(id: 1, ready: true)
+        defer { requestFinished = true }
+        return try await server.answer("old", id: 1)
       }
     }
-
+    await server.waitForAsks(1)
     task.cancel()
     await task.value
+    server.releaseNext()
+    try await waitForTestCondition("The canceled visit's request did not finish") {
+      requestFinished
+    }
 
     XCTAssertNil(asking.answer(for: "old"))
     XCTAssertNil(asking.first)
@@ -258,13 +271,13 @@ final class PlanAskingTests: XCTestCase {
     let asking = makeAsking()
     let server = HeldRequests()
 
-    let first = Task { await asking.ask("a", when: true) { await server.answer("a", id: 1) } }
+    let first = Task { await asking.ask("a", when: true) { try await server.answer("a", id: 1) } }
     await server.waitForAsks(1)
 
-    let second = Task { await asking.ask("b", when: true) { await server.answer("b", id: 2) } }
+    let second = Task { await asking.ask("b", when: true) { try await server.answer("b", id: 2) } }
     first.cancel()
     await Task.yield()
-    let latest = Task { await asking.ask("c", when: true) { await server.answer("c", id: 3) } }
+    let latest = Task { await asking.ask("c", when: true) { try await server.answer("c", id: 3) } }
     second.cancel()
 
     server.releaseNext()
@@ -280,7 +293,7 @@ final class PlanAskingTests: XCTestCase {
     let asking = makeAsking(timeout: .milliseconds(20))
     let server = HeldRequests()
 
-    await asking.ask("a", when: true) { await server.answer("a", id: 1) }
+    await asking.ask("a", when: true) { try await server.answer("a", id: 1) }
 
     XCTAssertEqual(asking.status, .failed)
     XCTAssertEqual(server.asked, ["a"], "asking again joins the request still out")
@@ -291,13 +304,15 @@ final class PlanAskingTests: XCTestCase {
   func testAnAnswerAfterATimeoutClearsTheFailureWhileItKeepsAsking() async {
     final class Asks {
       var count = 0
-      var statusOnRetry: PlanAsking<String, Answer, ContinuousClock>.Status?
+      var statusOnRetry: PlanAsking<String, Answer, StepClock>.Status?
     }
 
-    let asking = makeAsking(timeout: .milliseconds(200))
+    let asking = PlanAsking<String, Answer, StepClock>(
+      clock: StepClock(step: .seconds(3), expireFirstTimeout: true),
+      interval: .seconds(3), settle: .milliseconds(300), timeout: .seconds(45))
     let asks = Asks()
 
-    // The first answer comes between the first timeout and the second.
+    // The clock expires only the first timeout, so scheduler speed cannot expire the retry.
     await asking.ask("a", when: true) {
       asks.count += 1
 
@@ -320,11 +335,11 @@ final class PlanAskingTests: XCTestCase {
     let asking = makeAsking(timeout: .milliseconds(20))
     let server = HeldRequests()
 
-    let first = Task { await asking.ask("a", when: true) { await server.answer("a", id: 1) } }
+    let first = Task { await asking.ask("a", when: true) { try await server.answer("a", id: 1) } }
     await server.waitForAsks(1)
     first.cancel()
 
-    await asking.ask("b", when: true) { await server.answer("b", id: 2) }
+    await asking.ask("b", when: true) { try await server.answer("b", id: 2) }
 
     XCTAssertEqual(asking.status, .failed)
     XCTAssertEqual(server.asked, ["a"], "the latest week waits for the one still out")
@@ -334,7 +349,6 @@ final class PlanAskingTests: XCTestCase {
 }
 
 private func waitForCancellation() async throws {
-  let never = AsyncStream<Void> { _ in }
-  for await _ in never {}
+  try await waitForTestCondition("The fixture sleep was never canceled") { Task.isCancelled }
   throw CancellationError()
 }

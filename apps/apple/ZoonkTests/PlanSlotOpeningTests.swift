@@ -96,15 +96,21 @@ final class PlanSlotOpeningTests: XCTestCase {
   func testClosingTheSheetDropsAClaimStillWaiting() async throws {
     let claims = HeldClaims()
     let router = AppRouter()
+    let api = try await finishedPlan()
     let window = try await showPlan(
-      api: try await finishedPlan(), width: .narrow, claims: claims, router: router)
+      api: api, width: .narrow, claims: claims, router: router)
 
     try await activate(String(localized: "View", table: "Plan"), in: window)
     try await activate(Self.claim, in: window)
     try await claims.waitUntilAsked()
     try await closeRequestSheet(in: window)
+    let read = plans.plan(goalId: "goal")
+    let revision = read.revision
     await claims.answer()
-    try await waitForTestCondition("Expected state did not arrive") { (router.sheet) == nil }
+    try await waitForTestCondition("The claim result was not consumed and refreshed") {
+      await claims.completed == 1 && read.revision > revision
+        && !read.isInvalidated && !read.isRefreshing
+    }
     XCTAssertNil(router.sheet, "Nothing opens once its sheet closed")
 
     try await activate(String(localized: "View", table: "Plan"), in: window)
@@ -566,10 +572,13 @@ final class PlanSlotOpeningTests: XCTestCase {
 /// A claim that answers when the test says, with two certificates already shown before, so the
 /// Plan opens the learner's certificates.
 private actor HeldClaims: CertificatesAPIClient {
-  private var asked: CheckedContinuation<Void, Never>?
+  private var asked: TestContinuation<Void>?
+  private(set) var completed = 0
 
-  func waitUntilAsked() async throws {
-    try await waitForTestCondition("The fixture request never arrived") { await self.isHeld }
+  func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture request never arrived", file: file, line: line) {
+      await self.isHeld
+    }
   }
 
   private var isHeld: Bool { asked != nil }
@@ -580,7 +589,8 @@ private actor HeldClaims: CertificatesAPIClient {
   }
 
   func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] {
-    await withCheckedContinuation { continuation in
+    defer { completed += 1 }
+    await withTestVoidContinuation { continuation in
       asked = continuation
     }
 

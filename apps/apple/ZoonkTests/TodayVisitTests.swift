@@ -315,12 +315,12 @@ private struct PausedToday {
 
   func leave() async throws {
     tabs.selected = 1
-    try await waitForTestCondition("Left Today") { says("Elsewhere") }
+    try await waitForTestCondition("Left Today") { !tabs.pageVisible && says("Elsewhere") }
   }
 
   func comeBack() async throws {
     tabs.selected = 0
-    try await waitForTestCondition("Returned to Today") { !says("Elsewhere") }
+    try await waitForTestCondition("Returned to Today") { tabs.pageVisible && !says("Elsewhere") }
   }
 
   func leaveAndComeBack() async throws {
@@ -333,6 +333,7 @@ private struct PausedToday {
 @Observable
 private final class PausedTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 private struct PausedTodayHost: View {
@@ -342,6 +343,8 @@ private struct PausedTodayHost: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         TodayScreen()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 

@@ -90,6 +90,9 @@ final class PlanSlotCheckTests: XCTestCase {
 
     XCTAssertNotNil(
       context.slotCheck(.coverage("Coverage")).asked, "The change it found")
+    try await waitForTestCondition("The card did not draw the change") {
+      self.spoken(in: window).contains(String(localized: "Change my plan", table: "Plan"))
+    }
     XCTAssertTrue(
       spoken(in: window).contains(String(localized: "Change my plan", table: "Plan")),
       "The card shows the change: \(spoken(in: window))")
@@ -109,6 +112,9 @@ final class PlanSlotCheckTests: XCTestCase {
     }
 
     let found = String(localized: "No date fits all your lessons.", table: "Plan")
+    try await waitForTestCondition("The card did not draw the date result") {
+      self.spoken(in: window).contains { $0.contains(found) }
+    }
     XCTAssertTrue(
       spoken(in: window).contains { $0.contains(found) },
       "The card says what it found: \(spoken(in: window))")

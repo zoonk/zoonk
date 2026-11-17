@@ -81,8 +81,8 @@ final class MindMapsStoreTests: XCTestCase {
 
     await api.holdNextList()
     let earlier = Task { await list.refresh() }
-    while await !api.isHoldingList {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
     }
 
     await store.create(goalId: "goal", chapterId: "chapter")
@@ -134,9 +134,7 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
 
     let first = Task { await store.follow(goalId: "goal", chapterId: "chapter") }
-    while await !api.isHolding {
-      await Task.yield()
-    }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") { await !(!api.isHolding) }
 
     let second = Task { await store.follow(goalId: "goal", chapterId: "chapter") }
     first.cancel()
@@ -172,8 +170,8 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextList()
     let earlier = Task { await list.refresh() }
-    while await !api.isHoldingList {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
     }
 
     let created = expectation(description: "The tap reads the list without the read before it")
@@ -222,8 +220,8 @@ final class MindMapsStoreTests: XCTestCase {
     await api.holdNextChapterRead()
 
     let firstRead = Task { await lessons.load() }
-    while await !api.isHoldingChapterRead {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingChapterRead)
     }
 
     await api.writeLessons(["first", "second"])
@@ -320,13 +318,13 @@ final class MindMapsStoreTests: XCTestCase {
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
     XCTAssertTrue(store.isSaved(Self.chapterKey, server: false))
-    while await !api.isHoldingSave {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingSave)
     }
 
     await api.releaseSave()
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     XCTAssertEqual(list.value?.chapters.first?.saved, true)
@@ -342,8 +340,8 @@ final class MindMapsStoreTests: XCTestCase {
     await api.failSaves(1)
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     XCTAssertFalse(
@@ -360,16 +358,16 @@ final class MindMapsStoreTests: XCTestCase {
     await api.holdNextSave()
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    while await !api.isHoldingSave {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingSave)
     }
 
     store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
     store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
     await api.releaseSave()
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     let calls = await api.calls
@@ -388,8 +386,8 @@ final class MindMapsStoreTests: XCTestCase {
     await otherMap.load()
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     await other.load()
@@ -407,15 +405,15 @@ final class MindMapsStoreTests: XCTestCase {
     await api.holdNextSave()
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    while await !api.isHoldingSave {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingSave)
     }
 
     store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
     await api.failSaves(1)
     await api.releaseSave()
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     await other.load()
@@ -434,8 +432,8 @@ final class MindMapsStoreTests: XCTestCase {
     await api.holdNextSave()
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    while await !api.isHoldingSave {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingSave)
     }
 
     await accounts.signIn(session, as: "learner-b")
@@ -444,8 +442,8 @@ final class MindMapsStoreTests: XCTestCase {
 
     store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
     await api.releaseSave()
-    while !store.pendingSaves.isEmpty {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(!store.pendingSaves.isEmpty)
     }
 
     let calls = await api.calls
@@ -578,8 +576,8 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextList()
     let earlier = Task { await list.refresh() }
-    while await !api.isHoldingList {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
     }
 
     let created = expectation(description: "Create all reads the list without the read before it")
@@ -619,8 +617,8 @@ final class MindMapsStoreTests: XCTestCase {
     await api.holdNextChapterRead()
 
     let firstRead = Task { await map.load() }
-    while await !api.isHoldingChapterRead {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingChapterRead)
     }
 
     await store.createAll(goalId: "goal")
@@ -724,7 +722,9 @@ final class MindMapsStoreTests: XCTestCase {
     await store.list(goalId: "goal").load()
     await api.holdRowOnlyRefusal()
     let older = Task { await store.create(goalId: "goal", chapterId: "older") }
-    while await !api.isHoldingRow { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingRow)
+    }
     await store.create(goalId: "goal", chapterId: "chapter")
     XCTAssertNotNil(store.shownStop(goalId: "goal"))
     await api.releaseRow()
@@ -746,7 +746,9 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextList()
     let create = Task { await store.createAll(goalId: "goal") }
-    while await !api.isHoldingList { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
+    }
     XCTAssertEqual(
       store.shownStop(goalId: "goal"), stop,
       "The POST refusal must gate rows while its own follow-up is pending")
@@ -766,7 +768,9 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextList()
     let create = Task { await store.createAll(goalId: "goal") }
-    while await !api.isHoldingList { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
+    }
     list.invalidate()
     await list.refresh()
     XCTAssertNil(list.value?.createOffer.stop)
@@ -806,7 +810,9 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextList()
     let older = Task { await list.refresh() }
-    while await !api.isHoldingList { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
+    }
     await store.create(goalId: "goal", chapterId: "chapter")
     XCTAssertEqual(list.value?.createOffer.stop, cap.pageStop)
     await api.releaseList()
@@ -856,13 +862,17 @@ final class MindMapsStoreTests: XCTestCase {
     await store.list(goalId: "goal").load()
     await api.holdRowOnlyRefusal()
     let row = Task { await store.create(goalId: "goal", chapterId: "chapter") }
-    while await !api.isHoldingRow { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingRow)
+    }
     await store.create(goalId: "goal", chapterId: "chapter")
     var calls = await api.calls
     XCTAssertEqual(calls.create, 1)
     await api.holdNextList()
     let bulk = Task { await store.createAll(goalId: "goal") }
-    while await !api.isHoldingList { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      await !(!api.isHoldingList)
+    }
     await store.createAll(goalId: "goal")
     calls = await api.calls
     XCTAssertEqual(calls.createAll, 1)
@@ -1000,7 +1010,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
       ], []
     )
   }
-  private var heldRow: CheckedContinuation<Void, Never>?
+  private var heldRow: TestContinuation<Void>?
   private var holdsRow = false
   var isHoldingRow: Bool { heldRow != nil }
   func holdRowOnlyRefusal() { holdsRow = true }
@@ -1025,19 +1035,19 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private let request: MindMapRequest
   private let startsAs: ChapterMindMap.Status?
   private var holdsFirstStatus: Bool
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
   /// The next list read answers with what the server had when it was asked, once released.
   private var holdsNextList = false
-  private var heldList: CheckedContinuation<Void, Never>?
+  private var heldList: TestContinuation<Void>?
   private var listFailures = 0
   private var saved = false
   private var saveFailures = 0
   private var holdsNextSave = false
-  private var heldSave: CheckedContinuation<Void, Never>?
+  private var heldSave: TestContinuation<Void>?
   /// The next read of a chapter's map or lesson maps answers with what the server had when it was
   /// asked, once released.
   private var holdsNextChapterRead = false
-  private var heldChapterRead: CheckedContinuation<Void, Never>?
+  private var heldChapterRead: TestContinuation<Void>?
   private var createAllFailures = 0
   private var answered: (chapters: [ChapterMindMap], saved: [SavedMindMap])?
   /// The chapter's written lessons, every one open.
@@ -1148,7 +1158,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
     if holdsNextList {
       holdsNextList = false
-      await withCheckedContinuation { heldList = $0 }
+      await withTestVoidContinuation { heldList = $0 }
     }
 
     if listFailures > 0 {
@@ -1184,7 +1194,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
     if holdsNextSave {
       holdsNextSave = false
-      await withCheckedContinuation { heldSave = $0 }
+      await withTestVoidContinuation { heldSave = $0 }
     }
 
     if fails {
@@ -1224,7 +1234,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
     if holdsFirstStatus {
       holdsFirstStatus = false
-      await withCheckedContinuation { held = $0 }
+      await withTestVoidContinuation { held = $0 }
     }
 
     let next = statuses.count > 1 ? statuses.removeFirst() : statuses.first ?? .success(server)
@@ -1237,7 +1247,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     calls.create += 1
     if holdsRow {
       holdsRow = false
-      await withCheckedContinuation { heldRow = $0 }
+      await withTestVoidContinuation { heldRow = $0 }
       return .refused(MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap))
     }
 
@@ -1251,7 +1261,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private func holdChapterRead() async {
     if holdsNextChapterRead {
       holdsNextChapterRead = false
-      await withCheckedContinuation { heldChapterRead = $0 }
+      await withTestVoidContinuation { heldChapterRead = $0 }
     }
   }
 

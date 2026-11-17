@@ -63,11 +63,12 @@ final class PlanCertificateClaimTests: XCTestCase {
     owner.leave()
     XCTAssertFalse(check.failed, "A failure before leaving")
 
-    check.claim(context)
+    let oldCheck = check
+    oldCheck.claim(context)
     try await claim.waitUntilAsked()
     owner.leave()
     claim.release(nil)
-    try await waitForTestCondition("The late claim did not finish") { claim.completed == 2 }
+    try await waitForTestCondition("The old claim did not consume its failure") { oldCheck.failed }
     XCTAssertFalse(check.failed, "A failure after leaving")
   }
 }
@@ -75,19 +76,18 @@ final class PlanCertificateClaimTests: XCTestCase {
 /// A claim the server answers when the test says.
 @MainActor
 private final class HeldClaim {
-  private var held: CheckedContinuation<PlanClaim?, Never>?
-  private(set) var completed = 0
+  private var held: TestContinuation<PlanClaim?>?
 
   func answer() async -> PlanClaim? {
-    let claim = await withCheckedContinuation { continuation in
+    let claim = await withTestOptionalContinuation { continuation in
       held = continuation
     }
-    completed += 1
     return claim
   }
 
-  func waitUntilAsked() async throws {
-    try await waitForTestCondition("The fixture never received its request") { self.isHeld }
+  func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture never received its request", file: file, line: line)
+    { self.isHeld }
   }
 
   private var isHeld: Bool { held != nil }

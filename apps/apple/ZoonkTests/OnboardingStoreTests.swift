@@ -258,17 +258,17 @@ actor DraftServer: ClientTransport {
 
   private var served: OnboardingDraft
   private var editAnswer: OnboardingDraft?
-  private var heldEdit: CheckedContinuation<Void, Never>?
+  private var heldEdit: TestContinuation<Void>?
   private var editsFail = false
   private var holdsRead = false
-  private var heldRead: CheckedContinuation<Void, Never>?
+  private var heldRead: TestContinuation<Void>?
   private var editAnswered = false
   private var readsAfterEdit = 0
   private(set) var creates = 0
   private(set) var reads = 0
   private var createAnswer = CreateAnswer.created
   private var holdsCreate = false
-  private var heldCreate: CheckedContinuation<Void, Never>?
+  private var heldCreate: TestContinuation<Void>?
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -288,7 +288,7 @@ actor DraftServer: ClientTransport {
 
       if holdsRead {
         holdsRead = false
-        await withCheckedContinuation { heldRead = $0 }
+        await withTestVoidContinuation { heldRead = $0 }
       }
     }
 
@@ -297,7 +297,7 @@ actor DraftServer: ClientTransport {
 
       if holdsCreate {
         holdsCreate = false
-        await withCheckedContinuation { heldCreate = $0 }
+        await withTestVoidContinuation { heldCreate = $0 }
       }
 
       switch createAnswer {
@@ -324,7 +324,7 @@ actor DraftServer: ClientTransport {
       }
 
       if let editAnswer {
-        await withCheckedContinuation { heldEdit = $0 }
+        await withTestVoidContinuation { heldEdit = $0 }
         answer = editAnswer
       }
     }
@@ -343,9 +343,9 @@ actor DraftServer: ClientTransport {
     editAnswer = draft
   }
 
-  func waitForHeldEdit() async {
-    while heldEdit == nil {
-      await Task.yield()
+  func waitForHeldEdit(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldEdit did not arrive", file: file, line: line) {
+      await self.heldEdit != nil
     }
   }
 
@@ -363,10 +363,9 @@ actor DraftServer: ClientTransport {
     holdsCreate = true
   }
 
-  func waitForHeldCreate() async {
-    while heldCreate == nil {
-      await Task.yield()
-    }
+  func waitForHeldCreate(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldCreate did not arrive", file: file, line: line)
+    { await self.heldCreate != nil }
   }
 
   func releaseHeldCreate() {
@@ -378,9 +377,9 @@ actor DraftServer: ClientTransport {
     holdsRead = true
   }
 
-  func waitForHeldRead() async {
-    while heldRead == nil {
-      await Task.yield()
+  func waitForHeldRead(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldRead did not arrive", file: file, line: line) {
+      await self.heldRead != nil
     }
   }
 

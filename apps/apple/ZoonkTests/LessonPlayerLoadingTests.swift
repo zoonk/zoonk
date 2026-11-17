@@ -1039,8 +1039,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     await store.check()
     store.continueLesson()
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     XCTAssertEqual(store.state?.completion?.status, .failed)
@@ -1071,8 +1071,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     await store.check()
     store.continueLesson()
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     XCTAssertEqual(store.state?.completion?.status, .failed)
@@ -1104,14 +1104,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let second = try XCTUnwrap(store.held.last?.attemptId)
     await transport.release(first)
 
-    while store.held.count > 1 {
-      await Task.yield()
-    }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") { !(store.held.count > 1) }
 
     await transport.release(second)
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     let requests = await transport.requests
@@ -1209,12 +1207,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     while await transport.clocks.count < count, Date.now < deadline { await Task.yield() }
   }
 
-  private func waitUntil(_ condition: () -> Bool) async {
-    for _ in 0..<10_000 where !condition() {
-      await Task.yield()
+  private func waitUntil(
+    file: StaticString = #filePath, line: UInt = #line, _ condition: () -> Bool
+  ) async {
+    _ = try? await waitForTestCondition("The state did not arrive", file: file, line: line) {
+      condition()
     }
-
-    XCTAssertTrue(condition(), "the change never showed")
   }
 
   private func temporaryDefaults(name: String = #function) throws -> UserDefaults {
@@ -1417,7 +1415,7 @@ private actor HeldAnswersTransport: ClientTransport {
   private let runAnswers: String
   private var failingSteps: Set<String> = []
   private var holdsChecks = false
-  private var gates: [String: CheckedContinuation<Void, Never>] = [:]
+  private var gates: [String: TestContinuation<Void>] = [:]
   private var released: Set<String> = []
   private(set) var requests: [String] = []
 
@@ -1462,7 +1460,7 @@ private actor HeldAnswersTransport: ClientTransport {
 
       if holdsChecks {
         if !released.contains(input.attemptId) {
-          await withCheckedContinuation { gates[input.attemptId] = $0 }
+          await withTestVoidContinuation { gates[input.attemptId] = $0 }
         }
 
         requests.append("answered \(input.attemptId)")
@@ -1560,8 +1558,8 @@ private actor OpeningStartTransport: ClientTransport {
   let clockStatus: String
   /// By their place among the clock requests, from 1: the ones answered only on `releaseClock(_:)`.
   let heldClocks: Set<Int>
-  private var gate: CheckedContinuation<Void, Never>?
-  private var clockGates: [Int: CheckedContinuation<Void, Never>] = [:]
+  private var gate: TestContinuation<Void>?
+  private var clockGates: [Int: TestContinuation<Void>] = [:]
   private(set) var count = 0
   private(set) var inputs: [String] = []
   private(set) var clocks: [ClockInput] = []
@@ -1610,7 +1608,7 @@ private actor OpeningStartTransport: ClientTransport {
       let place = clocks.count
       if failingClocks.contains(place) { throw APIError.network }
       if heldClocks.contains(place) {
-        await withCheckedContinuation { clockGates[place] = $0 }
+        await withTestVoidContinuation { clockGates[place] = $0 }
       }
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
@@ -1630,7 +1628,7 @@ private actor OpeningStartTransport: ClientTransport {
       String(
         decoding: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20), as: UTF8.self))
     count += 1
-    if holds || heldStarts.contains(count) { await withCheckedContinuation { gate = $0 } }
+    if holds || heldStarts.contains(count) { await withTestVoidContinuation { gate = $0 } }
     var headers = HTTPFields()
     headers[.contentType] = "application/json"
     if failingStarts.contains(count) {

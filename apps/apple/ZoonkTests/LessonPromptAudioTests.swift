@@ -101,12 +101,12 @@ final class LessonPromptAudioTests: XCTestCase {
 private final class Clips {
   private(set) var plays: [(url: URL, autoplay: Bool)] = []
   private(set) var stops = 0
-  private var playing: [(url: URL, end: CheckedContinuation<Void, Never>)] = []
+  private var playing: [(url: URL, end: TestContinuation<Void>)] = []
 
   var audio: LessonAudio {
     LessonAudio(
       play: { url, _, autoplay, _ in
-        await withCheckedContinuation { end in
+        await withTestVoidContinuation { end in
           self.plays.append((url, autoplay))
           self.playing.append((url, end))
         }

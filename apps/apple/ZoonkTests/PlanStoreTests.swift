@@ -860,9 +860,12 @@ actor PlanAPIStub: PlanAPIClient {
   private var fittingDate: String?
   private var end = PlanEnd(certificates: nil, next: nil)
   private var languageUnitsRead: LanguageUnitsOverview?
-  private var heldCall: CheckedContinuation<Void, Never>?
+  private var heldCall: TestContinuation<Void>?
 
-  enum HeldCall {
+  private var heldKind: HeldCall?
+  private var completed: [HeldCall: Int] = [:]
+
+  enum HeldCall: Hashable {
     case advice
     case timeToCover
     case change
@@ -909,10 +912,28 @@ actor PlanAPIStub: PlanAPIClient {
 
   private var hasHeldCall: Bool { heldCall != nil }
 
-  func releaseHeldCall() {
+  func releaseHeldCall(file: StaticString = #filePath, line: UInt = #line) async {
+    guard let kind = heldKind else { return }
+    let before = completed[kind, default: 0]
     heldCall?.resume()
     heldCall = nil
+    heldKind = nil
+    _ = try? await waitForTestCondition(
+      "The released plan operation did not finish", file: file, line: line
+    ) {
+      await self.completionCount(kind) > before
+    }
   }
+
+  func waitForCompleted(
+    _ kind: HeldCall, count: Int = 1, file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await waitForTestCondition("The plan operation did not complete", file: file, line: line) {
+      await self.completionCount(kind) >= count
+    }
+  }
+
+  private func completionCount(_ kind: HeldCall) -> Int { completed[kind, default: 0] }
 
   private func holdIfAsked(_ call: HeldCall) async {
     guard holds == call else {
@@ -920,7 +941,8 @@ actor PlanAPIStub: PlanAPIClient {
     }
 
     holds = nil
-    await withCheckedContinuation { continuation in
+    heldKind = call
+    await withTestVoidContinuation { continuation in
       heldCall = continuation
     }
   }
@@ -937,6 +959,7 @@ actor PlanAPIStub: PlanAPIClient {
   }
 
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome {
+    defer { completed[.change, default: 0] += 1 }
     await holdIfAsked(.change)
     // As URLSession does, a request whose task was canceled meanwhile doesn't arrive.
     try Task.checkCancellation()
@@ -998,12 +1021,14 @@ actor PlanAPIStub: PlanAPIClient {
     end
   }
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool {
+    defer { completed[.resumeChangesPlan, default: 0] += 1 }
     await holdIfAsked(.resumeChangesPlan)
     return false
   }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
   {
+    defer { completed[.setStatus, default: 0] += 1 }
     await holdIfAsked(.setStatus)
     try Task.checkCancellation()
     calls.statuses.append(status)
@@ -1017,6 +1042,7 @@ actor PlanAPIStub: PlanAPIClient {
   func rename(token: String, goalId: String, displayName: String) async throws -> Bool { true }
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   {
+    defer { completed[.preview, default: 0] += 1 }
     await holdIfAsked(.preview)
 
     guard !previewFails else {
@@ -1034,6 +1060,7 @@ actor PlanAPIStub: PlanAPIClient {
   ) async throws -> PlanChangeOutcome { .unchanged }
   func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     calls.timeToCover += 1
+    defer { completed[.timeToCover, default: 0] += 1 }
     await holdIfAsked(.timeToCover)
 
     guard !timeToCoverFails else {
@@ -1050,6 +1077,7 @@ actor PlanAPIStub: PlanAPIClient {
     calls.advice += 1
     // Worked out when asked, for the plan of that moment.
     let answer = PlanBasesAdvice(ready: answersReady, recommended: advised)
+    defer { completed[.advice, default: 0] += 1 }
     await holdIfAsked(.advice)
 
     guard !adviceFails else {
@@ -1059,10 +1087,12 @@ actor PlanAPIStub: PlanAPIClient {
     return answer
   }
   func continueAtNextLevel(token: String, goalId: String) async throws -> Bool {
+    defer { completed[.continueAtNextLevel, default: 0] += 1 }
     await holdIfAsked(.continueAtNextLevel)
     return false
   }
   func skipAlphabet(token: String, goalId: String) async throws -> Bool {
+    defer { completed[.skipAlphabet, default: 0] += 1 }
     await holdIfAsked(.skipAlphabet)
     return false
   }

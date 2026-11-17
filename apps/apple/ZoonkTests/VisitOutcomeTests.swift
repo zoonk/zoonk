@@ -419,8 +419,9 @@ private struct GlassesSheet: View {
 private actor VisitSettingsAPI: SettingsAPIClient {
   private let failsUpdates: Bool
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(failsUpdates: Bool) {
     self.failsUpdates = failsUpdates
@@ -428,23 +429,28 @@ private actor VisitSettingsAPI: SettingsAPIClient {
 
   func holdUpdates() { holds = true }
 
-  func waitForHeldUpdate() async {
+  func waitForHeldUpdate(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseUpdate() {
+  func releaseUpdate(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   private func update() async throws {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil
@@ -517,8 +523,9 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
 
   private let fails: @Sendable (StudyReminderChange) -> Bool
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(fails: @escaping @Sendable (StudyReminderChange) -> Bool = { _ in true }) {
     self.fails = fails
@@ -526,17 +533,21 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
 
   func holdUpdates() { holds = true }
 
-  func waitForHeldUpdate() async {
+  func waitForHeldUpdate(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseUpdate() {
+  func releaseUpdate(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   func getReminder(token: String) async throws -> StudyReminder {
@@ -544,9 +555,10 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
   }
 
   func updateReminder(token: String, _ change: StudyReminderChange) async throws -> StudyReminder {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil

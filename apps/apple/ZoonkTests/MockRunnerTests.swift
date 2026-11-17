@@ -143,7 +143,7 @@ final class MockDraftQueueTests: XCTestCase {
       })
 
     queue.add(draft("a", .choice(0)))
-    while saves == 0 { await Task.yield() }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") { !(saves == 0) }
     queue.stop()
     gate.open()
     await queue.idle()
@@ -172,7 +172,7 @@ private final class Gate {
 
   func open() { isOpen = true }
 
-  func wait() async {
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
     _ = try? await waitForTestCondition("The draft gate was never released") { self.isOpen }
   }
 }

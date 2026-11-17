@@ -160,11 +160,11 @@ struct PageVisit {
   func leaveAndComeBack() async throws {
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      test.spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && test.spoken(in: window).contains("Elsewhere")
     }
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      !test.spoken(in: window).contains("Elsewhere")
+      tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
     }
   }
 
@@ -173,12 +173,12 @@ struct PageVisit {
     try await server.waitForHeldRequest()
     tabs.selected = 1
     try await waitForTestCondition("The other tab did not appear") {
-      test.spoken(in: window).contains("Elsewhere")
+      !tabs.pageVisible && test.spoken(in: window).contains("Elsewhere")
     }
     try await server.release()
     tabs.selected = 0
     try await waitForTestCondition("The page did not return") {
-      !test.spoken(in: window).contains("Elsewhere")
+      tabs.pageVisible && !test.spoken(in: window).contains("Elsewhere")
     }
   }
 
@@ -204,6 +204,7 @@ struct PageVisit {
 @Observable
 private final class VisitTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 private struct VisitHost<Page: View>: View {
@@ -214,6 +215,8 @@ private struct VisitHost<Page: View>: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         page()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 
@@ -241,7 +244,7 @@ actor PageServer: ClientTransport {
   private(set) var writes: [String] = []
   private var completedWrites = 0
   private var holding: String?
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   init(holding: String?) {
     self.holding = holding
@@ -261,7 +264,7 @@ actor PageServer: ClientTransport {
     writes.append(operationID)
     if operationID == holding {
       holding = nil
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
       }
     }
@@ -282,8 +285,9 @@ actor PageServer: ClientTransport {
     throw APIError.network
   }
 
-  func waitForHeldRequest() async throws {
-    try await waitForTestCondition("The fixture never received its request") { await self.isHeld }
+  func waitForHeldRequest(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture never received its request", file: file, line: line)
+    { await self.isHeld }
   }
 
   private var isHeld: Bool { held != nil }
