@@ -64,7 +64,9 @@ struct BuddyDayView: View {
         } label: {
           Text(
             "What \(name) remembers", tableName: "Buddy",
-            comment: "Opens what the buddy remembers; the argument is its name")
+            comment: "Opens what the buddy remembers; the argument is its name"
+          )
+          .disclosureChevron()
         }
 
         Button(action: onGlasses) {
@@ -77,12 +79,14 @@ struct BuddyDayView: View {
           } label: {
             Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
           }
+          .disclosureChevron()
         }
 
         Button {
           places.open(.logbook)
         } label: {
           Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
+            .disclosureChevron()
         }
       } header: {
         SectionTitle(Text(name))

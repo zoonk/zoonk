@@ -39,7 +39,7 @@ struct BuddyGoalStart: View {
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
     }
     .defaultScrollAnchor(.bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
@@ -83,7 +83,7 @@ struct BuddyGoalStart: View {
         .padding(.vertical, 8)
         .inputPanel(isFocused: isFocused)
       }
-      .scenePadding(.horizontal)
+      .listRowEdges()
       .padding(.vertical, 8)
     }
   }

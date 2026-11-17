@@ -210,12 +210,14 @@ private struct BuddyContent: View {
   }
 
   private func thread(opensDay: Bool) -> some View {
-    conversation
+    conversation(showsFace: !opensDay)
       .safeAreaBar(edge: .top) {
         VStack(alignment: .leading, spacing: 0) {
           PageHeader(Text(name))
 
-          dayLine(opensDay: opensDay)
+          if opensDay {
+            dayLine()
+          }
         }
         .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
@@ -226,7 +228,7 @@ private struct BuddyContent: View {
   }
 
   @ViewBuilder
-  private var conversation: some View {
+  private func conversation(showsFace: Bool) -> some View {
     if let goalId {
       let mistakes = practice.mistakes(goalId: goalId, fixed: false)
 
@@ -238,7 +240,12 @@ private struct BuddyContent: View {
           comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
         isPage: true
       ) {
-        greeting
+        HStack(alignment: .top, spacing: 12) {
+          if showsFace {
+            face
+          }
+          greeting
+        }
       }
       .loads(mistakes, refreshable: false)
     } else {
@@ -332,26 +339,19 @@ private struct BuddyContent: View {
   }
 
   @ViewBuilder
-  private func dayLine(opensDay: Bool) -> some View {
-    if opensDay {
-      Button {
-        isDayShown = true
-      } label: {
-        dayLineLabel
-      }
-      .buttonStyle(.plain)
-      .accessibilityLabel(dayLabel)
-      .accessibilityHint(
-        Text(
-          "Shows \(name)'s day", tableName: "Buddy",
-          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-      )
-    } else {
-      // The day's pane beside the conversation shows its numbers: only the face stays here.
-      face
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityHidden(true)
+  private func dayLine() -> some View {
+    Button {
+      isDayShown = true
+    } label: {
+      dayLineLabel
     }
+    .buttonStyle(.plain)
+    .accessibilityLabel(dayLabel)
+    .accessibilityHint(
+      Text(
+        "Shows \(name)'s day", tableName: "Buddy",
+        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+    )
   }
 
   private var face: some View {
