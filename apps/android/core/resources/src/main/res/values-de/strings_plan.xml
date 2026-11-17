@@ -283,9 +283,6 @@
   "plan_focus_only": "021973b613c87e47147675868a8b71c7e9d5ac259745cefa58c40eaf33ddbb70",
   "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
   "plan_full_course": "3aeb35c1aaff06d5659736c71cc09e08b4ce82dc96316ff41e006c7c5c0ffcb5",
-  "plan_full_course_off": "89557a85efedf7385058cbb72a65c494b50c73bf4c4574e2aa0e39b0e686757e",
-  "plan_full_course_on_exam": "2736f5bdd7b63e126c8221c317d024403d54e537654d6e3f3f0216206a73ca24",
-  "plan_full_course_on_exam_unknown_end": "a96b2b331f72e285b2f79bb5068e02189704d492f00a97d95df3e80d2575108d",
   "plan_full_course_rule_exam": "8888c2d2321293ff3360b3f026a2665ee33bf5b35efe93b309e9491331dbddfb",
   "plan_full_course_rule_goal": "3409aa1b91ef32e9e680f392961c0a23ade4420a190666afabee12d60fd8b211",
   "plan_full_course_rule_goal_month": "648c3753f8c5c8e6347fad4ec072b942a826a9ae1a2b778d249d06bf3260b323",
@@ -1193,9 +1190,6 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Zieldatum auf %1$s verschieben</string>
     <string name="plan_full_course_switch">Nach der Prüfung weiterlernen</string>
-    <string name="plan_full_course_off">Ist diese Option ausgeschaltet, endet dein Plan mit der Prüfung.</string>
-    <string name="plan_full_course_on_exam">%1$s Bis zur Prüfung kommen die Themen zuerst, die am häufigsten vorkommen.</string>
-    <string name="plan_full_course_on_exam_unknown_end">Bis zur Prüfung kommen die Themen zuerst, die am häufigsten drankommen. Was nicht mehr hineinpasst, folgt danach.</string>
     <string name="plan_finish">Mit %1$s am Tag bist du im %2$s fertig.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung am %3$s.</string>

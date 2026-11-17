@@ -283,9 +283,6 @@
   "plan_focus_only": "a3e24dedb6733b940d541b36a852121ffbf73c39d34eee7d212fa2baa4b15c87",
   "plan_fridays": "294546d6d834ed2f45b9e3ad4e0adc201b1fd34147ab5469d7adc3231a999c01",
   "plan_full_course": "8c9b172a4bdff7bb62395347fa9d5d5be3131c67add484ff5c8f71556725992c",
-  "plan_full_course_off": "6690b491e5a95476d886157dfbb985006704e850569b252be068ac4ae6b0cf9f",
-  "plan_full_course_on_exam": "c91d0e85ab51644162033aee399c777d44cb07ab25622947f1b1d9d617830d53",
-  "plan_full_course_on_exam_unknown_end": "59ea3d8a798448bdcfa46c153d045d51982ec1252b5376e91a6ce9ed6e7bb600",
   "plan_full_course_rule_exam": "29ec7ba8e272e22142349e66087988cff41da77759ae72938659d6d4e16d05cc",
   "plan_full_course_rule_goal": "55a9b00aa9e3b0ef5ab9c0e62eaebeda8a83895a54955208feea825e5e46a7b3",
   "plan_full_course_rule_goal_month": "89bb7cb31e6c905ba8cd6d87b7fe36fd26823bd6217ed390062f0806498eaaa6",
@@ -1138,9 +1135,6 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">期日を%1$sに変更する</string>
     <string name="plan_full_course_switch">試験後も学習を続ける</string>
-    <string name="plan_full_course_off">オフにすると、学習計画は試験日までになります。</string>
-    <string name="plan_full_course_on_exam">%1$s 試験までは、よく出る内容を優先します。</string>
-    <string name="plan_full_course_on_exam_unknown_end">試験までは、よく出る内容を優先して学びます。入りきらない内容は試験後に学びます。</string>
     <string name="plan_finish">1日%1$sなら、%2$sに完了します。</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">1日%1$sでは、完了は%2$sで、%3$sの試験より後になります。</string>
