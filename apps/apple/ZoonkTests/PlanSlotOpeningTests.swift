@@ -46,15 +46,23 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd(tooTight: true)
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.more, in: window)
-    try await settle()
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
+    guard try await startNextAdd(api, in: window) else { return }
     try activate(Self.more, in: window)
     try await answer(api)
 
     let changes = await api.calls.changes
     XCTAssertEqual(changes, [], "Paged past, the offer adds nothing")
+  }
+
+  func testAnAddStartedAsSoonAsItsSuggestionAppearsAppliesOnce() async throws {
+    let api = try await waitingAdd(tooTight: true)
+    let window = try await showPlan(api: api, width: .wide)
+    guard try await startNextAdd(api, in: window) else { return }
+
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "The newly shown suggestion keeps its preview")
   }
 
   func testClosingTheSheetDropsAnAddStillWaiting() async throws {
@@ -402,6 +410,20 @@ final class PlanSlotOpeningTests: XCTestCase {
 
   private func shows(_ line: String, in window: UIWindow) -> Bool {
     spoken(in: window).contains(line)
+  }
+
+  private func startNextAdd(_ api: PlanAPIStub, in window: UIWindow) async throws -> Bool {
+    try activate(Self.more, in: window)
+    for _ in 0..<500 where !spoken(in: window).contains(Self.add) {
+      try await Task.sleep(for: .milliseconds(20))
+    }
+    try activate(Self.add, in: window)
+    for _ in 0..<500 where await !api.hasHeldCall {
+      try await Task.sleep(for: .milliseconds(20))
+    }
+    let held = await api.hasHeldCall
+    XCTAssertTrue(held, "The newly shown Add must start its preview")
+    return held
   }
 
   private static let claim = String(localized: "Get your certificate", table: "Plan")

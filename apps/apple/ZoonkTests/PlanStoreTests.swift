@@ -871,6 +871,8 @@ actor PlanAPIStub: PlanAPIClient {
   /// The next `call` waits for `releaseHeldCall()`.
   func hold(_ call: HeldCall) { holds = call }
 
+  var hasHeldCall: Bool { heldCall != nil }
+
   func waitForHeldCall() async {
     guard heldCall == nil else {
       return
