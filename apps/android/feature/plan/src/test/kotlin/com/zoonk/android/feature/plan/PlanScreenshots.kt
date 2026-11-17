@@ -837,6 +837,28 @@ class PlanScreenshots {
         write("$prefix-tool", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsPartialPathPhone() = captureCallsPath("calls-partial-path-phone")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
+    fun callsPartialPathLarge() = captureCallsPath("calls-partial-path-large")
+
+    private fun captureCallsPath(name: String) {
+        val original = page()
+        val phases =
+            original.plan.phases.take(2).mapIndexed { index, phase ->
+                if (index == 0) {
+                    phase.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = "skippedBase", checkpoint = null)
+                } else {
+                    phase.copy(state = PlanPhase.State.CURRENT, challengeLeftOut = true, checkpoint = null)
+                }
+            }
+        capture(name, exam = original.copy(plan = original.plan.copy(phases = phases)))
+        compose.onNodeWithText("The Trickster isn't in your plan").assertExists()
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,

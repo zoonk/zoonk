@@ -65,6 +65,7 @@ import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.OnVisitEnd
@@ -258,8 +259,19 @@ internal fun WebPlusPlan(
     }
     if (standalone && subscription.state != State.UNPAID) PlusBenefits()
     val context = LocalContext.current
-    TextButton(onClick = { openWebPage(context, "https://zoonk.com/subscription") }) {
-        Text(stringResource(R.string.subscription_renewal_failed_website))
+    val language = currentLocale().language
+    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }) {
+        Text(
+            stringResource(
+                if (subscription.state ==
+                    State.UNPAID
+                ) {
+                    R.string.subscription_renewal_failed_website
+                } else {
+                    R.string.subscription_manage_website
+                },
+            ),
+        )
     }
 }
 
@@ -312,18 +324,7 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text =
-                stringResource(
-                    when (provider) {
-                        GOOGLE -> R.string.subscription_managed_google
-                        APPLE -> R.string.subscription_managed_apple
-                        else -> R.string.subscription_managed_zoonk
-                    },
-                ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (provider != GOOGLE && provider != APPLE) Text(stringResource(R.string.subscription_managed_zoonk))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (provider == GOOGLE) {
                 Button(

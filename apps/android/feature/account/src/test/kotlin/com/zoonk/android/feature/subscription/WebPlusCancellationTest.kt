@@ -68,15 +68,8 @@ class WebPlusCancellationTest {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var response: suspend () -> StripeSubscriptionCancellation? = { web(State.RENEWING) }
-    private var answer: MutationResult<StripeSubscriptionCancellationReceipt> =
-        MutationResult.Done(
-            StripeSubscriptionCancellationReceipt(ENDS),
-        )
-    private var cancellationArrives: CompletableDeferred<Unit>? = null
     private var darkTheme = false
     private var higherContrast = false
-    private var sent = 0
-    private var keepAnswer: MutationResult<Unit> = MutationResult.Done(Unit)
     private var reads = 0
     private var profile by mutableStateOf(false)
     private var subscription by mutableStateOf<MeSubscription?>(plan())
@@ -112,8 +105,6 @@ class WebPlusCancellationTest {
         }
     }
 
-    private fun inDialog(text: String) = rule.onNode(hasText(text) and hasAnyAncestor(isDialog()))
-
     private fun update(state: State) {
         response = { web(state) }
         rule.runOnIdle { scope.launch { website.refresh() } }
@@ -129,6 +120,31 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Through the website").assertExists()
         rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
         rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
+    }
+
+    @Test
+    fun aRenewingWebsiteSubscriptionOpensManagement() = websiteAction(State.RENEWING, "Manage on the website")
+
+    @Test
+    fun anEndingWebsiteSubscriptionOpensManagement() = websiteAction(State.ENDING, "Manage on the website")
+
+    @Test
+    fun aFailedWebsiteRenewalOpensPayment() = websiteAction(State.UNPAID, "Update your payment on the website, where you subscribed.")
+
+    private fun websiteAction(
+        state: State,
+        label: String,
+    ) {
+        subscription = null
+        response = { web(state) }
+        show()
+        rule.onNodeWithText(label).assertExists()
+        rule.onNodeWithText(label).performClick()
+        val intent =
+            org.robolectric.Shadows
+                .shadowOf(rule.activity)
+                .nextStartedActivity
+        assertEquals("https://www.zoonk.com/subscription", intent.dataString)
     }
 
     @Test
@@ -222,8 +238,6 @@ class WebPlusCancellationTest {
     }
 
     private companion object {
-        const val FAILED = "We couldn't cancel Plus. Try again or email hello@zoonk.com."
-        const val KEEP_FAILED = "We couldn't keep Plus. Try again or email hello@zoonk.com."
         val ENDS: Instant = Instant.parse("2026-12-01T12:00:00Z")
 
         fun web(state: State) = StripeSubscriptionCancellation(if (state == State.UNPAID) null else ENDS, state)

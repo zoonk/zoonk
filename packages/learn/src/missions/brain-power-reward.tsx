@@ -3,14 +3,7 @@
 import { BrainPowerAmount } from "../_components/brain-power-amount";
 import { LearnLink } from "../learn-link";
 
-export function BrainPowerReward({
-  earned,
-  points,
-}: {
-  brainPower: number | null;
-  earned: boolean;
-  points: number;
-}) {
+export function BrainPowerReward({ earned, points }: { earned: boolean; points: number }) {
   return (
     <LearnLink
       href="/level"

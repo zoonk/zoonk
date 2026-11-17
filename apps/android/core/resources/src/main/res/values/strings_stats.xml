@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stats_open">Open Statistics</string>
     <string name="stats_overview">Overview</string>
     <string name="stats_level">Level</string>
     <string name="stats_energy">Energy</string>

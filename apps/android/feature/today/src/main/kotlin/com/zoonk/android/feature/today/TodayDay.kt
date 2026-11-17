@@ -88,7 +88,6 @@ fun TodayDay(
     padding: PaddingValues,
     buddy: BuddyLook,
     buddyName: String,
-    brainPower: Long? = null,
     practice: @Composable () -> Unit = {},
     plans: PlanStore? = null,
     language: LoadState<LanguageToday>? = null,
@@ -145,7 +144,6 @@ fun TodayDay(
             TodayAsideState(
                 buddy = buddy,
                 buddyName = buddyName,
-                brainPower = brainPower,
                 practice = practice,
                 notice = { layout ->
                     TodayNotice(

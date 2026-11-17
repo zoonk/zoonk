@@ -356,6 +356,10 @@ private struct BuddyContent: View {
       } label: {
         face
       }.accessibilityLabel(Text(name))
+        .accessibilityHint(
+          Text(
+            "Shows \(name)'s day", tableName: "Buddy",
+            comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name"))
 
       AccessibilityStack(spacing: 16, stackedSpacing: 4) {
         Button {

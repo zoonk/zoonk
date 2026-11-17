@@ -187,3 +187,33 @@ extension AppNavigationTests {
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 }
+
+extension AppNavigationTests {
+  @MainActor
+  func testTheLevelChipNamesAndOpensLevel() async throws {
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(),
+      learnerSummaryAPI: OneGoalSummary(kind: .learn, level: .init(belt: .white, level: 2)))
+    await dependencies.learnerSummaryStore.summary.load()
+    let router = AppRouter()
+    router.sidebarTabs = [.stats(.level)]
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack { Color.clear.modifier(ShellToolbar(isShown: true)) }
+        .appDependencies(dependencies).environment(router).zoonkStyles())
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await Task.sleep(for: .milliseconds(600))
+      try captureCallsRoundTwo("level-chip-\(size)")
+      XCTAssertTrue(spoken(in: window).contains("Level"), "\(spoken(in: window))")
+      XCTAssertFalse(spoken(in: window).contains("Statistics"), "\(spoken(in: window))")
+    }
+    try activate("Level", in: window)
+    XCTAssertEqual(router.selectedTab, .stats(.level))
+  }
+}

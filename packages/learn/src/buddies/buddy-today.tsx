@@ -81,13 +81,7 @@ function BuddyTodaySheet({
 
           {today && today.missions.length > 0 && (
             <div className="border-t pt-5">
-              <MissionsCard
-                brainPower={status.belt.totalBrainPower}
-                showBuddy={false}
-                buddy={buddy}
-                links={links}
-                today={today}
-              />
+              <MissionsCard showBuddy={false} buddy={buddy} links={links} today={today} />
             </div>
           )}
 
@@ -106,7 +100,7 @@ function useMissionsLabel(status: BuddyStatusView): string {
   const t = useExtracted();
   const today = status.today;
 
-  if (!today) {
+  if (!today || today.missions.length === 0) {
     return t("Missions");
   }
 
@@ -171,17 +165,14 @@ export function BuddyToday({
         </LearnLink>
         <button
           aria-haspopup="dialog"
-          className={cn(
-            "hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums",
-            today?.missions.length === 0 && "hidden",
-          )}
+          className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums"
           onClick={() => {
             setAsked(false);
             setOpen(true);
           }}
           type="button"
         >
-          {today ? (
+          {today && today.missions.length > 0 ? (
             <MissionsRing
               className="size-3.5"
               missions={{ done, total: today.missions.length }}

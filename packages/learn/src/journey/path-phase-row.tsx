@@ -64,6 +64,7 @@ function isLeftOut(phase: PlanPhaseView): boolean {
 function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const lessons = phase.lessonsTotal - phase.lessonsDone;
+  const { goal } = usePlanScreen();
 
   if (phase.state === "leftOut") {
     return <ReasonText reason={phase.notPlannedReason} />;
@@ -79,7 +80,13 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
     );
   }
 
-  return <ReasonText reason="time" />;
+  return (
+    <span className="text-muted-foreground text-xs">
+      {goal.kind === "language"
+        ? t("The call isn't in your plan")
+        : t("The Trickster isn't in your plan")}
+    </span>
+  );
 }
 
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {

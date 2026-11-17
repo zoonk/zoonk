@@ -48,10 +48,6 @@ interface SubscriptionApi {
     ): StoreSubscriptionResponse
 
     suspend fun websiteSubscription(session: AuthenticatedSession): StripeSubscriptionCancellation
-
-    suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt
-
-    suspend fun keepWebPlus(session: AuthenticatedSession)
 }
 
 class LiveSubscriptionApi(
@@ -74,12 +70,6 @@ class LiveSubscriptionApi(
 
     override suspend fun websiteSubscription(session: AuthenticatedSession): StripeSubscriptionCancellation =
         perform { api.clients(session).subscriptions.getStripeSubscriptionCancellation() }
-
-    override suspend fun cancelWebPlus(session: AuthenticatedSession): StripeSubscriptionCancellationReceipt =
-        perform { api.clients(session).subscriptions.cancelStripeSubscription() }
-
-    override suspend fun keepWebPlus(session: AuthenticatedSession) =
-        perform { api.clients(session).subscriptions.resumeStripeSubscription() }
 }
 
 sealed interface PurchaseState {
@@ -204,27 +194,6 @@ class SubscriptionStore(
 
     private var reconciledFor: AuthenticatedSession? = null
 
-    suspend fun cancelWebPlus(): MutationResult<StripeSubscriptionCancellationReceipt> =
-        cache
-            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it) }
-            .also { refreshWebsiteSubscription(it) }
-
-    suspend fun keepWebPlus(): MutationResult<Unit> =
-        cache
-            .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.keepWebPlus(it) }
-            .also { refreshWebsiteSubscription(it) }
-
-    private suspend fun refreshWebsiteSubscription(result: MutationResult<*>) {
-        val conflict = result is MutationResult.Failed && result.status == HTTP_CONFLICT
-        if (conflict) cache.invalidate(SUBSCRIPTION_DOMAINS)
-        if (result is MutationResult.Done || conflict) websiteSubscription.load()
-    }
-
-    /**
-     * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
-     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere. [host] is the window
-     * Play's sheet opens on, asked for only then, since the one shown when the checkout started may be gone.
-     */
     suspend fun buy(
         host: suspend () -> Activity,
         period: BillingPeriod,

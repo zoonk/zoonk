@@ -54,35 +54,6 @@ final class SettingsStore {
     webPlus = signedIn([.userSubscription]) { try await api.getWebPlus(token: $0) }
   }
 
-  /// False when it failed. Otherwise the plan is read again before this returns, so it shows what
-  /// canceling did, or what changed meanwhile.
-  func cancelWebPlus() async -> Bool {
-    await changeWebPlus { [api] in try await api.cancelWebPlus(token: $0.bearerToken) }
-  }
-
-  /// False when it failed. Otherwise the plan is read again before this returns.
-  func keepWebPlus() async -> Bool {
-    await changeWebPlus { [api] in try await api.keepWebPlus(token: $0.bearerToken) }
-  }
-
-  /// Runs to the end even when its caller stops waiting, as a closed screen does: the server may
-  /// already have made the change, and the plan must show it next time.
-  private func changeWebPlus(
-    _ write: @escaping @Sendable (AuthenticatedSession) async throws -> Void
-  ) async -> Bool {
-    await Task {
-      switch await cache.mutate(invalidating: [.userSubscription], write) {
-      case .done:
-        await webPlus.refresh()
-        return true
-      case .failed:
-        return false
-      case .obsolete:
-        return true
-      }
-    }.value
-  }
-
   /// False when it didn't save.
   @discardableResult
   func updatePreferences(_ update: PreferencesUpdate) async -> Bool {

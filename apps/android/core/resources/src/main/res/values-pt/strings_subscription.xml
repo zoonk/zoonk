@@ -24,7 +24,6 @@
   "subscription_benefits_summary": "65a0a2eb4ddccb10eb34d7dae4c383403b2357119a9da29387e89a2ba50fdc00",
   "subscription_billed_monthly": "00c626a160472ce842070a7d4bee8a6c6cbc6912a4f18e2c981449dc44652c26",
   "subscription_billing_period": "5f25881eaba8c673834dd4c58a2dcd5a7c47f9f471a8a93feaa96e8bd309fa2b",
-  "subscription_cancel": "62bd747b7124cfddb449ac6121838d2210d44ea460a3c3addb8586173b751afc",
   "subscription_cancel_anytime": "774704a893c56cb8bca9085d2fbcde8142a1f7618281439a3517eadaf13b0e58",
   "subscription_contact_support": "904edfa7b05b5d4007689954de4452f0108848fb1ff38c93a1fe31991174071b",
   "subscription_current_plan": "17999193d58b393abb3e66db33e546017d5d7c69b6c349b3701da0c929a45e50",
@@ -44,8 +43,6 @@
   "subscription_hide_answer": "296663cec16f65f11e37dd5154eb9aea2c89f4b37e4c40b75a4a2beaa84f767f",
   "subscription_manage_apple": "d0ce6a59a22c734051cb1581823e078f866f611c0a66df22b8be01b5e2b86ecc",
   "subscription_manage_google": "3350b3c34c2619bf6c0bb6c453f81cfd595325bb120ce397fda93f8edfc15474",
-  "subscription_managed_apple": "6ea498dba9deef7479ec2138b2a1003de8f0610684587f7781350ad033d6e65c",
-  "subscription_managed_google": "0f0107621b3b200a4185e219fc8c7f15be3ee200a4e4ca78a34915388e81adcc",
   "subscription_managed_zoonk": "1fa1738c17e73c1561b6a05ae1bd4ae0c1ec769455237dcd083afa4dbb22214b",
   "subscription_monthly": "6318e4608f7a532ca1bf0648a78e324455d1ee06bf47856ad39403fe974184cf",
   "subscription_no_card_needed": "9a604115b8195ad9ee3e04ca2f0de939855d7befaf9a343af82ff7e5a0f611a1",
@@ -90,13 +87,10 @@
     <string name="subscription_renews_on">Renova em %1$s.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">Pago até %1$s.</string>
-    <string name="subscription_managed_google">Você assinou via Google Play.</string>
-    <string name="subscription_managed_apple">Você assinou pela App Store.</string>
     <string name="subscription_managed_zoonk">Para mudar ou cancelar o Plus, escreva para a gente.</string>
     <string name="subscription_manage_google">Gerenciar no Google Play</string>
     <string name="subscription_contact_support">Pedir ajuda</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Cancelar o Plus</string>
     <string name="subscription_renewal_failed">O pagamento da sua última renovação falhou.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Atualize seu pagamento no site, onde você assinou.</string>

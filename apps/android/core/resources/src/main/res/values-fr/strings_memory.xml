@@ -31,14 +31,12 @@
   "memory_undo_retry": "c3e020644496152820ddfec1c70f2c16f6e270dcf9b498da4d88833e315155bf",
   "memory_updated": "c10493b342954890cce0fd7eea07b0624614223df9258578fa37d74c4bec3fa8",
   "memory_updated_more": "b965593ef9aa06bdee5bd474dd235b63fe1157bc9e39d3fbcbdd1eae6cdefc2d",
-  "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41",
-  "memory_use_off": "3a0c52ade5832a1142e76ad23bda73064e0d6431f08bd686716a7d6fa24d103f"
+  "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41"
 }
 -->
 <resources>
     <string name="memory_description">Ce que Zoonk retient pour te proposer des exemples et des plans adaptés à ta vie.</string>
     <string name="memory_use">Utiliser la mémoire</string>
-    <string name="memory_use_off">Rien n’est mémorisé ni utilisé tant que cette option est désactivée.</string>
     <string name="memory_empty">Rien pour l’instant. Des notes s’ajoutent ici au fil de ton apprentissage et de tes discussions.</string>
     <string name="memory_save_failed">L’enregistrement a échoué. Réessaie.</string>
     <string name="memory_category_goals">Objectifs</string>

@@ -47,7 +47,6 @@
   "stats_no_energy": "ba917f377349c253018dc7686cd5a051a5095bb5d9f229e9328d3c8ea7ea18de",
   "stats_no_study": "439a535a48423aabd1ec27baec573650123e456d6fd0a90eb74b4d9bbda4703a",
   "stats_not_yet": "c806bee8c96418cc585eeaadba6f2722c4f02d25b92f45b90a38a97adb2311f0",
-  "stats_open": "5bf7730acf12eb1eb66e49667f1bc9b3fb0de7d13ebfe973318558f3edf31915",
   "stats_overview": "f27afc28473f6042c82fe3ab032bb7bcdcaeac8bfb96b9090da8ef0b80aa221c",
   "stats_part_failed": "a8f3ccc7646186fa41386b7aae753f32161eea3b67bee75be6e5587058f94ed2",
   "stats_past_6_months": "92482f8b07e7f6050a9dfac4a6524b63c15b3e318792e07a38742d41ade58d73",
@@ -72,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">İstatistikleri aç</string>
     <string name="stats_overview">Genel bakış</string>
     <string name="stats_level">Seviye</string>
     <string name="stats_energy">Enerji</string>

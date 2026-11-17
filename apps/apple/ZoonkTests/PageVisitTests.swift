@@ -346,6 +346,7 @@ actor PageServer: ClientTransport {
 /// One goal of `kind`, the one every page shows.
 struct OneGoalSummary: LearnerSummaryAPIClient {
   let kind: LearnerGoal.Kind
+  var level: LearnerLevel? = nil
 
   func getSummary(token: String) async throws -> LearnerSummary {
     LearnerSummary(
@@ -360,7 +361,7 @@ struct OneGoalSummary: LearnerSummaryAPIClient {
           targetDate: nil, displayName: "Biology", title: "Biology")
       ],
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
-      level: nil, nextChangeAt: .distantFuture,
+      level: level, nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: kind == .exam, mindMaps: false,
         readyMistakes: 0, speaking: true),

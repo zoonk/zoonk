@@ -31,14 +31,12 @@
   "memory_undo_retry": "eb520f1e88bd3ed807f162dfe8f1ba1775a01ce46861eebd8320de3d4b694a79",
   "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
   "memory_updated_more": "2a7fa74cb7a372f52bf8e0370feddf87171a4c14521e6008b1a9bb537940e3ab",
-  "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
-  "memory_use_off": "bcefea31ff1142e3857b6d5297843ca1100aa50b0eb313bcaf62ea8fc88ca211"
+  "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60"
 }
 -->
 <resources>
     <string name="memory_description">生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。</string>
     <string name="memory_use">メモリを使う</string>
-    <string name="memory_use_off">オフの間は、情報を記憶したり使ったりしません。</string>
     <string name="memory_empty">まだメモはありません。学習やチャットをすると、ここにメモが表示されます。</string>
     <string name="memory_save_failed">保存できませんでした。もう一度お試しください。</string>
     <string name="memory_category_goals">目標</string>

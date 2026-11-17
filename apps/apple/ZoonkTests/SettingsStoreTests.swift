@@ -383,69 +383,6 @@ final class SettingsStoreTests: XCTestCase {
     }
   }
 
-  func testCancelingWebPlusShowsItEndingOnceItReturns() async {
-    let api = SettingsAPIStub(webPlus: .renewing)
-    let store = makeStore(api: api)
-    await store.webPlus.load()
-
-    let canceled = await store.cancelWebPlus()
-
-    XCTAssertTrue(canceled)
-    XCTAssertEqual(
-      store.webPlus.value, WebPlus(state: .ending, periodEnd: WebPlus.renewing.periodEnd))
-    let tokens = await api.webPlusChangeTokens
-    XCTAssertEqual(tokens, ["preview-session"])
-  }
-
-  func testAWebPlusCancellationMadeAfterItsScreenClosedStillShows() async {
-    let api = SettingsAPIStub(webPlus: .renewing)
-    let store = makeStore(api: api)
-    await store.webPlus.load()
-    await api.holdWebPlusChangeAnswers()
-
-    let screen = Task { await store.cancelWebPlus() }
-    await api.waitForHeldWebPlusChangeAnswer()
-    screen.cancel()
-    await api.releaseWebPlusChangeAnswer()
-    _ = await screen.value
-
-    await waitUntil { store.webPlus.value?.state == .ending }
-  }
-
-  func testCancelingAnUnpaidRenewalLeavesNoWebPlus() async {
-    let store = makeStore(api: SettingsAPIStub(webPlus: WebPlus(state: .unpaid, periodEnd: nil)))
-    await store.webPlus.load()
-
-    let canceled = await store.cancelWebPlus()
-
-    XCTAssertTrue(canceled)
-    XCTAssertEqual(store.webPlus.state, .failed(.notFound))
-  }
-
-  func testKeepingPlusShowsItRenewingOnceItReturns() async {
-    let ending = WebPlus(state: .ending, periodEnd: WebPlus.renewing.periodEnd)
-    let store = makeStore(api: SettingsAPIStub(webPlus: ending))
-    await store.webPlus.load()
-
-    let kept = await store.keepWebPlus()
-
-    XCTAssertTrue(kept)
-    XCTAssertEqual(store.webPlus.value, .renewing)
-  }
-
-  func testAWebPlusChangeThatFailsKeepsWhatShowed() async {
-    let api = SettingsAPIStub(webPlus: .renewing, webPlusChangeError: APIError.unavailable)
-    let store = makeStore(api: api)
-    await store.webPlus.load()
-
-    let canceled = await store.cancelWebPlus()
-
-    XCTAssertFalse(canceled)
-    XCTAssertEqual(store.webPlus.value, .renewing)
-    let reads = await api.webPlusReads
-    XCTAssertEqual(reads, 1)
-  }
-
   private func waitUntil(_ condition: () -> Bool) async {
     for _ in 0..<10_000 where !condition() {
       await Task.yield()
@@ -465,12 +402,6 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private(set) var updateTokens: [String] = []
   private(set) var restoredFactIds: [String] = []
   private(set) var restoreCount = 0
-  private(set) var webPlusChangeTokens: [String] = []
-  private(set) var webPlusReads = 0
-  private var webPlus: WebPlus?
-  private let webPlusChangeError: Error?
-  private var holdsWebPlusChangeAnswers = false
-  private var heldWebPlusChangeAnswer: CheckedContinuation<Void, Never>?
   private var beforeDelete: (@MainActor @Sendable () async -> Void)?
   private var holdsDeletes = false
   private var heldDelete: CheckedContinuation<Void, Error>?
@@ -496,12 +427,8 @@ private actor SettingsAPIStub: SettingsAPIClient {
     updateError: Error? = nil,
     deleteError: Error? = nil,
     restoreError: Error? = nil,
-    restoreChangedSince: Bool = false,
-    webPlus: WebPlus? = nil,
-    webPlusChangeError: Error? = nil
+    restoreChangedSince: Bool = false
   ) {
-    self.webPlus = webPlus
-    self.webPlusChangeError = webPlusChangeError
     self.preferencesError = preferencesError
     self.updateError = updateError
     self.deleteError = deleteError
@@ -661,53 +588,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   }
 
   func getWebPlus(token: String) async throws -> WebPlus {
-    webPlusReads += 1
-
-    guard let webPlus else {
-      throw APIError.notFound
-    }
-
-    return webPlus
-  }
-
-  func cancelWebPlus(token: String) async throws {
-    try await changeWebPlus(token: token) {
-      $0.state == .unpaid ? nil : WebPlus(state: .ending, periodEnd: $0.periodEnd)
-    }
-  }
-
-  func keepWebPlus(token: String) async throws {
-    try await changeWebPlus(token: token) { WebPlus(state: .renewing, periodEnd: $0.periodEnd) }
-  }
-
-  /// The change is made, then its answer waits until released.
-  func holdWebPlusChangeAnswers() {
-    holdsWebPlusChangeAnswers = true
-  }
-
-  func waitForHeldWebPlusChangeAnswer() async {
-    while heldWebPlusChangeAnswer == nil {
-      await Task.yield()
-    }
-  }
-
-  func releaseWebPlusChangeAnswer() {
-    heldWebPlusChangeAnswer?.resume()
-    heldWebPlusChangeAnswer = nil
-  }
-
-  private func changeWebPlus(token: String, _ change: (WebPlus) -> WebPlus?) async throws {
-    webPlusChangeTokens.append(token)
-
-    if let webPlusChangeError {
-      throw webPlusChangeError
-    }
-
-    webPlus = webPlus.flatMap(change)
-
-    if holdsWebPlusChangeAnswers {
-      await withCheckedContinuation { heldWebPlusChangeAnswer = $0 }
-    }
+    throw APIError.notFound
   }
 
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }

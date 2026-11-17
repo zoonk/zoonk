@@ -132,7 +132,7 @@ export function LessonActionBar() {
           />
         </MainActionSlot>
 
-        {screen.step?.kind !== "explanation" && <TutorAskButton />}
+        <TutorAskButton />
       </QuestionActions>
     </TaskActionBar>
   );

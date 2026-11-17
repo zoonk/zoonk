@@ -9,13 +9,10 @@
     <string name="subscription_renews_on">Renews on %1$s.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">Paid until %1$s.</string>
-    <string name="subscription_managed_google">You subscribed in Google Play.</string>
-    <string name="subscription_managed_apple">You subscribed in the App Store.</string>
     <string name="subscription_managed_zoonk">To change or cancel Plus, write to us.</string>
     <string name="subscription_manage_google">Manage in Google Play</string>
     <string name="subscription_contact_support">Get help</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Cancel Plus</string>
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Update your payment on the website, where you subscribed.</string>
@@ -124,4 +121,5 @@
     <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
     <string name="subscription_through_website">Through the website</string>
     <string name="subscription_manage_apple">Manage in App Store</string>
+    <string name="subscription_manage_website">Manage on the website</string>
 </resources>

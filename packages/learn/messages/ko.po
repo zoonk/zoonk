@@ -4998,6 +4998,16 @@ msgid "Continues {date}"
 msgstr "{date}에 이어서 진행해요"
 
 #: src/journey/path-phase-row.tsx
+msgctxt "sk-jVa"
+msgid "The call isn't in your plan"
+msgstr "대화는 계획에 없어요"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "xl2sjx"
+msgid "The Trickster isn't in your plan"
+msgstr "트릭스터는 계획에 없어요"
+
+#: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
 msgid ", up next"
 msgstr ", 다음 단계"
@@ -6952,10 +6962,11 @@ msgctxt "nxU2W7"
 msgid "From a call"
 msgstr "대화에서"
 
+#. What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.
 #: src/memory/memory-screen.tsx
-msgctxt "LwVSHh"
-msgid "When off, notes aren't saved or used"
-msgstr "끄면 메모를 저장하거나 사용하지 않아요"
+msgctxt "EDgENy"
+msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
+msgstr ""
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

@@ -32,7 +32,6 @@
   "buddy_page_grows": "dd9d9861f7d5878f1482f5c346a983a45cb087cb15e1a66360caef3921c8c4b8",
   "buddy_page_missions": "6d40b0fcfa985693781d8f8252fc321484bb715ff8ecfc5f6858869bc29e3174",
   "buddy_page_missions_count": "6c101c5c3c3ca9d46f24817d1e9b4b106e4d955037196da9bbf09041d44024d8",
-  "buddy_page_missions_done": "0253950800870a0fe55feb4e0caa872eef2a516d5f5c1e2414e621fbb866dd51",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
   "buddy_page_placeholder": "01f1dd536ef0424dca1d0c0ade7c85d3c1a83e80a74e8ece4f7f40ed726426a9",
   "buddy_page_remembers": "e2fc572bb233ad191a4a725dbfa3083846c1ba7fe561ae07c97ef87a3fb6cecb",
@@ -88,7 +87,6 @@
         <item quantity="other">%1$d / %2$d görev</item>
     </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
-    <string name="buddy_page_missions_done">%1$d görev tamamlandı, toplam %2$d görev var</string>
     <string name="buddy_page_fully_grown">Büyümesini tamamladı</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">%1$s seviyesine ulaştığında büyür</string>

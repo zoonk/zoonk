@@ -47,7 +47,6 @@
   "stats_no_energy": "24940d14392a7ee4edd4dadaed432b37186926686bf5de33d088e04fcd5e95b2",
   "stats_no_study": "7bc7fb4b834e1363a8970d4c0e563be7ffd774a443d68314c36bcdaf59b2785a",
   "stats_not_yet": "562ba61b1a5dd9e118725b6e9e35a983f134a1266be0d8bf409bf0d19bb05cab",
-  "stats_open": "70bc0c0ebed0d1db12dc017e9c77580e517628ef0bc52093d5cda5be8b390bb2",
   "stats_overview": "6a925434d0b1d487401a59d62acffa8cbba73d4e2a414d681be122bfa9fae96b",
   "stats_part_failed": "d39faf0cf964e62bb471882921e130b0b041971d8be3e7fbf7c1d042d4c02b09",
   "stats_past_6_months": "ec6186a9175d188054d8845103210b8eb0b71733cc7ce56674083bfb148fde3a",
@@ -72,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">統計を開く</string>
     <string name="stats_overview">概要</string>
     <string name="stats_level">レベル</string>
     <string name="stats_energy">エネルギー</string>

@@ -150,7 +150,6 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
  * since most of them are already rows of the day's list right above the card.
  */
 export function MissionsCard({
-  brainPower,
   buddy,
   className,
   showBuddy = true,
@@ -159,7 +158,6 @@ export function MissionsCard({
   links,
   today,
 }: {
-  brainPower: number | null;
   buddy: LearnBuddy | null;
   className?: string;
   collapseWhenDone?: boolean;
@@ -194,7 +192,7 @@ export function MissionsCard({
             {missions.map((mission) => missionName(mission)).join(", ")}
           </span>
         </span>
-        <BrainPowerReward brainPower={brainPower} earned points={points} />
+        <BrainPowerReward earned points={points} />
       </MissionsLine>
     );
   }
@@ -220,7 +218,7 @@ export function MissionsCard({
         <MissionsHeading
           fold={foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null}
           missions={missions}
-          reward={<BrainPowerReward brainPower={brainPower} earned={won} points={points} />}
+          reward={<BrainPowerReward earned={won} points={points} />}
           titleId={titleId}
           won={won}
         />

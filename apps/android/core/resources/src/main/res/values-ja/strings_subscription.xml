@@ -24,7 +24,6 @@
   "subscription_benefits_summary": "7ef48449d19263112a34f92db72cc5da109bbf4d78e64cada0be830a2744182b",
   "subscription_billed_monthly": "8a79fdf2eafaae852978cd9a0ccd2a840729cf69196bec71b826e6a4da491558",
   "subscription_billing_period": "bc3a89a3fe251c0b1626350a3459e4be3bab34375abb16e15e5bb4917d886ee2",
-  "subscription_cancel": "78aff38aa1afaca033a8697b24d085e1983d78050d3c268dfd8621b4984fbe42",
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
   "subscription_contact_support": "113f34d5b3304c0384f27e242338c47e4cfb6b46a91f39b38c6fa7b893cf0f10",
   "subscription_current_plan": "c0c880e21da7133a521ab461808c031bd40a7145d1ff82d7e1c6aca4a02695de",
@@ -44,8 +43,6 @@
   "subscription_hide_answer": "6dc13c62d64c74f2654a96a7c0b8dbef17a9ebaf031b422a3d06ec62df0a92b6",
   "subscription_manage_apple": "1da7f3e5563ead5d95039546cddaff3ce2af287bff0f65d3543be9586d47cfef",
   "subscription_manage_google": "203f57bf90846fb2ab671556f0c1952e90d3d302de603b542968c5271f99df70",
-  "subscription_managed_apple": "b80bdee2252167b56e39c983bfe9f76292e902710e2e549ce0ebd2f9674dec12",
-  "subscription_managed_google": "cd95079de19b08a6f51dd08e7fcac05890ea3e906b786bff674209937e1f2b54",
   "subscription_managed_zoonk": "a5a97d38c8cc42d4b281afaba2f2e620633fe3192e1bcd8fac868ba022accf96",
   "subscription_monthly": "d48069c2e42d55ef2e725cdf46c582eb9dc883843c85b7e0c764fbba335be199",
   "subscription_no_card_needed": "312a0e8ccfa86155456c4e90f91eae5c489a070ea49fe122adfd5bcdaaa63d23",
@@ -90,13 +87,10 @@
     <string name="subscription_renews_on">%1$sに更新されます。</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">%1$sまでの料金は支払い済みです。</string>
-    <string name="subscription_managed_google">Google Playで登録しました。</string>
-    <string name="subscription_managed_apple">App Storeで登録しました。</string>
     <string name="subscription_managed_zoonk">Plusの変更や解約は、メールでお問い合わせください。</string>
     <string name="subscription_manage_google">Google Playで管理する</string>
     <string name="subscription_contact_support">問い合わせる</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Plusの解約</string>
     <string name="subscription_renewal_failed">前回の更新料金を決済できませんでした。</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">登録したウェブサイトでお支払い方法を更新してください。</string>

@@ -47,7 +47,6 @@
   "stats_no_energy": "1e8e868934f3f519ac4db2b449c325ab88a8e11bef6a13ad2f265e7178c5fcbc",
   "stats_no_study": "08c4d25e2ef6f6f6d0fd2b3581d079d1746404725aca432afd28034a4b795837",
   "stats_not_yet": "152675764b7139752af6f6e52a023897861964761cb3ba1993a096031c431a44",
-  "stats_open": "a51da30a100e06f01585bdf238ab2b10c212447ea12bfa6e915ea96489424624",
   "stats_overview": "71ab8b754a34cb4144afb90b85dfa5eeb7e3c28e12a7847cd527f8cf92761020",
   "stats_part_failed": "6db80ca9756ce4fe60eeffde2f2fbc556be3ca6ee56c979f175a7e285552c709",
   "stats_past_6_months": "28b8a51b8fd0331d0075f76b307f853d328feedd49ac8f858a0bce2b07777251",
@@ -72,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">Apri le statistiche</string>
     <string name="stats_overview">Panoramica</string>
     <string name="stats_level">Livello</string>
     <string name="stats_energy">Energia</string>

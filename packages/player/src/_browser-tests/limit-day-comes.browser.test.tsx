@@ -222,7 +222,7 @@ describe("a limit whose day has come", () => {
   it("opens Level from the missions reward", async () => {
     render(
       <LearnProvider adapters={ADAPTERS}>
-        <BrainPowerReward brainPower={50} earned={false} points={50} />
+        <BrainPowerReward earned={false} points={50} />
       </LearnProvider>,
     );
 

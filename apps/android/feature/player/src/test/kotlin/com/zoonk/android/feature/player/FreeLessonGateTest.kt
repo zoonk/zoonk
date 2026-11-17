@@ -102,7 +102,7 @@ class FreeLessonGateTest {
         rule.setContent {
             ZoonkTheme {
                 com.zoonk.android.feature.missions
-                    .BrainPowerReward("50", false, null) { opened = AppRoute.StatsLevel }
+                    .BrainPowerReward("50", false) { opened = AppRoute.StatsLevel }
             }
         }
         rule.onNodeWithText("Brain Power").performClick()

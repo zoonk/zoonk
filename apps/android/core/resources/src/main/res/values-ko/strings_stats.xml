@@ -47,7 +47,6 @@
   "stats_no_energy": "4864d4a69df7a589b9e251a2121af7f0c6e9c9434f78d9449d478a689cbd01ad",
   "stats_no_study": "b4d2a323e7f3e5fdae858bfe46f6fdc8420f452443fa7ced669b25b79975a8b2",
   "stats_not_yet": "15c4c9e09f9bbb3a98f3a0527ed2cc9e66c72ba4360ef5cdba6e9b06950c0f9f",
-  "stats_open": "685759c9a6b03a587889a8556ac3ee09eed133f4beb262c249917612db967a63",
   "stats_overview": "a6a615115eb749bc9c117fc5cec6cd9071c0218cef4b63cd75287e03b563d8d9",
   "stats_part_failed": "bb8f42070e64c2f4d76b2e4e6186514bd85a3c0e858e2d124d3a3e03c0481723",
   "stats_past_6_months": "3c73d4b58b785792e0d9c6505624b55346cb9f142df1f8544fbb919f9ce3fe81",
@@ -72,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">통계 열기</string>
     <string name="stats_overview">개요</string>
     <string name="stats_level">레벨</string>
     <string name="stats_energy">에너지</string>

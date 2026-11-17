@@ -109,35 +109,25 @@ internal fun BuddyTodayLine(
             Text(stringResource(R.string.buddy_page_energy), style = number)
             Text(energy ?: DASH, style = number)
         }
-        if (today == null || today.missions.isNotEmpty()) {
-            TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
-                if (today != null) {
-                    MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
-                } else {
-                    Icon(painterResource(R.drawable.ic_check), null, Modifier.size(icon))
-                }
-                Text(
-                    today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
-                        ?: stringResource(R.string.buddy_page_missions),
-                    style = number,
-                )
+        TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
+            if (today != null && today.missions.isNotEmpty()) {
+                MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
+            } else {
+                Icon(painterResource(R.drawable.ic_check), null, Modifier.size(icon))
             }
+            Text(
+                today
+                    ?.takeIf {
+                        it.missions.isNotEmpty()
+                    }?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
+                    ?: stringResource(R.string.buddy_page_missions),
+                style = number,
+            )
         }
     }
 
     if (open) BuddyTodaySheet(status, look, name, taps, navigator, onDismiss = { onOpenChange(false) })
 }
-
-@Composable
-private fun missionsLabel(
-    total: Int?,
-    done: Int,
-): String? =
-    when (total) {
-        null -> stringResource(R.string.buddy_page_missions)
-        0 -> null
-        else -> stringResource(R.string.buddy_page_missions_done, done, total)
-    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -275,7 +265,6 @@ private fun BuddyMissions(
         buddyName = name,
         onOpen = { opens -> taps.open(BuddyTap(opens)) },
         onLevel = onLevel,
-        brainPower = status.belt.totalBrainPower,
         opening = { mission -> taps.isOpening(mission.tap()) },
         openFailed = { mission -> taps.hasFailed(mission.tap()) },
         showBuddy = false,

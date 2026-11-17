@@ -448,16 +448,21 @@ fun LessonPlayer(
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
                                 ) {
                                     // A screen that already offers help keeps the ask quiet.
-                                    tutor?.takeUnless { screen.step?.content is StepContent.Explanation }?.askButton?.invoke(
-                                        state.tutorScope(screen),
-                                        state.showsMiss(screen) && screen.struggleOffer == null,
-                                        asking && (spread || !askedOnSpread),
-                                        tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
-                                        {
-                                            offerId = null
-                                            offerAsked = false
-                                        },
-                                    ) { open -> if (open) ask(spread) else asking = false }
+                                    tutor
+                                        ?.takeUnless {
+                                            screen.step?.content is StepContent.Explanation &&
+                                                ((spread && help != null) || (!language.languages.isLanguageLesson && askSimpler != null))
+                                        }?.askButton
+                                        ?.invoke(
+                                            state.tutorScope(screen),
+                                            state.showsMiss(screen) && screen.struggleOffer == null,
+                                            asking && (spread || !askedOnSpread),
+                                            tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
+                                            {
+                                                offerId = null
+                                                offerAsked = false
+                                            },
+                                        ) { open -> if (open) ask(spread) else asking = false }
                                 }
                             }
                         }

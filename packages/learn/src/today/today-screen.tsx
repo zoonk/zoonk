@@ -55,7 +55,6 @@ function isWaitingForLessons(today: TodayView): boolean {
 export function TodayScreen({
   actions,
   banner = null,
-  brainPower = null,
   buddy,
   completedLessons = false,
   knownLessons = 0,
@@ -73,7 +72,6 @@ export function TodayScreen({
   actions: TodayActions;
   /** Above the day, for what the host needs to say first, such as a reminder's other goal. */
   banner?: React.ReactNode;
-  brainPower?: number | null;
   buddy: LearnBuddy | null;
   completedLessons?: boolean;
   knownLessons?: number;
@@ -111,7 +109,7 @@ export function TodayScreen({
 
   return (
     <TodayScreenProvider
-      value={{ actions, brainPower, buddy, missions, notices, planEnd, today, writingStalled }}
+      value={{ actions, buddy, missions, notices, planEnd, today, writingStalled }}
     >
       <TodayContinueProvider>
         <PageWithAside

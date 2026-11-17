@@ -512,8 +512,8 @@ private fun Meters() {
         Labeled("Brain Power to the next level") { Meter(0.3f, color = MaterialTheme.zoonk.brain) }
         Labeled("Today's missions reward, then earned") {
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                BrainPowerReward("50", earned = false, brainPower = null, onOpen = {})
-                BrainPowerReward("50", earned = true, brainPower = null, onOpen = {})
+                BrainPowerReward("50", earned = false, onLevel = {})
+                BrainPowerReward("50", earned = true, onLevel = {})
             }
         }
         Labeled("Today's blocks: two done, one in progress") {

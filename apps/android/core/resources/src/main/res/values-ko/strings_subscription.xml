@@ -24,7 +24,6 @@
   "subscription_benefits_summary": "88a3ac4d625d9adb923814d7d10dbd82907ed3b781e0c104251a2083c10ec8c2",
   "subscription_billed_monthly": "8039e55f4cfc8cb7234c469b06c7805b2886db7cd1c3b9a0b49991385114b490",
   "subscription_billing_period": "365fd7c100e29f048c7c563f061244836e521406299509c6160a854fc51a365c",
-  "subscription_cancel": "9207ea217854db4e735e6fc431dde6e02b1f8e957b17003dcc2290986f06178c",
   "subscription_cancel_anytime": "b3889b437557ca1e77edda1805888eb26d4b35be3ae0bb922a8610abf89966fb",
   "subscription_contact_support": "377eed1872744835e794f472abf805372f0cd1a1feff5ff6a8043c6e763ec5e9",
   "subscription_current_plan": "64b88f84a0cd48e7d3e45c3c65c27745bd81dbf3187a35add8028112e81fc79c",
@@ -44,8 +43,6 @@
   "subscription_hide_answer": "6d6c995779f11d6919a9b7b495e4cc7a03e3187d2d71c81c797e6bcf6921a13a",
   "subscription_manage_apple": "763f9c6a2ab2ff16975fd387936bbca588ff6bef0616d90c57c1bc3b500728f7",
   "subscription_manage_google": "ae3d8ea5838e871ee1a2576a1c53ae6faa3acf43460ea10a90c61ea61502620d",
-  "subscription_managed_apple": "e3ee28acc04a3002fc239086c444007a2b9328be01117f8bdc662e5d5f7e8926",
-  "subscription_managed_google": "bf8adece16d22a40e113a16f6bcf36d4ad514236cb4417b9345ce0f4685da6ac",
   "subscription_managed_zoonk": "5b84b382678cca2f6bde1de202cde35f954c09a5b4115f0d5a5f86b632b2eb3f",
   "subscription_monthly": "4d93dc22fffcc050deca96f38a3e933d528a17aecf3d83cbc1b31d1214fcc203",
   "subscription_no_card_needed": "39990f1313b3ca81856f6f643da3697547775ea2c7b1afa15783911b77fb0aea",
@@ -90,13 +87,10 @@
     <string name="subscription_renews_on">%1$s에 갱신돼요.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">%1$s까지 요금이 결제되어 있어요.</string>
-    <string name="subscription_managed_google">Google Play에서 구독했어요.</string>
-    <string name="subscription_managed_apple">App Store에서 구독했어요.</string>
     <string name="subscription_managed_zoonk">Plus를 변경하거나 해지하려면 문의해 주세요.</string>
     <string name="subscription_manage_google">Google Play에서 관리하기</string>
     <string name="subscription_contact_support">도움 받기</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Plus 해지</string>
     <string name="subscription_renewal_failed">최근 갱신 결제에 실패했어요.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">구독한 웹사이트에서 결제 정보를 업데이트하세요.</string>

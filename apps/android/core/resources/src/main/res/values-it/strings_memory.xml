@@ -31,14 +31,12 @@
   "memory_undo_retry": "afe89e5a384d0fab6744e1ba35808a0285cb71917b8014ab87ea9470d12b6ed6",
   "memory_updated": "15622a7c74ab17214a7efd410181cc11325b69d633821c859dbb9a29320787cf",
   "memory_updated_more": "29d2f532148da7e5bd46edb58fb8443aaae86f2ff0fabbcae92beedbae17f85d",
-  "memory_use": "63f13feffebb2a3114960e3c294cf68b2ecf908faeeb0201f9bb1272da17d5e5",
-  "memory_use_off": "d153373122305acfe94e50389017c81e94685f671548ce83584b4d7f86877bb4"
+  "memory_use": "63f13feffebb2a3114960e3c294cf68b2ecf908faeeb0201f9bb1272da17d5e5"
 }
 -->
 <resources>
     <string name="memory_description">Quello che Zoonk ricorda di te per proporti esempi e piani adatti alla tua vita.</string>
     <string name="memory_use">Usa la memoria</string>
-    <string name="memory_use_off">Finché la funzione è disattivata, non memorizziamo né usiamo nulla.</string>
     <string name="memory_empty">Ancora niente. Le note compaiono qui man mano che studi e chatti.</string>
     <string name="memory_save_failed">Il salvataggio non è riuscito. Riprova.</string>
     <string name="memory_category_goals">Obiettivi</string>

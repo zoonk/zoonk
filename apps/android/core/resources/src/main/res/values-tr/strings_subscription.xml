@@ -24,7 +24,6 @@
   "subscription_benefits_summary": "d5033a0370823f8562629bddf498819793abd6115370d7ef833887bc54fcb6a7",
   "subscription_billed_monthly": "44654592dbcdaa1fbf82916d7665dba08c89342dcfe7bf68591dbae8629311c9",
   "subscription_billing_period": "e922481b89bfdc4ee50eefce439c78f2825fb121396726b4b16fd3acb35d4b3a",
-  "subscription_cancel": "1b16da962a35a7147682af435d8f31438fdfd4a0e103d95a1110cfe2f81b92ae",
   "subscription_cancel_anytime": "01286831343c40949bbf7a456c5f87613dc7d964751f59b9dfec6c177a87dd59",
   "subscription_contact_support": "8064f05f931c772f3742264a14010577184faa0e6d2b2463b73ef442933f4e8d",
   "subscription_current_plan": "88443b10dadd6a449d5632a55d43abb90aed882f672aa0c173fbab9ec993bea4",
@@ -44,8 +43,6 @@
   "subscription_hide_answer": "43b3a8f01149ff422fe93a58d9907f7bdd16549100b84f9d1622feaabcf655f0",
   "subscription_manage_apple": "2089d9b49177a1827441460dcc584e92f83c0ebc1c2983d16c1e2c01ae812719",
   "subscription_manage_google": "66817ecbbc77b214339a036c43f3c92b6f115eafaf3bd0c5b9eef245ae1e74fd",
-  "subscription_managed_apple": "0a005504b19a6205ad2bdf990695974eaa531adc0838587f269f95e9499ba17b",
-  "subscription_managed_google": "f8e22bc45632e23c7bc37888f9fc308a3205c2ae818fb3a1f229b337517a97c7",
   "subscription_managed_zoonk": "a740c39efbe3750a7b5f730cf1e29daee1345bd1ef3ffb8b98dfbf71e6ba83f6",
   "subscription_monthly": "d566790a4085b332da1f6d6ccbd1752c583940f764d01050bc5548bb01e8bd5a",
   "subscription_no_card_needed": "dae780cf6cc61f461a778c5aa7374baff3ce9f8e597599f145dac0fece65d03e",
@@ -90,13 +87,10 @@
     <string name="subscription_renews_on">%1$s tarihinde yenilenecek.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">Ücreti %1$s tarihine kadar ödendi.</string>
-    <string name="subscription_managed_google">Google Play üzerinden abone oldun.</string>
-    <string name="subscription_managed_apple">App Store üzerinden abone oldun.</string>
     <string name="subscription_managed_zoonk">Plus’ı değiştirmek veya iptal etmek için bize yaz.</string>
     <string name="subscription_manage_google">Google Play’de yönet</string>
     <string name="subscription_contact_support">Yardım al</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Plus’ı iptal et</string>
     <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Ödemeni, abone olduğun web sitesinden güncelle.</string>

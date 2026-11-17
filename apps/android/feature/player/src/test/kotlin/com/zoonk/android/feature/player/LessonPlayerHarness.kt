@@ -54,6 +54,8 @@ internal class LessonPlayerHarness(
     private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
     val session = FakeSession(ana)
     var closed = 0
+    var tutorOpen = false
+        private set
     lateinit var api: FakeLessonPlayerApi
     val catalogApi = FakeCatalogApi()
     lateinit var catalog: CatalogStore
@@ -87,10 +89,12 @@ internal class LessonPlayerHarness(
         pictures: PrivatePictures? = null,
         layoutDirection: LayoutDirection? = null,
         withTutor: Boolean = false,
+        tutorCanAsk: Boolean = true,
         withSpeech: Boolean = false,
+        targetLanguage: String? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
-        val lesson = playable(steps)
+        val lesson = playable(steps).copy(targetLanguage = targetLanguage)
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         cache = AppCache(session, scope)
@@ -142,7 +146,12 @@ internal class LessonPlayerHarness(
                             rememberAppNavigator(),
                             tutor =
                                 if (withTutor) {
-                                    LessonTutor(TutorIdentity("Sam", look = null), LESSON_SUGGESTIONS) { _, _, _, _, _, onOpenChange ->
+                                    LessonTutor(
+                                        TutorIdentity("Sam", look = null),
+                                        LESSON_SUGGESTIONS,
+                                        canAsk = tutorCanAsk,
+                                    ) { _, _, open, _, _, onOpenChange ->
+                                        androidx.compose.runtime.SideEffect { tutorOpen = open }
                                         TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
                                     }
                                 } else {

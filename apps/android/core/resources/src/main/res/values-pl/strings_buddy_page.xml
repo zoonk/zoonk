@@ -32,7 +32,6 @@
   "buddy_page_grows": "9182d9ab021b605db93969ff85d43525d0ca71d43fe2beb5909a9cfa03fbcd85",
   "buddy_page_missions": "49ccf29194689db5ff5f449b7a213aa89381b1286869568109dd8ceb23343f93",
   "buddy_page_missions_count": "9a935765163ccb0b27a28ea8464637e4db9cbe9b3eae133a72b02b0872a34642",
-  "buddy_page_missions_done": "0af9b4099e64f98c98fbc323c59e30b0d4ea8518181a45845d32c65fb3758061",
   "buddy_page_more": "9588388ce4cb980c0fa455995e1a2ccb655f92a687e7252cf49ec7534e39734b",
   "buddy_page_placeholder": "665155520fbf7cb01ade2b2def4bb48d058b2282d7f769578aea89b54b206923",
   "buddy_page_remembers": "a5680268e9c220eb9aa45cd6dc438e425ec2cfc21899136c2e15c5fbc1a0f3d8",
@@ -90,7 +89,6 @@
         <item quantity="other">%1$d z %2$d misji</item>
     </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
-    <string name="buddy_page_missions_done">Ukończone misje: %1$d z %2$d</string>
     <string name="buddy_page_fully_grown">Rozwój zakończony</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Urośnie, gdy zdobędziesz pas: %1$s</string>

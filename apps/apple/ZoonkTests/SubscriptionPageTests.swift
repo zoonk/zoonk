@@ -82,13 +82,53 @@ extension SubscriptionPageTests {
 }
 
 private struct UnpaidWebsiteTransport: ClientTransport {
+  var state = "unpaid"
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
     -> (HTTPResponse, HTTPBody?)
   {
     guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
     return (
       HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-      HTTPBody(#"{"state":"unpaid","periodEnd":null}"#)
+      HTTPBody(Data("{\"state\":\"\(state)\",\"periodEnd\":null}".utf8))
     )
+  }
+}
+
+extension SubscriptionPageTests {
+  @MainActor
+  func testRenewingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "renewing", label: "Manage on the website")
+  }
+
+  @MainActor
+  func testEndingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "ending", label: "Manage on the website")
+  }
+
+  @MainActor
+  func testFailedWebsitePlusOpensPayment() async throws {
+    try await websiteAction(
+      state: "unpaid", label: "Update your payment on the website, where you subscribed.")
+  }
+
+  @MainActor
+  private func websiteAction(state: String, label: String) async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport(state: state))
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await Task.sleep(for: .milliseconds(600))
+      try captureCallsRoundTwo("website-\(state)-\(size)")
+    }
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains(label), words)
+    XCTAssertFalse(words.contains("You subscribed in the App Store."))
   }
 }

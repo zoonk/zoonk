@@ -77,6 +77,7 @@
   "plan_cadence_final_weeks_effect": "cc3c355e4fe4e6da6ca217e15736282cb18dd1568f21bb461213d68ed5d6cd6d",
   "plan_cadence_weekly": "1d3f5ff00bb452d3722004afd6d0a5f57345956937622bf881299a6155c63d66",
   "plan_cadence_weekly_effect": "0a9d057f575bdf5fa1708c205fe6b28fe558ce2a0508a844bb6625cee40bfe2d",
+  "plan_call_not_in_plan": "7017d4d4110c529b93cb80c38eca09aa288680a10d520c2bce2cd57bff1b72f8",
   "plan_cancel": "4f8e8234a33f8e6a966fd36361c1ca533fc6ac2c7065e630b52bb546c7c7fba3",
   "plan_challenge_live_call": "f7a6e77ab091ca4de038d0afe2c60b27853be1fb6d073985bb5e5416bf5ec149",
   "plan_challenge_next_session": "01874489d209cdd75ecafbec5d880e9c02c0c2193d5374e316ea434b71919074",
@@ -513,6 +514,7 @@
   "plan_tools_title": "e149a232d321ecac67fcd4ca00dad29d31f78e65670e641fed42fe95f38669ec",
   "plan_tools_without": "06163415e60e0aaf2376c0ace33205f2f127e8665ecaa6f506c7fa9c98003ffd",
   "plan_topics_studied": "41ab128686a7578a1dff0765314614db929ed3317dcedfce8ae30537b3b2d964",
+  "plan_trickster_not_in_plan": "bd9c75b016e311255642cfd5d03467f2fa0606ce169e26f01a5c0296987cdec9",
   "plan_try_again": "dc98417b560732ae3b4bff210d071467cc7bc79f59550bc65c69a59fd1b80bae",
   "plan_tuesdays": "e70a0cd29941957cfda9f6133c3cc63d7fce2be1271c47e3c09d503abf320589",
   "plan_undo": "c1b16070b19f787bde9d22305d8be221b30523ac460e4a0906012d38c14ff6f9",
@@ -1342,4 +1344,8 @@
     <string name="plan_outside_time">계획에 없어요 · 학습 시간이 부족해요</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">계획에 없어요 · 직접 뺀 과목이에요</string>
+    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
+    <string name="plan_trickster_not_in_plan">트릭스터는 계획에 없어요</string>
+    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
+    <string name="plan_call_not_in_plan">대화는 계획에 없어요</string>
 </resources>

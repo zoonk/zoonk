@@ -47,7 +47,6 @@
   "stats_no_energy": "05320e5c748718ae75ff70a2382d1e5c66ccb0889456c67406b066fdd615d651",
   "stats_no_study": "7c799abfa821856c3e0a2c1206ba8650ef41c845bfecf539eaccfd89bfba481f",
   "stats_not_yet": "a1cbdba330cc24f8cbacad99abcbfd7c18ccfe0d34fe96466395b1220f24121e",
-  "stats_open": "a6a1b142d608b010afb0b26dfde5a9512980bb14830a24142222bdbc2a1c7b9e",
   "stats_overview": "e69870ba694ad885fda085221b01b0f8bdd17abeb12b254d16f4e410adf1493e",
   "stats_part_failed": "b950aa736f1216c067e9b9a09a89d27c75291b112933d115872f9b3d04c321d2",
   "stats_past_6_months": "bd02978e4d93b624ba41e31cd8450aaf6c66483f2094ce93012eeeb27ee1beff",
@@ -72,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">Abrir Estadísticas</string>
     <string name="stats_overview">Panorama general</string>
     <string name="stats_level">Nivel</string>
     <string name="stats_energy">Energía</string>

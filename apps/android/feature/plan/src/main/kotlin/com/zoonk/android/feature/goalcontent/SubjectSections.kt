@@ -175,9 +175,9 @@ internal fun NotPlannedNotice(
 ) {
     val words =
         when (subject.notPlannedReason) {
-            SyllabusSubject.NotPlannedReason.SKIPPED -> R.string.goalcontent_subject_skipped
-            SyllabusSubject.NotPlannedReason.TIME -> R.string.goalcontent_subject_time
-            SyllabusSubject.NotPlannedReason.MISSING -> R.string.goalcontent_subject_missing
+            "skipped" -> R.string.goalcontent_subject_skipped
+            "time" -> R.string.goalcontent_subject_time
+            "missing" -> R.string.goalcontent_subject_missing
             else -> return
         }
 
@@ -192,7 +192,7 @@ internal fun NotPlannedNotice(
                 Text(stringResource(words), style = MaterialTheme.typography.bodyMedium)
 
                 when (subject.notPlannedReason) {
-                    SyllabusSubject.NotPlannedReason.SKIPPED -> {
+                    "skipped" -> {
                         OutlinedButton(
                             onClick = { actions.restore(subject.areas) },
                             busy = writes.restoring,
@@ -203,7 +203,7 @@ internal fun NotPlannedNotice(
                         if (writes.restoreFailed) SaveFailed()
                     }
 
-                    SyllabusSubject.NotPlannedReason.TIME -> {
+                    "time" -> {
                         TextButton(onClick = actions.adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
                     }
 
@@ -730,11 +730,12 @@ private fun topicNote(
     }
     return when (topic.notPlannedReason) {
         null -> null
-        SyllabusTopic.NotPlannedReason.SKIPPED -> stringResource(R.string.goalcontent_topic_skipped)
-        SyllabusTopic.NotPlannedReason.PAST_BASICS -> stringResource(R.string.goalcontent_topic_past_basics)
-        SyllabusTopic.NotPlannedReason.SKIPPED_BASE -> stringResource(R.string.goalcontent_topic_skipped_base)
-        SyllabusTopic.NotPlannedReason.TIME -> stringResource(R.string.goalcontent_topic_time)
-        SyllabusTopic.NotPlannedReason.MISSING -> stringResource(R.string.goalcontent_topic_missing)
+        "skipped" -> stringResource(R.string.goalcontent_topic_skipped)
+        "pastBasics" -> stringResource(R.string.goalcontent_topic_past_basics)
+        "skippedBase" -> stringResource(R.string.goalcontent_topic_skipped_base)
+        "time" -> stringResource(R.string.goalcontent_topic_time)
+        "missing" -> stringResource(R.string.goalcontent_topic_missing)
+        else -> stringResource(R.string.plan_not_in_your_plan)
     }
 }
 
@@ -770,7 +771,7 @@ private fun TopicFrequencyNote(
             else -> {
                 val publisher = sourceHost(source.url)
                 val link = publisher to LinkTarget(source.url)
-                val waits = subject.topics.any { it.notPlannedReason == SyllabusTopic.NotPlannedReason.TIME }
+                val waits = subject.topics.any { it.notPlannedReason == "time" }
                 when {
                     tagged && waits -> {
                         annotate(

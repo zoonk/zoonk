@@ -32,7 +32,6 @@
   "buddy_page_grows": "0e149fc8735ae968cb89af2a20b4a03b900f942d59c77253b9216d48ecae213b",
   "buddy_page_missions": "a4b193c38ec468967d9da2b31a893f432a761808edcfb273ec3b38de8757d403",
   "buddy_page_missions_count": "9ffb449aab0a5f1debbcc156c91b0ac482daf9c4c5bc06659ec87ea6f84ca1da",
-  "buddy_page_missions_done": "5edd0f8def77e55ee6e48824d9c809e07e36fb88c34efd063d4d1f5bef939941",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
   "buddy_page_placeholder": "a6d797519a04770772242d8ff4a2d742ccf4f29184064773f41c2e1e341f6fd4",
   "buddy_page_remembers": "9ed368023fa7d2ae9afc289cb90b462afeca767ce23e95d616618ad10fa8ca03",
@@ -87,7 +86,6 @@
         <item quantity="other">ミッション%1$d/%2$d完了</item>
     </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
-    <string name="buddy_page_missions_done">ミッション完了数：%1$d件（全%2$d件）</string>
     <string name="buddy_page_fully_grown">成長完了</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">%1$sになると成長します</string>

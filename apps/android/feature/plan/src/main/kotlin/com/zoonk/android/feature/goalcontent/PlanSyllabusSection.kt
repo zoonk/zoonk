@@ -135,13 +135,7 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                stringResource(
-                    when (subject.notPlannedReason) {
-                        SyllabusSubject.NotPlannedReason.SKIPPED -> R.string.plan_outside_skipped
-                        SyllabusSubject.NotPlannedReason.MISSING -> R.string.today_coming_not_written
-                        else -> R.string.plan_outside_time
-                    },
-                ),
+                planOutsideReason(subject.notPlannedReason),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -271,3 +265,16 @@ private val BAR_MIN = 112.dp
 private val BAR_MAX = 224.dp
 private val QUESTIONS_WIDTH = 104.dp
 private val SHARE_WIDTH = 40.dp
+
+@Composable
+internal fun planOutsideReason(reason: String?): String =
+    stringResource(
+        when (reason) {
+            "skipped" -> R.string.plan_outside_skipped
+            "pastBasics" -> R.string.plan_outside_past_basics
+            "skippedBase" -> R.string.plan_outside_skipped_base
+            "missing" -> R.string.today_coming_not_written
+            "time" -> R.string.plan_outside_time
+            else -> R.string.plan_not_in_your_plan
+        },
+    )

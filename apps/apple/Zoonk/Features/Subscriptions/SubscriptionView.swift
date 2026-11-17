@@ -668,8 +668,6 @@ private struct UnpaidPlusView: View {
   }
 }
 
-/// Main's `CancelPlusButton` and `KeepPlusButton`. Beside a store purchase it's titled and says
-/// its own date.
 private struct WebPlusSection: View {
   let web: WebPlus
   let beside: Bool
@@ -680,11 +678,15 @@ private struct WebPlusSection: View {
         dateLine.foregroundStyle(.mutedForeground)
       }
       Link(destination: AccountLinks.subscription) {
-        Text(
-          "Update your payment on the website, where you subscribed.", tableName: "Subscriptions",
-          comment:
-            "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update."
-        )
+        if web.state == .unpaid {
+          Text(
+            "Update your payment on the website, where you subscribed.", tableName: "Subscriptions",
+            comment:
+              "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update."
+          )
+        } else {
+          Text("Manage on the website", tableName: "Subscriptions")
+        }
       }
       .buttonStyle(.ghost)
     } header: {

@@ -140,12 +140,9 @@ private struct LevelButton: View {
         }
       }
     }
-    .accessibilityLabel(
-      Text(
-        "\(Text(belt.localizedTitle)) \(level.level). Statistics", tableName: "Navigation",
-        comment:
-          "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
-      ))
+    .accessibilityLabel(Text("Level", tableName: "Progress"))
+    .accessibilityValue(
+      Text(verbatim: "\(String(localized: belt.localizedTitle)) \(level.level.formatted())"))
   }
 }
 

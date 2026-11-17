@@ -90,7 +90,6 @@ fun MissionsCard(
     buddyName: String,
     onOpen: (MissionOpens) -> Unit,
     modifier: Modifier = Modifier,
-    brainPower: Long? = null,
     onLevel: () -> Unit,
     opening: (DayMission) -> Boolean = { false },
     openFailed: (DayMission) -> Boolean = { false },
@@ -117,7 +116,7 @@ fun MissionsCard(
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            BrainPowerReward(points, earned = true, brainPower, onLevel)
+            BrainPowerReward(points, earned = true, onLevel)
         }
         return
     }
@@ -130,7 +129,7 @@ fun MissionsCard(
                     MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         MissionsStatus(missions, Modifier.weight(1f))
-                        BrainPowerReward(points, earned = won, brainPower, onLevel)
+                        BrainPowerReward(points, earned = won, onLevel)
                     }
                 }
             }
@@ -369,13 +368,11 @@ fun MissionListRow(
     }
 }
 
-/** The day's bonus opens the Level page. */
 @Composable
 fun BrainPowerReward(
     points: String,
     earned: Boolean,
-    brainPower: Long?,
-    onOpen: () -> Unit,
+    onLevel: () -> Unit,
 ) {
     val label = stringResource(R.string.missions_brain_power)
 
@@ -383,7 +380,7 @@ fun BrainPowerReward(
         modifier =
             Modifier
                 .clip(MaterialTheme.shapes.small)
-                .clickable(role = Role.Button, onClick = onOpen)
+                .clickable(role = Role.Button, onClick = onLevel)
                 .semantics(mergeDescendants = true) {}
                 .heightIn(min = 32.dp)
                 .padding(horizontal = 4.dp),

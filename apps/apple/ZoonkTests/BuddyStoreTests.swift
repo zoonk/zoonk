@@ -257,3 +257,42 @@ final class BuddyDayOpeningTests: XCTestCase {
 private final class OpenedMissions {
   var count = 0
 }
+
+extension BuddyDayOpeningTests {
+  func testTheFaceExplainsADayWithNoMissions() async throws {
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(),
+      learnerSummaryAPI: OneGoalSummary(kind: .learn))
+    await dependencies.learnerSummaryStore.summary.load()
+    let buddy = BuddyAPIStub()
+    buddy.shownStatus.today = .init(
+      fullMeal: .init(bonus: 50, earned: false), goalId: "goal", localDate: "2026-11-16",
+      missions: [])
+    let store = BuddyStore(api: buddy, cache: dependencies.cache)
+    await store.status.load()
+    let window = try show(
+      NavigationStack { BuddyScreen() }.environment(store).appDependencies(dependencies)
+        .environment(AppRouter()).zoonkStyles())
+    try readsWhatVoiceOverReads()
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await Task.sleep(for: .milliseconds(600))
+      try captureCallsRoundTwo("empty-buddy-\(size)")
+      if width < 700 {
+        XCTAssertTrue(
+          spokenHints(in: window).contains("Shows Zu's day"), "\(spokenHints(in: window))")
+        try activate(hint: "Shows Zu's day", in: window)
+        try await Task.sleep(for: .milliseconds(600))
+        XCTAssertTrue(spoken(in: window).contains("Zu today"), "\(spoken(in: window))")
+        try captureCallsRoundTwo("empty-buddy-day-phone")
+        try closeRequestSheet(in: window)
+        try await Task.sleep(for: .milliseconds(400))
+      }
+    }
+  }
+}

@@ -160,7 +160,6 @@ private fun TodayRead(
                     }
 
                     val buddy = summary.value?.buddy?.look() ?: BuddyLook()
-                    val brainPower by app.today.brainPower.collectShown()
                     val language =
                         if (read.today.goal.kind == TodayGoal.Kind.LANGUAGE) {
                             app.today.language[read.today.goal.id]
@@ -178,7 +177,6 @@ private fun TodayRead(
                         padding = padding,
                         buddy = buddy,
                         buddyName = buddyName(buddy.kind, summary.value?.buddy?.name),
-                        brainPower = brainPower.value,
                         practice = {
                             TodayPractice(
                                 app.today,

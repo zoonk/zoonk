@@ -82,6 +82,39 @@ class BuddyPageTest {
         assertEquals(false, dayOpened)
     }
 
+    @Test
+    fun aDayWithNoMissionsStillOpensTheBuddyDay() {
+        val empty =
+            STATUS.copy(
+                today =
+                    com.zoonk.api.models.BuddyStatusToday(
+                        fullMeal =
+                            com.zoonk.api.models
+                                .BuddyStatusTodayFullMeal(50, false),
+                        goalId = java.util.UUID.fromString(GOAL),
+                        localDate = kotlinx.datetime.LocalDate(2026, 11, 16),
+                        missions = emptyList(),
+                    ),
+            )
+        var opened = false
+        compose.setContent {
+            ZoonkTheme {
+                BuddyTodayLine(
+                    empty,
+                    com.zoonk.android.ui.characters
+                        .BuddyLook(),
+                    "Zu",
+                    BuddyDayTaps({}),
+                    false,
+                    { opened = it },
+                    rememberAppNavigator(),
+                )
+            }
+        }
+        compose.onNodeWithText("Missions", substring = false).performClick()
+        assertEquals(true, opened)
+    }
+
     @Composable
     private fun Page() {
         val context = LocalContext.current

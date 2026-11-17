@@ -4998,6 +4998,16 @@ msgid "Continues {date}"
 msgstr "Continúa el {date}"
 
 #: src/journey/path-phase-row.tsx
+msgctxt "sk-jVa"
+msgid "The call isn't in your plan"
+msgstr "La llamada no está en tu plan"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "xl2sjx"
+msgid "The Trickster isn't in your plan"
+msgstr "El Tramposo no está en tu plan"
+
+#: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
 msgid ", up next"
 msgstr ", a continuación"
@@ -6952,10 +6962,11 @@ msgctxt "nxU2W7"
 msgid "From a call"
 msgstr "De una llamada"
 
+#. What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.
 #: src/memory/memory-screen.tsx
-msgctxt "LwVSHh"
-msgid "When off, notes aren't saved or used"
-msgstr "Si desactivas esta opción, las notas no se guardan ni se usan"
+msgctxt "EDgENy"
+msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
+msgstr ""
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

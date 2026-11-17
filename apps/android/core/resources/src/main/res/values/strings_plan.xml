@@ -883,4 +883,10 @@
     <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Not in your plan · you took this subject out</string>
+    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
+    <string name="plan_trickster_not_in_plan">The Trickster isn\'t in your plan</string>
+    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
+    <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
+    <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
+    <string name="plan_outside_skipped_base">Skipped · your choice</string>
 </resources>

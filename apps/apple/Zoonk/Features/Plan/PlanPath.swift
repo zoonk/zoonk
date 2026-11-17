@@ -250,7 +250,15 @@ private struct PlanPhaseRow: View {
         "\(count) lessons not studied", tableName: "Plan",
         comment: "A phase the date passed with lessons not studied")
     case .challenge, .noTimeForChallenge:
-      return planOutsideReason("time")
+      return context.goal.kind == .language
+        ? Text(
+          "The call isn't in your plan", tableName: "Plan",
+          comment: "A language phase whose closing call has no day in the plan")
+        : Text(
+          "The Trickster isn't in your plan", tableName: "Plan",
+          comment:
+            "A phase whose closing challenge has no day in the plan. The Trickster is the name of the challenge's character"
+        )
     case nil:
       return phase.state == .current && !isOpen ? resumes : nil
     }
@@ -777,13 +785,19 @@ func planOutsideReason(_ reason: String?) -> Text {
       comment:
         "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out."
     )
+  case "pastBasics":
+    Text("Skipped\u{00A0}· you already know the basics", tableName: "Plan")
+  case "skippedBase":
+    Text("Skipped\u{00A0}· your choice", tableName: "Plan")
   case "missing":
     Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
-  default:
+  case "time":
     Text(
       "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
       comment:
         "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it."
     )
+  default:
+    Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
   }
 }

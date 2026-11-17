@@ -37,6 +37,18 @@ extension XCTestCase {
     accessibilityElements(in: element).compactMap(\.accessibilityLabel).filter { !$0.isEmpty }
   }
 
+  @MainActor
+  func spokenHints(in element: Any) -> [String] {
+    accessibilityElements(in: element).compactMap(\.accessibilityHint).filter { !$0.isEmpty }
+  }
+
+  @MainActor
+  func activate(hint: String, in window: UIWindow) throws {
+    let element = try XCTUnwrap(
+      accessibilityElements(in: window).first { $0.accessibilityHint == hint })
+    XCTAssertTrue(element.accessibilityActivate(), "\(hint) didn't act")
+  }
+
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
   @MainActor
   func activate(_ label: String, in window: UIWindow) throws {

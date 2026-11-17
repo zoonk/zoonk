@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.goalcontent.planOutsideReason
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -244,15 +245,7 @@ private fun phaseMeta(
     open: Boolean,
 ): PlanDateWords? {
     if (phase.state == PlanPhase.State.LEFT_OUT) {
-        return sameWords(
-            stringResource(
-                when (phase.notPlannedReason?.value) {
-                    "skipped" -> R.string.plan_outside_skipped
-                    "missing" -> R.string.today_coming_not_written
-                    else -> R.string.plan_outside_time
-                },
-            ),
-        )
+        return sameWords(planOutsideReason(phase.notPlannedReason))
     }
     if (phase.state == PlanPhase.State.UNFINISHED) {
         val leftOut = (phase.lessonsTotal - phase.lessonsDone).toInt()
@@ -260,11 +253,11 @@ private fun phaseMeta(
             if (leftOut > 0) {
                 pluralStringResource(R.plurals.plan_lessons_not_studied, leftOut, leftOut)
             } else {
-                challengeNotInPlan()
+                challengeNotInPlan(page)
             },
         )
     }
-    if (phase.challengeLeftOut) return sameWords(challengeNotInPlan())
+    if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
     if (phase.state != PlanPhase.State.CURRENT || open) return null
 
     if (phase.lessonsDone < phase.lessonsTotal) {
@@ -467,7 +460,16 @@ internal fun challengeName(page: PlanPageState): String =
     stringResource(if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) R.string.session_block_call else R.string.checkpoint_trickster)
 
 @Composable
-private fun challengeNotInPlan(): String = stringResource(R.string.plan_outside_time)
+private fun challengeNotInPlan(page: PlanPageState): String =
+    stringResource(
+        if (page.goal.kind ==
+            LearnerSummaryGoal.Kind.LANGUAGE
+        ) {
+            R.string.plan_call_not_in_plan
+        } else {
+            R.string.plan_trickster_not_in_plan
+        },
+    )
 
 /** [brief] leaves out what a challenge is in a list of every phase's, where it would repeat. */
 @Composable

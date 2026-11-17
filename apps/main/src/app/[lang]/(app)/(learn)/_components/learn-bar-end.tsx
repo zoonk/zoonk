@@ -68,7 +68,7 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
       )}
       href={getMenu("level").url}
       prefetch
-      title={t("Statistics")}
+      title={t("Level")}
     >
       <LevelRoom>
         <BeltLevel
@@ -78,7 +78,7 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
         />
       </LevelRoom>
       <span className="sr-only">
-        {t("{belt}, level {level}. Statistics", { belt, level: levelNumber })}
+        {[belt, t("Level {level}", { level: levelNumber })].join(", ")}
       </span>
     </Link>
   );

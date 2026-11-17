@@ -24,6 +24,7 @@ import { useChangeSaveFailed } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
 import { findRowMenu, useKeepFocus } from "../_utils/use-keep-focus";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
+import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
 import { type MemoryUndoOutcome, toMemoryChangeReferences } from "./memory-updated";
@@ -73,9 +74,11 @@ function findMemorySwitch() {
 }
 
 function MemorySwitch({
+  buddyName,
   enabled,
   onChange,
 }: {
+  buddyName: string;
   enabled: boolean;
   onChange: (enabled: boolean) => void;
 }) {
@@ -86,8 +89,13 @@ function MemorySwitch({
   return (
     <ListGroup>
       <SettingRow
-        // Always there, so the rows under the switch don't move when it flips.
-        description={t("When off, notes aren't saved or used")}
+        description={t({
+          description:
+            "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.",
+          message:
+            "Personal examples, plans that fit your week and calls with {buddy} that remember your news",
+          values: { buddy: buddyName },
+        })}
         descriptionId={descriptionId}
         label={<span id={labelId}>{t("Use memory")}</span>}
       >
@@ -171,14 +179,23 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
   };
 }
 
-export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memory: MemoryView }) {
+export function MemoryScreen({
+  actions,
+  buddy,
+  memory,
+}: {
+  actions: MemoryActions;
+  buddy: Pick<LearnBuddy, "kind" | "name"> | null;
+  memory: MemoryView;
+}) {
+  const buddyName = useBuddyName(buddy);
   const t = useExtracted();
   const screen = useMemoryScreen({ actions, memory });
   const groups = groupByCategory(screen.facts);
 
   return (
     <div className="flex flex-col gap-7" data-slot="memory-screen">
-      <MemorySwitch enabled={screen.enabled} onChange={screen.setEnabled} />
+      <MemorySwitch buddyName={buddyName} enabled={screen.enabled} onChange={screen.setEnabled} />
 
       {groups.length === 0 && screen.enabled && (
         <p className="text-muted-foreground text-sm">

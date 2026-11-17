@@ -287,7 +287,6 @@ msgid "Weekly summary"
 msgstr "週間まとめ"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
@@ -748,9 +747,12 @@ msgid "Level {level}"
 msgstr "レベル{level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "yAw6p8"
-msgid "{belt}, level {level}. Statistics"
-msgstr "{belt}、レベル{level}。統計"
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "レベル"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
@@ -1602,13 +1604,6 @@ msgstr "概要"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "学習データ"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "レベル"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
