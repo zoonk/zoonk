@@ -208,7 +208,13 @@ class WebPlusCancellationTest {
         assumeTrue("Pass -Pzoonk.shots=<folder> to write review screenshots", folder.isNotEmpty())
         darkTheme = dark
         higherContrast = moreContrast
+        subscription = plan("zoonk")
+        response = { null }
         show()
+        rule.onNodeWithText("To change or cancel Plus, write to us.").assertExists()
+        capture(folder, "$prefix-zoonk")
+        subscription = plan()
+        update(State.RENEWING)
         capture(folder, "$prefix-renewing")
         update(State.ENDING)
         capture(folder, "$prefix-ending")

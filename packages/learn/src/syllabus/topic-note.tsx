@@ -21,6 +21,8 @@ export function useNotPlannedReason() {
             "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
           message: "Not in your plan · you took this subject out",
         });
+      case "known":
+        return t("Skipped · you already know it");
       case "pastBasics":
         return t("Skipped · you already know the basics");
       case "skippedBase":
@@ -46,13 +48,5 @@ export function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
 }
 
 export function TopicNote({ topic }: { topic: SyllabusTopic }) {
-  const t = useExtracted();
-
-  if (topic.status === "known") {
-    return (
-      <span className="text-muted-foreground text-xs">{t("Skipped · you already know it")}</span>
-    );
-  }
-
-  return <ReasonText reason={topic.notPlannedReason} />;
+  return <ReasonText reason={topic.status === "known" ? "known" : topic.notPlannedReason} />;
 }

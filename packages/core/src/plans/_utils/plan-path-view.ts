@@ -67,14 +67,19 @@ export function buildPlanPath({
       phases.map((_, index) => {
         const skills = state.graph.skills.filter((skill) => skill.phase === index);
 
+        const known =
+          skills.length > 0 && skills.every((skill) => syllabus?.knownSkillIds.has(skill.skillId));
+
         const hasItems = items.some((item) => item.phase === index && item.kind === "lesson");
+
+        const fallbackReason = !hasItems && known ? "known" : "time";
 
         return [
           index,
           getNotPlannedReason({
             hasItems,
             hasSkills: skills.length > 0,
-            known: skills.every((skill) => syllabus?.knownSkillIds.has(skill.skillId)),
+            known,
             pastBasics: skills.every((skill) => syllabus?.pastBasicsSkillIds.has(skill.skillId)),
             skipped:
               skills.length > 0 &&
@@ -82,7 +87,7 @@ export function buildPlanPath({
                 state.settings.skippedAreas.includes(getSkillArea({ graph: state.graph, skill })),
               ),
             skippedBase: skills.every((skill) => syllabus?.skippedBaseIds?.has(skill.skillId)),
-          }) ?? (hasItems ? "time" : null),
+          }) ?? fallbackReason,
         ];
       }),
     ),

@@ -128,7 +128,7 @@ class BuddyScreenshots {
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
-        if (name == "calls-no-missions-phone") compose.onNodeWithText("Missions").assertExists()
+        if (name == "calls-no-missions-phone") compose.onNodeWithText("Zu today").assertExists()
         if (name.startsWith("calls-")) {
             compose
                 .onNode(

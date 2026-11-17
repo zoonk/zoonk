@@ -6,7 +6,7 @@ import { loadPlanContext } from "./plan-context";
 import { buildPlanPath } from "./plan-path-view";
 
 describe("a left-out phase uses the syllabus facts", () => {
-  it.each(["time", "skipped", "missing", "pastBasics", "skippedBase", null] as const)(
+  it.each(["time", "skipped", "missing", "pastBasics", "skippedBase", "known"] as const)(
     "derives %s without inventing a time shortage",
     async (reason) => {
       const user = await userFixture();
@@ -55,7 +55,7 @@ describe("a left-out phase uses the syllabus facts", () => {
         currentPhase: 0,
         skillAreas: new Map(),
         syllabus: {
-          knownSkillIds: new Set(reason === null ? ["basis"] : []),
+          knownSkillIds: new Set(reason === "known" ? ["basis"] : []),
           pastBasicsSkillIds: new Set(reason === "pastBasics" ? ["basis"] : []),
           skippedBaseIds: new Set(reason === "skippedBase" ? ["basis"] : []),
         },

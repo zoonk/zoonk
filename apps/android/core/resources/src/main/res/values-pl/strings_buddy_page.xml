@@ -30,7 +30,6 @@
   "buddy_page_goal_placeholder": "2efa14ecb0d8398bdde85ae1b98d2b16af1ae63db3acfa3844301bdf48cfa68e",
   "buddy_page_greeting": "4c2caf7fcc71c63ca108ee73663646297da4c2b81b7bb2424a254716e2d80f9e",
   "buddy_page_grows": "9182d9ab021b605db93969ff85d43525d0ca71d43fe2beb5909a9cfa03fbcd85",
-  "buddy_page_missions": "49ccf29194689db5ff5f449b7a213aa89381b1286869568109dd8ceb23343f93",
   "buddy_page_missions_count": "9a935765163ccb0b27a28ea8464637e4db9cbe9b3eae133a72b02b0872a34642",
   "buddy_page_more": "9588388ce4cb980c0fa455995e1a2ccb655f92a687e7252cf49ec7534e39734b",
   "buddy_page_placeholder": "665155520fbf7cb01ade2b2def4bb48d058b2282d7f769578aea89b54b206923",
@@ -80,7 +79,6 @@
     <string name="buddy_page_energy_starts">Pojawi się po pierwszej lekcji.</string>
     <string name="buddy_page_energy_napping">%1$s drzemie. Obudzi się, gdy zaczniesz naukę.</string>
     <string name="buddy_page_energy_study">Poucz się dziś, żeby utrzymać jej poziom.</string>
-    <string name="buddy_page_missions">Misje</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d z %2$d misji</item>

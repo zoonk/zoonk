@@ -112,15 +112,13 @@ internal fun BuddyTodayLine(
         TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
             if (today != null && today.missions.isNotEmpty()) {
                 MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
-            } else {
-                Icon(painterResource(R.drawable.ic_check), null, Modifier.size(icon))
             }
             Text(
                 today
                     ?.takeIf {
                         it.missions.isNotEmpty()
                     }?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
-                    ?: stringResource(R.string.buddy_page_missions),
+                    ?: stringResource(R.string.buddy_page_today, name),
                 style = number,
             )
         }

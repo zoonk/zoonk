@@ -9,7 +9,7 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ZapIcon } from "lucide-react";
+import { ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
@@ -96,22 +96,6 @@ function BuddyTodaySheet({
   );
 }
 
-function useMissionsLabel(status: BuddyStatusView): string {
-  const t = useExtracted();
-  const today = status.today;
-
-  if (!today || today.missions.length === 0) {
-    return t("Missions");
-  }
-
-  const done = countDoneMissions(today.missions);
-
-  return t(
-    "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}",
-    { done, total: String(today.missions.length) },
-  );
-}
-
 function NotYet() {
   const t = useExtracted();
 
@@ -142,12 +126,19 @@ export function BuddyToday({
 }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
-  const missionsLabel = useMissionsLabel(status);
   const [open, setOpen] = useState(false);
   const [asked, setAsked] = useState(false);
   const { current } = status.energy;
   const today = status.today;
   const done = today ? countDoneMissions(today.missions) : 0;
+
+  const dayLabel =
+    today && today.missions.length > 0
+      ? t(
+          "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}",
+          { done, total: String(today.missions.length) },
+        )
+      : t("{buddy} today", { buddy: name });
 
   return (
     <>
@@ -179,10 +170,8 @@ export function BuddyToday({
               moment={false}
               strokeWidth={6}
             />
-          ) : (
-            <CheckIcon aria-hidden="true" className="size-3.5" />
-          )}
-          <span>{missionsLabel}</span>
+          ) : null}
+          <span>{dayLabel}</span>
         </button>
       </div>
 

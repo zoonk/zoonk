@@ -83,13 +83,6 @@
   "goalcontent_topic_count": "f1f93c1a7f811ac7eac486451f3babd242a536abf25b9b0f0278b3e93d4c17ff",
   "goalcontent_topic_in_progress": "14a9c050d273773fd34b58644e3cd54290913cd2433ece2a4aa545f966ec14e2",
   "goalcontent_topic_known": "b64a0cdee4ed67a1523d277b22d91a807088efcd23cf82b7c0ff8dc3c052ac83",
-  "goalcontent_topic_known_practice": "0d835dd7c7adcb307256d68be915a7564813ed7da8c34fd159a79fb17a034bec",
-  "goalcontent_topic_known_reviews": "5dfdaf3d6c6add9f7a35975b99d5ec989676c5af6d919a2b3b5527e5151569d7",
-  "goalcontent_topic_missing": "a037cc843befe36fdd194118757ac732a6b556257f5f1b59867e0a8234ee4115",
-  "goalcontent_topic_past_basics": "c9a179624d30a66984fb99d0e258b0f48e5b4f6f95b14c53d3c22f936e782ce9",
-  "goalcontent_topic_skipped": "4c8c9091d9e957a3a4fc952aeb0adbc85d62333f3a27947d26d0165705748d21",
-  "goalcontent_topic_skipped_base": "069796f793806705ea5aee372050f8eb60533a35c54dbb4f728f412c15a22bf8",
-  "goalcontent_topic_time": "e596a8771c03f69a1e6e004ff8e1968de020d1b82c35c3aab605dbdf2eedb109",
   "goalcontent_topic_to_study": "d4557cc8bc48a849f5ab4f5e13186237cdbe09ab7b7b48bfa7272e385f946288",
   "goalcontent_topics": "fc8484e0b36f2ae6ce6e28d8c2f47c21ace99daf9b3f780aaa7b1f998aa9a749",
   "goalcontent_topics_in_guide": "bcc7ad63d095dc89da10f2448f39c3efd7d0709b7ca262da28b4f26aca41ed1a",
@@ -240,13 +233,6 @@
     <string name="goalcontent_topic_known">이미 아는 내용</string>
     <string name="goalcontent_topic_in_progress">진행 중</string>
     <string name="goalcontent_topic_to_study">학습 예정</string>
-    <string name="goalcontent_topic_known_reviews">이미 알고 있어요 · 복습할 때 다시 나와요</string>
-    <string name="goalcontent_topic_known_practice">이미 알고 있어요 · 연습할 때 다시 나와요</string>
-    <string name="goalcontent_topic_skipped">이 과목을 계획에서 제외했어요</string>
-    <string name="goalcontent_topic_past_basics">기초 다음 단계부터 시작해요</string>
-    <string name="goalcontent_topic_skipped_base">이 사전 지식은 건너뛰기로 했어요</string>
-    <string name="goalcontent_topic_time">학습할 시간이 부족해요</string>
-    <string name="goalcontent_topic_missing">아직 관련 레슨이 없어요</string>
     <!-- Marks a topic that comes up often in the exam. -->
     <string name="goalcontent_asked_a_lot">자주 출제</string>
     <!-- %1$s is the "Asked a lot" mark. -->

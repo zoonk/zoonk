@@ -194,6 +194,11 @@ class SubscriptionStore(
 
     private var reconciledFor: AuthenticatedSession? = null
 
+    /**
+     * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
+     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere. [host] is the window
+     * Play's sheet opens on, asked for only then, since the one shown when the checkout started may be gone.
+     */
     suspend fun buy(
         host: suspend () -> Activity,
         period: BillingPeriod,

@@ -30,7 +30,6 @@
   "buddy_page_goal_placeholder": "b37d2e2b74bb31269a3f814e7b679a4418b572d1241ebcd7ae0f62fb5e4a4966",
   "buddy_page_greeting": "20d0334bac860a2e8b10eebe0fae1b33051b9ffc7adc84440a1bc85f541d8b52",
   "buddy_page_grows": "0e149fc8735ae968cb89af2a20b4a03b900f942d59c77253b9216d48ecae213b",
-  "buddy_page_missions": "a4b193c38ec468967d9da2b31a893f432a761808edcfb273ec3b38de8757d403",
   "buddy_page_missions_count": "9ffb449aab0a5f1debbcc156c91b0ac482daf9c4c5bc06659ec87ea6f84ca1da",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
   "buddy_page_placeholder": "a6d797519a04770772242d8ff4a2d742ccf4f29184064773f41c2e1e341f6fd4",
@@ -80,7 +79,6 @@
     <string name="buddy_page_energy_starts">最初のレッスンから始まります。</string>
     <string name="buddy_page_energy_napping">%1$sはお昼寝中です。学習すると目を覚まします。</string>
     <string name="buddy_page_energy_study">今日の学習でエネルギーを保ちましょう。</string>
-    <string name="buddy_page_missions">ミッション</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="other">ミッション%1$d/%2$d完了</item>

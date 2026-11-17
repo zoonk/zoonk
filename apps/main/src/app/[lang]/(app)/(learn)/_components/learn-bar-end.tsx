@@ -78,7 +78,12 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
         />
       </LevelRoom>
       <span className="sr-only">
-        {[belt, t("Level {level}", { level: levelNumber })].join(", ")}
+        {t({
+          description:
+            "Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.",
+          message: "{belt}, Level {level}",
+          values: { belt, level: levelNumber },
+        })}
       </span>
     </Link>
   );

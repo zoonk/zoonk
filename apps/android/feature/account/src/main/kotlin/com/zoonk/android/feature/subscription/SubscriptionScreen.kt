@@ -324,7 +324,13 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (provider != GOOGLE && provider != APPLE) Text(stringResource(R.string.subscription_managed_zoonk))
+        if (provider != GOOGLE && provider != APPLE) {
+            Text(
+                stringResource(R.string.subscription_managed_zoonk),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (provider == GOOGLE) {
                 Button(

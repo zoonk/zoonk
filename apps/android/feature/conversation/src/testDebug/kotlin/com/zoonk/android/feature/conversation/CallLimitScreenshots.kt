@@ -74,14 +74,14 @@ class CallLimitScreenshots {
         sheet("practice-call-sheet-free-limit-$size", practiceCall(limit = limit("free", later)))
         sheet("practice-call-sheet-guest-limit-$size", practiceCall(limit = """{"availableAt":null,"period":"total","tier":"guest"}"""))
         sheet("practice-call-sheet-lifted-$size", practiceCall(limit = limit("free", Instant.now().minusSeconds(60))))
-        screen("call-problem-limit-$size") { problem(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, later)) }
+        screen("call-problem-limit-$size") { Problem(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, later)) }
         screen(
             "call-problem-lifted-$size",
-        ) { problem(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60))) }
-        screen("dropped-call-limit-$size") { dropped(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, later)) }
+        ) { Problem(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60))) }
+        screen("dropped-call-limit-$size") { Dropped(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, later)) }
         screen(
             "dropped-call-lifted-$size",
-        ) { dropped(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60))) }
+        ) { Dropped(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60))) }
     }
 
     private val later = Instant.now().plus(9, ChronoUnit.DAYS)
@@ -116,7 +116,7 @@ class CallLimitScreenshots {
     }
 
     @Composable
-    private fun problem(limit: Limit.Reached) =
+    private fun Problem(limit: Limit.Reached) =
         CallProblem(
             CallProblemKind.Failed(LiveCallFailure.Limit, limit),
             title = "Lucía",
@@ -124,7 +124,7 @@ class CallLimitScreenshots {
         )
 
     @Composable
-    private fun dropped(limit: Limit.Reached) =
+    private fun Dropped(limit: Limit.Reached) =
         DroppedCallScreen(
             DroppedCall(DroppedReason.Limit, retry = null),
             limit,

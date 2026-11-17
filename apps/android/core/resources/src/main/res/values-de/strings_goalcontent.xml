@@ -83,13 +83,6 @@
   "goalcontent_topic_count": "a92fa1a73b9c7a543863a3f809ce6b42a9c8d739c57a3e145602f389ee985f89",
   "goalcontent_topic_in_progress": "6c092bf498cac1ec7cc3e11f0358393355c1d27703fb8f487baf0c144d40ddde",
   "goalcontent_topic_known": "cd435ca42b3cd753cfd0cda5cc9673742cbc132b492b7c839073660112e62ca1",
-  "goalcontent_topic_known_practice": "7dd3ee84a890067c9061773ddbc70167609a5e872b9a2a01550eae5c12091393",
-  "goalcontent_topic_known_reviews": "ae6a2bf2cf835cfb99c2eab2d03a0a9f89a5e8bdd3e7e843f2a97af883bdd871",
-  "goalcontent_topic_missing": "1f460ecabb501aea40081b56e5b4dfb09de123b736dabe9a45f995677b9022a5",
-  "goalcontent_topic_past_basics": "50bc6cad73bffd70114a1bddb3f30e57660018b3785faacee00d799049643709",
-  "goalcontent_topic_skipped": "75f37cf227bc961260659ca2b405a1580199da8616f0a434e3ed1fde8ff5e92b",
-  "goalcontent_topic_skipped_base": "bf493000a22cc5315b62f7894a24d09f9c82e65afce63560c75d3356c5f98446",
-  "goalcontent_topic_time": "abba989b4f4047277466479808bc92f7d606666c5cd5164f953af915d8c26c17",
   "goalcontent_topic_to_study": "8d345bfe22dcef619dc1784a1145a55113800f21bde951f159454c2fe7ebdd4d",
   "goalcontent_topics": "38cd3c62311206481457771305c5539cdedd0523b87527efc69a8220573d89b4",
   "goalcontent_topics_in_guide": "778fa49f54a6ad2a3fabcf1e6bc4c8f802ebfd397c6a9ab960ab6780b1228d5f",
@@ -260,13 +253,6 @@
     <string name="goalcontent_topic_known">Das weißt du schon</string>
     <string name="goalcontent_topic_in_progress">In Bearbeitung</string>
     <string name="goalcontent_topic_to_study">Noch zu lernen</string>
-    <string name="goalcontent_topic_known_reviews">Das kennst du schon · kommt beim Wiederholen wieder dran</string>
-    <string name="goalcontent_topic_known_practice">Das kennst du schon · kommt beim Üben wieder dran</string>
-    <string name="goalcontent_topic_skipped">Du hast dieses Fach aus deinem Plan genommen</string>
-    <string name="goalcontent_topic_past_basics">Du beginnst nach den Grundlagen</string>
-    <string name="goalcontent_topic_skipped_base">Du hast diese Voraussetzung übersprungen</string>
-    <string name="goalcontent_topic_time">Passt nicht in die Zeit, die du zur Verfügung hast</string>
-    <string name="goalcontent_topic_missing">Noch keine Lektionen dazu</string>
     <!-- Marks a topic that comes up often in the exam. -->
     <string name="goalcontent_asked_a_lot">Häufig abgefragt</string>
     <!-- %1$s is the "Asked a lot" mark. -->

@@ -89,7 +89,7 @@ private struct UnpaidWebsiteTransport: ClientTransport {
     guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
     return (
       HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-      HTTPBody(Data("{\"state\":\"\(state)\",\"periodEnd\":null}".utf8))
+      HTTPBody(Data("{\"state\":\"\(state)\",\"periodEnd\":\"2026-12-18T12:00:00.000Z\"}".utf8))
     )
   }
 }
@@ -129,6 +129,7 @@ extension SubscriptionPageTests {
     }
     let words = spoken(in: window).joined(separator: " ")
     XCTAssertTrue(words.contains(label), words)
+    if state == "ending" { XCTAssertTrue(words.contains("Plus ends on"), words) }
     XCTAssertFalse(words.contains("You subscribed in the App Store."))
   }
 }

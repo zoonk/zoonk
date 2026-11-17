@@ -111,7 +111,7 @@ class BuddyPageTest {
                 )
             }
         }
-        compose.onNodeWithText("Missions", substring = false).performClick()
+        compose.onNodeWithText("Zu today", substring = false).performClick()
         assertEquals(true, opened)
     }
 

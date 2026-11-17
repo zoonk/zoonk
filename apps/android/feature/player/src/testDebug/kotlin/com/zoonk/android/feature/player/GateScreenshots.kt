@@ -56,27 +56,27 @@ class GateScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeLaterToday() = capture("gate-lesson-free-today-phone") { access(free(Instant.now().plusSeconds(60))) }
+    fun lessonFreeLaterToday() = capture("gate-lesson-free-today-phone") { Access(free(Instant.now().plusSeconds(60))) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeTomorrow() = capture("gate-lesson-free-tomorrow-phone") { access(free(Instant.now().plus(1, ChronoUnit.DAYS))) }
+    fun lessonFreeTomorrow() = capture("gate-lesson-free-tomorrow-phone") { Access(free(Instant.now().plus(1, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeOnADay() = capture("gate-lesson-free-on-day-phone") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+    fun lessonFreeOnADay() = capture("gate-lesson-free-on-day-phone") { Access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = PHONE_DARK)
-    fun lessonFreeOnADayDark() = capture("gate-lesson-free-on-day-phone-dark") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+    fun lessonFreeOnADayDark() = capture("gate-lesson-free-on-day-phone-dark") { Access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = TABLET)
-    fun lessonFreeOnADayTablet() = capture("gate-lesson-free-on-day-tablet") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+    fun lessonFreeOnADayTablet() = capture("gate-lesson-free-on-day-tablet") { Access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeReady() = capture("gate-lesson-free-ready-phone") { access(free(Instant.now().minusSeconds(60))) }
+    fun lessonFreeReady() = capture("gate-lesson-free-ready-phone") { Access(free(Instant.now().minusSeconds(60))) }
 
     @Test
     @Config(qualifiers = PHONE)
@@ -93,19 +93,19 @@ class GateScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeNoDay() = capture("gate-lesson-free-no-day-phone") { access(free(null)) }
+    fun lessonFreeNoDay() = capture("gate-lesson-free-no-day-phone") { Access(free(null)) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonGuest() = capture("gate-lesson-guest-phone") { access(Limit.Reached(LimitTier.Guest, LimitPeriod.Total)) }
+    fun lessonGuest() = capture("gate-lesson-guest-phone") { Access(Limit.Reached(LimitTier.Guest, LimitPeriod.Total)) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonSubscriberDay() = capture("gate-lesson-subscriber-day-phone") { access(Limit.Reached(LimitTier.Plus, LimitPeriod.Day)) }
+    fun lessonSubscriberDay() = capture("gate-lesson-subscriber-day-phone") { Access(Limit.Reached(LimitTier.Plus, LimitPeriod.Day)) }
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonGone() = capture("gate-lesson-gone-phone") { access(LessonRefusal.NotFound) }
+    fun lessonGone() = capture("gate-lesson-gone-phone") { Access(LessonRefusal.NotFound) }
 
     @Test
     @Config(qualifiers = PHONE_TALL, fontScale = 2f)
@@ -142,15 +142,15 @@ class GateScreenshots {
     @Test
     @Config(qualifiers = PHONE_TALL, fontScale = 2f)
     fun lessonFreeOnADayFont200() =
-        capture("gate-lesson-free-on-day-phone-font200") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+        capture("gate-lesson-free-on-day-phone-font200") { Access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = TABLET)
-    fun lessonFreeReadyTablet() = capture("gate-lesson-free-ready-tablet") { access(free(Instant.now().minusSeconds(60))) }
+    fun lessonFreeReadyTablet() = capture("gate-lesson-free-ready-tablet") { Access(free(Instant.now().minusSeconds(60))) }
 
     @Test
     @Config(qualifiers = PHONE_TALL, fontScale = 2f)
-    fun lessonFreeReadyFont200() = capture("gate-lesson-free-ready-phone-font200") { access(free(Instant.now().minusSeconds(60))) }
+    fun lessonFreeReadyFont200() = capture("gate-lesson-free-ready-phone-font200") { Access(free(Instant.now().minusSeconds(60))) }
 
     @Test
     @Config(qualifiers = PHONE_TALL)
@@ -186,10 +186,10 @@ class GateScreenshots {
     private fun free(availableAt: Instant?) = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, availableAt)
 
     @Composable
-    private fun access(limit: Limit) = access(LessonRefusal.Limited(limit))
+    private fun Access(limit: Limit) = Access(LessonRefusal.Limited(limit))
 
     @Composable
-    private fun access(refusal: LessonRefusal) =
+    private fun Access(refusal: LessonRefusal) =
         LessonFrame(title = "Multiplying powers of ten", onClose = {}, bottomBar = lessonAccessBar(refusal, onRetry = {}, exits = EXITS)) {
             LessonAccessScreen(refusal, onRetry = {})
         }

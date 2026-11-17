@@ -210,6 +210,24 @@ class GoalContentScreenshots {
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
+                "calls-known-phase" to {
+                    val syllabus = examSyllabus()
+                    PlanSyllabusSection(syllabus.copy(subjects = listOf(syllabus.subjects.first().copy(notPlannedReason = "known"))), {})
+                },
+                "calls-topic-reasons" to {
+                    val syllabus = examSyllabus()
+                    val subject = syllabus.subjects.first { it.topics.isNotEmpty() }
+                    val topics =
+                        listOf("pastBasics", "skippedBase", "skipped", "time", "missing", "known").map { reason ->
+                            subject.topics.first().copy(
+                                name = reason,
+                                status = com.zoonk.api.models.SyllabusTopic.Status.NOT_PLANNED,
+                                notPlannedReason = reason,
+                                chapters = emptyList(),
+                            )
+                        }
+                    SubjectPage(syllabus, subject.copy(topics = topics), SubjectWrites(), NO_ACTIONS, TODAY, {}, {})
+                },
                 "subject-exam" to { Subject("natural-sciences") },
                 "subject-skipped" to { Subject("spanish") },
                 "subject-written" to { Subject("essay") },

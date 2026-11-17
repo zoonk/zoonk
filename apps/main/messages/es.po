@@ -754,6 +754,12 @@ msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Nivel"
 
+#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+msgctxt "xjYKLD"
+msgid "{belt}, Level {level}"
+msgstr ""
+
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
 msgid "Skip to content"

@@ -845,18 +845,30 @@ class PlanScreenshots {
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun callsPartialPathLarge() = captureCallsPath("calls-partial-path-large")
 
-    private fun captureCallsPath(name: String) {
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsKnownPathPhone() = captureCallsPath("calls-known-path-phone", "known")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
+    fun callsKnownPathLarge() = captureCallsPath("calls-known-path-large", "known")
+
+    private fun captureCallsPath(
+        name: String,
+        outsideReason: String = "skippedBase",
+    ) {
         val original = page()
         val phases =
             original.plan.phases.take(2).mapIndexed { index, phase ->
                 if (index == 0) {
-                    phase.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = "skippedBase", checkpoint = null)
+                    phase.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = outsideReason, checkpoint = null)
                 } else {
                     phase.copy(state = PlanPhase.State.CURRENT, challengeLeftOut = true, checkpoint = null)
                 }
             }
         capture(name, exam = original.copy(plan = original.plan.copy(phases = phases)))
         compose.onNodeWithText("The Trickster isn't in your plan").assertExists()
+        if (outsideReason == "known") compose.onNodeWithText("Skipped · you already know it").assertExists()
     }
 
     private fun capture(

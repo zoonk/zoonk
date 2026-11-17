@@ -271,6 +271,7 @@ internal fun planOutsideReason(reason: String?): String =
     stringResource(
         when (reason) {
             "skipped" -> R.string.plan_outside_skipped
+            "known" -> R.string.plan_skipped_known
             "pastBasics" -> R.string.plan_outside_past_basics
             "skippedBase" -> R.string.plan_outside_skipped_base
             "missing" -> R.string.today_coming_not_written

@@ -6,6 +6,7 @@ import { page } from "vitest/browser";
 import { type BuddyStatusView } from "../../../learn/src/buddies/buddy-status-view";
 import { BuddyToday } from "../../../learn/src/buddies/buddy-today";
 import { PhaseName } from "../../../learn/src/journey/path-phase-row";
+import { ReasonText } from "../../../learn/src/syllabus/topic-note";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { render } from "../_test-utils/render";
 
@@ -89,6 +90,11 @@ describe("the founder's calls with partial or empty days", () => {
     expect(page.getByText("Not in your plan · your time doesn't cover it").query()).toBeNull();
   });
 
+  it("names a phase the learner already knows", async () => {
+    render(<ReasonText reason="known" />);
+    await expect.element(page.getByText("Skipped · you already know it")).toBeVisible();
+  });
+
   it.each([390, 1440])("opens the buddy's day with no missions at %ipx", async (width) => {
     await atViewport({ height: 900, width }, async () => {
       render(
@@ -114,7 +120,7 @@ describe("the founder's calls with partial or empty days", () => {
         </LearnProvider>,
       );
 
-      await page.getByRole("button", { exact: true, name: "Missions" }).click();
+      await page.getByRole("button", { exact: true, name: "Zu today" }).click();
 
       await expect
         .element(page.getByRole("dialog").getByRole("heading", { name: "Zu today" }))

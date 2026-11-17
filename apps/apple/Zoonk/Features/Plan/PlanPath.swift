@@ -785,6 +785,8 @@ func planOutsideReason(_ reason: String?) -> Text {
       comment:
         "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out."
     )
+  case "known":
+    Text("Skipped\u{00A0}· you already know it", tableName: "Plan")
   case "pastBasics":
     Text("Skipped\u{00A0}· you already know the basics", tableName: "Plan")
   case "skippedBase":
