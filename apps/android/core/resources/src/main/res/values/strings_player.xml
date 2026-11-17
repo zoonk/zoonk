@@ -249,4 +249,5 @@
     <string name="player_citation_from_material">From your material: %1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">Not in your material</string>
+    <string name="player_not_found_description">The link may be old or mistyped.</string>
 </resources>

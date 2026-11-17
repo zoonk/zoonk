@@ -47,7 +47,6 @@
   "catalog_level_unwritten": "1a53d1fef8a9a4d01f07e157d386edb99966294996b5294efb7788465a40e572",
   "catalog_load_more_failed": "6238a4fdbc4a0bf48994032357f849ec8b04a7741d1c273005327a360b177618",
   "catalog_loading_more": "c3fb2775e1431d99bfcea7e06141aab175f2e0f514700725e6c0cbbc30350bc9",
-  "catalog_no_sign_up": "262e2b68109fa730d93cba013a2bae082ab57b86ba290054854517ff3c4801a5",
   "catalog_open_course": "dcc6880b6e9ee57b2f6713d3d0494a2681667e06963ace010ab182e426a6f292",
   "catalog_outcomes": "c560aa013140ae432a9c0d7de3354f00e4b14999ffdaa50a4d6f17958e94b1dc",
   "catalog_outline": "90df6ce86319608f5056b261a1af3fd93566b8892f034d8f9d7c59abb57cac1f",
@@ -154,7 +153,6 @@
     <string name="catalog_quick_question">Una domanda al volo</string>
     <string name="catalog_guess_note">La tua risposta avvia la lezione da %1$s minuti.</string>
     <string name="catalog_check_note">La tua scelta apre la lezione da %1$s minuti. Lì puoi controllare la tua risposta.</string>
-    <string name="catalog_no_sign_up">Non serve registrarsi.</string>
     <string name="catalog_example_plan">Quanto tempo ci vuole</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s settimana</item>

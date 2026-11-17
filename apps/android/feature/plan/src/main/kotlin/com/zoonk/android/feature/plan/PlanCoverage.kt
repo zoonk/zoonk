@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -131,7 +132,7 @@ internal fun DailyCoverage(
     val fittingDate = found?.fittingDate?.takeIf { !page.isExam && line !is TimeLine.Everything }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
-    Box {
+    Box(Modifier.heightIn(min = 60.dp)) {
         Column(Modifier.hiddenIf(pending), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (plan.fitOffer?.fits == true) {
                 Text(

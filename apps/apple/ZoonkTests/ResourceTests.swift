@@ -547,7 +547,7 @@ private final class Requests {
   var suspends: Bool
   private(set) var sessions: [AuthenticatedSession?] = []
   private var results: [Result<Int?, Error>]
-  private var pending: [Int: CheckedContinuation<Int?, Error>] = [:]
+  private var pending: [Int: TestContinuation<Int?>] = [:]
 
   init(results: [Result<Int?, Error>] = [], suspends: Bool = false) {
     self.results = results
@@ -566,19 +566,17 @@ private final class Requests {
       return try results.isEmpty ? nil : results.removeFirst().get()
     }
 
-    return try await withCheckedThrowingContinuation { pending[index] = $0 }
+    return try await withTestContinuation { pending[index] = $0 }
   }
 
   func resolve(_ index: Int, with result: Result<Int?, Error>) {
     pending.removeValue(forKey: index)?.resume(with: result)
   }
 
-  func waitForCount(_ count: Int) async {
-    for _ in 0..<1_000 where sessions.count < count {
-      await Task.yield()
+  func waitForCount(_ count: Int, file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("Expected resource requests", file: file, line: line) {
+      sessions.count >= count
     }
-
-    XCTAssertGreaterThanOrEqual(sessions.count, count)
   }
 }
 

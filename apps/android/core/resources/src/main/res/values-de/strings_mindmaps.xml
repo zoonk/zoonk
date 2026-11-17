@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "860d58f689c860858d18fe276636f881bd658f2dce81cb353f637eabb7013fe6",
   "mindmaps_alt_sentence": "0ab8e822b50976dd52ff9d14c185d437bb92c581b4a699b3c65f5f4c368cc2df",
   "mindmaps_as_text": "6b08109929478e80530bdb62d80349bc21c6dace449d273a3fd181912cb030c6",
-  "mindmaps_as_text_note": "d298a4615f2f7d301ac63b32086b0db5d83918bcd580aac9e93a44e10940dfa6",
+  "mindmaps_as_text_note": "9a15d3322ed86005c7200a7a3f37f623760669ab46aab9391e90d7678d3350fe",
   "mindmaps_being_made": "146d701ea1d32d69d15d78e78f4bf941d0648ab326bc64e653f050d294676ea8",
   "mindmaps_can_make_more": "8f2058257e71442ea7441ba6b60681006d02571a07ba4bd50e4ea99511b15bc6",
   "mindmaps_chapter_count": "0c2e2215690b8efeabfd9e06147412d72f18fd89c2eddeb0eb1671c03f5fc70a",
@@ -123,7 +123,7 @@
     <string name="mindmaps_try_again_spoken">Versuch die Mindmap zu %1$s noch einmal</string>
     <string name="mindmaps_failed">Die Mindmap konnte dieses Mal nicht erstellt werden.</string>
     <string name="mindmaps_unreachable">Wir konnten den Server nicht erreichen. Prüfe deine Verbindung.</string>
-    <string name="mindmaps_as_text_note">Das Bild enthielt Fehler. Deshalb zeigen wir dir die Mindmap als Text.</string>
+    <string name="mindmaps_as_text_note">Diese Mindmap wird als Text angezeigt.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Herunterladen</string>
     <string name="mindmaps_saved">Mindmap gespeichert</string>

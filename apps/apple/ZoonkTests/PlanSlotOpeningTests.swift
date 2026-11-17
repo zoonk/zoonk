@@ -12,9 +12,9 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
-    try activate(String(localized: "Not now", table: "Plan"), in: window)
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
+    try await activate(String(localized: "Not now", table: "Plan"), in: window)
     try await answer(api)
 
     let changes = await api.calls.changes
@@ -27,12 +27,14 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
     await api.setPlan(try goalPlanFixture(status: "needsAdjusting", fitOffer: Self.offer))
     await api.setChanged(true)
     await plans.plan(goalId: "goal").refresh()
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") {
+      spoken(in: window).contains(String(localized: "More lessons than days left", table: "Plan"))
+    }
     XCTAssertTrue(
       spoken(in: window).contains(String(localized: "More lessons than days left", table: "Plan")),
       "Another suggestion shows: \(spoken(in: window))")
@@ -46,11 +48,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd(tooTight: true)
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.more, in: window)
-    try await settle()
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
-    try activate(Self.more, in: window)
+    try await activate(Self.more, in: window)
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
+    try await activate(Self.more, in: window)
     try await answer(api)
 
     let changes = await api.calls.changes
@@ -61,11 +62,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .narrow)
 
-    try activate(String(localized: "View", table: "Plan"), in: window)
-    try await settle()
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
-    try close(in: window)
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
+    try await closeRequestSheet(in: window)
     try await answer(api)
 
     let changes = await api.calls.changes
@@ -77,13 +77,16 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .narrow)
 
-    try activate(String(localized: "View", table: "Plan"), in: window)
-    try await settle()
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
     window.frame = Width.wide.frame
-    try await answer(api)
+    try await waitForLayout(in: window)
+    try await answer(api, adds: true)
 
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "The offer adds once")
   }
@@ -93,24 +96,45 @@ final class PlanSlotOpeningTests: XCTestCase {
   func testClosingTheSheetDropsAClaimStillWaiting() async throws {
     let claims = HeldClaims()
     let router = AppRouter()
-    let window = try await showPlan(
-      api: try await finishedPlan(), width: .narrow, claims: claims, router: router)
+    let dependencies = AppDependencies.hosted()
+    let certificates = CertificatesStore(api: claims, cache: dependencies.cache)
+    let goal = LearnerGoal(
+      dailyMinutes: 30, id: "goal", kind: .learn, language: "en", status: .active,
+      targetDate: nil, displayName: "Finance", title: "Finance")
+    let context = PlanContext(
+      goal: goal, plan: try goalPlanFixture(end: "finished"), adjust: { _ in }, show: { _ in },
+      claimCertificate: {
+        // A sent claim can answer independently of the canceled opening; its landing must reject it.
+        let result = await Task { await certificates.claim(goalID: goal.id) }.value
+        guard case .done = result else { return nil }
+        return .certificates
+      },
+      showClaim: { _ in router.present(.account(.certificates)) })
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      ClaimOpening(context: context)
+        .environment(PlanStore(api: try await finishedPlan(), cache: dependencies.cache))
+        .appDependencies(dependencies)
+        .environment(router)
+        .zoonkStyles())
+    window.frame = Width.narrow.frame
 
-    try activate(String(localized: "View", table: "Plan"), in: window)
-    try await settle()
-    try activate(Self.claim, in: window)
-    await claims.waitUntilAsked()
-    try close(in: window)
-    try await settle()
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await activate(Self.claim, in: window)
+    try await claims.waitUntilAsked()
+    weak let consumer = context.slotCheck(.finished, request: .claim)
+    XCTAssertTrue(consumer?.isWorking == true)
+    try await closeRequestSheet(in: window)
+    XCTAssertNotNil(consumer, "The pending consumer still owns its check after the sheet closes")
     await claims.answer()
-    try await settle()
+    // The opening drops the check on close; only its running consumer retains it afterward.
+    try await waitForTestCondition("The closed opening's claim consumer did not finish") {
+      consumer == nil
+    }
     XCTAssertNil(router.sheet, "Nothing opens once its sheet closed")
 
-    try activate(String(localized: "View", table: "Plan"), in: window)
-    try await settle()
-    try close(in: window)
-    try await settle()
-    try await settle()
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await closeRequestSheet(in: window)
     XCTAssertNil(router.sheet, "Nor when a later sheet closes")
   }
 
@@ -121,16 +145,16 @@ final class PlanSlotOpeningTests: XCTestCase {
     let window = try await showPlan(
       api: try await finishedPlan(), width: .narrow, claims: claims, router: router)
 
-    try activate(String(localized: "View", table: "Plan"), in: window)
-    try await settle()
-    try activate(Self.claim, in: window)
-    await claims.waitUntilAsked()
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await activate(Self.claim, in: window)
+    try await claims.waitUntilAsked()
     window.frame = Width.wide.frame
-    try await settle()
+    try await waitForLayout(in: window)
     await claims.answer()
-    try await settle()
-    try await settle()
 
+    try await waitForTestCondition("Certificates did not open") {
+      router.sheet == .account(.certificates)
+    }
     XCTAssertEqual(router.sheet, .account(.certificates), "The certificates open")
   }
 
@@ -144,13 +168,14 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await finishedPlan()
     let window = try await showPlan(api: api, width: .wide, claims: claims, router: router)
 
-    try activate(Self.claim, in: window)
-    await claims.waitUntilAsked()
+    try await activate(Self.claim, in: window)
+    try await claims.waitUntilAsked()
     try await dismissFocusTestElsewhere(api)
     await claims.answer()
-    try await settle()
-    try await settle()
 
+    try await waitForTestCondition("Certificates did not open") {
+      router.sheet == .account(.certificates)
+    }
     XCTAssertEqual(router.sheet, .account(.certificates), "What it earned opens")
   }
 
@@ -159,11 +184,14 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
     try await dismissFocusTestElsewhere(api)
-    try await answer(api)
+    try await answer(api, adds: true)
 
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "The offer adds once")
   }
@@ -174,8 +202,8 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
     try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
     try await answer(api)
 
@@ -193,8 +221,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     let repriced = String(
       localized: "Your plan changed since you saw this. Here's what it does now.", table: "Plan")
 
-    try activate(Self.add, in: window)
-    try await settle()
+    try await activate(Self.add, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      spoken(in: window).contains { $0.contains(repriced) }
+    }
     XCTAssertTrue(
       spoken(in: window).contains { $0.contains(repriced) },
       "The check found other numbers: \(spoken(in: window))")
@@ -205,9 +235,10 @@ final class PlanSlotOpeningTests: XCTestCase {
       "Nothing of the earlier offer's check shows: \(spoken(in: window))")
 
     await api.setPreview(try Self.preview(lessons: 4))
-    try activate(Self.add, in: window)
-    try await settle()
-    try await settle()
+    try await activate(Self.add, in: window)
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "Add applies the offer shown")
   }
@@ -221,8 +252,10 @@ final class PlanSlotOpeningTests: XCTestCase {
         effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    try await settle()
+    try await activate(Self.add, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      !(spoken(in: window).contains(Self.add))
+    }
     XCTAssertFalse(spoken(in: window).contains(Self.add), "The check found nothing to add")
 
     try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
@@ -235,9 +268,9 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
-    try activate(String(localized: "Adjust plan", table: "Plan"), in: window)
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
+    try await activate(String(localized: "Adjust plan", table: "Plan"), in: window)
     try await answer(api)
 
     let changes = await api.calls.changes
@@ -249,12 +282,15 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await waitingAdd()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(Self.add, in: window)
-    await api.waitForHeldCall()
-    try activate(
+    try await activate(Self.add, in: window)
+    try await api.waitForHeldCall()
+    try await activate(
       where: { $0.hasPrefix(String(localized: "Schedule", table: "Plan")) }, in: window)
-    try await answer(api)
+    try await answer(api, adds: true)
 
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "The offer adds once")
   }
@@ -265,8 +301,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await pastDate()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(String(localized: "Find a date", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.changePlan, in: window)
+    }
     XCTAssertTrue(shows(Self.changePlan, in: window), "The date found: \(spoken(in: window))")
 
     try await readAgain(api, plan: goalPlanFixture(status: "pastDate", studyDays: 5))
@@ -280,12 +318,16 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await pastDate()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(String(localized: "Find a date", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await waitForTestCondition("The preview did not finish before the unrelated change") {
+      shows(Self.changePlan, in: window)
+    }
     try await dismissFocusTestElsewhere(api)
-    try activate(Self.changePlan, in: window)
-    try await settle()
+    try await activate(Self.changePlan, in: window)
 
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "The found date applies once")
   }
@@ -296,8 +338,10 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(String(localized: "See what changes", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.changePlan, in: window)
+    }
     XCTAssertTrue(shows(Self.changePlan, in: window), "What changes: \(spoken(in: window))")
 
     try await readAgain(
@@ -312,12 +356,16 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
 
-    try activate(String(localized: "See what changes", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await waitForTestCondition("The preview did not finish before the unrelated change") {
+      shows(Self.changePlan, in: window)
+    }
     try await dismissFocusTestElsewhere(api)
-    try activate(Self.changePlan, in: window)
-    try await settle()
+    try await activate(Self.changePlan, in: window)
 
+    try await waitForTestCondition("The change never applied") {
+      await api.calls.changes.count == 1
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes.count, 1, "The preview applies once")
   }
@@ -341,8 +389,10 @@ final class PlanSlotOpeningTests: XCTestCase {
   private func foundDateEnds(today: String = "2027-01-04", lessonsStudied: Int = 0) async throws {
     let api = try await pastDate()
     let window = try await showPlan(api: api, width: .wide)
-    try activate(String(localized: "Find a date", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.changePlan, in: window)
+    }
     XCTAssertTrue(shows(Self.changePlan, in: window), "The date found")
 
     try await readAgain(
@@ -358,8 +408,10 @@ final class PlanSlotOpeningTests: XCTestCase {
   {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
-    try activate(String(localized: "See what changes", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.changePlan, in: window)
+    }
     XCTAssertTrue(shows(Self.changePlan, in: window), "The preview found")
 
     try await readAgain(
@@ -443,26 +495,6 @@ final class PlanSlotOpeningTests: XCTestCase {
     return api
   }
 
-  /// The sheet's close button, the system's: a bar button VoiceOver's activation may not reach from a
-  /// hosted window, so its tap is sent when that doesn't act.
-  private func close(in window: UIWindow) throws {
-    let buttons = views(UIView.self, in: window).filter { $0.accessibilityLabel == "Close" }
-
-    if buttons.contains(where: { $0.accessibilityActivate() }) {
-      return
-    }
-
-    let control = try XCTUnwrap(
-      buttons.compactMap { $0 as? UIControl }.first
-        ?? buttons.lazy.compactMap { self.views(UIControl.self, in: $0).first }.first,
-      "No close button: \(spoken(in: window))")
-    control.sendActions(for: .touchUpInside)
-  }
-
-  private func views<Kind: UIView>(_ kind: Kind.Type, in view: UIView) -> [Kind] {
-    ((view as? Kind).map { [$0] } ?? []) + view.subviews.flatMap { views(kind, in: $0) }
-  }
-
   /// Today's Not now on the Focus test, as another window says it: the shared plan's Focus test
   /// changes, and nothing the suggestion shows does.
   private func dismissFocusTestElsewhere(_ api: PlanAPIStub) async throws {
@@ -474,7 +506,6 @@ final class PlanSlotOpeningTests: XCTestCase {
             .utf8)))
     _ = await plans.updateFocusTest(
       goalId: "goal", FocusTestControls(suggestion: .dismissed))
-    try await settle()
   }
 
   /// The plan read again as `plan`.
@@ -482,7 +513,6 @@ final class PlanSlotOpeningTests: XCTestCase {
     await api.setPlan(plan)
     await api.setChanged(true)
     await plans.plan(goalId: "goal").refresh()
-    try await settle()
   }
 
   private static func offer(lessons: Int) -> String {
@@ -515,11 +545,17 @@ final class PlanSlotOpeningTests: XCTestCase {
   }
 
   /// The held check answers, and the Plan settles.
-  private func answer(_ api: PlanAPIStub) async throws {
-    try await settle()
+  private func answer(_ api: PlanAPIStub, adds: Bool = false) async throws {
     await api.releaseHeldCall()
-    try await settle()
-    try await settle()
+    if adds {
+      try await waitForTestCondition("The offer did not apply") {
+        await api.calls.changes.count == 1
+      }
+    } else {
+      // A discarded offer must not write after its held preview answers.
+      let discardedOfferWindow: Duration = .milliseconds(200)
+      try await Task.sleep(for: discardedOfferWindow)
+    }
   }
 
   private func showPlan(
@@ -546,29 +582,45 @@ final class PlanSlotOpeningTests: XCTestCase {
       .environment(router)
       .zoonkStyles())
     window.frame = width.frame
-    try await settle()
-    try await settle()
+    try await waitForLayout(in: window)
     return window
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
+}
+
+/// Keeps the real sheet modifier across openings while exposing the opening owner to the test.
+private struct ClaimOpening: View {
+  let context: PlanContext
+  @State private var sheet: PlanSheet?
+  @State private var answer: PlanSlotAnswer?
+
+  var body: some View {
+    Button {
+      sheet = .suggestion(.finished)
+    } label: {
+      Text("View", tableName: "Plan")
+    }
+    .planSheets($sheet, context: context, syllabus: nil, slotAnswer: $answer)
+    .onChange(of: sheet) { old, new in
+      if old?.isSuggestion == true && new?.isSuggestion != true {
+        context.slotChecks.leave()
+      }
+    }
   }
 }
 
 /// A claim that answers when the test says, with two certificates already shown before, so the
 /// Plan opens the learner's certificates.
 private actor HeldClaims: CertificatesAPIClient {
-  private var asked: CheckedContinuation<Void, Never>?
-  private var askedWaiter: CheckedContinuation<Void, Never>?
+  private var asked: TestContinuation<Void>?
 
-  func waitUntilAsked() async {
-    guard asked == nil else {
-      return
+  func waitUntilAsked(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture request never arrived", file: file, line: line) {
+      await self.isHeld
     }
-
-    await withCheckedContinuation { askedWaiter = $0 }
   }
+
+  private var isHeld: Bool { asked != nil }
 
   func answer() {
     asked?.resume()
@@ -576,10 +628,8 @@ private actor HeldClaims: CertificatesAPIClient {
   }
 
   func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] {
-    await withCheckedContinuation { continuation in
+    await withTestVoidContinuation { continuation in
       asked = continuation
-      askedWaiter?.resume()
-      askedWaiter = nil
     }
 
     return ["COURSE000001", "COURSE000002"].map {

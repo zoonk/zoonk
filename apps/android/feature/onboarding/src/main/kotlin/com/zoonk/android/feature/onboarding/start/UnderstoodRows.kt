@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.start
 import android.content.res.Resources
 import android.icu.text.ListFormatter
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.languageAimTitle
 import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.factsLine
@@ -272,7 +273,7 @@ class UnderstoodRows(
                     id = "targetScore",
                     label =
                         if (draft.isLanguage) {
-                            text(R.string.onboarding_aim_title, languageName(draft.targetLanguage.orEmpty(), locale))
+                            languageAimTitle(resources, draft.targetLanguage, locale)
                         } else {
                             text(R.string.onboarding_row_target_score)
                         },
@@ -473,8 +474,9 @@ class UnderstoodRows(
         formatDate(date, locale, DateStyle.Long, today),
     )
 
-    private fun daysLeft(date: LocalDate): String {
+    private fun daysLeft(date: LocalDate): String? {
         val days = ChronoUnit.DAYS.between(today, date).toInt()
+        if (days < 0) return null
         return resources.getQuantityString(R.plurals.onboarding_row_days_left, days, days)
     }
 
@@ -515,7 +517,7 @@ class UnderstoodRows(
 
     private companion object {
         const val SITTING_CHOICES = 3
-        const val NO_BREAK_SPACE = ' '
+        const val NO_BREAK_SPACE = '\u00a0'
     }
 }
 

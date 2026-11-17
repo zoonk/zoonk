@@ -436,7 +436,13 @@ private fun UnitCircleWaves(
             area = WAVE_AREA,
         ) {
             waves.forEach { trig ->
-                line(wavePoints(trig, FULL_TURN), muted.copy(alpha = WAVE_GUIDE_ALPHA), width = 2.dp, dash = WAVE_DASH, gap = WAVE_DASH_GAP)
+                line(
+                    wavePoints(trig, FULL_TURN),
+                    tones.of(trig).copy(alpha = WAVE_GUIDE_ALPHA),
+                    width = 2.dp,
+                    dash = WAVE_DASH,
+                    gap = WAVE_DASH_GAP,
+                )
                 line(wavePoints(trig, degrees), tones.of(trig))
                 dot(degrees, UnitCircleAngle.value(trig, degrees) ?: 0.0, tones.of(trig), ring, radius = WAVE_DOT)
             }
@@ -513,22 +519,42 @@ internal fun sinLabelPlacement(
     canvasWidth: Float,
     unit: Float,
 ): Pair<Offset, LabelAnchor> {
-    val labelWidth = label.width
+    val radius = (point - center).getDistance()
     val foot = Offset(point.x, center.y)
     val isLeft = point.x < center.x
     val isAbove = point.y <= center.y
-    val beside = foot.x + (if (isLeft) -1 else 1) * SIN_LABEL_GAP.value * unit
-    val fits = if (isLeft) beside - labelWidth >= 0 else beside + labelWidth <= canvasWidth
+    val middle = (foot.y + point.y) / 2
+    val gap = if (abs(middle - center.y) <= label.height / 2 + 3 * unit) 26 * unit else 16 * unit
+    val beside = foot.x + (if (isLeft) -gap else gap)
+    val ring = radius + 6 * unit
+    val nearestY = (abs(middle - center.y) - label.height / 2).coerceAtLeast(0f)
+    val outerReach = kotlin.math.sqrt((ring * ring - nearestY * nearestY).coerceAtLeast(0f))
+    val outside = center.x + (if (isLeft) -1 else 1) * maxOf(abs(beside - center.x), outerReach)
 
-    if (fits) return Offset(beside, (foot.y + point.y) / 2) to if (isLeft) LabelAnchor.End else LabelAnchor.Start
-
-    val outermost =
-        target
-            ?.takeIf { abs(it.x - point.x) < labelWidth && (if (isAbove) it.y < point.y else it.y > point.y) }
-            ?.y ?: point.y
-    val x = foot.x.coerceIn(labelWidth / 2, (canvasWidth - labelWidth / 2).coerceAtLeast(labelWidth / 2))
-    val past = SIN_LABEL_PAST_POINT.value * unit + label.height / 2
-    return Offset(x, outermost + (if (isAbove) -1 else 1) * past) to LabelAnchor.Middle
+    fun fits(at: Float): Boolean {
+        val left = if (isLeft) at - label.width else at
+        val box = Rect(Offset(left, middle - label.height / 2), label)
+        val nearest = Offset(center.x.coerceIn(box.left, box.right), center.y.coerceIn(box.top, box.bottom))
+        val farthest = listOf(box.topLeft, box.topRight, box.bottomLeft, box.bottomRight).maxOf { (it - center).getDistance() }
+        val targetGap =
+            target?.let { (it - Offset(it.x.coerceIn(box.left, box.right), it.y.coerceIn(box.top, box.bottom))).getDistance() }
+                ?: Float.POSITIVE_INFINITY
+        return box.left >= 0 && box.right <= canvasWidth &&
+            (farthest <= radius - 6 * unit || (nearest - center).getDistance() >= ring) && targetGap >= 16 * unit
+    }
+    listOf(beside, outside).firstOrNull(::fits)?.let {
+        return Offset(it, middle) to if (isLeft) LabelAnchor.End else LabelAnchor.Start
+    }
+    val outermost = target?.takeIf { abs(it.x - point.x) < label.width && (if (isAbove) it.y < point.y else it.y > point.y) }?.y ?: point.y
+    val outward = if (isLeft) center.x else canvasWidth - center.x
+    val inward = if (isLeft) canvasWidth - center.x else center.x
+    val farthestStart = outward - label.width
+    val clearAt = if (farthestStart >= 0) kotlin.math.sqrt((ring * ring - farthestStart * farthestStart).coerceAtLeast(0f)) else ring
+    val past = maxOf(abs(outermost - center.y) + 25 * unit, clearAt)
+    val clearStart = if (past >= ring) -inward else kotlin.math.sqrt(ring * ring - past * past)
+    val start = maxOf(abs(foot.x - center.x) - label.width / 2, clearStart).coerceIn(-inward, farthestStart.coerceAtLeast(-inward))
+    return Offset(center.x + (if (isLeft) -start else start), center.y + (if (isAbove) -1 else 1) * (past + label.height / 2)) to
+        if (isLeft) LabelAnchor.End else LabelAnchor.Start
 }
 
 private val MAX_SIZE = 300.dp

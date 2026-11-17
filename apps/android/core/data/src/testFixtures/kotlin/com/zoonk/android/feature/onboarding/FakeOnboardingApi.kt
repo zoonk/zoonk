@@ -117,7 +117,7 @@ fun setupView(
     firstLesson: String = "null",
     warmUp: String = "null",
     planRevealed: Boolean = false,
-    languageAim: String = if (kind == "language") languageAimOf() else "null",
+    languageAim: String = if (kind == "language") languageAimOf(targetLanguage = targetLanguage) else "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
@@ -558,9 +558,14 @@ val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
 
 private const val MOST_SUGGESTED = 240L
 
-fun languageAimOf(aim: String? = null): String =
+fun languageAimOf(
+    aim: String? = null,
+    targetLanguage: String?,
+): String =
     """
     {"aim":${aim?.let { "\"$it\"" } ?: "null"},
+     "label":${aim?.let { "\"$it\"" } ?: "null"},
+     "targetLanguage":${targetLanguage?.let { "\"$it\"" } ?: "null"},
      "choices":[{"aim":"A2","hours":190},{"aim":"B1","hours":375},{"aim":"B2","hours":550},{"aim":"C1","hours":750}],
      "reasons":[{"reason":"travel","aim":"A2","hours":190},{"reason":"talk","aim":"B1","hours":375},
        {"reason":"work","aim":"B2","hours":550},{"reason":"fluent","aim":"C1","hours":750},

@@ -129,7 +129,11 @@ fun LessonAccessScreen(
         }
 
         LessonRefusal.NotFound -> {
-            AccessLayout(R.drawable.ic_error, stringResource(R.string.player_not_found_title), null)
+            AccessLayout(
+                R.drawable.ic_error,
+                stringResource(R.string.player_not_found_title),
+                stringResource(R.string.player_not_found_description),
+            )
         }
 
         LessonRefusal.NotInApp -> {

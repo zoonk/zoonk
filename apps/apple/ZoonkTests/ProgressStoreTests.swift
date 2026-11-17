@@ -71,7 +71,7 @@ final class ProgressStoreTests: XCTestCase {
 
 private actor SuspendedActivityAPIStub: ProgressAPIClient {
   private struct Request {
-    let continuation: CheckedContinuation<ActivityProgress, any Error>
+    let continuation: TestContinuation<ActivityProgress>
     let id: UUID
   }
 
@@ -94,7 +94,7 @@ private actor SuspendedActivityAPIStub: ProgressAPIClient {
     return try await withTaskCancellationHandler {
       try Task.checkCancellation()
 
-      return try await withCheckedThrowingContinuation { continuation in
+      return try await withTestContinuation { continuation in
         guard !Task.isCancelled else {
           continuation.resume(throwing: CancellationError())
           return

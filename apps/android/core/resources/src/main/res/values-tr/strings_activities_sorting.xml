@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "b8b05d7eb5377bdc8d263ebea6a517eee8e553a89e505ca4f2c02725e12d0699",
   "activities_sorting_remove_link": "ee2fc7dc9520a620dd0ea4f3c84fab36c111f5ef10ae740716e320b3d5d427f1",
   "activities_sorting_removed": "9a3f335556b5fbb97ac9ca2be5a469cdc6af098d498f8519dc0929d5699bab7e",
-  "activities_sorting_right_count": "56e066997d354c1173625b7e9afb2360c764fa3bd112ca60d4a6c0c3c8cab07e",
   "activities_sorting_right_group": "4d278612ec191e2632dbe9ed6ec40260c3851fc040a3da2cd8b697c7b9a68310",
   "activities_sorting_right_order": "aeeb67e0056c484ca7321bf722a06fcbdbbbedf068d6db655751a698fb474ade",
   "activities_sorting_show_real_dates": "776f0e573446237f69731efd0f73b47db79512abfcc5dbab1b5f4454703a8bee",
@@ -110,7 +109,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, yanlış grupta</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d / %2$d öğe doğru grupta</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s öğesi %2$s grubunda olmalı.</string>
     <string name="activities_sorting_badge_put_in_order">Sıraya koy</string>

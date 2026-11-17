@@ -57,7 +57,9 @@ final class PracticeCallTests: XCTestCase {
       .environment(VoiceServices(clients: clients, cache: AppCache(session: session)))
       .environment(AppRouter()))
 
-    try await Task.sleep(for: .seconds(2.5))
+    // Nothing may move while the limit lifts and the view redraws.
+    let noMovementWindow: Duration = .seconds(2.5)
+    try await Task.sleep(for: noMovementWindow)
 
     XCTAssertEqual(nextRow.count, 1, "The next row moved: \(nextRow)")
   }

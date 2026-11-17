@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import android.content.res.Resources
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -33,6 +35,18 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
+import java.util.Locale
+
+fun languageAimTitle(
+    resources: Resources,
+    targetLanguage: String?,
+    locale: Locale,
+): String =
+    if (targetLanguage.isNullOrEmpty()) {
+        resources.getString(R.string.onboarding_aim_picker_title)
+    } else {
+        resources.getString(R.string.onboarding_aim_title, languageName(targetLanguage, locale))
+    }
 
 @Composable
 fun languageAimName(aim: String): String? = languageAimNameResource(aim)?.let { stringResource(it) }
@@ -78,12 +92,12 @@ fun LanguageAimRow(
 ) {
     if (choices.isEmpty()) return
     ListRow(
-        headline = { Text(stringResource(R.string.onboarding_aim_title, languageName(targetLanguage.orEmpty(), currentLocale()))) },
+        headline = { Text(languageAimTitle(LocalResources.current, targetLanguage, currentLocale())) },
         supporting = {
             Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }
         },
-        trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
+        trailing = { Text(stringResource(R.string.onboarding_aim_change), style = MaterialTheme.typography.labelMedium) },
         chevron = false,
         onClick = { onOpenChange(true) },
         modifier = modifier.bleed(LIST_ITEM_INSET),

@@ -30,6 +30,7 @@
   "account_menu_subscription": "6fc7e8b67c8708e362352f7d32570ff2a8e38283aac3897b3f0f4ced62c437e4",
   "account_name": "91a49014b7ccbcabbfb7ebfc2f676c7971eadb653526fd1cbe09414b473c0e41",
   "account_name_description": "bb643a89f077b89995a9cb4521b2d45b69e3dd9b77768f6aaad6bd38a1089d6d",
+  "account_name_required": "054cd6049a487dfb840ee32abc3a0fdba8f2dcdee780945de6951e3c1a38d839",
   "account_name_too_long": "cd2152259df0e7e3f31884a3b357989eeb269faac0d90c86d99c1336f254f782",
   "account_new_code_failed": "34ef696b347a885f18afa7f8bc4bcf2d5646b01e7c4464822837b24a094bdf21",
   "account_new_code_sent": "402df1e7fb6e7bbe27ea06a90fa1fb869aedaa93fa3c09db95b81f8b3db2731e",
@@ -48,6 +49,7 @@
   "account_username_available": "93541d3d9df9024774176af1f24d38ca4c61250f08e9a56712aad906cdda0da0",
   "account_username_checking": "6ef04b24ad286575ba5a7455ffd9325e147066677725952ad507686e29983291",
   "account_username_line": "694a279b677a3bd8973cf10d42130a3cd7f2f4e4e3ae4ad1383563ec89439aa0",
+  "account_username_required": "759ac7790364628e0866152f8f9ff14cdfe2d41685bbca3ec515c0aa7146a6bc",
   "account_username_rules": "5dc9eb9c30f956153eb586306a6e89463293efb93190ad0a61743b80b687a158",
   "account_username_taken": "b4a1332fa7d461da1f718a7947bf4d53827b064afa960e1c7061e54b5ebf1162",
   "account_welcome_description": "6ce5d30c1d7c8594b6e551cbeccd33982283e5fd7e13edb926c3087f4b98bfa3",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">Sair</string>
     <string name="account_menu_create_account">Criar uma conta</string>
     <string name="account_sign_out_failed">O Zoonk não conseguiu sair da sua conta. Confira sua conexão e tente de novo.</string>
+    <string name="account_name_required">Nome</string>
+    <string name="account_username_required">Nome de usuário</string>
 </resources>

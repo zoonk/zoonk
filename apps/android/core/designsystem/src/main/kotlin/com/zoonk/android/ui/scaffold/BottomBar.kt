@@ -55,7 +55,7 @@ fun BottomBar(
     note: (@Composable () -> Unit)? = null,
     columnWidth: Dp = Dp.Unspecified,
     columnAtStart: Boolean = false,
-    columnMargin: Dp = pageMargin(),
+    columnMargin: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val anchors = LocalSnackbarAnchors.current

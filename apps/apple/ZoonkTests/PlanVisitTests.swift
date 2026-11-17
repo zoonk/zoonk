@@ -13,11 +13,13 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: api, goal: Self.goal(), tabs: tabs, wide: true)
 
-    try activate(where: { $0.hasPrefix(Self.continueAt) }, in: window)
-    try await settle()
+    try await activate(where: { $0.hasPrefix(Self.continueAt) }, in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntWork, in: window)
+    }
     XCTAssertTrue(shows(Self.didntWork, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntWork, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -27,9 +29,9 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: api, goal: Self.goal(), tabs: tabs, wide: true)
 
-    try activate(where: { $0.hasPrefix(Self.continueAt) }, in: window)
-    await api.waitForHeldCall()
-    try await leave(tabs, meanwhile: { await api.releaseHeldCall() })
+    try await activate(where: { $0.hasPrefix(Self.continueAt) }, in: window)
+    try await api.waitForHeldCall()
+    try await leave(tabs, in: window, meanwhile: { await api.releaseHeldCall() })
 
     XCTAssertFalse(shows(Self.didntWork, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -39,11 +41,13 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: api, goal: Self.goal(kind: .language), tabs: tabs)
 
-    try activate(String(localized: "I can already read it", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "I can already read it", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntWork, in: window)
+    }
     XCTAssertTrue(shows(Self.didntWork, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntWork, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -53,9 +57,9 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: api, goal: Self.goal(kind: .language), tabs: tabs)
 
-    try activate(String(localized: "I can already read it", table: "Plan"), in: window)
-    await api.waitForHeldCall()
-    try await leave(tabs, meanwhile: { await api.releaseHeldCall() })
+    try await activate(String(localized: "I can already read it", table: "Plan"), in: window)
+    try await api.waitForHeldCall()
+    try await leave(tabs, in: window, meanwhile: { await api.releaseHeldCall() })
 
     XCTAssertFalse(shows(Self.didntWork, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -65,11 +69,13 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: PlanAPIStub(), summary: summary, tabs: tabs)
 
-    try activate(String(localized: "Try again", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Try again", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.didntSave, in: window)
+    }
     XCTAssertTrue(shows(Self.didntSave, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(shows(Self.didntSave, in: window), "Gone on return: \(spoken(in: window))")
   }
 
@@ -79,9 +85,9 @@ final class PlanVisitTests: XCTestCase {
     let tabs = PlanVisitTabs()
     let window = try await showPlan(api: PlanAPIStub(), summary: summary, tabs: tabs)
 
-    try activate(String(localized: "Try again", table: "Plan"), in: window)
+    try await activate(String(localized: "Try again", table: "Plan"), in: window)
     await summary.waitForHeldRetry()
-    try await leave(tabs, meanwhile: { await summary.releaseRetry() })
+    try await leave(tabs, in: window, meanwhile: { await summary.releaseRetry() })
 
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
@@ -160,8 +166,6 @@ final class PlanVisitTests: XCTestCase {
     window.frame =
       wide
       ? CGRect(x: 0, y: 0, width: 1376, height: 1032) : CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
-    try await settle()
     return window
   }
 
@@ -169,29 +173,32 @@ final class PlanVisitTests: XCTestCase {
     spoken(in: window).contains { $0.contains(line) }
   }
 
-  private func leaveAndComeBack(_ tabs: PlanVisitTabs) async throws {
-    try await leave(tabs, meanwhile: {})
+  private func leaveAndComeBack(_ tabs: PlanVisitTabs, in window: UIWindow) async throws {
+    try await leave(tabs, in: window, meanwhile: {})
   }
 
   /// Goes to the other tab, lets `meanwhile` happen there, and comes back.
-  private func leave(_ tabs: PlanVisitTabs, meanwhile: () async -> Void) async throws {
+  private func leave(_ tabs: PlanVisitTabs, in window: UIWindow, meanwhile: () async -> Void)
+    async throws
+  {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      !tabs.pageVisible && spoken(in: window).contains("Elsewhere")
+    }
     await meanwhile()
-    try await settle()
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      tabs.pageVisible && !spoken(in: window).contains("Elsewhere")
+    }
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
-  }
 }
 
 @MainActor
 @Observable
 private final class PlanVisitTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 /// The Plan in one tab, and somewhere else to go.
@@ -202,6 +209,8 @@ private struct PlanVisitTabsView: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         PlanScreen()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 
@@ -215,8 +224,9 @@ private struct PlanVisitTabsView: View {
 private actor RebuildSummary: LearnerSummaryAPIClient {
   private let goal: LearnerGoal
   private var holds = false
-  private var held: CheckedContinuation<Void, Never>?
-  private var heldWaiter: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+  private var completed = 0
+  private var heldWaiter: TestContinuation<Void>?
 
   init(goal: LearnerGoal) {
     self.goal = goal
@@ -224,17 +234,21 @@ private actor RebuildSummary: LearnerSummaryAPIClient {
 
   func holdRetry() { holds = true }
 
-  func waitForHeldRetry() async {
+  func waitForHeldRetry(file: StaticString = #filePath, line: UInt = #line) async {
     guard held == nil else {
       return
     }
 
-    await withCheckedContinuation { heldWaiter = $0 }
+    await withTestVoidContinuation(file: file, line: line) { heldWaiter = $0 }
   }
 
-  func releaseRetry() {
+  func releaseRetry(file: StaticString = #filePath, line: UInt = #line) async {
+    let before = completed
     held?.resume()
     held = nil
+    _ = try? await waitForTestCondition(
+      "The released response did not finish", file: file, line: line
+    ) { await self.completed > before }
   }
 
   func getSummary(token: String) async throws -> LearnerSummary {
@@ -266,9 +280,10 @@ private actor RebuildSummary: LearnerSummaryAPIClient {
   }
 
   func retryRebuild(token: String, goalID: String) async throws {
+    defer { completed += 1 }
     if holds {
       holds = false
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         held = continuation
         heldWaiter?.resume()
         heldWaiter = nil

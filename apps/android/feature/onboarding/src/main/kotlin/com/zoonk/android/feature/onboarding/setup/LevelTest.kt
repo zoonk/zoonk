@@ -27,11 +27,15 @@ internal sealed interface LevelTestPhase {
         val question: LevelTestQuestion,
         /** 0 to 1. */
         val progress: Float,
+        val number: Int = 1,
+        val total: Int = 1,
     ) : LevelTestPhase
 
     data class Speaking(
         val sentence: LevelTestSentence,
         val progress: Float,
+        val number: Int = 1,
+        val total: Int = 1,
     ) : LevelTestPhase
 
     data class Done(
@@ -77,9 +81,33 @@ internal val LanguageLevelTest.showAlphabetNote: Boolean
 private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> LevelTestPhase.Question(next.value.question, progress)
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> LevelTestPhase.Speaking(next.value.speaking, progress)
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value -> LevelTestPhase.Done(levels)
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
+            LevelTestPhase.Question(
+                next.value.question,
+                progress,
+                (
+                    answered +
+                        1
+                ).toInt(),
+                total.toInt(),
+            )
+        }
+
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> {
+            LevelTestPhase.Speaking(
+                next.value.speaking,
+                progress,
+                (
+                    answered +
+                        1
+                ).toInt(),
+                total.toInt(),
+            )
+        }
+
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value -> {
+            LevelTestPhase.Done(levels)
+        }
     }
 }
 

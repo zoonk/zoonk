@@ -46,6 +46,7 @@ import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyExpression
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
@@ -66,6 +67,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -264,8 +266,8 @@ private fun EarnedToday(
     buddyName: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionLabel(stringResource(R.string.session_summary_earned_today))
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.session_summary_earned_today))
         Rewards(summary, facts, buddy, buddyName, title = null)
     }
 }
@@ -332,7 +334,13 @@ private fun SessionNumbers(
             }
             add { modifier ->
                 val skills = summary.comesBack.sumOf { it.skills }
-                StatTile(reviewLabel, formatNumber(skills.toDouble(), locale), modifier, icon = summaryIcon(R.drawable.ic_replay))
+                StatTile(
+                    reviewLabel,
+                    formatNumber(skills.toDouble(), locale),
+                    modifier,
+                    detail = stringResource(R.string.session_summary_to_review_detail),
+                    icon = summaryIcon(R.drawable.ic_replay),
+                )
             }
             if (brainPowerTile) {
                 add { modifier -> StatTile(brainLabel, earned, modifier, belt, StatTone.Brain, summaryIcon(R.drawable.ic_psychology)) }
@@ -342,7 +350,8 @@ private fun SessionNumbers(
     StatTiles(columns = 2, tiles = tiles)
 }
 
-private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit = { modifier -> Icon(painterResource(icon), null, modifier) }
+private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit =
+    { modifier -> Icon(painterResource(icon), null, Modifier.glyphInk(icon).then(modifier)) }
 
 @Composable
 private fun rightDetail(summary: StudySessionSummary): CharSequence? {
@@ -447,11 +456,10 @@ private fun Rewards(
     val streak = summary.bestStreak.takeIf { it >= SHOWN_STREAK }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        BuddyActor(
+        StandingBuddy(
             look = buddy,
-            modifier = Modifier.size(96.dp),
+            height = 96.dp,
             expression = BuddyExpression.Happy,
-            crop = BuddyCrop.Whole,
             reaction = if (celebrates()) ActReaction(BuddyAct.Proud, ZoonkMotion.BEAT_MILLIS) else null,
             label = stringResource(R.string.session_summary_buddy_happy, buddyName),
         )
@@ -602,7 +610,7 @@ private fun SummaryBar(
             TextButton(
                 busy = busy == SessionAction.ExtraTime,
                 onClick = actions.extraTime,
-                modifier = Modifier.taskOption(),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = busy == null,
                 leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
@@ -645,17 +653,16 @@ private fun SharedRow(
     content: @Composable () -> Unit,
 ) {
     Layout(content, modifier) { measurables, constraints ->
-        val gap = 12.dp.roundToPx()
+        val gap = 8.dp.roundToPx()
         val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
-        val row = labels.sum() + gap * (labels.size - 1)
+        val row = (labels.maxOrNull() ?: 0) * labels.size + gap * (labels.size - 1)
 
         if (row <= constraints.maxWidth) {
             val width = max(row, constraints.minWidth)
-            val rest = width - row
+            val buttonWidth = (width - gap * (labels.size - 1)) / labels.size
             val placeables =
                 measurables.mapIndexed { index, measurable ->
-                    val share = rest / labels.size + if (index < rest % labels.size) 1 else 0
-                    measurable.measure(Constraints.fixedWidth(labels[index] + share))
+                    measurable.measure(Constraints.fixedWidth(buttonWidth))
                 }
             val height = placeables.maxOf { it.height }
             layout(width, height) {

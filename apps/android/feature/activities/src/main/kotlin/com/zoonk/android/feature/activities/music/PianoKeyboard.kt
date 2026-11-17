@@ -95,7 +95,7 @@ fun PianoKeyboard(
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         BoxWithConstraints(modifier.fillMaxWidth()) {
             val fitted = maxWidth / whiteCount
-            val whiteWidth = onPress?.let { max(fitted, pressableWhiteKey(maxWidth, keys, openingMarks, narrowest)) } ?: fitted
+            val whiteWidth = if (narrowest * whiteCount <= maxWidth) fitted else max(fitted, narrowest)
             val width = whiteWidth * whiteCount
             val board =
                 if (onPress == null) {
@@ -246,18 +246,4 @@ private const val BLACK_KEY_HEIGHT = 0.6f
 private val KEYBOARD_HEIGHT = 144.sp
 private val MARK_RING = 2.dp
 
-/** Wide enough that a black key, at [BLACK_KEY_SHARE] of a white one, is still a 48dp target. */
-private val PRESSABLE_WHITE_KEY: Dp = 78.dp
-
 private val MIN_TARGET: Dp = 48.dp
-
-private fun pressableWhiteKey(
-    window: Dp,
-    keys: List<PianoKey>,
-    marked: Set<Int>,
-    narrowest: Dp,
-): Dp {
-    val centers = keys.filter { it.midi in marked }.map { it.center(1.dp).value }
-    val fitted = if (centers.isEmpty()) PRESSABLE_WHITE_KEY else window / (centers.max() - centers.min() + 1)
-    return max(narrowest, min(fitted, PRESSABLE_WHITE_KEY))
-}

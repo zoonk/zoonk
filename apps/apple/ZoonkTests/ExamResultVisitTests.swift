@@ -12,11 +12,9 @@ final class ExamResultVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam) {
       ExamList(exam: exam, options: nil)
     }
-    try await visit.settle()
 
     try await save(in: visit)
-    try await visit.settle()
-    visit.assertSays(Self.failure)
+    try await visit.assertSays(Self.failure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.failure)
@@ -27,7 +25,6 @@ final class ExamResultVisitTests: XCTestCase {
     let visit = try await PageVisit(in: self, goal: .exam, holding: "reportExamResult") {
       ExamList(exam: exam, options: nil)
     }
-    try await visit.settle()
 
     try await save(in: visit)
     try await visit.failAfterLeaving()
@@ -39,10 +36,12 @@ final class ExamResultVisitTests: XCTestCase {
 
   /// Types a score, as the keyboard does, and taps Save.
   private func save(in visit: PageVisit) async throws {
+    try await waitForTestCondition("The score field did not appear") {
+      textField(in: visit.window) != nil
+    }
     let field = try XCTUnwrap(textField(in: visit.window), "No score field")
     field.becomeFirstResponder()
     field.insertText("700")
-    try await visit.settle()
     try await visit.activate(String(localized: "Save my result", table: "Exam"))
   }
 

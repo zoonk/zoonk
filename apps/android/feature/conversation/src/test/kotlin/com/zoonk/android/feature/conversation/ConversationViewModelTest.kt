@@ -11,6 +11,7 @@ import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -46,6 +47,16 @@ class ConversationViewModelTest {
         model.start(conversation, microphone = true)
         idle()
         return gate
+    }
+
+    @Test fun ringingAgainNamesAReconnectBeforeItsReservationAnswers() {
+        val gate = reconnectHeld(setup(continuesCall = true, connectionId = SECOND))
+        assertTrue(
+            model.call!!
+                .state.value.reconnecting,
+        )
+        gate.complete(Unit)
+        idle()
     }
 
     @Test

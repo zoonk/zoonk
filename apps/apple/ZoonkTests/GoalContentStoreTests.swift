@@ -45,7 +45,7 @@ final class GoalContentStoreTests: XCTestCase {
 }
 
 private actor HeldPracticeTransport: ClientTransport {
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
 
   func send(
     _ request: HTTPRequest,
@@ -53,7 +53,7 @@ private actor HeldPracticeTransport: ClientTransport {
     baseURL: URL,
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
-    await withCheckedContinuation { held = $0 }
+    await withTestVoidContinuation { held = $0 }
 
     return (
       HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
@@ -61,10 +61,9 @@ private actor HeldPracticeTransport: ClientTransport {
     )
   }
 
-  func waitForHeldRequest() async {
-    while held == nil {
-      await Task.yield()
-    }
+  func waitForHeldRequest(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldRequest did not arrive", file: file, line: line)
+    { await self.held != nil }
   }
 
   func release() {

@@ -157,7 +157,7 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     Box {
         ActivityCanvas {
             if (!isLessonChain) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(Modifier.padding(start = ARC_GUTTER.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
                         causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
                             ?: stringResource(R.string.activities_sorting_pick_cause),
@@ -397,7 +397,7 @@ private data class ArcColors(
 @Composable
 private fun arcColors() =
     ArcColors(
-        made = MaterialTheme.zoonk.vizHighlight,
+        made = MaterialTheme.colorScheme.tertiary,
         correct = MaterialTheme.colorScheme.tertiary,
         incorrect = MaterialTheme.colorScheme.error,
         missed = MaterialTheme.colorScheme.tertiary.copy(alpha = MISSED_ALPHA),

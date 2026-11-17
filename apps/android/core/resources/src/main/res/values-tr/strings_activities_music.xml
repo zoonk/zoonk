@@ -29,6 +29,7 @@
   "activities_music_get_ready": "059742dd37ece293aafbec98576f1a78d12b20f812f4960c826b8d03b0912dcb",
   "activities_music_guitar_strings": "5b002e3fc8de61a75a954563bb84635f7ada4d85cba3b183733472e6d0c499dc",
   "activities_music_hear_it": "4846e139f2ea6830315c47ece9eb3f4c3fcd084662b72690de7e4e3e17587be2",
+  "activities_music_hear_your_notes": "8e6519517f4fcb988cf2b45c912f25e40fde9cf89642517dac76ca62a1519330",
   "activities_music_higher_frets": "3fac332af5f0302897bf1c4563133a5192b4543ec8e59023349fadb3933faef7",
   "activities_music_listen_first": "658a31cfd0833b8c9a9f988af5169e4e749792ad7d6dc8841804b9a230a9cfd0",
   "activities_music_lower_frets": "e53271640e67006ad51031c91487cb5add40b30b956e88c9aae9e87f59dd2ea4",
@@ -245,4 +246,5 @@
     <string name="activities_music_sound_check_start">Başla</string>
     <string name="activities_music_skip_for_now">Şimdilik atla</string>
     <string name="activities_music_continue">Devam et</string>
+    <string name="activities_music_hear_your_notes">Notalarını dinle</string>
 </resources>

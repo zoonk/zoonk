@@ -388,7 +388,8 @@ private fun MockHandedIn(
             }
         },
     ) {
-        StepHeader {
+        StepHeader(R.drawable.ic_timer_off) {
+            MockEyebrow(run.view)
             StepTitle(stringResource(R.string.mock_handed_in_title))
             StepDetail(stringResource(R.string.mock_answers_saved))
         }

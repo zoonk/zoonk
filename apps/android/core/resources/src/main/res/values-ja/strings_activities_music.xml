@@ -29,6 +29,7 @@
   "activities_music_get_ready": "adc6a01c4c47d5ab1e13507ce73905b165a81848e55d28e1d78c17b8fe99575e",
   "activities_music_guitar_strings": "9adde9ff0ea67d46bdfa716f7b3f72bae2469b60f2b5a7b6419d04901abed33c",
   "activities_music_hear_it": "4f840f0bc3018dc09b75d84dd24aab29ac5e1ad8b204a723390824f4a288d72e",
+  "activities_music_hear_your_notes": "e156c2f152f2f82e12b36e362a749b7210cf913fa4ffc80a30492cb0d3c22cc4",
   "activities_music_higher_frets": "926a40a4693fa6b10e99a537f8bb5a391d606c6cff79f5e9fb59677c87e352c3",
   "activities_music_listen_first": "c9c41204914225e5ce4940c087f9b1a9eaac7d3478eb16638b6f72ba6bd00010",
   "activities_music_lower_frets": "3b54f63d611f9139e7719126f3fa3f032bf4acd12ca6b704068bbcea262a20da",
@@ -238,4 +239,5 @@
     <string name="activities_music_sound_check_start">始める</string>
     <string name="activities_music_skip_for_now">今はスキップする</string>
     <string name="activities_music_continue">続ける</string>
+    <string name="activities_music_hear_your_notes">選んだ音を聴く</string>
 </resources>

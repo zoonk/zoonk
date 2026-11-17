@@ -37,7 +37,7 @@
   "checkpoint_removed_detail": "f7944c95c1b5f22a58fcf9218a91f91226e8cd0df84b897edef04a3fd09c6c11",
   "checkpoint_removed_title": "374979fbdf31a4b4ecf6352a2c7812c4cb9f753d961bb48f37226219cab20ec9",
   "checkpoint_retry_after_lessons": "0923b4d2b412753e98021c567c08fee85b8694f398374f8139a38504cd69c6f8",
-  "checkpoint_retry_tomorrow": "96d15f763cbd3495ffcc2535377df0208f30080d4bca7ac22d0d3ff31340b330",
+  "checkpoint_retry_tomorrow": "a54eb719e195aec6a1609788c047ade89f07458160e3674bc9476cbe73af55d1",
   "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
   "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
@@ -67,7 +67,7 @@
     <string name="checkpoint_why_later">Al final verás por qué.</string>
     <string name="checkpoint_won_line">Su escudo está roto. ¡Ganaste!</string>
     <string name="checkpoint_lost_line">Su escudo resistió esta vez.</string>
-    <string name="checkpoint_retry_tomorrow">Podrás volver a intentarlo mañana. No perdiste nada.</string>
+    <string name="checkpoint_retry_tomorrow">Vuelve a intentarlo mañana. Todo lo que hiciste sigue guardado.</string>
     <plurals name="checkpoint_retry_after_lessons">
         <item quantity="one">Podrás volver a intentarlo mañana, después de %d lección corta. No perdiste nada.</item>
         <item quantity="many">Podrás volver a intentarlo mañana, después de %d lecciones cortas. No perdiste nada.</item>

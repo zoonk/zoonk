@@ -69,8 +69,8 @@ private actor CompletedLessonsAPIStub: CompletedLessonsAPIClient {
   private var firstPages: [CompletedLessonsPage]
   private let nextPage: CompletedLessonsPage
   private let holdsNextPage: Bool
-  private var heldPage: CheckedContinuation<Void, Never>?
-  private var askedForNextPage: CheckedContinuation<Void, Never>?
+  private var heldPage: TestContinuation<Void>?
+  private var askedForNextPage: TestContinuation<Void>?
 
   init(
     firstPages: [CompletedLessonsPage], nextPage: CompletedLessonsPage, holdsNextPage: Bool = false
@@ -88,7 +88,7 @@ private actor CompletedLessonsAPIStub: CompletedLessonsAPIClient {
     }
 
     if holdsNextPage {
-      await withCheckedContinuation { continuation in
+      await withTestVoidContinuation { continuation in
         heldPage = continuation
         askedForNextPage?.resume()
         askedForNextPage = nil
@@ -103,7 +103,7 @@ private actor CompletedLessonsAPIStub: CompletedLessonsAPIClient {
       return
     }
 
-    await withCheckedContinuation { askedForNextPage = $0 }
+    await withTestVoidContinuation { askedForNextPage = $0 }
   }
 
   func releaseNextPage() {

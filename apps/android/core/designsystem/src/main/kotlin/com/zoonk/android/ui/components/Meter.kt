@@ -214,10 +214,8 @@ private fun PartsCanvas(
                     val filled = width * fill.share.coerceIn(0f, 1f)
                     if (filled < width) drawRoundRect(track, Offset(left, 0f), partSize, radius)
                     if (filled > 0f) {
-                        // Cut to the part's round ends, so a little progress fills the start of the part, not a tick.
-                        val part = Path().apply { addRoundRect(RoundRect(Rect(Offset(left, 0f), partSize), radius)) }
                         val filledLeft = if (rtl) left + width - filled else left
-                        clipPath(part) { drawRect(fill.color, Offset(filledLeft, 0f), Size(filled, size.height)) }
+                        drawRoundRect(fill.color, Offset(filledLeft, 0f), Size(filled, size.height), radius)
                     }
                 }
             }

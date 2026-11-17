@@ -11,30 +11,26 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
     let label = String(localized: "Keep studying", table: "Plan")
     try await visit.activate(label)
-    await visit.server.waitForHeldRequest()
+    try await visit.server.waitForHeldRequest()
     try await visit.leaveAndComeBack()
     if spoken(in: visit.window).contains(label) {
-      try activate(label, in: visit.window)
+      try await activate(label, in: visit.window)
     }
-    await visit.server.release()
-    try await visit.settle()
+    try await visit.server.release()
     let changes = await visit.server.writes.filter { $0 == "createPlanChange" }
     XCTAssertEqual(changes.count, 1)
   }
 
   func testAnExamKeepStudyingFailureEndsWithTheVisit() async throws {
     let visit = try await todayVisit(try day(pastDate: true))
-    try await visit.settle()
     try await visit.activate(String(localized: "Keep studying", table: "Plan"))
-    try await visit.settle()
-    visit.assertSays(Self.suggestionFailure)
+    try await visit.assertSays(Self.suggestionFailure)
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.suggestionFailure)
   }
 
   func testAnExamKeepStudyingFailureAfterLeavingSaysNothing() async throws {
     let visit = try await todayVisit(try day(pastDate: true), holding: "createPlanChange")
-    try await visit.settle()
     try await visit.activate(String(localized: "Keep studying", table: "Plan"))
     try await visit.failAfterLeaving()
     visit.assertSaysNothingOf(Self.suggestionFailure)
@@ -44,11 +40,9 @@ final class TodayVisitTests: XCTestCase {
 
   func testACatchUpFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
     let visit = try await todayVisit(try day(catchUp: true))
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Add to today", table: "Today"))
-    try await visit.settle()
-    visit.assertSays(Self.todayFailure)
+    try await visit.assertSays(Self.todayFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.todayFailure)
@@ -58,11 +52,9 @@ final class TodayVisitTests: XCTestCase {
 
   func testAnInsightFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
     let visit = try await todayVisit(try day(notice: .insight))
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Got it", table: "Buddy"))
-    try await visit.settle()
-    visit.assertSays(Self.insightFailure)
+    try await visit.assertSays(Self.insightFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.insightFailure)
@@ -70,7 +62,6 @@ final class TodayVisitTests: XCTestCase {
 
   func testAnInsightAnswerThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
     let visit = try await todayVisit(try day(notice: .insight), holding: "answerMemoryInsight")
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Got it", table: "Buddy"))
     try await visit.failAfterLeaving()
@@ -81,11 +72,9 @@ final class TodayVisitTests: XCTestCase {
 
   func testAnUploadRequestNotNowFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
     let visit = try await todayVisit(try day(notice: .uploadRequest))
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Not now", table: "Today"))
-    try await visit.settle()
-    visit.assertSays(Self.todayFailure)
+    try await visit.assertSays(Self.todayFailure)
 
     try await visit.leaveAndComeBack()
     visit.assertSaysNothingOf(Self.todayFailure)
@@ -94,7 +83,6 @@ final class TodayVisitTests: XCTestCase {
   func testAnUploadRequestNotNowThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
     let visit = try await todayVisit(
       try day(notice: .uploadRequest), holding: "dismissGoalUploadRequest")
-    try await visit.settle()
 
     try await visit.activate(String(localized: "Not now", table: "Today"))
     try await visit.failAfterLeaving()
@@ -105,12 +93,10 @@ final class TodayVisitTests: XCTestCase {
 
   func testAFocusTestNotNowFailureShownBeforeTheLearnerLeftIsGoneOnReturn() async throws {
     let visit = try await todayVisit(try day(notice: .focusTest))
-    try await visit.settle()
 
     try await openFocusTest(visit)
     try await visit.activate(String(localized: FocusTestCopy.notNow))
-    try await visit.settle()
-    visit.assertSays(Self.suggestionFailure)
+    try await visit.assertSays(Self.suggestionFailure)
 
     try await visit.leaveAndComeBack()
     try await openFocusTest(visit)
@@ -119,7 +105,6 @@ final class TodayVisitTests: XCTestCase {
 
   func testAFocusTestNotNowThatFailsAfterTheLearnerLeftSaysNothingOnReturn() async throws {
     let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
-    try await visit.settle()
 
     try await openFocusTest(visit)
     try await visit.activate(String(localized: FocusTestCopy.notNow))
@@ -132,28 +117,33 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
     await visit.server.setFocusTestResult(
       #"{"offer":null,"sessionQuestions":"paused","state":"notStarted","suggestsFocus":false}"#)
-    try await visit.settle()
     try await openFocusTest(visit)
     try await visit.activate(String(localized: FocusTestCopy.notNow))
-    await visit.server.waitForHeldRequest()
-    try closeRequestSheet(in: visit.window)
-    try await visit.settle()
-    await visit.server.release()
-    try await visit.settle()
-    visit.assertSays(String(localized: "You can take the test from your plan.", table: "Today"))
+    try await visit.server.waitForHeldRequest()
+    try await closeRequestSheet(in: visit.window)
+    try await visit.server.release()
+    try await visit.assertSays(
+      String(localized: "You can take the test from your plan.", table: "Today"))
     XCTAssertNil(visit.window.rootViewController?.presentedViewController)
   }
 
   func testClosingFocusTestBeforeNotNowFailsLeavesTheNextOpeningClean() async throws {
-    let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
-    try await visit.settle()
+    let dismissal = VisitRequest<Bool>()
+    let today = try day(notice: .focusTest)
+    let visit = try await PageVisit(in: self, goal: .exam, holding: "updateGoalFocusTest") {
+      List {
+        TodayFocusTestSection(
+          goalID: today.goal.id, offer: today.focusTest, dismissal: dismissal, onAnswer: {})
+      }
+    }
     try await openFocusTest(visit)
     try await visit.activate(String(localized: FocusTestCopy.notNow))
-    await visit.server.waitForHeldRequest()
-    try closeRequestSheet(in: visit.window)
-    try await visit.settle()
-    await visit.server.release()
-    try await visit.settle()
+    try await visit.server.waitForHeldRequest()
+    try await closeRequestSheet(in: visit.window)
+    try await visit.server.release()
+    try await waitForTestCondition("Not now did not finish before reopening") {
+      !dismissal.isRunning
+    }
     try await openFocusTest(visit)
     visit.assertSaysNothingOf(Self.suggestionFailure)
   }
@@ -164,10 +154,11 @@ final class TodayVisitTests: XCTestCase {
     let plans = PlanAPIStub()
     await plans.setStatusFails(true)
     let paused = try await PausedToday(in: self, plans: plans)
-    try await paused.settle()
 
-    try activate(Self.resume, in: paused.window)
-    try await paused.settle()
+    try await activate(Self.resume, in: paused.window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      paused.says(Self.resumeFailure)
+    }
     XCTAssertTrue(
       paused.says(Self.resumeFailure), "The failure shows: \(spoken(in: paused.window))")
 
@@ -183,19 +174,19 @@ final class TodayVisitTests: XCTestCase {
     await plans.setStatusFails(true)
     await plans.hold(.setStatus)
     let paused = try await PausedToday(in: self, plans: plans)
-    try await paused.settle()
 
-    try activate(Self.resume, in: paused.window)
-    await plans.waitForHeldCall()
+    try await activate(Self.resume, in: paused.window)
+    try await plans.waitForHeldCall()
     try await paused.leave()
     await plans.releaseHeldCall()
-    try await paused.settle()
     try await paused.comeBack()
     XCTAssertFalse(
       paused.says(Self.resumeFailure), "Nothing of it on return: \(spoken(in: paused.window))")
 
-    try activate(Self.resume, in: paused.window)
-    try await paused.settle()
+    try await activate(Self.resume, in: paused.window)
+    try await waitForTestCondition("Resume was not sent again") {
+      await plans.calls.statuses.count == 2
+    }
     let statuses = await plans.calls.statuses
     XCTAssertEqual(statuses, [.active, .active], "Resume asks again")
   }
@@ -228,7 +219,9 @@ final class TodayVisitTests: XCTestCase {
     }
 
     try await visit.activate(String(localized: "View", table: "Plan"))
-    try await visit.settle()
+    try await waitForTestCondition("Expected state did not arrive") {
+      (visit.window.rootViewController?.presentedViewController) != nil
+    }
     XCTAssertNotNil(
       visit.window.rootViewController?.presentedViewController, "The Focus test's sheet opens")
   }
@@ -320,18 +313,14 @@ private struct PausedToday {
     test.spoken(in: window).contains { $0.contains(words) }
   }
 
-  func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
-
   func leave() async throws {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("Left Today") { !tabs.pageVisible && says("Elsewhere") }
   }
 
   func comeBack() async throws {
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("Returned to Today") { tabs.pageVisible && !says("Elsewhere") }
   }
 
   func leaveAndComeBack() async throws {
@@ -344,6 +333,7 @@ private struct PausedToday {
 @Observable
 private final class PausedTabs {
   var selected = 0
+  var pageVisible = false
 }
 
 private struct PausedTodayHost: View {
@@ -353,6 +343,8 @@ private struct PausedTodayHost: View {
     TabView(selection: $tabs.selected) {
       NavigationStack {
         TodayScreen()
+          .onAppear { tabs.pageVisible = true }
+          .onDisappear { tabs.pageVisible = false }
       }
       .tag(0)
 

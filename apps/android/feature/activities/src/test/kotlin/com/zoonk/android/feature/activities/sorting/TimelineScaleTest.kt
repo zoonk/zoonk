@@ -14,7 +14,7 @@ class TimelineScaleTest {
 
     @Test
     fun givesRoundYearsAndSkipsYearZero() {
-        assertEquals(listOf(-3000L, -2000L, -1000L, 1000L, 2000L), yearTicks(-3000, 2000))
+        assertEquals(listOf(-3000L, -2000L, -1000L, 1L, 1000L, 2000L), yearTicks(-3000, 2000))
         assertEquals(listOf(1900L, 1920L, 1940L, 1960L, 1980L, 2000L), yearTicks(1900, 2000))
     }
 

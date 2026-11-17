@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "e3ce1802a070a5c74cf581ed8bc32ce17d45dae08f3485081de30c75153cc3c2",
   "activities_sorting_remove_link": "118177232f7c192ab378fcab9af1152e0413139c2ba820bbba9ea9c053a12f63",
   "activities_sorting_removed": "259ede62de2cbe6ae1077868b5b0a56067b996dba6860e895343dcc3e889bccf",
-  "activities_sorting_right_count": "8f3375b39d1712808d95fe3f8a17b29cef64adac5e3c22268ba44233334b172f",
   "activities_sorting_right_group": "69ecbf207e5c41296301b85737e0823dc8b0d1d22232024808e86fae19a1d679",
   "activities_sorting_right_order": "a0be98bee4575ea4592be780cde5d89b276ef91b78b86aa24266dfa24b65d457",
   "activities_sorting_show_real_dates": "d33b716ea2efe147b7fc010ce6d2f67f22d9d6767bbd65eb2fb98eeb2dda03cd",
@@ -111,7 +110,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, mauvais groupe</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d sur %2$d dans le bon groupe</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s appartient au groupe %2$s.</string>
     <string name="activities_sorting_badge_put_in_order">Mets dans l’ordre</string>

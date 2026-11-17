@@ -86,6 +86,7 @@
   "session_summary_so_far": "b85fe8b68a09dbb9695b6a7583a4fa4ae398055211a408c2d00b4039519ab28b",
   "session_summary_streak": "f1b82d1eccfabe812b157dd815cbc4a53822d662b28d6b310f8fd15ad7cd4135",
   "session_summary_to_review": "73e987f0f6ad779868078b5f9ee34c29d4bac1cd42f8d7aa720bd60c1b08d127",
+  "session_summary_to_review_detail": "17f9ac757cac656c08898db8693da8988a98e04b9ce90e0da5195e5824cd582b",
   "session_summary_tomorrow": "c4dacf00d17c9a6e5bb5538509b5007380e9ee5ca3acda5e93579866217812fc",
   "session_summary_up_from": "fa808d9097b5028966a880a26ddfdffcc50991ea35f7d7fbb7446c97baa08f03",
   "session_topics_and_more": "2206b15e59e14adeacac18bcfb104487f78fcc8835bc82442753cf8d34ff7eef"
@@ -274,4 +275,5 @@
         <item quantity="many">%1$s leçons reportées à un autre jour pour ne pas dépasser %2$s d’étude aujourd’hui.</item>
         <item quantity="other">%1$s leçons reportées à un autre jour pour ne pas dépasser %2$s d’étude aujourd’hui.</item>
     </plurals>
+    <string name="session_summary_to_review_detail">À revoir</string>
 </resources>

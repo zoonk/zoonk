@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.activities.math
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -143,13 +145,24 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                "< " + format(low) + ": " + percent(below),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                "> " + format(high) + ": " + percent(above),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         DistributionPlot(
             distribution = distribution,
             domain = domain,
             handles = handles,
             target = fields.target.takeIf { props.isChecked },
             targetLabel = targetLabel,
-            tails = percent(below) to percent(above),
             format = format,
         ) { x, pillCenter ->
             DistributionHandle(
@@ -183,7 +196,6 @@ private fun DistributionPlot(
     handles: Pair<Double, Double>,
     target: Interval?,
     targetLabel: String,
-    tails: Pair<String, String>,
     format: (Double) -> String,
     overlay: @Composable (x: LinearScale, pillCenter: Float) -> Unit,
 ) {
@@ -316,26 +328,6 @@ private fun DistributionPlot(
                         ),
                 )
             }
-            val tailGap = TAIL_GAP.toPx()
-            val tailY = axis - TAIL_RISE.toPx()
-            listOf(
-                Triple(tails.first, x.toPixel(from) - x.range.first, true),
-                Triple(tails.second, x.range.second - x.toPixel(to), false),
-            ).forEach { (text, room, isBelow) ->
-                val label = measurer.measure(text, labelStyle.copy(color = muted))
-                if (room < label.size.width + tailGap) return@forEach
-                val left = if (isBelow) x.toPixel(from) - tailGap - label.size.width else x.toPixel(to) + tailGap
-                val topLeft = Offset(left, tailY - label.size.height)
-                drawText(
-                    measurer.measure(text, labelStyle.copy(color = canvas, drawStyle = Stroke(HALO.toPx(), join = StrokeJoin.Round))),
-                    topLeft = topLeft,
-                )
-                drawText(label, topLeft = topLeft, drawStyle = Fill)
-            }
-            listOf(
-                from,
-                to,
-            ).forEach { drawLine(accent, Offset(x.toPixel(it), top), Offset(x.toPixel(it), pillCenter), HANDLE_WIDTH.toPx()) }
         }
         overlay(x, pillCenter)
     }
@@ -390,8 +382,6 @@ private val PILL_GAP = 6.dp
 private val TARGET_RISE = 4.dp
 private val TICK_GAP = 4.dp
 private val PILL_PADDING = 10.dp
-private val TAIL_GAP = 6.dp
-private val TAIL_RISE = 14.dp
 private val HALO = 4.dp
 private val MEAN_DASH = 3.dp
 private val TARGET_DASH = 4.dp

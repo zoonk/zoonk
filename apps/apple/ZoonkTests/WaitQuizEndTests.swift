@@ -35,17 +35,21 @@ final class WaitQuizEndTests: XCTestCase {
       .environment(session)
       .environment(AppRouter())
       .zoonkStyles())
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows("First question?", in: window)
+    }
     XCTAssertTrue(shows("First question?", in: window), "The quiz: \(spoken(in: window))")
 
     if answered {
-      try activate("Right", in: window)
-      try await settle()
+      try await activate("Right", in: window)
+      try await waitForTestCondition("Expected state did not arrive") {
+        shows("Because.", in: window)
+      }
       XCTAssertTrue(shows("Because.", in: window), "Its answer: \(spoken(in: window))")
     }
 
     run.ended = true
-    try await settle()
+    try await waitForTestCondition("The quiz did not end") { shows("It stopped.", in: window) }
 
     for gone in ["First question?", "Right", "Wrong", "Because."] {
       XCTAssertFalse(shows(gone, in: window), "\(gone) went: \(spoken(in: window))")
@@ -53,9 +57,8 @@ final class WaitQuizEndTests: XCTestCase {
     XCTAssertTrue(shows("It stopped.", in: window), "The progress says so")
 
     run.ended = false
-    try await settle()
-
     let next = answered ? "Second question?" : "First question?"
+    try await waitForTestCondition("The next card did not arrive") { shows(next, in: window) }
     XCTAssertTrue(shows(next, in: window), "A card afresh: \(spoken(in: window))")
     XCTAssertFalse(shows("Because.", in: window), "with no answer")
   }
@@ -64,9 +67,6 @@ final class WaitQuizEndTests: XCTestCase {
     spoken(in: window).contains { $0.contains(words) }
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
-  }
 }
 
 @MainActor

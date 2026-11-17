@@ -338,15 +338,14 @@ private fun CheckedSlot(
             .padding(horizontal = 10.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        FlowRow(
-            Modifier.clearAndSetSemantics { contentDescription = description },
+        Row(
+            Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = description },
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             SpotNumber(slot.number, if (right) SpotState.Right else SpotState.Wrong)
             if (right) {
-                Text(slot.label, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+                Text(slot.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
                 Icon(
                     painterResource(R.drawable.ic_check),
                     contentDescription = null,

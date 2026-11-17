@@ -156,7 +156,9 @@ class LiveCall(
     ) {
         attempt += 1
         val mine = attempt
-        mutableState.update { it.copy(phase = LiveCallPhase.Connecting, failure = null, limit = null, micBlocked = !microphone) }
+        mutableState.update {
+            it.copy(phase = LiveCallPhase.Connecting, failure = null, limit = null, micBlocked = !microphone, reconnecting = continuing)
+        }
         val reservation = scope.async { reserve(takeover) { attempt == mine } }
         reserving = reservation
         scope.launch { connect(mine, microphone, reservation.await()) }
@@ -297,7 +299,9 @@ class LiveCall(
         setup = ready.setup
         answeredAt = timeSource.markNow()
         if (ready.setup.continuesCall) {
-            clockZeroAt = -(task.talkSeconds - ready.setup.talkSeconds) * 1000
+            val elapsed = task.talkSeconds - ready.setup.talkSeconds
+            clockZeroAt = -elapsed * 1000
+            mutableState.update { it.copy(reconnecting = true, elapsedSeconds = elapsed) }
         } else {
             startOver()
         }
@@ -360,7 +364,7 @@ class LiveCall(
         earlier = CallSoFar()
         examCuesSent = 0
         clockZeroAt = null
-        mutableState.update { it.copy(turns = it.turns.drop(dropped), usedHelp = helped) }
+        mutableState.update { it.copy(turns = it.turns.drop(dropped), usedHelp = helped, reconnecting = false, elapsedSeconds = 0) }
     }
 
     private fun failure(reservation: CallReservation) =

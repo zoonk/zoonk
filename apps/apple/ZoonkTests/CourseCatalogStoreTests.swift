@@ -348,16 +348,13 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(store.search(query: "planets")?.state, .loaded(.testFixture))
   }
 
-  private func waitForCourseRequests(_ count: Int, in api: SuspendedCourseCatalogAPI) async {
-    for _ in 0..<1_000 {
-      if await api.courseRequestCount >= count {
-        return
-      }
-
-      await Task.yield()
+  private func waitForCourseRequests(
+    _ count: Int, in api: SuspendedCourseCatalogAPI, file: StaticString = #filePath,
+    line: UInt = #line
+  ) async {
+    _ = try? await waitForTestCondition("Expected course requests", file: file, line: line) {
+      await api.courseRequestCount >= count
     }
-
-    XCTFail("Expected \(count) course requests")
   }
 }
 
@@ -441,11 +438,11 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
 
 private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
   private struct CourseRequest {
-    let continuation: CheckedContinuation<CourseCatalogPage, any Error>
+    let continuation: TestContinuation<CourseCatalogPage>
   }
 
   private struct SearchRequest {
-    let continuation: CheckedContinuation<CatalogSearchResults, any Error>
+    let continuation: TestContinuation<CatalogSearchResults>
   }
 
   private let requestDidStart: @Sendable (Int) -> Void
@@ -480,7 +477,7 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
   }
 
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
-    try await withCheckedThrowingContinuation { continuation in
+    try await withTestContinuation { continuation in
       requests.append(CourseRequest(continuation: continuation))
       requestDidStart(requests.count)
     }
@@ -509,7 +506,7 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
   }
 
   func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults {
-    try await withCheckedThrowingContinuation { continuation in
+    try await withTestContinuation { continuation in
       searchRequests.append(SearchRequest(continuation: continuation))
       searchDidStart(searchRequests.count)
     }
@@ -519,8 +516,8 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
 private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
   private let chaptersDidStart: @Sendable () -> Void
   private let courseDidStart: @Sendable () -> Void
-  private var chaptersContinuation: CheckedContinuation<[CourseChapter], any Error>?
-  private var courseContinuation: CheckedContinuation<Course, any Error>?
+  private var chaptersContinuation: TestContinuation<[CourseChapter]>?
+  private var courseContinuation: TestContinuation<Course>?
 
   init(
     chaptersDidStart: @escaping @Sendable () -> Void,
@@ -549,7 +546,7 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
   }
 
   func getCourse(id: String) async throws -> Course {
-    try await withCheckedThrowingContinuation { continuation in
+    try await withTestContinuation { continuation in
       courseContinuation = continuation
       courseDidStart()
     }
@@ -560,7 +557,7 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
   }
 
   func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    try await withCheckedThrowingContinuation { continuation in
+    try await withTestContinuation { continuation in
       chaptersContinuation = continuation
       chaptersDidStart()
     }

@@ -445,7 +445,7 @@ class OnboardingScreenshots {
                                         listOf("schedule", "plan"),
                                         kind = "language",
                                         targetLanguage = "fr",
-                                        languageAim = languageAimOf("B1"),
+                                        languageAim = languageAimOf("B1", targetLanguage = "fr"),
                                     )
                                 }
                             advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2029, 11, 6), targetDate = null) }

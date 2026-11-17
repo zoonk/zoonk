@@ -167,7 +167,7 @@ class SuggestionContentScope internal constructor(
 
 @Composable
 fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
-    OutlinedButton(onClick = LocalFrame.current.open) { Text(text) }
+    OutlinedButton(onClick = LocalFrame.current.open, size = ButtonSize.Small) { Text(text) }
 }
 
 @Composable
@@ -175,22 +175,11 @@ fun SuggestionHeader(text: String) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
     val style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall
-    val mark = (if (sheet) SHEET_MARK else PANEL_MARK) * glyphScale()
-    val line = lineHeight(style)
-    // On the title's first line, however it wraps; a mark taller than the line centers the line on itself.
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-        OnFirstLine(maxOf(line, mark)) { Mark(if (sheet) SHEET_MARK else PANEL_MARK) }
-        Text(
-            text = text,
-            modifier =
-                Modifier
-                    .focusRequester(if (sheet) frame.sheetFocus else frame.focus)
-                    .focusable()
-                    .semantics { heading() }
-                    .padding(top = (mark - line).coerceAtLeast(0.dp) / 2),
-            style = style.copy(lineBreak = LineBreak.Heading),
-        )
-    }
+    Text(
+        text = text,
+        modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
+        style = style.copy(lineBreak = LineBreak.Heading),
+    )
 }
 
 @Composable

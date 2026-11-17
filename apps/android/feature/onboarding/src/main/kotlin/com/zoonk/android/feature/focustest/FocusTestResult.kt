@@ -327,7 +327,7 @@ private fun subjectState(subject: FocusTestSubject): String? =
         }
 
         FocusTestSubject.State.NOT_ASKED -> {
-            null
+            stringResource(R.string.focustest_not_known_yet)
         }
 
         FocusTestSubject.State.NOT_CHECKED -> {

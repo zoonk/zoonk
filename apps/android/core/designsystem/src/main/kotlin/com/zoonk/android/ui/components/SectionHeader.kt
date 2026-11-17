@@ -1,5 +1,9 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +32,11 @@ fun SectionHeader(
         return
     }
 
-    SectionHeader(title, modifier) {
+    FlowRow(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(title, Modifier.padding(end = 12.dp).alignByBaseline().semantics { heading() }, style = MaterialTheme.zoonkType.sectionTitle)
         Text(
             detail,
+            Modifier.alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.zoonkType.data,
         )
@@ -44,7 +50,7 @@ fun SectionHeader(
     modifier: Modifier = Modifier,
     trailing: @Composable () -> Unit,
 ) {
-    HeadingRow(title, MaterialTheme.zoonkType.sectionTitle, modifier, Alignment.CenterVertically, trailing = trailing)
+    HeadingRow(title, MaterialTheme.zoonkType.sectionTitle, modifier, Alignment.CenterVertically, trailing = { trailing() })
 }
 
 /** Main's `PageSectionLabel`: a quiet label naming a group inside a section, still a heading for TalkBack. */

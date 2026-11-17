@@ -103,6 +103,7 @@
   "player_microphone_is_blocked": "d285d91469688de0407a6e5896b06ea69958b2858ad3559b8e555b427f815df5",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
   "player_next_step_failed": "90105c9d7e343aefd8e2b116b65654edbaf1a21ae27e4ffebdee6b1e22cd6c21",
+  "player_not_found_description": "f5a78dba3e1d80b5eb6789f033dbd8d66d06fa4bf448cb4fd18670a274c23a5a",
   "player_not_found_title": "fd7c7bf9194bf0e302698a3476549a9faa4da8458b8c2bbeb6f5f6afc21c5ac8",
   "player_not_in_app_description": "303546ba08cc4e2276516ad1273d0bda3a1919599763c6ad5bb8a57f6d7b4273",
   "player_not_in_app_title": "eb28b1eb7666364fada33b422fafc1fcd1163a035f9f55d956292cd32e3661d9",
@@ -426,4 +427,5 @@
     <string name="player_citation_from_material">参照した資料：%1$s</string>
     <!-- Under a screen of a lesson built from the learner\'s own material, when no page of that material supports what the screen says. -->
     <string name="player_citation_not_in_material">資料には載っていません</string>
+    <string name="player_not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
 </resources>

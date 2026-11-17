@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -271,15 +272,15 @@ fun ChecklistRow(
     description: String? = null,
 ) {
     val state = stringResource(if (done) R.string.conversation_goal_done else R.string.conversation_goal_not_yet)
-    Row(
-        modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) { stateDescription = state },
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    MarkedLine(
+        firstLine = MaterialTheme.typography.bodyMedium,
+        mark = { StatusMark(if (done) MarkStatus.Done else MarkStatus.Todo) },
+        modifier = modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) { stateDescription = state },
     ) {
-        StatusMark(if (done) MarkStatus.Done else MarkStatus.Todo)
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.bodyMedium)
             description?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -291,10 +292,8 @@ internal fun SectionTitle(
     modifier: Modifier = Modifier,
     trailing: String? = null,
 ) {
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-        trailing?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium) }
-    }
+    com.zoonk.android.ui.components
+        .SectionHeader(text, modifier = modifier, detail = trailing)
 }
 
 /** Main's `CallNote` and `MicNote`: a small line with its icon. */

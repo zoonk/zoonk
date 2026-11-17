@@ -274,7 +274,7 @@
     <string name="onboarding_library_course_fits">A Library course fits your goal. Start it now</string>
     <string name="onboarding_reveal_reading_title">Reading the exam\'s official documents</string>
     <string name="onboarding_reveal_reading_last_title">Reading the last edition\'s official documents</string>
-    <string name="onboarding_reveal_reading_notice">Your plan will follow the notice\'s subjects, topics and dates. This usually takes a few minutes.</string>
+    <string name="onboarding_reveal_reading_notice">Your plan will follow the exam\'s subjects, topics and dates.</string>
     <string name="onboarding_reveal_reading_guide">Your plan will follow the official guide\'s parts, topics and dates. This usually takes a few minutes.</string>
     <string name="onboarding_reveal_reading_last">The next edition\'s documents aren\'t out yet, so your plan follows the last one\'s subjects and topics. We\'ll tell you when the new ones are out. This usually takes a few minutes.</string>
     <string name="onboarding_reveal_reading_done_step">Your plan, from what you told us</string>
@@ -495,18 +495,18 @@
     <string name="onboarding_exam_choice_title_other">Which ones will you take?</string>
     <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
     <plurals name="onboarding_exam_choice_options">
-        <item quantity="one">The exam offers %1$d option for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
-        <item quantity="other">The exam offers %1$d options for %2$s. Your plan and mocks follow the one you pick, and you can change it in your plan.</item>
+        <item quantity="one">The exam offers %1$d option for %2$s. Your plan and mock exams follow the one you pick, and you can change it in your plan.</item>
+        <item quantity="other">The exam offers %1$d options for %2$s. Your plan and mock exams follow the one you pick, and you can change it in your plan.</item>
     </plurals>
     <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
     <plurals name="onboarding_exam_choice_options_take">
-        <item quantity="one">The exam offers %1$d option for %2$s, and each candidate takes %3$d of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.</item>
-        <item quantity="other">The exam offers %1$d options for %2$s, and each candidate takes %3$d of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.</item>
+        <item quantity="one">The exam offers %1$d option for %2$s, and each candidate takes %3$d of them. Your plan and mock exams follow the ones you pick, and you can change them in your plan.</item>
+        <item quantity="other">The exam offers %1$d options for %2$s, and each candidate takes %3$d of them. Your plan and mock exams follow the ones you pick, and you can change them in your plan.</item>
     </plurals>
     <!-- Under the exam choice question, for several choices. -->
     <plurals name="onboarding_exam_choice_choices">
-        <item quantity="one">The exam has %1$d choice to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
-        <item quantity="other">The exam has %1$d choices to make. Your plan and mocks follow your picks, and you can change them in your plan.</item>
+        <item quantity="one">The exam has %1$d choice to make. Your plan and mock exams follow your picks, and you can change them in your plan.</item>
+        <item quantity="other">The exam has %1$d choices to make. Your plan and mock exams follow your picks, and you can change them in your plan.</item>
     </plurals>
     <string name="onboarding_decide_later">Decide later</string>
     <string name="onboarding_buddy_title">Choose your buddy</string>
@@ -552,7 +552,7 @@
     <string name="onboarding_plan_stopped">Building your plan stopped</string>
     <string name="onboarding_plan_answers_saved">Your answers are saved. Try again so it\'s ready when you finish.</string>
     <!-- Detail lines while an exam's official documents are read. -->
-    <string name="onboarding_reveal_reading_line_notice">Finding the subjects and topics the notice lists…</string>
+    <string name="onboarding_reveal_reading_line_notice">Finding the subjects and topics on the exam…</string>
     <string name="onboarding_reveal_reading_line_guide">Finding the parts and topics the official guide lists…</string>
     <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
     <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
@@ -644,4 +644,17 @@
     <string name="onboarding_country_skip_default">If you skip: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">where you live</string>
+    <string name="onboarding_test_question_progress">Question %1$d of %2$d</string>
+    <string name="onboarding_test_level_a1">A1</string>
+    <string name="onboarding_test_level_a1_plus">A1+</string>
+    <string name="onboarding_test_level_a2">A2</string>
+    <string name="onboarding_test_level_a2_plus">A2+</string>
+    <string name="onboarding_test_level_b1">B1</string>
+    <string name="onboarding_test_level_b1_plus">B1+</string>
+    <string name="onboarding_test_level_b2">B2</string>
+    <string name="onboarding_test_level_b2_plus">B2+</string>
+    <string name="onboarding_test_level_c1">C1</string>
+    <string name="onboarding_test_level_c1_plus">C1+</string>
+    <string name="onboarding_test_level_c2">C2</string>
+    <string name="onboarding_test_level_c2_plus">C2+</string>
 </resources>

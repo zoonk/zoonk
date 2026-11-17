@@ -3,10 +3,12 @@ package com.zoonk.android.feature.onboarding.start
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -64,10 +66,14 @@ import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -249,7 +255,13 @@ private fun ColumnScope.Entry(
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
             IconButton(onClick = vm::toggleAttach) {
-                Icon(painterResource(R.drawable.ic_attach_file), contentDescription = stringResource(R.string.onboarding_study_material))
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+                    Icon(
+                        painterResource(R.drawable.ic_attach_file),
+                        contentDescription = stringResource(R.string.onboarding_study_material),
+                        modifier = Modifier.glyphInk(R.drawable.ic_attach_file).size(24.dp),
+                    )
+                }
             }
         },
     )
@@ -591,32 +603,14 @@ private fun HowItWorks(hasAccount: Boolean) {
     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.onboarding_how_it_works))
         steps.forEachIndexed { index, step ->
-            // The first step is where the learner is.
-            Row(
-                modifier =
-                    Modifier
-                        .semantics(mergeDescendants = true) { if (index == 0) stateDescription = current }
-                        .fillMaxWidth()
-                        .background(
-                            if (index ==
-                                0
-                            ) {
-                                MaterialTheme.colorScheme.surfaceContainerHigh
-                            } else {
-                                Color.Transparent
-                            },
-                            MaterialTheme.shapes.small,
-                        ).padding(horizontal = 8.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = (index + 1).toString(),
-                    modifier = Modifier.alignByBaseline().clearAndSetSemantics {},
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-                Text(stringResource(step), modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
-            }
+            ListRow(
+                headline = { Text(stringResource(step)) },
+                modifier = Modifier.bleed(LIST_ITEM_INSET),
+                highlighted = index == 0,
+                stateDescription = current.takeIf { index == 0 },
+                leading = { Text((index + 1).toString(), style = MaterialTheme.typography.labelMedium.withTabularFigures()) },
+                leadOnFirstLine = true,
+            )
         }
         if (!hasAccount) StartFreeNote()
     }

@@ -63,7 +63,8 @@ private fun placeLineLabel(
     fun Rect.fits(lines: List<LabelSegment>) =
         left >= area.left && right <= area.right && top >= area.top && bottom <= area.bottom &&
             (listOf(label.segment) + lines).none { touches(it, clearance) } &&
-            marks.arrows.none { touches(it, clearance) }
+            marks.arrows.none { touches(it, clearance) } &&
+            marks.lines.all { it == label.segment || gapTo(label.segment) < gapTo(it) }
 
     fun Rect.clearsMarks() =
         marks.circles.none { touches(it, clearance) } &&
@@ -77,13 +78,15 @@ private fun placeLineLabel(
             { box, _ -> isClear(box) },
             { box, _ -> !label.isOptional && offItsLine(box) },
         )
-    val nearby = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
-    if (nearby != null) return start.translate(nearby * step)
 
+    fun nearby(checks: List<(Rect, Offset) -> Boolean>): Rect? =
+        checks.firstNotNullOfOrNull { pass ->
+            NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) }?.let { start.translate(it * step) }
+        }
     val spots = spotsAcross(area, start)
-    val clear = spots.firstOrNull(isClear)
+    val clear = nearby(passes.take(2)) ?: spots.firstOrNull(isClear)
     if (clear != null || label.isOptional) return clear
-    return spots.firstOrNull(offItsLine) ?: start
+    return nearby(passes.takeLast(1)) ?: spots.firstOrNull(offItsLine) ?: start
 }
 
 private fun spotsAcross(
@@ -105,7 +108,7 @@ private fun besideEnd(
 ): Rect {
     val (from, to) = label.segment
     val (lower, upper) = if (from.y > to.y) from to to else to to from
-    val end = if (label.isUpper) upper else lower
+    val end = upper
     val gap = LABEL_GAP * unit
     val left = if (end.x < area.center.x) end.x + gap else end.x - gap - label.size.width
     val top = if (label.isUpper) end.y - gap - label.size.height else end.y + gap
@@ -149,3 +152,20 @@ private val NEAREST_SHIFTS =
     (-SEARCH_STEPS..SEARCH_STEPS)
         .flatMap { row -> (-SEARCH_STEPS..SEARCH_STEPS).map { column -> Offset(column.toFloat(), row.toFloat()) } }
         .sortedBy { it.getDistance() }
+
+private fun Rect.gapTo(segment: LabelSegment): Float {
+    if (touches(segment, 0f)) return 0f
+    val pointGap = { point: Offset ->
+        Offset(maxOf(left - point.x, 0f, point.x - right), maxOf(top - point.y, 0f, point.y - bottom)).getDistance()
+    }
+    val vector = segment.to - segment.from
+    val squared = vector.x * vector.x + vector.y * vector.y
+    val corners = listOf(topLeft, topRight, bottomLeft, bottomRight)
+    val cornerGap =
+        corners.minOf { corner ->
+            val delta = corner - segment.from
+            val along = if (squared == 0f) 0f else ((delta.x * vector.x + delta.y * vector.y) / squared).coerceIn(0f, 1f)
+            (corner - (segment.from + vector * along)).getDistance()
+        }
+    return minOf(pointGap(segment.from), pointGap(segment.to), cornerGap)
+}

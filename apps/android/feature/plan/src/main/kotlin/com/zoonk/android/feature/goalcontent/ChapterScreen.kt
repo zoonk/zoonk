@@ -374,7 +374,7 @@ private fun ChapterPractice(
 }
 
 @Composable
-private fun PracticeChapterRow(
+internal fun PracticeChapterRow(
     practice: PracticeState,
     onPractice: () -> Unit,
 ) {
@@ -386,26 +386,22 @@ private fun PracticeChapterRow(
             )
         },
         onClick = onPractice,
+        leadOnFirstLine = true,
         busy = practice.running,
         leading = { KindDot(LearnKind.Practice) },
     )
     practiceMessage(practice.outcome)?.let {
-        Text(
-            text = it,
-            modifier =
-                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics {
-                    liveRegion = LiveRegionMode.Polite
-                },
-            color =
-                if (practice.outcome ==
-                    PracticeOutcome.Failed
-                ) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (practice.outcome == PracticeOutcome.Failed) {
+            com.zoonk.android.ui.components
+                .InlineFailure(it, Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp))
+        } else {
+            Text(
+                it,
+                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 
@@ -466,8 +462,9 @@ private fun SkillRow(skill: MapSkill) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { SkillDot(skill.state) }
-        Text(skill.name, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Text(skill.name, modifier = Modifier.weight(1f).alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = if (skill.fading) stringResource(R.string.goalcontent_to_review) else skillStateLabel(skill.state),
             color = if (skill.fading) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,

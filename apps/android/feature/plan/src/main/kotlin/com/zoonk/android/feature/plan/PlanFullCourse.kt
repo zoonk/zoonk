@@ -96,7 +96,6 @@ internal fun FullCourseSwitch(
             .filterIsInstance<PlanOp.FullCourse>()
             .firstOrNull()
             ?.fullCourse ?: course.on
-    val finish = finishText(course, course.endDate, page)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -116,16 +115,6 @@ internal fun FullCourseSwitch(
             Text(stringResource(R.string.plan_full_course_switch), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Switch(checked = on, onCheckedChange = null)
         }
-        Text(
-            text =
-                when {
-                    !course.on -> stringResource(R.string.plan_full_course_off)
-                    finish != null -> stringResource(R.string.plan_full_course_on_exam, finish)
-                    else -> stringResource(R.string.plan_full_course_on_exam_unknown_end)
-                },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         if (edits.hasFailed(PlanPart.FullCourse)) SaveFailedText()
     }
 }

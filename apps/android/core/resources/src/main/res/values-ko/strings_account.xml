@@ -30,6 +30,7 @@
   "account_menu_subscription": "83ebb83159099b2c55422ef4869b574ed54e905586693649ccdc8ca70f487162",
   "account_name": "2c8e140bd39f1c6bc90e1a5ddfebd754aea535a5c4cf7ce10406d99ea009a260",
   "account_name_description": "0f7050b31b63a57d8a9ec88b8b807a1ee5f1137d6d0365ebd01a3842862c4edf",
+  "account_name_required": "4b7eb6e6df6b98882dcab8cd132e1941780740135e8632fec1cc9debcd9cc8af",
   "account_name_too_long": "01e4c8dd747ebc30308f533593efea2948480d69f8e326a84c7f1896259c4daa",
   "account_new_code_failed": "297d4920115e715ef9a3e33621c6c0ac84991490e28f47240301069d3e8ff56f",
   "account_new_code_sent": "241fb5d611f2a5e59c48ebefb7978c8f922d36f3d8adef5b1ac0f0e8ad6afce6",
@@ -48,6 +49,7 @@
   "account_username_available": "9e84063bebc8e071d534cd2b72d00afb233d2f0bef5798ee424ee4f5c387c4d4",
   "account_username_checking": "26bbbb89ef82936413468c7aaa5eb99233492dfd0e37e52699c5e6b59b68fdf9",
   "account_username_line": "4222d57a8ac900c2126d0aa651a158391ff982fd71a44228bdc9e26c652170e6",
+  "account_username_required": "42539a9502de31bee3766b58eeffa164cb7f08ac556e2de5f284a4edc665699b",
   "account_username_rules": "bcf492735c77bc7eaef8749a887b4f4bbaf890dc91104441c2a7aaeaaceca670",
   "account_username_taken": "c8b47a367230685516469d27eadc3e3a1aec52b2df657e722648b8ca0e9f146d",
   "account_welcome_description": "93734888df24b8fbe72922f84976e90274aaca1a8bcc4603fb0e41065004e733",
@@ -114,4 +116,6 @@
     <string name="account_menu_log_out">로그아웃</string>
     <string name="account_menu_create_account">계정 만들기</string>
     <string name="account_sign_out_failed">Zoonk에서 로그아웃하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
+    <string name="account_name_required">이름</string>
+    <string name="account_username_required">사용자 이름</string>
 </resources>

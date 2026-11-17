@@ -34,17 +34,11 @@ fun StepPagerActions(
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    // Back stays outside the actions' row, level with its last line when they wrap at a large font.
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-        if (index > 0) StepBackButton(onClick = { onIndexChange(index - 1) })
-        Box(Modifier.weight(1f)) {
-            TaskActions { main ->
-                if (index < count - 1) {
-                    Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
-                } else {
-                    finalAction(main)
-                }
-            }
+    TaskActions(back = if (index > 0) ({ StepBackButton(onClick = { onIndexChange(index - 1) }) }) else null) { main ->
+        if (index < count - 1) {
+            Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
+        } else {
+            finalAction(main)
         }
     }
 }

@@ -131,6 +131,7 @@
   "conversation_take_your_time": "c4b922da26f3775d14ce0c4264e33e43d35affca6ee010d2b71d6407fac4f06c",
   "conversation_taken_over": "41ed3612c3e2d9b8a8c9684da01a69e10ce2d86e6d7958fb9af2ce1d0f57e760",
   "conversation_talking": "4e22448f97e3c342fd0a1685b114bcf570689a4661e7d8228b029f911ed74661",
+  "conversation_time_used": "4df90ceb3eda79d58d11c7e5d910286d95a8c78f29e27809d8dbba4da689d59a",
   "conversation_tip": "a817b9edc3601bbaf830d3d9d7827c34bdcc17c9d67cd87a9643d3601b22532b",
   "conversation_to_improve": "a1f298c11370ce2a50c48065e74e875bc1f787e381089b25107230de9341088b",
   "conversation_toefl_mock": "a86776e8532976537ec777d14660679538720d5d2d27988859221b3235df0f0b",
@@ -367,4 +368,5 @@
     <string name="conversation_writing_task_line_2">카드에 들어갈 안내문을 만들고 있어요…</string>
     <string name="conversation_writing_task_line_3">면접관이 할 말을 준비하고 있어요…</string>
     <string name="conversation_writing_task_line_4">도움이 될 표현을 더하고 있어요…</string>
+    <string name="conversation_time_used">%1$s</string>
 </resources>
