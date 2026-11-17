@@ -31,7 +31,8 @@
   "memory_undo_retry": "c3e020644496152820ddfec1c70f2c16f6e270dcf9b498da4d88833e315155bf",
   "memory_updated": "c10493b342954890cce0fd7eea07b0624614223df9258578fa37d74c4bec3fa8",
   "memory_updated_more": "b965593ef9aa06bdee5bd474dd235b63fe1157bc9e39d3fbcbdd1eae6cdefc2d",
-  "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41"
+  "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41",
+  "memory_use_description": "af706ff3787448c0800452e36807df1c2dcee8f78c348a110bc41d36d5b63f6c"
 }
 -->
 <resources>
@@ -75,4 +76,6 @@
     <string name="memory_change_undone">Modification annulée</string>
     <string name="memory_undo_failed">Impossible d’annuler. Cela a changé depuis.</string>
     <string name="memory_undo_retry">Impossible d’annuler. Réessaie.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Des exemples personnalisés, des plans adaptés à ta semaine et des appels où %1$s se souvient de ce que tu as raconté</string>
 </resources>

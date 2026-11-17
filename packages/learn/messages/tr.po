@@ -6961,7 +6961,7 @@ msgstr "Sesli sohbetten"
 #: src/memory/memory-screen.tsx
 msgctxt "EDgENy"
 msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
-msgstr ""
+msgstr "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan {buddy} ile sohbetler"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

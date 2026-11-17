@@ -347,7 +347,9 @@
   "plan_not_yet": "3f0ef141931fec72d2100faead4f88e470d379014ef9781061de8355659ada0b",
   "plan_nothing_planned_until_resume": "5b23eadc600a9721616bc7a523a7d5593c901ad118d10aba930d48fb01aad1aa",
   "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
+  "plan_outside_past_basics": "3f383690198414aa391fd0c8fe9e77c9589591a19d0e76116c053e8b68a638ed",
   "plan_outside_skipped": "ebee463bc3c8f1ee3bc461c16633c6859bc2163cc1a4641a9338e9266833e24d",
+  "plan_outside_skipped_base": "9a5263c347295bb3b27a69b13f1ad152964c6e908fb59a9f0de56f429e4fb72f",
   "plan_outside_time": "bb8ea53e379a55dbc8530687d3a2300d9997255c3fde4ace93b0095b82058845",
   "plan_pace": "624a3f71e74a04bd3f1f6f5dd01794e645c400de482b0eaff03c1ddc01b025a1",
   "plan_pace_challenges_to_go": "a03da8857241790dafb4e2f49d1b3badba9df5aa58464a2faa499d916603a9c7",
@@ -1418,4 +1420,6 @@
     <string name="plan_trickster_not_in_plan">Der Trickser ist nicht in deinem Plan</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
     <string name="plan_call_not_in_plan">Das Gespräch ist nicht in deinem Plan</string>
+    <string name="plan_outside_past_basics">Übersprungen · du kennst die Grundlagen schon</string>
+    <string name="plan_outside_skipped_base">Übersprungen · deine Entscheidung</string>
 </resources>

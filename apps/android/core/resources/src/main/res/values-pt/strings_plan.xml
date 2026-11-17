@@ -347,7 +347,9 @@
   "plan_not_yet": "91d83b3abcdc65081054bf2d46b7d3bad22fdcabeffaff7f3410e892d06664cd",
   "plan_nothing_planned_until_resume": "b1f111ec47fc8436958b19cc9ba795c834f71fa9987ef6b9ff2d958748ccf723",
   "plan_options": "f3cee82c74a292395099a5d18d2a09eade63ced448764e4e972d49c2e215faec",
+  "plan_outside_past_basics": "1ff45c72db29a4c3ba03bb49c9868fe6a509158380feebc6fe905a5d5b70cca3",
   "plan_outside_skipped": "f2010712ba202a2ea48dfe103707a89c0e9a7d68d7d3f1941e1fac4688a9d617",
+  "plan_outside_skipped_base": "be5b66d8912e53c5f6062622a0ed23005b7d6c49e4711f25e236ab820ed8eae7",
   "plan_outside_time": "e78711fd8204451002e08eb1297f89d00d4dfbfaa08c3c199dfae40ca19d964b",
   "plan_pace": "cf3459896b82bb7e8e5648a5e4f90b8bc382c1a30170915d0095202140a45980",
   "plan_pace_challenges_to_go": "57b05e9169ff3be90d41153129d1487157da5025b55f7d77da2939bd0868d568",
@@ -1488,4 +1490,6 @@
     <string name="plan_trickster_not_in_plan">O Pegadinha não está no seu plano</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
     <string name="plan_call_not_in_plan">A conversa não está no seu plano</string>
+    <string name="plan_outside_past_basics">Pulado · você já sabe o básico</string>
+    <string name="plan_outside_skipped_base">Pulado · por sua escolha</string>
 </resources>

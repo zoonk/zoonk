@@ -43,6 +43,7 @@
   "subscription_hide_answer": "6dc13c62d64c74f2654a96a7c0b8dbef17a9ebaf031b422a3d06ec62df0a92b6",
   "subscription_manage_apple": "1da7f3e5563ead5d95039546cddaff3ce2af287bff0f65d3543be9586d47cfef",
   "subscription_manage_google": "203f57bf90846fb2ab671556f0c1952e90d3d302de603b542968c5271f99df70",
+  "subscription_manage_website": "969e41ecc083136beaa60d88e61adda0a351a50ed294088dd6e2a544a2a8cf81",
   "subscription_managed_zoonk": "a5a97d38c8cc42d4b281afaba2f2e620633fe3192e1bcd8fac868ba022accf96",
   "subscription_monthly": "d48069c2e42d55ef2e725cdf46c582eb9dc883843c85b7e0c764fbba335be199",
   "subscription_no_card_needed": "312a0e8ccfa86155456c4e90f91eae5c489a070ea49fe122adfd5bcdaaa63d23",
@@ -191,4 +192,5 @@
     <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
     <string name="subscription_through_website">ウェブサイト経由</string>
     <string name="subscription_manage_apple">App Storeで管理する</string>
+    <string name="subscription_manage_website">ウェブサイトで管理する</string>
 </resources>

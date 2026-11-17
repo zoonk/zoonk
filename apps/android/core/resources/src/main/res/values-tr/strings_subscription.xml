@@ -43,6 +43,7 @@
   "subscription_hide_answer": "43b3a8f01149ff422fe93a58d9907f7bdd16549100b84f9d1622feaabcf655f0",
   "subscription_manage_apple": "2089d9b49177a1827441460dcc584e92f83c0ebc1c2983d16c1e2c01ae812719",
   "subscription_manage_google": "66817ecbbc77b214339a036c43f3c92b6f115eafaf3bd0c5b9eef245ae1e74fd",
+  "subscription_manage_website": "b5329b016d8d8c1cf3a8fc5a5e2a21b989feb611a8f691e4a9615d10b532d661",
   "subscription_managed_zoonk": "a740c39efbe3750a7b5f730cf1e29daee1345bd1ef3ffb8b98dfbf71e6ba83f6",
   "subscription_monthly": "d566790a4085b332da1f6d6ccbd1752c583940f764d01050bc5548bb01e8bd5a",
   "subscription_no_card_needed": "dae780cf6cc61f461a778c5aa7374baff3ce9f8e597599f145dac0fece65d03e",
@@ -199,4 +200,5 @@
     <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
     <string name="subscription_through_website">Web sitesi üzerinden</string>
     <string name="subscription_manage_apple">App Store’da yönet</string>
+    <string name="subscription_manage_website">Web sitesinden yönet</string>
 </resources>

@@ -6961,7 +6961,7 @@ msgstr "De uma conversa por voz"
 #: src/memory/memory-screen.tsx
 msgctxt "EDgENy"
 msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
-msgstr ""
+msgstr "Exemplos personalizados, planos que cabem na sua semana e conversas com {buddy} que lembram das suas novidades"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

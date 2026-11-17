@@ -758,7 +758,7 @@ msgstr "레벨"
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "xjYKLD"
 msgid "{belt}, Level {level}"
-msgstr ""
+msgstr "{belt}, 레벨 {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"

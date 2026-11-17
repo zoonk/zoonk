@@ -6961,7 +6961,7 @@ msgstr "Lors d’un appel"
 #: src/memory/memory-screen.tsx
 msgctxt "EDgENy"
 msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
-msgstr ""
+msgstr "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où {buddy} se souvient de ce que tu as raconté"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

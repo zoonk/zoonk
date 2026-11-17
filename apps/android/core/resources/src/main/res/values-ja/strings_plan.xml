@@ -347,7 +347,9 @@
   "plan_not_yet": "ff5d5c1da4878899e7fbc38e98f94e062f3fcc1336b355fa2eaaae9c425afb62",
   "plan_nothing_planned_until_resume": "bacb95752bb9f0edd29215f8c1cca716d72f90ad13601641d4b3128ec8766f1e",
   "plan_options": "adb6f1c7e8160b647a1c0163c2b3d05224011ee6fbb752eab272eff5ee2c8e36",
+  "plan_outside_past_basics": "479850f16f5ee50f2b0a87e8ba0e30a023ebcb030f5db397d337962068fd8765",
   "plan_outside_skipped": "d9078f7e7831244ed866f4f28c80e1db40a7004fbc244e2f9ef9d6f2abe45594",
+  "plan_outside_skipped_base": "ba5abb8d4c20210e780d247dd914e08421574ae9fffe00d19032fc1b4384a0d1",
   "plan_outside_time": "865c81d634c2bbe24a5bad1bee7e0a731fa3cf25cf8be565961791f3a39b149f",
   "plan_pace": "130246beb5f281bf1e48421de624c139097fb5b182acb66860908e7d33b7005e",
   "plan_pace_challenges_to_go": "9c326580b985fbe8f39e38839daba86b1d98e77a0109f1479cc421ba848eb909",
@@ -1348,4 +1350,6 @@
     <string name="plan_trickster_not_in_plan">トリックスターとの対戦は学習計画に入りきりません</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
     <string name="plan_call_not_in_plan">会話は学習計画に入りきりません</string>
+    <string name="plan_outside_past_basics">スキップ・基礎はすでに知っています</string>
+    <string name="plan_outside_skipped_base">スキップ・自分で選びました</string>
 </resources>

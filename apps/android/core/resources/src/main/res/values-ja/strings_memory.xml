@@ -31,7 +31,8 @@
   "memory_undo_retry": "eb520f1e88bd3ed807f162dfe8f1ba1775a01ce46861eebd8320de3d4b694a79",
   "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
   "memory_updated_more": "2a7fa74cb7a372f52bf8e0370feddf87171a4c14521e6008b1a9bb537940e3ab",
-  "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60"
+  "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
+  "memory_use_description": "e8c009a43760c0efc91e8c64a835b395e2f7b5656777cb95111874986c2c0666"
 }
 -->
 <resources>
@@ -73,4 +74,6 @@
     <string name="memory_change_undone">変更を取り消しました</string>
     <string name="memory_undo_failed">取り消せませんでした。その後、内容が変更されています。</string>
     <string name="memory_undo_retry">取り消せませんでした。もう一度お試しください。</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">身近な例、1週間の予定に合った学習計画、近況を踏まえた%1$sとの会話</string>
 </resources>

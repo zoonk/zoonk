@@ -6961,7 +6961,7 @@ msgstr "会話から"
 #: src/memory/memory-screen.tsx
 msgctxt "EDgENy"
 msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
-msgstr ""
+msgstr "身近な例、1週間の予定に合った学習計画、近況を踏まえた{buddy}との会話"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"

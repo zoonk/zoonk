@@ -43,6 +43,7 @@
   "subscription_hide_answer": "6d6c995779f11d6919a9b7b495e4cc7a03e3187d2d71c81c797e6bcf6921a13a",
   "subscription_manage_apple": "763f9c6a2ab2ff16975fd387936bbca588ff6bef0616d90c57c1bc3b500728f7",
   "subscription_manage_google": "ae3d8ea5838e871ee1a2576a1c53ae6faa3acf43460ea10a90c61ea61502620d",
+  "subscription_manage_website": "1103e0118bf8c5242fd58ef237fc03ae52e16b97354767e7bf7c1f120b6af7aa",
   "subscription_managed_zoonk": "5b84b382678cca2f6bde1de202cde35f954c09a5b4115f0d5a5f86b632b2eb3f",
   "subscription_monthly": "4d93dc22fffcc050deca96f38a3e933d528a17aecf3d83cbc1b31d1214fcc203",
   "subscription_no_card_needed": "39990f1313b3ca81856f6f643da3697547775ea2c7b1afa15783911b77fb0aea",
@@ -191,4 +192,5 @@
     <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
     <string name="subscription_through_website">웹사이트에서 구독</string>
     <string name="subscription_manage_apple">App Store에서 관리하기</string>
+    <string name="subscription_manage_website">웹사이트에서 관리하기</string>
 </resources>

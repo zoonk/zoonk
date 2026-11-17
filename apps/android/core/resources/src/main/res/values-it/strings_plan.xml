@@ -347,7 +347,9 @@
   "plan_not_yet": "c509bbee050f9b3014a239b05e51122173848767561750baf0e1f01dd2802107",
   "plan_nothing_planned_until_resume": "1ad66fd19c19b73a063281b2263cbbc499e99748f55b685d98c8ad47fb2e01bb",
   "plan_options": "7c43156b903bd94b5789af13d74ebdab200dafccdeda34beb58a63b5e437ded8",
+  "plan_outside_past_basics": "fda670859c85eaec11331cf7b0e37f6546b301ce126070fcc15708120c730dc8",
   "plan_outside_skipped": "4c7f555b6de61272db12f73b6a14d8f81f95d470a1ebea23120f2e9efaca0d07",
+  "plan_outside_skipped_base": "0022164f585162501d2450c1016d1cdfbc57efdc13c0f4cec1cb2a78e2d67875",
   "plan_outside_time": "5296fc7c45322b21127dccb79864b988dfba293df2965ca36d9f8b984f9fb224",
   "plan_pace": "13902643d14f0c0de731bf1525cd3bd5516dca91a62a0d397592ce334c375fe9",
   "plan_pace_challenges_to_go": "26eb3347c699698374a2ba7f487836deadb86f0974cbce026be8b737d8ee2a91",
@@ -1488,4 +1490,6 @@
     <string name="plan_trickster_not_in_plan">Il Briccone non rientra nel tuo piano</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
     <string name="plan_call_not_in_plan">La conversazione non rientra nel tuo piano</string>
+    <string name="plan_outside_past_basics">Saltato · conosci già le basi</string>
+    <string name="plan_outside_skipped_base">Saltato · per tua scelta</string>
 </resources>

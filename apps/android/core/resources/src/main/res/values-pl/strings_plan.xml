@@ -347,7 +347,9 @@
   "plan_not_yet": "f0e4e8c0e2ebd841c29e3a0dc0b7467773d4275e5020da1b5fc394283e3ecce8",
   "plan_nothing_planned_until_resume": "2988f75d8e8eb6464e912f0ca9b5835e43be8cbb1e2507d71ff14c3d7acc3079",
   "plan_options": "3081bf9f165dda733291b7b65b67327040f2170a20e2f7bfa8e9a4e1a89841b1",
+  "plan_outside_past_basics": "689864428b84889bc86fe758189990198b73fb0041e504b0c2873f23bee01c5e",
   "plan_outside_skipped": "7928e9afde9124c0bcc48b284b4ff84bc720498f1216599b35f4df79245b4bac",
+  "plan_outside_skipped_base": "e92a706e38bfe6d198ee8b8442b1f4a7c525bf89ad7b8b999e2ed43f2795f8c5",
   "plan_outside_time": "dd5df126b38bbe1d588f4ad1201cd36e3962e75ed58a6c2f61d7f0c36d27655b",
   "plan_pace": "ab43e71f17e75d3a1a2f758c75bc7443834117848ebb4f8878abf60fb1e464e8",
   "plan_pace_challenges_to_go": "c9460ddbb10361942ec87d063ab526f4160e0f050d250a55bd1444a48c3bcff4",
@@ -1558,4 +1560,6 @@
     <string name="plan_trickster_not_in_plan">Twój plan nie obejmuje Spryciarza</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
     <string name="plan_call_not_in_plan">Twój plan nie obejmuje rozmowy</string>
+    <string name="plan_outside_past_basics">Pominięte · znasz już podstawy</string>
+    <string name="plan_outside_skipped_base">Pominięte · twój wybór</string>
 </resources>

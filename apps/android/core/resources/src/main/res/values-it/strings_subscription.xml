@@ -43,6 +43,7 @@
   "subscription_hide_answer": "a9313943d1b386f2c3c93cd39f769fb5645d00b77c7126711bf1adaec378c604",
   "subscription_manage_apple": "709cfaba26c9a2f600821d21665ff23c61ebd879a5c729cf08ba30b4e79d6972",
   "subscription_manage_google": "a92f9939a9cc1b69a0b213d559870f0b81a6cce144ff30101f493b00bec40cb0",
+  "subscription_manage_website": "65184a66655085a6cee2236067fb8fc7d2db90392ef29928d6b8556b337c22e3",
   "subscription_managed_zoonk": "5d82d2c56be5ef3f62482a864230a826ab93053b0c0372877e57e5830d2c812f",
   "subscription_monthly": "d4d0b28cf2fbf2c9162c2ac727448bfad0384e5a4a7da6c8cc1d91833cfb73e7",
   "subscription_no_card_needed": "5f26ca441d884bc313422d36b0882d0a079dc9213d55cde916a71647c69d6f9a",
@@ -207,4 +208,5 @@
     <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
     <string name="subscription_through_website">Tramite il sito web</string>
     <string name="subscription_manage_apple">Gestisci su App Store</string>
+    <string name="subscription_manage_website">Gestisci sul sito web</string>
 </resources>
