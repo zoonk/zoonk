@@ -111,6 +111,7 @@ export function spreadPins({
 }
 
 export type MapLabelSpot = {
+  positions?: readonly MapPoint[];
   angle: number;
   kind: "region" | "street";
   text: string;
@@ -121,7 +122,6 @@ export type MapLabelSpot = {
 const LABEL_CLEARANCE = 3;
 const LABEL_HALO = 1.5;
 const PIN_RADIUS = 20;
-const SLIDE_STEP = 4;
 const HALF_TURN = 180;
 
 function axes(label: MapLabelSpot): readonly [MapPoint, MapPoint] {
@@ -180,24 +180,14 @@ export function placeMapLabels({
     .toSorted((a, b) => Number(Boolean(b.label.priority)) - Number(Boolean(a.label.priority)));
 
   for (const { index, label } of order) {
-    const along = axes(label)[0];
+    const candidates = label.kind === "street" ? (label.positions ?? []) : [label];
 
-    const reach =
-      Math.hypot(label.x - frame.width / 2, label.y - frame.height / 2) +
-      Math.hypot(frame.width, frame.height) / 2;
-
-    const steps = label.kind === "street" ? Math.ceil(reach / SLIDE_STEP) : 0;
-
-    const slides = [
-      0,
-      ...Array.from({ length: steps }, (_, step) => [
-        (step + 1) * SLIDE_STEP,
-        -(step + 1) * SLIDE_STEP,
-      ]).flat(),
-    ];
-
-    const spot = slides
-      .map((slide) => ({ ...label, x: label.x + along.x * slide, y: label.y + along.y * slide }))
+    const spot = candidates
+      .toSorted(
+        (a, b) =>
+          Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
+      )
+      .map((point) => ({ ...label, ...point }))
       .find((candidate) => {
         const rx = projection(candidate, { x: 1, y: 0 });
         const ry = projection(candidate, { x: 0, y: 1 });

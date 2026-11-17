@@ -132,11 +132,48 @@ function gapBetween(first: MapPoint[], second: MapPoint[]): number {
 }
 
 describe(placeMapLabels, () => {
+  it("hides a street name when avoiding its pin would move it beyond the drawn street", () => {
+    const [spot] = placeMapLabels({
+      frame: { height: 250, width: 210 },
+      labels: [
+        {
+          angle: 90,
+          height: 12,
+          kind: "street",
+          positions: [
+            { x: 70, y: 50 },
+            { x: 70, y: 120 },
+          ],
+          text: "Poland Street",
+          width: 80,
+          x: 70,
+          y: 100,
+        },
+      ],
+      pins: [{ x: 70, y: 100 }],
+    });
+
+    expect(spot).toBeNull();
+  });
+
   it("slides a street farther than its text width when the visible part has room", () => {
     const [spot] = placeMapLabels({
       frame: { height: 200, width: 210 },
       labels: [
-        { angle: 90, height: 12, kind: "street", text: "Wardour Street", width: 80, x: 70, y: 300 },
+        {
+          angle: 90,
+          height: 12,
+          kind: "street",
+          positions: [
+            { x: 70, y: 50 },
+            { x: 70, y: 124 },
+            { x: 70, y: 300 },
+          ],
+          text: "Wardour Street",
+          width: 80,
+          x: 70,
+          y: 300,
+        },
       ],
       pins: [{ x: 70, y: 190 }],
     });
@@ -152,6 +189,10 @@ describe(placeMapLabels, () => {
       angle: 0,
       height: 12,
       kind: "street" as const,
+      positions: [
+        { x: 200, y: 150 },
+        { x: 240, y: 150 },
+      ],
       text: "Broad Street",
       width: estimatedLabelWidth("Broad Street"),
       x: 200,
@@ -170,6 +211,10 @@ describe(placeMapLabels, () => {
       angle: 90,
       height: 12,
       kind: "street" as const,
+      positions: [
+        { x: 380, y: 290 },
+        { x: 380, y: 200 },
+      ],
       text: "Wardour Street",
       width: estimatedLabelWidth("Wardour Street"),
       x: 380,
@@ -202,6 +247,7 @@ describe(placeMapLabels, () => {
       angle: -8,
       height: 12,
       kind: "street" as const,
+      positions: [{ x: 150, y: 50 }],
       text: "Oxford Street",
       width: estimatedLabelWidth("Oxford Street"),
       x: 150,
@@ -212,6 +258,10 @@ describe(placeMapLabels, () => {
       angle: 88,
       height: 12,
       kind: "street" as const,
+      positions: [
+        { x: 196, y: 80 },
+        { x: 196, y: 150 },
+      ],
       text: "Berwick Street",
       width: estimatedLabelWidth("Berwick Street"),
       x: 196,
@@ -287,6 +337,10 @@ describe("measured map labels", () => {
         angle: 0,
         height: 12,
         kind: "street" as const,
+        positions: [
+          { x: 70, y: 100 },
+          { x: 138, y: 100 },
+        ],
         priority: true,
         text: "Broad Street",
         width: 80,

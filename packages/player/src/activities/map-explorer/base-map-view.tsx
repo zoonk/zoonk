@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
 import { type MapBox, type MapPoint, placeMapLabels, strayRegions } from "./map-viewport";
+import { useMapLabelSizes } from "./use-map-label-sizes";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -12,8 +12,6 @@ const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   groupB: "fill-viz-highlight-soft",
   groupC: "fill-viz-secondary-soft",
 };
-
-const rounded = (value: number) => Number(value.toFixed(3));
 
 const LABEL_SIZE = 12;
 const LABEL_HALO = 3;
@@ -74,6 +72,7 @@ function MapShapes({
         {drawing.streets.map((street) => (
           <path
             d={street.path}
+            data-street={street.name}
             key={street.name}
             strokeWidth={STREET_WIDTH}
             vectorEffect="non-scaling-stroke"
@@ -110,6 +109,7 @@ function MapShapes({
               )}
               style={{ visibility: spot ? "visible" : "hidden" }}
               ref={(element) => measureLabel(index, element)}
+              data-street-label={label.kind === "street" ? label.text : undefined}
               dominantBaseline="middle"
               fontSize={LABEL_SIZE * pixelSize}
               key={`${label.text}-${label.x}-${label.y}`}
@@ -128,72 +128,6 @@ function MapShapes({
       </g>
     </>
   );
-}
-
-type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
-
-function useMapLabelSizes(labelKey: string, pixelSize: number) {
-  const elements = useRef(new Map<number, SVGTextElement>());
-
-  const [cache, setCache] = useState<{
-    labelKey: string;
-    pixelSize: number;
-    sizes: Readonly<Record<number, MapLabelSize>>;
-  } | null>(null);
-
-  const measureLabel = useCallback((index: number, element: SVGTextElement | null) => {
-    if (element) {
-      elements.current.set(index, element);
-    } else {
-      elements.current.delete(index);
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const sizes = Object.fromEntries(
-        [...elements.current].map(([index, element]) => {
-          const box = element.getBBox();
-
-          return [
-            index,
-            {
-              height: rounded(box.height / pixelSize),
-              offsetX: rounded(
-                (box.x + box.width / 2 - Number(element.getAttribute("x"))) / pixelSize,
-              ),
-              offsetY: rounded(
-                (box.y + box.height / 2 - Number(element.getAttribute("y"))) / pixelSize,
-              ),
-              width: rounded(box.width / pixelSize),
-            },
-          ];
-        }),
-      );
-
-      const next = { labelKey, pixelSize, sizes };
-      setCache((known) => (JSON.stringify(known) === JSON.stringify(next) ? known : next));
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-
-    for (const element of elements.current.values()) {
-      observer.observe(element);
-    }
-
-    document.fonts.addEventListener("loadingdone", measure);
-
-    return () => {
-      observer.disconnect();
-      document.fonts.removeEventListener("loadingdone", measure);
-    };
-  }, [labelKey, pixelSize]);
-
-  const sizes: Readonly<Record<number, MapLabelSize>> =
-    cache?.labelKey === labelKey && cache.pixelSize === pixelSize ? cache.sizes : {};
-
-  return { measureLabel, sizes };
 }
 
 export function BaseMapView({
@@ -222,15 +156,16 @@ export function BaseMapView({
     y: crop.y + point.y * pixelSize,
   });
 
-  const labelKey = JSON.stringify(
-    drawing.labels.map((label) => [
+  const labelKey = JSON.stringify({
+    labels: drawing.labels.map((label) => [
       label.text,
       label.kind,
       label.x,
       label.y,
       labelText(label.key, label.text),
     ]),
-  );
+    streets: drawing.streets,
+  });
 
   const { sizes, measureLabel } = useMapLabelSizes(labelKey, pixelSize);
 
@@ -238,6 +173,10 @@ export function BaseMapView({
     angle: label.angle,
     height: sizes[index]?.height ?? 0,
     kind: label.kind,
+    positions: sizes[index]?.positions?.map((point) => ({
+      x: (point.x - crop.x) / pixelSize,
+      y: (point.y - crop.y) / pixelSize,
+    })),
     priority: references
       .toLocaleLowerCase()
       .includes(labelText(label.key, label.text).toLocaleLowerCase()),
