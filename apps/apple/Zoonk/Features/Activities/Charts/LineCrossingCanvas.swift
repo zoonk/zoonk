@@ -196,12 +196,13 @@ struct LineCrossingCanvas: View {
     _ field: LineCrossingFields.Line, index: Int, proxy: ChartProxy, plot: CGRect,
     domain: LineCrossingModel.Point, changes: String
   ) -> some View {
-    let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
-    let share = index == 0 ? 0.8 : 0.2
-    let x = segment.from.x + (segment.to.x - segment.from.x) * share
+    let position = LineCrossingModel.handlePoint(
+      line(field, offsets), domain: domain,
+      share: index == 0 ? 0.8 : 0.2, plot: .init(x: plot.width, y: plot.height),
+      radius: ChartsHandle.radius)
     let point = CGPoint(
-      x: plot.minX + (proxy.position(forX: x) ?? 0),
-      y: plot.minY + (proxy.position(forY: line(field, offsets).y(at: x)) ?? 0))
+      x: plot.minX + (proxy.position(forX: position.x) ?? 0),
+      y: plot.minY + (proxy.position(forY: position.y) ?? 0))
     let range = LineCrossingModel.range(fields.shift.amount)
     let offset = offsets[field.id] ?? 0
 

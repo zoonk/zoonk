@@ -244,6 +244,8 @@ private fun LineCrossingChart(
     val beforeLabel = stringResource(R.string.activities_geometry_line_before)
     val whatHappened = stringResource(R.string.activities_geometry_line_what_happened)
     val lines = fields.lines.map { it.line() }
+    val realOffset = LineCrossingModel.offset(fields.shift.direction, fields.shift.amount)
+    val real = fields.lines.map { if (it.id == fields.shift.line) realOffset else 0.0 }
     val domain = chart.domain
     val xTicks = chart.xTicks
     val yTicks = chart.yTicks
@@ -275,8 +277,16 @@ private fun LineCrossingChart(
         val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
         val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> LabelSegment(pixel(from), pixel(to)) } }
         val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
+        val fitted =
+            LineCrossingModel.slides(
+                fields.shift.amount,
+                axis,
+                lines,
+                real,
+                Vec(((right - left) / density.density).toDouble(), ((bottom - top) / density.density).toDouble()),
+            )
         val handles =
-            fields.lines.zip(chart.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
+            fields.lines.zip(fitted.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
         val names =
             fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
                 listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
@@ -586,8 +596,8 @@ private val AXIS_LABEL_GAP = 8.dp
 private val PADDING_LEFT = 22.dp
 private val PADDING_RIGHT = 18.dp
 private val TRACK_WIDTH = 48.dp
-private val KNOB_RADIUS = 14.dp
-private val KNOB_STROKE = 2.5.dp
+private val KNOB_RADIUS = LineCrossingModel.HANDLE_RADIUS.dp
+private val KNOB_STROKE = LineCrossingModel.HANDLE_STROKE.dp
 private val CHEVRON = 4.dp
 private val CHEVRON_GAP = 2.dp
 private val LINE_DASH = 5.dp

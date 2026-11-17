@@ -169,6 +169,22 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertTrue(fields.ticks.allSatisfy(\.isLabelled))
   }
 
+  func testLineCrossingHandleFitsMeasuredPlotIncludingFlatLines() {
+    for plot in [LineCrossingModel.Point(x: 128, y: 130), .init(x: 300, y: 172)] {
+      for line in [
+        LineCrossingModel.Line(intercept: 100, slope: 0), .init(intercept: 10, slope: -1),
+        .init(intercept: -100, slope: 0),
+      ] {
+        let point = LineCrossingModel.handlePoint(
+          line, domain: .init(x: 100, y: 100), share: 0.8, plot: plot, radius: 11)
+        XCTAssertGreaterThanOrEqual(point.x / 100 * plot.x, 11)
+        XCTAssertLessThanOrEqual(point.x / 100 * plot.x, plot.x - 11)
+        XCTAssertGreaterThanOrEqual(point.y / 100 * plot.y, 11)
+        XCTAssertLessThanOrEqual(point.y / 100 * plot.y, plot.y - 11)
+      }
+    }
+  }
+
   func testLineCrossingMovesGradesAndPutsASavedMoveBack() throws {
     let fields: LineCrossingFields = try decode(
       """

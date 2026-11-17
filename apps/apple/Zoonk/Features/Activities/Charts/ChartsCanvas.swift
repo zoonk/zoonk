@@ -124,6 +124,7 @@ enum ChartsPlot {
 /// A dot inside a 44-point target, so a finger can grab it without covering the mark and a swipe
 /// elsewhere still scrolls the lesson.
 struct ChartsHandle: View {
+  static let radius = 11.0
   var tint: Color = .primary
   var isEnabled = true
 
@@ -131,7 +132,7 @@ struct ChartsHandle: View {
     Circle()
       .fill(tint)
       .overlay { Circle().strokeBorder(.background, lineWidth: 2) }
-      .frame(width: 22, height: 22)
+      .frame(width: Self.radius * 2, height: Self.radius * 2)
       .frame(width: 44, height: 44)
       .contentShape(.circle)
       .opacity(isEnabled ? 1 : 0.6)

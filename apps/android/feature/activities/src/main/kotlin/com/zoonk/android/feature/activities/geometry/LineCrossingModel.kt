@@ -116,10 +116,11 @@ internal object LineCrossingModel {
         axis: PlaceOrientation,
         lines: List<Line>,
         real: List<Double>,
+        plot: Vec = Vec(192.0, 192.0),
     ): ChartSlides {
         val domain = domain(amount, axis, lines, real)
         val crossing = crossing(lines[0], lines[1])
-        return ChartSlides(domain, lines.map { slide(amount, axis, it, domain, crossing) })
+        return ChartSlides(domain, lines.map { slide(amount, axis, it, domain, crossing, plot) })
     }
 
     /** Main's `restoredOffset`: a saved answer keeps only its direction, so its line goes as far as the real move, or the furthest allowed stop that way. */
@@ -150,10 +151,12 @@ internal object LineCrossingModel {
         line: Line,
         domain: ChartDomain,
         crossing: Vec,
+        plot: Vec,
     ): LineSlide {
         val size = Vec(domain.max.x - domain.min.x, domain.max.y - domain.min.y)
-        val low = Vec(domain.min.x + size.x * HANDLE_MARGIN, domain.min.y + size.y * HANDLE_MARGIN)
-        val high = Vec(domain.max.x - size.x * HANDLE_MARGIN, domain.max.y - size.y * HANDLE_MARGIN)
+        val radius = kotlin.math.ceil(HANDLE_RADIUS + HANDLE_STROKE / 2)
+        val low = Vec(domain.min.x + size.x * radius / plot.x, domain.min.y + size.y * radius / plot.y)
+        val high = Vec(domain.max.x - size.x * radius / plot.x, domain.max.y - size.y * radius / plot.y)
         val full = range(amount)
         val count = ((full.max - full.min) / full.step).roundToInt() + 1
         val offsets =
@@ -169,7 +172,7 @@ internal object LineCrossingModel {
             val shifted = moved(line, offset, axis)
             val preferred = if (axis == PlaceOrientation.Horizontal) homeX + offset else homeX
             val x = spanInside(shifted, low, high)?.let { (start, end) -> clamp(preferred, start, end) } ?: preferred
-            Vec(x, shifted.yAt(x))
+            Vec(clamp(x, low.x, high.x), clamp(shifted.yAt(x), low.y, high.y))
         }
     }
 
@@ -202,11 +205,10 @@ internal object LineCrossingModel {
     private const val HANDLE_SHARE = 0.82
     private const val HANDLE_SHARE_STEPS = 100
 
-    // Main's shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest plot
-    // (192dp), so a slide never depends on the screen's size.
-    private const val HANDLE_MARGIN = 0.08
+    const val HANDLE_RADIUS = 14
+    const val HANDLE_STROKE = 2.5
     private const val CROSSING_GAP = 0.135
-    private const val KEPT_MARGIN = HANDLE_MARGIN * 2
+    private const val KEPT_MARGIN = 0.16
     private val HANDLE_SHARES =
         (0..HANDLE_SHARE_STEPS).map { it.toDouble() / HANDLE_SHARE_STEPS }.sortedBy { abs(it - HANDLE_SHARE) }
     private const val STEPS_PER_SHIFT = 4

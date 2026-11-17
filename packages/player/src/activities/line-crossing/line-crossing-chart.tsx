@@ -1,12 +1,13 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { estimatedLabelWidth } from "../_utils/drawing-label";
 import { PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
-import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
+import { LineHandle } from "./line-crossing-handle";
 import { type LabelSize, changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
 import {
   Axes,
@@ -21,11 +22,14 @@ import {
 } from "./line-crossing-marks";
 import {
   type ChartDomain,
+  HANDLE_RADIUS,
+  HANDLE_STROKE,
   type Line,
   type LineOffsets,
   type LineSlide,
   type Point,
   type ShiftAxis,
+  chartDomain,
   chartSlides,
   crossingPoint,
   movedLine,
@@ -34,7 +38,7 @@ import {
 
 type ChartLine = Line & { id: string; label: string };
 
-const PLOT_HEIGHT = 248;
+const PLOT_HEIGHT = 280;
 const PADDING = { bottom: 50, left: PLOT_TICK_ROOM, right: 0, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
@@ -183,7 +187,7 @@ function LineLabels({
   ));
 }
 
-export function LineCrossingChart({
+function LineCrossingPlot({
   amount,
   answerLine,
   axis,
@@ -210,7 +214,16 @@ export function LineCrossingChart({
 }) {
   const clipId = useId();
   const format = useFormatNumber();
-  const { domain, slides, xTicks, yTicks } = chartSlides({ amount, axis, lines, real });
+  const scales = usePlotScales();
+
+  const { domain, slides, xTicks, yTicks } = chartSlides({
+    amount,
+    axis,
+    lines,
+    plot: { x: scales.x.range[1] - scales.x.range[0], y: scales.y.range[0] - scales.y.range[1] },
+    real,
+  });
+
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const shown = lines.map((line) => movedLine(line, offsetOf(line), axis));
   const moved = lines.filter((line) => offsetOf(line) !== 0);
@@ -219,18 +232,7 @@ export function LineCrossingChart({
   const after = first && second ? crossingPoint(first, second) : before;
 
   return (
-    <ActivityPlot
-      height={PLOT_HEIGHT}
-      padding={{
-        ...PADDING,
-        left: Math.max(
-          PLOT_TICK_ROOM,
-          ...yTicks.map((tick) => estimatedLabelWidth(format(tick)) + TICK_GAP),
-        ),
-      }}
-      xDomain={[domain.min.x, domain.max.x]}
-      yDomain={[domain.min.y, domain.max.y]}
-    >
+    <>
       <ClipArea id={clipId} />
       <Axes format={format} xLabel={xLabel} xTicks={xTicks} yLabel={yLabel} yTicks={yTicks} />
 
@@ -295,6 +297,29 @@ export function LineCrossingChart({
       {/* The crossings are the answer, so they show over a handle resting on them. */}
       {moved.length > 0 && <CrossingDot isBefore point={before} />}
       <CrossingDot isBefore={false} point={after} />
+    </>
+  );
+}
+
+export function LineCrossingChart(props: Parameters<typeof LineCrossingPlot>[0]) {
+  const format = useFormatNumber();
+  const domain = chartDomain(props);
+  const yTicks = niceTicks([domain.min.y, domain.max.y]);
+
+  return (
+    <ActivityPlot
+      height={PLOT_HEIGHT}
+      padding={{
+        ...PADDING,
+        left: Math.max(
+          PLOT_TICK_ROOM,
+          ...yTicks.map((tick) => estimatedLabelWidth(format(tick)) + TICK_GAP),
+        ),
+      }}
+      xDomain={[domain.min.x, domain.max.x]}
+      yDomain={[domain.min.y, domain.max.y]}
+    >
+      <LineCrossingPlot {...props} />
     </ActivityPlot>
   );
 }

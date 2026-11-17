@@ -26,6 +26,29 @@ class LineCrossingModelTest {
         assertEquals(listOf(0.0, 2000.0, 4000.0), chart.yTicks)
     }
 
+    @Test
+    fun paintedHandlesFitTheMeasuredPlotAtEveryStop() {
+        for (plot in listOf(Vec(168.0, 172.0), Vec(128.0, 130.0), Vec(500.0, 220.0))) {
+            val chart =
+                LineCrossingModel.slides(
+                    2.0,
+                    PlaceOrientation.Horizontal,
+                    listOf(Line(1.0, 0.5), Line(10.0, -1.0)),
+                    listOf(-2.0, 0.0),
+                    plot,
+                )
+            for (slide in chart.slides) {
+                for (offset in slide.offsets) {
+                    val point = slide.at(offset)
+                    val x = (point.x - chart.domain.min.x) / (chart.domain.max.x - chart.domain.min.x) * plot.x
+                    val y = (point.y - chart.domain.min.y) / (chart.domain.max.y - chart.domain.min.y) * plot.y
+                    assertTrue(x >= 15.25 && x <= plot.x - 15.25)
+                    assertTrue(y >= 15.25 && y <= plot.y - 15.25)
+                }
+            }
+        }
+    }
+
     private val supply = Line(intercept = 1.0, slope = 0.5)
     private val demand = Line(intercept = 10.0, slope = -1.0)
     private val cost = Line(intercept = 2000.0, slope = 5.0)

@@ -23,13 +23,14 @@ describe("any-subject activities", () => {
     await guessOnScale(cited.fields, 14);
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Real value: 14 times")).toBeVisible();
+    await expect.element(page.getByText("Real value: 14")).toBeVisible();
+    await expect.element(page.getByText("in times", { exact: true })).toBeVisible();
 
     await expect
       .element(page.getByText(/The usual world map stretches land near the poles/u))
       .toBeVisible();
 
-    await expect.element(page.getByText("Your guess: 13 times")).toBeVisible();
+    await expect.element(page.getByText("Your guess: 13")).toBeVisible();
     await expect.element(page.getByText("Your guess is close to the real value.")).toBeVisible();
   });
 
@@ -39,7 +40,7 @@ describe("any-subject activities", () => {
     await guessOnScale(content.fields, 14);
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Your guess: 14 times")).toBeVisible();
+    await expect.element(page.getByText("Your guess: 14")).toBeVisible();
 
     await expect
       .element(page.getByText("Your guess is close to the real value."))
