@@ -30,7 +30,7 @@ private struct FieldBorder: ViewModifier {
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
       .frame(minHeight: minHeight)
-      .background(Color(.background), in: shape)
+      .background(Color(.systemBackground), in: shape)
       .overlay {
         shape.strokeBorder(line, lineWidth: isFocused && isRight == nil ? 2 : 1)
       }

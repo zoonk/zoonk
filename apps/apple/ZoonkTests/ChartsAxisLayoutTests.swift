@@ -26,7 +26,7 @@ final class ChartsAxisLayoutTests: XCTestCase {
           context: ActivityCanvasContext(
             template: "numberLine", payload: .null, check: nil, phase: .answering,
             answer: nil, setAnswer: { _ in }), fields: fields)
-      }.environment(ActivityWork()))
+      }.environment(ActivityWork()).dynamicTypeSize(.large))
     window.frame = CGRect(x: 0, y: 0, width: 375, height: 500)
     try await Task.sleep(for: .milliseconds(600))
     let raster = try Raster(window: window)
@@ -50,10 +50,11 @@ final class ChartsAxisLayoutTests: XCTestCase {
     XCTAssertEqual(labels.count, fields.ticks.count, "Every number must remain separately readable")
     let ordinaryGaps = zip(labels.dropFirst().dropLast(2), labels.dropFirst(2).dropLast())
       .map { $1.minX - $0.maxX }
+    let halfFontSize = TypeStyle.body.uiFont(.large, legibility: nil).pointSize / 2
     check(
       raster, plot: plot, panel: probe.panel, positions: positions, checksCorner: false,
       labels: labels, anchorsEnds: false,
-      minimumGap: ordinaryGaps.min() ?? 0)
+      minimumGap: max(halfFontSize, ordinaryGaps.min() ?? 0))
   }
 
   private func checkChart(domain: ClosedRange<Double>, ticks: [Double], isPercent: Bool = false)
