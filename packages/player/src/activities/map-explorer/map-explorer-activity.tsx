@@ -197,6 +197,11 @@ function MapCanvas({
           crop={crop}
           drawing={drawing}
           references={questionReferences(content.check)}
+          question={
+            content.check.kind === "choice" || content.check.kind === "numeric"
+              ? content.check.question
+              : ""
+          }
           height={height}
           labelText={labelText}
           onSelect={select}

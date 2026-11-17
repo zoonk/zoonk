@@ -17,6 +17,43 @@ final class MapViewportTests: XCTestCase {
   private let named = MapViewport.Label(
     center: CGPoint(x: 160, y: 120), size: CGSize(width: 80, height: 12), angle: 0, street: true,
     priority: true, positions: [CGPoint(x: 160, y: 120)])
+  func testNamedLabelBoxClearsEveryPinBox() throws {
+    let pins = [CGPoint(x: 160, y: 120), CGPoint(x: 190, y: 155)]
+    let label = MapViewport.Label(
+      center: named.center, size: named.size, angle: 0, street: true, priority: true,
+      positions: [CGPoint(x: 150, y: 120), CGPoint(x: 170, y: 120)])
+    let spot = try XCTUnwrap(
+      MapViewport.placeLabels([label], pins: pins, frame: CGSize(width: 320, height: 240))[0])
+    for pin in pins { XCTAssertTrue(abs(spot.x - pin.x) >= 60 || abs(spot.y - pin.y) >= 26) }
+  }
+  func testThreeNamedRegionsPackWithoutBoxOverlap() throws {
+    let label = MapViewport.Label(
+      center: CGPoint(x: 100, y: 20), size: CGSize(width: 110, height: 12), angle: 0, street: false,
+      priority: true)
+    let spots = MapViewport.placeLabels(
+      [label, label, label], pins: [], frame: CGSize(width: 200, height: 40))
+    XCTAssertTrue(spots.allSatisfy { $0 != nil })
+    for i in spots.indices {
+      for j in (i + 1)..<spots.count {
+        let a = try XCTUnwrap(spots[i])
+        let b = try XCTUnwrap(spots[j])
+        XCTAssertTrue(
+          abs(a.x - b.x) >= 55 * (a.scale + b.scale) || abs(a.y - b.y) >= 6 * (a.scale + b.scale))
+      }
+    }
+  }
+  func testQuestionNamesOutrankAnswerOnlyNamesAtMinimumSize() throws {
+    let choice = MapViewport.Label(
+      center: CGPoint(x: 50, y: 10), size: CGSize(width: 110, height: 12), angle: 0, street: false,
+      priority: true)
+    var question = choice
+    question.question = true
+    let spots = MapViewport.placeLabels(
+      [choice, question], pins: [], frame: CGSize(width: 100, height: 20))
+    XCTAssertNil(spots[0])
+    let kept = try XCTUnwrap(spots[1])
+    XCTAssertGreaterThanOrEqual(kept.scale, 0.8)
+  }
   func testNamedStreetSurvivesItsOnlySpotBeingUnderAPin() {
     XCTAssertNotNil(
       MapViewport.placeLabels(
@@ -65,7 +102,9 @@ final class MapViewportTests: XCTestCase {
         priority: false),
     ]
     XCTAssertEqual(
-      MapViewport.placeLabels(labels, pins: [], frame: CGSize(width: 210, height: 200)),
+      MapViewport.placeLabels(labels, pins: [], frame: CGSize(width: 210, height: 200)).map {
+        $0?.center
+      },
       [nil, CGPoint(x: 100, y: 100), CGPoint(x: 12, y: 30)])
   }
 

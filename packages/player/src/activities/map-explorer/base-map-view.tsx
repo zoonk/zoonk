@@ -2,13 +2,8 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import {
-  type MapBox,
-  type MapPoint,
-  isMapLabelNamed,
-  placeMapLabels,
-  strayRegions,
-} from "./map-viewport";
+import { type MapLabelPlacement, isMapLabelNamed, placeMapLabels } from "./map-labels";
+import { type MapBox, type MapPoint, strayRegions } from "./map-viewport";
 import { useMapLabelSizes } from "./use-map-label-sizes";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
@@ -19,7 +14,7 @@ const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   groupC: "fill-viz-secondary-soft",
 };
 
-const LABEL_SIZE = 12;
+const LABEL_SIZE_REM = 0.75;
 const LABEL_HALO = 3;
 const STREET_WIDTH = 9;
 const TRUE_SPOT_RADIUS = 3.5;
@@ -36,7 +31,7 @@ export type MapPin = {
 
 type MapDrawingProps = {
   drawing: BaseMapDrawing;
-  labelSpots: readonly (MapPoint | null)[];
+  labelSpots: readonly (MapLabelPlacement | null)[];
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
   labelSizes: Readonly<Record<number, { offsetX: number; offsetY: number }>>;
@@ -120,17 +115,19 @@ function MapLabels({
                 ? "fill-muted-foreground font-medium"
                 : "fill-foreground/75 font-semibold",
             )}
-            style={{ visibility: spot ? "visible" : "hidden" }}
+            style={{
+              fontSize: `calc(${LABEL_SIZE_REM}rem * ${pixelSize})`,
+              visibility: spot ? "visible" : "hidden",
+            }}
             ref={(element) => measureLabel(index, element)}
             data-street-label={label.kind === "street" ? label.text : undefined}
             dominantBaseline="middle"
-            fontSize={LABEL_SIZE * pixelSize}
             key={`${label.text}-${label.x}-${label.y}`}
             paintOrder="stroke"
             strokeLinejoin="round"
             strokeWidth={LABEL_HALO * pixelSize}
             textAnchor="middle"
-            transform={label.angle ? `rotate(${label.angle} ${at.x} ${at.y})` : undefined}
+            transform={`translate(${at.x} ${at.y}) rotate(${label.angle}) scale(${spot?.scale ?? 1}) translate(${-at.x} ${-at.y})`}
             x={at.x - (labelSizes[index]?.offsetX ?? 0) * pixelSize}
             y={at.y - (labelSizes[index]?.offsetY ?? 0) * pixelSize}
           >
@@ -142,6 +139,18 @@ function MapLabels({
   );
 }
 
+type BaseMapProps = {
+  crop: MapBox;
+  drawing: BaseMapDrawing;
+  height: number;
+  labelText: (key: string | null, text: string) => string;
+  onSelect: (id: string) => void;
+  pins: readonly MapPin[];
+  width: number;
+  references: string;
+  question: string;
+};
+
 export function BaseMapView({
   crop,
   drawing,
@@ -151,16 +160,8 @@ export function BaseMapView({
   pins,
   width,
   references,
-}: {
-  crop: MapBox;
-  drawing: BaseMapDrawing;
-  height: number;
-  labelText: (key: string | null, text: string) => string;
-  onSelect: (id: string) => void;
-  pins: readonly MapPin[];
-  width: number;
-  references: string;
-}) {
+  question,
+}: BaseMapProps) {
   const pixelSize = crop.width / width;
 
   const toMap = (point: MapPoint) => ({
@@ -194,6 +195,11 @@ export function BaseMapView({
       source: label.text,
       text: labelText(label.key, label.text),
     }),
+    question: isMapLabelNamed({
+      references: question,
+      source: label.text,
+      text: labelText(label.key, label.text),
+    }),
     text: labelText(label.key, label.text),
     width: sizes[index]?.width ?? 0,
     x: (label.x - crop.x) / pixelSize,
@@ -210,7 +216,7 @@ export function BaseMapView({
           pins: pins.map((pin) => pin.shown),
         })
       : drawing.labels.map(() => null)
-  ).map((spot) => spot && toMap(spot));
+  ).map((spot) => spot && { ...toMap(spot), scale: spot.scale });
 
   return (
     <div

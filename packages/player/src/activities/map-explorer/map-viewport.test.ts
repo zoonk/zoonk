@@ -1,14 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { estimatedLabelWidth } from "../_utils/drawing-label";
-import {
-  type MapLabelSpot,
-  type MapPoint,
-  fitViewport,
-  isMapLabelNamed,
-  placeMapLabels,
-  spreadPins,
-  strayRegions,
-} from "./map-viewport";
+import { type MapLabelSpot, isMapLabelNamed, placeMapLabels } from "./map-labels";
+import { type MapPoint, fitViewport, spreadPins, strayRegions } from "./map-viewport";
 
 const map = { height: 500, width: 1000 };
 
@@ -144,6 +137,71 @@ describe(placeMapLabels, () => {
     x: 160,
     y: 120,
   };
+
+  it("keeps a named label box clear of every pin box", () => {
+    const pins = [
+      { x: 160, y: 120 },
+      { x: 190, y: 155 },
+    ];
+
+    const [spot] = placeMapLabels({
+      frame: { height: 240, width: 320 },
+      labels: [
+        {
+          ...named,
+          positions: [
+            { x: 150, y: 120 },
+            { x: 170, y: 120 },
+          ],
+        },
+      ],
+      pins,
+    });
+
+    expect(spot).not.toBeNull();
+
+    for (const pin of pins) {
+      expect(Math.abs(spot!.x - pin.x) >= 40 + 20 || Math.abs(spot!.y - pin.y) >= 6 + 20).toBe(
+        true,
+      );
+    }
+  });
+
+  it("packs three named region boxes without overlaps in a short frame", () => {
+    const labels = Array.from({ length: 3 }, () => ({
+      ...named,
+      kind: "region" as const,
+      width: 110,
+      x: 100,
+      y: 20,
+    }));
+
+    const spots = placeMapLabels({ frame: { height: 40, width: 200 }, labels, pins: [] });
+    expect(spots.every(Boolean)).toBe(true);
+
+    for (let i = 0; i < spots.length; i += 1) {
+      for (let j = i + 1; j < spots.length; j += 1) {
+        expect(
+          Math.abs(spots[i]!.x - spots[j]!.x) >=
+            55 * ((spots[i]!.scale ?? 1) + (spots[j]!.scale ?? 1)) ||
+            Math.abs(spots[i]!.y - spots[j]!.y) >=
+              6 * ((spots[i]!.scale ?? 1) + (spots[j]!.scale ?? 1)),
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("keeps a question name before answer-only names when the minimum cannot fit them all", () => {
+    const labels = [
+      { ...named, kind: "region" as const, width: 110, x: 50, y: 10 },
+      { ...named, kind: "region" as const, question: true, width: 110, x: 50, y: 10 },
+    ];
+
+    const spots = placeMapLabels({ frame: { height: 20, width: 100 }, labels, pins: [] });
+    expect(spots[0]).toBeNull();
+    expect(spots[1]).not.toBeNull();
+    expect(spots[1]!.scale).toBeGreaterThanOrEqual(0.8);
+  });
 
   it("keeps a named street even when its only spot is under a pin", () => {
     expect(

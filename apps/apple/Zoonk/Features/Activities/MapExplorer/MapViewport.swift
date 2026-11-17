@@ -9,10 +9,11 @@ enum MapViewport {
     let street: Bool
     let priority: Bool
     var positions: [CGPoint]? = nil
+    var question: Bool = false
     func at(_ center: CGPoint) -> Label {
       Label(
         center: center, size: size, angle: angle, street: street, priority: priority,
-        positions: positions)
+        positions: positions, question: question)
     }
   }
   private static func axes(_ label: Label) -> [CGPoint] {
@@ -25,18 +26,14 @@ enum MapViewport {
       + (label.size.height / 2 + 1.5) * abs(directions[1].x * axis.x + directions[1].y * axis.y)
   }
   private static func clearOfPin(_ label: Label, _ pin: CGPoint) -> Bool {
-    let directions = axes(label)
-    let dx = pin.x - label.center.x
-    let dy = pin.y - label.center.y
-    return hypot(
-      max(abs(dx * directions[0].x + dy * directions[0].y) - label.size.width / 2 - 1.5, 0),
-      max(abs(dx * directions[1].x + dy * directions[1].y) - label.size.height / 2 - 1.5, 0)) >= 23
+    abs(label.center.x - pin.x) >= projection(label, CGPoint(x: 1, y: 0)) + 23
+      || abs(label.center.y - pin.y) >= projection(label, CGPoint(x: 0, y: 1)) + 23
   }
   private static func clearOfLabel(_ label: Label, _ other: Label) -> Bool {
-    (axes(label) + axes(other)).contains { axis in
-      abs((label.center.x - other.center.x) * axis.x + (label.center.y - other.center.y) * axis.y)
-        >= projection(label, axis) + projection(other, axis) + 3
-    }
+    abs(label.center.x - other.center.x) >= projection(label, CGPoint(x: 1, y: 0))
+      + projection(other, CGPoint(x: 1, y: 0)) + 3
+      || abs(label.center.y - other.center.y) >= projection(label, CGPoint(x: 0, y: 1))
+        + projection(other, CGPoint(x: 0, y: 1)) + 3
   }
   private static func inFrame(_ label: Label, _ frame: CGSize) -> Bool {
     let rx = projection(label, CGPoint(x: 1, y: 0))
@@ -44,68 +41,121 @@ enum MapViewport {
     return label.center.x >= rx && label.center.x + rx <= frame.width && label.center.y >= ry
       && label.center.y + ry <= frame.height
   }
-  private static func namedSpot(
-    _ label: Label, candidates: [CGPoint], placed: [Label], pins: [CGPoint], frame: CGSize
-  ) -> Label {
+  struct Placement: Equatable {
+    let center: CGPoint
+    var scale: Double = 1
+    var x: Double { center.x }
+    var y: Double { center.y }
+  }
+  private static func namedCandidates(
+    _ label: Label, placed: [Label], pins: [CGPoint], frame: CGSize
+  ) -> [CGPoint] {
     let rx = projection(label, CGPoint(x: 1, y: 0))
     let ry = projection(label, CGPoint(x: 0, y: 1))
-    let neighbors = placed.flatMap { other in
-      let dx = rx + projection(other, CGPoint(x: 1, y: 0)) + 3
-      let dy = ry + projection(other, CGPoint(x: 0, y: 1)) + 3
-      return [
-        CGPoint(x: other.center.x - dx, y: other.center.y),
-        CGPoint(x: other.center.x + dx, y: other.center.y),
-        CGPoint(x: other.center.x, y: other.center.y - dy),
-        CGPoint(x: other.center.x, y: other.center.y + dy),
-      ]
+    if rx * 2 > frame.width || ry * 2 > frame.height { return [] }
+    let seeds = (label.positions ?? []) + [label.center]
+    let obstacles =
+      placed.map {
+        ($0.center, projection($0, CGPoint(x: 1, y: 0)), projection($0, CGPoint(x: 0, y: 1)))
+      } + pins.map { ($0, 20.0, 20.0) }
+    let rawX: [Double] =
+      [rx, Double(frame.width) - rx] + seeds.map { Double($0.x) }
+      + obstacles.flatMap { p, x, _ in [p.x - rx - x - 3, p.x + rx + x + 3] }
+    let rawY: [Double] =
+      [ry, Double(frame.height) - ry] + seeds.map { Double($0.y) }
+      + obstacles.flatMap { p, _, y in [p.y - ry - y - 3, p.y + ry + y + 3] }
+    let xs = rawX.map { clamp($0, rx, frame.width - rx) }.reduce(into: [Double]()) {
+      if !$0.contains($1) { $0.append($1) }
     }
-    func score(_ spot: Label) -> (Int, Int, Double) {
-      (
-        placed.filter { !clearOfLabel(spot, $0) }.count,
-        pins.filter { !clearOfPin(spot, $0) }.count,
-        hypot(spot.center.x - label.center.x, spot.center.y - label.center.y)
-      )
+    let ys = rawY.map { clamp($0, ry, frame.height - ry) }.reduce(into: [Double]()) {
+      if !$0.contains($1) { $0.append($1) }
     }
-    return (candidates + [label.center] + neighbors).map { point in
-      label.at(
-        CGPoint(
-          x: clamp(point.x, min(rx, frame.width / 2), max(frame.width - rx, frame.width / 2)),
-          y: clamp(point.y, min(ry, frame.height / 2), max(frame.height - ry, frame.height / 2))))
-    }.min { score($0) < score($1) }!
+    return xs.flatMap { x in ys.map { y in CGPoint(x: x, y: y) } }
   }
   static func isNamed(references: String, source: String, text: String) -> Bool {
     let named = references.lowercased()
     return [source, text].contains { !$0.isEmpty && named.contains($0.lowercased()) }
   }
-  static func placeLabels(_ labels: [Label], pins: [CGPoint], frame: CGSize) -> [CGPoint?] {
-    var spots = [CGPoint?](repeating: nil, count: labels.count)
-    var placed: [Label] = []
-    let order = labels.indices.sorted {
-      labels[$0].priority == labels[$1].priority ? $0 < $1 : labels[$0].priority
+  static func placeLabels(_ labels: [Label], pins: [CGPoint], frame: CGSize) -> [Placement?] {
+    let order = labels.indices.sorted { a, b in
+      if labels[a].question != labels[b].question { return labels[a].question }
+      if labels[a].priority != labels[b].priority { return labels[a].priority }
+      return a < b
     }
-    for index in order {
+    let named = order.filter { labels[$0].priority || labels[$0].question }
+    struct Layout {
+      var placed: [Label]
+      var spots: [Placement?]
+    }
+    func arrange(_ scale: Double, _ pack: Bool) -> Layout {
+      var placed: [Label] = []
+      var spots = [Placement?](repeating: nil, count: labels.count)
+      for index in named {
+        let original = labels[index]
+        let label = Label(
+          center: original.center,
+          size: CGSize(width: original.size.width * scale, height: original.size.height * scale),
+          angle: original.angle, street: original.street, priority: original.priority,
+          positions: original.positions, question: original.question)
+        let points = namedCandidates(label, placed: placed, pins: pins, frame: frame).enumerated()
+          .sorted { a, b in
+            if pack {
+              return a.element.y == b.element.y
+                ? a.element.x < b.element.x : a.element.y < b.element.y
+            }
+            let da = hypot(a.element.x - label.center.x, a.element.y - label.center.y)
+            let db = hypot(b.element.x - label.center.x, b.element.y - label.center.y)
+            return da == db ? a.offset < b.offset : da < db
+          }.map(\.element)
+        let originalPoints = (label.street ? (label.positions ?? []) : [label.center]).sorted {
+          hypot($0.x - label.center.x, $0.y - label.center.y)
+            < hypot($1.x - label.center.x, $1.y - label.center.y)
+        }
+        let spot = (pack ? points : originalPoints + points).map { label.at($0) }.first {
+          candidate in
+          inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
+            && placed.allSatisfy { clearOfLabel(candidate, $0) }
+        }
+        if let spot {
+          placed.append(spot)
+          spots[index] = Placement(center: spot.center, scale: scale)
+        }
+      }
+      return Layout(placed: placed, spots: spots)
+    }
+    var layouts: [Layout] = []
+    for scale in [1.0, 0.9, 0.8] {
+      layouts.append(arrange(scale, false))
+      if layouts.last!.placed.count == named.count { break }
+      layouts.append(arrange(scale, true))
+      if layouts.last!.placed.count == named.count { break }
+    }
+    var chosen =
+      layouts.first { $0.placed.count == named.count }
+      ?? layouts.enumerated().sorted { a, b in
+        let qa = named.filter { labels[$0].question && a.element.spots[$0] != nil }.count
+        let qb = named.filter { labels[$0].question && b.element.spots[$0] != nil }.count
+        if qa != qb { return qa > qb }
+        if a.element.placed.count != b.element.placed.count {
+          return a.element.placed.count > b.element.placed.count
+        }
+        return a.offset < b.offset
+      }.first!.element
+    for index in order where !labels[index].priority && !labels[index].question {
       let label = labels[index]
-      let points = label.street ? (label.positions ?? []) : [label.center]
-      let candidates = points.enumerated().sorted {
-        let first = hypot($0.element.x - label.center.x, $0.element.y - label.center.y)
-        let second = hypot($1.element.x - label.center.x, $1.element.y - label.center.y)
-        return first == second ? $0.offset < $1.offset : first < second
-      }.map(\.element)
-      let clear = candidates.map { label.at($0) }.first { candidate in
+      let spot = (label.street ? (label.positions ?? []) : [label.center]).sorted {
+        hypot($0.x - label.center.x, $0.y - label.center.y)
+          < hypot($1.x - label.center.x, $1.y - label.center.y)
+      }.map { label.at($0) }.first { candidate in
         inFrame(candidate, frame) && pins.allSatisfy { clearOfPin(candidate, $0) }
-          && placed.allSatisfy { clearOfLabel(candidate, $0) }
+          && chosen.placed.allSatisfy { clearOfLabel(candidate, $0) }
       }
-      let spot =
-        clear
-        ?? (label.priority
-          ? namedSpot(label, candidates: candidates, placed: placed, pins: pins, frame: frame)
-          : nil)
       if let spot {
-        placed.append(spot)
-        spots[index] = spot.center
+        chosen.placed.append(spot)
+        chosen.spots[index] = Placement(center: spot.center)
       }
     }
-    return spots
+    return chosen.spots
   }
 
   private static let minAspect = 0.62

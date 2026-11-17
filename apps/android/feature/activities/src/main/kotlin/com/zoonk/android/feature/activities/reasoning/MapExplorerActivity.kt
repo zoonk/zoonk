@@ -92,6 +92,20 @@ private typealias Place = PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInne
 private fun MapExplorerActivity(props: ActivityProps) {
     val content = (props.content as MapExplorerContent).value
     val fields = content.fields
+    val question =
+        when (val check = content.check) {
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue -> {
+                check.value.question
+            }
+
+            is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value -> {
+                check.value.question
+            }
+
+            else -> {
+                ""
+            }
+        }
     val references =
         when (val check = content.check) {
             is com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue -> {
@@ -152,7 +166,7 @@ private fun MapExplorerActivity(props: ActivityProps) {
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
         }
-        MapView(map, places, name, selectedId, visited, references, enabled = !props.isLocked, onSelect = ::select)
+        MapView(map, places, name, selectedId, visited, references, question, enabled = !props.isLocked, onSelect = ::select)
         if (map.drawing.legend.isNotEmpty() || note != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 map.drawing.legend.forEach { LegendItem(it) }
@@ -202,6 +216,7 @@ private fun MapView(
     selectedId: String?,
     visited: List<String>,
     references: String,
+    question: String,
     enabled: Boolean,
     onSelect: (String) -> Unit,
 ) {
@@ -238,7 +253,7 @@ private fun MapView(
                     }
                 }
             }
-            MapLabels(map, layout, references, Modifier.matchParentSize())
+            MapLabels(map, layout, references, question, Modifier.matchParentSize())
         }
     }
 }
@@ -248,6 +263,7 @@ private fun MapLabels(
     map: BaseMap,
     layout: MapLayout,
     references: String,
+    question: String,
     modifier: Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -301,6 +317,7 @@ private fun MapLabels(
                         label.kind == LabelKind.Street,
                         isMapLabelNamed(references, label.text, labelTexts[index]),
                         positions,
+                        question = isMapLabelNamed(question, label.text, labelTexts[index]),
                     )
                 },
                 layout.pins.map { it.shown },
@@ -312,8 +329,10 @@ private fun MapLabels(
             val center = Offset((spot.x * density).toFloat(), (spot.y * density).toFloat())
             val topLeft = center - Offset(text.size.width / 2f, text.size.height / 2f)
             rotate(label.angle.toFloat(), pivot = center) {
-                drawText(text, colors.surface, topLeft, drawStyle = halo)
-                drawText(text, if (label.kind == LabelKind.Street) colors.onSurfaceVariant else regionLabel, topLeft, drawStyle = Fill)
+                withTransform({ scale(spot.scale.toFloat(), spot.scale.toFloat(), pivot = center) }) {
+                    drawText(text, colors.surface, topLeft, drawStyle = halo)
+                    drawText(text, if (label.kind == LabelKind.Street) colors.onSurfaceVariant else regionLabel, topLeft, drawStyle = Fill)
+                }
             }
         }
     }

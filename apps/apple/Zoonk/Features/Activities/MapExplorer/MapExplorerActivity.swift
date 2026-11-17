@@ -7,6 +7,13 @@ extension ActivityRenderer {
       if let map = context.baseMap {
         MapExplorerCanvas(
           fields: fields, map: map,
+          question: {
+            switch context.check {
+            case .choice(let question, _, _, _): return question
+            case .numeric(let question, _, _, _, _, _, _): return question
+            default: return ""
+            }
+          }(),
           references: {
             switch context.check {
             case .choice(let question, let options, _, _):
@@ -41,6 +48,7 @@ struct MapExplorerFields: Decodable, Hashable, Sendable {
 private struct MapExplorerCanvas: View {
   let fields: MapExplorerFields
   let map: ActivityBaseMap
+  let question: String
   let references: String
 
   @ActivityState("selectedId") private var selectedId: String? = nil
@@ -167,7 +175,7 @@ private struct MapExplorerCanvas: View {
           .position(shown[order])
       }
       MapLabels(
-        map: map, crop: crop, scale: scale, references: references,
+        map: map, crop: crop, scale: scale, question: question, references: references,
         pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
       )
       .allowsHitTesting(false)
@@ -289,6 +297,7 @@ private struct MapLabels: View {
   let map: ActivityBaseMap
   let crop: CGRect
   let scale: Double
+  let question: String
   let references: String
   let pins: [(spot: CGPoint, shown: CGPoint)]
   var body: some View {
@@ -315,7 +324,12 @@ private struct MapLabels: View {
             text: String(
               localized: String.LocalizationValue(label.text), table: "Activities",
               locale: context.environment.locale)),
-          positions: positions
+          positions: positions,
+          question: MapViewport.isNamed(
+            references: question, source: label.text,
+            text: String(
+              localized: String.LocalizationValue(label.text), table: "Activities",
+              locale: context.environment.locale))
         )
       }
       let spots = MapViewport.placeLabels(labels, pins: pins.map(\.shown), frame: size)
@@ -325,6 +339,7 @@ private struct MapLabels: View {
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))
+        labelContext.scaleBy(x: point.scale, y: point.scale)
 
         for offset in [
           CGSize(width: 1, height: 0), CGSize(width: -1, height: 0), CGSize(width: 0, height: 1),

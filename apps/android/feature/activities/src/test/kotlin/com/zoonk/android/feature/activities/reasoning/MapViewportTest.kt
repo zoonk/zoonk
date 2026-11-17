@@ -14,6 +14,40 @@ class MapViewportTest {
 
     private val named = MapLabelSpot(MapPoint(160.0, 120.0), 80.0, 12.0, 0.0, true, true, listOf(MapPoint(160.0, 120.0)))
 
+    @Test fun namedLabelBoxesClearEveryPinBox() {
+        val pins = listOf(MapPoint(160.0, 120.0), MapPoint(190.0, 155.0))
+        val spot =
+            placeMapLabels(
+                listOf(named.copy(positions = listOf(MapPoint(150.0, 120.0), MapPoint(170.0, 120.0)))),
+                pins,
+                320.0,
+                240.0,
+            )[0]!!
+        pins.forEach { pin -> org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - pin.x) >= 60 || kotlin.math.abs(spot.y - pin.y) >= 26) }
+    }
+
+    @Test fun threeNamedRegionsPackWithoutBoxOverlap() {
+        val labels = List(3) { named.copy(center = MapPoint(100.0, 20.0), width = 110.0, street = false) }
+        val spots = placeMapLabels(labels, emptyList(), 200.0, 40.0)
+        org.junit.Assert.assertTrue(spots.all { it != null })
+        for (i in spots.indices) {
+            for (j in i + 1 until spots.size) {
+                org.junit.Assert.assertTrue(
+                    kotlin.math.abs(spots[i]!!.x - spots[j]!!.x) >= 55 * (spots[i]!!.scale + spots[j]!!.scale) ||
+                        kotlin.math.abs(spots[i]!!.y - spots[j]!!.y) >= 6 * (spots[i]!!.scale + spots[j]!!.scale),
+                )
+            }
+        }
+    }
+
+    @Test fun questionNamesOutrankAnswerOnlyNamesAtMinimumSize() {
+        val choice = named.copy(center = MapPoint(50.0, 10.0), width = 110.0, street = false)
+        val spots = placeMapLabels(listOf(choice, choice.copy(question = true)), emptyList(), 100.0, 20.0)
+        org.junit.Assert.assertNull(spots[0])
+        org.junit.Assert.assertNotNull(spots[1])
+        org.junit.Assert.assertTrue(spots[1]!!.scale >= 0.8)
+    }
+
     @Test fun namedStreetSurvivesItsOnlySpotBeingUnderAPin() {
         org.junit.Assert.assertNotNull(placeMapLabels(listOf(named), listOf(named.center), 320.0, 240.0)[0])
     }
@@ -49,7 +83,12 @@ class MapViewportTest {
                 MapLabelSpot(MapPoint(100.0, 100.0), 40.0, 12.0, 0.0, false, false),
                 MapLabelSpot(MapPoint(12.0, 30.0), 20.0, 12.0, 0.0, false, false),
             )
-        assertEquals(listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)), placeMapLabels(labels, emptyList(), 210.0, 200.0))
+        assertEquals(
+            listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)),
+            placeMapLabels(labels, emptyList(), 210.0, 200.0).map {
+                it?.center
+            },
+        )
     }
 
     @Test

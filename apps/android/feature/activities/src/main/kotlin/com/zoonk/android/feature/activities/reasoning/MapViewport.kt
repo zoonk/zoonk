@@ -110,6 +110,7 @@ internal data class MapLabelSpot(
     val street: Boolean,
     val priority: Boolean,
     val positions: List<MapPoint>? = null,
+    val question: Boolean = false,
 )
 
 private fun labelAxes(label: MapLabelSpot): List<MapPoint> {
@@ -130,23 +131,20 @@ private fun labelProjection(
 private fun clearOfMapPin(
     label: MapLabelSpot,
     pin: MapPoint,
-): Boolean {
-    val axes = labelAxes(label)
-    val dx = pin.x - label.center.x
-    val dy = pin.y - label.center.y
-    val along = max(kotlin.math.abs(dx * axes[0].x + dy * axes[0].y) - label.width / 2 - 1.5, 0.0)
-    val across = max(kotlin.math.abs(dx * axes[1].x + dy * axes[1].y) - label.height / 2 - 1.5, 0.0)
-    return kotlin.math.hypot(along, across) >= 23.0
-}
+): Boolean =
+    kotlin.math.abs(label.center.x - pin.x) >= labelProjection(label, MapPoint(1.0, 0.0)) + 23 ||
+        kotlin.math.abs(label.center.y - pin.y) >= labelProjection(label, MapPoint(0.0, 1.0)) + 23
 
 private fun clearOfMapLabel(
     label: MapLabelSpot,
     other: MapLabelSpot,
 ): Boolean =
-    (labelAxes(label) + labelAxes(other)).any { axis ->
-        val gap = kotlin.math.abs((label.center.x - other.center.x) * axis.x + (label.center.y - other.center.y) * axis.y)
-        gap >= labelProjection(label, axis) + labelProjection(other, axis) + 3
-    }
+    kotlin.math.abs(
+        label.center.x - other.center.x,
+    ) >= labelProjection(label, MapPoint(1.0, 0.0)) + labelProjection(other, MapPoint(1.0, 0.0)) + 3 ||
+        kotlin.math.abs(
+            label.center.y - other.center.y,
+        ) >= labelProjection(label, MapPoint(0.0, 1.0)) + labelProjection(other, MapPoint(0.0, 1.0)) + 3
 
 private fun inMapFrame(
     label: MapLabelSpot,
@@ -158,47 +156,43 @@ private fun inMapFrame(
     return label.center.x >= rx && label.center.x + rx <= width && label.center.y >= ry && label.center.y + ry <= height
 }
 
-private fun namedMapSpot(
+internal data class MapLabelPlacement(
+    val center: MapPoint,
+    val scale: Double = 1.0,
+) {
+    val x get() = center.x
+    val y get() = center.y
+}
+
+private fun namedMapCandidates(
     label: MapLabelSpot,
-    candidates: List<MapLabelSpot>,
     placed: List<MapLabelSpot>,
     pins: List<MapPoint>,
     width: Double,
     height: Double,
-): MapLabelSpot {
+): List<MapPoint> {
     val rx = labelProjection(label, MapPoint(1.0, 0.0))
     val ry = labelProjection(label, MapPoint(0.0, 1.0))
-    val neighbors =
-        placed.flatMap { other ->
-            val dx = rx + labelProjection(other, MapPoint(1.0, 0.0)) + 3
-            val dy = ry + labelProjection(other, MapPoint(0.0, 1.0)) + 3
-            listOf(
-                MapPoint(other.center.x - dx, other.center.y),
-                MapPoint(other.center.x + dx, other.center.y),
-                MapPoint(
-                    other.center.x,
-                    other.center.y - dy,
-                ),
-                MapPoint(other.center.x, other.center.y + dy),
-            )
-        }
-    return (candidates.map { it.center } + label.center + neighbors)
-        .map { point ->
-            label.copy(
-                center =
-                    MapPoint(
-                        point.x.coerceIn(min(rx, width / 2), max(width - rx, width / 2)),
-                        point.y.coerceIn(
-                            min(ry, height / 2),
-                            max(height - ry, height / 2),
-                        ),
-                    ),
-            )
-        }.minWith(
-            compareBy<MapLabelSpot> { candidate -> placed.count { !clearOfMapLabel(candidate, it) } }
-                .thenBy { candidate -> pins.count { !clearOfMapPin(candidate, it) } }
-                .thenBy { hypot(it.center.x - label.center.x, it.center.y - label.center.y) },
-        )
+    if (rx * 2 > width || ry * 2 > height) return emptyList()
+    val seeds = label.positions.orEmpty() + label.center
+    val obstacles =
+        placed.map { Triple(it.center, labelProjection(it, MapPoint(1.0, 0.0)), labelProjection(it, MapPoint(0.0, 1.0))) } +
+            pins.map { Triple(it, 20.0, 20.0) }
+    val xs =
+        (
+            listOf(rx, width - rx) + seeds.map { it.x } +
+                obstacles.flatMap { (p, x, _) ->
+                    listOf(p.x - rx - x - 3, p.x + rx + x + 3)
+                }
+        ).map { it.coerceIn(rx, width - rx) }.distinct()
+    val ys =
+        (
+            listOf(ry, height - ry) + seeds.map { it.y } +
+                obstacles.flatMap { (p, _, y) ->
+                    listOf(p.y - ry - y - 3, p.y + ry + y + 3)
+                }
+        ).map { it.coerceIn(ry, height - ry) }.distinct()
+    return xs.flatMap { x -> ys.map { y -> MapPoint(x, y) } }
 }
 
 internal fun isMapLabelNamed(
@@ -215,23 +209,81 @@ internal fun placeMapLabels(
     pins: List<MapPoint>,
     width: Double,
     height: Double,
-): List<MapPoint?> {
-    val spots = MutableList<MapPoint?>(labels.size) { null }
-    val placed = mutableListOf<MapLabelSpot>()
-    labels.indices.sortedByDescending { labels[it].priority }.forEach { index ->
-        val label = labels[index]
-        val points = if (label.street) label.positions.orEmpty() else listOf(label.center)
-        val candidates = points.sortedBy { kotlin.math.hypot(it.x - label.center.x, it.y - label.center.y) }.map { label.copy(center = it) }
-        val spot =
-            candidates.firstOrNull { candidate ->
-                inMapFrame(candidate, width, height) && pins.all { clearOfMapPin(candidate, it) } &&
-                    placed.all { clearOfMapLabel(candidate, it) }
-            } ?: if (label.priority) namedMapSpot(label, candidates, placed, pins, width, height) else null
+): List<MapLabelPlacement?> {
+    val order = labels.indices.sortedWith(compareByDescending<Int> { labels[it].question }.thenByDescending { labels[it].priority })
+    val named = order.filter { labels[it].priority || labels[it].question }
 
+    data class Layout(
+        val placed: MutableList<MapLabelSpot>,
+        val spots: MutableList<MapLabelPlacement?>,
+    )
+
+    fun arrange(
+        scale: Double,
+        pack: Boolean,
+    ): Layout {
+        val placed = mutableListOf<MapLabelSpot>()
+        val spots = MutableList<MapLabelPlacement?>(labels.size) { null }
+        for (index in named) {
+            val label = labels[index].let { it.copy(width = it.width * scale, height = it.height * scale) }
+            val comparator =
+                compareBy<MapPoint> { point ->
+                    if (pack) point.y else hypot(point.x - label.center.x, point.y - label.center.y)
+                }.thenBy { point ->
+                    if (pack) point.x else 0.0
+                }
+            val points = namedMapCandidates(label, placed, pins, width, height).sortedWith(comparator)
+            val original =
+                (if (label.street) label.positions.orEmpty() else listOf(label.center)).sortedBy {
+                    hypot(
+                        it.x - label.center.x,
+                        it.y - label.center.y,
+                    )
+                }
+            val spot =
+                (if (pack) points else original + points).map { label.copy(center = it) }.firstOrNull { candidate ->
+                    inMapFrame(candidate, width, height) &&
+                        pins.all { clearOfMapPin(candidate, it) } &&
+                        placed.all { clearOfMapLabel(candidate, it) }
+                }
+            if (spot != null) {
+                placed.add(spot)
+                spots[index] = MapLabelPlacement(spot.center, scale)
+            }
+        }
+        return Layout(placed, spots)
+    }
+    val layouts = mutableListOf<Layout>()
+    for (scale in listOf(1.0, 0.9, 0.8)) {
+        layouts.add(arrange(scale, false))
+        if (layouts.last().placed.size == named.size) break
+        layouts.add(arrange(scale, true))
+        if (layouts.last().placed.size == named.size) break
+    }
+    val chosen =
+        layouts.firstOrNull { it.placed.size == named.size }
+            ?: layouts
+                .sortedWith(
+                    compareByDescending<Layout> { layout ->
+                        named.count { labels[it].question && layout.spots[it] != null }
+                    }.thenByDescending { it.placed.size },
+                ).first()
+    for (index in order.filter { !labels[it].priority && !labels[it].question }) {
+        val label = labels[index]
+        val spot =
+            (if (label.street) label.positions.orEmpty() else listOf(label.center))
+                .sortedBy {
+                    hypot(it.x - label.center.x, it.y - label.center.y)
+                }.map { label.copy(center = it) }
+                .firstOrNull { candidate ->
+                    inMapFrame(candidate, width, height) &&
+                        pins.all { clearOfMapPin(candidate, it) } &&
+                        chosen.placed.all { clearOfMapLabel(candidate, it) }
+                }
         if (spot != null) {
-            placed.add(spot)
-            spots[index] = spot.center
+            chosen.placed.add(spot)
+            chosen.spots[index] = MapLabelPlacement(spot.center)
         }
     }
-    return spots
+    return chosen.spots
 }
