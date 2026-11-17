@@ -45,6 +45,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.weekdayNames
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyWeekDay
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
@@ -61,6 +62,7 @@ internal fun TodayWeek(
     exam: Boolean = false,
 ) {
     val week = day.week
+    if (!showsWeek(week.days)) return
     // The week marks the current local day even while a lesson carries the previous day's session.
     val weekDate = week.days.firstOrNull { it.isToday }?.date ?: day.localDate
     val inWeek = challenge?.date != null && week.days.any { it.date == challenge.date }
@@ -350,3 +352,5 @@ private fun ChallengeRow(
 }
 
 private val RING = WEEK_RING
+
+internal fun showsWeek(days: List<StudyWeekDay>): Boolean = days.isNotEmpty()

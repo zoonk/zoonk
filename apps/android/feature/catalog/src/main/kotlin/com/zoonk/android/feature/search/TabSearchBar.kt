@@ -119,7 +119,7 @@ fun TabSearchBar(
 
     SearchPanel(app, navigator, state, docked) { inputField ->
         // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
-        val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
+        val width = Modifier.fillMaxWidth()
         BeforeFold { beforeFold ->
             SearchBar(
                 state = state,
