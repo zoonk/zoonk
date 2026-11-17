@@ -358,7 +358,7 @@ private fun EssayWriteColumn(
             QuestionTitle(essay.question)
         }
     }
-    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, viewModel::seeGrade) } }
+    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, gradeBeside = fill, viewModel::seeGrade) } }
     BoxWithConstraints {
         if (fill && maxHeight >= FILL_HEIGHT) {
             Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -402,6 +402,7 @@ private fun QuotedText(
 @Composable
 private fun RewriteGuide(
     grade: EssayGrade,
+    gradeBeside: Boolean,
     onSeeGrade: () -> Unit,
 ) {
     val nextStep = grade.nextStep
@@ -426,14 +427,23 @@ private fun RewriteGuide(
                 buildAnnotatedString {
                     lead?.let {
                         withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)) { append(it) }
-                        append(" ")
+                        append("\n")
                     }
                     append(detail)
                 },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            OutlinedButton(onClick = onSeeGrade, size = ButtonSize.Small) { Text(stringResource(R.string.essay_see_grade)) }
+            if (essayGradeLinkVisible(
+                    hasGrade = true,
+                    tooShort = tooShort,
+                    beside = gradeBeside,
+                )
+            ) {
+                OutlinedButton(onClick = onSeeGrade, size = ButtonSize.Small) {
+                    Text(stringResource(R.string.essay_see_grade))
+                }
+            }
         }
     }
 }
@@ -531,8 +541,12 @@ private fun EssayAside(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(pagePadding())
-                .semantics { paneTitle = label },
+                .padding(
+                    horizontal =
+                        com.zoonk.android.ui.scaffold
+                            .pageMargin(),
+                    vertical = 24.dp,
+                ).semantics { paneTitle = label },
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             texts?.let {
@@ -851,3 +865,9 @@ private val BOX_MIN_HEIGHT = 144.dp
 private val FILL_HEIGHT = 560.dp
 private const val NOT_YET = -1
 private val SLOW_GRADING = 20.seconds
+
+internal fun essayGradeLinkVisible(
+    hasGrade: Boolean,
+    tooShort: Boolean,
+    beside: Boolean,
+): Boolean = hasGrade && !tooShort && !beside

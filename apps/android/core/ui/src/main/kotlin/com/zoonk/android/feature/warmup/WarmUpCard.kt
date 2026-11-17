@@ -315,7 +315,7 @@ private fun WaitStrip(
     Column(
         modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .then(if (ready) Modifier else Modifier.clickable(onClick = onClick))
             .semantics(mergeDescendants = true) {
                 stateDescription = percent
             }.padding(vertical = 8.dp),
@@ -336,7 +336,10 @@ private fun WaitStrip(
                 }
             }
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-            Icon(painterResource(R.drawable.ic_chevron_right), null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (!ready) {
+                com.zoonk.android.ui.components
+                    .ListRowChevron()
+            }
         }
         lessonLine?.let {
             Row(
@@ -469,16 +472,16 @@ private fun Guess(
     }
 
     val right = card.options.any { it.id == picked && it.correct }
-    Column(
-        Modifier.bringIntoViewRequester(reveal).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    com.zoonk.android.ui.components.FeedbackPanel(
+        label = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),
+        modifier = Modifier.bringIntoViewRequester(reveal).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
     ) {
         FeedbackVerdict(
             text = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),
             tone = if (right) FeedbackTone.Right else FeedbackTone.Neutral,
             icon = if (right) null else R.drawable.ic_auto_awesome,
         )
-        Text(card.reveal, style = MaterialTheme.typography.bodyLarge)
+        Text(card.reveal, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

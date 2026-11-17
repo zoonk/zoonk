@@ -26,6 +26,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
@@ -110,7 +111,9 @@ internal fun AlphabetRow(
             onClick = { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
         )
         if (alphabet.pending) {
-            OutlinedButton(busy = model.skipping, onClick = { model.skip(goalId) }, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
+            OutlinedButton(size = ButtonSize.Small, busy = model.skipping, onClick = {
+                model.skip(goalId)
+            }, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
                 Text(stringResource(R.string.language_alphabet_skip))
             }
             if (model.failed) {

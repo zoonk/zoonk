@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,12 @@ fun PageTitleRow(
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
     HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, content = trailing)
+        Row(
+            Modifier.alignByBaseline(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = trailing,
+        )
     }
 }
 
@@ -47,7 +53,7 @@ internal fun HeadingRow(
     modifier: Modifier,
     verticalAlignment: Alignment.Vertical,
     titleModifier: Modifier = Modifier.semantics { heading() },
-    trailing: @Composable () -> Unit,
+    trailing: @Composable FlowRowScope.() -> Unit,
 ) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
@@ -55,7 +61,7 @@ internal fun HeadingRow(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         itemVerticalAlignment = verticalAlignment,
     ) {
-        Text(title, Modifier.padding(end = 12.dp).then(titleModifier), style = style)
+        Text(title, Modifier.alignByBaseline().padding(end = 12.dp).then(titleModifier), style = style)
         trailing()
     }
 }

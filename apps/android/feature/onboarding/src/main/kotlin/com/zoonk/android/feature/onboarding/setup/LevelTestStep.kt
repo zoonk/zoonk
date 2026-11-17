@@ -104,6 +104,7 @@ fun ColumnScope.LanguageLevelTestStep(
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
+    onProgressLabel: (String?) -> Unit = {},
 ) {
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle(), onDone) }
     VisitOf(vm.visit)
@@ -122,8 +123,22 @@ fun ColumnScope.LanguageLevelTestStep(
             is LevelTestPhase.Speaking -> phase.progress
             else -> null
         }
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val progressLabel =
+        when (phase) {
+            is LevelTestPhase.Question -> stringResource(R.string.onboarding_test_question_progress, phase.number, phase.total)
+            is LevelTestPhase.Speaking -> stringResource(R.string.onboarding_test_question_progress, phase.number, phase.total)
+            else -> null
+        }
+    LaunchedEffect(progress, progressLabel) {
+        onProgress(progress)
+        onProgressLabel(progressLabel)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onProgress(null)
+            onProgressLabel(null)
+        }
+    }
     val finish = { vm.finish() }
 
     when (shown) {
@@ -525,12 +540,13 @@ private fun ColumnScope.LevelTestDone(
 @Composable
 private fun LevelRows(levels: List<SkillLevel>) {
     val names = levels.map { skillName(it.skill) }
+    val labels = levels.map { levelLabel(it.label) }
     val nameStyle = MaterialTheme.typography.labelLarge
     val labelStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
     val nameWidth = with(density) { names.maxOf { measurer.measure(it, nameStyle).size.width }.toDp() }
-    val labelWidth = with(density) { levels.maxOf { measurer.measure(it.label, labelStyle).size.width }.toDp() }
+    val labelWidth = with(density) { labels.maxOf { measurer.measure(it, labelStyle).size.width }.toDp() }
 
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val nameColumn = nameWidth.coerceAtMost(maxWidth * NAME_SHARE_LIMIT)
@@ -544,7 +560,7 @@ private fun LevelRows(levels: List<SkillLevel>) {
                 ) {
                     Text(names[index], modifier = Modifier.width(nameColumn), style = nameStyle)
                     LevelBar(level.score, Modifier.weight(1f))
-                    Text(level.label, modifier = Modifier.width(labelWidth), style = labelStyle, textAlign = TextAlign.End)
+                    Text(labels[index], modifier = Modifier.width(labelWidth), style = labelStyle, textAlign = TextAlign.End)
                 }
             }
         }
@@ -567,3 +583,21 @@ private const val LISTENING_RATE = 0.9f
 /** The ready message's height, so Play replaces the on-its-way panel without moving the question. */
 private val MESSAGE_MIN_HEIGHT = 80.dp
 private const val NAME_SHARE_LIMIT = 0.4f
+
+@Composable
+private fun levelLabel(code: String): String =
+    when (code) {
+        "A1" -> stringResource(R.string.onboarding_test_level_a1)
+        "A1+" -> stringResource(R.string.onboarding_test_level_a1_plus)
+        "A2" -> stringResource(R.string.onboarding_test_level_a2)
+        "A2+" -> stringResource(R.string.onboarding_test_level_a2_plus)
+        "B1" -> stringResource(R.string.onboarding_test_level_b1)
+        "B1+" -> stringResource(R.string.onboarding_test_level_b1_plus)
+        "B2" -> stringResource(R.string.onboarding_test_level_b2)
+        "B2+" -> stringResource(R.string.onboarding_test_level_b2_plus)
+        "C1" -> stringResource(R.string.onboarding_test_level_c1)
+        "C1+" -> stringResource(R.string.onboarding_test_level_c1_plus)
+        "C2" -> stringResource(R.string.onboarding_test_level_c2)
+        "C2+" -> stringResource(R.string.onboarding_test_level_c2_plus)
+        else -> code
+    }

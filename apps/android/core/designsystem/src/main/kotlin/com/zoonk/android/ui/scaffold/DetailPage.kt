@@ -44,6 +44,7 @@ fun DetailPage(
 
     PageWithSupportingPane(
         modifier = modifier,
+        panesTouch = true,
         supportingPane = {
             Row {
                 VerticalDivider()

@@ -38,7 +38,6 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LocalMainActionInBar
 
 internal val LocalSetupWarmUp = compositionLocalOf<WarmUpStore?> { null }
 internal val LocalSetupWait = compositionLocalOf { SetupWaitContext() }
@@ -115,64 +114,62 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
         }
     TrackVisibleWait(waitSurface, "curriculum", context.goalId)
     val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
-    CompositionLocalProvider(LocalMainActionInBar provides firstReady) {
-        SetupContent(aside = aside, reversed = canShowAside) {
-            val beside = LocalWaitBeside.current && canShowAside
-            WaitContent(
-                quiz,
-                hold,
-                surface,
-                kind,
-                run,
-                title,
-                goalId = context.goalId,
-                lessonLine = line,
-                lessonReady = first?.ready == true,
-                progressBeside = beside,
-                progressShare = share,
-                onRetry = onRetry,
-                progress = shownProgress,
-            )
-            val course = context.course?.takeIf { !context.planReady && first?.ready != true }
-            // A run that failed waits for nothing: its Try again is the way on, never the quiz. A lost connection still waits.
-            val failed = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
-            val actionsVisible =
-                hold.holding || firstReady || course != null || skip != null ||
-                    (!failed && quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
-            PageActions(hold, visible = actionsVisible) {
-                when {
-                    hold.holding -> {
-                        if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
-                            Text(
-                                stringResource(R.string.warm_up_plan_ready_one_question),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
-                    }
-
-                    firstReady -> {
+    SetupContent(aside = aside, reversed = canShowAside) {
+        val beside = LocalWaitBeside.current && canShowAside
+        WaitContent(
+            quiz,
+            hold,
+            surface,
+            kind,
+            run,
+            title,
+            goalId = context.goalId,
+            lessonLine = line,
+            lessonReady = first?.ready == true,
+            progressBeside = beside,
+            progressShare = share,
+            onRetry = onRetry,
+            progress = shownProgress,
+        )
+        val course = context.course?.takeIf { !context.planReady && first?.ready != true }
+        // A run that failed waits for nothing: its Try again is the way on, never the quiz. A lost connection still waits.
+        val failed = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
+        val actionsVisible =
+            hold.holding || firstReady || course != null || skip != null ||
+                (!failed && quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+        PageActions(hold, visible = actionsVisible) {
+            when {
+                hold.holding -> {
+                    if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
                         Text(
-                            stringResource(R.string.warm_up_plan_waiting),
+                            stringResource(R.string.warm_up_plan_ready_one_question),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        Button(
-                            onClick = context.onStartLesson,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(stringResource(R.string.warm_up_start_first_lesson))
-                        }
                     }
+                    Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
+                }
 
-                    else -> {
-                        if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
-                        if (!failed) WaitQuizAction(quiz, hold, beside)
+                firstReady -> {
+                    Text(
+                        stringResource(R.string.warm_up_plan_waiting),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        onClick = context.onStartLesson,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.warm_up_start_first_lesson))
                     }
                 }
-                if (!hold.holding) skip?.invoke()
+
+                else -> {
+                    if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
+                    if (!failed) WaitQuizAction(quiz, hold, beside)
+                }
             }
+            if (!hold.holding) skip?.invoke()
         }
     }
 }

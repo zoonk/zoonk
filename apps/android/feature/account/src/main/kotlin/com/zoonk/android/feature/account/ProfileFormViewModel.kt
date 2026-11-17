@@ -60,6 +60,16 @@ class ProfileFormViewModel(
     val isNameTooLong: Boolean
         get() = isNameChangeTooLong(name, savedName)
 
+    private var submitted by mutableStateOf(false)
+    val showNameRequired: Boolean get() = submitted && name.isBlank()
+    val showUsernameRequired: Boolean get() = submitted && username.isBlank()
+    val canContinue: Boolean get() = !isSaving
+
+    fun continueSetup() {
+        submitted = true
+        save()
+    }
+
     val canSave: Boolean
         get() =
             !isSaving && name.isNotBlank() && !isNameTooLong && isUsernameSyntaxValid(username) &&

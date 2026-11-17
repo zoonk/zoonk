@@ -77,6 +77,8 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
@@ -591,7 +593,7 @@ private fun Entries(
                         ?.set
                         ?.id == setId,
                 actions = actions,
-                modifier = Modifier.padding(top = if (index == 0) 0.dp else 16.dp, bottom = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
             )
         }
     }
@@ -665,18 +667,11 @@ private fun CauseLabel(
 ) {
     val label = causeLabel(cause)
 
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            painterResource(cause.icon),
-            contentDescription = null,
-            Modifier.size(
-                with(LocalDensity.current) {
-                    MaterialTheme.typography.labelMedium.lineHeight
-                        .toDp()
-                },
-            ),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    MarkedLine(
+        firstLine = MaterialTheme.typography.labelMedium,
+        mark = { MarkIcon(cause.icon, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+        modifier = modifier,
+    ) {
         Text(
             label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

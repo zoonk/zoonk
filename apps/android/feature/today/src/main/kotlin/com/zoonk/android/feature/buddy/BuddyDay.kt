@@ -343,12 +343,7 @@ private fun BuddyEnergy(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
             Text(formatPercent(current / PERCENT, currentLocale()), style = MaterialTheme.typography.labelLarge.withTabularFigures())
-            Icon(
-                painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            ListRowChevron()
         }
         Meter((current / PERCENT).toFloat(), color = MaterialTheme.zoonk.energy)
         line?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }

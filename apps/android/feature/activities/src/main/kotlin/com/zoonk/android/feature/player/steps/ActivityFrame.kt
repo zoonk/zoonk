@@ -32,6 +32,7 @@ import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.beforeAfterRenderer
+import com.zoonk.android.feature.activities.canvasOwnsAnswer
 import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
@@ -169,7 +170,24 @@ internal fun ActivityView(
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
     val onAnswerChange = { next: ActivityAnswer? -> if (!locked) actions.select(next?.let(LessonAnswer::Activity)) }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
-    val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, locked, onAnswerChange) }
+    val ownsAnswer = canvasOwnsAnswer(frame.template)
+    val numericQuestion =
+        (frame.check as? NumericCheckValue)?.value?.question?.takeIf {
+            frame.template == "guessReveal" ||
+                frame.template == "beforeAfter"
+        }
+    val check = @Composable {
+        if (!ownsAnswer) {
+            ActivityCheckArea(
+                frame.check,
+                activityAnswer,
+                phase,
+                locked,
+                onAnswerChange,
+                numericQuestion != null,
+            )
+        }
+    }
     val props =
         ActivityProps(
             content.content,
@@ -187,7 +205,7 @@ internal fun ActivityView(
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
     // with the learner's turn.
-    val canvasOnScreen = part != StepPart.Whole && frame.check !is InteractionCheckValue
+    val canvasOnScreen = part != StepPart.Whole && frame.check !is InteractionCheckValue && !ownsAnswer
     val canvas = @Composable {
         renderer?.let {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -201,7 +219,7 @@ internal fun ActivityView(
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 renderer?.badge?.invoke(content.content)?.let { Eyebrow(stringResource(it.label), icon = it.icon) }
-                QuestionText(frame.prompt)
+                QuestionText(numericQuestion ?: frame.prompt)
             }
             StepPicture(step, PictureFrame.Question)
             if (canvasOnScreen) canvas()
@@ -225,6 +243,7 @@ private fun ActivityCheckArea(
     phase: ActivityPhase,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
+    questionAlreadyShown: Boolean = false,
 ) {
     if (check is ChoiceCheckValue) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -240,7 +259,7 @@ private fun ActivityCheckArea(
             )
         }
     } else if (check is NumericCheckValue) {
-        NumericCheckField(check.value, answer, locked, onAnswerChange)
+        NumericCheckField(check.value, answer, locked, onAnswerChange, showQuestion = !questionAlreadyShown)
     }
 }
 
@@ -256,6 +275,7 @@ private fun NumericCheckField(
     answer: ActivityAnswer?,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
+    showQuestion: Boolean = true,
 ) {
     val locale = currentLocale()
     var typed by rememberSaveable { mutableStateOf<String?>(null) }
@@ -269,7 +289,7 @@ private fun NumericCheckField(
     val unitFirst = currency != null && formatMoney(1.0, currency, locale).indexOfFirst(Char::isDigit) > 0
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        CheckQuestion(check.question)
+        if (showQuestion) CheckQuestion(check.question)
         OutlinedTextField(
             value = shown,
             onValueChange = { text ->
@@ -283,8 +303,15 @@ private fun NumericCheckField(
             modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
             readOnly = locked,
             label = stringResource(R.string.player_your_answer),
-            leadingIcon = unit?.takeIf { unitFirst }?.let { { UnitText(it) } },
-            trailingIcon = unit?.takeUnless { unitFirst }?.let { { UnitText(it, Modifier.padding(end = 12.dp)) } },
+            visualTransformation =
+                unit?.let {
+                    com.zoonk.android.ui.components.NumberUnitTransformation(
+                        it,
+                        unitFirst,
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                    ?: androidx.compose.ui.text.input.VisualTransformation.None,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
@@ -292,15 +319,6 @@ private fun NumericCheckField(
     }
 }
 
-@Composable
-private fun UnitText(
-    unit: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(unit, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-}
-
-/** The difference a numeric answer may have from the expected one and still be right. */
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
@@ -308,7 +326,6 @@ internal val NumericCheck.allowed: Double
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
 
-/** Main's `ActivityExplore`: an explanation's activity, its canvas to explore with nothing to answer. */
 @Composable
 internal fun ExploredActivityCanvas(
     explore: ExploredActivity,

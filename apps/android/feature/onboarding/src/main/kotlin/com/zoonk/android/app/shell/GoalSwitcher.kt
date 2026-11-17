@@ -45,6 +45,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.TextButton
@@ -128,7 +129,11 @@ fun GoalSwitcher(
 
     Box {
         // The button keeps its role and click action; only the words it reads are replaced.
-        TextButton(onClick = { expanded = true }, modifier = Modifier.semantics { contentDescription = description }) {
+        TextButton(
+            onClick = { expanded = true },
+            edge = ButtonEdge.Start,
+            modifier = Modifier.semantics { contentDescription = description },
+        ) {
             Row(Modifier.clearAndSetSemantics {}, verticalAlignment = Alignment.CenterVertically) {
                 SwitcherTitle(selected)
             }

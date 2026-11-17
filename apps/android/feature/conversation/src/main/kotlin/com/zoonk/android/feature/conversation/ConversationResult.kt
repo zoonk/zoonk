@@ -337,16 +337,11 @@ private fun ImproveStep(
                     ),
                 added = stringResource(R.string.conversation_better),
                 removed = stringResource(R.string.conversation_you_said_label),
+                trailing = { line ->
+                    if (line.kind == DiffKind.Added) SpeakButton(speech, language, improve.better, personal = true)
+                },
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-                Text(
-                    improve.why,
-                    Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                SpeakButton(speech, language, improve.better, personal = true)
-            }
+            Text(improve.why, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }
     if (missed.isNotEmpty()) {

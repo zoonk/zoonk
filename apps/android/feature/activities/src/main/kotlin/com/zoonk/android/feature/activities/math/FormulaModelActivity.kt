@@ -114,13 +114,10 @@ private fun FormulaModelBoard(
     }
     var events by rememberSaveable { mutableStateOf(eventsOff(fields).mapValues { (name, off) -> answered[name] ?: off }) }
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
-    // Once checked, the asked output reads to the check's precision everywhere it shows, as the answer does.
-    val checked = numeric?.takeIf { props.isChecked }
-    val checkedOutput = checked?.let { askedOutputId(fields, it.output) }
-    val checkedDigits = checked?.let { exactFractionDigitsFor(it.answer, it.allowed, props.answer.numericValue ?: it.answer) }
+    val askedOutput = numeric?.let { askedOutputId(fields, it.output) }
     val formatOutput = { output: ModelOutput, value: Double? ->
-        val digits = checkedDigits.takeIf { output.id == checkedOutput }
-        value?.let { formatAmount(it, locale, output.unit, maximumFractionDigits = digits) }.orEmpty()
+        val check = numeric?.takeIf { output.id == askedOutput }
+        value?.let { formatModelOutput(it, locale, output.unit, check?.answer, check?.allowed) }.orEmpty()
     }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }
     val readouts = readouts(charted, view, formatOutput)
@@ -353,6 +350,7 @@ private fun FormulaChart(
     val density = LocalDensity.current
     val minDelta = with(density) { MIN_DELTA.toPx() }
 
+    Text(charted.label, style = MaterialTheme.typography.labelSmall, color = muted)
     ActivityPlot(
         xDomain = axis.min..axis.max,
         yDomain = view.yDomain,
@@ -381,6 +379,7 @@ private fun FormulaChart(
             dot(view.x, it, accent, ring, radius = CURRENT_INNER)
         }
     }
+    Text(axis.label, style = MaterialTheme.typography.labelSmall, color = muted)
 }
 
 @Composable
@@ -456,3 +455,24 @@ private val MARK_INNER = 3.25.dp
 private val EXPECTED_INNER = 5.75.dp
 private val EXPECTED_LIFT = 20.dp
 private val CURRENT_INNER = 4.75.dp
+
+internal fun formatModelOutput(
+    value: Double,
+    locale: java.util.Locale,
+    unit: String?,
+    answer: Double?,
+    allowed: Double?,
+): String =
+    formatAmount(
+        value,
+        locale,
+        unit,
+        maximumFractionDigits =
+            if (answer != null &&
+                allowed != null
+            ) {
+                exactFractionDigitsFor(answer, allowed)
+            } else {
+                1
+            },
+    )

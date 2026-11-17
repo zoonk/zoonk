@@ -277,13 +277,13 @@ private fun LineCrossingChart(
         val dots = listOfNotNull(pixel(after), pixel(before).takeIf { movedLines.isNotEmpty() })
         val boxes =
             placeLineLabels(
-                area = Rect(left, top, constraints.maxWidth.toFloat(), bottom),
+                area = Rect(left, top, right, bottom),
                 labels =
                     names.mapIndexed { index, name ->
                         LineLabel(
                             name.isUpper,
                             segment(name.line),
-                            Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
+                            Size(texts[index].size.width.toFloat(), texts[index].size.height.toFloat()),
                             name.isOptional,
                         )
                     },

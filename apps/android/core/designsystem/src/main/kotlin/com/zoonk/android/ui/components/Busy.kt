@@ -135,7 +135,7 @@ internal fun ButtonContent(
         Row(Modifier.weight(1f, fill = false), verticalAlignment = Alignment.CenterVertically, content = content)
         if (forward) {
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            IconSlot(busy, iconSize) { ButtonIcon(R.drawable.ic_chevron_right) }
+            IconSlot(busy, iconSize) { ListRowChevron() }
         }
     }
 }

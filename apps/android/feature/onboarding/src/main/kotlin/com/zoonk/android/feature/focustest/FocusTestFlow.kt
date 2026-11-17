@@ -61,6 +61,7 @@ internal fun ColumnScope.FocusTestFlow(
     plan: OnPlan? = null,
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
+    onProgressLabel: (String?) -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle(), handBack) }
@@ -76,8 +77,17 @@ internal fun ColumnScope.FocusTestFlow(
     val shown = if (hold.over) phase else FocusTestPhase.Waiting(answered = (phase as? FocusTestPhase.Waiting)?.answered ?: false)
     val question = shown as? FocusTestPhase.Question
     val progress = question?.sitting?.let { if (it.questions > 0) it.answered.toFloat() / it.questions else 0f }
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val progressLabel = question?.sitting?.let { stringResource(R.string.onboarding_test_question_progress, it.answered + 1, it.questions) }
+    LaunchedEffect(progress, progressLabel) {
+        onProgress(progress)
+        onProgressLabel(progressLabel)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onProgress(null)
+            onProgressLabel(null)
+        }
+    }
     val onboarding = plan == null
     // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
     // A start the app was closed during runs again when the test comes back: the API answers it with the open sitting.

@@ -61,3 +61,5 @@ class ActivityRenderer(
     val showsData: (ActivityStepContent) -> Boolean = { false },
     val keyPick: ((ActivityStepContent, Int) -> ActivityAnswer?)? = null,
 )
+
+internal fun canvasOwnsAnswer(template: String): Boolean = template == "guessReveal"

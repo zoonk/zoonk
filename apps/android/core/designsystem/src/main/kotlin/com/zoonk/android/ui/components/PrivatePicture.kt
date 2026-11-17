@@ -53,10 +53,16 @@ enum class PictureShape(
 
 @Composable
 private fun PictureFrame.maxHeight(): Dp =
-    with(LocalDensity.current) {
-        LocalWindowInfo.current.containerSize.height
-            .toDp()
-    } * heightShare
+    if (com.zoonk.android.ui.scaffold
+            .spreadShows()
+    ) {
+        Dp.Infinity
+    } else {
+        with(LocalDensity.current) {
+            LocalWindowInfo.current.containerSize.height
+                .toDp()
+        } * heightShare
+    }
 
 /**
  * Sized from its stored [width] and [height], or its [shape] when they're unknown, so nothing jumps;

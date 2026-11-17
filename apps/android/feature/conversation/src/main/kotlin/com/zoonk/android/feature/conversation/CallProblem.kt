@@ -57,7 +57,7 @@ internal fun CallProblem(
             val lifted = limitLifted(limit)
             val (label, onClick) =
                 when {
-                    lifted -> R.string.conversation_try_again to actions.onRetry
+                    lifted -> R.string.conversation_start to actions.onRetry
                     limit.needsAccount -> R.string.limit_create_account to actions.onCreateAccount
                     limit.hasWayOn -> R.string.subscription_subscribe to actions.onSubscribe
                     else -> R.string.navigation_back to actions.onClose

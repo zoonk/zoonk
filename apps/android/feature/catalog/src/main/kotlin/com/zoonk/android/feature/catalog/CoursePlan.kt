@@ -64,7 +64,7 @@ internal fun CoursePlanSection(
     if (beside && firstDay != null) {
         Column(modifier, verticalArrangement = Arrangement.spacedBy(28.dp)) {
             title()
-            Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
                 Column(Modifier.weight(1f)) { headline() }
                 Column(Modifier.weight(1f)) { firstDay() }
             }

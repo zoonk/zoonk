@@ -3,6 +3,7 @@ package com.zoonk.android.feature.audio
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -18,10 +19,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -103,7 +106,12 @@ fun ListenButton(
     ) {
         SpeechStatusIcon(state) { Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(buttonIconSize())) }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(label)
+        val stop = stringResource(R.string.audio_record_stop)
+        Box(contentAlignment = Alignment.Center) {
+            Text(label, Modifier.alpha(0f).clearAndSetSemantics {})
+            Text(stop, Modifier.alpha(0f).clearAndSetSemantics {})
+            Text(if (state == SpeechState.Playing) stop else label)
+        }
     }
 }
 
@@ -177,7 +185,7 @@ fun SpeechFailedNote(
         }
         // Beside the note's words, small, as the limit's Subscribe it takes the place of.
         if (refusal == null || refusal is Limit.SlowDown) {
-            OutlinedButton(onClick = onRetry, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) {
+            OutlinedButton(onClick = onRetry, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) {
                 Text(stringResource(R.string.audio_try_again))
             }
         }

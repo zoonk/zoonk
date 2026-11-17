@@ -102,4 +102,6 @@
     <string name="citation_slide">%1$s, slide %2$s</string>
     <string name="player_not_saved">Not saved yet</string>
     <string name="player_not_saved_description">Some answers aren\'t saved yet. We\'ll keep trying while this lesson is open.</string>
+    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
+    <string name="activities_guess_in_unit">in %1$s</string>
 </resources>

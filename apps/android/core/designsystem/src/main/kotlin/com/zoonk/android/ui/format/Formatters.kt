@@ -294,6 +294,7 @@ private fun formatUtc(
         .getInstanceForSkeleton(skeleton, ULocale.forLocale(locale))
         .apply { timeZone = TimeZone.GMT_ZONE }
         .format(date)
+        .replace(' ', NO_BREAK_SPACE)
 
 internal const val MAX_FRACTION_DIGITS = 20
 internal const val MINUS_SIGN = "−"

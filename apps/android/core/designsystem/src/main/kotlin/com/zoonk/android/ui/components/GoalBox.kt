@@ -115,7 +115,7 @@ fun GoalBox(
                 .fillMaxWidth()
                 .background(colors.surfaceContainerLow, shape)
                 .border(if (focused) ring else 1.dp, if (focused) colors.primary else colors.outline, shape)
-                .padding(6.dp),
+                .padding(16.dp),
         ) {
             val textField: @Composable () -> Unit = {
                 BasicTextField(
@@ -181,7 +181,7 @@ fun GoalBox(
                             style = words.copy(fontWeight = FontWeight.Medium),
                         )
                     },
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    modifier = Modifier,
                     field = textField,
                 )
 

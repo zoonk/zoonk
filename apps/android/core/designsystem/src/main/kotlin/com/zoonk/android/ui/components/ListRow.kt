@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -63,8 +64,8 @@ import kotlin.math.roundToInt
  * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
  * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
- * spans the list. [verticalAlignment] `Top` puts the words and the row's end at its top (main's
- * `items-start`). A row that opens a page ends with main's chevron; one
+ * spans the list. [leadOnFirstLine] keeps the leading mark on the first line; the value
+ * and end stay centered on the row. A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
  * is a value rather than a control passes `true`; a row that can't open in a list whose other rows end with
  * a glyph passes [chevronSpace], so its value ends where theirs do (main's `ListRowChevronSpace`). [onLongClick] opens what else a tappable row offers,
@@ -92,7 +93,6 @@ fun ListRow(
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
     chevronSpace: Boolean = false,
 ) {
@@ -151,10 +151,8 @@ fun ListRow(
                 .alpha(if (onClick != null && !enabled && !busy) DISABLED_ALPHA else 1f)
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
-        // A row with a text lead reads as a table row: top-aligned as a whole, its end on the first entry's line.
-        verticalAlignment = if (leadOnFirstLine) Alignment.Top else verticalAlignment,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val firstLineBox = if (leadOnFirstLine) maxOf(markSize(), lineHeight(MaterialTheme.typography.titleSmall)) else null
         val parts = remember { RowParts() }
         RowContent(
             parts = parts,
@@ -164,13 +162,14 @@ fun ListRow(
             mark =
                 leading?.let { mark ->
                     {
-                        CompositionLocalProvider(LocalContentColor provides quiet) {
+                        CompositionLocalProvider(LocalContentColor provides quiet, LocalMarkEdge provides ButtonEdge.Start) {
                             Box(
                                 Modifier
                                     .sizeIn(
                                         minWidth = markSize(),
                                         minHeight = markSize(),
-                                    ).layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark),
+                                    ).offset(x = -2.dp * glyphScale())
+                                    .layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark),
                                 contentAlignment = Alignment.Center,
                             ) { mark() }
                         }
@@ -219,28 +218,37 @@ fun ListRow(
         )
 
         expanded?.let { open ->
-            OnFirstLine(
-                firstLineBox,
-            ) { EndGlyph(if (open) R.drawable.ic_row_fold_open else R.drawable.ic_row_fold, quiet) }
+            EndGlyph(if (open) R.drawable.ic_row_fold_open else R.drawable.ic_row_fold, quiet)
         }
 
-        trailing?.let { end -> OnFirstLine(firstLineBox) { Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { end() } } }
+        trailing?.let { end -> Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { end() } }
 
         when {
-            chevron -> OnFirstLine(firstLineBox) { BusyContent(busy) { ListRowChevron() } }
+            chevron -> BusyContent(busy) { ListRowChevron() }
             keepsSlot -> Spacer(Modifier.width(endSlot))
         }
     }
 }
 
-/** On a top-aligned row, what ends it centered in a box as tall as the lead's, on the first entry's line. */
 @Composable
 internal fun OnFirstLine(
-    box: Dp?,
+    box: Dp,
     content: @Composable () -> Unit,
 ) {
-    if (box == null) content() else Box(Modifier.heightIn(min = box), contentAlignment = Alignment.Center) { content() }
+    Layout(content) { measurables, constraints ->
+        val parts = measurables.map { it.measure(constraints.copy(minHeight = 0)) }
+        val height = box.roundToPx()
+        layout(parts.maxOfOrNull { it.width } ?: 0, height) {
+            parts.forEach { it.placeRelative(0, (height - it.height) / 2) }
+        }
+    }
 }
+
+@Composable
+fun OnFirstLine(
+    style: TextStyle,
+    content: @Composable () -> Unit,
+) = OnFirstLine(lineHeight(style), content)
 
 /** A line of [style] as the text lays it out at this text size, nonlinear scaling included. */
 @Composable
@@ -299,7 +307,11 @@ fun MarkedLine(
         firstLine = firstLine,
         leadOnFirstLine = true,
         modifier = modifier,
-        mark = { Box(Modifier.widthIn(min = markSize()), contentAlignment = Alignment.Center) { mark() } },
+        mark = {
+            CompositionLocalProvider(LocalMarkEdge provides ButtonEdge.Start) {
+                Box(Modifier.widthIn(min = markSize()).offset(x = -2.dp * glyphScale()), contentAlignment = Alignment.Center) { mark() }
+            }
+        },
         title = content,
     )
 }

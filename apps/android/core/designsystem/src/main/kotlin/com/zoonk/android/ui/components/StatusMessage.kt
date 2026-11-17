@@ -143,6 +143,7 @@ fun EmptyState(
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
+            modifier = Modifier.glyphInk(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.size(12.dp))

@@ -57,6 +57,26 @@ class SignInTest {
     }
 
     @Test
+    fun continuingAnEmptySetupStaysAvailableSoItCanExplainWhatsMissing() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+            form.onNameChange("")
+            form.onUsernameChange("")
+            assertTrue(form.canContinue)
+            assertFalse(form.canSave)
+            form.continueSetup()
+            assertTrue(form.showNameRequired)
+            assertTrue(form.showUsernameRequired)
+            assertFalse(form.isSaving)
+            form.onNameChange("Bia")
+            assertFalse(form.showNameRequired)
+        }
+
+    @Test
     fun anEmailCodeSignsInOnceItsSixDigitsAreTyped() =
         runTest {
             val (sessions, account) = stores()

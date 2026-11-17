@@ -59,8 +59,9 @@ private fun numberEnd(
     text: String,
     start: Int,
 ): Int {
-    if (!text[start].isDigit()) return start
-    var end = start
+    val signed = text[start] in "+−-" && text.getOrNull(start + 1)?.isDigit() == true
+    if (!text[start].isDigit() && !signed) return start
+    var end = if (signed) start + 1 else start
     while (end < text.length &&
         (text[end].isDigit() || (text[end] in SEPARATORS && end + 1 < text.length && text[end + 1].isDigit()))
     ) {
