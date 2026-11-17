@@ -69,6 +69,8 @@ final class AGFReviewCaptureTests: XCTestCase {
           .environment(ActivityWork()).zoonkStyles())
       host.overrideUserInterfaceStyle = dark ? .dark : .light
       host.traitOverrides.preferredContentSizeCategory = large ? .accessibilityExtraLarge : .large
+      window.traitOverrides.preferredContentSizeCategory = large ? .accessibilityExtraLarge : .large
+      window.overrideUserInterfaceStyle = dark ? .dark : .light
       window.rootViewController = host
       window.makeKeyAndVisible()
       try await Task.sleep(for: .milliseconds(600))
