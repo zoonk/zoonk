@@ -433,6 +433,7 @@ private struct SQLTableViewer: View {
 
           Text(verbatim: table.name)
             .typeStyle(.body.weight(.semibold).monospaced())
+            .foregroundStyle(Color(.foreground))
 
           if !isExpanded {
             Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
