@@ -62,7 +62,6 @@
     <string name="today_continue_session">Continue</string>
     <string name="today_keep_learning">Keep learning</string>
     <string name="today_practice_minutes">Practice %1$s min</string>
-    <string name="today_see_plan">See your plan</string>
     <string name="today_lessons_not_written">Today\'s lessons aren\'t ready yet.</string>
     <string name="today_get_lessons">Get today\'s lessons</string>
     <string name="today_open_failed">We couldn\'t open the next step. Try again.</string>

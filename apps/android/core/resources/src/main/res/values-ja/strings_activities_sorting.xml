@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "a8402a1a467727b5a2d5f4cb982dba037ac74040d9a254750181a7a2cd580edc",
   "activities_sorting_remove_link": "2da528ec2fa3a8f8c6956685a0732b2d342434b6f859f2505ce28f132c0cbfdd",
   "activities_sorting_removed": "d33d7de45a8222d3b08fc6bb24d304087ae39ab461f438631c516850b5708780",
-  "activities_sorting_right_count": "d7055c18cd7eb7f9bb38a68c7ea0cf5c26cfdb55d37607aceb776727b54634c1",
   "activities_sorting_right_group": "8a2454710303882e925d254c389aac5c9db3cba75081a4075db265437ff23566",
   "activities_sorting_right_order": "523d0882550609bf5c2247e1bf548574108ecfa9bf28e13fe9f111db39488a94",
   "activities_sorting_show_real_dates": "98e71885853284faf6f52615f4357a2f568aa90f7958d09aff5a42cc6c0fea10",
@@ -109,7 +108,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s、グループが違います</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">正しく分類できた数：%1$d / %2$d</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">「%1$s」が入るのは「%2$s」です。</string>
     <string name="activities_sorting_badge_put_in_order">順番に並べる</string>

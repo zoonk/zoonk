@@ -47,7 +47,6 @@
   "catalog_level_unwritten": "001c9b8af5052d9925a6b21e8294b4ca35d76405ba8bd74f85bada4ac5a5c9a7",
   "catalog_load_more_failed": "51b50bfacf07d6b51352aebaa449ae61a323e377afb2d78a1f564f6f45c4cb67",
   "catalog_loading_more": "3053e5b1300f8faadf65802a50ac45cd7137104fb28efd6aa624a1f5dfd0a3ef",
-  "catalog_no_sign_up": "b21c3cd10798359ccf3153c377a7ea25baa22ac5df632df52f214ddab8c435d3",
   "catalog_open_course": "8f698c4e231c46e4dce0c0e9f32bc56cea6f163d485741e7201a08ed47a285d7",
   "catalog_outcomes": "7139cca87d62e967f6772512bdc4a4817a58f5be062dbe3b0367fa210f3fcb2a",
   "catalog_outline": "20392136a115e2c5fb8a3baeae0a2469c1dd906847b787448413719d6a93bab8",
@@ -154,7 +153,6 @@
     <string name="catalog_quick_question">Pregunta rápida</string>
     <string name="catalog_guess_note">Tu respuesta inicia la lección de %1$s min.</string>
     <string name="catalog_check_note">Tu elección abre la lección de %1$s min. Comprueba tu respuesta ahí.</string>
-    <string name="catalog_no_sign_up">No necesitas registrarte.</string>
     <string name="catalog_example_plan">Cuánto tiempo toma</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s semana</item>

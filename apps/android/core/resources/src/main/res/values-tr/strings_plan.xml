@@ -285,9 +285,6 @@
   "plan_focus_only": "1d8c7a7745d0fbd6fa933eb9befb8d4dac8145e583cd61140ec1623971a30f1c",
   "plan_fridays": "7df04b7bf8541cfaa289ac541beaa2f6e7e6e2f69dbb2fbdbe9f74904a969b07",
   "plan_full_course": "c7b0949576fbcb2f03b77df21b910de64e1495f07db5a7e087e7c460e0ae91db",
-  "plan_full_course_off": "3d234122839bdb9ef2da51bd02c1e47b1b966e569c72ef3044d3f7248e1ad9d6",
-  "plan_full_course_on_exam": "902f75280c9b81831177b3ac6bc12f3c669f73f55dabae96b90780d6ae0b674a",
-  "plan_full_course_on_exam_unknown_end": "000cda22d687e04ed1ac9560bf1376d28180da1f99e6d141e023f38d744e7f51",
   "plan_full_course_rule_exam": "9c86bba5e7834316e9b08d5f4aec12f7a21f34a0fc4e8301d71e3ae2c06ae7f1",
   "plan_full_course_rule_goal": "4d54099a4b4969687cc44acb8589aa14ac1b088df94a30b95192a8e019b8d78a",
   "plan_full_course_rule_goal_month": "ea23bdfeaada730b55927df2f8d97796f26eee37aadfcc1603f87a7f9634c30a",
@@ -1195,9 +1192,6 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Tarihini %1$s olarak değiştir</string>
     <string name="plan_full_course_switch">Sınavdan sonra çalışmaya devam et</string>
-    <string name="plan_full_course_off">Kapalıyken planın sınav tarihinde biter.</string>
-    <string name="plan_full_course_on_exam">%1$s Sınava kadar en çok çıkan konulara öncelik verilir.</string>
-    <string name="plan_full_course_on_exam_unknown_end">Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyenler sınavdan sonra işlenir.</string>
     <string name="plan_finish">Günde %1$s çalışarak %2$s ayında bitirirsin.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">Günde %1$s çalışırsan %2$s ayında, %3$s tarihindeki sınavdan sonra bitirirsin.</string>

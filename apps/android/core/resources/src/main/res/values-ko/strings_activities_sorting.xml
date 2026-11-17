@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "51de57e0b4378c1ff3a74799a6cc7914c132cbc2a174422cdfc5d886ce3a61a0",
   "activities_sorting_remove_link": "51643c739724072a40578050ffc617e33b1e945bf745b603d060b7c4f80c1541",
   "activities_sorting_removed": "b43b4973b3186cccc07498a964cf89223d3cac18b58de72151b2d1596524b69f",
-  "activities_sorting_right_count": "75f57486444011777a1d942b762ad90ccb5e877e541c997fcc88b161b74098bf",
   "activities_sorting_right_group": "f35be266fcf068cf1f7035925a4ee4bbc302566789fa152f0060efe3a475c401",
   "activities_sorting_right_order": "cf237dc141326ba06594ca17aa7caccb6ce36f5777bc4e6d4f048af93c75d593",
   "activities_sorting_show_real_dates": "458fe6dea26acd83f9da740a7037d248999a5563da08be95eac623f3967ac8ba",
@@ -109,7 +108,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, 잘못된 그룹</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">올바르게 분류한 항목 %1$d/%2$d개</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s은(는) %2$s에 속해요.</string>
     <string name="activities_sorting_badge_put_in_order">순서대로 놓기</string>

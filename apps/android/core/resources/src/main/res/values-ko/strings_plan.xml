@@ -285,9 +285,6 @@
   "plan_focus_only": "80abbba76eb392d599f81283cca6d15a36c739e87e7b9e8be5ca5c91a98bb8a8",
   "plan_fridays": "e3bc455ed02d257b3456cb9258d30e5198c827495069c11bd916e7521702f21f",
   "plan_full_course": "07d9f9670334a535868a19cd1170f8c7a86232758359f827b792c939a0055274",
-  "plan_full_course_off": "51e97d35615819bf682646dc43f3d42b3f4db7286d1eb4e5fc0d3c0ee57b5973",
-  "plan_full_course_on_exam": "481b62db2d281d573c5c163e702cc5bcda2109b48c8bb5767a512b80b1fb3eb3",
-  "plan_full_course_on_exam_unknown_end": "9e30aebe6dd59f5152d467c908c213aaf64d8615cf3c89c509203e7da0b0417f",
   "plan_full_course_rule_exam": "7d7e6f3fb94d00f0b950a443f4dcc6eaccfe5b64aef78f19ea35f73090a39d1a",
   "plan_full_course_rule_goal": "44bdea8fac79be25c41337406ad2baf6e8e7cdd611421746407290a6c285e83c",
   "plan_full_course_rule_goal_month": "e61afe883f17683a85ece12df3cb82bedc389e0d249b7905f3297de15bf28db3",
@@ -1140,9 +1137,6 @@
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">날짜를 %1$s로 변경하기</string>
     <string name="plan_full_course_switch">시험 후에도 계속 공부하기</string>
-    <string name="plan_full_course_off">끄면 계획이 시험일에 끝나요.</string>
-    <string name="plan_full_course_on_exam">%1$s 시험 전까지는 가장 자주 출제되는 내용부터 공부해요.</string>
-    <string name="plan_full_course_on_exam_unknown_end">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
     <string name="plan_finish">하루 %1$s씩 공부하면 %2$s에 마쳐요.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">하루 %1$s씩 공부하면 %2$s에 끝나요. 시험일인 %3$s보다 늦어요.</string>

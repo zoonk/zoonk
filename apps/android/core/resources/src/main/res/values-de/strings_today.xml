@@ -92,7 +92,6 @@
   "today_save_failed": "37584d4a01b5d654d720b1b7a2e6c20a1a09b8ded1fe333c7197375abc3ec9c4",
   "today_see_day_challenge": "ad1879a691be929643904d56040e36eb26ec2a3f2f1ea7b88a3bdb2332ca60fb",
   "today_see_day_mock": "8f79da98cbe460de95df7acd805190f4a03285c7aa239dfa546b3e0b95beb816",
-  "today_see_plan": "6d118536fee5dfeb6a157a92af6560541ed75cd14b258fc6ce8b874cc81f8d53",
   "today_see_summary": "12f863d4edde0a6b73bf9f93cf8c57876fdbeabe72066ad96c17c63f8f5a29d7",
   "today_see_your_plan": "4405f9a57a3f1150fc73cf3e2c6e979aa4cd13b997a77e3bdfd6f6de8145b9de",
   "today_segment_challenge_note": "18f0a71f0df1a6a4704f3db71d1cbac27c0bca165ef27398987530424d489efd",
@@ -221,7 +220,6 @@
     <string name="today_continue_session">Weiter</string>
     <string name="today_keep_learning">Weiterlernen</string>
     <string name="today_practice_minutes">%1$s Min. üben</string>
-    <string name="today_see_plan">Deinen Plan ansehen</string>
     <string name="today_lessons_not_written">Die heutigen Lektionen sind noch nicht fertig.</string>
     <string name="today_get_lessons">Heutige Lektionen vorbereiten</string>
     <string name="today_open_failed">Wir konnten den nächsten Schritt nicht öffnen. Versuch es noch einmal.</string>

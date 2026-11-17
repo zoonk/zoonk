@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "a46ab48ea1d1ccc0d7d85fd092024e369c9fbf5c359eabb715f7d77f566c651f",
   "activities_sorting_remove_link": "eec0f76f4655b853fc3057d4fc0412afc5e5d0161925f509fc069695b8118ffa",
   "activities_sorting_removed": "8a435ed751d1dc000825f0fa07149206d10687aaf2c755e9ede3346d01709fe7",
-  "activities_sorting_right_count": "7a291b447e66dd9d37dda0aeefc4d77107a71f7a80b84c3b43e3d39866d5dff3",
   "activities_sorting_right_group": "fe034b192fce5b40772943bcb32fb5a19ca253aebdd4c53cc1e7aabd463bc5bd",
   "activities_sorting_right_order": "43c108e475c353ff904ae270bddc80f50a2680c903ac71b16ad0921de3765e84",
   "activities_sorting_show_real_dates": "55a4e1e605ac1534583363b5794e7309f95361ddea1d3092ea53525de79a37fb",
@@ -111,7 +110,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, grupo errado</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d de %2$d no grupo certo</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s pertence ao grupo %2$s.</string>
     <string name="activities_sorting_badge_put_in_order">Coloque em ordem</string>
