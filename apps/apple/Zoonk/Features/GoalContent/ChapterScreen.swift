@@ -133,6 +133,7 @@ private struct ChapterContent: View {
         referenceSection(withMap: false)
       }
     }
+    .environment(\.rowMarkWidth, MindMapSlotMetrics.side)
     .bottomBar {
       if let next = lessons.first(where: { $0.state == .next }) {
         Button {

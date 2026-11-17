@@ -327,6 +327,10 @@ struct MindMapRow: View {
 }
 
 /// The row's leading square: the map's thumbnail once it's drawn, otherwise a dashed slot.
+enum MindMapSlotMetrics {
+  static let side: CGFloat = 48
+}
+
 struct MindMapSlot<Mark: View>: View {
   private let picture: URL?
   @ViewBuilder private let mark: Mark
@@ -354,7 +358,7 @@ struct MindMapSlot<Mark: View>: View {
           .overlay { mark }
       }
     }
-    .frame(width: 48, height: 48)
+    .frame(width: MindMapSlotMetrics.side, height: MindMapSlotMetrics.side)
     // The square keeps its size, so what's drawn in it does too.
     .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     .accessibilityHidden(true)

@@ -258,7 +258,10 @@ struct PlanLine: View {
   let start: Start
 
   var body: some View {
-    Label {
+    MarkedRow {
+      Image(systemName: "map")
+        .accessibilityHidden(true)
+    } content: {
       switch start {
       case .chapter:
         Text(
