@@ -49,6 +49,14 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
   }
 
   func testNarrowLargeBreakEvenNamesClearEveryLineAndAxisTitle() async throws {
+    try await checkNarrow(moved: false)
+  }
+
+  func testMovedRevenueNameClearsItsOwnLine() async throws {
+    try await checkNarrow(moved: true)
+  }
+
+  private func checkNarrow(moved: Bool) async throws {
     let fields = LineCrossingFields(
       change: "The rent for the workshop goes up by $500 a month.",
       feedback: .init(
@@ -60,16 +68,21 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
       ],
       shift: .init(amount: 500, direction: .up, line: "cost"),
       xLabel: "Lamps sold", yLabel: "Dollars per month")
+    let answer =
+      moved
+      ? try ActivityAnswer(encoding: LineShiftAnswer(curve: "cost", direction: .up)) : nil
     let window = try show(
-      LineCrossingCanvas(
-        context: ActivityCanvasContext(
-          template: "lineCrossing", payload: .null, check: nil, phase: .answering,
-          answer: nil, setAnswer: { _ in }), fields: fields
-      )
-      .activityPanel().padding(16).frame(width: 320)
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-      .background(.white).environment(ActivityWork()).zoonkStyles()
-      .preferredColorScheme(.light).dynamicTypeSize(.accessibility3))
+      ScrollView {
+        LineCrossingCanvas(
+          context: ActivityCanvasContext(
+            template: "lineCrossing", payload: .null, check: nil, phase: .answering,
+            answer: answer, setAnswer: { _ in }), fields: fields
+        )
+        .activityPanel().padding(16)
+      }.frame(width: 320)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(.white).environment(ActivityWork()).zoonkStyles()
+        .preferredColorScheme(.light).dynamicTypeSize(.accessibility3))
     window.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
     try await Task.sleep(for: .milliseconds(800))
     let format = UIGraphicsImageRendererFormat()
@@ -90,7 +103,7 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
       guard let text = observation.topCandidates(1).first?.string else { return nil }
       let box = observation.boundingBox
       return (
-        text,
+        text.folding(options: .diacriticInsensitive, locale: Locale(identifier: "en_US")),
         CGRect(
           x: box.minX * CGFloat(cg.width), y: (1 - box.maxY) * CGFloat(cg.height),
           width: box.width * CGFloat(cg.width), height: box.height * CGFloat(cg.height))
@@ -124,5 +137,42 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
         XCTAssertFalse(box.insetBy(dx: -6, dy: -6).intersects(title))
       }
     }
+    let revenue = try XCTUnwrap(words.first { $0.0 == "Revenue" }?.1)
+    var firstY: Int?
+    var lastY: Int?
+    var firstXs: [Int] = []
+    var lastXs: [Int] = []
+    for y in 0..<cg.height {
+      for x in 0..<cg.width {
+        let offset = (y * cg.width + x) * 4
+        let r = Int(rgba[offset])
+        let g = Int(rgba[offset + 1])
+        let b = Int(rgba[offset + 2])
+        guard r > g + 35 && b > g + 35 && r > 70 else { continue }
+        if firstY == nil { firstY = y }
+        if firstY == y { firstXs.append(x) }
+        if lastY != y {
+          lastY = y
+          lastXs = []
+        }
+        lastXs.append(x)
+      }
+    }
+    let top = CGPoint(
+      x: Double(firstXs.reduce(0, +)) / Double(max(1, firstXs.count)),
+      y: Double(try XCTUnwrap(firstY)))
+    let bottom = CGPoint(
+      x: Double(lastXs.reduce(0, +)) / Double(max(1, lastXs.count)),
+      y: Double(try XCTUnwrap(lastY)))
+    let intersects = (0...1000).contains { sample in
+      let t = Double(sample) / 1000
+      return revenue.insetBy(dx: -6, dy: -6).contains(
+        CGPoint(
+          x: top.x + (bottom.x - top.x) * t,
+          y: top.y + (bottom.y - top.y) * t))
+    }
+    XCTAssertFalse(
+      intersects, "Revenue label \(revenue) crosses its rendered line \(top) to \(bottom)")
+
   }
 }

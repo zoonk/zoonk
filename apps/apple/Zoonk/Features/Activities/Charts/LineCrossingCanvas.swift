@@ -397,41 +397,52 @@ private struct LineCrossingLabels: View {
     let color: Color
   }
 
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
   let items: [Item]
   let plot: CGRect
   let otherLines: [LineCrossingLabelLayout.Segment]
   let obstacles: [CGRect]
 
   var body: some View {
-    let style = TypeStyle.meta.weight(.semibold)
-    let area = plot.insetBy(dx: 3, dy: 3)
-    let labels = items.map { item in
-      let width = min(
-        area.width,
-        ceil(
-          style.width(
-            of: item.text, dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight)))
-      let bounds = (item.text as NSString).boundingRect(
-        with: CGSize(width: max(1, width), height: .greatestFiniteMagnitude),
-        options: [.usesLineFragmentOrigin, .usesFontLeading],
-        attributes: [.font: style.uiFont(dynamicTypeSize, legibility: legibilityWeight)],
-        context: nil)
-      return LineCrossingLabelLayout.Label(
-        segment: item.segment, size: CGSize(width: max(1, width), height: ceil(bounds.height)))
-    }
-    let boxes = LineCrossingLabelLayout.place(
-      labels, in: area, lines: items.map(\.segment) + otherLines, obstacles: obstacles)
-    ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-      let box = boxes[index]
-      Text(verbatim: item.text)
-        .typeStyle(style).foregroundStyle(item.color).chartsLabelHalo()
-        .frame(width: box.width, height: box.height, alignment: .topLeading)
-        .position(x: box.midX, y: box.midY)
+    LineCrossingNamesLayout(
+      segments: items.map(\.segment), plot: plot,
+      lines: items.map(\.segment) + otherLines, obstacles: obstacles
+    ) {
+      ForEach(items) { item in
+        Text(verbatim: item.text)
+          .typeStyle(.meta.weight(.semibold))
+          .foregroundStyle(item.color)
+          .chartsLabelHalo()
+      }
     }
     .allowsHitTesting(false)
     .accessibilityHidden(true)
+  }
+}
+
+private struct LineCrossingNamesLayout: Layout {
+  let segments: [LineCrossingLabelLayout.Segment]
+  let plot: CGRect
+  let lines: [LineCrossingLabelLayout.Segment]
+  let obstacles: [CGRect]
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    CGSize(width: proposal.width ?? plot.maxX, height: proposal.height ?? plot.maxY)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    let area = plot.insetBy(dx: 3, dy: 3)
+    let labels = zip(segments, subviews).map { segment, view in
+      LineCrossingLabelLayout.Label(
+        segment: segment,
+        size: view.sizeThatFits(ProposedViewSize(width: max(1, area.width), height: nil)))
+    }
+    let boxes = LineCrossingLabelLayout.place(labels, in: area, lines: lines, obstacles: obstacles)
+    for (view, box) in zip(subviews, boxes) {
+      view.place(
+        at: CGPoint(x: bounds.minX + box.minX, y: bounds.minY + box.minY), anchor: .topLeading,
+        proposal: ProposedViewSize(width: box.width, height: box.height))
+    }
   }
 }
