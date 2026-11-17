@@ -190,18 +190,9 @@ private struct ContentCountryFacts: View {
   let country: ContentCountry
 
   var body: some View {
-    ViewThatFits(in: .horizontal) {
-      Text(facts.joinedFacts())
-
-      VStack(alignment: .leading, spacing: 2) {
-        ForEach(facts, id: \.self) { fact in
-          Text(fact)
-        }
-      }
-      .accessibilityElement(children: .combine)
-    }
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
+    FactSegments(facts)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
   }
 
   private var facts: [String] {
@@ -276,9 +267,8 @@ struct PlanLine: View {
           "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
           tableName: "Courses", comment: "On an exam course's page, what Zoonk does with it")
       }
-    } icon: {
-      Image(systemName: "map")
-        .accessibilityHidden(true)
+    } end: {
+      EmptyView()
     }
     .typeStyle(.note)
     .foregroundStyle(.mutedForeground)

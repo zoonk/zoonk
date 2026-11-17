@@ -3,6 +3,10 @@ import SwiftUI
 /// Items in rows that wrap like words. An item wider than the row wraps inside it.
 struct FlowLayout: Layout {
   var spacing: CGFloat = 8
+
+  struct Separator: LayoutValueKey {
+    static let defaultValue = false
+  }
   /// How the items of a row line up: `.firstTextBaseline` keeps a sentence's pieces on one line
   /// when one of them wraps.
   var alignment: VerticalAlignment = .center
@@ -21,6 +25,9 @@ struct FlowLayout: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
+    for subview in subviews where subview[Separator.self] {
+      subview.place(at: bounds.origin, proposal: .zero)
+    }
     var y = bounds.minY
 
     for row in arrange(subviews, width: bounds.width) {
@@ -68,24 +75,38 @@ struct FlowLayout: Layout {
       line: subview.dimensions(in: proposal)[alignment])
   }
 
+  private func append(_ item: Item, to row: inout Row) {
+    let below = max(row.height - row.line, item.size.height - item.line)
+    row.width = row.items.isEmpty ? item.size.width : row.width + spacing + item.size.width
+    row.line = max(row.line, item.line)
+    row.height = row.line + below
+    row.items.append(item)
+  }
+
   private func arrange(_ subviews: Subviews, width: CGFloat) -> [Row] {
     var rows: [Row] = []
     var row = Row()
 
+    var separator: Item?
     for index in subviews.indices {
       let item = item(index, of: subviews, width: width)
-      let needed = row.items.isEmpty ? item.size.width : row.width + spacing + item.size.width
+      if subviews[index][Separator.self] {
+        separator = item
+        continue
+      }
+      let separation = separator.map { $0.size.width + spacing } ?? 0
+      let needed =
+        row.items.isEmpty ? item.size.width : row.width + spacing + separation + item.size.width
 
       if needed > width, !row.items.isEmpty {
         rows.append(row)
         row = Row()
       }
-
-      let below = max(row.height - row.line, item.size.height - item.line)
-      row.width = row.items.isEmpty ? item.size.width : row.width + spacing + item.size.width
-      row.line = max(row.line, item.line)
-      row.height = row.line + below
-      row.items.append(item)
+      if !row.items.isEmpty, let separator {
+        append(separator, to: &row)
+      }
+      append(item, to: &row)
+      separator = nil
     }
 
     if !row.items.isEmpty {

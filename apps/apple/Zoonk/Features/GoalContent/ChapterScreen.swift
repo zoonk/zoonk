@@ -162,7 +162,7 @@ private struct ChapterContent: View {
     Section {
       PageHeader(
         Text(chapter.chapter.title),
-        supporting: Text(verbatim: facts.joinedFacts()), supportingIsFacts: true
+        facts: facts
       )
     }
   }

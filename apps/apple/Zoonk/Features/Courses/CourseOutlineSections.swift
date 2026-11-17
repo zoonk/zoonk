@@ -116,8 +116,8 @@ struct CourseOutlineSections: View {
       SectionTitle(
         Text("Course outline", tableName: "Courses", comment: "Header of a course's outline")
       ) {
-        if let size = sizeText(chapters) {
-          Text(size)
+        if let size = sizeFacts(chapters) {
+          FactSegments(size)
         }
       }
     }
@@ -142,7 +142,7 @@ struct CourseOutlineSections: View {
     }
   }
 
-  private func sizeText(_ chapters: [CourseChapter]) -> String? {
+  private func sizeFacts(_ chapters: [CourseChapter]) -> [String]? {
     guard !chapters.isEmpty else {
       return nil
     }
@@ -153,13 +153,13 @@ struct CourseOutlineSections: View {
       comment: "How many chapters a course or an exam area has")
 
     guard !lessons.isEmpty else {
-      return chapterText
+      return [chapterText]
     }
 
     let lessonText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",
       comment: "How many lessons a course or a chapter has")
-    return [chapterText, lessonText].joinedFacts()
+    return [chapterText, lessonText]
   }
 }
 
@@ -194,7 +194,7 @@ private struct CourseLevelOutline: View {
           }
 
           if !isExpanded.wrappedValue {
-            Text(band.chapters.prefix(Self.named).map(\.title).joinedFacts())
+            FactSegments(band.chapters.prefix(Self.named).map(\.title))
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
@@ -364,7 +364,7 @@ private struct CourseAreaOutline: View {
               }
 
               if !isExpanded.wrappedValue {
-                Text(areaChapters.prefix(Self.named).map(\.title).joinedFacts())
+                FactSegments(areaChapters.prefix(Self.named).map(\.title))
                   .typeStyle(.note)
                   .foregroundStyle(.mutedForeground)
               }
@@ -436,7 +436,7 @@ private struct OutlineChapterRow: View {
         }
 
         if !chapter.lessons.isEmpty {
-          Text(chapter.lessons.map(\.title).joinedFacts())
+          FactSegments(chapter.lessons.map(\.title))
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }

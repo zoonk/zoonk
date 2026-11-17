@@ -186,7 +186,7 @@ private struct ExamHero: View {
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
-          Text(facts.joinedFacts())
+          FactSegments(facts)
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
