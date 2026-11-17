@@ -98,6 +98,42 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
+  func testGoalNameRemainsVisibleAtAccessibilitySizes() throws {
+    for category in [
+      "UICTContentSizeCategoryAccessibilityL", "UICTContentSizeCategoryAccessibilityXXXL",
+    ] {
+      let app = makeApp(for: .freeSubscription)
+      app.launchArguments += [
+        "-UIPreferredContentSizeCategoryName", category,
+      ]
+      addTeardownBlock { app.terminate() }
+      launch(app)
+      XCTAssertTrue(app.buttons["Plant growth"].firstMatch.waitForExistence(timeout: 10))
+      let screenshot = app.screenshot()
+      let attachment = XCTAttachment(screenshot: screenshot)
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      let request = VNRecognizeTextRequest()
+      request.recognitionLevel = .accurate
+      request.recognitionLanguages = ["en-US"]
+      request.regionOfInterest = CGRect(x: 0, y: 0.72, width: 1, height: 0.28)
+      try VNImageRequestHandler(cgImage: XCTUnwrap(screenshot.image.cgImage)).perform([request])
+      let words = request.results?.compactMap { $0.topCandidates(1).first?.string } ?? []
+      XCTAssertTrue(
+        words.contains { $0.contains("Plant") }, "The goal name must have visible text: \(words)")
+      let more = app.buttons["More"].firstMatch
+      XCTAssertTrue(more.waitForExistence(timeout: 5), app.debugDescription)
+      more.tap()
+      let level = app.buttons["Level 12"].firstMatch
+      XCTAssertTrue(level.waitForExistence(timeout: 5), app.debugDescription)
+      level.tap()
+      XCTAssertTrue(
+        app.staticTexts["Statistics"].firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+      app.terminate()
+    }
+  }
+
+  @MainActor
   func testFreeAccountOpensNativeSubscriptionStore() throws {
     continueAfterFailure = false
     storeKitSession = try makeStoreKitSession()

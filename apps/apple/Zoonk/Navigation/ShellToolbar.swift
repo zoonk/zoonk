@@ -27,9 +27,11 @@ struct ShellToolbar: ViewModifier {
     if !isShown {
       content
     } else if #available(iOS 27, *) {
-      measured(content).toolbar { items(account: account.visibilityPriority(.high)) }
+      measured(content).toolbar {
+        items(account: account.visibilityPriority(.high), level: level.visibilityPriority(.low))
+      }
     } else {
-      measured(content).toolbar { items(account: account) }
+      measured(content).toolbar { items(account: account, level: level) }
     }
   }
 
@@ -37,8 +39,7 @@ struct ShellToolbar: ViewModifier {
     content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
   }
 
-  /// The goal's name takes the room the bar leaves (main's bar holds only the goal, the level and
-  /// the account), so it truncates there instead of sending the bar's items to its overflow menu.
+  /// The name keeps a readable minimum; lower-priority items overflow when they no longer fit.
   /// Where the tabs sit in the bar, centered, the name has the side they leave.
   private var nameWidth: CGFloat {
     guard let barWidth else {
@@ -49,7 +50,7 @@ struct ShellToolbar: ViewModifier {
       return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
     }
 
-    return max(0, barWidth - besideName)
+    return max(shortestName, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -59,7 +60,9 @@ struct ShellToolbar: ViewModifier {
   }
 
   @ToolbarContentBuilder
-  private func items(account: some ToolbarContent) -> some ToolbarContent {
+  private func items(account: some ToolbarContent, level: some ToolbarContent)
+    -> some ToolbarContent
+  {
     switch session.state {
     case .restoring where session.authenticatedSession == nil:
       ToolbarItem(placement: .topBarTrailing) {
@@ -79,10 +82,8 @@ struct ShellToolbar: ViewModifier {
           GoalSwitcher(summary: summary, isCompact: isSwitcherCompact, maxTitleWidth: nameWidth)
         }
 
-        if let level = summary.level {
-          ToolbarItem(placement: .topBarTrailing) {
-            LevelButton(level: level)
-          }
+        if summary.level != nil {
+          level
 
           ToolbarSpacer(.fixed, placement: .topBarTrailing)
         }
@@ -99,6 +100,12 @@ struct ShellToolbar: ViewModifier {
       }
 
       account
+    }
+  }
+
+  private var level: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      if let level = learner.summary.value?.level { LevelButton(level: level) }
     }
   }
 
