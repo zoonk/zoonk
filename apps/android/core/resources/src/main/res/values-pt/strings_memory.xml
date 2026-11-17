@@ -32,13 +32,12 @@
   "memory_updated": "1806c4632943665e0ee90d1352cad6e5f3205e777f7fe65f66a1cf38a1ee850d",
   "memory_updated_more": "2914d54b079390bc8bc38f7c1bfa85a256ff3261910d35c4043e44a827afdd51",
   "memory_use": "1243783609b6dcae5fd006a871c8e7d54c34286909170b1f0f1710c543b5f35b",
-  "memory_use_off": "4b936bd5173357677b7f021c9c50acd8917cfdf0b2166c50711f0b952c3c4b81"
+  "memory_use_description": "21d2a50b4bca553baa25bcc335805e3e9b5ff9b4cb856e9e3bc81020f52c4902"
 }
 -->
 <resources>
     <string name="memory_description">O que o Zoonk lembra para te dar exemplos e planos que combinam com a sua vida.</string>
     <string name="memory_use">Usar memória</string>
-    <string name="memory_use_off">Nada é guardado ou usado enquanto esta opção está desativada.</string>
     <string name="memory_empty">Nada por enquanto. As anotações aparecem aqui conforme você estuda e conversa.</string>
     <string name="memory_save_failed">Não foi possível salvar. Tente de novo.</string>
     <string name="memory_category_goals">Objetivos</string>
@@ -77,4 +76,6 @@
     <string name="memory_change_undone">Alteração desfeita</string>
     <string name="memory_undo_failed">Não foi possível desfazer. A informação mudou desde então.</string>
     <string name="memory_undo_retry">Não foi possível desfazer. Tente de novo.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Exemplos personalizados, planos que cabem na sua semana e conversas com %1$s que lembram das suas novidades</string>
 </resources>

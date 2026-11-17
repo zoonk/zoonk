@@ -756,7 +756,14 @@ private fun CoverageWords(
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         // A learner who skipped the test, short on time, gets no focus: the test is what would suggest one.
-        if (focusTestOffer(plan) != null) RevealLink(stringResource(R.string.focustest_take_test), focus.onTest)
+        if (focusTestOffer(plan) != null) {
+            RevealLink(stringResource(R.string.focustest_take_test), focus.onTest)
+            Text(
+                stringResource(R.string.focustest_suggestion_line),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
 

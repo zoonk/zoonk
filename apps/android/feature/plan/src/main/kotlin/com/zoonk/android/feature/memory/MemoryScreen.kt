@@ -45,9 +45,12 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -78,6 +81,17 @@ fun MemoryScreen(
     navigator: AppNavigator,
 ) {
     val memory by app.memory.memory.collectShown()
+    val learner by app.learnerSummary.summary.collectShown()
+    val name =
+        buddyName(
+            BuddyKind.of(
+                learner.value
+                    ?.buddy
+                    ?.kind
+                    ?.value ?: "zu",
+            ),
+            learner.value?.buddy?.name,
+        )
     val files = LocalContext.current.applicationContext.contentResolver
     val screen = viewModel { MemoryViewModel(app.memory, files::openOutputStream, createSavedStateHandle()) }
     val scope = rememberCoroutineScope()
@@ -108,7 +122,7 @@ fun MemoryScreen(
 
                 when (val state = memory) {
                     is LoadState.Loaded -> {
-                        Loaded(state.value, screen, navigator)
+                        Loaded(state.value, screen, navigator, name)
                     }
 
                     is LoadState.Failed -> {
@@ -132,6 +146,7 @@ private fun Loaded(
     memory: Memory,
     screen: MemoryViewModel,
     navigator: AppNavigator,
+    buddyName: String,
 ) {
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -145,12 +160,7 @@ private fun Loaded(
 
     ListRow(
         headline = { Text(stringResource(R.string.memory_use)) },
-        supporting =
-            if (memory.enabled) {
-                null
-            } else {
-                { Text(stringResource(R.string.memory_use_off)) }
-            },
+        supporting = { Text(stringResource(R.string.memory_use_description, buddyName)) },
         trailing = { Switch(checked = memory.enabled, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = memory.enabled, role = Role.Switch, onValueChange = screen::setEnabled),
     )

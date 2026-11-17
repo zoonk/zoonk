@@ -37,7 +37,6 @@ msgstr "Ta proposition"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
 msgid "Brain Power"
@@ -1445,21 +1444,16 @@ msgid "{buddy} today"
 msgstr "{buddy} aujourd’hui"
 
 #: src/buddies/buddy-today.tsx
-msgctxt "6Fd8_d"
-msgid "Missions"
-msgstr "Missions"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {# mission sur {total}} one {# mission accomplie sur {total}} other {# missions accomplies sur {total}}}"
-
-#: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
 #: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Pas encore"
+
+#: src/buddies/buddy-today.tsx
+msgctxt "xlYYsb"
+msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
+msgstr "{done, plural, =0 {# mission sur {total}} one {# mission accomplie sur {total}} other {# missions accomplies sur {total}}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -4897,15 +4891,6 @@ msgstr ", terminé"
 
 #: src/journey/journey-path.tsx
 #: src/journey/path-phase-row.tsx
-#: src/journey/phase-details.tsx
-#: src/plan-diff/use-change-rows.ts
-#: src/syllabus/use-subject-progress.ts
-msgctxt "L_oGIZ"
-msgid "Not in your plan"
-msgstr "Pas dans ton plan"
-
-#: src/journey/journey-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, one {# leçon non étudiée} other {# leçons non étudiées}}"
@@ -5026,6 +5011,12 @@ msgstr ", à suivre"
 msgctxt "sFnTpp"
 msgid "<start></start> – <end></end>"
 msgstr "<start></start> – <end></end>"
+
+#: src/journey/phase-details.tsx
+#: src/plan-diff/use-change-rows.ts
+msgctxt "L_oGIZ"
+msgid "Not in your plan"
+msgstr "Pas dans ton plan"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
@@ -5356,6 +5347,7 @@ msgid "Phase {number, number} of {total, number}"
 msgstr "Phase {number, number} sur {total, number}"
 
 #: src/language-aim/aim-picker.tsx
+#: src/language-aim/use-aim-words.ts
 msgctxt "OIMmZ8"
 msgid "How far do you want to go?"
 msgstr "Jusqu’où veux-tu aller ?"
@@ -6965,10 +6957,11 @@ msgctxt "nxU2W7"
 msgid "From a call"
 msgstr "Lors d’un appel"
 
+#. What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.
 #: src/memory/memory-screen.tsx
-msgctxt "LwVSHh"
-msgid "When off, notes aren't saved or used"
-msgstr "Si l’option est désactivée, les notes ne sont ni enregistrées ni utilisées"
+msgctxt "EDgENy"
+msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
+msgstr "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où {buddy} se souvient de ce que tu as raconté"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -7291,16 +7284,6 @@ msgstr "Impossible d’enregistrer cette carte mentale. Réessaie."
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Impossible de retirer cette carte mentale. Réessaie."
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "HCrEOP"
-msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Des points pour ce que tu apprends. Ils te permettent de passer à la ceinture suivante et font grandir ton compagnon."
-
-#: src/missions/brain-power-reward.tsx
-msgctxt "JGTjfj"
-msgid "You have <mono>{points}</mono>"
-msgstr "Tu en as <mono>{points}</mono>"
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -10457,6 +10440,12 @@ msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
 msgstr "Nouveau pays : {country}. On va créer un nouveau plan adapté. Les leçons terminées le restent."
 
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "Le Test de priorités t’indique quoi étudier en priorité."
+
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -13091,10 +13080,11 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, one {# module} other {# modules}}"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
-msgstr "Hors de ton plan · tu as retiré cette matière"
+msgstr "Pas dans ton plan · tu as retiré cette matière"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "Wz9Y3H"
@@ -13106,10 +13096,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "Sauté · à ta demande"
 
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
-msgstr "Hors de ton plan · le temps prévu ne suffit pas"
+msgstr "Pas dans ton plan · le temps prévu ne suffit pas"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx
@@ -13331,11 +13322,6 @@ msgstr "Modification du plan"
 msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "C’est noté. Tu peux faire le test depuis ton plan."
-
-#: src/today/today-focus-test.tsx
-msgctxt "KYliMN"
-msgid "The Focus test shows what to study most."
-msgstr "Le Test de priorités t’indique quoi étudier en priorité."
 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"

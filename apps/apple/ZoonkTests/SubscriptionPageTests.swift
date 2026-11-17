@@ -60,71 +60,83 @@ final class SubscriptionPageTests: XCTestCase {
   }
 }
 
-@MainActor
-final class WebPlusVisitTests: XCTestCase {
-  func testScrollingAwayWhileRenewalFailsKeepsTheFailureForReturn() async throws {
-    let server = RenewalFailure()
-    let dependencies = AppDependencies.hosted(transport: server)
+extension SubscriptionPageTests {
+  @MainActor
+  func testTwoSubscriptionsEachShowTheirOwnManagementAction() async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport())
+    try readsWhatVoiceOverReads()
     let window = try show(
       PlusStatusView(
-        subscription: AccountSubscription(plan: "plus", provider: "stripe", status: "active")
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
       )
       .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
-    window.frame = CGRect(x: 0, y: 0, width: 420, height: 250)
-    try readsWhatVoiceOverReads()
-    try await waitForTestCondition("The subscription scroll view did not appear") {
-      !requestViews(UIScrollView.self, in: window).isEmpty
+    window.frame = CGRect(x: 0, y: 0, width: 1032, height: 1376)
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The website payment action did not appear") {
+      spoken(in: window).joined(separator: " ")
+        .contains("Update your payment on the website, where you subscribed.")
     }
-    let scroll = try XCTUnwrap(requestViews(UIScrollView.self, in: window).first)
-    try await waitForTestCondition("Keep Plus did not appear at the end of the page") {
-      scroll.setContentOffset(
-        CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-      return spoken(in: window).contains(String(localized: "Keep Plus", table: "Subscriptions"))
-    }
-    try await activate(String(localized: "Keep Plus", table: "Subscriptions"), in: window)
-    try await server.waitForRequest()
-    scroll.setContentOffset(.zero, animated: false)
-    try await waitForTestCondition("Keep Plus did not scroll out of view") {
-      !spoken(in: window).contains(String(localized: "Keep Plus", table: "Subscriptions"))
-    }
-    await server.release()
-    try await waitForTestCondition("Renewal failure did not appear") {
-      scroll.setContentOffset(
-        CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
-      return spoken(in: window).contains { $0.contains("We couldn't keep Plus") }
-    }
-    XCTAssertTrue(
-      spoken(in: window).contains { $0.contains("We couldn't keep Plus") }, "\(spoken(in: window))")
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains("Through the App Store"))
+    XCTAssertTrue(words.contains("Manage in App Store"))
+    XCTAssertTrue(words.contains("Through the website"))
+    XCTAssertTrue(words.contains("Update your payment on the website, where you subscribed."))
+    XCTAssertFalse(words.contains("Cancel Plus"))
   }
 }
 
-private actor RenewalFailure: ClientTransport {
-  private var held: TestContinuation<Void>?
+private struct UnpaidWebsiteTransport: ClientTransport {
+  var state = "unpaid"
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
     -> (HTTPResponse, HTTPBody?)
   {
-    if operationID == "getStripeSubscriptionCancellation" {
-      return (
-        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-        HTTPBody(#"{"state":"ending","periodEnd":"2027-01-01T00:00:00.000Z"}"#)
-      )
-    }
-    if operationID == "resumeStripeSubscription" {
-      await withTestVoidContinuation {
-        held = $0
-      }
-    }
-    throw APIError.network
+    guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(Data("{\"state\":\"\(state)\",\"periodEnd\":\"2026-12-18T12:00:00.000Z\"}".utf8))
+    )
   }
-  func waitForRequest(file: StaticString = #filePath, line: UInt = #line) async throws {
-    try await waitForTestCondition("Renewal was not requested", file: file, line: line) {
-      await self.isHeld
-    }
+}
+
+extension SubscriptionPageTests {
+  @MainActor
+  func testRenewingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "renewing", label: "Manage on the website")
   }
 
-  private var isHeld: Bool { held != nil }
-  func release() {
-    held?.resume()
-    held = nil
+  @MainActor
+  func testEndingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "ending", label: "Manage on the website")
+  }
+
+  @MainActor
+  func testFailedWebsitePlusOpensPayment() async throws {
+    try await websiteAction(
+      state: "unpaid", label: "Update your payment on the website, where you subscribed.")
+  }
+
+  @MainActor
+  private func websiteAction(state: String, label: String) async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport(state: state))
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await waitForLayout(in: window)
+      try await waitForTestCondition("The website action did not appear for \(state)") {
+        spoken(in: window).joined(separator: " ").contains(label)
+      }
+      try captureCallsRoundTwo("website-\(state)-\(size)")
+    }
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains(label), words)
+    if state == "ending" { XCTAssertTrue(words.contains("Plus ends on"), words) }
+    XCTAssertFalse(words.contains("You subscribed in the App Store."))
   }
 }

@@ -87,10 +87,16 @@ async function WebsiteSubscription({ web }: { web: WebSubscription }) {
 
   const dateLine = await getWebDateLine(web);
 
+  const title = t({
+    description:
+      "On the subscription page, labels Plus bought on the Zoonk website, where it's managed.",
+    message: "Through the website",
+  });
+
   return (
-    <PageSection aria-label={t("Bought on the website")}>
+    <PageSection aria-label={title}>
       <PageSectionHeader>
-        <PageSectionTitle>{t("Bought on the website")}</PageSectionTitle>
+        <PageSectionTitle>{title}</PageSectionTitle>
       </PageSectionHeader>
       {dateLine && <p className="text-muted-foreground text-sm">{dateLine}</p>}
       <WebPlanAction state={web.state} />

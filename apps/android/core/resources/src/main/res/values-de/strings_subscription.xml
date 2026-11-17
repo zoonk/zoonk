@@ -24,13 +24,7 @@
   "subscription_benefits_summary": "b74d5e574530831e7d7674d83973722a79d21edba4e261c5f1f5f5f86a86b585",
   "subscription_billed_monthly": "b9f273469f13b3c7bac7504198ad335bd2b5f56273ce6fbee5f9398b75587c96",
   "subscription_billing_period": "8f999c920e3b3c40cfb833bc9a3d8dde18808f8fe8c9e39f04a9e7dbd1338b58",
-  "subscription_cancel": "121f691d72973e017852863ebbe40bc90db058227448a30fa4a0b7c82a01313c",
   "subscription_cancel_anytime": "38a57590680dc7ee2b46e07132642bb75fd3003b0b639d6f9dabc382f4dd282a",
-  "subscription_cancel_at_period_end": "3f22adf3ef90e7aff234f02f5cfaf1ceb8bc7aaf971c1b32ef5870ab065abdab",
-  "subscription_cancel_back": "def9ff0bff5d91659a8a69a765f00afdf77f84da0deb3d37202b6d24bde37e36",
-  "subscription_cancel_failed": "396fff45af68a3b571869071311d003014fd45bc036d559f50e88b6ecbe1a311",
-  "subscription_cancel_title": "3e634f3f9ebadd5d121eb8ff68b1f764ff0bc98e00b197775a9ac195a0ed57ca",
-  "subscription_cancel_unpaid": "88590f54f9b7ed37880d05cc04fad6535985c759ac0e639f19263c96c494219c",
   "subscription_contact_support": "8e9ef48acfe152a37e8627a8ebb3d1fe2f27560c01dd07483b0186018060c2af",
   "subscription_current_plan": "b3b92c9e3bedc42a7437faad84ef2710c9573d2c1c3d75cc03ae30cc9382a1ce",
   "subscription_deletion_app_store": "3b1404d05949e35b09a477a77091cc0cddd0a7073c9926fe06aff9c1758fb89e",
@@ -47,12 +41,9 @@
   "subscription_free_plan": "9c1adb536f417118ddc62e74d43b0367df9e7911d6de61d3b5fa4a6e7b409242",
   "subscription_free_summary": "c1049344c0fa899a879fd33cc6cbe4820527e8282bad3cce3f7f620ded13f77d",
   "subscription_hide_answer": "1e64955d0dbad610321106f3cc25af23733472837439ee7017dd96a62e44d306",
-  "subscription_keep_failed": "5da666cacbc4d5f002a7db5ae00e6f46e79e27a665bd3ede6f2d28f00ebb4971",
-  "subscription_keep_plus": "ddfacd6e9dbede46c670f66bf1f4d9e7f5dc3a48e6cdd2f37c5d3909565e0411",
-  "subscription_keep_plus_description": "1eae8558b9d02fbb96a02054aa9cfdbf78e870f461a7a9402d30b2b39c4ef6c2",
+  "subscription_manage_apple": "cf0dca11711dc58130bb406abd47e93b3f092ff2c4851442ddc505d8807b2a81",
   "subscription_manage_google": "ef40137d6b2dba5b32e47efffd7cff90e754d2498f63ee7fe7c91fc460776f98",
-  "subscription_managed_apple": "4017c92d1000b52fbfd195e55fe9fde760115c1f28566a7a0689567d285e21ee",
-  "subscription_managed_google": "320c1de9c8630e57325ef6a8f1bf6fec3cca6a97b27f096290ad275ca87aa718",
+  "subscription_manage_website": "06b11551d90ba0da43cd62c3dedab727c4ae09920a0f7c75633b75324779b9b1",
   "subscription_managed_zoonk": "e88c89d39e12e78e7883d3c4d975b4b7c3a231fcbd147e92fcaf9b4bec2f4cf1",
   "subscription_monthly": "f1e53edbf4cb4cab6bdf361ea17a2e36dc8f9d4979bd46cafe3fa3d76465dc58",
   "subscription_no_card_needed": "63f85ab3a6eeceed470b2f2a1a5d367abd0e8b08b11e8847631f2c94c4d64f6b",
@@ -79,8 +70,10 @@
   "subscription_show_answer": "570c4c77482c0ab7d68d379b01c3a7c97d89eaaca67042aebd3345f32c887b7d",
   "subscription_start_free": "9c8eddb8d20009a3f6fcf409cf45ac49149400c90fea5c2c65e0d234242091bb",
   "subscription_subscribe": "7cc8965d6c6ae991879d725ecee58ef25a3aae1e658f6d92b23c7dc6c668cac7",
+  "subscription_through_apple": "55196ee3d1fcfbee51b3219142c864d3fe0740ebf4b87be6fda32bdac45f741a",
+  "subscription_through_google": "bac58a18196b42a54fa75f38109404d02044457d010968df7c7a76effab71718",
+  "subscription_through_website": "656f2077d0f3e62a293fa2b29422b52c50c704fd7dcf941a71375c0325571289",
   "subscription_unavailable": "529977c454a684698a40c90c2438a19094f07c41788d53f18f12235a2e3a7a5b",
-  "subscription_website": "4a08e3fd64b37cf8036730bdaaa8490cc493dfc3392905fb7d1b8dfbeea9e4fb",
   "subscription_yearly": "523bbf7f6ad76293fdf793e597819f81d75df6fb3496537b8100a74a2f7fa37d",
   "subscription_yearly_per_month": "2e484194db11b31ad587bf0cee813f6e01d0c1d2693c5d82b90a81828c726be6"
 }
@@ -95,27 +88,13 @@
     <string name="subscription_renews_on">Verlängert sich am %1$s.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">Bezahlt bis %1$s.</string>
-    <string name="subscription_managed_google">Du hast dein Abo über Google Play abgeschlossen.</string>
-    <string name="subscription_managed_apple">Du hast dein Abo im App Store abgeschlossen.</string>
     <string name="subscription_managed_zoonk">Schreib uns, um Plus zu ändern oder zu kündigen.</string>
     <string name="subscription_manage_google">In Google Play verwalten</string>
     <string name="subscription_contact_support">Hilfe erhalten</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Plus kündigen</string>
-    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
-    <string name="subscription_cancel_failed">Wir konnten Plus nicht kündigen. Versuch es noch einmal oder schreib uns an hello@zoonk.com.</string>
-    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
-    <string name="subscription_cancel_title">Plus kündigen?</string>
-    <string name="subscription_cancel_at_period_end">Du behältst Plus bis zum Ende des bereits bezahlten Zeitraums.</string>
-    <string name="subscription_website">Auf der Website gekauft</string>
     <string name="subscription_renewal_failed">Deine letzte Zahlung für die Verlängerung ist fehlgeschlagen.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Aktualisiere deine Zahlung auf der Website, wo du abonniert hast.</string>
-    <string name="subscription_cancel_unpaid">Plus endet sofort und dir wird nichts mehr berechnet.</string>
-    <string name="subscription_cancel_back">Zurück</string>
-    <string name="subscription_keep_plus">Plus behalten</string>
-    <string name="subscription_keep_plus_description">Wenn du Plus behältst, verlängert sich dein Abo wie bisher.</string>
-    <string name="subscription_keep_failed">Wir konnten die Verlängerung von Plus nicht wieder aktivieren. Versuch es noch einmal oder schreib an hello@zoonk.com.</string>
     <string name="subscription_deletion_notice">Wenn du dein Konto löschst, endet Plus sofort.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">Für Plus aus dem App Store zahlst du weiter, bis du es dort kündigst.</string>
@@ -214,4 +193,12 @@
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, für den du schon bezahlt hast. Danach nutzt du wieder Free und behältst deine Ziele und Fortschritte.</string>
     <string name="subscription_question_refund">Kann ich eine Rückerstattung bekommen?</string>
     <string name="subscription_answer_refund">Google Play ist für Erstattungen zuständig, wenn du Plus dort abonniert hast: Beantrag die Erstattung in Google Play. Wenn du dein Abo auf unserer Website abgeschlossen hast, schreib uns an hello@zoonk.com und wir schauen uns das an.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Über Google Play</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">Über den App Store</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">Über die Website</string>
+    <string name="subscription_manage_apple">Im App Store verwalten</string>
+    <string name="subscription_manage_website">Auf der Website verwalten</string>
 </resources>

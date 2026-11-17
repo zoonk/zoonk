@@ -11,6 +11,7 @@
   "stats_belt_comes_after": "6bf6ff9f1cae94cf2124e60dc475cfb17577ee1e6ca8ad51459ae32e72b0a331",
   "stats_belt_current": "d965f5b5f7d00eaba2cb2bf7b0766eb81dcbb28adcaf3341d7ea5f4bcf07c5d6",
   "stats_belt_earned": "063ab8ff520d993e0c70227f45329248f2a2969ef7a511b01cf6e070d65e5cf7",
+  "stats_belt_level": "ac2509fc3fb99ae10118c06edc83d06a6f412b37b7df4da4e12c0b20775ed874",
   "stats_belt_line": "0646d1040febc0fcfd14bb84b28b5c4c7686dc64f5e3df050892ca2344374186",
   "stats_best_day": "3dc73f55d73f8695f07ab556f7f1c375699b31bfb68916e963617fac21641760",
   "stats_best_day_is": "c0b62cd3bb248b4ad20918468eaedd855a8bd2c7a46c809e976dbf719945a197",
@@ -46,7 +47,6 @@
   "stats_no_energy": "951de6f094e99e7f9c8ddf28a579a3eea5904db53c06d53ab5ee761626d93e91",
   "stats_no_study": "e37ccf6026bd70dcdbd2219b2f3c3bd6b09e37b06c29b9302d4616d76cb54a19",
   "stats_not_yet": "7de0b22f3688fc6a5767e27b296522bfe8d60839cf6aaf85627479ce430b61a5",
-  "stats_open": "8db0daf84c47c0ff3b94769885478cfce66ee251686563fcff9fc25d4c978931",
   "stats_overview": "11fb6c0016027a644be58c9951008f1809cfc05d25ad5e13389a3f416724a683",
   "stats_part_failed": "4cdd07523a0d2ec967ec07fca3be637956924715cc8b99af744725036d9aa4e8",
   "stats_past_6_months": "0838d6339adcc1595ae136c13bae24283d683d8dd7436fcbcf8af96c584258af",
@@ -71,7 +71,6 @@
 }
 -->
 <resources>
-    <string name="stats_open">Ouvrir les statistiques</string>
     <string name="stats_overview">Vue d’ensemble</string>
     <string name="stats_level">Niveau</string>
     <string name="stats_energy">Énergie</string>
@@ -183,4 +182,6 @@
     <string name="stats_afternoon">Après-midi</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Soir</string>
+    <!-- A belt and a level inside it, from 1 to 10, as in “Yellow belt · Level 2”. It heads the Level page. -->
+    <string name="stats_belt_level">%1$s · Niveau %2$s</string>
 </resources>

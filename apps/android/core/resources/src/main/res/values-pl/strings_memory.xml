@@ -32,13 +32,12 @@
   "memory_updated": "c3716f340c3a00ef57b7ceb7cd7ee3882ac71bd339e2aa792e07de3678298a3b",
   "memory_updated_more": "8a220f11a39e6ae5edadd515249308d34c9f3779d370e3a34ec165210d5e6bf8",
   "memory_use": "fd536cb298f483c7da9d01bab9a1aa5ae67f824145d18f55e48fbdfd689d87b0",
-  "memory_use_off": "c20e1d9526e544cb8908856be16a03610e15ce1757b4213855e75b8b12e1defc"
+  "memory_use_description": "9a8cb17e5f3105598ccef16a282f76836610a4ebb0e44f0a0e380a69f70c564e"
 }
 -->
 <resources>
     <string name="memory_description">To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia.</string>
     <string name="memory_use">Korzystamy z pamięci</string>
-    <string name="memory_use_off">Gdy ta opcja jest wyłączona, niczego nie zapamiętujemy ani nie wykorzystujemy.</string>
     <string name="memory_empty">Na razie pusto. Notatki pojawią się tu w trakcie nauki i rozmów.</string>
     <string name="memory_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <string name="memory_category_goals">Cele</string>
@@ -78,4 +77,6 @@
     <string name="memory_change_undone">Cofnięto zmianę</string>
     <string name="memory_undo_failed">Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną.</string>
     <string name="memory_undo_retry">Nie udało się cofnąć zmiany. Spróbuj ponownie.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których %1$s pamięta, co u ciebie nowego</string>
 </resources>

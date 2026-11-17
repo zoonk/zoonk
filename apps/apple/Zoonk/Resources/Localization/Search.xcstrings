@@ -1070,7 +1070,7 @@
       }
     },
     "Practice your mistakes" : {
-      "comment" : "Search action that practices the mistakes ready for review",
+      "comment" : "Search action that practices the mistakes ready for review\nA button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1099,13 +1099,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違えた問題を復習する"
+            "value" : "間違えた問題を練習する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "틀린 문제 복습하기"
+            "value" : "틀린 문제 다시 풀기"
           }
         },
         "pl" : {

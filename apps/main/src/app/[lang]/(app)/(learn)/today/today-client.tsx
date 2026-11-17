@@ -310,7 +310,6 @@ export function TodayClient({
         studyEverythingHref: "/plan?focus=everything",
         summaryHref: sessionHref,
       }}
-      brainPower={data.brainPower}
       buddy={data.buddy}
       completedLessons={data.completedLessons}
       knownLessons={data.knownLessons}

@@ -1,3 +1,4 @@
+import { notPlannedReasonSchema } from "@zoonk/core/view-models/syllabus/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { shortPhaseSchema } from "./short-exam-plans";
@@ -140,6 +141,7 @@ export const planPhaseSchema = z
       })
       .meta({ description: "The phase's mock exams" }),
     name: z.string(),
+    notPlannedReason: notPlannedReasonSchema,
     short: shortPhaseSchema,
     startDate: isoDateSchema.nullable(),
     state: z

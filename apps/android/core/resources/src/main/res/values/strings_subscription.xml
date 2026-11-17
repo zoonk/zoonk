@@ -9,27 +9,13 @@
     <string name="subscription_renews_on">Renews on %1$s.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_period_ends_on">Paid until %1$s.</string>
-    <string name="subscription_managed_google">You subscribed in Google Play.</string>
-    <string name="subscription_managed_apple">You subscribed in the App Store.</string>
     <string name="subscription_managed_zoonk">To change or cancel Plus, write to us.</string>
     <string name="subscription_manage_google">Manage in Google Play</string>
     <string name="subscription_contact_support">Get help</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
-    <string name="subscription_cancel">Cancel Plus</string>
-    <!-- In Polish, match the Cancel Plus action: start with "Nie udało się zrezygnować z Plus." -->
-    <string name="subscription_cancel_failed">We couldn\'t cancel Plus. Try again or email hello@zoonk.com.</string>
-    <!-- In Polish, match the Cancel Plus action: "Zrezygnować z Plus?" -->
-    <string name="subscription_cancel_title">Cancel Plus?</string>
-    <string name="subscription_cancel_at_period_end">You keep Plus until the end of the period you already paid for.</string>
-    <string name="subscription_website">Bought on the website</string>
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
     <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
     <string name="subscription_renewal_failed_website">Update your payment on the website, where you subscribed.</string>
-    <string name="subscription_cancel_unpaid">Plus ends right away, and you won\'t be charged again.</string>
-    <string name="subscription_cancel_back">Go back</string>
-    <string name="subscription_keep_plus">Keep Plus</string>
-    <string name="subscription_keep_plus_description">Keep Plus, and it renews as before.</string>
-    <string name="subscription_keep_failed">We couldn\'t keep Plus. Try again or email hello@zoonk.com.</string>
     <string name="subscription_deletion_notice">Deleting your account ends Plus right away.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">Plus from the App Store keeps charging until you cancel it there.</string>
@@ -128,4 +114,12 @@
     <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back to free, and your goals and progress stay with you.</string>
     <string name="subscription_question_refund">Can I get a refund?</string>
     <string name="subscription_answer_refund">Google Play handles refunds for Plus bought there: ask for one in Google Play. If you subscribed on our website, write to us at hello@zoonk.com and we\'ll look into it.</string>
+    <!-- On the subscription page, labels Plus bought in Google Play, where it's managed. -->
+    <string name="subscription_through_google">Through Google Play</string>
+    <!-- On the subscription page, labels Plus bought in the App Store, where it's managed. -->
+    <string name="subscription_through_apple">Through the App Store</string>
+    <!-- On the subscription page, labels Plus bought on the Zoonk website, where it's managed. -->
+    <string name="subscription_through_website">Through the website</string>
+    <string name="subscription_manage_apple">Manage in App Store</string>
+    <string name="subscription_manage_website">Manage on the website</string>
 </resources>

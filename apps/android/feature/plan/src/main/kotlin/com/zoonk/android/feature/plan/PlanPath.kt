@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.goalcontent.planOutsideReason
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -244,7 +245,9 @@ private fun phaseMeta(
     phase: PlanPhase,
     open: Boolean,
 ): PlanDateWords? {
-    if (phase.state == PlanPhase.State.LEFT_OUT) return sameWords(stringResource(R.string.plan_not_in_your_plan))
+    if (phase.state == PlanPhase.State.LEFT_OUT) {
+        return sameWords(planOutsideReason(phase.notPlannedReason))
+    }
     if (phase.state == PlanPhase.State.UNFINISHED) {
         val leftOut = (phase.lessonsTotal - phase.lessonsDone).toInt()
         return sameWords(

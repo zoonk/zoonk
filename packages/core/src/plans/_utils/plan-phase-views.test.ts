@@ -53,6 +53,24 @@ function boss(position: number, phaseIndex: number, status: "done" | "todo", day
 describe(buildPhaseViews, () => {
   const items = [lesson(0, 0), lesson(1, 0), lesson(2, 0), lesson(3, 1)];
 
+  it("carries the syllabus reason for a phase with no scheduled work", () => {
+    const views = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "learn",
+      items: [lesson(0, 0)],
+      phaseReasons: new Map([
+        [1, "time"],
+        [2, "skipped"],
+      ]),
+      phases: [phase(), phase(), phase()],
+      skillAreas: new Map(),
+      upNextItemId: null,
+    });
+
+    expect(views.map((view) => view.notPlannedReason)).toStrictEqual([null, "time", "skipped"]);
+  });
+
   it("uses the planner's minutes for each phase", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map(),

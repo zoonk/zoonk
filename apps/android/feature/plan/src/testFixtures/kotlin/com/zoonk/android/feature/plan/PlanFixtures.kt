@@ -95,7 +95,7 @@ fun phase(
     mocks: String = """{"count":0}""",
 ) = """{"chapterCount":${chapters.size},"chapters":[${chapters.joinToString(",")}],"checkpoint":$checkpoint,"startDate":"$start",
     "endDate":"$end","hours":10,"index":$index,"kind":"learn","lessonsDone":$done,"lessonsTotal":$total,"mocks":$mocks,
-    "name":"$name","state":"$state"}"""
+    "name":"$name","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state"}"""
 
 /** A learn goal three weeks into four phases: the second one open, its next chapter half done, a day behind. */
 internal fun learnPlan(): Plan =

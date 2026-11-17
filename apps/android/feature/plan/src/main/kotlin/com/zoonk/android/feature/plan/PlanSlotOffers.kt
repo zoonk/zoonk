@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -246,6 +247,11 @@ internal fun CoverageSuggestion(slot: Slot) {
                             close()
                             slot.links.focusTest()
                         }, secondary = true)
+                        Text(
+                            stringResource(R.string.focustest_suggestion_line),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                     }
                     if (coverage != null) {
                         SuggestionMenu { done ->

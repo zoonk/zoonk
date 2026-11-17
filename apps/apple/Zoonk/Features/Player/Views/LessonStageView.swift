@@ -222,7 +222,8 @@ struct LessonStageView: View {
             }
           }
           .bottomBar {
-            LessonActionBar(store: store, state: state, step: step)
+            LessonActionBar(
+              store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
           }
           .environment(recordInBar)
           // The hinge is the trailing page's safe area, so its content and the action bar stay
@@ -454,6 +455,7 @@ struct LessonActionBar: View {
   let state: LessonPlayerState
   /// Nil on the lesson map, which is read like a screen.
   let step: LessonStep?
+  var showsOwnAsk = false
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
@@ -494,7 +496,10 @@ struct LessonActionBar: View {
         primaryButton
       }
 
-      if tutor.panel != nil {
+      if showsLessonAsk(
+        isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
+        hasOwnAsk: showsOwnAsk)
+      {
         askButton
       }
     }
@@ -766,4 +771,8 @@ private struct LessonNotice: View {
       }
     }
   }
+}
+
+func showsLessonAsk(isExplanation: Bool, hasPanel: Bool, hasOwnAsk: Bool) -> Bool {
+  hasPanel && !(isExplanation && hasOwnAsk)
 }

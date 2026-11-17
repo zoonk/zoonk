@@ -210,7 +210,6 @@ class TodayScreenshots {
                     buddyName = "Zu",
                     snackbars = app.snackbars,
                     refreshIfChanged = app.today::refreshIfChanged,
-                    brainPower = 1240,
                     practice = {
                         TodayPracticeRows(
                             MistakeListAvailability(ready = 3, tomorrow = 1),

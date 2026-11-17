@@ -32,13 +32,12 @@
   "memory_updated": "4a142d4a8877ed27695f5df9ae6c71375c12f184ed27451f3ba8d031849e63a2",
   "memory_updated_more": "5def2e4f944c2a00696253739021ef1548ba9c1e6562b158cca077dde68bac1f",
   "memory_use": "3a4de16106f2a8433d5a89624c8108789115571668e08e41fa237a749f4353dc",
-  "memory_use_off": "ac3d5062fddd7340102e3d6a1a095f75b2440d577b789cbce12c74b5b5ebe11c"
+  "memory_use_description": "cd70216c00222e067661578435fd05359d6c304aa2d00cb41d1025cbb179db8f"
 }
 -->
 <resources>
     <string name="memory_description">Was Zoonk sich merkt, um dir Beispiele und Pläne zu geben, die zu deinem Leben passen.</string>
     <string name="memory_use">Erinnerungen verwenden</string>
-    <string name="memory_use_off">Solange diese Funktion ausgeschaltet ist, werden keine Notizen gespeichert oder verwendet.</string>
     <string name="memory_empty">Noch nichts. Hier erscheinen Notizen, während du lernst und chattest.</string>
     <string name="memory_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="memory_category_goals">Ziele</string>
@@ -76,4 +75,6 @@
     <string name="memory_change_undone">Änderung rückgängig gemacht</string>
     <string name="memory_undo_failed">Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert.</string>
     <string name="memory_undo_retry">Das ließ sich nicht rückgängig machen. Versuch es noch einmal.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %1$s, die an deine Neuigkeiten anknüpfen</string>
 </resources>

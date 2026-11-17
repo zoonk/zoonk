@@ -172,11 +172,11 @@ private fun Syllabus.coverageDetail(): SummaryDetail {
     val total = topicCount.toInt()
     val out =
         subjects.flatMap { it.topics }.filter {
-            it.status == SyllabusTopic.Status.NOT_PLANNED && it.notPlannedReason != SyllabusTopic.NotPlannedReason.PAST_BASICS
+            it.status == SyllabusTopic.Status.NOT_PLANNED && it.notPlannedReason != "pastBasics"
         }
     return when {
         out.isEmpty() -> SummaryDetail.AllPlanned(total)
-        out.all { it.notPlannedReason == SyllabusTopic.NotPlannedReason.TIME } -> SummaryDetail.DontFit(out.size, total)
+        out.all { it.notPlannedReason == "time" } -> SummaryDetail.DontFit(out.size, total)
         else -> SummaryDetail.Planned(total - out.size, total)
     }
 }

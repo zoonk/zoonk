@@ -349,7 +349,7 @@ private fun BeltProgression(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
-                        stringResource(R.string.belt_level, name, whole(level.level, locale)),
+                        stringResource(R.string.stats_belt_level, name, whole(level.level, locale)),
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -409,7 +409,11 @@ private fun NextStep(
         if (nextBelt != null && level.level == LEVELS_PER_BELT) {
             stringResource(R.string.stats_brain_power_to, points, stringResource(nextBelt.label))
         } else {
-            stringResource(R.string.stats_brain_power_to, points, stringResource(R.string.belt_level, name, whole(level.level + 1, locale)))
+            stringResource(
+                R.string.stats_brain_power_to,
+                points,
+                stringResource(R.string.stats_belt_level, name, whole(level.level + 1, locale)),
+            )
         },
     )
 }

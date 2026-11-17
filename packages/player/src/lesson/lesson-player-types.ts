@@ -137,6 +137,7 @@ export type LessonPlayerAdapters = {
 };
 
 export type LessonPlayerRoutes = {
+  mistakes: string;
   exit: string;
   /** Set when `exit` points to the lesson's chapter or language unit. */
   exitTo: "chapter" | "unit" | null;
