@@ -53,11 +53,11 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.zoonk
 
 /** A line that opens its content in a sheet (beside nothing), or its content in full (beside the page). */
@@ -208,7 +208,7 @@ fun SuggestionHeader(text: String) {
     Text(
         text = text,
         modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
-        style = style.copy(lineBreak = LineBreak.Heading),
+        style = style.balanced(),
     )
 }
 
@@ -366,7 +366,7 @@ private fun SuggestionLine(
                                             else -> Modifier
                                         },
                                     ),
-                            style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Heading),
+                            style = MaterialTheme.typography.bodyMedium.balanced(),
                             fontWeight = FontWeight.Medium,
                             color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         )

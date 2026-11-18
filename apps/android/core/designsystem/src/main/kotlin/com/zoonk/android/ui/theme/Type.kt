@@ -64,8 +64,13 @@ private fun TextStyle.role(
         textDirection = TextDirection.ContentOrLtr,
     )
 
-/** Main's titles balance their lines (`text-balance`), so a wrapped title never leaves one word alone. */
-private fun TextStyle.balanced(): TextStyle = copy(lineBreak = LineBreak.Heading)
+/**
+ * Main's titles and questions balance their lines (`text-balance`), so a wrapped one never leaves a word alone, by the
+ * normal rules: Compose's `LineBreak.Heading` also loosens them, which lets a Japanese line start with 々 in any app
+ * language. Where a line may break between words is the theme's ([wrappedFor]), so this keeps it.
+ */
+fun TextStyle.balanced(): TextStyle =
+    copy(lineBreak = lineBreak.copy(strategy = LineBreak.Strategy.Balanced, strictness = LineBreak.Strictness.Normal))
 
 private val material = Typography()
 
@@ -156,61 +161,69 @@ fun TextStyle.withTabularFigures(): TextStyle = copy(fontFeatureSettings = "tnum
 
 /**
  * Compose breaks Korean and Japanese inside words. Korean wraps between words, at the spaces, everywhere, as the web's
- * `keep-all` does. Japanese wraps between phrases only in short text (labels, titles), so a button never splits a word;
- * a paragraph still wraps between characters, as on the web and in Android's own text past a few lines.
+ * `keep-all` does. Japanese wraps between phrases only in a short control (a button, a chip, a label), so it never
+ * splits a word; a sentence or a question wraps between characters, as on the web.
  */
-internal fun Typography.wrappedFor(language: String): Typography {
-    val phrase = phraseLocale(language) ?: return this
-    val paragraph = paragraphWrap(language, phrase)
-    return copy(
-        displayLarge = displayLarge.byPhrase(phrase),
-        displayMedium = displayMedium.byPhrase(phrase),
-        displaySmall = displaySmall.byPhrase(phrase),
-        headlineLarge = headlineLarge.byPhrase(phrase),
-        headlineMedium = headlineMedium.byPhrase(phrase),
-        headlineSmall = headlineSmall.byPhrase(phrase),
-        titleLarge = titleLarge.byPhrase(phrase),
-        titleMedium = titleMedium.byPhrase(phrase),
-        titleSmall = titleSmall.byPhrase(phrase),
-        bodyLarge = paragraph(bodyLarge),
-        bodyMedium = paragraph(bodyMedium),
-        bodySmall = paragraph(bodySmall),
-        labelLarge = labelLarge.byPhrase(phrase),
-        labelMedium = labelMedium.byPhrase(phrase),
-        labelSmall = labelSmall.byPhrase(phrase),
-    )
-}
-
-internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography {
-    val phrase = phraseLocale(language) ?: return this
-    val paragraph = paragraphWrap(language, phrase)
-    return copy(
-        sectionTitle = sectionTitle.byPhrase(phrase),
-        lead = paragraph(lead),
-        lessonText = paragraph(lessonText),
-        question = paragraph(question),
-    )
-}
-
-private fun phraseLocale(language: String): LocaleList? =
+internal fun Typography.wrappedFor(language: String): Typography =
     when (language) {
-        "ko", "ja" -> LocaleList("$language-u-lw-phrase")
-        else -> null
+        "ko" -> {
+            val phrase = phraseLocale(language)
+            copy(
+                displayLarge = displayLarge.byPhrase(phrase),
+                displayMedium = displayMedium.byPhrase(phrase),
+                displaySmall = displaySmall.byPhrase(phrase),
+                headlineLarge = headlineLarge.byPhrase(phrase),
+                headlineMedium = headlineMedium.byPhrase(phrase),
+                headlineSmall = headlineSmall.byPhrase(phrase),
+                titleLarge = titleLarge.byPhrase(phrase),
+                titleMedium = titleMedium.byPhrase(phrase),
+                titleSmall = titleSmall.byPhrase(phrase),
+                bodyLarge = bodyLarge.byPhrase(phrase),
+                bodyMedium = bodyMedium.byPhrase(phrase),
+                bodySmall = bodySmall.byPhrase(phrase),
+                labelLarge = labelLarge.byPhrase(phrase),
+                labelMedium = labelMedium.byPhrase(phrase),
+                labelSmall = labelSmall.byPhrase(phrase),
+            )
+        }
+
+        "ja" -> {
+            val phrase = phraseLocale(language)
+            copy(
+                labelLarge = labelLarge.byPhrase(phrase),
+                labelMedium = labelMedium.byPhrase(phrase),
+                labelSmall = labelSmall.byPhrase(phrase),
+            )
+        }
+
+        else -> {
+            this
+        }
     }
 
-private fun paragraphWrap(
-    language: String,
-    phrase: LocaleList,
-): (TextStyle) -> TextStyle = if (language == "ja") TextStyle::byCharacter else { style -> style.byPhrase(phrase) }
+internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
+    when (language) {
+        "ko" -> {
+            val phrase = phraseLocale(language)
+            copy(
+                sectionTitle = sectionTitle.byPhrase(phrase),
+                lead = lead.byPhrase(phrase),
+                lessonText = lessonText.byPhrase(phrase),
+                question = question.byPhrase(phrase),
+            )
+        }
 
-/**
- * A balanced paragraph (a question) keeps its balance but drops what `LineBreak.Heading` brings for headings: phrase
- * breaks, and the loose rules that let a line start with a mark such as 々, which the web never does.
- */
-private fun TextStyle.byCharacter(): TextStyle {
-    if (lineBreak.wordBreak != LineBreak.WordBreak.Phrase) return this
-    return copy(lineBreak = lineBreak.copy(strictness = LineBreak.Strictness.Normal, wordBreak = LineBreak.WordBreak.Default))
-}
+        "ja" -> {
+            val phrase = phraseLocale(language)
+            copy(label = label.byPhrase(phrase), tag = tag.byPhrase(phrase))
+        }
+
+        else -> {
+            this
+        }
+    }
+
+private fun phraseLocale(language: String) = LocaleList("$language-u-lw-phrase")
 
 /**
  * Every paragraph starts on the screen's start side, as Android's `viewStart` does: an English
