@@ -409,7 +409,6 @@ msgstr "페이지로 이동하거나 기능을 실행하거나 질문해 보세�
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "취소"
@@ -1420,9 +1419,21 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plus가 바로 종료되고 더 이상 요금이 청구되지 않아요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "MUSFX9"
+msgid "You have Plus until <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>까지 Plus를 이용할 수 있어요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Plus 계속 이용하기"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
@@ -1433,11 +1444,6 @@ msgstr "Plus가 <mono>{date}</mono>에 종료돼요."
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "<mono>{date}</mono>에 갱신돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "MUSFX9"
-msgid "You have Plus until <mono>{date}</mono>."
-msgstr "<mono>{date}</mono>까지 Plus를 이용할 수 있어요."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1483,11 +1489,6 @@ msgstr "Plus 자동 갱신을 다시 켜지 못했어요. 다시 시도해 보�
 msgctxt "aSfGh6"
 msgid "Keep Plus, and it renews as before."
 msgstr "Plus를 계속 이용하면 이전처럼 자동 갱신돼요."
-
-#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "KLKQ8N"
-msgid "Keep Plus"
-msgstr "Plus 계속 이용하기"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1601,6 +1602,7 @@ msgid "Your stats"
 msgstr "내 통계"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1629,14 +1631,14 @@ msgid "Patterns"
 msgstr "학습 패턴"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "cMaydB"
-msgid "Studied"
-msgstr "학습함"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "eos-eP"
 msgid "No study"
 msgstr "학습 없음"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "cMaydB"
+msgid "Studied"
+msgstr "학습함"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "MnYAxL"
@@ -1660,6 +1662,12 @@ msgstr "활동량이 적은 쪽부터 많은 쪽까지"
 msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "적음"
+
+#. Names the legend of a calendar of study days: a darker square means more minutes studied that day.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegendStudyTime"
+msgid "Study time"
+msgstr "학습 시간"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1740,6 +1748,16 @@ msgctxt "GfOLmq"
 msgid "Belts"
 msgstr "띠"
 
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Ysr8td"
+msgid "Earned"
+msgstr "획득"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Tw83HA"
+msgid "Coming"
+msgstr "획득 예정"
+
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
 msgid "Every belt earned"
@@ -1803,6 +1821,11 @@ msgctxt "l0d7rx"
 msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
 msgstr "{count, plural, other {응답 #개}}, 패턴 파악에 {minimum, number}개 필요"
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "yJxUpG"
+msgid "Not enough answers yet"
+msgstr "아직 푼 문제가 충분하지 않아요"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
@@ -1846,11 +1869,6 @@ msgid "Evening"
 msgstr "저녁"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "VPQ8Rv"
-msgid "No best day yet"
-msgstr "아직 두드러지는 요일 없음"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "언제든"
@@ -1876,6 +1894,7 @@ msgid "The time of day makes no difference."
 msgstr "시간대에 따른 차이는 없어요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "언제 가장 잘 푸는지 확인하려면 문제를 더 풀어 보세요."
@@ -1905,6 +1924,11 @@ msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {응답 #개}}"
 
+#: src/app/[lang]/(app)/(stats)/score/score-chart.tsx
+msgctxt "kUPk1B"
+msgid "Your trend shows after two weeks of study"
+msgstr "2주 동안 학습하면 점수 변화를 볼 수 있어요"
+
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "ElicHU"
 msgid "{correct} of {total} right in the last {days} days"
@@ -1922,6 +1946,11 @@ msgid "Shows after your first answers."
 msgstr "첫 문제에 답하면 표시돼요."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "아직 없음"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "hofSlo"
 msgid "Patterns · 90 days"
@@ -1931,16 +1960,6 @@ msgstr "패턴 · 90일"
 msgctxt "078WAr"
 msgid "See all"
 msgstr "전체 보기"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "lO7wKc"
-msgid "Not yet"
-msgstr "아직 없음"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "nr7tEh"
-msgid "Best on {day}"
-msgstr "{day}에 가장 잘해요"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"

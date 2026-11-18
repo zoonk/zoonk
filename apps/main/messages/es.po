@@ -409,7 +409,6 @@ msgstr "Ve a una página, realiza una acción o haz una pregunta."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1420,9 +1419,21 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plus termina de inmediato y no se te volverá a cobrar."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "MUSFX9"
+msgid "You have Plus until <mono>{date}</mono>."
+msgstr "Tienes Plus hasta el <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Conservarás Plus hasta que termine el periodo que ya pagaste."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Conservar Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
@@ -1433,11 +1444,6 @@ msgstr "Plus termina el <mono>{date}</mono>."
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "Se renueva el <mono>{date}</mono>."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "MUSFX9"
-msgid "You have Plus until <mono>{date}</mono>."
-msgstr "Tienes Plus hasta el <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1483,11 +1489,6 @@ msgstr "No pudimos conservar tu suscripción a Plus. Inténtalo de nuevo o escri
 msgctxt "aSfGh6"
 msgid "Keep Plus, and it renews as before."
 msgstr "Conserva Plus y se renovará como antes."
-
-#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "KLKQ8N"
-msgid "Keep Plus"
-msgstr "Conservar Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1601,6 +1602,7 @@ msgid "Your stats"
 msgstr "Tus estadísticas"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1629,14 +1631,14 @@ msgid "Patterns"
 msgstr "Patrones"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "cMaydB"
-msgid "Studied"
-msgstr "Estudiado"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "eos-eP"
 msgid "No study"
 msgstr "No estudiaste"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "cMaydB"
+msgid "Studied"
+msgstr "Estudiado"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "MnYAxL"
@@ -1660,6 +1662,12 @@ msgstr "Actividad de menos a más"
 msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "Menos"
+
+#. Names the legend of a calendar of study days: a darker square means more minutes studied that day.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegendStudyTime"
+msgid "Study time"
+msgstr "Tiempo de estudio"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1740,6 +1748,16 @@ msgctxt "GfOLmq"
 msgid "Belts"
 msgstr "Cinturones"
 
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Ysr8td"
+msgid "Earned"
+msgstr "Obtenido"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Tw83HA"
+msgid "Coming"
+msgstr "Por conseguir"
+
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
 msgid "Every belt earned"
@@ -1803,6 +1821,11 @@ msgctxt "l0d7rx"
 msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
 msgstr "{count, plural, one {# respuesta} other {# respuestas}}, se necesitan {minimum, number} para detectar un patrón"
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "yJxUpG"
+msgid "Not enough answers yet"
+msgstr "Aún no hay suficientes respuestas"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
@@ -1846,11 +1869,6 @@ msgid "Evening"
 msgstr "Noche"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "VPQ8Rv"
-msgid "No best day yet"
-msgstr "Aún no hay un día que destaque"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "Cualquier momento"
@@ -1876,6 +1894,7 @@ msgid "The time of day makes no difference."
 msgstr "La hora del día no influye."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "Responde más preguntas para ver cuándo te va mejor."
@@ -1905,6 +1924,11 @@ msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# respuesta} other {# respuestas}}"
 
+#: src/app/[lang]/(app)/(stats)/score/score-chart.tsx
+msgctxt "kUPk1B"
+msgid "Your trend shows after two weeks of study"
+msgstr "Verás tu tendencia después de dos semanas de estudio"
+
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "ElicHU"
 msgid "{correct} of {total} right in the last {days} days"
@@ -1922,6 +1946,11 @@ msgid "Shows after your first answers."
 msgstr "Aparecerá después de tus primeras respuestas."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "Aún no"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "hofSlo"
 msgid "Patterns · 90 days"
@@ -1931,16 +1960,6 @@ msgstr "Patrones · 90 días"
 msgctxt "078WAr"
 msgid "See all"
 msgstr "Ver todo"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "lO7wKc"
-msgid "Not yet"
-msgstr "Aún no"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "nr7tEh"
-msgid "Best on {day}"
-msgstr "Mejor el {day}"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
