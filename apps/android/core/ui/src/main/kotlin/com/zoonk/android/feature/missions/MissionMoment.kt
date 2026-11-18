@@ -62,7 +62,16 @@ data class MissionMomentFacts(
     val shows: Boolean get() = justDone.isNotEmpty() || bonusPaid
     internal val progress = MissionProgress(missions)
     val payoff: Boolean get() = bonusPaid && progress.full
-    internal val announcesCompletion: Boolean get() = progress.full
+    internal val title: MissionMomentTitle
+        get() = if (progress.left == 0) MissionMomentTitle.AllDone else MissionMomentTitle.Done(justDone.size)
+}
+
+internal sealed interface MissionMomentTitle {
+    data object AllDone : MissionMomentTitle
+
+    data class Done(
+        val count: Int,
+    ) : MissionMomentTitle
 }
 
 /** How long what follows waits, so the day's moment plays one thing at a time. */
@@ -90,11 +99,10 @@ fun MissionMoment(
     val points = formatNumber(facts.bonus.toDouble(), currentLocale())
     val brain = MaterialTheme.zoonk.brain
     val title =
-        when {
-            !facts.announcesCompletion -> stringResource(R.string.missions_title)
-            facts.progress.total == 1 -> stringResource(R.string.missions_moment_one_done)
-            justDone.size == facts.progress.total -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
-            else -> stringResource(R.string.missions_moment_all_done)
+        when (val said = facts.title) {
+            MissionMomentTitle.AllDone -> stringResource(R.string.missions_moment_all_done)
+            MissionMomentTitle.Done(1) -> stringResource(R.string.missions_moment_one_done)
+            is MissionMomentTitle.Done -> pluralStringResource(R.plurals.missions_moment_done, said.count, said.count)
         }
     val status =
         if (left > 0) {
@@ -160,6 +168,8 @@ fun MissionMoment(
             MissionTrack(
                 progress = facts.progress,
                 modifier = Modifier.padding(top = 16.dp),
+                from = facts.progress.done - justDone.size,
+                delayMillis = ZoonkMotion.BEAT_MILLIS,
             )
 
             Column(Modifier.padding(top = 6.dp)) {
