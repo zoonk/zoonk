@@ -34,7 +34,7 @@ type WeekDay = StudySession["week"]["days"][number];
 export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
-  "hit-area relative -mx-1 min-h-11 cursor-pointer rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "hit-area relative min-h-11 cursor-pointer rounded-md py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 /** The week marks the current local day even while a lesson carries the previous day's session. */
 function useWeekDate(): Date {

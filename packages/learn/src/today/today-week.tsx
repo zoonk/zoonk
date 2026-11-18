@@ -2,8 +2,9 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { GoalRing } from "../_components/goal-ring";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { WEEK_ROW_CLASS } from "../_components/week-row";
+import { WEEK_ROW_CLASS, isMissed } from "../_components/week-row";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useTodayScreen } from "./today-context";
 import { ChallengeRow, isSameDay } from "./today-week-challenge";
@@ -18,6 +19,7 @@ export function TodayWeek({ className }: { className?: string }) {
   const { today } = useTodayScreen();
   const challenge = today.weeklyChallenge;
   const { days } = today.session.week;
+  const localDate = days.find((day) => day.isToday)?.date ?? today.session.localDate;
 
   const focusIndex = Math.max(
     0,
@@ -48,6 +50,12 @@ export function TodayWeek({ className }: { className?: string }) {
         </ol>
 
         {challenge?.date && inWeek && <ChallengeRow challenge={challenge} date={challenge.date} />}
+        {days.some((day) => isMissed(day, localDate)) && (
+          <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
+            <GoalRing className="size-3.5" share={0} track="missed" />
+            {t("Not studied")}
+          </p>
+        )}
       </div>
     </PageSection>
   );

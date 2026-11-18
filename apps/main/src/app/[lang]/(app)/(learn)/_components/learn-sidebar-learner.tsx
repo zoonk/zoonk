@@ -14,12 +14,19 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { SIDEBAR_ACCOUNT_CLASS, SidebarSection } from "@zoonk/ui/components/sidebar";
+import {
+  SIDEBAR_ACCOUNT_CLASS,
+  SIDEBAR_ITEM_CLASS,
+  SidebarSection,
+} from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
 function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
@@ -69,16 +76,47 @@ function StudySectionView({ places }: { places: LearnerSummaryPlaces }) {
   );
 }
 
+function SectionSkeleton({ label, rows }: { label: string; rows: string[] }) {
+  return (
+    <SidebarSection label={label}>
+      {rows.map((row) => (
+        <div className={cn(SIDEBAR_ITEM_CLASS, "pointer-events-none")} key={row}>
+          <Skeleton className="size-4 shrink-0 rounded-sm" />
+          <Skeleton className="h-3 w-24 max-w-full rounded-sm" />
+        </div>
+      ))}
+    </SidebarSection>
+  );
+}
+
+function LearnerSectionsSkeleton() {
+  const t = useExtracted();
+  const stats = useStatsPages();
+
+  return (
+    <PrivateShellPlaceholder>
+      <div aria-hidden="true" className="flex flex-col gap-4">
+        <SectionSkeleton label={t("Study")} rows={["mistakes"]} />
+        <SectionSkeleton label={t("Statistics")} rows={stats.map((page) => page.menu)} />
+      </div>
+    </PrivateShellPlaceholder>
+  );
+}
+
 /** Every link here opens a learner's own page, so someone without a session gets none of them. */
 function FrameStudySection() {
   const learner = useFrameLearner();
 
-  return learner.status === "ready" ? <StudySectionView places={learner.summary.places} /> : null;
+  if (learner.status === "ready") {
+    return <StudySectionView places={learner.summary.places} />;
+  }
+
+  return learner.status === "visitor" ? null : <LearnerSectionsSkeleton />;
 }
 
 export function LearnerSections() {
   return (
-    <Suspense>
+    <Suspense fallback={<LearnerSectionsSkeleton />}>
       <FrameStudySection />
     </Suspense>
   );

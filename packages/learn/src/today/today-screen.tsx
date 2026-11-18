@@ -127,7 +127,9 @@ export function TodayScreen({
               />
               <TodayPractice
                 completedLessons={completedLessons}
+                completedLessonsHref={actions.completedLessonsHref}
                 mistakes={mistakes}
+                mistakesHref={actions.mistakesHref}
                 mockEntry={mockEntry}
                 speakingEntry={speakingEntry}
               />

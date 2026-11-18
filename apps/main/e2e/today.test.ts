@@ -189,7 +189,7 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
   try {
     const page = await context.newPage();
     await page.goto("/today");
-    const expand = page.getByRole("button", { name: /^\+\d+ more$/u });
+    const expand = page.getByRole("button", { name: /^\d+ more lessons?$/u });
     await expectHydrated(expand);
     await expand.tap();
 

@@ -84,7 +84,7 @@ export function TestOutStartLink({
         action={start}
         className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}
       >
-        {t("Already know this?")}
+        {compact ? t("Already know this chapter?") : t("Already know this?")}
         {space}
         <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
           {t("Take the test")}

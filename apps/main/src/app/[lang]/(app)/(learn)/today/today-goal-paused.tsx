@@ -1,5 +1,6 @@
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { EnterLink } from "@zoonk/learn/enter-button";
@@ -12,11 +13,12 @@ import {
   NoticeCardTitle,
 } from "@zoonk/learn/notice";
 import { Page } from "@zoonk/learn/page";
-import { TodayAtRest, TodayPageHeader } from "@zoonk/learn/today/at-rest";
+import { TodayAtRest, TodayPageHeader, TodayPractice } from "@zoonk/learn/today/at-rest";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FlagIcon, PauseIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import { loadTodayPractice } from "./today-view";
 
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
@@ -31,7 +33,6 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
   const t = await getExtracted();
   const list = await listCurrentUserGoals();
   const goal = list?.goals.find((item) => item.id === list.activeGoalId);
-  const resume = await loadResumePreview(goal);
 
   if (goal?.status === "completed") {
     return (
@@ -51,6 +52,11 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
     );
   }
 
+  const [resume, practice] = await Promise.all([
+    loadResumePreview(goal),
+    goal?.status === "paused" ? loadTodayPractice(goal.id) : null,
+  ]);
+
   return (
     <Page className="gap-5" data-slot="today-goal-at-rest">
       {banner}
@@ -69,6 +75,15 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
           )}
         </NoticeCardContent>
       </NoticeCard>
+
+      {practice && (
+        <TodayPractice
+          {...practice}
+          className="min-[72rem]:flex"
+          completedLessonsHref={getMenu("completedLessons").url}
+          mistakesHref={getMenu("mistakes").url}
+        />
+      )}
 
       {goal ? (
         <ResumeGoalBar key={goal.id} onResume={setGoalStatusAction.bind(null, goal.id, "active")}>

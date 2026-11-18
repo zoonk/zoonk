@@ -2,8 +2,7 @@
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
-import { CoverageLegend } from "../_components/coverage-bar";
-import { LessonCells } from "../_components/progress-cells";
+import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
 import { useFormatProgressShare } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
 
@@ -46,7 +45,7 @@ export function LessonsCard({
   const states = [
     "studied" as const,
     ...(counts.known > 0 ? ["known" as const] : []),
-    ...(counts.today > 0 ? ["today" as const] : []),
+    "new" as const,
   ];
 
   return (
@@ -69,8 +68,11 @@ export function LessonsCard({
     >
       {counts.total > 0 && (
         <div className="flex flex-col gap-2.5">
-          <LessonCells {...counts} />
-          {states.length > 1 && <CoverageLegend states={states} />}
+          <CoverageBar
+            known={counts.known / counts.total}
+            studied={counts.studied / counts.total}
+          />
+          <CoverageLegend states={states} />
         </div>
       )}
     </ProgressCard>
