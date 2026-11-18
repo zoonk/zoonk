@@ -509,16 +509,20 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(reserved?.spokenSeconds, 2)
   }
 
-  func testCancellingAReconnectWhileItRingsLeavesTheCallDropped() async {
+  func testEndingAReconnectWhileItRingsEndsTheCallOnWhatWasSaid() async {
     let first = await droppedCall()
+    let server = FakeServer(continuesCall: true)
     let reconnect = LiveCall(
-      conversation: .fixture(), client: FakeServer(continuesCall: true).client(FakeTransport()),
-      soFar: first.soFar)
+      conversation: .fixture(), client: server.client(FakeTransport()), soFar: first.soFar)
 
     await reconnect.start()
-    reconnect.cancel()
+    reconnect.hangUp()
 
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    XCTAssertEqual(reconnect.phase, .ended)
+    XCTAssertNil(reconnect.dropped)
+
+    let saved = await reconnect.finish()
+    XCTAssertEqual(saved?.turns, Self.droppedTurns)
 
     // A new call has nothing to save, not even a reply typed while it rang: the screen takes it
     // back to its intro, to start over.
@@ -532,9 +536,9 @@ final class LiveCallTests: XCTestCase {
     XCTAssertNil(new.soFar)
   }
 
-  func testAReservationAnsweringAfterTheCancelIsTheConnectionTheCallSavesUnder() async {
+  func testAReservationAnsweringAfterTheEndIsTheConnectionTheCallSavesUnder() async {
     let first = await droppedCall()
-    // Even one that would have opened a new call: it never went live, so the call stays dropped.
+    // Even one that would have opened a new call: it never went live.
     let server = FakeServer(
       reservations: [.ready(.fixture(connectionId: "late", continuesCall: false))],
       holdsConnects: true)
@@ -543,18 +547,20 @@ final class LiveCallTests: XCTestCase {
 
     Task { await reconnect.start() }
     await settle { server.isHoldingConnect }
-    reconnect.cancel()
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    reconnect.hangUp()
+    XCTAssertEqual(reconnect.phase, .ended)
 
     let finishing = Task { await reconnect.finish() }
     await Task.yield()
     server.answerConnect()
     let summary = await finishing.value
+    await settle { server.ended == ["late"] }
 
     XCTAssertEqual(summary?.connectionId, "late")
     XCTAssertEqual(summary?.turns, Self.droppedTurns)
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
-    XCTAssertEqual(server.ended, ["late"])
+    XCTAssertEqual(reconnect.phase, .ended)
+    // The ended call never connects the reservation that came late.
+    XCTAssertEqual(server.redeemed, [])
 
     // Called again and refused: the call still saves under the late connection.
     let refused = LiveCall(
@@ -570,10 +576,10 @@ final class LiveCallTests: XCTestCase {
 
   func testADroppedCallSaysWhyItsReconnectCantGoOnAndHowToGetBackIn() {
     let shown: [(LiveCall.Failure, DroppedCall)] = [
-      // Also a reconnect the learner cancelled while it rang.
       (.connect, .init(reason: nil, retry: .callAgain)),
       (.dropped, .init(reason: nil, retry: .callAgain)),
-      (.callsPaused, .init(reason: .callsPaused, retry: .callAgain)),
+      // Paused for everyone: calling again now can't work.
+      (.callsPaused, .init(reason: .callsPaused, retry: nil)),
       (.callInProgress, .init(reason: .callInProgress, retry: .takeover)),
       (.limit, .init(reason: .limit, retry: nil)),
       (.plusRequired, .init(reason: .plusRequired, retry: nil)),

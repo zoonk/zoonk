@@ -332,8 +332,10 @@ final class LiveCall {
     await start()
   }
 
-  /// The learner hung up: at once, with no goodbye, as a phone does.
+  /// The learner hung up: at once, with no goodbye, as a phone does. A reconnect still ringing
+  /// stops calling, and the call ends on what was said.
   func hangUp() {
+    attempt += 1
     end(.learnerEnded)
   }
 

@@ -273,7 +273,7 @@ final class TutorConversation {
     unresolved = request
     asking = TutorTurn(
       id: request.id, question: request.question, status: .pending, createdAt: .now,
-      about: scope.about)
+      about: scope.about, step: scope.step)
     askFailure = nil
 
     if !taken.isEmpty {

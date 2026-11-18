@@ -610,6 +610,31 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertThrowsError(try event(#"{"type":"error","errorText":"boom"}"#))
   }
 
+  /// "About …" shows on the first question and where the topic changes: another part of the
+  /// lesson, or the answer once it's checked.
+  func testAQuestionNamesItsTopicOnlyWhereItChanges() {
+    let part = TutorTurn.fixture(id: "1", about: .step, step: .init(id: "a", number: 1))
+
+    XCTAssertFalse(part.sharesTopic(with: nil))
+    XCTAssertTrue(
+      part.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: "a", number: 1))))
+    XCTAssertFalse(
+      part.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: "b", number: 2))))
+    XCTAssertFalse(
+      part.sharesTopic(with: .fixture(id: "0", about: .answer, step: .init(id: "a", number: 1))))
+    XCTAssertTrue(TutorTurn.fixture(id: "1").sharesTopic(with: .fixture(id: "0")))
+  }
+
+  /// A deleted step has no id any more: its number tells it apart from another deleted one.
+  func testDeletedStepsAreToldApartByTheirNumber() {
+    let deleted = TutorTurn.fixture(id: "1", about: .step, step: .init(id: nil, number: 2))
+
+    XCTAssertTrue(
+      deleted.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: nil, number: 2))))
+    XCTAssertFalse(
+      deleted.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: nil, number: 3))))
+  }
+
   func testAMemoryUndoThatDidNotGoThroughCanBeTriedAgain() async {
     let api = TutorAPIStub(answers: [[.memory([.likesMaps]), .text("Noted."), .finish]])
     api.undoResults = [.failure(APIError.network), .success(true)]
@@ -862,11 +887,11 @@ extension TutorMemoryChange {
 extension TutorTurn {
   fileprivate static func fixture(
     id: String, question: String = "Question", status: Status = .completed, about: About = .plan,
-    planChange: Components.Schemas.PlanChange? = nil
+    step: Step? = nil, planChange: Components.Schemas.PlanChange? = nil
   ) -> TutorTurn {
     TutorTurn(
       id: id, question: question, answer: status == .completed ? "Answer" : nil, status: status,
-      createdAt: .now, about: about, planChange: planChange, toolOffer: nil)
+      createdAt: .now, about: about, step: step, planChange: planChange, toolOffer: nil)
   }
 }
 

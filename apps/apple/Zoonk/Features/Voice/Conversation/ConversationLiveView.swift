@@ -323,12 +323,7 @@ private struct CallControls: View {
 
       Button(role: .destructive, action: onEnd) {
         Label {
-          // Before the character answers, nothing is lost by stopping.
-          if call.phase == .live {
-            Text("End", tableName: "Voice", comment: "Hangs up the call")
-          } else {
-            Text("Cancel", tableName: "Voice", comment: "Stops a call that hasn't connected yet")
-          }
+          Text("End", tableName: "Voice", comment: "Hangs up the call")
         } icon: {
           Image(systemName: "phone.down.fill")
         }
