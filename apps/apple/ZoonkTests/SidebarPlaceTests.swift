@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -24,6 +25,23 @@ final class SidebarPlaceTests: XCTestCase {
 
     router.open(.statistics())
 
+    XCTAssertEqual(router.selectedTab, .stats(.level))
+  }
+
+  /// A link the app opens as it starts arrives before the sidebar lists its places.
+  func testAPageOpenedBeforeTheSidebarListsItMovesToItsOwnRow() {
+    let router = AppRouter()
+
+    router.open(.mindMaps())
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    XCTAssertEqual(router.selectedTab, .mindMaps)
+
+    router.sidebarTabs = []
+    router.select(.today)
+    XCTAssertEqual(router.path(for: .today).wrappedValue, NavigationPath())
+
+    router.open(.statistics())
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 

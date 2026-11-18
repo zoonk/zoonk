@@ -144,7 +144,7 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if let subject = detail.course.subject {
-          CourseSubjectLabel(subject: subject)
+          Chip(Text(subject.localizedTitle))
         }
 
         Text(detail.course.title)
@@ -249,10 +249,11 @@ struct PlanLine: View {
   let start: Start
 
   var body: some View {
-    MarkedRow {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
       Image(systemName: "map")
+        .markColumn()
         .accessibilityHidden(true)
-    } content: {
+
       switch start {
       case .chapter:
         Text(
@@ -267,8 +268,6 @@ struct PlanLine: View {
           "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
           tableName: "Courses", comment: "On an exam course's page, what Zoonk does with it")
       }
-    } end: {
-      EmptyView()
     }
     .typeStyle(.note)
     .foregroundStyle(.mutedForeground)
@@ -309,12 +308,13 @@ struct CheckLine<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    Label {
-      content
-    } icon: {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
       Image(systemName: "checkmark")
         .foregroundStyle(.success)
+        .markColumn()
         .accessibilityHidden(true)
+
+      content
     }
   }
 }

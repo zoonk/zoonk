@@ -51,7 +51,7 @@ struct GoalMaterialButton: View {
     }
     .labelStyle(.iconOnly)
     .foregroundStyle(.mutedForeground)
-    .frame(minWidth: 44, minHeight: 44)
+    .frame(minWidth: 44, minHeight: 44, alignment: .leading)
     .contentShape(.rect)
   }
 }

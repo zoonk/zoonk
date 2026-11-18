@@ -25,20 +25,24 @@ struct FactSegments: View {
 
   let facts: [Fact]
 
+  /// Wrapped rows line up as the text around them does, such as on the end of a header's row.
+  @Environment(\.multilineTextAlignment) private var textAlignment
+
   init(_ facts: [String]) { self.facts = facts.map { Fact(text: $0) } }
   init(facts: [Fact]) { self.facts = facts }
 
   var body: some View {
-    FlowLayout(spacing: 5, alignment: .firstTextBaseline, rowSpacing: 4) {
+    FlowLayout(
+      spacing: 5, alignment: .firstTextBaseline, rowAlignment: rowAlignment, rowSpacing: 4
+    ) {
       ForEach(Array(facts.enumerated()), id: \.offset) { index, fact in
         if index > 0 {
-          Canvas { context, size in
-            context.fill(Path(ellipseIn: CGRect(origin: .zero, size: size)), with: .foreground)
-          }
-          .frame(idealWidth: 2, idealHeight: 2)
-          .alignmentGuide(.firstTextBaseline) { $0[.bottom] + 4 }
-          .layoutValue(key: FlowLayout.Separator.self, value: true)
-          .accessibilityHidden(true)
+          Text(verbatim: "·")
+            .fixedSize()
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .clipped()
+            .layoutValue(key: FlowLayout.Separator.self, value: true)
+            .accessibilityHidden(true)
         }
         ViewThatFits(in: .horizontal) {
           text(fact.text, color: fact.color).fixedSize()
@@ -50,6 +54,14 @@ struct FactSegments: View {
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(Text(verbatim: facts.map(\.text).joinedFacts()))
+  }
+
+  private var rowAlignment: HorizontalAlignment {
+    switch textAlignment {
+    case .leading: .leading
+    case .center: .center
+    case .trailing: .trailing
+    }
   }
 
   @ViewBuilder private func text(_ words: String, color: Color?) -> some View {

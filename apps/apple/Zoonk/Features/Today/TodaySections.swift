@@ -127,7 +127,7 @@ struct TodayMoreSection: View {
                   comment: "Adds the lessons earlier days left to today")
               }
               .buttonStyle(.outline)
-              .controlSize(.small)
+              .controlSize(.large)
               .disabled(busy != nil && busy != .catchUp)
 
               if failed == .catchUp {
@@ -240,7 +240,7 @@ struct TodayPlanChangeSection: View {
             }
           }
           .buttonStyle(.outline)
-          .controlSize(.small)
+          .controlSize(.large)
         }
         .listRowSeparator(.hidden)
       } else if isBehind, let behind = change.behind {
@@ -394,7 +394,7 @@ struct TodayPlanChangeSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      ButtonRow {
+      FlowLayout(spacing: 8) {
         // On a return after a break, nothing that asks for more hours leads.
         if view.session.freshStart == .welcomeBack {
           keepTimeButton
@@ -403,43 +403,43 @@ struct TodayPlanChangeSection: View {
           addTimeButton
           keepTimeButton
         }
-      }
-      // A notice's answers beside its words, as main's suggestion panel draws them.
-      .controlSize(.small)
-      .disabled(isSaving)
 
-      Menu {
-        if behind.canFocus {
-          Button {
-            adjust(.focus)
-          } label: {
-            Text(
-              "Choose where to focus", tableName: "Today",
-              comment: "Opens the choice of the plan's areas to focus on")
-          }
-        }
-
-        Button {
-          adjust(.everything)
-        } label: {
-          isExam
-            ? Text(
-              "Keep studying after the exam", tableName: "Today",
-              comment: "Opens studying every topic, past the exam's date")
-            : Text("Remove end date", tableName: "Today")
-        }
-      } label: {
-        Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
-          .typeStyle(.note.weight(.medium))
+        missedDaysMenu(behind)
       }
-      .buttonStyle(.outline)
-      .controlSize(.small)
+      .controlSize(.large)
       .disabled(isSaving)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+  }
+
+  private func missedDaysMenu(_ behind: TodayView.PlanChange.Behind) -> some View {
+    Menu {
+      if behind.canFocus {
+        Button {
+          adjust(.focus)
+        } label: {
+          Text(
+            "Choose where to focus", tableName: "Today",
+            comment: "Opens the choice of the plan's areas to focus on")
+        }
+      }
+
+      Button {
+        adjust(.everything)
+      } label: {
+        isExam
+          ? Text(
+            "Keep studying after the exam", tableName: "Today",
+            comment: "Opens studying every topic, past the exam's date")
+          : Text("Remove end date", tableName: "Today")
+      }
+    } label: {
+      Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+    }
+    .buttonStyle(.outline)
   }
 
   private var addTimeButton: some View {
@@ -609,9 +609,55 @@ struct TodayWeekSection: View {
       {
         WeekChallengeRow(challenge: challenge, date: date)
       }
+
+      if week.days.contains(where: { $0.isMissed(on: localDate) }) {
+        MissedDayKey()
+      }
     } header: {
       SectionTitle(title)
     }
+  }
+}
+
+/// Beside the title the count stands alone, as main's; under the words, where it reads as a line
+/// of its own, it says what it counts.
+private struct MistakesCount: View {
+  let ready: Int
+
+  @Environment(\.stacksContent) private var isStacked
+
+  var body: some View {
+    let phrase = Text("Fix \(ready) mistakes", tableName: "Today", comment: "Mission: fix mistakes")
+
+    if isStacked {
+      phrase
+        .typeStyle(.meta)
+    } else {
+      Text(ready, format: .number)
+        .accessibilityLabel(phrase)
+    }
+  }
+}
+
+/// Main's key under the week: the one day drawing a reader can't guess, a missed study day.
+private struct MissedDayKey: View {
+  var body: some View {
+    HStack(spacing: 6) {
+      GoalRing(share: 0, track: .missed, size: 14) {}
+        .accessibilityHidden(true)
+
+      Text(
+        String(localized: "not studied", table: "Today", comment: "A day's status").labelCased())
+    }
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
+    .rowSeparatorHiddenBelow()
+  }
+}
+
+extension StudyWeek.Day {
+  func isMissed(on localDate: String) -> Bool {
+    kind == "study" && !studied && !isToday && date < localDate
   }
 }
 
@@ -787,7 +833,7 @@ private struct WeekDayMark: View {
   }
 
   private var isMissed: Bool {
-    day.kind == "study" && !day.studied && !day.isToday && day.date < localDate
+    day.isMissed(on: localDate)
   }
 
   private var track: GoalRingTrack {
@@ -1069,20 +1115,16 @@ struct TodayPracticeSection: View {
       }
 
       PageLink(route: .mistakes) {
-        IconLabeledContent {
-          if let ready = places?.readyMistakes, ready > 0 {
-            Text(ready, format: .number)
-              .monospacedDigit()
-          }
-        } title: {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
-            Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        } icon: {
+        ListRow(
+          Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook"),
+          description: Text(
+            "Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
+        ) {
           KindMark(kind: .mistakes)
+        } trailing: {
+          if let ready = places?.readyMistakes, ready > 0 {
+            MistakesCount(ready: ready)
+          }
         }
       }
 
@@ -1149,7 +1191,7 @@ struct TodayLanguagePracticeSection: View {
           action
         }
         .buttonStyle(.outline)
-        .controlSize(.small)
+        .controlSize(.large)
       }
       .listRowSeparator(.hidden)
     }
@@ -1193,17 +1235,7 @@ private struct TodayMockRow: View {
   }
 
   private func label(title: Text, detail: Text?) -> some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        title
-
-        if let detail {
-          detail
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-    } icon: {
+    ListRow(title, description: detail) {
       KindMark(kind: .mock)
     }
   }
