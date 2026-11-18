@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_answer_not_saved": "f4718c666d46b687f5933a34dc2a18a397496abd94bcee2fc5dee85495dcbeca",
   "mock_answer_sheet": "8c3909593e261d36662486f50ad7d312d3b9428a6c22f9e6ddc092428fd62b5b",
   "mock_answered_count": "19951de96137decaf641c09be1addc893961a0bb4e05ce565fa406d1b9fe832f",
   "mock_answers_saved": "c7c5192acb6d24636961f3ff0a1bdc968eeed370887d7221c80e2ff4d5a70b46",
@@ -28,7 +29,6 @@
   "mock_keep_going": "b0cc0512ae16c92012710a2b6456dcfcd41ec79294144d13ac912bbbff81b856",
   "mock_label": "bffdece59ec6c657d417adf077d448efdd270e451c67eda8aa70dec72ba628cb",
   "mock_label_shape": "034242280bd96c59c6a094571d00716aae7aed09c4260090203b91eba97fafc2",
-  "mock_last_not_saved": "9ecf820b01585826c5d71cef0cd33c18864c2ea255ec45276e46f6cdcd9cd941",
   "mock_left_blank": "4dfe1c8291d373ecc06daa021307705b4b0682f6782a8af60a4921847d8aa8b9",
   "mock_left_blank_and_flagged": "d98c7c22a26cb358ec963eb630f9dea368a5be59e065645a9c624a4b2ffcbe33",
   "mock_left_blank_only": "e75e9c821e5d71c5efcbad626f1073702cba2a4360763246c48f6bbf9260686a",
@@ -196,7 +196,8 @@
     <string name="mock_section_answered_of">%1$s / %2$s</string>
     <string name="mock_save_retry">次に進む前にもう一度試してください</string>
     <string name="mock_try_again">もう一度試す</string>
-    <string name="mock_last_not_saved">直前の回答は保存されませんでした。</string>
+    <!-- During a mock exam: one of the learner's answers couldn't be saved. -->
+    <string name="mock_answer_not_saved">答えを保存できませんでした。</string>
     <string name="mock_step_failed_saved">うまくいきませんでした。回答は保存されています。少し待ってから、もう一度お試しください。</string>
     <string name="mock_step_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
     <string name="mock_step_slow">提出しています。いつもより時間がかかっています。</string>

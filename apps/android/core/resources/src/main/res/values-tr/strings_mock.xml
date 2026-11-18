@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_answer_not_saved": "6e1bc9289a6cf0c54163b04492d51638eb5ada74b8bc42683a66bcdaec941c0a",
   "mock_answer_sheet": "c0ec7679363fd84b65f6d6187e2e757cfbaf39fcafc6d547d9c5364945185a29",
   "mock_answered_count": "0147dff36c72bf2b63f483e2872a6e1ce3678cfbe224d439ba24414a25585b7e",
   "mock_answers_saved": "dad6bbfa7337f5ca171615312678f3f1b33341fa4e672da5932a8025a27a3629",
@@ -28,7 +29,6 @@
   "mock_keep_going": "c01693937811e0e538cf6529f49f8afed7427f772316405b887f5ab21323366b",
   "mock_label": "5feb0953f1b85d05ba84c155579f270ddd2f2648ba3aff2640a8174028ac406d",
   "mock_label_shape": "d28d06109dd466576d05228b472a4b7d06a7319f206a294a0e4b59dd6fc8d878",
-  "mock_last_not_saved": "0d99c98406da9d2e2aa1aa7a020435a7d18b35a66f6abbc49b2d2677ecfebed1",
   "mock_left_blank": "ef9ce209842503123875a9715dda8271ec38ba2473eda0a8d32f8a14f3d76b2b",
   "mock_left_blank_and_flagged": "f8600bff6469b59d06cd78fa22b8a4a43dfb400ea21096e065ff6e884e1ded61",
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
@@ -206,7 +206,8 @@
     <string name="mock_section_answered_of">%1$s / %2$s</string>
     <string name="mock_save_retry">Devam etmeden önce tekrar dene</string>
     <string name="mock_try_again">Tekrar dene</string>
-    <string name="mock_last_not_saved">Son cevabın kaydedilemedi.</string>
+    <!-- During a mock exam: one of the learner's answers couldn't be saved. -->
+    <string name="mock_answer_not_saved">Bir cevap kaydedilmedi.</string>
     <string name="mock_step_failed_saved">İşlem tamamlanamadı. Cevapların kayıtlı. Birazdan tekrar dene.</string>
     <string name="mock_step_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
     <string name="mock_step_slow">Teslim işlemini henüz tamamlayamadık. Normalden uzun sürüyor.</string>

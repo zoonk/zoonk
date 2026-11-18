@@ -8017,10 +8017,11 @@ msgctxt "hM4teD"
 msgid "That didn't go through. Your answers are saved. Try again in a moment."
 msgstr "うまくいきませんでした。回答は保存されています。少し待ってから、もう一度お試しください。"
 
+#. During a mock exam: one of the learner's answers couldn't be saved.
 #: src/mock/mock-frame.tsx
-msgctxt "gOsgur"
-msgid "Your last answer wasn't saved."
-msgstr "直前の回答は保存されませんでした。"
+msgctxt "P-hmyB"
+msgid "An answer wasn't saved."
+msgstr "答えを保存できませんでした。"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx

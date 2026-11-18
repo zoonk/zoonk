@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_answer_not_saved": "05389740a5ac1a4735a65f53564ec62e38a3de2b6d070787d14bb462fe02d9ce",
   "mock_answer_sheet": "f8bb887c129f259557818164386c0a9699222feeb43b05b09c85378a487c0164",
   "mock_answered_count": "966cc6ac69b3e7ceeab337668b45dfa901e55e932e19e456c7e766936a7872fd",
   "mock_answers_saved": "6f8df58b094ab77f51dc1e63c5c13067f011da260bc42209f96c0adc8aa1d72c",
@@ -28,7 +29,6 @@
   "mock_keep_going": "d1bb3c5982a65bf32e5008f7e289f3ed9c5c7f43b93eb29816ef8377de1d7b30",
   "mock_label": "d94ac68eb53a03d409f080e000c8ac4a782ad63a1ef3ee31dbdc3d2514e07f6e",
   "mock_label_shape": "33143e36b2a47fc6b54fecc5c49879cc38fd83917cfca8ddb5d9017f8e4c469c",
-  "mock_last_not_saved": "0a303a61155fbed2c5a6f64a1d1dff4214f14131bfccd96533c6a4fd6ff87e0e",
   "mock_left_blank": "ce8ffd8b2a3c6e0ce03e9e381be9c08a032a5f0c7a8faa2f931485760b8a8e7c",
   "mock_left_blank_and_flagged": "7e1b60c99b954904fa52efc4a07d28b4cbe481cd34c1c7a56ea1dacf7cad0be8",
   "mock_left_blank_only": "0ad26202901e6cf83ae4c407d3b21599a6491ca2dc60710385b5d385dfb587fa",
@@ -206,7 +206,8 @@
     <string name="mock_section_answered_of">%1$s von %2$s</string>
     <string name="mock_save_retry">Versuch es noch einmal, bevor du weitermachst</string>
     <string name="mock_try_again">Noch einmal versuchen</string>
-    <string name="mock_last_not_saved">Deine letzte Antwort wurde nicht gespeichert.</string>
+    <!-- During a mock exam: one of the learner's answers couldn't be saved. -->
+    <string name="mock_answer_not_saved">Eine Antwort wurde nicht gespeichert.</string>
     <string name="mock_step_failed_saved">Das hat nicht geklappt. Deine Antworten sind gespeichert. Versuch es gleich noch einmal.</string>
     <string name="mock_step_failed">Das hat nicht geklappt. Versuch es gleich noch einmal.</string>
     <string name="mock_step_slow">Die Abgabe läuft noch. Das dauert länger als gewöhnlich.</string>

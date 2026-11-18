@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_answer_not_saved": "3656c38a3737414598e0e4e923034ff7b65a637aaef6e5debf466c796a5d680b",
   "mock_answer_sheet": "37e2694f593345c72eb32c34ba5b221063588c7c74ceeb2f577a669dc4ce907a",
   "mock_answered_count": "8bed0e33b7e4d438b70c3ca9083821969c47de2bd2b32d4b7aca4b5b5eb069db",
   "mock_answers_saved": "f0c9672022a5d118ec35abe5fc284b822bf06b597cf9564998d8a70961492287",
@@ -28,7 +29,6 @@
   "mock_keep_going": "86acc8ebe29a45bc9263485cc9c11dd3b7e947f55f0bc3ae4b8a37fbc0867bfe",
   "mock_label": "3066dc588bc3f8268b7830f124b64b4c0181cac79a9e7bcf866d2a68c509759e",
   "mock_label_shape": "b7e72d245210fc6353a484f7edb86f7517dedbe101f60c5b0e9df6821e23b218",
-  "mock_last_not_saved": "ece6097c7849c12434904da7158f58b45509d001077b2d9080044af1ed5f39f3",
   "mock_left_blank": "e7dc8b1ae9c9d3a0b526e1a2adf22d1ea14fcf2254d115b80006a27a79542f67",
   "mock_left_blank_and_flagged": "bbd2b295859cc3c8265b84aadf36bf08c5dbb7c42957589ce9f71d633d1cc1a0",
   "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
@@ -196,7 +196,8 @@
     <string name="mock_section_answered_of">%1$s/%2$s</string>
     <string name="mock_save_retry">계속하기 전에 다시 시도해 보세요</string>
     <string name="mock_try_again">다시 시도</string>
-    <string name="mock_last_not_saved">마지막 답이 저장되지 않았어요.</string>
+    <!-- During a mock exam: one of the learner's answers couldn't be saved. -->
+    <string name="mock_answer_not_saved">답변이 저장되지 않았어요.</string>
     <string name="mock_step_failed_saved">처리하지 못했어요. 답안은 저장되어 있어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="mock_step_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="mock_step_slow">아직 제출하고 있어요. 평소보다 오래 걸리고 있어요.</string>

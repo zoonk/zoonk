@@ -179,7 +179,8 @@ extension MockRun {
     if save == .refused {
       return BarNote(
         LocalizedStringResource(
-          "An answer wasn't saved.", table: "Mock", comment: "A refused save"))
+          "An answer wasn't saved.", table: "Mock",
+          comment: "During a mock exam: one of the learner's answers couldn't be saved."))
     }
 
     return slow.map { BarNote(slowLine($0), tone: .status) }
