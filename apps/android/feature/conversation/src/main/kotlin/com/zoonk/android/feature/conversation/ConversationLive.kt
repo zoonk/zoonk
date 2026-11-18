@@ -340,7 +340,8 @@ private fun LiveBar(
     var phrasesOpen by rememberSaveable { mutableStateOf(false) }
     val next = if (conversation.examTask == null) conversation.objectives.firstOrNull { it.label !in call.metLabels } else null
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        CallTurn(call, conversation.character.name, next?.description)
+        val goals = if (conversation.examTask == null) conversation.objectives.map { it.description } else emptyList()
+        CallTurn(call, conversation.character.name, next?.description, goals)
         TypedReply(call.isOpen, actions.onSend, actions.onTyping, focusOnStart = call.micBlocked)
         CallControls(
             call,
@@ -369,6 +370,7 @@ private fun CallTurn(
     call: LiveCallState,
     name: String,
     nextGoal: String?,
+    goals: List<String>,
 ) {
     val state =
         when {
@@ -410,7 +412,7 @@ private fun CallTurn(
             TurnState.Yours -> wrapUp ?: yourTurnDetail(call, name, nextGoal)
         }
 
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         TurnMark(state, name)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
@@ -418,16 +420,38 @@ private fun CallTurn(
                 Modifier.semantics { if (state == TurnState.Reconnecting) liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.titleSmall,
             )
-            // An empty line holds the detail's room, so the bar doesn't move as a hint comes and goes.
-            Text(
-                detail.orEmpty(),
-                Modifier.semantics { if (detail != null && detail == wrapUp) liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            // Every hint this call can show is laid out unseen, so the row keeps the tallest one's height and the bar never moves.
+            Box {
+                turnDetails(name, goals).forEach {
+                    Text(it, Modifier.alpha(0f).clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium)
+                }
+                Text(
+                    detail.orEmpty(),
+                    Modifier.semantics { if (detail != null && detail == wrapUp) liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
     }
 }
+
+/** Every line the turn row can show under its title, for [name]'s call with [goals]. */
+@Composable
+private fun turnDetails(
+    name: String,
+    goals: List<String>,
+): List<String> =
+    listOf(
+        stringResource(R.string.conversation_answers_first, name),
+        stringResource(R.string.conversation_listen_then_answer),
+        stringResource(R.string.conversation_muted_detail),
+        stringResource(R.string.conversation_type_below),
+        stringResource(R.string.conversation_take_your_time),
+        stringResource(R.string.conversation_answer_out_loud, name),
+        stringResource(R.string.conversation_wrap_up_time, name),
+        stringResource(R.string.conversation_wrap_up_done, name),
+    ) + goals.map { stringResource(R.string.conversation_tip, it) }
 
 @Composable
 private fun yourTurnDetail(
