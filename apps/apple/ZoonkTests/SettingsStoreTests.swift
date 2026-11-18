@@ -4,6 +4,34 @@ import XCTest
 
 @MainActor
 final class SettingsStoreTests: XCTestCase {
+  func testAnUnansweredProfileQuestionDoesNotSaveAnEmptyDraft() async {
+    let question = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: [], studies: [], text: ""), status: nil,
+      version: 1)
+    let store = makeStore(api: SettingsAPIStub(profileQuestion: question))
+    await store.profileQuestions.load()
+    var draft = ProfileDraft(question)
+    draft.text = "  "
+
+    let saved = await store.answerProfileQuestion(draft)
+
+    XCTAssertFalse(saved)
+  }
+
+  func testAnAnsweredProfileQuestionCanBeCleared() async {
+    let question = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: ["figma"], studies: [], text: ""),
+      status: .answered, version: 1)
+    let store = makeStore(api: SettingsAPIStub(profileQuestion: question))
+    await store.profileQuestions.load()
+    var draft = ProfileDraft(question)
+    draft.toggle("figma")
+
+    let saved = await store.answerProfileQuestion(draft)
+
+    XCTAssertTrue(saved)
+  }
+
   func testSavedPreferenceShowsTheServerReply() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
@@ -417,6 +445,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private let deleteError: Error?
   private let restoreError: Error?
   private let restoreChangedSince: Bool
+  private let profileQuestion: ProfileQuestionView?
 
   func runBeforeDelete(_ action: @escaping @MainActor @Sendable () async -> Void) {
     beforeDelete = action
@@ -427,13 +456,15 @@ private actor SettingsAPIStub: SettingsAPIClient {
     updateError: Error? = nil,
     deleteError: Error? = nil,
     restoreError: Error? = nil,
-    restoreChangedSince: Bool = false
+    restoreChangedSince: Bool = false,
+    profileQuestion: ProfileQuestionView? = nil
   ) {
     self.preferencesError = preferencesError
     self.updateError = updateError
     self.deleteError = deleteError
     self.restoreError = restoreError
     self.restoreChangedSince = restoreChangedSince
+    self.profileQuestion = profileQuestion
   }
 
   func getPreferences(token: String) async throws -> LearningPreferences {
@@ -592,13 +623,15 @@ private actor SettingsAPIStub: SettingsAPIClient {
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }
 
   nonisolated func getProfileQuestions(token: String) async throws -> ProfileQuestions {
-    throw APIError.unavailable
+    guard let profileQuestion else { throw APIError.unavailable }
+    return ProfileQuestions(memoryEnabled: true, questions: [profileQuestion])
   }
 
   nonisolated func answerProfileQuestion(
     token: String, _ input: Components.Schemas.ProfileAnswerInput
   ) async throws -> ProfileQuestionView {
-    throw APIError.unavailable
+    guard let profileQuestion else { throw APIError.unavailable }
+    return profileQuestion
   }
 
   func exportAccountData(token: String) async throws -> Data {
