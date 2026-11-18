@@ -230,7 +230,8 @@ func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
   fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7,
-  today: String = "2027-01-04", lessonsStudied: Int = 0, finishedOn: String? = nil
+  today: String = "2027-01-04", lessonsStudied: Int = 0, finishedOn: String? = nil,
+  weekdayMinutes: [Int] = [30, 30, 30, 30, 30, 30, 30], weekDays: [String] = []
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
   let completion = finishedOn.map { "\"\($0)\"" } ?? "null"
@@ -254,14 +255,14 @@ func goalPlanFixture(
           "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,
           "weekendDays": [0, 6]
         },
-        "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
+        "weekdayMinutes": \(weekdayMinutes)
       },
       "status": { "kind": "\(status)" },
       "steering": {
         "difficultyBias": "standard", "lessonsStudied": \(lessonsStudied), "practiceBias": "balanced",
         "skippedActivities": []
       },
-      "tools": [], "week": { "days": [], "startDate": "\(today)" },
+      "tools": [], "week": { "days": [\(weekDays.joined(separator: ","))], "startDate": "\(today)" },
       "weekTime": { "studiedMinutes": 0, "targetMinutes": 210 }, "writtenPractice": null
     }
     """

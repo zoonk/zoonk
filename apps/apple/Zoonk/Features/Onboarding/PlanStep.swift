@@ -667,11 +667,9 @@ private struct PlanReveal: View {
           day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
           open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) }))
     case .idle, .loading:
-      // Today's rows hold their place, so the week doesn't move as they come. The reveal's week
-      // holds the rest of the plan's, so when that has nothing left, the reveal draws nothing.
-      if plan.week.days.contains(where: {
-        [.today, .upcoming].contains($0.state) && !$0.items.isEmpty
-      }) {
+      // Today's rows hold their place, so the week doesn't move as they come; a reveal whose seven
+      // days hold no lesson draws nothing.
+      if plan.hasLessonsInNextSevenDays {
         RevealTodayPlaceholder()
       }
     case .empty, .failed:
