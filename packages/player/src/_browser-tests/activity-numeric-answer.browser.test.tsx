@@ -51,6 +51,27 @@ describe("activity numeric answers", () => {
     );
   });
 
+  it("keeps a right answer's own digits when the hint's rounding would grade it wrong", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+
+    openActivity({
+      content: {
+        ...calculator,
+        check: {
+          ...calculator.check,
+          answer: 251.54,
+          tolerance: { kind: "absolute", value: 0.05 },
+        },
+      },
+      template: "formulaModel",
+    });
+
+    await valueInput().fill("251.495");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(valueInput()).toHaveValue("251.495");
+  });
+
   it("keeps a field with no rounding rule in place when a typing error shows", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
 
