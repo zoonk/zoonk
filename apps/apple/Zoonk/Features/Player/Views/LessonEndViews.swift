@@ -750,7 +750,7 @@ enum LessonWaitWords {
 /// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
 /// written: it runs AI.
 struct LessonWaitingView: View {
-  /// Main's `ALTERNATIVE_AFTER_MS`: a wait this long offers what's ready meanwhile.
+  /// A wait this long offers what's ready meanwhile.
   private static let lateAfter = Duration.seconds(15)
 
   let outline: LessonOutline

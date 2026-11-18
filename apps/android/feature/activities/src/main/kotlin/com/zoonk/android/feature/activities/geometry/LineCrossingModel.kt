@@ -140,10 +140,10 @@ internal object LineCrossingModel {
     }
 
     /**
-     * Main's `lineSlide`: twice the real shift each way, as far as the line still passes through the chart
-     * inset by a handle's margin. At each shift the handle rides its moved line, at the point nearest its
-     * resting spot inside that inset. It rests 82% along the line, or at the nearest point to that clear of
-     * the resting [crossing], kept inside the inset.
+     * One line of main's `chartSlides`: twice the real shift each way, as far as the line still passes through the
+     * chart inset by a handle's margin. At each shift the handle rides its moved line, at the point nearest its resting
+     * spot inside that inset. It rests 82% along the line, or at the nearest point to that clear of the resting
+     * [crossing], kept inside the inset.
      */
     private fun slide(
         amount: Double,

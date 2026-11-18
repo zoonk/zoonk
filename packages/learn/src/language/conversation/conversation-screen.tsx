@@ -151,16 +151,18 @@ function LiveCallRun({
     return () => replaced.abort();
   }, [start, startWith]);
 
+  // A reconnect's End ends the call, on what was said; a first call's goes back to its start.
   const end =
     call.phase === "connecting"
       ? () => {
-          call.cancel();
-
           if (call.continuing) {
-            call.dropStart();
-          } else {
-            restart("intro");
+            call.cancelStart();
+            hangUp();
+            return;
           }
+
+          call.cancel();
+          restart("intro");
         }
       : hangUp;
 

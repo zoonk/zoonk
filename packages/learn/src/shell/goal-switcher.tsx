@@ -214,6 +214,8 @@ export function GoalSwitcher({
   const [selectedId, setSelectedId] = useOptimistic(activeGoalId);
   const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
   const selected = followed.find((goal) => goal.id === selectedId);
+  const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
+  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Start a goal");
 
   if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
@@ -243,13 +245,13 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected && (
+          {(selected || !hasGoalOptions) && (
             <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
-              <GoalMark goal={selected} />
+              {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
             </span>
           )}
           <span className="line-clamp-2 min-w-0 flex-1 text-left wrap-anywhere">
-            {selected?.displayName ?? t("Your goals")}
+            {selected?.displayName ?? unselectedLabel}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
           {selected && <GoalCountryName goal={selected} />}
@@ -258,39 +260,41 @@ export function GoalSwitcher({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)] p-1.5">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
+          {hasGoalOptions && (
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
 
-            <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
-              {followed.map((goal) => (
-                <GoalOption goal={goal} key={goal.id} />
+              <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
+                {followed.map((goal) => (
+                  <GoalOption goal={goal} key={goal.id} />
+                ))}
+              </DropdownMenuRadioGroup>
+
+              {waitingGoals.map((goal) => (
+                <WaitingOption
+                  goal={goal}
+                  isStarting={isPending}
+                  key={goal.id}
+                  onMakeRoom={hasAccount ? () => room.open(goal) : null}
+                  onStart={(waitingGoalId) =>
+                    startTransition(async () => {
+                      const { data: started } = await safeAsync(() =>
+                        onStartWaiting({ waitingGoalId }),
+                      );
+
+                      if (!started) {
+                        showErrorToast(startFailed);
+                      }
+                    })
+                  }
+                />
               ))}
-            </DropdownMenuRadioGroup>
-
-            {waitingGoals.map((goal) => (
-              <WaitingOption
-                goal={goal}
-                isStarting={isPending}
-                key={goal.id}
-                onMakeRoom={hasAccount ? () => room.open(goal) : null}
-                onStart={(waitingGoalId) =>
-                  startTransition(async () => {
-                    const { data: started } = await safeAsync(() =>
-                      onStartWaiting({ waitingGoalId }),
-                    );
-
-                    if (!started) {
-                      showErrorToast(startFailed);
-                    }
-                  })
-                }
-              />
-            ))}
-          </DropdownMenuGroup>
+            </DropdownMenuGroup>
+          )}
 
           {explanations.length > 0 && (
             <DropdownMenuGroup>
-              <DropdownMenuSeparator className="-mx-1.5" />
+              {hasGoalOptions && <DropdownMenuSeparator className="-mx-1.5" />}
               <DropdownMenuLabel className={MENU_LABEL_CLASS}>
                 {t("Quick explanations")}
               </DropdownMenuLabel>

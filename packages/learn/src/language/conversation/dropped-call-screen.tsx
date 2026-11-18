@@ -8,12 +8,42 @@ import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notic
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { MicrophoneOff } from "./call-intro-footer";
-import { CallLimitReason } from "./call-limit-message";
+import { CallLimitReason, useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
 import { ChallengeCallGate } from "./challenge-call-gate";
-import { CallOffMessage, CallReason } from "./conversation-parts";
+import { CallOffMessage } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
 import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
+
+const REACHED: CallLimit = { period: "day", tier: "plus" };
+
+/**
+ * Titled by what stopped the call: only a lost connection "dropped". Once call time comes back
+ * nothing ran out, so the notice's own line says it under no title.
+ */
+function useDroppedTitle({
+  opened,
+  limit,
+  reason,
+}: {
+  limit: CallLimit;
+  opened: boolean;
+  reason: DroppedCall["reason"];
+}): string | undefined {
+  const t = useExtracted();
+  const copy = useRefusalCopy();
+  const limitTitle = useCallLimitTitle(limit);
+
+  if (reason === "limit") {
+    return opened ? undefined : limitTitle;
+  }
+
+  if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
+    return copy[reason].title;
+  }
+
+  return t("The call dropped");
+}
 
 function DroppedCallReason({
   limit,
@@ -21,7 +51,7 @@ function DroppedCallReason({
   name,
   reason,
 }: {
-  limit: CallLimit | null;
+  limit: CallLimit;
   microphoneProblem: MicrophoneProblem | null;
   name: string;
   reason: DroppedCall["reason"];
@@ -30,7 +60,7 @@ function DroppedCallReason({
   const copy = useRefusalCopy();
 
   if (reason === "limit") {
-    return <CallLimitReason limit={limit ?? { period: "day", tier: "plus" }} />;
+    return <CallLimitReason limit={limit} untitled />;
   }
 
   if (reason === "microphone" && microphoneProblem) {
@@ -42,11 +72,7 @@ function DroppedCallReason({
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
-    return (
-      <CallReason title={copy[reason].title}>
-        <p className="text-muted-foreground text-sm text-pretty">{copy[reason].text}</p>
-      </CallReason>
-    );
+    return <p className="text-muted-foreground text-pretty">{copy[reason].text}</p>;
   }
 
   return (
@@ -124,9 +150,11 @@ export function DroppedCallScreen({
   onTakeover: () => void;
   title: string;
 }) {
-  const t = useExtracted();
+  const reached = limit ?? REACHED;
   const liveLimit = useLiveLimit(limit);
-  const retry = dropped.reason === "limit" && limit && !liveLimit ? "callAgain" : dropped.retry;
+  const opened = limit !== null && liveLimit === null;
+  const retry = dropped.reason === "limit" && opened ? "callAgain" : dropped.retry;
+  const droppedTitle = useDroppedTitle({ limit: reached, opened, reason: dropped.reason });
 
   return (
     <TaskFrame
@@ -134,9 +162,9 @@ export function DroppedCallScreen({
       footer={<DroppedCallActions {...actions} retry={retry} />}
       headerTitle={title}
     >
-      <CallOffMessage title={t("The call dropped")}>
+      <CallOffMessage title={droppedTitle}>
         <DroppedCallReason
-          limit={limit}
+          limit={reached}
           microphoneProblem={microphoneProblem}
           name={name}
           reason={dropped.reason}

@@ -8,7 +8,8 @@ describe(getDroppedCall, () => {
     // Also a reconnect the learner cancelled while it rang.
     ["dropped", { reason: null, retry: "callAgain" }],
     ["connect", { reason: null, retry: "callAgain" }],
-    ["callsPaused", { reason: "callsPaused", retry: "callAgain" }],
+    // Paused for everyone: calling again now can't work.
+    ["callsPaused", { reason: "callsPaused", retry: null }],
     ["callInProgress", { reason: "callInProgress", retry: "takeover" }],
     ["limit", { reason: "limit", retry: null }],
     ["plusRequired", { reason: "plusRequired", retry: null }],
