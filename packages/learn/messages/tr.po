@@ -513,7 +513,6 @@ msgstr "Dersler"
 
 #: src/_components/lesson-list.tsx
 #: src/_utils/count-of.ts
-#: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
@@ -1278,6 +1277,7 @@ msgstr "{buddy} neler hatırlıyor"
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "Haftalık özet"
@@ -2394,15 +2394,6 @@ msgstr "Konular"
 msgctxt "KV-O0y"
 msgid "Practice"
 msgstr "Alıştırma"
-
-#: src/chapter/chapter-screen.tsx
-#: src/journey/journey-hero.tsx
-#: src/language/unit/language-unit-screen.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "İlerleme"
 
 #: src/chapter/chapter-screen.tsx
 msgctxt "xY7fiy"
@@ -3672,14 +3663,14 @@ msgid "How the score works"
 msgstr "Puan nasıl hesaplanır"
 
 #: src/exam/exam-screen.tsx
-msgctxt "QGnOZU"
-msgid "{date} at {time}"
-msgstr "{date} saat {time}"
-
-#: src/exam/exam-screen.tsx
 msgctxt "yft85U"
 msgid "Starts at {time}"
 msgstr "Başlangıç saati: {time}"
+
+#: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} saat {time}"
 
 #: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
@@ -4727,16 +4718,15 @@ msgstr "Bu hedef duraklatıldı"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "Devam edene kadar hiçbir şey planlanmaz."
 
 #: src/journey/journey-chapters.tsx
-#: src/syllabus/use-subject-progress.ts
-msgctxt "B3fpYI"
-msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
-msgstr "{count, plural, other {Zaten bildiğin # konu}}"
+#: src/syllabus/subject-chapters.tsx
+msgctxt "duDcbL"
+msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
+msgstr "{count, plural, other {Zaten bildiğin # ünite}}"
 
 #: src/journey/journey-chapters.tsx
 #: src/onboarding/steps/reveal-week.tsx
@@ -4767,6 +4757,7 @@ msgid "{count, plural, one {# more unit} other {# more units}}"
 msgstr "{count, plural, other {# ünite daha}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/syllabus/subject-chapters.tsx
 msgctxt "OGR3YM"
 msgid "Show fewer chapters"
 msgstr "Daha az ünite göster"
@@ -4808,6 +4799,14 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
 
 #: src/journey/journey-hero.tsx
+#: src/language/unit/language-unit-screen.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "sIMS7i"
+msgid "Progress"
+msgstr "İlerleme"
+
+#: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -4833,8 +4832,8 @@ msgid "Your schedule"
 msgstr "Çalışma takvimin"
 
 #: src/journey/journey-menu.tsx
-msgctxt "jgL8u5"
-msgid "Talk to {name}"
+msgctxt "bH47Z4"
+msgid "Ask {name}"
 msgstr "{name} ile konuş"
 
 #: src/journey/journey-menu.tsx
@@ -5299,32 +5298,22 @@ msgid "Schedule"
 msgstr "Takvim"
 
 #: src/journey/schedule-details.tsx
-#: src/onboarding/understood/use-schedule-row.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "Günde {time}"
-
-#: src/journey/schedule-details.tsx
 #: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {# ders kaldı}}"
 
 #: src/journey/schedule-details.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "Duraklatıldı"
+#: src/onboarding/understood/use-schedule-row.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "Günde {time}"
 
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Bugün sayfasına git"
-
-#: src/journey/schedule-details.tsx
-msgctxt "htY1di"
-msgid "Last week's recap"
-msgstr "Geçen haftanın özetine bak"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -8081,9 +8070,9 @@ msgid "The practical test can't be part of a mock exam."
 msgstr "Uygulamalı sınav deneme sınavında yer alamaz."
 
 #: src/mock/mock-notes.tsx
-msgctxt "XOPRn8"
-msgid "{name} is only in full mock exams."
-msgstr "{name} yalnızca tam deneme sınavlarında var."
+msgctxt "HImQYk"
+msgid "This was a shorter mock exam, so it didn't include {name}."
+msgstr "Bu deneme sınavı daha kısa olduğu için {name} yer almadı."
 
 #: src/mock/mock-notes.tsx
 msgctxt "jvTx9o"
@@ -10779,9 +10768,9 @@ msgid "I'll set it up"
 msgstr "Kuracağım"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "lEMiev"
-msgid "Learn with examples. You won't practice on your own computer."
-msgstr "Örneklerle öğren. Kendi bilgisayarında pratik yapmayacaksın."
+msgctxt "yHP5HT"
+msgid "Learn with examples. You won't practice on your own device."
+msgstr "Örneklerle öğren. Kendi cihazında uygulama yapmayacaksın."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -10844,9 +10833,9 @@ msgid "Choose how you'll use {tool}"
 msgstr "{tool} kullanma şeklini seç"
 
 #: src/plan/plan-tools.tsx
-msgctxt "Z6SQB3"
-msgid "You won't practice on your own computer. Lessons use examples and simulations instead."
-msgstr "Kendi bilgisayarında pratik yapmayacaksın. Derslerde bunun yerine örnekler ve simülasyonlar kullanılır."
+msgctxt "u4q1Pf"
+msgid "You won't practice on your own device. Lessons use examples and simulations instead."
+msgstr "Kendi cihazında uygulama yapmayacaksın. Bunun yerine derslerde örnekler ve simülasyonlar kullanılır."
 
 #. A link that switches the plan to learning from examples, without installing tools.
 #: src/plan/plan-tools.tsx
@@ -12892,6 +12881,11 @@ msgid "Counts your answers in lessons, practice and tests."
 msgstr "Derslerde, alıştırmalarda ve testlerde verdiğin cevapları hesaba katar."
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "nIwm4S"
+msgid "Questions from {exam}"
+msgstr "{exam} soruları"
+
+#: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
 msgid "Next date"
 msgstr "Sonraki tarih"
@@ -12910,11 +12904,6 @@ msgstr "Ayrıca"
 msgctxt "JeoRv8"
 msgid "{count, plural, one {# chapter done} other {# chapters done}}"
 msgstr "{count, plural, other {# ünite tamamlandı}}"
-
-#: src/syllabus/subject-chapters.tsx
-msgctxt "duDcbL"
-msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
-msgstr "{count, plural, other {Zaten bildiğin # ünite}}"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "oUXyHJ"
@@ -13109,6 +13098,11 @@ msgstr "Planında yok · çalışma süren yetmiyor"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Henüz hazır değil"
+
+#: src/syllabus/use-subject-progress.ts
+msgctxt "B3fpYI"
+msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
+msgstr "{count, plural, other {Zaten bildiğin # konu}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "0O99bA"
