@@ -22,7 +22,6 @@
   "subscription_benefit_exam": "a77020384f9ed52c12037502ab61ecdaf9dd671f4a0a570364f416b651082c3b",
   "subscription_benefit_mocks": "ea18df6e22134d3df2666fdf94dc5b9507dcfc3ab03a126b3673f488bd0768b6",
   "subscription_benefits_summary": "88a3ac4d625d9adb923814d7d10dbd82907ed3b781e0c104251a2083c10ec8c2",
-  "subscription_billed_monthly": "8039e55f4cfc8cb7234c469b06c7805b2886db7cd1c3b9a0b49991385114b490",
   "subscription_billing_period": "365fd7c100e29f048c7c563f061244836e521406299509c6160a854fc51a365c",
   "subscription_cancel_anytime": "b3889b437557ca1e77edda1805888eb26d4b35be3ae0bb922a8610abf89966fb",
   "subscription_contact_support": "377eed1872744835e794f472abf805372f0cd1a1feff5ff6a8043c6e763ec5e9",
@@ -109,7 +108,6 @@
     <string name="subscription_save">%1$s 절약</string>
     <string name="subscription_per_month">월</string>
     <string name="subscription_per_year">연</string>
-    <string name="subscription_billed_monthly">매월 결제돼요.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">한 달에 %1$s인 셈이에요.</string>
     <string name="subscription_unavailable">지금은 이 기기에서 Plus를 구독할 수 없어요. Google Play가 설치되어 있는지, 로그인했는지 확인하세요.</string>

@@ -7,11 +7,22 @@
   "stats_answer_more": "4b2ceabd8df8974111852e315072b2c43c220867bb9d0f07b0bd52b643381c49",
   "stats_answers_to_count": "15f51156f9067ada03523768a117d40cd86f1255894045f94a4689c86eb1fcc4",
   "stats_any_time": "ccc7f443619903aee4bcbe17b10f1b6eb956ded1d5d3be59a28bb3c115241af4",
+  "stats_belt_black": "11e1613f370908bb83e1d225e6abaf77777ecb167cd13dd7aee67cdcba6f818a",
+  "stats_belt_blue": "94bf3ea52e3a53960709ceeb9be153dbcf891a17d27334f68d982b0b7b791173",
+  "stats_belt_brown": "04cb33b9ef25d4fbf72c795a0f881d78d234fe05765760da734852e16dd82af9",
   "stats_belt_comes_after": "d06cbbf6264d4e06abc47823139611ff52f98c4aa64b4f713f1d6d4433009765",
+  "stats_belt_coming": "82f685d2b6382405799b856377ee892d9e56f21cb57dcd884bb9f5dff99dacf0",
   "stats_belt_current": "16be4194d9d62ed609d28c2f6a761fb297e9f7fd95bf63b1b8d3e01cd9508630",
   "stats_belt_earned": "8a7000ac32c84aeea779133d91a5dfca4e6cbd4db03eef87d720f53d1460775f",
+  "stats_belt_gray": "96e07d6e15b6ca51dcfae74249390d364c1f216539cb03682184d9445d0beb90",
+  "stats_belt_green": "4272963d0943c123e11c10a9868792495f731e59b744b353a07c5b08dbaa9c0f",
   "stats_belt_level": "95a22bd363711678bd87b6a3a7ccee83dc48586cc2136726a1be9dfadcaa18e9",
   "stats_belt_line": "560dccf5ad73489144a031aa5fd2b2db26067524741aefe06b113c4cb04eb3b1",
+  "stats_belt_orange": "3c9b6370276f727111cba9187c07e902615fdf790c9419370047265584ce2be2",
+  "stats_belt_purple": "84c3bf7a9810124a6df8b9d4cdca0f32229195360690e0ae3698293e323a717c",
+  "stats_belt_red": "ad1ff57156c45db74e22a80f36aa03e6a6672657d7a0f6c24fa368431c40faad",
+  "stats_belt_white": "a98a8a19f016bcc3c229a27e093fcbe4715a78abe08e2673d657ebf6cb46d477",
+  "stats_belt_yellow": "3be4e2b029c5dce39ca0dd28dcf5a7b8c11ed822a4b3d6bb82b25f98f3d94e92",
   "stats_best_day": "625f136a5c0832cf6c95bb5aa974ab8f6c1d2c123c066319a8e8a4a264199d21",
   "stats_best_day_is": "033f885ad22402e6f9e5966a89b0ae4a7289d32f1e43d907aac9ec60c58d5fc2",
   "stats_best_on": "5ade58c07b1009da539892caccdc19c67c52ada48c69ca0641e10662cf2e4085",
@@ -66,7 +77,8 @@
   "stats_throughout_week": "f2993fa78a09db1df6ded3cd6a01c4cbf697c69cabec3c9d33365f6d86896706",
   "stats_time": "6701e8f5acc8d51b5c6bcba2ddbe1dc3e927679e7785df4d8986bfffef191b38",
   "stats_times_same": "c1fb432d19df8b715d9458688d8df8936d74959b39c6ed753ae55ed6fee87e46",
-  "stats_today": "633f6af1ca5f4704d6b132279eebedae9066bec7c7b06b8a765cac22e79d748f"
+  "stats_today": "633f6af1ca5f4704d6b132279eebedae9066bec7c7b06b8a765cac22e79d748f",
+  "stats_trend_after_two_weeks": "077cdb61279cf629e2d7de77b96b2647e5b01eee3892d473a7d4ff839eb3a0e3"
 }
 -->
 <resources>
@@ -101,6 +113,18 @@
     <string name="stats_belt_comes_after">El %1$s sigue al %2$s %3$s y se alcanza con %4$s de Poder Mental</string>
     <string name="stats_belt_earned">Obtenido</string>
     <string name="stats_belt_current">Actual</string>
+    <string name="stats_belt_coming">Por conseguir</string>
+    <string name="stats_belt_white">Blanco</string>
+    <string name="stats_belt_yellow">Amarillo</string>
+    <string name="stats_belt_orange">Naranja</string>
+    <string name="stats_belt_green">Verde</string>
+    <string name="stats_belt_blue">Azul</string>
+    <string name="stats_belt_purple">Morado</string>
+    <string name="stats_belt_brown">Café</string>
+    <string name="stats_belt_red">Rojo</string>
+    <string name="stats_belt_gray">Gris</string>
+    <string name="stats_belt_black">Negro</string>
+    <string name="stats_trend_after_two_weeks">Verás tu tendencia después de dos semanas de estudio</string>
     <string name="stats_today">Hoy</string>
     <string name="stats_days_at_full">Días al 100%</string>
     <string name="stats_energy_line">La Energía sube con cada lección y baja un poco los días de descanso.</string>

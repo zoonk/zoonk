@@ -22,7 +22,6 @@
   "subscription_benefit_exam": "6467e1f1bfe0f4d0e4aa57c51634a222ff48b80810abf28162db3241ba7cf8f1",
   "subscription_benefit_mocks": "cd1aad5ec78ec3baa29d102ab29033894fe8954cfa7bd4c6d28b26ebb833724e",
   "subscription_benefits_summary": "7116108eac44634461f8fd97a22a75d3b5aec127aded0b43a70d89544cbb9eae",
-  "subscription_billed_monthly": "79d337b66ba01baaeec9130117c083a4274ca59020b6d22e0692905545969d18",
   "subscription_billing_period": "eb82a1d2b891a3d1762d9e02e0f70924fc4b319f8974f8b4a25f85103873ffa6",
   "subscription_cancel_anytime": "2f215df53f49a230a553a1f38b76d83d9eb535ee76272bd1900badd2fdf01841",
   "subscription_contact_support": "a9e56fc82ee69d380cd219cacdc96d3b0f42937a955eefd0d52103a23c851585",
@@ -109,7 +108,6 @@
     <string name="subscription_save">économise %1$s</string>
     <string name="subscription_per_month">par mois</string>
     <string name="subscription_per_year">par an</string>
-    <string name="subscription_billed_monthly">Facturé chaque mois.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Soit %1$s par mois.</string>
     <string name="subscription_unavailable">Impossible d’acheter Plus sur cet appareil pour le moment. Vérifie que Google Play est installé et que tu y es connecté.</string>

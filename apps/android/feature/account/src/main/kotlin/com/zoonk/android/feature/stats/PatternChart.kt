@@ -131,7 +131,6 @@ private fun PatternColumnView(
 ) {
     val scheme = MaterialTheme.colorScheme
     val best = column.state == PatternState.Best
-    val quiet = column.state == PatternState.Few || column.state == PatternState.None
     val spoken = listOfNotNull(bestLabel.takeIf { best }, column.name, column.hours, column.value, column.note).joinToString()
 
     Column(
@@ -155,12 +154,7 @@ private fun PatternColumnView(
                     painterResource(it),
                     contentDescription = null,
                     modifier = Modifier.size(CHIP_ICON),
-                    tint =
-                        when {
-                            best -> scheme.background
-                            quiet -> scheme.onSurfaceVariant
-                            else -> scheme.onSurface
-                        },
+                    tint = if (best) scheme.background else scheme.onSurfaceVariant,
                 )
             }
         }
