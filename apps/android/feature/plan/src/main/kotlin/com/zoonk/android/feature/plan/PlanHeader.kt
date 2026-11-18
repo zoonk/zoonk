@@ -264,14 +264,14 @@ private fun GoalItems(
         if (goal.status == LearnerSummaryGoal.Status.PAUSED) {
             MenuItem(
                 R.drawable.ic_play_arrow,
-                stringResource(R.string.plan_menu_resume_goal),
+                stringResource(R.string.plan_resume_goal),
                 closing { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
                 enabled = !isSaving && resume != Resume.Pending,
             )
         } else {
             MenuItem(
                 R.drawable.ic_pause,
-                stringResource(R.string.plan_menu_pause_goal),
+                stringResource(R.string.plan_pause_goal),
                 closing { onSetStatus(LearnerSummaryGoal.Status.PAUSED) },
                 enabled = !isSaving,
             )
@@ -279,7 +279,7 @@ private fun GoalItems(
     }
     MenuItem(
         R.drawable.ic_archive,
-        stringResource(R.string.plan_menu_archive_goal),
+        stringResource(R.string.plan_archive_goal),
         closing { onDialog(GoalDialog.Archive) },
         enabled = !isSaving,
     )

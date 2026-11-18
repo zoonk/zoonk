@@ -441,8 +441,10 @@ private struct MockScoreSections: View {
       return (
         view.examName.map {
           String(
-            localized: "Estimated \($0) score", table: "Mock",
-            comment: "An estimated score's label; the argument is the exam's name")
+            localized: "Estimated score · \($0)", table: "Mock",
+            comment:
+              "Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it."
+          )
         } ?? String(localized: "Estimated score", table: "Mock", comment: "An IRT score's label"),
         MockLabels.range(low: irt.low, high: irt.high)
       )

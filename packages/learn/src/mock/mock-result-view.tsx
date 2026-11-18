@@ -61,9 +61,10 @@ function useScore(result: MockResult): { caption: string; value: string } {
     return {
       caption: examName
         ? t({
-            description: "In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).",
-            id: "estimatedExamScore",
-            message: "Estimated {exam} score",
+            description:
+              "Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it.",
+            id: "estimatedScoreNamedExam",
+            message: "Estimated score · {exam}",
             values: { exam: examName },
           })
         : t("Estimated score"),

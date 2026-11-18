@@ -284,7 +284,7 @@
   "onboarding_reveal_most_questions": "29887559ecd0a865b6ee6f3568c49c233b330d59d891c2e106f99b9846e27313",
   "onboarding_reveal_no_sitting": "631998b16663b7179a6dc430d3602a14c061586748433b8d5aeaba701217734a",
   "onboarding_reveal_notice_day_estimated": "d09f46c148376c2b6058529e1863493d44d29078326af82d390867ed5f118029",
-  "onboarding_reveal_notice_day_notice": "e6b40f8fde997f81f22d66d74363dc37c8b2e6f52fed9be926291bfe6eb83f2b",
+  "onboarding_reveal_notice_day_notice": "8dc9b6a6af6d22bb86619e31d3d50fdc64d422630b52123479fdfaf3e02fb6ac",
   "onboarding_reveal_notice_subjects": "ac5eae05390553f67a79e7b3905c46894ef84d06a7134f8d4d1d540f2553f46e",
   "onboarding_reveal_pace_covers": "59ffc876a921e1da56adbf5e7976b127cfaf9f7623c8db05ea5ea8e4a1a0a6f4",
   "onboarding_reveal_pace_time": "44769e9bd976c4693094bd546dcbd554cd5d5ff3a64df5c449922fb318a519fa",
@@ -355,7 +355,7 @@
   "onboarding_row_material": "5115e0ca3274d96cdc10937e4c24a50fedcd7abd7ea743c9902044484a491a17",
   "onboarding_row_material_note": "876b8fa4f94d9f7b7aaffd003f882c9f056186b45d22d8c328972bd21f905ac5",
   "onboarding_row_minutes_a_day": "8e0b47a6718989766fba7ed290a75afebe7e287e470d7b9f7f51b81bcf71a35a",
-  "onboarding_row_notice_says": "8f6bd644d0435fc5f53b572f9df4319effbf623fe79f663226e720f0d0daa3d4",
+  "onboarding_row_notice_says": "d7ea50cf9e957af7719e21f8faf8a740edf4dce9eda6273d72a881952cb549da",
   "onboarding_row_pick_date": "88778f00b1f9f9ae8a21de4f4086c6680c3929ab231d3f3cc786b4bd79cdec9c",
   "onboarding_row_position": "7b4791e448eab2ad39e323e90445e533e969de329af94df3e13f8d45fb8f6728",
   "onboarding_row_reason": "c1d0430ec54a9c097387b493950df1a5b04508f2dee8eb756188a559cfd4afee",
@@ -559,7 +559,7 @@
     <string name="onboarding_row_dates_estimated">Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî tarihler açıklanınca haber vereceğiz.</string>
     <string name="onboarding_row_pick_date">Tarihini seç</string>
     <string name="onboarding_row_several_sittings">Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planın ilk sınav tarihini esas alır.</string>
-    <string name="onboarding_row_notice_says">Sınav %1$s tarihinde.</string>
+    <string name="onboarding_row_notice_says">Resmî sınav tarihi %1$s. Bu tarihi sınav tarihin olarak kullanalım mı?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">Yaklaşık 5 dakikada okuyabileceğin kısa bir açıklama hazırlayacağız.</string>
@@ -749,7 +749,7 @@
     <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Sınavın tahmini tarihi artık %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">Sınav %1$s tarihinde.</string>
+    <string name="onboarding_reveal_notice_day_notice">Resmî sınav tarihi %1$s. Bu tarihi sınav tarihin olarak kullanalım mı?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s ayında sınav tarihi yok</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
