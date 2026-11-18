@@ -42,6 +42,26 @@ test.describe("Journey", () => {
     });
   });
 
+  test("hides live plan estimates when the goal is paused", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page }) => {
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await openJourney(page);
+
+      const endDate = page.getByRole("button", { name: /^End date/u });
+      const estimate = endDate.locator('[data-slot="plan-date"]');
+      await expect(estimate).toBeVisible();
+
+      const options = page.getByRole("button", { name: "Plan options" });
+      await expectHydrated(options);
+      await options.click();
+      await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
+
+      await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+      await expect(estimate).toHaveCount(0);
+      await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
+    });
+  });
+
   test("says what a time change in the plan editor did, and Undo gives the plan back as it was", async ({
     browser,
   }) => {

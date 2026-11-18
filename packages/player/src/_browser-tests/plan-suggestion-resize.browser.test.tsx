@@ -249,6 +249,28 @@ const HOST_BASE = {
   onEdit: vi.fn(),
 } satisfies Omit<PlanSuggestionHost, "certificates">;
 
+describe.each([PHONE, LAPTOP])("a completed plan at $width px", (viewport) => {
+  afterEach(cleanup);
+
+  it("offers the certificate without opening the finished plan's details", async () => {
+    await atViewport(viewport, async () => {
+      const onClaim = vi.fn(async () => true);
+
+      renderPlanSlots({
+        host: {
+          ...HOST_BASE,
+          certificates: { onClaim, unclaimed: [{ courseLevel: "beginner" }], view: null },
+          next: { onContinue: vi.fn(), view: { nextLevel: null, related: [] } },
+        },
+        plan: { ...PLAN, fitOffer: null, status: { kind: "finished" } },
+      });
+
+      await press("Get your certificate");
+      await expect.poll(() => onClaim).toHaveBeenCalledOnce();
+    });
+  });
+});
+
 describe.each([
   { from: PHONE, to: LAPTOP },
   { from: LAPTOP, to: PHONE },
