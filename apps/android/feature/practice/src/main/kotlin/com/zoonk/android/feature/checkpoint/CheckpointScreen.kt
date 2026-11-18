@@ -64,7 +64,6 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunFrame
@@ -725,7 +724,6 @@ internal fun DuelResult(
 
             TaskScaffold(
                 onClose = viewModel::close,
-                title = { LessonTitle(eyebrow(checkpoint)) },
                 bottomBar = {
                     TaskActionBar {
                         TaskActions { width ->
@@ -739,7 +737,13 @@ internal fun DuelResult(
                         }
                     }
                 },
-                aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
+                // As main's, the challenge's name titles the details beside the result, not the bar over it.
+                aside =
+                    outcome?.takeIf { !rows.isEmpty && !folded }?.let {
+                        TaskAside(
+                            title = eyebrow(checkpoint),
+                        ) { ResultDetails(duel, rows, won) }
+                    },
             ) { padding ->
                 val wide = taskAsideBeside()
                 ResultPages(
