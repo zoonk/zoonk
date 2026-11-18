@@ -2,6 +2,8 @@ import {
   LABEL_CLEARANCE as CLEARANCE,
   type LabelBox,
   type LabelSegment,
+  closestPoint,
+  isOnNamedSide,
   touchesSegment,
 } from "../_utils/drawing-label";
 import { clamp } from "../_utils/snap-value";
@@ -41,18 +43,19 @@ function shifted(box: LabelBox, { x, y }: Point, step: number): LabelBox {
   };
 }
 
-function spotsAcross(area: LabelBox, start: LabelBox): LabelBox[] {
+function spotsAcross(area: LabelBox, start: LabelBox, step?: number): LabelBox[] {
   const [width, height] = [start.right - start.left, start.bottom - start.top];
-  const columns = Math.floor((area.right - area.left - width) / height) + 1;
-  const rows = Math.floor((area.bottom - area.top - height) / height) + 1;
+  const spacing = step ?? height;
+  const columns = Math.floor((area.right - area.left - width) / spacing) + 1;
+  const rows = Math.floor((area.bottom - area.top - height) / spacing) + 1;
 
   if (columns < 1 || rows < 1) {
     return [];
   }
 
   return Array.from({ length: columns * rows }, (_, index) => {
-    const left = area.left + (index % columns) * height;
-    const top = area.top + Math.floor(index / columns) * height;
+    const left = area.left + (index % columns) * spacing;
+    const top = area.top + Math.floor(index / columns) * spacing;
     return { bottom: top + height, left, right: left + width, top };
   }).toSorted(
     (first, second) =>
@@ -77,18 +80,6 @@ function pointGap(point: Point, box: LabelBox): number {
   );
 }
 
-function segmentPointGap(point: Point, { from, to }: LabelSegment): number {
-  const [dx, dy] = [to.x - from.x, to.y - from.y];
-
-  const along =
-    dx === 0 && dy === 0
-      ? 0
-      : ((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx ** 2 + dy ** 2);
-
-  const t = clamp(along, 0, 1);
-  return Math.hypot(point.x - (from.x + t * dx), point.y - (from.y + t * dy));
-}
-
 function segmentGap(box: LabelBox, segment: LabelSegment): number {
   if (touchesSegment(box, segment, 0)) {
     return 0;
@@ -101,7 +92,10 @@ function segmentGap(box: LabelBox, segment: LabelSegment): number {
   return Math.min(
     pointGap(segment.from, box),
     pointGap(segment.to, box),
-    ...corners.map((corner) => segmentPointGap(corner, segment)),
+    ...corners.map((corner) => {
+      const nearest = closestPoint(corner, segment);
+      return Math.hypot(corner.x - nearest.x, corner.y - nearest.y);
+    }),
   );
 }
 
@@ -243,6 +237,28 @@ function placeLineLabel({
 
   if (clear || label.isOptional) {
     return clear ?? null;
+  }
+
+  if (origin) {
+    const candidates = spotsAcross(area, start, step).filter((box) => clearsAll(box));
+    const strict = candidates.find((box) => isNearestItsLine(box));
+
+    if (strict) {
+      return strict;
+    }
+
+    const closest = candidates.reduce<{ box: LabelBox; gap: number } | null>((best, box) => {
+      if (!requiredLines.every((line) => isOnNamedSide(box, label.segment, line))) {
+        return best;
+      }
+
+      const gap = segmentGap(box, label.segment);
+      return !best || gap < best.gap ? { box, gap } : best;
+    }, null);
+
+    if (closest) {
+      return closest.box;
+    }
   }
 
   const clearsRequired = (box: LabelBox) =>

@@ -55,6 +55,39 @@ class LineLabelsTest {
     }
 
     @Test
+    fun crossedNameKeepsItsSideOfTheAnswerAt320DpWithLargestText() {
+        fun segment(
+            x: Float,
+            y: Float,
+            endX: Float,
+            endY: Float,
+        ) = LabelSegment(Offset(x, y), Offset(endX, endY))
+
+        val plot = Rect(0f, 0f, 230f, 248f)
+        val supply = segment(0f, 248f, 230f, 141f)
+        val demand = segment(0f, 50f, 214f, 248f)
+        val original = segment(0f, 229f, 230f, 121f)
+        val answer = segment(0f, 208f, 230f, 101f)
+        val guides = listOf(segment(0f, 182f, 140f, 182f), segment(140f, 182f, 140f, 248f))
+        val shown =
+            listOf(
+                LineLabel(true, supply, Size(55f, 23f)),
+                LineLabel(true, demand, Size(68f, 23f)),
+                LineLabel(false, original, Size(55f, 23f), isOptional = true),
+            )
+        val marks = noMarks.copy(lines = guides)
+        val before = placeChartLabels(plot, shown, emptyList(), marks, 1f)
+        val after = placeChartLabels(plot, shown, listOf(LineLabel(false, answer, Size(82f, 46f))), marks, 1f)
+        val box = requireNotNull(after[2])
+
+        assertTrue(gap(requireNotNull(before[2]), answer) < 1f)
+        assertEquals(before.take(2), after.take(2))
+        assertTrue(box.center.y > 208f - 107f * box.center.x / 230f)
+        assertTrue(gap(box, answer) >= 3f)
+        assertTrue(gap(box, original) < 40f)
+    }
+
+    @Test
     fun keepsANameOffItsLineWhereTheLineLeavesThroughTheChartsTop() {
         val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
         val box = place(LineLabel(isUpper = true, segment, size)).single()

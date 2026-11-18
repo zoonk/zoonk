@@ -53,6 +53,31 @@ export function touchesSegment(
   return Math.max(...xs) >= box.left - clearance && Math.min(...xs) <= box.right + clearance;
 }
 
+export function closestPoint(point: LabelPoint, { from, to }: LabelSegment): LabelPoint {
+  const [dx, dy] = [to.x - from.x, to.y - from.y];
+
+  const along =
+    dx === 0 && dy === 0
+      ? 0
+      : ((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx ** 2 + dy ** 2);
+
+  const t = Math.max(0, Math.min(1, along));
+  return { x: from.x + t * dx, y: from.y + t * dy };
+}
+
+export function isOnNamedSide(
+  box: LabelBox,
+  named: LabelSegment,
+  { from, to }: LabelSegment,
+): boolean {
+  const center = { x: (box.left + box.right) / 2, y: (box.top + box.bottom) / 2 };
+
+  const side = (point: LabelPoint) =>
+    (to.x - from.x) * (point.y - from.y) - (to.y - from.y) * (point.x - from.x);
+
+  return side(center) * side(closestPoint(center, named)) >= 0;
+}
+
 function touchesLine(box: LabelBox, line: readonly LabelPoint[]): boolean {
   return line.some((from, index) => {
     const to = line[index + 1];

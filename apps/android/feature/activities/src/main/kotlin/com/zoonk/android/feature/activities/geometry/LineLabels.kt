@@ -115,6 +115,18 @@ private fun placeLineLabel(
         } ?: nearby { box, _ -> isClear(box) } ?: spots.firstOrNull(isClear)
     if (clear != null || (label.isOptional && origin == null)) return clear
 
+    if (origin != null) {
+        val candidates = spotsAcross(area, start, step).filter(clearsAll)
+        val strict = candidates.firstOrNull { it.isNearestItsLine() }
+        if (strict != null) return strict
+
+        val closest =
+            candidates
+                .filter { box -> requiredLines.all { box.isOnNamedSide(label.segment, it) } }
+                .minByOrNull { it.gapTo(label.segment) }
+        if (closest != null) return closest
+    }
+
     return nearby { box, _ -> clearsAll(box) } ?: spots.firstOrNull(clearsAll)
         ?: nearby { box, _ -> offItsLine(box) } ?: spots.firstOrNull(offItsLine)
         ?: if (requiredLines.isEmpty()) {
@@ -127,12 +139,13 @@ private fun placeLineLabel(
 private fun spotsAcross(
     area: Rect,
     start: Rect,
+    spacing: Float = start.height,
 ): List<Rect> {
-    val columns = floor((area.width - start.width) / start.height).toInt() + 1
-    val rows = floor((area.height - start.height) / start.height).toInt() + 1
+    val columns = floor((area.width - start.width) / spacing).toInt() + 1
+    val rows = floor((area.height - start.height) / spacing).toInt() + 1
     if (columns < 1 || rows < 1) return emptyList()
     return (0 until columns * rows)
-        .map { Rect(Offset(area.left + it % columns * start.height, area.top + it / columns * start.height), start.size) }
+        .map { Rect(Offset(area.left + it % columns * spacing, area.top + it / columns * spacing), start.size) }
         .sortedBy { (it.topLeft - start.topLeft).getDistance() }
 }
 
@@ -188,19 +201,29 @@ private val NEAREST_SHIFTS =
         .flatMap { row -> (-SEARCH_STEPS..SEARCH_STEPS).map { column -> Offset(column.toFloat(), row.toFloat()) } }
         .sortedBy { it.getDistance() }
 
+private fun LabelSegment.closestPoint(point: Offset): Offset {
+    val vector = to - from
+    val squared = vector.x * vector.x + vector.y * vector.y
+    val delta = point - from
+    val along = if (squared == 0f) 0f else ((delta.x * vector.x + delta.y * vector.y) / squared).coerceIn(0f, 1f)
+    return from + vector * along
+}
+
+private fun Rect.isOnNamedSide(
+    named: LabelSegment,
+    line: LabelSegment,
+): Boolean {
+    fun side(point: Offset): Float =
+        (line.to.x - line.from.x) * (point.y - line.from.y) - (line.to.y - line.from.y) * (point.x - line.from.x)
+    return side(center) * side(named.closestPoint(center)) >= 0f
+}
+
 private fun Rect.gapTo(segment: LabelSegment): Float {
     if (touches(segment, 0f)) return 0f
     val pointGap = { point: Offset ->
         Offset(maxOf(left - point.x, 0f, point.x - right), maxOf(top - point.y, 0f, point.y - bottom)).getDistance()
     }
-    val vector = segment.to - segment.from
-    val squared = vector.x * vector.x + vector.y * vector.y
     val corners = listOf(topLeft, topRight, bottomLeft, bottomRight)
-    val cornerGap =
-        corners.minOf { corner ->
-            val delta = corner - segment.from
-            val along = if (squared == 0f) 0f else ((delta.x * vector.x + delta.y * vector.y) / squared).coerceIn(0f, 1f)
-            (corner - (segment.from + vector * along)).getDistance()
-        }
+    val cornerGap = corners.minOf { corner -> (corner - segment.closestPoint(corner)).getDistance() }
     return minOf(pointGap(segment.from), pointGap(segment.to), cornerGap)
 }

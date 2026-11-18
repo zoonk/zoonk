@@ -273,6 +273,51 @@ describe(placeChartLabels, () => {
     expect(box && gapToSegment(box, segment)).toBeLessThan(box ? gapToSegment(box, guide) : 0);
   });
 
+  it("keeps the crossed name on its line's side when a 320 px chart cannot fit it between the lines", () => {
+    const primary = { from: { x: 0, y: 248 }, to: { x: 230, y: 141 } };
+    const demand = { from: { x: 0, y: 50 }, to: { x: 214, y: 248 } };
+    const original = { from: { x: 0, y: 229 }, to: { x: 230, y: 121 } };
+    const correct = { from: { x: 0, y: 208 }, to: { x: 230, y: 101 } };
+
+    const shown = [
+      { isUpper: true, segment: primary, size: { height: 23, width: 55 } },
+      { isUpper: true, segment: demand, size: { height: 23, width: 68 } },
+      { isOptional: true, isUpper: false, segment: original, size: { height: 23, width: 55 } },
+    ];
+
+    const marks = {
+      ...noMarks,
+      lines: [
+        { from: { x: 0, y: 182 }, to: { x: 140, y: 182 } },
+        { from: { x: 140, y: 182 }, to: { x: 140, y: 248 } },
+      ],
+    };
+
+    // The 320 px activity leaves 230 px for the plot at its largest chart text size.
+    const plot = { bottom: 248, left: 0, right: 230, top: 0 };
+    const before = placeChartLabels({ area: plot, marks, revealed: [], shown });
+
+    const after = placeChartLabels({
+      area: plot,
+      marks,
+      revealed: [{ isUpper: false, segment: correct, size: { height: 46, width: 82 } }],
+      shown,
+    });
+
+    const box = after[2];
+
+    if (!before[2] || !box) {
+      throw new Error("The original line needs its name in both states.");
+    }
+
+    const answerY = 208 - (107 * ((box.left + box.right) / 2)) / 230;
+
+    expect(after.slice(0, 2)).toStrictEqual(before.slice(0, 2));
+    expect((box.top + box.bottom) / 2).toBeGreaterThan(answerY);
+    expect(gapToSegment(box, correct)).toBeGreaterThanOrEqual(3);
+    expect(gapToSegment(box, original)).toBeLessThan(40);
+  });
+
   it("keeps the answer's name nearer the answer's line than the lines shown before it", () => {
     const box = placeChartLabels({
       area,

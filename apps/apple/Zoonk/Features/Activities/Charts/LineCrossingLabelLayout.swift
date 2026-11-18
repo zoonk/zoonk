@@ -73,8 +73,9 @@ enum LineCrossingLabelLayout {
     let width = max(0, area.width - label.size.width)
     let height = max(0, area.height - label.size.height)
 
-    func search(_ accepts: (CGRect) -> Bool) -> CGRect? {
+    func search(preferOwnLine: Bool = false, _ accepts: (CGRect) -> Bool) -> CGRect? {
       var best: CGRect?
+      var bestGap = CGFloat.infinity
       var distance = CGFloat.infinity
       for row in 0...Int(ceil(height / step)) {
         for column in 0...Int(ceil(width / step)) {
@@ -85,8 +86,11 @@ enum LineCrossingLabelLayout {
           let dx = box.midX - start.midX
           let dy = box.midY - start.midY
           let cost = dx * dx + dy * dy
-          if cost < distance, area.contains(box), accepts(box) {
+          guard area.contains(box) else { continue }
+          let gap = preferOwnLine ? gapSquared(box, label.segment) : 0
+          if (gap, cost) < (bestGap, distance), accepts(box) {
             best = box
+            bestGap = gap
             distance = cost
           }
         }
@@ -116,6 +120,17 @@ enum LineCrossingLabelLayout {
       return clear
     }
 
+    if origin != nil,
+      let besideItsLine = search(
+        preferOwnLine: true,
+        { box in
+          clearsLinesAndMarks(box)
+            && requiredLines.allSatisfy { isOnNamedSide(box, named: label.segment, of: $0) }
+        })
+    {
+      return besideItsLine
+    }
+
     return search(clearsLinesAndMarks)
       ?? search(belongsToLine)
       ?? (requiredLines.isEmpty
@@ -130,18 +145,33 @@ enum LineCrossingLabelLayout {
     box.insetBy(dx: -clearance, dy: -clearance)
   }
 
-  private static func gapSquared(_ box: CGRect, _ line: Segment) -> CGFloat {
-    if touches(box, line) { return 0 }
+  private static func closestPoint(_ point: CGPoint, on line: Segment) -> CGPoint {
     let dx = line.to.x - line.from.x
     let dy = line.to.y - line.from.y
     let length = dx * dx + dy * dy
+    let along =
+      length == 0
+      ? 0
+      : min(1, max(0, ((point.x - line.from.x) * dx + (point.y - line.from.y) * dy) / length))
+    return CGPoint(x: line.from.x + along * dx, y: line.from.y + along * dy)
+  }
+
+  private static func isOnNamedSide(_ box: CGRect, named: Segment, of line: Segment) -> Bool {
+    let center = CGPoint(x: box.midX, y: box.midY)
+    func side(_ point: CGPoint) -> CGFloat {
+      (line.to.x - line.from.x) * (point.y - line.from.y)
+        - (line.to.y - line.from.y) * (point.x - line.from.x)
+    }
+    return side(center) * side(closestPoint(center, on: named)) >= 0
+  }
+
+  private static func gapSquared(_ box: CGRect, _ line: Segment) -> CGFloat {
+    if touches(box, line) { return 0 }
     let cornerGaps = [box.minX, box.maxX].flatMap { x in
       [box.minY, box.maxY].map { y in
-        let along =
-          length == 0
-          ? 0 : min(1, max(0, ((x - line.from.x) * dx + (y - line.from.y) * dy) / length))
-        let xGap = x - line.from.x - along * dx
-        let yGap = y - line.from.y - along * dy
+        let nearest = closestPoint(CGPoint(x: x, y: y), on: line)
+        let xGap = x - nearest.x
+        let yGap = y - nearest.y
         return xGap * xGap + yGap * yGap
       }
     }
