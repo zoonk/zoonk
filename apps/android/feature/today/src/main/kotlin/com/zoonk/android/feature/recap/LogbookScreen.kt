@@ -70,6 +70,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.WeeklyRecap
 import kotlinx.coroutines.launch
@@ -350,7 +351,7 @@ private fun NameRow(
             value,
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.End,
+            textAlign = layoutEnd(),
             style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
         )
     }
