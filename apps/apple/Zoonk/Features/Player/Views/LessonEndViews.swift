@@ -746,13 +746,9 @@ enum LessonWaitWords {
   }
 }
 
-/// Main's `LessonWaiting`: the lesson's description, then how its writing stands, and once that
-/// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
-/// written: it runs AI.
+/// Main's `LessonWaiting`: the lesson's description, how its writing stands, and something ready
+/// to do meanwhile. Only the learner asks for the lesson to be written: it runs AI.
 struct LessonWaitingView: View {
-  /// A wait this long offers what's ready meanwhile.
-  private static let lateAfter = Duration.seconds(15)
-
   let outline: LessonOutline
   let kind: LessonWaitWords
   let writing: LessonPlayerStore.LessonWriting
@@ -763,8 +759,6 @@ struct LessonWaitingView: View {
   var goalID: String?
   var holding: WaitHolding?
   let write: () -> Void
-
-  @State private var isLate = false
 
   /// Main's `useGenerationStepLabel` under a title that already says the lesson is getting ready.
   private func stripLabel(title: Text) -> Text {
@@ -839,16 +833,6 @@ struct LessonWaitingView: View {
       surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
       goalID: goalID
     )
-    .task(id: writing) {
-      isLate = false
-
-      guard writing == .writing else {
-        return
-      }
-
-      try? await Task.sleep(for: Self.lateAfter)
-      isLate = !Task.isCancelled
-    }
   }
 
   private var page: some View {
@@ -895,16 +879,13 @@ struct LessonWaitingView: View {
     }
   }
 
+  /// Until the lesson is ready.
   private var shownAlternative: LessonWaitAlternative? {
-    guard let alternative, holding == nil else {
+    guard let alternative, holding == nil, writing != .written else {
       return nil
     }
 
-    return switch writing {
-    case .refused, .setAside, .failed: LessonWaitAlternative(alternative: alternative)
-    case .writing where isLate: LessonWaitAlternative(alternative: alternative)
-    default: nil
-    }
+    return LessonWaitAlternative(alternative: alternative)
   }
 
   private var notWrittenLine: String? {
