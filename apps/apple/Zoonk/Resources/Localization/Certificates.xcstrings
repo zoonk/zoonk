@@ -191,7 +191,7 @@
       }
     },
     "%@ complete!" : {
-      "comment" : "Title when the learner finished a CEFR language level, such as B1",
+      "comment" : "Title when the learner finished a level: a CEFR language level, such as B1, or a course's level, such as Beginner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -250,7 +250,7 @@
       }
     },
     "%@ completed %@" : {
-      "comment" : "A course certificate read aloud: the learner's name, then the course",
+      "comment" : "A course certificate read aloud: the learner's name, then the course or its level, such as Python · Beginner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -785,6 +785,7 @@
       }
     },
     "Add to LinkedIn" : {
+      "comment" : "Adds a certificate to LinkedIn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1726,7 +1727,7 @@
       }
     },
     "Course complete!" : {
-      "comment" : "Title when the learner finished a course",
+      "comment" : "Title when the learner finished a whole plan's course",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2200,7 +2201,7 @@
       }
     },
     "I just finished %@ on Zoonk: %lld lessons and about %@ of study." : {
-      "comment" : "Suggested text for sharing a course certificate: the course, the lessons studied, then about how long they took, such as \"41 hours\"",
+      "comment" : "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), the lessons studied, then about how long they took, such as \"41 hours\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2473,7 +2474,7 @@
       }
     },
     "I just finished %@ on Zoonk: %lld lessons." : {
-      "comment" : "Suggested text for sharing a course certificate: the course, then the lessons studied",
+      "comment" : "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), then the lessons studied",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4643,7 +4644,7 @@
       }
     },
     "Your certificate for %@ is ready." : {
-      "comment" : "Under the title when a course certificate was earned; the course",
+      "comment" : "Under the title when a course certificate was earned; the course or its level, such as Python · Beginner",
       "localizations" : {
         "de" : {
           "stringUnit" : {

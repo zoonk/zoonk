@@ -165,9 +165,16 @@ struct AboutYouQuestionView: View {
 
 extension ProfileDraft {
   /// About you's Save: an answer that can be saved and differs from the one saved, so one opened
-  /// and left as it was never saves again.
+  /// and left as it was never saves again. Picks put back in another order are the same answer,
+  /// except studies, whose order is their fields' order.
   func savesAChange(_ view: ProfileQuestionView, memoryEnabled: Bool = true) -> Bool {
-    canSave(view) && self != ProfileDraft(view, memoryEnabled: memoryEnabled)
+    let saved = ProfileDraft(view, memoryEnabled: memoryEnabled)
+    let samePicks =
+      question == .studies ? picks == saved.picks : Set(picks) == Set(saved.picks)
+
+    return canSave(view)
+      && !(samePicks && decline == saved.decline && text == saved.text
+        && subjects == saved.subjects)
   }
 }
 

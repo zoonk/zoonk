@@ -127,12 +127,21 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertGreaterThan(longDay.step, shortDay.step)
   }
 
-  func testBestDayWithEvenAnswersSaysNoDayStandsOut() {
-    let even = ScorePatterns(
-      dayparts: [], dayVerdict: .even(points: 3), minimumAnswers: 10, strongestDaypart: nil,
-      strongestWeekday: nil, timeVerdict: .notEnough, weekdays: [])
+  /// Every weekday has enough answers and none scores apart, so the best day is a sentence saying
+  /// so, not a weekday and not "Not yet".
+  func testBestDayWhenEveryDayScoresTheSameSaysSo() {
+    let even = ScorePerformance(
+      correctAnswers: 16, incorrectAnswers: 4, score: 80, totalAnswers: 20)
+    let patterns = ScorePatterns(
+      dayparts: [], dayVerdict: .even(points: 2), minimumAnswers: 10, strongestDaypart: nil,
+      strongestWeekday: nil, timeVerdict: .notEnough,
+      weekdays: ProgressWeekday.allCases.map { WeekdayScorePattern(performance: even, weekday: $0) }
+    )
 
-    XCTAssertEqual(even.bestDayName, "You answer about the same every day.")
+    XCTAssertTrue(
+      patterns.weekdays.allSatisfy { $0.performance.totalAnswers >= patterns.minimumAnswers })
+    XCTAssertNil(patterns.dayVerdict.best)
+    XCTAssertEqual(patterns.bestDayName, "You answer about the same every day.")
   }
 
   private func activityDay(activities: Int, lessons: Int, seconds: Int) -> ActivityProgressDay {
