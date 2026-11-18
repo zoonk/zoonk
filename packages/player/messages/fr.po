@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value} par {unit}"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "Appuie sur un intervalle pour le mesurer"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "Choisis un intervalle pour le mesurer"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. {share} entre les curseurs."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "De {from} à {to} : {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Curseur inférieur"
@@ -992,6 +987,11 @@ msgstr "Curseur inférieur"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Curseur supérieur"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "De {from} à {to} : {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1088,11 +1088,6 @@ msgstr "À titre de comparaison, pour {input}, la valeur est de {value}."
 msgctxt "b42_4_"
 msgid "What-if events"
 msgstr "Événements hypothétiques"
-
-#: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "Avec les scénarios"
 
 #: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "Touches de piano"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "Un demi-ton sépare deux touches voisines, touches noires comprises."
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Un clavier de piano de do à si. Touches enfoncées : {notes}."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "Écoute le son, puis choisis."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Un demi-ton sépare deux touches voisines, touches noires comprises."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "Écouter le son"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "Écouter tes notes"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "Écouter"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1477,11 +1472,6 @@ msgstr "Aucune ligne n’a encore bougé."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "Le nouveau point d’intersection se trouve à {value}."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "Appuie sur un lieu numéroté pour découvrir ce qui s’y trouve."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"

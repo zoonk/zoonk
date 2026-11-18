@@ -12,7 +12,7 @@ const CHAR_WIDTH = 8;
 const PILL_OFFSET = 18;
 const TICK_OFFSET = 18;
 const TICK_DROP = 4;
-const TARGET_LABEL_RISE = 4;
+const MEAN_LABEL_RISE = 4;
 const TICK_CLEARANCE = 28;
 const TAIL_GAP = 6;
 const TAIL_RISE = 14;
@@ -144,47 +144,42 @@ export function DistributionTails({
   );
 }
 
-export function DistributionTarget({
-  label,
-  target,
-}: {
-  label: string;
-  target: { from: number; to: number };
-}) {
+export function DistributionTarget({ target }: { target: { from: number; to: number } }) {
   const { x, y } = usePlotScales();
   const [bottom, top] = y.range;
   const [from, to] = [x.toPixel(target.from), x.toPixel(target.to)];
 
   return (
+    <path
+      aria-hidden="true"
+      className="stroke-success"
+      d={`M${from} ${bottom} V${top} M${to} ${bottom} V${top}`}
+      strokeDasharray="4 3"
+      strokeWidth={2}
+    />
+  );
+}
+
+export function DistributionMean({ label, value }: { label: string; value: number }) {
+  const { x, y } = usePlotScales();
+  const [bottom, top] = y.range;
+  const at = x.toPixel(value);
+
+  return (
     <g aria-hidden="true">
       <path
-        className="stroke-success"
-        d={`M${from} ${bottom} V${top} M${to} ${bottom} V${top}`}
-        strokeDasharray="4 3"
-        strokeWidth={2}
+        className="stroke-muted-foreground/50"
+        d={`M${at} ${bottom} V${top}`}
+        strokeDasharray="3 4"
       />
       <text
-        className={cn("fill-success text-xs font-semibold")}
+        className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}
         textAnchor="middle"
-        x={(from + to) / 2}
-        y={top - TARGET_LABEL_RISE}
+        x={at}
+        y={top - MEAN_LABEL_RISE}
       >
         {label}
       </text>
     </g>
-  );
-}
-
-export function DistributionMean({ value }: { value: number }) {
-  const { x, y } = usePlotScales();
-  const [bottom, top] = y.range;
-
-  return (
-    <path
-      aria-hidden="true"
-      className="stroke-muted-foreground/50"
-      d={`M${x.toPixel(value)} ${bottom} V${top}`}
-      strokeDasharray="3 4"
-    />
   );
 }

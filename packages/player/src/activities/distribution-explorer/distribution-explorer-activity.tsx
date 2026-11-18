@@ -2,7 +2,6 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -18,6 +17,7 @@ import {
   type Interval,
   densityCurve,
   distributionDomain,
+  distributionPercentFormat,
   distributionTicks,
   handleStep,
   snapDomain,
@@ -36,7 +36,6 @@ type Content = DistributionExplorerProps["content"];
 const PLOT_HEIGHT = 196;
 const PLOT_PADDING = { bottom: 46, left: 12, right: 12, top: 22 };
 const HEADROOM = 1.08;
-const PERCENT_DIGITS = 1;
 const FAR_SDS = 40;
 
 function percentBetween(content: Content, range: Interval): number {
@@ -92,14 +91,8 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
-  // A share is written with the digits the question's answer needs, the same in every place.
-  const percentDigits =
-    check.kind === "numeric"
-      ? exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance })
-      : PERCENT_DIGITS;
-
-  const percent = (value: number) =>
-    format(value, { maximumFractionDigits: percentDigits, unit: "%" });
+  const percent = (value: number) => format(value, distributionPercentFormat({ check }));
+  const tail = (value: number) => format(value, distributionPercentFormat({ check, isTail: true }));
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
   const space = useSentenceSpace();
@@ -125,7 +118,9 @@ export function DistributionExplorerActivity({
     });
 
   const targetShare = percentBetween(content, fields.target);
-  const isOnTarget = handles.from === fields.target.from && handles.to === fields.target.to;
+
+  const showTarget =
+    isChecked && (handles.from !== fields.target.from || handles.to !== fields.target.to);
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -145,29 +140,24 @@ export function DistributionExplorerActivity({
         <ActivityPlotArea
           points={curve.filter((point) => point.x >= handles.from && point.x <= handles.to)}
         />
-        {distribution.kind === "normal" && <DistributionMean value={distribution.mean} />}
+        {distribution.kind === "normal" && (
+          <DistributionMean label={format(distribution.mean)} value={distribution.mean} />
+        )}
         <ActivityPlotLine className="stroke-2" points={curve} />
 
         <DistributionTicks
           format={(value) => format(value)}
           handles={[handles.from, handles.to]}
-          ticks={distributionTicks(distribution, domain)}
+          ticks={distributionTicks(distribution, domain).filter(
+            (tick) => distribution.kind !== "normal" || tick !== distribution.mean,
+          )}
         />
 
-        {isChecked && !isOnTarget && (
-          <DistributionTarget
-            label={t("{from} to {to}: {share}", {
-              from: format(fields.target.from),
-              share: percent(targetShare),
-              to: format(fields.target.to),
-            })}
-            target={fields.target}
-          />
-        )}
+        {showTarget && <DistributionTarget target={fields.target} />}
 
         <DistributionTails
-          above={percent(above)}
-          below={percent(below)}
+          above={tail(above)}
+          below={tail(below)}
           handles={[handles.from, handles.to]}
         />
 
@@ -192,6 +182,16 @@ export function DistributionExplorerActivity({
         />
       </ActivityPlot>
 
+      {showTarget && (
+        <ActivityCanvasLabel className="text-success-text text-center font-semibold tabular-nums">
+          {t("{from} to {to}: {share}", {
+            from: format(fields.target.from),
+            share: percent(targetShare),
+            to: format(fields.target.to),
+          })}
+        </ActivityCanvasLabel>
+      )}
+
       <ActivityTextAlternative>
         {distribution.kind === "normal"
           ? t(
@@ -209,8 +209,8 @@ export function DistributionExplorerActivity({
             })}
         {space}
         {t("{between} of values fall between {from} and {to}, {below} below and {above} above.", {
-          above: percent(above),
-          below: percent(below),
+          above: tail(above),
+          below: tail(below),
           between: percent(between),
           from: formatValue(handles.from),
           to: formatValue(handles.to),

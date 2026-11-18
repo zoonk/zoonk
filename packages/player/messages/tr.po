@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value} ({unit} başına)"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "Ölçmek için bir aralığa dokun"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "Ölçmek için bir aralık seç"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. İki sınır arasındaki oran: {share}."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from} ile {to} arası: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Alt sınır"
@@ -992,6 +987,11 @@ msgstr "Alt sınır"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Üst sınır"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from} ile {to} arası: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1088,11 +1088,6 @@ msgstr "Karşılaştırmak gerekirse, {input} için sonuç {value}."
 msgctxt "b42_4_"
 msgid "What-if events"
 msgstr "Olası senaryolar"
-
-#: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "Senaryolar uygulanınca"
 
 #: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "Piyano tuşları"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "Yarım ses, siyah tuşlar da sayıldığında bir sonraki tuşa olan uzaklıktır."
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Do’dan Si’ye uzanan bir piyano klavyesi. Basılan tuşlar: {notes}."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "Sesi çal, sonra seç."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Yarım ses, siyah tuşlar da sayıldığında bir sonraki tuşa olan uzaklıktır."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "Sesi çal"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "Notalarını dinle"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "Dinle"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1477,11 +1472,6 @@ msgstr "İki çizgi de henüz yer değiştirmedi."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "Yeni kesişim noktası {value} değerinde."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "Orada neler olduğunu görmek için numaralı bir yere dokun."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"

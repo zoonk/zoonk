@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value} ({unit}당)"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "구간을 눌러 측정해 보세요"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "측정할 구간을 골라 보세요"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. 두 조절점 사이의 비율은 {share}예요."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from}~{to}: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "하한 조절점"
@@ -992,6 +987,11 @@ msgstr "하한 조절점"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "상한 조절점"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from}~{to}: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1088,11 +1088,6 @@ msgstr "비교해 보면, {input}일 때는 {value}의 값이 나와요."
 msgctxt "b42_4_"
 msgid "What-if events"
 msgstr "가상 상황"
-
-#: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "가상 상황 적용 후"
 
 #: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "피아노 건반"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "반음은 검은 건반을 포함해 바로 옆 건반까지의 간격이에요."
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "C부터 B까지의 피아노 건반이에요. 누른 음: {notes}."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "소리를 재생한 뒤 골라 보세요."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "반음은 검은 건반을 포함해 바로 옆 건반까지의 간격이에요."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "소리 재생하기"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "선택한 음 듣기"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "들어 보기"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1477,11 +1472,6 @@ msgstr "아직 어느 선도 움직이지 않았어요."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "새 교점은 {value}에 있어요."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "번호가 표시된 장소를 눌러 무엇이 있는지 확인해 보세요."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"

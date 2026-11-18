@@ -43,14 +43,12 @@ function expectedPoint({
   axis,
   content,
   expected,
-  format,
-  submitted,
+  formatOutput,
 }: {
   axis: Fields["variables"][number];
   content: Content;
   expected: FormulaModelProps["expected"];
-  format: ReturnType<typeof useFormatNumber>;
-  submitted: FormulaModelProps["answer"];
+  formatOutput: (value: number) => string;
 }) {
   const { check } = content;
 
@@ -61,13 +59,7 @@ function expectedPoint({
   const input = check.inputs?.findLast((item) => item.name === axis.name);
 
   return {
-    label: format(
-      expected.value,
-      exactAnswerFormat({
-        check,
-        value: submitted?.kind === "numeric" ? submitted.value : undefined,
-      }),
-    ),
+    label: formatOutput(expected.value),
     x: input?.value ?? axis.initial,
     y: expected.value,
   };
@@ -100,8 +92,25 @@ function FormulaModelBoard({
   const outputAt = (output: Output, at: ModelValues) =>
     computeActivityValue(content, { inputs: at, output: output.id });
 
+  const answerFormat =
+    check.kind === "numeric" &&
+    exactAnswerFormat({
+      check,
+      value: isChecked && answer?.kind === "numeric" ? answer.value : undefined,
+    });
+
   const formatOutput = (output: Output, value: number | null) =>
-    value === null ? "" : format(value, { unit: output.unit });
+    value === null
+      ? ""
+      : format(value, {
+          maximumFractionDigits:
+            output.id === charted.id && answerFormat
+              ? answerFormat.maximumFractionDigits
+              : undefined,
+          unit:
+            output.unit ??
+            (output.id === charted.id && answerFormat ? answerFormat.unit : undefined),
+        });
 
   const formatX = (value: number) => format(value, { unit: axis.unit });
 
@@ -132,38 +141,53 @@ function FormulaModelBoard({
         />
       )}
 
-      <ActivityOutputReadouts items={readouts} />
-
-      {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
-      {view.compared && (
-        <ActivityCanvasLabel
-          aria-hidden="true"
-          className={cn("tabular-nums", view.compared.x === view.x && "invisible")}
-        >
-          {t("{output} at {input}: {value}", {
-            input: formatX(view.compared.x),
-            output: charted.label,
-            value: formatOutput(charted, view.compared.y),
-          })}
-        </ActivityCanvasLabel>
-      )}
-
-      <ActivityFormulaChart
-        baseline={view.baselineCurve ? { points: view.baselineCurve, y: view.chartedBefore } : null}
-        compare={view.compared}
-        current={{ points: view.current, y: view.chartedNow }}
-        deltaLabel={view.delta && format(view.delta.amount, changeFormat(view.delta, charted.unit))}
-        expected={
-          isChecked ? expectedPoint({ axis, content, expected, format, submitted: answer }) : null
-        }
-        formatTick={(value, isShort) => format(value, { compact: isShort, unit: charted.unit })}
-        formatX={formatX}
-        x={view.x}
-        xDomain={[axis.min, axis.max]}
-        yDomain={view.yDomain}
+      <ActivityOutputReadouts
+        items={readouts.map((item) => ({ ...item, note: item.note ?? "\u00A0" }))}
       />
 
-      {view.baseline && <FormulaModelLegend kind={view.baseline.kind} />}
+      <div className="flex flex-col gap-1">
+        <ActivityFormulaChart
+          baseline={
+            view.baselineCurve ? { points: view.baselineCurve, y: view.chartedBefore } : null
+          }
+          compare={view.compared}
+          current={{ points: view.current, y: view.chartedNow }}
+          deltaLabel={
+            view.delta && format(view.delta.amount, changeFormat(view.delta, charted.unit))
+          }
+          expected={
+            isChecked
+              ? expectedPoint({
+                  axis,
+                  content,
+                  expected,
+                  formatOutput: (value) => formatOutput(charted, value),
+                })
+              : null
+          }
+          formatTick={(value, isShort) => format(value, { compact: isShort, unit: charted.unit })}
+          formatX={formatX}
+          x={view.x}
+          xDomain={[axis.min, axis.max]}
+          xLabel={axis.label}
+          yDomain={view.yDomain}
+          yLabel={charted.label}
+        />
+
+        {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
+        {view.compared && (
+          <ActivityCanvasLabel
+            aria-hidden="true"
+            className={cn("tabular-nums", view.compared.x === view.x && "invisible")}
+          >
+            {t("{output} at {input}: {value}", {
+              input: formatX(view.compared.x),
+              output: charted.label,
+              value: formatOutput(charted, view.compared.y),
+            })}
+          </ActivityCanvasLabel>
+        )}
+      </div>
 
       <ActivityModelSliders
         disabled={isChecked}
@@ -173,6 +197,10 @@ function FormulaModelBoard({
         values={sliders}
         variables={fields.variables}
       />
+
+      {view.baseline && (
+        <FormulaModelLegend activeLabels={view.activeLabels} kind={view.baseline.kind} />
+      )}
 
       <FormulaModelDescription
         axis={axis.label}

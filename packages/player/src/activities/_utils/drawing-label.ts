@@ -3,7 +3,7 @@ export const DRAWING_LABEL_HALO =
 
 export type LabelAnchor = "end" | "middle" | "start";
 export type LabelBox = { bottom: number; left: number; right: number; top: number };
-export type LabelPoint = { x: number; y: number };
+type LabelPoint = { x: number; y: number };
 export type LabelSegment = { from: LabelPoint; to: LabelPoint };
 
 /** The room a label's halo needs between it and a line, so the line never shows through it. */
@@ -141,32 +141,6 @@ function separatesName(box: LabelBox, named: LabelSegment, line: LabelSegment): 
     sideOf(connector.from, line) * sideOf(connector.to, line) < 0 &&
     sideOf(line.from, connector) * sideOf(line.to, connector) < 0
   );
-}
-
-function touchesLine(box: LabelBox, line: readonly LabelPoint[]): boolean {
-  return line.some((from, index) => {
-    const to = line[index + 1];
-    return to !== undefined && touchesSegment(box, { from, to });
-  });
-}
-
-/** A mark's label goes above it, or below it when its line runs through the spot above and leaves the one below clear. */
-export function sideOffLine({
-  gap,
-  line,
-  mark,
-  size,
-}: {
-  gap: number;
-  line: readonly LabelPoint[];
-  mark: LabelPoint;
-  size: { height: number; width: number };
-}): "above" | "below" {
-  const [left, right] = [mark.x - size.width / 2, mark.x + size.width / 2];
-  const above = { bottom: mark.y - gap, left, right, top: mark.y - gap - size.height };
-  const below = { bottom: mark.y + gap + size.height, left, right, top: mark.y + gap };
-
-  return touchesLine(above, line) && !touchesLine(below, line) ? "below" : "above";
 }
 
 export function measureDrawingLabel({

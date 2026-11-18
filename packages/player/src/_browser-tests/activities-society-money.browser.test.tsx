@@ -42,8 +42,13 @@ const chainQuestion = {
   ]),
 };
 
-const { calculator, scenario } = engineModeFixtures.formulaModel;
+const { calculator, scenario, simulation } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
+
+function sliderTop(name: string): number {
+  const slider = page.getByRole("slider", { name }).element();
+  return slider.getBoundingClientRect().top - slider.closest("figure")!.getBoundingClientRect().top;
+}
 
 function chartLabels() {
   return [...document.querySelectorAll("figure svg text")].map((text) => ({
@@ -102,6 +107,18 @@ function openWithWrongPassage() {
 }
 
 describe("money and society activities", () => {
+  it("keeps the extra payment slider in place when the comparison appears", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).toBeVisible();
+
+    const top = slider.element().getBoundingClientRect().top;
+    await pressOnSlider("Extra per month", "ArrowRight", 4);
+    await expect.element(valueInput()).toHaveValue("251.54");
+
+    expect(slider.element().getBoundingClientRect().top).toBeCloseTo(top, 0);
+  });
+
   it("formula model calculator: moving the extra payment gives the months to check", async () => {
     openActivity({ content: calculator, template: "formulaModel" });
     await pressOnSlider("Extra per month", "ArrowRight", 4);
@@ -110,6 +127,28 @@ describe("money and society activities", () => {
     await expect.element(page.getByText(/^−[\d.]+ from the start$/u)).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("keeps the speed slider in place when the starting curve appears", async () => {
+    openActivity({ content: simulation, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Speed" })).toBeVisible();
+
+    const top = sliderTop("Speed");
+    await pressOnSlider("Speed", "ArrowRight", 1);
+    await expect.element(page.getByText("At the start", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Speed")).toBeCloseTo(top, 0);
+  });
+
+  it("keeps the price slider in place when the rent event changes the curve", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Price per cup" })).toBeVisible();
+
+    const top = sliderTop("Price per cup");
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
+    await expect.element(page.getByText("Before", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Price per cup")).toBeCloseTo(top, 0);
   });
 
   it("formula model calculator: a number that isn't the model's is wrong", async () => {
@@ -160,6 +199,18 @@ describe("money and society activities", () => {
     await expect.element(page.getByText("Eggs sold: down", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("line crossing: a time axis uses the generic direction wording", async () => {
+    const crossing = fixtures.lineCrossing;
+
+    openActivity({
+      content: { ...crossing, fields: { ...crossing.fields, xLabel: "Time (s)" } },
+      template: "lineCrossing",
+    });
+
+    await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
+    await expect.element(page.getByText("Time (s): down", { exact: true })).toBeVisible();
   });
 
   it("line crossing: moving demand gets the wrong-line feedback", async () => {
@@ -350,7 +401,7 @@ describe("money and society activities", () => {
     });
   });
 
-  it("map explorer: tapping places uncovers what's there", async () => {
+  it("keeps the explored map count visible after check", async () => {
     openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
     await expect.element(page.getByText(/Over 70 workers and no cholera deaths/u)).toBeVisible();
@@ -364,6 +415,7 @@ describe("money and society activities", () => {
 
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
   });
 
   it("map explorer: the wrong conclusion is marked wrong", async () => {

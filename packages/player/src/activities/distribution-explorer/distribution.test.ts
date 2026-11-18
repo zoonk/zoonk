@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   densityCurve,
   distributionDomain,
+  distributionPercentFormat,
   distributionTicks,
   handleStep,
   snapDomain,
@@ -83,5 +84,27 @@ describe(densityCurve, () => {
 describe(distributionTicks, () => {
   it("labels the mean and whole SDs on a normal curve", () => {
     expect(distributionTicks(iq, [45, 155])).toStrictEqual([55, 70, 85, 100, 115, 130, 145]);
+  });
+});
+
+describe(distributionPercentFormat, () => {
+  it("writes the same tail percentage in questions and reading activities", () => {
+    const answering = distributionPercentFormat({
+      check: {
+        answer: 49.5,
+        explanation: "",
+        kind: "numeric",
+        question: "",
+        tolerance: { kind: "absolute", value: 0.01 },
+      },
+      isTail: true,
+    });
+
+    const exploring = distributionPercentFormat({
+      check: { kind: "choice", options: [], question: "" },
+      isTail: true,
+    });
+
+    expect(exploring).toStrictEqual(answering);
   });
 });

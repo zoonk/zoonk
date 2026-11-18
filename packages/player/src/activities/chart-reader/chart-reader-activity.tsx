@@ -81,6 +81,7 @@ export function ChartReaderActivity({
   const measure = (spanId: string) => computeActivityValue(content, { output: spanId });
   const targetId = check.kind === "numeric" ? (check.output ?? fields.spans[0]?.id) : null;
   const plainX = isPlainAxis(xs);
+  const formatX = (value: number) => format(value, { grouping: !plainX });
 
   function handleToggle(spanId: string) {
     const next = selected.includes(spanId)
@@ -113,10 +114,7 @@ export function ChartReaderActivity({
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}
         />
-        <ActivityPlotAxisX
-          format={(value) => format(value, { grouping: !plainX })}
-          ticks={niceTicks(xDomain, 3)}
-        />
+        <ActivityPlotAxisX format={formatX} ticks={niceTicks(xDomain, 3)} />
 
         {shownSpans.map((span) => (
           <ActivityPlotBand from={span.from} key={span.id} to={span.to} />
@@ -157,7 +155,9 @@ export function ChartReaderActivity({
         })}
       </ActivityPlot>
 
-      <ActivityCanvasLabel className="text-sm">{t("Tap a span to measure it")}</ActivityCanvasLabel>
+      <ActivityCanvasLabel className="text-sm">
+        {t("Pick a span to measure it")}
+      </ActivityCanvasLabel>
 
       <ActivitySelectGrid label={t("Spans to measure")}>
         {fields.spans.map((span) => (
@@ -176,8 +176,8 @@ export function ChartReaderActivity({
       <ActivityTextAlternative>
         {t("A line chart of {y} by {x}, from {start} at {firstX} to {end} at {lastX}.", {
           end: format(pointAt(fields, xDomain[1]), { unit: fields.yUnit }),
-          firstX: format(xDomain[0], { grouping: !plainX }),
-          lastX: format(xDomain[1], { grouping: !plainX }),
+          firstX: formatX(xDomain[0]),
+          lastX: formatX(xDomain[1]),
           start: format(pointAt(fields, xDomain[0]), { unit: fields.yUnit }),
           x: fields.xLabel,
           y: fields.yLabel,
