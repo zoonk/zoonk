@@ -13,15 +13,6 @@ struct CertificateLinkedInSheet: View {
     NavigationStack {
       ZoonkList {
         Section {
-          Text(
-            "LinkedIn opens its form to add a license or certification. Copy each field into it.",
-            tableName: "Certificates"
-          )
-          .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
-        }
-
-        Section {
           field(
             Text(
               LocalizedStringResource(
@@ -50,25 +41,29 @@ struct CertificateLinkedInSheet: View {
               "Credential URL", tableName: "Certificates",
               comment: "LinkedIn's field for the certificate's link"),
             value: certificate.url.absoluteString, isCode: true)
+        } header: {
+          Text(
+            "LinkedIn opens its form to add a license or certification. Copy each field into it.",
+            tableName: "Certificates"
+          )
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+          .textCase(nil)
         }
-
-        Section {
-          Button {
-            openURL(certificate.linkedInURL)
-          } label: {
-            Label {
-              Text(
-                "Open LinkedIn", tableName: "Certificates",
-                comment: "Opens LinkedIn's form to add a certification")
-            } icon: {
-              Image(systemName: "arrow.up.right")
-            }
-            .frame(maxWidth: .infinity)
+      }
+      .bottomBar {
+        Button {
+          openURL(certificate.linkedInURL)
+        } label: {
+          Label {
+            Text(
+              "Open LinkedIn", tableName: "Certificates",
+              comment: "Opens LinkedIn's form to add a certification")
+          } icon: {
+            Image(systemName: "arrow.up.right")
           }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .listRowSeparator(.hidden)
         }
+        .buttonStyle(.mainAction)
       }
       .navigationTitle(
         Text(
@@ -106,35 +101,66 @@ struct CertificateLinkedInSheet: View {
       Spacer()
 
       if copies {
-        Button {
+        CertificateCopyButton(isCopied: copied == value) {
           UIPasteboard.general.string = value
           copied = value
-          announcePolitely(String(localized: Self.copiedLine))
-        } label: {
-          if copied == value {
-            Label {
-              Text(Self.copiedLine)
-            } icon: {
-              Image(systemName: "checkmark")
-            }
-          } else {
-            Label {
-              Text(
-                "Copy", tableName: "Certificates", comment: "Copies one field for LinkedIn's form")
-            } icon: {
-              Image(systemName: "doc.on.doc")
-            }
-          }
+          announcePolitely(String(localized: CertificateCopyButton.copiedLine))
         }
-        .buttonStyle(.outline)
-        .controlSize(.small)
         .accessibilityValue(label)
       }
     }
     .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
   }
+}
 
-  private static var copiedLine: LocalizedStringResource {
+/// Main's `CopyButton`, the one way a certificate's page and its LinkedIn fields copy a value.
+struct CertificateCopyButton: View {
+  let isCopied: Bool
+  let action: () -> Void
+
+  static var copiedLine: LocalizedStringResource {
     LocalizedStringResource("Copied", table: "Certificates", comment: "A field was just copied")
+  }
+
+  var body: some View {
+    Button(action: action) {
+      if isCopied {
+        Label {
+          Text(Self.copiedLine)
+        } icon: {
+          Image(systemName: "checkmark")
+        }
+      } else {
+        Label {
+          Text(
+            "Copy", tableName: "Certificates", comment: "Copies one field for LinkedIn's form")
+        } icon: {
+          Image(systemName: "doc.on.doc")
+        }
+      }
+    }
+    .buttonStyle(.outline)
+    .controlSize(.small)
+    .fixedSize()
+  }
+}
+
+/// Main's link address: one line whose start gives way first, so the certificate's code at its end
+/// always shows whole.
+struct CertificateAddress: View {
+  let shown: String
+
+  var body: some View {
+    let codeStart = shown.lastIndex(of: "/").map { shown.index(after: $0) } ?? shown.startIndex
+
+    HStack(spacing: 0) {
+      Text(verbatim: String(shown[..<codeStart]))
+        .truncationMode(.head)
+      Text(verbatim: String(shown[codeStart...]))
+        .fixedSize()
+    }
+    .lineLimit(1)
+    .typeStyle(.data)
+    .environment(\.layoutDirection, .leftToRight)
   }
 }

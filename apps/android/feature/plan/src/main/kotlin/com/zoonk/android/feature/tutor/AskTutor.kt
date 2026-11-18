@@ -29,11 +29,10 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 
-enum class AskTutorAppearance { Button, Icon, Row }
+enum class AskTutorAppearance { Button, Icon }
 
 /**
  * Main's "Ask {buddy}" on a chapter, subject, mock or plan page: it opens the conversation about it
@@ -69,15 +68,6 @@ fun AskTutor(
                     TutorAvatar(identity, BUTTON_AVATAR_SIZE)
                 }
             }
-        }
-
-        AskTutorAppearance.Row -> {
-            ListRow(
-                headline = { Text(label) },
-                modifier = modifier,
-                onClick = { open = true },
-                leading = { TutorAvatar(identity, ROW_AVATAR_SIZE) },
-            )
         }
     }
 
@@ -140,4 +130,3 @@ fun TutorAskButton(
 }
 
 private val BUTTON_AVATAR_SIZE = 24.dp
-private val ROW_AVATAR_SIZE = 24.dp

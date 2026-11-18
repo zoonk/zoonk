@@ -814,16 +814,16 @@ msgid "Already know this chapter?"
 msgstr "Znasz już ten rozdział?"
 
 #: src/_components/test-out-start-link.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "27gMHa"
-msgid "Already know this?"
-msgstr "Już to znasz?"
-
-#: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Rozwiąż test"
+
+#: src/_components/test-out-start-link.tsx
+#: src/questions/test-out-preparing.tsx
+msgctxt "27gMHa"
+msgid "Already know this?"
+msgstr "Już to znasz?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "osZ9ZA"
@@ -2115,6 +2115,7 @@ msgid "That didn't go through. Try again in a moment."
 msgstr "Nie udało się. Spróbuj ponownie za chwilę."
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "Tfnp_R"
 msgid "Still starting. This is taking longer than usual."
 msgstr "Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle."
@@ -3799,6 +3800,7 @@ msgid "Still getting your explanation ready."
 msgstr "Nadal przygotowujemy wyjaśnienie."
 
 #: src/explain/explain-waiting.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "To trwa dłużej niż zwykle."
@@ -7982,6 +7984,11 @@ msgid "This one doesn't count."
 msgstr "Ten egzamin się nie liczy."
 
 #: src/mock/mock-frame.tsx
+msgctxt "9UlLLH"
+msgid "Still handing it in. This is taking longer than usual."
+msgstr "Wciąż oddajemy egzamin. Trwa to dłużej niż zwykle."
+
+#: src/mock/mock-frame.tsx
 msgctxt "EWTtfJ"
 msgid "Try again before you move on"
 msgstr "Spróbuj ponownie, zanim przejdziesz dalej"
@@ -7995,11 +8002,6 @@ msgstr "Nie udało się. Twoje odpowiedzi są zapisane. Spróbuj ponownie za chw
 msgctxt "gOsgur"
 msgid "Your last answer wasn't saved."
 msgstr "Nie zapisano twojej ostatniej odpowiedzi."
-
-#: src/mock/mock-frame.tsx
-msgctxt "9UlLLH"
-msgid "Still handing it in. This is taking longer than usual."
-msgstr "Wciąż oddajemy egzamin. Trwa to dłużej niż zwykle."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -10303,6 +10305,7 @@ msgstr "{count, plural, other {# mniej}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
+#: src/today/today-session-card.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {# więcej}}"
@@ -10791,15 +10794,6 @@ msgstr "Termin zakończenia minął"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "Propozycja zmiany planu"
-
-#: src/plan/plan-suggestion-context.tsx
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "Zobacz, co się zmienia"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11546,6 +11540,14 @@ msgstr "Obliczamy, ile czasu potrzeba na cały materiał…"
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Nie udało nam się znaleźć terminu, w którym zmieści się cały materiał."
+
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "Zobacz, co się zmienia"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

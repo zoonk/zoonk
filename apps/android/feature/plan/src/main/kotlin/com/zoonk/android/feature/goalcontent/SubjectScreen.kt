@@ -225,9 +225,8 @@ internal fun SubjectPage(
         title = subject.name,
         onBack = actions.back,
         hero = { SubjectHero(syllabus, subject, actions, menu) },
-        aside = { SubjectAside(syllabus, subject, today, ask) },
+        aside = { SubjectAside(syllabus, subject, today) },
         ask = ask,
-        askInAside = true,
         action =
             subject.nextChapterId?.let { next ->
                 { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }

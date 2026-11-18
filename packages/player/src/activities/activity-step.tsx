@@ -2,7 +2,7 @@
 
 import {
   getActivityRoundedAnswer,
-  getCheckedAnswerPlaces,
+  getCheckedAnswerDigits,
 } from "@zoonk/core/library/activities/answers";
 import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { useAppLocale } from "@zoonk/learn/locale";
@@ -162,17 +162,23 @@ export function ActivityStep({
   const { check } = content;
   const typedPlaces = typedValue === value ? countDecimalPlaces(typedValue ?? 0) : 0;
 
-  const maximumFractionDigits =
-    check.kind === "numeric"
-      ? ((phase === "checked" && value !== undefined
-          ? getCheckedAnswerPlaces({ content, isCorrect: isCorrect !== false, value })
-          : null) ??
-        Math.max(
-          exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
-          places ?? 0,
-          typedPlaces,
-        ))
-      : undefined;
+  function numericDigits(numericCheck: Extract<typeof check, { kind: "numeric" }>) {
+    if (phase === "checked" && value !== undefined) {
+      return getCheckedAnswerDigits({ content, isCorrect: isCorrect !== false, value });
+    }
+
+    return Math.max(
+      exactFractionDigitsFor({
+        expected: numericCheck.answer,
+        tolerance: numericCheck.tolerance,
+        value,
+      }),
+      places ?? 0,
+      typedPlaces,
+    );
+  }
+
+  const maximumFractionDigits = check.kind === "numeric" ? numericDigits(check) : undefined;
 
   const shownAnswer = phase === "checked" ? displayedAnswer(answer, maximumFractionDigits) : answer;
 

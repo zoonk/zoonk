@@ -8,7 +8,7 @@
   "mock_break_detail": "fa66b05003c70d083de4b61ac45f07679aa330c6f62df6bdd99de3e3774c1ef5",
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
-  "mock_cell_flagged": "baf06ee8c507c03e25ab973570ba1714a3ffa520f40658602fd512aa75e911f4",
+  "mock_cell_marked_for_review": "fc6498bbb1af542fccc2f39c0fbad4ebd1de4cbaf33df22189122bb754a34d5e",
   "mock_continue": "898a1a5f9e4467c4a564855b4677047e55c83afc11dcfbee5fe37def116e3482",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
@@ -17,7 +17,6 @@
   "mock_expired_detail": "619e04071a4f48d40ff60c588bd5fcd01daa52f6cec1098d516c0e393c561097",
   "mock_expired_title": "fe96d54a878245903edf5242fbcb9bf20536f9fc3ac3c5956a8528c1e831d3b8",
   "mock_flag": "20cdefc022c95a34eb7aa008f468dfa257707cec0e31525514b000337782e7a6",
-  "mock_flagged_count": "7e5537a26542320e4f6368011f85ca9848251a0904ae5e3ae9f557df9871109c",
   "mock_hand_in": "d575d9bcc15433fa77420f48975d339edb88907eb4639147a720d18adfe9b340",
   "mock_hand_in_final": "3c0b92b4635e337993f3a6c3d44e73cc2995ad3ca03d09ccae7d1f440527d1b2",
   "mock_hand_in_mock_title": "234c8553f6382e20682115284e83efbedc8e85a9c6d5aa1895210fb37d361ee4",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
   "mock_left_flagged": "496c80f1fd75aaf5b2da4deee471a8397abe0d9e808868b74a1a459d903ce983",
   "mock_left_flagged_only": "9fc0b153b96fd9417219c47e66e2df436d2ba2cbe4c0124dcff748110bf02fbc",
+  "mock_legend_answered": "1756ab93d3731eb750a1c336f9bd08c667afb1947173d083aac4a247ff6286ea",
+  "mock_legend_current": "2e1a20ec0fb58ea14a8baa6338d904660d2d9d8cb05101e56f4274b03174e400",
+  "mock_legend_review": "d48d87694f6dcf4ca91ab34b4ccbd5938086dc58d90c09c2dd8443558dfdff20",
+  "mock_legend_review_count": "3bf005f727d2d71776f6bdfce061bd4570f731a95f56b14ff70b237e11755d51",
+  "mock_legend_unanswered": "37dcfd1734c10d4b4748f32e70ad9890fe12fe2d1be7e4cad3336d7acf012262",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
@@ -45,7 +49,6 @@
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
-  "mock_not_saved_retrying": "16335e8d43882ac27ace6d79045baf63c4cb20c9460260087e431e0a50860159",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
@@ -55,7 +58,8 @@
   "mock_questions": "58152ae334dac014a72731286080db935f8ee90172674d7f76996941adbda551",
   "mock_right_answers": "ee9dee4f9cface0386987ad565686aac076b98d3ec40d27f619f6e68e928ddef",
   "mock_row_detail": "c0eccaca29d298486bc25432fc077bbf66348862f4ff30b2118c0232bc415229",
-  "mock_section_answered": "bae4eb5df6c0cdaee598393216e95ddde975a96194a8b50fce69cf6984071716",
+  "mock_save_retry": "989d0b53be32fc4dc406626912374cef56e3f6cd3dad3393d7adcd0b4f797002",
+  "mock_section_answered_of": "b02f3bcea9133402ce63544800d8d0f1130d74e1da591d3be1a809268a367602",
   "mock_section_number": "7816e14665d493211074bb22b95b27ecf837a02476b8c12d362151c5b8377b71",
   "mock_sections": "868877f99217fe164c757f37460e9675f65a3dd97212d7529726e599a136eccc",
   "mock_see_result": "454ed09506e7aefc56dbd2f03de48d5970a8240003c8f00ba0ac9b85c2adc0f6",
@@ -165,28 +169,31 @@
     <string name="mock_hand_in_final">제출하면 답안을 수정할 수 없어요.</string>
     <string name="mock_keep_answering">계속 풀기</string>
     <string name="mock_hand_in">제출하기</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
     <string name="mock_sheet">답안지</string>
     <string name="mock_answer_sheet">답안지</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="other">%d개 풀었어요</item>
     </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="other">%d문제 표시됨</item>
+    <string name="mock_legend_unanswered">안 푼 문제</string>
+    <string name="mock_legend_answered">푼 문제</string>
+    <string name="mock_legend_current">현재 문제</string>
+    <string name="mock_legend_review">다시 볼 문제</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="other">다시 볼 문제 %d개</item>
     </plurals>
     <string name="mock_questions">문제</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
     <string name="mock_cell_answered">답안 작성 완료</string>
-    <string name="mock_cell_flagged">표시됨</string>
+    <string name="mock_cell_marked_for_review">%1$s, 다시 볼 문제로 표시됨</string>
     <string name="mock_sections">파트</string>
     <string name="mock_section_number">파트 %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">제출 완료</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">아직 저장되지 않았어요 · 다시 시도하고 있어요</string>
+    <string name="mock_section_answered_of">%1$s/%2$s</string>
+    <string name="mock_save_retry">계속하기 전에 다시 시도해 보세요</string>
     <string name="mock_try_again">다시 시도</string>
     <string name="mock_last_not_saved">마지막 답이 저장되지 않았어요.</string>
     <string name="mock_step_failed_saved">처리하지 못했어요. 답안은 저장되어 있어요. 잠시 후에 다시 시도해 보세요.</string>

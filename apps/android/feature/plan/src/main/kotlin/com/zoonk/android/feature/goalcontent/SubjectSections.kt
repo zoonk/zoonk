@@ -50,7 +50,6 @@ import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
-import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -253,7 +252,6 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
-    ask: (@Composable (AskTutorAppearance) -> Unit)?,
 ) {
     if (subject.notPlannedReason == null || subject.preparation != null) {
         AsideSection(
@@ -262,10 +260,6 @@ internal fun ColumnScope.SubjectAside(
     }
 
     AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
-
-    if (ask != null) {
-        AsideSection(stringResource(R.string.goalcontent_also)) { ask(AskTutorAppearance.Row) }
-    }
 }
 
 @Composable

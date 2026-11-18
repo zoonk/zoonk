@@ -111,6 +111,7 @@ private func makeActivityProgressDay(
   ActivityProgressDay(
     activitiesCompleted: payload.activitiesCompleted,
     date: try makeProgressDate(payload.date),
+    lessonCompletions: payload.lessonCompletions,
     timeSpentSeconds: payload.timeSpentSeconds)
 }
 

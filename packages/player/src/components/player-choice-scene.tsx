@@ -99,10 +99,11 @@ export function PlayerChoiceSceneOptions({
   const t = useExtracted();
   const interactionState = usePlayerInteractionState();
   const isDisabled = isLocked || isChecked;
+  const hasKeys = !isDisabled && interactionState !== "paused";
 
   useNumberKeys({
     count: options.length,
-    enabled: !isDisabled && interactionState !== "paused",
+    enabled: hasKeys,
     onPick: (index) => {
       const option = options[index];
 
@@ -134,7 +135,7 @@ export function PlayerChoiceSceneOptions({
 
         return (
           <AnswerOption
-            aria-keyshortcuts={shortcutKeys("pick", index)}
+            aria-keyshortcuts={hasKeys ? shortcutKeys("pick", index) : undefined}
             disabled={isDisabled}
             guessed={isGuess}
             key={option.key}

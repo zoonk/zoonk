@@ -92,6 +92,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
@@ -178,15 +179,15 @@ private fun Paper(
     openTask: String?,
     actions: SpeakingActions,
 ) {
-    val hero: @Composable () -> Unit = { PaperHero(paper) }
+    val hero: @Composable (titled: Boolean) -> Unit = { PaperHero(paper, it) }
     OpenStartedCall(speakingStart(goalId, actions.start) { actions.refused(goalId) }) { actions.open(AppRoute.Conversation(it.toString())) }
-    PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero() } }) { beside ->
+    PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero(false) } }) { beside ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = pagePadding(),
         ) {
-            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(bottom = 24.dp)) { hero() } }
+            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(bottom = 24.dp)) { hero(true) } }
             item(key = "paper") {
                 SpeakingPaperSection(
                     paper = paper,
@@ -205,9 +206,17 @@ private fun Paper(
 }
 
 @Composable
-private fun PaperHero(paper: SpeakingPaper) {
+private fun PaperHero(
+    paper: SpeakingPaper,
+    titled: Boolean,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(paper.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+        // In the page's column it's the page's title, which the way back lines up with; in the aside it's only a heading.
+        Text(
+            paper.title,
+            if (titled) Modifier.pageTitle() else Modifier.semantics { heading() },
+            style = MaterialTheme.typography.headlineMedium,
+        )
         Text(
             pluralStringResource(
                 R.plurals.speaking_facts,

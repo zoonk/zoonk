@@ -7,11 +7,22 @@
   "stats_answer_more": "86c14d64bc8c2edb86a08cd9582e78082fc158e519c9ecf6ffabca0e6262ef7e",
   "stats_answers_to_count": "811d426ccc4db1741b80d2ef1d2418c85ff4ce12fb9b3f805d9ae98a5a067053",
   "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
+  "stats_belt_black": "4c59dde7f2b1c9584b34e3fedacbcf47b423a2ce73b9c63c84810c5ea8e2000a",
+  "stats_belt_blue": "940db92ba3976240c16e9ed265a6366643238c9278c35827c778b3a351c652e0",
+  "stats_belt_brown": "e1020855bc25137454a844b6a6e7cd4247085561b8501d8304b9f6e4ba7faf98",
   "stats_belt_comes_after": "1a063930631e231f92cedd322756052f14cb098473afa74b22c56bb823d93dca",
+  "stats_belt_coming": "62a171129d28eaa0f63eb1a42118c765e3b84706a617fe5070f46bc72e2152f5",
   "stats_belt_current": "eeca18a1f2b94efda6a63d529939befb480cb0340024de4b74ecd9efd7e5bd17",
   "stats_belt_earned": "ff9fa09132443349ef65e3fe7608f0e542fd16f0b5c1de2708de6a8b9acf8559",
+  "stats_belt_gray": "ad8d6cbbeba616954c734069171db4e31c9b3ebf2ab722dab9819a6527c0f72c",
+  "stats_belt_green": "29703de4a35b304c7bed084d3f4867a4a579fd15355dc3f2d098546086191808",
   "stats_belt_level": "f2e0ddbad712459747bb974e64f42640ee4f469b345847fcbf6cff3a1bae6509",
   "stats_belt_line": "7b42915a88f4edad2a7ac5d6c0c22644a88d3b81b8c08a1ed77642dfe23404cb",
+  "stats_belt_orange": "00c56a716129568fe5abf975df18b7aa990ecb8dbf724d2c9861f7699cc8bb29",
+  "stats_belt_purple": "c1acaa95a66a30a4c8b064b751160771b2def233e43a6e6a473c7bbcde4a65ee",
+  "stats_belt_red": "78aedf2dd8385487d8c6a114f7214125c063e14ae87809f7bdcc0129bacae9e7",
+  "stats_belt_white": "874831a4879f15ae67d0ebacd53de5aa3acdec64b104ce8814bce9237e1f0525",
+  "stats_belt_yellow": "dd99fe261a3f6532b50beefac90f1fcc1d5d9d2527134b8874ecb377ebc2c630",
   "stats_best_day": "c9343adb1e39e7fbb331bd258e356567bb1f7bec9226d342fefb84d74843f590",
   "stats_best_day_is": "a9693f5cc6abd055aab11871daebe487ee5c4ab6485ded82654a7bb1b6def99f",
   "stats_best_on": "fa540cb982860d0918cfa9ab0b7865efce26cdfb17e2f87e7fb09548eee5ad26",
@@ -66,7 +77,8 @@
   "stats_throughout_week": "a7a89208eb4939381b9e11d185d457e17f347b865945287c193786ca5f8b4864",
   "stats_time": "fa25f795ae8426bbc00998cf15a8cca66c447a3e71cb68e8759e419c14be423c",
   "stats_times_same": "6c0644a2ae9600c721424095119a43a13508027d0d090a475c03a749a28ed483",
-  "stats_today": "b4a177ce4466ed3233d567bbdc360c80046f25e6de5fd37783e476ff43604f17"
+  "stats_today": "b4a177ce4466ed3233d567bbdc360c80046f25e6de5fd37783e476ff43604f17",
+  "stats_trend_after_two_weeks": "7cc673aceb71bcba2e30f3ed3e4c64bc736591c1edaa595eee4e896edc06ff55"
 }
 -->
 <resources>
@@ -101,6 +113,18 @@
     <string name="stats_belt_comes_after">%1$sは%2$s%3$sの次で、%4$s脳力で獲得できます</string>
     <string name="stats_belt_earned">獲得済み</string>
     <string name="stats_belt_current">現在の帯</string>
+    <string name="stats_belt_coming">これから</string>
+    <string name="stats_belt_white">白帯</string>
+    <string name="stats_belt_yellow">黄帯</string>
+    <string name="stats_belt_orange">オレンジ帯</string>
+    <string name="stats_belt_green">緑帯</string>
+    <string name="stats_belt_blue">青帯</string>
+    <string name="stats_belt_purple">紫帯</string>
+    <string name="stats_belt_brown">茶帯</string>
+    <string name="stats_belt_red">赤帯</string>
+    <string name="stats_belt_gray">グレー帯</string>
+    <string name="stats_belt_black">黒帯</string>
+    <string name="stats_trend_after_two_weeks">2週間学習するとスコアの推移が表示されます</string>
     <string name="stats_today">今日</string>
     <string name="stats_days_at_full">100%だった日数</string>
     <string name="stats_energy_line">エネルギーはレッスンごとに増え、休みの日には少し減ります。</string>

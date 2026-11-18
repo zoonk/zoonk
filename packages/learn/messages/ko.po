@@ -814,16 +814,16 @@ msgid "Already know this chapter?"
 msgstr "이 챕터 내용을 이미 알고 있나요?"
 
 #: src/_components/test-out-start-link.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "27gMHa"
-msgid "Already know this?"
-msgstr "이미 아는 내용인가요?"
-
-#: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "테스트 보기"
+
+#: src/_components/test-out-start-link.tsx
+#: src/questions/test-out-preparing.tsx
+msgctxt "27gMHa"
+msgid "Already know this?"
+msgstr "이미 아는 내용인가요?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "osZ9ZA"
@@ -2115,6 +2115,7 @@ msgid "That didn't go through. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "Tfnp_R"
 msgid "Still starting. This is taking longer than usual."
 msgstr "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
@@ -3799,6 +3800,7 @@ msgid "Still getting your explanation ready."
 msgstr "아직 설명을 준비하고 있어요."
 
 #: src/explain/explain-waiting.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "평소보다 시간이 더 걸리고 있어요."
@@ -7982,6 +7984,11 @@ msgid "This one doesn't count."
 msgstr "이번 모의고사는 기록에 반영되지 않아요."
 
 #: src/mock/mock-frame.tsx
+msgctxt "9UlLLH"
+msgid "Still handing it in. This is taking longer than usual."
+msgstr "아직 제출하고 있어요. 평소보다 오래 걸리고 있어요."
+
+#: src/mock/mock-frame.tsx
 msgctxt "EWTtfJ"
 msgid "Try again before you move on"
 msgstr "계속하기 전에 다시 시도해 보세요"
@@ -7995,11 +8002,6 @@ msgstr "처리하지 못했어요. 답안은 저장되어 있어요. 잠시 후�
 msgctxt "gOsgur"
 msgid "Your last answer wasn't saved."
 msgstr "마지막 답이 저장되지 않았어요."
-
-#: src/mock/mock-frame.tsx
-msgctxt "9UlLLH"
-msgid "Still handing it in. This is taking longer than usual."
-msgstr "아직 제출하고 있어요. 평소보다 오래 걸리고 있어요."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -10303,6 +10305,7 @@ msgstr "{count, plural, other {#개 감소}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
+#: src/today/today-session-card.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {#개 더}}"
@@ -10791,15 +10794,6 @@ msgstr "종료일이 지났어요"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "계획 제안"
-
-#: src/plan/plan-suggestion-context.tsx
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "달라지는 내용 보기"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11546,6 +11540,14 @@ msgstr "모든 내용을 공부할 수 있는 시간을 찾고 있어요…"
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "모든 내용을 마칠 수 있는 날짜를 찾지 못했어요."
+
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "달라지는 내용 보기"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

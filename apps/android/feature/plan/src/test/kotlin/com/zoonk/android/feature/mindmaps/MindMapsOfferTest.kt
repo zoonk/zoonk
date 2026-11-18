@@ -436,12 +436,9 @@ class MindMapsOfferTest {
         compose.onNodeWithText("Optics").assertDoesNotExist()
     }
 
-    /**
-     * As in Main's `countChapterMaps`, the line counts only the chapters under Without a map. A failed map
-     * whose lessons are written has its own row with Try again; the one writing lessons is on its way.
-     */
+    /** The line counts every map on its way: a failed one has its own row with Try again, the one writing lessons is on its way. */
     @Test
-    fun theLineCountsOnlyTheChaptersUnderOtherChapters() {
+    fun theLineCountsTheMapsOnTheirWay() {
         api.mindMaps = {
             goalMindMaps(
                 listOf(mapJson(1, "Waves", "failed"), mapJson(2, "Optics", "writingLessons", lessonsToWrite = 2)),

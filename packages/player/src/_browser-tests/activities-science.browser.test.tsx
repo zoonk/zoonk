@@ -211,7 +211,7 @@ describe("science activities", () => {
     await valueInput().fill("40.7849");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(valueInput()).toHaveValue("40.7849");
+    await expect.element(valueInput()).toHaveValue("40.785");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
 
@@ -383,6 +383,18 @@ describe("science activities", () => {
 
     expect(choiceKeys.length).toBeGreaterThan(0);
     expect(choiceKeys.map((key) => getComputedStyle(key).visibility)).not.toContain("visible");
+
+    expect(
+      page
+        .getByRole("radio")
+        .elements()
+        .map((radio) => radio.getAttribute("aria-keyshortcuts")),
+    ).toStrictEqual(
+      page
+        .getByRole("radio")
+        .elements()
+        .map(() => null),
+    );
 
     await userEvent.keyboard("1");
 

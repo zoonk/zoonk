@@ -99,7 +99,7 @@ class ConversationFlowTest {
         compose.onNodeWithText("Call Lucía").performClick()
         compose.onNodeWithText("Calling Lucía…").assertExists()
 
-        compose.onNodeWithContentDescription("Cancel").performClick()
+        compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()
 
         compose.onNodeWithText("Call Lucía").assertExists()
@@ -156,8 +156,8 @@ class ConversationFlowTest {
         val earlier = listOf("¡Hola! ¿Qué le pongo?", "Un café, por favor.")
         assertEquals(earlier, client.offeredTurns.last().map { it.text })
 
-        // Cancelling the call while it rings leaves it dropped, to end or call again.
-        compose.onNodeWithContentDescription("Cancel").performClick()
+        // Ending the call while it rings leaves it dropped, to end or call again.
+        compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()
         compose.onNodeWithText("The call dropped").assertExists()
         compose.onNodeWithText("Call again").performClick()

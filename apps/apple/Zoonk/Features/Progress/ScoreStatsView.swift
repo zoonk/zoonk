@@ -66,6 +66,17 @@ struct ScoreTrendChart: View {
   }
 
   var body: some View {
+    if points.count < 2 {
+      Text("Your trend shows after two weeks of study", tableName: "Progress")
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    } else {
+      chart
+    }
+  }
+
+  private var chart: some View {
     Chart {
       ForEach(points) { week in
         let (date, point) = (week.date, week.point)
@@ -112,9 +123,13 @@ struct ScoreTrendChart: View {
     }
     .chartYScale(domain: 0...100)
     .chartYAxis {
-      AxisMarks(position: .leading, values: [0, 25, 50, 75, 100]) {
+      AxisMarks(position: .leading, values: [0.0, 25, 50, 75, 100]) { value in
         AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel()
+        AxisValueLabel {
+          if let percent = value.as(Double.self) {
+            Text(wholePercent(percent)).typeStyle(.data)
+          }
+        }
       }
     }
     .chartXScale(range: .plotDimension(padding: 16))
@@ -125,7 +140,9 @@ struct ScoreTrendChart: View {
           centered: false,
           anchor: axisLabels[value.index].anchor,
           collisionResolution: .disabled,
-          horizontalSpacing: 0
+          horizontalSpacing: 0,
+          // Below the "0%" that ends the percent axis, not against it.
+          verticalSpacing: 10
         ) {
           if let date = value.as(Date.self) {
             Text(weekLabel(date)).typeStyle(.data)

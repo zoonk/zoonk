@@ -92,7 +92,7 @@ private struct CertificateDetail: View {
         Button {
           isZoomed = true
         } label: {
-          CertificatePicture(url: certificate.pictures.screen)
+          CertificatePicture(url: certificate.pictures.screen, facts: certificate.facts)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(certificate.facts.spokenTitle)
@@ -113,7 +113,7 @@ private struct CertificateDetail: View {
       CertificateMeaning(facts: certificate.facts)
       CertificateCovered(facts: certificate.facts)
     }
-    .barTitleAfterHero(certificate.facts.name)
+    .barTitleAfterHero(certificate.facts.rowName)
     .fullScreenCover(isPresented: $isZoomed) {
       CertificateZoom(certificate: certificate)
     }
@@ -152,46 +152,30 @@ private struct CertificateDetail: View {
     .disabled(!picturesAreCurrent)
   }
 
+  /// Main's: each at its own width in one row where they fit, Share first; otherwise Share over
+  /// the others.
   private var actions: some View {
     Section {
-      VStack(spacing: 8) {
-        shareLink
-          .buttonStyle(.mainAction)
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 8) {
+          shareLink
+            .buttonStyle(.mainAction)
+          otherActions
+        }
+        .buttonSizing(.fitted)
 
-        EqualButtonRow {
-          BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
-            Text("Print", tableName: "Certificates", comment: "Prints a certificate")
-              .background { PrintAnchorView(anchor: printAnchor) }
-          }
-          .disabled(!picturesAreCurrent)
+        VStack(spacing: 8) {
+          shareLink
+            .buttonStyle(.mainAction)
 
-          ShareLink(
-            item: certificate.document,
-            preview: SharePreview(certificate.fileName, image: certificate.document)
-          ) {
-            Label {
-              Text(
-                "Save certificate", tableName: "Certificates",
-                comment: "Saves the certificate's picture to Photos or Files")
-            } icon: {
-              Image(systemName: "square.and.arrow.down")
-            }
-          }
-          .disabled(!picturesAreCurrent)
-          Button {
-            isLinkedInShown = true
-          } label: {
-            Label {
-              Text(
-                "Add to LinkedIn", tableName: "Certificates")
-            } icon: {
-              Image(systemName: "arrow.up.right")
-            }
+          EqualButtonRow {
+            otherActions
           }
         }
+        .buttonSizing(.flexible)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
       .buttonStyle(.outline)
-      .buttonSizing(.flexible)
       .controlSize(.large)
       .listRowSeparator(.hidden)
     } footer: {
@@ -199,6 +183,39 @@ private struct CertificateDetail: View {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Certificates"))
+      }
+    }
+  }
+
+  @ViewBuilder private var otherActions: some View {
+    BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
+      Text("Print", tableName: "Certificates", comment: "Prints a certificate")
+        .background { PrintAnchorView(anchor: printAnchor) }
+    }
+    .disabled(!picturesAreCurrent)
+
+    ShareLink(
+      item: certificate.document,
+      preview: SharePreview(certificate.fileName, image: certificate.document)
+    ) {
+      Label {
+        Text(
+          "Save certificate", tableName: "Certificates",
+          comment: "Saves the certificate's picture to Photos or Files")
+      } icon: {
+        Image(systemName: "square.and.arrow.down")
+      }
+    }
+    .disabled(!picturesAreCurrent)
+
+    Button {
+      isLinkedInShown = true
+    } label: {
+      Label {
+        Text(
+          "Add to LinkedIn", tableName: "Certificates")
+      } icon: {
+        Image(systemName: "arrow.up.right")
       }
     }
   }
@@ -234,37 +251,28 @@ private struct CertificateDetail: View {
     }
   }
 
-  /// Main's link row: the page's address, which "Copy" copies.
+  /// Main's link row: the page's address on one line, its code always whole, and the Copy every
+  /// certificate field has.
   private var linkRow: some View {
-    Button {
-      UIPasteboard.general.string = certificate.url.absoluteString
-      linkCopied = true
-      announcePolitely(String(localized: Self.linkCopiedLine))
-    } label: {
-      CertificateDetailRow(
-        label: Text(
-          "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
-      ) {
-        AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
-          Text(verbatim: certificate.shownURL)
-            .typeStyle(.data)
+    CertificateDetailRow(
+      label: Text(
+        "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
+    ) {
+      HStack(spacing: 8) {
+        CertificateAddress(shown: certificate.shownURL)
+          .accessibilityLabel(Text(verbatim: certificate.shownURL))
 
-          Group {
-            if linkCopied {
-              Text(Self.linkCopiedLine)
-            } else {
-              Text("Copy", tableName: "Certificates", comment: "Copies a certificate's link")
-                .underline()
-            }
-          }
-          .typeStyle(.note.weight(.semibold))
+        CertificateCopyButton(isCopied: linkCopied) {
+          UIPasteboard.general.string = certificate.url.absoluteString
+          linkCopied = true
+          announcePolitely(String(localized: Self.linkCopiedLine))
         }
+        .accessibilityLabel(
+          linkCopied
+            ? Text(Self.linkCopiedLine)
+            : Text("Copy link", tableName: "Certificates", comment: "Copies a certificate's link"))
       }
     }
-    .accessibilityLabel(
-      linkCopied
-        ? Text(Self.linkCopiedLine)
-        : Text("Copy link", tableName: "Certificates", comment: "Copies a certificate's link"))
   }
 
   private var linkNote: Text {
@@ -319,7 +327,7 @@ private struct LockedCertificateDetail: View {
       CertificateMeaning(facts: facts)
       CertificateCovered(facts: facts)
     }
-    .barTitleAfterHero(facts.name)
+    .barTitleAfterHero(facts.rowName)
     // The gate itself, since the learner opened the certificate: no card about a paid plan.
     .bottomBar(
       note: BarNote(
@@ -357,8 +365,9 @@ private struct CertificateHeading: View {
           .heroTitle()
 
         if isIssued {
+          // Details' date form, kept on one line.
           Text(
-            "Certificate of completion, issued on \(facts.completedOnLong).",
+            "Certificate of completion, issued on \(facts.completedOnDay.replacing(" ", with: "\u{00A0}")).",
             tableName: "Certificates",
             comment:
               "Under an issued certificate's heading; the argument is a date like October 28, 2026"

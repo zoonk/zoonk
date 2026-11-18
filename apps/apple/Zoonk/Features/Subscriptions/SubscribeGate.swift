@@ -111,8 +111,6 @@ struct LimitWords: Equatable {
 /// Main's limit notices: the words, then the way on. A guest creates an account, a free learner
 /// subscribes, and a subscriber or a short break has only the words.
 struct LimitNotice: View {
-  @Environment(AppRouter.self) private var router
-
   let limit: HelpLimit
   /// Read at the gate's clock, so words about a day follow it while the notice is open.
   let words: (Date) -> LimitWords
@@ -144,15 +142,25 @@ struct LimitNotice: View {
         GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
         if !isOpen {
-          wayOn
+          LimitWayOn(limit: limit)
+            .buttonStyle(.outline)
+            .controlSize(.small)
         }
       }
     }
     .accessibilityElement(children: .contain)
   }
+}
 
-  @ViewBuilder
-  private var wayOn: some View {
+/// Main's way on from a limit, for any screen that shows one: a guest creates a free account, a
+/// free learner subscribes, and a subscriber has none. The caller styles it and hides it once the
+/// limit's day has come (`isOpen(at:)`).
+struct LimitWayOn: View {
+  @Environment(AppRouter.self) private var router
+
+  let limit: HelpLimit
+
+  var body: some View {
     if limit.needsAccount {
       Button {
         router.present(.signIn)
@@ -165,12 +173,8 @@ struct LimitNotice: View {
           Image(systemName: "person.badge.plus")
         }
       }
-      .buttonStyle(.outline)
-      .controlSize(.small)
     } else if limit.offersSubscription {
       SubscribeButton()
-        .buttonStyle(.outline)
-        .controlSize(.small)
     }
   }
 }

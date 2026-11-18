@@ -177,6 +177,7 @@ internal fun CoverageSuggestion(slot: Slot) {
     val status =
         when {
             retry -> if (search is TimeToCoverState.Building) stringResource(R.string.plan_find_building) else failed
+            pending && state.intent == CoverageIntent.Time -> stringResource(R.string.plan_finding)
             noDate -> stringResource(R.string.plan_find_no_date)
             else -> none
         }
@@ -195,7 +196,7 @@ internal fun CoverageSuggestion(slot: Slot) {
     }
 
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
-        // The sheet or panel asks: closing it drops what the search owes it, so a later opening only shows what was found.
+        // The card asks: paging away drops what the search owes it, so coming back only shows what was found.
         VisitOf(edits.outcomes.suggestion)
         // Focus moves to the suggestion once the search answers, as the control that asked gives way. What's kept is
         // the answer for the plan shown now ([found]), never the time an older plan's search carried.
@@ -229,7 +230,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                 SuggestionActions {
                     offer?.let {
                         SuggestionAction(
-                            stringResource(R.string.plan_preview),
+                            stringResource(R.string.plan_see_changes),
                             onClick = { slot.host.requestPreview(it.operations) },
                         )
                     }
@@ -294,7 +295,7 @@ private fun FindAction(
         onClick = onFind,
         modifier = if (pending) Modifier.semantics { stateDescription = finding } else Modifier,
         busy = pending,
-    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_find)) }
+    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_see_changes)) }
 }
 
 /** Main's `FitLessonsSuggestion`: the lessons the learner's own time fits that the plan doesn't hold. */
@@ -324,7 +325,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
     val room = remember(offer) { HeldRoom() }
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
-        // The sheet or panel asks: its check adds only while this opening lasts, so one a recreated layout no longer shows adds nothing.
+        // The card asks: its check adds only while the card shows, so one paged away adds nothing.
         VisitOf(slot.edits.outcomes.suggestion)
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
         // check's answer takes, so its buttons stay put when the answer is a failure.
@@ -415,9 +416,8 @@ private fun DateOverSuggestion(
         item,
         stringResource(R.string.plan_past_date_goal_title),
         slot,
-        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
     ) {
-        // The sheet or panel asks: closing it while the date is found stops the wait, and its answer does nothing.
+        // The card asks: paging away while the date is found stops the wait, and its answer does nothing.
         VisitOf(slot.edits.outcomes.suggestion)
         ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
             if (state.waiting != request) return@ActOn

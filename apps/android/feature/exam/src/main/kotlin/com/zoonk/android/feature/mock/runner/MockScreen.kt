@@ -187,12 +187,8 @@ internal fun MockStepFrame(
     TaskScaffold(
         onClose = onClose,
         title = title,
-        bottomBar = {
-            TaskActionBar {
-                MockStepStatus(viewModel, run)
-                actions()
-            }
-        },
+        bottomBar = { TaskActionBar { actions() } },
+        note = mockStepNote(viewModel, run),
         aside = aside,
         lonePage = true,
     ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
@@ -232,9 +228,20 @@ internal fun StepHeader(
     }
 }
 
+/** [MockStepStatus] just above a step's bar, as main's sits, while it has something to say. */
+@Composable
+internal fun mockStepNote(
+    viewModel: MockRunnerViewModel,
+    run: MockRun,
+): (@Composable () -> Unit)? {
+    val saveStatus by viewModel.saveStatus.collectAsStateWithLifecycle()
+    val says = saveStatus == DraftSaveStatus.Retrying || saveStatus == DraftSaveStatus.Refused || run.error || run.slow
+    return if (says) ({ Column { MockStepStatus(viewModel, run) } }) else null
+}
+
 /** Main's `MockStepStatus`: whether answers are saving, and a step that didn't go through or is slow. */
 @Composable
-internal fun MockStepStatus(
+private fun MockStepStatus(
     viewModel: MockRunnerViewModel,
     run: MockRun,
 ) {
@@ -245,9 +252,9 @@ internal fun MockStepStatus(
         DraftSaveStatus.Retrying -> {
             Row(live, verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.mock_not_saved_retrying),
+                    stringResource(R.string.mock_save_retry),
                     Modifier.weight(1f, fill = false),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_try_again)) }
@@ -299,7 +306,7 @@ internal fun MockMainButton(
 ) = Button(
     busy = busy,
     onClick = onClick,
-    modifier = modifier.heightIn(min = 48.dp),
+    modifier = modifier,
     enabled = enabled,
 ) { Text(text) }
 
@@ -388,8 +395,7 @@ private fun MockHandedIn(
             }
         },
     ) {
-        StepHeader(R.drawable.ic_timer_off) {
-            MockEyebrow(run.view)
+        StepHeader {
             StepTitle(stringResource(R.string.mock_handed_in_title))
             StepDetail(stringResource(R.string.mock_answers_saved))
         }
@@ -498,7 +504,7 @@ private fun MockExpired(
                             run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser,
                         )
                     },
-                    modifier = main.heightIn(min = 48.dp),
+                    modifier = main,
                 ) { Text(stringResource(R.string.mock_take_another)) }
             }
         },

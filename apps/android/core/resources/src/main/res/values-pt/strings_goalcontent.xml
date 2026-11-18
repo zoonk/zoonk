@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "goalcontent_adjust_plan": "27cfee04b142e9d0aa205e7cb196b6f0f0e1e7da755c24f25ec9695fbcc78fb0",
-  "goalcontent_also": "2276df5ea06bb4e11bae62e520ca9f850fcca20dbc0a4c84fa2205fa93aa0757",
   "goalcontent_also_in_exam_count": "6b751e06462dc906d0d35ecd5ed9e2b972bc3959b0d7c05ceae73174a251df31",
   "goalcontent_also_in_exams": "986a74d19b1565a522320a4d310562617095d31bc107a1c44b4efc5f405251fc",
   "goalcontent_also_in_plan": "5748c7f097de887df8715ec06886462cd98d52c99819aa255798b130147793b1",
@@ -216,8 +215,6 @@
     <string name="goalcontent_topics_in_notice">Tópicos da prova</string>
     <string name="goalcontent_topics_in_guide">Tópicos do guia oficial</string>
     <string name="goalcontent_details">Detalhes</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
-    <string name="goalcontent_also">Também</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Questões</string>
     <string name="goalcontent_topics">Tópicos</string>

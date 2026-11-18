@@ -814,16 +814,16 @@ msgid "Already know this chapter?"
 msgstr "Bu üniteyi zaten biliyor musun?"
 
 #: src/_components/test-out-start-link.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "27gMHa"
-msgid "Already know this?"
-msgstr "Bunu zaten biliyor musun?"
-
-#: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Testi çöz"
+
+#: src/_components/test-out-start-link.tsx
+#: src/questions/test-out-preparing.tsx
+msgctxt "27gMHa"
+msgid "Already know this?"
+msgstr "Bunu zaten biliyor musun?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "osZ9ZA"
@@ -2115,6 +2115,7 @@ msgid "That didn't go through. Try again in a moment."
 msgstr "İşlem tamamlanamadı. Birazdan tekrar dene."
 
 #: src/challenge/challenge-footer.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "Tfnp_R"
 msgid "Still starting. This is taking longer than usual."
 msgstr "Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor."
@@ -3799,6 +3800,7 @@ msgid "Still getting your explanation ready."
 msgstr "Açıklamanı hâlâ hazırlıyoruz."
 
 #: src/explain/explain-waiting.tsx
+#: src/mock/mock-frame.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Normalden uzun sürüyor."
@@ -7982,6 +7984,11 @@ msgid "This one doesn't count."
 msgstr "Bu sınav sayılmaz."
 
 #: src/mock/mock-frame.tsx
+msgctxt "9UlLLH"
+msgid "Still handing it in. This is taking longer than usual."
+msgstr "Teslim işlemini henüz tamamlayamadık. Normalden uzun sürüyor."
+
+#: src/mock/mock-frame.tsx
 msgctxt "EWTtfJ"
 msgid "Try again before you move on"
 msgstr "Devam etmeden önce tekrar dene"
@@ -7995,11 +8002,6 @@ msgstr "İşlem tamamlanamadı. Cevapların kayıtlı. Birazdan tekrar dene."
 msgctxt "gOsgur"
 msgid "Your last answer wasn't saved."
 msgstr "Son cevabın kaydedilemedi."
-
-#: src/mock/mock-frame.tsx
-msgctxt "9UlLLH"
-msgid "Still handing it in. This is taking longer than usual."
-msgstr "Teslim işlemini henüz tamamlayamadık. Normalden uzun sürüyor."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -10303,6 +10305,7 @@ msgstr "{count, plural, other {# daha az}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
+#: src/today/today-session-card.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {# daha fazla}}"
@@ -10791,15 +10794,6 @@ msgstr "Bitiş tarihin geçti"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "Plan önerisi"
-
-#: src/plan/plan-suggestion-context.tsx
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "Nelerin değişeceğini gör"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11546,6 +11540,14 @@ msgstr "Her şeye yetecek süreyi buluyoruz…"
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Tüm konuları bitirebileceğin bir tarih bulamadık."
+
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "Nelerin değişeceğini gör"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

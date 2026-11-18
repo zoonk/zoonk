@@ -32,7 +32,7 @@ fun PageTitleRow(
     verticalAlignment: Alignment.Vertical = Alignment.Bottom,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
-    HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle()) {
+    HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle(), byBaseline = true) {
         Row(
             Modifier.alignByBaseline(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -44,7 +44,8 @@ fun PageTitleRow(
 
 /**
  * A heading with what sits at its end, which moves under it when both don't fit, so the heading
- * keeps its words whole (main's `flex-wrap`).
+ * keeps its words whole (main's `flex-wrap`). [byBaseline] when what's at the end is words that share the
+ * title's line (a readout); otherwise the title sits at [verticalAlignment] beside it, as a button's middle.
  */
 @Composable
 internal fun HeadingRow(
@@ -53,6 +54,7 @@ internal fun HeadingRow(
     modifier: Modifier,
     verticalAlignment: Alignment.Vertical,
     titleModifier: Modifier = Modifier.semantics { heading() },
+    byBaseline: Boolean = false,
     trailing: @Composable FlowRowScope.() -> Unit,
 ) {
     FlowRow(
@@ -61,7 +63,8 @@ internal fun HeadingRow(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         itemVerticalAlignment = verticalAlignment,
     ) {
-        Text(title, Modifier.alignByBaseline().padding(end = 12.dp).then(titleModifier), style = style)
+        val line = if (byBaseline) Modifier.alignByBaseline() else Modifier.align(verticalAlignment)
+        Text(title, line.padding(end = 12.dp).then(titleModifier), style = style)
         trailing()
     }
 }

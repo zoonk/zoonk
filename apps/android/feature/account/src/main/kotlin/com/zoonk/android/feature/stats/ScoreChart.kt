@@ -23,6 +23,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserScoreResponseScore
@@ -38,6 +39,8 @@ internal fun ScoreChart(
     score: CurrentUserScoreResponseScore,
     modifier: Modifier = Modifier,
 ) {
+    if (score.dataPoints.size < 2) return StatsLine(stringResource(R.string.stats_trend_after_two_weeks))
+
     val locale = currentLocale()
     val weeks = score.dataPoints.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.Day) }
     val points =
@@ -69,7 +72,8 @@ internal fun ScoreChart(
             .copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     val grid = MaterialTheme.zoonk.vizGrid
     val line = MaterialTheme.colorScheme.tertiary
-    val ticks = remember(measurer, labelStyle, locale) { PERCENT_TICKS.map { measurer.measure(formatNumber(it, locale), labelStyle) } }
+    val ticks =
+        remember(measurer, labelStyle, locale) { PERCENT_TICKS.map { measurer.measure(formatPercent(it / PERCENT, locale), labelStyle) } }
     val window = remember(score) { StatsWindow(score.periodStart.toJavaLocalDate(), score.periodEnd.toJavaLocalDate()) }
     val axis = remember(window) { listOf(window.start, window.start.plusDays(window.days / 2), window.end) }
     val axisLabels =

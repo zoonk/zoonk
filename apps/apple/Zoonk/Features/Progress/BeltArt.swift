@@ -137,11 +137,7 @@ struct BeltRack: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack(alignment: .top, spacing: 0) {
         ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-          VStack(
-            alignment: index == 0
-              ? .leading : index == ProgressBelt.allCases.count - 1 ? .trailing : .center,
-            spacing: 6
-          ) {
+          VStack(spacing: 6) {
             RackBelt(belt: belt, isTied: index <= currentIndex)
               .frame(
                 width: sizeClass == .regular ? 52 : 32, height: sizeClass == .regular ? 38 : 26
@@ -153,7 +149,8 @@ struct BeltRack: View {
                 }
               }
 
-            if sizeClass == .regular {
+            // On a phone only the learner's belt is named; the key says which are earned.
+            if sizeClass == .regular || index == currentIndex {
               Text(belt.shortTitle)
                 .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
                 .foregroundStyle(
@@ -162,15 +159,16 @@ struct BeltRack: View {
                     : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
                 )
                 .lineLimit(1)
+                .fixedSize()
             }
           }
-          .frame(
-            maxWidth: .infinity,
-            alignment: index == 0
-              ? .leading : index == ProgressBelt.allCases.count - 1 ? .trailing : .center
-          )
+          .frame(maxWidth: .infinity)
           .accessibilityElement(children: .ignore)
           .accessibilityLabel(Text(belt.localizedTitle))
+          .accessibilityValue(
+            index <= currentIndex
+              ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
+          )
           .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
         }
       }
@@ -180,16 +178,25 @@ struct BeltRack: View {
           "Belt progression", tableName: "Progress", comment: "Title of the belts on the Level page"
         ))
 
-      if sizeClass != .regular {
-        HStack {
-          Text(ProgressBelt.white.localizedTitle)
-          Spacer()
-          Text(ProgressBelt.black.localizedTitle)
+      HStack(spacing: 12) {
+        keyItem(isTied: true) {
+          Text("Earned", tableName: "Progress")
         }
-        .typeStyle(.small)
-        .foregroundStyle(.faint)
-        .accessibilityHidden(true)
+        keyItem(isTied: false) {
+          Text("Coming", tableName: "Progress")
+        }
       }
+      .typeStyle(.small)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityHidden(true)
+    }
+  }
+
+  private func keyItem(isTied: Bool, @ViewBuilder label: () -> Text) -> some View {
+    HStack(spacing: 4) {
+      RackBelt(belt: .gray, isTied: isTied)
+        .frame(width: 20, height: 20)
+      label()
     }
   }
 }

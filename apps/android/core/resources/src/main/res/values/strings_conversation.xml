@@ -44,8 +44,6 @@
     <!-- The call is connecting; the character's name. -->
     <string name="conversation_calling">Calling %1$s…</string>
     <string name="conversation_answers_first">%1$s answers first.</string>
-    <!-- Ends a call that hasn't connected yet. -->
-    <string name="conversation_cancel">Cancel</string>
     <string name="conversation_muted">Muted</string>
     <string name="conversation_muted_detail">Unmute to answer out loud, or type your reply.</string>
     <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->

@@ -3,7 +3,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class MindMapChapterIndexTest {
-    @Test fun everyRowShownInTheChapterGroupBelongsToItsCount() {
+    @Test fun theChapterIndexListsOnlyTheChaptersWhoseMapIsReady() {
         val maps =
             goalMindMaps(
                 listOf(
@@ -13,6 +13,6 @@ class MindMapChapterIndexTest {
                     mapJson(4, "Optics", "available", lessonsToWrite = 2),
                 ),
             )
-        assertEquals(3, maps.chapterIndex().sumOf { it.rows.size })
+        assertEquals(listOf("Motion"), maps.chapterIndex().flatMap { group -> group.rows.map { it.title } })
     }
 }

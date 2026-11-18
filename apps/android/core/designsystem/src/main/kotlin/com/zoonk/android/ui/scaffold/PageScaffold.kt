@@ -28,8 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
@@ -97,9 +100,17 @@ fun PageScaffold(
                             },
                             modifier = Modifier.pageBar(focus),
                             navigationIcon = {
+                                // The way back starts on the column the page's title starts, measured, so it sits on every page's own
+                                // column however the page lays it out; a page without a marked title keeps it on the margin.
+                                val density = LocalDensity.current
+                                val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+                                val titleColumn =
+                                    focus.columnStart?.let { start ->
+                                        span?.let { bar -> with(density) { (if (rtl) bar.right - start else start - bar.left).toDp() } }
+                                    }
                                 BackButton(
                                     onClick = onBack,
-                                    modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
+                                    modifier = Modifier.offset(x = (titleColumn?.minus(columnInset) ?: pageMargin()) - BACK_INK_START),
                                     enabled = backEnabled,
                                 )
                             },
