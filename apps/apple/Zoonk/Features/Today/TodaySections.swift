@@ -1193,17 +1193,7 @@ private struct TodayMockRow: View {
   }
 
   private func label(title: Text, detail: Text?) -> some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        title
-
-        if let detail {
-          detail
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-    } icon: {
+    ListRow(title, description: detail) {
       KindMark(kind: .mock)
     }
   }

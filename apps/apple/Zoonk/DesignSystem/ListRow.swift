@@ -94,33 +94,19 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
   @ViewBuilder let value: Value
 
   var body: some View {
-    Group {
-      if !hasMark {
-        if isStacked {
-          column
-        } else {
-          HStack(alignment: alignment, spacing: 12) {
-            column
-              .frame(maxWidth: .infinity, alignment: .leading)
+    HStack(alignment: alignment, spacing: 12) {
+      if hasMark {
+        mark
+          .markColumn()
+          .layoutPart(.mark)
+      }
 
-            shownValue
-          }
-        }
-      } else {
-        HStack(alignment: alignment, spacing: 12) {
-          MarkedRow(alignment: alignment, stackedSpacing: 4) {
-            mark
-              .markColumn()
-              .layoutPart(.mark)
-          } content: {
-            column
-          } end: {
-          }
+      column
+        .frame(maxWidth: .infinity, alignment: .leading)
 
-          if !isStacked {
-            shownValue
-          }
-        }
+      if !isStacked {
+        shownValue
+          .fixedSize()
       }
     }
     .modifier(ListRowTrailing())
@@ -145,7 +131,6 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
   private var shownValue: some View {
     value
       .layoutPart(.value)
-      .fixedSize()
   }
 }
 
