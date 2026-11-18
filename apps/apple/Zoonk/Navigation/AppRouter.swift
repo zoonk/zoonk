@@ -21,7 +21,8 @@ final class AppRouter {
   var selectedTab = AppTab.today
   /// The places the window's sidebar lists, where opening one marks its own row (main's
   /// `getActiveTab`); none where the window has no sidebar. A place opened before the sidebar listed
-  /// it, such as by a link the app starts with, moves to its own row once it does.
+  /// it, such as by a link the app starts with, moves to its own row once it does, under whatever
+  /// task is open over it.
   var sidebarTabs: Set<AppTab> = [] {
     didSet {
       moveListedPlaceToItsRow()
@@ -263,7 +264,8 @@ final class AppRouter {
 
     if let tab = place?.sidebarTab, sidebarTabs.contains(tab) {
       paths[selectedTab] = nil
-      showRoot(of: tab)
+      paths[tab] = nil
+      selectedTab = tab
     }
   }
 
