@@ -97,7 +97,7 @@ private struct BottomBar<Actions: View>: View {
     .barColumn(column, listMargins: listMargins, isTask: isTask)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
-    .overlay(alignment: .top) {
+    .floatingAbove {
       if let note {
         note
           .typeStyle(.body)
@@ -105,8 +105,22 @@ private struct BottomBar<Actions: View>: View {
           .padding(.horizontal, 16)
           .padding(.vertical, 8)
           .background(.background)
-          .alignmentGuide(.top) { $0[.bottom] }
       }
+    }
+  }
+}
+
+extension View {
+  /// `content` over the screen, its bottom on this view's top edge, so this view never moves when
+  /// it shows.
+  func floatingAbove<Above: View>(@ViewBuilder _ content: () -> Above) -> some View {
+    overlay(alignment: .top) {
+      Color.clear
+        .frame(height: 0)
+        .overlay(alignment: .bottom) {
+          content()
+            .fixedSize(horizontal: false, vertical: true)
+        }
     }
   }
 }

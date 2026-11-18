@@ -190,7 +190,7 @@ struct MockActionBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, true)
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
-    .overlay(alignment: .top) {
+    .floatingAbove {
       if let note = run.barNote {
         note
           .typeStyle(.body)
@@ -198,7 +198,6 @@ struct MockActionBar<Actions: View>: View {
           .scenePadding(.horizontal)
           .padding(.vertical, 8)
           .background(.background)
-          .alignmentGuide(.top) { $0[.bottom] }
       }
     }
   }
