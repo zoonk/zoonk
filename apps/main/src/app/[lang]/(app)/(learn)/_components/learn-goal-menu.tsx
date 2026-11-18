@@ -16,6 +16,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
 import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding-actions";
 import { useOnboardingNavigation } from "../../(onboarding)/start/use-onboarding-navigation";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 import { switchGoal } from "./switch-goal";
 
 type Placement = "bar" | "sidebar";
@@ -96,7 +97,11 @@ function getVisitorStart({ placement, visitor }: GoalMenuProps): React.ReactNode
 }
 
 /** Holds the menu's room while the learner loads; a browser with no session shows `visitor` there. */
-export function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
+export function PendingGoalMenu({
+  placement = "bar",
+  skeleton,
+  visitor,
+}: GoalMenuProps & { skeleton?: React.ReactNode }) {
   return (
     <>
       <VisitorLook>{getVisitorStart({ placement, visitor })}</VisitorLook>
@@ -107,12 +112,25 @@ export function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
           placement === "sidebar" ? "h-8 w-full px-2" : "h-9",
         )}
       >
-        <div className="flex h-full items-center gap-2.5">
-          <Skeleton className="size-4 shrink-0 rounded-sm" />
-          <Skeleton className="h-3 w-24 rounded-sm" />
-        </div>
+        {skeleton}
       </div>
     </>
+  );
+}
+
+function PendingAppGoalMenu(props: GoalMenuProps) {
+  return (
+    <PendingGoalMenu
+      {...props}
+      skeleton={
+        <PrivateShellPlaceholder>
+          <div className="flex h-full items-center gap-2.5">
+            <Skeleton className="size-4 shrink-0 rounded-sm" />
+            <Skeleton className="h-3 w-24 rounded-sm" />
+          </div>
+        </PrivateShellPlaceholder>
+      }
+    />
   );
 }
 
@@ -125,7 +143,7 @@ function GoalMenu({ placement, visitor }: GoalMenuProps) {
   }
 
   if (learner.status !== "ready") {
-    return <PendingGoalMenu placement={placement} visitor={visitor} />;
+    return <PendingAppGoalMenu placement={placement} visitor={visitor} />;
   }
 
   const { waitingGoals } = learner.summary;
@@ -187,7 +205,7 @@ function GoalMenu({ placement, visitor }: GoalMenuProps) {
 /** An explanation read to the end leaves the switcher: search finds it again. */
 export function LearnGoalMenu(props: GoalMenuProps) {
   return (
-    <Suspense fallback={<PendingGoalMenu {...props} />}>
+    <Suspense fallback={<PendingAppGoalMenu {...props} />}>
       <GoalMenu {...props} />
     </Suspense>
   );

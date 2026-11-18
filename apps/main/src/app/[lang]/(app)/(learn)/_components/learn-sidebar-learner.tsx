@@ -25,6 +25,7 @@ import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
 function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
   const t = useExtracted();
@@ -88,17 +89,21 @@ function PendingStudySection() {
   const pages = useStatsPages();
 
   return (
-    <div aria-hidden="true" className="signed-in:contents hidden">
-      <SidebarSection label={t("Study")}>
-        <SidebarRowSkeleton />
-        <SidebarRowSkeleton />
-        <SidebarRowSkeleton />
-      </SidebarSection>
-      <SidebarSection label={t("Statistics")}>
-        {pages.map(({ menu }) => (
-          <SidebarRowSkeleton key={menu} />
-        ))}
-      </SidebarSection>
+    <div className="signed-in:contents hidden">
+      <PrivateShellPlaceholder fallback={<StudySectionView places={null} />}>
+        <div aria-hidden="true" className="contents">
+          <SidebarSection label={t("Study")}>
+            <SidebarRowSkeleton />
+            <SidebarRowSkeleton />
+            <SidebarRowSkeleton />
+          </SidebarSection>
+          <SidebarSection label={t("Statistics")}>
+            {pages.map(({ menu }) => (
+              <SidebarRowSkeleton key={menu} />
+            ))}
+          </SidebarSection>
+        </div>
+      </PrivateShellPlaceholder>
     </div>
   );
 }
