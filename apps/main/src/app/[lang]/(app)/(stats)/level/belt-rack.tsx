@@ -20,7 +20,12 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
   );
 
   return (
-    <svg aria-hidden="true" className="size-4/5" fill="currentColor" viewBox="0 0 44 30">
+    <svg
+      aria-hidden="true"
+      className="h-4/5 w-4/5 overflow-visible"
+      fill="currentColor"
+      viewBox={isTied ? "0 0 44 30" : "3.5 0 37 30"}
+    >
       {(color === "white" || color === "black") && (
         <g
           className={
@@ -64,13 +69,13 @@ export async function BeltRack({
         {beltColors.map((belt, index) => (
           <li
             aria-current={index === currentIndex ? "step" : undefined}
-            className="flex w-8 flex-col items-center gap-1.5 md:w-13"
+            className="group/belt flex w-8 min-w-0 flex-col items-center gap-1.5 md:w-13"
             key={belt.key}
           >
             <span
               aria-label={belt.label}
               className={cn(
-                "flex h-6.5 w-8 items-center justify-center rounded-md md:h-9.5 md:w-13 md:rounded-lg",
+                "flex h-6.5 w-full items-center justify-center rounded-md max-md:group-first/belt:justify-start max-md:group-last/belt:justify-end md:h-9.5 md:rounded-lg",
                 index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
               )}
               role="img"
