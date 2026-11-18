@@ -32,10 +32,23 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       sourceLocale: "en",
       ...options.messages,
     },
-    // On 20 main-app strings in pt, es and ja (18 Nov 2026), two blind readers each ranked 6.1 Sol
-    // at xhigh first or tied for first: GPT-6.2 Sol at xhigh and high lost meaning or wrote fragments
-    // on 2 to 5 strings, and 6.2 Sol at medium on 6 or 7.
-    model: codexCli("gpt-6.1-sol", { codexPath: getCodexPath(), reasoningEffort: "xhigh" }),
+    // Luna rather than Sol at xhigh, which ranked best in a blind read: translation runs thousands of
+    // times a week on the Codex subscription, and its cost matters more than a slightly better string.
+    model: codexCli("gpt-6-luna", {
+      codexPath: getCodexPath(),
+      // Codex otherwise sends AGENTS.md, memories, the skills list and agent context with every
+      // request, about 80% of each translation's input.
+      configOverrides: {
+        "features.memories": false,
+        include_apps_instructions: false,
+        include_collaboration_mode_instructions: false,
+        include_environment_context: false,
+        include_permissions_instructions: false,
+        project_doc_max_bytes: 0,
+        "skills.include_instructions": false,
+      },
+      reasoningEffort: "high",
+    }),
     srcPath: getSrcPath(options.srcPath),
     styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),
   });
