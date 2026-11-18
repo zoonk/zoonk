@@ -97,6 +97,10 @@ test.describe("Study reminders", () => {
     await expect(time).toBeDisabled();
     await expect(page.getByText("Reminders are off.", { exact: true })).toBeVisible();
 
+    await expect(
+      page.getByText("To get notifications on your phone, turn them on in the Zoonk phone app."),
+    ).toBeVisible();
+
     await email.click();
     await expect(email).toBeChecked();
     await expect(time).toBeEnabled();

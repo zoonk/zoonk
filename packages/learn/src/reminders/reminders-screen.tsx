@@ -148,15 +148,18 @@ export function RemindersScreen({
         </ListGroup>
 
         <PageSectionFooter aria-live="polite" className="empty:hidden">
-          {isOff
-            ? t("Reminders are off.")
-            : !view.push.phone &&
-              t({
-                description:
-                  "Stands in for the Push notifications row: name them in the same words as that row",
-                message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
-              })}
+          {isOff && t("Reminders are off.")}
         </PageSectionFooter>
+
+        {!view.push.phone && (
+          <PageSectionFooter>
+            {t({
+              description:
+                "Stands in for the Push notifications row: name them in the same words as that row",
+              message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
+            })}
+          </PageSectionFooter>
+        )}
       </div>
 
       {view.quiet && (
