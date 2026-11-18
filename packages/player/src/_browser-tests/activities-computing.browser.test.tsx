@@ -228,8 +228,12 @@ describe("computing activities", () => {
       .element(page.getByRole("region", { name: "Should not match" }))
       .toMatchTextContent("3 of 3 pass");
 
+    const examples = page.getByRole("region", { name: "Should not match" });
+    const top = examples.element().getBoundingClientRect().top;
+
     await checkActivity();
     await expectVerdict("Correct!");
+    expect(examples.element().getBoundingClientRect().top).toBe(top);
     await expect.element(page.getByText("A pattern that works")).not.toBeInTheDocument();
   });
 

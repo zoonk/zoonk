@@ -164,14 +164,12 @@ export function CauseEffectChainActivity({
       state: isGuided && !isLessonChain ? ("correct" as const) : ("made" as const),
     }));
 
+  const gutter = arcs.length > 0 ? ARC_GUTTER : 0;
+
   return (
     <ActivityCanvas labelId={labelId}>
-      {!isExploring && (
-        <p
-          aria-live="polite"
-          aria-hidden={isLocked}
-          className={cn("text-muted-foreground text-sm text-pretty", isLocked && "invisible")}
-        >
+      {!isExploring && (!isChecked || notice) && (
+        <p aria-live="polite" className="text-muted-foreground text-sm text-pretty">
           {notice || t("Pick a cause, then pick what it led to.")}
         </p>
       )}

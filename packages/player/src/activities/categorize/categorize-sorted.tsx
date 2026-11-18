@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { CategorizeGroupList } from "./categorize-group";
-import { type Placements } from "./categorize-placements";
+import { type Placements, misplacedItems } from "./categorize-placements";
 import { CategorizeResults } from "./categorize-results";
 import { CategorizeMoveRow, CategorizeResultRow } from "./categorize-row";
 
@@ -28,17 +28,24 @@ export function CategorizeSorted({
 }) {
   const t = useExtracted();
 
+  const misplaced = checkedPairs
+    ? misplacedItems({ expected: checkedPairs, items, placements })
+    : [];
+
   return (
     <>
-      {!checkedPairs && (
-        <p className="text-sm font-medium outline-none" ref={statusRef} tabIndex={-1}>
-          {t({
-            description:
-              "Shown once every card has a group. Choosing a card opens a menu that moves it to another group.",
-            message: "All sorted. Choose a card to move it.",
-          })}
-        </p>
-      )}
+      <p className="text-sm font-medium tabular-nums outline-none" ref={statusRef} tabIndex={-1}>
+        {checkedPairs
+          ? t("{right} of {total} in the right group", {
+              right: String(items.length - misplaced.length),
+              total: String(items.length),
+            })
+          : t({
+              description:
+                "Shown once every card has a group. Choosing a card opens a menu that moves it to another group.",
+              message: "All sorted. Choose a card to move it.",
+            })}
+      </p>
 
       <div className="flex flex-col gap-2.5">
         {groups.map((group) => {
@@ -75,13 +82,8 @@ export function CategorizeSorted({
         })}
       </div>
 
-      {checkedPairs && (
-        <CategorizeResults
-          groups={groups}
-          items={items}
-          pairs={checkedPairs}
-          placements={placements}
-        />
+      {checkedPairs && misplaced.length > 0 && (
+        <CategorizeResults groups={groups} misplaced={misplaced} pairs={checkedPairs} />
       )}
     </>
   );
