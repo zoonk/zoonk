@@ -24,7 +24,6 @@ export function StepForm({
   onContinue,
   onSkip,
   pending,
-  position,
   rail,
   skipIcon,
   skipLabel,
@@ -40,8 +39,6 @@ export function StepForm({
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
-  /** Where the learner is in a run of steps ("4 of 10"), beside the subject. */
-  position?: string;
   rail?: React.ReactNode;
   /** The second action's glyph, for one that isn't a skip. */
   skipIcon?: React.ReactNode;
@@ -66,7 +63,7 @@ export function StepForm({
             <OnboardingSecondaryButton
               busy={sender === "skip"}
               disabled={pending}
-              icon={skipIcon ?? <SkipForwardIcon aria-hidden="true" />}
+              icon={skipIcon === undefined ? <SkipForwardIcon aria-hidden="true" /> : skipIcon}
               onClick={() => send("skip", onSkip)}
             >
               {skipLabel ?? t("Skip")}
@@ -97,7 +94,7 @@ export function StepForm({
         }}
       >
         <OnboardingHeading>
-          {subject && <OnboardingSubject position={position}>{subject}</OnboardingSubject>}
+          {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
           <OnboardingTitle>{title}</OnboardingTitle>
           {description && <OnboardingDescription>{description}</OnboardingDescription>}
         </OnboardingHeading>

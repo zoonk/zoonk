@@ -159,13 +159,14 @@ function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: ()
   );
 }
 
-/** On the questions about the learner, Skip all comes first and the menu can decline them all. */
 export function StepsBarEnd({
+  canSkipAll,
   disabled,
   onSkipProfile,
   onStartOver,
   profile,
 }: {
+  canSkipAll: boolean;
   disabled: boolean;
   onSkipProfile: (forever: boolean) => void;
   onStartOver: () => void;
@@ -174,7 +175,7 @@ export function StepsBarEnd({
 }) {
   return (
     <div className="flex items-center gap-1">
-      {profile && <SkipProfileButton disabled={disabled} onSkip={() => onSkipProfile(false)} />}
+      {canSkipAll && <SkipProfileButton disabled={disabled} onSkip={() => onSkipProfile(false)} />}
       <StartOverMenu
         disabled={disabled}
         onDeclineProfile={profile ? () => onSkipProfile(true) : undefined}

@@ -50,7 +50,7 @@ function UnderstandingWaitScreen({
       <GenerationWait kind="understanding" run={run} since={since}>
         <OnboardingHeading>
           <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
-          <OnboardingDescription>{t("Next, you check what we understood.")}</OnboardingDescription>
+          <OnboardingDescription>{t("We're reading your goal")}</OnboardingDescription>
         </OnboardingHeading>
       </GenerationWait>
     </OnboardingColumn>

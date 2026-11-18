@@ -99,10 +99,10 @@ describe(getSetupProgress, () => {
 describe("profile steps", () => {
   const steps = ["work", "tools", "conditions", "learningSupport", "schedule", "plan"] as const;
 
-  it("share one dot", () => {
+  it("show their own count instead of setup dashes", () => {
     expect(
       getSetupProgress({ current: "tools", history: ["level", "work"], view: { steps } }),
-    ).toStrictEqual({ current: 1, total: 3 });
+    ).toBeNull();
 
     expect(
       getSetupProgress({
@@ -120,7 +120,7 @@ describe("profile steps", () => {
         history: ["level", "work"],
         view: { steps: steps.slice(1) },
       }),
-    ).toStrictEqual({ current: 2, total: 4 });
+    ).toStrictEqual({ canSkipAll: true, current: 2, total: 4 });
 
     expect(
       getProfileProgress({
@@ -128,7 +128,15 @@ describe("profile steps", () => {
         history: ["level"],
         view: { steps: ["conditions", "learningSupport", "schedule", "plan"] },
       }),
-    ).toStrictEqual({ current: 1, total: 2 });
+    ).toStrictEqual({ canSkipAll: true, current: 1, total: 2 });
+
+    expect(
+      getProfileProgress({
+        current: "learningSupport",
+        history: ["conditions"],
+        view: { steps: ["learningSupport", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ canSkipAll: false, current: 2, total: 2 });
 
     expect(getProfileProgress({ current: "schedule", history: [], view: { steps } })).toBeNull();
   });

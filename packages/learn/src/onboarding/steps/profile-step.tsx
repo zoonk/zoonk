@@ -108,7 +108,6 @@ function ProfileStep({
   onConditions,
   pending,
   precheck,
-  progress,
   question,
 }: {
   jobPrefill: string | null;
@@ -120,7 +119,6 @@ function ProfileStep({
   onConditions: (picks: string[]) => void;
   pending: boolean;
   precheck: readonly string[];
-  progress: { current: number; total: number };
   question: ProfileQuestionView;
 }) {
   const t = useExtracted();
@@ -157,9 +155,6 @@ function ProfileStep({
       }}
       pending={pending}
       skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
-      position={
-        progress.total === 1 ? undefined : t("{current, number} of {total, number}", progress)
-      }
       subject={t("About you")}
       title={title}
     >
@@ -180,7 +175,7 @@ function ProfileStep({
 export type ProfileStepState = {
   onConditions: (picks: string[]) => void;
   precheck: readonly string[];
-  progress: { current: number; total: number } | null;
+  progress: ReturnType<typeof getProfileProgress>;
 };
 
 /** The conditions' picks stay in this run's state only, to check rows on the supports screen next. */
@@ -226,7 +221,6 @@ export function ProfileStepScreen({
         onConditions={onConditions}
         pending={pending}
         precheck={precheck}
-        progress={progress}
         question={question}
       />
     )

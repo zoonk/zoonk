@@ -48,14 +48,14 @@ export function getSetupProgress({
     QUESTIONS_THAT_ADD_QUESTIONS.includes(step),
   );
 
-  if (!isSetupQuestion(current) || !countKnown) {
+  if (!isSetupQuestion(current) || isProfileQuestion(current) || !countKnown) {
     return null;
   }
 
   return getPlace({
     ahead: view.steps.filter((step) => isSetupQuestion(step)).map((step) => toDot(step)),
     behind: history.filter((step) => isSetupQuestion(step)).map((step) => toDot(step)),
-    current: toDot(current),
+    current,
   });
 }
 
@@ -64,7 +64,7 @@ export function getProfileProgress({
   current,
   history,
   view,
-}: ProgressInput): { current: number; total: number } | null {
+}: ProgressInput): { canSkipAll: boolean; current: number; total: number } | null {
   if (!isProfileQuestion(current)) {
     return null;
   }
@@ -75,5 +75,6 @@ export function getProfileProgress({
     current,
   });
 
-  return { current: place.current + 1, total: place.total };
+  const position = place.current + 1;
+  return { canSkipAll: position < place.total, current: position, total: place.total };
 }

@@ -49,7 +49,14 @@ export async function LibraryCourseOutline({
   const titleId = `course-outline-${courseId}`;
 
   return (
-    <RouteStop aria-labelledby={titleId} className={cn("flex flex-col gap-8", className)}>
+    <RouteStop
+      aria-labelledby={titleId}
+      className={cn(
+        "flex flex-col gap-8 [--zone-route-inset:calc(var(--route-inset)+(--spacing(4)))]",
+        "**:data-[slot=route-zone]:ml-0 **:data-[slot=route-zone]:pl-4 **:data-[slot=route-zone]:[--route-fill:var(--background)] **:data-[slot=route-zone]:[--route-inset:var(--zone-route-inset)]",
+        className,
+      )}
+    >
       <div className="max-w-column flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <RouteTitle down id={titleId}>

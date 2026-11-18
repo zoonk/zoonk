@@ -92,10 +92,11 @@ export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
   const ahead = reveal?.nextDays ?? [];
+  const studyDays = ahead.filter((day) => day.items.length > 0);
   const dates = ahead.map((day) => formatDate(day.date, "row", { weekday: true }));
   const dateWidth = Math.max(0, ...dates.map((date) => date.length));
 
-  if (!reveal || !ahead.some((day) => day.items.length > 0)) {
+  if (studyDays.length === 0) {
     return null;
   }
 
@@ -104,7 +105,7 @@ export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
+          {`${t("{days, plural, one {# study day} other {# study days}}", { days: studyDays.length })} · ${formatDuration(studyDays.reduce((total, day) => total + day.minutes, 0))}`}
         </PageSectionDetail>
       </PageSectionHeader>
 

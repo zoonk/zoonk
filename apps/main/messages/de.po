@@ -449,6 +449,16 @@ msgctxt "subscriberPlanName"
 msgid "Plus"
 msgstr "Plus"
 
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "Kurse"
+
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "t_2u2K"
@@ -626,15 +636,6 @@ msgstr "Dein Plan folgt diesem Kurs"
 msgctxt "Sm_2tk"
 msgid "Course options"
 msgstr "Kursoptionen"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/components/public/public-footer.tsx
-#: src/components/public/public-nav-links.tsx
-msgctxt "R85gsW"
-msgid "Courses"
-msgstr "Kurse"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -1572,6 +1573,7 @@ msgid "They show up after your first lesson."
 msgstr "Du siehst sie nach deiner ersten Lektion."
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Zu Heute"
@@ -2177,7 +2179,6 @@ msgstr "<line>{exam}.</line> <line>{language, select, spanish {Spanisch sprechen
 
 #. The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
-#: src/app/[lang]/opengraph-image.tsx
 msgctxt "lH-iPt"
 msgid "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know."
 msgstr "Sag Zoonk, welches Ziel du bis wann erreichen möchtest. Du bekommst einen Plan für jeden Tag, der zu deiner verfügbaren Zeit passt und auf dem aufbaut, was du schon weißt."
@@ -2664,6 +2665,12 @@ msgctxt "HGnX5e"
 msgid "Practice mistakes"
 msgstr "Fehler üben"
 
+#. The home share card's subhead, under a headline listing goals.
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "3v2HCV"
+msgid "Tell Zoonk your goal and when you want to be ready. It builds a plan for each day that fits your time and starts from what you already know."
+msgstr "Sag Zoonk, was dein Ziel ist und bis wann du bereit sein möchtest. Du bekommst einen Plan für jeden Tag, der zu deiner verfügbaren Zeit passt und auf dem aufbaut, was du schon weißt."
+
 #: src/app/[lang]/pattern/[patternId]/page.tsx
 msgctxt "KS_o38"
 msgid "Mistake pattern"
@@ -2738,6 +2745,11 @@ msgid "Email reminders"
 msgstr "E-Mail-Erinnerungen"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "MXXJ7_"
+msgid "Nothing was changed."
+msgstr "Es wurde nichts geändert."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "22mt47"
 msgid "Email reminders are off"
 msgstr "E-Mail-Erinnerungen sind ausgeschaltet"
@@ -2756,6 +2768,11 @@ msgstr "Erinnerungen verwalten"
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "Das wurde nicht gespeichert. Versuch es noch einmal."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "Ih9a17"
+msgid "They can be turned back on in Settings."
+msgstr "Du kannst sie in den Einstellungen wieder einschalten."
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "YvVUvF"
@@ -3348,11 +3365,6 @@ msgstr "Schreib dein Ziel zuerst in eigenen Worten in das Feld."
 msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "Ich möchte"
-
-#: src/components/public/goal-form.tsx
-msgctxt "0u-6yz"
-msgid "For example: <example></example>"
-msgstr "Zum Beispiel: <example></example>"
 
 #: src/components/public/not-found-message.tsx
 msgctxt "EdX_cR"

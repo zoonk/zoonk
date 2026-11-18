@@ -12,12 +12,12 @@ import {
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import { LinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { CopyButton } from "./certificate-copy-button";
+import { CertificateLinkRow } from "./certificate-details";
 import { roundStudyMinutes, useCertificateName } from "./certificate-labels";
 
 const MINUTES_PER_HOUR = 60;
@@ -231,7 +231,6 @@ export function CertificateShareDialog({
 }) {
   const t = useExtracted();
   const shareText = useShareText();
-  const { copy } = useClipboard();
   const text = shareText(facts);
 
   return (
@@ -267,19 +266,9 @@ export function CertificateShareDialog({
             <NetworkLinks text={text} url={links.url} />
           </div>
 
-          <button
-            className={buttonVariants({
-              className: "self-start",
-              edge: "start",
-              size: "lg",
-              variant: "ghost",
-            })}
-            onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
-            type="button"
-          >
-            <LinkIcon aria-hidden="true" />
-            {t("Copy link")}
-          </button>
+          <dl>
+            <CertificateLinkRow layout="stacked" url={links.url} />
+          </dl>
         </DrawerContent>
       </DrawerPopup>
     </Drawer>

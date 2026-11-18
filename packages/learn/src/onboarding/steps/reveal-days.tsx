@@ -206,7 +206,7 @@ export function RevealToday({
             <TodayRow
               block={block}
               key={block.position}
-              line={label(block)}
+              line={block.kind === "learn" && !block.waitReason ? null : label(block)}
               locked={locked}
               onOpen={open && opensFromReveal(block) ? () => open(block) : null}
               tag={block === next ? nextTag : null}

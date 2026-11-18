@@ -18,6 +18,7 @@ async function AuthBackLink({ appUrl }: { appUrl: string | Promise<string> }) {
         message: "Back to Zoonk",
       })}
       href={href}
+      tone="foreground"
     >
       {BRAND_NAME}
     </BackLink>

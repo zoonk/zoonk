@@ -15,7 +15,7 @@ export async function CertificateNotFound() {
   const [t, { home }] = await Promise.all([getExtracted(), getNotFoundWords()]);
 
   return (
-    <section className="bg-ground">
+    <section className="bg-ground flex-1">
       <div className={cn(PUBLIC_CONTAINER_CLASS, "py-12 sm:py-24")}>
         <div className="max-w-column">
           <h1 className="text-headline">{t("We couldn't find this certificate")}</h1>

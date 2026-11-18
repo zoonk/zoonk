@@ -5,7 +5,13 @@ import { useExtracted } from "next-intl";
 import { LearnerAvatar } from "./user-avatar";
 import { UserDropdownMenu } from "./user-dropdown-menu";
 
-export function UserAvatarMenu({ includeSearch = false }: { includeSearch?: boolean }) {
+export function UserAvatarMenu({
+  includePublicLinks = false,
+  includeSearch = false,
+}: {
+  includePublicLinks?: boolean;
+  includeSearch?: boolean;
+}) {
   const t = useExtracted();
 
   return (
@@ -17,7 +23,7 @@ export function UserAvatarMenu({ includeSearch = false }: { includeSearch?: bool
         <LearnerAvatar />
       </DropdownMenuTrigger>
 
-      <UserDropdownMenu includeSearch={includeSearch} />
+      <UserDropdownMenu includePublicLinks={includePublicLinks} includeSearch={includeSearch} />
     </DropdownMenu>
   );
 }

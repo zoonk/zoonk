@@ -106,7 +106,7 @@ function CourseHero({
     <section aria-labelledby={titleId} className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}>
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
-      <CourseMark course={course} loading="eager" locale={locale} />
+      <CourseMark align="start" course={course} loading="eager" locale={locale} />
 
       <div className="mt-5 flex">
         <CourseSubjectLabel subject={subject} />
@@ -170,7 +170,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
 
   return (
     <RouteStop aria-labelledby={titleId} className="flex flex-col gap-1.5">
-      <RouteTitle id={titleId} station="end">
+      <RouteTitle id={titleId}>
         <CourseGoalSwitch
           continueLink={t("Your plan follows this course")}
           courseId={courseId}

@@ -183,6 +183,11 @@ msgid "That link didn't work"
 msgstr "Esse link não funcionou"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "4Wp5HU"
+msgid "The link may have expired. Go to Zoonk and log in again for a new one."
+msgstr "O link pode ter expirado. Acesse o Zoonk e entre de novo para receber um novo link."
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "15PZTm"
 msgid "Go to Zoonk"
 msgstr "Ir para o Zoonk"

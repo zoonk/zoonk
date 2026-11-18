@@ -147,7 +147,7 @@ function CertificateSkeleton() {
 
 export default function CertificatePage(props: Props) {
   return (
-    <PublicPage>
+    <PublicPage className="flex flex-col">
       <ClientMessagesProvider scope="learn">
         <MainLearnProvider>
           <Suspense fallback={<CertificateSkeleton />}>

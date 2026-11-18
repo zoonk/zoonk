@@ -11,7 +11,6 @@ import { getString } from "@zoonk/utils/json";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
-import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePoll } from "../_utils/use-poll";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
@@ -24,7 +23,6 @@ import {
   isStepScreen,
   openStep,
 } from "./_utils/answered-step";
-import { getSetupProgress } from "./_utils/setup-progress";
 import {
   type AnswerOutcome,
   type OnboardingActions,
@@ -33,7 +31,7 @@ import {
   type RevealedPlan,
 } from "./onboarding-actions";
 import { OnboardingAnnouncer } from "./onboarding-announcer";
-import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
+import { stepBarProgress } from "./onboarding-bar";
 import { OnboardingClock } from "./onboarding-clock";
 import { OnboardingFrame } from "./onboarding-frame";
 import { FirstLessonReadContext } from "./onboarding-host";
@@ -285,7 +283,6 @@ export function StepsFlow({
   const isPlan = state.current === "plan";
   const isProfile = isProfileQuestion(state.current);
   const showDots = isStepScreen(state.current) || isProfile;
-  const progress = getSetupProgress(state);
   const profile = useProfileStepState(state);
   useFocusTitleOnNewScreen(state.current);
 
@@ -295,19 +292,14 @@ export function StepsFlow({
         bar={{
           end: isPlan ? null : (
             <StepsBarEnd
+              canSkipAll={profile.progress?.canSkipAll ?? false}
               disabled={isPending}
               onSkipProfile={(forever) => void answer({ forever, question: "skipProfile" })}
               profile={isProfile}
               onStartOver={startOver}
             />
           ),
-          middle: progress && (
-            <StepDots
-              className={BAR_MIDDLE_CLASS}
-              current={progress.current}
-              total={progress.total}
-            />
-          ),
+          middle: stepBarProgress(state, profile.progress),
           // Answers change in "Adjust" now, not by going back through the questions.
           onBack: state.history.length > 0 && !isPlan ? back : undefined,
         }}

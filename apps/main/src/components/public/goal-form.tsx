@@ -4,8 +4,8 @@ import { useRouter } from "@/i18n/navigation";
 import { GOAL_PARAM } from "@/lib/public/public-hrefs";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import {
-  GOAL_FIELD_TEXT_CLASS,
   GoalField,
+  GoalFieldExample,
   GoalFieldLabel,
   GoalFieldSubmit,
   GoalFieldText,
@@ -15,8 +15,6 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useId, useRef, useState, useTransition } from "react";
 import { PageStartMark } from "./page-start";
 import { useSendGoal } from "./use-send-goal";
-
-const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
 
 /**
  * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
@@ -70,26 +68,11 @@ export function GoalForm({
           }
         }}
       >
-        <div className="flex min-w-0 flex-auto items-start gap-2 pr-2.5">
+        <div className="flex min-w-0 flex-auto items-start gap-2">
           <GoalFieldLabel htmlFor={fieldId}>{t("I want to")}</GoalFieldLabel>
 
           <div className="group/goal grid min-w-0 flex-1">
-            <span
-              aria-hidden="true"
-              className={cn(
-                FIELD_TEXT_CLASS,
-                "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none min-w-0 text-balance select-none",
-                // The field's own state (it holds words), so it's right before scripts run and without them.
-                "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
-              )}
-              data-slot="goal-example"
-            >
-              {example}
-            </span>
-
-            <span className="sr-only" id={exampleId}>
-              {t.rich("For example: <example></example>", { example: () => example })}
-            </span>
+            <GoalFieldExample id={exampleId}>{example}</GoalFieldExample>
 
             <GoalFieldText
               aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}

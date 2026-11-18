@@ -259,16 +259,19 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await page.context().close();
 });
 
-test("a learner who guessed while the exam's notice is read stays once it's read", async ({
+test("a learner who guessed while the exam notice is read stays once it is ready", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
-  const [deck, goal] = await Promise.all([warmUpFixture(), createMappedGoal(noProgressUser.id)]);
+  const [deck, goal] = await Promise.all([
+    warmUpFixture(),
+    createMappedGoal(noProgressUser.id, { exam: true }),
+  ]);
 
   await Promise.all([
     prisma.goal.update({
       data: {
-        details: { answered: [...ANSWERED, "placement"], subject: "algebra" },
+        details: { answered: [...ANSWERED, "placement", "target"], subject: "algebra" },
         generationRunId: goal.id,
       },
       where: { id: goal.id },

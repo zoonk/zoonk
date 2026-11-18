@@ -51,14 +51,13 @@ test.describe("Profile Setup Flow", () => {
 
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
+    await expectHydrated(name);
+    await expect(submit).toBeDisabled();
     await name.fill("   ");
-    await name.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
-    await submit.click();
-
-    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
-    await expect(page).toHaveURL(/\/auth\/en\/setup/u);
+    await expect(submit).toBeDisabled();
 
     await name.fill("Test User");
+    await expect(submit).toBeEnabled();
 
     const redirectPromise = page.waitForRequest((req) => {
       const url = req.url();
@@ -102,7 +101,9 @@ test.describe("Profile Setup Flow", () => {
     });
 
     await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Early Learner");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    const submit = page.getByRole("button", { name: /^continue$/iu });
+    await expect(submit).toBeEnabled();
+    await submit.click();
     await loadScripts();
     await handoff;
 
