@@ -49,17 +49,18 @@ private struct GuessRevealCanvas: View {
 
   var body: some View {
     let guess = context.answer?.number
-    let actual: Double? =
-      if case .checked = context.phase { checkAnswer ?? fields.trueValue } else { nil }
+    let actual = checkAnswer ?? fields.trueValue
+    let isRevealed = if case .checked = context.phase { true } else { false }
 
     VStack(alignment: .leading, spacing: 16) {
       ActivityGuessScaleView(
-        scale: fields.guessScale, unit: fields.unit, guess: guess, actual: actual
+        scale: fields.guessScale, unit: fields.unit, guess: guess, actual: actual,
+        isRevealed: isRevealed
       ) { value in
         context.setAnswer(.numeric(value))
       }
 
-      if let actual {
+      if isRevealed, let actual {
         VStack(alignment: .leading, spacing: 10) {
           if let guess {
             comparisonText(

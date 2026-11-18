@@ -32,14 +32,15 @@ final class ChartsActivitiesTests: XCTestCase {
   /// on the track.
   @MainActor func testAGuessScaleKeepsItsHeightWhenTheRealValueShows() {
     let scale = GuessScale(min: 1, max: 1000, kind: .log)
-    let height = { (actual: Double?) in
+    let height = { (isRevealed: Bool) in
       UIHostingController(
         rootView: ActivityGuessScaleView(
-          scale: scale, unit: "days", guess: 11.2, actual: actual, onGuess: { _ in })
+          scale: scale, unit: "days", guess: 11.2, actual: 11.57, isRevealed: isRevealed,
+          onGuess: { _ in })
       ).sizeThatFits(in: CGSize(width: 340, height: 2000)).height
     }
 
-    XCTAssertEqual(height(nil), height(11.57))
+    XCTAssertEqual(height(false), height(true))
   }
 
   /// At the largest text sizes the real value's row wraps, and it still holds the room it takes.
@@ -52,16 +53,17 @@ final class ChartsActivitiesTests: XCTestCase {
 
     for size in [DynamicTypeSize.accessibility3, .accessibility5] {
       for (scale, unit, guess, actual) in scales {
-        let height = { (actual: Double?) in
+        let height = { (isRevealed: Bool) in
           UIHostingController(
             rootView: ActivityGuessScaleView(
-              scale: scale, unit: unit, guess: guess, actual: actual, onGuess: { _ in }
+              scale: scale, unit: unit, guess: guess, actual: actual, isRevealed: isRevealed,
+              onGuess: { _ in }
             )
             .environment(\.dynamicTypeSize, size)
           ).sizeThatFits(in: CGSize(width: 320, height: 4000)).height
         }
 
-        XCTAssertEqual(height(nil), height(actual), "\(unit) at \(size)")
+        XCTAssertEqual(height(false), height(true), "\(unit) at \(size)")
       }
     }
   }
