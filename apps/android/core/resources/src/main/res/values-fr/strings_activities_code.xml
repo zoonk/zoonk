@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "5aca913fe29cd22f0e477ec5fc5fa04481de2fbecb96e746e2afe13de958abd4",
   "activities_code_you_said_wrong": "d9b6d37dd779029cc591067d316a1b24e96725dfd0f1d0c1ca1ab596448f1816",
   "activities_code_your_formula": "17dae608d1ae16eaba0ff1473445d2fdc6b3f43aaa457bc48918d7d2eb4a36d4",
-  "activities_code_your_output": "1eba4c4a143d57e9c16188ad1a35f794a8547712ed07a3bbbdd7e1932ed3b3cc",
   "activities_code_your_pattern": "7a35d6144ef219f390cf8e18dfee0306e4aaf659f6e342013cd78b9daebe63be",
   "activities_code_your_predictions": "b41988c2e5bdc270e92633162024bc840328e8262c2846c556c4cc93272d27fb",
   "activities_code_your_query": "414b54aa56504e55736f707f0185c44d11c0279d083f19c9ae3145a5fd36ba0e",
@@ -114,7 +113,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Ligne %1$d, à toi de la modifier</string>
-    <string name="activities_code_your_output">Ton résultat</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Sortie</string>
     <!-- The output the program should print. -->

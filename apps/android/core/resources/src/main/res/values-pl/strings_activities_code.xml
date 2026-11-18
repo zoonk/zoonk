@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "8ece0ed7581c9824474f5a0104ea74e933bc1b16a1c975bb770fc005832a6715",
   "activities_code_you_said_wrong": "8773cef39c72583fd98495cc22d554c398d9e088798bf8a081539bb24238425f",
   "activities_code_your_formula": "239d2b451a842fb5ea3e39b3b50136e7cc5b92e8f2ae2c2377e618f0048cd96b",
-  "activities_code_your_output": "00b7df0c46de4e5003867705b47dc2578e2c357c84800b1a280476cbb1ca6cb3",
   "activities_code_your_pattern": "da78ea2412de2eb6275f0719188281ff11747639be76420f8a45b189e2d672dd",
   "activities_code_your_predictions": "9488a03458565b355d633e94bc1b5c0b44cec7d4b89bdefc3c5084ace7dd9896",
   "activities_code_your_query": "579578cdea549308a15f98183cf7ec58ab5a4a291e056e14fe056c57f6efceb4",
@@ -115,7 +114,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Wiersz %1$d, możesz go edytować</string>
-    <string name="activities_code_your_output">Twój wynik</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Wynik</string>
     <!-- The output the program should print. -->

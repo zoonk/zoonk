@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "16bccf5a79e90cdd0cb858949fb2eaa0b91d2822a885205aa2e890efe3f70b30",
   "activities_code_you_said_wrong": "a7f2527edb22ef346851fae3dd2cf3b3abd31feb45c0520e77d150558dde8177",
   "activities_code_your_formula": "adf08bfa2d955a4db389b6860db6ae607d1e3760a8c01a540677976214e38193",
-  "activities_code_your_output": "eba42f8f25989935fbace06e1da434f79ee496f6e5e7dbaa36b99ed3a3d6a587",
   "activities_code_your_pattern": "763b9afb5f669b23bfeba5002a9de5ef48e43c241615abc4aac6b7be8daa678a",
   "activities_code_your_predictions": "194de333d52208bb9b7adfcb820f05c33785d3b59f54e3feab39db8c355d8556",
   "activities_code_your_query": "2c7998f641e26c69217bc977045397ddcaae8cb72ad69b7d4cac4fcde1801a5c",
@@ -113,7 +112,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d numaralı satırı düzenleyebilirsin</string>
-    <string name="activities_code_your_output">Çıktın</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Çıktı</string>
     <!-- The output the program should print. -->

@@ -251,7 +251,7 @@ private fun CodeRunnerOutput(
                 .border(1.dp, colors.outlineVariant, shape),
         ) {
             OutputCell(
-                stringResource(if (expectedOutput == null) R.string.activities_code_output else R.string.activities_code_your_output),
+                stringResource(R.string.activities_code_output),
                 Modifier.weight(1f).alpha(
                     if (isStale &&
                         run != null
