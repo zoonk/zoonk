@@ -425,6 +425,9 @@ private struct LineCrossingLabels: View {
           .foregroundStyle(item.color)
           .chartsLabelHalo()
           .clipped()
+          #if DEBUG
+            .modifier(LineCrossingNameFrameReporter(id: item.id))
+          #endif
       }
     }
     .allowsHitTesting(false)
@@ -470,3 +473,26 @@ private struct LineCrossingNamesLayout: Layout {
     }
   }
 }
+
+#if DEBUG
+  extension EnvironmentValues {
+    @Entry var lineCrossingNameFrame: ((String, CGRect) -> Void)?
+  }
+
+  private struct LineCrossingNameFrameReporter: ViewModifier {
+    let id: String
+    @Environment(\.lineCrossingNameFrame) private var report
+
+    func body(content: Content) -> some View {
+      if let report {
+        content.onGeometryChange(for: CGRect.self) {
+          $0.frame(in: .global)
+        } action: {
+          report(id, $0)
+        }
+      } else {
+        content
+      }
+    }
+  }
+#endif
