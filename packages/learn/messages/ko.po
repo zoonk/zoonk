@@ -1601,10 +1601,14 @@ msgid "Copied"
 msgstr "복사됨"
 
 #: src/certificates/certificate-copy-button.tsx
-#: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
 msgstr "복사"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "링크 복사"
 
 #: src/certificates/certificate-details.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -1650,13 +1654,6 @@ msgstr "성명"
 msgctxt "JBWS0c"
 msgid "Link"
 msgstr "링크"
-
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-share.tsx
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "링크를 복사했어요"
 
 #: src/certificates/certificate-details.tsx
 #: src/mock/mock-result-details.tsx
@@ -1996,11 +1993,6 @@ msgstr "추천 문구 복사하기"
 msgctxt "rIB4Ud"
 msgid "Post on"
 msgstr "게시할 곳"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "lbr3Lq"
-msgid "Copy link"
-msgstr "링크 복사"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
@@ -4366,7 +4358,6 @@ msgid "Deciding how deep to go…"
 msgstr "얼마나 깊이 배울지 정하고 있어요…"
 
 #: src/generation/use-generation-copy.ts
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "b_5kn-"
 msgid "Reading your material"
 msgstr "자료를 읽고 있어요"
@@ -8853,16 +8844,16 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "자료에 추가했어요: {title}"
 
-#: src/onboarding/entry/goal-box.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "내 목표"
-
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-box.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {Abitur 합격하기, {language} 말하기…} bac {bac 합격하기, {language} 말하기…} enem {ENEM 합격하기, {language} 말하기…} exani {EXANI-II 합격하기, {language} 말하기…} kyotsu {Common Test 잘 보기, {language} 말하기…} matura {matura 합격하기, {language} 말하기…} maturita {maturità 합격하기, {language} 말하기…} suneung {수능 잘 보기, {language} 말하기…} yks {YKS 잘 보기, {language} 말하기…} other {SAT 합격하기, {language} 말하기…}}"
+
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "내 목표"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -9496,19 +9487,14 @@ msgid "Fitting them into your plan…"
 msgstr "계획에 반영하고 있어요…"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "5cCtX9"
-msgid "Reading the exam's official documents"
-msgstr "시험의 공식 문서를 읽고 있어요"
-
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "WX6JMT"
 msgid "Reading the last edition's official documents"
 msgstr "지난 시험의 공식 문서를 읽고 있어요"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {시험의 과목, 주제, 일정에 맞춰 계획을 세울 거예요.} other {공식 안내서의 파트, 주제, 일정에 맞춰 계획을 세울 거예요.}} 보통 몇 분 정도 걸려요."
+msgctxt "5cCtX9"
+msgid "Reading the exam's official documents"
+msgstr "시험의 공식 문서를 읽고 있어요"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "KYgf4_"
@@ -9516,9 +9502,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "다음 시험의 공식 문서가 아직 나오지 않아 지난 시험의 과목과 주제를 바탕으로 계획을 세워요. 새 문서가 나오면 알려 드릴게요. 보통 몇 분 정도 걸려요."
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "yCtkE2"
-msgid "Your plan will follow it"
-msgstr "이 자료에 맞춰 계획을 세울 거예요"
+msgctxt "_Bb7oM"
+msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {시험의 과목, 주제, 일정에 맞춰 계획을 세울 거예요.} other {공식 안내서의 파트, 주제, 일정에 맞춰 계획을 세울 거예요.}} 보통 몇 분 정도 걸려요."
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -11367,6 +11353,11 @@ msgstr "{count, plural, other {그 외 #개 과목}}"
 msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {주제 #개가 계획에 다시 포함됐어요. {subjects}에서 관련 문제를 틀렸기 때문이에요.}}"
+
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "링크를 복사했어요"
 
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"

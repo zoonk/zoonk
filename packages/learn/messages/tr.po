@@ -1601,10 +1601,14 @@ msgid "Copied"
 msgstr "Kopyalandı"
 
 #: src/certificates/certificate-copy-button.tsx
-#: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
 msgstr "Kopyala"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "Bağlantıyı kopyala"
 
 #: src/certificates/certificate-details.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -1650,13 +1654,6 @@ msgstr "Ad soyad"
 msgctxt "JBWS0c"
 msgid "Link"
 msgstr "Bağlantı"
-
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-share.tsx
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "Bağlantı kopyalandı"
 
 #: src/certificates/certificate-details.tsx
 #: src/mock/mock-result-details.tsx
@@ -1996,11 +1993,6 @@ msgstr "Önerilen metni kopyala"
 msgctxt "rIB4Ud"
 msgid "Post on"
 msgstr "Paylaşım platformu"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "lbr3Lq"
-msgid "Copy link"
-msgstr "Bağlantıyı kopyala"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
@@ -4366,7 +4358,6 @@ msgid "Deciding how deep to go…"
 msgstr "Ne kadar ayrıntıya gireceğimize karar veriyoruz…"
 
 #: src/generation/use-generation-copy.ts
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "b_5kn-"
 msgid "Reading your material"
 msgstr "Materyalini okuyoruz"
@@ -8853,16 +8844,16 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "Materyallerine eklendi: {title}"
 
-#: src/onboarding/entry/goal-box.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "Hedefim"
-
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-box.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {Abitur’u geçmek, {language} konuşmak…} bac {bac’ı geçmek, {language} konuşmak…} enem {ENEM’i geçmek, {language} konuşmak…} exani {EXANI-II’yi geçmek, {language} konuşmak…} kyotsu {Common Test’te başarılı olmak, {language} konuşmak…} matura {matura’yı geçmek, {language} konuşmak…} maturita {maturità’yı geçmek, {language} konuşmak…} suneung {CSAT sınavında başarılı olmak, {language} konuşmak…} yks {YKS’de başarılı olmak, {language} konuşmak…} other {SAT’ı geçmek, {language} konuşmak…}}"
+
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "Hedefim"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -9496,19 +9487,14 @@ msgid "Fitting them into your plan…"
 msgstr "Bunları planına yerleştiriyoruz…"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "5cCtX9"
-msgid "Reading the exam's official documents"
-msgstr "Sınavın resmî belgelerini okuyoruz"
-
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "WX6JMT"
 msgid "Reading the last edition's official documents"
 msgstr "Bir önceki sınavın resmî belgelerini okuyoruz"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {Planın sınavın branşlarına, konularına ve tarihlerine göre hazırlanacak.} other {Planın resmî kılavuzdaki bölümlere, konulara ve tarihlere göre hazırlanacak.}} Bu genellikle birkaç dakika sürer."
+msgctxt "5cCtX9"
+msgid "Reading the exam's official documents"
+msgstr "Sınavın resmî belgelerini okuyoruz"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "KYgf4_"
@@ -9516,9 +9502,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "Bir sonraki sınavın belgeleri henüz yayımlanmadığı için planın bir önceki sınavın branş ve konularını temel alıyor. Yeni belgeler yayımlandığında sana haber vereceğiz. Belgeleri okumamız genellikle birkaç dakika sürer."
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "yCtkE2"
-msgid "Your plan will follow it"
-msgstr "Planın bu materyali temel alacak"
+msgctxt "_Bb7oM"
+msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {Planın sınavın branşlarına, konularına ve tarihlerine göre hazırlanacak.} other {Planın resmî kılavuzdaki bölümlere, konulara ve tarihlere göre hazırlanacak.}} Bu genellikle birkaç dakika sürer."
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -11367,6 +11353,11 @@ msgstr "{count, plural, other {# branş daha}}"
 msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {# konu ({subjects}) yeniden planında: bu konulardaki soruları yanlış yanıtladın.}}"
+
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "Bağlantı kopyalandı"
 
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"

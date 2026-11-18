@@ -1601,10 +1601,14 @@ msgid "Copied"
 msgstr "Copiato"
 
 #: src/certificates/certificate-copy-button.tsx
-#: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
 msgstr "Copia"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "Copia link"
 
 #: src/certificates/certificate-details.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -1650,13 +1654,6 @@ msgstr "Nome e cognome"
 msgctxt "JBWS0c"
 msgid "Link"
 msgstr "Link"
-
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-share.tsx
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "Link copiato"
 
 #: src/certificates/certificate-details.tsx
 #: src/mock/mock-result-details.tsx
@@ -1996,11 +1993,6 @@ msgstr "Copia il testo suggerito"
 msgctxt "rIB4Ud"
 msgid "Post on"
 msgstr "Pubblica su"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "lbr3Lq"
-msgid "Copy link"
-msgstr "Copia link"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
@@ -4366,7 +4358,6 @@ msgid "Deciding how deep to go…"
 msgstr "Stiamo decidendo quanto approfondire…"
 
 #: src/generation/use-generation-copy.ts
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "b_5kn-"
 msgid "Reading your material"
 msgstr "Stiamo leggendo il tuo materiale"
@@ -8853,16 +8844,16 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "Aggiunto al tuo materiale: {title}"
 
-#: src/onboarding/entry/goal-box.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "Voglio"
-
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-box.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {superare l’Abitur, parlare {language}…} bac {superare il bac, parlare {language}…} enem {superare l’ENEM, parlare {language}…} exani {superare l’EXANI-II, parlare {language}…} kyotsu {andare bene al Common Test, parlare {language}…} matura {superare la matura, parlare {language}…} maturita {superare la Maturità, parlare {language}…} suneung {andare bene al CSAT, parlare {language}…} yks {andare bene allo YKS, parlare {language}…} other {superare il SAT, parlare {language}…}}"
+
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "Voglio"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -9496,19 +9487,14 @@ msgid "Fitting them into your plan…"
 msgstr "Stiamo inserendo tutto nel tuo piano…"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "5cCtX9"
-msgid "Reading the exam's official documents"
-msgstr "Stiamo leggendo i documenti ufficiali dell’esame"
-
-#: src/onboarding/steps/notice-reading.tsx
 msgctxt "WX6JMT"
 msgid "Reading the last edition's official documents"
 msgstr "Stiamo leggendo i documenti ufficiali dell’ultima edizione"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {Il tuo piano seguirà le materie, gli argomenti e le date dell’esame.} other {Il tuo piano seguirà le parti, gli argomenti e le date indicati nella guida ufficiale.}} Di solito ci vogliono pochi minuti."
+msgctxt "5cCtX9"
+msgid "Reading the exam's official documents"
+msgstr "Stiamo leggendo i documenti ufficiali dell’esame"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "KYgf4_"
@@ -9516,9 +9502,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "I documenti della prossima edizione non sono ancora usciti, quindi il tuo piano segue le materie e gli argomenti dell’ultima edizione. Ti avviseremo quando usciranno quelli nuovi. Di solito ci vogliono pochi minuti."
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "yCtkE2"
-msgid "Your plan will follow it"
-msgstr "Il tuo piano si baserà su questo materiale"
+msgctxt "_Bb7oM"
+msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {Il tuo piano seguirà le materie, gli argomenti e le date dell’esame.} other {Il tuo piano seguirà le parti, gli argomenti e le date indicati nella guida ufficiale.}} Di solito ci vogliono pochi minuti."
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -11367,6 +11353,11 @@ msgstr "{count, plural, one {# altra materia} other {# altre materie}}"
 msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {Abbiamo reinserito # argomenti di {subjects} nel tuo piano: hai sbagliato alcune domande su questi argomenti.}}"
+
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "Link copiato"
 
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
