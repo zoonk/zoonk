@@ -21,20 +21,18 @@ msgstr "Zaloguj się"
 
 #: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
-msgctxt "0vL5u1"
-msgid "Create an account"
-msgstr "Utwórz konto"
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "Utwórz bezpłatne konto"
 
 #: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 msgctxt "PlBReU"
 msgid "Log out"
 msgstr "Wyloguj się"
-
-#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
-msgctxt "ejEGdx"
-msgid "Home"
-msgstr "Strona główna"
 
 #: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
@@ -460,10 +458,14 @@ msgid "Courses"
 msgstr "Kursy"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "t_2u2K"
-msgid "{count, plural, one {# short lesson} other {# short lessons}}"
-msgstr "{count, plural, one {# krótka lekcja} few {# krótkie lekcje} other {# krótkich lekcji}}"
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+#: src/app/[lang]/(home)/_components/career-section.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "n7xPkB"
+msgid "{count, plural, one {# lesson} other {# lessons}}"
+msgstr "{count, plural, one {# lekcja} few {# lekcje} other {# lekcji}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
@@ -478,14 +480,6 @@ msgstr "Lekcje"
 msgctxt "BGwIJy"
 msgid "Chapter {number} of {total}"
 msgstr "Rozdział {number} z {total}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-#: src/app/[lang]/(home)/_components/career-section.tsx
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "n7xPkB"
-msgid "{count, plural, one {# lesson} other {# lessons}}"
-msgstr "{count, plural, one {# lekcja} few {# lekcje} other {# lekcji}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-course-start.tsx
 msgctxt "Ethu_P"
@@ -601,6 +595,11 @@ msgctxt "SFqn9B"
 msgid "Try a lesson"
 msgstr "Wypróbuj lekcję"
 
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/edition-notice.tsx
+msgctxt "mHs85k"
+msgid "This course is also in {language}."
+msgstr "Ten kurs ma też inną wersję językową: {language}."
+
 #. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "rEPdIs"
@@ -621,11 +620,6 @@ msgstr "{count, plural, one {# rozdział} few {# rozdziały} many {# rozdziałó
 msgctxt "yjO9gi"
 msgid "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know."
 msgstr "Gdy ułożysz plan, Zoonk przygotuje lekcje tego kursu, zaczynając od tego, co już wiesz."
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-msgctxt "FwtWUq"
-msgid "This course is also available in your language."
-msgstr "Ten kurs jest też dostępny w twoim języku."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "vZu-i7"
@@ -1573,6 +1567,7 @@ msgid "They show up after your first lesson."
 msgstr "Pojawią się po pierwszej lekcji."
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+#: src/components/catalog/catalog-not-found.tsx
 #: src/components/public/not-found-message.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
@@ -2875,13 +2870,6 @@ msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "Zaloguj się, aby kontynuować"
 
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/public/course-start-failure.tsx
-msgctxt "d82w2J"
-msgid "Create a free account"
-msgstr "Utwórz bezpłatne konto"
-
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"
 msgid "Back to top"
@@ -3093,6 +3081,11 @@ msgid "Example · {time} a day, about {count, plural, one {# short lesson} other
 msgstr "Przykład · {time} dziennie, około {count, plural, one {# krótkiej lekcji} other {# krótkich lekcji}}"
 
 #: src/components/pricing/plus-adds.tsx
+msgctxt "EGA7KK"
+msgid "One block is one study day"
+msgstr "Jeden blok to jeden dzień nauki"
+
+#: src/components/pricing/plus-adds.tsx
 msgctxt "tbnyhv"
 msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
 msgstr "{lessons, plural, one {# lekcja} few {# lekcje} other {# lekcji}}: {days, plural, =5 {mniej więcej pierwszy tydzień} =10 {mniej więcej pierwsze dwa tygodnie} one {pierwszy dzień} other {pierwsze # dni nauki}}"
@@ -3103,9 +3096,9 @@ msgid "Every lesson, all month"
 msgstr "Wszystkie lekcje przez cały miesiąc"
 
 #: src/components/pricing/plus-benefits.tsx
-msgctxt "ktRBJl"
-msgid "Your whole exam plan, every day to the exam"
-msgstr "Cały twój plan nauki, dzień po dniu aż do egzaminu"
+msgctxt "v0Vpb-"
+msgid "Your whole study plan, every day to your deadline"
+msgstr "Twój pełny plan nauki na każdy dzień aż do wyznaczonego terminu"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "CRK05Z"
@@ -3156,11 +3149,6 @@ msgid "per month"
 msgstr "miesięcznie"
 
 #: src/components/pricing/plus-plan.tsx
-msgctxt "PMrrSl"
-msgid "Billed every month."
-msgstr "Płatność co miesiąc."
-
-#: src/components/pricing/plus-plan.tsx
 msgctxt "qxHg3H"
 msgid "per year"
 msgstr "rocznie"
@@ -3206,11 +3194,10 @@ msgctxt "ViRhm-"
 msgid "Zoonk pricing: free and Plus plans"
 msgstr "Cennik Zoonka: pakiety Free i Plus"
 
-#. The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "hCsrai"
-msgid "Follow your study plan all the way to your date."
-msgstr "Ucz się według swojego planu aż do wielkiego dnia."
+msgctxt "iMG-Wq"
+msgid "Follow your study plan all the way to your exam, move or deadline."
+msgstr "Realizuj swój plan nauki aż do egzaminu, przeprowadzki lub wyznaczonego terminu."
 
 #. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
@@ -3357,14 +3344,14 @@ msgid "become a data analyst by June"
 msgstr "zacząć pracę w analizie danych do czerwca"
 
 #: src/components/public/goal-form.tsx
-msgctxt "47CC_y"
-msgid "Write your goal in the box first, in your own words."
-msgstr "Najpierw wpisz w polu swój cel własnymi słowami."
-
-#: src/components/public/goal-form.tsx
 msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "Chcę"
+
+#: src/components/public/legal-company-number.tsx
+msgctxt "JEU0mM"
+msgid "Brazilian company number (CNPJ):"
+msgstr "Brazylijski numer rejestracyjny firmy (CNPJ):"
 
 #: src/components/public/not-found-message.tsx
 msgctxt "EdX_cR"

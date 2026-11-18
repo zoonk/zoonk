@@ -1334,7 +1334,7 @@ msgid "Earlier questions"
 msgstr "Perguntas anteriores"
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-entry.tsx
+#: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Criar meu plano"
@@ -5403,9 +5403,9 @@ msgid "IELTS, DELE, CELI and others"
 msgstr "IELTS, DELE, CELI e outros"
 
 #: src/language-aim/use-reason-copy.ts
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "Conseguir um certificado"
+msgctxt "3wvH7G"
+msgid "Pass an exam"
+msgstr "Passar em uma prova"
 
 #: src/language-aim/use-reason-copy.ts
 #: src/onboarding/steps/reason-step.tsx
@@ -7870,6 +7870,7 @@ msgstr "Costuma levar"
 
 #: src/mock/mock-chooser-picked.tsx
 #: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "Cerca de {time}"
@@ -8942,9 +8943,9 @@ msgid "Write your goal again"
 msgstr "Escreva seu objetivo de novo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Rt585I"
-msgid "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”."
-msgstr "O que você quer aprender ou ser capaz de fazer? Por exemplo: “passar na prova de direção”, “entender estatística para o trabalho” ou “falar francês na minha viagem”."
+msgctxt "M2yYBP"
+msgid "We couldn't tell what you want to learn from what you wrote."
+msgstr "A gente não conseguiu entender o que você quer aprender pelo que escreveu."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
@@ -9112,9 +9113,9 @@ msgid "Understanding your goal"
 msgstr "Entendendo seu objetivo"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "Du-NAs"
-msgid "We're reading your goal"
-msgstr "A gente está lendo seu objetivo"
+msgctxt "yN-ccj"
+msgid "Next, we'll show you what we understood."
+msgstr "A seguir, a gente vai mostrar o que entendeu."
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9329,6 +9330,11 @@ msgstr "{count, plural, one {Escolha pelo menos {time} por dia para seu # objeti
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Seu parceiro cresce enquanto você aprende."
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "pBUysu"
+msgid "We use it for examples, money and units in your lessons."
+msgstr "A gente usa essa informação para adaptar os exemplos, a moeda e as unidades das suas aulas."
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9624,9 +9630,9 @@ msgid "About you"
 msgstr "Sobre você"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "l7i_x_"
-msgid "The big ideas, in short"
-msgstr "As ideias principais, em resumo"
+msgctxt "SNyNNm"
+msgid "I want a quick look at the big ideas"
+msgstr "Quero uma visão geral das ideias principais"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "2ne17k"
@@ -9634,9 +9640,9 @@ msgid "Get an overview"
 msgstr "Ter uma visão geral"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "kYQaaW"
-msgid "The full path, from the basics to advanced"
-msgstr "A trilha completa, do básico ao avançado"
+msgctxt "KzC5E1"
+msgid "I want to go from the basics to advanced topics"
+msgstr "Quero ir do básico aos tópicos avançados"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "70ejro"
@@ -9644,9 +9650,9 @@ msgid "Understand it well"
 msgstr "Entender bem"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "yI7Bsd"
-msgid "Only what your work uses, in the order it needs"
-msgstr "Só o que você precisa no trabalho, na ordem em que vai usar"
+msgctxt "9KaXOx"
+msgid "I want to learn what I use at work"
+msgstr "Quero aprender o que uso no trabalho"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
@@ -9654,9 +9660,9 @@ msgid "Use it at work"
 msgstr "Usar no trabalho"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHQ_Su"
-msgid "What the new role needs, portfolio included"
-msgstr "O que a nova função exige, com portfólio incluído"
+msgctxt "J3TL_F"
+msgid "I want to learn what I need for a new role and build a portfolio"
+msgstr "Quero aprender o que preciso para uma nova função e montar um portfólio"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "D05Dha"
@@ -9664,9 +9670,9 @@ msgid "Change careers"
 msgstr "Mudar de carreira"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "cp6QBi"
-msgid "Back to the level I had, after a short test"
-msgstr "Voltar ao nível que eu tinha, depois de um teste rápido"
+msgctxt "rOoGXV"
+msgid "I want to get back to the level I had"
+msgstr "Quero voltar ao nível que eu tinha"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -9674,9 +9680,9 @@ msgid "Refresh what I studied"
 msgstr "Relembrar o que estudei"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHhNk1"
-msgid "Tell us later, in your own words"
-msgstr "Conte depois, com suas palavras"
+msgctxt "xAm26I"
+msgid "I want something different"
+msgstr "Quero algo diferente"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -9738,9 +9744,9 @@ msgid "Tell us a bit more"
 msgstr "Conte um pouco mais"
 
 #: src/onboarding/steps/reason-step.tsx
-msgctxt "P5KfyI"
-msgid "Which certificate?"
-msgstr "Qual certificado?"
+msgctxt "22M_i9"
+msgid "Which exam?"
+msgstr "Qual prova?"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "j4_o5O"

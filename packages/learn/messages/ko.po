@@ -1334,7 +1334,7 @@ msgid "Earlier questions"
 msgstr "이전 질문"
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-entry.tsx
+#: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "내 계획 만들기"
@@ -5403,9 +5403,9 @@ msgid "IELTS, DELE, CELI and others"
 msgstr "토익, DELE, CELI 등"
 
 #: src/language-aim/use-reason-copy.ts
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "어학시험 합격하기"
+msgctxt "3wvH7G"
+msgid "Pass an exam"
+msgstr "시험에 합격하기"
 
 #: src/language-aim/use-reason-copy.ts
 #: src/onboarding/steps/reason-step.tsx
@@ -7870,6 +7870,7 @@ msgstr "보통 걸리는 시간"
 
 #: src/mock/mock-chooser-picked.tsx
 #: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "약 {time}"
@@ -8942,9 +8943,9 @@ msgid "Write your goal again"
 msgstr "목표를 다시 써 보세요"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Rt585I"
-msgid "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”."
-msgstr "무엇을 배우거나 할 수 있게 되고 싶나요? 예를 들어 “운전면허 시험 합격하기”, “업무에 필요한 통계 이해하기”, “여행 중 프랑스어로 말하기”처럼 적어 보세요."
+msgctxt "M2yYBP"
+msgid "We couldn't tell what you want to learn from what you wrote."
+msgstr "적어 주신 내용만으로는 무엇을 배우고 싶은지 알기 어려웠어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
@@ -9112,9 +9113,9 @@ msgid "Understanding your goal"
 msgstr "목표를 파악하고 있어요"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "Du-NAs"
-msgid "We're reading your goal"
-msgstr "목표를 읽고 있어요"
+msgctxt "yN-ccj"
+msgid "Next, we'll show you what we understood."
+msgstr "다음에는 이해한 내용을 보여 드릴게요."
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9329,6 +9330,11 @@ msgstr "{count, plural, other {하루에 최소 {time}씩 목표 #개를 위한 
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "배울수록 짝꿍도 자라요."
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "pBUysu"
+msgid "We use it for examples, money and units in your lessons."
+msgstr "레슨에 나오는 예시, 화폐, 단위를 나라에 맞춰 정해요."
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9624,9 +9630,9 @@ msgid "About you"
 msgstr "내 소개"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "l7i_x_"
-msgid "The big ideas, in short"
-msgstr "핵심 개념을 간단히"
+msgctxt "SNyNNm"
+msgid "I want a quick look at the big ideas"
+msgstr "핵심 개념을 빠르게 훑어보고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "2ne17k"
@@ -9634,9 +9640,9 @@ msgid "Get an overview"
 msgstr "전체적인 흐름을 알고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "kYQaaW"
-msgid "The full path, from the basics to advanced"
-msgstr "기초부터 고급까지 배우는 전체 코스"
+msgctxt "KzC5E1"
+msgid "I want to go from the basics to advanced topics"
+msgstr "기초부터 심화 내용까지 배우고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "70ejro"
@@ -9644,9 +9650,9 @@ msgid "Understand it well"
 msgstr "제대로 이해하기"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "yI7Bsd"
-msgid "Only what your work uses, in the order it needs"
-msgstr "일에 필요한 내용만, 필요한 순서대로"
+msgctxt "9KaXOx"
+msgid "I want to learn what I use at work"
+msgstr "업무에 쓰는 내용을 배우고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
@@ -9654,9 +9660,9 @@ msgid "Use it at work"
 msgstr "업무에 활용하고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHQ_Su"
-msgid "What the new role needs, portfolio included"
-msgstr "새 직무에 필요한 내용부터 포트폴리오까지"
+msgctxt "J3TL_F"
+msgid "I want to learn what I need for a new role and build a portfolio"
+msgstr "새로운 직무에 필요한 내용을 배우고 포트폴리오를 만들고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "D05Dha"
@@ -9664,9 +9670,9 @@ msgid "Change careers"
 msgstr "직업을 바꾸고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "cp6QBi"
-msgid "Back to the level I had, after a short test"
-msgstr "짧은 테스트를 보고 예전 실력을 되찾아요"
+msgctxt "rOoGXV"
+msgid "I want to get back to the level I had"
+msgstr "예전 실력을 되찾고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -9674,9 +9680,9 @@ msgid "Refresh what I studied"
 msgstr "배운 내용을 다시 익히고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHhNk1"
-msgid "Tell us later, in your own words"
-msgstr "나중에 자유롭게 적어 주세요"
+msgctxt "xAm26I"
+msgid "I want something different"
+msgstr "원하는 게 따로 있어요"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -9738,9 +9744,9 @@ msgid "Tell us a bit more"
 msgstr "조금 더 알려 주세요"
 
 #: src/onboarding/steps/reason-step.tsx
-msgctxt "P5KfyI"
-msgid "Which certificate?"
-msgstr "어떤 인증서인가요?"
+msgctxt "22M_i9"
+msgid "Which exam?"
+msgstr "어떤 시험인가요?"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "j4_o5O"

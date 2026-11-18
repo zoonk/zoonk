@@ -24,9 +24,9 @@ msgid "We couldn't log you in. Try again."
 msgstr "로그인하지 못했어요. 다시 시도해 보세요."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
-msgctxt "YRe93Y"
-msgid "Enter a valid email address"
-msgstr "올바른 이메일 주소를 입력하세요"
+msgctxt "TBZNYA"
+msgid "Enter a valid email address."
+msgstr "올바른 이메일 주소를 입력하세요."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
@@ -178,19 +178,19 @@ msgid "Use 150 characters or fewer."
 msgstr "150자 이내로 입력해 주세요."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Zoonk로 이동하기"
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
 msgid "That link didn't work"
 msgstr "링크를 열 수 없어요"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "4Wp5HU"
-msgid "The link may have expired. Go to Zoonk and log in again for a new one."
-msgstr "링크가 만료되었을 수 있어요. Zoonk에서 다시 로그인해 새 링크를 받아 보세요."
-
-#: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Zoonk로 이동하기"
+msgctxt "__q7P3"
+msgid "Go to Zoonk and log in again."
+msgstr "Zoonk로 이동해 다시 로그인해 주세요."
 
 #. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
 #: src/components/auth-frame.tsx

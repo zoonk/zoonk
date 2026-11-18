@@ -24,9 +24,9 @@ msgid "We couldn't log you in. Try again."
 msgstr "Nie udało się zalogować. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
-msgctxt "YRe93Y"
-msgid "Enter a valid email address"
-msgstr "Wpisz poprawny adres e-mail"
+msgctxt "TBZNYA"
+msgid "Enter a valid email address."
+msgstr "Wpisz poprawny adres e-mail."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
@@ -178,19 +178,19 @@ msgid "Use 150 characters or fewer."
 msgstr "Wpisz maksymalnie 150 znaków."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Przejdź do Zoonka"
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
 msgid "That link didn't work"
 msgstr "Ten link nie zadziałał"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "4Wp5HU"
-msgid "The link may have expired. Go to Zoonk and log in again for a new one."
-msgstr "Link mógł wygasnąć. Przejdź do Zoonka i zaloguj się ponownie, aby otrzymać nowy."
-
-#: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Przejdź do Zoonka"
+msgctxt "__q7P3"
+msgid "Go to Zoonk and log in again."
+msgstr "Przejdź do Zoonka i zaloguj się ponownie."
 
 #. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
 #: src/components/auth-frame.tsx
