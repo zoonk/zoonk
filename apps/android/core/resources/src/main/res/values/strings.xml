@@ -56,7 +56,7 @@
     <string name="exam_choice_pick_up_to">Pick up to %1$d.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="weekend_time_differs">Different time on weekends</string>
-    <string name="weekend_time_label">Time on weekends</string>
+    <string name="weekend_time_label">Weekend time</string>
     <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
     <string name="weekend_time_add_weekend_day">Add Saturday or Sunday to your study days.</string>
     <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->

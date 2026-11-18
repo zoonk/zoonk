@@ -284,7 +284,7 @@
   "onboarding_reveal_most_questions": "60041a16529598dd029c4195363de683a33ef54b399544c5a30c573e72d78c92",
   "onboarding_reveal_no_sitting": "ad4bbd500f5419e0ddbe235976cf0e9483d1b2583c656f0c9381c7b2e790d4cf",
   "onboarding_reveal_notice_day_estimated": "cd30787795e54f1fc885741390d4b86005d8aa8fb223a570aafe51d08aac15ad",
-  "onboarding_reveal_notice_day_notice": "c07bb2d4efba04c56c00e5cec7e4a5a20e68cb33b9b2742a9eab331fbef24618",
+  "onboarding_reveal_notice_day_notice": "5a6a90ec083b4d6e89dd8fa23bb9ce2d49f41211e96742d3aa9770533e438c84",
   "onboarding_reveal_notice_subjects": "9c61d929b43dad5381edd8096adf538e5b9d29cf53ddb3a1015296f65bf720e7",
   "onboarding_reveal_pace_covers": "c90fd5b2825bb6bfacd89a2ca47475b5707e15e033d299cffb0ad41c19c15694",
   "onboarding_reveal_pace_time": "2772903b46464bd116c89286a4c4f6909d083ee20b13594d447cb89b74401813",
@@ -355,7 +355,7 @@
   "onboarding_row_material": "1646e8f11b3f1d150be03e0b2bcd177e6e2e5fb63a1fc82ac31235e3a72cdac6",
   "onboarding_row_material_note": "063e584a90bc127b7b77b42d1ab4149023de7e95e9d2ced35cb635de38a37546",
   "onboarding_row_minutes_a_day": "1fc429e09904fd162c8db767b02d748a86b6a28a80a187594a1303ba622cc85c",
-  "onboarding_row_notice_says": "7975c9124071309679431cb4eb9b5d2ce990a6eb3423e008b5d2ac908f44ea16",
+  "onboarding_row_notice_says": "fd4dd5435ac7cc816f06fd9ba35219b7dde7d3663ad785ba810d7b2653fe85e4",
   "onboarding_row_pick_date": "30507fa38de2b3730fa8e95bcaf98bf5576c8a19f368d690324d18306d01783a",
   "onboarding_row_position": "ac871aa91bada1d4727e15db2f807d3573392a0130bd7258620bf1f75a8cdff3",
   "onboarding_row_reason": "6f6d7c14f3b5fd924944be9b8434c03bcf3b7e9c2731d020eed3bb9d00182093",
@@ -557,7 +557,7 @@
     <string name="onboarding_row_dates_estimated">예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요.</string>
     <string name="onboarding_row_pick_date">날짜 선택하기</string>
     <string name="onboarding_row_several_sittings">이 시험은 매년 여러 번 열려요. 날짜를 고르기 전까지는 첫 번째 시험일을 기준으로 계획을 세워요.</string>
-    <string name="onboarding_row_notice_says">시험은 %1$s에 있어요.</string>
+    <string name="onboarding_row_notice_says">공식 시험일은 %1$s이에요. 이 날짜를 시험일로 설정할까요?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요.</string>
@@ -743,7 +743,7 @@
     <string name="onboarding_reveal_phase_light_review">가벼운 복습</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">현재 예상 시험일은 %1$s이에요.</string>
-    <string name="onboarding_reveal_notice_day_notice">시험은 %1$s에 있어요.</string>
+    <string name="onboarding_reveal_notice_day_notice">공식 시험일은 %1$s이에요. 이 날짜를 시험일로 설정할까요?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s에는 예정된 시험이 없어요</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->

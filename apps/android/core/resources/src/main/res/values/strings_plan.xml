@@ -40,9 +40,9 @@
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Name</string>
     <string name="plan_rename_description">Choose a name you recognize. Your study plan stays the same.</string>
-    <string name="plan_pause_goal">Pause this goal</string>
-    <string name="plan_resume_goal">Resume this goal</string>
-    <string name="plan_archive_goal">Archive this goal</string>
+    <string name="plan_pause_goal">Pause goal</string>
+    <string name="plan_resume_goal">Resume goal</string>
+    <string name="plan_archive_goal">Archive goal</string>
     <!-- The button that archives a goal whose exam date has passed; it asks first. -->
     <string name="plan_archive_goal_short">Archive goal</string>
     <string name="plan_keep_studying">Keep studying</string>
@@ -345,7 +345,7 @@
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
-    <string name="plan_change_notice_says">The exam is on %1$s.</string>
+    <string name="plan_change_notice_says">The official exam date is %1$s. Use it as your exam date?</string>
     <string name="plan_change_keep_official_date">Keep official date</string>
     <string name="plan_change_daily_time_changed">You now study %1$s a day.</string>
     <string name="plan_change_rest_day">%1$s: rest day.</string>
@@ -397,7 +397,7 @@
     <string name="plan_change_start_past_basics">Your plan skips the basics of %1$s.</string>
     <string name="plan_change_tool_setup">A lesson to set up %1$s on %2$s comes before you need it.</string>
     <string name="plan_change_tool_have">You have %1$s, so there\'s nothing to set up.</string>
-    <string name="plan_change_tool_none">No install for %1$s: you\'ll learn with examples.</string>
+    <string name="plan_change_tool_none">You won\'t use %1$s: you\'ll learn with examples.</string>
     <string name="plan_system_chromebook" translatable="false">Chromebook</string>
     <string name="plan_system_linux" translatable="false">Linux</string>
     <string name="plan_system_macos" translatable="false">macOS</string>

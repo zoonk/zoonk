@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "72de2f82f591b70cbe8f2966f073a2a1faed1cf18164770127d26671f7ba9af2",
   "mock_result_easy_questions": "3e21aa69c7b170b5512f819dae37b4db01f43cc2bda50042da547c53d7608410",
   "mock_result_estimate_detail": "d0cdcb4b92b75d0d5db930302c10eae0c2f74d8c355e0b69cda633b715927474",
-  "mock_result_estimated_exam_score": "a0dd99fa1c8b630409de25151991b58d06afc187503c43144ef90d11e6c2ad2a",
+  "mock_result_estimated_exam_score": "3ab95cdef6dda8aea23af9537e8d0c96bdd222372dc343185d0ceec34f7c1ddc",
   "mock_result_estimated_score": "4d6ccbdec1afa34f24e99a45c8ce6d84869892b7180498cf32ac59c71e0c2528",
   "mock_result_every_minimum": "53d525cf6aea834bd466e2705af6b190b864ccfe9315ef50ab8a5b21ee1f8901",
   "mock_result_flagged_answers": "9f256f3c177a679cae7bfb7505d8f2cf5d889de71d9853a740cc5e996c75b5d8",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Score estimé</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Score estimé pour %1$s</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Score estimé · %1$s</string>
     <string name="mock_result_net_score">Score sur %1$d</string>
     <string name="mock_result_right_answers">Bonnes réponses</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

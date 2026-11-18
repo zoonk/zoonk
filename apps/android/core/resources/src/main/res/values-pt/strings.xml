@@ -80,7 +80,7 @@
   "weekend_time_add_weekday": "dd1ab21dda40813dd61600b2d83c3322e9f5ea1a6dba676f5be92529ccf96a66",
   "weekend_time_add_weekend_day": "7e8f03c3c3d4356fe9dc5978feabf4bbb176fd2eab9e5a80089dd78e2941ad7a",
   "weekend_time_differs": "5dca3c6b81751b1109d1279eee43d913e186376b81ae3119a23eb5a9b43fe102",
-  "weekend_time_label": "9de37e5847d6ddfb81b26edebd04b49d27b1e82381b3506c6e27554b7c8aba40"
+  "weekend_time_label": "b53fe5bb0ca4efcb4c98c0150b07a7dd7a05c2e843bece4aa84978c541debd20"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -139,7 +139,7 @@
     <string name="exam_choice_pick_up_to">Escolha até %1$d.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="weekend_time_differs">Tempo de estudo diferente nos fins de semana</string>
-    <string name="weekend_time_label">Tempo nos fins de semana</string>
+    <string name="weekend_time_label">Tempo no fim de semana</string>
     <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
     <string name="weekend_time_add_weekend_day">Adicione sábado ou domingo aos seus dias de estudo.</string>
     <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->

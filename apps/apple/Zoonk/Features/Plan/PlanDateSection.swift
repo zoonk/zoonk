@@ -154,9 +154,5 @@ func planNoticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay, document: ExamD
     )
   }
 
-  return Text(
-    "The exam is on \(date).", tableName: "Plan",
-    comment:
-      "The exam's day its notice or official calendar gives; the argument is a date like 'May 5, 2027'"
-  )
+  return Text("The official exam date is \(date). Use it as your exam date?", tableName: "Plan")
 }

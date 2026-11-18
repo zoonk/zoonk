@@ -23,7 +23,9 @@ export function useNoticeDayText() {
   return ({ date, estimated }: NoticeDay): string =>
     estimated
       ? t("The exam's likely date is now {date}.", { date: formatDate(date, "sentence") })
-      : t("The exam is on {date}.", { date: formatDate(date, "sentence") });
+      : t("The official exam date is {date}. Use it as your exam date?", {
+          date: formatDate(date, "sentence"),
+        });
 }
 
 export function NoSittingWords({
@@ -101,17 +103,7 @@ function CalendarTile() {
   );
 }
 
-function NoticeDayCard({
-  day,
-  examName,
-  onUse,
-}: {
-  day: NoticeDay;
-  examName: string;
-  onUse: () => Promise<boolean>;
-}) {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+function NoticeDayCard({ day, onUse }: { day: NoticeDay; onUse: () => Promise<boolean> }) {
   const text = useNoticeDayText();
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
@@ -130,14 +122,7 @@ function NoticeDayCard({
       <CalendarTile />
 
       <NoticeCardContent>
-        <NoticeCardTitle>
-          {day.estimated
-            ? text(day)
-            : t("The official {exam} date is {date}. Use it as your exam date?", {
-                date: formatDate(day.date, "sentence", { year: "always" }),
-                exam: examName,
-              })}
-        </NoticeCardTitle>
+        <NoticeCardTitle>{text(day)}</NoticeCardTitle>
         <NoticeCardActions>
           <UseDateButton busy={isPending} onUse={use} />
         </NoticeCardActions>
@@ -201,21 +186,17 @@ function NoSittingCard({
 }
 
 export function NoticeDatesCard({
-  examName,
   noSitting,
   noticeDay,
   onUse,
 }: {
-  examName: string;
   noSitting: NoSitting | null;
   noticeDay: NoticeDay | null;
   /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   if (noticeDay) {
-    return (
-      <NoticeDayCard day={noticeDay} examName={examName} onUse={() => onUse(noticeDay.date)} />
-    );
+    return <NoticeDayCard day={noticeDay} onUse={() => onUse(noticeDay.date)} />;
   }
 
   return noSitting ? <NoSittingCard noSitting={noSitting} onUse={onUse} /> : null;
