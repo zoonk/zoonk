@@ -2,6 +2,11 @@ import Foundation
 
 /// Mirrors main's `useFormatNumber` (`@zoonk/utils/math-answer`).
 enum ActivityNumberFormat {
+  static func currencyUnit(_ unit: String?) -> String? { money(unit) == nil ? nil : unit }
+  static func guess(_ value: Double, unit: String?, locale: Locale = .courseLanguage) -> String {
+    format(value, unit: currencyUnit(unit), locale: locale)
+  }
+
   private static let currencies: [String: String] = [
     "$": "USD", "A$": "AUD", "C$": "CAD", "R$": "BRL", "US$": "USD", "£": "GBP", "¥": "JPY",
     "€": "EUR", "₹": "INR",
@@ -53,11 +58,6 @@ enum ActivityNumberFormat {
     }
 
     return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
-  }
-
-  /// Whether a unit is money ("$", "R$ por metro"), which an amount always carries.
-  static func isMoney(_ unit: String) -> Bool {
-    money(unit) != nil
   }
 
   /// Main's `formatLocalizedNumber` with `percent`.

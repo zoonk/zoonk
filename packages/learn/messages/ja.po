@@ -621,7 +621,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "いつもより時間がかかっています。自動で開くので、もう一度タップしなくても大丈夫です。"
 
 #: src/_components/practice-outcome-message.tsx
-#: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
@@ -804,6 +803,11 @@ msgstr "サイドバーを展開する"
 msgctxt "y7b8vA"
 msgid "Screen options"
 msgstr "画面のオプション"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "WE1eNa"
+msgid "The test didn't open. Try again."
+msgstr "テストを開けませんでした。もう一度お試しください。"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1288,6 +1292,7 @@ msgid "Energy"
 msgstr "エネルギー"
 
 #: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
 #: src/missions/missions-card.tsx
 #: src/session/summary/summary-rewards.tsx
 msgctxt "IFviMa"
@@ -1448,11 +1453,6 @@ msgstr "今日の{buddy}"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだです"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {#個のミッションを完了（全{total}個）} other {ミッションを#個完了（全{total}個）}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -7484,6 +7484,12 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr "、今日のレッスンのあと"
 
+#. Under the title Today's missions: how many of today's missions are done.
+#: src/missions/mission-list.tsx
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done}件完了（全{total}件）"
+
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
@@ -7503,12 +7509,6 @@ msgstr "{count, plural, other {あと#ミッションで脳力+{points}}}"
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "脳力を+{points}獲得しました。"
-
-#. Under the title Today's missions: how many of today's missions are done.
-#: src/missions/missions-card.tsx
-msgctxt "deISVW"
-msgid "{done} of {total} done"
-msgstr "{done}件完了（全{total}件）"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
@@ -11485,6 +11485,9 @@ msgid "We couldn't find a date that covers everything."
 msgstr "すべてを学び終える日を見つけられませんでした。"
 
 #: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "OgCCUY"
 msgid "See what changes"
 msgstr "変更内容を見る"
@@ -12769,15 +12772,15 @@ msgid "We couldn't start this goal. Try again."
 msgstr "この目標を始められませんでした。もう一度お試しください。"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr "、現在の目標。目標を切り替える"
-
-#: src/shell/goal-switcher.tsx
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "目標"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr "、現在の目標。目標を切り替える"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
@@ -13349,6 +13352,11 @@ msgstr "おかえりなさい。今日の学習は短めなので、気軽に再
 msgctxt "Viq1rs"
 msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}まであと{days, plural, other {#日}}"
+
+#: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "答える"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"

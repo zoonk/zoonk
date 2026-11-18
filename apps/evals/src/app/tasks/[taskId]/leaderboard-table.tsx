@@ -217,7 +217,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
       </div>
 
       {/* Each column keeps its content's width and a wide table scrolls, so "More columns" moves no column. */}
-      <Table scrollLabels={SCROLL_LABELS} className="w-max">
+      <Table scrollLabels={SCROLL_LABELS}>
         <TableHeader>
           <TableRow>
             {shownColumns.map((column) => (

@@ -210,7 +210,7 @@ export function FallingBehindNotice({
         ) : (
           <>
             <SuggestionSummary>{title}</SuggestionSummary>
-            <SuggestionOpen />
+            <SuggestionOpen>{t("See what changes")}</SuggestionOpen>
           </>
         )}
       </SuggestionLine>

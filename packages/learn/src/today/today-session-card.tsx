@@ -83,6 +83,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
   const listRef = useRef<HTMLOListElement>(null);
   const revealFrom = useRef<number | null>(null);
   const opens = next !== null;
+  const showSubject = new Set(blocks.map((block) => block.subject).filter(Boolean)).size > 1;
   const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next?.position ?? null });
   const foldsDone = done.length > DONE_ROWS;
   const doneLabel = useDoneFoldLabel(done);
@@ -131,16 +132,24 @@ function SessionQueue({ next }: { next: DayStep | null }) {
 
       <ol className="flex flex-col" id={SESSION_LIST_ID} ref={listRef} style={rowTimeStyle}>
         {(!foldsDone || doneOpen) &&
-          done.map((block) => <BlockRow block={block} isNext={false} key={block.position} />)}
+          done.map((block) => (
+            <BlockRow block={block} isNext={false} key={block.position} showSubject={showSubject} />
+          ))}
 
         {before.map((block) => (
-          <BlockRow block={block} isNext={false} key={block.position} />
+          <BlockRow block={block} isNext={false} key={block.position} showSubject={showSubject} />
         ))}
 
-        {next && <BlockRow block={next} isNext />}
+        {next && <BlockRow block={next} isNext showSubject={showSubject} />}
 
         {(moreOpen ? after : after.slice(0, UPCOMING_ROWS)).map((block) => (
-          <BlockRow block={block} isNext={false} key={block.position} opens={opens} />
+          <BlockRow
+            block={block}
+            isNext={false}
+            key={block.position}
+            opens={opens}
+            showSubject={showSubject}
+          />
         ))}
 
         {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}

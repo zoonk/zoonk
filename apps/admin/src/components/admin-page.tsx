@@ -46,7 +46,7 @@ export function AdminPageBody({ children, className }: React.ComponentProps<"sec
  */
 export function AdminToolbar({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex min-h-11 flex-wrap items-center gap-x-6 gap-y-2", className)}>
+    <div className={cn("flex min-h-11 flex-wrap items-center gap-x-6 gap-y-3", className)}>
       {children}
     </div>
   );

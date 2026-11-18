@@ -14,25 +14,20 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
-import { MissionListRow, ProgressCount } from "./mission-list";
+import { MissionListRow, MissionsDoneCount, ProgressCount } from "./mission-list";
 import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
 
 function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
-  const t = useExtracted();
   const done = countDoneMissions(missions);
 
   if (done === missions.length) {
     return null;
   }
 
-  return t({
-    description: "Under the title Today's missions: how many of today's missions are done.",
-    message: "{done} of {total} done",
-    values: { done: String(done), total: String(missions.length) },
-  });
+  return <MissionsDoneCount done={done} total={missions.length} />;
 }
 
 function MissionRow({

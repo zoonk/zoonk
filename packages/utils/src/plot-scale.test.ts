@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { createLinearScale, niceDomain, niceTicks } from "./plot-scale";
+import {
+  createLinearScale,
+  fittingTickIndices,
+  fittingTicks,
+  niceDomain,
+  niceTicks,
+} from "./plot-scale";
 
 describe(createLinearScale, () => {
   it("maps data onto pixels and back, including flipped ranges", () => {
@@ -47,5 +53,51 @@ describe(niceDomain, () => {
     expect(niceDomain([Number.NaN, 4])).toStrictEqual([0, 4]);
     expect(niceDomain([])).toStrictEqual([0, 1]);
     expect(niceDomain([], { includeZero: false })).toStrictEqual([0, 1]);
+  });
+});
+
+describe("category tick thinning", () => {
+  it("keeps uniformly spaced category labels when crowded", () => {
+    expect(
+      fittingTickIndices([
+        { left: 0, right: 14 },
+        { left: 20, right: 63 },
+        { left: 59, right: 102 },
+        { left: 98, right: 141 },
+      ]),
+    ).toStrictEqual([0, 2]);
+
+    expect(
+      fittingTickIndices([
+        { left: 0, right: 14 },
+        { left: 60, right: 103 },
+        { left: 120, right: 163 },
+        { left: 180, right: 223 },
+      ]),
+    ).toStrictEqual([0, 1, 2, 3]);
+  });
+});
+
+describe("round tick fitting", () => {
+  it("lowers the nice count when labels crowd, retaining the readable crossing tick", () => {
+    expect(
+      fittingTicks({
+        domain: [0, 375],
+        frame: (value) => {
+          const x = (value / 375) * 140;
+          return { left: x, right: x + (value === 0 ? 14 : 43) };
+        },
+      }),
+    ).toStrictEqual([0, 200]);
+
+    expect(
+      fittingTicks({
+        domain: [0, 375],
+        frame: (value) => {
+          const x = (value / 375) * 400;
+          return { left: x, right: x + 25 };
+        },
+      }),
+    ).toStrictEqual([0, 100, 200, 300]);
   });
 });

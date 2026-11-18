@@ -183,6 +183,12 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "O som não carregou. Você ainda pode ver todas as notas."
 
+#. Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h
+#: src/activities/_components/guess-format.ts
+msgctxt "rfH5Nn"
+msgid "in {unit}"
+msgstr "em {unit}"
+
 #: src/activities/_components/guitar-fretboard.tsx
 msgctxt "MgBNC_"
 msgid "Play without pressing a fret"

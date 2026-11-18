@@ -143,17 +143,9 @@ struct LineCrossingCanvas: View {
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
     .chartPlotStyle { plot in plot.frame(minHeight: 248).clipped() }
-    .chartXAxisLabel(fields.xLabel, alignment: .trailing)
-    .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
-    .chartsXAxis {
-      ChartsAxis.bottom(ticks: ChartsAxis.ticks(0...domain.x)) {
-        ActivityNumberFormat.format($0)
-      }
-    }
+    .chartsXAxis(domain: 0...domain.x) { ActivityNumberFormat.format($0) }
     .chartYAxis {
-      ChartsAxis.values(ticks: ChartsAxis.ticks(0...domain.y)) {
-        ActivityNumberFormat.format($0)
-      }
+      ChartsAxis.values(ticks: ChartsAxis.ticks(0...domain.y)) { ActivityNumberFormat.format($0) }
     }
     .chartsMarksHidden()
     .chartOverlay { proxy in
@@ -188,11 +180,11 @@ struct LineCrossingCanvas: View {
                 segment: segment(line(field, [field.id: realOffset])), color: .vizHighlight,
                 isUpper: false)
             }.map { [$0] } ?? []
-          let handles = names.enumerated().map { index, name in
-            let share = index == 0 ? 0.8 : 0.2
-            let x = name.segment.from.x + (name.segment.to.x - name.segment.from.x) * share
-            let y = name.segment.from.y + (name.segment.to.y - name.segment.from.y) * share
-            return CGRect(x: x - 14, y: y - 14, width: 28, height: 28)
+          let handles = fields.lines.enumerated().map { index, field in
+            let center = point(handlePosition(field, index: index, plot: plot, domain: domain))
+            let radius = ChartsHandle.radius + 3
+            return CGRect(
+              x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
           }
           let cross = point(after)
           LineCrossingLabels(
@@ -201,7 +193,8 @@ struct LineCrossingCanvas: View {
             guides: [
               .init(from: CGPoint(x: cross.x, y: plot.maxY), to: cross),
               .init(from: CGPoint(x: plot.minX, y: cross.y), to: cross),
-            ], obstacles: handles + [CGRect(x: cross.x - 7, y: cross.y - 7, width: 14, height: 14)])
+            ], obstacles: handles + [CGRect(x: cross.x - 7, y: cross.y - 7, width: 14, height: 14)]
+          )
           ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
             handle(field, index: index, proxy: proxy, plot: plot, domain: domain, changes: changes)
           }
@@ -212,6 +205,9 @@ struct LineCrossingCanvas: View {
     .chartsPlotText()
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text(verbatim: summary(changes: changes)))
+    .chartsAxisTitles(
+      x: fields.xLabel, y: fields.yLabel,
+      values: ChartsAxis.ticks(0...domain.y).map { ActivityNumberFormat.format($0) })
   }
 
   private func segmentMarks(
@@ -228,16 +224,23 @@ struct LineCrossingCanvas: View {
     }
   }
 
+  private func handlePosition(
+    _ field: LineCrossingFields.Line, index: Int, plot: CGRect, domain: LineCrossingModel.Point
+  ) -> LineCrossingModel.Point {
+    LineCrossingModel.handlePoint(
+      line(field, offsets), domain: domain,
+      share: index == 0 ? 0.8 : 0.2, plot: .init(x: plot.width, y: plot.height),
+      radius: ChartsHandle.radius)
+  }
+
   private func handle(
     _ field: LineCrossingFields.Line, index: Int, proxy: ChartProxy, plot: CGRect,
     domain: LineCrossingModel.Point, changes: String
   ) -> some View {
-    let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
-    let share = index == 0 ? 0.8 : 0.2
-    let x = segment.from.x + (segment.to.x - segment.from.x) * share
+    let position = handlePosition(field, index: index, plot: plot, domain: domain)
     let point = CGPoint(
-      x: plot.minX + (proxy.position(forX: x) ?? 0),
-      y: plot.minY + (proxy.position(forY: line(field, offsets).y(at: x)) ?? 0))
+      x: plot.minX + (proxy.position(forX: position.x) ?? 0),
+      y: plot.minY + (proxy.position(forY: position.y) ?? 0))
     let range = LineCrossingModel.range(fields.shift.amount)
     let offset = offsets[field.id] ?? 0
 

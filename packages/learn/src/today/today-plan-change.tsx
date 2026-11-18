@@ -229,7 +229,7 @@ function PlanChangeNotice({
         ) : (
           <SuggestionSummary>{words.title}</SuggestionSummary>
         )}
-        {result ? after : <SuggestionOpen />}
+        {result ? after : <SuggestionOpen>{t("See what changes")}</SuggestionOpen>}
       </SuggestionLine>
 
       <SuggestionContent>

@@ -39,10 +39,12 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
 
 export function TestOutStartStatus({
   className,
+  compact = false,
   isPending,
   result,
 }: {
   className?: string;
+  compact?: boolean;
   isPending: boolean;
   result: TestOutStart | null;
 }) {
@@ -51,14 +53,14 @@ export function TestOutStartStatus({
   const shown = isPending ? null : result;
 
   return (
-    <StatusRegion className={className}>
+    <StatusRegion className={className} data-slot="test-out-start-status">
       {shown?.status === "refused" && (
         <HelpLimitNotice limit={shown.limit} linkComponent={LearnLink} routes={routes} />
       )}
 
       {shown?.status === "failed" && (
-        <p className="text-muted-foreground text-sm">
-          {t("That didn't work. Try again in a moment.")}
+        <p className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}>
+          {t("The test didn't open. Try again.")}
         </p>
       )}
     </StatusRegion>
@@ -66,10 +68,10 @@ export function TestOutStartStatus({
 }
 
 export function TestOutStartLink({
-  className,
+  compact = false,
   onStart,
 }: {
-  className?: string;
+  compact?: boolean;
   onStart: () => Promise<TestOutStart>;
 }) {
   const t = useExtracted();
@@ -77,8 +79,11 @@ export function TestOutStartLink({
   const space = useSentenceSpace();
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <form action={start} className={cn("text-muted-foreground text-sm", className)}>
+    <div className={cn("flex flex-col items-start", compact ? "relative gap-px" : "gap-2")}>
+      <form
+        action={start}
+        className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}
+      >
         {t("Already know this?")}
         {space}
         <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
@@ -86,7 +91,7 @@ export function TestOutStartLink({
         </Button>
       </form>
 
-      <TestOutStartStatus isPending={isPending} result={result} />
+      <TestOutStartStatus compact={compact} isPending={isPending} result={result} />
     </div>
   );
 }

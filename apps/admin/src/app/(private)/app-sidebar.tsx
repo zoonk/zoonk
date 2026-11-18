@@ -96,7 +96,11 @@ export function AppSidebar({ account, counts }: AdminSidebarProps) {
       {/* One row, so the whole navigation fits a laptop's height. The toggle comes first at both
           widths, beside the search and, collapsed, above it, so it's read where it's drawn. */}
       <SidebarHeader className="sidebar-collapsed:flex-col sidebar-collapsed:gap-4 flex-row items-center gap-1">
-        <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
+        <SidebarToggle
+          className="hover:bg-transparent"
+          collapseLabel="Collapse sidebar"
+          expandLabel="Expand sidebar"
+        />
         <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 

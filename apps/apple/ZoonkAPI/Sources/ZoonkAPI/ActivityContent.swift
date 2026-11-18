@@ -241,6 +241,7 @@ public struct ActivityBaseMap: Codable, Hashable, Sendable {
   }
 
   public struct Street: Codable, Hashable, Sendable {
+    public let name: String
     public let path: String
   }
 

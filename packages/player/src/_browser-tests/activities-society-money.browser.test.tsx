@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -18,6 +18,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const fixtures = activityContentFixtures;
 
@@ -172,6 +173,13 @@ describe("money and society activities", () => {
 
   it("line crossing: moving the cost line up gives the new break-even", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
+    await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+    const plot = document.querySelector('[data-slot="activity-plot"]');
+
+    expect(
+      [...(plot?.querySelectorAll("text") ?? [])].map((text) => text.textContent),
+    ).toStrictEqual(expect.arrayContaining(["0", "100", "200", "300", "2,000", "4,000"]));
+
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
     await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");
@@ -230,6 +238,116 @@ describe("money and society activities", () => {
     await page.getByRole("radio", { name: /The Moon landing/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("keeps the named street inside a narrow large-text map and clear of the pin faces", async () => {
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 1100, width: 320 }, async () => {
+      document.documentElement.style.fontSize = "200%";
+      expect(getComputedStyle(document.documentElement).fontSize).toBe("32px");
+      openActivity({ template: "mapExplorer" });
+      await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
+
+      await expect
+        .poll(
+          () =>
+            getComputedStyle(document.querySelector('[data-street-label="Broad Street"]')!)
+              .visibility,
+        )
+        .toBe("visible");
+
+      const map = document.querySelector('[data-slot="base-map"]')!.getBoundingClientRect();
+
+      const text = document.querySelector<SVGTextElement>('[data-street-label="Broad Street"]')!;
+      const label = text.getBoundingClientRect();
+      const matrix = text.getScreenCTM()!;
+      const mapMatrix = text.ownerSVGElement!.getScreenCTM()!;
+
+      expect(Math.hypot(matrix.a, matrix.b) / Math.hypot(mapMatrix.a, mapMatrix.b)).toBeCloseTo(
+        0.8,
+      );
+
+      const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
+
+      const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
+        (path) => {
+          const pathMatrix = path.getScreenCTM()!;
+
+          const distance = Math.min(
+            ...Array.from({ length: 501 }, (_, index) => {
+              const at = path.getPointAtLength((path.getTotalLength() * index) / 500);
+              const point = new DOMPoint(at.x, at.y).matrixTransform(pathMatrix);
+              return Math.hypot(center.x - point.x, center.y - point.y);
+            }),
+          );
+
+          return { distance, name: path.dataset.street };
+        },
+      );
+
+      const own = streets.find((street) => street.name === "Broad Street")!;
+      expect(own.distance).toBeLessThanOrEqual(40);
+
+      const lineHeight = text.getBBox().height * Math.hypot(matrix.c, matrix.d);
+
+      const nearestOther = Math.min(
+        ...streets.filter((street) => street !== own).map((street) => street.distance),
+      );
+
+      expect(own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther).toBe(true);
+
+      expect(label.left).toBeGreaterThanOrEqual(map.left);
+      expect(label.right).toBeLessThanOrEqual(map.right);
+      expect(label.top).toBeGreaterThanOrEqual(map.top);
+      expect(label.bottom).toBeLessThanOrEqual(map.bottom);
+
+      const column = text.closest(".max-w-column")!;
+      const gutter = Number(getComputedStyle(column).paddingLeft.replace("px", ""));
+      const pageBounds = column.getBoundingClientRect();
+      expect(gutter).toBeGreaterThanOrEqual(16);
+      expect(map.left).toBeGreaterThanOrEqual(pageBounds.left + gutter);
+      expect(map.right).toBeLessThanOrEqual(pageBounds.right - gutter);
+
+      const overlapsCircle = document.querySelector<SVGTextElement>(
+        '[data-street-label="Broad Street"]',
+      )?.dataset.pinCircleOverlap;
+
+      const guarded = [
+        ...document.querySelectorAll<HTMLElement>('[data-slot="map-pin"] > span'),
+      ].map((element) => {
+        const face = element.getBoundingClientRect();
+
+        if (!overlapsCircle) {
+          return face;
+        }
+
+        const style = getComputedStyle(element);
+        const context = document.createElement("canvas").getContext("2d")!;
+        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const metrics = context.measureText(element.textContent!);
+        const width = metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
+        const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+        return {
+          bottom: (face.top + face.bottom + height) / 2,
+          left: (face.left + face.right - width) / 2,
+          right: (face.left + face.right + width) / 2,
+          top: (face.top + face.bottom - height) / 2,
+        };
+      });
+
+      for (const pin of guarded) {
+        expect(
+          label.right <= pin.left ||
+            pin.right <= label.left ||
+            label.bottom <= pin.top ||
+            pin.bottom <= label.top,
+        ).toBe(true);
+      }
+    });
   });
 
   it("map explorer: tapping places uncovers what's there", async () => {

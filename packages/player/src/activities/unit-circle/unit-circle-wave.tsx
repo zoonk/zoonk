@@ -6,11 +6,11 @@ import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
 import {
   ActivityPlot,
-  ActivityPlotAxisX,
   ActivityPlotDot,
   ActivityPlotGridY,
   ActivityPlotLine,
 } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { FULL_TURN } from "./unit-circle-angle";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 

@@ -17,6 +17,10 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { QuestionAskedIn, QuestionWrittenBy } from "./question-details";
 
+function questionTitle(question: string): string {
+  return question.trim().split(/\r?\n/u, 1)[0] || "Buddy question";
+}
+
 export async function generateMetadata({
   params,
 }: PageProps<"/questions/[id]">): Promise<Metadata> {
@@ -32,7 +36,7 @@ export async function generateMetadata({
     notFound();
   }
 
-  return { title: record.question };
+  return { title: questionTitle(record.question) };
 }
 
 const QUESTION_PARENTS = [{ href: "/questions", label: "Buddy questions" }];
@@ -87,8 +91,8 @@ async function QuestionDetailContent({ params, searchParams }: PageProps<"/quest
           `Asked ${formatDateTime(question.createdAt)}`,
         ]}
         parents={QUESTION_PARENTS}
-        title={question.question}
-        titleClassName="max-w-3xl"
+        title={questionTitle(question.question)}
+        titleClassName="max-w-3xl truncate"
       />
 
       <AdminDetailBody>
@@ -98,6 +102,12 @@ async function QuestionDetailContent({ params, searchParams }: PageProps<"/quest
           path={`/questions/${question.id}`}
           tabs={QUESTION_TABS}
         />
+
+        <AdminSection title="Question">
+          <p className="max-w-column text-sm leading-6 wrap-anywhere whitespace-pre-wrap">
+            {question.question}
+          </p>
+        </AdminSection>
 
         {tab === "answer" ? (
           <AdminDetailColumns aside={<QuestionAskedIn question={question} />}>

@@ -48,7 +48,7 @@ export function WaitingOption({
   const content = (
     <>
       <GoalMark goal={goal} />
-      <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 flex-col text-pretty">
         <span>
           {goal.displayName}
           <GoalCountryName goal={goal} />

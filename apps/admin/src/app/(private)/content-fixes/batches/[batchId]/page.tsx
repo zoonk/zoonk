@@ -20,7 +20,7 @@ import { Suspense } from "react";
 import { ContentFixChanges } from "../../_components/content-fix-changes";
 import { RejectForm, ReviewBar, ReviewBarSkeleton } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
-import { ContentFixTechnicalDetails, proposedFact } from "../../_components/content-fix-facts";
+import { ContentFixTechnicalDetails, proposalFacts } from "../../_components/content-fix-facts";
 import { ContentFixVoice } from "../../_components/content-fix-voice";
 import { sharedPlace, sharedReason } from "../../content-fix-batch";
 import { ContentFixStatusMark, contentFixState, findAppliedRevert } from "../../content-fix-status";
@@ -70,14 +70,14 @@ function waitingFixes(fixes: readonly BatchFix[]) {
   return { approvable, waiting };
 }
 
-function batchFacts(fixes: readonly BatchFix[]): string[] {
+function batchFacts(fixes: readonly BatchFix[]) {
   const [first] = fixes;
   const { waiting } = waitingFixes(fixes);
 
   return [
     waiting.length > 0 ? `${String(waiting.length)} waiting for review` : "All decided",
-    first ? proposedFact(first) : "",
-  ].filter(Boolean);
+    ...(first ? proposalFacts(first) : []),
+  ];
 }
 
 /** Fixes in different places are each named under Fixes, so this only counts them. */

@@ -72,7 +72,7 @@ export function DetailField({
           (mono ?? isData({ children, label })) && "text-compact font-mono tabular-nums",
         )}
       >
-        {children}
+        {children === "" ? "—" : (children ?? "—")}
       </dd>
     </div>
   );
