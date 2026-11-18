@@ -49,6 +49,7 @@ struct CertificateSheet: View {
 
 private struct CertificateDetail: View {
   @Environment(SessionStore.self) private var session
+  @Environment(\.stacksContent) private var stacksContent
   @State private var isZoomed = false
   @State private var isLinkedInShown = false
   @State private var isEditingName = false
@@ -252,15 +253,21 @@ private struct CertificateDetail: View {
   }
 
   /// Main's link row: the page's address on one line, its code always whole, and the Copy every
-  /// certificate field has.
+  /// certificate field has. At accessibility sizes the address wraps over Copy.
   private var linkRow: some View {
     CertificateDetailRow(
       label: Text(
         "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
     ) {
-      HStack(spacing: 8) {
-        CertificateAddress(shown: certificate.shownURL)
-          .accessibilityLabel(Text(verbatim: certificate.shownURL))
+      AccessibilityStack(spacing: 8) {
+        if stacksContent {
+          Text(verbatim: certificate.shownURL)
+            .typeStyle(.data)
+            .multilineTextAlignment(.leading)
+        } else {
+          CertificateAddress(shown: certificate.shownURL)
+            .accessibilityLabel(Text(verbatim: certificate.shownURL))
+        }
 
         CertificateCopyButton(isCopied: linkCopied) {
           UIPasteboard.general.string = certificate.url.absoluteString
