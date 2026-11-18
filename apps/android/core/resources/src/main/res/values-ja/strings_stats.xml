@@ -6,7 +6,7 @@
   "stats_answer_count": "a61d5c8dbd2d5c410213e0c33ecb7e6418b3a54cae13ae2fcf5c0d42a3c6bba4",
   "stats_answer_more": "86c14d64bc8c2edb86a08cd9582e78082fc158e519c9ecf6ffabca0e6262ef7e",
   "stats_answers_to_count": "811d426ccc4db1741b80d2ef1d2418c85ff4ce12fb9b3f805d9ae98a5a067053",
-  "stats_any_day": "a525962c2ae59b6e8638f16dac8de85963d61bcbd70662984c50e7b3a14fd410",
+  "stats_any_day": "73f36195ad06b640c1a0a7300e88d406cb1c2b6290636e26cd75ca336422ef87",
   "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
   "stats_belt_comes_after": "1a063930631e231f92cedd322756052f14cb098473afa74b22c56bb823d93dca",
   "stats_belt_current": "eeca18a1f2b94efda6a63d529939befb480cb0340024de4b74ecd9efd7e5bd17",
@@ -153,7 +153,7 @@
     </plurals>
     <string name="stats_throughout_week">曜日別</string>
     <string name="stats_throughout_day">時間帯別</string>
-    <string name="stats_any_day">どの曜日でも</string>
+    <string name="stats_any_day">一番調子のよい曜日はまだわかりません</string>
     <string name="stats_any_time">いつでも</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">一番調子がよいのは%1$sです。</string>

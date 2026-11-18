@@ -61,18 +61,15 @@
     <string name="mindmaps_zoom_out">Zoom out</string>
     <string name="mindmaps_fit">Fit to screen</string>
     <string name="mindmaps_viewer_hint">Pinch, scroll or use + and - to zoom; drag or use the arrows to move.</string>
-    <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
-    <string name="mindmaps_study">Study</string>
+    <string name="mindmaps_study">Study mind maps</string>
     <string name="mindmaps_create_all">Create all</string>
-    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
-    <string name="mindmaps_other_chapters">Other chapters</string>
+    <string name="mindmaps_other_chapters">Without a map</string>
     <string name="mindmaps_free_lessons_note">Making one of these maps writes its lessons first, and they count toward your free lessons.</string>
     <plurals name="mindmaps_lessons_to_write">
         <item quantity="one">%1$s lesson to write</item>
         <item quantity="other">%1$s lessons to write</item>
     </plurals>
-    <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
-    <string name="mindmaps_tab_chapters">Chapters</string>
+    <string name="mindmaps_tab_chapters">With a map</string>
     <string name="mindmaps_tab_lessons">Lessons</string>
     <string name="mindmaps_tab_saved">Saved</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->

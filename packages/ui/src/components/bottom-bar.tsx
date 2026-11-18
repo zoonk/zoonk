@@ -1,6 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-const ROW_CLASS = "w-full px-(--page-gutter)";
+const ROW_CLASS =
+  "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter)";
 
 /**
  * The frame's side padding at each size: the app's shell, a full page drawn without it, and the

@@ -409,6 +409,7 @@ msgstr "페이지로 이동하거나 기능을 실행하거나 질문해 보세�
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "취소"
@@ -851,11 +852,6 @@ msgstr "업데이트된 레슨에서 했던 질문과 답변이에요."
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "이전 질문이 없어요"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "질문했던 레슨이 업데이트되면 질문과 답변이 여기에 보관돼요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1427,11 +1423,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "돌아가기"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1623,7 +1614,6 @@ msgstr "활동"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1854,9 +1844,9 @@ msgid "Evening"
 msgstr "저녁"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "어느 요일이든"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "아직 두드러지는 요일 없음"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"

@@ -7189,11 +7189,10 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "ピンチ操作やスクロール、+と-で拡大・縮小できます。ドラッグや矢印キーで移動できます。"
 
-#. A button: study the mind maps, one by one. A verb, not the noun.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "mindMapsStudyAction"
-msgid "Study"
-msgstr "学習する"
+msgctxt "RNV4nB"
+msgid "Study mind maps"
+msgstr "マインドマップで学習する"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
@@ -7236,12 +7235,9 @@ msgid "No longer available"
 msgstr "利用できなくなりました"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "章"
+msgctxt "YvO5Tq"
+msgid "With a map"
+msgstr "マップあり"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7260,9 +7256,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, other {今すぐ、マップをあと#枚作成できます。}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "BekXxP"
-msgid "Other chapters"
-msgstr "ほかの章"
+msgctxt "uPTv7C"
+msgid "Without a map"
+msgstr "マップなし"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -9595,6 +9591,13 @@ msgstr "最初に学ぶ内容を選び、毎日の予定に合わせて調整し
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "学習計画の作成が途中で止まりました"
+
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "章"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -12083,6 +12086,11 @@ msgstr "メールアドレス"
 msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "プッシュ通知"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "リマインダーはオフです。"
 
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx

@@ -153,7 +153,7 @@ private fun ChapterRow(
 }
 
 /**
- * A chapter folded under Other chapters is being made or didn't finish, so the group opens on arrival with its
+ * A chapter folded under Without a map is being made or didn't finish, so the group opens on arrival with its
  * progress, or its row's Try again, in view.
  */
 internal val GoalMindMaps.foldedMapToShow: Boolean
@@ -175,7 +175,7 @@ private fun GoalMindMap.canMakeNow(): Boolean =
 /**
  * Main's `NotMadeYet`, after the chapters that have a map: each chapter whose map can be made now as
  * its own row, Create all when two or more can start, one line about the rest, and the rest folded
- * under Other chapters. The rows mix subjects without their headers, so they go without their number.
+ * under Without a map. The rows mix subjects without their headers, so they go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,

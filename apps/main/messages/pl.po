@@ -409,6 +409,7 @@ msgstr "Przejdź do strony, wykonaj działanie lub zadaj pytanie."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Anuluj"
@@ -851,11 +852,6 @@ msgstr "Twoje pytania z lekcji, które zostały zaktualizowane, wraz z odpowiedz
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "Brak wcześniejszych pytań"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "Gdy aktualizujemy lekcję, zachowujemy tutaj twoje pytania na jej temat wraz z odpowiedziami."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1427,11 +1423,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Możesz korzystać z Plus do końca opłaconego okresu."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "Wróć"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1623,7 +1614,6 @@ msgstr "Aktywność"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1854,9 +1844,9 @@ msgid "Evening"
 msgstr "Wieczór"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "Każdy dzień"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "Żaden dzień się jeszcze nie wyróżnia"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"

@@ -6,7 +6,7 @@
   "stats_answer_count": "09e722c8d547c29d34ed83dfae5bc45b52e04b62e26a44d5eb762bd2df843125",
   "stats_answer_more": "13caf8f7fd8f8887486f592ba52a3dcb1782d189bcf121fcc31f38a6b60c29bb",
   "stats_answers_to_count": "8782c47c1258ee446bdf0993028716527cf45fb251246314158f9940137acc87",
-  "stats_any_day": "193e2fd7fec703de2de0cd3f8d3304dcb99f1316529c4fe9b01c87adeaf04c58",
+  "stats_any_day": "8ec7ea6e748c6dfb12fbf9770993d9a965981ef0ada0f570cbd85852d43d962f",
   "stats_any_time": "dadcc8d1aab84362f496b8083d75e8c57ba2f5a0783d2a11fb9f47ca310bea44",
   "stats_belt_comes_after": "aebeee5b512d1b45cb40c144fd6aa9988e18e3333275d3fc61c50e81a5406819",
   "stats_belt_current": "6ea9c24370d561fe6672990ee6962d211ab0fff2e1f128ec2ea19c4545ae6bf1",
@@ -160,7 +160,7 @@
     </plurals>
     <string name="stats_throughout_week">Hafta boyunca</string>
     <string name="stats_throughout_day">Gün boyunca</string>
-    <string name="stats_any_day">Her gün</string>
+    <string name="stats_any_day">Henüz öne çıkan bir gün yok</string>
     <string name="stats_any_time">Her zaman</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">En iyi günün %1$s.</string>

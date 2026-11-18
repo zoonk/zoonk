@@ -7189,11 +7189,10 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Junta o separa dos dedos, desplázate o usa + y - para acercar o alejar; arrastra o usa las flechas para mover el mapa."
 
-#. A button: study the mind maps, one by one. A verb, not the noun.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "mindMapsStudyAction"
-msgid "Study"
-msgstr "Estudiar"
+msgctxt "RNV4nB"
+msgid "Study mind maps"
+msgstr "Estudiar mapas mentales"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
@@ -7236,12 +7235,9 @@ msgid "No longer available"
 msgstr "Ya no está disponible"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Capítulos"
+msgctxt "YvO5Tq"
+msgid "With a map"
+msgstr "Con mapa"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7260,9 +7256,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, one {Puedes crear # mapa más ahora mismo.} other {Puedes crear # mapas más ahora mismo.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "BekXxP"
-msgid "Other chapters"
-msgstr "Otros capítulos"
+msgctxt "uPTv7C"
+msgid "Without a map"
+msgstr "Sin mapa"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -9595,6 +9591,13 @@ msgstr "Estamos eligiendo qué aprenderás primero y distribuyéndolo entre tus 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Se interrumpió la preparación de tu plan"
+
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Capítulos"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -12083,6 +12086,11 @@ msgstr "Correo electrónico"
 msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "Notificaciones push"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "Los recordatorios están desactivados."
 
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx

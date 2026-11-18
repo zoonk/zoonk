@@ -409,6 +409,7 @@ msgstr "Vai a una pagina, esegui un’azione o fai una domanda."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Annulla"
@@ -851,11 +852,6 @@ msgstr "Le tue domande su lezioni che sono state aggiornate, con le risposte."
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "Nessuna domanda precedente"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "Quando una lezione su cui hai fatto domande viene aggiornata, conserviamo qui le tue domande e le relative risposte."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1427,11 +1423,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Plus resta attivo fino alla fine del periodo già pagato."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "Torna indietro"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1623,7 +1614,6 @@ msgstr "Attività"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1854,9 +1844,9 @@ msgid "Evening"
 msgstr "Sera"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "Qualsiasi giorno"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "Per ora nessun giorno spicca"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"

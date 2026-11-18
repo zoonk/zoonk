@@ -70,17 +70,8 @@ function EmptyTab({ children }: { children: React.ReactNode }) {
   );
 }
 
-function StudyLabel() {
-  const t = useExtracted();
-
-  return t({
-    description: "A button: study the mind maps, one by one. A verb, not the noun.",
-    id: "mindMapsStudyAction",
-    message: "Study",
-  });
-}
-
 function StudyLink({ goalId, study, view }: { goalId: string; study: string; view: MindMapTab }) {
+  const t = useExtracted();
   const place = useMindMapPlace({ goalId, view });
 
   return (
@@ -91,7 +82,7 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
       prefetch="intent"
       size="lg"
     >
-      <StudyLabel />
+      {t("Study mind maps")}
     </EnterLink>
   );
 }
@@ -215,7 +206,7 @@ function useTabLabels(): Record<MindMapTab, string> {
   const t = useExtracted();
 
   return {
-    chapters: t("Chapters"),
+    chapters: t("With a map"),
     lessons: t("Lessons"),
     saved: t({
       description: "A tab's name: the list of mind maps the learner saved.",

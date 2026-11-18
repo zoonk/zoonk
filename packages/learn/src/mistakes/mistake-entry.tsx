@@ -44,7 +44,11 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
     return <span />;
   }
 
-  return <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>;
+  return (
+    <Eyebrow className="bg-muted ring-0" icon={<CauseIcon aria-hidden="true" />}>
+      {causeLabel(cause)}
+    </Eyebrow>
+  );
 }
 
 function hiddenLabel(words: React.ReactNode) {
@@ -182,7 +186,7 @@ export function MistakeEntryCard({
 
   return (
     <li
-      className="border-border lg:max-w-column flex flex-col gap-3 border-t py-4 text-sm first:border-t-0 first:pt-1"
+      className="border-border lg:max-w-column flex flex-col gap-3 border-t py-4 text-sm first:border-t-0 lg:first:pt-1"
       data-slot="mistake-entry"
       data-status={mistake.status}
     >

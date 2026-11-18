@@ -24,7 +24,7 @@ import { SignInAgainDialog } from "../../_components/sign-in-again-dialog";
 import { deleteAccountAction } from "./delete-account-action";
 
 const DELETE_BUTTON_CLASS = cn(
-  buttonVariants({ size: "sm", variant: "outline" }),
+  buttonVariants({ size: "lg", variant: "outline" }),
   "text-destructive-text border-destructive/40 hover:bg-destructive/10 hover:text-destructive-text",
 );
 

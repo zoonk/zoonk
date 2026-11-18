@@ -192,7 +192,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
               aria-label={t("Add a passkey")}
               busy={isPending && !dialog}
               icon={<PlusIcon aria-hidden="true" />}
-              size="sm"
+              size="lg"
               type="submit"
               variant="outline"
             >
