@@ -165,7 +165,7 @@ internal fun showsStartRow(
     explanations: Int,
 ): Boolean = followed == 0 && waiting == 0 && explanations <= 1
 
-/** What the trigger says with no goal selected: the menu it opens. */
+/** What the trigger says with no goal selected: the menu it opens, so Start a goal shows only inside it. */
 internal enum class TriggerTitle(
     val label: Int,
 ) {
@@ -177,7 +177,12 @@ internal enum class TriggerTitle(
 internal fun triggerTitle(
     waiting: Int,
     explanations: Int,
-): TriggerTitle = if (waiting > 0) TriggerTitle.YourGoals else TriggerTitle.StartGoal
+): TriggerTitle =
+    when {
+        waiting > 0 -> TriggerTitle.YourGoals
+        explanations > 0 -> TriggerTitle.QuickExplanations
+        else -> TriggerTitle.StartGoal
+    }
 
 @Composable
 private fun SwitcherTitle(
