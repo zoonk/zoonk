@@ -40,6 +40,27 @@ const FIT_CLASS = {
   lg: { body: "lg:min-h-0 lg:overflow-y-auto", root: "lg:h-dvh lg:overflow-hidden" },
 } as const;
 
+/** With no buttons to keep still, the note takes the bar's row itself. */
+function TaskFrameBar({
+  footer,
+  note,
+  ref,
+}: {
+  footer: React.ReactNode;
+  note: React.ReactNode;
+  ref: React.Ref<HTMLDivElement>;
+}) {
+  if (!footer && !note) {
+    return null;
+  }
+
+  return (
+    <TaskActionBar note={footer ? note : null} ref={ref} tabIndex={-1}>
+      {footer || note}
+    </TaskActionBar>
+  );
+}
+
 export function TaskFrame({
   aside,
   beforeExit,
@@ -138,11 +159,7 @@ export function TaskFrame({
         {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
 
-      {footer && (
-        <TaskActionBar note={footerNote} ref={bar} tabIndex={-1}>
-          {footer}
-        </TaskActionBar>
-      )}
+      <TaskFrameBar footer={footer} note={footerNote} ref={bar} />
 
       {aside && (
         <TaskAside footer={aside.footer} label={aside.label} meta={aside.meta} title={aside.title}>
