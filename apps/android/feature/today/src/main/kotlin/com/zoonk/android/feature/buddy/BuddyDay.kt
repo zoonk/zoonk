@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -100,18 +102,25 @@ internal fun BuddyTodayLine(
     val done = today?.missions?.count { it.status == StudyMission.Status.DONE } ?: 0
     val energy = status.energy.current?.let { formatPercent(it / PERCENT, currentLocale()) }
     val number = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
 
     FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), itemVerticalAlignment = Alignment.CenterVertically) {
         TextButton(onClick = { navigator.open(AppRoute.StatsEnergy) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
             Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
-            Text(stringResource(R.string.buddy_page_energy), style = number)
-            Text(energy ?: DASH, style = number)
+            Text(
+                stringResource(R.string.buddy_page_energy_named, name),
+                Modifier.padding(start = ENERGY_GAP),
+                color = muted,
+                style = number,
+            )
+            Text(energy ?: DASH, Modifier.padding(start = ENERGY_GAP), color = muted, style = number)
         }
         TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
             if (today != null && today.missions.isNotEmpty()) {
                 MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
+                Spacer(Modifier.width(MISSIONS_GAP))
             }
             Text(
                 today
@@ -119,6 +128,7 @@ internal fun BuddyTodayLine(
                         it.missions.isNotEmpty()
                     }?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
                     ?: stringResource(R.string.buddy_page_today, name),
+                color = muted,
                 style = number,
             )
         }
@@ -331,3 +341,7 @@ private val LINE_ICON = 14.sp
 
 /** The day's line is a quiet button: its words sit this far inside its box. */
 internal val DAY_LINE_PADDING = 8.dp
+
+/** Main's `gap-1` and `gap-1.5` between the line's mark and words. */
+private val ENERGY_GAP = 4.dp
+private val MISSIONS_GAP = 6.dp

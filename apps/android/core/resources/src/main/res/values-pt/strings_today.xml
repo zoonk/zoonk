@@ -14,8 +14,6 @@
   "today_coming_stalled": "ba66ac667319ed42cbe32b34d152a09c279dffaeaf0e09269454bb1ce7973b8e",
   "today_coming_title": "6b1b44d52bcf8d2f00190147263f74adc5b125b56183b72d9d148dfd9bb168cd",
   "today_coming_writing": "8337a3bd007730f29a239e51c1a0311b29bda8a90e406bbd910263e4b7db563a",
-  "today_connection_lost": "981ea8faf68816c2ae574e0fcb21ab7806fbe154438d00eadebb35433622c2c7",
-  "today_connection_lost_detail": "f162d6a008c0c055131eaac01759b64db7cc3bc7310c472eec9fea522ada712d",
   "today_continue_draft": "3bbe66680b9262d06b2b547bf9e1f2f2c5f26f568ac304e71c4c3cc3ed41cad5",
   "today_continue_mock": "429e2e7d241613416605b6c11145773538c1a8b3f9acf522a5d0b028c5e43e94",
   "today_continue_mock_detail": "b66f4d254ecc88dd43190bfa89ed7f80da3f4396e34bc5b398247a6680d54757",
@@ -77,11 +75,8 @@
   "today_practice_with_buddy": "6286ca9320dfe4c322613d9148299d3355a92310accce93808b09d7cb4be7f4c",
   "today_preparation": "a88df056bef623a543b0c5626e6726e4a37ab613d4f3891d68df6e6af6f2c67f",
   "today_progress": "d0e6159ff3135a2f33691523312a2f31f437f3a24660b2ff6ed385dd34c03e92",
-  "today_progress_known": "85261fd2b18db56180fb930741f8a3e1c722e03ad53053fe3272057c93a2aea0",
   "today_progress_lessons_today": "2875856dcc5912d78a3866e5a43127012bdcba1b17c9d3a73999e27c7e31cb14",
-  "today_progress_studied": "99f4d39b247c601019a9932ac6056c00b6ba40b80c322d173a0f68fc4d910cb4",
   "today_quick_explanation": "9ce3878ce22c95901ce8e7cde9a330294512c5b441c0fcb1899610ddca75f44e",
-  "today_reconnect": "e80099c797aaeac23393aa70bf395bb6658acdaa5ea7498c1bb98016c109c85f",
   "today_rest": "6f21a861099c42ed471988bed38d90f3e8afccf466013d3fba1d9fe7969501c3",
   "today_rest_enjoy": "dd81683facd67f0d923f8fb89c622bd8055a13a757a2563bcc7c355aa3699124",
   "today_rest_next_lessons": "0ced18bc2f16e23e79173228d079ece7963fbf4a5467242878eb87e9007ef2d4",
@@ -337,9 +332,6 @@
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Manter meu tempo</string>
     <string name="today_behind_kept">Tudo bem. Seu tempo continua o mesmo.</string>
-    <string name="today_connection_lost">Conexão perdida</string>
-    <string name="today_connection_lost_detail">A gente parou de receber atualizações. O processo ainda pode estar em andamento.</string>
-    <string name="today_reconnect">Reconectar</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Progresso</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
@@ -356,10 +348,6 @@
         <item quantity="many">Hoje: %s aulas</item>
         <item quantity="other">Hoje: %s aulas</item>
     </plurals>
-    <!-- A legend label in the progress card: lessons the learner studied. -->
-    <string name="today_progress_studied">Estudadas</string>
-    <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Já sabia</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Suas próximas aulas</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->

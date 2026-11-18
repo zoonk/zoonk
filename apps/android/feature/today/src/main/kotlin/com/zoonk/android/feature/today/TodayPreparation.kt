@@ -13,16 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
-import com.zoonk.android.feature.goalcontent.LegendDot
-import com.zoonk.android.feature.goalcontent.LegendItem
-import com.zoonk.android.feature.goalcontent.bar
+import com.zoonk.android.feature.goalcontent.CoverageLegend
 import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.feature.plan.studiedLessonsLine
 import com.zoonk.android.ui.components.ButtonEdge
@@ -92,7 +89,7 @@ private fun LessonsCard(
     ) {
         if (counts.total > 0) {
             LessonsBar(counts)
-            CoverageLegend(counts)
+            CoverageLegend(known = counts.known > 0)
         }
     }
 }
@@ -175,25 +172,6 @@ private fun LessonsBar(counts: LessonCounts) {
 
     Box(Modifier.semantics { summary?.let { contentDescription = it } }) {
         CoverageBar(studied = counts.studied.toDouble() / counts.total, known = counts.known.toDouble() / counts.total)
-    }
-}
-
-/** Main's `CoverageLegend`: what the bar's parts are, "Already knew" only when some are; the words beside it say the counts, so TalkBack skips it. */
-@Composable
-private fun CoverageLegend(counts: LessonCounts) {
-    val dots =
-        listOfNotNull(
-            LegendDot.Studied to stringResource(R.string.today_progress_studied),
-            (LegendDot.Known to stringResource(R.string.today_progress_known)).takeIf { counts.known > 0 },
-            LegendDot.New to stringResource(R.string.goalcontent_new),
-        )
-
-    FlowRow(
-        Modifier.clearAndSetSemantics {},
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        dots.forEach { (dot, label) -> LegendItem(dot, label) }
     }
 }
 

@@ -28,7 +28,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.LanguageTodaySpeaking
-import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptions
@@ -66,16 +65,6 @@ internal fun TodayPractice(
 
     TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, navigate)
 }
-
-/** A paused goal's ways to practice: mistakes and completed lessons, since a mock or a call starts only on an active goal. */
-@Composable
-internal fun PausedPractice(
-    store: TodayStore,
-    mocks: MockStore,
-    goal: LearnerSummaryGoal,
-    completedLessons: Boolean,
-    navigate: (AppRoute) -> Unit,
-) = TodayPractice(store, mocks, goal.id, isExam = false, isLanguage = false, completedLessons = completedLessons, navigate = navigate)
 
 @Composable
 fun TodayPracticeRows(

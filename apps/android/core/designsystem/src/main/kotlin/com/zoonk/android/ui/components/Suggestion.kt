@@ -367,13 +367,8 @@ private fun SuggestionLine(
                                         },
                                     ),
                             style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Heading),
-                            fontWeight = if (answered) FontWeight.Medium else null,
-                            color =
-                                when {
-                                    failed -> MaterialTheme.colorScheme.error
-                                    whole -> MaterialTheme.colorScheme.onSurface
-                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                                },
+                            fontWeight = FontWeight.Medium,
+                            color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         )
                         description?.let {
                             Text(

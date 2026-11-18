@@ -125,7 +125,7 @@ fun GoalSwitcher(
     val description =
         selected?.let {
             stringResource(R.string.goal_switcher_current_goal, goalSpokenName(it.displayName, it.targetLanguage, it.targetRegion))
-        } ?: stringResource(if (learner.waitingGoals.isNotEmpty()) R.string.goal_switcher_your_goals else R.string.goal_switcher_start_goal)
+        } ?: stringResource(triggerTitle(waiting = learner.waitingGoals.size, explanations = explanations.size).label)
 
     Box {
         // The button keeps its role and click action; only the words it reads are replaced.
@@ -135,7 +135,7 @@ fun GoalSwitcher(
             modifier = Modifier.semantics { contentDescription = description },
         ) {
             Row(Modifier.clearAndSetSemantics {}, verticalAlignment = Alignment.CenterVertically) {
-                SwitcherTitle(selected, waiting = learner.waitingGoals.isNotEmpty())
+                SwitcherTitle(selected, triggerTitle(waiting = learner.waitingGoals.size, explanations = explanations.size))
             }
         }
 
@@ -165,22 +165,45 @@ internal fun showsStartRow(
     explanations: Int,
 ): Boolean = followed == 0 && waiting == 0 && explanations <= 1
 
+/** What the trigger says with no goal selected: the menu it opens, so Start a goal shows only inside it. */
+internal enum class TriggerTitle(
+    val label: Int,
+) {
+    YourGoals(R.string.goal_switcher_your_goals),
+    QuickExplanations(R.string.goal_switcher_quick_explanations),
+    StartGoal(R.string.goal_switcher_start_goal),
+}
+
+internal fun triggerTitle(
+    waiting: Int,
+    explanations: Int,
+): TriggerTitle =
+    when {
+        waiting > 0 -> TriggerTitle.YourGoals
+        explanations > 0 -> TriggerTitle.QuickExplanations
+        else -> TriggerTitle.StartGoal
+    }
+
 @Composable
 private fun SwitcherTitle(
     selected: LearnerSummaryGoal?,
-    waiting: Boolean,
+    unselected: TriggerTitle,
 ) {
     when {
-        selected != null -> GoalMark(selected.displayName, selected.languageFlag)
-        !waiting -> Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
+        selected != null -> {
+            GoalMark(selected.displayName, selected.languageFlag)
+        }
+
+        unselected == TriggerTitle.StartGoal -> {
+            Icon(
+                painterResource(R.drawable.ic_add),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+        }
     }
     Text(
-        text =
-            when {
-                selected != null -> selected.displayName
-                waiting -> stringResource(R.string.goal_switcher_your_goals)
-                else -> stringResource(R.string.goal_switcher_start_goal)
-            },
+        text = selected?.displayName ?: stringResource(unselected.label),
         modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = TITLE_WIDTH),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,

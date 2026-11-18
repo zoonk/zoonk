@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -122,6 +123,7 @@ private fun CatchUpLater(
         OutlinedButton(
             busy = viewModel.isCatchingUp,
             onClick = { viewModel.catchUp(model.read) },
+            size = ButtonSize.Small,
             leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
         ) {
             Text(stringResource(R.string.today_add_to_today))

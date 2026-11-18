@@ -36,11 +36,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.feature.plan.ResumeFailure
@@ -54,6 +56,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -347,9 +350,33 @@ private fun GoalAtRest(
     summary: LearnerSummary?,
     padding: PaddingValues,
 ) {
-    val goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId }
+    GoalAtRestPage(
+        goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId },
+        completedLessons = summary?.places?.completedLessons == true,
+        viewModel = viewModel,
+        today = app.today,
+        mocks = app.mocks,
+        padding = padding,
+        navigate = navigator::open,
+        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
+        resume = { ResumeEffect(app, it) },
+    )
+}
 
-    val newGoal = { navigator.open(AppRoute.StartGoal()) }
+/** [goal] is the active one, finished or paused; [resume] keeps a paused one's resume preview in step. */
+@Composable
+internal fun GoalAtRestPage(
+    goal: LearnerSummaryGoal?,
+    completedLessons: Boolean,
+    viewModel: TodayViewModel,
+    today: TodayStore,
+    mocks: MockStore,
+    padding: PaddingValues,
+    navigate: (AppRoute) -> Unit,
+    banner: @Composable () -> Unit = {},
+    resume: @Composable (LearnerSummaryGoal) -> Unit = {},
+) {
+    val newGoal = { navigate(AppRoute.StartGoal()) }
 
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
@@ -362,7 +389,7 @@ private fun GoalAtRest(
 
     TodayAtRest(
         padding = padding,
-        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
+        banner = banner,
         icon = R.drawable.ic_pause,
         sentence =
             goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
@@ -370,8 +397,17 @@ private fun GoalAtRest(
         statusAsCard = true,
         detail = {
             if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
-                ResumeEffect(app, goal)
-                PausedPractice(app.today, app.mocks, goal, summary.places.completedLessons, navigator::open)
+                resume(goal)
+                // A mock or a call starts only on an active goal, so a paused one offers neither.
+                TodayPractice(
+                    today,
+                    mocks,
+                    goal.id,
+                    isExam = false,
+                    isLanguage = false,
+                    completedLessons = completedLessons,
+                    navigate = navigate,
+                )
             }
         },
         failure =
@@ -465,25 +501,7 @@ private fun Preparing(
 /** Polling gave up: it may still be building, so Reconnect starts reading again. */
 @Composable
 private fun PlanWaitStalled(onReconnect: () -> Unit) {
-    Column(
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            stringResource(R.string.today_connection_lost),
-            modifier =
-                Modifier.semantics {
-                    heading()
-                },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            text = stringResource(R.string.today_connection_lost_detail),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = onReconnect) { Text(stringResource(R.string.today_reconnect)) }
-    }
+    GenerationFailureNotice(GenerationFailure.Connection, onReconnect)
 }
 
 @Composable

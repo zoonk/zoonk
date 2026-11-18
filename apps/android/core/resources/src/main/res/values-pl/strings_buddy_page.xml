@@ -5,7 +5,6 @@
   "buddy_page_choose": "9b89581393d1c7d61b4239b7808d515b786d8e3226cd5067fbd43e16c4c30fcc",
   "buddy_page_count": "518c079fe373bfe1e5f16c79c8929e04a3e6de296f61bbac0c9cbdea2090488f",
   "buddy_page_earlier_questions": "5e5d6bae1ddb7cf4896c26c65dae8681a60c074b33fd48457b283ddd67996be2",
-  "buddy_page_energy": "3aeb4ffaf3326b396273351edca6f5fb7b08c71550da7cf71e4f10e0d4d4466f",
   "buddy_page_energy_named": "a4fe232c86987aacdf4b5a8460110f90dbd92d4371a25f1d5f172bd6ecd085c1",
   "buddy_page_energy_napping": "97e4847d185f8f242090fb26939242219970ef71052244927438d9911f5c80c0",
   "buddy_page_energy_starts": "faa0b80993c0622a7da2bac9b3f6cee3cfd946370c780287acfe394eb6f3d875",
@@ -73,7 +72,6 @@
     <string name="buddy_page_suggest_mistake">Wyjaśnij mój ostatni błąd</string>
     <string name="buddy_page_suggest_focus">Na czym mam się najpierw skupić?</string>
     <string name="buddy_page_today">%1$s dzisiaj</string>
-    <string name="buddy_page_energy">Energia</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">Energia: %1$s</string>
     <string name="buddy_page_energy_starts">Pojawi się po pierwszej lekcji.</string>

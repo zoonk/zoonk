@@ -2,6 +2,8 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -240,14 +242,15 @@ private fun ExamChoiceNotice(
                 SuggestionMainAction(stringResource(R.string.plan_save), save, enabled, busy = saving)
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Main's `SuggestionChoices`: equal picks, one under the other, each as wide as the column.
+            Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->
                     SuggestionAction(
-                        text = option.shortName ?: option.name,
                         onClick = { choose(listOf(option.name)) },
+                        modifier = Modifier.fillMaxWidth(),
                         enabled = !saving,
                         secondary = true,
-                    )
+                    ) { Text(option.shortName ?: option.name) }
                 }
             }
         }
@@ -442,12 +445,14 @@ private fun InsightActions(
         // A tip's only answer is secondary, so Today's own action stays the screen's one filled button.
         if (canAccept) {
             val onAccept = { viewModel.answerInsight(insight, accepted = true) }
+            // Main's accept shows its answer working while either answer saves.
+            val busy = viewModel.isAnsweringInsight
             if (dismiss ==
                 null
             ) {
-                SuggestionAction(accept, onAccept, enabled, secondary = true)
+                SuggestionAction(accept, onAccept, busy = busy, secondary = true)
             } else {
-                SuggestionMainAction(accept, onAccept, enabled)
+                SuggestionMainAction(accept, onAccept, busy = busy)
             }
         }
         dismiss?.let { SuggestionAction(it, { viewModel.answerInsight(insight, accepted = false) }, enabled, secondary = true) }
