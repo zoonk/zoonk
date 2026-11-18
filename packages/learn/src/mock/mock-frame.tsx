@@ -83,7 +83,7 @@ function useMockStatusNote(): React.ReactNode {
   if (runner.saveStatus === "refused") {
     return (
       <p className="text-destructive-text" role="alert">
-        {t("Your last answer wasn't saved.")}
+        {t("An answer wasn't saved.")}
       </p>
     );
   }

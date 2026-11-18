@@ -93,6 +93,7 @@ internal class FakeMockRunApi(
     val saved = mutableListOf<MockDraft>()
     var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
+    var saveOutcome = SaveOutcome.Stored
 
     /** Holds every save until completed, as a slow connection does. */
     var saveGate: CompletableDeferred<Unit>? = null
@@ -124,6 +125,7 @@ internal class FakeMockRunApi(
     ): SaveOutcome {
         saveGate?.await()
         saveFailure?.let { throw it }
+        if (saveOutcome == SaveOutcome.Refused) return saveOutcome
         saved += draft
         return SaveOutcome.Stored
     }

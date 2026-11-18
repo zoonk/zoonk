@@ -109,8 +109,14 @@ class MockRunnerViewModelTest {
             assertEquals(DraftSaveStatus.Retrying, viewModel.saveStatus.value)
             assertEquals(0, viewModel.state.value.counts.answered)
 
-            // Back online, the retry gets it through and the device lets it go.
+            // Back online, the answer counts only once the server keeps it, not while it's on its way.
             api.saveFailure = null
+            api.saveGate = CompletableDeferred()
+            viewModel.retrySaves()
+            runCurrent()
+            assertEquals(0, viewModel.state.value.counts.answered)
+
+            api.saveGate?.complete(Unit)
             advanceUntilIdle()
             assertEquals(Answer.Choice(1), api.saved.last { it.itemId == ITEM_ONE }.answer)
             assertEquals(1, viewModel.state.value.counts.answered)
@@ -176,6 +182,28 @@ class MockRunnerViewModelTest {
             viewModel.show(runningMock(extra = """"status":"expired""""))
 
             assertEquals(MockExam.Status.EXPIRED, viewModel.state.value.view.status)
+        }
+
+    @Test
+    fun aRefusedAnswerIsNoLongerSaidOnceItsSectionIsHandedIn() =
+        runTest(dispatcher) {
+            api.saveOutcome = SaveOutcome.Refused
+            val viewModel = store().runner()
+            viewModel.answer(Answer.Choice(1))
+            runCurrent()
+            assertEquals(DraftSaveStatus.Refused, viewModel.saveStatus.value)
+
+            api.mock = secondSection()
+            viewModel.submitSection()
+            runCurrent()
+
+            assertEquals(
+                1,
+                viewModel.state.value.view.current
+                    ?.section
+                    ?.toInt(),
+            )
+            assertEquals(DraftSaveStatus.Saved, viewModel.saveStatus.value)
         }
 
     @Test
