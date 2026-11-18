@@ -154,6 +154,7 @@
   "player_spelled": "4f52d2937460cc59656b44eff1d78dea22a3f362daf743df29e1d63950237465",
   "player_start_failed_description": "3e495bcd5469734b0577a153516163b9b14c7f7adea35962c998621c4ccb35e7",
   "player_start_failed_title": "991d5e250e7fec104c02665d7857bb9f0f1115be7827fa8a2b54a36daea2b077",
+  "player_start_note": "1c46bb614403940224ed00321afe0900572219ac35ce47e411814094d3a3ae8d",
   "player_start_the_lesson": "529843e27eea556457ab797be883b8e549167c5b7315a933d0d60e6e5cf0a19c",
   "player_start_this_challenge": "6526f470995a4618251abfaa84a62544bc68496b240e80a5e3f74f4195904853",
   "player_start_this_lesson": "17167792eb062697b8255805d56242ce94b6cee37df29729e36f32e879917ab8",
@@ -333,6 +334,8 @@
     <string name="player_challenge_phase_fix">Poprawiamy wykryte błędy</string>
     <string name="player_challenge_phase_fix_line_1">Poprawiamy niespójne fragmenty…</string>
     <string name="player_writing_note">To zajmuje kilka minut. Pracujemy dalej, nawet jeśli wyjdziesz.</string>
+    <!-- Under the title of a lesson that isn't written yet, before the learner taps to get it ready. -->
+    <string name="player_start_note">Potrzebujemy kilku minut, żeby to przygotować.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Możesz zacząć już teraz</string>
     <plurals name="player_review_ideas">

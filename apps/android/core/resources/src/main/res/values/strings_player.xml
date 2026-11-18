@@ -144,6 +144,8 @@
     <string name="player_challenge_phase_fix">Fixing what the check found</string>
     <string name="player_challenge_phase_fix_line_1">Rewriting the parts that didn\'t add up…</string>
     <string name="player_writing_note">It takes a few minutes, and keeps going if you leave.</string>
+    <!-- Under the title of a lesson that isn't written yet, before the learner taps to get it ready. -->
+    <string name="player_start_note">Getting it ready takes a few minutes.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Ready to start now</string>
     <plurals name="player_review_ideas">
