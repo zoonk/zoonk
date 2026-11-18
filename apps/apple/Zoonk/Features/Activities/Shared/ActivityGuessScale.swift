@@ -106,7 +106,9 @@ struct ActivityGuessScaleView: View {
   let scale: GuessScale
   let unit: String?
   let guess: Double?
+  /// The real value, known before Check so its row holds the room it takes once revealed.
   let actual: Double?
+  let isRevealed: Bool
   let onGuess: (Double) -> Void
 
   var body: some View {
@@ -127,15 +129,17 @@ struct ActivityGuessScaleView: View {
 
       // The real value's row and the revealed bar hold their room from the start, so nothing
       // moves on Check.
-      Text(
-        "Real value: \(format(actual ?? scale.max))", tableName: "Activities",
-        comment: "The real value revealed after a guess"
-      )
-      .typeStyle(.readout)
-      .foregroundStyle(Color.successText)
-      .opacity(actual == nil ? 0 : 1)
-      .accessibilityHidden(actual == nil)
-      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
+      if let actual {
+        Text(
+          "Real value: \(format(actual))", tableName: "Activities",
+          comment: "The real value revealed after a guess"
+        )
+        .typeStyle(.readout)
+        .foregroundStyle(Color.successText)
+        .opacity(isRevealed ? 1 : 0)
+        .accessibilityHidden(!isRevealed)
+        .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
+      }
 
       if let label = guessUnitLabel(unit) { ActivityCaption(label) }
 
@@ -159,14 +163,15 @@ struct ActivityGuessScaleView: View {
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet")
         )
-        .opacity(actual == nil ? 1 : 0)
-        .disabled(actual != nil)
-        .accessibilityHidden(actual != nil)
+        .opacity(isRevealed ? 0 : 1)
+        .disabled(isRevealed)
+        .accessibilityHidden(isRevealed)
 
         if let actual {
           GuessScaleBar(
             guessShare: guess.map(scale.share(of:)), actualShare: scale.share(of: actual)
           )
+          .opacity(isRevealed ? 1 : 0)
           .accessibilityHidden(true)
         }
       }
