@@ -76,7 +76,7 @@ function StudyLabel() {
   return t({
     description: "A button: study the mind maps, one by one. A verb, not the noun.",
     id: "mindMapsStudyAction",
-    message: "Study",
+    message: "Study mind maps",
   });
 }
 
@@ -215,7 +215,7 @@ function useTabLabels(): Record<MindMapTab, string> {
   const t = useExtracted();
 
   return {
-    chapters: t("Chapters"),
+    chapters: t("With a map"),
     lessons: t("Lessons"),
     saved: t({
       description: "A tab's name: the list of mind maps the learner saved.",

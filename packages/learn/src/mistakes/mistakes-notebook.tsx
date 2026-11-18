@@ -267,12 +267,7 @@ export function MistakesNotebook({
   return (
     <DetailLayout
       bar={
-        <LearnPageBar
-          back={{ href: hrefs.back }}
-          listed="learner"
-          root
-          title={t("Mistakes notebook")}
-        />
+        <LearnPageBar back={{ href: hrefs.back }} listed="learner" title={t("Mistakes notebook")} />
       }
       bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
       measure="list"

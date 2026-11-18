@@ -180,7 +180,7 @@ export function NotMadeYet({
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
 
   return (
-    <PageSection aria-label={t("Other chapters")} data-slot="maps-not-made">
+    <PageSection aria-label={t("Without a map")} data-slot="maps-not-made">
       {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
       <div
@@ -211,7 +211,7 @@ export function NotMadeYet({
             aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
             defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
             icon={null}
-            title={t("Other chapters")}
+            title={t("Without a map")}
           >
             {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
               <p className={LINE_CLASS}>
