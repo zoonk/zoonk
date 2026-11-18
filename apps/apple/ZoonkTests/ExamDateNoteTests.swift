@@ -30,7 +30,7 @@ final class ExamDateNoteTests: XCTestCase {
     let line = try XCTUnwrap(
       accessibilityElements(in: window).first { $0.accessibilityLabel == failure })
     let action = try speakingMockAction(in: window)
-    XCTAssertLessThan(line.accessibilityFrame.midY, action.accessibilityFrame.midY)
+    XCTAssertLessThanOrEqual(line.accessibilityFrame.maxY, action.accessibilityFrame.minY)
     XCTAssertLessThan(
       action.accessibilityFrame.minY - line.accessibilityFrame.maxY, 44,
       "The failure should sit just above the action that failed")
