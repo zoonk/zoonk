@@ -42,7 +42,7 @@ export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button aria-haspopup="dialog" onClick={onAdjust} size="sm" variant="outline">
+    <Button aria-haspopup="dialog" onClick={onAdjust} size="bar" variant="outline">
       {t("Adjust plan")}
     </Button>
   );
@@ -52,7 +52,7 @@ function PlanMenuTrigger({ busy }: { busy: boolean }) {
   const t = useExtracted();
 
   return (
-    <DropdownMenuTrigger render={<Button busy={busy} edge="end" size="icon-sm" variant="ghost" />}>
+    <DropdownMenuTrigger render={<Button busy={busy} edge="end" size="icon-bar" variant="ghost" />}>
       <EllipsisIcon aria-hidden="true" />
       <span className="sr-only">{t("Plan options")}</span>
     </DropdownMenuTrigger>
