@@ -335,20 +335,23 @@ private const val SLOW_CHECK_MS = 15_000L
 
 private const val CLOCK_ALPHA = 0.7f
 
-/** Inline, beside the step it belongs to; [description] says what the microphone is for here. */
+/** Inline, beside the step it belongs to; [description] says what the microphone is for here. [titled] is false under a title that already says it. */
 @Composable
 fun MicrophoneOff(
     description: String,
     modifier: Modifier = Modifier,
+    titled: Boolean = true,
 ) {
     val context = LocalContext.current
     Column(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(painterResource(R.drawable.ic_mic_off), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(stringResource(R.string.audio_microphone_off_title), style = MaterialTheme.typography.titleSmall)
+        if (titled) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(painterResource(R.drawable.ic_mic_off), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.audio_microphone_off_title), style = MaterialTheme.typography.titleSmall)
+            }
         }
         Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         OutlinedButton(
