@@ -4,7 +4,7 @@ import {
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
   expectCount,
@@ -363,6 +363,31 @@ describe("science activities", () => {
 
     await fillSquare(["Pp", "Pp", "pp", "pp"]);
     await expect.element(share).toBeVisible();
+  });
+
+  it("Punnett grid: number keys fill a square picked to change, not the share question", async () => {
+    openActivity({ template: "combinationGrid" });
+    await fillSquare(["Pp", "Pp", "pp", "pp"]);
+
+    await expect
+      .element(page.getByText("What share of the seeds grow white flowers?"))
+      .toBeVisible();
+
+    const square = page.getByRole("button", { name: /^Square 1,/u });
+    const before = square.element().textContent;
+    await square.click();
+
+    const choiceKeys = [
+      ...document.querySelectorAll('[data-slot="player-choice-scene-options"] [data-slot="kbd"]'),
+    ];
+
+    expect(choiceKeys.length).toBeGreaterThan(0);
+    expect(choiceKeys.map((key) => getComputedStyle(key).visibility)).not.toContain("visible");
+
+    await userEvent.keyboard("1");
+
+    await expect.element(page.getByRole("radio", { checked: true })).not.toBeInTheDocument();
+    await expect.poll(() => square.element().textContent).not.toBe(before);
   });
 
   it("Punnett grid: a wrong square in a fill-the-square check is wrong", async () => {
