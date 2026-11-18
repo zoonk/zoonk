@@ -15,6 +15,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const FILL_THE_SQUARE = { ...activityContentFixtures.combinationGrid, check: interactionCheck };
 
@@ -262,6 +263,33 @@ describe("science activities", () => {
     await page.getByRole("button", { name: "Add Carbon" }).click();
     await expect.element(page.getByText("Built: C", { exact: true })).toBeVisible();
     expect(statusTop("1 atom has open bonds, shown as dots.")).toBe(top);
+  });
+
+  it("molecule builder: selecting an atom keeps the tools in place on a phone", async () => {
+    await atViewport({ height: 844, width: 320 }, async () => {
+      openActivity({ template: "moleculeBuilder" });
+      const card = page.getByRole("figure");
+      const undo = page.getByRole("button", { exact: true, name: "Undo" });
+      const addCarbon = page.getByRole("button", { name: /^Add Carbon/u });
+      const atom = page.getByRole("button", { name: "Carbon 1: 0 of 4 bonds" });
+
+      const toolsTop = () =>
+        undo.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+      await expect.element(undo).toBeVisible();
+      const beforeAdding = toolsTop();
+      await addCarbon.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "false");
+      const beforeSelecting = toolsTop();
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+      expect(toolsTop()).toBe(beforeSelecting);
+      expect(toolsTop()).toBe(beforeAdding);
+    });
   });
 
   it("molecule builder: two double bonds make carbon dioxide", async () => {
