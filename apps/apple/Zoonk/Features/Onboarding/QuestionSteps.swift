@@ -479,7 +479,7 @@ private struct PurposeQuestion: View {
 /// Main's `ReasonStep`: each reason with the level it aims for. One with a level moves on when it's
 /// picked; a certificate and Something else ask for words first, in a box under the list, so no row
 /// moves.
-private func certificateExample(language: String?, region: String?) -> String? {
+func certificateExample(language: String?, region: String?) -> String? {
   let tag = language?.split(separator: "-", maxSplits: 1) ?? []
   let country = region ?? tag.dropFirst().first.map(String.init)
   switch tag.first {
