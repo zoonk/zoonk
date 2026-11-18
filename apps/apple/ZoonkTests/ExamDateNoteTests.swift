@@ -23,7 +23,7 @@ final class ExamDateNoteTests: XCTestCase {
   func testAFailedSpeakingMockStartSaysSoAboveItsAction() async throws {
     let window = try await showExamDay()
 
-    try await activate("IELTS speaking mock", in: window)
+    try await activate("Start", in: window)
 
     let failure = "The mock didn't start. Try again in a moment."
     try await waitForTestCondition("The failure never showed: \(spoken(in: window))") {
@@ -41,7 +41,7 @@ final class ExamDateNoteTests: XCTestCase {
   func testAGuestAtTheCallLimitIsOfferedAnAccountInTheBar() async throws {
     let window = try await showExamDay(transport: GuestCallLimit())
 
-    try await activate("IELTS speaking mock", in: window)
+    try await activate("Start", in: window)
 
     let signUp = String(localized: "Create a free account", table: "Subscriptions")
     try await waitForTestCondition("No way on: \(spoken(in: window))") {
@@ -54,7 +54,7 @@ final class ExamDateNoteTests: XCTestCase {
   private func speakingMockAction(in window: UIWindow) throws -> NSObject {
     try XCTUnwrap(
       accessibilityElements(in: window).first {
-        $0.accessibilityLabel == "IELTS speaking mock" && $0.accessibilityTraits.contains(.button)
+        $0.accessibilityLabel == "Start" && $0.accessibilityTraits.contains(.button)
       })
   }
 

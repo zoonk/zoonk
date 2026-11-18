@@ -107,6 +107,7 @@ final class MockRun {
     }
 
     adopted = key
+    queue.forgetRefusals()
     shown = nil
     drafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })

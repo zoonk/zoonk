@@ -191,6 +191,36 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertEqual(queue.status, .refused)
   }
 
+  /// Another question's ordinary save doesn't hide that an earlier answer still isn't saved.
+  func testARefusalStaysTheStatusWhileAnotherAnswerSaves() async {
+    var statuses: [MockDraftQueue.Status] = []
+    var queue: MockDraftQueue?
+    queue = MockDraftQueue { draft in
+      guard draft.itemId == "b" else { return .refused }
+      statuses.append(queue?.status ?? .saved)
+      return .stored
+    }
+
+    queue?.add(draft("a", .choice(0)))
+    await queue?.idle()
+    queue?.add(draft("b", .choice(1)))
+    await queue?.idle()
+
+    XCTAssertEqual(statuses, [.refused])
+    XCTAssertEqual(queue?.status, .refused)
+  }
+
+  /// A section handed in can't take its answers again, so its refusals go with it.
+  func testHandingASectionInForgetsItsRefusals() async {
+    let queue = MockDraftQueue { _ in .refused }
+
+    queue.add(draft("a", .choice(0)))
+    await queue.idle()
+    queue.forgetRefusals()
+
+    XCTAssertEqual(queue.status, .saved)
+  }
+
   /// "Try again" sends an answer that didn't get through, and it stays unanswered until the server
   /// keeps it.
   func testAnAnswerSentAgainCountsOnlyOnceItIsStored() async {

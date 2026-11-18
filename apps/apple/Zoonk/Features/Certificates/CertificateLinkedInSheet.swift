@@ -124,20 +124,19 @@ struct CertificateCopyButton: View {
 
   var body: some View {
     Button(action: action) {
-      if isCopied {
-        Label {
+      // One line, icon beside its word: a row's control stays as tall as the row's own text.
+      HStack(spacing: 4) {
+        Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+          .accessibilityHidden(true)
+
+        if isCopied {
           Text(Self.copiedLine)
-        } icon: {
-          Image(systemName: "checkmark")
-        }
-      } else {
-        Label {
+        } else {
           Text(
             "Copy", tableName: "Certificates", comment: "Copies one field for LinkedIn's form")
-        } icon: {
-          Image(systemName: "doc.on.doc")
         }
       }
+      .lineLimit(1)
     }
     .buttonStyle(.outline)
     .controlSize(.small)

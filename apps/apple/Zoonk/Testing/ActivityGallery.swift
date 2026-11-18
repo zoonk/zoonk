@@ -192,12 +192,17 @@
           Image(systemName: result.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
         }
         .foregroundStyle(result.isCorrect ? Color.success : .destructive)
+        // As the player's verdict: a canvas that takes the number shows the real value itself.
         Text(
-          verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
-            separator: "\n")
+          verbatim: [answersOnCanvas ? nil : result.correctAnswer, result.feedback]
+            .compactMap { $0 }.joined(separator: "\n")
         )
         .typeStyle(.note)
       }
+    }
+
+    private var answersOnCanvas: Bool {
+      activityRenderers.renderer(for: content.template)?.answersOnCanvas == true
     }
 
     private func check() {
