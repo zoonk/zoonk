@@ -20,10 +20,10 @@ export function useChangeWords() {
   const t = useExtracted();
 
   // An axis's label is a name, not a sentence's subject, so each change is its label and a value.
-  return (axis: string, along: "x" | "y") => ({
-    down: along === "x" ? t("{axis}: fewer", { axis }) : t("{axis}: down", { axis }),
+  return (axis: string) => ({
+    down: t("{axis}: down", { axis }),
     same: t("{axis}: no change", { axis }),
-    up: along === "x" ? t("{axis}: more", { axis }) : t("{axis}: up", { axis }),
+    up: t("{axis}: up", { axis }),
   });
 }
 
@@ -102,11 +102,11 @@ export function LineCrossingChanges({
     <div aria-hidden="true" className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
       <span className="flex items-center gap-1.5">
         <YArrow className="size-4" />
-        {changeWords(fields.yLabel, "y")[yChange]}
+        {changeWords(fields.yLabel)[yChange]}
       </span>
       <span className="flex items-center gap-1.5">
         <XArrow className="size-4" />
-        {changeWords(fields.xLabel, "x")[xChange]}
+        {changeWords(fields.xLabel)[xChange]}
       </span>
     </div>
   );
