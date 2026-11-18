@@ -451,67 +451,131 @@
         }
       }
     },
-    "%@ comes after %@ %lld, at %@ Brain Power" : {
-      "comment" : "Under the belts: the next belt, the belt before it with its last number (10), and the Brain Power where the next one starts, as in Yellow belt comes after White belt 10, at 2,500 Brain Power",
+    "%@ Brain Power to level %lld" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: Davor kommt %2$@ %3$lld. Los geht es bei %4$@ Brain Power"
+            "value" : "%1$@ Brain Power bis Level %2$lld"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ comes after %2$@ %3$lld, at %4$@ Brain Power"
+            "value" : "%1$@ Brain Power to level %2$lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ viene después de %2$@ %3$lld, al llegar a %4$@ de Poder Mental"
+            "value" : "%1$@ de Poder Mental para llegar al nivel %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ vient après %2$@ %3$lld, à partir de %4$@ points de Puissance Mentale"
+            "value" : "%1$@ points de Puissance Mentale pour atteindre le niveau %2$lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La %1$@ viene dopo la %2$@ %3$lld, a %4$@ punti di Potenza Mentale"
+            "value" : "%1$@ punti di Potenza Mentale per raggiungere il livello %2$lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@は%2$@%3$lldの次の帯で、%4$@脳力から始まります"
+            "value" : "あと%1$@脳力でレベル%2$lld"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 단계는 %2$@ %3$lld 다음이고, 두뇌력 %4$@부터 시작해요"
+            "value" : "두뇌력 %1$@ 더 모으면 레벨 %2$lld"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ to następny pas. Poprzedza go %2$@ %3$lld, a próg to %4$@ pkt Mocy Umysłu"
+            "value" : "%1$@ pkt Mocy Umysłu do poziomu %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ vem depois de %2$@ %3$lld e começa com %4$@ de Poder Mental"
+            "value" : "%1$@ de Poder Mental para chegar ao nível %2$lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, %2$@ %3$lld seviyesinden sonra %4$@ Beyin Gücü ile başlar"
+            "value" : "%1$@ Beyin Gücü daha kazanınca %2$lld. seviyeye ulaşırsın"
+          }
+        }
+      }
+    },
+    "%@ comes after level %lld, at %@ Brain Power" : {
+      "comment" : "{next} is a belt's name, such as \"Yellow belt\". {count} is a belt's last level, 10.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ gibt es nach Level %2$lld, ab %3$@ Brain Power"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ comes after level %2$lld, at %3$@ Brain Power"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ viene después del nivel %2$lld, al llegar a %3$@ de Poder Mental"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ s’obtient après le niveau %2$lld, à %3$@ points de Puissance Mentale"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ arriva dopo il livello %2$lld, a %3$@ punti di Potenza Mentale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@になるのはレベル%2$lldの次、%3$@脳力に達したときです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: 레벨 %2$lld 이후, 두뇌력이 %3$@에 도달하면 받아요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ zaczyna się po poziomie %2$lld, od %3$@ pkt Mocy Umysłu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ vem depois do nível %2$lld, com %3$@ de Poder Mental"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$lld. seviyeden sonra %3$@ Beyin Gücüne ulaştığında kazanılır"
           }
         }
       }
@@ -1190,6 +1254,178 @@
                       "value" : "%arg cevap"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons" : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektionen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezione"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezioni"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lldレッスン"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨 %lld개"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcje"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcja"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcji"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ders"
                 }
               }
             }
@@ -1957,65 +2193,6 @@
         }
       }
     },
-    "Best on %@" : {
-      "comment" : "Beside Patterns on the overview: the day of the week the learner answers best",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beste Ergebnisse am %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mejor día: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meilleurs résultats le %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Giorno migliore: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@が一番好調です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "가장 잘하는 날: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najlepszy dzień: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melhor desempenho: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En iyi günün: %@"
-          }
-        }
-      }
-    },
     "Best time" : {
       "comment" : "The part of the day the learner answers best",
       "localizations" : {
@@ -2487,6 +2664,64 @@
         }
       }
     },
+    "Coming" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht erreicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por conseguir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À venir"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da conquistare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これから"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "획득 예정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do zdobycia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A conquistar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sırada"
+          }
+        }
+      }
+    },
     "Day" : {
       "comment" : "Audio graph axis: the calendar's days",
       "localizations" : {
@@ -2660,6 +2895,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çalışılan gün sayısı"
+          }
+        }
+      }
+    },
+    "Earned" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verdient"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenue"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottenuta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "獲得済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "획득"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zdobyty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conquistada"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kazanıldı"
           }
         }
       }
@@ -5193,6 +5486,65 @@
         }
       }
     },
+    "Study time" : {
+      "comment" : "Names the legend of a calendar of study days: a darker square means more minutes studied that day.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo di studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習時間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시간"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo de estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma süresi"
+          }
+        }
+      }
+    },
     "The time of day makes no difference." : {
       "localizations" : {
         "de" : {
@@ -6478,6 +6830,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk cevaplarından sonra puanın görünür."
+          }
+        }
+      }
+    },
+    "Your trend shows after two weeks of study" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach zwei Wochen Lernen siehst du deinen Trend"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verás tu tendencia después de dos semanas de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’évolution de ton Score s’affiche après deux semaines d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedrai il tuo andamento dopo due settimane di studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2週間学習するとスコアの推移が表示されます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2주 동안 학습하면 점수 변화를 볼 수 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trend wyników zobaczysz po dwóch tygodniach nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua evolução aparece depois de duas semanas de estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İki hafta çalıştıktan sonra puanındaki değişimi görebilirsin"
           }
         }
       }
