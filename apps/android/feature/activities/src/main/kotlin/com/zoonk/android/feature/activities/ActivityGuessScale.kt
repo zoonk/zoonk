@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.displayDigits
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -164,7 +165,7 @@ fun ActivityGuessComparison(
 ) {
     val locale = currentLocale()
     val text =
-        when (val comparison = compareGuess(actual, guess, isCorrect)) {
+        when (val comparison = compareGuess(actual, guess, isCorrect, unit)) {
             GuessComparison.Close -> {
                 stringResource(R.string.activities_guess_close)
             }
@@ -172,7 +173,12 @@ fun ActivityGuessComparison(
             is GuessComparison.Off -> {
                 stringResource(
                     R.string.activities_guess_off_by,
-                    formatAmount(abs(comparison.difference), locale, currencyUnit(unit)),
+                    formatAmount(
+                        abs(comparison.difference),
+                        locale,
+                        currencyUnit(unit),
+                        maximumFractionDigits = displayDigits(actual, unit),
+                    ),
                 )
             }
 

@@ -70,7 +70,7 @@ describe(compareGuess, () => {
     });
 
     expect(compareGuess({ actual: 11.57, guess: 15, isCorrect: false })).toStrictEqual({
-      difference: 15 - 11.57,
+      difference: 15 - 11.6,
       kind: "off",
     });
   });

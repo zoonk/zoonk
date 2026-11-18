@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities
 
 import com.zoonk.android.ui.components.fittingTicks
 import com.zoonk.android.ui.components.niceTicks
+import com.zoonk.android.ui.format.roundForDisplay
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -89,15 +90,15 @@ fun compareGuess(
     actual: Double,
     guess: Double,
     isCorrect: Boolean,
+    unit: String? = null,
 ): GuessComparison {
     if (isCorrect) return GuessComparison.Close
     val ratio = guess / actual
-    if (guess <= 0 || actual <= 0 || !ratio.isFinite() || !(1 / ratio).isFinite()) return GuessComparison.Off(guess - actual)
-    return when {
-        ratio >= RATIO_COMPARISON_MIN -> GuessComparison.TooBig(twoSignificant(ratio))
-        ratio <= 1 / RATIO_COMPARISON_MIN -> GuessComparison.TooSmall(twoSignificant(1 / ratio))
-        else -> GuessComparison.Off(guess - actual)
+    if (guess > 0 && actual > 0 && ratio.isFinite() && (1 / ratio).isFinite()) {
+        if (ratio >= RATIO_COMPARISON_MIN) return GuessComparison.TooBig(twoSignificant(ratio))
+        if (ratio <= 1 / RATIO_COMPARISON_MIN) return GuessComparison.TooSmall(twoSignificant(1 / ratio))
     }
+    return GuessComparison.Off(roundForDisplay(guess, unit) - roundForDisplay(actual, unit))
 }
 
 /** JavaScript's `Number(value.toPrecision(2))`, how main rounds a guess and a change. */

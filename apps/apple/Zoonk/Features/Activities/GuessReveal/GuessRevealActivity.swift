@@ -62,8 +62,12 @@ private struct GuessRevealCanvas: View {
       if let actual {
         VStack(alignment: .leading, spacing: 10) {
           if let guess {
-            comparisonText(GuessScale.compare(guess: guess, actual: actual, isCorrect: isCorrect))
-              .typeStyle(.body.weight(.semibold))
+            comparisonText(
+              GuessScale.compare(
+                guess: guess, actual: actual, isCorrect: isCorrect, unit: fields.unit),
+              actual: actual
+            )
+            .typeStyle(.body.weight(.semibold))
           }
 
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
@@ -108,25 +112,27 @@ private struct GuessRevealCanvas: View {
     if case .checked(let isCorrect) = context.phase { isCorrect } else { false }
   }
 
-  private func comparisonText(_ comparison: GuessScale.Comparison) -> Text {
+  private func comparisonText(_ comparison: GuessScale.Comparison, actual: Double) -> Text {
     switch comparison {
     case .close:
-      Text(
+      return Text(
         "Your guess is close to the real value.", tableName: "Activities",
         comment: "After the check: the guess was close enough")
     case .tooBig(let times):
-      Text(
+      return Text(
         "Your guess is about \(ActivityNumberFormat.format(times)) times too big.",
         tableName: "Activities",
         comment: "After the check: how many times bigger the guess was than the real value")
     case .tooSmall(let times):
-      Text(
+      return Text(
         "Your guess is about \(ActivityNumberFormat.format(times)) times too small.",
         tableName: "Activities",
         comment: "After the check: how many times smaller the guess was than the real value")
     case .off(let difference):
-      Text(
-        "Your guess is off by \(ActivityNumberFormat.guess(abs(difference), unit: fields.unit)).",
+      let digits = ActivityNumberFormat.displayDigits(actual, unit: fields.unit)
+      let shown = ActivityNumberFormat.guess(abs(difference), unit: fields.unit, digits: digits)
+      return Text(
+        "Your guess is off by \(shown).",
         tableName: "Activities",
         comment: "After the check: how far the guess was from the real value")
     }

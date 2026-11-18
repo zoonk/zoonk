@@ -95,6 +95,7 @@ import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
+import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
@@ -107,6 +108,7 @@ import com.zoonk.api.models.ActivityExpectedFormulaTolerance
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf5Value as GuessRevealContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
@@ -237,7 +239,10 @@ internal fun ActivityView(
             check()
             if (!canvasOnScreen && checkFirst) canvas()
 
-            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect, places)
+            if (result != null) {
+                val guessUnit = (content.content as? GuessRevealContent)?.value?.fields?.unit
+                ActivityFeedback(frame.check, activityAnswer, result.isCorrect, places, guessUnit)
+            }
         }
     }
 }
@@ -439,6 +444,7 @@ private fun ActivityFeedback(
     answer: ActivityAnswer?,
     isCorrect: Boolean,
     places: Int?,
+    guessUnit: String?,
 ) {
     val reveal = LocalFeedbackReveal.current
 
@@ -467,19 +473,20 @@ private fun ActivityFeedback(
                 val numeric = check.value
                 val locale = currentLocale()
                 val value = answer.numericValue
-                val digits = numeric.answerDigits(value, places)
+                val unit = if (guessUnit == null) numeric.unit else currencyUnit(guessUnit)
+                val digits = if (guessUnit == null) numeric.answerDigits(value, places) else null
 
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
                     value?.let {
                         LabeledLine(
                             stringResource(R.string.player_activity_your_answer),
-                            formatAmount(it, locale, numeric.unit, maximumFractionDigits = digits),
+                            formatAmount(it, locale, unit, maximumFractionDigits = digits),
                             tabular = true,
                         )
                     }
                     if (!isCorrect) {
                         if (value != null) Text("·", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        RightAnswerLine(formatAmount(numeric.answer, locale, numeric.unit, maximumFractionDigits = digits), tabular = true)
+                        RightAnswerLine(formatAmount(numeric.answer, locale, unit, maximumFractionDigits = digits), tabular = true)
                     }
                 }
                 FeedbackText(numeric.explanation)

@@ -18,7 +18,8 @@ export function useGuessFormat(unit?: string) {
         })
       : null;
 
-  const value = (number: number) => format(number, { unit: money ? unit : undefined });
+  const value = (number: number, maximumFractionDigits?: number) =>
+    format(number, { maximumFractionDigits, unit: money ? unit : undefined });
 
   return {
     accessible: (number: number) => [value(number), label].filter(Boolean).join(". "),

@@ -70,22 +70,26 @@ struct GuessScale: Hashable, Sendable {
     case off(Double)
   }
 
-  static func compare(guess: Double, actual: Double, isCorrect: Bool) -> Comparison {
+  static func compare(
+    guess: Double, actual: Double, isCorrect: Bool, unit: String? = nil
+  ) -> Comparison {
     if isCorrect {
       return .close
     }
 
-    guard guess > 0, actual > 0 else {
-      return .off(guess - actual)
+    if guess > 0, actual > 0 {
+      let ratio = guess / actual
+      if ratio >= 1.5 {
+        return .tooBig(roundGuess(ratio))
+      }
+      if ratio <= 1 / 1.5 {
+        return .tooSmall(roundGuess(1 / ratio))
+      }
     }
 
-    let ratio = guess / actual
-
-    if ratio >= 1.5 {
-      return .tooBig(roundGuess(ratio))
-    }
-
-    return ratio <= 1 / 1.5 ? .tooSmall(roundGuess(1 / ratio)) : .off(guess - actual)
+    return .off(
+      ActivityNumberFormat.roundedForDisplay(guess, unit: unit)
+        - ActivityNumberFormat.roundedForDisplay(actual, unit: unit))
   }
 }
 

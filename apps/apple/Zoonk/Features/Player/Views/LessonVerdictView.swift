@@ -146,7 +146,7 @@ struct LessonVerdictView: View {
           LessonRichText(correctAnswer)
             .typeStyle(.body.weight(.medium))
         } else {
-          RightAnswerLine(answer: correctAnswer)
+          RightAnswerLine(answer: displayedCorrectAnswer(correctAnswer))
         }
       } else if result.isCorrect, isWordBankAnswer {
         LabeledText(
@@ -158,6 +158,15 @@ struct LessonVerdictView: View {
           text: correctAnswer)
       }
     }
+  }
+
+  private func displayedCorrectAnswer(_ answer: String) -> String {
+    guard case .activity(let content) = step.content, content.template == "guessReveal",
+      case .numeric(_, let expected, _, _, _, _, _) = content.check,
+      let fields = try? content.fields(as: GuessRevealFields.self)
+    else { return answer }
+
+    return ActivityNumberFormat.guess(expected, unit: fields.unit)
   }
 
   /// A device grade sets the right answer on other right answers too.

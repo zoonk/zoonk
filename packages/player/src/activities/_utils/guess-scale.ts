@@ -1,3 +1,4 @@
+import { roundForDisplay } from "@zoonk/learn/format-number";
 import { niceTicks } from "@zoonk/utils/plot-scale";
 import { clamp } from "./snap-value";
 
@@ -69,26 +70,28 @@ export function compareGuess({
   actual,
   guess,
   isCorrect,
+  unit,
 }: {
   actual: number;
   guess: number;
   isCorrect: boolean;
+  unit?: string;
 }): GuessComparison {
   if (isCorrect) {
     return { kind: "close" };
   }
 
-  if (guess <= 0 || actual <= 0) {
-    return { difference: guess - actual, kind: "off" };
-  }
-
   const ratio = guess / actual;
 
-  if (ratio >= RATIO_COMPARISON_MIN) {
-    return { kind: "tooBig", times: roundGuess(ratio) };
+  if (guess > 0 && actual > 0) {
+    if (ratio >= RATIO_COMPARISON_MIN) {
+      return { kind: "tooBig", times: roundGuess(ratio) };
+    }
+
+    if (ratio <= 1 / RATIO_COMPARISON_MIN) {
+      return { kind: "tooSmall", times: roundGuess(1 / ratio) };
+    }
   }
 
-  return ratio <= 1 / RATIO_COMPARISON_MIN
-    ? { kind: "tooSmall", times: roundGuess(1 / ratio) }
-    : { difference: guess - actual, kind: "off" };
+  return { difference: roundForDisplay(guess, unit) - roundForDisplay(actual, unit), kind: "off" };
 }

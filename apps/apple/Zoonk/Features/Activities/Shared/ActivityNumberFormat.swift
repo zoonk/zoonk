@@ -3,8 +3,10 @@ import Foundation
 /// Mirrors main's `useFormatNumber` (`@zoonk/utils/math-answer`).
 enum ActivityNumberFormat {
   static func currencyUnit(_ unit: String?) -> String? { money(unit) == nil ? nil : unit }
-  static func guess(_ value: Double, unit: String?, locale: Locale = .courseLanguage) -> String {
-    format(value, unit: currencyUnit(unit), locale: locale)
+  static func guess(
+    _ value: Double, unit: String?, digits: Int? = nil, locale: Locale = .courseLanguage
+  ) -> String {
+    format(value, unit: currencyUnit(unit), digits: digits, locale: locale)
   }
 
   private static let currencies: [String: String] = [
