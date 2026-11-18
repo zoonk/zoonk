@@ -68,7 +68,8 @@ struct LessonCompletionView: View {
         content()
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
+      .scenePadding(.vertical)
     }
     .readableColumn(680)
   }
@@ -812,7 +813,8 @@ struct LessonWaitingView: View {
             shownAlternative
           }
           .frame(maxWidth: .infinity, alignment: .leading)
-          .scenePadding()
+          .listRowEdges()
+          .scenePadding(.vertical)
         }
         .readableColumn(680)
       }
@@ -850,7 +852,7 @@ struct LessonWaitingView: View {
   private var status: some View {
     switch (holding, writing) {
     case (nil, .notStarted):
-      LessonNoticeText(title: Text(kind.notReady), description: Text(Self.takesMinutes))
+      LessonNoticeText(title: Text(kind.notReady), description: Text(Self.startTakesMinutes))
     case (nil, .refused(let refusal)):
       LessonUnavailableView(refusal: refusal, isNotice: true, retry: write)
     case (nil, .setAside):
@@ -905,6 +907,9 @@ struct LessonWaitingView: View {
   private static let takesMinutes = LocalizedStringResource(
     "It takes a few minutes, and keeps going if you leave.", table: "Player",
     comment: "How long making a lesson takes; it goes on when the learner leaves")
+
+  private static let startTakesMinutes = LocalizedStringResource(
+    "Getting it ready takes a few minutes.", table: "Player")
 
   private static let setAsideTitle = LocalizedStringResource(
     "This lesson isn't available", table: "Player",
