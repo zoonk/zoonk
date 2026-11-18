@@ -92,6 +92,24 @@ final class PlanVisitTests: XCTestCase {
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
 
+  func testTheBarReadsAnEstimatedDaysLeftAsAbout() async throws {
+    let api = PlanAPIStub()
+    await api.setPlan(
+      try goalPlanFixture(targetDate: "2027-03-05", targetDateEstimated: true, today: "2027-01-04"))
+    let window = try await showPlan(api: api, goal: Self.goal(), tabs: PlanVisitTabs())
+
+    var subtitle: UIView?
+    try await waitForTestCondition("The bar never had a subtitle") {
+      subtitle =
+        self.requestViews(UINavigationBar.self, in: window)
+        .flatMap { $0.items ?? [] }.compactMap(\.subtitleView).first
+      return subtitle != nil
+    }
+    let spoken = spoken(in: try XCTUnwrap(subtitle))
+    XCTAssertTrue(spoken.contains("About 60 days left"), "VoiceOver reads: \(spoken)")
+    XCTAssertFalse(spoken.contains { $0.contains("~") }, "VoiceOver reads: \(spoken)")
+  }
+
   private static let didntWork = String(
     localized: "That didn't work. Try again in a moment.", table: "Plan")
   private static let didntSave = String(localized: "That didn't save. Try again.", table: "Plan")

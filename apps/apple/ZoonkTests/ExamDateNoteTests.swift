@@ -107,6 +107,9 @@ final class ExamDateNoteTests: XCTestCase {
     try await waitForTestCondition("The exam's facts never showed: \(spoken(in: window))") {
       self.spoken(in: window).contains { $0.hasPrefix("About ") }
     }
+    XCTAssertTrue(
+      spoken(in: window).contains { $0.contains("About 364 days left") },
+      "An estimated date's days left read as about: \(spoken(in: window))")
     XCTAssertFalse(
       spoken(in: window).contains { $0.contains("~") }, "Read as written: \(spoken(in: window))")
   }
