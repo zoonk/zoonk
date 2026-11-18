@@ -18,7 +18,7 @@ struct PlanEndDateValue: Equatable {
     guard let finish, !isExam || targetDate != nil else {
       shown =
         isExam
-        ? String(localized: "Date not set", table: "Plan", comment: "An exam date that is not set")
+        ? String(localized: "To be confirmed", table: "Plan")
         : String(localized: "None set", table: "Plan")
       spoken = shown
       return
