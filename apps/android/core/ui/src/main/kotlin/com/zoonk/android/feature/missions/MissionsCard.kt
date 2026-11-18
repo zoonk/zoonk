@@ -221,38 +221,41 @@ private fun MissionsStatus(
 }
 
 internal class MissionProgress(
-    missions: List<DayMission>,
+    private val missions: List<DayMission>,
 ) {
     val done = missions.count(DayMission::done)
     val total = missions.size
     val left get() = total - done
     val full get() = total > 0 && left == 0
 
-    /** Each part's fill before and after, finished ones first: the [from] first were already full, the rest up to [done] fill now. */
-    fun fills(from: Int = done): List<Pair<Float, Float>> =
-        List(total) { index -> (if (index < from) 1f else 0f) to (if (index < done) 1f else 0f) }
+    /** Each part's fill before and after, finished ones first; the [justDone] fill from empty. */
+    fun fills(justDone: Collection<DayMission> = emptyList()): List<Pair<Float, Float>> {
+        val from = done - missions.count { it in justDone }
+        return List(total) { index -> (if (index < from) 1f else 0f) to (if (index < done) 1f else 0f) }
+    }
 }
 
 /**
- * One part per mission, finished ones first, filling in Brain Power's violet. Parts past [from] fill from empty,
+ * One part per mission, finished ones first, filling in Brain Power's violet. The [justDone] fill,
  * after [delayMillis], when the screen celebrates.
  */
 @Composable
 internal fun MissionTrack(
     progress: MissionProgress,
     modifier: Modifier,
-    from: Int = progress.done,
+    justDone: Collection<DayMission> = emptyList(),
     delayMillis: Int = 0,
 ) {
+    val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
-    val animates = celebrates() && from < progress.done
+    val animates = celebrates() && fills.any { (start, fill) -> start < fill }
     val motion = remember { Animatable(if (animates) 0f else 1f) }
     LaunchedEffect(animates) {
         if (animates) motion.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
     }
 
     Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        progress.fills(from).forEach { (start, fill) ->
+        fills.forEach { (start, fill) ->
             Box(
                 Modifier
                     .weight(1f)

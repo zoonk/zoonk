@@ -35,7 +35,7 @@ class MissionTrackTest {
     fun aMissionJustFinishedFillsFromEmpty() {
         val facts = MissionMomentFacts(listOf(lesson, review), completed = listOf(lesson.kind), bonus = 20, bonusPaid = false)
 
-        assertEquals(listOf(0f to 1f, 0f to 0f), facts.progress.fills(from = facts.progress.done - facts.justDone.size))
+        assertEquals(listOf(0f to 1f, 0f to 0f), facts.progress.fills(facts.justDone))
     }
 
     private fun mission(
