@@ -25,11 +25,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DoneMark
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -89,12 +87,10 @@ fun DayProgress(
     val done = MaterialTheme.colorScheme.tertiary
     val fills =
         parts.map { part ->
-            val kind = part.step.learnKind
-            when {
-                part.state == DayPart.State.Done -> MeterPart.Fill.Solid(done, if (part.step.id == fillingId) filling.value else 1f)
-                part.state == DayPart.State.Current -> MeterPart.Fill.Place(part.share)
-                kind == LearnKind.Lesson -> MeterPart.Fill.Track
-                else -> MeterPart.Fill.Solid(kind.color.copy(alpha = AHEAD_ALPHA))
+            when (part.state) {
+                DayPart.State.Done -> MeterPart.Fill.Solid(done, if (part.step.id == fillingId) filling.value else 1f)
+                DayPart.State.Current -> MeterPart.Fill.Place(part.share)
+                DayPart.State.Ahead -> MeterPart.Fill.Track
             }
         }
 
@@ -262,4 +258,3 @@ private fun leadLine(
 
 private const val MARK = "⁣"
 private const val PERCENT = 100.0
-private const val AHEAD_ALPHA = 0.5f
