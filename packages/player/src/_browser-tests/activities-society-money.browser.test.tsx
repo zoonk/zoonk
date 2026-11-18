@@ -264,6 +264,12 @@ describe("money and society activities", () => {
       const text = document.querySelector<SVGTextElement>('[data-street-label="Broad Street"]')!;
       const label = text.getBoundingClientRect();
       const matrix = text.getScreenCTM()!;
+      const mapMatrix = text.ownerSVGElement!.getScreenCTM()!;
+
+      expect(Math.hypot(matrix.a, matrix.b) / Math.hypot(mapMatrix.a, mapMatrix.b)).toBeCloseTo(
+        0.8,
+      );
+
       const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
 
       const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
@@ -291,10 +297,7 @@ describe("money and society activities", () => {
         ...streets.filter((street) => street !== own).map((street) => street.distance),
       );
 
-      expect(
-        own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther,
-        `Broad Street distance: ${own.distance}px. Nearest other street: ${nearestOther}px. Label line height: ${lineHeight}px. Inline: ${text.dataset.pinCircleOverlap ?? false}. Center: ${JSON.stringify(center)}. Map: ${map.x},${map.y} ${map.width}×${map.height}. Transform: ${text.getAttribute("transform")}.`,
-      ).toBe(true);
+      expect(own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther).toBe(true);
 
       expect(label.left).toBeGreaterThanOrEqual(map.left);
       expect(label.right).toBeLessThanOrEqual(map.right);

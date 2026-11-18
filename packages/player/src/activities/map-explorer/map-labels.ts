@@ -43,7 +43,6 @@ function inFrame(label: MapLabelSpot, frame: { height: number; width: number }):
 export type MapLabelPlacement = MapPoint & { scale?: number; overPinCircle?: boolean };
 const MIN_LABEL_SCALE = 0.8;
 const LABEL_SCALES = [1, (1 + MIN_LABEL_SCALE) / 2, MIN_LABEL_SCALE] as const;
-const MIN_INLINE_LABEL_SCALE = 0.75;
 
 function namedCandidates(
   label: MapLabelSpot,
@@ -168,23 +167,19 @@ export function placeMapLabels({
       }),
     ];
 
-    for (const scale of [MIN_LABEL_SCALE, MIN_INLINE_LABEL_SCALE]) {
-      const label = { ...original, height: original.height * scale, width: original.width * scale };
+    const label = {
+      ...original,
+      height: original.height * MIN_LABEL_SCALE,
+      width: original.width * MIN_LABEL_SCALE,
+    };
 
-      const spot = streetCandidates(label, { boxes, frame })
-        .toSorted(
-          (a, b) =>
-            Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
-        )
-        .map((point) => ({ ...label, ...point }))
-        .find((candidate) => clear(candidate, placed, numbers, true));
-
-      if (spot) {
-        return { ...spot, scale };
-      }
-    }
-
-    return null;
+    return streetCandidates(label, { boxes, frame })
+      .toSorted(
+        (a, b) =>
+          Math.hypot(a.x - label.x, a.y - label.y) - Math.hypot(b.x - label.x, b.y - label.y),
+      )
+      .map((point) => ({ ...label, ...point }))
+      .find((candidate) => clear(candidate, placed, numbers, true));
   }
 
   function arrange(scale: number, pack: boolean) {
@@ -254,7 +249,7 @@ export function placeMapLabels({
 
       if (spot) {
         chosen.placed.push(spot);
-        chosen.spots[index] = { overPinCircle: true, scale: spot.scale, x: spot.x, y: spot.y };
+        chosen.spots[index] = { overPinCircle: true, scale: MIN_LABEL_SCALE, x: spot.x, y: spot.y };
       }
     }
   }

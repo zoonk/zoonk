@@ -223,9 +223,11 @@ describe(placeMapLabels, () => {
       { x: 244, y },
     ]);
 
+    const width = 145;
+
     const [spot] = placeMapLabels({
       frame: { height: 200, width: 288 },
-      labels: [{ ...named, height: 28, positions: streets[1], width: 150, x: 188, y: 100 }],
+      labels: [{ ...named, height: 28, positions: streets[1], width, x: 188, y: 100 }],
       pinNumbers: [
         { height: 20, width: 14, x: 124, y: 90 },
         { height: 20, width: 16, x: 162, y: 90 },
@@ -239,7 +241,10 @@ describe(placeMapLabels, () => {
 
     expect(spot).not.toBeNull();
     expect(spot?.y).toBe(100);
-    const halfWidth = 75 * (spot?.scale ?? 1) + 1.5;
+    const scale = spot?.scale ?? 1;
+
+    expect(scale).toBeGreaterThanOrEqual(0.8);
+    const halfWidth = (width / 2) * scale + 1.5;
     expect(spot!.x - halfWidth).toBeGreaterThanOrEqual(0);
     expect(spot!.x + halfWidth).toBeLessThanOrEqual(121);
   });
