@@ -98,6 +98,7 @@
   "conversation_opens_when_ready": "ca2a2198e837c55e7b44812dfad0041386384aae4aaeacbbdab232dbe672dc63",
   "conversation_paused": "9a8b2c80767705bbb549f11b54052e190a18b2f1f226bc1ed4a3f60a0c0c6a25",
   "conversation_paused_title": "92b769e489033eee9a8af0b9987d251065f7540d9d93ce4fb8c4b22ecbf0131c",
+  "conversation_phrase": "9fa5dde8c216ab3a03616f7b45b71952592cb35adde33186ee4f75d646a78130",
   "conversation_phrases": "38ee3229224d9d06d05d982cd4372e24d71af64f1211a0cef4228ac00a8dfab1",
   "conversation_practice": "71134e430d3190ac3f350b90768cd355f18b13c2bfa6bfb57b826be5e5202f10",
   "conversation_practice_call": "f7eb43da3377636f485b1261edb0425e10b68ccc8d660fca4a6f6167b7950b16",
@@ -197,6 +198,8 @@
     <string name="conversation_type_reply">Yanıtını yaz</string>
     <string name="conversation_type_reply_hint">Ya da yanıtını yaz</string>
     <string name="conversation_send">Gönder</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">Kullanabileceğin bir ifade</string>
     <string name="conversation_phrases">Kullanabileceğin ifadeler</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">İpucu: %1$s</string>

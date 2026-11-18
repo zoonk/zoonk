@@ -56,7 +56,7 @@
     <string name="generation_first_lesson_day_line_2">Choosing where to start…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Preparing your level test</string>
-    <string name="generation_level_test_bank">Writing the level test questions</string>
+    <string name="generation_level_test_bank">Getting the questions ready</string>
     <string name="generation_level_test_bank_line_1">Choosing texts from beginner to advanced…</string>
     <string name="generation_level_test_bank_line_2">Writing the reading questions…</string>
     <string name="generation_level_test_bank_line_3">Writing the listening questions…</string>

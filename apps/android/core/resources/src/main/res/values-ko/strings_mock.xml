@@ -169,7 +169,7 @@
     <string name="mock_hand_in_final">제출하면 답안을 수정할 수 없어요.</string>
     <string name="mock_keep_answering">계속 풀기</string>
     <string name="mock_hand_in">제출하기</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
     <string name="mock_sheet">답안지</string>
     <string name="mock_answer_sheet">답안지</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
@@ -187,6 +187,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
     <string name="mock_cell_answered">답안 작성 완료</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, 다시 볼 문제로 표시됨</string>
     <string name="mock_sections">파트</string>
     <string name="mock_section_number">파트 %1$d</string>

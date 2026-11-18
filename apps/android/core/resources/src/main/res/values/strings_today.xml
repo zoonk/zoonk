@@ -32,8 +32,12 @@
         <item quantity="other">%d skipped</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d more</item>
-        <item quantity="other">+%d more</item>
+        <item quantity="one">%d more</item>
+        <item quantity="other">%d more</item>
+    </plurals>
+    <plurals name="today_more_lessons">
+        <item quantity="one">%d more lesson</item>
+        <item quantity="other">%d more lessons</item>
     </plurals>
     <!-- Folds the session's later steps back under today_more_count. -->
     <string name="today_show_less">Show less</string>
@@ -113,10 +117,12 @@
     <string name="today_see_day_mock">See %1$s\'s mock exam</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="today_practice_with_buddy">Practice with %1$s</string>
-    <string name="today_already_know_this">Already know this?</string>
+    <string name="today_already_know_chapter">Already know this chapter?</string>
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <!-- The line under Completed lessons in Practice anytime. -->
+    <string name="today_completed_lessons_line">Do a lesson again</string>
     <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d ready to practice</item>

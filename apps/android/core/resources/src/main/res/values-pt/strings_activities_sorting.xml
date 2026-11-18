@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "d4012c07cc0b10f1e5fc7546f21cc68b479080f47010d29ae0024157dca2c280",
   "activities_sorting_drag_onto_timeline": "293aca67ef0c26aaca7e6d15c6e5027cdfade19a030bb6e675b83c916cd1830b",
   "activities_sorting_drag_steps": "452a66cb49d2e3e5a7c7266382fde489212f697b706917be0c514754d4fd078a",
-  "activities_sorting_events_to_place": "34a97db6915bc8216f617ceb75caf82c99a93a44f6be5e147e4f62ccd6443a0b",
+  "activities_sorting_events_placed": "1df409229d03d77631776cca2a83ea76d053baefa97299763ba26d05e778182a",
   "activities_sorting_every_spot_named": "901ba929b8e81e732c05df1d29803870a9aca83a1a36c1eb8507d1d7a621ee14",
   "activities_sorting_gap_between": "d0bd6d189cc8302b7f00c4963405d6fce649493e8621bbb7190177b2027791ec",
   "activities_sorting_goes_with": "611ede0caa4460b9099f4a4af678fbab7285c4363374698c288afff34014ae41",
@@ -197,11 +197,7 @@
     <string name="activities_sorting_year_and_guess">%1$s. Seu palpite: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Seu palpite: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">%d evento para posicionar</item>
-        <item quantity="many">%d eventos para posicionar</item>
-        <item quantity="other">%d eventos para posicionar</item>
-    </plurals>
+    <string name="activities_sorting_events_placed">%1$d de %2$d eventos posicionados</string>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Coloque %1$s na linha do tempo</string>
     <string name="activities_sorting_drag_onto_timeline">Toque para posicionar ou pressione e arraste até a linha do tempo.</string>

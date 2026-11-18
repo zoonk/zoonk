@@ -98,6 +98,7 @@
   "conversation_opens_when_ready": "49247572170827f6e58b638915a528c634d162a8a4f6a00f3315b03921bff3d5",
   "conversation_paused": "b71950323ec28d2aa4287380e576f0c28612b1b98e4b162b56e05499add0bbd9",
   "conversation_paused_title": "d4924e3d32992343c3fe77fe407d9110142f11ca0030a8c39db0b677fa34d008",
+  "conversation_phrase": "588780f5abf0d3d997852f72bb704f158ad7a885700fd9a7c06db5c4ae973418",
   "conversation_phrases": "54cbd1a729eb680b1f02af4fe38c04704a4c74c253f54ce89209e957634abdea",
   "conversation_practice": "1703d2513f257ed9543773417af541733ecff507ed041efe3701e1dd2f2fffc7",
   "conversation_practice_call": "63ec6ed80d4854bfd59bf0b54aa75cc94e5b632b43919a3720f17868d11b34e7",
@@ -197,6 +198,8 @@
     <string name="conversation_type_reply">Scrivi la tua risposta</string>
     <string name="conversation_type_reply_hint">Oppure scrivi la tua risposta</string>
     <string name="conversation_send">Invia</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">Una frase che puoi usare</string>
     <string name="conversation_phrases">Frasi che puoi usare</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">Suggerimento: %1$s</string>

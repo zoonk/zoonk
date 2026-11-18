@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "43b8af6a7260f5ff874a22d9b718a686a721a2ae499e94a7b8644d893395acc3",
   "activities_geometry_molecule_selected_hint": "ee80133899c5e9aaeb5bfedaf38b5a417cee7f8c127f1f6502856e487d2ee42d",
   "activities_geometry_molecule_single_bond": "37b2bd9acafdec09594364ff80527c439664e31e3d5239affa33c1b5f4acad07",
-  "activities_geometry_molecule_start": "d21e98a0f0b68eda4fb26010ba934f213c4537124469f2f3ecb1b9a045b641e7",
+  "activities_geometry_molecule_start": "c7d04e626f7f4632984f528c4f83c84d642aa6785053a6a77e54ba7ee272e9e7",
   "activities_geometry_molecule_target": "0157a0c6eff09029e8adcbdf652ab3cb069a6101e9e694c514361d135156746f",
   "activities_geometry_molecule_triple_bond": "ad088232b089e12b55180ca7f015f3e5b0a8130fee8d77e827cb95f3676a01db",
   "activities_geometry_molecule_undo": "c58354e845aa400bcc5ebf935142c7b1c706b9894ae5d8131546b684baf9a89f",
@@ -192,7 +192,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$s atomunu kaldır</string>
     <string name="activities_geometry_molecule_remove_selected">Seçili atomu kaldır</string>
-    <string name="activities_geometry_molecule_start">İlk atomunu eklemek için bir elemente dokun.</string>
+    <string name="activities_geometry_molecule_start">Molekülünü başlatmak için bir elemente dokun.</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$s oluşturabileceğinden fazla bağa sahip.</string>
     <plurals name="activities_geometry_molecule_open">

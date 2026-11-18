@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "4bb8e2a51fb1f12a9e7872d45a7b7d6018d98a7b78942bd073b6f51b7349a196",
   "activities_geometry_molecule_selected_hint": "a06b5633f86a51ffa1d2fda8d18e60a9c78cc259a24c611a6d5c488b314bd83c",
   "activities_geometry_molecule_single_bond": "c344a38dfce8bfd8db953e353b7744869ae9f32cc22c2a000f5ba4d75e92bb96",
-  "activities_geometry_molecule_start": "b83f0b3b1307526300b8e6828731f942946550609596526975c5dc01da7e1db9",
+  "activities_geometry_molecule_start": "c7903f02cb4cf5b818b96501425ff77cc1cde9ac2234d4c43bccac1dddcacd80",
   "activities_geometry_molecule_target": "d0c2827c86f27600d7c80e7d773b1ee086a788a7d66ac6f397900b4d8e70c831",
   "activities_geometry_molecule_triple_bond": "c1c417ce095fcc73b8186976e0c18709d5b5a57301eae69d25d14381e5602618",
   "activities_geometry_molecule_undo": "988456be582ebb81f873016c695599985880335d1188467d8e4e5a0ceb2f7381",
@@ -188,7 +188,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$sを取り除く</string>
     <string name="activities_geometry_molecule_remove_selected">選択中の原子を取り除く</string>
-    <string name="activities_geometry_molecule_start">元素をタップして、最初の原子を追加してください。</string>
+    <string name="activities_geometry_molecule_start">元素をタップして、分子を作り始めましょう。</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$sの結合が多すぎます。</string>
     <plurals name="activities_geometry_molecule_open">

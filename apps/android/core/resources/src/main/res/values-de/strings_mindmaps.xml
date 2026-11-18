@@ -23,13 +23,13 @@
   "mindmaps_empty_stopped": "07a9f38bae035b3b9f129fbfc9ebea4cab97cd1ae6b4871b0d93085c2ca4cba7",
   "mindmaps_failed": "3956a173932b8307993c01a0ab1eea017898402fed89af58cd5c2dba4639a5be",
   "mindmaps_fit": "65265aa963046da1dd81f6e13717b0c9f7aca1cfca730591600d94a3b1c848b0",
-  "mindmaps_free_lessons_note": "89263801dec00e0f74513d2e1e8ebfa0179526c428b81bc997f499c40ee618a0",
+  "mindmaps_free_lessons_note": "b04d477e434a00734466228a6de5c1fc4a3cf3eb74b605683ccc96b292973438",
   "mindmaps_in_short": "1c3594134a5b9a5195a20630a9172feb3e0320955c80bc8cee0d2f313955f3e7",
   "mindmaps_lesson_map": "e5b698006c98ad721a804cea35ee9b3a49f82fcf1f37bcdb9f5bccdda01858b7",
   "mindmaps_lesson_maps": "943018a3da4b3e656f3b32f9c98fe68242eb116c02a888904d8dcbdce979faa8",
   "mindmaps_lessons_empty": "9401eeb859c1cf8711d4ec5415f6bf706f5c4d9d05b861f4e0bbfb843c7d7d6c",
-  "mindmaps_lessons_first_free": "76ca6da61329afead036bc9db3fe559f1a69bd875571f9505ef2bd5b9262458e",
-  "mindmaps_lessons_to_write": "0ac5fcfa54559be7f2b38ef3012e5692abbc30f65c3e09a2f4ee0fb6e104618c",
+  "mindmaps_lessons_first_free": "1acb2b678ff0511cce39485f97091f9ab9ea186a39e74cb2a9a1c0d5ee203cf2",
+  "mindmaps_lessons_to_write": "36c1f821093577a3ecd23e91aa2109300d46eb9cf6b8956da24864bb40836db6",
   "mindmaps_map_gone": "1b56bc26c227a731e76e56df3633e310a5cc6ca312de82dcc054732aac299390",
   "mindmaps_next": "f54709fe6b8f8e6a351147d63d73299b7ba7c690e0117e53391a53404fc6c3e0",
   "mindmaps_no_longer_available": "62cfe62b5cb5f0ad2185a696d580c19941c072fd06e05cb252b591102853de3d",
@@ -38,7 +38,7 @@
   "mindmaps_open_lesson": "827db19d2e2b115ec7a0ffdbe9f405aba2a00f44e3a116026e6f54fc4792590e",
   "mindmaps_open_spoken": "59f526e5967f3220d6c7b5c2711b435593d13d5349342534f0911617f550a6de",
   "mindmaps_options": "78170e3f99033aeb5c6a9922c3198b1c63b3cb03b8ab1ffd070392a921bf9440",
-  "mindmaps_other_chapters": "8dfe75ff6930fe15b3beb454d738571895c02fec8adca4c2988fc09016351960",
+  "mindmaps_other_chapters": "279067aa1a8d6a7966947293b9635169d4aa5892b6900d4a2747a854b6ceaf0e",
   "mindmaps_previous": "e3eca1a4e2045771a6852211a78a9ea7bef25055a0e773402e61af95242581fd",
   "mindmaps_ready": "50fa70d417dc36699f601354ccb12564bd79e4fc9885ccc43634cb9024ebf540",
   "mindmaps_remove": "2fab361c1e7d8c07efbea970522564c4635db8057c90200fdaeedc3d9de246c8",
@@ -56,8 +56,8 @@
   "mindmaps_shown_as_text": "f00a49b56cffc684be6a97e171eafd85ca69ceaf2420d075db928660334b5f60",
   "mindmaps_start_from_first": "24dbf9a6205f26d9d8f14da576dab842792801123fc518796fa9d760a1a71697",
   "mindmaps_study": "ef35081034fd73ad828241428b89cb3a5add93e38d9061980366f9f6dc05ab40",
-  "mindmaps_tab_chapters": "1294c6c1e76821462d6d5c1faf2699f0acfc7faf62492f03a44db7f6236619b8",
-  "mindmaps_tab_lessons": "2435fd3881cc889f4055544643f282351358723a18727057e9e9e18718cc1b00",
+  "mindmaps_tab_chapters": "098162f5a70f26e1fd6296b07fcdac063904d0a6a42b6ffadf601691a514d128",
+  "mindmaps_tab_lessons": "c61f7891f664d64f6fc513cd5639ae4fad54a5cb5ebafe12f6ebe6f0f46d27d3",
   "mindmaps_tab_saved": "6d47c87a9bcb0bde560f6ed64005992336da6c65ddda51fb9299aa781b37b4c5",
   "mindmaps_tab_spoken": "20f42bbf78b605dc974226e8b3979307d75364c0ccda321ce4e61c28fe869a75",
   "mindmaps_try_again": "d18c92113d59794675b473266cf49a8e6cfad01ae36c61c0d429694bd385b49e",
@@ -99,8 +99,8 @@
     <string name="mindmaps_shown_as_text">Als Text angezeigt</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="one">Wir erstellen zuerst %1$s Lektion und rechnen sie auf deine kostenlosen Lektionen an.</item>
-        <item quantity="other">Wir erstellen zuerst %1$s Lektionen und rechnen sie auf deine kostenlosen Lektionen an.</item>
+        <item quantity="one">Wir erstellen zuerst %1$s Lektion aus deinen kostenlosen Lektionen</item>
+        <item quantity="other">Wir erstellen zuerst %1$s Lektionen aus deinen kostenlosen Lektionen</item>
     </plurals>
     <string name="mindmaps_writing_lessons">Wir erstellen zuerst die Lektionen, dann die Mindmap…</string>
     <string name="mindmaps_writing_lessons_wait">Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier.</string>
@@ -136,14 +136,17 @@
     <string name="mindmaps_viewer_hint">Ziehe zwei Finger zusammen oder auseinander, scrolle oder nutze + und - zum Zoomen; ziehe das Bild oder nutze die Pfeile zum Verschieben.</string>
     <string name="mindmaps_study">Mit Mindmaps lernen</string>
     <string name="mindmaps_create_all">Alle erstellen</string>
-    <string name="mindmaps_other_chapters">Ohne Mindmap</string>
-    <string name="mindmaps_free_lessons_note">Für eine dieser Mindmaps erstellen wir zuerst ihre Lektionen, und sie werden auf deine kostenlosen Lektionen angerechnet.</string>
+    <!-- Heading over the chapters whose mind map hasn't been made yet. -->
+    <string name="mindmaps_other_chapters">Noch keine Mindmap</string>
+    <string name="mindmaps_free_lessons_note">Wenn du eine Mindmap erstellst, werden zuerst die Lektionen des Kapitels erstellt und auf deine kostenlosen Lektionen angerechnet.</string>
     <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">%1$s Lektion zu erstellen</item>
-        <item quantity="other">%1$s Lektionen zu erstellen</item>
+        <item quantity="one">Wir erstellen zuerst %1$s Lektion</item>
+        <item quantity="other">Wir erstellen zuerst %1$s Lektionen</item>
     </plurals>
-    <string name="mindmaps_tab_chapters">Mit Mindmap</string>
-    <string name="mindmaps_tab_lessons">Lektionen</string>
+    <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
+    <string name="mindmaps_tab_chapters">Kapitel-Mindmaps</string>
+    <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->
+    <string name="mindmaps_tab_lessons">Lektions-Mindmaps</string>
     <string name="mindmaps_tab_saved">Gespeichert</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->
     <plurals name="mindmaps_tab_spoken">

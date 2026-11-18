@@ -156,7 +156,7 @@ private fun ChapterRow(
 internal val GoalMindMaps.notMade: List<GoalMindMap> get() = chapters.filter { it.status in NOT_MADE }
 
 /**
- * A chapter folded under Without a map is being made or didn't finish, so the group opens on arrival with its
+ * A chapter folded under No map yet is being made or didn't finish, so the group opens on arrival with its
  * progress, or its row's Try again, in view.
  */
 internal val GoalMindMaps.foldedMapToShow: Boolean
@@ -178,7 +178,7 @@ private fun GoalMindMap.canMakeNow(): Boolean =
         (status == GoalMindMap.Status.AVAILABLE || status == GoalMindMap.Status.DRAWING || status == GoalMindMap.Status.FAILED)
 
 /**
- * Main's `NotMadeYet`, after the chapters that have a map, under its own Without a map heading: each chapter whose
+ * Main's `NotMadeYet`, after the chapters that have a map, under its own No map yet heading: each chapter whose
  * map can be made now as its own row, the rest folded under the heading (listed when none is ready), then Create all
  * when two or more can start and one line about them all, after the rows they act on. The rows mix subjects, so they
  * go without their number.

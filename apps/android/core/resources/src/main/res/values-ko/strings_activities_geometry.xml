@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "263c5b697b7ba496714fb8df5e4630ab72925ee7729755dcdf989b26917b71d2",
   "activities_geometry_molecule_selected_hint": "506a195e570206b284848b6fe5d0cb35f24dcd990fc8564b5d540e76eeb05c9a",
   "activities_geometry_molecule_single_bond": "8efab867e4cc296066e6ce963de2077e6e65d7b4608798b797719ad816810246",
-  "activities_geometry_molecule_start": "0d5eb8fe170b6e2873be4b848846d117439c176d543cfe0b5251881e467316da",
+  "activities_geometry_molecule_start": "af97deb52be36580a79a2f3ae8caf57c45d93316f0d8407d9517bb2fe60222a7",
   "activities_geometry_molecule_target": "b659252cc92abe08c227498fe4c140c29bb4d2b299e4fb3bcdb2783d7ec08ccd",
   "activities_geometry_molecule_triple_bond": "a6f8222e036454831f379967f2550aefec01adf9c0f4f180dffa88bfa05a8798",
   "activities_geometry_molecule_undo": "c1c81a45b96fb000fa850b46a2a340c2a7fdee66708b6049a2f5caee02a2e5e5",
@@ -188,7 +188,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$s 제거</string>
     <string name="activities_geometry_molecule_remove_selected">선택한 원자 삭제하기</string>
-    <string name="activities_geometry_molecule_start">원소를 눌러 첫 원자를 추가하세요.</string>
+    <string name="activities_geometry_molecule_start">원소를 눌러 분자를 시작하세요.</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$s의 결합 수가 최대 개수를 넘었어요.</string>
     <plurals name="activities_geometry_molecule_open">

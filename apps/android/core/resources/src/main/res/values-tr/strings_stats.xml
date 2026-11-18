@@ -6,6 +6,7 @@
   "stats_answer_count": "09e722c8d547c29d34ed83dfae5bc45b52e04b62e26a44d5eb762bd2df843125",
   "stats_answer_more": "13caf8f7fd8f8887486f592ba52a3dcb1782d189bcf121fcc31f38a6b60c29bb",
   "stats_answers_to_count": "8782c47c1258ee446bdf0993028716527cf45fb251246314158f9940137acc87",
+  "stats_any_day": "39efaa08e95a701a19161405d5723e19e51dc04cec5a9f5b06c18f8a00123a86",
   "stats_any_time": "dadcc8d1aab84362f496b8083d75e8c57ba2f5a0783d2a11fb9f47ca310bea44",
   "stats_belt_black": "79eec878b3c55d2aa42c6ab2ab4a49e2ca770ad5227f963439bc907d68634d38",
   "stats_belt_blue": "921ad4c25f1ae4537ce53aeef1cc7e76c472896ce6d9f5a5f116cef27cee45b4",
@@ -113,7 +114,11 @@
     <string name="stats_belt_comes_after">%1$s, %2$s %3$s sonrasında %4$s Beyin Gücü ile kazanılır</string>
     <string name="stats_belt_earned">Kazanıldı</string>
     <string name="stats_belt_current">Mevcut</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">İki hafta çalıştıktan sonra puanındaki değişimi görebilirsin</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
     <string name="stats_belt_coming">Sırada</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">Beyaz</string>
     <string name="stats_belt_yellow">Sarı</string>
     <string name="stats_belt_orange">Turuncu</string>
@@ -124,7 +129,6 @@
     <string name="stats_belt_red">Kırmızı</string>
     <string name="stats_belt_gray">Gri</string>
     <string name="stats_belt_black">Siyah</string>
-    <string name="stats_trend_after_two_weeks">İki hafta çalıştıktan sonra puanındaki değişimi görebilirsin</string>
     <string name="stats_today">Bugün</string>
     <string name="stats_days_at_full">Enerjinin %100 olduğu günler</string>
     <string name="stats_energy_line">Enerji her dersle artar, ara verdiğin günlerde biraz azalır.</string>
@@ -184,6 +188,8 @@
     <string name="stats_throughout_week">Hafta boyunca</string>
     <string name="stats_throughout_day">Gün boyunca</string>
     <string name="stats_any_time">Her zaman</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">Herhangi bir gün</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">En iyi günün %1$s.</string>
     <string name="stats_days_same">Cevaplarının doğruluk oranı her gün yaklaşık aynı.</string>

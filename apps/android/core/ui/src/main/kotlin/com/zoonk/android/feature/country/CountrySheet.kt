@@ -189,7 +189,7 @@ private fun CountryRow(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val home = stringResource(R.string.settings_home_country)
+    val home = stringResource(R.string.country_home_tag)
     val spoken = stringResource(R.string.country_home_label, choice.name)
     ListRow(
         headline = { Text(choice.name, Modifier.semantics { if (choice.home) contentDescription = spoken }) },

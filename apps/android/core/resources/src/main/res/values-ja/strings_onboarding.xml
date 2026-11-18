@@ -121,7 +121,7 @@
   "onboarding_language_test_new_alphabet": "6a3ec17a38d0416d68a9f9afb42b5361b2455e0aa3c0ae971c79f82afe9aa50d",
   "onboarding_language_test_play": "0626814a40b4dea1c59c24357a81ee9c8eb4c2e5bbe1ccfc89e3deddc1530eec",
   "onboarding_language_test_play_again": "638ab7bcde3e0b8abeb971bf46b3505b96c6ddcac7e40ba92c8f613149d5dfea",
-  "onboarding_language_test_preparing_description": "34617b34302fb202428026c8068affb978c2c9e73a65c362fde388d9831e5499",
+  "onboarding_language_test_preparing_description": "8435508b8317ca1ece9e0f5b9cc2fb31500bdb270acd2caa26a62d899bc0eb51",
   "onboarding_language_test_preparing_title": "c811f5cbdde4e7b4c453e728e5e30d43ebf7e8fd149842ac5e065d4b69b30fe4",
   "onboarding_language_test_reading": "591f0cb9521fb34d33d3f20376144e67cc67743375ce4d78f7423a201a49dcc1",
   "onboarding_language_test_say_it": "848123e47a86c20bccb72a9d2d74e319120072ee22b978c7b34e4ce3dec5b013",
@@ -350,7 +350,7 @@
   "onboarding_row_goal": "27763df5d3dde695187d99974cf8b14a999a7dae62a61a698d731fb7f078ca9c",
   "onboarding_row_language": "8656dd5075ac84350060a275c8b43cc46bf626f283207d2c4e237315f3454959",
   "onboarding_row_last_cutoff": "236c9ce71d2e14a9a01b17ed2a6a994517387d5f1a5d89d4f51936fe76e4b644",
-  "onboarding_row_level": "e4548a6eae264eab8ce438db15cfba13a19bb2c4b3486c3d736a974fc57c398b",
+  "onboarding_row_level": "4e9dfe12385a8026960d647f89fcc275d9d0bf334aeef0a06a3df7296de3890c",
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
@@ -514,7 +514,8 @@
     <!-- A link to where a fact came from. %1$s is a site or document name. -->
     <string name="onboarding_source">出典：%1$s</string>
     <string name="onboarding_row_goal">目標</string>
-    <string name="onboarding_row_level">レベル</string>
+    <!-- Row with what the learner said they already know about their goal's subject, such as "I know a few things". -->
+    <string name="onboarding_row_level">知っていること</string>
     <!-- A small mark beside a fact the learner stated themselves. -->
     <string name="onboarding_row_you_said">入力内容より</string>
     <string name="onboarding_row_language">言語</string>
@@ -668,7 +669,7 @@
     <string name="onboarding_language_test_use_app_in">アプリを%1$sで使う</string>
     <string name="onboarding_language_test_preparing_title">レベルテストを準備しています</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">お使いの言語での%1$sテストはまだないため、今、問題を作成しています。通常は1〜2分かかりますが、この待ち時間は今回だけです。</string>
+    <string name="onboarding_language_test_preparing_description">%1$sのテストの問題を作成しています。1〜2分ほどかかりますが、この準備は今回限りです。</string>
     <string name="onboarding_language_test_skip_note">学習計画は選んだレベルから始まり、最初の数回の学習で細かく調整されます。</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">音声の内容がわからない</string>

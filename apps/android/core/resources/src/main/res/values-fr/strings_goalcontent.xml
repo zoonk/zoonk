@@ -71,7 +71,7 @@
   "goalcontent_skills": "bcdebe0301104100c00924290afbc151b70737d90d7e8ced3c541487fefb41af",
   "goalcontent_skipped_known": "3d995d7764c4539a9e83a52c3e0ebe3dcd13532f292e4b9d77286d94b3ea7d99",
   "goalcontent_start": "da74b1d50d8751f9a5a5fed95a80ca4922f32194fb191b465094c04588475fbb",
-  "goalcontent_studied": "c393780a2165d31e2db22d51214e3b2cf68e46d425fb015295d3c1aad2e3690d",
+  "goalcontent_studied": "be5601ef2a4098ecc355fe4679d71aa189469376eb797cc7a461d8cb0a1c3bea",
   "goalcontent_subject_count": "b7068b733119eb7baef29e60be0c6798f2553c701890abcba6f15779071bdabd",
   "goalcontent_subject_missing": "464de09f49d155efcb86bcd12e841e27db6a0314157271fed3bc07a31172de72",
   "goalcontent_subject_skipped": "3c7f82504b7a6fe2ffc2b4fa1d2285da7e716d39cf7c0a6b7d47cb5f1f2def9d",
@@ -154,7 +154,7 @@
     <!-- The share of something done: "35% done". -->
     <string name="goalcontent_percent_done">%1$d %% terminé</string>
     <!-- Legend of a progress bar's parts. -->
-    <string name="goalcontent_studied">Étudiés</string>
+    <string name="goalcontent_studied">Étudié</string>
     <string name="goalcontent_known">Déjà acquis</string>
     <string name="goalcontent_new">Nouveau</string>
     <!-- An exam subject's estimated readiness. -->

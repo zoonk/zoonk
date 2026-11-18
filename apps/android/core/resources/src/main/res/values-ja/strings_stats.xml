@@ -6,6 +6,7 @@
   "stats_answer_count": "a61d5c8dbd2d5c410213e0c33ecb7e6418b3a54cae13ae2fcf5c0d42a3c6bba4",
   "stats_answer_more": "86c14d64bc8c2edb86a08cd9582e78082fc158e519c9ecf6ffabca0e6262ef7e",
   "stats_answers_to_count": "811d426ccc4db1741b80d2ef1d2418c85ff4ce12fb9b3f805d9ae98a5a067053",
+  "stats_any_day": "9408882c34ef03b8ceab5d1210e894c9ba235275d2773d677de0004db0aeb44f",
   "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
   "stats_belt_black": "4c59dde7f2b1c9584b34e3fedacbcf47b423a2ce73b9c63c84810c5ea8e2000a",
   "stats_belt_blue": "940db92ba3976240c16e9ed265a6366643238c9278c35827c778b3a351c652e0",
@@ -113,7 +114,11 @@
     <string name="stats_belt_comes_after">%1$sは%2$s%3$sの次で、%4$s脳力で獲得できます</string>
     <string name="stats_belt_earned">獲得済み</string>
     <string name="stats_belt_current">現在の帯</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">2週間学習するとスコアの推移が表示されます</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
     <string name="stats_belt_coming">これから</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">白帯</string>
     <string name="stats_belt_yellow">黄帯</string>
     <string name="stats_belt_orange">オレンジ帯</string>
@@ -124,7 +129,6 @@
     <string name="stats_belt_red">赤帯</string>
     <string name="stats_belt_gray">グレー帯</string>
     <string name="stats_belt_black">黒帯</string>
-    <string name="stats_trend_after_two_weeks">2週間学習するとスコアの推移が表示されます</string>
     <string name="stats_today">今日</string>
     <string name="stats_days_at_full">100%だった日数</string>
     <string name="stats_energy_line">エネルギーはレッスンごとに増え、休みの日には少し減ります。</string>
@@ -177,6 +181,8 @@
     <string name="stats_throughout_week">曜日別</string>
     <string name="stats_throughout_day">時間帯別</string>
     <string name="stats_any_time">いつでも</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">どの日でも</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">一番調子がよいのは%1$sです。</string>
     <string name="stats_days_same">どの曜日も調子はほぼ同じです。</string>

@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "8a2d44ac3ca3ca8ee228c846156bf3ea654f24a69eb71a6cd21c19cbd944cb5b",
   "activities_sorting_drag_onto_timeline": "53597caa82f7007d2aa747cee182c48a79afe0ea123881fb76c45ddcb382355f",
   "activities_sorting_drag_steps": "40517eebe0abc5dfcc9b5d14dd04b4ff4f40c9155be49d09893ea56b07fdecfa",
-  "activities_sorting_events_to_place": "94fa67eef6038f4eb12c50436d300951d9728af8100d350b963707ee202f81a3",
+  "activities_sorting_events_placed": "ad27e512800333f8eb8d160f60c047dc933b705c422cb0500728e96950ca6d40",
   "activities_sorting_every_spot_named": "85ace62f4a7bc07e44252ae2330a31e4e39a4f0122e0bd3898b416a966ee8d1e",
   "activities_sorting_gap_between": "fccd6394a93af7b2245f6a9d351e7b0e5491f942fc779905061980c9eda0bfd9",
   "activities_sorting_goes_with": "d62e5dc0166bbc0ab80938a23ff17e18217fc340d38c64601fb0a21058ce7b8e",
@@ -189,9 +189,7 @@
     <string name="activities_sorting_year_and_guess">%1$s. 내 예상: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">내 예상: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="other">배치할 사건 %d개</item>
-    </plurals>
+    <string name="activities_sorting_events_placed">사건 %1$d/%2$d개 배치 완료</string>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">%1$s을(를) 연표에 배치하기</string>
     <string name="activities_sorting_drag_onto_timeline">눌러서 배치하거나 길게 눌러 연표로 끌어 놓으세요.</string>

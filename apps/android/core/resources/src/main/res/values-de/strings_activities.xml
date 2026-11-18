@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "c16cf10e23d6994238d8bbfb4ff5daf2bc778d9b41761537e58320784ca2d96b",
-  "activities_badge_estimate_first": "75254b54fa15ffaae13500528f7b9d2052c8302fb416d8fce86aa28a7004d13b",
+  "activities_badge_estimate_first": "688dd0dd17381e07964482e095777aa9b5946e741f917b73a6f90501fdffb064",
   "activities_badge_find_error": "bbb1cda2c14e4286211582f948a82bbe440142e508bcdf8a4bf46406498d8788",
   "activities_badge_read_chart": "c5d57e0bacd234bbc55de680556c62a632a6627e11431001595e88a35cab217b",
   "activities_badge_reply": "7ed79040956633b7437351e953ff86af02be52249f0979e3b5fc093c24b2b4d3",
@@ -61,7 +61,7 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Schätze zuerst</string>
+    <string name="activities_badge_estimate_first">Deine Schätzung zählt</string>
     <string name="activities_badge_read_chart">Lies das Diagramm</string>
     <string name="activities_badge_before_after">Vergleiche vorher und nachher</string>
     <string name="activities_badge_find_error">Finde den Fehler</string>

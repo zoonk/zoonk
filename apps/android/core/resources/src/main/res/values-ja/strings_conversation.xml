@@ -98,6 +98,7 @@
   "conversation_opens_when_ready": "9141a040f1533c6daac76c168184e8b84424c1cb2d908e1620fa9d1d868409b1",
   "conversation_paused": "c4f7725ed70ded922fa0937ec2c0c17f28587cc2173b284bbd6bc2e677db3dd7",
   "conversation_paused_title": "7d47f6dec00ca1bf7d62519e3e16ac2bef9c65a119b26b8070205b5733b3731c",
+  "conversation_phrase": "363df71de9768bec6941456bf0b05762cc159df5059bcc578554a42f1d9bf3e5",
   "conversation_phrases": "26d9b276a709f5fdfbbdf3afb86c20fffec299eaa44d3c0ef493336821b30faf",
   "conversation_practice": "cf3311265248df55f379f9bac740ed3880ffb38d10218f805a735bac63ecc8ad",
   "conversation_practice_call": "01b76bb31777a8448306b962c2d77c248aae7b031346b7b900bf9b2315b5385e",
@@ -197,6 +198,8 @@
     <string name="conversation_type_reply">返答を入力</string>
     <string name="conversation_type_reply_hint">文字でも返答できます</string>
     <string name="conversation_send">送信</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">使えるフレーズ</string>
     <string name="conversation_phrases">使えるフレーズ</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">ヒント：%1$s</string>

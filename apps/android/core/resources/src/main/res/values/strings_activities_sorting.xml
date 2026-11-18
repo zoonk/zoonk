@@ -118,10 +118,7 @@
     <string name="activities_sorting_year_and_guess">%1$s. Your guess: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Your guess: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">%d event to place</item>
-        <item quantity="other">%d events to place</item>
-    </plurals>
+    <string name="activities_sorting_events_placed">%1$d of %2$d events placed</string>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Place %1$s on the timeline</string>
     <string name="activities_sorting_drag_onto_timeline">Tap to place, or hold and drag onto the timeline.</string>

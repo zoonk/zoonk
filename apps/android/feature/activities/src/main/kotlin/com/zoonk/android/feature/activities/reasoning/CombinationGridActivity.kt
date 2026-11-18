@@ -561,7 +561,7 @@ private fun GridCaption(
     val text =
         when {
             counted != null && outputName != null -> {
-                pluralStringResource(R.plurals.activities_reasoning_grid_counted, total, counted, total, outputName)
+                stringResource(R.string.activities_reasoning_grid_counted, counted, total, outputName)
             }
 
             expected.isNotEmpty() -> {

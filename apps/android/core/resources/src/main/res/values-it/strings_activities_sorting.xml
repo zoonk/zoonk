@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "35b1a580fa402980b3819d2d973ade7b52fa663e671715d1c18445d222c22cae",
   "activities_sorting_drag_onto_timeline": "7835b020a50e61ff20776e6c6f9b5f79ddf7b279a4d725a5ee70dc62ebd0ce6e",
   "activities_sorting_drag_steps": "24b2e58216b4073da19c8e91b0328aeef0f12febbef08f1f0ebac78a99d3ac15",
-  "activities_sorting_events_to_place": "a0f2f5e2c67ff8da8a1f2c104c6eeabf37674e259d4493361eb5b02f924dff46",
+  "activities_sorting_events_placed": "d46c0b08addbec5f09fdf781e785c1669cf4bb80381ce3d66e70301781cae9a4",
   "activities_sorting_every_spot_named": "7c01ade0cc982cca43040b96dc5fbc4ded6708af769a6f4f56ac34f3950a7693",
   "activities_sorting_gap_between": "e9e9c913bf08d8d30e31645ebfc7e08786ce53f3b951e078c2dd7026a672746f",
   "activities_sorting_goes_with": "3f8c221192d031dc67fb92441b1a0b7bfe8ce70c97d2ef99c0e3ec5db9794766",
@@ -197,11 +197,7 @@
     <string name="activities_sorting_year_and_guess">%1$s. La tua stima: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">La tua stima: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">%d evento da posizionare</item>
-        <item quantity="many">%d eventi da posizionare</item>
-        <item quantity="other">%d eventi da posizionare</item>
-    </plurals>
+    <string name="activities_sorting_events_placed">%1$d eventi posizionati su %2$d</string>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Posiziona %1$s sulla linea del tempo</string>
     <string name="activities_sorting_drag_onto_timeline">Tocca per posizionare, oppure tieni premuto e trascina sulla linea del tempo.</string>

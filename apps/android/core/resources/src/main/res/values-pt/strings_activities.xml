@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "8d06e17ddb5c2be64d840a5346d2a16572fa62ce659a3b6d1d451c6c42a4782b",
-  "activities_badge_estimate_first": "a39f053d277c1f2d218b963a5f0b02b25bb806f70cefe410ae2c5e6d1237aacd",
+  "activities_badge_estimate_first": "c2b2b027c215a923c214f3a198104275fedc69c152d76fba4e88139962c9f75d",
   "activities_badge_find_error": "a13c3622cfc396444b49f77f06c3326094b925384e5e55f9acce56437982bcc4",
   "activities_badge_read_chart": "520ae739730a17e239dbb1bf7942e57f27df52ac06e5a38b533034edfbbb4c14",
   "activities_badge_reply": "dabfe8ae57699f8485fa489de73f35b55ba19edc9a0dee18d331fd908ecec68c",
@@ -61,7 +61,7 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Dê um palpite primeiro</string>
+    <string name="activities_badge_estimate_first">Seu palpite conta</string>
     <string name="activities_badge_read_chart">Leia o gráfico</string>
     <string name="activities_badge_before_after">Veja o antes e o depois</string>
     <string name="activities_badge_find_error">Encontre o erro</string>
