@@ -344,26 +344,30 @@ private const val NONE = "\u0000"
 internal fun ReadingPrompt(
     sentence: String,
     words: List<ReadingPromptWord>,
+    language: String,
 ) {
     val prompt = remember(sentence) { stripWrappingQuotes(sentence) }
     val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow(stringResource(R.string.player_language_translate), icon = R.drawable.ic_translate)
-        FlowRow(
-            // One stop reads the whole sentence; each word or phrase with a translation is its own stop after it.
-            Modifier.semantics(mergeDescendants = true) {
-                contentDescription = prompt
-                heading()
-            },
-            horizontalArrangement = Arrangement.spacedBy(if (' ' in prompt) 6.dp else 0.dp),
-        ) {
-            words.forEach { promptWord ->
-                val translation = promptWord.translation
-                if (translation == null) {
-                    Text(promptWord.word, style = style, modifier = Modifier.clearAndSetSemantics {})
-                } else {
-                    HintedWord(promptWord.word, translation, style)
+        // The words run in their own language's direction, so a mirrored screen doesn't reverse the sentence.
+        TargetDirection(language) {
+            FlowRow(
+                // One stop reads the whole sentence; each word or phrase with a translation is its own stop after it.
+                Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = prompt
+                    heading()
+                },
+                horizontalArrangement = Arrangement.spacedBy(if (' ' in prompt) 6.dp else 0.dp),
+            ) {
+                words.forEach { promptWord ->
+                    val translation = promptWord.translation
+                    if (translation == null) {
+                        Text(promptWord.word, style = style, modifier = Modifier.clearAndSetSemantics {})
+                    } else {
+                        HintedWord(promptWord.word, translation, style)
+                    }
                 }
             }
         }
