@@ -203,6 +203,20 @@ private fun LazyListScope.notMadeBlock(
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
     }
+    if (folds) {
+        item(key = "not-made-fold", contentType = "fold") {
+            MoreChaptersRow(
+                text =
+                    if (open) {
+                        stringResource(R.string.plan_show_fewer_chapters)
+                    } else {
+                        pluralStringResource(R.plurals.plan_more_chapters, later.size, later.size)
+                    },
+                open = open,
+                onClick = actions.toggleNotMade,
+            )
+        }
+    }
     if ((open || !folds) && later.isNotEmpty()) {
         val note = !actions.state.plus && later.any { it.lessonsToWrite > 0 }
         if (note) {
@@ -218,20 +232,6 @@ private fun LazyListScope.notMadeBlock(
         items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
             // The note parts the two lists; without it a hairline does, as between any two rows.
             Divided(map != later.first() || (now.isNotEmpty() && !note)) { ChapterRow(map, actions, stop = stop, numbered = false) }
-        }
-    }
-    if (folds) {
-        item(key = "not-made-fold", contentType = "fold") {
-            MoreChaptersRow(
-                text =
-                    if (open) {
-                        stringResource(R.string.plan_show_fewer_chapters)
-                    } else {
-                        pluralStringResource(R.plurals.plan_more_chapters, later.size, later.size)
-                    },
-                open = open,
-                onClick = actions.toggleNotMade,
-            )
         }
     }
     item(key = "not-made", contentType = "not-made") {
