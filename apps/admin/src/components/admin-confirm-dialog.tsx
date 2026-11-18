@@ -11,7 +11,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
+import { Button } from "@zoonk/ui/components/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { EnterButton } from "@zoonk/ui/components/enter-button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -46,6 +57,7 @@ export function AdminConfirmDialog({
   description,
   onOpenChange,
   open,
+  sheet = false,
   title,
   trigger,
   ...form
@@ -53,11 +65,38 @@ export function AdminConfirmDialog({
   description: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
+  sheet?: boolean;
   title: string;
   trigger?: React.ReactElement;
 }) {
   const [ownOpen, setOwnOpen] = useState(false);
   const setOpen = onOpenChange ?? setOwnOpen;
+
+  const confirmForm = (
+    <ConfirmForm
+      {...form}
+      onConfirmed={() => {
+        form.onConfirmed?.();
+        setOpen(false);
+      }}
+      sheet={sheet}
+    />
+  );
+
+  if (sheet) {
+    return (
+      <Drawer onOpenChange={setOpen} open={open ?? ownOpen}>
+        <DrawerPopup>
+          <DrawerHeader closeLabel="Close">
+            <DrawerTitle>{title}</DrawerTitle>
+            <DrawerDescription>{description}</DrawerDescription>
+          </DrawerHeader>
+
+          <DrawerContent>{confirmForm}</DrawerContent>
+        </DrawerPopup>
+      </Drawer>
+    );
+  }
 
   return (
     <AlertDialog onOpenChange={setOpen} open={open ?? ownOpen}>
@@ -69,13 +108,7 @@ export function AdminConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
 
-        <ConfirmForm
-          {...form}
-          onConfirmed={() => {
-            form.onConfirmed?.();
-            setOpen(false);
-          }}
-        />
+        {confirmForm}
       </AlertDialogContent>
     </AlertDialog>
   );
@@ -88,7 +121,8 @@ function ConfirmForm({
   confirmLabel,
   destructive = false,
   onConfirmed,
-}: ConfirmFormProps & { onConfirmed: () => void }) {
+  sheet,
+}: ConfirmFormProps & { onConfirmed: () => void; sheet: boolean }) {
   const [state, formAction] = useAdminActionState<AdminActionState>({
     action: async (previous, formData) => {
       const result = await action(formData);
@@ -119,7 +153,11 @@ function ConfirmForm({
         </p>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          {sheet ? (
+            <DrawerClose render={<Button size="lg" variant="outline" />}>Cancel</DrawerClose>
+          ) : (
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          )}
           <ConfirmButton destructive={destructive} disabled={confirmDisabled}>
             {confirmLabel}
           </ConfirmButton>
@@ -130,8 +168,7 @@ function ConfirmForm({
 }
 
 /**
- * Enter confirms what can be taken back (⏎ on the button); a destructive action is never the
- * default, so Enter doesn't press it and it shows no ⏎.
+ * Destructive actions only use the form's native keyboard behavior. They do not bind a dialog-wide shortcut.
  */
 function ConfirmButton({
   children,
@@ -146,7 +183,13 @@ function ConfirmButton({
 
   if (destructive) {
     return (
-      <SubmitButton className="w-auto" disabled={disabled} size="lg" variant="destructive">
+      <SubmitButton
+        className="w-auto"
+        disabled={disabled}
+        keyHint={<ShortcutKbd shortcut="main" />}
+        size="lg"
+        variant="destructive"
+      >
         {children}
       </SubmitButton>
     );

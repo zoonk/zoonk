@@ -14,9 +14,9 @@ import { SourceRow } from "./source-row";
 const SOURCE_COLUMNS: AdminTableColumn[] = [
   { label: "Source", twoLines: true },
   { label: "Kind" },
-  { label: "Last checked" },
-  { label: "Good until" },
-  { label: "Used by", size: "wide" },
+  { align: "right", label: "Last checked" },
+  { align: "right", label: "Good until" },
+  { align: "right", label: "Used by", size: "wide" },
 ];
 
 /** Resolves the URL into primitive filters so each list state is its own cache entry. */

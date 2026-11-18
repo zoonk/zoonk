@@ -5,7 +5,8 @@ import {
   StatTile,
   StatTileSkeleton,
 } from "@/components/stat-tile";
-import { formatDollars } from "@/lib/ai-format";
+import { formatUsd } from "@/lib/ai-format";
+import { formatDate } from "@/lib/format";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Stat, StatIcon, StatLabel } from "@zoonk/ui/components/stat";
@@ -79,15 +80,27 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
                 >
                   {formatNumber(item.count)}
                 </span>
-                <span className="text-muted-foreground text-compact text-pretty">
-                  {item.detail}
-                </span>
+                <AttentionDetail item={item} />
               </span>
             </Stat>
           </li>
         );
       })}
     </ul>
+  );
+}
+
+function AttentionDetail({ item }: { item: AttentionItem }) {
+  return (
+    <span className="text-muted-foreground text-compact text-pretty">
+      {item.detail}
+      {item.oldest && (
+        <>
+          {", the oldest from "}
+          <span className="whitespace-nowrap">{formatDate(item.oldest)}</span>
+        </>
+      )}
+    </span>
   );
 }
 
@@ -156,12 +169,12 @@ export function WeekTiles({
       />
 
       <StatTile
-        change={{ ...week.spend, format: formatDollars, rise: "watch" }}
+        change={{ ...week.spend, format: formatUsd, rise: "watch" }}
         href="/ai"
         icon={<CpuIcon />}
         title="AI spend"
         trend={trendOf(week.spend, "AI spend")}
-        value={formatDollars(week.spend.current)}
+        value={formatUsd(week.spend.current)}
       />
     </div>
   );

@@ -14,7 +14,10 @@ export default function NotFound() {
       </EvalPageTop>
 
       <ContainerBody>
-        <Link className={buttonVariants({ className: "self-start", variant: "outline" })} href="/">
+        <Link
+          className={buttonVariants({ className: "self-start", size: "lg", variant: "outline" })}
+          href="/"
+        >
           See all tasks
         </Link>
       </ContainerBody>

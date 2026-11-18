@@ -2,7 +2,7 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export type InboxQueue = { count: number; oldest: Date | null };
+type InboxQueue = { count: number; oldest: Date | null };
 
 const waiting = { _count: { id: true }, _min: { createdAt: true } } as const;
 

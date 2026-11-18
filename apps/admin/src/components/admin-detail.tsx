@@ -87,7 +87,7 @@ export function AdminDetailHeader({
   /** The page's buttons, in its top bar: `Button size="bar"`. */
   actions?: React.ReactNode;
   alert?: string | null;
-  facts: (string | null | undefined | false)[];
+  facts: React.ComponentProps<typeof FactSegments>["facts"];
   /** What the record is, drawn before its name: a person's photo or initials. */
   mark?: React.ReactNode;
   menu?: React.ReactNode;
@@ -96,8 +96,6 @@ export function AdminDetailHeader({
   title: string;
   titleClassName?: string;
 }) {
-  const shown = facts.filter((fact): fact is string => Boolean(fact));
-
   return (
     <AdminHeader
       actions={
@@ -123,7 +121,7 @@ export function AdminDetailHeader({
       {/* A record's facts here are names, a plan and dates: words, so the text face (Main's are counts). */}
       <DetailFacts className="font-sans">
         <FactSegments
-          facts={shown}
+          facts={facts}
           lead={alert && <span className="text-destructive-text">{alert}</span>}
         />
       </DetailFacts>

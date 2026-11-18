@@ -8,7 +8,7 @@ import { buildSourceListHref, parseSourceListFilters } from "./_utils/source-lis
 const KIND_OPTIONS = [
   { label: "Official", value: "official" as const },
   { label: "Secondary", value: "secondary" as const },
-  { label: "Upload", value: "upload" as const },
+  { label: "Uploaded", value: "upload" as const },
 ];
 
 export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">, "searchParams">) {
@@ -16,7 +16,7 @@ export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">
 
   return (
     <AdminToolbar>
-      <AdminSearch placeholder="Search public sources by title…" />
+      <AdminSearch placeholder="Search sources by title…" />
 
       <AdminTabs
         label="Kind"

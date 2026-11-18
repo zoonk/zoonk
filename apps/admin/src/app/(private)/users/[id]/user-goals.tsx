@@ -52,7 +52,7 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
         <Meter>
           <MeterFill
             className="bg-success"
-            share={goal.totalItems > 0 ? goal.doneItems / goal.totalItems : 0}
+            share={goal.lessonsTotal > 0 ? goal.lessonsDone / goal.lessonsTotal : 0}
           />
         </Meter>
       ) : null}
@@ -61,11 +61,10 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
         <span>
           {goal.plan ? (
             <>
-              Plan:{" "}
               <span className="text-foreground tabular-nums">
-                {goal.doneItems.toLocaleString("en")} of {goal.totalItems.toLocaleString("en")}
+                {goal.lessonsDone.toLocaleString("en")} of {goal.lessonsTotal.toLocaleString("en")}
               </span>{" "}
-              done
+              lessons done
             </>
           ) : (
             "No plan"
@@ -161,6 +160,31 @@ function PlanChanges({ goals }: { goals: UserGoal[] }) {
 }
 
 /** The Plan tab: each goal's plan drawn as on the Overview, with what the plan itself is, then every change made to it, newest first. */
+function PlanFacts({ goal }: { goal: UserGoal }) {
+  if (!goal.plan) {
+    return null;
+  }
+
+  const { estimateHours, version } = goal.plan;
+
+  return (
+    <FactSegments
+      facts={[
+        `Plan version ${version}`,
+        estimateHours ? `About ${Math.round(estimateHours)} hours of study` : null,
+        {
+          content: (
+            <>
+              Goal created <span className="whitespace-nowrap">{formatDate(goal.createdAt)}</span>
+            </>
+          ),
+          key: "created",
+        },
+      ]}
+    />
+  );
+}
+
 export async function UserPlans({ userId }: { userId: string }) {
   "use cache: private";
 
@@ -175,15 +199,7 @@ export async function UserPlans({ userId }: { userId: string }) {
           <ul className="-my-3.5 flex flex-col divide-y">
             {goals.map((goal) => (
               <GoalProgress goal={goal} key={goal.id}>
-                {goal.plan ? (
-                  <span>
-                    Version {goal.plan.version}
-                    {goal.plan.estimateHours
-                      ? ` · About ${Math.round(goal.plan.estimateHours)} hours of study`
-                      : ""}
-                    {` · Goal created ${formatDate(goal.createdAt)}`}
-                  </span>
-                ) : null}
+                {goal.plan && <PlanFacts goal={goal} />}
               </GoalProgress>
             ))}
           </ul>
