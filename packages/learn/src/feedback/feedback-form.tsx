@@ -11,6 +11,7 @@ import {
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { parseFormField } from "@zoonk/utils/form";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -166,7 +167,9 @@ export function FeedbackForm({
   const isSaveReport = context.reportType === "saveFailure";
 
   const [draft, setDraft] = useState(isSaveReport ? t("I couldn't save my answers.") : "");
-  const sendDisabled = viewerEmail === undefined || draft.trim() === "";
+  // The required field guards empty sends before hydration, while React queues a filled submit.
+  const hydrated = useIsMounted();
+  const sendDisabled = viewerEmail === undefined || (hydrated && draft.trim() === "");
 
   const [status, formAction, isPending] = useActionState<FormStatus, FormData>(
     async (_state, formData) => {
