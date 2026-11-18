@@ -232,7 +232,7 @@ private struct MapShapes: View {
     Canvas { context, size in
       let map = naming.map
       let transform = naming.transform
-      let unnamed = naming.unnamedRegions(naming.layout(in: context, size: size).spots)
+      let stray = naming.strayRegions(naming.layout(in: context, size: size).spots)
 
       func path(_ data: String) -> Path {
         svg(data).applying(transform)
@@ -242,7 +242,7 @@ private struct MapShapes: View {
         context.fill(path(sphere), with: .color(ActivityBaseMap.Tone.water))
       }
 
-      for (index, region) in map.regions.enumerated() where !unnamed.contains(index) {
+      for region in map.regions where !stray.contains(region.id) {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
@@ -280,8 +280,8 @@ private struct MapShapes: View {
   }
 }
 
-/// Where the map's names go, measured as the labels draw them. The shapes read it too, so a
-/// colored block whose name can't be placed isn't drawn unnamed.
+/// Where the map's names go, measured as the labels draw them. The shapes read it too, to leave
+/// out the stray regions.
 private struct MapNaming {
   let map: ActivityBaseMap
   let crop: CGRect
@@ -338,19 +338,9 @@ private struct MapNaming {
     return (texts, spots)
   }
 
-  /// The colored regions whose name has no room on the map.
-  func unnamedRegions(_ spots: [MapViewport.Placement?]) -> Set<Int> {
-    Set(
-      map.regions.indices.filter { index in
-        let region = map.regions[index]
-        guard region.tone != .context, region.tone != .focus else { return false }
-        let bounds = svg(region.path).boundingRect
-        let names = map.labels.indices.filter {
-          map.labels[$0].kind == .region
-            && bounds.contains(CGPoint(x: map.labels[$0].x, y: map.labels[$0].y))
-        }
-        return !names.isEmpty && names.allSatisfy { spots[$0] == nil }
-      })
+  func strayRegions(_ spots: [MapViewport.Placement?]) -> Set<String> {
+    MapViewport.strayRegions(
+      map.regions, labels: map.labels, legendTones: Set(map.legend.map(\.tone)), spots: spots)
   }
 }
 

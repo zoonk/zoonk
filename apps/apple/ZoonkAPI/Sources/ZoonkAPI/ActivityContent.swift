@@ -250,6 +250,8 @@ public struct ActivityBaseMap: Codable, Hashable, Sendable {
   }
 
   public struct Region: Codable, Hashable, Sendable {
+    public let id: String
+    public let name: String
     public let path: String
     public let tone: Tone
   }
