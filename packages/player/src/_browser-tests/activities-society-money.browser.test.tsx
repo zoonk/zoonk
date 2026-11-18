@@ -362,7 +362,7 @@ describe("money and society activities", () => {
     });
   });
 
-  it("map explorer: tapping places uncovers what's there", async () => {
+  it("keeps the explored map count visible after check", async () => {
     openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
     await expect.element(page.getByText(/Over 70 workers and no cholera deaths/u)).toBeVisible();
@@ -376,6 +376,7 @@ describe("money and society activities", () => {
 
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
   });
 
   it("map explorer: the wrong conclusion is marked wrong", async () => {
