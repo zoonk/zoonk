@@ -94,6 +94,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
 
 function GoalDate() {
   const t = useExtracted();
+  const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
 
   if (!finish) {
