@@ -10,7 +10,11 @@ final class MockDraftQueue {
   enum Status: Equatable {
     case saved
     case saving
+    /// An answer didn't get through and waits to go again; "Try again" sends it now.
     case retrying
+    /// An answer that didn't get through is on its way again. Its note stays up, so it isn't drawn
+    /// and read out again on every attempt, but there's nothing more to send until it fails.
+    case resending
     case refused
   }
 
@@ -154,9 +158,10 @@ final class MockDraftQueue {
   }
 
   private func settle() {
-    // A retry on its way is still retrying: its note stays up until an answer gets through.
-    if retryTask != nil || attempt > 0 && isBusy {
+    if retryTask != nil {
       status = .retrying
+    } else if attempt > 0 && isBusy {
+      status = .resending
     } else if isBusy {
       status = .saving
     } else {

@@ -600,12 +600,9 @@ struct PracticeCallSection: View {
     }
 
     switch PracticeCallAction(limit: limit, isLocked: isLocked, isWriting: start.isWriting) {
-    case .signUp,
-      .subscribe where limit != nil:
+    case .wayOn(let limit):
       // In Start's row, as Start: the row keeps its height when Start comes back.
-      if let limit {
-        LimitWayOn(limit: limit)
-      }
+      LimitWayOn(limit: limit)
     case .subscribe:
       SubscribeGate(
         title: Text(
@@ -650,15 +647,17 @@ private struct PracticeCallRequest: Encodable {
 /// What the practice call's one action place holds. A limit's way on takes Start's place until its
 /// day comes: a guest signs up, a free learner subscribes, a subscriber waits on a disabled Start.
 enum PracticeCallAction: Equatable {
-  case signUp
+  /// The limit's own way on: an account for a guest, a subscription for a free learner.
+  case wayOn(HelpLimit)
+  /// A free learner picked a length only subscribers get.
   case subscribe
   case writing
   case start(isEnabled: Bool)
 
   init(limit: HelpLimit?, isLocked: Bool, isWriting: Bool) {
-    if let limit, limit.needsAccount {
-      self = .signUp
-    } else if limit?.offersSubscription == true || isLocked {
+    if let limit, limit.needsAccount || limit.offersSubscription {
+      self = .wayOn(limit)
+    } else if isLocked {
       self = .subscribe
     } else if isWriting {
       self = .writing
