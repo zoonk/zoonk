@@ -113,7 +113,7 @@ function RowLines({
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const isGettingReady = useLessonGettingReady();
-  const stepLabel = useStepLabel();
+  const stepLabel = useStepLabel({ includeSubject: false });
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (

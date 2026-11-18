@@ -8,7 +8,7 @@ import { practisesTopics } from "../session/use-block-copy";
  * A row's one line under its title: what a lesson belongs to, what practice is on, or how long a
  * challenge is, since a learner meets one before they've ever taken one.
  */
-export function useStepLabel() {
+export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
 
   return function stepLabel(block: DayStep): string | null {
@@ -33,6 +33,6 @@ export function useStepLabel() {
       return t("Every topic");
     }
 
-    return null;
+    return includeSubject ? block.subject : null;
   };
 }
