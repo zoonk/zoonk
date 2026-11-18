@@ -233,7 +233,7 @@ struct GoalSwitcher: View {
 
   /// The menu's "Your goals" section: the goals followed and the ones waiting to start.
   static func listsGoals(followed: Int, waiting: Int) -> Bool {
-    followed > 0
+    followed > 0 || waiting > 0
   }
 
   enum Trigger: Equatable {
@@ -242,11 +242,16 @@ struct GoalSwitcher: View {
     case explanations
   }
 
-  /// What the menu's button says.
+  /// What the menu's button says: the goal shown, or the quick explanations it lists when they're
+  /// all the learner has.
   static func trigger(hasShownGoal: Bool, followed: Int, waiting: Int, explanations: Int)
     -> Trigger
   {
-    hasShownGoal ? .goal : .startGoal
+    if hasShownGoal {
+      return .goal
+    }
+
+    return followed == 0 && waiting == 0 && explanations > 1 ? .explanations : .startGoal
   }
 
   /// Said in an alert, since the menu the learner chose from has closed.
