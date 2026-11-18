@@ -65,6 +65,16 @@ describe(getSetupProgress, () => {
     ).toStrictEqual({ current: 2, total: 6 });
   });
 
+  it("hides setup dashes while the language aim can open exam questions", () => {
+    expect(
+      getSetupProgress({
+        current: "reason",
+        history: ["level", "followUps", "targetDate", "schedule"],
+        view: { steps: ["reason", "plan"] },
+      }),
+    ).toBeNull();
+  });
+
   it("keeps an earlier question's place when a later screen opens it again", () => {
     expect(
       getSetupProgress({
