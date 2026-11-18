@@ -61,14 +61,25 @@ class PhraseWrapOnDeviceTest {
         assertEquals("a line per character", (1..LABEL.length).toList(), ends)
     }
 
-    private fun narrowestLineEnds(style: @Composable () -> TextStyle): List<Int> {
+    /** Only Japanese's loosest rules let a line start with a mark that belongs to the character before it, which the web never does. */
+    @Test
+    fun aJapaneseQuestionNeverStartsALineWithARepeatMark() {
+        val question = "日本の様々な地域で使われている言葉はどれですか？"
+        val ends = narrowestLineEnds(question) { MaterialTheme.zoonkType.question }
+        assertTrue("様々 stays together: $ends", question.indexOf('々') !in ends)
+    }
+
+    private fun narrowestLineEnds(
+        text: String = LABEL,
+        style: @Composable () -> TextStyle,
+    ): List<Int> {
         lateinit var layout: TextLayoutResult
         compose.setContent {
             val japanese = Configuration(LocalConfiguration.current).apply { setLocale(Locale.JAPANESE) }
             CompositionLocalProvider(LocalConfiguration provides japanese) {
                 ZoonkTheme {
                     Box(Modifier.width(IntrinsicSize.Min)) {
-                        Text(LABEL, style = style(), onTextLayout = { layout = it })
+                        Text(text, style = style(), onTextLayout = { layout = it })
                     }
                 }
             }

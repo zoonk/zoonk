@@ -203,10 +203,13 @@ private fun paragraphWrap(
     phrase: LocaleList,
 ): (TextStyle) -> TextStyle = if (language == "ja") TextStyle::byCharacter else { style -> style.byPhrase(phrase) }
 
-/** A balanced paragraph (a question) keeps its balance but drops the phrase breaks `LineBreak.Heading` brings. */
+/**
+ * A balanced paragraph (a question) keeps its balance but drops what `LineBreak.Heading` brings for headings: phrase
+ * breaks, and the loose rules that let a line start with a mark such as 々, which the web never does.
+ */
 private fun TextStyle.byCharacter(): TextStyle {
     if (lineBreak.wordBreak != LineBreak.WordBreak.Phrase) return this
-    return copy(lineBreak = lineBreak.copy(wordBreak = LineBreak.WordBreak.Default))
+    return copy(lineBreak = lineBreak.copy(strictness = LineBreak.Strictness.Normal, wordBreak = LineBreak.WordBreak.Default))
 }
 
 /**
