@@ -33,7 +33,9 @@ function getTopicKey(context: Topic): string {
   }
 
   if (context.kind === "step" || context.kind === "answer") {
-    return `${context.kind}:${"step" in context ? context.step.id : context.stepId}`;
+    // A saved question keeps its part's number once the part itself is removed from the lesson.
+    const part = "step" in context ? context.step.id : (context.stepId ?? `#${context.stepNumber}`);
+    return `${context.kind}:${part}`;
   }
 
   return context.kind;
