@@ -72,6 +72,18 @@ const guitarChord = {
   template: "keyboardFretboard",
 };
 
+function keysTop() {
+  const board = document.querySelector('[data-slot="piano-keyboard"]');
+
+  if (!board) {
+    throw new Error("The piano keys are missing");
+  }
+
+  return (
+    board.getBoundingClientRect().top - (board.closest("figure")?.getBoundingClientRect().top ?? 0)
+  );
+}
+
 function pianoKey(name: string) {
   return page.getByRole("group", { name: "Piano keys" }).getByRole("button", { exact: true, name });
 }
@@ -234,6 +246,21 @@ describe("music activities", () => {
       await expect
         .poll(() => document.querySelectorAll(".abcjs-l1 .abcjs-tab-number").length)
         .toBeGreaterThan(0);
+    });
+  });
+
+  it("keeps the piano keys in place when checking a sound on a phone", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ content: byEar, template: "keyboardFretboard" });
+      await focusOn(pianoKey("C"));
+      await press("Space");
+      await focusOn(pianoKey("G"));
+      await press("Space");
+
+      const top = keysTop();
+      await checkActivity();
+      await expectVerdict("Correct!");
+      expect(keysTop()).toBeCloseTo(top, 0);
     });
   });
 
