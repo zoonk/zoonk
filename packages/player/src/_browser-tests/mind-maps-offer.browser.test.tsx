@@ -200,7 +200,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect
       .element(rowButton("Reactions", "Try again"))
       .toHaveAccessibleDescription(
-        "Reactions Making one of these maps writes its lessons first, and they count toward your free lessons.",
+        "Reactions Making a map writes its chapter's lessons first, from your free lessons.",
       );
   });
 
@@ -214,7 +214,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
       .toHaveAccessibleDescription("Reactions");
 
     await expect
-      .element(notMade().getByText("they count toward your free lessons", { exact: false }))
+      .element(notMade().getByText("from your free lessons", { exact: false }))
       .not.toBeInTheDocument();
   });
 
