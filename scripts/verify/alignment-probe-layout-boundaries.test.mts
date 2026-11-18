@@ -171,4 +171,18 @@ describe("alignment across layout boundaries", () => {
     document.querySelector("[data-slot=drawer-popup]")?.append(second);
     assert.equal(hits("one-filled").length, 1);
   });
+
+  it("recognizes a drawer whose popup has a screen-specific slot name", () => {
+    document.body.innerHTML = `
+      <button style="--button-variant:default" data-box="16,784,306,44">Continue</button>
+      <div data-slot="drawer-viewport" data-box="0,0,390,844">
+        <div role="dialog" data-slot="lesson-question-drawer" data-box="0,253,390,591">
+          <a href="/login" style="--button-variant:default" data-box="16,776,358,44">Create a free account</a>
+        </div>
+      </div>`;
+
+    setHit(document.querySelector("[role=dialog] a"));
+    assert.deepEqual(hits("one-filled"), []);
+    assert.notEqual(read().activeSurface, "page");
+  });
 });
