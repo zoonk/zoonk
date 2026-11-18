@@ -74,9 +74,7 @@ function ChallengePracticeAction() {
 
   return (
     <QuestionMainAction
-      action={
-        primary.label === "start" || primary.label === "confirm" ? primary.label : "seeResult"
-      }
+      action={primary.label}
       busy={primary.busy}
       disabled={primary.disabled}
       enter="host"

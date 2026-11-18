@@ -115,7 +115,7 @@ describe("lesson feedback", () => {
 
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await expect.element(page.getByText("Let's go through it together")).not.toBeInTheDocument();
-    await next(/^Next/u);
+    await next();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
     await next();
 
@@ -173,7 +173,7 @@ describe("lesson feedback", () => {
     await answer("No", "Good guess!", /^See the answer/u);
     await next();
     await expect.element(previous).toBeVisible();
-    await next(/^Next/u);
+    await next();
     await expect.element(page.getByText(QUESTION)).toBeVisible();
     await expect.element(previous).toBeVisible();
 
@@ -195,7 +195,7 @@ describe("lesson feedback", () => {
 
     await answer(WRONG_OPTION, "Not quite");
     await next();
-    await next(/^Next/u);
+    await next();
     await answer(RIGHT_OPTION, "Correct!");
 
     const previous = page.getByRole("button", { name: "Previous screen" });
@@ -215,7 +215,7 @@ describe("lesson feedback", () => {
       .toMatchTextContent(/Correct/u);
 
     await next();
-    await next(/^Next/u);
+    await next();
     await expect.element(verdict("Correct!")).toBeVisible();
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeDisabled();
   });
@@ -231,7 +231,7 @@ describe("lesson feedback", () => {
 
     await answer(WRONG_OPTION, "Not quite");
     await next();
-    await next(/^Next/u);
+    await next();
     await answer(RIGHT_OPTION, "Correct!");
     await next();
 
@@ -248,7 +248,7 @@ describe("lesson feedback", () => {
     await expect.element(wrong).toBeDisabled();
 
     await next();
-    await next(/^Next/u);
+    await next();
     await next();
 
     await expect.element(wrong).toBeEnabled();
