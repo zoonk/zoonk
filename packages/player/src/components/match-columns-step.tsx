@@ -7,8 +7,9 @@ import { MatchEntry } from "@zoonk/learn/match-entry";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
+import { ActivityCanvas } from "../activities/_components/activity-canvas";
 import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer } from "../step-answer";
 import {
@@ -25,7 +26,7 @@ import {
   isItemMatched,
   restoreMatches,
 } from "./_utils/match-columns";
-import { MatchBoard } from "./match-board";
+import { MatchBoard, MatchBoardCount } from "./match-board";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -42,6 +43,7 @@ export function MatchColumnsStep({
 }) {
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);
   const t = useExtracted();
+  const questionId = useId();
   const interactionState = usePlayerInteractionState();
   const { trigger } = useWebHaptics();
 
@@ -165,16 +167,22 @@ export function MatchColumnsStep({
 
   return (
     <InteractiveStepLayout>
-      <QuestionText>{question}</QuestionText>
+      <div id={questionId}>
+        <QuestionText>{question}</QuestionText>
+      </div>
 
-      <MatchBoard
-        alignRows
-        className="text-reading"
-        left={leftItems}
-        renderItem={renderItem}
-        right={board.rightItems}
-        solvedRows={isSolved ? solvedRows : undefined}
-      />
+      <ActivityCanvas labelId={questionId}>
+        <MatchBoardCount matched={board.matches.length} total={leftItems.length} />
+
+        <MatchBoard
+          alignRows
+          className="text-reading"
+          left={leftItems}
+          renderItem={renderItem}
+          right={board.rightItems}
+          solvedRows={isSolved ? solvedRows : undefined}
+        />
+      </ActivityCanvas>
 
       <div aria-live="polite" className="sr-only" role="status">
         {allMatched && t("All pairs matched. Press Check to continue.")}

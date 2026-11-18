@@ -65,6 +65,12 @@ export function NumberLineActivity({
           : fields.label}
       </ActivityCanvasLabel>
 
+      {!showsMoves && (
+        <ActivityCanvasLabel className="text-sm">
+          {t("Drag it, or use the arrow keys to move it one grid step.")}
+        </ActivityCanvasLabel>
+      )}
+
       <ActivityPlot
         height={PLOT_HEIGHT}
         padding={{ bottom: 8, left: 20, right: 20, top: 8 }}

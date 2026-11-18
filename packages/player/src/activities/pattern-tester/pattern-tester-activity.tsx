@@ -159,9 +159,11 @@ export function PatternTesterActivity({
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <p className="text-base leading-snug font-medium">
-        <PatternTask literalNumbers={isRegex} text={fields.task} />
-      </p>
+      {!isExploring && (
+        <p className="text-base leading-snug font-medium">
+          <PatternTask literalNumbers={isRegex} text={fields.task} />
+        </p>
+      )}
 
       <div className="flex flex-col gap-2">
         <label className="sr-only" htmlFor={inputId}>

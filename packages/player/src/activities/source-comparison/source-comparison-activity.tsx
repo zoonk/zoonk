@@ -3,7 +3,7 @@
 import { splitExcerpt } from "@zoonk/core/library/activities/excerpt-passages";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenText, ScrollText } from "lucide-react";
+import { BookOpenText, CheckIcon, ScrollText } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -84,6 +84,12 @@ function Passage({
       tabIndex={disabled ? -1 : 0}
     >
       {text}
+      {state === "correct" && (
+        <CheckIcon
+          aria-hidden="true"
+          className="text-success-text ms-1 inline size-3.5 align-text-bottom"
+        />
+      )}
     </span>
   );
 }

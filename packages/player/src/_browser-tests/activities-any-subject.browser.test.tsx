@@ -86,6 +86,7 @@ describe("any-subject activities", () => {
 
   it("before and after: a wrong ratio is marked", async () => {
     openActivity({ template: "beforeAfter" });
+    await page.getByRole("button", { name: "Show after: 1914" }).click();
     await valueInput().fill("8");
     await checkActivity();
     await expectVerdict("Not quite");

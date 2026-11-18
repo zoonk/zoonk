@@ -45,8 +45,7 @@ function cellOption(value: string) {
 
   return page
     .getByRole("group", { name: "What goes in the highlighted square?" })
-    .getByRole("button")
-    .filter({ hasText: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
+    .getByRole("button", { name: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
 }
 
 async function fillSquare(values: readonly string[]) {

@@ -49,7 +49,7 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     beforeAfter: t("Before and after"),
     dragCorner: t("Drag a corner"),
     earTraining: t("Ear training"),
-    estimateFirst: t("Estimate first"),
+    estimateFirst: t("Your guess counts"),
     moveLine: t("Move a line"),
     predictFirst: t("Predict first"),
     stepByStep: t("Step by step"),

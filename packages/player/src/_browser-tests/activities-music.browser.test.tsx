@@ -305,10 +305,7 @@ describe("music activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("A minor", { exact: true })).toBeVisible();
-
-    await expect
-      .element(page.getByText(/^On the keys: (?=.*\bA\b)(?=.*\bC\b)(?=.*\bE\b)/u))
-      .toBeInTheDocument();
+    await expect.element(page.getByRole("group", { name: "Piano keys" })).not.toBeInTheDocument();
   });
 
   it("keyboard: an explored chord wider than a phone shows every key it marks, each easy to tap", async () => {

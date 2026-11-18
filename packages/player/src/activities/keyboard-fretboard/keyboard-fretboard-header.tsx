@@ -49,7 +49,7 @@ export function KeyboardFretboardHeader({
   checked: boolean;
   heading: KeyboardHeading;
   notes: readonly string[];
-  onHear: () => void;
+  onHear?: () => void;
   start?: NoteTarget;
   target: NoteTarget;
 }) {
@@ -73,32 +73,45 @@ export function KeyboardFretboardHeader({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex min-w-0 flex-col gap-0.5">
-        <p className="text-lg leading-tight font-semibold">{title()}</p>
+      {(onHear || checked) && (
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <p className="text-lg leading-tight font-semibold">{title()}</p>
 
-        <p aria-live="polite" className="text-muted-foreground text-sm">
-          <span aria-hidden="true">
-            {notes.length > 0 ? notes.map((note) => display(note)).join(", ") : t("No notes yet")}
-          </span>
-          <span className="sr-only">
-            {notes.length > 0
-              ? t("On the keys: {notes}", { notes: notes.map((note) => spoken(note)).join(", ") })
-              : t("No notes yet")}
-          </span>
-        </p>
-      </div>
+          {onHear && (
+            <p aria-live="polite" className="text-muted-foreground text-sm">
+              <span aria-hidden="true">
+                {notes.length > 0
+                  ? notes.map((note) => display(note)).join(", ")
+                  : t("No notes yet")}
+              </span>
+              <span className="sr-only">
+                {notes.length > 0
+                  ? t("On the keys: {notes}", {
+                      notes: notes.map((note) => spoken(note)).join(", "),
+                    })
+                  : t("No notes yet")}
+              </span>
+            </p>
+          )}
+        </div>
+      )}
 
       <div className={cn("grid w-fit max-w-full gap-2", byEar?.onPlay && "sm:grid-cols-2")}>
         {byEar?.onPlay && (
-          <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
+          <ActivitySoundButton className="justify-start" onPlay={byEar.onPlay}>
+            {t("Play the sound")}
+          </ActivitySoundButton>
         )}
 
-        <ActivitySoundButton
-          disabled={notes.length === 0 || (byEar !== null && checked)}
-          onPlay={onHear}
-        >
-          {byEar ? t("Hear your notes") : t("Play the sound")}
-        </ActivitySoundButton>
+        {onHear && (
+          <ActivitySoundButton
+            className="justify-start"
+            disabled={notes.length === 0 || (byEar !== null && checked)}
+            onPlay={onHear}
+          >
+            {byEar ? t("Hear your notes") : t("Play the sound")}
+          </ActivitySoundButton>
+        )}
       </div>
     </div>
   );
