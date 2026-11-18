@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "df8fac2ca25d3eaf319a6de7491e5d3b1c8a6c6327ebbcc25f27c7a5e3d6e0f9",
   "mindmaps_alt_sentence": "439dfcd179134086ecf7225b5676a4f980ca0b1b814a1fd8f96bfe28ddbac2f3",
   "mindmaps_as_text": "c8ec3abda3b8c2348e3b51643bbd1316b753885190580bcd70d0874a3091c452",
-  "mindmaps_as_text_note": "20929d118d15f185df087adaf58d1bcfa1d83040d72d0d3f2b958eb2cad17386",
+  "mindmaps_as_text_note": "fbb2a5d0a970cd5392f8d49a3467046720a0ee8ebbbf446446079ad564b221a7",
   "mindmaps_being_made": "abea387fb2d42c4f3c23a1c5f17fc269dabd61d5e6ae0ac1b9b89464615c346b",
   "mindmaps_can_make_more": "a5fd830e9ae53f0d991028df5290e4025d92e75212d2bb356fb4c4baa5e57ce6",
   "mindmaps_chapter_count": "25b5778eb0f10519cf6a0e82dc049c224548f5e2aa963b55fb05251e75207ff0",
@@ -121,7 +121,7 @@
     <string name="mindmaps_try_again_spoken">%1$sのマインドマップをもう一度作成する</string>
     <string name="mindmaps_failed">今回は作成できませんでした。</string>
     <string name="mindmaps_unreachable">サーバーに接続できませんでした。インターネット接続を確認してください。</string>
-    <string name="mindmaps_as_text_note">このマップはテキストで表示されています。</string>
+    <string name="mindmaps_as_text_note">図に間違いがあったため、マインドマップをテキストで表示しています。</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">ダウンロード</string>
     <string name="mindmaps_saved">マインドマップを保存しました</string>

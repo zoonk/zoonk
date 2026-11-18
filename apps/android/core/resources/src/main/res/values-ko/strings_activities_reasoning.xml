@@ -9,7 +9,7 @@
   "activities_reasoning_claim": "ed6d526eb3e833a0856480b58d5278b7e2b0e95b9de7c53488ace2ddfa3eec26",
   "activities_reasoning_evidence": "8ae7c54e66d415f45640ef459de46dbce2308a50f0a73e3fe41151fe17b165fd",
   "activities_reasoning_evidence_chosen": "5ef2a399cff54a57b03470545c60dc9b96e464a921f07e37d5f0bbd0490345ff",
-  "activities_reasoning_evidence_hint": "40977998eacdceee44d0475cd9bb5d8ec899d75e5ac5052f6f9014bee18ec029",
+  "activities_reasoning_evidence_hint": "92c25144adc019ca1e9b115392a07094f07c4099ebac13a4ebf71e911741d3e1",
   "activities_reasoning_grid_all_filled": "d9e64314673fc151c779af9fa33ddf41b56ea3b5a9ecfa9e8292c776a2461273",
   "activities_reasoning_grid_counted": "1e7b5c174568136d7f4c1c847e1fc8b067d400edaff88489695da75fad46b867",
   "activities_reasoning_grid_filled": "003fdbc28fa953e047db0eb01ee37ac74c4fd92f03a30c857b9b5cce0fbaa9dc",
@@ -66,7 +66,7 @@
   "activities_reasoning_quotes": "35d88c0dc10425797fe54203e4bbf9bedacf1798a527c73fee0df63971e336b2",
   "activities_reasoning_reasoning": "2687064a92ad720e3d0fe8d4c0b2e883b9cbf6171845f7c052bbc044d9f65e58",
   "activities_reasoning_reasoning_chosen": "93d6561c3050210f75f93d01e522f3635d0355d6351234a741f1d3aa751d614a",
-  "activities_reasoning_reasoning_hint": "83ef52fb95ba8019fe2f065a9433937a51ce4b8e74d0a59c144cb3b16b0fc995",
+  "activities_reasoning_reasoning_hint": "be3fb9cf5dfe8dbf146293bbe9ce29c5387f3d124a984ff9b86e01287ee668c7",
   "activities_reasoning_reasoning_next": "687b1471455ccd9750fc73d32f65a9e0a93bbfbf6dd2dc7b52ef66f8d9fba840",
   "activities_reasoning_source_mark": "aee0b7ede71c058f1535f97230c2195cec9ddde4947a92892060fa8926ed0d0d",
   "activities_reasoning_source_missed": "c8a966a74663d390c1bcdd778b1cc0e3358dcdba24158f710f17e71977df2b32",
@@ -211,8 +211,8 @@
     <string name="activities_reasoning_evidence_chosen">근거: %1$s</string>
     <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
     <string name="activities_reasoning_reasoning_chosen">설명: %1$s</string>
-    <string name="activities_reasoning_evidence_hint">주장을 가장 잘 뒷받침하는 인용문을 고르세요</string>
-    <string name="activities_reasoning_reasoning_hint">인용문이 주장을 어떻게 뒷받침하는지 고르세요</string>
+    <string name="activities_reasoning_evidence_hint">주장을 가장 잘 뒷받침하는 인용문을 고르거나 끌어다 놓으세요</string>
+    <string name="activities_reasoning_reasoning_hint">인용문이 주장을 입증하는 이유를 고르거나 끌어다 놓으세요</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->
     <string name="activities_reasoning_reasoning_next">다음: 인용문이 주장을 어떻게 뒷받침하는지 설명하기</string>
     <string name="activities_reasoning_take_quote_out">인용문 빼기</string>

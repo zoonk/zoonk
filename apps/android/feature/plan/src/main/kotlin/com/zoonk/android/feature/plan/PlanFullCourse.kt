@@ -69,18 +69,8 @@ internal fun finishText(
 }
 
 @Composable
-private fun fullCourseRule(
-    course: FullCourse,
-    today: LocalDate,
-): String =
-    if (course.isExam) {
-        stringResource(R.string.plan_full_course_rule_exam)
-    } else {
-        stringResource(
-            if (course.targetDateNamedMonth) R.string.plan_full_course_rule_goal_month else R.string.plan_full_course_rule_goal,
-            goalDate(course.targetDate, course.targetDateNamedMonth, today),
-        )
-    }
+private fun fullCourseRule(course: FullCourse): String =
+    stringResource(if (course.isExam) R.string.plan_full_course_rule_exam else R.string.plan_full_course_rule_goal)
 
 /** Main's `FullCourseSwitch`, under an exam's time a day. */
 @Composable
@@ -210,7 +200,7 @@ internal fun ColumnScope.StudyEverythingBody(
                 )
             }
             Text(
-                fullCourseRule(course, page.today),
+                fullCourseRule(course),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -7,8 +7,6 @@
   "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
   "goalcontent_also_in_plan": "55d5c2936f025723288b341c1d7764918faa742a0a0ea3fbb959b84c4dccee38",
   "goalcontent_asked_a_lot": "1e624477335a1f4cb46db144121721d07b8d3f63ec4c972d2e2c4f2709b99f3d",
-  "goalcontent_beyond_guide": "5db5fc713491616b8fba6ae2a9114b3251a18c84701fa1552247e685bd58c80c",
-  "goalcontent_beyond_notice": "8063132c8978a341ba55f30a23a4b361071d7413cdef4b8bda808f1aac60404a",
   "goalcontent_bring_back": "200bd9282cc2c39490b00219ee80492d9b32fefd69b7f9ee912f174d53fdd416",
   "goalcontent_chapter_count": "9f42c6a0897e9330ca437058835d3d04e11687a550333be671770f29bb50ac6f",
   "goalcontent_chapter_number": "af5af3da7b5dcafef5ee19957b63cc672fd61795a7c5d21adacbde49bfb1af51",
@@ -150,10 +148,6 @@
     <string name="goalcontent_not_in_plan">学習計画に含まれていません</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">学習計画の追加項目</string>
-    <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">試験範囲外</string>
-    <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
-    <string name="goalcontent_beyond_guide">公式ガイドにない科目</string>
     <!-- %1$s is a link to the site that counted the questions. -->
     <string name="goalcontent_questions_source_edition">%1$sの科目別問題数です。%2$sの集計に基づいています。</string>
     <string name="goalcontent_questions_source_latest">最新の試験の科目別問題数です。%1$sの集計に基づいています。</string>

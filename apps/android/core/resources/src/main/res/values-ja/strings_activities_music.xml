@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "424c433e9f9c8f701442efd9a0b8c112821af3cbb0e2e6c1d088e5d900031b62",
   "activities_music_sound_check_done": "2e456077239fbd65836c474b6ecef963775962cb00d5e6a8c5ca42933a59573a",
   "activities_music_sound_check_failed": "01e2cb0af93b803a01fed314e4af05cbd2d7627df9cf0054eaf7b7803d16b3f1",
-  "activities_music_sound_check_intro": "db4b23fe4f952d3341d34fc405188b2b2bb7e94f835e45d22491d94293f56345",
+  "activities_music_sound_check_intro": "546fd64e43e08d7b94f160655e404f653a232a727878198f50399fbfe4ac8541",
   "activities_music_sound_check_listen": "6ae4f40cb5e68850b2219b09e99e8d9602bef79d979b55a1f0d5cfdf25baa9a0",
   "activities_music_sound_check_start": "aa3375e8774890661d898e79ba5d89bca4b1fdd9870b0e85f46a254681aa034c",
   "activities_music_sound_check_tap": "eae8aaf5e406ffc777460524cffa9eb592e98f1719adc3c3f6faeb65fa203ca0",
@@ -229,7 +229,7 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">音のタイミングを調整</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="other">タップのタイミングを調整するため、%1$d回のクリック音に合わせてタップしてください。</item>
+        <item quantity="other">スピーカーやヘッドホンでは、音が少し遅れることがあります。%1$d回のクリック音に合わせてタップして、タイミングを調整してください。</item>
     </plurals>
     <string name="activities_music_sound_check_listen">クリック音を聞いてください…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

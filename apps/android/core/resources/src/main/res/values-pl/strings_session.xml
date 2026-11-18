@@ -34,7 +34,6 @@
   "session_energy_glowing": "17bb5889ae7736c3e1e021694ecab1d6acc93705d5aafcd9b5763ba134420afa",
   "session_energy_glowing_brightest": "bc253dbfb109fc451efcd8d34b13bd9dbef8da0be1a4bd22e904e86a9604eeb8",
   "session_energy_max": "8039dbaa9155faad2634f524ccf4f22e6de8b24b28498d64548cfb70bd35ddaa",
-  "session_lessons_deferred": "5726d4ca79ef52af03a78b48a48aae2707411d5e76a1482eebf1de73d03e8361",
   "session_next_belt": "14d3938a28080f910e37e7c50d6784af3c30a27b6861ee5f64f76e6152338408",
   "session_next_continue": "385c215cdc80d2ba9ee24cdcb0ed792307e02af80c3c5228e77fd7538497b4ab",
   "session_next_eyebrow": "b54554310c6bdd3115b4598593a4ae3684446beb8ef0db191c760a116d3af137",
@@ -282,12 +281,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Nie ma już lekcji do nadrobienia.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">Przeniesiono %1$s lekcję na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="few">Przeniesiono %1$s lekcje na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="many">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="other">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">Do powtórki</string>
 </resources>

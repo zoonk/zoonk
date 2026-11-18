@@ -36,8 +36,8 @@
   "checkpoint_questions_left": "1d477a45b59ecca6b60532dc59702c0e575910bac967e446892f753ac70758f4",
   "checkpoint_removed_detail": "6abf303d99863a3f9b8ff8eb9272f26ba0ed426169d9b557c43a0a839c5cdc64",
   "checkpoint_removed_title": "d75b825848fd9876c82a5bb03ee5de076f0b4c7b19f26141295d05b2e0982e23",
-  "checkpoint_retry_after_lessons": "1c5a92ecd1f908bfa77466dbbb2896dff8ac638c5a36bf5bf17aed5bc1e95859",
-  "checkpoint_retry_tomorrow": "7e517f7fcc2fdc9540a9dc1848b853215e79da5bacfc69b865c3748b651669da",
+  "checkpoint_retry_after_lessons": "bf36e435b09462f4a726d6ab90c6ffad80ec977ab22e3e147e708f6226ec2980",
+  "checkpoint_retry_tomorrow": "edf6d5b61f9d64795a57f04f7fccbdc47151b39bc22f5462284d1d4b28b76f26",
   "checkpoint_review": "c9b50f228e0bd7ef299c0d41f595bc11289d3774f452347f9cd8e02fecd0180b",
   "checkpoint_rewards": "284e88905170e98451fa4bca5cc6ff191d702b0a9a32a3b32fb4e44ef6a283bb",
   "checkpoint_right_to_win": "7c78200d030e22e1d012cd133ba25fb6bfb0dbf52947e056ec89b3145dacf604",
@@ -67,11 +67,11 @@
     <string name="checkpoint_why_later">Você vai entender por quê no final.</string>
     <string name="checkpoint_won_line">O escudo dele quebrou. Você venceu!</string>
     <string name="checkpoint_lost_line">O escudo dele resistiu desta vez.</string>
-    <string name="checkpoint_retry_tomorrow">Tente de novo amanhã. Tudo o que você fez está salvo.</string>
+    <string name="checkpoint_retry_tomorrow">Revanche amanhã.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Tente de novo amanhã, depois de %d aula rápida. Nada foi perdido.</item>
-        <item quantity="many">Tente de novo amanhã, depois de %d aulas rápidas. Nada foi perdido.</item>
-        <item quantity="other">Tente de novo amanhã, depois de %d aulas rápidas. Nada foi perdido.</item>
+        <item quantity="one">Revanche amanhã, depois de %d aula curta.</item>
+        <item quantity="many">Revanche amanhã, depois de %d aulas curtas.</item>
+        <item quantity="other">Revanche amanhã, depois de %d aulas curtas.</item>
     </plurals>
     <string name="checkpoint_every_answered">Todas as perguntas foram respondidas.</string>
     <string name="checkpoint_shield">Escudo do Pegadinha</string>

@@ -102,7 +102,6 @@ internal sealed interface SummaryTitle {
 
     data class Subjects(
         val count: Int,
-        val document: ExamDocument,
     ) : SummaryTitle
 }
 
@@ -148,7 +147,7 @@ private fun Syllabus.summary(): RevealCoverage.Summary {
         return RevealCoverage.Summary(title, if (topics == 0) firstNames else coverageDetail().takeIf { topicsMapped })
     }
 
-    val title = SummaryTitle.Subjects(noticeSubjects, examDocument)
+    val title = SummaryTitle.Subjects(noticeSubjects)
     val detail =
         when {
             // A notice that names its subjects without listing their topics (the OAB's first phase).

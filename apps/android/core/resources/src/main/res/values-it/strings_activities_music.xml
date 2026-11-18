@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "161df6f527e3f33e83f72d471602c88bb730ac178141e514931aef19935c30e9",
   "activities_music_sound_check_done": "6c6a01ae930ab27ded8cf76720712622fc5545c1e2fa47741cb204bf7a0ebb7d",
   "activities_music_sound_check_failed": "cd5ba8340d862f67b2f52dc04efa95cc7e144fe01bcfe2f03f14f275f6f3bd6d",
-  "activities_music_sound_check_intro": "0562623943328be396d340796696828e9f54f5a46350e5e3cecee4eca721b5aa",
+  "activities_music_sound_check_intro": "74158d86dec4ec7721b2cb5222b518240c3bbec17a53a78389b2ebf277ac6227",
   "activities_music_sound_check_listen": "b5500949df7c74425c92e375cfec78e848d01fd13850919285d48331553d83bb",
   "activities_music_sound_check_start": "631b35aa1ec901d9f59221418b9c8630f6ddc54916ec56fcf648114ded62724d",
   "activities_music_sound_check_tap": "17149a4400ac6a357691d5583fa33905eebe2a2e30a923f4f9b68f7f533385ec",
@@ -241,9 +241,9 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configura l’audio</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
-        <item quantity="many">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
-        <item quantity="other">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
+        <item quantity="one">Altoparlanti e cuffie possono riprodurre l’audio con un leggero ritardo. Tocca lo schermo a tempo con %1$d clic per sincronizzare i tocchi.</item>
+        <item quantity="many">Altoparlanti e cuffie possono riprodurre l’audio con un leggero ritardo. Tocca lo schermo a tempo con %1$d clic per sincronizzare i tocchi.</item>
+        <item quantity="other">Altoparlanti e cuffie possono riprodurre l’audio con un leggero ritardo. Tocca lo schermo a tempo con %1$d clic per sincronizzare i tocchi.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Ascolta i clic…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

@@ -43,7 +43,7 @@
   "account_setup_title": "e87ff65ff2024e0f0f6d56388fb294876787b4792924e7d830718140f388ba3c",
   "account_sign_in_expired": "9e14913c03ba077f3310fe94808ca06019652aa6b541717bb7838349ae20c55e",
   "account_sign_in_title": "be5ed117649a7dad0ff244d2f25a507234a29e2c65231f424bcccbd00181898f",
-  "account_sign_out_failed": "abcecc5b2193277e42d82c1bbc7b99dad0d99b041411954073925059efa83e81",
+  "account_sign_out_failed": "8661e290666cc3942e38c59dd1ea62bed0b7f0fb9bd06f6a99ebd53b041ee147",
   "account_terms": "4b8ae467ffd16f23667e44a4e07099b41ba94714ce25bfee3e8d1465c820af31",
   "account_username": "dfa26ddc9014f74368b1d3f46a070aeb4a80aebb78970c4ac910d57ab17933d0",
   "account_username_available": "93541d3d9df9024774176af1f24d38ca4c61250f08e9a56712aad906cdda0da0",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">Ajuda</string>
     <string name="account_menu_log_out">Sair</string>
     <string name="account_menu_create_account">Criar uma conta</string>
-    <string name="account_sign_out_failed">O Zoonk não conseguiu sair da sua conta. Confira sua conexão e tente de novo.</string>
+    <string name="account_sign_out_failed">Não foi possível sair da sua conta. Confira sua conexão e tente de novo.</string>
     <string name="account_name_required">Nome</string>
     <string name="account_username_required">Nome de usuário</string>
 </resources>

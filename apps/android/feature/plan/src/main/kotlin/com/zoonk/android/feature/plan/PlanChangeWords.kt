@@ -210,13 +210,7 @@ private fun guideQuestion(
 fun noticeDayText(
     date: LocalDate,
     estimated: Boolean,
-    document: ExamDocument,
-): String =
-    when {
-        estimated -> stringResource(R.string.plan_change_likely_date, longDate(date))
-        document == ExamDocument.NOTICE -> stringResource(R.string.plan_change_notice_says, longDate(date))
-        else -> stringResource(R.string.plan_change_calendar_says, longDate(date))
-    }
+): String = stringResource(if (estimated) R.string.plan_change_likely_date else R.string.plan_change_notice_says, longDate(date))
 
 /** Main's `useOperationQuestion`: a change nobody applied yet is a question; null when the operation has none of its own. */
 @Composable

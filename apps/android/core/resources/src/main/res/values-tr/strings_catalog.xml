@@ -14,7 +14,6 @@
   "catalog_chapter_strip": "c2cb938ae47f75e79524bec7d4a736c23e3211668a04cdf1bb17d59b56f178ff",
   "catalog_chapter_writes_lessons": "3532f05a87d55307225cf47c3e411c66c2fb20cb1ae84060d5f1f3f246c1901a",
   "catalog_chapters": "200c5a1c03e45cbfca0a838a9c916989c805d33449bc8fd673ab1c5c6e14ffbd",
-  "catalog_check_note": "db3d1b7dad5b10c796759d4cf144304431c455dbadf2711c310cc45fa459d84e",
   "catalog_closing_follows": "73692e9631c28a5d50b7eeff184180212ffc5955cca7f0bdad6adcd8e0b7ac95",
   "catalog_closing_start": "2e5662f4083ce4802e9588606de85fc426bed43d77e139d02a92b58e75c8ad42",
   "catalog_closing_steps": "4c34a717a0a332a4b424f83cee37cfee96fc4e5306f549ac0709a62728eeb0f2",
@@ -51,7 +50,7 @@
   "catalog_outcomes": "88049953b795e25861e9b673adfa24f88d395816d62dbe05d1b2b22dfd03789b",
   "catalog_outline": "64aeb4ff81b23d7e9c0d781d73873c9e25e72536f22bcc61baa8a8e69cc64b6d",
   "catalog_outline_unwritten": "6fbfd539a387d3673ca364543d27ea92306c2557bd0bca9f9a46aa832820f5d2",
-  "catalog_plan_caption": "887fca61e1d53b0f94395226a3a7a456411df08a19b8ed873a052bd2b51e7d35",
+  "catalog_plan_caption": "47a1b54bc659a70b94219521e514b6cb1c52220237acf155cd4309f0f6e1e2c7",
   "catalog_plan_lessons": "13db56a2a8bcc1ac336504890a23935cb07d2695a2aefed09eb97954a414b396",
   "catalog_plan_line": "3bd00235a2c7aa8e7569b9fdc5eedbe41b7210c9f004b412f847a9423fa47b99",
   "catalog_plan_line_chapter": "afc1320c0bca6a64d44b065926237a642982b2915d4698af49e9f3566547321e",
@@ -149,7 +148,6 @@
     <string name="catalog_guess_chip">Sadece bir tahmin, puanlanmaz</string>
     <string name="catalog_quick_question">Kısa bir soru</string>
     <string name="catalog_guess_note">Cevabın %1$s dakikalık dersi başlatır.</string>
-    <string name="catalog_check_note">Seçimin %1$s dakikalık dersi açar. Cevabını orada kontrol et.</string>
     <string name="catalog_example_plan">Ne kadar sürer</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s hafta</item>
@@ -168,7 +166,7 @@
         <item quantity="one">+ %1$d ders daha</item>
         <item quantity="other">+ %1$d ders daha</item>
     </plurals>
-    <string name="catalog_plan_caption">Bu bir örnek. Planın cevaplarına göre şekillenir, bu yüzden daha ileriden başlayıp daha erken bitebilir.</string>
+    <string name="catalog_plan_caption">Planın zaten bildiklerini atladığı için daha kısa sürebilir.</string>
     <string name="catalog_audience">Kimler için</string>
     <string name="catalog_outcomes">Yapabileceklerin</string>
     <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->

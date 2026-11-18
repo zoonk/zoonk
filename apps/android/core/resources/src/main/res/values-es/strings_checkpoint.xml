@@ -36,8 +36,8 @@
   "checkpoint_questions_left": "39ddf8db7f59894028872d3a0c89f74fecab68e186dcd1c80dfe7d627516a54d",
   "checkpoint_removed_detail": "f7944c95c1b5f22a58fcf9218a91f91226e8cd0df84b897edef04a3fd09c6c11",
   "checkpoint_removed_title": "374979fbdf31a4b4ecf6352a2c7812c4cb9f753d961bb48f37226219cab20ec9",
-  "checkpoint_retry_after_lessons": "0923b4d2b412753e98021c567c08fee85b8694f398374f8139a38504cd69c6f8",
-  "checkpoint_retry_tomorrow": "a54eb719e195aec6a1609788c047ade89f07458160e3674bc9476cbe73af55d1",
+  "checkpoint_retry_after_lessons": "0c983131830a4caef9aad441c138e99f36be6b6d067df5ae79bb07cd99bc8071",
+  "checkpoint_retry_tomorrow": "9a3736b4a6dd4c007ea439823521f940475a39210a307d185392d67b7c104749",
   "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
   "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
@@ -67,11 +67,11 @@
     <string name="checkpoint_why_later">Al final verás por qué.</string>
     <string name="checkpoint_won_line">Su escudo está roto. ¡Ganaste!</string>
     <string name="checkpoint_lost_line">Su escudo resistió esta vez.</string>
-    <string name="checkpoint_retry_tomorrow">Vuelve a intentarlo mañana. Todo lo que hiciste sigue guardado.</string>
+    <string name="checkpoint_retry_tomorrow">Revancha mañana.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Podrás volver a intentarlo mañana, después de %d lección corta. No perdiste nada.</item>
-        <item quantity="many">Podrás volver a intentarlo mañana, después de %d lecciones cortas. No perdiste nada.</item>
-        <item quantity="other">Podrás volver a intentarlo mañana, después de %d lecciones cortas. No perdiste nada.</item>
+        <item quantity="one">Revancha mañana, después de %d lección corta.</item>
+        <item quantity="many">Revancha mañana, después de %d lecciones cortas.</item>
+        <item quantity="other">Revancha mañana, después de %d lecciones cortas.</item>
     </plurals>
     <string name="checkpoint_every_answered">Respondiste todas las preguntas.</string>
     <string name="checkpoint_shield">El escudo del Tramposo</string>

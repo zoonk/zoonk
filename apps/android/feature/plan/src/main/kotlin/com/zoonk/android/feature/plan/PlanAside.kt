@@ -356,7 +356,7 @@ private fun goalDateValue(page: PlanPageState): AnnotatedString {
     }
     val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
     if (finish.estimate && page.plan.schedule.targetDate == null) {
-        return withData(stringResource(R.string.plan_end_none_set_estimate, date), date)
+        return withData(factsLine(stringResource(R.string.plan_end_none_set), date), date)
     }
     return withData(date, date)
 }

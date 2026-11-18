@@ -9,7 +9,7 @@
   "activities_reasoning_claim": "afcea6760d715fb23471090f0e64fd90f40c01dbda77cf8db0c0bc9be73ee3b8",
   "activities_reasoning_evidence": "9e17090b759990306b137a202f8a1405276fa473bd846b30f68827bb6dce8f79",
   "activities_reasoning_evidence_chosen": "152cc65da82d045310728d4a3cab3269c0a2808b261bd1ff20ffc4ca836cfb89",
-  "activities_reasoning_evidence_hint": "e3b0f0e8ba076e6e72a425e82309630c1658b45f550453d00cd083d3d4c70f21",
+  "activities_reasoning_evidence_hint": "0a4362601a8b68167b4ccda9b22ee392797277de7ceb54ecbcd237a61c482710",
   "activities_reasoning_grid_all_filled": "25fc79cec2a963ca3e68774b210b5cee24339d808247d7044242d10dfd9c3450",
   "activities_reasoning_grid_counted": "66e3e050e3ce610baf770251051794f30d2143439cf54a6ae836bec77251cf85",
   "activities_reasoning_grid_filled": "2142316f9100455605283e27fcc321f708eebb06a99249468113af21929684cc",
@@ -66,7 +66,7 @@
   "activities_reasoning_quotes": "667c4cc76128a50be0702a220035c895c26e0a709e030ef1662316f71604b06a",
   "activities_reasoning_reasoning": "97bf0600a9d92149e65e6330c59912628366f191c9846068adfb842c23e7df05",
   "activities_reasoning_reasoning_chosen": "e6be965cc0082762b0e91e7e68f87b3395503190aaaac7ab3e104c4e5c5a0c49",
-  "activities_reasoning_reasoning_hint": "eaa359b9970b8549cbb7a85c74b39103156a3f22dab294bc5bf5b157130f9f5a",
+  "activities_reasoning_reasoning_hint": "5d180a7f103dfcb71ef772e274062ca660a5a930e9ed7899fdcbbc3df6bb0c5f",
   "activities_reasoning_reasoning_next": "d29db5c23dff67a69e7426b9fe74e9f7d4dfb264535e8e9a25019e44b3c92b39",
   "activities_reasoning_source_mark": "22aced29ff6cabea910e572cc9e606222d0e3a79ef2c2dbb8177ca83a44694b5",
   "activities_reasoning_source_missed": "cac100b8cfa71949db575584ba151bb7446f1457c754ddb43fb1d7a6c902c9c6",
@@ -216,8 +216,8 @@
     <string name="activities_reasoning_evidence_chosen">Kanıt: %1$s</string>
     <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
     <string name="activities_reasoning_reasoning_chosen">Gerekçe: %1$s</string>
-    <string name="activities_reasoning_evidence_hint">İddiayı en iyi destekleyen alıntıyı seç</string>
-    <string name="activities_reasoning_reasoning_hint">Alıntının iddiayı nasıl kanıtladığını seç</string>
+    <string name="activities_reasoning_evidence_hint">İddiayı en iyi destekleyen alıntıyı seç veya sürükle</string>
+    <string name="activities_reasoning_reasoning_hint">Alıntının iddiayı nasıl kanıtladığını açıklayan ifadeyi seç veya sürükle</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->
     <string name="activities_reasoning_reasoning_next">Sıradaki adım: alıntının iddiayı nasıl kanıtladığını açıkla</string>
     <string name="activities_reasoning_take_quote_out">Alıntıyı çıkar</string>

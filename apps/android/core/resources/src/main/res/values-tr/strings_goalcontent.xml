@@ -7,8 +7,6 @@
   "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
   "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
   "goalcontent_asked_a_lot": "d86f0fc3be1c1058005d7138c4655856f166cbb3c0bd3f6a9a80fdac5e574aff",
-  "goalcontent_beyond_guide": "989967682bdbf3f8d7951a6230865af3b4f86cec33fb6cf67d1f8b2c4fb8a5af",
-  "goalcontent_beyond_notice": "a9ee86b668640841b00b318416fe789c4bae6c82a0024837672d612b2de0197a",
   "goalcontent_bring_back": "6b56364d43374b204e1335e4a7d479d9063773e4e7a6f32d18227570c59bbb82",
   "goalcontent_chapter_count": "33d5b50ba36acea5b6fbf72dd589e5a41de2797168a8c959792cea6fab77469f",
   "goalcontent_chapter_number": "b6b348989a6bf77bf906cf671fed9e8bf7b828116d05c72319c4a023774a6634",
@@ -160,10 +158,6 @@
     <string name="goalcontent_not_in_plan">Planında yok</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Planında da var</string>
-    <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">Sınav kapsamı dışında</string>
-    <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
-    <string name="goalcontent_beyond_guide">Resmî kılavuzun kapsamı dışında</string>
     <!-- %1$s is a link to the site that counted the questions. -->
     <string name="goalcontent_questions_source_edition">%1$s sınavında branş başına soru sayısı (%2$s sayımına göre).</string>
     <string name="goalcontent_questions_source_latest">Son sınavda branş başına soru sayısı (%1$s sayımına göre).</string>

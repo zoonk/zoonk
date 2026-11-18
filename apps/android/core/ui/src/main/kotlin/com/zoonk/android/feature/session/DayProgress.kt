@@ -32,7 +32,6 @@ import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.ZoonkMotion
@@ -171,7 +170,6 @@ fun SessionDayProgress(
     if (total == 0 && !open) return
 
     val locale = currentLocale()
-    val deferred = completion.deferredLessonsCount.toInt()
     val caption =
         when {
             day.lead == StudyDayProgress.Lead.LEFT -> {
@@ -217,18 +215,6 @@ fun SessionDayProgress(
                 dayParts(completion.blocks.map { it.toDayStep() }, isNext = { it.id == completion.nextBlockId }),
                 held = open,
                 fillingId = completion.blockId.takeIf { celebrates() },
-            )
-        }
-        if (deferred > 0) {
-            Text(
-                pluralStringResource(
-                    R.plurals.session_lessons_deferred,
-                    deferred,
-                    formatNumber(deferred.toDouble(), locale),
-                    formatMinutes(completion.minutes.dailyGoal, locale),
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

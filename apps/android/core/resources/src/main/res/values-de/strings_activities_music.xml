@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "66e8385897b4b827780881621bc29daec7ab940aee9387becd54b5df92902254",
   "activities_music_sound_check_done": "66a93eb47832b942f343fac6a9767974334a3c1a3bae376d840da4a66ab93d65",
   "activities_music_sound_check_failed": "c28eef09e814987cfa93ee20bb343cce59f7f215344e061c0c4fb57db445240d",
-  "activities_music_sound_check_intro": "77d3bd8780eff374c5fb4857b61c08642c07fc0e077efe8bce6a40afbc57b84c",
+  "activities_music_sound_check_intro": "ddec57220f5fa3f4a3ddc8c9dd768897212981ca20440a0ec9154f641f17b846",
   "activities_music_sound_check_listen": "40892c575fc99d78767c9af7cf1112b7c4066632164448ac51755f0c17aeccf6",
   "activities_music_sound_check_start": "c55be4c0d68afbacedd6eaa7f83eb81805e8241b7c45901f1b384d26cd8988f8",
   "activities_music_sound_check_tap": "6e41cfaf69d6df59a14da978a766af230461051b57dfdd33329712fa31326ca2",
@@ -235,8 +235,8 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Ton einrichten</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Tippe zu %1$d Klick mit, damit deine Schläge im Takt sind.</item>
-        <item quantity="other">Tippe zu %1$d Klicks mit, damit deine Schläge im Takt sind.</item>
+        <item quantity="one">Lautsprecher und Kopfhörer können Töne leicht verzögert wiedergeben. Tippe bei %1$d Klick mit, damit deine Schläge zeitlich richtig erfasst werden.</item>
+        <item quantity="other">Lautsprecher und Kopfhörer können Töne leicht verzögert wiedergeben. Tippe bei %1$d Klicks mit, damit deine Schläge zeitlich richtig erfasst werden.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Hör dir die Klicks an…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

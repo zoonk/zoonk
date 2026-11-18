@@ -5,7 +5,7 @@
   "planlink_eyebrow": "9bff81464cc09570b52f70a3cb6a8e1c0534f16aeffac81a5870d8af19ca6200",
   "planlink_facts": "d2cb35ab3919b8e10927218dd539663bf7bb134799041bb59a8c5ed6cdae1d3f",
   "planlink_failed": "f37e3bc145e7d8b9cda478aa144e530ded4507a635d9658f65bcdcf8cf5abf2a",
-  "planlink_make_it_yours": "81ef9ce7695bf9d01e5b8851428554573aef4c9feb27e0e560b11fe4790470c5",
+  "planlink_make_it_yours": "f4a57cc62a6de8fa636de875f5d14c2314b6fb04684376e611f062dc6b077a40",
   "planlink_minutes_label": "bccf9c84f430472820a1b48d9f8f5a60d0525a62f615a94627da528db31ada6c",
   "planlink_not_found": "b280b645667761a9f3d41bc0a6afda4b07ec387becc30db19616c2784efd02d1",
   "planlink_not_found_description": "b80493f4d76582a7d27c9538e3369384c5859e1afce1695e987b105ca4e0d227",
@@ -24,7 +24,7 @@
     <string name="planlink_minutes_label">Quanto tempo al giorno?</string>
     <!-- Starts the learner's own plan from a shared one. -->
     <string name="planlink_start">Inizia da questo piano</string>
-    <string name="planlink_make_it_yours">Avrai un piano tutto tuo per la stessa materia, al tuo ritmo. Rispondi a qualche domanda e il piano salta quello che sai già.</string>
+    <string name="planlink_make_it_yours">Ricevi un piano tutto tuo per la stessa materia. Parte da quello che sai già.</string>
     <string name="planlink_refused">Al momento non puoi iniziare un altro obiettivo. Prima completane uno o mettilo in pausa.</string>
     <string name="planlink_failed">Non ha funzionato. Riprova tra poco.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->

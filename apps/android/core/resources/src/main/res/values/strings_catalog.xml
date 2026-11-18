@@ -58,7 +58,6 @@
     <string name="catalog_guess_chip">Just a guess, it doesn\'t count</string>
     <string name="catalog_quick_question">Quick question</string>
     <string name="catalog_guess_note">Your answer starts the %1$s-minute lesson.</string>
-    <string name="catalog_check_note">Your choice opens the %1$s-minute lesson. Check your answer there.</string>
 
     <string name="catalog_example_plan">How long it takes</string>
     <plurals name="catalog_plan_weeks">
@@ -78,7 +77,7 @@
         <item quantity="one">+ %1$d more lesson</item>
         <item quantity="other">+ %1$d more lessons</item>
     </plurals>
-    <string name="catalog_plan_caption">An example. Your plan follows your answers, so it can start later and end sooner.</string>
+    <string name="catalog_plan_caption">Your plan skips what you already know, so it can take less.</string>
 
     <string name="catalog_audience">Who it\'s for</string>
     <string name="catalog_outcomes">What you\'ll be able to do</string>

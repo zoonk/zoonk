@@ -437,7 +437,7 @@ internal fun FirstQuestion(
 
         Spacer(Modifier.size(20.dp))
 
-        val note = stringResource(if (screen.guess) R.string.catalog_guess_note else R.string.catalog_check_note, minutesText)
+        val note = stringResource(R.string.catalog_guess_note, minutesText)
         Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }

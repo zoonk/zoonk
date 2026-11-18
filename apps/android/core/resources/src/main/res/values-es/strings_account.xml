@@ -43,7 +43,7 @@
   "account_setup_title": "b493260eb5ceba696ab1887aa9f1f988452c4945d54fed2bbee8f0bcecdadf09",
   "account_sign_in_expired": "811d8c26731049c17c382154d7bc5630cf30197d235cc59019f7c2aa183dc7e9",
   "account_sign_in_title": "84cf19a685b4d0fdd7f339db4bcb047fbcdc357cd3650f4c82a1ec14389ba48e",
-  "account_sign_out_failed": "7bcaea8b200b63330764777cb81d7f7ab387b8de0b39ae510a1aa1023a047826",
+  "account_sign_out_failed": "da14af54a9fb48965e565a2ada953eb5d082a27b7ce6684dbb49877752235d6f",
   "account_terms": "ab4742f6cd27e0be7210fb74feb3bdddad4401e73bddf18958242e9a227aaad8",
   "account_username": "d44eb77b7c52a8cb52a7f0345f3f38e4ba9ec6d9dcc80c2aba51e90010c7cca9",
   "account_username_available": "07a542184504047216c861cf36bac708fab42eafc6b2d44a714d716729f12ee1",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">Ayuda</string>
     <string name="account_menu_log_out">Cerrar sesión</string>
     <string name="account_menu_create_account">Crear una cuenta</string>
-    <string name="account_sign_out_failed">Zoonk no pudo cerrar tu sesión. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="account_sign_out_failed">No pudimos cerrar tu sesión. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="account_name_required">Nombre</string>
     <string name="account_username_required">Nombre de usuario</string>
 </resources>

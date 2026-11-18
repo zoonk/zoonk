@@ -5,7 +5,7 @@
   "mindmaps_alt_chapter": "b0d837f5f74ffbe174d21b5142a180532b1d90bfcdc14fa7ac2589a0d9335ab8",
   "mindmaps_alt_sentence": "ccca543019c9508d84e76a63322c35eeed4fa7d6ebdc69e8e026c6135ad1b133",
   "mindmaps_as_text": "63ec156151cc2d86d81d84d0f35b799cf0e3adc611ab4c0005a1ce13e6d0984f",
-  "mindmaps_as_text_note": "b24a4be3116edbdc9ee37f9a88f46f5442f89cb839c38d0a0d4cdae19d7ce1c8",
+  "mindmaps_as_text_note": "dc496ef57ea8f06f5f4150b970060e78a0285c277322173433e0b3a41426100d",
   "mindmaps_being_made": "1007f76304fa886580128f3abbdabb86a07de67f4b5d7874d2f1c87a569b91d3",
   "mindmaps_can_make_more": "340128105cc7c0c45148018f9ae03283f3f5682293c2153a8492e86077cd1e80",
   "mindmaps_chapter_count": "659d692a8bef30000c5c6a174c862e95c05cf908aec4b595bcfb4b6fc5ef7c91",
@@ -125,7 +125,7 @@
     <string name="mindmaps_try_again_spoken">Réessayer de créer la carte mentale de %1$s</string>
     <string name="mindmaps_failed">La carte mentale n’a pas pu être créée cette fois-ci.</string>
     <string name="mindmaps_unreachable">Impossible de joindre le serveur. Vérifie ta connexion.</string>
-    <string name="mindmaps_as_text_note">Cette carte mentale s’affiche sous forme de texte.</string>
+    <string name="mindmaps_as_text_note">L’image contenait des erreurs, voici donc la carte mentale sous forme de texte.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Télécharger</string>
     <string name="mindmaps_saved">Carte mentale enregistrée</string>

@@ -36,8 +36,8 @@
   "checkpoint_questions_left": "4528d3fa97ebc525eb7bb5a5d0ed695be3ea228742af9133a14d4161c2797387",
   "checkpoint_removed_detail": "ba2ead8dfc5127253911680c112a608e147389d45fa0136d2e464c06e5ebcfad",
   "checkpoint_removed_title": "e948b8e86eaed46c6a21003f7e29e3f34a745505ff3895c1545f4b1616dcbd89",
-  "checkpoint_retry_after_lessons": "4bfec004709a547ccfd64b561744d1d8b8bb113b6a2e61f47925e8ffb5f9b2df",
-  "checkpoint_retry_tomorrow": "432d32a5b99e1d295838e637978b0801ecc51f0d0e7abe1cf2f57ea995f62b38",
+  "checkpoint_retry_after_lessons": "e8d5a508c809ed896ed04154ccda8f09ed0bdeeda4d450703def43d8f11c649b",
+  "checkpoint_retry_tomorrow": "f0920e59ff92d4bbb21186b227e6b380649dfb4a98d3376d5baf60368bd55644",
   "checkpoint_review": "1665041ef6a964f88d635ad7c60591f6fe9850c6652e1bc9c339c3cb81a12922",
   "checkpoint_rewards": "02f04ebf1fba86fbba5e736b13d8510808cef28ed7316e6c0988073a67992303",
   "checkpoint_right_to_win": "ce40b357c66a7be0d5d5e5b54183c23d17ec206a19e104cba98d9141858f5aaf",
@@ -67,11 +67,11 @@
     <string name="checkpoint_why_later">Tu découvriras pourquoi à la fin.</string>
     <string name="checkpoint_won_line">Son bouclier est brisé. Tu as gagné !</string>
     <string name="checkpoint_lost_line">Son bouclier a tenu cette fois.</string>
-    <string name="checkpoint_retry_tomorrow">Réessaie demain. Rien de ce que tu as fait n’est perdu.</string>
+    <string name="checkpoint_retry_tomorrow">Revanche demain.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Nouvel essai demain, après %d courte leçon. Rien n’est perdu.</item>
-        <item quantity="many">Nouvel essai demain, après %d courtes leçons. Rien n’est perdu.</item>
-        <item quantity="other">Nouvel essai demain, après %d courtes leçons. Rien n’est perdu.</item>
+        <item quantity="one">Revanche demain, après %d courte leçon.</item>
+        <item quantity="many">Revanche demain, après %d courtes leçons.</item>
+        <item quantity="other">Revanche demain, après %d courtes leçons.</item>
     </plurals>
     <string name="checkpoint_every_answered">Tu as répondu à toutes les questions.</string>
     <string name="checkpoint_shield">Le bouclier du Farceur</string>

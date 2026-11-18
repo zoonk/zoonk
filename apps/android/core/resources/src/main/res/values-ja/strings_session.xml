@@ -34,7 +34,6 @@
   "session_energy_glowing": "ffd5d54b63fec2b40d8eb023171762eaa49defe49ac58408b5add071552da8f7",
   "session_energy_glowing_brightest": "6e2be7991da3c472a92d06b399ec0c7eacb5a7e30f2a41a5dda72db217ac4d2b",
   "session_energy_max": "767d7f5bdbb3d6f12f1d034502e6a6295531ce283d139cd9b3b547105617cecc",
-  "session_lessons_deferred": "54d107c91b7a9b38aecbcc395d4419c7a596a66d6c535bf5026d16b5785168e3",
   "session_next_belt": "a4ca1729ee58a2e707596ff34bb917489e7a4e66f1a543ce88b64cc896ec2b8a",
   "session_next_continue": "e0fabce12834cc2bd85645092b456a1fcd3fa2de57648fd60bbc4081578ee889",
   "session_next_eyebrow": "8be43af1861a6b3fe59c541fd58b207d4cbf4f379bd353e90b8a201ad0047733",
@@ -243,9 +242,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">持ち越していたレッスンはすべて終わりました。</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="other">%1$sレッスンを別の日に移して、今日の学習時間が%2$sに収まるようにしました。</item>
-    </plurals>
     <string name="session_summary_to_review_detail">要復習</string>
 </resources>

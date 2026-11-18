@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -390,7 +389,6 @@ internal enum class TextQuestion { Admission, Position, Score }
 
 private data class TextQuestionCopy(
     @StringRes val title: Int,
-    @StringRes val description: Int,
     @StringRes val label: Int,
     @StringRes val placeholder: Int?,
 )
@@ -411,12 +409,11 @@ internal fun ColumnScope.TextStep(
             ),
         )
     }
-    val (title, description, label, placeholder) =
+    val (title, label, placeholder) =
         when (question) {
             TextQuestion.Admission -> {
                 TextQuestionCopy(
                     R.string.onboarding_admission_title,
-                    R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
                     R.string.onboarding_admission_placeholder,
                 )
@@ -425,7 +422,6 @@ internal fun ColumnScope.TextStep(
             TextQuestion.Position -> {
                 TextQuestionCopy(
                     R.string.onboarding_position_title,
-                    R.string.onboarding_position_description,
                     R.string.onboarding_position_label,
                     placeholder = null,
                 )
@@ -434,7 +430,6 @@ internal fun ColumnScope.TextStep(
             TextQuestion.Score -> {
                 TextQuestionCopy(
                     R.string.onboarding_score_title,
-                    R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
                     R.string.onboarding_score_placeholder,
                 )
@@ -443,7 +438,6 @@ internal fun ColumnScope.TextStep(
 
     StepForm(
         title = stringResource(title),
-        description = stringResource(description),
         subject = subject,
         canContinue = value.isNotBlank(),
         pending = pending,
@@ -789,30 +783,9 @@ internal fun ColumnScope.ExamChoiceStep(
             ),
         )
     }
-    val only = choices.singleOrNull()
 
     StepForm(
         title = stringResource(if (takes == 1L) R.string.onboarding_exam_choice_title_one else R.string.onboarding_exam_choice_title_other),
-        description =
-            when {
-                only == null -> {
-                    pluralStringResource(R.plurals.onboarding_exam_choice_choices, choices.size, choices.size)
-                }
-
-                only.take > 1 -> {
-                    pluralStringResource(
-                        R.plurals.onboarding_exam_choice_options_take,
-                        only.options.size,
-                        only.options.size,
-                        only.group,
-                        only.take,
-                    )
-                }
-
-                else -> {
-                    pluralStringResource(R.plurals.onboarding_exam_choice_options, only.options.size, only.options.size, only.group)
-                }
-            },
         subject = subject,
         canContinue = choices.all { !picks[it.group].isNullOrEmpty() },
         skipLabel = stringResource(R.string.onboarding_decide_later),

@@ -156,8 +156,8 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Set up your sound</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Tap along with %1$d click, so your taps are timed right.</item>
-        <item quantity="other">Tap along with %1$d clicks, so your taps are timed right.</item>
+        <item quantity="one">Speakers and headphones can play a little late. Tap along with %1$d click so your taps are timed right.</item>
+        <item quantity="other">Speakers and headphones can play a little late. Tap along with %1$d clicks so your taps are timed right.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

@@ -34,7 +34,6 @@
   "session_energy_glowing": "318914c13384d13bd06ba1022d933543480117abfce96ada609d21fdb15aaa90",
   "session_energy_glowing_brightest": "7f4bb76ad02c5ea1600bc961951a0d151eb2233a401f4d55b4bb857ddcda168b",
   "session_energy_max": "2989a6614b8b626ed9361defeab1a1000ea2f5c7d0f39bdd2ebcd9ead6a793c9",
-  "session_lessons_deferred": "2e9384f9309d1a11fdb57f78cdb3e6c423145aa787e22cc78248db13f21404ba",
   "session_next_belt": "f96ad377c0479f7adb226a7e3137a05e5d579e23841b088dad591438d8dc39a1",
   "session_next_continue": "a5308726d6243d7d6f89b34ee3b7d858381eef6f42d2a9fe91bf4306cf5a2e5f",
   "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
@@ -243,9 +242,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">밀린 레슨을 모두 마쳤어요.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="other">레슨 %1$s개를 다른 날로 옮겨 오늘 학습 시간을 %2$s에 맞췄어요.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">복습 필요</string>
 </resources>

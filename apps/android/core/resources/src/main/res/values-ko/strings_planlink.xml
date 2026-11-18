@@ -5,7 +5,7 @@
   "planlink_eyebrow": "238b2d330cbb3b109a466b56ef6996539ff8530e09f3a72a9b09a2945ad75b28",
   "planlink_facts": "3c3844e03cbf2d5519c25b2dead5d9551d3fa64f5c1311825d85c23f6385adec",
   "planlink_failed": "1b1f9dc55472a37ea36ab17e0e5191e3613854a59bf5c47c7b670e280daac6c6",
-  "planlink_make_it_yours": "697fb97004af78c5c564d1cfbf8680aae342a3a5ef2d9c4ad28a6a01bc801149",
+  "planlink_make_it_yours": "1fb40b6e3e45816025e873dffce0c6666f44354fad999a14c4513e44be9a5de9",
   "planlink_minutes_label": "b9698d5ad60b9da08ba7bf26857879007ca5dd12066ab5b61912341adcc512ec",
   "planlink_not_found": "eca94edc390d2dd0e1d4519081c6aa8e98be40f877eb39c75c3896b11763a396",
   "planlink_not_found_description": "b36a23c7865a661d35290b30e48e2a7cfee6c91e89d6ea747b21cc13a6e5e8dd",
@@ -24,7 +24,7 @@
     <string name="planlink_minutes_label">하루에 얼마나 공부할까요?</string>
     <!-- Starts the learner's own plan from a shared one. -->
     <string name="planlink_start">이 계획으로 시작하기</string>
-    <string name="planlink_make_it_yours">같은 과목을 내 페이스로 공부할 수 있는 나만의 계획을 받아요. 몇 가지 질문에 답하면 이미 아는 내용은 계획에서 건너뛰어요.</string>
+    <string name="planlink_make_it_yours">같은 과목으로 나만의 계획을 세워 드려요. 이미 아는 내용에 맞춰 시작해요.</string>
     <string name="planlink_refused">지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 완료하거나 일시 중지하세요.</string>
     <string name="planlink_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->

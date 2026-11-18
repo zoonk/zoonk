@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_guess_in_unit": "abb44d8d3d35d3affdd50482d7f6285e7a48d2de6f0e7a670e27ea96d731bdeb",
+  "activities_guess_in_unit": "c7fd06efc1faaf3f56342dcba33c934f85f9e7630c1e9f4aeab002e12b748c4a",
   "answer_tag_correct": "ec77020557bc0462e384ac51df0f726fd468a575baa6b02ac7f1378349ed7b28",
   "answer_tag_your_answer": "39239aaceec7c5ebbcd301bec5af15ea217c8572fa54bdabfcea35654930f68b",
   "answer_tag_your_guess": "a295206d6cdedf4e96252799182e96d3d38ec200a05a76ff639037c3a5be11fa",
@@ -187,6 +187,6 @@
     <string name="citation_slide">%1$s、スライド%2$s</string>
     <string name="player_not_saved">まだ保存されていません</string>
     <string name="player_not_saved_description">一部の回答がまだ保存されていません。このレッスンを開いている間は、引き続き保存を試みます。</string>
-    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">単位：%1$s</string>
 </resources>

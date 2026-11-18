@@ -86,7 +86,7 @@ internal fun PlanDateSection(
 
         schedule.noticeDay?.let { day ->
             Text(
-                text = noticeDayText(day.date.toJavaLocalDate(), day.estimated, page.plan.examDocument),
+                text = noticeDayText(day.date.toJavaLocalDate(), day.estimated),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

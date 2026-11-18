@@ -392,7 +392,7 @@ class UnderstoodRows(
                     .meantDay(examDates, draft.details, today, targetDate)
                     ?.takeUnless { day -> day.estimated || examDates.any { it.day == targetDate } }
             }
-        val note = official?.let { daysLeft(it.day) } ?: suggested?.let { noticeDayText(it.day, draft) }
+        val note = official?.let { daysLeft(it.day) } ?: suggested?.let { noticeDayText(it.day) }
 
         return UnderstoodRow(
             id = "targetDate",
@@ -432,7 +432,7 @@ class UnderstoodRows(
             id = "targetDate",
             label = text(R.string.onboarding_row_exam_date),
             value = formatDate(kept, locale, DateStyle.Month, today).replaceFirstChar { it.titlecase(locale) },
-            note = noticeDay?.let { noticeDayText(it.day, draft) },
+            note = noticeDay?.let { noticeDayText(it.day) },
             source = noticeDay?.source?.let { RowSource(it.title, it.url) },
             editable = EditableField.TargetDate,
             editDefault = kept.toString(),
@@ -466,13 +466,7 @@ class UnderstoodRows(
         )
     }
 
-    private fun noticeDayText(
-        date: LocalDate,
-        draft: GoalDraftOutput,
-    ) = text(
-        if (isGuide(draft)) R.string.onboarding_row_guide_says else R.string.onboarding_row_notice_says,
-        formatDate(date, locale, DateStyle.Long, today),
-    )
+    private fun noticeDayText(date: LocalDate) = text(R.string.onboarding_row_notice_says, formatDate(date, locale, DateStyle.Long, today))
 
     private fun daysLeft(date: LocalDate): String? {
         val days = ChronoUnit.DAYS.between(today, date).toInt()

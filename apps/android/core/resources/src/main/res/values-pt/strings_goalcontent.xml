@@ -7,8 +7,6 @@
   "goalcontent_also_in_exams": "986a74d19b1565a522320a4d310562617095d31bc107a1c44b4efc5f405251fc",
   "goalcontent_also_in_plan": "5748c7f097de887df8715ec06886462cd98d52c99819aa255798b130147793b1",
   "goalcontent_asked_a_lot": "cd845d9c72e0c543a64e642ebb3e0a385779ee9f4923cebfb77a56ae6b60f443",
-  "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
-  "goalcontent_beyond_notice": "f074f903b9454a681afcbc2c0f0e5bcff0562643d84d4a87b97b49fc137abc11",
   "goalcontent_bring_back": "87f8f9b03dba1431978b9fbddfc3b951b1d7119ff30b259bb7b56983733e8310",
   "goalcontent_chapter_count": "58d2dc698aad9c199ae2680bf8469d0f5b6e11b42803e008c7ed8316d112aca4",
   "goalcontent_chapter_number": "8f9ca80605c51d0dc549768a59f7e5776b6d2f2e66f85b402a3b28adbd9175fb",
@@ -170,10 +168,6 @@
     <string name="goalcontent_not_in_plan">Fora do seu plano</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Também no seu plano</string>
-    <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">Além da prova</string>
-    <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
-    <string name="goalcontent_beyond_guide">Além do guia oficial</string>
     <!-- %1$s is a link to the site that counted the questions. -->
     <string name="goalcontent_questions_source_edition">Perguntas por matéria em %1$s, segundo a contagem de %2$s.</string>
     <string name="goalcontent_questions_source_latest">Perguntas por matéria na última prova, segundo a contagem de %1$s.</string>

@@ -14,7 +14,6 @@
   "catalog_chapter_strip": "2c6ab6c2f30e90b75d08bcf0ca422e4e5f20f7e051307c7280a75f45385ea0db",
   "catalog_chapter_writes_lessons": "92f7d7749ceab8f1acf15e2f405f3061774a3f909765a433e989a0dcac954897",
   "catalog_chapters": "734d34119b1c7242b20d1605e5e4c62169b0a3f36705c7453c7abf0158991898",
-  "catalog_check_note": "d0f70ed5765973cd288367227cc7f77648ab174a46065d1579cea95f6a3cbb7b",
   "catalog_closing_follows": "571afeadc212d19a55a757903ab6fa80e90bb215850bae72920f77c6f2cadd7e",
   "catalog_closing_start": "e82bfedabac0621feb673ad26f6d14085dcb14934cda9966f8105df9374f8806",
   "catalog_closing_steps": "27050ee398126c8414d92deea43f769645fe656538c71be35cc12ee3f9cb6604",
@@ -51,7 +50,7 @@
   "catalog_outcomes": "fe4bd796741243615fe432bcdf00c1d5170de3fb5d3c5908077656a2cd5ec607",
   "catalog_outline": "6e87665a9ff24b696456c0494893f6c251c3b482ca64646c6cd168a1bc833cdb",
   "catalog_outline_unwritten": "c0ec1469d24adc8aea85baee53375dad9d419a0dc4fec06be1156f9a37b2b665",
-  "catalog_plan_caption": "0197e3887bde55774d05bff1e8ec17842b8e8faa7ca9952ad06eaa6976573b0d",
+  "catalog_plan_caption": "743b83dc47e83b2e88dfacbd56287d66b0a9e0759237f54bcec36eda5e6dced5",
   "catalog_plan_lessons": "3c01a05055d07c7223149edfbc00887e618a2ebeb783b97eab0f2880eb021e69",
   "catalog_plan_line": "885fb0020d28599c38f4a852e04fd1ac4cf0cfb0ac0c4408504565d6612f7b57",
   "catalog_plan_line_chapter": "cb60aebd8a160cb0e7b13afc0e141875dcbacc0e384a5f57b7b9f8325239f51e",
@@ -146,7 +145,6 @@
     <string name="catalog_guess_chip">予想なので、採点されません</string>
     <string name="catalog_quick_question">まずは1問</string>
     <string name="catalog_guess_note">答えると、%1$s分のレッスンが始まります。</string>
-    <string name="catalog_check_note">選ぶと、%1$s分のレッスンに進みます。そこで答え合わせをしましょう。</string>
     <string name="catalog_example_plan">学習にかかる期間</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="other">約%1$s週間</item>
@@ -161,7 +159,7 @@
     <plurals name="catalog_plan_more_lessons">
         <item quantity="other">+ %1$dレッスン</item>
     </plurals>
-    <string name="catalog_plan_caption">これは一例です。学習計画は回答に合わせて変わるので、途中から始めて早めに終えられることもあります。</string>
+    <string name="catalog_plan_caption">学習計画では知っている内容をスキップするので、もっと短い時間で終えられることがあります。</string>
     <string name="catalog_audience">こんな方におすすめ</string>
     <string name="catalog_outcomes">できるようになること</string>
     <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->

@@ -43,7 +43,7 @@
   "account_setup_title": "95f2070b35fd4c472d8a1fbaf0e58be1b3638b3d59b31884dd5ddc4e80cf3382",
   "account_sign_in_expired": "e9cc2b9c9ff7b138c9a380600edf007fa56862aaf5170e6244f4768a3a8db058",
   "account_sign_in_title": "667214834d9cac309cc747d996d1942d440f3c1968ffd98ea716a018abb97cd0",
-  "account_sign_out_failed": "5814afbc145261462b1512b3f8d29834d491d393e380c77e703efec8248113fa",
+  "account_sign_out_failed": "72b8f27be0c26d5e353075916690a94e56a35af18594c9a6edc3c5c96a555a70",
   "account_terms": "6c6b5509e04bcf97b58df3bc743d42f39de1f9f783274dfb44664c7d1e4af390",
   "account_username": "d2be2f027137e19d7e47eb87105ed93066cd521313dc68e1d99e2ad6aaf88b0f",
   "account_username_available": "da8f401057f06e825c8e9dd4dd0eb1fea7554b79ece85483420cb6033434094f",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">Aiuto</string>
     <string name="account_menu_log_out">Esci</string>
     <string name="account_menu_create_account">Crea un account</string>
-    <string name="account_sign_out_failed">Zoonk non riesce a disconnetterti. Controlla la connessione e riprova.</string>
+    <string name="account_sign_out_failed">Non siamo riusciti a disconnetterti. Controlla la connessione e riprova.</string>
     <string name="account_name_required">Nome</string>
     <string name="account_username_required">Nome utente</string>
 </resources>

@@ -12,10 +12,10 @@
     <string name="checkpoint_why_later">You\'ll see why at the end.</string>
     <string name="checkpoint_won_line">His shield is broken. You won!</string>
     <string name="checkpoint_lost_line">His shield held this time.</string>
-    <string name="checkpoint_retry_tomorrow">Try again tomorrow. Nothing you did is lost.</string>
+    <string name="checkpoint_retry_tomorrow">Rematch tomorrow.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">New try tomorrow, after %d short lesson. Nothing is lost.</item>
-        <item quantity="other">New try tomorrow, after %d short lessons. Nothing is lost.</item>
+        <item quantity="one">Rematch tomorrow, after %d short lesson.</item>
+        <item quantity="other">Rematch tomorrow, after %d short lessons.</item>
     </plurals>
     <string name="checkpoint_every_answered">Every question is answered.</string>
     <string name="checkpoint_shield">The Trickster\'s shield</string>

@@ -5,7 +5,7 @@
   "planlink_eyebrow": "ef844ed930655dc19eabadbaf01045abf9cff71a7acbb168c2a5537075296609",
   "planlink_facts": "f8aa4fd3a7e63ad81f81ba1810131c3fb8ba6d8f0076d8f3ffa0ed3fa87d7311",
   "planlink_failed": "4d20816c815e7cefea7dd0844e00d8056f54d686db69c317cb710c77d0bcaf0a",
-  "planlink_make_it_yours": "4353cc4ead43cf98f66ebdb764d2cac535bd14ee95ce800794e0857dc2370be9",
+  "planlink_make_it_yours": "2def25867ff5f33acbb1f67db73848a3e1e4e1357a0cb70c895e05379d03c2ef",
   "planlink_minutes_label": "a4ac03e21c51e19f8fb49f8ea821aa3585c5c32c1b467ba904554e577c2a3e70",
   "planlink_not_found": "c90499fbfb8cf5a0b51928908b8bbedebcdd9a22ca534d72dc032d330e6da5af",
   "planlink_not_found_description": "8d47fe106c09f9434cf5e57333ff22c025696924bc38b48da681b8d5dd4625df",
@@ -24,7 +24,7 @@
     <string name="planlink_minutes_label">Ile czasu dziennie?</string>
     <!-- Starts the learner's own plan from a shared one. -->
     <string name="planlink_start">Zacznij od tego planu</string>
-    <string name="planlink_make_it_yours">Dostaniesz własny plan z tego samego przedmiotu, dopasowany do twojego tempa. Po kilku pytaniach plan pominie to, co już wiesz.</string>
+    <string name="planlink_make_it_yours">Dostaniesz własny plan nauki tego samego przedmiotu. Zacznie się od tego, co już wiesz.</string>
     <string name="planlink_refused">Nie możesz teraz zacząć pracy nad kolejnym celem. Najpierw zrealizuj jeden z obecnych lub go wstrzymaj.</string>
     <string name="planlink_failed">Nie udało się. Spróbuj ponownie za chwilę.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->

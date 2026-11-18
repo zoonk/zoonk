@@ -9,7 +9,7 @@
   "activities_reasoning_claim": "3eaf392dc0f782c761038ceef490bee762aa87b942e3359896bec9296a1277ab",
   "activities_reasoning_evidence": "ef3ad8d1a4467b17e143e6577d159dfcb095645dfcbd79430a65dfacac0779b1",
   "activities_reasoning_evidence_chosen": "2e4f45a8d7055a937a275bc7d2b83870d06870bc45732fd920b12c1b44045fda",
-  "activities_reasoning_evidence_hint": "c0e260ac667f60f1bc090e90c12968bd088af9de71c861ca8582cadef058e22f",
+  "activities_reasoning_evidence_hint": "e06d2c58f9776c4140cc72fbe4b6bcac268a0892ae2fc9a919ae000577459da7",
   "activities_reasoning_grid_all_filled": "949b0f638acbf5a0d1993d83150cf0f90bda93abb565bbe4f465eb0be54a6a2f",
   "activities_reasoning_grid_counted": "bad96997cc575e13d88794b6530080d93a3fb1d07f4676d2f82aaa83919b3621",
   "activities_reasoning_grid_filled": "0cca0c086b5dbcb30246e1dc26740f375ed08de7fe3bcb0abd3d8271af23e8d0",
@@ -66,7 +66,7 @@
   "activities_reasoning_quotes": "4747c26ee6c27e9003fec23937f0bf22bd04649e30332791c1c57d64e83ecf52",
   "activities_reasoning_reasoning": "e1984f9d4643e3c29d3ca987283cd7f87effd260ba03d2a2ac4048c76edafe54",
   "activities_reasoning_reasoning_chosen": "993c027a581173e07629d5b664a05f04d0e960789f30753946d7495042a5bfb4",
-  "activities_reasoning_reasoning_hint": "3ddf53ade23c585d5dd91033b9f66b9f78375c415c79b01f85780d61b896c6fa",
+  "activities_reasoning_reasoning_hint": "cb3dc9f165d1555e48d5be457799d9e306337093ff280f04745c59b580eb6eb6",
   "activities_reasoning_reasoning_next": "a174cdbe5966933615c76468258e0b075f9c68ed72f3591ff738b3472e9e42f3",
   "activities_reasoning_source_mark": "899a2cea2f3e8518314b9ce1e64438ce058e04f582c40a5f9d1c1ba3af6361ac",
   "activities_reasoning_source_missed": "5fcff3313326622247fd84573cc75b658f5e95064104d67423272eef7c4fb033",
@@ -216,8 +216,8 @@
     <string name="activities_reasoning_evidence_chosen">Beleg: %1$s</string>
     <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
     <string name="activities_reasoning_reasoning_chosen">Begründung: %1$s</string>
-    <string name="activities_reasoning_evidence_hint">Wähle das Zitat aus, das die Behauptung am besten stützt</string>
-    <string name="activities_reasoning_reasoning_hint">Wähle aus, wie das Zitat die Behauptung belegt</string>
+    <string name="activities_reasoning_evidence_hint">Wähl das Zitat, das die Aussage am besten stützt, oder zieh es hierher</string>
+    <string name="activities_reasoning_reasoning_hint">Wähl aus, wie das Zitat die Aussage belegt, oder zieh die Erklärung hierher</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->
     <string name="activities_reasoning_reasoning_next">Als Nächstes: Erkläre, wie das Zitat die Behauptung belegt</string>
     <string name="activities_reasoning_take_quote_out">Zitat entfernen</string>

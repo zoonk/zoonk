@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "aa6bb1bdf45e3e6d7d623ef220c7376f2069775afb6046c7f3e6572d31479c30",
   "activities_music_sound_check_done": "818b6f5e0028d9bc8f43900c451d7c9fb156fa174fdf4f0b180032fd45c5e1d6",
   "activities_music_sound_check_failed": "d088c4dd51d73e29a0eabe2203469ad8696b66801a67d0a843e908f134fb58e4",
-  "activities_music_sound_check_intro": "b7eccf7ba07431dccdc0ab0393a6d2fc5c5864abd273b3228ff20c45dd80e078",
+  "activities_music_sound_check_intro": "4d0ae394be3e3cefce503391f5507e220f7016f132a05864417a99caec9c4784",
   "activities_music_sound_check_listen": "b7f64b7fe9b6d4e76ea3137cf36a7160839271fbc614d66685b8e00d0c7938f2",
   "activities_music_sound_check_start": "a20916dc5463787d1faa1e5d6a80a78cd57d1568f7ff95ab4820837415b86e3f",
   "activities_music_sound_check_tap": "6c59fa9cff0fa1d056a07c039bbde25c559e16bbe2140b5e29928cbfd1e597ee",
@@ -241,9 +241,9 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configurar el sonido</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Toca la pantalla al ritmo de %1$d clic para sincronizar tus toques.</item>
-        <item quantity="many">Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
-        <item quantity="other">Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
+        <item quantity="one">Las bocinas y los audífonos pueden sonar con un poco de retraso. Toca la pantalla al ritmo de %1$d clic para sincronizar tus toques.</item>
+        <item quantity="many">Las bocinas y los audífonos pueden sonar con un poco de retraso. Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
+        <item quantity="other">Las bocinas y los audífonos pueden sonar con un poco de retraso. Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Escucha los clics…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

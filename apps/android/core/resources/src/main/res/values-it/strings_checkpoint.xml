@@ -36,8 +36,8 @@
   "checkpoint_questions_left": "0f583045374e7aa7d8cb78d01af671cd27e5983686d662cdc8080428b211f2a9",
   "checkpoint_removed_detail": "738cc1930c3290270be9ccf64a4b21854adcdcdd595de8537b8d4ddc791458b8",
   "checkpoint_removed_title": "c6141f9aa760bdea22c70e1b6d66a170962d72b5e9e377eb66380ae55e1f2d74",
-  "checkpoint_retry_after_lessons": "5a50c13c67e4358d4eba91a88e0f16be59111eb69b097a4e43dd6097976b7f2a",
-  "checkpoint_retry_tomorrow": "ecd069611d2f4e81b85b6c8dca17cee790fb2caa7d1ad7d1c4c6378f097655f2",
+  "checkpoint_retry_after_lessons": "b3cf14477c334d983a1caba8457d68e1a9de34ce23ccbd123c09d988285ae9fa",
+  "checkpoint_retry_tomorrow": "8d05f9074707a211d6209d3ec4ef0c02ef1f8e448ec572b6f6da2f960cc3c5dd",
   "checkpoint_review": "724b840140d7d037e505a562d3c50d70e949cecad8d285ffa416fccc65b27b63",
   "checkpoint_rewards": "f7a96c2738363f1694b54eab6d4ec0878039898b19b21aaceb6a26018c322c85",
   "checkpoint_right_to_win": "805d0699297a1bb5c721942e0f4f2fab400c1c996fd163c5f95fd65c8c16915c",
@@ -67,11 +67,11 @@
     <string name="checkpoint_why_later">Alla fine scoprirai perché.</string>
     <string name="checkpoint_won_line">Il suo scudo è rotto. Hai vinto!</string>
     <string name="checkpoint_lost_line">Questa volta il suo scudo ha retto.</string>
-    <string name="checkpoint_retry_tomorrow">Riprova domani. I tuoi progressi sono al sicuro.</string>
+    <string name="checkpoint_retry_tomorrow">Rivincita domani.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Puoi riprovare domani, dopo %d breve lezione. Non hai perso nulla.</item>
-        <item quantity="many">Puoi riprovare domani, dopo %d brevi lezioni. Non hai perso nulla.</item>
-        <item quantity="other">Puoi riprovare domani, dopo %d brevi lezioni. Non hai perso nulla.</item>
+        <item quantity="one">Rivincita domani, dopo %d breve lezione.</item>
+        <item quantity="many">Rivincita domani, dopo %d brevi lezioni.</item>
+        <item quantity="other">Rivincita domani, dopo %d brevi lezioni.</item>
     </plurals>
     <string name="checkpoint_every_answered">Hai risposto a tutte le domande.</string>
     <string name="checkpoint_shield">Lo scudo del Briccone</string>

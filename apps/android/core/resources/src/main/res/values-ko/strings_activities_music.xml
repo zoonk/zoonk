@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "eca9535af34c0f6d7fc7b2194c4178548e41e30aa2bc892cdcd0bfbe83dd01e2",
   "activities_music_sound_check_done": "3f89ed928cc42aa81605be824108bd5d5104b30b20a38ea91c99df967f0cde49",
   "activities_music_sound_check_failed": "2ab51412800c779f5cac9c735e0be400d11bf45524d59b064fb2a329d158b86a",
-  "activities_music_sound_check_intro": "df35aa373ff87880d5e5176a365ba7a26d94ecf3a7feeb7ab91330f6a467bdce",
+  "activities_music_sound_check_intro": "9db5ed1c53443df8b55bad53a16de29bc45e4d4130ebc8dcaa93f50c4e11a6b5",
   "activities_music_sound_check_listen": "8030dee864cd941d8af23ceba306599ddc908d7694ee702547b03ff6e47f011f",
   "activities_music_sound_check_start": "20357703e4c0be19c7828aa58cece32630d8afc23c395c7e67ff5d43404ce1a1",
   "activities_music_sound_check_tap": "e0e45f1f9bf7a058c3f1dcd8996f5d3e5f6b0b658e8c46df3a3f02206c5e791e",
@@ -229,7 +229,7 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">소리 설정</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="other">클릭 소리에 맞춰 %1$d번 탭해 타이밍을 맞춰 보세요.</item>
+        <item quantity="other">스피커나 헤드폰에서는 소리가 조금 늦게 들릴 수 있어요. 터치 타이밍을 맞추려면 클릭 소리에 맞춰 %1$d번 탭하세요.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">박자 소리를 들어 보세요…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

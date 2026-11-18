@@ -83,7 +83,7 @@ fun PlanSyllabusSection(
             }
 
             groups.forEach { group ->
-                val name = if (group.extra) beyondGroupName(syllabus) else group.name
+                val name = if (group.extra) stringResource(R.string.goalcontent_also_in_plan) else group.name
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
                     if (index > 0) ListDivider()

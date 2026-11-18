@@ -77,7 +77,7 @@ internal fun MakeRoomContent(
         Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
             Text(
-                stringResource(R.string.goal_switcher_make_room_description, waitingName),
+                stringResource(R.string.goal_switcher_make_room_description),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )

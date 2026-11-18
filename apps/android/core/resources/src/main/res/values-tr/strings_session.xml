@@ -34,7 +34,6 @@
   "session_energy_glowing": "730c05bcaf02de7a47db1a4b5908d8855cdbef35c6e4fce6c9cfdf4b7d47f420",
   "session_energy_glowing_brightest": "3d7f63dd542af838220c8ac7d0307178ecdd1e7670a6b4d8c22cffc724df49d4",
   "session_energy_max": "07721fa57250c8d5b0fc9f15119aa47b22da7bc748ed8f6bdae323055eb4e50c",
-  "session_lessons_deferred": "b5d15d235eaa847210f85d6389feda21895262200fc973aacf8c28bc66617bfd",
   "session_next_belt": "1f5ca62b715f9e09ecff4a680bff1818e89fbdf9e58c7221f9d2ef5c260b352a",
   "session_next_continue": "a1acc9a6160e497ac262238e9acc08d0d544a0dedb634aec0ee1b92989cbd215",
   "session_next_eyebrow": "517dd79150fef8c3955d2902b0232b4701abefea045141c1c87c64f581cb5f52",
@@ -256,10 +255,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Telafi edilecek ders kalmadı.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">%1$s ders, bugünkü çalışmanı %2$s içinde bitirebilmen için başka bir güne taşındı.</item>
-        <item quantity="other">%1$s ders, bugünkü çalışmanı %2$s içinde bitirebilmen için başka bir güne taşındı.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">Tekrar edilecek</string>
 </resources>

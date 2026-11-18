@@ -59,7 +59,7 @@
   "activities_music_skip_for_now": "d7e47ae7c9c8238455552beafc6a98c0242a93d79624789c1f67c594e5a46377",
   "activities_music_sound_check_done": "f4d726ba84282ab3646d3deee7f2a26635357fc488209d57563c1879c94a6995",
   "activities_music_sound_check_failed": "f5cd59fd3aabc4991ee27111c1baf67dd4b7c0fb33be6389a4c4f8bf83ecbde6",
-  "activities_music_sound_check_intro": "7d283c64fba5ae4e1bf8eb90b8dc04cef135bb7099d8bdd03cbec1386febb0c3",
+  "activities_music_sound_check_intro": "1441adc1421935c0821e41d7feffc3baaa9d1b8060fa7d9180ba651d5e982481",
   "activities_music_sound_check_listen": "2464c531ff9ae4f1153d63cb26147590d86fc42189de54e8c559022afadbb80e",
   "activities_music_sound_check_start": "658efc58a0283613bafa6587fa23a27da208a61added27c1796daf3e7ab51744",
   "activities_music_sound_check_tap": "3cd7af4d7a085bfb907144c520754b86116aa65aa8216c42d0a1abb5faa01ce2",
@@ -247,10 +247,10 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Ustaw dźwięk</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Usłyszysz %1$d kliknięcie. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
-        <item quantity="few">Usłyszysz %1$d kliknięcia. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
-        <item quantity="many">Usłyszysz %1$d kliknięć. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
-        <item quantity="other">Usłyszysz %1$d kliknięcia. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
+        <item quantity="one">Dźwięk z głośników i słuchawek może być lekko opóźniony. Stukaj w rytm %1$d kliknięcia, żebyśmy mogli prawidłowo mierzyć czas twoich uderzeń.</item>
+        <item quantity="few">Dźwięk z głośników i słuchawek może być lekko opóźniony. Stukaj w rytm %1$d kliknięć, żebyśmy mogli prawidłowo mierzyć czas twoich uderzeń.</item>
+        <item quantity="many">Dźwięk z głośników i słuchawek może być lekko opóźniony. Stukaj w rytm %1$d kliknięć, żebyśmy mogli prawidłowo mierzyć czas twoich uderzeń.</item>
+        <item quantity="other">Dźwięk z głośników i słuchawek może być lekko opóźniony. Stukaj w rytm %1$d kliknięć, żebyśmy mogli prawidłowo mierzyć czas twoich uderzeń.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Słuchaj kliknięć…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->

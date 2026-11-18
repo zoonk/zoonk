@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_guess_in_unit": "7df8e12ff706d7f839cc03c79c9db151a0725ae2becab8b791ffe17fa68786fd",
+  "activities_guess_in_unit": "ed9d6e4c0f0e0aa2c9affc60118d5f7b63a77df933199fc04342f30385957f99",
   "answer_tag_correct": "a46a5d3009df5c0c9e2e9711a31a97115319aab89f597c92dd203d9ee58b70f6",
   "answer_tag_your_answer": "62b05972bb20a55ad3074547616da7ae1770e41bb49f8632ad06e76f05316a86",
   "answer_tag_your_guess": "39a470de383c99efaf21890d739721fab6ae322e5601252e3a0f42e553bd069a",
@@ -187,6 +187,6 @@
     <string name="citation_slide">%1$s, %2$s번 슬라이드</string>
     <string name="player_not_saved">아직 저장되지 않음</string>
     <string name="player_not_saved_description">일부 답이 아직 저장되지 않았어요. 레슨이 열려 있는 동안 계속 저장을 시도할게요.</string>
-    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">단위: %1$s</string>
 </resources>

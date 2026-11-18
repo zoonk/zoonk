@@ -69,9 +69,6 @@
   "onboarding_error_could_not_read": "50e5e98c09073f2e2253b6371388c5265ab44118e6d1f655ebd183c431630d55",
   "onboarding_error_could_not_save": "0c69f48ed9441c40e4db3b86c4ca7bcadf957571cd52fc115460ad92e508bed9",
   "onboarding_error_one_moment": "64653fb4b3b925347bb592b292df0252b770f3b1642871db100986888678b58e",
-  "onboarding_exam_choice_choices": "84f973f883fcedd3d00e2c7317312507289ec6ab20a9c629bf6886d5c6d936d9",
-  "onboarding_exam_choice_options": "1ddfc4c12d79d423112ebc679ba7d07a72838ea8ebd25b014125c5f5b0757000",
-  "onboarding_exam_choice_options_take": "d0e12b7309b4eae2a975ac11dd682b2ade2c76019ba17cb35a47869045707aca",
   "onboarding_exam_choice_title_one": "ea1cfd70783c2ad47235d792845fc82dddedb30758213d197488156c6b038202",
   "onboarding_exam_choice_title_other": "fe159555a3888c7ac60a1db9da79d17401f175a5caa5ea919fa2cb0e9bd92802",
   "onboarding_exam_expected": "e80119f20ae2aef610e4aec369943d745454038b2e89bfb37fbc4f12f711f890",
@@ -142,12 +139,12 @@
   "onboarding_level_basic_description": "c23cf43f614f2edfa6ca55255600ab6c985d3f889bfd1fbdb1b164c9c261c956",
   "onboarding_level_description": "47aa202ec76c16fa20842a0dcfb72b3fb7c169ee4b2b5bfee6d8884313177993",
   "onboarding_level_intermediate": "978aca42b29242078f568924432a1459ec70397a5bcd1105af183d96f567132b",
-  "onboarding_level_intermediate_description": "44e20abd883b6de3612b65396d21d8c3478df331eb4807fcd96a9ff9431af640",
+  "onboarding_level_intermediate_description": "b6141b567839722e83f01556e140aecf6e1a8481f032f2e01c171f289f57b6d2",
   "onboarding_level_label": "c251d0cacbb1a31d981c3dac3fb5d15e0e5b7511114e2728d04a815d7f6aa190",
   "onboarding_level_none": "dc422ae7e89dadddb747eea7f7ec61a9c5e13b4c237a73245ce11b4e9f864e10",
   "onboarding_level_none_description": "6933541f56b32a3269892053947d7c00512e622ec159a9c5169fdaa1b2f267a9",
-  "onboarding_level_test": "aeeb97be99b6f1e377febdbeee0c35b04445538ab2c74ea4ca164f09d9cd90fc",
-  "onboarding_level_test_description": "264b33dcdcb166cfe60702281114fea8c498f0b5fd7a89fc860157867c883d4f",
+  "onboarding_level_test": "06e974ea8a992a03b152d300bc050b0451395d9df69efeebf16cb7040789dd36",
+  "onboarding_level_test_description": "881f05221ace60657681ba9180cccebbadeb932189dc20dd0374cc22a0cf51c5",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
   "onboarding_library_course_fits": "d45a125d44f2eec602f150cf74608e5458cbb8d56aa00d50f5a202cc91e0e38b",
   "onboarding_limit_daily_explanations": "dabbc629b301064a8712f0799baf94f43967a86bddad7c88fd54abbb01db4815",
@@ -203,7 +200,6 @@
   "onboarding_plan_ready_goal": "826e77fb14e2f70fd48df6c9b129cf31599ee1ca4f0dbfecd0a1b5db2feb0f83",
   "onboarding_plan_so_far": "47d56d3b06b5eb573bb143aff2c5421dbdc55831f055a9037e522193d8297260",
   "onboarding_plan_stopped": "0d4bf8ba8790edd2b5dbab6b8bf2ed297183524b7c1366fb798a23ec5498131a",
-  "onboarding_position_description": "a89f60e1c4847bcc789d4b07bc118b7ffca672106d529e575f6184013a7472bf",
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
   "onboarding_purpose_career_change": "6acac8523734ecdd508dfcd517e58e43afb86bd3c033e2c15b95d9f8291bc124",
@@ -217,7 +213,7 @@
   "onboarding_purpose_overview": "7c16f89b6fc55b58663fec08b8086b7b238ff4053ca652712709351d973455b7",
   "onboarding_purpose_overview_description": "f5109ee58cf690029d5a1eb209dc470e7b5efebc5b827b5fed1d508b11939e35",
   "onboarding_purpose_refresh": "cf99d887660154aaa8e6bb1ab6182d4534792917f1317c0a5ba4b42061fb4c34",
-  "onboarding_purpose_refresh_description": "0b51593a5957b9e6180f3bce2d2a70096f58ee70914ee4908a72f3910658b279",
+  "onboarding_purpose_refresh_description": "a9c6e82633b5b8b41b3ac6ccb3c5c0ca442f2c5575afbca4f113d59a5da76511",
   "onboarding_purpose_title": "97fb47b64ebead19d3c30f8b909e46c8b02c0f2b4e4c0af484b89278c19e71e4",
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
   "onboarding_purpose_work_description": "c257328c47b3e126fee2cf4dd41a84452b76ad2fbe2cb318fe9a565d2bc2c1b4",
@@ -278,7 +274,6 @@
   "onboarding_reveal_full_course": "5efc1a5345e213b870c7c8e9e9ebcb52ce0bf0e808864b57e48ae39f43f24f08",
   "onboarding_reveal_full_course_finish": "43251d1e69e4bc50e116d825d83d43ca46a4b2b43d6a34e9dcfd7d97b2a0f19c",
   "onboarding_reveal_full_course_finish_month": "bbe615051f3f4ed81a8468ad60b6460a543e5809db7312a3f65c82d635a683cf",
-  "onboarding_reveal_guide_parts": "76e25d21d5db906b1bada72b34f7dc1cfc25ec28af297e9ed65e7263d891116d",
   "onboarding_reveal_known_skills": "9205db11fc4d6b7728fedcfb7449e074fa93267308162ae67e96d6af93e0d773",
   "onboarding_reveal_lessons": "5465dd9f39e45f82c145922ba55ee46e9533167458f4bd76eb2127dca9631f1a",
   "onboarding_reveal_lessons_done": "b30485dddf4ca33738e0f8cdb932eec2d85dbc4211fea45d5ebfdcbea7bc5530",
@@ -290,9 +285,8 @@
   "onboarding_reveal_most_questions": "fd66edef6b8aaa9c90397fb638455067a6801360a56c184c23c05dd3e0b081c9",
   "onboarding_reveal_no_sitting": "78685708d962d460ca04327910f20dad18acbdf6596e619e495c5d7a7e59bd8a",
   "onboarding_reveal_notice_day_estimated": "23e61a99041cbea7248b537d2c20cb9f67058b405259fa6993c90ddd6d9e8c62",
-  "onboarding_reveal_notice_day_guide": "516afdebd6056e85f7843b6adc7d2ce961da68ca9cddd3798b3e729526afaddd",
-  "onboarding_reveal_notice_day_notice": "6138105bc2439acffb305b438dfebf4f19faf6b2d9a92de278d899ccbb40468f",
-  "onboarding_reveal_notice_subjects": "10f2bce87213289014dca217d456e7b4790023a60b9070b56bd5b36acffb6424",
+  "onboarding_reveal_notice_day_notice": "a68b27fc96553d7d333cf26d8f9e928bccf5a6e41e3464a2cf84701f6abfcf4b",
+  "onboarding_reveal_notice_subjects": "50d8e668a844888330f52ad96e621b497dc925504b776031596b195cf62c6b85",
   "onboarding_reveal_pace_covers": "24f8e014bc65bc2cada7d0656bb79fc9342795e14cc52be129f38bbf100c31aa",
   "onboarding_reveal_pace_time": "291073076db1257c30528b8695f6eb9e57e487cd5b146acccb5d468b17aa91e2",
   "onboarding_reveal_phase_final_stretch": "57cfd584eb0c0cdf6a05d43d523dcfed10a347cd667499192d3e4ca12572d0d2",
@@ -352,18 +346,17 @@
   "onboarding_row_date_to_be_confirmed": "1c1296e0ef51bb6f9fb177405d4bd6fa646a91a7372b66027064d9472c48a9ca",
   "onboarding_row_dates_estimated": "689085676612859807a3bef44f9687c4ae70d1744c9bcd14af7c25c9e7abba63",
   "onboarding_row_days_left": "b87aeb029fe360291ec22aa389c28a2ce3bde7e96aecb511080b1ecca6e35de3",
-  "onboarding_row_deadline": "f58f3093b1f27d035afbbb457b746675e11dd8baa79cc5a0d36a1e1951920d5c",
+  "onboarding_row_deadline": "f6e0e8bd8907dbb3ffed227142d5363474f65c305f813627ef7c637552808f78",
   "onboarding_row_exam_date": "f540c7531475952c39f47921a36173e2ef0e18b9b7ef1de76b1a5c5df32f35e0",
   "onboarding_row_exam_dates": "b33cf75e768fc6646b6585fd0166ff79dbded1674c1e267a4d9f94e25f94efca",
   "onboarding_row_goal": "27763df5d3dde695187d99974cf8b14a999a7dae62a61a698d731fb7f078ca9c",
-  "onboarding_row_guide_says": "80363e6869b0cb3d45dc9578cdb044e86b15fed5b5adc7305c679f874dc772af",
   "onboarding_row_language": "8656dd5075ac84350060a275c8b43cc46bf626f283207d2c4e237315f3454959",
   "onboarding_row_last_cutoff": "236c9ce71d2e14a9a01b17ed2a6a994517387d5f1a5d89d4f51936fe76e4b644",
   "onboarding_row_level": "e4548a6eae264eab8ce438db15cfba13a19bb2c4b3486c3d736a974fc57c398b",
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
-  "onboarding_row_notice_says": "df46a277148f9f042090340a799d8403407a95f4efc3a6f49b9cfa1aa363a46f",
+  "onboarding_row_notice_says": "347a6d87d441536c663d30cc1de37620d5bdf4ff21dca41ede32ba8b66298c72",
   "onboarding_row_pick_date": "da1f50d5810fd8fd525accfc09cec66512155010d9ff76e93715e9fc8b649d92",
   "onboarding_row_position": "e24afc7c38c844ba467578695f9403017d95389b6456fe6375f27677703bd769",
   "onboarding_row_reason": "1c65118b91f78cd9f4d12bf263b051104d32ebf7691e208789da097681175731",
@@ -405,7 +398,6 @@
   "onboarding_subjects_label": "a09836ec95a763540547c0c78a89b37305a98dc2d62c0dd46636b203e21cfdd2",
   "onboarding_subjects_none": "e485086488a74e69e5356dd040ebd9f248bd21acb04aa1c20cdfa6ef6d191c15",
   "onboarding_subjects_title": "dd42819d4864da6240f581531452f5c43f2c4a3415199c85a4369170727b570b",
-  "onboarding_target_description": "3dbada53b222c272b3cf48c3b379befce2119fba70a81ce7fa4761b4c11b804d",
   "onboarding_target_label": "a28034d110ee81ad2e3c15f0d1990be31afd6033f657333a23ca9cf2c908110e",
   "onboarding_test_level_a1": "725b74917f9aa668bc4bb13188c54f09b6f12d59e20a556941c902f422854ba5",
   "onboarding_test_level_a1_plus": "d2a69c4080678f6823e84542d514aed00f35e2425e0a4c6c15f21972fca00d4e",
@@ -552,7 +544,7 @@
     <string name="onboarding_row_exam_date">試験日</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">試験日程</string>
-    <string name="onboarding_row_deadline">期限</string>
+    <string name="onboarding_row_deadline">終了日</string>
     <plurals name="onboarding_row_days_left">
         <item quantity="other">残り%d日</item>
     </plurals>
@@ -567,10 +559,7 @@
     <string name="onboarding_row_dates_estimated">例年の日程から予想しています。正式な日程が発表されたらお知らせします。</string>
     <string name="onboarding_row_pick_date">受験日を選ぶ</string>
     <string name="onboarding_row_several_sittings">この試験は年に数回実施されます。受験日を選ぶまでは、最初の日程に合わせて学習計画を立てます。</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="onboarding_row_notice_says">試験要項には%1$sと記載されています。</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="onboarding_row_guide_says">試験の公式日程表には%1$sと記載されています。</string>
+    <string name="onboarding_row_notice_says">試験日は%1$sです。</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">5分ほどで読める短い解説を作成します。</string>
@@ -756,8 +745,7 @@
     <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">試験日は現在、%1$sの見込みです。</string>
-    <string name="onboarding_reveal_notice_day_notice">要項に記載されている試験日は%1$sです。</string>
-    <string name="onboarding_reveal_notice_day_guide">試験の公式日程では%1$sとなっています。</string>
+    <string name="onboarding_reveal_notice_day_notice">試験日は%1$sです。</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$sに試験の予定はありません</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -780,10 +768,7 @@
         <item quantity="other">資料に含まれる%d個のトピック</item>
     </plurals>
     <plurals name="onboarding_reveal_notice_subjects">
-        <item quantity="other">要項に記載されている%d科目</item>
-    </plurals>
-    <plurals name="onboarding_reveal_guide_parts">
-        <item quantity="other">公式ガイドに含まれる%dパート</item>
+        <item quantity="other">%d科目</item>
     </plurals>
     <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
     <string name="onboarding_reveal_most_questions">出題数が最も多い科目：%1$s</string>
@@ -827,7 +812,7 @@
     <string name="onboarding_purpose_career_change">転職する</string>
     <string name="onboarding_purpose_career_change_description">新しい仕事に必要なことを学び、ポートフォリオも作る</string>
     <string name="onboarding_purpose_refresh">以前学んだことを復習する</string>
-    <string name="onboarding_purpose_refresh_description">短いテストのあと、以前のレベルまで学び直す</string>
+    <string name="onboarding_purpose_refresh_description">短いテストを受けてから、以前のレベルを取り戻します</string>
     <string name="onboarding_purpose_other">その他</string>
     <string name="onboarding_purpose_other_description">あとで自分の言葉で教えてください</string>
     <string name="onboarding_level_title">どのくらい知っていますか？</string>
@@ -861,23 +846,21 @@
     <string name="onboarding_level_basic">基礎は知っている</string>
     <string name="onboarding_level_basic_description">少し知っています</string>
     <string name="onboarding_level_intermediate">以前に学んだことがある</string>
-    <string name="onboarding_level_intermediate_description">すでに知っていることはスキップします</string>
+    <string name="onboarding_level_intermediate_description">知っている内容はスキップします</string>
     <string name="onboarding_level_advanced">よく知っている</string>
     <string name="onboarding_level_advanced_description">知らないことや難しいことだけを学びます</string>
-    <string name="onboarding_level_test">よくわからないので、短いテストを受ける</string>
+    <string name="onboarding_level_test">わからないので、短いテストを受ける</string>
     <!-- %1$s is a duration, like "2 min". -->
-    <string name="onboarding_level_test_description">答えに合わせて問題が変わります（約%1$s）</string>
+    <string name="onboarding_level_test_description">約%1$s</string>
     <string name="onboarding_subjects_title">すでによく理解している科目はどれですか？</string>
     <string name="onboarding_subjects_description">学習計画では、選んだ科目の基礎をスキップします。残りの科目は、短いテストでどこから学ぶかを決めます。</string>
     <string name="onboarding_subjects_label">よく理解している科目</string>
     <string name="onboarding_subjects_none">まだない</string>
     <string name="onboarding_subjects_from_scratch">ゼロから始める</string>
     <string name="onboarding_admission_title">志望する学部と目標の点数は何ですか？</string>
-    <string name="onboarding_target_description">特に大切な内容を優先した学習計画を作れます。</string>
     <string name="onboarding_target_label">目標</string>
     <string name="onboarding_admission_placeholder">例：医学部、750点</string>
     <string name="onboarding_position_title">どの職種に応募しますか？</string>
-    <string name="onboarding_position_description">要項に載っている試験は、職種ごとに異なる場合があります。</string>
     <string name="onboarding_position_label">職種</string>
     <string name="onboarding_reason_title">何のために学びますか？</string>
     <string name="onboarding_reason_description">回答によって、コースで目指すレベルが決まります。</string>
@@ -916,18 +899,6 @@
     <string name="onboarding_date_is_today">設定した日付が今日なので、それまでに学習できる日が残っていません。</string>
     <string name="onboarding_exam_choice_title_one">どの試験を受けますか？</string>
     <string name="onboarding_exam_choice_title_other">どの試験を受けますか？</string>
-    <!-- Under the exam choice question. %1$d counts the options; %2$s is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language. -->
-    <plurals name="onboarding_exam_choice_options">
-        <item quantity="other">この試験では、%1$d種類の中から%2$sを選びます。学習計画と模試には選んだ内容が反映され、学習計画で変更できます。</item>
-    </plurals>
-    <!-- Under the exam choice question when each candidate takes several of its options. %1$d counts the options; %2$s is the notice's name for the choice, such as the modules a course takes, in the notice's own language; %3$d is how many of the options each candidate takes, at least 2. -->
-    <plurals name="onboarding_exam_choice_options_take">
-        <item quantity="other">この試験では、%1$d種類の中から%2$sを%3$d種類選んで受験します。学習計画と模試には選んだ内容が反映され、学習計画で変更できます。</item>
-    </plurals>
-    <!-- Under the exam choice question, for several choices. -->
-    <plurals name="onboarding_exam_choice_choices">
-        <item quantity="other">この試験では、%1$d項目の選択が必要です。学習計画と模試には選んだ内容が反映され、学習計画で変更できます。</item>
-    </plurals>
     <string name="onboarding_decide_later">後で決める</string>
     <string name="onboarding_buddy_title">相棒を選ぶ</string>
     <string name="onboarding_buddy_description">学ぶにつれて、相棒も成長します。</string>

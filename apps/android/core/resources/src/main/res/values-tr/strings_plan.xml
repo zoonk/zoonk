@@ -49,8 +49,8 @@
   "plan_ask_phase_end_off_rest": "132d3067d08f5e5827ad8fa7f2bb7ed05dd9c77499876b7db1a9241aa7d7a846",
   "plan_ask_prerequisites": "de563ab4bf172dad7f610bfc032895402898f52691235755bc08ee7258cbb53f",
   "plan_ask_remove_focus": "1b7f85f456c96c9633028996577e8bb1405dd1236ec59cc32df5db1f2f65a795",
-  "plan_ask_rest_day": "325758ff44a928a386614887a32a0d00f96a93f2f8ebf012655ac5a08a4e41ff",
-  "plan_ask_rest_days": "1a886c3639b0ccfda80b646ef17abfc2de56b0888e90e61532216e0f8d45833d",
+  "plan_ask_rest_day": "af8ec69bf7546f25de06f1e96910aea2dd9087978532aacdd8e64ce16e5f0d40",
+  "plan_ask_rest_days": "b620c9b01ca17e58dfbaacf53604c7732c1a6afd2ee572e480d1ce3e0642a311",
   "plan_ask_restore_activities": "433c607708e3c561f656e6b0cef5b5792543daf080cbdc77812e0a3c519087f1",
   "plan_ask_restore_areas": "7acc8fbb856dd8b4e960e6e774d98212f07a8123956d509bec2dc0c66b325d7c",
   "plan_ask_skip_activities": "31eea32ec18e1a15c0cbec6c0da65006e9d520dfa219b35314c9eb22cf35e0b8",
@@ -88,7 +88,7 @@
   "plan_change_activities_left_out": "3f2d456dc3317ef7237872cc296f5c7886e2b5d562916c750cd033a819288da6",
   "plan_change_adds": "b616d2d6bec3180c512e6365313198f8f234e007f6f54116111917fd52766bc4",
   "plan_change_adds_about": "e7bb464e1829bf04b1b69b0b961eb3a971d1618a09cab9fe1a13246a228fe5a3",
-  "plan_change_adds_and_leaves_out": "2c50a462000e9548ee039fc1a9296c1fa40c7bf9dc3896cef5b680ab58b1f697",
+  "plan_change_adds_and_leaves_out": "796b016f0ee6e54a30fd058e2e1ac4b327d0ccb9357c86c1fd70d335a40b7c8b",
   "plan_change_aim": "0920c54914c5c7b2e3a5ed58512910aaa5216d33ab22b86b5ad854e1803be98c",
   "plan_change_area_from_basics": "f03540c868b0f91b8fe525ac3728d00084822779407eac23d657bbc3897070b1",
   "plan_change_area_left_out": "3a008d341cd99510a9d57aa859a2c2f9376e12a6140880b9792a9694fc0f0506",
@@ -99,7 +99,6 @@
   "plan_change_bases_essential": "db6cc1b37d5a516b7e8d121c721ad3305d0f956613248f5822b2f52b7c89fd77",
   "plan_change_bases_quick": "b7977ebe81cb12f2d3079d841c5e3e10dcfe6cd70f3edf5eae193785cb2417a5",
   "plan_change_bases_skip": "e6800cc4ee7724be2ac65188d41ff9e2aedcb1380eebce5566bc74e07b663723",
-  "plan_change_calendar_says": "cd605cab5603d93d466b100d4e1489d8ba9a190e6a251a04748427911855e27b",
   "plan_change_changed": "685ad7d1130a976b134e2e94920f995b34dd00347458f5e19c3bad5d6ce5fed2",
   "plan_change_daily_time_changed": "3ddae6778f2ec390def159bb3424a856705efafe03c7697a662937752b330e61",
   "plan_change_date_moved": "0475391dbd41781db09cb9c12bd5e5213f9215fc84a572e5c063a6c6a5eda331",
@@ -120,7 +119,7 @@
   "plan_change_full_course": "db133b2509ae8c0d32ac37dd522bcbcbc27fad569bbe7dd7376f5caef967d7e1",
   "plan_change_harder": "47629405cef3349b82c6d9467099bc793392b1862c3c338fcdbce4de6c3d1d71",
   "plan_change_keep_official_date": "98f3ca72d96a6c3260b0dfc4ad2850d6b8b0f6e58d21fac099a8e87f6bb3896b",
-  "plan_change_leaves_out": "0a73e0598a06707f0a7a76ff5d624b5bb0e4b9ee968cfbb6c9625ad8cd188f4f",
+  "plan_change_leaves_out": "843389b6e407f00668ac71cae22026a1bb8d6e4766d21e86c5c98a0f3381bb48",
   "plan_change_left_out": "b1dead564d60e24d2138a95a1b7456f9d40561bc883c24efcf64b3eaa19895ad",
   "plan_change_left_out_include": "8c2010d766e6629ac16385ead908fcf8dab1c59acf00d66f97e549b2280f11e8",
   "plan_change_less_time_for": "a3ae22f7d33b4b0b9ac8290467b425b1a1c7a55c94e9395eea72325850245265",
@@ -137,7 +136,7 @@
   "plan_change_names_and_more_topics": "919c12de17c076b2ae9ba8ffad9471bb2c8223700e60de5b0de9e502f2ee8ee2",
   "plan_change_no_deadline": "f22e79cb864decb312ae4ebb26039d1a03e6bf7a970264626d5cf3f5cca3993e",
   "plan_change_no_focus": "804e50a2601a39382eb82e01a5e7bb79cc98dd2025ba8bb0af05c62cb03edb83",
-  "plan_change_notice_says": "745b5a8b3b69563c49a4676a22b5b969a282d646413ed359010af89ed7e8656b",
+  "plan_change_notice_says": "d6eec87efaea898953dfa7652c750171333111f0612caa5fdddf1083981b384c",
   "plan_change_official_date": "e440c23eaa36cf00b3b65defc15c20e40abc9672701f929c19c25e574c484a94",
   "plan_change_other_subjects": "187fd2c9377576dd16f03e0feda4a1f4ddc3b1493a073c4d9ff0b62eee5367d4",
   "plan_change_own_level_first": "02319e62017d74c689e6b0e84571f1d4f72e29112849c4cffc056dbdfedd64a8",
@@ -192,7 +191,7 @@
   "plan_days_left": "255f2e6ae1068b95dc04df8294b94776361b24917981d7b592d26f81b17dba77",
   "plan_days_left_estimate": "e51fcd21117e5367e7135c85749edac9e2a0a8a9dbfbb320b7bf93bb7aa6c2e3",
   "plan_days_left_estimate_spoken": "795126f478f49067d8385c5bff1e4a80d94c76a0060a046dbc24700e30e25a79",
-  "plan_deadline": "34712425c7c0a8dcc9f79222611c5b8970d8034ed38ebb3d5b48ce51af856fe2",
+  "plan_deadline": "459158ed7868ff18250bb68eff6e5874153b940b61b67c2c5f8b70fa50b98d97",
   "plan_different_choices": "7167f299b356eb64b1055fcf9589e339ab97e73c4350170de981fdd105907c2a",
   "plan_done": "ad6b281b3323645bda8a0317c3420c5eaab3a966710596b1fce47c51888bd954",
   "plan_done_of_total": "d2a4ac223e447e4cd835eafce65c13076f5505b0a947da4b3e88aa6eb77c3e60",
@@ -237,7 +236,6 @@
   "plan_effect_topics_leave": "b2fe3e2d4821d9c1f14a767841e54235f1a2616949e86f3c8ef4b7a27b57497e",
   "plan_effect_weekly_challenge_on": "f2039da5ccfc79383d65089ebbfd673eac70c55b5c7d3d56a47ef2172c4a1506",
   "plan_end_none_set": "62f81f5f616d4aafff308fa488f1fed20db4376ade52d18b2a43428be13b75ff",
-  "plan_end_none_set_estimate": "177effbe43c3ace40d56e680e176ea792e23ea1794c4be457b875675e843613c",
   "plan_ends": "4a924e83f3621bbdf901b3640177d687f24312e7b616dbcddeda9affd6f28af7",
   "plan_ends_about": "55d47b0fee6c8c2839068bf294f5478715064380f60f8aa8aa055e307cc0df81",
   "plan_ends_about_month": "10ceffe8cfbc0c2d7c60197d732ae411223cf40c0b6fc59f74b1bc3f0cc82518",
@@ -256,15 +254,15 @@
   "plan_exam_over_ask": "30c13fc0e6269aa90901cbb0c044f57b72e199f2596a51d2d7053d67f898d98d",
   "plan_far_count_from": "2170998188c14d820f1d33baf352bc54a1594c49567e2264b46322dddd19c766",
   "plan_far_count_from_month": "6e6bc69cbfbe62e63b12f7b5aacde8986cc44aa130f3170bda46b3dcf2515eec",
-  "plan_far_explain": "a99e595fe1f0d15041b581129b0adedd7c11e11a240bf42e6362ce598cf84589",
+  "plan_far_explain": "b607679dfca47b917df9d70e27efab93a69a2776828e810581ddbd5d2b71b332",
   "plan_far_from": "af8e65d4de83fdd4ff305dd25a60c9174347aaa70cffbccf7ada6b427df59a93",
   "plan_far_from_month": "6df66fb5cd541eba8e5a8641e99956f0343a895c6b2266a93df30ec7d59c5b05",
   "plan_far_lessons": "686defb96cf1edbce263f227bc04c64dd329d3507374baa9caf09a4e9ad19fde",
   "plan_far_lessons_about": "1d5619ab1df43dc310a4cc539d8c880c65162ce5083d99e3ae809911280f51b1",
-  "plan_far_nothing_left": "3f586c011a993f4e72a1af8db79c3acf460f796862ab11c10398a1a7aaa36a58",
-  "plan_far_see_lessons": "5e3d1feeddafdf2b5f96e37533d1fb7d97978f69b45f9454fb3385d7d3d061fe",
+  "plan_far_nothing_left": "899f1721e76393ad396fd54012c27e64aecd8f15fcfd7f86b283a92cd72f88ac",
+  "plan_far_see_lessons": "4f55b62c76e403c622436a35f8bdcc5a25ef5547d560f0b081360c960b29e826",
   "plan_far_unreachable": "dffd717644fa274e556af5d641415aaf819dddd74576ea7dfae7ef3ed359813e",
-  "plan_far_writing": "2bf518e3759633c9f20581ad20fd2eb4cb4b7f93268cced104203a4901dc0b24",
+  "plan_far_writing": "f1c8814363d4c80bf9929e732215dfe0d5e0895c79c49a16f073092de1b28b09",
   "plan_find": "0010d7427f8bd1445064b58c176ada49838f20c29b87ea0c3317833fce951f5a",
   "plan_find_building": "8b65c6815d3bf4d8a71990d118db52a019fc3a5ec7645ce1d186edf1023d43f3",
   "plan_find_date": "47b918b2c6b24b975ba59513afd647969a4b9cd686845ba07f26d782ca244115",
@@ -285,9 +283,8 @@
   "plan_focus_only": "1d8c7a7745d0fbd6fa933eb9befb8d4dac8145e583cd61140ec1623971a30f1c",
   "plan_fridays": "7df04b7bf8541cfaa289ac541beaa2f6e7e6e2f69dbb2fbdbe9f74904a969b07",
   "plan_full_course": "c7b0949576fbcb2f03b77df21b910de64e1495f07db5a7e087e7c460e0ae91db",
-  "plan_full_course_rule_exam": "9c86bba5e7834316e9b08d5f4aec12f7a21f34a0fc4e8301d71e3ae2c06ae7f1",
-  "plan_full_course_rule_goal": "4d54099a4b4969687cc44acb8589aa14ac1b088df94a30b95192a8e019b8d78a",
-  "plan_full_course_rule_goal_month": "ea23bdfeaada730b55927df2f8d97796f26eee37aadfcc1603f87a7f9634c30a",
+  "plan_full_course_rule_exam": "55a30ee10d9572015a2f8e8fa2633ad6cd350066977898d61139733744905ee3",
+  "plan_full_course_rule_goal": "247f42b804e7728f75e02b6d785bb743b2fc82497fa118b2c36c0d25ca8f8d9d",
   "plan_full_course_switch": "a3a827a7496044525df043b081ebee1dfaf2b82e0793f1cae076118c797e8943",
   "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
@@ -297,7 +294,7 @@
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
-  "plan_last_week_recap": "43c91a29f350fb875253e9bcac3abf613cdfe567951a031de10f4204fef2b3ab",
+  "plan_last_week_recap": "ca97129ede9d2d01485ed297be4e9ac218fab4c55402e312d73c96e61b402add",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
   "plan_lessons_left": "4df3969bdd163b0ddda3930cd6e9d1e54870bced633dd784f911ef1332b0bb91",
@@ -497,7 +494,7 @@
   "plan_tool_how": "0a1cb26e45301272c593eba1c42043b2a79f7e98a7b52f6ab9ea4c7de67a80ad",
   "plan_tool_needed": "e09bed746f6fd6cac2eda17f92598b2be89ffcef5692eec1b53b1efa290535b8",
   "plan_tool_none": "1e8db6c9160634c98b1f2fbe45459fdeca8e2f747438ac31d85a5b689be2394e",
-  "plan_tool_none_description": "bf2a02d5bd6b196a465183b7761a2fa2cca0face277908ff40490d1fe1c1a72c",
+  "plan_tool_none_description": "4bdbe9feb74ff82d0ad0c88b3eb8ee090772ad9750e632d4685e39b8fa302d5a",
   "plan_tool_optional": "3ceed2e24af566989f3d80d6b7cbdb491ed12bafaf1505d06553e77d8cf62499",
   "plan_tool_setup": "3d0aaa5ac7fe379aa3c99454640a6205fe0348b3889c16b4ff1446d7e6888ba5",
   "plan_tool_setup_description": "d07dee6981f6b8ddc3c26f8c6248a45447c0babd71082d3f95417125f3243224",
@@ -512,7 +509,7 @@
   "plan_tools_later": "91e37c2c70ec8015f9e397279e1622084ba3e8f6f73f51507c8fe3ba569b8af0",
   "plan_tools_none": "67a69cf1f31ba9c854ecd399557a38abab27734d24e1090dc96badf250dca757",
   "plan_tools_title": "d2bf63f9fd6ba66dae899de4c40ae35a8a66e7cb35a0b49752ee27e1f7f419b3",
-  "plan_tools_without": "b7431ff5a4e46a1493469e7727a5b551c6c8f22e5b317243017de124d5a2d7a6",
+  "plan_tools_without": "d55d03ab8173aeaebbd03b389603dcf36aadad0e24929631b18a01cece9eaad5",
   "plan_topics_studied": "e1a300fa446e01cda154edd09207bd1c4b5bc82b48bea23d161e46ad4144bf7b",
   "plan_trickster_not_in_plan": "323e7d53c9101f3036b356a41b04f22cff5a7ca40e8db712a6fd3ecae50603ea",
   "plan_try_again": "50e02d0d3e47d8caa6a659dc55954ac010d31d3325bb5159c45e4891d509fb84",
@@ -670,15 +667,11 @@
     <string name="plan_far_count_from">%1$s · %2$s tarihinden itibaren</string>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
     <string name="plan_far_count_from_month">%1$s · %2$s ayından itibaren</string>
-    <!-- A far topic's sheet: why its lessons aren't there yet. -->
-    <string name="plan_far_explain">Bir konunun dersleri, o konuya başlamandan iki hafta önce planlanır. Bu konunun derslerini şimdi görebilirsin.</string>
-    <!-- Writes a far topic's lessons now. -->
-    <string name="plan_far_see_lessons">Dersleri gör</string>
-    <!-- Write the duration out in words, not as "30 s". -->
-    <string name="plan_far_writing">Dersleri hazırlıyoruz… Yaklaşık yarım dakika sürer.</string>
+    <string name="plan_far_explain">Bu dersleri hazırlamak yaklaşık yarım dakika sürer.</string>
+    <string name="plan_far_see_lessons">Dersleri hazırla</string>
+    <string name="plan_far_writing">Derslerini hazırlıyoruz…</string>
     <string name="plan_far_unreachable">Sunucuya ulaşamadık. Bağlantını kontrol et.</string>
-    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
-    <string name="plan_far_nothing_left">Bu dersler erkenden hazırlanamaz. Bu konuya gelmeden önce hazır olacak.</string>
+    <string name="plan_far_nothing_left">Bu konuda hazırlanacak başka ders yok.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d ünite daha</item>
         <item quantity="other">%d ünite daha</item>
@@ -802,7 +795,7 @@
     <string name="plan_day_rest">dinlenme günü</string>
     <string name="plan_day_today">bugün</string>
     <string name="plan_day_planned">planlandı</string>
-    <string name="plan_last_week_recap">Geçen haftanın özetine bak</string>
+    <string name="plan_last_week_recap">Haftalık özet</string>
     <string name="plan_preparation">Hazırlık</string>
     <string name="plan_progress">İlerleme</string>
     <string name="plan_your_preparation">Hazırlığın</string>
@@ -888,10 +881,7 @@
     <string name="plan_change_follows_guide">Planın sınavın resmî kılavuzunu temel alır.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">Sınavın tahmini tarihi artık %1$s.</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="plan_change_notice_says">Sınav ilanında tarih %1$s olarak belirtiliyor.</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="plan_change_calendar_says">Sınavın resmî takviminde %1$s yazıyor.</string>
+    <string name="plan_change_notice_says">Sınav %1$s tarihinde.</string>
     <string name="plan_change_keep_official_date">Resmî tarihi koru</string>
     <string name="plan_change_daily_time_changed">Artık günde %1$s çalışıyorsun.</string>
     <string name="plan_change_rest_day">%1$s: dinlenme günü.</string>
@@ -995,8 +985,8 @@
         <item quantity="other">Yaklaşık %d ders daha</item>
     </plurals>
     <plurals name="plan_change_leaves_out">
-        <item quantity="one">%d ders dışarıda kalıyor</item>
-        <item quantity="other">%d ders dışarıda kalıyor</item>
+        <item quantity="one">%d dersi çıkarır</item>
+        <item quantity="other">%d dersi çıkarır</item>
     </plurals>
     <plurals name="plan_change_fewer_lessons">
         <item quantity="one">%d ders daha az</item>
@@ -1006,9 +996,10 @@
         <item quantity="one">%d daha az</item>
         <item quantity="other">%d daha az</item>
     </plurals>
+    <!-- %1$s says the lessons a change adds, such as "Adds 3 lessons"; %2$d is how many lessons it takes out. -->
     <plurals name="plan_change_adds_and_leaves_out">
-        <item quantity="one">%1$s ve %2$d ders dışarıda kalıyor</item>
-        <item quantity="other">%1$s ve %2$d ders dışarıda kalıyor</item>
+        <item quantity="one">%1$s ve %2$d dersi çıkarır</item>
+        <item quantity="other">%1$s ve %2$d dersi çıkarır</item>
     </plurals>
     <string name="plan_change_more_and_fewer">%1$s ve %2$s</string>
     <string name="plan_change_sentence">%1$s.</string>
@@ -1020,7 +1011,7 @@
     <string name="plan_undo">Geri al</string>
     <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
     <string name="plan_undo_failed">Bu değişiklik geri alınamadı.</string>
-    <string name="plan_deadline">Son tarih</string>
+    <string name="plan_deadline">Bitiş tarihi</string>
     <string name="plan_named_month_note">Şimdilik %1$s. Gün belli olunca seç.</string>
     <string name="plan_no_deadline_note">Son tarih yok: her şeyi kendi temponda çalışırsın. Son tarih belirlersen planın o zamana kadar en önemli konuları kapsar.</string>
     <string name="plan_pick_date">Tarih seç</string>
@@ -1083,7 +1074,7 @@
     <string name="plan_tool_change_how">%1$s kullanma şeklini değiştir</string>
     <string name="plan_tool_choose_how">%1$s kullanma şeklini seç</string>
     <string name="plan_tools_none">Araçların yok mu? Her şeyi örneklerle yapabilirsin.</string>
-    <string name="plan_tools_without">Kendi bilgisayarında pratik yapmayacaksın. Derslerde bunun yerine örnekler ve simülasyonlar kullanılır.</string>
+    <string name="plan_tools_without">Kendi cihazında uygulama yapmayacaksın. Bunun yerine derslerde örnekler ve simülasyonlar kullanılır.</string>
     <string name="plan_tools_later">Daha sonra: %1$s</string>
     <string name="plan_tool_how">Nasıl kullanacaksın?</string>
     <string name="plan_tool_have">Bende var</string>
@@ -1091,7 +1082,7 @@
     <string name="plan_tool_setup">Kuracağım</string>
     <string name="plan_tool_setup_description">İhtiyaç duymadan hemen önce kısa bir dersle nasıl kuracağını öğrenirsin.</string>
     <string name="plan_tool_none">Kurulum yapmadan</string>
-    <string name="plan_tool_none_description">Örneklerle öğren. Kendi bilgisayarında pratik yapmayacaksın.</string>
+    <string name="plan_tool_none_description">Bunun yerine örneklerle pratik yapacaksın.</string>
     <string name="plan_tool_updates_when_ready">Planın hazır olur olmaz güncellenir.</string>
     <string name="plan_tool_writing_setup">Kurulum dersi ekliyoruz</string>
     <string name="plan_tool_writing_setup_phase">Cihazın için kurulum adımları hazırlanıyor</string>
@@ -1195,11 +1186,8 @@
     <string name="plan_finish_after_exam">Günde %1$s çalışırsan %2$s ayında, %3$s tarihindeki sınavdan sonra bitirirsin.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="plan_finish_after_exam_month">Günde %1$s çalışırsan %2$s ayında, %3$s ayındaki sınavdan sonra bitirirsin.</string>
-    <string name="plan_full_course_rule_exam">Sınava kadar hiçbir şey değişmez: en sık çıkan konulara öncelik verilir, deneme sınavları ve son hazırlık dönemi de planda kalır. Yetişmeyenler sınavdan sonra işlenir.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_full_course_rule_goal">%1$s olarak belirlediğin hedef tarih planından kaldırılır. İstediğin zaman yeniden belirleyebilirsin.</string>
-    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_full_course_rule_goal_month">%1$s olarak belirlediğin hedef tarih planından kaldırılır. İstediğin zaman yeniden belirleyebilirsin.</string>
+    <string name="plan_full_course_rule_exam">Tüm konulara çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır.</string>
+    <string name="plan_full_course_rule_goal">Bitiş tarihi olmadan hedefindeki tüm konulara çalışırsın.</string>
     <string name="plan_study_everything">Bitiş tarihini kaldır</string>
     <string name="plan_study_everything_exam_description">Tüm konulara çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır.</string>
     <string name="plan_study_everything_goal_description">Bitiş tarihi olmadan hedefindeki tüm konulara çalışırsın.</string>
@@ -1361,10 +1349,10 @@
     <string name="plan_ask_skip_basics">%1$s için temel bilgileri atlayalım mı?</string>
     <string name="plan_ask_from_basics">%1$s için temelden başlayalım mı?</string>
     <string name="plan_ask_daily_time">Günde %1$s çalışalım mı?</string>
-    <!-- %1$s is one day of the week. -->
-    <string name="plan_ask_rest_day">%1$s dinlenme günü olsun mu?</string>
-    <!-- %1$s lists two or more days of the week. -->
-    <string name="plan_ask_rest_days">%1$s dinlenme günleri olsun mu?</string>
+    <!-- Asks whether to stop studying on this weekday every week. %1$s is a weekday, such as “Saturday”. -->
+    <string name="plan_ask_rest_day">Her %1$s dinlenmek ister misin?</string>
+    <!-- Asks whether to stop studying on these weekdays every week. %1$s lists them, such as “Saturday and Sunday”. -->
+    <string name="plan_ask_rest_days">Her %1$s dinlenmek ister misin?</string>
     <string name="plan_ask_days_time">%1$s çalışmayı %2$s günleri için planlayalım mı?</string>
     <string name="plan_ask_light_week">%1$s tarihinden itibaren bir hafta çalışma süreni yarıya indirelim mi?</string>
     <string name="plan_ask_move_challenge">Bu haftaki meydan okumayı %1$s tarihine alalım mı?</string>
@@ -1407,7 +1395,6 @@
     <string name="plan_ask_phase_end_off_rest">%1$s aşamasının bitişini %2$s yerine başka bir güne alalım mı?</string>
     <string name="plan_why_phase_end_off_rest">%1$s günü çalışmıyorsun.</string>
     <string name="plan_end_none_set">Belirlenmedi</string>
-    <string name="plan_end_none_set_estimate">Belirlenmedi · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Planında yok · çalışma süren yetmiyor</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

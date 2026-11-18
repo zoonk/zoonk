@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_guess_in_unit": "29bb447e6e59daa53c20768d56b2c8a6d6b50a72453ab6e7de2afb204fa4c756",
+  "activities_guess_in_unit": "9c0a0be44d89f5e1906dcc3d612dd3f96a1650f5a6d0f364c03d75f76cf09129",
   "answer_tag_correct": "bd7b51a991dcdf10588c9e30dc81ebfc05b3f873d09a14883252e10dcd5989a5",
   "answer_tag_your_answer": "9549fe692fcf4980298171ba68696486a87b21e0c23480dd68987b39f0dd2263",
   "answer_tag_your_guess": "8e936ef2ccb0d8057cb72e344a9898896781bebe7b4e1f67ea6aa64cdb9dd58c",
@@ -187,6 +187,6 @@
     <string name="citation_slide">%1$s, slayt %2$s</string>
     <string name="player_not_saved">Henüz kaydedilmedi</string>
     <string name="player_not_saved_description">Bazı cevapların henüz kaydedilmedi. Bu ders açık kaldığı sürece kaydetmeyi denemeye devam edeceğiz.</string>
-    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
-    <string name="activities_guess_in_unit">%1$s cinsinden</string>
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
+    <string name="activities_guess_in_unit">Birim: %1$s</string>
 </resources>

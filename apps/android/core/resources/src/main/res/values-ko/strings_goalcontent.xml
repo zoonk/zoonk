@@ -7,8 +7,6 @@
   "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
   "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
   "goalcontent_asked_a_lot": "43b3da3cba0dbb63bf08613564c7066d71f8ac3a5e4f0881ebec7d51e482f1a7",
-  "goalcontent_beyond_guide": "93b3c08ab7bb9ab49200c0147257543da2b501332e5f724e55c447731428323f",
-  "goalcontent_beyond_notice": "a6b41d23e9f887eda9d3aa500d075b691f808df6be72eb37367e74fe48b03819",
   "goalcontent_bring_back": "3702c3442d73545ef2ad9376edae31044dfd89ab6636f85c66ad692f93cb682c",
   "goalcontent_chapter_count": "ecf00553681787dc60c88a8c3f56c3f366f61f5b64b7f8e7ebcf59c436f269fd",
   "goalcontent_chapter_number": "450d37f08bc4719c86abcc83b8926a938b01b3a648351a0080a351934ffdb420",
@@ -150,10 +148,6 @@
     <string name="goalcontent_not_in_plan">계획에 없어요</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">내 계획에도 포함</string>
-    <!-- A group of subjects the plan adds outside an exam's public notice. -->
-    <string name="goalcontent_beyond_notice">시험 외 과목</string>
-    <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
-    <string name="goalcontent_beyond_guide">공식 안내서 외 추가 과목</string>
     <!-- %1$s is a link to the site that counted the questions. -->
     <string name="goalcontent_questions_source_edition">%1$s의 과목별 문제 수를 %2$s에서 집계했어요.</string>
     <string name="goalcontent_questions_source_latest">가장 최근 시험의 과목별 문제 수를 %1$s에서 집계했어요.</string>

@@ -479,10 +479,10 @@ private fun NoticeDayLine(plan: Plan) {
             noticeDay != null -> {
                 val date = formatDate(noticeDay.date.toJavaLocalDate(), locale, DateStyle.Long)
                 stringResource(
-                    when {
-                        noticeDay.estimated -> R.string.onboarding_reveal_notice_day_estimated
-                        plan.examDocument == ExamDocument.GUIDE -> R.string.onboarding_reveal_notice_day_guide
-                        else -> R.string.onboarding_reveal_notice_day_notice
+                    if (noticeDay.estimated) {
+                        R.string.onboarding_reveal_notice_day_estimated
+                    } else {
+                        R.string.onboarding_reveal_notice_day_notice
                     },
                     date,
                 )
@@ -839,14 +839,7 @@ private fun summaryTitle(title: SummaryTitle): String =
         }
 
         is SummaryTitle.Subjects -> {
-            pluralStringResource(
-                when (title.document) {
-                    ExamDocument.GUIDE -> R.plurals.onboarding_reveal_guide_parts
-                    ExamDocument.NOTICE -> R.plurals.onboarding_reveal_notice_subjects
-                },
-                title.count,
-                title.count,
-            )
+            pluralStringResource(R.plurals.onboarding_reveal_notice_subjects, title.count, title.count)
         }
     }
 

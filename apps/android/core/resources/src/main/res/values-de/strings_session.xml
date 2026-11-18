@@ -34,7 +34,6 @@
   "session_energy_glowing": "437670414a99ac2307c7b3651ea9fda1dd3ac100df0a1002e414298203c18b10",
   "session_energy_glowing_brightest": "ff802443e02beb2e3b048133d0df139a7c433ee92b85656cad230e5e0ccda24b",
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
-  "session_lessons_deferred": "dfed8ada294ef6b08f3d93cdeb6daf75e1c6d3dbb99f0d896b47c259437699f4",
   "session_next_belt": "508f6a28d0835f91b8d745af74c76d0990445844fb3fe86b0503fef86079f865",
   "session_next_continue": "dd797e6439ba7fbad564cbdd266684dba4e0ea9681d4727e2b1852815ce24974",
   "session_next_eyebrow": "85d4f662cf5696db68110c59f47ee87fe590679824969d65fa8694d5563bc326",
@@ -256,10 +255,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Keine Lektionen mehr nachzuholen.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">%1$s Lektion wurde auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
-        <item quantity="other">%1$s Lektionen wurden auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">Zum Wiederholen</string>
 </resources>

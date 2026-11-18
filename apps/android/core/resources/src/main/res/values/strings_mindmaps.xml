@@ -50,7 +50,7 @@
     <string name="mindmaps_try_again_spoken">Try the mind map of %1$s again</string>
     <string name="mindmaps_failed">It couldn\'t be made this time.</string>
     <string name="mindmaps_unreachable">We couldn\'t reach the server. Check your connection.</string>
-    <string name="mindmaps_as_text_note">This map is shown as text.</string>
+    <string name="mindmaps_as_text_note">Its picture had mistakes, so here\'s the mind map as text.</string>
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Download</string>
     <string name="mindmaps_saved">Mind map saved</string>

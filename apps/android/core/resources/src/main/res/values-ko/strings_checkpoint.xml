@@ -36,8 +36,8 @@
   "checkpoint_questions_left": "beeb1e208943ff0dd12fddc91d7010af56c7ce0f20436da94cb5824b7c1ae65c",
   "checkpoint_removed_detail": "23dcf6157adacbcd6da48fca13f876a527c224a908b48f38d7d591713834a0e0",
   "checkpoint_removed_title": "f59eafc84cf0af35b5c1b171ec053b3acb24e48f77d5760774073387025fdcb2",
-  "checkpoint_retry_after_lessons": "c5e7f51c54c4c42d95e6207460ac3e30d6b98c19b9b3befab0ef2f56f047a077",
-  "checkpoint_retry_tomorrow": "91d028c9bb6e9c21c5c20d3d0709aea18b8b4d77d489c7b4b9632da2850585f3",
+  "checkpoint_retry_after_lessons": "b15e946019259ef1c4b1882668851c98b9176780cea6edeb73d5174465b965e4",
+  "checkpoint_retry_tomorrow": "4961797c7d19b70fb6d675d95df745c0b3bd150004512669f6937c8e4c9f0a71",
   "checkpoint_review": "e1ad8dd0f557642b6d6ba6cb4162cf335294d0cc227cfc96a28f60f51cc1f7a1",
   "checkpoint_rewards": "98cb8dc69e3c5b003344abf539ffe374242f0b299b227a16be5f351f77ffdebe",
   "checkpoint_right_to_win": "75b559cb7c2c3e24a205b8631f9561a4a89e28d5983d1ce254096d54090d62a8",
@@ -67,9 +67,9 @@
     <string name="checkpoint_why_later">이유는 마지막에 확인할 수 있어요.</string>
     <string name="checkpoint_won_line">트릭스터의 방패가 깨졌어요. 이겼어요!</string>
     <string name="checkpoint_lost_line">이번에는 트릭스터의 방패가 버텼어요.</string>
-    <string name="checkpoint_retry_tomorrow">내일 다시 시도해 보세요. 지금까지 한 내용은 그대로 남아 있어요.</string>
+    <string name="checkpoint_retry_tomorrow">내일 다시 대결할 수 있어요.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="other">내일 짧은 레슨 %d개를 마치면 다시 도전할 수 있어요. 잃은 건 없어요.</item>
+        <item quantity="other">내일 짧은 레슨 %d개를 마친 뒤 다시 대결할 수 있어요.</item>
     </plurals>
     <string name="checkpoint_every_answered">모든 문제에 답했어요.</string>
     <string name="checkpoint_shield">트릭스터의 방패</string>

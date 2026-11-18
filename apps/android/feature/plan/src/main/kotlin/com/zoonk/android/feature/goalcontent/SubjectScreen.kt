@@ -55,7 +55,6 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
@@ -286,7 +285,7 @@ private fun subjectLead(
             subject.group != null -> subject.group
             subject.source == SyllabusSubject.Source.NOTICE && syllabus.fromMaterial -> stringResource(R.string.goalcontent_from_material)
             subject.source == SyllabusSubject.Source.NOTICE || syllabus.kind != Syllabus.Kind.NOTICE -> null
-            else -> beyondGroupName(syllabus)
+            else -> stringResource(R.string.goalcontent_also_in_plan)
         }
     val questions = subject.questions
     val share = subject.share
@@ -306,17 +305,6 @@ private fun subjectLead(
         }
     return listOfNotNull(kind, weight)
 }
-
-/** The group a plan adds outside the learner's material or the exam's own documents. */
-@Composable
-internal fun beyondGroupName(syllabus: Syllabus): String =
-    stringResource(
-        when {
-            syllabus.fromMaterial -> R.string.goalcontent_also_in_plan
-            syllabus.examDocument == ExamDocument.NOTICE -> R.string.goalcontent_beyond_notice
-            else -> R.string.goalcontent_beyond_guide
-        },
-    )
 
 @Composable
 private fun subjectFacts(subject: SyllabusSubject): List<String> {

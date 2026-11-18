@@ -201,7 +201,7 @@ internal fun NoticeDatesCard(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (noticeDay != null) {
                     Text(
-                        noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated, exam.examDocument),
+                        noticeDayText(noticeDay.date.toJavaLocalDate(), noticeDay.estimated),
                         style = MaterialTheme.typography.titleSmall,
                     )
                     OutlinedButton(

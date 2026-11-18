@@ -9,7 +9,7 @@
   "activities_reasoning_claim": "679a8b3a3b640f8488ecb2f091253c207284916ab024bc62be8e704b131c1ab3",
   "activities_reasoning_evidence": "aef268b786502506af0e034f275352e1a50120acd60525bda7cbcdc6c2acd810",
   "activities_reasoning_evidence_chosen": "c11d1e45806aac253c10c43f8015a3e18bd7c460266f7823132e770b7aca31b5",
-  "activities_reasoning_evidence_hint": "c7851a6637efdec5d3cd88f24438f24c68eb4f99dff18761ffb8c28353936fc6",
+  "activities_reasoning_evidence_hint": "7e6ad02952a766abd25052945d3080b3960c08d5e82b7b26e71b92ab94aaae96",
   "activities_reasoning_grid_all_filled": "23f34d24a794b94cfeaafbed6d1e68d195051a4ad4c042c51089343f6b50804f",
   "activities_reasoning_grid_counted": "8e218b64cef7b490cb3a906def63e49211576ac2ad379c6b58dc14dbc5b89443",
   "activities_reasoning_grid_filled": "fecf590aba0cb05b406f6238789609ca8bda7c45825d4085ca5ebd33cec73b9f",
@@ -66,7 +66,7 @@
   "activities_reasoning_quotes": "2d47d00986cf59507e38cd76ce0a8c8f42416e9854f2fb3feba74e4827c9ef70",
   "activities_reasoning_reasoning": "e2a2f55751203fe387dd1a7ff4145318edcefad5d6d572d18a31b4896e5e1684",
   "activities_reasoning_reasoning_chosen": "b8a3d8a407418c3ed0ab21a1d058e51fa3a753b9ec4adfbf581842e534ef5667",
-  "activities_reasoning_reasoning_hint": "b27abfd736e4d3aa0127eba6443b63528312746796967ad8a6f977ea4ea58fac",
+  "activities_reasoning_reasoning_hint": "193852860176de8955319ed33755b2bc2b148b5b84076c031a6b73158ec7aac6",
   "activities_reasoning_reasoning_next": "1ca3810d6e7405698ba67a7c8c4cacd8992c49d486b2ed2be576406a1923336b",
   "activities_reasoning_source_mark": "254e4611757bdc3c27d37b5ea60eaf1f582e9920b9abcdf210f929058d8b7ad3",
   "activities_reasoning_source_missed": "c629e7020ba6f7fd3ea0e7d0a78d833646629533669528caf7ca6f06ed4cc180",
@@ -221,8 +221,8 @@
     <string name="activities_reasoning_evidence_chosen">Evidência: %1$s</string>
     <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
     <string name="activities_reasoning_reasoning_chosen">Raciocínio: %1$s</string>
-    <string name="activities_reasoning_evidence_hint">Escolha a citação que melhor sustenta a afirmação</string>
-    <string name="activities_reasoning_reasoning_hint">Escolha como a citação comprova a afirmação</string>
+    <string name="activities_reasoning_evidence_hint">Escolha ou arraste a citação que melhor sustenta a afirmação</string>
+    <string name="activities_reasoning_reasoning_hint">Escolha ou arraste a explicação de como a citação comprova a afirmação</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->
     <string name="activities_reasoning_reasoning_next">Próximo: explique como a citação comprova a afirmação</string>
     <string name="activities_reasoning_take_quote_out">Remover a citação</string>

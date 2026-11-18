@@ -43,7 +43,7 @@
   "account_setup_title": "efb8e74f3312b171a539413bf86ca25b626bb796608debca6f1955c93d9038e5",
   "account_sign_in_expired": "6b395c683d7537b3b85f9f2e40b8295beb000450d63d05f87333022e9f9b7016",
   "account_sign_in_title": "c0118a28af864deaa40ead5c871482c00f33b0db48b713f27fd59220e037f310",
-  "account_sign_out_failed": "18b79ba5284fe6fa868c5a257488f06c350328b5af83b1f1d9d9b7db98414add",
+  "account_sign_out_failed": "c37f07f779e5af0653b622632180907b443dbb21a66cf8094a990f5cc3609755",
   "account_terms": "73158147bf55eec60f77994dc2b165ee61cc3bfcc77c6c997f825172345f1e8a",
   "account_username": "06418da10607cb3d75eaad34592a15817b53d92d42dd7716f8c5ce646c281630",
   "account_username_available": "2b02e8e0dbb22766ce17c8c70cee84c539732221d701d365cf6b2d2e08c85519",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">Pomoc</string>
     <string name="account_menu_log_out">Wyloguj się</string>
     <string name="account_menu_create_account">Utwórz konto</string>
-    <string name="account_sign_out_failed">Zoonk nie może cię wylogować. Sprawdź połączenie i spróbuj ponownie.</string>
+    <string name="account_sign_out_failed">Nie udało się wylogować. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="account_name_required">Imię</string>
     <string name="account_username_required">Nazwa użytkownika</string>
 </resources>

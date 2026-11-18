@@ -34,7 +34,6 @@
   "session_energy_glowing": "dceff1ee6b70674433345bcf551b64deb8c32f95318b64dc5d995d9ea03814ce",
   "session_energy_glowing_brightest": "0f7dda432d1d1c3b050d26ece6109c0dec475fa75f5995687a08b90f8e17f7a1",
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
-  "session_lessons_deferred": "4550e67ea283c869b3a0e1b9dc4ee9312374a2c06dcd6a0ef674152b49262788",
   "session_next_belt": "ed2871c649d774783684ff153f04c2ddc3be3d45d4eca9cab840a8499942d868",
   "session_next_continue": "85164fcd78662ae75f9e72dc560dc6e189aebbc2a1cd909ef79820d8fbd1f551",
   "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
@@ -269,11 +268,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">No quedan lecciones por recuperar.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">Se pasó %1$s lección a otro día para ajustar tu estudio de hoy a %2$s.</item>
-        <item quantity="many">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
-        <item quantity="other">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">Por repasar</string>
 </resources>

@@ -128,15 +128,11 @@
     <string name="plan_far_count_from">%1$s · from %2$s</string>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
     <string name="plan_far_count_from_month">%1$s · from %2$s</string>
-    <!-- A far topic's sheet: why its lessons aren't there yet. -->
-    <string name="plan_far_explain">A topic\'s lessons are planned two weeks before you get to it. You can see this one\'s now.</string>
-    <!-- Writes a far topic's lessons now. -->
-    <string name="plan_far_see_lessons">See the lessons</string>
-    <!-- Write the duration out in words, not as "30 s". -->
-    <string name="plan_far_writing">Preparing the lessons… It takes about half a minute.</string>
+    <string name="plan_far_explain">Getting these lessons ready takes about half a minute.</string>
+    <string name="plan_far_see_lessons">Get them ready</string>
+    <string name="plan_far_writing">Getting your lessons ready…</string>
     <string name="plan_far_unreachable">We couldn\'t reach the server. Check your connection.</string>
-    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
-    <string name="plan_far_nothing_left">These lessons can\'t be prepared early. They\'ll be ready before you get to this topic.</string>
+    <string name="plan_far_nothing_left">This topic has no more lessons to get ready.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d more chapter</item>
         <item quantity="other">%d more chapters</item>
@@ -263,7 +259,7 @@
     <string name="plan_day_rest">rest day</string>
     <string name="plan_day_today">today</string>
     <string name="plan_day_planned">planned</string>
-    <string name="plan_last_week_recap">Last week\'s recap</string>
+    <string name="plan_last_week_recap">Weekly summary</string>
 
     <string name="plan_preparation">Preparation</string>
     <string name="plan_progress">Progress</string>
@@ -351,10 +347,7 @@
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="plan_change_notice_says">The exam notice says %1$s.</string>
-    <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="plan_change_calendar_says">The exam\'s official calendar says %1$s.</string>
+    <string name="plan_change_notice_says">The exam is on %1$s.</string>
     <string name="plan_change_keep_official_date">Keep official date</string>
     <string name="plan_change_daily_time_changed">You now study %1$s a day.</string>
     <string name="plan_change_rest_day">%1$s: rest day.</string>
@@ -462,8 +455,8 @@
         <item quantity="other">About %d more lessons</item>
     </plurals>
     <plurals name="plan_change_leaves_out">
-        <item quantity="one">Leaves out %d lesson</item>
-        <item quantity="other">Leaves out %d lessons</item>
+        <item quantity="one">Takes out %d lesson</item>
+        <item quantity="other">Takes out %d lessons</item>
     </plurals>
     <plurals name="plan_change_fewer_lessons">
         <item quantity="one">%d fewer lesson</item>
@@ -473,9 +466,10 @@
         <item quantity="one">%d fewer</item>
         <item quantity="other">%d fewer</item>
     </plurals>
+    <!-- %1$s says the lessons a change adds, such as "Adds 3 lessons"; %2$d is how many lessons it takes out. -->
     <plurals name="plan_change_adds_and_leaves_out">
-        <item quantity="one">%1$s and leaves out %2$d</item>
-        <item quantity="other">%1$s and leaves out %2$d</item>
+        <item quantity="one">%1$s and takes out %2$d</item>
+        <item quantity="other">%1$s and takes out %2$d</item>
     </plurals>
     <string name="plan_change_more_and_fewer">%1$s and %2$s</string>
     <string name="plan_change_sentence">%1$s.</string>
@@ -488,7 +482,7 @@
     <string name="plan_undo">Undo</string>
     <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
     <string name="plan_undo_failed">Couldn\'t undo this change.</string>
-    <string name="plan_deadline">Deadline</string>
+    <string name="plan_deadline">End date</string>
     <string name="plan_named_month_note">%1$s for now. Pick the day when you know it.</string>
     <string name="plan_no_deadline_note">No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.</string>
     <string name="plan_pick_date">Pick a date</string>
@@ -551,7 +545,7 @@
     <string name="plan_tool_change_how">Change how you\'ll use %1$s</string>
     <string name="plan_tool_choose_how">Choose how you\'ll use %1$s</string>
     <string name="plan_tools_none">No tools? You can do it all with examples.</string>
-    <string name="plan_tools_without">You won\'t practice on your own computer. Lessons use examples and simulations instead.</string>
+    <string name="plan_tools_without">You won\'t practice on your own device. Lessons use examples and simulations instead.</string>
     <string name="plan_tools_later">More later: %1$s</string>
     <string name="plan_tool_how">How will you use it?</string>
     <string name="plan_tool_have">I have it</string>
@@ -559,7 +553,7 @@
     <string name="plan_tool_setup">I\'ll set it up</string>
     <string name="plan_tool_setup_description">A short lesson shows how, right before you need it.</string>
     <string name="plan_tool_none">No install</string>
-    <string name="plan_tool_none_description">Learn with examples. You won\'t practice on your own computer.</string>
+    <string name="plan_tool_none_description">You\'ll practice with examples instead.</string>
     <string name="plan_tool_updates_when_ready">Your plan updates as soon as it\'s ready.</string>
     <string name="plan_tool_writing_setup">Adding a setup lesson</string>
     <string name="plan_tool_writing_setup_phase">Writing the setup for your device</string>
@@ -664,11 +658,8 @@
     <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="plan_finish_after_exam_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
-    <string name="plan_full_course_rule_exam">Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn\'t fit comes after it.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_full_course_rule_goal">Your deadline of %1$s comes off your plan. You can set one again anytime.</string>
-    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_full_course_rule_goal_month">Your deadline of %1$s comes off your plan. You can set one again anytime.</string>
+    <string name="plan_full_course_rule_exam">You study every topic. What doesn\'t fit before the exam comes after it.</string>
+    <string name="plan_full_course_rule_goal">Every part of your goal, with no end date.</string>
     <string name="plan_study_everything">Remove end date</string>
     <string name="plan_study_everything_exam_description">You study every topic. What doesn\'t fit before the exam comes after it.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, with no end date.</string>
@@ -830,10 +821,10 @@
     <string name="plan_ask_skip_basics">Skip the basics of %1$s?</string>
     <string name="plan_ask_from_basics">Start %1$s from the basics?</string>
     <string name="plan_ask_daily_time">Study %1$s a day?</string>
-    <!-- %1$s is one day of the week. -->
-    <string name="plan_ask_rest_day">Make %1$s a rest day?</string>
-    <!-- %1$s lists two or more days of the week. -->
-    <string name="plan_ask_rest_days">Make %1$s rest days?</string>
+    <!-- Asks whether to stop studying on this weekday every week. %1$s is a weekday, such as “Saturday”. -->
+    <string name="plan_ask_rest_day">Rest every %1$s?</string>
+    <!-- Asks whether to stop studying on these weekdays every week. %1$s lists them, such as “Saturday and Sunday”. -->
+    <string name="plan_ask_rest_days">Rest every %1$s?</string>
     <string name="plan_ask_days_time">Study %1$s on %2$s?</string>
     <string name="plan_ask_light_week">Take a lighter week from %1$s, at half the time?</string>
     <string name="plan_ask_move_challenge">Move this week\'s challenge to %1$s?</string>
@@ -876,7 +867,6 @@
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
     <string name="plan_end_none_set">None set</string>
-    <string name="plan_end_none_set_estimate">None set · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

@@ -43,7 +43,7 @@
   "account_setup_title": "d2d7319a2dbf3a501946ce92716517ed8620d7681e61e3534700840fd185b73a",
   "account_sign_in_expired": "246e7cf5277ae22103bf6d4f8e1da4108f9cc2190a558650ddfa80a9eb006a39",
   "account_sign_in_title": "06e6ce7df07f28e2017aca3e8f573b1a73a9beb2e69bc9cf0e482008996a54b2",
-  "account_sign_out_failed": "400e2e770ed12fd6ac9682937a88641214be6fd0add4f22e49238cd865ccb8a0",
+  "account_sign_out_failed": "ba61910c03f331c2cb62f26994d919a042e1113b75ff478741ed4604751985fe",
   "account_terms": "54726db05126ce3184136a8ae980d87c03e0a53cf82c09af58f7192c13b3c56d",
   "account_username": "116da6b06e9f55e5f645c5e54bd3bd28b99e38f1bcb7ac972230161e01296b6f",
   "account_username_available": "66fdb8556eb7a0b55597c626cf4ba25effeff3ca916879a6196ab3bb66472194",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">Yardım</string>
     <string name="account_menu_log_out">Çıkış yap</string>
     <string name="account_menu_create_account">Hesap oluştur</string>
-    <string name="account_sign_out_failed">Zoonk oturumunu kapatamadı. Bağlantını kontrol edip tekrar dene.</string>
+    <string name="account_sign_out_failed">Çıkış yapılamadı. Bağlantını kontrol et ve tekrar dene.</string>
     <string name="account_name_required">Ad</string>
     <string name="account_username_required">Kullanıcı adı</string>
 </resources>

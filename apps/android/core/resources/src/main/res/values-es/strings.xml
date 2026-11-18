@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_guess_in_unit": "b2581ea3bd44c11263ea302c0efe46dd2f3f0f58b1931d597df02242e2dd9d17",
+  "activities_guess_in_unit": "2956a19c0f53e907a7ded4d66c805886f8095c1adfb1306e258ee770e7b35153",
   "answer_tag_correct": "b1c83078b74a9180fddf50be37e172dea26c0b9ea3240e36ebdba53e037335d5",
   "answer_tag_your_answer": "f21a660d020fdc139f14ef8785f5fcc21501ff4cf40515c6fa157e73de215482",
   "answer_tag_your_guess": "1da3ccf30863913e98ae6bac3aa72a2d1d53028c659ea379eaa74377bd8b5339",
@@ -187,6 +187,6 @@
     <string name="citation_slide">%1$s, diapositiva %2$s</string>
     <string name="player_not_saved">Aún sin guardar</string>
     <string name="player_not_saved_description">Algunas respuestas aún no se guardaron. Seguiremos intentándolo mientras esta lección esté abierta.</string>
-    <!-- Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h -->
-    <string name="activities_guess_in_unit">en %1$s</string>
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
+    <string name="activities_guess_in_unit">Unidad: %1$s</string>
 </resources>

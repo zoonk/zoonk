@@ -38,9 +38,8 @@
     <string name="activities_chart_description">A line chart of %1$s by %2$s, from %3$s at %4$s to %5$s at %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Tap a span to measure it</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Spans to measure</string>
+    <string name="activities_chart_tap_span">Tap a part of the chart to measure it</string>
+    <string name="activities_chart_spans">Parts of the chart to measure</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s per %2$s</string>
 

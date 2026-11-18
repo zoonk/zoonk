@@ -15,8 +15,8 @@
   "activities_chart_description": "7341107c79623e1573a4938c5706afc98bf5bb4e13246909f5ca723ce1ee0662",
   "activities_chart_rate": "d7f5bc50dbe954ca67517ceba6b779d96a07655974e07a695fe10746de6a25b4",
   "activities_chart_span": "3b6a269fda02457d7d28a8acf13be615fc5e7f26cf3cb899c4687171df09190a",
-  "activities_chart_spans": "26d147f6f97df6ce6ba3a377a4ca40898ff090370c70ec022dd207d53480aae4",
-  "activities_chart_tap_span": "132378c00f72006ddf914acc72a0bd31741b1220ce2e388f83b03f02266592a0",
+  "activities_chart_spans": "78fd5c41046301f06f167d16b1d00dba10424598957ca5c1f3fd6c5ce726f07d",
+  "activities_chart_tap_span": "bd2bd8cc2cc4c7a2e29d56eb284b5adcf1ecc384664431784d50f0eadc2d2542",
   "activities_dialogue_conversation": "9878106a84de990d9c39331b2c1af434fb698900acdd4405436c26b2505c5475",
   "activities_dialogue_hear_best": "acd2fa592d5f784d51c97ade445364db12f805617015cb97d5961e40c9acc40d",
   "activities_dialogue_hear_line": "2fae251c44d77422d16b46f6d32914b569e218dbefa6b9aed3acc1bc13e33fdd",
@@ -96,9 +96,8 @@
     <string name="activities_chart_description">Um gráfico de linhas de %1$s por %2$s, de %3$s em %4$s a %5$s em %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Toque em um intervalo para medir</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Intervalos para medir</string>
+    <string name="activities_chart_tap_span">Toque na parte do gráfico que você quer medir</string>
+    <string name="activities_chart_spans">Partes do gráfico para medir</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s por %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

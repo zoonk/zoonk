@@ -163,10 +163,5 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">No lessons left to catch up.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">%1$s lesson moved to another day to fit your %2$s today.</item>
-        <item quantity="other">%1$s lessons moved to another day to fit your %2$s today.</item>
-    </plurals>
     <string name="session_summary_to_review_detail">To review</string>
 </resources>

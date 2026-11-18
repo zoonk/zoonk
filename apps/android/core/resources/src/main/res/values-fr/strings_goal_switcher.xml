@@ -6,7 +6,7 @@
   "goal_switcher_explore_courses": "1a3347cbf72f4d58d0cdaf0a6ff6189cb26f5596b25d3561a82fa7c81a6e63e2",
   "goal_switcher_failed": "6287d1685278059c1baf8d718a3a72472902f522901899d21da69b2cc4f09bd1",
   "goal_switcher_finished": "fe5c20f46939a3d680ffe5ddd33f2365f4ec94c9c05d3b94928a2148bc87a49b",
-  "goal_switcher_make_room_description": "5b637cea0a6e5bfad18c73342aac05b65d27d8a9d31cba1359ce4ec0bd7b71b8",
+  "goal_switcher_make_room_description": "0057d3600dfec14657771cdc735ad946495c43e43a617758060fe3d2b70fbde0",
   "goal_switcher_make_room_title": "a8fc8faf1ed7057325242d2b27a6c146ac4080110dc408557c90678990599377",
   "goal_switcher_pause": "5b64e495a3506e6d4bac8a0002a387fe68fda9bbd698ee9abb9a67f8daefbcb5",
   "goal_switcher_pause_goal": "ca55fcfabf87f39f2aa0f14d3ea1dacb002cde78cf3eceedaf44bdac91d695f2",
@@ -41,8 +41,7 @@
     <string name="goal_switcher_pause_to_start">Mets un objectif en pause pour commencer celui-ci</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Fais de la place pour %1$s</string>
-    <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">Tu as atteint le nombre maximal d’objectifs que tu peux poursuivre à la fois. Mets-en un en pause pour commencer celui-ci, ou abonne-toi pour en poursuivre davantage en même temps.</string>
+    <string name="goal_switcher_make_room_description">C’est le maximum d’objectifs que tu peux suivre en même temps. Mets-en un en pause pour commencer celui-ci.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pause</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

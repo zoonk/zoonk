@@ -43,7 +43,7 @@
   "account_setup_title": "6c9db8178c527543a91ccc3cdaeded7274d2c905a7149606cc63dd0bc0b66566",
   "account_sign_in_expired": "1f7d5baa3270b577943fd99b3ae8fe7a1bf29e7f2ff1c2b2bc37a3d9f82051c3",
   "account_sign_in_title": "766014847fedf3392ffb681d7a6481477f94a92752ae58b3f4bc64ab391364a7",
-  "account_sign_out_failed": "3b97805b8c6fff1f7a72c970d7eedafe0800f043be6fa450db894dca83053d49",
+  "account_sign_out_failed": "d55d15eb6c7a34cb4f92da609a04ba393ff994f41f2733d66048b718e3c7d282",
   "account_terms": "2d580ce8f3ede796e0c614b1434626c5e0a4a910ef0d78c750a3f5f050822eae",
   "account_username": "22070558607c8162570fe7db60f2fd4fa811cb0378f4d1a5045cbb6548df64d4",
   "account_username_available": "0bfdd26903fef343d48c49b74c088289bd34b4be002838275d854eb4b45b587e",
@@ -115,7 +115,7 @@
     <string name="account_menu_help">ヘルプ</string>
     <string name="account_menu_log_out">ログアウト</string>
     <string name="account_menu_create_account">アカウントを作成する</string>
-    <string name="account_sign_out_failed">Zoonkからログアウトできませんでした。通信状況を確認して、もう一度お試しください。</string>
+    <string name="account_sign_out_failed">ログアウトできませんでした。接続状況を確認して、もう一度お試しください。</string>
     <string name="account_name_required">名前</string>
     <string name="account_username_required">ユーザー名</string>
 </resources>
