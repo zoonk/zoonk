@@ -138,7 +138,7 @@ struct MockRunnerView: View {
     let counts = MockSectionCounts(run: run)
 
     return Meter(
-      value: Double(counts.answered + counts.essays - counts.blankEssays),
+      value: Double(counts.answered),
       total: Double(max(counts.total, 1)), height: 4
     )
     .accessibilityLabel(
@@ -474,6 +474,7 @@ private struct ItemClock: ViewModifier {
 
 @MainActor
 struct MockSectionCounts {
+  /// Main's: every question counted as answered, essays included.
   var answered = 0
   var blank = 0
   var blankEssays = 0
@@ -490,7 +491,7 @@ struct MockSectionCounts {
 
       if question.format == .essay {
         essays += 1
-        if !run.isCountedAsAnswered(question.itemId) { blankEssays += 1 }
+        if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blankEssays += 1 }
         continue
       }
 
@@ -549,6 +550,7 @@ private struct MockAnswerSheet: View {
       NavigationStack {
         sheet
           .navigationTitle(Text("Answer sheet", tableName: "Mock"))
+          .navigationSubtitle(Text(MockLabels.answered(MockSectionCounts(run: run).answered)))
           .navigationBarTitleDisplayMode(.inline)
       }
     }
@@ -557,10 +559,16 @@ private struct MockAnswerSheet: View {
   private var sheet: some View {
     ZoonkList {
       if isBeside {
-        Text("Answer sheet", tableName: "Mock")
-          .typeStyle(.body.weight(.semibold))
-          .accessibilityAddTraits(.isHeader)
-          .listRowBackground(Color.clear)
+        VStack(alignment: .leading, spacing: 4) {
+          Text("Answer sheet", tableName: "Mock")
+            .typeStyle(.body.weight(.semibold))
+            .accessibilityAddTraits(.isHeader)
+          Text(MockLabels.answered(MockSectionCounts(run: run).answered))
+            .typeStyle(.note)
+            .monospacedDigit()
+            .foregroundStyle(.mutedForeground)
+        }
+        .listRowBackground(Color.clear)
       }
 
       Section {

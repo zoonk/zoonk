@@ -142,14 +142,16 @@ struct MockClock: View {
 
 extension MockRun {
   var barNote: BarNote? {
-    Self.barNote(failed: failed, save: queue.status, slow: slow) { [queue] in queue.retryNow() }
+    Self.barNote(failed: failed, save: queue.status, slow: slow ? busy : nil) { [queue] in
+      queue.retryNow()
+    }
   }
 
   /// The one line over a mock step's buttons: an answer that didn't get through, then a step that
-  /// didn't, then what it waits on. A step that timed out waiting on an answer that keeps failing
-  /// is that one failure, so the answer's own note and its "Try again" stay.
+  /// didn't, then what the `slow` step is still doing. A step that timed out waiting on an answer
+  /// that keeps failing is that one failure, so the answer's own note and its "Try again" stay.
   static func barNote(
-    failed: Bool, save: MockDraftQueue.Status, slow: Bool, retry: @escaping () -> Void
+    failed: Bool, save: MockDraftQueue.Status, slow: Step?, retry: @escaping () -> Void
   ) -> BarNote? {
     switch save {
     case .retrying, .resending:
@@ -180,13 +182,21 @@ extension MockRun {
           "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
     }
 
-    return slow
-      ? BarNote(
-        String(
-          localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
-          comment: "A mock step is slow"),
-        tone: .status)
-      : nil
+    return slow.map { BarNote(slowLine($0), tone: .status) }
+  }
+
+  /// Main's `useSlowLine`: what a step taking longer than usual is still doing.
+  private static func slowLine(_ step: Step) -> String {
+    switch step {
+    case .submit:
+      String(
+        localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
+        comment: "A mock step is slow")
+    case .finish:
+      String(localized: "This is taking longer than usual.", table: "Mock")
+    case .endBreak, .startSpeaking:
+      String(localized: "Still starting. This is taking longer than usual.", table: "Mock")
+    }
   }
 }
 

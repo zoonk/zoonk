@@ -153,31 +153,13 @@ private struct CertificateDetail: View {
     .disabled(!picturesAreCurrent)
   }
 
-  /// Main's: each at its own width in one row where they fit, Share first; otherwise Share over
-  /// the others.
   private var actions: some View {
     Section {
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 8) {
-          shareLink
-            .buttonStyle(.mainAction)
-          otherActions
-        }
-        .buttonSizing(.fitted)
-
-        VStack(spacing: 8) {
-          shareLink
-            .buttonStyle(.mainAction)
-
-          EqualButtonRow {
-            otherActions
-          }
-        }
-        .buttonSizing(.flexible)
+      CertificateActions {
+        shareLink
+      } others: {
+        otherActions
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .buttonStyle(.outline)
-      .controlSize(.large)
       .listRowSeparator(.hidden)
     } footer: {
       if printing.outcome == false {
@@ -311,6 +293,37 @@ private struct CertificateDetail: View {
 }
 
 /// What the certificate says, without the picture, code or link that make it a credential.
+/// Main's: each at its own width in one row where every label fits whole, Share first; otherwise
+/// Share over the others.
+struct CertificateActions<Share: View, Others: View>: View {
+  @ViewBuilder let share: Share
+  @ViewBuilder let others: Others
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 8) {
+        share
+          .buttonStyle(.mainAction)
+        others
+      }
+      .buttonSizing(.fitted)
+
+      VStack(spacing: 8) {
+        share
+          .buttonStyle(.mainAction)
+
+        EqualButtonRow {
+          others
+        }
+      }
+      .buttonSizing(.flexible)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .buttonStyle(.outline)
+    .controlSize(.large)
+  }
+}
+
 private struct LockedCertificateDetail: View {
   let facts: CertificateFacts
 

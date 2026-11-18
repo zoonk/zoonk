@@ -3,7 +3,8 @@ import Observation
 
 /// Sends answers one after another, so an older answer to a question never lands after a newer one.
 /// A newer answer to a question still waiting replaces the older one, since each holds everything
-/// about its question. A refused save isn't tried again: nothing would change.
+/// about its question. A refused save isn't tried again: nothing would change, and its question stays
+/// unsaved until a later answer to it is stored.
 @MainActor
 @Observable
 final class MockDraftQueue {
@@ -39,7 +40,7 @@ final class MockDraftQueue {
   @ObservationIgnored private var waiting: [MockDraft] = []
   @ObservationIgnored private var sending = false
   @ObservationIgnored private var attempt = 0
-  @ObservationIgnored private var refused = false
+  @ObservationIgnored private var refused: Set<String> = []
   @ObservationIgnored private var retryTask: Task<Void, Never>?
   @ObservationIgnored private var sendTask: Task<Void, Never>?
   @ObservationIgnored private var isStopped = false
@@ -106,7 +107,6 @@ final class MockDraftQueue {
     }
 
     let draft = waiting.removeFirst()
-    failedDrafts[draft.itemId] = nil
     sending = true
     settle()
 
@@ -120,6 +120,8 @@ final class MockDraftQueue {
       sending = false
       if outcome == .stored {
         storedDrafts[draft.itemId] = draft
+        failedDrafts[draft.itemId] = nil
+        refused.remove(draft.itemId)
       } else {
         failedDrafts[draft.itemId] = draft
       }
@@ -135,7 +137,7 @@ final class MockDraftQueue {
         settle()
       case .stored, .refused:
         attempt = 0
-        refused = outcome == .refused
+        if outcome == .refused { refused.insert(draft.itemId) }
         sendNext()
       }
     }
@@ -165,7 +167,7 @@ final class MockDraftQueue {
     } else if isBusy {
       status = .saving
     } else {
-      status = refused ? .refused : .saved
+      status = refused.isEmpty ? .saved : .refused
     }
   }
 }

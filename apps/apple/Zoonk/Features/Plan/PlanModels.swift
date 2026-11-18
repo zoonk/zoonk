@@ -299,6 +299,11 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     }
   }
 
+  /// Whether today has lessons: on a rest day the reveal's week starts with the days after it.
+  var hasLessonsToday: Bool {
+    week.days.contains { $0.state == .today && !$0.items.isEmpty }
+  }
+
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
   /// phase the plan holds nothing of has no days.
   var roadPhases: [PlanPhase] {
