@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. İki sınır arasındaki oran: {share}."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from} ile {to} arası: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Alt sınır"
@@ -992,6 +987,11 @@ msgstr "Alt sınır"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Üst sınır"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from} ile {to} arası: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1394,11 +1394,6 @@ msgid "What happened"
 msgstr "Ne oldu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "FZSgzg"
-msgid "{axis}: fewer"
-msgstr "{axis}: daha az"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}: azaldı"
@@ -1407,11 +1402,6 @@ msgstr "{axis}: azaldı"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}: değişmedi"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "ZTcdGM"
-msgid "{axis}: more"
-msgstr "{axis}: daha fazla"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"

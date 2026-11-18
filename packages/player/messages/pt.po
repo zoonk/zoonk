@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. {share} entre os marcadores."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from} a {to}: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Marcador inferior"
@@ -992,6 +987,11 @@ msgstr "Marcador inferior"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Marcador superior"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from} a {to}: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1394,11 +1394,6 @@ msgid "What happened"
 msgstr "O que aconteceu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "FZSgzg"
-msgid "{axis}: fewer"
-msgstr "{axis}: menos"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}: para baixo"
@@ -1407,11 +1402,6 @@ msgstr "{axis}: para baixo"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}: sem mudança"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "ZTcdGM"
-msgid "{axis}: more"
-msgstr "{axis}: mais"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"

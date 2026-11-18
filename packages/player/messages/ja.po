@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}です。つまみの間にある値の割合は{share}です。"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from}〜{to}：{share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "下限のつまみ"
@@ -992,6 +987,11 @@ msgstr "下限のつまみ"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "上限のつまみ"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from}〜{to}：{share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1394,11 +1394,6 @@ msgid "What happened"
 msgstr "結果"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "FZSgzg"
-msgid "{axis}: fewer"
-msgstr "{axis}：減らす"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}：下がる"
@@ -1407,11 +1402,6 @@ msgstr "{axis}：下がる"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}：変化なし"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "ZTcdGM"
-msgid "{axis}: more"
-msgstr "{axis}：増やす"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"

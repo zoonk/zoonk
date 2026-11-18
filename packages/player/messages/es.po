@@ -979,11 +979,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. {share} entre los límites."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "De {from} a {to}: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Límite inferior"
@@ -992,6 +987,11 @@ msgstr "Límite inferior"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Límite superior"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "De {from} a {to}: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1394,11 +1394,6 @@ msgid "What happened"
 msgstr "Qué pasó"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "FZSgzg"
-msgid "{axis}: fewer"
-msgstr "{axis}: menos"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}: disminuye"
@@ -1407,11 +1402,6 @@ msgstr "{axis}: disminuye"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}: sin cambios"
-
-#: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "ZTcdGM"
-msgid "{axis}: more"
-msgstr "{axis}: más"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"
