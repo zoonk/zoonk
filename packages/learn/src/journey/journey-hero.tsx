@@ -243,13 +243,7 @@ export function PlanNumbers({
           )}
           data-slot="journey-standing"
         >
-          <li
-            className={cn(
-              NUMBER_ITEM_CLASS,
-              "min-w-0",
-              !status && "@2xl/standing:col-span-2",
-            )}
-          >
+          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "@2xl/standing:col-span-2")}>
             <NumberButton
               number={standingNumber}
               onOpen={() => setOpen("standing")}
