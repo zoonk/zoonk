@@ -229,7 +229,11 @@ function placeLineLabel({
     const named = candidates.filter((box) => belongs(box));
     const guided = named.filter((box) => belongsWith(box, label.segment, guides));
     const offLine = (box: LabelBox) => avoidsMarks(box) && !touchesSegment(box, label.segment, 0);
-    const preferred = guided.find((box) => offLine(box));
+
+    const preferred =
+      guided.find((box) => clearsStrokes(box) && avoidsMarks(box)) ??
+      guided.find((box) => offLine(box));
+
     const edges = () => edgeSpots(area, label.size);
 
     if (label.isOptional) {
@@ -324,14 +328,9 @@ export function placeChartLabels({
 
   const checkedMarks = { ...visibleMarks, lines: [...visibleMarks.lines, ...answerLines] };
 
-  const needsPlacement = (box: LabelBox, line: LabelSegment) =>
-    answerLines.some((answer) => touchesSegment(box, answer)) ||
-    !belongsWith(box, line, answerLines);
-
-  const kept = before.map((box, index) => {
-    const label = shown[index];
-    return box && label && needsPlacement(box, label.segment) ? null : box;
-  });
+  const kept = before.map((box) =>
+    box && answerLines.some((answer) => touchesSegment(box, answer)) ? null : box,
+  );
 
   const placed = shown.reduce((positions, label, index) => {
     const origin = before[index];

@@ -24,13 +24,10 @@ enum LineCrossingLabelLayout {
     guard !answerLines.isEmpty else { return before }
 
     let lines = visibleLines + answerLines
-    func needsPlacement(_ box: CGRect, named: Segment) -> Bool {
-      answerLines.contains { touches(padded(box), $0) }
-        || !belongsWith(box, named: named, lines: answerLines)
-    }
-
-    var placed = zip(before, shown).map { box, label in
-      box.flatMap { needsPlacement($0, named: label.segment) ? nil : $0 }
+    var placed = before.map { box in
+      box.flatMap { name in
+        answerLines.contains { touches(padded(name), $0) } ? nil : name
+      }
     }
 
     for (index, label) in shown.enumerated() {
@@ -167,7 +164,8 @@ enum LineCrossingLabelLayout {
     }
 
     let preferred =
-      search(spacing: 1) { offLine($0) && fits($0) }
+      search(spacing: 1) { clearsStrokes($0) && avoidsMarks($0) && fits($0) }
+      ?? search(spacing: 1) { offLine($0) && fits($0) }
       ?? search(spacing: 1) { avoidsMarks($0) && fits($0) }
     if label.isOptional && origin == nil {
       return preferred

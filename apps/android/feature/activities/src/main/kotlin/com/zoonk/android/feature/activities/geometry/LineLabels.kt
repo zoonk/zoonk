@@ -46,9 +46,7 @@ internal fun placeChartLabels(
     val checkedMarks = visibleMarks.copy(lines = visibleMarks.lines + answerLines)
     val clearance = CLEARANCE * unit
 
-    fun Rect.needsPlacement(named: LabelSegment) = answerLines.any { touches(it, clearance) } || !belongsWith(named, answerLines)
-
-    val placed = before.mapIndexed { index, box -> box?.takeUnless { it.needsPlacement(shown[index].segment) } }.toMutableList()
+    val placed = before.map { box -> box?.takeUnless { name -> answerLines.any { name.touches(it, clearance) } } }.toMutableList()
     shown.forEachIndexed { index, label ->
         val origin = before[index]
         if (origin != null && placed[index] == null) {
@@ -129,7 +127,10 @@ private fun placeLineLabel(
 
     fun Rect.offLine() = avoidsMarks() && !touches(label.segment, 0f)
 
-    val preferred = associatedWithGuides.firstOrNull { it.offLine() } ?: associatedWithGuides.firstOrNull { it.avoidsMarks() }
+    val preferred =
+        associatedWithGuides.firstOrNull { it.clearsStrokes() && it.avoidsMarks() }
+            ?: associatedWithGuides.firstOrNull { it.offLine() }
+            ?: associatedWithGuides.firstOrNull { it.avoidsMarks() }
     if (label.isOptional && origin == null) {
         return preferred
             ?: edgeSpots(area, label.size).firstOrNull { it.avoidsMarks() && it.fits() }
