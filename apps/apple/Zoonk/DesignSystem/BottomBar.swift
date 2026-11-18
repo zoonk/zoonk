@@ -60,7 +60,7 @@ private struct BottomBar<Actions: View>: View {
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
     // Wide, a filling button would read as a banner across the page.
-    let isWide = width >= wideBarWidth && !isStacked
+    let isWide = width >= WideBar.width && !isStacked
 
     return Group {
       if isWide || isStacked || buttons.count < 2 {
@@ -88,7 +88,7 @@ private struct BottomBar<Actions: View>: View {
     .controlSize(.large)
     .layoutAnchor("bar")
     .environment(\.mainActionFillsRow, !isWide)
-    .environment(\.mainActionMinWidth, isWide ? 160 : nil)
+    .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
     .onGeometryChange(for: CGFloat.self) {
       $0.size.width
@@ -126,8 +126,12 @@ extension View {
   }
 }
 
-/// Main's `sm`, less the scene's margins.
-private let wideBarWidth: CGFloat = 600
+/// A bar from main's `sm` (less the scene's margins) puts its main action at its end, at least
+/// this wide.
+enum WideBar {
+  static let width: CGFloat = 600
+  static let mainActionMinWidth: CGFloat = 160
+}
 
 extension EnvironmentValues {
   /// In a narrow bottom bar, the main action takes the room its row's other buttons

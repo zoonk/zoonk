@@ -133,22 +133,25 @@ struct BeltRack: View {
 
   var body: some View {
     let currentIndex = ProgressBelt.allCases.firstIndex(of: current) ?? 0
+    let beltWidth: CGFloat = sizeClass == .regular ? 52 : 32
 
     VStack(alignment: .leading, spacing: 8) {
       VStack(spacing: 6) {
+        // The first and last belts sit on the column's edges, as the page's other parts do.
         HStack(spacing: 0) {
           ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
+            if index > 0 {
+              Spacer(minLength: 0)
+            }
+
             RackBelt(belt: belt, isTied: index <= currentIndex)
-              .frame(
-                width: sizeClass == .regular ? 52 : 32, height: sizeClass == .regular ? 38 : 26
-              )
+              .frame(width: beltWidth, height: sizeClass == .regular ? 38 : 26)
               .overlay {
                 if index == currentIndex {
                   RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .strokeBorder(.primary, lineWidth: 1.5)
                 }
               }
-              .frame(maxWidth: .infinity)
               .accessibilityElement(children: .ignore)
               .accessibilityLabel(Text(belt.localizedTitle))
               .accessibilityValue(
@@ -162,13 +165,13 @@ struct BeltRack: View {
         // Every belt is named only when no name would crowd its neighbor's column; otherwise only
         // the learner's, kept inside the row. The key says which are earned.
         ViewThatFits(in: .horizontal) {
-          BeltColumns(count: ProgressBelt.allCases.count) {
+          BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth) {
             ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
               name(belt, index: index, currentIndex: currentIndex)
             }
           }
 
-          BeltColumns(count: ProgressBelt.allCases.count, only: currentIndex) {
+          BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex) {
             name(current, index: currentIndex, currentIndex: currentIndex)
           }
         }
@@ -214,19 +217,21 @@ struct BeltRack: View {
   }
 }
 
-/// Names under the rack's equal columns, each centered under its belt. With every name, its ideal
-/// width is the columns at the widest name, so `ViewThatFits` drops to the learner's name alone when
-/// one would crowd its neighbor. `only` places that one name under its column, moved in from the
-/// row's ends so it never starts or ends outside the row.
+/// Names under the rack's belts, each centered under its belt. With every name, its ideal width
+/// keeps the widest name a few points from the next, so `ViewThatFits` drops to the learner's name
+/// alone when one would crowd its neighbor. A name is moved in from the row's ends so it never
+/// starts or ends outside the row.
 private struct BeltColumns: Layout {
   let count: Int
+  let beltWidth: CGFloat
   var only: Int?
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
     let widest = sizes.map(\.width).max() ?? 0
     // Every name keeps a few points from the next one.
-    let ideal = only == nil ? (widest + 4) * Double(count) : widest
+    let ideal =
+      only == nil ? (widest + 4) * Double(max(count - 1, 0)) + max(widest, beltWidth) : widest
 
     return CGSize(width: proposal.width ?? ideal, height: sizes.map(\.height).max() ?? 0)
   }
@@ -234,11 +239,11 @@ private struct BeltColumns: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
-    let column = bounds.width / Double(max(count, 1))
+    let step = (bounds.width - beltWidth) / Double(max(count - 1, 1))
 
     for (index, subview) in subviews.enumerated() {
       let width = min(subview.sizeThatFits(.unspecified).width, bounds.width)
-      let center = bounds.minX + column * (Double(only ?? index) + 0.5)
+      let center = bounds.minX + beltWidth / 2 + step * Double(only ?? index)
       let x = min(max(center - width / 2, bounds.minX), bounds.maxX - width)
 
       subview.place(

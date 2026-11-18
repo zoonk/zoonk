@@ -304,6 +304,8 @@ struct GoalSwitcher: View {
                 Text(goal.displayName)
                 Text(goalLine(goal))
               }
+              // A menu's own checkmark row; the app's switch style draws these dimmed.
+              .toggleStyle(.automatic)
             }
 
             ForEach(summary.waitingGoals) { goal in

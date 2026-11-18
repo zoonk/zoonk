@@ -68,6 +68,8 @@ private struct BeltProgression: View {
       .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
       BeltRack(current: level.belt)
+        // A section's gap from the panel; the line under it is the rack's own.
+        .padding(.top, 12)
 
       // On a belt's tenth level the panel already names the next belt.
       if let next = level.nextBelt, level.level < 10 {
