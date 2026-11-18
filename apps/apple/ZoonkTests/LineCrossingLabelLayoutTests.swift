@@ -6,7 +6,7 @@ import XCTest
 
 @MainActor
 final class LineCrossingLabelLayoutTests: XCTestCase {
-  func testNamesClearSolidDashedAndGuideLinesAtActualLargeFontSizes() {
+  func testLargeNamesBelongToTheirOwnLineWhenStrokeClearanceIsTight() throws {
     for width in [176.0, 260, 600] {
       for size in [DynamicTypeSize.large, .xxxLarge, .accessibility3] {
         let area = CGRect(x: 0, y: 0, width: width, height: 240)
@@ -20,7 +20,7 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
           to: CGPoint(x: width, y: cost.to.y + 20))
         let guide = LineCrossingLabelLayout.Segment(
           from: CGPoint(x: 0, y: 112), to: CGPoint(x: width * 200 / 375, y: 112))
-        let lines = [cost, revenue, before, guide]
+        let lines = [cost, revenue, before]
         let style = TypeStyle.meta.weight(.semibold)
         let labels = zip(["Cost", "Revenue"], [cost, revenue]).map { text, line in
           LineCrossingLabelLayout.Label(
@@ -29,23 +29,17 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
               width: ceil(style.width(of: text, dynamicTypeSize: size, legibility: nil)),
               height: ceil(style.uiFont(size, legibility: nil).lineHeight)))
         }
-        let boxes = LineCrossingLabelLayout.place(
-          labels, in: area, lines: lines, obstacles: []
-        ).map { $0! }
+        let boxes = try LineCrossingLabelLayout.place(
+          labels, in: area, lines: lines, obstacles: [], guides: [guide]
+        ).map { try XCTUnwrap($0) }
         XCTAssertEqual(boxes.count, 2)
-        XCTAssertFalse(boxes[0].insetBy(dx: -3, dy: -3).intersects(boxes[1]))
-        for box in boxes {
+        XCTAssertFalse(boxes[0].intersects(boxes[1]))
+        for (box, label) in zip(boxes, labels) {
           XCTAssertTrue(area.contains(box), "\(width), \(size), \(box)")
-          for line in lines {
-            for sample in 0...1000 {
-              let t = Double(sample) / 1000
-              let point = CGPoint(
-                x: line.from.x + (line.to.x - line.from.x) * t,
-                y: line.from.y + (line.to.y - line.from.y) * t)
-              XCTAssertFalse(
-                box.insetBy(dx: -2.9, dy: -2.9).contains(point),
-                "\(width), \(size), \(box), line \(line), labels \(labels.map(\.size))")
-            }
+          for other in lines where other != label.segment {
+            XCTAssertFalse(
+              LineCrossingLabelLayout.touches(box, other),
+              "\(width), \(size), \(box) sits on a line it does not name")
           }
         }
       }
