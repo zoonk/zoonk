@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -239,7 +240,7 @@ internal fun SearchPanel(
                 placeholder = { Text(stringResource(R.string.search_placeholder), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 leadingIcon = {
                     if (expanded) {
-                        IconButton(onClick = close) {
+                        IconButton(onClick = close, modifier = Modifier.offset(x = -FIELD_ICON_PULL)) {
                             Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.search_close))
                         }
                     } else {
@@ -248,7 +249,7 @@ internal fun SearchPanel(
                 },
                 trailingIcon = {
                     if (expanded && text.text.isNotEmpty()) {
-                        IconButton(onClick = { text.clearText() }) {
+                        IconButton(onClick = { text.clearText() }, modifier = Modifier.offset(x = FIELD_ICON_PULL)) {
                             Icon(painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.search_clear))
                         }
                     }
@@ -495,3 +496,6 @@ private fun SearchResults(
 private const val QUERY_SETTLE_MS = 250L
 private const val MIN_SERVER_QUERY = 2
 private val DOCKED_WIDTH = 560.dp
+
+/** Material's field sets its back arrow and clear button 4dp inside the edges the results' marks and dividers keep. */
+private val FIELD_ICON_PULL = 4.dp

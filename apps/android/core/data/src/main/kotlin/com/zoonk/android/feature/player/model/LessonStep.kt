@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.ActivityRoundedAnswer
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
@@ -46,10 +47,10 @@ typealias ActivityStepContent = PlayableLibraryStepAnyOfContent
 typealias ActivityCheck = PlayableLibraryStepAnyOfContentOneOfCheck
 typealias ActivityData = PlayableLibraryStepAnyOfContentOneOfData
 typealias ActivityAnswer = LessonStepAnswerOneOf3Answer
-typealias ActivityTolerance = PlayableLibraryStepAnyOfMinTolerance
 typealias ChoiceCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf
 typealias InteractionCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf1
 typealias NumericCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
+typealias ActivityTolerance = PlayableLibraryStepAnyOfMinTolerance
 typealias ChallengeStepContent = PlayableLibraryStepAnyOf1Content
 typealias ChallengeNode = PlayableLibraryStepAnyOf1ContentNodesInner
 typealias ChallengeChoice = PlayableLibraryStepAnyOf1ContentNodesInnerChoicesInner
@@ -115,8 +116,9 @@ sealed interface StepContent {
     data class Activity(
         val content: ActivityStepContent,
         val frame: ActivityFrame,
-        val minTolerance: ActivityTolerance?,
         val baseMap: ActivityBaseMap? = null,
+        val roundedAnswer: ActivityRoundedAnswer? = null,
+        val minTolerance: ActivityTolerance? = null,
     ) : StepContent {
         override val kind get() = StepKind.Activity
     }

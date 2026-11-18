@@ -236,7 +236,7 @@ export function useLiveCall({
 
   const [microphoneProblem, setMicrophoneProblem] = useState<MicrophoneProblem | null>(null);
 
-  const { cancelStart, dropStart, start } = useConnectCall({
+  const { cancelStart, start } = useConnectCall({
     endAtDeadline,
     endedByServer: connection.endedByServer,
     fail,
@@ -266,8 +266,8 @@ export function useLiveCall({
   return {
     /** The learner stopped a call that was still ringing. */
     cancel: () => report.send("learnerEnded"),
+    cancelStart,
     continuing: soFar.continuing,
-    dropStart,
     elapsedSeconds: ending.elapsedSeconds,
     error: problem.error,
     finish,

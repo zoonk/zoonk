@@ -162,6 +162,8 @@ fun TaskScaffold(
     exitConfirmation: TaskExitConfirmation? = null,
     closeLabel: String? = null,
     bottomBar: (@Composable () -> Unit)? = null,
+    /** A status over [bottomBar] (what's saving, what didn't go through), shown just above it so the bar never moves. */
+    note: (@Composable () -> Unit)? = null,
     aside: TaskAside? = null,
     lonePage: Boolean = false,
     content: @Composable (PaddingValues) -> Unit,
@@ -176,7 +178,7 @@ fun TaskScaffold(
         WithLoadFailureBar(enabled = bottomBar == null) { retry ->
             Scaffold(
                 topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
-                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it) } },
+                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }) } },
                 snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
                 content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
             )
@@ -275,6 +277,9 @@ private fun TaskAsideRail(aside: TaskAside) {
 private val ASIDE_MARGIN = 24.dp
 
 @Composable
-private fun TaskBottomBar(content: @Composable () -> Unit) {
-    BottomBar(columnMargin = TASK_MARGIN) { content() }
+private fun TaskBottomBar(
+    content: @Composable () -> Unit,
+    note: (@Composable () -> Unit)? = null,
+) {
+    BottomBar(note = note, columnMargin = TASK_MARGIN) { content() }
 }

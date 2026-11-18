@@ -47,9 +47,8 @@ import org.robolectric.annotation.Config
 import java.io.IOException
 
 /**
- * Add to my plan on a later day's fit offer checks today's numbers first, from the panel or sheet that asked: recreated
- * with that opening still shown, it adds the lessons once or says the check failed; recreated as a closed line, or left,
- * it adds and says nothing.
+ * Add to my plan on a later day's fit offer checks today's numbers first, from the card that asked, which shows at every
+ * width: recreated, it adds the lessons once or says the check failed; left, it adds and says nothing.
  */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -75,10 +74,9 @@ class FitOfferWindowTest {
     }
 
     @Test
-    fun aCheckOutWhileTheOpenSheetIsRecreatedAddsTheLessonsOnce() {
+    fun aCheckOutWhileThePhoneCardIsRecreatedAddsTheLessonsOnce() {
         val (held, api) = launchAFitOffer(wide = false)
 
-        rule.onNodeWithText("View").performClick()
         rule.onNodeWithText("Add to my plan").performClick()
         scenario.recreate()
         held.complete(Unit)
@@ -88,7 +86,7 @@ class FitOfferWindowTest {
     }
 
     @Test
-    fun aCheckAskedFromThePanelThatAnswersAfterItBecameAClosedLineAddsNothing() {
+    fun aCheckAskedOnAWideWindowThatAnswersAfterAPhoneRecreationAddsTheLessonsOnce() {
         val (held, api) = launchAFitOffer(wide = true)
 
         rule.onNodeWithText("Add to my plan").performClick()
@@ -98,8 +96,7 @@ class FitOfferWindowTest {
         held.complete(Unit)
         rule.waitForIdle()
 
-        assertEquals(emptyList<List<PlanOp>>(), api.changes)
-        assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
+        assertEquals(listOf(fitOperations()), api.changes)
     }
 
     @Test

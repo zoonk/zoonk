@@ -59,7 +59,8 @@ struct BuddyGoalStart: View {
         .accessibilityLabel(
           Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
 
-        AccessibilityStack(alignment: .bottom, spacing: 8, stackedSpacing: 0) {
+        // The typed words share the button's line, and stay level with it as the field grows.
+        AccessibilityStack(alignment: .lastTextBaseline, spacing: 8, stackedSpacing: 0) {
           MultilineTextField(
             text: $goal,
             prompt: Text(

@@ -39,53 +39,55 @@ import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.api.models.FreePlan
 
 /** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
-@Composable
-internal fun FreePlanCard(
+internal fun freePlanRows(
     limits: FreePlan,
     currency: String?,
     viewer: PlanViewer,
     navigator: AppNavigator,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedCard(modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.subscription_free), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            if (currency != null) Text(money(0, currency, currentLocale()), style = MaterialTheme.typography.headlineMedium)
+): PlanRows =
+    listOf(
+        { PlanNameRow(stringResource(R.string.subscription_free)) },
+        { if (currency != null) Text(money(0, currency, currentLocale()), style = MaterialTheme.typography.headlineMedium) },
+        {
             when (viewer) {
                 PlanViewer.Visitor -> StartFree(stringResource(R.string.subscription_start_free)) { navigator.showRoot(AppTab.Today) }
                 PlanViewer.Guest -> StartFree(stringResource(R.string.limit_create_account)) { navigator.open(AppRoute.Login) }
                 PlanViewer.Free -> CurrentPlan()
             }
-            HorizontalDivider()
-            PlanIncludes(
-                summary =
-                    stringResource(
-                        R.string.subscription_free_summary,
-                        goals(limits.activeGoals),
-                        pluralStringResource(
-                            R.plurals.subscription_free_lessons_a_month,
-                            count(limits.lessonsPer30Days),
-                            count(limits.lessonsPer30Days),
+        },
+        {
+            PlanIncludesRow {
+                PlanIncludes(
+                    summary =
+                        stringResource(
+                            R.string.subscription_free_summary,
+                            goals(limits.activeGoals),
+                            pluralStringResource(
+                                R.plurals.subscription_free_lessons_a_month,
+                                count(limits.lessonsPer30Days),
+                                count(limits.lessonsPer30Days),
+                            ),
                         ),
-                    ),
-                items =
-                    listOfNotNull(
-                        stringResource(R.string.subscription_free_plan),
-                        buddySentence(limits),
-                        stringResource(R.string.subscription_free_calls),
-                    ),
-            )
-        }
-    }
-}
+                    items =
+                        listOfNotNull(
+                            stringResource(R.string.subscription_free_plan),
+                            buddySentence(limits),
+                            stringResource(R.string.subscription_free_calls),
+                        ),
+                )
+            }
+        },
+    )
 
 @Composable
 private fun ColumnScope.StartFree(
@@ -220,7 +222,13 @@ private fun Question(
         Icon(
             painterResource(R.drawable.ic_expand_more),
             contentDescription = null,
-            modifier = if (open) Modifier.rotate(180f) else Modifier,
+            // The chevron's ink ends where the divider does, as the question starts where it does.
+            modifier =
+                Modifier
+                    .glyphInk(
+                        R.drawable.ic_expand_more,
+                        edge = ButtonEdge.End,
+                    ).then(if (open) Modifier.rotate(180f) else Modifier),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }

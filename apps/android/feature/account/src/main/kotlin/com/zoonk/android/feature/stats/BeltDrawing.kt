@@ -35,12 +35,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -197,59 +199,108 @@ private fun RankStripe(
 }
 
 /**
- * Main's `BeltRack`: every belt in order, those earned tied and the rest folded, the current one
- * ringed, with the first and last belts named under the row.
+ * Main's `BeltRack`: every belt in order in equal columns, those earned tied and the rest folded, the
+ * current one ringed and named under it (every belt named where all the names fit), then a key to the two shapes.
  */
 @Composable
 internal fun BeltRack(current: Belt) {
     val ink = MaterialTheme.colorScheme.onSurface
-    val faint = MaterialTheme.zoonk.faint
     val earned = stringResource(R.string.stats_belt_earned)
+    val coming = stringResource(R.string.stats_belt_coming)
     val now = stringResource(R.string.stats_belt_current)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(Modifier.fillMaxWidth()) {
-            Belt.entries.forEach { entry ->
-                val name = stringResource(entry.label)
-                Box(
-                    Modifier.weight(1f),
-                    contentAlignment =
-                        when (entry) {
-                            Belt.entries.first() -> Alignment.CenterStart
-                            Belt.entries.last() -> Alignment.CenterEnd
-                            else -> Alignment.Center
-                        },
-                ) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(Modifier.fillMaxWidth()) {
+                Belt.entries.forEach { entry ->
+                    val name = stringResource(entry.label)
+                    val tied = entry <= current
+
                     Box(
-                        Modifier
-                            .size(RACK_WIDTH, RACK_HEIGHT)
-                            .then(if (entry == current) Modifier.border(1.5.dp, ink, RoundedCornerShape(ZoonkRadius.sm)) else Modifier)
-                            .clearAndSetSemantics {
-                                contentDescription = name
+                        Modifier.weight(1f).clearAndSetSemantics {
+                            contentDescription = name
+                            stateDescription =
                                 when {
-                                    entry == current -> stateDescription = now
-                                    entry < current -> stateDescription = earned
-                                    else -> Unit
+                                    entry == current -> now
+                                    tied -> earned
+                                    else -> coming
                                 }
-                            },
+                        },
                         contentAlignment = Alignment.Center,
                     ) {
-                        RackBelt(entry)
+                        Box(
+                            Modifier
+                                .size(RACK_WIDTH, RACK_HEIGHT)
+                                .then(if (entry == current) Modifier.border(1.5.dp, ink, RoundedCornerShape(ZoonkRadius.sm)) else Modifier),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            RackBelt(entry, tied, Modifier.fillMaxSize(RACK_FILL))
+                        }
                     }
                 }
             }
+
+            BeltNames(current)
         }
 
-        Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(stringResource(Belt.entries.first().label), color = faint, style = MaterialTheme.typography.bodySmall)
-            Text(stringResource(Belt.entries.last().label), color = faint, style = MaterialTheme.typography.bodySmall)
+        Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            RackKey(earned, tied = true)
+            RackKey(coming, tied = false)
         }
+    }
+}
+
+/** Each belt's one-word name under its column, never cut: a long one spills past its column, as main's does. */
+@Composable
+private fun BeltNames(current: Belt) {
+    val ink = MaterialTheme.colorScheme.onSurface
+
+    Layout(
+        content = {
+            Belt.entries.forEach { entry ->
+                Text(
+                    stringResource(entry.shortLabel),
+                    color =
+                        when {
+                            entry == current -> ink
+                            entry < current -> MaterialTheme.colorScheme.onSurfaceVariant
+                            else -> MaterialTheme.zoonk.faint
+                        },
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (entry == current) FontWeight.Medium else null,
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val names = measurables.map { it.measure(Constraints()) }
+        val spots = beltNameSpots(constraints.maxWidth, names.map { it.width }, current.ordinal, NAME_GAP.roundToPx())
+        layout(constraints.maxWidth, spots.maxOfOrNull { (index, _) -> names[index].height } ?: 0) {
+            spots.forEach { (index, x) -> names[index].placeRelative(x, 0) }
+        }
+    }
+}
+
+@Composable
+private fun RackKey(
+    label: String,
+    tied: Boolean,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        RackBelt(Belt.Gray, tied, Modifier.size(KEY_SIZE))
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
 /** Main's rack belt: tied once earned, folded until then; white and black keep an outline where the page would swallow them. */
 @Composable
-private fun RackBelt(belt: Belt) {
+private fun RackBelt(
+    belt: Belt,
+    tied: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val dark = MaterialTheme.colorScheme.background.luminance() < HALF
     val fill = if (belt == Belt.Black && dark) Color.Black else belt.color
     val outline =
@@ -258,21 +309,44 @@ private fun RackBelt(belt: Belt) {
             belt == Belt.Black && dark -> Color.White.copy(alpha = HALF)
             else -> null
         }
+    val shapes = if (tied) TIED else FOLDED
+    val box = if (tied) TIED_BOX else FOLDED_BOX
 
-    Canvas(Modifier.fillMaxSize()) {
-        val edge = if (outline == null) 0f else RACK_OUTLINE / 2
-        val bounds = FOLDED_BOUNDS.inflate(edge)
-        val scale = minOf(size.width / bounds.width, size.height / bounds.height)
-        translate((size.width - bounds.width * scale) / 2, (size.height - bounds.height * scale) / 2) {
+    Canvas(modifier) {
+        val scale = minOf(size.width / box.width, size.height / box.height)
+        translate((size.width - box.width * scale) / 2, (size.height - box.height * scale) / 2) {
             scale(scale, pivot = Offset.Zero) {
-                translate(-bounds.left, -bounds.top) {
-                    outline?.let { color -> FOLDED.forEach { drawPath(it, color, style = Stroke(RACK_OUTLINE)) } }
-                    FOLDED.forEach { drawPath(it, fill) }
+                translate(-box.left, -box.top) {
+                    outline?.let { color -> shapes.forEach { drawPath(it, color, style = Stroke(RACK_OUTLINE)) } }
+                    shapes.forEach { drawPath(it, fill) }
                 }
             }
         }
     }
 }
+
+/** A belt's one-word name under it in the rack, as main's: "Yellow". */
+private val Belt.shortLabel: Int
+    get() =
+        when (this) {
+            Belt.White -> R.string.stats_belt_white
+            Belt.Yellow -> R.string.stats_belt_yellow
+            Belt.Orange -> R.string.stats_belt_orange
+            Belt.Green -> R.string.stats_belt_green
+            Belt.Blue -> R.string.stats_belt_blue
+            Belt.Purple -> R.string.stats_belt_purple
+            Belt.Brown -> R.string.stats_belt_brown
+            Belt.Red -> R.string.stats_belt_red
+            Belt.Gray -> R.string.stats_belt_gray
+            Belt.Black -> R.string.stats_belt_black
+        }
+
+private fun polygon(vararg points: Float) =
+    Path().apply {
+        moveTo(points[0], points[1])
+        for (i in 2 until points.size step 2) lineTo(points[i], points[i + 1])
+        close()
+    }
 
 private fun roundRect(
     x: Float,
@@ -284,16 +358,30 @@ private fun roundRect(
     addRoundRect(RoundRect(x, y, x + width, y + height, CornerRadius(radius)))
 }
 
+/** Main's rack shapes and the boxes they're drawn in, so a tied belt and a folded one stand at one height. */
+private val TIED =
+    listOf(
+        polygon(18.6f, 12.5f, 22.4f, 12.5f, 16.6f, 27.6f, 12.2f, 27.6f),
+        polygon(21.6f, 12.5f, 25.4f, 12.5f, 31.8f, 27.6f, 27.4f, 27.6f),
+        roundRect(1.5f, 6f, 41f, 8f, 2f),
+        roundRect(17f, 3.5f, 10f, 13f, 3f),
+    )
+private val TIED_BOX = Rect(0f, 0f, 44f, 30f)
 private val FOLDED =
     listOf(
         roundRect(5f, 7.5f, 34f, 7f, 2f),
         roundRect(5f, 15.5f, 34f, 7f, 2f),
         roundRect(31f, 7.5f, 8f, 15f, 2f),
     )
-private val FOLDED_BOUNDS = Path().apply { FOLDED.forEach { addPath(it) } }.getBounds()
+private val FOLDED_BOX = Rect(3.5f, 0f, 40.5f, 30f)
 private const val RACK_OUTLINE = 3f
+private const val RACK_FILL = 0.8f
 private val RACK_WIDTH = 32.dp
 private val RACK_HEIGHT = 26.dp
+private val KEY_SIZE = 20.dp
+
+/** The least room between two belts' names before only the current belt keeps its name. */
+private val NAME_GAP = 8.dp
 
 /** Main's belt on a phone: band, rank bar and tail at 36 : 52 : 12. */
 private const val BAND_SHARE = 36f

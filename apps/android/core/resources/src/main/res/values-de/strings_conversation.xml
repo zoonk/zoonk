@@ -18,7 +18,6 @@
   "conversation_call_time": "fba9082c6ac43085c1e15ea8d9276ff39ac3e4478205e3909d30c84e4c4f20f4",
   "conversation_calling": "a4a6f38f987c046d702b804651da25d92f067e0e847be197f8ff41764b247452",
   "conversation_calls_need_account": "1e72744b3412530031a0d92803ac735167b185d0175ec3c9022d015d86dd2efb",
-  "conversation_cancel": "521964f32c2ba2d9386d2bdeac84e818a9e7324d8b1a001ccc0c4a9a1a272363",
   "conversation_challenge_gate_line": "1dff8e3391314850d9943c469019a6efbf0b2ce88010a93f30cb6124251b0911",
   "conversation_challenge_gate_title": "3871ac4f591ce6175c2a3dde200f17c5d76bb126d47deb7b37f7a8a2f557644e",
   "conversation_challenge_passed": "8b33ec83258b4fcfc6ca0f123808fc6a7125e6b96e0659f2c5e19de2b48a5d7a",
@@ -213,8 +212,6 @@
     <!-- The call is connecting; the character's name. -->
     <string name="conversation_calling">Wir verbinden dich mit %1$s…</string>
     <string name="conversation_answers_first">%1$s meldet sich zuerst.</string>
-    <!-- Ends a call that hasn't connected yet. -->
-    <string name="conversation_cancel">Abbrechen</string>
     <string name="conversation_muted">Stummgeschaltet</string>
     <string name="conversation_muted_detail">Schalt das Mikrofon ein, um laut zu antworten, oder schreib deine Antwort.</string>
     <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->

@@ -5,6 +5,22 @@ import { useState } from "react";
 import { type ContentWriting } from "../generation/writing-wait";
 import { type MockActions, type MockStep } from "./mock-context";
 
+/**
+ * The speaking part's Start stays in the bar: off while its paper is written, which opens on its
+ * own, and on again when opening it failed, so the failure has something to try again.
+ */
+export function canStartSpeaking({
+  error,
+  pending,
+  writing,
+}: {
+  error: boolean;
+  pending: boolean;
+  writing: boolean;
+}): boolean {
+  return !pending && (!writing || error);
+}
+
 /** A paper still unwritten after its run ended would loop, so asking again then fails. */
 export function useSpeakingStart({
   start,

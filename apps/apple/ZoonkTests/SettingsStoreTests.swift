@@ -32,6 +32,27 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(saved)
   }
 
+  /// An answer whose facts were deleted in Memory opens empty; Save waits for a change.
+  func testAboutYouSaveWaitsForAChange() {
+    let emptied = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: [], studies: [], text: ""),
+      status: .answered, version: 1)
+    var picked = ProfileDraft(emptied)
+    picked.toggle("figma")
+
+    XCTAssertFalse(ProfileDraft(emptied).savesAChange(emptied))
+    XCTAssertTrue(picked.savesAChange(emptied))
+
+    let answered = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: ["figma"], studies: [], text: ""),
+      status: .answered, version: 1)
+    var cleared = ProfileDraft(answered)
+    cleared.toggle("figma")
+
+    XCTAssertFalse(ProfileDraft(answered).savesAChange(answered))
+    XCTAssertTrue(cleared.savesAChange(answered))
+  }
+
   func testSavedPreferenceShowsTheServerReply() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)

@@ -237,7 +237,7 @@ private fun UpNextRow(item: CertificateUpNext) {
     )
 }
 
-/** Main's `GhostCertificate`: shapes that stand for a certificate without saying one, so nothing reads as real. */
+/** Shapes that stand for a certificate without saying one, so nothing reads as real. */
 @Composable
 private fun GhostCertificate() {
     val ground = MaterialTheme.zoonk.ground

@@ -11,7 +11,6 @@
   "player_action_start": "e2c9701c7258a63bd5a61ac0139cdd61e391ba01568124b9ac04bbf6ef7c98f6",
   "player_activity_example_data": "dd723799ce152b28251c1420f1343a4e2fa415986c49e53562ffdfb29bce035b",
   "player_activity_source": "a0694ea0103e19e0d81b5a56e32addc6f2bc81e053fbc25f3b58b6a90c469b91",
-  "player_activity_your_answer": "ed08a1151a171117690bcb19b316e2ca00b4f7be83c0aa63878ab8cb2570a5e8",
   "player_ai_note": "dc7150bd60c7b94ef3b18c2d66de66bd56a554a1c7f55f241aebe46f699a8c34",
   "player_already_knew": "6be34cb2030e9c01a7aaa37eb6f8f3e60c12ea0194476f0f4631e361007c6e50",
   "player_also_correct_label": "324a336c160c877c6df95944528598464882cce6c8c484dd981541acd4a8c09e",
@@ -358,7 +357,6 @@
     <string name="player_activity_example_data">실제 데이터가 아닌 예시 수치예요</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">출처: %1$s</string>
-    <string name="player_activity_your_answer">내 답:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">챌린지 · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->

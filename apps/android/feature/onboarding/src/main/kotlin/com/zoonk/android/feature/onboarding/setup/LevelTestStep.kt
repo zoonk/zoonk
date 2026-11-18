@@ -81,6 +81,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
@@ -560,7 +561,7 @@ private fun LevelRows(levels: List<SkillLevel>) {
                 ) {
                     Text(names[index], modifier = Modifier.width(nameColumn), style = nameStyle)
                     LevelBar(level.score, Modifier.weight(1f))
-                    Text(labels[index], modifier = Modifier.width(labelWidth), style = labelStyle, textAlign = TextAlign.End)
+                    Text(labels[index], modifier = Modifier.width(labelWidth), style = labelStyle, textAlign = layoutEnd())
                 }
             }
         }

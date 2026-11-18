@@ -125,7 +125,7 @@ private fun Options(
 ) {
     val words = run.view.trueFalseWords
     val labels = question.question.options.orEmpty()
-    // Main's `getOptionMarks`: where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
+    // Where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
     val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
 
     AnswerOptionGroup {
@@ -305,7 +305,7 @@ internal fun QuestionCell(
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
     val shape = RoundedCornerShape(10.dp)
-    val name =
+    val number =
         if (question.essay) {
             stringResource(
                 R.string.mock_written_part,
@@ -313,13 +313,9 @@ internal fun QuestionCell(
         } else {
             stringResource(R.string.mock_question_number, question.number)
         }
-    val states =
-        listOfNotNull(
-            stringResource(R.string.mock_cell_answered).takeIf {
-                answered
-            },
-            stringResource(R.string.mock_cell_flagged).takeIf { flagged },
-        ).joinToString(", ")
+    // Flagged is read in the key's words, as the web's cell is.
+    val name = if (flagged) stringResource(R.string.mock_cell_marked_for_review, number) else number
+    val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
     // The current one is ringed the way a pick is; a flagged one keeps its amber ring.
     val border =
         when {

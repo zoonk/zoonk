@@ -264,12 +264,11 @@ internal fun GuessHookView(
             }
         },
         picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
+        // On a spread the question heads the learner's page, right over the answers it asks for.
         question = {
-            if (part.showsScreen) {
-                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
-                    LessonStepVisual(guess.visual)
-                    QuestionText(guess.question)
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
+                if (part.showsScreen) LessonStepVisual(guess.visual)
+                if (part.showsTurn) QuestionText(guess.question)
             }
         },
         options = {
@@ -513,11 +512,12 @@ internal fun CheckView(
                 screen.step?.let { StepPicture(it, PictureFrame.Question) }
                 ContextText(check.context)
                 LessonStepVisual(check.visual)
-                QuestionText(check.question)
             }
         }
 
         if (part.showsTurn) {
+            // On a spread the question heads the learner's page, right over the answers it asks for.
+            QuestionText(check.question)
             val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
             val optionCaption: (@Composable (ChoiceOption) -> Unit)? =
                 if (pictured != null && result != null) {

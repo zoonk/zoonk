@@ -2,7 +2,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
@@ -10,9 +10,16 @@ import {
   openActivity,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 function numericGroup() {
   return valueInput().element().closest('[data-slot="input-group"]')!;
+}
+
+/** Where the field sits in its form, so only the note above it can move it. */
+function fieldOffsetInForm() {
+  const field = numericGroup();
+  return field.getBoundingClientRect().top - field.closest("form")!.getBoundingClientRect().top;
 }
 
 describe("activity numeric answers", () => {
@@ -51,7 +58,7 @@ describe("activity numeric answers", () => {
     );
   });
 
-  it("keeps a right answer's own digits when the hint's rounding would grade it wrong", async () => {
+  it("shows a right answer with the fewest digits that keep it right", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
 
     openActivity({
@@ -59,18 +66,52 @@ describe("activity numeric answers", () => {
         ...calculator,
         check: {
           ...calculator.check,
-          answer: 251.54,
+          answer: 251.5421,
           tolerance: { kind: "absolute", value: 0.05 },
         },
       },
       template: "formulaModel",
     });
 
-    await valueInput().fill("251.495");
+    await valueInput().fill("251.49301");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(valueInput()).toHaveValue("251.495");
+    await expect.element(valueInput()).toHaveValue("251.493");
   });
+
+  it.each([
+    { fontSize: "100%", width: 320 },
+    { fontSize: "150%", width: 320 },
+    { fontSize: "200%", width: 390 },
+  ])(
+    "keeps a field with a rounding rule in place when a typing error shows at $fontSize on $width px",
+    async ({ fontSize, width }) => {
+      document.documentElement.style.fontSize = fontSize;
+
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
+      });
+
+      await atViewport({ height: 900, width }, async () => {
+        openActivity({
+          content: engineModeFixtures.formulaModel.calculator,
+          template: "formulaModel",
+        });
+
+        await expect
+          .element(page.getByText("Round to the nearest whole number.", { exact: true }))
+          .toBeVisible();
+
+        const before = fieldOffsetInForm();
+
+        await valueInput().fill("12,,5");
+        await userEvent.keyboard("{Enter}");
+        await expect.element(page.getByRole("alert")).toBeVisible();
+
+        expect(fieldOffsetInForm()).toBe(before);
+      });
+    },
+  );
 
   it("keeps a field with no rounding rule in place when a typing error shows", async () => {
     const { calculator } = engineModeFixtures.formulaModel;

@@ -425,25 +425,18 @@ private struct LessonGroupRow: View {
         .mindMapStudy(
           goalId: goalId, tab: .lessons, start: MindMapPosition(chapterId: item.group.chapterId)))
     } label: {
-      MarkedRow(alignment: .center) {
-        MindMapSlot {
-          Image(systemName: LessonMapView.symbol)
-            .foregroundStyle(.mutedForeground)
-        }
-      } content: {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(item.chapter.title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
+      // Main's row has no square: a lesson map has no picture to show in one.
+      VStack(alignment: .leading, spacing: 2) {
+        Text(item.chapter.title)
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
 
-          FactSegments(facts)
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
-        }
-        .accessibilityElement(children: .combine)
-      } end: {
-        EmptyView()
+        FactSegments(facts)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .accessibilityElement(children: .combine)
       .disclosureChevron()
     }
   }
@@ -550,13 +543,9 @@ private struct SavedRow: View {
           start: save.chapterId.map { MindMapPosition(chapterId: $0, key: save.key) }))
     } label: {
       MarkedRow(alignment: .center) {
-        if save.kind == .chapter, let thumbnail {
-          MindMapSlot(picture: thumbnail)
-        } else {
-          MindMapSlot {
-            Image(systemName: save.kind == .lesson ? LessonMapView.symbol : "map")
-              .foregroundStyle(.mutedForeground)
-          }
+        MindMapSlot(MindMapSlotLook(kind: save.kind, picture: thumbnail)) {
+          Image(systemName: save.kind == .lesson ? LessonMapView.symbol : "map")
+            .foregroundStyle(.mutedForeground)
         }
       } content: {
         VStack(alignment: .leading, spacing: 2) {

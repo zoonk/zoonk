@@ -22,7 +22,6 @@
   "subscription_benefit_exam": "b2d4916fddc1fff0e85833261da4b8d21b7ac5817cbd6105a9eea783844c6f63",
   "subscription_benefit_mocks": "1edaf3ab2ca5a4312fd32b01f2b4ffbacdbba6f8f005a0cef9f926b65d2005ac",
   "subscription_benefits_summary": "7ef48449d19263112a34f92db72cc5da109bbf4d78e64cada0be830a2744182b",
-  "subscription_billed_monthly": "8a79fdf2eafaae852978cd9a0ccd2a840729cf69196bec71b826e6a4da491558",
   "subscription_billing_period": "bc3a89a3fe251c0b1626350a3459e4be3bab34375abb16e15e5bb4917d886ee2",
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
   "subscription_contact_support": "113f34d5b3304c0384f27e242338c47e4cfb6b46a91f39b38c6fa7b893cf0f10",
@@ -109,7 +108,6 @@
     <string name="subscription_save">%1$sお得</string>
     <string name="subscription_per_month">／月</string>
     <string name="subscription_per_year">／年</string>
-    <string name="subscription_billed_monthly">毎月のお支払いです。</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">1か月あたり%1$sです。</string>
     <string name="subscription_unavailable">今はこのデバイスでPlusを購入できません。Google Playのインストールとログインが済んでいるか確認してください。</string>

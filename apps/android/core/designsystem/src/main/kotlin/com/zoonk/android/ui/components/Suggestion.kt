@@ -262,7 +262,8 @@ fun SuggestionActions(content: @Composable () -> Unit) {
 
 /**
  * Main's `useMainActionVariant`: the main answer of a suggestion on a page whose bar holds the page's own main
- * action (Today). It fills its sheet, and is outlined in a wide screen's side panel so it never competes with the bar.
+ * action (Today). It fills its sheet, and is outlined on Today's card or a wide screen's side panel so it never competes
+ * with the bar.
  */
 @Composable
 fun SuggestionMainAction(
@@ -270,7 +271,7 @@ fun SuggestionMainAction(
     onClick: () -> Unit,
     enabled: Boolean = true,
     busy: Boolean = false,
-) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current == Presentation.Panel)
+) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current != Presentation.Sheet)
 
 /** On a line it's always [secondary], beside the summary. */
 @Composable

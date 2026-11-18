@@ -196,15 +196,7 @@ internal fun ConversationLive(
             if (call.usedHelp) Phrases(conversation)
         },
     ) { beside ->
-        item(key = "character") {
-            val detail =
-                if (examTask != null) {
-                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
-                } else {
-                    stringResource(R.string.conversation_character_detail, character.role, character.place)
-                }
-            CharacterRow(character.name, detail, Modifier.callItem())
-        }
+        // On one column the goals come first, so the character's row heads what they say, as it does beside the goals.
         if (!beside && examTask != null) {
             item(key = "card") { SpeakingCardView(examTask.card, conversation.targetLanguage, Modifier.callItem(), compact = true) }
         }
@@ -215,6 +207,15 @@ internal fun ConversationLive(
                     Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
                 }
             }
+        }
+        item(key = "character") {
+            val detail =
+                if (examTask != null) {
+                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
+                } else {
+                    stringResource(R.string.conversation_character_detail, character.role, character.place)
+                }
+            CharacterRow(character.name, detail, Modifier.callItem())
         }
         call.turns.forEachIndexed { index, turn ->
             // Turns only grow at the end, so their position identifies them.
@@ -417,14 +418,13 @@ private fun CallTurn(
                 Modifier.semantics { if (state == TurnState.Reconnecting) liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.titleSmall,
             )
-            detail?.let {
-                Text(
-                    it,
-                    Modifier.semantics { if (it == wrapUp) liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            // An empty line holds the detail's room, so the bar doesn't move as a hint comes and goes.
+            Text(
+                detail.orEmpty(),
+                Modifier.semantics { if (detail != null && detail == wrapUp) liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
@@ -567,14 +567,13 @@ private fun CallControls(
 ) {
     val canMute = call.phase == LiveCallPhase.Live && !call.micBlocked
     val off = call.micBlocked || call.muted
-    val calling = call.phase != LiveCallPhase.Live
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
             FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE), shape = ICON_BUTTON_SHAPE) {
                 Icon(painterResource(R.drawable.ic_help), contentDescription = label)
             }
         }
-        Control(R.string.conversation_mute, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_mute, Modifier.weight(1f), enabled = canMute) { label ->
             FilledTonalIconToggleButton(
                 checked = call.muted,
                 onCheckedChange = { actions.onMute() },
@@ -593,7 +592,7 @@ private fun CallControls(
                 Icon(painterResource(if (off) R.drawable.ic_mic_off else R.drawable.ic_mic), contentDescription = label)
             }
         }
-        Control(if (calling) R.string.conversation_cancel else R.string.conversation_end, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_end, Modifier.weight(1f)) { label ->
             FilledIconButton(
                 onClick = actions.onEnd,
                 modifier = Modifier.size(CONTROL_SIZE),
@@ -610,17 +609,24 @@ private fun CallControls(
     }
 }
 
-/** A call control as phones show them: the button, its name under it. */
+/** A call control as phones show them: the button, its name under it, muted with it while it can't be used. */
 @Composable
 private fun Control(
     label: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     button: @Composable (label: String) -> Unit,
 ) {
     val name = stringResource(label)
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         button(name)
-        Text(name, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
+        Text(
+            name,
+            Modifier.clearAndSetSemantics {},
+            color = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

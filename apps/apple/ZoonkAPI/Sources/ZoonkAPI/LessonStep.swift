@@ -20,7 +20,8 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
 
   private enum CodingKeys: String, CodingKey {
     case baseMap, citation, content, exercise, id, image, imagePending, kind, listening, marks
-    case minTolerance, optionPictures, picture, pictureWaitStartedAt, position, skillId, wordHints
+    case minTolerance, optionPictures, picture, pictureWaitStartedAt, position, roundedAnswer
+    case skillId, wordHints
   }
 
   public init(
@@ -86,6 +87,8 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
       var activity = try container.decode(ActivityStepContent.self, forKey: .content)
       activity.minTolerance = try container.decodeIfPresent(
         ActivityCheck.Tolerance.self, forKey: .minTolerance)
+      activity.roundedAnswer = try container.decodeIfPresent(
+        ActivityRoundedAnswer.self, forKey: .roundedAnswer)
       activity.baseMap = Self.baseMap(in: container)
       content = .activity(activity)
     case "summary":
@@ -140,6 +143,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     case .activity(let value):
       try container.encode(value, forKey: .content)
       try container.encode(value.minTolerance, forKey: .minTolerance)
+      try container.encode(value.roundedAnswer, forKey: .roundedAnswer)
       try container.encode(value.baseMap, forKey: .baseMap)
     case .summary(let value): try container.encode(value, forKey: .content)
     case .challenge(let value): try container.encode(value, forKey: .content)

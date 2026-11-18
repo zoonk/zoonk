@@ -168,7 +168,7 @@
 
     <string name="plan_your_plan">Your plan</string>
     <string name="plan_exam_date">Exam date</string>
-    <string name="plan_time_a_day_label">Time a day</string>
+    <string name="plan_daily_study_time">Daily study time</string>
     <string name="plan_study_days">Study days</string>
     <string name="plan_mock_exams">Mock exams</string>
     <string name="plan_choose">Choose</string>
@@ -272,6 +272,7 @@
         <item quantity="one">%1$s lesson studied</item>
         <item quantity="other">%1$s lessons studied</item>
     </plurals>
+    <string name="plan_studied_and_known">%1$s studied · %2$s already known</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d this week</item>
         <item quantity="other">+%d this week</item>
@@ -545,12 +546,12 @@
     <string name="plan_tools_none">No tools? You can do it all with examples.</string>
     <string name="plan_tools_without">You won\'t practice on your own device. Lessons use examples and simulations instead.</string>
     <string name="plan_tools_later">More later: %1$s</string>
-    <string name="plan_tool_how">How will you use it?</string>
+    <string name="plan_tool_have_question">Do you have it?</string>
     <string name="plan_tool_have">I have it</string>
     <string name="plan_tool_have_description">You\'ll practice on your own device.</string>
     <string name="plan_tool_setup">I\'ll set it up</string>
     <string name="plan_tool_setup_description">A short lesson shows how, right before you need it.</string>
-    <string name="plan_tool_none">No install</string>
+    <string name="plan_tool_wont_use">I won\'t use it</string>
     <string name="plan_tool_none_description">You\'ll practice with examples instead.</string>
     <string name="plan_tool_updates_when_ready">Your plan updates as soon as it\'s ready.</string>
     <string name="plan_tool_writing_setup">Adding a setup lesson</string>
@@ -636,8 +637,6 @@
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
     <string name="plan_time_covers_share_goal">%1$s a day covers about %2$s of your goal</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
-    <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
-    <string name="plan_find">Find the time</string>
     <string name="plan_finding">Finding the time…</string>
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
@@ -656,8 +655,6 @@
     <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="plan_finish_after_exam_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
-    <string name="plan_full_course_rule_exam">You study every topic. What doesn\'t fit before the exam comes after it.</string>
-    <string name="plan_full_course_rule_goal">Every part of your goal, with no end date.</string>
     <string name="plan_study_everything">Remove end date</string>
     <string name="plan_study_everything_exam_description">You study every topic. What doesn\'t fit before the exam comes after it.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, with no end date.</string>
@@ -689,7 +686,7 @@
     <string name="plan_suggestion">Plan suggestion</string>
     <string name="plan_updated">Plan updated</string>
     <string name="plan_updated_sentence">Your plan is updated.</string>
-    <string name="plan_preview">Preview</string>
+    <string name="plan_see_changes">See what changes</string>
     <string name="plan_study_everything_after_exam">Keep studying after the exam</string>
     <string name="plan_most_asked_first_until_exam">Until the exam, what comes up most comes first.</string>
     <string name="plan_time_covers_everything">%1$s a day covers everything</string>
@@ -865,6 +862,7 @@
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
     <string name="plan_end_none_set">None set</string>
+    <string name="plan_estimated_finish">Estimated finish %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

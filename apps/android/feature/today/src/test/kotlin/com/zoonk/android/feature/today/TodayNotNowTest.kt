@@ -22,6 +22,9 @@ import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -68,6 +71,31 @@ class TodayNotNowTest {
 
         assertEquals(1, todayApi.insightQuotes.size)
         rule.onNodeWithText("Your study time stays the same.").assertExists()
+    }
+
+    @Test
+    fun anAppliedPlanChangeIdeaIsUndoneOnTheCard() {
+        val applied =
+            buildJsonObject {
+                put("canApply", false)
+                put("effect", JsonNull)
+                put("id", "6a1c2f3e-0d3a-4c55-9d1e-6f1b0a3c2d01")
+                put("quote", "quote-shown")
+                put("status", "applied")
+            }
+        val today =
+            decodeFixture<Today>(
+                "today",
+                "notice" to "insight",
+                "insight" to fixture("memory-insight", "kind" to "planChange", "planChange" to applied),
+            )
+        show(today)
+
+        rule.onNodeWithText("See what changes").assertDoesNotExist()
+        rule.onNodeWithText("Undo").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your plan stays as it was.").assertExists()
     }
 
     private fun show(today: Today) {

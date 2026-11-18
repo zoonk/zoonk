@@ -125,11 +125,21 @@ struct ActivityGuessScaleView: View {
       .typeStyle(.readout)
       .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
 
+      // The real value's row and the revealed bar hold their room from the start, so nothing
+      // moves on Check.
+      Text(
+        "Real value: \(format(actual ?? scale.max))", tableName: "Activities",
+        comment: "The real value revealed after a guess"
+      )
+      .typeStyle(.readout)
+      .foregroundStyle(Color.successText)
+      .opacity(actual == nil ? 0 : 1)
+      .accessibilityHidden(actual == nil)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
+
       if let label = guessUnitLabel(unit) { ActivityCaption(label) }
 
-      if let actual {
-        revealed(actual: actual)
-      } else {
+      ZStack {
         Slider(
           value: Binding(
             get: { (guess.map(scale.share(of:)) ?? 0.5) * GuessScale.positions },
@@ -147,28 +157,21 @@ struct ActivityGuessScaleView: View {
           }
             ?? Text(
               "No guess yet", tableName: "Activities",
-              comment: "VoiceOver: a guess slider not moved yet"))
-        GuessScaleAxis(scale: scale, unit: unit)
-      }
-    }
-  }
+              comment: "VoiceOver: a guess slider not moved yet")
+        )
+        .opacity(actual == nil ? 1 : 0)
+        .disabled(actual != nil)
+        .accessibilityHidden(actual != nil)
 
-  private func revealed(actual: Double) -> some View {
-    VStack(alignment: .leading, spacing: 6) {
-      GuessScaleBar(
-        guessShare: guess.map(scale.share(of:)), actualShare: scale.share(of: actual)
-      )
-      .accessibilityHidden(true)
+        if let actual {
+          GuessScaleBar(
+            guessShare: guess.map(scale.share(of:)), actualShare: scale.share(of: actual)
+          )
+          .accessibilityHidden(true)
+        }
+      }
 
       GuessScaleAxis(scale: scale, unit: unit)
-
-      Text(
-        "Real value: \(format(actual))", tableName: "Activities",
-        comment: "The real value revealed after a guess"
-      )
-      .typeStyle(.body.weight(.semibold).monospaced())
-      .foregroundStyle(Color.successText)
-      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
     }
   }
 
@@ -178,6 +181,10 @@ struct ActivityGuessScaleView: View {
 }
 
 private struct GuessScaleAxis: View {
+  /// The scale's end labels hold the track's ends, so the room between labels is kept wide enough
+  /// that the last two still read apart.
+  private static let labelGap = 16.0
+
   let scale: GuessScale
   let unit: String?
   @Environment(\.dynamicTypeSize) private var textSize
@@ -196,7 +203,7 @@ private struct GuessScaleAxis: View {
         0, Swift.min(scale.share(of: value) * width - textWidth / 2, width - textWidth))
     }
     let ticks = ChartsAxis.fittingTicks(
-      scale.min...scale.max,
+      scale.min...scale.max, gap: Self.labelGap,
       frame: { value in
         let start = left(value)
         let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
@@ -236,21 +243,27 @@ private struct GuessScaleBar: View {
       context.fill(track, with: .color(Color.surface3))
 
       let actualX = size.width * actualShare
+      let radius = height / 3
+
+      // Main's reveal: the real value's dot sits in a soft ring under the learner's guess, so a guess
+      // right on it still shows, and the ring still marks the real value around it.
+      marker(context, x: actualX, y: y, radius: radius + 4, color: Color.success.opacity(0.2))
+      marker(context, x: actualX, y: y, radius: radius, color: .success)
 
       if let guessShare {
         let guessX = size.width * guessShare
         let gap = CGRect(x: min(guessX, actualX), y: y - 3, width: abs(guessX - actualX), height: 6)
         context.fill(Path(gap), with: .color(Color.success.opacity(0.35)))
-        marker(context, x: guessX, y: y, color: .primary)
+        marker(context, x: guessX, y: y, radius: radius + 2, color: Color(.systemBackground))
+        marker(context, x: guessX, y: y, radius: radius, color: .primary)
       }
-
-      marker(context, x: actualX, y: y, color: .success)
     }
     .frame(height: height)
   }
 
-  private func marker(_ context: GraphicsContext, x: Double, y: Double, color: Color) {
-    let radius = height / 3
+  private func marker(
+    _ context: GraphicsContext, x: Double, y: Double, radius: Double, color: Color
+  ) {
     context.fill(
       Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)),
       with: .color(color))

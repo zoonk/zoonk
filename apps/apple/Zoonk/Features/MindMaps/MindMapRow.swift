@@ -335,12 +335,30 @@ enum MindMapSlotMetrics {
   static let side: CGFloat = 48
 }
 
+/// Main's `MindMapSlot`: a map's picture, a dashed square while a chapter map has none, and a
+/// filled one for a lesson map, which never has a picture.
+enum MindMapSlotLook: Equatable {
+  case picture(URL)
+  case dashed
+  case filled
+
+  init(kind: SavedMindMapKind, picture: URL?) {
+    if kind == .lesson {
+      self = .filled
+    } else if let picture {
+      self = .picture(picture)
+    } else {
+      self = .dashed
+    }
+  }
+}
+
 struct MindMapSlot<Mark: View>: View {
-  private let picture: URL?
+  private let look: MindMapSlotLook
   @ViewBuilder private let mark: Mark
 
-  init(@ViewBuilder mark: () -> Mark) {
-    picture = nil
+  init(_ look: MindMapSlotLook = .dashed, @ViewBuilder mark: () -> Mark) {
+    self.look = look
     self.mark = mark()
   }
 
@@ -348,7 +366,8 @@ struct MindMapSlot<Mark: View>: View {
     let shape = RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
 
     Group {
-      if let picture {
+      switch look {
+      case .picture(let picture):
         AsyncImage(url: picture) { image in
           image.resizable().scaledToFill()
         } placeholder: {
@@ -356,9 +375,13 @@ struct MindMapSlot<Mark: View>: View {
         }
         .clipShape(shape)
         .overlay(shape.strokeBorder(.border))
-      } else {
+      case .dashed:
         shape
           .strokeBorder(.input, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+          .overlay { mark }
+      case .filled:
+        shape
+          .fill(.muted)
           .overlay { mark }
       }
     }
@@ -371,8 +394,9 @@ struct MindMapSlot<Mark: View>: View {
 
 extension MindMapSlot where Mark == EmptyView {
   init(picture: URL) {
-    self.picture = picture
-    mark = EmptyView()
+    self.init(.picture(picture)) {
+      EmptyView()
+    }
   }
 }
 

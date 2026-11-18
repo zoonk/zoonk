@@ -125,7 +125,8 @@ struct AboutYouQuestionView: View {
             draft: draft)
         } buttons: {
           StepButtons(
-            canContinue: canEdit && draft.wrappedValue.canSave(view),
+            canContinue: canEdit
+              && draft.wrappedValue.savesAChange(view, memoryEnabled: profile.memoryEnabled),
             continueLabel: Text(
               "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {
@@ -141,7 +142,8 @@ struct AboutYouQuestionView: View {
         }
       }
     }
-    .navigationTitle(AboutYouCopy.rowName(question))
+    // The question heads the screen, so the bar doesn't repeat its row's name over it.
+    .barName(AboutYouCopy.rowName(question))
     .loads(settings.profileQuestions)
   }
 
@@ -158,6 +160,14 @@ struct AboutYouQuestionView: View {
         failed = true
       }
     }
+  }
+}
+
+extension ProfileDraft {
+  /// About you's Save: an answer that can be saved and differs from the one saved, so one opened
+  /// and left as it was never saves again.
+  func savesAChange(_ view: ProfileQuestionView, memoryEnabled: Bool = true) -> Bool {
+    canSave(view) && self != ProfileDraft(view, memoryEnabled: memoryEnabled)
   }
 }
 

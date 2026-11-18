@@ -48,7 +48,7 @@ struct CertificatesScreen: View {
         Group {
           switch certificate {
           case .issued(let issued):
-            CertificatePicture(url: issued.pictures.screen, size: .thumbnail)
+            CertificatePicture(url: issued.pictures.screen, facts: issued.facts, size: .thumbnail)
           case .locked(let facts):
             LockedCertificateCard(facts: facts, size: .thumbnail)
           }
@@ -147,8 +147,7 @@ private struct EmptyCertificates: View {
   }
 }
 
-/// Main's `GhostCertificate`: shapes that stand for a certificate without saying one, so nothing
-/// reads as a real one.
+/// Shapes that stand for a certificate without saying one, so nothing reads as a real one.
 private struct GhostCertificate: View {
   private static let bars: [(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)] = [
     (0.07, 0.10, 0.16, 0.05),

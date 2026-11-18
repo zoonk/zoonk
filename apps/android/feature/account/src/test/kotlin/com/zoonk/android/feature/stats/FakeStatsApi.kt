@@ -12,11 +12,13 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 
+/** [dayVerdict] is the API's `dayVerdict`: "best" names Tuesday, "even" says no day stands out. */
 internal class FakeStatsApi(
     val studied: Boolean,
+    private val dayVerdict: String = """{"kind":"best","points":null}""",
 ) : StatsApi {
     private val verdicts =
-        """"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},""" +
+        """"dayVerdict":$dayVerdict,"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},""" +
             """"weekSpread":{"high":92,"low":74}"""
 
     override suspend fun progress(session: AuthenticatedSession): CurrentUserProgressResponse =
@@ -57,7 +59,7 @@ internal class FakeStatsApi(
                     } else {
                         (ago * 7 % 11).takeIf { ago < 60 && it < 5 } ?: 0
                     }
-                """{"activitiesCompleted":$count,"date":"$day","lessonCompletions":0}"""
+                """{"activitiesCompleted":$count,"date":"$day","lessonCompletions":0,"timeSpentSeconds":${count * 240}}"""
             }}]}""",
         )
 

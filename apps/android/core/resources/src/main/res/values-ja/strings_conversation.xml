@@ -18,7 +18,6 @@
   "conversation_call_time": "3755af2cc8184b1b8398b802ac0a861b2fa9e3a04bc6e19247f1c35b6bea73e0",
   "conversation_calling": "7f60335c1c9802ffdae59354435ce1c411397c4d4a3beb25387f452b965c9b6a",
   "conversation_calls_need_account": "0e7de2a2250a143ad05fa13a30c5b78889b7fd843b3c9a132d4e03f63cf2db3c",
-  "conversation_cancel": "7aea9dd4a9073dc8ea9b53772366039c318fd3bbf24a8e3c8656c4f23aad8025",
   "conversation_challenge_gate_line": "d820e588f0aca166a4ea0d32a7b232abf4242af5adb5253d37b685f6cb4cd5e4",
   "conversation_challenge_gate_title": "9711d81e4e23b481041b36ccc50b5a0719d24913c601e1f9f13a980c8549edd1",
   "conversation_challenge_passed": "83ba98fc26de1805c2c9e11fce46abc979a69a3009c034cf6808bb97faf6a0cb",
@@ -213,8 +212,6 @@
     <!-- The call is connecting; the character's name. -->
     <string name="conversation_calling">%1$sさんを呼び出しています…</string>
     <string name="conversation_answers_first">%1$sさんが先に応答します。</string>
-    <!-- Ends a call that hasn't connected yet. -->
-    <string name="conversation_cancel">キャンセル</string>
     <string name="conversation_muted">ミュート中</string>
     <string name="conversation_muted_detail">ミュートを解除して声に出して答えるか、返事を入力してください。</string>
     <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->

@@ -47,6 +47,7 @@ private struct EnergyCalendar: View {
     StatsCalendar(
       gridLabel: Text(
         "Energy by day", tableName: "Progress"),
+      legendTitle: Text("Energy", tableName: "Progress"),
       legendLabel: Text(
         "Energy intensity from low to high", tableName: "Progress"),
       low: Text("Low", tableName: "Progress", comment: "Low end of the Energy calendar's key"),
@@ -79,6 +80,7 @@ private struct EnergyCalendar: View {
       chartTitle: String(
         localized: "Energy by day", table: "Progress", comment: "Spoken name of the Energy calendar"
       ),
+      valueText: { metricPercent($0) },
       chartSummary: { visibleDays, _ in
         let values = visibleDays.compactMap(\.value)
         guard !values.isEmpty else { return "" }

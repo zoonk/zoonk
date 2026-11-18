@@ -80,9 +80,13 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
     val between = percentBetween(distribution, Interval(low, high))
     val below = percentBetween(distribution, Interval(ends.from, low))
     val above = percentBetween(distribution, Interval(high, ends.to))
-    // Every share reads to the check's precision, as the answer and its feedback do.
-    val checkDigits = (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
-    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = checkDigits ?: PERCENT_DIGITS) }
+    // The share between the handles reads to the answer's rounding, as the hint and the right answer do; the tails, which no
+    // check asks about, read the same on every step.
+    val shareDigits =
+        props.roundedAnswer?.places?.toInt()
+            ?: (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
+    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = shareDigits ?: PERCENT_DIGITS) }
+    val tail = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = TAIL_DIGITS) }
     val format = { value: Double -> formatAmount(value, locale) }
     val withUnit = { value: Double -> formatAmount(value, locale, fields.unit) }
     val change = { next: Pair<Double, Double> ->
@@ -119,8 +123,8 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
             percent(between),
             withUnit(low),
             withUnit(high),
-            percent(below),
-            percent(above),
+            tail(below),
+            tail(above),
         )
     val handleTexts =
         listOf(low, high).map {
@@ -147,12 +151,12 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
         }
         FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
-                "< " + format(low) + ": " + percent(below),
+                "< " + format(low) + ": " + tail(below),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                "> " + format(high) + ": " + percent(above),
+                "> " + format(high) + ": " + tail(above),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -234,7 +238,11 @@ private fun DistributionPlot(
         val (from, to) = handles
 
         Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            val inside = curve.filter { it.first in from..to }
+            // The shading starts and ends on the handles, not on the nearest drawn point inside them.
+            val inside =
+                listOf(from to densityAt(distribution, from)) +
+                    curve.filter { it.first > from && it.first < to } +
+                    (to to densityAt(distribution, to))
             if (inside.isNotEmpty()) {
                 val shaded =
                     Path().apply {
@@ -370,6 +378,7 @@ private fun DistributionHandle(
 }
 
 private const val PERCENT_DIGITS = 1
+private const val TAIL_DIGITS = 2
 private const val HEADROOM = 1.08
 private const val SOFT = 0.18f
 private const val HALF = 0.5f

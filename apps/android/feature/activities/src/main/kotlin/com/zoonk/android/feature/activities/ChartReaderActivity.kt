@@ -76,7 +76,6 @@ private fun ChartReaderActivity(props: ActivityProps) {
             xDomain = xDomain,
             yDomain = yDomain,
             yTicks = niceTicks(yDomain, AXIS_TICKS),
-            xTicks = niceTicks(xDomain, AXIS_TICKS),
             formatY = { formatAmount(it, locale, compact = true) },
             formatX = formatX,
         ) {

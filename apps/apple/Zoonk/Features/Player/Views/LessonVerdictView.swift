@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonVerdictView: View {
   @Environment(\.legibilityWeight) private var legibility
+  @Environment(\.activityRenderers) private var activityRenderers
 
   let step: LessonStep
   let answer: LessonAnswer?
@@ -141,12 +142,12 @@ struct LessonVerdictView: View {
   @ViewBuilder
   private var correctAnswerLine: some View {
     if result.checked, let correctAnswer = result.correctAnswer {
-      if !result.isCorrect, !Self.marksItsAnswer.contains(step.kind) {
+      if !result.isCorrect, !Self.marksItsAnswer.contains(step.kind), !isRevealedOnCanvas {
         if result.isSampleAnswer {
           LessonRichText(correctAnswer)
             .typeStyle(.body.weight(.medium))
         } else {
-          RightAnswerLine(answer: displayedCorrectAnswer(correctAnswer))
+          RightAnswerLine(answer: correctAnswer)
         }
       } else if result.isCorrect, isWordBankAnswer {
         LabeledText(
@@ -160,13 +161,11 @@ struct LessonVerdictView: View {
     }
   }
 
-  private func displayedCorrectAnswer(_ answer: String) -> String {
-    guard case .activity(let content) = step.content, content.template == "guessReveal",
-      case .numeric(_, let expected, _, _, _, _, _) = content.check,
-      let fields = try? content.fields(as: GuessRevealFields.self)
-    else { return answer }
-
-    return ActivityNumberFormat.guess(expected, unit: fields.unit)
+  /// A canvas that takes the number itself reveals the real value beside the guess, so the verdict
+  /// doesn't write it a second time.
+  private var isRevealedOnCanvas: Bool {
+    guard case .activity(let content) = step.content else { return false }
+    return activityRenderers.renderer(for: content.template)?.answersOnCanvas == true
   }
 
   /// A device grade sets the right answer on other right answers too.

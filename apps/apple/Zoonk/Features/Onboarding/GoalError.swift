@@ -33,7 +33,7 @@ enum GoalLimitReason: Equatable, Sendable {
     isPlusLimit && !(availableAt.map { $0 <= now } ?? false)
   }
 
-  /// Mirrors main's `getGoalLimitReason`.
+  /// Mirrors main's `getGoalLimit`.
   init(_ limit: OnboardingLimit) {
     let help = limit.help
 

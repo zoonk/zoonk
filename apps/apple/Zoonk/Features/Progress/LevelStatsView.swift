@@ -69,13 +69,14 @@ private struct BeltProgression: View {
 
       BeltRack(current: level.belt)
 
-      if let next = level.nextBelt {
+      // On a belt's tenth level the panel already names the next belt.
+      if let next = level.nextBelt, level.level < 10 {
         StatsLine(
           text: Text(
-            "\(String(localized: next.belt.localizedTitle)) comes after \(String(localized: level.belt.localizedTitle)) \(10), at \(next.startBrainPower.formatted()) Brain Power",
+            "\(String(localized: next.belt.localizedTitle)) comes after level \(10), at \(next.startBrainPower.formatted()) Brain Power",
             tableName: "Progress",
             comment:
-              "Under the belts: the next belt, the belt before it with its last number (10), and the Brain Power where the next one starts, as in Yellow belt comes after White belt 10, at 2,500 Brain Power"
+              "{next} is a belt's name, such as \"Yellow belt\". {count} is a belt's last level, 10."
           ))
       }
     }
@@ -97,9 +98,8 @@ private struct BeltProgression: View {
           "What the next belt takes, at a belt's tenth number, as in 96 Brain Power to Yellow belt")
     } else {
       Text(
-        "\(level.bpToNextLevel.formatted()) Brain Power to \(beltAndNumber(level.belt, level.level + 1))",
-        tableName: "Progress",
-        comment: "What the belt's next number takes, as in 96 Brain Power to White belt 3")
+        "\(level.bpToNextLevel.formatted()) Brain Power to level \(level.level + 1)",
+        tableName: "Progress")
     }
   }
 

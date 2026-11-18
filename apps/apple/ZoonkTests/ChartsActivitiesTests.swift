@@ -28,6 +28,20 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertLessThanOrEqual(size.width, 96)
     XCTAssertGreaterThan(size.height, large.lineHeight)
   }
+  /// The guess's scale holds still on Check: revealing the real value changes no height above or
+  /// on the track.
+  @MainActor func testAGuessScaleKeepsItsHeightWhenTheRealValueShows() {
+    let scale = GuessScale(min: 1, max: 1000, kind: .log)
+    let height = { (actual: Double?) in
+      UIHostingController(
+        rootView: ActivityGuessScaleView(
+          scale: scale, unit: "days", guess: 11.2, actual: actual, onGuess: { _ in })
+      ).sizeThatFits(in: CGSize(width: 340, height: 2000)).height
+    }
+
+    XCTAssertEqual(height(nil), height(11.57))
+  }
+
   @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
     let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
     let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)

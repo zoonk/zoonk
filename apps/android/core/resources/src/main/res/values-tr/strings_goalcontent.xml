@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "goalcontent_adjust_plan": "d9aa3e27c9d36f31f6d2815ee42d18338bf7c49e0925a4888f2aae70a3fec3ce",
-  "goalcontent_also": "6e6eb5196914a4e0d147bc256934a39dadb96c4fb47be6f2b59b9a9e2123a043",
   "goalcontent_also_in_exam_count": "b319c8bf446c2cc25408ce4e98195208b09d93ae55c0001b45ee8f50d1b8e8d2",
   "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
   "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
@@ -201,8 +200,6 @@
     <string name="goalcontent_topics_in_notice">Sınav konuları</string>
     <string name="goalcontent_topics_in_guide">Resmî kılavuzdaki konular</string>
     <string name="goalcontent_details">Ayrıntılar</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
-    <string name="goalcontent_also">Diğer seçenekler</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Sorular</string>
     <string name="goalcontent_topics">Konular</string>

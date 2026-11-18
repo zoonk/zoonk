@@ -66,6 +66,7 @@ struct BuddyDayView: View {
             "What \(name) remembers", tableName: "Buddy",
             comment: "Opens what the buddy remembers; the argument is its name"
           )
+          .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
         }
 
@@ -77,7 +78,7 @@ struct BuddyDayView: View {
             )
             .monospacedDigit()
           } label: {
-            Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+            Text("\(name)'s glasses", tableName: "Buddy")
           }
           .disclosureChevron()
         }
@@ -86,6 +87,7 @@ struct BuddyDayView: View {
           places.open(.logbook)
         } label: {
           Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
+            .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
         }
       } header: {

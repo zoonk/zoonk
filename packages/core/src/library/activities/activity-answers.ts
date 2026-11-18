@@ -1,4 +1,8 @@
-import { formatLocalizedNumber, parseLocalizedNumber } from "@zoonk/utils/localized-number";
+import {
+  exactFractionDigitsFor,
+  formatLocalizedNumber,
+  parseLocalizedNumber,
+} from "@zoonk/utils/localized-number";
 import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { type ActivityAnswer } from "./activity-answer-schema";
 import { type ActivityTolerance } from "./activity-schemas";
@@ -93,8 +97,8 @@ export function getActivityAnswerRules(content: ActivityStepContent): {
   };
 }
 
-/** The hint's places for a checked learner's number, or null when there's no hint or the rounded number would grade differently from what was typed. */
-export function getCheckedAnswerPlaces({
+/** Decimal places for a checked learner's number: the hint's when the rounded number keeps its grade, else the fewest from its exact digits that do, so the shown number never reads as the other verdict. */
+export function getCheckedAnswerDigits({
   content,
   isCorrect,
   value,
@@ -102,16 +106,34 @@ export function getCheckedAnswerPlaces({
   content: ActivityStepContent;
   isCorrect: boolean;
   value: number;
-}): number | null {
-  const places = getActivityRoundedAnswer(content)?.places ?? null;
+}): number {
+  const { check } = content;
+  const ownDigits = countDecimalPlaces(value);
 
-  if (places === null) {
-    return null;
+  if (check.kind !== "numeric") {
+    return ownDigits;
   }
 
-  const shown = roundToPlaces(value, places);
+  const keepsGrade = (places: number) =>
+    checkActivityAnswer(content, { kind: "numeric", value: roundToPlaces(value, places) }) ===
+    isCorrect;
 
-  return checkActivityAnswer(content, { kind: "numeric", value: shown }) === isCorrect
-    ? places
-    : null;
+  const hint = getActivityRoundedAnswer(content)?.places ?? null;
+
+  if (hint !== null && keepsGrade(hint)) {
+    return hint;
+  }
+
+  const from = exactFractionDigitsFor({
+    expected: check.answer,
+    tolerance: check.tolerance,
+    value,
+  });
+
+  const candidates = Array.from(
+    { length: Math.max(0, ownDigits - from) },
+    (_, index) => from + index,
+  );
+
+  return candidates.find((places) => keepsGrade(places)) ?? Math.max(from, ownDigits);
 }

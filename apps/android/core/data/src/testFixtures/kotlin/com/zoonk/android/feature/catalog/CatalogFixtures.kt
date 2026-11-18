@@ -31,7 +31,7 @@ private fun courseResult(
 ): CourseResult =
     ApiJson.decodeFromString(
         """{"description":"A first sentence. A second one.","estimatedMinutes":90,"id":"$id","language":"en",
-            "lessonCount":6,"organization":{"id":"$ORG","name":"Zoonk","slug":"zoonk"},"slug":"s","subject":"science",
+            "lessonCount":6,"organization":{"id":"$ORG","name":"Zoonk","slug":"zoonk"},"promise":"A first sentence. A second one.","slug":"s","subject":"science",
             "title":"$title"}""",
     )
 

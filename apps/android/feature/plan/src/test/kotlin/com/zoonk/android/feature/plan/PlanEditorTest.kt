@@ -62,7 +62,7 @@ class PlanEditorTest {
             sheetAnswers = sheetAnswers + (opening to PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED))
         }
 
-        compose.onNodeWithText("How will you use it?").assertIsDisplayed()
+        compose.onNodeWithText("Do you have it?").assertIsDisplayed()
     }
 
     private companion object {

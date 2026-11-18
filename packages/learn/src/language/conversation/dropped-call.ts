@@ -3,8 +3,9 @@ import { type LiveCallError } from "./live-call-lifecycle";
 import { type LiveCallPhase } from "./use-call-controls";
 
 /**
- * What the dropped screen shows: why the call can't go on (null keeps the plain "call dropped"
- * line) and how the learner can call again, if that can work. Ending the call is always there.
+ * What the dropped screen shows: why the call can't go on (null: the connection was lost, the one
+ * call that "dropped") and how the learner can call again, if that can work. Ending the call is
+ * always there.
  */
 export type DroppedCall = {
   reason:
@@ -20,7 +21,8 @@ export type DroppedCall = {
 
 const BY_ERROR: Record<LiveCallError, DroppedCall> = {
   callInProgress: { reason: "callInProgress", retry: "takeover" },
-  callsPaused: { reason: "callsPaused", retry: "callAgain" },
+  // Paused for everyone: calling again now can't work.
+  callsPaused: { reason: "callsPaused", retry: null },
   connect: { reason: null, retry: "callAgain" },
   dropped: { reason: null, retry: "callAgain" },
   ended: { reason: "ended", retry: null },

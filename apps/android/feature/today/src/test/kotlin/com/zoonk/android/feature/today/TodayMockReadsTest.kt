@@ -18,6 +18,7 @@ import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -68,7 +69,7 @@ class TodayMockReadsTest {
         val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
         val mocks = MockStore(LiveMockApi(api.clients), cache)
 
-        rule.setContent { ZoonkTheme { PausedPractice(today, mocks, GOAL, completedLessons = true) {} } }
+        rule.setContent { ZoonkTheme { PausedPractice(today, mocks, PAUSED_EXAM, completedLessons = true) {} } }
         rule.waitFor { api.requests(MISTAKES) == 1 }
         rule.waitForIdle()
 
@@ -79,5 +80,32 @@ class TodayMockReadsTest {
         val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00")
         val MOCKS = "/goals/$GOAL/mocks"
         const val MISTAKES = "/me/mistakes"
+        val PAUSED_EXAM =
+            LearnerSummaryGoal(
+                courseChapterId = null,
+                courseId = null,
+                courseLevel = null,
+                dailyMinutes = 20,
+                id = GOAL,
+                isActive = true,
+                isSettingUp = false,
+                kind = LearnerSummaryGoal.Kind.EXAM,
+                language = "en",
+                languageFlag = null,
+                regionChoices = emptyList(),
+                contentCountry = null,
+                countryDependent = false,
+                examCountry = null,
+                examplesCountry = null,
+                languageCountry = null,
+                suggested = emptyList(),
+                status = LearnerSummaryGoal.Status.PAUSED,
+                targetDate = null,
+                targetDateEstimated = false,
+                targetLanguage = null,
+                targetRegion = null,
+                title = "ENEM 2026",
+                displayName = "ENEM",
+            )
     }
 }

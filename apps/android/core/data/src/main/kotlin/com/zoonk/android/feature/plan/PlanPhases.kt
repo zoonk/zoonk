@@ -70,8 +70,14 @@ sealed interface PhaseEnd {
     ) : PhaseEnd
 }
 
-/** Main's `getPlanFinish`: the completion day, or the goal's date or estimated end while under way. */
-fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanEnd? {
+/**
+ * Main's `getPlanFinish`: the completion day, or the goal's date or estimated end while under way. That end comes from
+ * the learner's pace, so a [paused] goal has none; the goal's date, an exam's likely one included, stays.
+ */
+fun Plan.finish(
+    goalKind: LearnerSummaryGoal.Kind,
+    paused: Boolean = false,
+): PlanEnd? {
     val completion = end
     if (goalKind != LearnerSummaryGoal.Kind.EXAM && completion != null) {
         return completion.finishedOn?.let { PlanEnd(it.toJavaLocalDate(), estimate = false, month = false) }
@@ -80,7 +86,7 @@ fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanEnd? {
         return PlanEnd(it.toJavaLocalDate(), schedule.targetDateEstimated, schedule.targetDateNamedMonth)
     }
     val end = estimate.endDate?.toJavaLocalDate() ?: return null
-    if (goalKind == LearnerSummaryGoal.Kind.EXAM) return null
+    if (goalKind == LearnerSummaryGoal.Kind.EXAM || paused) return null
     return PlanEnd(end, estimate = true, month = estimateNamesMonth(end))
 }
 

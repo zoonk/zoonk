@@ -191,10 +191,10 @@ fun ActivityPlot(
     xDomain: ClosedFloatingPointRange<Double>,
     yDomain: ClosedFloatingPointRange<Double>,
     yTicks: List<Double>,
-    xTicks: List<Double>,
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
+    xTicks: List<Double>? = null,
     area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
@@ -213,15 +213,17 @@ fun ActivityPlot(
 
     Canvas(modifier.fillMaxWidth().height(height).clearAndSetSemantics {}) {
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
-        val xLabels = xTicks.map { measurer.measure(formatX(it), style.copy(color = muted)) }
         val gap = LABEL_GAP.toPx()
         val left = if (yLabels.isEmpty()) RIGHT.toPx() else max(MIN_LEFT.toPx(), yLabels.maxOf { it.size.width } + gap)
         val right = size.width - RIGHT.toPx()
         val top = TOP.toPx()
-        val bottom = size.height - max(MIN_BOTTOM.toPx(), (xLabels.maxOfOrNull { it.size.height } ?: 0) + gap)
+        val bottom = size.height - max(MIN_BOTTOM.toPx(), labelHeight.toPx() + gap)
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
-        drawPlotAxes(x, y, measurer.fittedPlotTicks(x, style.copy(color = muted), formatX), yTicks.zip(yLabels), gridColor)
+        val xStyle = style.copy(color = muted)
+        // A caller's own ticks (an angle's quarter turns) show when they fit side by side; otherwise round ones that do.
+        val given = xTicks?.map { it to measurer.measure(formatX(it), xStyle) }?.takeIf { x.fitsSideBySide(it) }
+        drawPlotAxes(x, y, given ?: measurer.fittedPlotTicks(x, xStyle, formatX), yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
@@ -278,6 +280,13 @@ internal fun DrawScope.drawPlotAxes(
         drawText(label, topLeft = Offset(start, bottom + gap))
     }
 }
+
+private fun LinearScale.fitsSideBySide(labels: List<Pair<Double, TextLayoutResult>>): Boolean =
+    labels
+        .map { (tick, label) -> toPixel(tick) - label.size.width / 2f to toPixel(tick) + label.size.width / 2f }
+        .sortedBy { it.first }
+        .zipWithNext()
+        .all { (a, b) -> a.second < b.first }
 
 internal fun TextMeasurer.fittedPlotTicks(
     scale: LinearScale,

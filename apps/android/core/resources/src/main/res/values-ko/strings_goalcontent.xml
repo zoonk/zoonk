@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "goalcontent_adjust_plan": "ad0b1bb190075f7d1cda4d199e8349a486315d6a97bfa207a71657f5e7423d4e",
-  "goalcontent_also": "7b01d560e70d5f5df13c9aa948abc9dce9166d1b80fe27e77345ab81083f574e",
   "goalcontent_also_in_exam_count": "b61d23f5380bef9380f52cec3694faeafa4e8bd5ed7d2c20c8a1e21457a87a8a",
   "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
   "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
@@ -186,8 +185,6 @@
     <string name="goalcontent_topics_in_notice">시험에 나오는 주제</string>
     <string name="goalcontent_topics_in_guide">공식 안내서에 나온 주제</string>
     <string name="goalcontent_details">상세 정보</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
-    <string name="goalcontent_also">함께 보기</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">문제</string>
     <string name="goalcontent_topics">주제</string>

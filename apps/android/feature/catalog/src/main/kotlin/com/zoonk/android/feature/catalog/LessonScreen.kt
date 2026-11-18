@@ -319,7 +319,7 @@ private fun LessonChapterAside(
     }
 }
 
-/** Main's `LessonPlanDay`: the lesson among its neighbors as a day of a plan would hold them. */
+/** The lesson among its neighbors as a day of a plan would hold them. */
 @Composable
 private fun LessonPlanDay(
     app: AppContainer,
