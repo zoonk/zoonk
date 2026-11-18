@@ -66,10 +66,10 @@ describe("activity numeric answers", () => {
       template: "formulaModel",
     });
 
-    await valueInput().fill("251.4922");
+    await valueInput().fill("251.49301");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(valueInput()).toHaveValue("251.492");
+    await expect.element(valueInput()).toHaveValue("251.493");
   });
 
   it("keeps a field with no rounding rule in place when a typing error shows", async () => {

@@ -143,14 +143,21 @@ describe(gradeStepAnswer, () => {
     { answer: 251.54, answerText: "251.5", correctAnswer: null, tolerance: 0.05, value: 251.495 },
     {
       answer: 251.5421,
-      answerText: "251.492",
+      answerText: "251.4922",
       correctAnswer: null,
       tolerance: 0.05,
       value: 251.4922,
     },
     {
+      answer: 251.5421,
+      answerText: "251.493",
+      correctAnswer: null,
+      tolerance: 0.05,
+      value: 251.49301,
+    },
+    {
       answer: 251.54,
-      answerText: "251.4901",
+      answerText: "251.49",
       correctAnswer: null,
       tolerance: 0.05,
       value: 251.54 - 0.0499,
