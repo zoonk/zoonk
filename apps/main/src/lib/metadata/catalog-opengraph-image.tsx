@@ -5,15 +5,14 @@ import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
+import { getCatalogImageDescription } from "./catalog-opengraph-description";
 import { OpenGraphBrand, getOpenGraphLogo } from "./open-graph-brand";
 import { getOpenGraphWordBreak } from "./open-graph-word-break";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
 const DESCRIPTION_LINE_HEIGHT = 1.35;
-const DESCRIPTION_LINE_COUNT = 5;
 const DESCRIPTION_FONT_SIZE = 30;
 const BRAND_SIZE = 40;
-const MAX_DESCRIPTION_LENGTH = 112;
 const MAX_TITLE_LENGTH = 76;
 const LONG_TITLE_LENGTH = 58;
 const MEDIUM_TITLE_LENGTH = 38;
@@ -183,9 +182,7 @@ function CatalogOpenGraphImage({
 }: CatalogOpenGraphImageParams & { imageSrc: string; logoSrc: string }) {
   const safeTitle = truncateText({ maxLength: MAX_TITLE_LENGTH, text: title });
 
-  const safeDescription = description
-    ? truncateText({ maxLength: MAX_DESCRIPTION_LENGTH, text: description })
-    : "";
+  const safeDescription = getCatalogImageDescription({ description, language });
 
   return (
     <div
@@ -195,23 +192,17 @@ function CatalogOpenGraphImage({
         display: "flex",
         flexDirection: "column",
         fontFamily: "Geist",
+        gap: 32,
         height: "100%",
-        padding: "48px 96px 72px",
+        justifyContent: "center",
+        padding: "48px 96px",
         width: "100%",
         wordBreak: getOpenGraphWordBreak(language),
       }}
     >
       <OpenGraphBrand logoSrc={logoSrc} size={BRAND_SIZE} />
 
-      <div
-        style={{
-          alignItems: "center",
-          display: "flex",
-          flexGrow: 1,
-          gap: 96,
-          justifyContent: "center",
-        }}
-      >
+      <div style={{ alignItems: "center", display: "flex", gap: 96 }}>
         <div
           style={{
             background: "#ffffff",
@@ -237,11 +228,12 @@ function CatalogOpenGraphImage({
         <div
           style={{
             display: "flex",
+            flexBasis: 0,
             flexDirection: "column",
+            flexGrow: 1,
             gap: 28,
             justifyContent: "center",
             minWidth: 0,
-            width: 560,
           }}
         >
           <div
@@ -262,8 +254,6 @@ function CatalogOpenGraphImage({
                 display: "flex",
                 fontSize: DESCRIPTION_FONT_SIZE,
                 lineHeight: DESCRIPTION_LINE_HEIGHT,
-                maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
-                overflow: "hidden",
               }}
             >
               {safeDescription}
