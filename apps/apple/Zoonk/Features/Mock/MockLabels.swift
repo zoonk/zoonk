@@ -8,6 +8,13 @@ enum MockLabels {
       : LocalizedStringResource("\(count) marked for review", table: "Mock")
   }
 
+  /// How many of the section's questions are answered, beside the answer sheet's title.
+  static func answered(_ count: Int) -> LocalizedStringResource {
+    count == 0
+      ? LocalizedStringResource("0 answered", table: "Mock")
+      : LocalizedStringResource("\(count) answered", table: "Mock")
+  }
+
   static func title(number: Int) -> String {
     String(
       localized: "Mock exam \(number)", table: "Mock", comment: "A mock exam's name, by its number")

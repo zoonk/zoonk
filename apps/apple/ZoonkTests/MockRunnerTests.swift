@@ -306,6 +306,13 @@ final class MockAnswerSheetTests: XCTestCase {
     XCTAssertEqual(String(localized: japanese), "2問が見直し対象", "The web's words")
   }
 
+  /// Beside the sheet's title, as the web's: how many of the section's questions are answered.
+  func testTheSheetSaysHowManyQuestionsAreAnswered() {
+    XCTAssertEqual(String(localized: MockLabels.answered(0)), "0 answered")
+    XCTAssertEqual(String(localized: MockLabels.answered(1)), "1 answered")
+    XCTAssertEqual(String(localized: MockLabels.answered(2)), "2 answered")
+  }
+
   /// A question the learner can't go back to reads as dimmed, as it's drawn.
   func testALockedQuestionReadsAsDimmed() async throws {
     try readsWhatVoiceOverReads()
