@@ -8,7 +8,7 @@
   "mock_break_detail": "d5dbd2f5f4633d5183aac47f3d4e2e9f4f0f2e7827d383a4bda1a1007bb916c4",
   "mock_break_time_left": "c242660b660cd52ce630a0983d01149f104f45ee1ffaf62624ed12d07a9e0b81",
   "mock_cell_answered": "104bdd3ddf561f40b8299398f49ded7effef14828ed816aa146b7579fb9857d3",
-  "mock_cell_flagged": "6ba6f2181265ba7bcb0a2f4ee5d79d6f1dc7cf66633e077175c70b6d9b802e2d",
+  "mock_cell_marked_for_review": "9119cde7ec6b9d27af87a36ea5c2556c9eb0c75dc63907f207552f3ea1b9f54d",
   "mock_continue": "48298322cad404d3d999253bb4e39110329c41e1fea376e187f209e9d1ba83bf",
   "mock_continue_section": "b756f1009d5558f0fa38b9c2972ed8a7e14d8ad928bfcd6e9e1dd126af55be97",
   "mock_essay_blank": "c8766822cc7ca0a22fee1e791dc4f12ba6f55b7ea56f73ad48cd8b187f9b7633",
@@ -63,6 +63,7 @@
   "mock_section_number": "9ff4b04f3bdd85b75b79bfaa5674757759df58ef7200e67ff92c0e14d7ed01f3",
   "mock_sections": "651386e3e0e213d324a519c0b3596a8671ceb26a2db5b9b0066c58f2fb8134f2",
   "mock_see_result": "eedc9cdbe0c52da130b812185dc38615b481563dbcf40ed352823ff9fd2b8c85",
+  "mock_sheet": "699cb04256f723c9e4a6170b7c5a9988518f343b16b3d127e84c35a58ddba298",
   "mock_speaking": "d9805eb4cbdcfd89bb3a578757f25d0c49bd6622ed70cb0d9808ac8930d8f453",
   "mock_speaking_all_done": "866e5ef015f6a5d5504159ceaad4eda04d67882eda5ce241eb910d79880a4d6f",
   "mock_speaking_done": "7d2cc9b967db370206452a3621caf88924868782e5ca24a7ac7d215b2f081d57",
@@ -168,16 +169,25 @@
     <string name="mock_hand_in_final">提出後は回答を変更できません。</string>
     <string name="mock_keep_answering">解答を続ける</string>
     <string name="mock_hand_in">提出する</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">解答用紙</string>
     <string name="mock_answer_sheet">解答用紙</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="other">%d問に回答済み</item>
     </plurals>
+    <string name="mock_legend_unanswered">未回答</string>
+    <string name="mock_legend_answered">回答済み</string>
+    <string name="mock_legend_current">現在の問題</string>
+    <string name="mock_legend_review">見直し対象</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="other">%d問が見直し対象</item>
+    </plurals>
     <string name="mock_questions">問題</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">問題%1$d</string>
     <string name="mock_cell_answered">回答済み</string>
-    <string name="mock_cell_flagged">見直し対象</string>
+    <string name="mock_cell_marked_for_review">%1$s、見直し対象</string>
     <string name="mock_sections">セクション</string>
     <string name="mock_section_number">セクション%1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
@@ -232,11 +242,4 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">すべてのタスクが終わりました。提出後はこの模試でやり直せません。</string>
     <string name="mock_keep_going">続ける</string>
-    <string name="mock_legend_unanswered">未回答</string>
-    <string name="mock_legend_answered">回答済み</string>
-    <string name="mock_legend_current">現在の問題</string>
-    <string name="mock_legend_review">見直し対象</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="other">%d問が見直し対象</item>
-    </plurals>
 </resources>

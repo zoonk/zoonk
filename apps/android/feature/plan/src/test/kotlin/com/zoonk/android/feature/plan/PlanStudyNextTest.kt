@@ -25,6 +25,19 @@ class PlanStudyNextTest {
 
     @Test
     fun aFinishedPlansLineOffersItsCertificate() {
+        show()
+
+        compose.onNodeWithText("Get your certificate").assertIsDisplayed()
+    }
+
+    @Test
+    fun aClaimFromTheLineThatFailsSaysSoOnTheLine() {
+        show(claimFailed = true)
+
+        compose.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
+    }
+
+    private fun show(claimFailed: Boolean = false) {
         val summary = learnerSummary()
         val page = PlanPageState(summary.goals.first(), plan(), summary)
         val next = ApiJson.decodeFromString<StudyNext>("""{"nextLevel":null,"related":[]}""")
@@ -37,7 +50,7 @@ class PlanStudyNextTest {
                         page,
                         PlanEdits(),
                         PlanLinks(rememberAppNavigator(), page),
-                        SlotHost(next = next, certificates = certificates),
+                        SlotHost(next = next, certificates = certificates, claimFailed = claimFailed),
                         SlotState(),
                         SuggestionLayout.Line,
                         SlotFocus(),
@@ -45,7 +58,5 @@ class PlanStudyNextTest {
                 StudyNextSuggestion(next, slot)
             }
         }
-
-        compose.onNodeWithText("Get your certificate").assertIsDisplayed()
     }
 }

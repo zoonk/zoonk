@@ -185,7 +185,6 @@
     <string name="goalcontent_topics_in_notice">시험에 나오는 주제</string>
     <string name="goalcontent_topics_in_guide">공식 안내서에 나온 주제</string>
     <string name="goalcontent_details">상세 정보</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">문제</string>
     <string name="goalcontent_topics">주제</string>

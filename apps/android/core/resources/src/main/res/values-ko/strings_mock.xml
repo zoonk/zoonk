@@ -8,7 +8,7 @@
   "mock_break_detail": "fa66b05003c70d083de4b61ac45f07679aa330c6f62df6bdd99de3e3774c1ef5",
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
-  "mock_cell_flagged": "baf06ee8c507c03e25ab973570ba1714a3ffa520f40658602fd512aa75e911f4",
+  "mock_cell_marked_for_review": "fc6498bbb1af542fccc2f39c0fbad4ebd1de4cbaf33df22189122bb754a34d5e",
   "mock_continue": "898a1a5f9e4467c4a564855b4677047e55c83afc11dcfbee5fe37def116e3482",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
@@ -63,6 +63,7 @@
   "mock_section_number": "7816e14665d493211074bb22b95b27ecf837a02476b8c12d362151c5b8377b71",
   "mock_sections": "868877f99217fe164c757f37460e9675f65a3dd97212d7529726e599a136eccc",
   "mock_see_result": "454ed09506e7aefc56dbd2f03de48d5970a8240003c8f00ba0ac9b85c2adc0f6",
+  "mock_sheet": "eab2fbdaf070eb80a0039625f122967ff12c4ff09fba4c9d3e4e280a4900c2c9",
   "mock_speaking": "8c1738c8c97b9972f7815533ef89a0846097bdb77110f10fa437265e0b022996",
   "mock_speaking_all_done": "b3251461ba015bbfc80987eb0dffa65e375f95df9e2d99cfb9591b54ce924364",
   "mock_speaking_done": "901c9f622454d5febe8fcbd7a438ae301e19cf086e8be03441dbbd8820192670",
@@ -168,16 +169,25 @@
     <string name="mock_hand_in_final">제출하면 답안을 수정할 수 없어요.</string>
     <string name="mock_keep_answering">계속 풀기</string>
     <string name="mock_hand_in">제출하기</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">답안지</string>
     <string name="mock_answer_sheet">답안지</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="other">%d개 풀었어요</item>
     </plurals>
+    <string name="mock_legend_unanswered">안 푼 문제</string>
+    <string name="mock_legend_answered">푼 문제</string>
+    <string name="mock_legend_current">현재 문제</string>
+    <string name="mock_legend_review">다시 볼 문제</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="other">다시 볼 문제 %d개</item>
+    </plurals>
     <string name="mock_questions">문제</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
     <string name="mock_cell_answered">답안 작성 완료</string>
-    <string name="mock_cell_flagged">표시됨</string>
+    <string name="mock_cell_marked_for_review">%1$s, 다시 볼 문제로 표시됨</string>
     <string name="mock_sections">파트</string>
     <string name="mock_section_number">파트 %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
@@ -232,11 +242,4 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">모든 과제를 마쳤어요. 제출하면 이 모의고사에서는 과제를 다시 할 수 없어요.</string>
     <string name="mock_keep_going">계속하기</string>
-    <string name="mock_legend_unanswered">안 푼 문제</string>
-    <string name="mock_legend_answered">푼 문제</string>
-    <string name="mock_legend_current">현재 문제</string>
-    <string name="mock_legend_review">다시 볼 문제</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="other">다시 볼 문제 %d개</item>
-    </plurals>
 </resources>

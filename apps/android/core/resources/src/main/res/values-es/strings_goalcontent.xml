@@ -215,7 +215,6 @@
     <string name="goalcontent_topics_in_notice">Temas del examen</string>
     <string name="goalcontent_topics_in_guide">Temas de la guía oficial</string>
     <string name="goalcontent_details">Detalles</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Preguntas</string>
     <string name="goalcontent_topics">Temas</string>

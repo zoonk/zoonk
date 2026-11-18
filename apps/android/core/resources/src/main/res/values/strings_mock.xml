@@ -76,6 +76,8 @@
     <string name="mock_hand_in_final">After this, your answers can\'t change.</string>
     <string name="mock_keep_answering">Keep answering</string>
     <string name="mock_hand_in">Hand in</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">Sheet</string>
     <string name="mock_answer_sheet">Answer sheet</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -94,7 +96,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">answered</string>
-    <string name="mock_cell_flagged">flagged</string>
+    <string name="mock_cell_marked_for_review">%1$s, marked for review</string>
     <string name="mock_sections">Sections</string>
     <string name="mock_section_number">Section %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

@@ -123,7 +123,10 @@ internal fun MockRunnerView(
         },
         actions = {
             if (!taskAsideBeside()) {
-                TextButton(onClick = { sheetOpen = true }) { Text(stringResource(R.string.mock_answer_sheet)) }
+                val label = stringResource(R.string.mock_answer_sheet)
+                TextButton(onClick = { sheetOpen = true }, Modifier.semantics { contentDescription = label }) {
+                    Text(stringResource(R.string.mock_sheet))
+                }
             }
         },
         bottomBar = { RunnerActions(viewModel, run, handIn) },
@@ -427,7 +430,7 @@ private fun QuestionMap(
     }
 }
 
-/** How many questions are flagged, under the map: nothing until one is. */
+/** The key under the question numbers: what each cell's look means, with how many are marked for review. */
 @Composable
 internal fun SheetLegend(flagged: Int) {
     val colors = MaterialTheme.colorScheme
@@ -438,7 +441,6 @@ internal fun SheetLegend(flagged: Int) {
             pluralStringResource(R.plurals.mock_legend_review_count, flagged, flagged)
         }
 
-    // Says what each cell's look means, drawn as the cells draw it.
     FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         LegendEntry(stringResource(R.string.mock_legend_unanswered), border = BorderStroke(1.dp, colors.outlineVariant))
         LegendEntry(stringResource(R.string.mock_legend_answered), fill = colors.surfaceContainerHighest)
