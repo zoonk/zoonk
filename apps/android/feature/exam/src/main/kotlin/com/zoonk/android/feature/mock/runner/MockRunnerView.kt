@@ -130,6 +130,7 @@ internal fun MockRunnerView(
             }
         },
         bottomBar = { RunnerActions(viewModel, run, handIn) },
+        note = mockStepNote(viewModel, run),
         aside =
             TaskAside(
                 title = stringResource(R.string.mock_answer_sheet),
@@ -367,7 +368,6 @@ private fun RunnerActions(
     val handingIn = run.busy == MockStep.Submit
 
     TaskActionBar {
-        MockStepStatus(viewModel, run)
         TaskActions { width ->
             OutlinedButton(
                 onClick = viewModel::toggleFlag,

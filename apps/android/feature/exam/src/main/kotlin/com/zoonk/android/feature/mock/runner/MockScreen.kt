@@ -187,12 +187,8 @@ internal fun MockStepFrame(
     TaskScaffold(
         onClose = onClose,
         title = title,
-        bottomBar = {
-            TaskActionBar {
-                MockStepStatus(viewModel, run)
-                actions()
-            }
-        },
+        bottomBar = { TaskActionBar { actions() } },
+        note = mockStepNote(viewModel, run),
         aside = aside,
         lonePage = true,
     ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
@@ -232,9 +228,20 @@ internal fun StepHeader(
     }
 }
 
+/** [MockStepStatus] just above a step's bar, as main's sits, while it has something to say. */
+@Composable
+internal fun mockStepNote(
+    viewModel: MockRunnerViewModel,
+    run: MockRun,
+): (@Composable () -> Unit)? {
+    val saveStatus by viewModel.saveStatus.collectAsStateWithLifecycle()
+    val says = saveStatus == DraftSaveStatus.Retrying || saveStatus == DraftSaveStatus.Refused || run.error || run.slow
+    return if (says) ({ Column { MockStepStatus(viewModel, run) } }) else null
+}
+
 /** Main's `MockStepStatus`: whether answers are saving, and a step that didn't go through or is slow. */
 @Composable
-internal fun MockStepStatus(
+private fun MockStepStatus(
     viewModel: MockRunnerViewModel,
     run: MockRun,
 ) {
