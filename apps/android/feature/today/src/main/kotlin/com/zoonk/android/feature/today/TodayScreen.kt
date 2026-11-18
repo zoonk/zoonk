@@ -371,16 +371,7 @@ private fun GoalAtRest(
         detail = {
             if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
                 ResumeEffect(app, goal)
-                TodayPractice(
-                    app.today,
-                    app.mocks,
-                    goal.id,
-                    // A mock or a call starts only on an active goal.
-                    isExam = false,
-                    isLanguage = false,
-                    completedLessons = summary.places.completedLessons,
-                    navigate = navigator::open,
-                )
+                PausedPractice(app.today, app.mocks, goal.id, summary.places.completedLessons, navigator::open)
             }
         },
         failure =
