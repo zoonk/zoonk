@@ -111,7 +111,7 @@ function Screen({ actions, served }: { actions: MindMapLibraryActions; served: G
   );
 }
 
-const notMade = () => page.getByRole("region", { name: "Without a map" });
+const notMade = () => page.getByRole("region", { name: "No map yet" });
 const usedUp = () => notMade().getByText("You've used your mind maps");
 const createAll = () => notMade().getByRole("button", { name: "Create all" });
 
@@ -133,7 +133,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
   it("names every chapter without a map under one heading, with their count", async () => {
     render(<Screen actions={actionsWith({})} served={writingView(null)} />);
 
-    await expect.element(notMade().getByRole("heading", { name: "Without a map" })).toBeVisible();
+    await expect.element(notMade().getByRole("heading", { name: "No map yet" })).toBeVisible();
 
     await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
     await expect.element(rowCreate("Atoms")).toBeVisible();
@@ -157,7 +157,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
 
     await expect
-      .element(notMade().getByRole("button", { name: "Without a map" }))
+      .element(notMade().getByRole("button", { name: "No map yet" }))
       .not.toBeInTheDocument();
 
     await expect.element(rowCreate("Atoms")).toBeVisible();

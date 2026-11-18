@@ -49,7 +49,11 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     beforeAfter: t("Before and after"),
     dragCorner: t("Drag a corner"),
     earTraining: t("Ear training"),
-    estimateFirst: t("Your guess counts"),
+    estimateFirst: t({
+      description:
+        "A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count.",
+      message: "Your guess counts",
+    }),
     moveLine: t("Move a line"),
     predictFirst: t("Predict first"),
     stepByStep: t("Step by step"),

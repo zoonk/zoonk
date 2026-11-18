@@ -284,7 +284,11 @@ export function useUnderstoodRows(timeZone: string) {
       Boolean(levelNote) && {
         badge: t("you said"),
         id: "level",
-        label: t("Level"),
+        label: t({
+          description:
+            'Row with what the learner said they already know about their goal\'s subject, such as "I know a few things".',
+          message: "What you know",
+        }),
         value: levelNote ?? "",
       },
     ];

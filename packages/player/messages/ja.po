@@ -21,10 +21,11 @@ msgctxt "EXpTKi"
 msgid "Ear training"
 msgstr "耳を鍛える"
 
+#. A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count.
 #: src/activities/_components/activity-badge.tsx
 msgctxt "rI0jil"
 msgid "Your guess counts"
-msgstr "予想も大切です"
+msgstr "予想も採点対象"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -898,10 +899,11 @@ msgctxt "Sb4hnT"
 msgid "Square {number}, {row} and {column}:"
 msgstr "マス{number}、{row}と{column}："
 
+#. How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". {what} is that result.
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "nyV23o"
-msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what}：{count}／{total, plural, =0 {#マス} other {#マス}}"
+msgctxt "gws3gs"
+msgid "Squares showing {what}: {count} of {total}"
+msgstr "「{what}」を示すマス：{total}マス中{count}マス"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -1816,9 +1818,9 @@ msgid "Remove"
 msgstr "取り除く"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "GyuZyo"
-msgid "Pick an element to add its first atom."
-msgstr "元素を選んで、最初の原子を追加してください。"
+msgctxt "0ktP9z"
+msgid "Pick an element to start your molecule."
+msgstr "分子を作り始めるには、元素を選んでください。"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -3572,6 +3574,11 @@ msgstr "声に出して答える"
 msgctxt "pjy2sy"
 msgid "Type what you'd say"
 msgstr "話す内容を入力してください"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "eUqe2x"
+msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
+msgstr "代わりに声で答えるには、ブラウザの設定でZoonkのマイク使用を許可してください。"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"

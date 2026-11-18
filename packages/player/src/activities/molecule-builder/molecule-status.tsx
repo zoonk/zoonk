@@ -12,7 +12,7 @@ function useBuildState(build: Build) {
   const open = build.atoms.filter((atom) => atomFill(build, atom) === "open").length;
 
   if (build.atoms.length === 0) {
-    return { text: t("Pick an element to add its first atom."), tone: "muted" as const };
+    return { text: t("Pick an element to start your molecule."), tone: "muted" as const };
   }
 
   if (over) {

@@ -208,9 +208,7 @@ export function NotMadeYet({
     <div className="flex flex-col gap-3" ref={laterRef}>
       {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
         <p className={LINE_CLASS}>
-          {t(
-            "Making one of these maps writes its lessons first, and they count toward your free lessons.",
-          )}
+          {t("Making a map writes its chapter's lessons first, from your free lessons.")}
         </p>
       )}
       <NotMadeRows chapters={later} library={library} plus={plus} />
@@ -220,7 +218,12 @@ export function NotMadeYet({
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{t("Without a map")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>
+          {t({
+            description: "Heading over the chapters whose mind map hasn't been made yet.",
+            message: "No map yet",
+          })}
+        </PageSectionTitle>
         <PageSectionDetail>
           {t("{count, plural, one {# chapter} other {# chapters}}", { count: chapters.length })}
         </PageSectionDetail>

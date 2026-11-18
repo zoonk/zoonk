@@ -90,7 +90,11 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
       id: "level",
       label: goal.targetLanguage
         ? t("{language} level", { language: languageName(goal.targetLanguage) })
-        : t("Level"),
+        : t({
+            description:
+              'Row with what the learner said they already know about their goal\'s subject, such as "I know a few things".',
+            message: "What you know",
+          }),
       value: level,
     },
     isAnswered({ goal, question: "schedule" }) && {

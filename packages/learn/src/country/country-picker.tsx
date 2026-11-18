@@ -86,7 +86,15 @@ function PickerOption({
     >
       <span className="min-w-0 text-pretty">{row.label}</span>
       <span className="flex shrink-0 items-center gap-2">
-        {row.home && <span className="text-muted-foreground text-xs">{t("Where you live")}</span>}
+        {row.home && (
+          <span className="text-muted-foreground text-xs">
+            {t({
+              description:
+                "Tag beside the country the learner said they live in, in a list of countries",
+              message: "You live here",
+            })}
+          </span>
+        )}
         {selected && <CheckIcon aria-hidden="true" className="text-foreground" />}
       </span>
     </CommandItem>

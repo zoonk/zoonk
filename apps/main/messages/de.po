@@ -993,14 +993,14 @@ msgid "You finished your {goal} goal."
 msgstr "Du hast dein Ziel {goal} erreicht."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "Bis du dein Ziel fortsetzt, ist nichts geplant."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "Dieses Ziel ist pausiert."
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Bis du dein Ziel fortsetzt, ist nichts geplant."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "SedhMm"
@@ -1863,11 +1863,11 @@ msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Abend"
 
+#. Best day when every day of the week scores about the same
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "ZTJDAv"
-msgid "You answer about the same every day."
-msgstr "Du antwortest jeden Tag etwa gleich gut."
+msgctxt "cwmQSC"
+msgid "Any day"
+msgstr "Jeder Tag"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
@@ -1878,6 +1878,11 @@ msgstr "Jede Tageszeit"
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
 msgstr "Dein bester Tag ist {day}."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Du antwortest jeden Tag etwa gleich gut."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"

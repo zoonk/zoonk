@@ -278,7 +278,9 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
           {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
             <p className="text-muted-foreground text-sm text-pretty" role="status">
-              {t("We can't use your microphone, so type what you'd say.")}
+              {answerMode.micProblem === "blocked"
+                ? t("To speak instead, allow the microphone for Zoonk in your browser settings.")
+                : t("We can't use your microphone, so type what you'd say.")}
             </p>
           )}
 

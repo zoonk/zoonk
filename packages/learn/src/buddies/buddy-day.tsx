@@ -64,7 +64,14 @@ function BuddyRows({
         <ListRowButton aria-haspopup="dialog" onClick={onGlasses}>
           <ListRowBody>
             <ListRowContent>
-              <ListRowTitle>{t("{buddy}'s glasses", { buddy: name })}</ListRowTitle>
+              <ListRowTitle>
+                {t({
+                  description:
+                    "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.",
+                  message: "{buddy}'s glasses",
+                  values: { buddy: name },
+                })}
+              </ListRowTitle>
             </ListRowContent>
             <ListRowTrailing>
               <GlassesCount status={status} />

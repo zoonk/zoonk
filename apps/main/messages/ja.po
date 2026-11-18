@@ -993,14 +993,14 @@ msgid "You finished your {goal} goal."
 msgstr "目標「{goal}」を達成しました。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "再開するまで、学習の予定は入りません。"
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "この目標は一時停止中です。"
+
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "再開するまで、学習の予定は入りません。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "SedhMm"
@@ -1863,11 +1863,11 @@ msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "夕方"
 
+#. Best day when every day of the week scores about the same
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "ZTJDAv"
-msgid "You answer about the same every day."
-msgstr "どの曜日も成績はほぼ同じです。"
+msgctxt "cwmQSC"
+msgid "Any day"
+msgstr "どの日でも"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
@@ -1878,6 +1878,11 @@ msgstr "いつでも"
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
 msgstr "いちばん成績がよい曜日は{day}です。"
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "どの曜日も成績はほぼ同じです。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"

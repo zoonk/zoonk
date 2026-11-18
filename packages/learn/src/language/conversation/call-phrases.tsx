@@ -8,6 +8,12 @@ import { LIST_GROUP_CLASS } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
 import { SheetHeader } from "../../_components/sheet-header";
 
+function usePhrasesTitle(count: number): string {
+  const t = useExtracted();
+
+  return t("{count, plural, one {A phrase you can use} other {Phrases you can use}}", { count });
+}
+
 export function Phrases({
   conversation,
   titled = true,
@@ -15,12 +21,12 @@ export function Phrases({
   conversation: LanguageConversationView;
   titled?: boolean;
 }) {
-  const t = useExtracted();
+  const title = usePhrasesTitle(conversation.hints.length);
   const titleId = useId();
 
   return (
     <div className="flex flex-col gap-2">
-      {titled && <PageSectionTitle id={titleId}>{t("Phrases you can use")}</PageSectionTitle>}
+      {titled && <PageSectionTitle id={titleId}>{title}</PageSectionTitle>}
       <ul aria-labelledby={titled ? titleId : undefined} className={LIST_GROUP_CLASS}>
         {conversation.hints.map((hint, index) => (
           <li
@@ -47,13 +53,13 @@ export function PhrasesSheet({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
-  const t = useExtracted();
+  const title = usePhrasesTitle(conversation.hints.length);
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <SheetHeader>
-          <DrawerTitle className="min-w-0 flex-1">{t("Phrases you can use")}</DrawerTitle>
+          <DrawerTitle className="min-w-0 flex-1">{title}</DrawerTitle>
         </SheetHeader>
         <DrawerContent className="pt-1 pb-6">
           <Phrases conversation={conversation} titled={false} />
