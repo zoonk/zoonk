@@ -65,7 +65,7 @@ export const en: ExampleSet = {
   move: "mexico-city",
   topic: {
     chapters: [
-      "Why classical physics wasn’t enough",
+      "Why classical physics wasn't enough",
       "Is light a wave or a particle?",
       "The Bohr model of the atom",
       "The uncertainty principle",

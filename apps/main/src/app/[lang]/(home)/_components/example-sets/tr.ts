@@ -6,7 +6,7 @@ export const tr: ExampleSet = {
     name: "6 ayda veri analisti",
     skipped: "SQL temelleri",
     topics: [
-      { lessons: 6, title: "SQL’de JOIN’ler" },
+      { lessons: 6, title: "SQL'de JOIN'ler" },
       { lessons: 8, title: "Gruplama ve GROUP BY" },
       { lessons: 20, title: "Veri analizi için Python" },
       { lessons: 10, title: "Power BI ile panolar" },
@@ -20,8 +20,8 @@ export const tr: ExampleSet = {
       { detail: "AYT Matematik", kind: "lesson", minutes: 8, title: "Türev" },
       { detail: "Tekrar", kind: "review", minutes: 4, title: "Kuvvet ve hareket" },
     ],
-    goal: () => "Haziran’daki YKS’ye hazırlanmak",
-    headline: "YKS’ye hazırlanmak",
+    goal: () => "Haziran'daki YKS'ye hazırlanmak",
+    headline: "YKS'ye hazırlanmak",
     mock: {
       firm: ["Paragraf", "Basınç"],
       minutes: 165,

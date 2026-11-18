@@ -1,10 +1,13 @@
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
-import { KindIcon } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, ListChecksIcon } from "lucide-react";
+import {
+  CalendarClockIcon,
+  ListChecksIcon,
+  MessageCircleQuestionIcon,
+  RotateCcwIcon,
+} from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
-import { Zu } from "./zu";
 
 const TITLE_ID = "every-plan-title";
 
@@ -66,7 +69,7 @@ export async function EveryPlan() {
             })}
           />
           <EveryPlanItem
-            mark={<KindIcon className="size-4 sm:size-5" kind="review" />}
+            mark={<RotateCcwIcon aria-hidden="true" className={ICON_CLASS} />}
             name={t({
               description: "In Brazilian Portuguese: “Revisa antes de você esquecer”.",
               message: "It reviews before you forget",
@@ -79,7 +82,7 @@ export async function EveryPlan() {
             })}
           />
           <EveryPlanItem
-            mark={<Zu className="size-7" view="face" />}
+            mark={<MessageCircleQuestionIcon aria-hidden="true" className={ICON_CLASS} />}
             name={t({
               description: "In Brazilian Portuguese: “Travou? É só perguntar”.",
               message: "Stuck? Just ask",

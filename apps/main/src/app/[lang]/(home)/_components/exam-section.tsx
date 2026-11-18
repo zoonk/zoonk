@@ -1,9 +1,10 @@
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
+import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { ExampleCard, ExampleCardHead } from "./example-card";
+import { EXAMPLE_ROW_HEIGHT_CLASS, ExampleCard, ExampleCardHead } from "./example-card";
 import { GoalSection } from "./goal-section";
 import { getExampleSet } from "./landing-examples";
 
@@ -73,7 +74,7 @@ async function MockResult() {
       </div>
 
       <ul className="divided-rows text-reading mt-6 border-t leading-snug">
-        <li className="flex min-h-12 items-center gap-3 py-2.5">
+        <li className={cn(EXAMPLE_ROW_HEIGHT_CLASS, "flex items-center gap-3 py-2.5")}>
           <DoneMark />
           <span>
             {t.rich({
@@ -84,13 +85,13 @@ async function MockResult() {
             })}
           </span>
         </li>
-        <li className="flex min-h-12 items-center gap-3 py-2.5">
+        <li className={cn(EXAMPLE_ROW_HEIGHT_CLASS, "flex items-center gap-3 py-2.5")}>
           <KindMark className="size-4" kind="review" />
           <span>
             {t.rich("<b>To review:</b> {topics}", { b: bold, topics: list(mock.review) })}
           </span>
         </li>
-        <li className="flex min-h-12 items-center gap-3 py-2.5">
+        <li className={cn(EXAMPLE_ROW_HEIGHT_CLASS, "flex items-center gap-3 py-2.5")}>
           <KindMark className="size-4" kind="mistakes" />
           <span>
             {t.rich({
