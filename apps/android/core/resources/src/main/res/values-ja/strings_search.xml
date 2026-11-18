@@ -20,7 +20,6 @@
   "search_group_goals": "8bafaa328de3dbc2121608c39940870301bf08a5aa4e697179d6b298726a8bd8",
   "search_group_help": "d455491aadcd236490f9f24d1c452445c3aaeed6129367d509f19e8929ef4bd0",
   "search_group_mocks": "0dadcf4ee5d43f0dcc9f07e873198b4e18023a6bf1e4f458a87335d33153a130",
-  "search_group_new_goal": "897762c1fa5e176c72af265ae967ee296b838919cb814c40a78597960a205062",
   "search_group_plan": "b0f70b69030942b6833ddfb1e8d2a1abd84921dc1cec9cb563e664e7a2643c82",
   "search_help": "213ca9753cce9af8e460e15107af10f859a389f4c87387b5738e86c695e4d5ff",
   "search_home": "92efdfed989115565cce7231d9a7bb797b9e1c8f5f2c46420fa2cf573f837b13",
@@ -65,7 +64,6 @@
     <string name="search_group_account">アカウント</string>
     <string name="search_group_help">ヘルプ</string>
     <string name="search_group_ask">質問</string>
-    <string name="search_group_new_goal">新しい目標</string>
     <string name="search_continue">今日の学習を続ける</string>
     <string name="search_take_mock">模試を受ける</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->

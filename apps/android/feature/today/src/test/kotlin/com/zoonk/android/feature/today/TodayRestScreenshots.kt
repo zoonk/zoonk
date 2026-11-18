@@ -62,7 +62,7 @@ class TodayRestScreenshots {
                 sentence = stringResource(R.string.today_paused_goal, GOAL),
                 clause = stringResource(R.string.today_paused_detail),
                 failure = stringResource(R.string.plan_goal_limit_reached),
-                other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.today_new_goal)) } },
+                other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.gate_start_goal)) } },
             ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.today_resume)) } }
         }
 
@@ -75,7 +75,7 @@ class TodayRestScreenshots {
                 icon = R.drawable.ic_pause,
                 sentence = stringResource(R.string.today_paused_goal, GOAL),
                 clause = stringResource(R.string.today_paused_detail),
-                other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.today_new_goal)) } },
+                other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.gate_start_goal)) } },
             ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.today_resume)) } }
         }
 
@@ -86,7 +86,7 @@ class TodayRestScreenshots {
                 padding = PaddingValues(),
                 icon = R.drawable.ic_flag,
                 sentence = stringResource(R.string.today_finished_goal, GOAL),
-            ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.today_new_goal)) } }
+            ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.gate_start_goal)) } }
         }
 
     @Test

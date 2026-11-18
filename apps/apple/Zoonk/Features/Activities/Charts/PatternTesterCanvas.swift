@@ -132,10 +132,7 @@ struct PatternTesterCanvas: View {
       .typeStyle(.section.weight(.regular).monospaced())
       .padding(.horizontal)
       .frame(minHeight: 52)
-      .background(.background, in: .rect(cornerRadius: Radius.option, style: .continuous))
-      .overlay {
-        RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(Color.border)
-      }
+      .activityBox(cornerRadius: Radius.option)
     }
     .typeStyle(.body.weight(.medium))
   }
@@ -233,7 +230,7 @@ struct PatternTesterCanvas: View {
   }
 
   private var snippets: some View {
-    ScrollView(.horizontal) {
+    ActivityHorizontalScroll {
       HStack(spacing: 6) {
         ForEach(snippetList) { snippet in
           Button {
@@ -248,7 +245,6 @@ struct PatternTesterCanvas: View {
         }
       }
     }
-    .scrollIndicators(.hidden)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text("Symbols", tableName: "ActivitiesCharts", comment: "The row of symbol buttons"))
@@ -299,8 +295,9 @@ struct PatternTesterCanvas: View {
           }
         }
         .padding(.horizontal, 12)
-        .frame(minHeight: 36)
-        .background(.background, in: .rect(cornerRadius: Radius.md, style: .continuous))
+        .padding(.vertical, 8)
+        .frame(minHeight: 44)
+        .activityBox()
         .accessibilityElement(children: .combine)
       }
     }

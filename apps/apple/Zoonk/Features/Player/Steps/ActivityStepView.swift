@@ -106,7 +106,18 @@ struct ActivityStepView: View {
         isChecked: context.result != nil,
         isLocked: context.isLocked
       ) { context.select(.activity(.choice(optionId: $0))) }
-    case .numeric(let question, let expected, let tolerance, let unit, _, _, _):
+    case .numeric:
+      if activityRenderers.renderer(for: content.template)?.answersOnCanvas != true {
+        numericQuestion
+      }
+    case .interaction:
+      EmptyView()
+    }
+  }
+
+  @ViewBuilder
+  private var numericQuestion: some View {
+    if case .numeric(let question, let expected, let tolerance, let unit, _, _, _) = content.check {
       LessonRichText(question)
         .typeStyle(.body.weight(.semibold))
       NumericAnswerField(
@@ -115,8 +126,6 @@ struct ActivityStepView: View {
       ) { number in
         context.select(number.map { .activity(.numeric($0)) })
       }
-    case .interaction:
-      EmptyView()
     }
   }
 }

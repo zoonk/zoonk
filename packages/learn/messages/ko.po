@@ -517,7 +517,6 @@ msgstr "레슨"
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number}/{total, number}"
@@ -9261,7 +9260,6 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/plan/plan-properties.tsx
 msgctxt "065UXh"
 msgid "No date"
 msgstr "날짜 없음"
@@ -10626,6 +10624,11 @@ msgstr "{days}, {weeks, plural, other {#주마다}}"
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "다음 <date></date>"
+
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "설정 안 됨"
 
 #: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
@@ -12775,11 +12778,6 @@ msgid "Quick explanations"
 msgstr "간단한 설명"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.Q25Oon"
-msgid "New goal"
-msgstr "새 목표"
-
-#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
 msgid "Explore courses"
 msgstr "코스 둘러보기"
@@ -12891,6 +12889,12 @@ msgstr "{count, plural, other {다른 시험 #개에도 포함}}"
 msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "레슨, 연습, 테스트에서 제출한 답을 반영해요."
+
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "tDrkTA"
+msgid "{done, number} of {total, number} chapters"
+msgstr "챕터 {done, number}/{total, number}개 완료"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"

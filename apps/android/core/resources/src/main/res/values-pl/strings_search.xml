@@ -20,7 +20,6 @@
   "search_group_goals": "d0150e39089ddc88eac98803bf317f75a8a58cc17ec57d4488cde38d7403270d",
   "search_group_help": "0f3cbb20054d5336f81c71f933d57fbeaded1d118ae7812586d2cfbaf23caf41",
   "search_group_mocks": "372643eac93010887e6b862be91aa90ab24d0fa737e8ad4a5742c3c9f9e5f5ab",
-  "search_group_new_goal": "6949b424b5fb5e44b9b50d211592a9a979c75e1d34f66439d0e1cf95f2d8ab01",
   "search_group_plan": "204b758eca494eb12936b835502103594697c9046e6bfd3773c6386d85854497",
   "search_help": "972bbad15f405d9a1193e962161ac7734839112df73b7380d31ceb973096e76a",
   "search_home": "dc90ffc1f1a1ec5bf51a3a52e13ab68321de204819b9d6ee55e2bb26c593505b",
@@ -65,7 +64,6 @@
     <string name="search_group_account">Moje konto</string>
     <string name="search_group_help">Pomoc</string>
     <string name="search_group_ask">Zapytaj</string>
-    <string name="search_group_new_goal">Wyznacz nowy cel</string>
     <string name="search_continue">Kontynuuj dzisiejszą naukę</string>
     <string name="search_take_mock">Podejdź do egzaminu próbnego</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->

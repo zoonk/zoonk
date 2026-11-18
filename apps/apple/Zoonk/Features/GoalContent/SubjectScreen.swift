@@ -179,8 +179,7 @@ private struct SubjectContent: View {
     Section {
       PageHeader(
         Text(subject.name),
-        supporting: facts.isEmpty ? nil : Text(verbatim: facts.joinedFacts()),
-        supportingIsFacts: true)
+        facts: facts)
 
       if !sharedExams.isEmpty {
         AlsoInExams(exams: sharedExams)
@@ -238,7 +237,7 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var chaptersSection: some View {
     let chapters = subject.chapters
-    let done = chapters.filter { $0.state == .done }
+    let done = chapters.doneChapters
     let ahead = chapters.filter { $0.state != .done }
     let shown = showsAllChapters ? ahead : Array(ahead.prefix(5))
     let hidden = ahead.count - shown.count
@@ -274,7 +273,7 @@ private struct SubjectContent: View {
         ) {
           HStack(spacing: 12) {
             Text(
-              "\(done.count { !$0.known }) of \(chapters.count)", tableName: "Plan",
+              "\(done.count) of \(chapters.count) chapters", tableName: "Plan",
               comment: "Chapters done of the subject's chapters"
             )
             .monospacedDigit()
@@ -332,7 +331,6 @@ private struct SubjectChapterRow: View {
       }
     } else {
       content
-        .chevronSlot()
     }
   }
 

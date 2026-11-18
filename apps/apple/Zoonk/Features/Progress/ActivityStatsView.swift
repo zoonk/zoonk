@@ -54,11 +54,8 @@ struct ActivityCalendar: View {
   var body: some View {
     let maximum = days.map(\.activitiesCompleted).max() ?? 0
     let today = PlanDate.today()
-    let studied = days.count(where: { $0.activitiesCompleted > 0 })
 
     StatsCalendar(
-      title: Text(
-        "Past 12 months", tableName: "Progress"),
       gridLabel: Text(
         "Activity by day", tableName: "Progress"),
       legendLabel: Text(
@@ -89,13 +86,13 @@ struct ActivityCalendar: View {
       chartTitle: String(
         localized: "Activity by day", table: "Progress",
         comment: "Spoken name of the study days calendar"),
-      chartSummary: studied == 0
-        ? String(
-          localized: "No study in the past 12 months", table: "Progress",
-          comment: "Summary of a study days calendar without a study day")
-        : String(
-          localized: "\(studied) study days in the past 12 months", table: "Progress",
-          comment: "Summary of the study days calendar: how many days had study"))
+      chartSummary: { visibleDays, months in
+        let studied = visibleDays.count(where: { ($0.value ?? 0) > 0 })
+        return studied == 0
+          ? String(localized: "No study in the past \(months) months", table: "Progress")
+          : String(
+            localized: "\(studied) study days in the past \(months) months", table: "Progress")
+      })
   }
 
   private func activityCount(_ count: Int) -> String {

@@ -321,30 +321,7 @@ private struct ProfileRow: View {
   let action: () -> Void
 
   var body: some View {
-    Button(action: action) {
-      HStack {
-        VStack(alignment: .leading, spacing: 2) {
-          label
-            .foregroundStyle(.primary)
-
-          if let detail {
-            detail
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-        if isOn {
-          Image(systemName: "checkmark")
-            .fontWeight(.semibold)
-            .foregroundStyle(.tint)
-            .accessibilityHidden(true)
-        }
-      }
-      .contentShape(.rect)
-    }
-    .accessibilityAddTraits(isOn ? .isSelected : [])
+    ChoiceRow(label, detail: detail, isPicked: isOn, action: action)
   }
 }
 

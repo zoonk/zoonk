@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
+import { useRoadmapFinish } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -188,9 +189,22 @@ function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
+  const finish = useRoadmapFinish();
 
   if (!targetDate) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("No date");
+    if (goal.kind === "exam") {
+      return t("To be confirmed");
+    }
+
+    return finish ? (
+      <>
+        {t("None set")}
+        {FACT_SEPARATOR}
+        <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+      </>
+    ) : (
+      t("None set")
+    );
   }
 
   return (

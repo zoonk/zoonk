@@ -6,10 +6,6 @@ struct EnergyStatsView: View {
   var body: some View {
     StatsContent(state: progress.energy.state, retry: { await progress.energy.refresh() }) {
       energy in
-      StatsLine(
-        text: Text(
-          "Energy goes up with every lesson and drops a little on days off.",
-          tableName: "Progress", comment: "Under the Energy page's title: how Energy moves"))
       EnergyTiles(energy: energy)
       EnergyCalendar(energy: energy)
     }
@@ -49,8 +45,6 @@ private struct EnergyCalendar: View {
     let today = PlanDate.today()
 
     StatsCalendar(
-      title: Text(
-        "Past 12 months", tableName: "Progress"),
       gridLabel: Text(
         "Energy by day", tableName: "Progress"),
       legendLabel: Text(
@@ -85,10 +79,13 @@ private struct EnergyCalendar: View {
       chartTitle: String(
         localized: "Energy by day", table: "Progress", comment: "Spoken name of the Energy calendar"
       ),
-      chartSummary: energy.insights.map {
-        String(
-          localized: "Average \(metricPercent($0.averageEnergy))", table: "Progress",
+      chartSummary: { visibleDays, _ in
+        let values = visibleDays.compactMap(\.value)
+        guard !values.isEmpty else { return "" }
+        let average = values.reduce(0, +) / Double(values.count)
+        return String(
+          localized: "Average \(metricPercent(average))", table: "Progress",
           comment: "The learner's average Energy")
-      } ?? "")
+      })
   }
 }

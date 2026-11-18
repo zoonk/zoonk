@@ -52,7 +52,6 @@
   "today_mistakes_tomorrow": "c337d930b230afe7173c1951e769507a9f704aeab7958d1c42b51c00d12cb2da",
   "today_more_count": "85d580027865b0c6b18922915c27a2de640fd4d6dd416e434136b7ae55da58ff",
   "today_more_time_a_day": "ab86bdb17ca72519b33d1084d1602f72f4b49bb1680c04413e5a4a1b88c4c08e",
-  "today_new_goal": "a44073be3f9c4d0bda7ecde9d9ec4b5cb2602e8fc63ca6df472347560c95d73b",
   "today_next_suggestion": "fe5612b8233fda5b7c829ecc806188845a3cf00a581cc07e7a37605a7ec0bfa9",
   "today_not_enough_time": "cf04e3f36d0ec44d94e0251b097d386b182837bc2ff5639c0fa533fcb371abdd",
   "today_not_now": "9512b620d3a0c2a61e204e0ff98ac76544a89c42518897f22b9ca6c73b0ba38b",
@@ -233,7 +232,6 @@
     <string name="today_paused_this_goal">この目標は一時停止中です。</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">再開するまで、学習の予定は入りません。</string>
-    <string name="today_new_goal">新しい目標</string>
     <string name="today_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
     <string name="today_setting_up_goal">「%1$s」の学習計画は、あと数問に答えると完成します。</string>
     <string name="today_building_plan_goal">%1$sの学習計画を作成しています</string>
