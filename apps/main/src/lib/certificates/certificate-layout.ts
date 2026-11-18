@@ -45,7 +45,7 @@ function estimateLines({
 
 export type SheetCovered = { topics: readonly string[] } | null;
 
-export type SheetGraphKind = "ladder" | "labelledRoute" | "route";
+export type SheetGraphKind = "ladder" | "route";
 
 /** A share picture draws a language's ladder or names a course's level; the route reads only beside its topics. */
 export type ShareGraphKind = "ladder" | "level" | "none";
@@ -63,9 +63,7 @@ function getGraphHeight(graph: SheetGraphKind): number {
     return SHEET.ladder.cellHeight + SHEET.ladder.labelGap + lineBox(SHEET.ladder.labelSize);
   }
 
-  const labels = graph === "labelledRoute" ? SHEET.route.labelHeight + SHEET.route.labelGap : 0;
-
-  return labels + SHEET.route.height;
+  return SHEET.route.height;
 }
 
 function getTopicRowLines(topics: readonly string[]): number[] {

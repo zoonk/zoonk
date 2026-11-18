@@ -3,6 +3,7 @@
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import { ListGroup, ListRow, ListRowContent, ListRowLeading } from "../../_components/list-group";
 import {
   PageSection,
@@ -86,18 +87,23 @@ function WeekDayRow({
   );
 }
 
-/** The six days after today, composed with Today by core so each lesson shows once. */
-export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
+/** The week the learner is in: Today (`children`), then the six days after it. */
+export function RevealWeek({
+  children,
+  reveal,
+}: {
+  children: ReactNode;
+  reveal: PlanRevealDays | null;
+}) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
   const ahead = reveal?.nextDays ?? [];
-  const studyDays = ahead.filter((day) => day.items.length > 0);
   const dates = ahead.map((day) => formatDate(day.date, "row", { weekday: true }));
   const dateWidth = Math.max(0, ...dates.map((date) => date.length));
 
-  if (studyDays.length === 0) {
-    return null;
+  if (!reveal || reveal.week.days === 0) {
+    return children;
   }
 
   return (
@@ -105,20 +111,24 @@ export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${t("{days, plural, one {# study day} other {# study days}}", { days: studyDays.length })} · ${formatDuration(studyDays.reduce((total, day) => total + day.minutes, 0))}`}
+          {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ListGroup>
-        {ahead.map((day, index) => (
-          <WeekDayRow
-            date={dates[index] ?? day.date}
-            dateWidth={dateWidth}
-            day={day}
-            key={day.date}
-          />
-        ))}
-      </ListGroup>
+      {children}
+
+      {ahead.length > 0 && (
+        <ListGroup>
+          {ahead.map((day, index) => (
+            <WeekDayRow
+              date={dates[index] ?? day.date}
+              dateWidth={dateWidth}
+              day={day}
+              key={day.date}
+            />
+          ))}
+        </ListGroup>
+      )}
     </PageSection>
   );
 }

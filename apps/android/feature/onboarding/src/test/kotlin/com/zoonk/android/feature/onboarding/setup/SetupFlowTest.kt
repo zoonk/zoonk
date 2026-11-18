@@ -5,6 +5,7 @@ import com.zoonk.api.models.OnboardingStep.FOLLOW_UPS
 import com.zoonk.api.models.OnboardingStep.LEVEL
 import com.zoonk.api.models.OnboardingStep.PLAN
 import com.zoonk.api.models.OnboardingStep.PURPOSE
+import com.zoonk.api.models.OnboardingStep.REASON
 import com.zoonk.api.models.OnboardingStep.SCHEDULE
 import com.zoonk.api.models.OnboardingStep.TARGET_DATE
 import org.junit.Assert.assertEquals
@@ -47,6 +48,11 @@ class SetupFlowTest {
         assertNull(setupProgress(SetupFlow(GOAL, LEVEL), listOf(PURPOSE, SCHEDULE, PLAN)))
         assertNull(setupProgress(SetupFlow(GOAL, PURPOSE, listOf(LEVEL)), listOf(SCHEDULE, PLAN)))
         assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(SetupFlow(GOAL, LEVEL, listOf(PURPOSE)), listOf(SCHEDULE, PLAN)))
+    }
+
+    @Test
+    fun noDashesWhileTheLanguageReasonCanAddExamQuestions() {
+        assertNull(setupProgress(SetupFlow(GOAL, REASON, listOf(LEVEL, FOLLOW_UPS, TARGET_DATE, SCHEDULE)), listOf(PLAN)))
     }
 
     @Test

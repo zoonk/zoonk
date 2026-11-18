@@ -36,7 +36,7 @@ import { useOnboardingRail } from "../onboarding-rail";
 import { NoticeReading, useNoticeProgress, useNoticeTitle } from "./notice-reading";
 import { PlanBuilding, type PlanNext } from "./plan-building";
 import { PlanStartNoticeProvider } from "./plan-start-notice";
-import { WaitBar, WaitLinkAction } from "./wait-parts";
+import { WaitBackToQuiz, WaitBar, WaitLinkAction } from "./wait-parts";
 import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 
 type Notice = { document: ExamDocument; lastNotice: boolean; stopped: WaitStop | null };
@@ -230,26 +230,28 @@ function PlanWaitPage({
     // The wait says its own run stopped, so its bar doesn't say it again.
     <PlanStartNoticeProvider run={null}>
       <OnboardingScreenProvider value={{ ...screen, bar: NO_BAR }}>
-        {use(FirstLessonReadContext)}
-        <OnboardingColumn
-          bar={
-            <PlanWaitBar
-              firstLesson={firstLesson}
-              holding={holding}
-              lessonHref={lessonHref}
-              library={library}
-              next={next}
-            />
-          }
-          rail={
-            <>
-              <WaitAside>{progress}</WaitAside>
-              {flowRail}
-            </>
-          }
-        >
-          <WaitContent progress={progress} status={status} />
-        </OnboardingColumn>
+        <WaitBackToQuiz>
+          {use(FirstLessonReadContext)}
+          <OnboardingColumn
+            bar={
+              <PlanWaitBar
+                firstLesson={firstLesson}
+                holding={holding}
+                lessonHref={lessonHref}
+                library={library}
+                next={next}
+              />
+            }
+            rail={
+              <>
+                <WaitAside>{progress}</WaitAside>
+                {flowRail}
+              </>
+            }
+          >
+            <WaitContent progress={progress} status={status} />
+          </OnboardingColumn>
+        </WaitBackToQuiz>
       </OnboardingScreenProvider>
     </PlanStartNoticeProvider>
   );

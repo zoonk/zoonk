@@ -50,6 +50,13 @@ export const courseResultSchema = z
         description: "Lessons in the course's outline; 0 while its lessons aren't written yet",
       }),
     organization: organizationSummarySchema,
+    promise: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "What the course promises a learner, the line its page opens with; its description when it has none",
+      }),
     slug: z.string().meta({ description: "URL slug" }),
     subject: z
       .enum(COURSE_CATEGORIES)

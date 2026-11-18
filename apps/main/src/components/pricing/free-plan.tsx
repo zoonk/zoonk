@@ -6,6 +6,7 @@ import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { formatPrice } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { PlanNextStep } from "./for-viewer";
 import {
@@ -16,7 +17,6 @@ import {
   PlanIncludes,
   PlanPrice,
 } from "./plan-includes";
-import { formatPlanPrice } from "./plan-price";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
 import { type PlusViewerState } from "./plus-plan";
 import { getStudyBuddyAllowance } from "./study-buddy-allowance";
@@ -94,9 +94,7 @@ export async function FreePlan({
       </div>
 
       <div className={PLAN_PRICE_CLASS}>
-        {currency && (
-          <PlanPrice amount={formatPlanPrice({ locale, price: { amount: 0, currency } })} />
-        )}
+        {currency && <PlanPrice amount={formatPrice(0, currency, locale)} />}
       </div>
 
       <PlanNextStep

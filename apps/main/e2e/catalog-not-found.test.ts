@@ -1,3 +1,4 @@
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
 const MISSING_COURSE = "/b/zoonk/c/no-course-with-this-slug";
@@ -22,4 +23,16 @@ test("offers Today as the main action when a learner opens a missing course", as
   await page.goto(MISSING_COURSE);
 
   await expect(page.getByRole("link", { name: "Go to Today" })).toHaveAttribute("href", "/today");
+});
+
+test("offers a learner Today on the missing course's first paint, before its scripts load", async ({
+  userWithoutProgress: page,
+}) => {
+  await holdScripts(page);
+  await page.goto(MISSING_COURSE, { waitUntil: "domcontentloaded" });
+
+  const bar = page.locator('[data-slot="bottom-bar"]');
+
+  await expect(bar.getByRole("link", { name: "Go to Today" })).toBeVisible();
+  await expect(bar.getByRole("link", { name: "Explore courses" })).toHaveCount(0);
 });

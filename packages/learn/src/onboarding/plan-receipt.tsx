@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useDaysLeftText } from "../_components/days-left";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { readSetupLevel } from "./_utils/setup-level";
 import { OnboardingRailSection } from "./onboarding-rail";
 import { useOwnLevelLabels } from "./steps/level-choices";
@@ -52,9 +53,15 @@ function useDateFact() {
       };
     }
 
-    return isAnswered({ goal, question: "targetDate" })
-      ? { id: "date", label, value: t("No date") }
-      : null;
+    if (!isAnswered({ goal, question: "targetDate" })) {
+      return null;
+    }
+
+    return {
+      id: "date",
+      label,
+      value: goal.kind === "exam" ? t("To be confirmed") : t("None set"),
+    };
   };
 }
 
@@ -65,6 +72,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   const detailRows = useDetailRows();
   const dateFact = useDateFact();
   const levelText = useLevelText();
+  const languageName = useLanguageNameInSentence();
   const level = levelText(goal.details);
 
   const facts: (ReceiptFact | null | false)[] = [
@@ -78,7 +86,13 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage ?? null })
         : null,
     ),
-    level !== null && { id: "level", label: t("Level"), value: level },
+    level !== null && {
+      id: "level",
+      label: goal.targetLanguage
+        ? t("{language} level", { language: languageName(goal.targetLanguage) })
+        : t("Level"),
+      value: level,
+    },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),

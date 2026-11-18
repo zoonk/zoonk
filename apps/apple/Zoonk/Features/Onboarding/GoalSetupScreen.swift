@@ -103,13 +103,20 @@ extension SetupProgress {
   /// Placement is optional, so it never counts: the total can't jump when a beginner skips it.
   private static let questions = stepScreens.subtracting([.placement])
 
+  /// Core's `QUESTIONS_THAT_ADD_QUESTIONS`: until they're answered, the count could still grow.
+  private static let questionsThatAddQuestions: Set<Components.Schemas.OnboardingStep> = [
+    .purpose, .reason,
+  ]
+
   /// Nil on a screen that isn't one of the questions, placement included. The About you screens
   /// count as one, so the count keeps its scale.
   init?(
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep]
   ) {
-    guard current.profileQuestion == nil, !([current] + steps).contains(.purpose) else {
+    guard current.profileQuestion == nil,
+      !([current] + steps).contains(where: Self.questionsThatAddQuestions.contains)
+    else {
       return nil
     }
 

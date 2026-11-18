@@ -65,6 +65,22 @@ describe(formatPrice, () => {
     expect(result).toContain("49,90");
   });
 
+  it.each([
+    ["en", "try", "\u20BA1,069"],
+    ["en", "usd", "$1,069"],
+    ["en", "sgd", "SGD\u00A01,069"],
+    ["en", "nzd", "NZ$1,069"],
+    ["en", "mxn", "MX$1,069"],
+    ["en", "sek", "SEK\u00A01,069"],
+    ["en", "xts", "XTS\u00A01,069"],
+    ["pt", "usd", "US$\u00A01.069"],
+  ])(
+    "in %s, writes %s so no other billing currency reads the same",
+    (locale, currency, expected) => {
+      expect(formatPrice(106_900, currency, locale)).toBe(expected);
+    },
+  );
+
   it("formats zero-decimal currency KRW", () => {
     expect(formatPrice(10_000, "krw", "ko-KR")).toContain("10,000");
   });

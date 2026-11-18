@@ -270,6 +270,7 @@ msgstr "{days, plural, one {Noch etwa # Tag} other {Noch etwa # Tage}}"
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
+#: src/onboarding/onboarding-skeletons.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/reveal-body.tsx
@@ -4825,6 +4826,7 @@ msgid "Progress"
 msgstr "Fortschritt"
 
 #: src/journey/journey-hero.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -9298,9 +9300,17 @@ msgid "Getting started"
 msgstr "Erste Schritte"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "065UXh"
-msgid "No date"
-msgstr "Kein Datum"
+#: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "bpAaId"
+msgid "To be confirmed"
+msgstr "Noch nicht bestätigt"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "Nicht festgelegt"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10038,12 +10048,6 @@ msgid "Edit {field}"
 msgstr "{field} bearbeiten"
 
 #: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-properties.tsx
-msgctxt "bpAaId"
-msgid "To be confirmed"
-msgstr "Noch nicht bestätigt"
-
-#: src/onboarding/understood/understood-date-row.ts
 msgctxt "H5ndh9"
 msgid "{year}, to be confirmed"
 msgstr "{year}, noch nicht bestätigt"
@@ -10680,11 +10684,6 @@ msgstr "{days}, alle {weeks, plural, one {# Woche} other {# Wochen}}"
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "Als Nächstes <date></date>"
-
-#: src/plan/plan-properties.tsx
-msgctxt "LG_0wj"
-msgid "None set"
-msgstr "Nicht festgelegt"
 
 #: src/plan/plan-properties.tsx
 msgctxt "G6h29P"
