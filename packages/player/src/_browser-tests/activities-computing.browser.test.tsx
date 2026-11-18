@@ -231,6 +231,17 @@ describe("computing activities", () => {
   it("pattern tester: examples pass as the pattern grows", async () => {
     openActivity({ template: "patternTester" });
     const pattern = page.getByRole("textbox", { name: "Your pattern" });
+    const examples = page.getByRole("region", { name: "Should not match" });
+    await expect.element(examples.getByRole("listitem").first()).toBeVisible();
+
+    const sampleLeft = () => {
+      const first = examples.getByRole("listitem").first().element();
+      const text = document.createRange();
+      text.selectNodeContents(first.firstChild!);
+      return text.getBoundingClientRect().left;
+    };
+
+    const left = sampleLeft();
     await pattern.fill(String.raw`^\d{5}`);
 
     await expect
@@ -243,7 +254,6 @@ describe("computing activities", () => {
       .element(page.getByRole("region", { name: "Should not match" }))
       .toMatchTextContent("3 of 3 pass");
 
-    const examples = page.getByRole("region", { name: "Should not match" });
     const card = page.getByRole("figure");
 
     const boardTop = () =>
@@ -254,6 +264,7 @@ describe("computing activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     expect(boardTop()).toBe(top);
+    expect(sampleLeft()).toBe(left);
     await expect.element(page.getByText("A pattern that works")).not.toBeInTheDocument();
   });
 
