@@ -71,24 +71,20 @@ private struct GuessRevealCanvas: View {
           }
 
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
-            VStack(alignment: .leading, spacing: 4) {
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 8, verticalSpacing: 4) {
               ForEach(Array(workings.enumerated()), id: \.offset) { _, working in
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                  if let value = ActivityExpression.evaluate(working.expression) {
-                    Text(ActivityNumberFormat.format(value))
-                      .typeWeight(.semibold)
-                      .monospacedDigit()
-                  }
+                GridRow {
+                  Text(verbatim: workingValue(working.expression, actual: actual))
+                    .typeWeight(.semibold)
+                    .monospacedDigit()
+                    .gridColumnAlignment(.trailing)
                   Text(working.label)
                     .foregroundStyle(.mutedForeground)
                 }
-                .typeStyle(.note)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
               }
             }
-            .padding(12)
-            .activityBox(cornerRadius: Radius.option)
+            .typeStyle(.note)
           }
 
           if let comparison = fields.comparison {
@@ -102,6 +98,14 @@ private struct GuessRevealCanvas: View {
         }
       }
     }
+  }
+
+  /// A working that lands on the real value is written as the reveal writes it, unit included.
+  private func workingValue(_ expression: String, actual: Double) -> String {
+    guard let value = ActivityExpression.evaluate(expression) else { return "" }
+    let real = ActivityNumberFormat.guess(actual, unit: fields.unit)
+    return ActivityNumberFormat.guess(value, unit: fields.unit) == real
+      ? real : ActivityNumberFormat.format(value)
   }
 
   private var checkAnswer: Double? {
