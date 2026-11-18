@@ -10,6 +10,7 @@ import {
   GoalFieldSubmit,
   GoalFieldText,
 } from "@zoonk/learn/onboarding/goal-field";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useId, useRef, useState, useTransition } from "react";
@@ -40,11 +41,11 @@ export function GoalForm({
   const exampleId = useId();
   const lineId = useId();
   const fieldRef = useRef<HTMLTextAreaElement>(null);
-  const [hinted, setHinted] = useState(false);
+  const [hasGoal, setHasGoal] = useState(false);
+  const mounted = useIsMounted();
   const send = useSendGoal();
   const [sending, startSending] = useTransition();
   const reset = useResetWhenDone();
-  const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
 
   return (
     <div className="flex w-full flex-col gap-4" key={reset.key}>
@@ -59,11 +60,9 @@ export function GoalForm({
           event.preventDefault();
           const goal = fieldRef.current?.value.trim() ?? "";
 
-          if (!goal) {
-            setHinted(true);
-            fieldRef.current?.focus();
-          } else if (!sending) {
+          if (goal && !sending) {
             reset.done();
+            setHasGoal(false);
             startSending(() => send(goal));
           }
         }}
@@ -75,38 +74,36 @@ export function GoalForm({
             <GoalFieldExample id={exampleId}>{example}</GoalFieldExample>
 
             <GoalFieldText
-              aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}
-              aria-invalid={hinted || undefined}
+              aria-describedby={note ? `${exampleId} ${lineId}` : exampleId}
               className="col-start-1 row-start-1 contain-inline-size"
               id={fieldId}
               name={GOAL_PARAM}
               onFocus={() => router.prefetch("/start")}
-              onInput={() => setHinted(false)}
+              onInput={(event) => setHasGoal(Boolean(event.currentTarget.value.trim()))}
               // A blank placeholder makes `:placeholder-shown` say whether the box is empty.
               placeholder=" "
               readOnly={sending}
               ref={fieldRef}
+              required
             />
           </div>
         </div>
 
-        <GoalFieldSubmit busy={sending} className="self-end" data-action-name="build-plan">
+        <GoalFieldSubmit
+          busy={sending}
+          className="self-end"
+          data-action-name="build-plan"
+          disabled={mounted && !hasGoal}
+        >
           {t("Build my plan")}
         </GoalFieldSubmit>
       </GoalField>
 
-      <p
-        aria-live="polite"
-        id={lineId}
-        className={cn(
-          "text-muted-foreground text-compact -mt-1",
-          hinted && "text-foreground",
-          !line && "sr-only",
-          noteClassName,
-        )}
-      >
-        {line}
-      </p>
+      {note && (
+        <p className={cn("text-muted-foreground text-compact -mt-1", noteClassName)} id={lineId}>
+          {note}
+        </p>
+      )}
     </div>
   );
 }

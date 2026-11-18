@@ -2,11 +2,12 @@
 
 import { AuthField, AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-form";
 import { LoginEmailInput, LoginEmailLabel } from "@/components/login";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { parseFormField } from "@zoonk/utils/form";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { unstable_rethrow } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { type VerificationOTPState, sendVerificationOTPAction } from "./actions";
 import { readPageRedirectTo } from "./page-url";
 
@@ -30,6 +31,8 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
     initialEmailLoginState,
   );
 
+  const mounted = useIsMounted();
+  const [email, setEmail] = useState(state.email ?? "");
   const hasError = state.status !== "idle";
 
   const errorMessage = {
@@ -51,17 +54,18 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
         <LoginEmailInput
           aria-describedby={hasError ? emailErrorId : undefined}
           aria-invalid={hasError}
-          defaultValue={state.email}
+          onChange={(event) => setEmail(event.currentTarget.value)}
           placeholder={t({
             description:
               "An example address shown in the empty email field. Keep it as written, like the app's other example addresses.",
             message: "me@gmail.com",
           })}
+          value={email}
         />
       </AuthField>
 
       <AuthStatus id={emailErrorId}>{errorMessage}</AuthStatus>
-      <AuthSubmit>{t("Continue")}</AuthSubmit>
+      <AuthSubmit disabled={mounted && !email.trim()}>{t("Continue")}</AuthSubmit>
     </AuthForm>
   );
 }

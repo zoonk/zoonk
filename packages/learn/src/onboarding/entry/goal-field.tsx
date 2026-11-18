@@ -1,9 +1,10 @@
 "use client";
 
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EnterButton } from "../../_components/enter-button";
 
 const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
@@ -16,12 +17,16 @@ const GOAL_FIELD = "goal";
  */
 export function useGoalFieldAction({
   canSendEmpty = false,
+  defaultValue = "",
   onSend,
 }: {
   canSendEmpty?: boolean;
+  defaultValue?: string;
   onSend: (goal: string) => void;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const mounted = useIsMounted();
+  const [hasWords, setHasWords] = useState(Boolean(defaultValue.trim()));
 
   const send = (words: string) => {
     const goal = words.trim();
@@ -44,11 +49,21 @@ export function useGoalFieldAction({
 
     if (field) {
       field.value = words;
+      setHasWords(Boolean(words.trim()));
       field.focus();
     }
   };
 
-  return { action, field: { name: GOAL_FIELD, ref }, fill, send };
+  const onInput = (event: React.InputEvent<HTMLTextAreaElement>) =>
+    setHasWords(Boolean(event.currentTarget.value.trim()));
+
+  return {
+    action,
+    disabled: mounted && !hasWords && !canSendEmpty,
+    field: { name: GOAL_FIELD, onInput, ref },
+    fill,
+    send,
+  };
 }
 
 /**

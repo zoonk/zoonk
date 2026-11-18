@@ -3,6 +3,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { GoalEntrySubmit } from "./entry/goal-entry-submit";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
 import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
@@ -63,7 +64,7 @@ export function StartEntrySkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
-        <OnboardingColumn aria-busy="true">
+        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
           <OnboardingHeading>
             <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
             <OnboardingDescription>
@@ -107,7 +108,7 @@ export function StartWaitSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
-        <OnboardingColumn aria-busy="true">
+        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
           <Skeleton className="h-11 w-3/5 self-end rounded-xl rounded-br-sm" />
 
           <div className="flex flex-col gap-6">
@@ -136,7 +137,7 @@ export function StepsSkeleton() {
           middle: <Skeleton className={cn("h-1", BAR_MIDDLE_CLASS)} />,
         }}
       >
-        <OnboardingColumn aria-busy="true">
+        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
           <HeadingSkeleton eyebrow />
           <RowsSkeleton rows={4} twoLines />
         </OnboardingColumn>
