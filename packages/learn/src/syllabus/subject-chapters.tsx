@@ -8,13 +8,11 @@ import {
   CollapsibleTrigger,
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { NetworkIcon, PlusIcon } from "lucide-react";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
-  ListRowButton,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -132,12 +130,11 @@ export function SubjectChapters({
   mindMapsHref: string | null;
 }) {
   const t = useExtracted();
-  const [showAll, setShowAll] = useState(false);
   const done = chapters.filter((chapter) => chapter.state === "done");
   const studied = done.filter((chapter) => !chapter.known);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
-  const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
-  const hidden = ahead.length - shown.length;
+  const shown = ahead.slice(0, SHOWN_UPCOMING + 1);
+  const hidden = ahead.slice(shown.length);
 
   if (chapters.length === 0) {
     return null;
@@ -166,24 +163,25 @@ export function SubjectChapters({
         )}
 
         <ChapterRows chapterHref={chapterHref} chapters={shown} />
-
-        {hidden > 0 && (
-          <li>
-            <ListRowButton chevron={false} onClick={() => setShowAll(true)}>
-              <ListRowLeading className="text-muted-foreground size-4 justify-center">
-                <PlusIcon aria-hidden="true" className="size-3.5" />
-              </ListRowLeading>
-              <ListRowContent>
-                <ListRowTitle className="text-muted-foreground">
-                  {t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                    count: hidden,
-                  })}
-                </ListRowTitle>
-              </ListRowContent>
-            </ListRowButton>
-          </li>
-        )}
       </ul>
+      {hidden.length > 0 && (
+        <Collapsible>
+          <CollapsibleTrigger className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex min-h-11 items-center gap-1.5 rounded-lg text-sm font-medium outline-none focus-visible:ring-[3px]">
+            <span className="in-aria-expanded:hidden">
+              {t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                count: hidden.length,
+              })}
+            </span>
+            <span className="hidden in-aria-expanded:inline">{t("Show fewer chapters")}</span>
+            <FoldChevron inline />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className={LIST_GROUP_CLASS}>
+              <ChapterRows chapterHref={chapterHref} chapters={hidden} />
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
     </PageSection>
   );
 }
