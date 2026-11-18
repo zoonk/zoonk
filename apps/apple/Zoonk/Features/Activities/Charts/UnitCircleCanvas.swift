@@ -165,7 +165,7 @@ struct UnitCircleCanvas: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 
-      HStack(spacing: 16) {
+      HStack(alignment: .firstTextBaseline, spacing: 16) {
         Text(verbatim: angleText(degrees))
           .typeStyle(.readout)
         ForEach(fields.show, id: \.self) { trig in
@@ -282,7 +282,7 @@ struct UnitCircleCanvas: View {
       Path(
         ellipseIn: CGRect(
           x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)),
-      with: .style(.vizGrid), lineWidth: 1.5)
+      with: .style(.mutedForeground), lineWidth: 2)
 
     canvas.stroke(
       Path { path in
@@ -358,13 +358,11 @@ struct UnitCircleCanvas: View {
     }
     .chartXScale(domain: 0...360)
     .chartYScale(domain: -1...1)
-    .chartXAxis {
-      AxisMarks(values: [0, 90, 180, 270, 360]) { value in
+    .chartsXAxis {
+      AxisMarks(preset: .aligned, position: .bottom, values: [0, 90, 180, 270, 360]) { value in
         AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: angleText(x))
-          }
+        if let x = value.as(Double.self) {
+          ChartsAxis.bottomLabel(value: x) { Text(verbatim: angleText(x)) }
         }
       }
     }

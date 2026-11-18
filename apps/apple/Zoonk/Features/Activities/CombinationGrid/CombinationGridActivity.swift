@@ -79,11 +79,18 @@ private struct CombinationGridCanvas: View {
     let columns = fields.columns.values
 
     return VStack(alignment: .leading, spacing: 4) {
-      Text(fields.columns.label)
-        .typeStyle(.meta)
-        .foregroundStyle(.mutedForeground)
-
       Grid(horizontalSpacing: 6, verticalSpacing: 6) {
+        // The columns' name stands centered over them, so it never reads as the rows' name.
+        GridRow {
+          Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+          Text(fields.columns.label)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .gridCellColumns(columns.count)
+        }
+
         GridRow {
           Text(fields.rows.label)
             .typeStyle(.meta)

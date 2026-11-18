@@ -123,12 +123,13 @@ private struct BeforeAfterCanvas: View {
     }
   }
 
+  @ViewBuilder
   private func stateCard(
     _ state: BeforeAfterFields.State, other: BeforeAfterFields.State, isAfter: Bool
   )
     -> some View
   {
-    VStack(alignment: .leading, spacing: 12) {
+    let card = VStack(alignment: .leading, spacing: 12) {
       Text(state.label)
         .typeStyle(.note.weight(.semibold))
         .foregroundStyle(.mutedForeground)
@@ -144,11 +145,13 @@ private struct BeforeAfterCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(
-      isAfter ? Color.vizAccent.opacity(0.15) : Color.card,
-      in: .rect(cornerRadius: Radius.xl)
-    )
     .accessibilityElement(children: .contain)
+
+    if isAfter {
+      card.background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: Radius.xl))
+    } else {
+      card.activityBox()
+    }
   }
 
   private func factRow(

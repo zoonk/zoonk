@@ -170,7 +170,7 @@ struct PlanSuggestionSection: View {
     let paged = items.indices.contains(index) ? items[index] : nil
 
     if let item = applied == nil ? paged : answer?.item {
-      Section {
+      PageSection {
         // One row whichever shows, so a pointer resting on it stays on it.
         VStack(alignment: .leading, spacing: 8) {
           if let answer, let applied {
@@ -534,7 +534,7 @@ struct PlanSuggestionSection: View {
     case .paused:
       (
         Text(
-          "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
+          "This goal is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
       )
     case .choice(let choice):
@@ -631,7 +631,7 @@ private struct PlanPausedSlot: View {
     PlanStatement(
       mark: .symbol("pause"),
       title: Text(
-        "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
+        "This goal is paused", tableName: "Plan",
         comment: "Title of the Plan's notice for a paused goal"),
       description: preview.value == true
         ? Text(
@@ -656,7 +656,7 @@ struct PlanStatement: View {
 
   var body: some View {
     if isLine {
-      SuggestionLine {
+      SuggestionLine(alignment: .firstTextBaseline) {
         SuggestionMark(kind: mark)
       } summary: {
         VStack(alignment: .leading, spacing: 2) {
@@ -671,11 +671,13 @@ struct PlanStatement: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
-        Label {
+        MarkedRow {
+          SuggestionMark(kind: mark)
+        } content: {
           title
             .typeStyle(.body.weight(.semibold))
-        } icon: {
-          SuggestionMark(kind: mark)
+        } end: {
+          EmptyView()
         }
 
         description

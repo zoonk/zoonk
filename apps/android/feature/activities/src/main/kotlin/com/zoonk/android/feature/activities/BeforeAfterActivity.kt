@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -159,30 +160,29 @@ private fun StateCard(
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
 
-    Column(
-        modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(ZoonkRadius.option))
-            .background(if (isAfter) accent.copy(alpha = SOFT) else MaterialTheme.colorScheme.surface)
-            .semantics { contentDescription = state.label }
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+    Surface(
+        modifier = modifier.fillMaxWidth().semantics { contentDescription = state.label },
+        shape = RoundedCornerShape(ZoonkRadius.option),
+        color = if (isAfter) accent.copy(alpha = SOFT) else MaterialTheme.colorScheme.surface,
+        border = if (isAfter) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
-        Text(
-            state.label,
-            color = if (isAfter) accent else MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleSmall,
-        )
-        state.facts.forEach { fact ->
-            FactRow(
-                fact,
-                other = other.facts.find { it.id == fact.id },
-                isAfter = isAfter,
-                change = ratios?.get(fact.id)?.let(::describeChange),
-                highlighted = fact.id == highlightId,
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                state.label,
+                color = if (isAfter) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleSmall,
             )
+            state.facts.forEach { fact ->
+                FactRow(
+                    fact,
+                    other = other.facts.find { it.id == fact.id },
+                    isAfter = isAfter,
+                    change = ratios?.get(fact.id)?.let(::describeChange),
+                    highlighted = fact.id == highlightId,
+                )
+            }
+            RichText(state.description, style = MaterialTheme.typography.bodyMedium)
         }
-        RichText(state.description, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

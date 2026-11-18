@@ -68,7 +68,7 @@ func searchFallback(question: String, summary: LearnerSummary?) -> SearchGroup {
     return SearchGroup(
       id: "fallback",
       title: String(
-        localized: "New goal", table: "Search", comment: "Search group to start a goal"),
+        localized: "Start a goal", table: "Search"),
       items: [startGoal])
   }
 

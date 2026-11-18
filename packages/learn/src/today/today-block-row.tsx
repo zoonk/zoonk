@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { Loader2Icon, TargetIcon } from "lucide-react";
+import { ListChecksIcon, Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { TestOutStartLink } from "../_components/test-out-start-link";
@@ -204,7 +204,7 @@ export function BlockRow({
         {!finished && (
           <span className="text-muted-foreground flex h-5 items-center gap-1.5 font-mono text-xs tabular-nums">
             {countsTowardMission && (
-              <TargetIcon
+              <ListChecksIcon
                 aria-hidden="true"
                 className="text-brain size-3.5"
                 data-slot="mission-row-mark"

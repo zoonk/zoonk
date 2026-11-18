@@ -1,0 +1,64 @@
+name: Apple Unit Tests
+
+# Started by hand on any branch: `gh workflow run apple-tests.yml --ref <branch>`. Pull requests
+# skip Apple's unit tests (apple.yml runs them after merge), so this runs them before.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
+
+jobs:
+  test:
+    runs-on: xcode-27
+    timeout-minutes: 35
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Identify Xcode toolchain
+        id: xcode
+        run: |
+          set -o pipefail
+          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
+
+      # Restores main's caches and saves none, so a branch's entries don't evict main's.
+      - name: Restore Swift packages
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/apple-source-packages
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+
+      - name: Restore Xcode compilations
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make/CompilationCache.noindex
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
+
+      - name: Run unit tests
+        env:
+          XCODEBUILD_ARGUMENTS: >-
+            -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
+            -onlyUsePackageVersionsFromResolvedFile
+            -skipPackageUpdates
+            -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
+            COMPILATION_CACHE_ENABLE_CACHING=YES
+            COMPILER_INDEX_STORE_ENABLE=NO
+            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
+        # The newest runtime the image installs, as in apple.yml's test job.
+        run: |
+          udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
+          make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"
+
+      - name: Report unit test results
+        if: always()
+        shell: bash
+        run: |
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/apple-unit-tests.xcresult" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

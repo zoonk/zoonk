@@ -39,7 +39,7 @@ struct BuddyGoalStart: View {
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
     }
     .defaultScrollAnchor(.bottom, for: .initialOffset)
     .scrollDismissesKeyboard(.interactively)
@@ -71,20 +71,19 @@ struct BuddyGoalStart: View {
           .lineLimit(1...4)
           .focused($isFocused)
           .submitLabel(.go)
-          .padding(isStacked ? .horizontal : .leading, 16)
-          .padding(.vertical, 12)
 
           Button(action: start) {
             Text("Build my plan", tableName: "Buddy", comment: "Starts a goal with the words typed")
           }
           .buttonStyle(.mainAction)
           .buttonSizing(isStacked ? .flexible : .automatic)
-          .disabled(trimmedGoal.isEmpty)
-          .padding(6)
+          .disabled(!GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: false))
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .inputPanel(isFocused: isFocused)
       }
-      .scenePadding(.horizontal)
+      .listRowEdges()
       .padding(.vertical, 8)
     }
   }
@@ -94,7 +93,7 @@ struct BuddyGoalStart: View {
   }
 
   private func start() {
-    guard !trimmedGoal.isEmpty else {
+    guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: false) else {
       return
     }
 

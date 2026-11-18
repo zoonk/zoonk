@@ -11,11 +11,12 @@ final class ActivityWork {
   private var values: [String: any Sendable] = [:]
 
   func value<Value>(_ key: String) -> Value? {
-    values[key] as? Value
+    guard let stored = values[key] else { return nil }
+    return stored as? Value
   }
 
   func set<Value: Equatable & Sendable>(_ value: Value, for key: String) {
-    guard values[key] as? Value != value else {
+    if let stored: Value = self.value(key), stored == value {
       return
     }
 

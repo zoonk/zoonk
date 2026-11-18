@@ -27,6 +27,7 @@ struct MissionsSummary: View {
             let buddy = learner.summary.value?.buddy ?? BuddyLook()
             BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
           }
+          .frame(width: 20)
         } content: {
           if let isOpen {
             Button {

@@ -264,7 +264,7 @@ private struct TodayPreparing: View {
         StateMessage {
           Label {
             Text(
-              "Your \(displayName) plan is ready", tableName: "Today",
+              "Your plan is ready", tableName: "Today",
               comment: "A goal whose plan the learner hasn't looked at yet")
           } icon: {
             Image(systemName: "map")
@@ -285,7 +285,7 @@ private struct TodayPreparing: View {
         StateMessage {
           Label {
             Text(
-              "Your \(displayName) plan needs a few more answers", tableName: "Today",
+              "Your plan needs a few more answers", tableName: "Today",
               comment: "A goal left halfway through its questions")
           } icon: {
             Image(systemName: "list.bullet.clipboard")
@@ -405,7 +405,7 @@ private struct TodayGoalPaused: View {
     StateMessage {
       Label {
         Text(
-          "Your \(goal.displayName) goal is paused", tableName: "Today",
+          "This goal is paused", tableName: "Today",
           comment: "Today for a paused goal")
       } icon: {
         Image(systemName: "pause.circle")
@@ -459,7 +459,7 @@ private struct TodayGoalPaused: View {
     let button = Button {
       router.open(.startGoal())
     } label: {
-      Text("New goal", tableName: "Today", comment: "Starts a new goal")
+      Text("Start a goal", tableName: "Navigation")
     }
 
     if prominent {

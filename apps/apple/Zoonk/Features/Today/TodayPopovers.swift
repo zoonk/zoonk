@@ -5,7 +5,7 @@ import SwiftUI
 struct TodayFactsPopover: View {
   let title: String
   var kind: LearnKind?
-  let facts: String?
+  let facts: [String]?
   var factsStyle = Color.mutedForeground
   let note: String?
   /// The week's challenge on the day, under the rest.
@@ -29,7 +29,7 @@ struct TodayFactsPopover: View {
           .accessibilityAddTraits(.isHeader)
 
           if let facts {
-            Text(facts)
+            FactSegments(facts)
               .typeStyle(.data)
               .foregroundStyle(factsStyle)
           }
@@ -109,7 +109,7 @@ private struct DaySegmentButton: View {
     }
     .buttonStyle(.plain)
     .accessibilityLabel(segment.title)
-    .accessibilityValue(segment.facts)
+    .accessibilityValue(segment.facts.joinedFacts())
     .background {
       // Points the popover at the bar rather than the taller control around it.
       Color.clear
@@ -143,23 +143,25 @@ extension DaySegment {
     }
   }
 
-  var facts: String {
+  var facts: [String] {
     switch self {
     case .block(_, .done):
-      return String(localized: "Done", table: "Today", comment: "A finished block")
+      return [String(localized: "Done", table: "Today", comment: "A finished block")]
     case .block(let block, .ahead):
-      return studyDuration(minutes: block.estimatedMinutes)
+      return [studyDuration(minutes: block.estimatedMinutes)]
     case .block(let block, .current) where block.status == .active && block.answered > 0:
-      return String(
-        localized: "\(block.answered) of \(block.questions) questions", table: "Today",
-        comment: "How far the learner is in the day's current block")
+      return [
+        String(
+          localized: "\(block.answered) of \(block.questions) questions", table: "Today",
+          comment: "How far the learner is in the day's current block")
+      ]
     case .block(let block, .current):
       return [
         String(localized: "Up next", table: "Today", comment: "The day's next block"),
         studyDuration(minutes: block.estimatedMinutes),
-      ].joinedFacts()
+      ]
     case .held(let minutes, _):
-      return studyDuration(minutes: minutes)
+      return [studyDuration(minutes: minutes)]
     }
   }
 

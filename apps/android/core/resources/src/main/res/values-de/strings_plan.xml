@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "deb44fff7b236159e9a826e1805a51ec6c6af573a2ad2613fb28ae3dd7145764",
   "plan_effect_topics_leave": "7dfcbdba964638b786d956f87c3d845a4fb3b6023aae7e6d6919848742cc4992",
   "plan_effect_weekly_challenge_on": "52ea1b0c86d8349ebedafd31cf14beff5a6ecb8d0d250c5ebe475eb48ea8c5e3",
+  "plan_end_none_set": "74b4004e5ca6fbe04d6bae6500658c4ace814aab822597ab69c18d4ccac4ab25",
+  "plan_end_none_set_estimate": "4d0d1b48615bde0204f65628eb7bc806078537710fafd98db5cf5d5517eac322",
   "plan_ends": "c4e6be00bf7fa46c1197e3cb7870f8ac4d1f38d398ee52c29170ec64b0480488",
   "plan_ends_about": "028f59a34120d403a83e074175bd88a6744d23a1397c92d8ffbd2b5b991703f1",
   "plan_ends_about_month": "a5c852e742dc43770b5a7053fd35384bd60dd7733e355ec034a5549ad560d4f1",
@@ -334,7 +336,6 @@
   "plan_next_review_forgetting": "3d54e1f7e2748f3b9fb23834b1a6e3ab7f756e33cb9ae52fbb29124052385ec3",
   "plan_next_topics_count_most": "4275360cdbbab7f6ca70b344f193406ee26545712098f8b598244dbf5ade758f",
   "plan_next_topics_in_reviews": "bf80e8760c15ebe6025f692e0f136ef4acf023d2f1571f4ab9ed7eb80a49f789",
-  "plan_no_date": "aaa70661b2d901147ed8a6e0103427c9d17edf1a62fd4690cecbf11b7056d650",
   "plan_no_deadline_note": "0ddf291db0edb4f757dd60bcd1cd0428689d8c7f1dc9ba1bcbd7ededd7230840",
   "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
   "plan_no_lessons_studied_yet": "c597f000a0c37038c51970286f4c829d6494ad0bc794a3a05da48d13d049ef06",
@@ -723,7 +724,6 @@
     <string name="plan_practice">Üben</string>
     <string name="plan_everything">Alles</string>
     <string name="plan_to_be_confirmed">Noch nicht bestätigt</string>
-    <string name="plan_no_date">Kein Datum</string>
     <string name="plan_time_weekends">%1$s · %2$s am Wochenende</string>
     <string name="plan_every_day">Jeden Tag</string>
     <string name="plan_day_range">%1$s – %2$s</string>
@@ -1406,6 +1406,8 @@
     <string name="plan_ask_phase_dates_off_rest">Deine Phasentermine so verschieben, dass sie nicht auf Pausentage fallen?</string>
     <string name="plan_ask_phase_end_off_rest">Den Endtermin für %1$s von %2$s auf einen anderen Tag verschieben?</string>
     <string name="plan_why_phase_end_off_rest">Am %1$s lernst du nicht.</string>
+    <string name="plan_end_none_set">Nicht festgelegt</string>
+    <string name="plan_end_none_set_estimate">Nicht festgelegt · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Nicht in deinem Plan · deine Lernzeit reicht dafür nicht</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

@@ -3,11 +3,15 @@ import SwiftUI
 extension View {
   /// Main's `Surface`: one self-contained thing on the page, on `card` with a hairline and no
   /// shadow. Never inside another panel.
-  func panel(cornerRadius: CGFloat = Radius.xl) -> some View {
+  func panel(cornerRadius: CGFloat = Radius.xl, fill: Color = .card) -> some View {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
-    return background(.card, in: shape)
+    return background(fill, in: shape)
       .overlay(shape.strokeBorder(.border))
+  }
+
+  func activityBox(cornerRadius: CGFloat = Radius.xl) -> some View {
+    panel(cornerRadius: cornerRadius, fill: .boxBackground)
   }
 
   /// Main's `bg-muted/50 rounded-xl`: a quiet filled well, with no line, for supporting content
@@ -42,8 +46,11 @@ private struct InputPanel: ViewModifier {
 
 /// A `GroupBox` as main's `NoticeCard`: its label as a row's title over the content, on a panel.
 struct PanelGroupBoxStyle: GroupBoxStyle {
+  var isActivityBox = false
+
+  @ViewBuilder
   func makeBody(configuration: Configuration) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
+    let content = VStack(alignment: .leading, spacing: 8) {
       configuration.label
         .typeStyle(.rowTitle)
 
@@ -52,7 +59,11 @@ struct PanelGroupBoxStyle: GroupBoxStyle {
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
-    .panel()
+    if isActivityBox {
+      content.activityBox()
+    } else {
+      content.panel()
+    }
   }
 }
 

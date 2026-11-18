@@ -1,9 +1,39 @@
 package com.zoonk.android.feature.goalcontent
 
+import com.zoonk.api.models.SyllabusChapter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SyllabusRulesTest {
+    @Test
+    fun chaptersTestedOutOfCountAlongWithChaptersStudied() {
+        val studied = chapter(SyllabusChapter.State.DONE)
+        val skipped = chapter(SyllabusChapter.State.DONE, known = true)
+        val chapters =
+            listOf(studied, skipped, studied, skipped, chapter(SyllabusChapter.State.CURRENT)) +
+                List(5) { chapter(SyllabusChapter.State.UPCOMING) }
+
+        assertEquals(listOf(studied, skipped, studied, skipped), chapters.doneChapters)
+    }
+
+    private fun chapter(
+        state: SyllabusChapter.State,
+        known: Boolean = false,
+    ) = SyllabusChapter(
+        chapterId = null,
+        far = false,
+        known = known,
+        lessonsDone = 0,
+        lessonsTotal = 1,
+        nextDate = null,
+        plannedLessons = null,
+        position = 1,
+        skillId = null,
+        state = state,
+        title = "Chapter",
+        writing = false,
+    )
+
     @Test
     fun aNoticeNumberSplitsFromItsWords() {
         assertEquals(NumberedTopic(0, "1", "Mechanics"), splitTopicNumber("1 Mechanics"))

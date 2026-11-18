@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "213b9870dee9dc09c9aa7f439fd8d4a356c1b808af3d9937ebbbb087e528fc66",
   "plan_effect_topics_leave": "e1a1b3ed5eaf200cbcb2352ccb1ec6dfd3650ee11bbaeba24b75ea03361682a1",
   "plan_effect_weekly_challenge_on": "671f3dd7613b22ed86dadf2d6150201137ff77dadd3c3fd2a13fca3b656b1370",
+  "plan_end_none_set": "59c6d4e6b14b94b98c2e622dcdf07b53eb8579c13c166baa604fff5d3199f6ff",
+  "plan_end_none_set_estimate": "f3a7a3e48d5eba7bbcd04cc696cefa794577a4d849cf47478bde98d412ebd9b6",
   "plan_ends": "67f9b19b47b57b88c1c81c91355f8ca3bab85ce7ac8c137fc3eb07a0058cc9e7",
   "plan_ends_about": "3aefdcad28e6b749357444a6e0d4062d8aef0cd879e49dfb4526e01b761cce86",
   "plan_ends_about_month": "38c35d8c48f81eb356b4ef5b447dc301ed11529d9233063b7c96cffb73c4edab",
@@ -334,7 +336,6 @@
   "plan_next_review_forgetting": "d8dc32d02e9270665adb77ee693b15ba1c002e6df0ead1f0089ea025db30866e",
   "plan_next_topics_count_most": "432f35d4e20d0a1f93b4c4d99bb38f5b4e94cd157675fb89144325840d469f87",
   "plan_next_topics_in_reviews": "d49eff86a93bf6f04588eec7d7bd5f9d5670996c7ff503f9bc7d1fbde75786f8",
-  "plan_no_date": "e7694cfc13aa5834d524e5716868610849e04b223bea2445b7a6ac3a5d3a66a9",
   "plan_no_deadline_note": "c6df842f0249421110a7214cb896ca946fc91cbc47c11bf45eea30413da2707e",
   "plan_no_goal_description": "d96f6e3c3fb19d1f1d5891616cfb8d4a750e95d7267f99fe43713d0715b2d231",
   "plan_no_lessons_studied_yet": "93d7c3def22b89d178283f01c4918e0f8e454aecc327c24484c4963c4b254f4b",
@@ -737,7 +738,6 @@
     <string name="plan_practice">Esercitati</string>
     <string name="plan_everything">Tutto</string>
     <string name="plan_to_be_confirmed">Da confermare</string>
-    <string name="plan_no_date">Senza data</string>
     <string name="plan_time_weekends">%1$s · %2$s nel fine settimana</string>
     <string name="plan_every_day">Ogni giorno</string>
     <string name="plan_day_range">%1$s – %2$s</string>
@@ -1476,6 +1476,8 @@
     <string name="plan_ask_phase_dates_off_rest">Vuoi spostare le date delle fasi in giorni di studio?</string>
     <string name="plan_ask_phase_end_off_rest">Vuoi spostare la fine di %1$s a un giorno diverso da %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s è un giorno in cui non studi.</string>
+    <string name="plan_end_none_set">Non impostata</string>
+    <string name="plan_end_none_set_estimate">Non impostato · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Non è nel tuo piano · il tempo non basta</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

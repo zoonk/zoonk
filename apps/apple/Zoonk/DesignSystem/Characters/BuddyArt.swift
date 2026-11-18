@@ -10,6 +10,8 @@ struct BuddyArt: CharacterArt {
 
   /// Growth scales around the feet so a buddy always stands on the same ground line.
   private static let ground = CGPoint(x: 60, y: 116)
+  private static let faceSide = 96.0
+  private static let faceTop = 4.0
 
   var viewBox: CGRect {
     switch crop {
@@ -18,8 +20,9 @@ struct BuddyArt: CharacterArt {
     case .face: break
     }
 
-    let size = 96 * look.stage.scale
-    let centerY = Self.ground.y - (Self.ground.y - 60) * look.stage.scale
+    let size = Self.faceSide * look.stage.scale
+    let faceCenter = Self.faceTop + Self.faceSide / 2
+    let centerY = Self.ground.y - (Self.ground.y - faceCenter) * look.stage.scale
     return CGRect(x: Self.ground.x - size / 2, y: centerY - size / 2, width: size, height: size)
   }
 
@@ -68,7 +71,9 @@ struct BuddyArt: CharacterArt {
       .translatedBy(x: -Self.ground.x, y: -Self.ground.y)
 
     painter.group(grow) { body in
-      let parts = BuddyBodyArt(look: look, isNapping: face == .sleepy) { head in
+      let parts = BuddyBodyArt(
+        look: look, isNapping: face == .sleepy, faceTop: crop == .face ? Self.faceTop : nil
+      ) { head in
         head.part(.face, pivot: CGPoint(x: 60, y: 64)) { facePainter in
           BuddyFaceArt(expression: face).draw(facePainter)
           facePainter.group(
@@ -90,6 +95,7 @@ private let beltEdge = ArtPaint.color(.black)
 private struct BuddyBodyArt {
   let look: BuddyLook
   let isNapping: Bool
+  let faceTop: Double?
   let face: (ArtPainter) -> Void
 
   private var belt: ArtPaint { .color(look.belt.color) }
@@ -114,8 +120,10 @@ private struct BuddyBodyArt {
     guard glow > 0 else { return }
 
     let gradient = Gradient(art: (0xffb35c, 0, 0.95), (0xff8a3d, 1, 0))
+    let reach = radius * (1 + 1.5 * glow)
+    let shownRadius = faceTop.map { min(reach, y - $0) } ?? reach
     painter.fill(
-      ArtShape.circle(x, y, radius * (1 + 1.5 * glow)),
+      ArtShape.circle(x, y, shownRadius),
       .radial(gradient, center: CGPoint(x: 0.5, y: 0.5), radius: 0.5), opacity: glow)
   }
 

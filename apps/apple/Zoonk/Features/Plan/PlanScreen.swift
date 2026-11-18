@@ -155,7 +155,7 @@ private struct PlanSetupLeft: View {
     StateMessage {
       Label {
         Text(
-          "Your \(goal.displayName) goal is paused", tableName: "Plan",
+          "This goal is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal")
       } icon: {
         Image(systemName: "pause.circle")
@@ -170,6 +170,7 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
@@ -191,61 +192,83 @@ private struct PlanContent: View {
   var body: some View {
     let syllabus = store.syllabus(goalId: goal.id).value
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
-    let context = PlanContext(
-      goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
-      show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
-      slotChecks: slotChecks, alphabetSkip: alphabetSkip)
-    let opening = SuggestionOpening(
-      item: context.suggestions(in: store).shown, plan: plan,
-      inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
-
-    PaneSplit(primaryShare: 0.55) {
-      ZoonkList {
-        header(context)
-        rebuildNotice
-        PlanRoadmapSection(context: context, structure: structure)
-        structureSections(context: context, structure: structure, namesChoices: false)
+    let context: PlanContext = {
+      var context = PlanContext(
+        goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
+        show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
+        slotChecks: slotChecks, alphabetSkip: alphabetSkip)
+      let openingContext = context
+      context.slotOpening = {
+        SuggestionOpening(
+          item: openingContext.suggestions(in: store).shown, plan: plan,
+          inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
       }
-    } secondary: {
-      ZoonkList {
-        PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
+      return context
+    }()
+    let opening = context.slotOpening?()
 
-        if structure != nil {
-          NextOnPathSection(context: context)
-        }
-
-        PlanMoreSection(goal: goal)
-        PlanSettingsSection(context: context)
-      }
-    } single: {
-      ZoonkList {
-        header(context)
-        rebuildNotice
-        PlanRoadmapSection(context: context, structure: structure)
-        PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context, answer: $slotAnswer)
-        structureSections(context: context, structure: structure, namesChoices: true)
-
-        // What's next shows only where no path does: a path's next row is already its highlighted
-        // one. Main's tablet column puts it beside the other places.
-        if horizontalSizeClass == .regular {
+    GeometryReader { proxy in
+      if PaneSpace(proxy).pages(primaryShare: 0.5, stacked: isStacked) != nil {
+        ZoonkList {
+          rebuildNotice
           BlockGridSection {
+            PageSection {
+              PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
+                PlanHeaderActions(context: context)
+              }
+              PlanRoadmapContent(context: context, structure: structure)
+              if structure != nil, let focusTest = context.plan.focusTest {
+                PlanFocusTestRow(goalId: goal.id, summary: focusTest)
+              }
+            } header: {
+              EmptyView()
+            }
+            PlanNumbersSection(context: context, syllabus: syllabus)
+          }
+          BlockGridSection {
+            VStack(alignment: .leading, spacing: 24) {
+              structureSections(
+                context: context, structure: structure, namesChoices: false,
+                includesFocusTest: structure == nil)
+            }
+            PlanSettingsSection(context: context)
+          }
+          BlockGridSection {
+            PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
+            if structure != nil { NextOnPathSection(context: context) }
+            PlanMoreSection(goal: goal)
+          }
+        }
+        .sheetColumn()
+        .paneSplit(true)
+      } else {
+        ZoonkList {
+          header(context, structure: structure)
+          rebuildNotice
+          PlanNumbersSection(context: context, syllabus: syllabus)
+          PlanSuggestionSection(context: context, answer: $slotAnswer)
+          structureSections(context: context, structure: structure, namesChoices: true)
+
+          // What's next shows only where no path does: a path's next row is already its highlighted
+          // one. Main's tablet column puts it beside the other places.
+          if horizontalSizeClass == .regular {
+            BlockGridSection {
+              if structure != nil {
+                NextOnPathSection(context: context)
+              }
+
+              PlanMoreSection(goal: goal)
+            }
+          } else {
             if structure != nil {
               NextOnPathSection(context: context)
             }
 
             PlanMoreSection(goal: goal)
           }
-        } else {
-          if structure != nil {
-            NextOnPathSection(context: context)
-          }
 
-          PlanMoreSection(goal: goal)
+          PlanSettingsSection(context: context)
         }
-
-        PlanSettingsSection(context: context)
       }
     }
     .resumeGoalBar(isShown: goal.status == .paused)
@@ -269,7 +292,7 @@ private struct PlanContent: View {
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
     )
-    .onChange(of: opening) { slotChecks.leave() }
+    .onChange(of: opening) { slotChecks.leave(except: opening) }
     .onDisappear {
       slotAnswer?.editor.cancel()
       slotAnswer = nil
@@ -313,11 +336,13 @@ private struct PlanContent: View {
     }
   }
 
-  private func header(_ context: PlanContext) -> some View {
+  private func header(_ context: PlanContext, structure: GoalSyllabus?) -> some View {
     Section {
       PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
         PlanHeaderActions(context: context)
       }
+      PlanRoadmapContent(context: context, structure: structure)
+        .listRowSeparator(.hidden)
     }
   }
 
@@ -356,9 +381,10 @@ private struct PlanContent: View {
 
   @ViewBuilder
   private func structureSections(
-    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
+    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool,
+    includesFocusTest: Bool = true
   ) -> some View {
-    let focusTest = context.plan.focusTest.map {
+    let focusTest = (includesFocusTest ? context.plan.focusTest : nil).map {
       PlanFocusTestRow(goalId: goal.id, summary: $0)
     }
 
@@ -396,6 +422,7 @@ struct PlanContext {
   var showClaim: (PlanClaim) -> Void = { _ in }
   /// The screen's, above its panes.
   var slotChecks = PlanSlotChecks()
+  var slotOpening: (() -> SuggestionOpening)?
   /// A language plan's "I can already read it"; true once the alphabet is skipped.
   var alphabetSkip = VisitRequest<Bool>()
 
@@ -405,7 +432,7 @@ struct PlanContext {
 /// One opening of the Plan's suggestion: whatever changes a field (put off, paged past, a refresh
 /// that shows another, its sheet closed, another goal, the editor opened) ends what the opening
 /// asked for. Nothing else does: the rest of the plan can change under it.
-private struct SuggestionOpening: Equatable {
+struct SuggestionOpening: Equatable {
   /// The suggestion shown, with what it says (a coverage line's time and share).
   let item: PlanSlotItem?
   /// What the fit offer's check previewed.

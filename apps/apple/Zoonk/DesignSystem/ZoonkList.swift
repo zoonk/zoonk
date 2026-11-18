@@ -33,6 +33,8 @@ struct ZoonkList<Content: View>: View {
         }
         .rowLabelColumn()
     }
+    .modifier(ListRowTrailingHost())
+    .modifier(ListRowTrailingScope())
     .listStyle(.plain)
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)

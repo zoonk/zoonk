@@ -21,8 +21,8 @@ struct BrainPowerReward: View {
         .labelStyle(.titleAndIcon)
         .typeStyle(.body.weight(.semibold).monospaced())
         .foregroundStyle(earned ? Color(.background) : .brainText)
-        .padding(.horizontal, earned ? 6 : 0)
-        .padding(.vertical, earned ? 2 : 0)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
         .background {
           // `brainText`, since the page's color on `brain` is under AA in light.
           if earned {

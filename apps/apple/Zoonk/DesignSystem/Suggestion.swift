@@ -36,6 +36,8 @@ struct SuggestionMark: View {
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
+  var alignment = VerticalAlignment.center
+
   @ViewBuilder let mark: Mark
   @ViewBuilder let summary: Summary
   @ViewBuilder let action: Action
@@ -49,7 +51,7 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
       : AnyLayout(HStackLayout(spacing: 10))
 
     layout {
-      HStack(alignment: isStacked ? .firstTextBaseline : .center, spacing: 10) {
+      HStack(alignment: isStacked ? .firstTextBaseline : alignment, spacing: 10) {
         mark
           .accessibilityHidden(true)
 

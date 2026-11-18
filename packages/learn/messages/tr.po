@@ -517,7 +517,6 @@ msgstr "Dersler"
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} / {total, number}"
@@ -9262,7 +9261,6 @@ msgid "Getting started"
 msgstr "Başlarken"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/plan/plan-properties.tsx
 msgctxt "065UXh"
 msgid "No date"
 msgstr "Tarih yok"
@@ -10635,6 +10633,11 @@ msgstr "{days}, {weeks, plural, other {# haftada bir}}"
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "Sıradaki: <date></date>"
+
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "Belirlenmedi"
 
 #: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
@@ -12777,11 +12780,6 @@ msgid "Quick explanations"
 msgstr "Kısa açıklamalar"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.Q25Oon"
-msgid "New goal"
-msgstr "Yeni bir hedefe başla"
-
-#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
 msgid "Explore courses"
 msgstr "Kursları keşfet"
@@ -12893,6 +12891,12 @@ msgstr "{count, plural, other {# sınavla da ortak}}"
 msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "Derslerde, alıştırmalarda ve testlerde verdiğin cevapları hesaba katar."
+
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "tDrkTA"
+msgid "{done, number} of {total, number} chapters"
+msgstr "{done, number} / {total, number} ünite"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
