@@ -62,6 +62,7 @@ internal fun StudyNextSuggestion(
         summary = title,
         layout = slot.layout,
         mark = SuggestionMark.Done,
+        failed = host.claimFailed,
         lineAction =
             when {
                 certificates == null -> {
