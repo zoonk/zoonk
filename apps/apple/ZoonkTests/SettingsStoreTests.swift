@@ -53,6 +53,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(cleared.savesAChange(answered))
   }
 
+  /// Unticking a pick and ticking it again puts it last, but the answer is the one saved.
+  func testAboutYouSaveStaysOffAfterPuttingBackTheSamePicks() {
+    let answered = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: ["figma", "sketch"], studies: [], text: ""),
+      status: .answered, version: 1)
+    var draft = ProfileDraft(answered)
+    draft.toggle("figma")
+
+    XCTAssertTrue(draft.savesAChange(answered))
+
+    draft.toggle("figma")
+
+    XCTAssertFalse(draft.savesAChange(answered))
+  }
+
   func testSavedPreferenceShowsTheServerReply() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
