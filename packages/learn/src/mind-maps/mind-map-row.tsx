@@ -83,11 +83,12 @@ function RowAction({
   titleId: string;
 }) {
   const t = useExtracted();
+  const describedBy = noteId ? `${titleId} ${noteId}` : titleId;
 
   if (shown === "failed" || shown === "unreachable") {
     return (
       <Button
-        aria-describedby={titleId}
+        aria-describedby={describedBy}
         busy={isPending}
         onClick={onRetry}
         size="sm"
@@ -101,7 +102,7 @@ function RowAction({
   if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
-        aria-describedby={noteId ? `${titleId} ${noteId}` : titleId}
+        aria-describedby={describedBy}
         busy={isPending}
         onClick={onCreate}
         size="sm"
@@ -124,7 +125,7 @@ export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "re
 
 /**
  * The row for a map whose request someone else follows, like a page that shows it twice. `noteId`
- * names a line outside the row that its Create also reads out, like what making the map costs.
+ * names a line outside the row that its action also reads out, like what making the map costs.
  */
 export function MindMapRowView({
   className,

@@ -123,11 +123,10 @@ const writingRow = () =>
     .filter({ hasText: "Reactions" })
     .getByText("Writing the lessons, then the mind map…");
 
-const rowCreate = (title: string) =>
-  notMade()
-    .getByRole("listitem")
-    .filter({ hasText: title })
-    .getByRole("button", { name: "Create" });
+const rowButton = (title: string, name: string) =>
+  notMade().getByRole("listitem").filter({ hasText: title }).getByRole("button", { name });
+
+const rowCreate = (title: string) => rowButton(title, "Create");
 
 describe("the Mind maps page's gate is the list's offer", () => {
   it("names every chapter without a map under one heading, with their count", async () => {
@@ -178,6 +177,45 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect
       .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
       .toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("keeps the free-lessons note on Try again when Create never reached the server", async () => {
+    const served = view(null);
+
+    render(
+      <Screen
+        actions={actionsWith({ request: vi.fn(async () => ({ status: "failed" as const })) })}
+        served={{
+          ...served,
+          chapters: served.chapters.map((row, index) =>
+            index === 2 ? { ...row, lessonsToWrite: 1 } : row,
+          ),
+        }}
+      />,
+    );
+
+    await notMade().getByRole("button", { name: "1 more chapter" }).click();
+    await rowCreate("Reactions").click();
+
+    await expect
+      .element(rowButton("Reactions", "Try again"))
+      .toHaveAccessibleDescription(
+        "Reactions Making one of these maps writes its lessons first, and they count toward your free lessons.",
+      );
+  });
+
+  it("leaves out the free-lessons note when the only lessons left are a retry already paid for", async () => {
+    render(<Screen actions={actionsWith({})} served={failedView("underFold")} />);
+
+    await expect.element(rowButton("Reactions", "Try again")).toBeVisible();
+
+    await expect
+      .element(rowButton("Reactions", "Try again"))
+      .toHaveAccessibleDescription("Reactions");
+
+    await expect
+      .element(notMade().getByText("they count toward your free lessons", { exact: false }))
+      .not.toBeInTheDocument();
   });
 
   it("shows the chapters that need their lessons first when no other chapter is listed", async () => {
