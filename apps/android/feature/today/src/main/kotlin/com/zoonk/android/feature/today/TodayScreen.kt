@@ -371,7 +371,7 @@ private fun GoalAtRest(
         detail = {
             if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
                 ResumeEffect(app, goal)
-                PausedPractice(app.today, app.mocks, goal.id, summary.places.completedLessons, navigator::open)
+                PausedPractice(app.today, app.mocks, goal, summary.places.completedLessons, navigator::open)
             }
         },
         failure =
