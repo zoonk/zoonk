@@ -139,6 +139,23 @@ describe("alignment across layout boundaries", () => {
     assert.deepEqual(hits("end-edge"), []);
   });
 
+  it("counts a sidebar row wrapper's own padding in the declared gap", () => {
+    document.body.innerHTML = `
+      <div data-slot="sidebar-footer" style="display:flex;flex-direction:column;row-gap:2px" data-box="12,0,215,82">
+        <div style="padding-bottom:8px" data-box="12,0,215,44">
+          <a data-box="12,0,215,36">Build my plan</a>
+        </div>
+        <button data-box="12,46,215,36">Send feedback</button>
+      </div>`;
+
+    assert.deepEqual(hits("gap"), []);
+
+    const wrapper = document.querySelector("[data-slot=sidebar-footer] > div");
+    assert.ok(wrapper instanceof HTMLElement);
+    wrapper.style.paddingBottom = "4px";
+    assert.equal(hits("gap")[0]?.measured, 4);
+  });
+
   it("counts a drawer sheet as its own surface over a page with a filled action", () => {
     document.body.innerHTML = `<button style="--button-variant:default" data-box="16,20,120,44">Next</button><div data-slot="drawer-popup" aria-label="Ask" data-box="0,400,390,444"><button style="--button-variant:default" data-box="16,700,358,44">Create a free account</button></div>`;
     setHit(document.querySelector("[data-slot=drawer-popup] button"));
