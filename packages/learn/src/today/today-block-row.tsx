@@ -19,7 +19,8 @@ import { useStepLabel } from "./use-row-label";
 import { useLessonGettingReady } from "./use-today-copy";
 
 /** A row's mark and minutes center on a row of one or two lines and sit on the first of three. */
-const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items-start";
+const THREE_LINES_CLASS =
+  "has-[[data-slot=today-row-lines]>:nth-child(3),[data-slot=test-out-start-status]:not(:empty)]:items-start";
 
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
@@ -112,12 +113,7 @@ function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
       {line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
-        <div className="relative">
-          <TestOutStartLink
-            className="text-xs leading-4"
-            onStart={() => actions.startTestOut(block.chapterId ?? "")}
-          />
-        </div>
+        <TestOutStartLink compact onStart={() => actions.startTestOut(block.chapterId ?? "")} />
       )}
     </>
   );
