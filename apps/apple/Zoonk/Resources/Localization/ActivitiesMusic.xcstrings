@@ -4260,6 +4260,64 @@
         }
       }
     },
+    "Speakers and headphones can play a little late. Tap along with %lld clicks so your taps are timed right." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lautsprecher und Kopfhörer können Töne leicht verzögert wiedergeben. Tippe im Takt der %lld Klicks mit, damit deine Schläge zeitlich richtig erfasst werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los altavoces y los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clics para sincronizar tus toques."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les haut-parleurs et les écouteurs peuvent diffuser le son avec un léger retard. Appuie au rythme des %lld clics pour bien synchroniser tes appuis."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altoparlanti e cuffie possono riprodurre i suoni con un leggero ritardo. Tocca a tempo con %lld clic per sincronizzare i tuoi colpi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スピーカーやヘッドホンでは、音が少し遅れて聞こえることがあります。タップのタイミングを調整するため、%lld回のクリック音に合わせてタップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스피커나 헤드폰에서 소리가 조금 늦게 나올 수 있어요. 타이밍을 정확히 맞출 수 있도록 클릭 소리에 맞춰 %lld번 두드려 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Głośniki i słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Stukaj w rytm %lld kliknięć, byśmy mogli uwzględnić to opóźnienie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caixas de som e fones de ouvido podem ter um pequeno atraso. Toque no ritmo dos %lld cliques para ajustar o tempo dos seus toques."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoparlör ve kulaklıklardan ses biraz gecikmeli gelebilir. Vuruşlarının zamanlamasını ayarlamak için %lld tık sesinin her birinde dokun."
+          }
+        }
+      }
+    },
     "Staff" : {
       "comment" : "Shows the melody on a music staff",
       "localizations" : {
@@ -4740,65 +4798,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld. vuruş kaçırıldı."
-          }
-        }
-      }
-    },
-    "Tap along with %lld clicks, so your taps are timed right." : {
-      "comment" : "Why the sound check runs, before it starts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe bei %lld Klicks mit, damit deine Schläge zeitlich richtig erfasst werden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca al ritmo de %lld clics para sincronizar tus toques."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie au rythme de %lld clics pour bien synchroniser tes appuis."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca al ritmo di %lld clic per sincronizzare i tuoi colpi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タップのタイミングを調整するため、%lld回のクリック音に合わせてタップしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "누르는 타이밍을 맞출 수 있게 클릭 소리에 맞춰 %lld번 눌러 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stukaj w rytm %lld kliknięć, żebyśmy mogli dokładnie mierzyć czas uderzeń."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque no ritmo de %lld cliques para sincronizar seus toques."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuruşlarının zamanlamasını ayarlamak için tık sesleriyle birlikte %lld kez dokun."
           }
         }
       }

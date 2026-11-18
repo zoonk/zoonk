@@ -88,7 +88,8 @@ struct ChartReaderCanvas: View {
       ChartsCaption(fields.xLabel)
 
       Text(
-        "Tap a span to measure it", tableName: "ActivitiesCharts", comment: "Above a chart's spans"
+        "Tap a part of the chart to measure it", tableName: "ActivitiesCharts",
+        comment: "Above the buttons that measure parts of a chart"
       )
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
@@ -119,7 +120,7 @@ struct ChartReaderCanvas: View {
       }
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
-        Text("Spans to measure", tableName: "ActivitiesCharts", comment: "Group of a chart's spans")
+        Text("Parts of the chart to measure", tableName: "ActivitiesCharts")
       )
     }
   }

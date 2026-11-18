@@ -4891,61 +4891,60 @@
         }
       }
     },
-    "The exam notice says %@." : {
-      "comment" : "The notice's day; the argument is a date like 'May 5'",
+    "The exam is on %@." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laut Prüfungsankündigung ist der Termin am %@."
+            "value" : "Die Prüfung ist am %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Según la convocatoria, el examen será el %@."
+            "value" : "El examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’avis d’examen indique le %@."
+            "value" : "L’examen a lieu le %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il bando indica %@."
+            "value" : "L’esame è il %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要項では、試験日は%@です。"
+            "value" : "試験日は%@です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 공고에 따르면 %@에 시험이 있어요."
+            "value" : "%@에 시험이 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W ogłoszeniu o egzaminie podano datę: %@."
+            "value" : "Termin egzaminu: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O edital marca a prova para %@."
+            "value" : "A prova é em %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınav ilanına göre sınav tarihi %@."
+            "value" : "Sınav %@ tarihinde."
           }
         }
       }
@@ -5004,65 +5003,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınavın tahmini tarihi artık %@."
-          }
-        }
-      }
-    },
-    "The exam's official calendar says %@." : {
-      "comment" : "The official calendar's day; the argument is a date like 'May 5'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Laut offiziellem Prüfungskalender ist der Termin am %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Según el calendario oficial, el examen será el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le calendrier officiel de l’examen indique le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il calendario ufficiale dell’esame indica %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "公式日程では、試験日は%@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "공식 시험 일정에 따르면 %@에 시험이 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W oficjalnym kalendarzu egzaminu podano datę: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O calendário oficial da prova indica %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavın resmî takvimine göre sınav tarihi %@."
           }
         }
       }

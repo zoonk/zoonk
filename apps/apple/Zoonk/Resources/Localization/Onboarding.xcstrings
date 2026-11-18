@@ -2518,25 +2518,24 @@
         }
       }
     },
-    "Back to the level you had, after a short test" : {
-      "comment" : "Purpose choice detail",
+    "Back to the level I had, after a short test" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach einem kurzen Test zurück zu deinem früheren Level"
+            "value" : "Nach einem kurzen Test zurück auf mein früheres Level"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver al nivel que tenías, después de una prueba corta"
+            "value" : "Volver al nivel que tenía, después de una prueba corta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retrouver ton niveau d’avant après un court test"
+            "value" : "Retrouver mon ancien niveau après un court test"
           }
         },
         "it" : {
@@ -2548,13 +2547,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "短いテストのあと、以前のレベルまで学び直します"
+            "value" : "短いテストを受けてから、以前のレベルを取り戻します"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짧은 테스트를 본 뒤 예전 실력을 되찾아요"
+            "value" : "짧은 테스트를 보고 예전 실력을 되찾아요"
           }
         },
         "pl" : {
@@ -2566,13 +2565,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De volta ao nível que você tinha, depois de um teste rápido"
+            "value" : "Voltar ao nível que eu tinha, depois de um teste rápido"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa bir testten sonra eski seviyene dönüş"
+            "value" : "Kısa bir testten sonra eski seviyeme dönmek"
           }
         }
       }
@@ -15931,6 +15930,64 @@
         }
       }
     },
+    "Skip what I already know" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überspringen, was ich schon weiß"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltarme lo que ya sé"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauter ce que je sais déjà"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltare quello che so già"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知っている内容はスキップします"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 아는 내용은 건너뛰어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominąć to, co już znam"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pular o que eu já sei"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten bildiklerimi atlamak"
+          }
+        }
+      }
+    },
     "Skip what you already know" : {
       "comment" : "Title of the short test's start",
       "localizations" : {
@@ -18374,120 +18431,60 @@
         }
       }
     },
-    "The exam notice says %@." : {
-      "comment" : "The day an exam's notice gives",
+    "The exam is on %@." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Prüfungsausschreibung nennt den %@."
+            "value" : "Die Prüfung ist am %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La convocatoria del examen indica el %@."
+            "value" : "El examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’avis d’examen indique le %@."
+            "value" : "L’examen a lieu le %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il bando indica il %@."
+            "value" : "L’esame è il %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要項によると、試験日は%@です。"
+            "value" : "試験日は%@です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 공고에는 %@로 나와 있어요."
+            "value" : "%@에 시험이 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W ogłoszeniu o egzaminie podano datę: %@."
+            "value" : "Termin egzaminu: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O edital informa %@."
+            "value" : "A prova é em %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınav ilanında %@ tarihi yazıyor."
-          }
-        }
-      }
-    },
-    "The exam's official calendar says %@." : {
-      "comment" : "The day a language certificate's official calendar gives; the argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der offizielle Prüfungskalender nennt den %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El calendario oficial del examen indica el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le calendrier officiel de l’examen indique le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il calendario ufficiale dell’esame indica il %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "公式日程によると、試験日は%@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "공식 시험 일정에는 %@로 나와 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W oficjalnym harmonogramie egzaminu podano datę: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O calendário oficial da prova indica %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavın resmî takviminde %@ tarihi yazıyor."
+            "value" : "Sınav %@ tarihinde."
           }
         }
       }
@@ -21686,65 +21683,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden okuyacağız. Tek bir ayrıntıyı düzeltmek için aşağıda o ayrıntının yanındaki kalem simgesine dokun."
-          }
-        }
-      }
-    },
-    "We'll skip what you already know" : {
-      "comment" : "Level choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du schon weißt, überspringen wir"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nos saltaremos lo que ya sabes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On sautera ce que tu connais déjà"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salteremo ciò che sai già"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すでに知っている内容はスキップします"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이미 아는 내용은 건너뛸게요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pominiemy to, co już wiesz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vamos pular o que você já sabe"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaten bildiklerini atlayacağız"
           }
         }
       }

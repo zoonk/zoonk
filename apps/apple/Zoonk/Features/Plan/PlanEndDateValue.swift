@@ -20,8 +20,9 @@ struct PlanEndDateValue: Equatable {
     if finish.estimate {
       let value = PlanDate.estimate(finish.isoDate, today: today, month: finish.month)
       if targetDate == nil {
-        shown = String(localized: "None set · \(value.text)", table: "Plan")
-        spoken = String(localized: "None set · \(value.spoken)", table: "Plan")
+        let unset = String(localized: "None set", table: "Plan")
+        shown = [unset, value.text].joinedFacts()
+        spoken = [unset, value.spoken].joinedFacts()
       } else {
         shown = value.text
         spoken = value.spoken

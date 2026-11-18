@@ -434,7 +434,7 @@ enum UnderstoodRows {
             "End date", table: "Onboarding", comment: "Row with the date a goal aims for"),
         value: PlanDate.format(targetDate, .row, today: from),
         note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
-          ?? suggested.map { noticeDayText($0.date, isGuide: isGuide) },
+          ?? suggested.map { noticeDayText($0.date) },
         source: (official ?? suggested)?.source.flatMap(source),
         field: .targetDate, editValue: targetDate, suggestedDate: suggested?.date)
     }
@@ -454,8 +454,7 @@ enum UnderstoodRows {
     let estimated = examDates.contains(where: \.estimated)
 
     if !estimated,
-      let kept = keptMonthRow(
-        examDates: examDates, month: month, year: year, from: from, isGuide: isGuide)
+      let kept = keptMonthRow(examDates: examDates, month: month, year: year, from: from)
         ?? sittingChoiceRow(examDates: examDates, month: month, from: from)
     {
       return kept
@@ -494,8 +493,7 @@ enum UnderstoodRows {
     examDates: [Components.Schemas.OnboardingExamDate],
     month: Int?,
     year: Int?,
-    from: String,
-    isGuide: Bool
+    from: String
   ) -> UnderstoodRow? {
     let noticeDay = ExamSittings.meantDay(
       days: examDates, month: month, year: year, from: from, goalDate: nil)
@@ -512,7 +510,7 @@ enum UnderstoodRows {
     return UnderstoodRow(
       id: "targetDate", label: examDateLabel,
       value: PlanDate.format(kept, .rowMonth, today: from),
-      note: noticeDay.map { noticeDayText($0.date, isGuide: isGuide) },
+      note: noticeDay.map { noticeDayText($0.date) },
       source: noticeDay?.source.flatMap(source),
       field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
   }
@@ -565,20 +563,9 @@ enum UnderstoodRows {
           table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"))
   }
 
-  private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {
+  private static func noticeDayText(_ isoDate: String) -> String {
     let date = PlanDate.format(isoDate, .sentence, today: PlanDate.today())
-
-    return isGuide
-      ? String(
-        localized: LocalizedStringResource(
-          "The exam's official calendar says \(date).", table: "Onboarding",
-          comment:
-            "The day a language certificate's official calendar gives; the argument is a date like 'May 5, 2027'"
-        ))
-      : String(
-        localized: LocalizedStringResource(
-          "The exam notice says \(date).", table: "Onboarding",
-          comment: "The day an exam's notice gives"))
+    return String(localized: "The exam is on \(date).", table: "Onboarding")
   }
 
   private static func examDaysText(_ days: [Components.Schemas.OnboardingExamDate]) -> String {

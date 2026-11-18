@@ -443,9 +443,7 @@ private struct PurposeQuestion: View {
             value: "refresh",
             label: String(
               localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text(
-              "Back to the level you had, after a short test", tableName: "Onboarding",
-              comment: "Purpose choice detail")),
+            detail: Text("Back to the level I had, after a short test", tableName: "Onboarding")),
           .init(
             value: "other",
             label: String(
@@ -1267,9 +1265,7 @@ enum LevelChoices {
       .init(
         value: OwnLevel.intermediate.rawValue,
         label: String(localized: OwnLevel.intermediate.label),
-        detail: Text(
-          "We'll skip what you already know", tableName: "Onboarding",
-          comment: "Level choice detail")),
+        detail: Text("Skip what I already know", tableName: "Onboarding")),
       .init(
         value: OwnLevel.advanced.rawValue,
         label: String(localized: OwnLevel.advanced.label),

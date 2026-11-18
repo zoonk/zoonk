@@ -952,61 +952,60 @@
         }
       }
     },
-    "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know." : {
-      "comment" : "What starting from a shared plan does",
+    "You get your own plan for the same subject. It starts from what you already know." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bekommst einen eigenen Plan zum selben Thema, in deinem Tempo. Ein paar Fragen sorgen dafür, dass du überspringst, was du schon weißt."
+            "value" : "Du bekommst einen eigenen Plan für dasselbe Fach. Er baut auf dem auf, was du schon weißt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás tu propio plan para la misma materia, a tu ritmo. Luego responderás unas preguntas para saltarte lo que ya sabes."
+            "value" : "Recibes tu propio plan para la misma materia. Parte de lo que ya sabes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu auras ton propre plan sur le même sujet, à ton rythme. Quelques questions permettront ensuite de passer ce que tu sais déjà."
+            "value" : "Tu obtiens ton propre plan pour la même matière. Il part de ce que tu sais déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ottieni un piano tutto tuo per la stessa materia, al tuo ritmo. Poi, con poche domande, saltiamo ciò che sai già."
+            "value" : "Ricevi un piano tutto tuo per la stessa materia. Parte da quello che sai già."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "同じ科目で、自分のペースに合った学習計画を作成します。いくつかの問題に答えると、すでに知っている内容はスキップされます。"
+            "value" : "同じ科目で自分用の学習計画を立てられます。今の知識に合ったところから始められます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "같은 주제로 내 페이스에 맞는 나만의 계획을 만들어요. 몇 문제를 풀면 이미 아는 내용은 건너뛰어요."
+            "value" : "같은 과목으로 나만의 계획을 세워 드려요. 이미 아는 내용에 맞춰 시작해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dostaniesz własny plan z tego samego przedmiotu, dopasowany do twojego tempa. Po kilku pytaniach pominiemy to, co już wiesz."
+            "value" : "Dostaniesz własny plan nauki tego samego przedmiotu. Zacznie się od tego, co już wiesz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você recebe seu próprio plano para a mesma matéria, no seu ritmo. Depois, algumas perguntas ajudam a pular o que você já sabe."
+            "value" : "Você recebe seu próprio plano para a mesma matéria. Ele parte do que você já sabe."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aynı konu için kendi temponda ilerleyeceğin, sana özel bir planın olur. Ardından birkaç soruyla zaten bildiklerini atlarız."
+            "value" : "Aynı konu için kendi planın olur. Zaten bildiklerini temel alır."
           }
         }
       }

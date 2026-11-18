@@ -100,8 +100,8 @@ struct PlanLinkScreen: View {
               .listRowSeparator(.hidden)
           } else {
             Text(
-              "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
-              tableName: "PlanLink", comment: "What starting from a shared plan does"
+              "You get your own plan for the same subject. It starts from what you already know.",
+              tableName: "PlanLink"
             )
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)

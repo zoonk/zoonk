@@ -203,14 +203,8 @@ private struct ExamHero: View {
           let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
             Text("The exam's likely date is now \(day).", tableName: "Exam")
-          } else if exam.examDocument == .notice {
-            Text(
-              "The exam notice says \(day).", tableName: "Exam",
-              comment: "The notice's day; the argument is a date like 'May 5'")
           } else {
-            Text(
-              "The exam's official calendar says \(day).", tableName: "Exam",
-              comment: "The official calendar's day; the argument is a date like 'May 5'")
+            Text("The exam is on \(day).", tableName: "Exam")
           }
           if change.outcome == false {
             FailureLine(

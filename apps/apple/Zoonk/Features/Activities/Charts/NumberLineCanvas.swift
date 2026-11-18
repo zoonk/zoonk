@@ -77,8 +77,7 @@ struct NumberLineCanvas: View {
       Text(
         verbatim: fields.unit.map {
           String(
-            localized: "\(fields.label) in \(String($0))", table: "ActivitiesCharts",
-            comment: "A number line's label with its unit, like Temperature in °C")
+            localized: "\(fields.label) (\(String($0)))", table: "ActivitiesCharts")
         } ?? fields.label
       )
       .typeStyle(.note)

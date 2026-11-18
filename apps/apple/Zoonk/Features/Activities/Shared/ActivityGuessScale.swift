@@ -92,9 +92,9 @@ struct GuessScale: Hashable, Sendable {
 func guessUnitLabel(_ unit: String?) -> Text? {
   guard let unit, !unit.isEmpty, ActivityNumberFormat.currencyUnit(unit) == nil else { return nil }
   return Text(
-    "in \(unit)", tableName: "Activities",
+    "Unit: \(unit)", tableName: "Activities",
     comment:
-      "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h"
+      "Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times."
   )
 }
 

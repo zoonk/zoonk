@@ -218,13 +218,11 @@ enum PlanChangeWords {
         )
       }
 
-      return (operation.weekdays ?? []).count == 1
-        ? String(
-          localized: "Make \(days) a rest day?", table: "Plan",
-          comment: "Asks to make one weekday a rest day")
-        : String(
-          localized: "Make \(days) rest days?", table: "Plan",
-          comment: "Asks to make several weekdays rest days")
+      return String(
+        localized: "Rest every \(days)?", table: "Plan",
+        comment:
+          "Asks whether to stop studying on these weekdays every week; the argument lists them, such as “Saturday” or “Saturday and Sunday”"
+      )
     case "addLightWeek":
       let date = PlanDate.longDay(operation.startDate ?? today, today: today)
       return String(

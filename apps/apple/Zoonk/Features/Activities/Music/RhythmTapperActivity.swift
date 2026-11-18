@@ -499,8 +499,8 @@ private struct RhythmCalibrationView: View {
     case .idle:
       String(
         localized:
-          "Tap along with \(Rhythm.calibrationClicks) clicks, so your taps are timed right.",
-        table: "ActivitiesMusic", comment: "Why the sound check runs, before it starts")
+          "Speakers and headphones can play a little late. Tap along with \(Rhythm.calibrationClicks) clicks so your taps are timed right.",
+        table: "ActivitiesMusic")
     }
   }
 }

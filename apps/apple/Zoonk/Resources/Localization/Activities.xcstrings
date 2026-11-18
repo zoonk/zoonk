@@ -5187,71 +5187,6 @@
         }
       }
     },
-    "in %@" : {
-      "comment" : "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "in %@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "in %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "en %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "en %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "in %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "単位：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "단위: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jednostka: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "em %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ cinsinden"
-          }
-        }
-      }
-    },
     "Italy" : {
       "comment" : "A map label",
       "localizations" : {
@@ -7388,120 +7323,118 @@
         }
       }
     },
-    "Pick how the quote proves the claim" : {
-      "comment" : "An argument's empty reasoning part, open for a pick",
+    "Pick or drag how the quote proves the claim" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle aus, wie das Zitat die Behauptung belegt"
+            "value" : "Wähl aus, wie das Zitat die Aussage belegt, oder zieh die Erklärung hierher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir cómo la cita demuestra la afirmación"
+            "value" : "Elige o arrastra la explicación de cómo la cita demuestra la afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis comment la citation prouve l’affirmation"
+            "value" : "Choisis ou fais glisser l’explication qui montre comment la citation prouve l’affirmation"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli come la citazione dimostra la tesi"
+            "value" : "Scegli o trascina la spiegazione di come la citazione dimostra la tesi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "引用が主張をどう裏付けるかを選ぶ"
+            "value" : "引用が主張を裏付ける理由を選ぶか、ドラッグしてください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인용문이 주장을 뒷받침하는 이유 고르기"
+            "value" : "인용문이 주장을 입증하는 이유를 고르거나 끌어다 놓으세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz wyjaśnienie, jak cytat potwierdza tezę"
+            "value" : "Wybierz lub przeciągnij wyjaśnienie, jak cytat potwierdza tezę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha como a citação comprova a afirmação"
+            "value" : "Escolha ou arraste a explicação de como a citação comprova a afirmação"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alıntının iddiayı nasıl kanıtladığını seç"
+            "value" : "Alıntının iddiayı nasıl kanıtladığını açıklayan ifadeyi seç veya sürükle"
           }
         }
       }
     },
-    "Pick the quote that best supports the claim" : {
-      "comment" : "An argument's empty evidence part",
+    "Pick or drag the quote that best supports the claim" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle das Zitat, das die Behauptung am besten stützt"
+            "value" : "Wähl das Zitat, das die Aussage am besten stützt, oder zieh es hierher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir la cita que mejor respalda la afirmación"
+            "value" : "Elige o arrastra la cita que mejor respalde la afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis la citation qui appuie le mieux l’affirmation"
+            "value" : "Choisis ou fais glisser la citation qui appuie le mieux l’affirmation"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli la citazione che sostiene meglio la tesi"
+            "value" : "Scegli o trascina la citazione che sostiene meglio la tesi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "主張を最もよく裏付ける引用を選ぶ"
+            "value" : "主張を最もよく裏付ける引用を選ぶか、ドラッグしてください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "주장을 가장 잘 뒷받침하는 인용문 고르기"
+            "value" : "주장을 가장 잘 뒷받침하는 인용문을 고르거나 끌어다 놓으세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz cytat, który najlepiej potwierdza tezę"
+            "value" : "Wybierz lub przeciągnij cytat, który najlepiej potwierdza tezę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha a citação que melhor sustenta a afirmação"
+            "value" : "Escolha ou arraste a citação que melhor sustenta a afirmação"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İddiayı en iyi destekleyen alıntıyı seç"
+            "value" : "İddiayı en iyi destekleyen alıntıyı seç veya sürükle"
           }
         }
       }
@@ -10158,6 +10091,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri al"
+          }
+        }
+      }
+    },
+    "Unit: %@" : {
+      "comment" : "Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einheit: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unité : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単位：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단위: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jednostka: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidade: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birim: %@"
           }
         }
       }
