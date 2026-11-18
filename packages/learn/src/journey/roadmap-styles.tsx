@@ -94,12 +94,11 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   };
 }
 
-export const AXIS_CLASS =
-  "@container/phase relative flex h-4 flex-wrap content-start gap-x-2 overflow-hidden";
+export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap content-start gap-x-2";
 
 /** A date carries its own data face (`PlanDateText`); a word on the axis, such as "Today", keeps the text face. */
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 text-2xs leading-4 whitespace-nowrap";
+  "text-faint min-w-0 max-w-full text-2xs leading-4 wrap-anywhere text-balance";
 
 const MIDDLE_SHARE = 0.5;
 
@@ -115,25 +114,25 @@ function getAxisLabelBox({ after, share }: { after: boolean; share: number }): {
 } {
   if (after) {
     return {
-      className: "ml-auto flex max-w-full shrink-0 text-right",
+      className: "ml-auto flex min-w-0 max-w-full text-right",
       style: { paddingRight: `${(1 - share) * PERCENT}%` },
     };
   }
 
   if (getPointSide(share) === "left") {
     return {
-      className: "flex max-w-full justify-end",
+      className: "flex min-w-0 max-w-full justify-end",
       style: { paddingLeft: `${share * PERCENT}%` },
     };
   }
 
   return {
-    className: "flex max-w-full min-w-fit justify-end text-right",
+    className: "flex min-w-0 max-w-full justify-end text-right",
     style: { width: `${share * PERCENT}%` },
   };
 }
 
-/** A label stays at its mark. The axis clips later labels that wrap past the first line. */
+/** Labels keep their gap and can wrap within the phase. */
 export function AxisLabel({
   after = false,
   children,
