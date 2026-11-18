@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "8bfcb6a017f14a8142b22c22acc7b5c3f1cff647f3703520d9f6c2ec6bb2d0d1",
   "mock_result_easy_questions": "6b4d3ec38a658e58781b84e12aba1ca20ba0b63ad4cd95346c57a80867495ad1",
   "mock_result_estimate_detail": "85f251b2722ce8e9e0805290af27ccca06a00dc9bb7671e78fcdbbcf0984ec35",
-  "mock_result_estimated_exam_score": "96a4eca9f7eecc9e6e6186319ffd774287256ab00ce12fcd425a427f88623821",
+  "mock_result_estimated_exam_score": "1179df7898daad57dcbf0a7aedb0073387a317191fcf6af604fc81f4326f5aeb",
   "mock_result_estimated_score": "0e697c3c88c4c13ca9001bebbd2db25616cd56281e1881cf803328bfb160db83",
   "mock_result_every_minimum": "40cfc3fd7ea1f3a79390f9d79c01240fa38848d59b59b1a1a5d42b250a0b3ee1",
   "mock_result_flagged_answers": "9a09113e99df9ac94819625cb9562c249418051f5616883ff8dd5b90357aa2ec",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Punteggio stimato</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Punteggio stimato per %1$s</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Punteggio stimato · %1$s</string>
     <string name="mock_result_net_score">Punteggio su %1$d</string>
     <string name="mock_result_right_answers">Risposte corrette</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "7fc20f43ae4fe268cf0305f599f4b7ef3d01c0671b723e44b5300ad7d44174c3",
   "mock_result_easy_questions": "d4e6701834f6de241834509b45a2e9f5613f9a84563dc1bfed4d52fae83f1d99",
   "mock_result_estimate_detail": "b5277997e1f8604ae1b769b2f18690ad94abda5d5ef925d01f294ccf34f7a64c",
-  "mock_result_estimated_exam_score": "ab610e140f4995ef9e1455f7e9e0796a3267988ba0064e22f9125444e3bfa56b",
+  "mock_result_estimated_exam_score": "31bd8bed82e96f54f7e70d6f3829a249a551bee743e9f8b95558aa237eb8c5d2",
   "mock_result_estimated_score": "786ce13eb81c8492f34933d5cd044623ce0c0cd92934824a8624b017c7470de6",
   "mock_result_every_minimum": "fc2d206b0643276fa31a31464c9d92fcd99564945677da2ea0071351010e772f",
   "mock_result_flagged_answers": "4057cb797d4dec250052cf69f0726b39181540dc947dab866463ace798c41520",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Tahmini puan</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Tahmini %1$s puanı</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Tahmini puan · %1$s</string>
     <string name="mock_result_net_score">%1$d üzerinden puan</string>
     <string name="mock_result_right_answers">Doğru cevaplar</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

@@ -284,7 +284,7 @@
   "onboarding_reveal_most_questions": "e66688a1e99569fd6e8a075dd533429ae665209dcd96b50b2940824a875d2fe0",
   "onboarding_reveal_no_sitting": "28f0d1a969762ea58c337fde783df573ab86a366307969e79e1398848ed5e71e",
   "onboarding_reveal_notice_day_estimated": "823310474bb3ad5aa48a4476eed254c8651860296a9c080cdb41354ddab890a6",
-  "onboarding_reveal_notice_day_notice": "7c97421219f6a4f9a32f54c3c9c9fd7382650d2544b403996265a6725509cc2e",
+  "onboarding_reveal_notice_day_notice": "c00bbbf5a7b1a689a74b822e22041776ce28d41914c4ef60d2436c09ec8e6702",
   "onboarding_reveal_notice_subjects": "5835206622d953a30da45ba667c5cbcd2679593892d8874c604860e044f153b6",
   "onboarding_reveal_pace_covers": "e3f7fb4e94f7b2f7e611d1ebc0f3c9f2e8f8c4deedda7550011751fe6bf63bf9",
   "onboarding_reveal_pace_time": "c70cab95eaa90c245b9ea3e8480d6c4f1e6cced9e8e9107a96e7a6e362dc21eb",
@@ -355,7 +355,7 @@
   "onboarding_row_material": "2961931457ac6824068a721f337a1172c2178f7616cae6414aa3dcce6b48bf2d",
   "onboarding_row_material_note": "71ce7730b30430b3e824e667d716a8897fc50e1ba2cc489c722318cee050f2ac",
   "onboarding_row_minutes_a_day": "b4f52f79925ed4489dd28b651a53cbb460a3803fdabbee766dec1391c57d153b",
-  "onboarding_row_notice_says": "e7582d46f9c95efc4aa3ba351d56146361f13665e4fd650ad62eb8e8885e4433",
+  "onboarding_row_notice_says": "3d5f97e1acfcd751cf732aaf7b4f60f9ce222ff0b4952dc4e8db614520df1620",
   "onboarding_row_pick_date": "99d67c1fd7ad3322513a985e3742f03cb5b61f64fc7a730a6bdd6698e798c720",
   "onboarding_row_position": "adbd57d6853258979efea1529f23dcc327de5d920c5b9ab5b8a7f250deb9ec1e",
   "onboarding_row_reason": "500123554b4914f5a4840d88f77d748d89b0ace404eaa475ca05be7c89c37431",
@@ -563,7 +563,7 @@
     <string name="onboarding_row_dates_estimated">Na podstawie typowych terminów egzaminu. Damy ci znać, gdy pojawią się oficjalne.</string>
     <string name="onboarding_row_pick_date">Wybierz termin</string>
     <string name="onboarding_row_several_sittings">Ten egzamin ma kilka terminów w roku. Dopóki nie wybierzesz jednego z nich, twój plan uwzględnia pierwszy.</string>
-    <string name="onboarding_row_notice_says">Egzamin odbędzie się %1$s.</string>
+    <string name="onboarding_row_notice_says">Oficjalny termin egzaminu to %1$s. Ustawić go jako termin twojego egzaminu?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">Przygotujemy dla ciebie krótkie wyjaśnienie, które przeczytasz w około 5 minut.</string>
@@ -761,7 +761,7 @@
     <string name="onboarding_reveal_phase_light_review">Lekka powtórka</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Przewidywany termin egzaminu to teraz %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">Egzamin odbędzie się %1$s.</string>
+    <string name="onboarding_reveal_notice_day_notice">Oficjalny termin egzaminu to %1$s. Ustawić go jako termin twojego egzaminu?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">Brak terminu egzaminu na %1$s</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->

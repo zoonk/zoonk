@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "8fdf3c293524e9c4e4758679f321bce6dd078cb417f5548adb265e291e4832af",
   "mock_result_easy_questions": "3dbe3e04c58a1db69e84359cb9bf7627d79e29e9b57bde414e5f9e5f06b97848",
   "mock_result_estimate_detail": "67fa1c409fbd943f669ce4bb664e6d9fad82b0fe102a77341c49b7b9b84f06f3",
-  "mock_result_estimated_exam_score": "a803ad3b2717ad0a3cbe6c9a83bd2f50cbdafe48c1c4b12f44eb13ebeebb612b",
+  "mock_result_estimated_exam_score": "b5561c312ed023e60eb9972b6edbeae747e535fc2666c08c690a6777b9e82ca8",
   "mock_result_estimated_score": "9797dff2deb20c41f6dde7c782e5415de61adfe40efbb2db45ae57b2ca585843",
   "mock_result_every_minimum": "fbe92e0e2d3c51f61cb0f95ea8cc7ed884c3988f6dcee3308f8079ce4265ab03",
   "mock_result_flagged_answers": "541d7836c4332524ed75c1e61cf62d4edf918804f00c51402d4c02077e3d3e5c",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Geschätzter Score</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Geschätzter Score für %1$s</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Geschätzter Score · %1$s</string>
     <string name="mock_result_net_score">Score (maximal %1$d)</string>
     <string name="mock_result_right_answers">Richtige Antworten</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

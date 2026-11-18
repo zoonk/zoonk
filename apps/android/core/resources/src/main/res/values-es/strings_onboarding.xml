@@ -284,7 +284,7 @@
   "onboarding_reveal_most_questions": "c0cebbf38d1695ac7173c866929d4d082543a12d2c36cb6c3aaf234d29c89ffe",
   "onboarding_reveal_no_sitting": "77f157bb11ff78791a41e42cf0e589fba99932ff3731902657880a44a04be38e",
   "onboarding_reveal_notice_day_estimated": "79153526510a9320e54fc8b6c5dbbe051e3cb4a6c84021cc4d8f608db343685f",
-  "onboarding_reveal_notice_day_notice": "7d215e2e0347bbc9a71f4a9395161b0563063f8a6f2987d4e17c305b8c852f7d",
+  "onboarding_reveal_notice_day_notice": "3a3188f24ee2a0645ad18f5d3e0c5b1906b829988d6f272b86fc49133ec6cd6e",
   "onboarding_reveal_notice_subjects": "393d05f3aae382ec25ab28b3a0d2ca14fe83d95eda1c44703f27420294bb0563",
   "onboarding_reveal_pace_covers": "34e0c9646943ca8c6edf185ac776980eec33f07a929e4a23e8b2b5a489068746",
   "onboarding_reveal_pace_time": "d7356343c0708e5c52bd41d565620e8cff6e6c378cde6ae057fa0574f106ae79",
@@ -355,7 +355,7 @@
   "onboarding_row_material": "38474ab3da55d97bc2131dd6f72fb62d8fa0fa60773ffb40d7373760efd59428",
   "onboarding_row_material_note": "32cea155ee07bd562f82a807e38ee196566f5837c9a6bb600e9db624a90080aa",
   "onboarding_row_minutes_a_day": "21ba9a25bf2b5ee64cb097c506d2aebadd35e03a9ed5d24155bb0e7eb0f43ec1",
-  "onboarding_row_notice_says": "23c9e0adbb31953304430baa14c6d918bcf8614dc7aa9f9c99dd935d250bbe60",
+  "onboarding_row_notice_says": "5a234c460cc52e174e791461f79f95a89b4e77bca889724f1f377e439f82401f",
   "onboarding_row_pick_date": "f52d5d94a518a0f7b971042f1676584dde142e98a31b07932658768e296499ca",
   "onboarding_row_position": "e6028acd98e1f25493fbd3e83016ad5b0e5f278daa36561dd5555b4d03a5dbb3",
   "onboarding_row_reason": "934eff2128076d362aff25f7a157cf30573b232bcedddb25e8e8254a4f453e9a",
@@ -561,7 +561,7 @@
     <string name="onboarding_row_dates_estimated">Según sus fechas habituales. Te avisaremos cuando se publiquen las oficiales.</string>
     <string name="onboarding_row_pick_date">Elegir tu fecha</string>
     <string name="onboarding_row_several_sittings">Este examen se realiza varias veces al año. Hasta que elijas una fecha, tu plan usa la primera.</string>
-    <string name="onboarding_row_notice_says">El examen es el %1$s.</string>
+    <string name="onboarding_row_notice_says">La fecha oficial del examen es %1$s. ¿Quieres usarla como tu fecha de examen?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">Te prepararemos una explicación breve que podrás leer en aproximadamente 5 minutos.</string>
@@ -755,7 +755,7 @@
     <string name="onboarding_reveal_phase_light_review">Repaso ligero</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La fecha probable del examen ahora es el %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">El examen es el %1$s.</string>
+    <string name="onboarding_reveal_notice_day_notice">La fecha oficial del examen es %1$s. ¿Quieres usarla como tu fecha de examen?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No hay fecha de examen en %1$s</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->

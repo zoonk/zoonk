@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "d8f7944fffd47193d211bd265db637df53b7ddf354bb6e219f92883765c160b9",
   "mock_result_easy_questions": "23ba1bc398f2a3f18891b24d88204590bc83611adb2c6216396fa39ce7915ab0",
   "mock_result_estimate_detail": "0234bc084ad68e8992827ba331d22b24e7e04be3106fd7696e6cdf790e805f05",
-  "mock_result_estimated_exam_score": "14c9c7871ca6f87f6e842ebce1c362573afec1a38382e7b069ef345edb7d35af",
+  "mock_result_estimated_exam_score": "1693f54c1a57aad476d62b8f1ca02d1d4a443d9a93392fccd91b54fe32430d31",
   "mock_result_estimated_score": "848fa890b0884bc20d537aaa5e2e8ecd8b757f5e1c7e154f2bfa7131832e7758",
   "mock_result_every_minimum": "2fdf151efab5e37973728e780677407f6b50d2c172e68e2fc8213d42f8f6c9f8",
   "mock_result_flagged_answers": "dbfa15dd7a44537dc9b1ddf3b24618a7d0637d02fea007af7e3ba9e295999de7",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Szacowany wynik</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Szacowany wynik: %1$s</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Szacowany wynik · %1$s</string>
     <string name="mock_result_net_score">Wynik (maks. %1$d)</string>
     <string name="mock_result_right_answers">Poprawne odpowiedzi</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->
