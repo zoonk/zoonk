@@ -190,7 +190,13 @@ class ConversationFlowTest {
         compose.waitForIdle()
 
         compose.onNodeWithText("The call dropped").assertDoesNotExist()
-        assertEquals(listOf("Un café"), api.completions.single().turns.map { it.text })
+        assertEquals(
+            listOf("Un café"),
+            api.completions
+                .single()
+                .turns
+                .map { it.text },
+        )
     }
 
     @Test
