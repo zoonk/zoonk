@@ -22,12 +22,8 @@ private struct GoalPlanView: View {
 
   let goal: LearnerGoal
 
-  private func subtitle(_ plan: GoalPlan?) -> Text {
-    guard !goal.isSettingUp, let days = planDaysLeft(plan) else {
-      return Text(verbatim: "")
-    }
-
-    return Text(verbatim: days.shown).accessibilityLabel(Text(verbatim: days.spoken))
+  private func daysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
+    goal.isSettingUp ? nil : planDaysLeft(plan)
   }
 
   var body: some View {
@@ -50,7 +46,15 @@ private struct GoalPlanView: View {
       }
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(subtitle(plan.value?.plan))
+    .toolbar {
+      // A bar subtitle drawn from text drops its spoken form; a view keeps it.
+      if let days = daysLeft(plan.value?.plan) {
+        ToolbarItem(placement: .subtitle) {
+          Text(verbatim: days.shown)
+            .accessibilityLabel(Text(verbatim: days.spoken))
+        }
+      }
+    }
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
     }
@@ -106,21 +110,27 @@ func planDaysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
     return (line, line)
   }
 
-  if plan.schedule.targetDateEstimated {
-    return (
-      String(
-        localized: "~\(days) days left", table: "Plan",
-        comment: "Plan subtitle: about how many days are left until the goal's estimated date"),
-      String(
-        localized: "About \(days) days left", table: "Plan",
-        comment: "The Plan's \"~60 days left\" read aloud: about how many days are left")
-    )
+  return daysLeftText(days, estimated: plan.schedule.targetDateEstimated)
+}
+
+/// Main's `daysLeftText`: the days left to a date, one way on every screen. An estimated date's
+/// count is marked "~60 days left" and read "About 60 days left".
+func daysLeftText(_ days: Int, estimated: Bool) -> (shown: String, spoken: String) {
+  guard estimated else {
+    let line = String(
+      localized: "\(days) days left", table: "Plan",
+      comment: "How many days are left until the goal's date")
+    return (line, line)
   }
 
-  let line = String(
-    localized: "\(days) days left", table: "Plan",
-    comment: "Plan subtitle: how many days are left until the goal's date")
-  return (line, line)
+  return (
+    String(
+      localized: "~\(days) days left", table: "Plan",
+      comment: "About how many days are left until the goal's estimated date"),
+    String(
+      localized: "About \(days) days left", table: "Plan",
+      comment: "\"~60 days left\" read aloud: about how many days are left")
+  )
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen

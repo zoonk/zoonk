@@ -343,13 +343,13 @@ private struct ExamHero: View {
   }
 
   /// The day before, on the day and after, the moment card says where the learner is instead.
-  private var daysLeft: String? {
+  private var daysLeft: HeroFact? {
     guard let days = exam.daysLeft, days > 0, !exam.isLastDays else {
       return nil
     }
 
-    return String(
-      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
+    let text = daysLeftText(days, estimated: exam.daysEstimated)
+    return HeroFact(shown: .init(text: text.shown), spoken: text.spoken)
   }
 
   /// An estimated day reads "About Nov 14", not its "~".
@@ -374,7 +374,7 @@ private struct ExamHero: View {
     if exam.namedMonth {
       return
         (dates.map { PlanDate.format($0.date, .rowMonth, today: today) }
-        + [daysLeft].compactMap(\.self)).map(HeroFact.init)
+        .map(HeroFact.init) + [daysLeft].compactMap(\.self))
     }
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
@@ -393,7 +393,7 @@ private struct ExamHero: View {
       return [date] + (time.map { [HeroFact($0)] } ?? [])
     }
     if let shared, let time = examTimeOfDay(shared) { facts.append(HeroFact(time)) }
-    if let daysLeft { facts.append(HeroFact(daysLeft)) }
+    if let daysLeft { facts.append(daysLeft) }
     return facts
   }
 

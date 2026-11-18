@@ -3949,7 +3949,7 @@
       }
     },
     "%lld days left" : {
-      "comment" : "Plan subtitle: how many days are left until the goal's date",
+      "comment" : "How many days are left until the goal's date",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -11231,7 +11231,7 @@
       }
     },
     "~%lld days left" : {
-      "comment" : "Plan subtitle: about how many days are left until the goal's estimated date",
+      "comment" : "About how many days are left until the goal's estimated date",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -11769,7 +11769,7 @@
       }
     },
     "About %lld days left" : {
-      "comment" : "The Plan's \"~60 days left\" read aloud: about how many days are left",
+      "comment" : "\"~60 days left\" read aloud: about how many days are left",
       "localizations" : {
         "de" : {
           "variations" : {
