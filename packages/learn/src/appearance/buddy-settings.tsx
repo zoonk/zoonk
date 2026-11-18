@@ -136,7 +136,7 @@ export function BuddySettings({
           aria-haspopup="dialog"
           className="shrink-0"
           onClick={() => setIsEditing(true)}
-          size="sm"
+          size="lg"
           variant="outline"
         >
           {buddy.picked ? t("Change") : t("Choose your buddy")}

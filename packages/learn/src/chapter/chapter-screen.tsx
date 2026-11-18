@@ -3,14 +3,9 @@
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  DetailAside,
-  DetailAsideSection,
-  DetailContent,
-  DetailLayout,
-} from "../_components/detail-page";
+import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
-import { LessonList, LessonProgress } from "../_components/lesson-list";
+import { LessonList } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -39,7 +34,6 @@ export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
 const PRACTICE_TITLE_ID = "chapter-practice-title";
-const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
 function ChapterSummary({
@@ -115,28 +109,6 @@ function ChapterPractice() {
   );
 }
 
-function ChapterProgress() {
-  const t = useExtracted();
-  const { chapter } = useChapterScreen();
-  const { lessons } = chapter;
-  const done = lessons.filter((lesson) => lesson.state === "done").length;
-
-  if (lessons.length === 0) {
-    return null;
-  }
-
-  return (
-    <DetailAsideSection
-      className="hidden min-[72rem]:flex"
-      detail={t("{done, number} of {total, number}", { done, total: lessons.length })}
-      title={t("Progress")}
-      titleId={PROGRESS_TITLE_ID}
-    >
-      <LessonProgress lessons={lessons} />
-    </DetailAsideSection>
-  );
-}
-
 function ChapterBody({
   renderLessonText,
 }: {
@@ -149,7 +121,6 @@ function ChapterBody({
     <DetailLayout
       aside={
         <>
-          <ChapterProgress />
           <ChapterPractice />
           <ChapterSummary renderLessonText={renderLessonText} />
         </>

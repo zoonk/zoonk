@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   countChallengesLeft,
   countLessonsLeft,
+  getPlanEnd,
   isDateReached,
   isPlanFinished,
   isPlanOver,
@@ -51,6 +52,28 @@ function review(day: string) {
 
 const DATE = new Date("2026-10-12T00:00:00Z");
 const TODAY = new Date("2026-10-13T00:00:00Z");
+
+describe(getPlanEnd, () => {
+  it("dates completion by the last required work in the learner's time zone", () => {
+    const lessonDay = new Date("2026-10-10T18:00:00Z");
+    const challengeDay = new Date("2026-10-12T02:00:00Z");
+    const laterReview = new Date("2026-10-12T18:00:00Z");
+
+    expect(
+      getPlanEnd({
+        goalKind: "learn",
+        items: [
+          { ...lesson("done"), completedAt: lessonDay, scheduledFor: DATE },
+          { ...challenge("done"), completedAt: challengeDay },
+          { ...review("2026-10-12"), completedAt: laterReview, status: "done" },
+        ],
+        targetDate: null,
+        timeZone: "America/Sao_Paulo",
+        today: TODAY,
+      }),
+    ).toStrictEqual({ finishedOn: "2026-10-11", kind: "finished" });
+  });
+});
 
 describe(isPlanFinished, () => {
   it("isn't finished while a lesson is left to do, or a plan has none", () => {

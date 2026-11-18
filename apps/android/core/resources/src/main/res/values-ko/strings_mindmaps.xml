@@ -38,7 +38,7 @@
   "mindmaps_open_lesson": "282fb26096fc95a971d9ef7f3965efaadf4c8d57bed26ee56eb43eae479c5ae0",
   "mindmaps_open_spoken": "4f49306bfbe0752903f6d14a0837baaaaede6f0bee8435a2cf5b2e293426b2c7",
   "mindmaps_options": "be07dee1bc52f8a78ea91f86266bdab1175e981504952cfbd87c5c35a46c9e57",
-  "mindmaps_other_chapters": "9dd7933d6e3d6c2012cfaffdfc31f24547e52b87547ac65e111bfa928ff3c456",
+  "mindmaps_other_chapters": "5103612ac5a0d1cbc7d0e28b77c07f02f6d6d1018e379e717290f8bb49cdb46a",
   "mindmaps_previous": "7ea41e66412b1f448090f075e39282689498a9c381600d68511b5289c7696941",
   "mindmaps_ready": "dffdd162f0144d7998be93acfd953a7a72a597211a0b792a4ea508e3a80244e9",
   "mindmaps_remove": "128dc00cde1dbfca579da4fbec5845ddaa405edb4c77d123d51e4adaea76ddf7",
@@ -55,8 +55,8 @@
   "mindmaps_show_all": "2d897bb618e4efb10c876e77cc387a4b2a663f9695f7b8d8c73927e7965c5402",
   "mindmaps_shown_as_text": "943d780a5d4f23ca742bc022487dfa29f0f12af9736f2549efc8baf29f9cddba",
   "mindmaps_start_from_first": "5f8da31bdab99ba9fa5cada678c6c9dc0b8c09a4d2b3a33a5636d10c534939ba",
-  "mindmaps_study": "2d0bc7f61fb6f11c924056817af52392e54de1a728076170dcb149364176d974",
-  "mindmaps_tab_chapters": "525395387ba9a0b3ee39ef4b16cc047b811a61a6a0c77b46f7c8f83cbbdd669b",
+  "mindmaps_study": "103e831985153751f044ac6decf0b326b64a22f0c0128a7b53c83b10d9e76d51",
+  "mindmaps_tab_chapters": "1f4301b407b13aefcf84a1254a24b962e8c7b010d41c2831d202a6c01865583d",
   "mindmaps_tab_lessons": "2489bb1df9a419391a1a8b933c46b53b8b26bf2578552eb9a758bfdebc7c4ab3",
   "mindmaps_tab_saved": "b106b39c89f05511dd5716564f29d4326276a21f274042c5bbe4162b5d38573b",
   "mindmaps_tab_spoken": "69a2c1f7cfa6fc633cb84db16ab2339962c9b50497d0e85762259676405f6a53",
@@ -132,17 +132,14 @@
     <string name="mindmaps_zoom_out">축소</string>
     <string name="mindmaps_fit">화면에 맞추기</string>
     <string name="mindmaps_viewer_hint">두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요.</string>
-    <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
-    <string name="mindmaps_study">학습하기</string>
+    <string name="mindmaps_study">마인드맵 공부하기</string>
     <string name="mindmaps_create_all">모두 만들기</string>
-    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
-    <string name="mindmaps_other_chapters">다른 챕터</string>
+    <string name="mindmaps_other_chapters">마인드맵 없음</string>
     <string name="mindmaps_free_lessons_note">이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.</string>
     <plurals name="mindmaps_lessons_to_write">
         <item quantity="other">만들 레슨 %1$s개</item>
     </plurals>
-    <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
-    <string name="mindmaps_tab_chapters">챕터</string>
+    <string name="mindmaps_tab_chapters">마인드맵 있음</string>
     <string name="mindmaps_tab_lessons">레슨</string>
     <string name="mindmaps_tab_saved">저장한 마인드맵</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->

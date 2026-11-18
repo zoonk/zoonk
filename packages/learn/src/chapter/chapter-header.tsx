@@ -3,7 +3,7 @@
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import { DetailContinueLink, useDoneShare } from "../_components/detail-page";
+import { DetailContinueLink } from "../_components/detail-page";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -13,18 +13,15 @@ import { useChapterScreen } from "./chapter-context";
 function ChapterFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const doneShare = useDoneShare();
   const { chapter } = useChapterScreen();
   const { lessons } = chapter;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
-  const done = lessons.filter((lesson) => lesson.state === "done").length;
 
   const facts = [
     t("Chapter {number, number}", { number: chapter.chapter.position }),
     lessons.length > 0 &&
       t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
     minutes > 0 && formatDuration(minutes),
-    lessons.length > 0 && doneShare(done / lessons.length),
   ].filter(Boolean);
 
   return (

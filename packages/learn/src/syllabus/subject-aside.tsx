@@ -3,7 +3,7 @@
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
 import { ListGroup } from "../_components/list-group";
@@ -34,7 +34,7 @@ function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   return (
     <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
       <span className="font-medium">{t("Right answers")}</span>
-      <span className="text-muted-foreground tabular-nums">
+      <span className="text-muted-foreground font-mono tabular-nums">
         {t("{done, number} of {total, number}", { done: mastery.correct, total: mastery.answered })}
       </span>
     </p>
@@ -130,20 +130,6 @@ export function SubjectCoverage({
   );
 }
 
-function useQuestionsValue({
-  source,
-  subject,
-}: {
-  source: SyllabusView["questionsSource"];
-  subject: SyllabusSubject;
-}): string | null {
-  if (!subject.questions) {
-    return null;
-  }
-
-  return source?.edition ? `${subject.questions} · ${source.edition}` : String(subject.questions);
-}
-
 function SubjectDetails({
   questionsSource,
   subject,
@@ -153,17 +139,21 @@ function SubjectDetails({
 }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
-  const questions = useQuestionsValue({ source: questionsSource, subject });
+  const format = useFormatter();
+  const edition = questionsSource?.edition;
   const questionsLabel = useExamQuestionsLabel();
   const chaptersDone = getDoneChapters(subject.chapters).length;
 
   return (
     <DetailProperties>
-      {questions && (
-        <DetailProperty label={questionsLabel} mono>
-          {questions}
+      {subject.questions ? (
+        <DetailProperty
+          label={edition ? t("Questions from {exam}", { exam: edition }) : questionsLabel}
+          mono
+        >
+          {format.number(subject.questions)}
         </DetailProperty>
-      )}
+      ) : null}
 
       {subject.topics.length > 0 && (
         <DetailProperty label={t("Topics")} mono>

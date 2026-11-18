@@ -201,7 +201,12 @@ describe("a finished plan", () => {
     const view = await readPlan();
 
     expect(view?.status).toStrictEqual({ kind: "finished" });
-    expect(view?.end).toStrictEqual({ kind: "finished" });
+
+    expect(view?.end).toStrictEqual({
+      finishedOn: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/u),
+      kind: "finished",
+    });
+
     expect(view?.phases.every((phase) => phase.state === "done")).toBe(true);
     await expect(readTodayStatus(goal.id)).resolves.toStrictEqual({ kind: "finished" });
 

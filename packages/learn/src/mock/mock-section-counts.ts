@@ -1,12 +1,12 @@
 "use client";
 
+import { countsTowardMockProgress } from "./mock-answer-progress";
 import { useMockScreen } from "./mock-context";
-import { isDraftAnswered } from "./use-mock-drafts";
 
 export function useSectionCounts() {
   const { runner } = useMockScreen();
   const questions = runner.view.current?.questions ?? [];
-  const isBlank = (itemId: string) => !isDraftAnswered(runner.drafts[itemId]);
+  const isBlank = (itemId: string) => !countsTowardMockProgress(runner, itemId);
   const blank = questions.filter((question) => isBlank(question.itemId));
 
   return {

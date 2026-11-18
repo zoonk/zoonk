@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { TimeAnswer } from "../_components/time-answer";
-import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../_components/weekday-toggle";
+import { WeekdayGrid, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime, getMissingDays } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
 import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
@@ -173,7 +173,7 @@ function DailyMinutes({
   };
 
   return (
-    <div className="flex flex-col gap-3" id={getEditorSectionId("time")}>
+    <div className="flex flex-col gap-2" id={getEditorSectionId("time")}>
       <DailyTimePicker
         disabled={isPending}
         full={marked.full}
@@ -216,7 +216,7 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   return (
     <fieldset className="flex flex-col gap-2" id={getEditorSectionId("days")}>
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      <div className={WEEKDAY_GRID_CLASS}>
+      <WeekdayGrid>
         {weekdays.map((day) => (
           <WeekdayToggle
             // The last study day can't be turned off: a plan needs at least one.
@@ -239,7 +239,7 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
             weekday={day.weekday}
           />
         ))}
-      </div>
+      </WeekdayGrid>
     </fieldset>
   );
 }
@@ -310,14 +310,12 @@ export function PlanSchedule() {
         weekendOn={weekendOn}
       />
       <StudyDays planChange={schedule} />
-      <div className="flex flex-col">
-        <WeekendMinutes
-          checked={weekendOn}
-          onCheckedChange={setWeekendChoice}
-          planChange={schedule}
-        />
-        <FullCourseSwitch />
-      </div>
+      <WeekendMinutes
+        checked={weekendOn}
+        onCheckedChange={setWeekendChoice}
+        planChange={schedule}
+      />
+      <FullCourseSwitch />
     </>
   );
 }

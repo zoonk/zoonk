@@ -513,7 +513,6 @@ msgstr "레슨"
 
 #: src/_components/lesson-list.tsx
 #: src/_utils/count-of.ts
-#: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
@@ -1281,6 +1280,7 @@ msgstr "{buddy}(이)가 기억하는 것"
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "주간 요약"
@@ -2393,15 +2393,6 @@ msgstr "주제"
 msgctxt "KV-O0y"
 msgid "Practice"
 msgstr "연습"
-
-#: src/chapter/chapter-screen.tsx
-#: src/journey/journey-hero.tsx
-#: src/language/unit/language-unit-screen.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "진도"
 
 #: src/chapter/chapter-screen.tsx
 msgctxt "xY7fiy"
@@ -3671,14 +3662,14 @@ msgid "How the score works"
 msgstr "점수 계산 방식"
 
 #: src/exam/exam-screen.tsx
-msgctxt "QGnOZU"
-msgid "{date} at {time}"
-msgstr "{date} {time}"
-
-#: src/exam/exam-screen.tsx
 msgctxt "yft85U"
 msgid "Starts at {time}"
 msgstr "{time} 시작"
+
+#: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} {time}"
 
 #: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
@@ -4726,16 +4717,15 @@ msgstr "이 목표는 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
 
 #: src/journey/journey-chapters.tsx
-#: src/syllabus/use-subject-progress.ts
-msgctxt "B3fpYI"
-msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
-msgstr "{count, plural, other {이미 알던 주제 #개}}"
+#: src/syllabus/subject-chapters.tsx
+msgctxt "duDcbL"
+msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
+msgstr "{count, plural, other {이미 알던 챕터 #개}}"
 
 #: src/journey/journey-chapters.tsx
 #: src/onboarding/steps/reveal-week.tsx
@@ -4807,6 +4797,14 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {아직 학습한 레슨 없음} other {레슨 #개 학습}}"
 
 #: src/journey/journey-hero.tsx
+#: src/language/unit/language-unit-screen.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "sIMS7i"
+msgid "Progress"
+msgstr "진도"
+
+#: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -4832,9 +4830,9 @@ msgid "Your schedule"
 msgstr "내 일정"
 
 #: src/journey/journey-menu.tsx
-msgctxt "jgL8u5"
-msgid "Talk to {name}"
-msgstr "{name}에게 말 걸기"
+msgctxt "bH47Z4"
+msgid "Ask {name}"
+msgstr "{name}에게 물어보기"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
@@ -5298,32 +5296,22 @@ msgid "Schedule"
 msgstr "일정"
 
 #: src/journey/schedule-details.tsx
-#: src/onboarding/understood/use-schedule-row.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "하루 {time}"
-
-#: src/journey/schedule-details.tsx
 #: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {레슨 #개 남음}}"
 
 #: src/journey/schedule-details.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "일시 중지됨"
+#: src/onboarding/understood/use-schedule-row.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "하루 {time}"
 
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "오늘의 학습으로 이동하기"
-
-#: src/journey/schedule-details.tsx
-msgctxt "htY1di"
-msgid "Last week's recap"
-msgstr "지난주 요약"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -7189,11 +7177,10 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요."
 
-#. A button: study the mind maps, one by one. A verb, not the noun.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "mindMapsStudyAction"
-msgid "Study"
-msgstr "학습하기"
+msgctxt "RNV4nB"
+msgid "Study mind maps"
+msgstr "마인드맵 공부하기"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
@@ -7236,12 +7223,9 @@ msgid "No longer available"
 msgstr "더 이상 볼 수 없음"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "챕터"
+msgctxt "YvO5Tq"
+msgid "With a map"
+msgstr "마인드맵 있음"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7260,9 +7244,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, other {지금 마인드맵을 #개 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "BekXxP"
-msgid "Other chapters"
-msgstr "다른 챕터"
+msgctxt "uPTv7C"
+msgid "Without a map"
+msgstr "마인드맵 없음"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -8080,9 +8064,9 @@ msgid "The practical test can't be part of a mock exam."
 msgstr "실기 시험은 모의고사에 포함할 수 없어요."
 
 #: src/mock/mock-notes.tsx
-msgctxt "XOPRn8"
-msgid "{name} is only in full mock exams."
-msgstr "전체 모의고사에만 {name}(이)가 포함돼요."
+msgctxt "HImQYk"
+msgid "This was a shorter mock exam, so it didn't include {name}."
+msgstr "이번 모의고사는 분량이 짧아서 {name}을(를) 포함하지 않았어요."
 
 #: src/mock/mock-notes.tsx
 msgctxt "jvTx9o"
@@ -9596,6 +9580,13 @@ msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "계획 만들기가 중단됐어요"
 
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "챕터"
+
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
 msgid "Your plan didn't start"
@@ -10782,9 +10773,9 @@ msgid "I'll set it up"
 msgstr "설치할게요"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "lEMiev"
-msgid "Learn with examples. You won't practice on your own computer."
-msgstr "예시로 배워요. 컴퓨터에서 직접 연습하지는 않아요."
+msgctxt "yHP5HT"
+msgid "Learn with examples. You won't practice on your own device."
+msgstr "예시를 보며 배우세요. 개인 기기에서 직접 실습하지는 않아요."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -10847,9 +10838,9 @@ msgid "Choose how you'll use {tool}"
 msgstr "{tool} 사용 방식 선택하기"
 
 #: src/plan/plan-tools.tsx
-msgctxt "Z6SQB3"
-msgid "You won't practice on your own computer. Lessons use examples and simulations instead."
-msgstr "내 컴퓨터에서 직접 실습하지 않아요. 대신 레슨에서 예시와 시뮬레이션으로 배워요."
+msgctxt "u4q1Pf"
+msgid "You won't practice on your own device. Lessons use examples and simulations instead."
+msgstr "개인 기기에서 직접 실습하지는 않아요. 대신 레슨에서 예시와 시뮬레이션으로 배워요."
 
 #. A link that switches the plan to learning from examples, without installing tools.
 #: src/plan/plan-tools.tsx
@@ -12089,6 +12080,11 @@ msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "푸시 알림"
 
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "알림이 꺼져 있어요."
+
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
 msgctxt "vBM5w1"
@@ -12898,6 +12894,11 @@ msgid "Counts your answers in lessons, practice and tests."
 msgstr "레슨, 연습, 테스트에서 제출한 답을 반영해요."
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "nIwm4S"
+msgid "Questions from {exam}"
+msgstr "{exam} 기출문제"
+
+#: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
@@ -12922,11 +12923,6 @@ msgstr "함께 보기"
 msgctxt "JeoRv8"
 msgid "{count, plural, one {# chapter done} other {# chapters done}}"
 msgstr "{count, plural, other {챕터 #개 완료}}"
-
-#: src/syllabus/subject-chapters.tsx
-msgctxt "duDcbL"
-msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
-msgstr "{count, plural, other {이미 알던 챕터 #개}}"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "oUXyHJ"
@@ -13121,6 +13117,11 @@ msgstr "계획에 없어요 · 학습 시간이 부족해요"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않았어요"
+
+#: src/syllabus/use-subject-progress.ts
+msgctxt "B3fpYI"
+msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
+msgstr "{count, plural, other {이미 알던 주제 #개}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "0O99bA"

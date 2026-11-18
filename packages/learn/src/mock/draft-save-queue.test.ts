@@ -14,10 +14,14 @@ function flushPromises() {
 function setup() {
   const requests: PendingSave[] = [];
   const statuses: DraftSaveStatus[] = [];
+  const stored: Draft[] = [];
+  const attempts: ("sending" | "failed")[] = [];
 
   const queue = createDraftSaveQueue<Draft>({
     keyOf: (draft) => draft.itemId,
+    onAttempt: (_draft, state) => attempts.push(state),
     onStatus: (status) => statuses.push(status),
+    onStored: (draft) => stored.push(draft),
     save: (draft) =>
       new Promise<boolean>((resolve, reject) => {
         requests.push({
@@ -29,7 +33,7 @@ function setup() {
       }),
   });
 
-  return { queue, requests, statuses };
+  return { attempts, queue, requests, statuses, stored };
 }
 
 describe(createDraftSaveQueue, () => {
@@ -88,6 +92,26 @@ describe(createDraftSaveQueue, () => {
 
     expect(requests.map((request) => request.draft.itemId)).toStrictEqual(["q1", "q1", "q2"]);
     expect(statuses.at(-1)).toBe("saved");
+  });
+
+  it("reports a failed answer as sending again when its retry begins", async () => {
+    const { attempts, queue, requests, stored } = setup();
+    const answer = { answer: "B", itemId: "q1" };
+
+    queue.add(answer);
+    expect(attempts).toStrictEqual(["sending"]);
+    expect(stored).toStrictEqual([]);
+
+    requests[0]?.fail();
+    await flushPromises();
+    expect(attempts).toStrictEqual(["sending", "failed"]);
+    expect(stored).toStrictEqual([]);
+
+    queue.retryNow();
+    expect(attempts).toStrictEqual(["sending", "failed", "sending"]);
+    requests[1]?.store();
+    await flushPromises();
+    expect(stored).toStrictEqual([answer]);
   });
 
   it("waits longer before each new try, and tries at once when asked", async () => {

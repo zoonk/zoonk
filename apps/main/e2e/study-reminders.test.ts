@@ -92,12 +92,28 @@ test.describe("Study reminders", () => {
     await page.goto("/settings/reminders");
 
     const email = page.getByRole("switch", { name: "Email" });
+    const time = page.getByLabel("Time", { exact: true });
     await expectHydrated(email);
+    await expect(time).toBeDisabled();
+    await expect(page.getByText("Reminders are off.", { exact: true })).toBeVisible();
+
+    const guidance = page.getByText(
+      "To get notifications on your phone, turn them on in the Zoonk phone app.",
+    );
+
+    await expect(guidance).toBeVisible();
+
+    const guidanceTop = () => guidance.evaluate((node) => node.getBoundingClientRect().top);
+    const topWhileOff = await guidanceTop();
+
     await email.click();
     await expect(email).toBeChecked();
+    await expect(time).toBeEnabled();
+    await expect(page.getByText("Reminders are off.", { exact: true })).toBeHidden();
+    await expect.poll(guidanceTop).toBe(topWhileOff);
     await expect.poll(() => readReminder(user.id)).toMatchObject({ emailOn: true });
 
-    await page.getByLabel("Time").selectOption("07:15");
+    await time.selectOption("07:15");
     await expect.poll(() => readReminder(user.id)).toMatchObject({ emailOn: true, time: "07:15" });
 
     await page.context().close();

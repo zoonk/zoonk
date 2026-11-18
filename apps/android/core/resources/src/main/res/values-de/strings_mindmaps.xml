@@ -38,7 +38,7 @@
   "mindmaps_open_lesson": "827db19d2e2b115ec7a0ffdbe9f405aba2a00f44e3a116026e6f54fc4792590e",
   "mindmaps_open_spoken": "59f526e5967f3220d6c7b5c2711b435593d13d5349342534f0911617f550a6de",
   "mindmaps_options": "78170e3f99033aeb5c6a9922c3198b1c63b3cb03b8ab1ffd070392a921bf9440",
-  "mindmaps_other_chapters": "db0bfc6002d3efb135c226a3f00128b4c09fc3d72cb35bbfe56fe14ebb37bba5",
+  "mindmaps_other_chapters": "8dfe75ff6930fe15b3beb454d738571895c02fec8adca4c2988fc09016351960",
   "mindmaps_previous": "e3eca1a4e2045771a6852211a78a9ea7bef25055a0e773402e61af95242581fd",
   "mindmaps_ready": "50fa70d417dc36699f601354ccb12564bd79e4fc9885ccc43634cb9024ebf540",
   "mindmaps_remove": "2fab361c1e7d8c07efbea970522564c4635db8057c90200fdaeedc3d9de246c8",
@@ -55,8 +55,8 @@
   "mindmaps_show_all": "aabee69a32bec86245a15714a802e9620945f417f7cf7e0fba920cd5b5d713a0",
   "mindmaps_shown_as_text": "f00a49b56cffc684be6a97e171eafd85ca69ceaf2420d075db928660334b5f60",
   "mindmaps_start_from_first": "24dbf9a6205f26d9d8f14da576dab842792801123fc518796fa9d760a1a71697",
-  "mindmaps_study": "43d23121334cc6caedebfddc5d54a11db854268cbc6e9280508835425699492c",
-  "mindmaps_tab_chapters": "79fd6acb4da48e42f1a41b4f5bac629d39d0ebc7ad28774147a103fa1909313f",
+  "mindmaps_study": "ef35081034fd73ad828241428b89cb3a5add93e38d9061980366f9f6dc05ab40",
+  "mindmaps_tab_chapters": "1294c6c1e76821462d6d5c1faf2699f0acfc7faf62492f03a44db7f6236619b8",
   "mindmaps_tab_lessons": "2435fd3881cc889f4055544643f282351358723a18727057e9e9e18718cc1b00",
   "mindmaps_tab_saved": "6d47c87a9bcb0bde560f6ed64005992336da6c65ddda51fb9299aa781b37b4c5",
   "mindmaps_tab_spoken": "20f42bbf78b605dc974226e8b3979307d75364c0ccda321ce4e61c28fe869a75",
@@ -134,18 +134,15 @@
     <string name="mindmaps_zoom_out">Verkleinern</string>
     <string name="mindmaps_fit">An Bildschirm anpassen</string>
     <string name="mindmaps_viewer_hint">Ziehe zwei Finger zusammen oder auseinander, scrolle oder nutze + und - zum Zoomen; ziehe das Bild oder nutze die Pfeile zum Verschieben.</string>
-    <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
-    <string name="mindmaps_study">Lernen</string>
+    <string name="mindmaps_study">Mit Mindmaps lernen</string>
     <string name="mindmaps_create_all">Alle erstellen</string>
-    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
-    <string name="mindmaps_other_chapters">Weitere Kapitel</string>
+    <string name="mindmaps_other_chapters">Ohne Mindmap</string>
     <string name="mindmaps_free_lessons_note">Für eine dieser Mindmaps erstellen wir zuerst ihre Lektionen, und sie werden auf deine kostenlosen Lektionen angerechnet.</string>
     <plurals name="mindmaps_lessons_to_write">
         <item quantity="one">%1$s Lektion zu erstellen</item>
         <item quantity="other">%1$s Lektionen zu erstellen</item>
     </plurals>
-    <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
-    <string name="mindmaps_tab_chapters">Kapitel</string>
+    <string name="mindmaps_tab_chapters">Mit Mindmap</string>
     <string name="mindmaps_tab_lessons">Lektionen</string>
     <string name="mindmaps_tab_saved">Gespeichert</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->

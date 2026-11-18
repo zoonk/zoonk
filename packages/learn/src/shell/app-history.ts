@@ -117,7 +117,11 @@ export function nameAppEntry(name: string): void {
 }
 
 /** Returns whether it went back; otherwise the link navigates. */
-export function goBackTo(href: string): boolean {
+export function goBackTo(href: string, { skipSection = false } = {}): boolean {
+  if (skipSection) {
+    return goBackToApp(href);
+  }
+
   const navigation = getNavigation();
   const index = navigation?.currentEntry?.index ?? 0;
   const previous = index > 0 ? navigation?.entries()[index - 1] : null;
@@ -212,12 +216,15 @@ export function backLinkName({
   return own || null;
 }
 
-/** Returns whether it found an app page; otherwise the link goes to its default. */
-export function goBackToApp(): boolean {
+/** Returns to the app page outside this section, optionally requiring the link's own address. */
+export function goBackToApp(href?: string): boolean {
   const navigation = getNavigation();
   const entry = findAppEntryBehind(navigation);
 
-  if (!(navigation && entry)) {
+  if (
+    !(navigation && entry?.url) ||
+    (href && getPathAndSearch(entry.url) !== getPathAndSearch(href))
+  ) {
     return false;
   }
 

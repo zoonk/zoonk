@@ -349,15 +349,15 @@ private fun PropertyRow(
 
 @Composable
 private fun goalDateValue(page: PlanPageState): AnnotatedString {
-    val schedule = page.plan.schedule
-    val target = schedule.targetDate
-    if (target == null) {
-        if (page.isExam) return AnnotatedString(stringResource(R.string.plan_to_be_confirmed))
-        val finish = page.finish ?: return AnnotatedString(stringResource(R.string.plan_end_none_set))
-        val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
+    val finish = page.finish
+    if (finish == null) {
+        val unset = if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set
+        return AnnotatedString(stringResource(unset))
+    }
+    val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
+    if (finish.estimate && page.plan.schedule.targetDate == null) {
         return withData(stringResource(R.string.plan_end_none_set_estimate, date), date)
     }
-    val date = planDate(target.toJavaLocalDate(), page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text
     return withData(date, date)
 }
 

@@ -25,7 +25,7 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-function DailyTimeValue() {
+export function DailyTimeValue() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
@@ -188,32 +188,27 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
   const finish = useRoadmapFinish();
 
-  if (!targetDate) {
-    if (goal.kind === "exam") {
-      return t("To be confirmed");
-    }
+  if (!finish) {
+    return goal.kind === "exam" ? t("To be confirmed") : t("None set");
+  }
 
-    return finish ? (
+  const date = (
+    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+  );
+
+  if (goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate) {
+    return (
       <>
         {t("None set")}
         {FACT_SEPARATOR}
-        <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+        {date}
       </>
-    ) : (
-      t("None set")
     );
   }
 
-  return (
-    <PlanDateText
-      estimate={targetDateEstimated}
-      isoDate={targetDate}
-      month={targetDateNamedMonth}
-    />
-  );
+  return date;
 }
 
 export function PlanProperties({

@@ -256,7 +256,7 @@ export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }
 
   return (
     <Suggestion label={title} mark={<PauseIcon />}>
-      <SuggestionLine>
+      <SuggestionLine className="items-start *:data-[slot=suggestion-mark]:mt-0.5">
         <div>
           <SuggestionSummary>{title}</SuggestionSummary>
           <SuggestionDescription>{description}</SuggestionDescription>
@@ -264,7 +264,13 @@ export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }
       </SuggestionLine>
 
       <SlotContent statement>
-        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionHeader>
+          <PauseIcon
+            aria-hidden="true"
+            className="text-muted-foreground mr-2 inline size-4 align-text-bottom"
+          />
+          {title}
+        </SuggestionHeader>
         <SuggestionDescription>{description}</SuggestionDescription>
       </SlotContent>
     </Suggestion>

@@ -61,7 +61,7 @@ export function WeekendTime({
   const disabled = missing !== null;
 
   return (
-    <div className="flex flex-col gap-3" data-slot="weekend-time">
+    <div className="flex flex-col gap-2" data-slot="weekend-time">
       <div className="flex min-h-11 items-center justify-between gap-3">
         <label
           className={cn(disabled ? "text-muted-foreground" : "cursor-pointer", className)}
@@ -83,7 +83,7 @@ export function WeekendTime({
       </div>
 
       {missing ? (
-        <p className="text-muted-foreground -mt-3 min-h-14 text-sm text-pretty" id={reasonId}>
+        <p className="text-muted-foreground -mt-2 min-h-14 text-sm text-pretty" id={reasonId}>
           {missingDayReason(missing)}
         </p>
       ) : (

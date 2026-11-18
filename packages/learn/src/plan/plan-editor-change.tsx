@@ -52,7 +52,7 @@ export function PlanEditorChange({ placement }: { placement: "foot" | "panel" })
   );
 
   if (placement === "foot") {
-    return <DrawerFooter note={note} />;
+    return <DrawerFooter className="border-t" note={note} />;
   }
 
   return <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">{note}</div>;

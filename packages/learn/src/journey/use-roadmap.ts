@@ -9,7 +9,7 @@ import {
   type PlanDate,
   getAxisDatedPhases,
   getAxisFinish,
-  getRoadmapFinish,
+  getPlanFinish,
   getRoadmapPhases,
 } from "./phase-dates";
 
@@ -22,9 +22,9 @@ export function getLessonShare(phase: PlanPhaseView): number {
 }
 
 export function useRoadmapPhases() {
-  const { plan, today } = usePlanScreen();
+  const { goal, plan, today } = usePlanScreen();
 
-  const phases = getRoadmapPhases(plan.phases);
+  const phases = getRoadmapPhases(plan.phases, goal.kind === "exam" ? null : plan.end?.finishedOn);
 
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
 
@@ -33,7 +33,7 @@ export function useRoadmapPhases() {
 
 export function useRoadmapFinish(): PlanDate | null {
   const { goal, plan } = usePlanScreen();
-  return getRoadmapFinish({ goalKind: goal.kind, plan });
+  return getPlanFinish({ goalKind: goal.kind, plan });
 }
 
 /** The goal's date under the timeline's axis (`getAxisFinish`). */

@@ -164,7 +164,9 @@ function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
       {upNext.length > 0 && (
         <PageSection aria-labelledby={UP_NEXT_ID}>
           <PageSectionHeader>
-            <PageSectionTitle id={UP_NEXT_ID}>{t("Your next certificate")}</PageSectionTitle>
+            <PageSectionTitle className="text-wrap" id={UP_NEXT_ID}>
+              {t("Your next certificate")}
+            </PageSectionTitle>
           </PageSectionHeader>
           <ul className={LIST_GROUP_CLASS}>
             {upNext.map((item) => (

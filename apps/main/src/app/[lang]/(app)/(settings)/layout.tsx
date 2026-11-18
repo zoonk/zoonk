@@ -31,6 +31,7 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
           </Suspense>
         }
         parents={[{ href: getMenu("aboutYou").url, title: t("About you") }]}
+        tabbedHub
       >
         {children}
       </SectionPage>

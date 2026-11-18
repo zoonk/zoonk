@@ -7,11 +7,6 @@ import {
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 
-/** What learners call the subject, when the exam's notice names it at length. */
-export function getSubjectName(subject: { name: string; shortName: string | null }): string {
-  return subject.shortName ?? subject.name;
-}
-
 export function useSubjectStateText() {
   const t = useExtracted();
 

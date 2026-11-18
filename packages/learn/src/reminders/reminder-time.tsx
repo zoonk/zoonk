@@ -26,7 +26,7 @@ export function ReminderTimeSelect({
   onChange,
   time,
   ...props
-}: Omit<React.ComponentProps<typeof NativeSelect>, "onChange" | "size" | "value"> & {
+}: Omit<React.ComponentProps<typeof NativeSelect>, "onChange" | "value"> & {
   onChange: (time: string) => void;
   time: string;
 }) {

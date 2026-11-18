@@ -49,7 +49,9 @@ function useLeftOutLine() {
       case "written":
         return t("{name} isn't in mock exams yet.", { name: name ?? "" });
       case "writtenInFull":
-        return t("{name} is only in full mock exams.", { name: name ?? "" });
+        return t("This was a shorter mock exam, so it didn't include {name}.", {
+          name: name ?? "",
+        });
       case "numeric":
       case "shortAnswer":
         return "";

@@ -72,7 +72,7 @@ export async function SubscriptionPlans({
   }
 
   return (
-    <Page>
+    <Page measure="form">
       <SectionPageHeader title={t("Subscription")} />
 
       <PlusPricing

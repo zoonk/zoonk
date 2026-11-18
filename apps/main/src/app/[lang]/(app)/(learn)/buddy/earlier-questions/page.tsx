@@ -102,9 +102,7 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
               </EmptyMedia>
               <EmptyTitle>{t("No earlier questions")}</EmptyTitle>
               <EmptyDescription>
-                {t(
-                  "When a lesson you asked about is updated, your questions and their answers are kept here.",
-                )}
+                {t("Your questions from lessons that were updated, with their answers.")}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>

@@ -186,7 +186,7 @@ export function PhaseAxis({
   const goalShare = overrun?.phaseIndex === phase.index && axisFinish ? overrun.share : null;
   const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
-  const todayLabelled = todayShare !== null && goalShare === null;
+  const todayLabelled = todayShare !== null;
   const endLabelled = labelled && goalSide !== "right";
   const finishLabelled = isLast && goalSide !== "right";
 
@@ -198,7 +198,7 @@ export function PhaseAxis({
         </AxisLabel>
       )}
       {goalShare !== null && (
-        <AxisLabel share={goalShare}>
+        <AxisLabel after={todayLabelled} share={goalShare}>
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>
             <GoalDate />
           </span>

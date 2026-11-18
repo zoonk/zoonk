@@ -11,7 +11,7 @@ export async function getBestDayName(
   const locale = await getAppLocale();
 
   if (verdict.kind === "even") {
-    return t("Any day");
+    return t("No best day yet");
   }
 
   return verdict.kind === "best"

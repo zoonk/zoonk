@@ -31,6 +31,7 @@ import { PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
+import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
@@ -39,13 +40,7 @@ import { useNotebookAvailabilityText } from "./notebook-availability-text";
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
 
-type MistakesHrefs = {
-  back: string;
-  lesson: string;
-  notebook: string;
-  pattern: string;
-  practice: string;
-};
+type MistakesHrefs = { lesson: string; notebook: string; pattern: string; practice: string };
 
 type MistakesFilters = { nextOffset: number | null; status: "fixed" | "open" };
 
@@ -246,6 +241,15 @@ function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
   );
 }
 
+export function MistakesNotebookBar() {
+  const t = useExtracted();
+  const { today } = useLearnRoutes();
+
+  return (
+    <LearnPageBar back={{ href: today }} listed="learner" root title={t("Mistakes notebook")} />
+  );
+}
+
 export function MistakesNotebook({
   filters,
   goalTitle = null,
@@ -266,14 +270,7 @@ export function MistakesNotebook({
 
   return (
     <DetailLayout
-      bar={
-        <LearnPageBar
-          back={{ href: hrefs.back }}
-          listed="learner"
-          root
-          title={t("Mistakes notebook")}
-        />
-      }
+      bar={<MistakesNotebookBar />}
       bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
       measure="list"
       data-slot="mistakes-notebook"

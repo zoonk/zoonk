@@ -38,7 +38,7 @@
   "mindmaps_open_lesson": "b60ffdccd84df718f19f4e7dbc8db3089788570b08e3f91b3223ca1db604b0c4",
   "mindmaps_open_spoken": "2472b797493afc3cf1b597cf027e762285ca43667a94a3f4d7e1205f6ab27802",
   "mindmaps_options": "60040835e843ca097696da1ccecaebd104f911d28a6d16718db973c8cf1f41d8",
-  "mindmaps_other_chapters": "dc59029032cd0501f04a89247d6fd4472de8c30ff80638f2821e29e38bc0aeb8",
+  "mindmaps_other_chapters": "30226090b053b1b435d95b9d46218f828b3590a7850740952a43a35bff335453",
   "mindmaps_previous": "30004dfa1f9fe9ebc3a6853b2106605ef441d040f4be3838ebdd4dcbaa51b54b",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
   "mindmaps_remove": "9d85b1552e2be2eecbab1dfee4d1f260aaaf4485abe734084081006be37f6956",
@@ -55,8 +55,8 @@
   "mindmaps_show_all": "0262aff550f5e46b29563b87e3819506ad6e76d07828edb0f9f6fd2c1a665c01",
   "mindmaps_shown_as_text": "c20e11075bcf89d5789416048f1f1c6ca2588b78c7dc151383081192a5486278",
   "mindmaps_start_from_first": "f5882c2245618314aa0275bdf9c1641d3554740debd6effc9aa105f344efc658",
-  "mindmaps_study": "3cff15e310d1bb39ffae7f4d1371b1f87914e1bc1e3a366132edad37b80c4733",
-  "mindmaps_tab_chapters": "b6441aabcb4d88c1623cc9c02c56e6ce091237dce08d9488312a6b180aafe8df",
+  "mindmaps_study": "6a69dce8e488ebbb025901926b9f826c78b8ebef3ffdafdfb8ac29bb057e5823",
+  "mindmaps_tab_chapters": "388e7f0c1c61a3785d54d687b50dd9654db1525ddba119828ec6814962ec2ebe",
   "mindmaps_tab_lessons": "c799054cc1e11420965f981bbac43e581509cbb6a82cfdf55504cfb33ef178ff",
   "mindmaps_tab_saved": "8d6580ad70155b831e1190fd6158db15ad0207e046daffbb7acd40c598611ddc",
   "mindmaps_tab_spoken": "009dddeaaf10d3c20de03389bd29603a8ee1836302c0c99fc1dd950ca9dbf1bc",
@@ -134,18 +134,15 @@
     <string name="mindmaps_zoom_out">Uzaklaştır</string>
     <string name="mindmaps_fit">Ekrana sığdır</string>
     <string name="mindmaps_viewer_hint">Yakınlaştırıp uzaklaştırmak için iki parmağını açıp kapat, kaydır veya + ve - tuşlarını kullan; hareket ettirmek için sürükle veya ok tuşlarını kullan.</string>
-    <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
-    <string name="mindmaps_study">Çalış</string>
+    <string name="mindmaps_study">Zihin haritalarıyla çalış</string>
     <string name="mindmaps_create_all">Tümünü oluştur</string>
-    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
-    <string name="mindmaps_other_chapters">Diğer üniteler</string>
+    <string name="mindmaps_other_chapters">Haritası olmayanlar</string>
     <string name="mindmaps_free_lessons_note">Bu haritalardan birini yapmak için önce derslerini hazırlıyoruz ve bunlar ücretsiz ders hakkından düşüyor.</string>
     <plurals name="mindmaps_lessons_to_write">
         <item quantity="one">Hazırlanacak %1$s ders</item>
         <item quantity="other">Hazırlanacak %1$s ders</item>
     </plurals>
-    <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
-    <string name="mindmaps_tab_chapters">Üniteler</string>
+    <string name="mindmaps_tab_chapters">Haritası olanlar</string>
     <string name="mindmaps_tab_lessons">Dersler</string>
     <string name="mindmaps_tab_saved">Kaydedilenler</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->
