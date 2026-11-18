@@ -185,13 +185,17 @@ function placeLineLabel({
   label,
   marks,
   placed,
+  origin,
+  requiredLines = [],
 }: {
   area: LabelBox;
   label: LineLabel;
   marks: LabelMarks;
   placed: readonly LabelBox[];
+  origin?: LabelBox;
+  requiredLines?: readonly LabelSegment[];
 }): LabelBox | null {
-  const start = besideEnd(label, area);
+  const start = origin ?? besideEnd(label, area);
   const step = label.size.height / STEPS_PER_LABEL_HEIGHT;
 
   const clearsMarks = (box: LabelBox) =>
@@ -208,20 +212,18 @@ function placeLineLabel({
 
   const fits = (box: LabelBox, lines: readonly LabelSegment[]) =>
     isInside(box, area) &&
-    [label.segment, ...lines].every((segment) => !touchesSegment(box, segment)) &&
-    marks.boxes.every((other) => !touchesBox(box, other)) &&
-    isNearestItsLine(box);
+    !touchesSegment(box, label.segment) &&
+    requiredLines.every((line) => !touchesSegment(box, line)) &&
+    lines.every((line) => !touchesSegment(box, line)) &&
+    marks.boxes.every((other) => !touchesBox(box, other));
 
-  const isClear = (box: LabelBox) => fits(box, []) && clearsMarks(box);
-  const offItsLine = (box: LabelBox) => fits(box, []);
+  const clearsAll = (box: LabelBox) => fits(box, marks.lines) && clearsMarks(box);
+  const offItsLine = (box: LabelBox) => fits(box, []) && isNearestItsLine(box);
+  const isClear = (box: LabelBox) => offItsLine(box) && clearsMarks(box);
 
-  const nearby = (passes: readonly ((box: LabelBox, shift: Point) => boolean)[]) => {
-    const shift = passes.reduce<Point | null>(
-      (found, pass) =>
-        found ??
-        NEAREST_SHIFTS.find((candidate) => pass(shifted(start, candidate, step), candidate)) ??
-        null,
-      null,
+  const nearby = (accepts: (box: LabelBox, shift: Point) => boolean) => {
+    const shift = NEAREST_SHIFTS.find((candidate) =>
+      accepts(shifted(start, candidate, step), candidate),
     );
 
     return shift && shifted(start, shift, step);
@@ -230,43 +232,45 @@ function placeLineLabel({
   const spots = spotsAcross(area, start);
 
   const clear =
-    nearby([
+    nearby(
       (box, shift) =>
-        Math.hypot(shift.x, shift.y) <= CLEAR_OF_ALL_STEPS &&
-        fits(box, marks.lines) &&
-        clearsMarks(box),
-      isClear,
-    ]) ?? spots.find((box) => isClear(box));
+        (origin !== undefined || Math.hypot(shift.x, shift.y) <= CLEAR_OF_ALL_STEPS) &&
+        clearsAll(box) &&
+        isNearestItsLine(box),
+    ) ??
+    nearby(isClear) ??
+    spots.find((box) => isClear(box));
 
   if (clear || label.isOptional) {
     return clear ?? null;
   }
 
-  return nearby([offItsLine]) ?? spots.find((box) => offItsLine(box)) ?? start;
+  const clearsRequired = (box: LabelBox) =>
+    isInside(box, area) && requiredLines.every((line) => !touchesSegment(box, line));
+
+  return (
+    nearby(clearsAll) ??
+    spots.find((box) => clearsAll(box)) ??
+    nearby(offItsLine) ??
+    spots.find((box) => offItsLine(box)) ??
+    (requiredLines.length > 0
+      ? (nearby(clearsRequired) ?? spots.find((box) => clearsRequired(box)) ?? null)
+      : start)
+  );
 }
 
-/**
- * Where each line's name sits, in order: by its line's upper end (over the line, or under it for a
- * dashed copy), or at the nearest spot that clears the lines, the marks (drag handles, crossings)
- * and the names placed before it. Every spot is nearer its own line than any other, so a name never
- * reads as another line's. When no spot close by clears every line, it keeps off its own line and
- * the marks, searching the whole chart before it gives up the marks, so a name never sits under a
- * handle while a free spot is left; then it keeps just off its own line. Every spot it searches keeps clear of the boxes (the arrows, heads included, and the axis title). Its
- * halo never cuts the line it names: with no free spot anywhere it stays by its end. An optional
- * name with no spot clear of the marks and the names before it is left out, as null.
- *
- * @internal
- */
 export function placeLineLabels({
   area,
   labels,
   marks,
   placed = [],
+  requiredLines = [],
 }: {
   area: LabelBox;
   labels: readonly LineLabel[];
   marks: LabelMarks;
   placed?: readonly LabelBox[];
+  requiredLines?: readonly LabelSegment[];
 }): (LabelBox | null)[] {
   const [label, ...rest] = labels;
 
@@ -274,42 +278,71 @@ export function placeLineLabels({
     return [];
   }
 
-  const box = placeLineLabel({ area, label, marks, placed });
+  const box = placeLineLabel({ area, label, marks, placed, requiredLines });
   const next = box ? [...placed, box] : placed;
-  return [box, ...placeLineLabels({ area, labels: rest, marks, placed: next })];
+  return [box, ...placeLineLabels({ area, labels: rest, marks, placed: next, requiredLines })];
 }
 
-/**
- * Every name on the chart. The names shown while answering are placed against their own lines
- * only, so the answer's line and name that Check reveals never move them; the answer's name then
- * takes a spot around them, against every line.
- */
 export function placeChartLabels({
   area,
   marks,
   revealed,
+  revealedLine,
   shown,
 }: {
   area: LabelBox;
-  marks: Omit<LabelMarks, "lines">;
+  marks: LabelMarks;
   revealed: readonly LineLabel[];
+  revealedLine?: LabelSegment;
   shown: readonly LineLabel[];
 }): (LabelBox | null)[] {
-  const segments = (labels: readonly LineLabel[]) => labels.map((label) => label.segment);
+  const visibleMarks = {
+    ...marks,
+    lines: [...shown.map((label) => label.segment), ...marks.lines],
+  };
 
-  const placed = placeLineLabels({
-    area,
-    labels: shown,
-    marks: { ...marks, lines: segments(shown) },
-  });
+  const before = placeLineLabels({ area, labels: shown, marks: visibleMarks });
+  const unmeasured = revealedLine && revealed.length === 0 ? [revealedLine] : [];
+  const answerLines = [...revealed.map((label) => label.segment), ...unmeasured];
+
+  if (answerLines.length === 0) {
+    return before;
+  }
+
+  const checkedMarks = { ...marks, lines: [...visibleMarks.lines, ...answerLines] };
+
+  const crosses = (box: LabelBox | null) =>
+    box !== null && answerLines.some((line) => touchesSegment(box, line));
+
+  const kept = before.map((box) => (crosses(box) ? null : box));
+
+  const placed = shown.reduce((positions, label, index) => {
+    const origin = before[index];
+
+    if (!origin || !crosses(origin)) {
+      return positions;
+    }
+
+    const relocated = placeLineLabel({
+      area,
+      label: { ...label, isOptional: false },
+      marks: checkedMarks,
+      origin,
+      placed: positions.filter((box) => box !== null),
+      requiredLines: answerLines,
+    });
+
+    return positions.with(index, relocated);
+  }, kept);
 
   return [
     ...placed,
     ...placeLineLabels({
       area,
       labels: revealed,
-      marks: { ...marks, lines: segments([...shown, ...revealed]) },
+      marks: checkedMarks,
       placed: placed.filter((box) => box !== null),
+      requiredLines: answerLines,
     }),
   ];
 }

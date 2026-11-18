@@ -30,7 +30,7 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
               height: ceil(style.uiFont(size, legibility: nil).lineHeight)))
         }
         let boxes = LineCrossingLabelLayout.place(
-          labels, in: area, lines: lines, obstacles: [], nearestLines: [cost, revenue, before]
+          labels, in: area, lines: lines, obstacles: []
         ).map { $0! }
         XCTAssertEqual(boxes.count, 2)
         XCTAssertFalse(boxes[0].insetBy(dx: -3, dy: -3).intersects(boxes[1]))

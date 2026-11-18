@@ -73,55 +73,38 @@ final class LineCrossingPlacementParityTests: XCTestCase {
     XCTAssertTrue(failures.isEmpty, failures.first ?? "")
   }
 
-  func testChartNamesAreNearestTheirOwnNamedLineAtNarrowPlotSizes() {
-    var failures: [String] = []
-    for width in [176.0, 204, 320] {
-      for height in [156.0, 204, 240] {
-        let cost = LineCrossingLabelLayout.Segment(
-          from: CGPoint(x: 0, y: height * (1 - 2500.0 / 5625)),
-          to: CGPoint(x: width, y: height * (1 - 4375.0 / 5625)))
-        let revenue = LineCrossingLabelLayout.Segment(
-          from: CGPoint(x: 0, y: height), to: CGPoint(x: width, y: 0))
-        let before = LineCrossingLabelLayout.Segment(
-          from: CGPoint(x: 0, y: height * (1 - 2000.0 / 5625)),
-          to: CGPoint(x: width, y: height * (1 - 3875.0 / 5625)))
-        let cross = CGPoint(x: width * 250 / 375, y: height * (1 - 3750.0 / 5625))
-        let guides = [
-          LineCrossingLabelLayout.Segment(from: CGPoint(x: 0, y: cross.y), to: cross),
-          LineCrossingLabelLayout.Segment(from: CGPoint(x: cross.x, y: height), to: cross),
-        ]
-        let own = [cost, revenue]
-        let labels = zip(own, [45.0, 74]).map {
-          LineCrossingLabelLayout.Label(segment: $0, size: CGSize(width: $1, height: 22))
-        }
-        let shown =
-          labels + [
-            .init(
-              segment: before, size: CGSize(width: 55, height: 22), isUpper: false, isOptional: true
-            )
-          ]
-        let boxes = LineCrossingLabelLayout.chart(
-          shown: shown, revealed: [], in: CGRect(x: 0, y: 0, width: width, height: height),
-          guides: guides, obstacles: [])
-        for (index, box) in boxes.enumerated() {
-          guard let box else { continue }
-          let ownLine = shown[index].segment
-          let nearestOwn = distance(box, to: ownLine)
-          for other in (own + [before]) where other != ownLine {
-            let otherDistance = distance(box, to: other)
-            if nearestOwn > otherDistance + 0.1 {
-              failures.append(
-                "\(width)×\(height), name\(index): own \(nearestOwn), other \(otherDistance), box \(box)"
-              )
-            }
-          }
-        }
-      }
-    }
-    XCTAssertTrue(failures.isEmpty, failures.first ?? "")
+  func testChartNameIsNearerItsLineThanTheGuide() throws {
+    let own = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 104), to: .init(x: 311, y: 100))
+    let guide = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 76), to: .init(x: 311, y: 76))
+    let boxes = LineCrossingLabelLayout.chart(
+      shown: [.init(segment: own, size: .init(width: 50, height: 12))],
+      revealed: [], in: CGRect(x: 0, y: 0, width: 320, height: 220), guides: [guide], obstacles: [])
+    let box = try XCTUnwrap(boxes[0])
+
+    XCTAssertLessThan(distance(box, to: own), distance(box, to: guide))
   }
 
-  func testShownNamesKeepExactPositionsAcrossRevealMatrix() {
+  func testCrossedNameMovesToTheNearestClearSpot() throws {
+    let own = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 104), to: .init(x: 311, y: 100))
+    let other = LineCrossingLabelLayout.Segment(
+      from: .init(x: 22, y: 170), to: .init(x: 311, y: 160))
+    let answer = LineCrossingLabelLayout.Segment(
+      from: .init(x: 22, y: 86), to: .init(x: 311, y: 86))
+    let size = CGSize(width: 50, height: 12)
+    let area = CGRect(x: 0, y: 0, width: 320, height: 220)
+    let shown = [own, other].map { LineCrossingLabelLayout.Label(segment: $0, size: size) }
+    let before = LineCrossingLabelLayout.chart(
+      shown: shown, revealed: [], in: area, guides: [], obstacles: [])
+    let after = LineCrossingLabelLayout.chart(
+      shown: shown, revealed: [.init(segment: answer, size: size, isUpper: false)],
+      in: area, guides: [], obstacles: [])
+
+    XCTAssertTrue(LineCrossingLabelLayout.touches(try XCTUnwrap(before[0]), answer))
+    XCTAssertEqual(after[0], CGRect(x: 252, y: 104, width: 50, height: 12))
+    XCTAssertEqual(after[1], before[1])
+  }
+
+  func testOnlyCrossedNamesMoveAcrossRevealMatrix() {
     for width in [176.0, 260, 320] {
       for height in [156.0, 240, 480] {
         for offset in [-40.0, -20, 20, 40] {
@@ -148,7 +131,19 @@ final class LineCrossingPlacementParityTests: XCTestCase {
               shown: shown, revealed: [], in: area, guides: [], obstacles: [])
             let afterCheck = LineCrossingLabelLayout.chart(
               shown: shown, revealed: [answer], in: area, guides: [], obstacles: [])
-            XCTAssertEqual(beforeCheck, Array(afterCheck.prefix(shown.count)))
+            for (before, after) in zip(beforeCheck, afterCheck) {
+              if let before,
+                LineCrossingLabelLayout.touches(
+                  before.insetBy(dx: -3, dy: -3), answer.segment)
+              {
+                XCTAssertNotNil(after)
+                if let after {
+                  XCTAssertFalse(LineCrossingLabelLayout.touches(after, answer.segment))
+                }
+              } else {
+                XCTAssertEqual(before, after)
+              }
+            }
           }
         }
       }

@@ -228,18 +228,49 @@ describe(placeChartLabels, () => {
     size,
   };
 
-  it("keeps the names already shown in place when the answer's line and name appear", () => {
+  it("keeps shown names in place when the answer line clears both", () => {
+    const clearAnswer = { ...answer, segment: { from: { x: 22, y: 200 }, to: { x: 311, y: 200 } } };
     const before = placeChartLabels({ area, marks: noMarks, revealed: [], shown: [revenue, cost] });
 
     const after = placeChartLabels({
       area,
       marks: noMarks,
-      revealed: [answer],
+      revealed: [clearAnswer],
       shown: [revenue, cost],
     });
 
     expect(after.slice(0, 2)).toStrictEqual(before);
     expect(after[2]).not.toBeNull();
+  });
+
+  it("moves a crossed name to the closest clear spot and keeps the other name in place", () => {
+    const shown = [
+      { isUpper: true, segment: { from: { x: 22, y: 104 }, to: { x: 311, y: 100 } }, size },
+      { isUpper: true, segment: { from: { x: 22, y: 170 }, to: { x: 311, y: 160 } }, size },
+    ];
+
+    const revealed = [{ ...answer, segment: { from: { x: 22, y: 86 }, to: { x: 311, y: 86 } } }];
+    const before = placeChartLabels({ area, marks: noMarks, revealed: [], shown });
+    const after = placeChartLabels({ area, marks: noMarks, revealed, shown });
+
+    expect(before[0]).toStrictEqual({ bottom: 92, left: 253, right: 303, top: 80 });
+    expect(after[0]).toStrictEqual({ bottom: 116, left: 253, right: 303, top: 104 });
+    expect(after[1]).toStrictEqual(before[1]);
+  });
+
+  it("keeps a name closer to its own line than a dotted guide", () => {
+    const segment = { from: { x: 22, y: 104 }, to: { x: 311, y: 100 } };
+    const guide = { from: { x: 22, y: 76 }, to: { x: 311, y: 76 } };
+    const marks = { ...noMarks, lines: [guide] };
+
+    const [box] = placeChartLabels({
+      area,
+      marks,
+      revealed: [],
+      shown: [{ isUpper: true, segment, size }],
+    });
+
+    expect(box && gapToSegment(box, segment)).toBeLessThan(box ? gapToSegment(box, guide) : 0);
   });
 
   it("keeps the answer's name nearer the answer's line than the lines shown before it", () => {

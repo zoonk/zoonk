@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities.geometry
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -28,6 +29,30 @@ class LineLabelsTest {
         vararg labels: LineLabel,
         marks: LabelMarks = noMarks,
     ) = placeLineLabels(area, labels.toList(), marks, unit = 1f).map { requireNotNull(it) }
+
+    @Test
+    fun movesOnlyTheNameCrossedByTheAnswer() {
+        val own = LabelSegment(Offset(22f, 104f), Offset(311f, 100f))
+        val other = LabelSegment(Offset(22f, 170f), Offset(311f, 160f))
+        val answer = LabelSegment(Offset(22f, 86f), Offset(311f, 86f))
+        val shown = listOf(LineLabel(true, own, size), LineLabel(true, other, size))
+        val before = placeChartLabels(area, shown, emptyList(), noMarks, 1f)
+        val after = placeChartLabels(area, shown, listOf(LineLabel(false, answer, size)), noMarks, 1f)
+
+        assertEquals(Rect(253f, 80f, 303f, 92f), before[0])
+        assertEquals(Rect(253f, 104f, 303f, 116f), after[0])
+        assertEquals(before[1], after[1])
+    }
+
+    @Test
+    fun keepsANameCloserToItsLineThanADottedGuide() {
+        val own = LabelSegment(Offset(22f, 104f), Offset(311f, 100f))
+        val guide = LabelSegment(Offset(22f, 76f), Offset(311f, 76f))
+        val marks = noMarks.copy(lines = listOf(guide))
+        val box = requireNotNull(placeChartLabels(area, listOf(LineLabel(true, own, size)), emptyList(), marks, 1f).single())
+
+        assertTrue(gap(box, own) < gap(box, guide))
+    }
 
     @Test
     fun keepsANameOffItsLineWhereTheLineLeavesThroughTheChartsTop() {
