@@ -6,11 +6,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
 import { FactSegments } from "../_components/task-meta";
-import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
 import { PathRowBody } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
@@ -55,33 +55,38 @@ function RoadmapCompact({
             as="span"
             className={cn(
               "relative min-w-6 overflow-hidden",
-              phase.state === "current" &&
-                "after:ring-success after:absolute after:inset-0 after:rounded-[inherit] after:ring-[1.5px] after:ring-inset",
+              phase.state === "current" && BAND_STATE_CLASS.current,
             )}
             key={phase.index}
             weight={getPhaseWeight(phase)}
           >
             <span
-              className="bg-success absolute inset-y-0 left-0"
+              className={cn(
+                "absolute inset-y-0 left-0",
+                phase.state === "current" ? "bg-success/30" : "bg-success",
+              )}
               style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
             />
+            {phase.state === "current" && (
+              <CurrentPhaseMark className="absolute top-1/2 left-1/2 size-1 -translate-1/2 ring-1" />
+            )}
           </MeterPart>
         ))}
       </MeterParts>
 
       {lined && position && (
         <span
-          className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}
+          className="flex w-full items-center justify-between gap-2 text-xs"
           data-slot="plan-roadmap-line"
         >
-          <span className="text-muted-foreground text-balance">
+          <span className="text-muted-foreground min-w-0 text-balance">
             <FactSegments
               facts={[position.name]}
               lead={<span className="text-foreground font-medium">{position.place}</span>}
             />
           </span>
           <span
-            className="text-muted-foreground ms-auto flex items-center gap-3"
+            className="text-muted-foreground flex shrink-0 items-center gap-2"
             data-slot="plan-roadmap-when"
           >
             <PhaseWhen phase={position.phase} />

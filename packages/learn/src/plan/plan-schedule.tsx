@@ -94,7 +94,12 @@ function DailyCoverage({
         </p>
       )}
 
-      <div className={cn("col-start-1 row-start-1 flex flex-col gap-2", pending && "invisible")}>
+      <div
+        className={cn(
+          "col-start-1 row-start-1 flex flex-col gap-2 *:min-h-0 [&_button]:min-h-11",
+          pending && "invisible",
+        )}
+      >
         {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it
             says so. */}
         {plan.fitOffer?.fits ? (

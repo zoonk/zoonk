@@ -68,7 +68,7 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   return (
     <div className="flex flex-col" data-slot="estimated-score">
       <p className="flex min-w-0 flex-col gap-1">
-        <span className="text-label">{t("Estimated score")}</span>
+        <span className="text-muted-foreground text-sm font-medium">{t("Estimated score")}</span>
         <span className="text-readout text-2xl leading-tight">{scoreRange(score)}</span>
         <span className="text-muted-foreground text-xs">{source}</span>
       </p>
@@ -164,7 +164,12 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
     );
   }
 
-  return <div className="flex min-h-12 items-center gap-3 py-1.5">{content}</div>;
+  return (
+    <div className="flex flex-col gap-0.5">
+      <p className="text-sm">{item.label}</p>
+      {item.detail && <p className="text-muted-foreground text-xs">{item.detail}</p>}
+    </div>
+  );
 }
 
 function StillNeeded({
@@ -187,7 +192,7 @@ function StillNeeded({
 
   return (
     <section aria-labelledby="still-needed-title" className="flex flex-col gap-2">
-      <SectionLabel id="still-needed-title">
+      <SectionLabel className="text-sm tracking-normal normal-case" id="still-needed-title">
         {t({
           description:
             'A section heading over the next steps toward the learner\'s goal, such as "Take your first mock exam". Not a button.',
@@ -195,7 +200,7 @@ function StillNeeded({
           message: "Next",
         })}
       </SectionLabel>
-      <ul className="flex flex-col [&>li+li]:border-t">
+      <ul className="flex flex-col gap-3">
         {items.map((item) => (
           <li key={item.key}>
             <StillNeededRow examHref={examHref} item={item} />

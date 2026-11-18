@@ -94,7 +94,9 @@ function PlanWeek() {
   return (
     <section aria-labelledby={WEEK_TITLE_ID} className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
-        <SectionLabel id={WEEK_TITLE_ID}>{t("This week")}</SectionLabel>
+        <SectionLabel className="text-sm tracking-normal normal-case" id={WEEK_TITLE_ID}>
+          {t("This week")}
+        </SectionLabel>
         {time && (
           <span className="text-muted-foreground font-mono text-xs tabular-nums">{time}</span>
         )}

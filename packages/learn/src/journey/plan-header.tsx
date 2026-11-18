@@ -35,7 +35,7 @@ export function PlanHeader({
   return (
     <PageHeader>
       <PageHeaderContent className="w-full">
-        <div className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
+        <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-2")}>
           <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
             {t("Plan")}
           </PageTitle>

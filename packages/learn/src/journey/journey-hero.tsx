@@ -230,8 +230,8 @@ export function PlanNumbers({
             "grid @2xl/standing:grid-cols-2",
             NUMBER_ROWS_CLASS,
             variant === "tiles"
-              ? "gap-x-2 [&>li+li]:mt-2 @2xl/standing:[&>li+li]:mt-0"
-              : "gap-x-6 [&>li+li]:mt-4 @2xl/standing:[&>li+li]:mt-0",
+              ? "gap-x-2 [&>li+li]:mt-4 @2xl/standing:[&>li+li]:mt-0"
+              : "gap-x-6 [&>li+li]:mt-9 @2xl/standing:[&>li+li]:mt-0",
           )}
           data-slot="journey-standing"
         >

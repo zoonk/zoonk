@@ -21,8 +21,8 @@ import { useStudyDaysText } from "./use-study-days-text";
 
 const TITLE_ID = "plan-properties-title";
 
-function mono(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
+function studyTime(chunks: React.ReactNode) {
+  return <span className="tabular-nums">{chunks}</span>;
 }
 
 export function DailyTimeValue() {
@@ -32,11 +32,11 @@ export function DailyTimeValue() {
   const { shape } = plan.schedule;
 
   if (shape.weekend === null) {
-    return mono(formatDuration(shape.weekdays));
+    return studyTime(formatDuration(shape.weekdays));
   }
 
   return t.rich("<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends", {
-    mono,
+    mono: studyTime,
     weekdays: formatDuration(shape.weekdays),
     weekend: formatDuration(shape.weekend),
   });

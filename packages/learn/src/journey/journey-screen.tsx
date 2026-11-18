@@ -173,8 +173,10 @@ function JourneyBody({
           />
           <PlanRoadmap className="hidden sm:flex" density="full" links={links} />
 
-          {numbers("tiles", IN_COLUMN_CLASS)}
-          <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
+          <div className="flex flex-col gap-4 empty:hidden min-[72rem]:hidden">
+            {numbers("tiles", "")}
+            <PlanSuggestionSlot />
+          </div>
 
           {structure ? (
             <>
