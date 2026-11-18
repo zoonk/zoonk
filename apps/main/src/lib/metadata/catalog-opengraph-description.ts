@@ -1,4 +1,27 @@
-const MAX_DESCRIPTION_LENGTH = 112;
+const MAX_DESCRIPTION_LENGTH = 180;
+
+export function truncateCatalogImageText({
+  language,
+  maxLength,
+  text,
+}: {
+  language: string;
+  maxLength: number;
+  text: string;
+}): string {
+  const value = text.trim();
+
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  const limit = maxLength - 1;
+  const words = new Intl.Segmenter(language, { granularity: "word" });
+  const wordStart = words.segment(value).containing(limit)?.index;
+  const prefix = value.slice(0, wordStart || limit).replace(/[\s\p{P}]+$/u, "");
+
+  return `${prefix}…`;
+}
 
 export function getCatalogImageDescription({
   description,
@@ -7,12 +30,9 @@ export function getCatalogImageDescription({
   description?: string | null;
   language: string;
 }): string {
-  if (!description?.trim()) {
-    return "";
-  }
-
-  const segmenter = new Intl.Segmenter(language, { granularity: "sentence" });
-  const first = segmenter.segment(description.trim()).containing(0)?.segment.trim();
-
-  return first && first.length <= MAX_DESCRIPTION_LENGTH ? first : "";
+  return truncateCatalogImageText({
+    language,
+    maxLength: MAX_DESCRIPTION_LENGTH,
+    text: description ?? "",
+  });
 }

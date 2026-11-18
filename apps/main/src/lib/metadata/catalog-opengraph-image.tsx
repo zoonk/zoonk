@@ -5,11 +5,15 @@ import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
-import { getCatalogImageDescription } from "./catalog-opengraph-description";
+import {
+  getCatalogImageDescription,
+  truncateCatalogImageText,
+} from "./catalog-opengraph-description";
 import { OpenGraphBrand, getOpenGraphLogo } from "./open-graph-brand";
 import { getOpenGraphWordBreak } from "./open-graph-word-break";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
+const DESCRIPTION_LINE_COUNT = 5;
 const DESCRIPTION_LINE_HEIGHT = 1.35;
 const DESCRIPTION_FONT_SIZE = 30;
 const BRAND_SIZE = 40;
@@ -50,19 +54,6 @@ export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageP
     <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={logoSrc} {...params} />,
     { ...catalogOpenGraphImageSize, fonts },
   );
-}
-
-/** Ends on the last whole word that fits; a script without spaces between words is cut where it reaches the limit. */
-function truncateText({ maxLength, text }: { maxLength: number; text: string }): string {
-  if (text.length <= maxLength) {
-    return text;
-  }
-
-  const cut = text.slice(0, maxLength - 1);
-  const lastSpace = cut.lastIndexOf(" ");
-  const words = lastSpace > 0 ? cut.slice(0, lastSpace) : cut;
-
-  return `${words.replace(/[\s\p{P}]+$/u, "")}…`;
 }
 
 function getTitleFontSize(title: string): number {
@@ -180,7 +171,11 @@ function CatalogOpenGraphImage({
   logoSrc,
   title,
 }: CatalogOpenGraphImageParams & { imageSrc: string; logoSrc: string }) {
-  const safeTitle = truncateText({ maxLength: MAX_TITLE_LENGTH, text: title });
+  const safeTitle = truncateCatalogImageText({
+    language,
+    maxLength: MAX_TITLE_LENGTH,
+    text: title,
+  });
 
   const safeDescription = getCatalogImageDescription({ description, language });
 
@@ -251,9 +246,12 @@ function CatalogOpenGraphImage({
             <div
               style={{
                 color: "#4a4a4a",
-                display: "flex",
+                display: "block",
                 fontSize: DESCRIPTION_FONT_SIZE,
+                lineClamp: DESCRIPTION_LINE_COUNT,
                 lineHeight: DESCRIPTION_LINE_HEIGHT,
+                maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
+                overflow: "hidden",
               }}
             >
               {safeDescription}
