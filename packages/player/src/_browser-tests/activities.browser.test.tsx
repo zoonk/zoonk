@@ -1,3 +1,4 @@
+import { numericCheck } from "@zoonk/testing/fixtures/activity-checks";
 import {
   activityContentFixtures,
   engineModeFixtures,
@@ -16,6 +17,15 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep } from "../preview/preview-steps";
+
+function expectCenteredChipMark(chip: Element) {
+  const marker = chip.querySelector('[data-slot="line-marker"]')!;
+  const icon = marker.getBoundingClientRect();
+  const label = marker.nextElementSibling!.getBoundingClientRect();
+
+  expect(label.height).toBeGreaterThan(icon.height);
+  expect(icon.top + icon.height / 2).toBeCloseTo(label.top + label.height / 2, 0);
+}
 
 describe("lesson activities", () => {
   it("formula model: moving the rate produces the value to check", async () => {
@@ -95,6 +105,31 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
+  });
+
+  it("step solver: the mark centers on a wrapped wrong choice", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const solver = activityContentFixtures.stepSolver;
+      const [first, ...rest] = solver.fields.steps;
+      const text = "Add the sales tax to the original price before taking the discount";
+
+      const choices = first!.choices.map((choice) =>
+        choice.isCorrect ? choice : { ...choice, text },
+      );
+
+      openActivity({
+        content: {
+          ...solver,
+          fields: { ...solver.fields, steps: [{ ...first!, choices }, ...rest] },
+        },
+        template: "stepSolver",
+      });
+
+      const wrong = page.getByRole("button", { name: text });
+      await wrong.click();
+      await expect.element(wrong).toBeDisabled();
+      expectCenteredChipMark(wrong.element());
+    });
   });
 
   it("money ticks in millions shorten without giving adjacent ticks the same number", async () => {
@@ -305,6 +340,32 @@ describe("lesson activities", () => {
     await page.getByRole("radio", { name: /24 ppm/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("chart reader: the check mark centers on a wrapped span", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const chart = activityContentFixtures.chartReader;
+      const text = "From the 2010 measurement to the 2020 measurement";
+
+      const spans = chart.fields.spans.map((span) =>
+        span.id === "late" ? { ...span, label: text } : span,
+      );
+
+      openActivity({
+        content: {
+          ...chart,
+          check: numericCheck(24, { output: "late" }),
+          fields: { ...chart.fields, spans },
+        },
+        template: "chartReader",
+      });
+
+      const span = page.getByRole("button", { name: text });
+      await span.click();
+      await checkActivity();
+      await expectVerdict("Correct!");
+      expectCenteredChipMark(span.element());
+    });
   });
 
   it("chart reader: an axis label alone does not turn numbers into clock times", async () => {
