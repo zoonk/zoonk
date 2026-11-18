@@ -77,9 +77,7 @@ export function ExamMomentDay({ moment }: { moment: Moment }) {
 
   return (
     day && (
-      <p className="text-compact font-mono font-medium whitespace-nowrap tabular-nums">
-        {dayText(day)}
-      </p>
+      <p className="text-compact font-mono font-medium text-pretty tabular-nums">{dayText(day)}</p>
     )
   );
 }
