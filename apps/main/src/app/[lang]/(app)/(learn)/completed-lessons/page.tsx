@@ -100,7 +100,7 @@ async function CompletedLessonsSkeleton() {
     <DetailSkeleton
       aside={false}
       bar={<CompletedLessonsBar listed />}
-      measure="list"
+      measure="column"
       title={t("Completed lessons")}
     />
   );

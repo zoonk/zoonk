@@ -28,17 +28,17 @@ export function PathRowBody({
 }) {
   return (
     <span
-      className="flex min-w-0 flex-1 items-center justify-between gap-3"
+      className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-0.5"
       data-slot="path-row-body"
     >
       <span
-        className="flex min-w-0 flex-1 flex-col text-pretty wrap-break-word *:first:text-balance"
+        className="flex min-w-0 flex-[1_1_9rem] flex-col text-pretty wrap-break-word *:first:text-balance"
         data-slot="path-row-words"
       >
         {children}
       </span>
       {value && (
-        <span className="max-w-[50%] shrink-0 text-right" data-slot="path-row-value">
+        <span className="grid max-w-full shrink-0 text-xs" data-slot="path-row-value">
           {value}
         </span>
       )}

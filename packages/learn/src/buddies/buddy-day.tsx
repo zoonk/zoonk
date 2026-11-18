@@ -71,7 +71,7 @@ function BuddyRows({
             <ListRowContent>
               <ListRowTitle>{t("Glasses")}</ListRowTitle>
             </ListRowContent>
-            <ListRowTrailing className="font-sans">
+            <ListRowTrailing>
               <GlassesCount status={status} />
             </ListRowTrailing>
           </ListRowBody>

@@ -169,7 +169,7 @@ function NoticeScaleRow() {
 function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
   return (
     <ListRow role="note">
-      <ListRowLeading firstLine>
+      <ListRowLeading>
         <ListRowIcon>
           <ScaleIcon />
         </ListRowIcon>

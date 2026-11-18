@@ -117,8 +117,8 @@ export function CompletedLessonsScreen({
           title={t("Completed lessons")}
         />
       }
-      className="max-w-column"
       data-slot="completed-lessons"
+      measure="column"
     >
       <DetailHero>
         <DetailHeroText>

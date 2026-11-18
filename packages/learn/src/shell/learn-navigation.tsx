@@ -55,7 +55,7 @@ function TabLabel({
           <BuddyTabName buddy={null} />
         </span>
         {renderBuddyPlaceholder?.(
-          "signed-in:inline-block absolute start-0 top-1/2 hidden h-3 w-6 -translate-y-1/2 rounded-sm",
+          "signed-in:inline-block absolute start-0 top-1/2 hidden h-3 w-full -translate-y-1/2 rounded-sm",
         )}
         <span className="signed-in:inline sr-only hidden">{t("Buddy")}</span>
       </span>

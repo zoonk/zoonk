@@ -42,8 +42,14 @@ export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button aria-haspopup="dialog" onClick={onAdjust} size="bar" variant="outline">
-      {t("Adjust plan")}
+    <Button
+      aria-haspopup="dialog"
+      className="h-auto min-h-11 max-w-full py-1 whitespace-normal lg:min-h-10"
+      onClick={onAdjust}
+      size="bar"
+      variant="outline"
+    >
+      <span className="min-w-0 text-balance wrap-break-word">{t("Adjust plan")}</span>
     </Button>
   );
 }

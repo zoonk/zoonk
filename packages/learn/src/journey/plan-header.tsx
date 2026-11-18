@@ -40,7 +40,7 @@ export function PlanHeader({
             {t("Plan")}
           </PageTitle>
 
-          <div className="flex flex-wrap items-center gap-2">{children}</div>
+          <div className="flex max-w-full min-w-0 flex-wrap items-center gap-2">{children}</div>
         </div>
 
         {subtitle && (
