@@ -3,9 +3,9 @@ import {
   getContentLocale,
   getFormattingLocale,
   getSentenceSpace,
-  toSentence,
   getSupportedLocaleFromLanguage,
   isValidLocale,
+  toSentence,
 } from "./locale";
 
 describe(getContentLocale, () => {
