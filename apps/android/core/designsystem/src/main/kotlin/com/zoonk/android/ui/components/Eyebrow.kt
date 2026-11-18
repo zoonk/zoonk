@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.theme.balanced
+import com.zoonk.android.ui.theme.wrappedAs
 
 /**
  * Main's `Eyebrow`: the one chip for a small label over or beside a title (22dp, an outline, no fill,
@@ -74,7 +74,7 @@ private fun Chip(
             style =
                 MaterialTheme.typography.bodySmall
                     .copy(fontWeight = FontWeight.Medium)
-                    .balanced(),
+                    .wrappedAs(MaterialTheme.typography.labelSmall),
         )
     }
 }

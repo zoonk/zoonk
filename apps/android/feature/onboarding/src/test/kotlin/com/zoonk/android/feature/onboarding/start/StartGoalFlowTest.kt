@@ -347,6 +347,24 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Looks right").assertIsDisplayed()
     }
 
+    /** A newer tap's result replaces the older one's: joining the waitlist after a refusal shows only that it worked. */
+    @Test
+    fun joiningTheWaitlistAfterARefusalLeavesOnlyItsConfirmation() {
+        fun card(left: Int) = understoodDraft(understanding = """{"status":"instrument","instrument":"guitar"}""", activeGoalsLeft = left)
+        api.draft = card(left = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        api.draft = card(left = 0)
+        api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
+        rule.onNodeWithText("Start musicianship").performClick()
+        rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
+
+        rule.onNodeWithText("Join the waitlist").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("That's all the goals you can study at once").assertDoesNotExist()
+    }
+
     @Test
     fun aFullCardOpensEveryGoalOnceTheLearnerSubscribes() {
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = 0)

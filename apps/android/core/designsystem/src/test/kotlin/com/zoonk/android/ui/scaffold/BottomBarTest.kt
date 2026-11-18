@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,10 +25,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.Button
@@ -84,25 +92,27 @@ class BottomBarTest {
         compose.onNodeWithText("Start").assertIsFocused()
     }
 
-    /** In a short window, a note taller than the room between the page's top bar and the bar scrolls within that room. */
+    /** A note taller than the room between the page's content and the bar goes into the page's scroll, scrolled into view. */
     @Config(qualifiers = "w640dp-h320dp-land", fontScale = 2f)
     @Test
-    fun aNoteTallerThanItsRoomStartsBelowThePagesTopAndScrolls() {
+    fun aNoteTallerThanItsRoomMovesIntoThePagesScroll() {
+        val room = BarNoteRoom()
         compose.setContent {
             ZoonkTheme {
                 PageScaffold(onBack = {}, title = { Text("Learn piano") }) { padding ->
                     Column(Modifier.fillMaxSize().padding(padding)) {
-                        Box(Modifier.weight(1f).fillMaxWidth().testTag(PAGE))
-                        BottomBar(
-                            note = {
-                                Column {
-                                    Text("That's all the goals you can study at once", Modifier.testTag(HEADING))
-                                    Spacer(Modifier.height(240.dp))
-                                    Button(onClick = {}, Modifier.testTag(LAST)) { Text("Subscribe") }
-                                }
-                            },
-                            noteRoom = rememberBarNoteRoom(),
-                        ) { Button(onClick = {}) { Text("Start") } }
+                        Column(
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .barNoteViewport(room)
+                                .testTag(PAGE)
+                                .verticalScroll(rememberScrollState()),
+                        ) {
+                            Spacer(Modifier.height(600.dp))
+                            BarNoteInPage(room)
+                        }
+                        BottomBar(note = { TallNote() }, noteRoom = room) { Button(onClick = {}) { Text("Start") } }
                     }
                 }
             }
@@ -110,9 +120,80 @@ class BottomBarTest {
         compose.waitForIdle()
 
         val page = compose.onNodeWithTag(PAGE).getUnclippedBoundsInRoot()
-        val heading = compose.onNodeWithTag(HEADING).getUnclippedBoundsInRoot()
-        assertTrue("the note's heading ($heading) starts below the page's top ($page)", heading.top >= page.top)
+        val heading = compose.onNodeWithTag(HEADING).assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertTrue("the note's heading ($heading) starts in the page ($page)", heading.top >= page.top)
+        assertEquals("the page keeps no room for a note it holds", 0f, room.height.value, 0f)
         compose.onNodeWithTag(LAST).performScrollTo().assertIsDisplayed()
+    }
+
+    /** A lazy page takes a note too tall to draw over it as its last item, scrolled into view. */
+    @Config(qualifiers = "w640dp-h320dp-land", fontScale = 2f)
+    @Test
+    fun aLazyPageScrollsToTheNoteItTakes() {
+        compose.setContent {
+            ZoonkTheme {
+                val list = rememberLazyListState()
+                val room = rememberBarNoteRoom(list)
+                Column(Modifier.fillMaxSize()) {
+                    LazyColumn(Modifier.weight(1f).barNoteViewport(room).testTag(PAGE), state = list) {
+                        items(40) { Text("Row $it", Modifier.height(48.dp)) }
+                        barNoteInPage(room)
+                    }
+                    BottomBar(note = { TallNote() }, noteRoom = room) { Button(onClick = {}) { Text("Start") } }
+                }
+            }
+        }
+        compose.waitForIdle()
+
+        val page = compose.onNodeWithTag(PAGE).getUnclippedBoundsInRoot()
+        val heading =
+            compose
+                .onNode(
+                    hasTestTag(HEADING) and hasAnyAncestor(hasTestTag(PAGE)),
+                ).assertIsDisplayed()
+                .getUnclippedBoundsInRoot()
+        assertTrue("the note's heading ($heading) starts in the page ($page)", heading.top >= page.top)
+    }
+
+    /** With no top bar, the page's own top bounds the room: a note that fits there draws over the page whole, not cut to a guessed toolbar. */
+    @Config(qualifiers = "w640dp-h320dp-land")
+    @Test
+    fun aNoteThatFitsUnderAPageWithoutATopBarDrawsWhole() {
+        val room = BarNoteRoom()
+        var noteHeight by mutableStateOf<Dp?>(null)
+        compose.setContent {
+            ZoonkTheme {
+                Column(Modifier.fillMaxSize()) {
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .barNoteViewport(room)
+                            .testTag(PAGE),
+                    )
+                    BottomBar(
+                        note = noteHeight?.let { height -> { Spacer(Modifier.height(height)) } },
+                        noteRoom = room,
+                    ) { Button(onClick = {}) { Text("Start") } }
+                }
+            }
+        }
+        val page = compose.onNodeWithTag(PAGE).getUnclippedBoundsInRoot().let { it.bottom - it.top }
+
+        // 20dp short of the page's height, its 16dp of padding included.
+        noteHeight = page - 36.dp
+        compose.waitForIdle()
+
+        assertEquals("the note draws its full height over the page", (page - 20.dp).value, room.height.value, 1f)
+    }
+
+    @Composable
+    private fun TallNote() {
+        Column {
+            Text("That's all the goals you can study at once", Modifier.testTag(HEADING))
+            Spacer(Modifier.height(240.dp))
+            Button(onClick = {}, Modifier.testTag(LAST)) { Text("Subscribe") }
+        }
     }
 
     private companion object {

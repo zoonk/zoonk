@@ -58,6 +58,8 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.barNoteInPage
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LanguageToday
@@ -188,10 +190,10 @@ fun TodayDay(
             supportingPane = { TodayAsidePane(model, aside) },
             modifier = Modifier.alpha(if (switching) SWITCHING_ALPHA else 1f),
         ) { beside ->
-            val noteRoom = rememberBarNoteRoom()
+            val noteRoom = rememberBarNoteRoom(list)
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    modifier = Modifier.weight(1f).fillMaxWidth().barNoteViewport(noteRoom),
                     state = list,
                     horizontalAlignment = if (beside) Alignment.Start else Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp + noteRoom.height),
@@ -208,6 +210,7 @@ fun TodayDay(
                             TodayAside(model, aside, beside = false, modifier = Modifier.pageItem().padding(top = 24.dp))
                         }
                     }
+                    barNoteInPage(noteRoom, Modifier.pageItem())
                 }
 
                 TodayActionBar(model, viewModel, actions, beside, noteRoom)

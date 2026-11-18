@@ -12,16 +12,20 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.requestFocus
+import androidx.compose.ui.text.style.LineBreak
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.ui.testing.laidOutStyle
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class ChoiceQuestionsRunTest {
@@ -32,7 +36,7 @@ class ChoiceQuestionsRunTest {
     private var pending by mutableStateOf(false)
     private var presses = 0
 
-    private fun show() {
+    private fun show(hint: String? = null) {
         rule.setContent {
             ZoonkTheme {
                 ChoiceQuestionsRun(
@@ -47,6 +51,7 @@ class ChoiceQuestionsRunTest {
                     onAnswer = { _, _ -> presses++ },
                     onSend = { presses++ },
                     onClose = {},
+                    hint = { hint },
                 )
             }
         }
@@ -56,6 +61,15 @@ class ChoiceQuestionsRunTest {
         answered = 1
         pending = true
         rule.waitForIdle()
+    }
+
+    /** A hint is a sentence, so it wraps as every sentence does, with the normal rules. */
+    @Config(qualifiers = "ja")
+    @Test
+    fun aHintWrapsByTheNormalRules() {
+        show(hint = "惑星はどれですか")
+
+        assertNotEquals(LineBreak.Strictness.Strict, rule.laidOutStyle("惑星").lineBreak.strictness)
     }
 
     @Test

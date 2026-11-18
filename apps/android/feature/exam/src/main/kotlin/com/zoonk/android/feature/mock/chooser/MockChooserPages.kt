@@ -285,7 +285,7 @@ private fun ChooserPage(
 ) {
     // Main's screen Enter: a focused control that acts (the last mock, the bar's button, a notice's
     // action) keeps its own, and only an Enter none of them took starts; the picks hand theirs over.
-    val noteRoom = rememberBarNoteRoom()
+    val noteRoom = rememberBarNoteRoom(listState)
     Column(Modifier.onKeyEvent { event -> enterTakes(event, onEnter) }) {
         DetailPage(
             aside = aside,

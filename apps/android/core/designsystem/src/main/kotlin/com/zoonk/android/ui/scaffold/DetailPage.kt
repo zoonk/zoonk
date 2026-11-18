@@ -30,7 +30,8 @@ import androidx.window.core.layout.WindowSizeClass
  * (wider windows give it room, never wider margins), and [aside] beside it behind a hairline where
  * there's room, with [asideBar] pinned under it. Where there isn't, [content] is told so and shows
  * what the aside and its bar hold its own way, as main does under `lg`. A [BottomBar] under both panes
- * passes its [noteRoom], so each pane's scrolling content ends clear of the note drawn over them.
+ * passes its [noteRoom], so each pane's scrolling content ends clear of the note drawn over them, and the column holds a note too
+ * tall to draw over it; a [noteRoom] made with [listState] scrolls the column to it.
  */
 @Composable
 fun DetailPage(
@@ -68,10 +69,13 @@ fun DetailPage(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(),
+                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize().barNoteViewport(noteRoom),
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-            ) { content(asideBeside) }
+            ) {
+                content(asideBeside)
+                noteRoom?.let { barNoteInPage(it) }
+            }
         }
     }
 }

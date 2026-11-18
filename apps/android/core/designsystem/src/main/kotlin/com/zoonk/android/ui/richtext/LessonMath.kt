@@ -134,12 +134,15 @@ private class MathParser(
 
                     '{' -> {
                         index++
-                        parse(until = '}', style = style)
+                        val group = parse(until = '}', style = style)
+                        // A script after braces applies to the whole group, as KaTeX sets it: {(x+1)/2}² is ((x + 1)/2)².
+                        val next = source.drop(index).trimStart().firstOrNull()
+                        if (next != null && next in SCRIPT_MARKS) group.grouped(style) else group
                     }
 
                     '^', '_' -> {
                         index++
-                        script(if (character == '^') Script.Superscript else Script.Subscript)
+                        script(if (character == '^') Script.Superscript else Script.Subscript, style)
                     }
 
                     ' ', '&', '\n', '\t' -> {
@@ -184,20 +187,26 @@ private class MathParser(
         return gap + piece + gap
     }
 
-    private fun script(style: Script): Piece {
-        val piece = argument(style)
+    /** A [kind] of script on the [line] it's written on; one already raised or lowered can't move a second level, so it's written out: x^2. */
+    private fun script(
+        kind: Script,
+        line: Script,
+    ): Piece {
+        val nested = line != Script.Normal
+        val piece = argument(if (nested) line else kind)
         val said = piece.spoken.trim()
 
         val spoken =
             when {
                 said.isEmpty() || said in ATTACHED_MARKS -> said
-                style == Script.Subscript -> " ${words.subscript(said)} "
+                kind == Script.Subscript -> " ${words.subscript(said)} "
                 said == "2" -> " ${words.squared} "
                 said == "3" -> " ${words.cubed} "
                 else -> " ${words.power(said)} "
             }
+        val mark = if (kind == Script.Superscript) "^" else "_"
 
-        return Piece(piece.text, spoken)
+        return Piece(if (nested) (run(mark, line, italic = false) + piece.grouped(line)).text else piece.text, spoken)
     }
 
     private fun scriptArgument(style: Script): Piece {

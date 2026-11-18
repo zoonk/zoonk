@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityAnnouncement
@@ -266,7 +265,6 @@ private fun MatchCardButton(
             style =
                 MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
-                    lineBreak = LineBreak.Paragraph,
                     color =
                         when (state) {
                             CardState.Matched -> colors.onTertiaryContainer

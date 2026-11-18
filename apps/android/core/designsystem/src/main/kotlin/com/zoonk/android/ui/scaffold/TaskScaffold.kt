@@ -162,7 +162,10 @@ fun TaskScaffold(
     exitConfirmation: TaskExitConfirmation? = null,
     closeLabel: String? = null,
     bottomBar: (@Composable () -> Unit)? = null,
-    /** A status over [bottomBar] (what's saving, what didn't go through), shown just above it so the bar never moves. */
+    /**
+     * A status over [bottomBar] (what's saving, what didn't go through), shown just above it so the bar never moves. Content that
+     * scrolls marks its viewport and holds the note at its end ([LocalBarNoteRoom]), for a note too tall to draw over it.
+     */
     note: (@Composable () -> Unit)? = null,
     aside: TaskAside? = null,
     lonePage: Boolean = false,
@@ -184,7 +187,7 @@ fun TaskScaffold(
                 content = { padding ->
                     // The note draws over the content just above the bar, so the content's end keeps its room clear.
                     val clear = padding.plusBottom(noteRoom.height)
-                    CompositionLocalProvider(LocalTitleFocus provides focus) { content(clear) }
+                    CompositionLocalProvider(LocalTitleFocus provides focus, LocalBarNoteRoom provides noteRoom) { content(clear) }
                 },
             )
         }
