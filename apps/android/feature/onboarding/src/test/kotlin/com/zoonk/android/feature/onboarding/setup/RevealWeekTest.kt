@@ -12,7 +12,7 @@ class RevealWeekTest {
     fun theWeekCountsOnlyTheDaysItLists() {
         val week = listOf(day(1, minutes = 20.0, lessons = 1), day(2), day(3, minutes = 25.0, lessons = 2)).studyWeek()
 
-        assertEquals(StudyWeek(days = 2, minutes = 45), week)
+        assertEquals(RevealWeekCount(days = 2, minutes = 45), week)
     }
 
     @Test
