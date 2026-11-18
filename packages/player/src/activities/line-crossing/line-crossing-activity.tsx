@@ -126,7 +126,12 @@ export function LineCrossingActivity({
   const readsX = check.kind === "numeric" && check.output === "x";
   const showsAnswer = isChecked && !sameOffsets(offsets, real);
   const shifted = fields.lines.find((line) => line.id === fields.shift.line);
-  const changes = [changeWords(fields.yLabel)[yChange], changeWords(fields.xLabel)[xChange]];
+
+  const changes = [
+    changeWords(fields.yLabel, "y")[yChange],
+    changeWords(fields.xLabel, "x")[xChange],
+  ];
+
   const movedText = (line: FieldLine) => lineWords.moved(line, offsets[line.id] ?? 0, axis);
 
   function handleMove(id: string, offset: number) {

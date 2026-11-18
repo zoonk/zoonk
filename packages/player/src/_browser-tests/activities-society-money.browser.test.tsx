@@ -169,7 +169,7 @@ describe("money and society activities", () => {
     openActivity({ template: "lineCrossing" });
     await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
     await expect.element(page.getByText("Price per dozen: up", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Eggs sold: down", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Eggs sold: fewer", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -193,7 +193,7 @@ describe("money and society activities", () => {
     ).toStrictEqual(expect.arrayContaining(["0", "100", "200", "300", "2,000", "4,000"]));
 
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
-    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: more", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");
     await checkActivity();
     await expectVerdict("Correct!");
@@ -508,7 +508,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Cost" }), { x: 0, y: -40 });
 
-    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: more", { exact: true })).toBeVisible();
   });
 });
 
@@ -692,7 +692,7 @@ describe("money and society activities reopened from their saved answer", () => 
     await expectVerdict("Correct!");
     await reopenSaved();
 
-    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: more", { exact: true })).toBeVisible();
     await expect.element(page.getByText("What happened")).not.toBeInTheDocument();
   });
 
