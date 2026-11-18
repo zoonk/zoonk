@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.SubscribeButton
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GoalMark
@@ -36,6 +38,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.goalSpokenName
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.scaffold.CloseButton
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.UUID
@@ -83,7 +86,7 @@ internal fun MakeRoomContent(
         Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-                CloseButton(onDismiss, label = stringResource(R.string.close_sheet))
+                CloseButton(onDismiss, Modifier.iconButtonEdge(ButtonEdge.End).offset(x = CLOSE_INK), stringResource(R.string.close_sheet))
             }
             Text(
                 stringResource(R.string.goal_switcher_make_room_description),
@@ -110,8 +113,9 @@ internal fun MakeRoomContent(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onDismiss) { Text(stringResource(R.string.today_not_now)) }
+                TextButton(onClick = onDismiss, edge = ButtonEdge.Start, size = ButtonSize.Small) { Text(stringResource(R.string.today_not_now)) }
                 SubscribeButton(onSubscribe)
             }
         }
@@ -145,3 +149,6 @@ private fun ActiveGoalRow(
         },
     )
 }
+
+/** `ic_close` leaves 5dp blank after its ink, so the ✕ ends on the column's edge. */
+private val CLOSE_INK = 5.dp
