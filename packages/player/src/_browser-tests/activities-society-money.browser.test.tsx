@@ -42,8 +42,13 @@ const chainQuestion = {
   ]),
 };
 
-const { calculator, scenario } = engineModeFixtures.formulaModel;
+const { calculator, scenario, simulation } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
+
+function sliderTop(name: string): number {
+  const slider = page.getByRole("slider", { name }).element();
+  return slider.getBoundingClientRect().top - slider.closest("figure")!.getBoundingClientRect().top;
+}
 
 function chartLabels() {
   return [...document.querySelectorAll("figure svg text")].map((text) => ({
@@ -122,6 +127,28 @@ describe("money and society activities", () => {
     await expect.element(page.getByText(/^−[\d.]+ from the start$/u)).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("keeps the speed slider in place when the starting curve appears", async () => {
+    openActivity({ content: simulation, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Speed" })).toBeVisible();
+
+    const top = sliderTop("Speed");
+    await pressOnSlider("Speed", "ArrowRight", 1);
+    await expect.element(page.getByText("At the start", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Speed")).toBeCloseTo(top, 0);
+  });
+
+  it("keeps the price slider in place when the rent event changes the curve", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Price per cup" })).toBeVisible();
+
+    const top = sliderTop("Price per cup");
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
+    await expect.element(page.getByText("Before", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Price per cup")).toBeCloseTo(top, 0);
   });
 
   it("formula model calculator: a number that isn't the model's is wrong", async () => {
