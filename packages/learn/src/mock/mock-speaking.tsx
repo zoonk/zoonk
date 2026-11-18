@@ -26,6 +26,7 @@ import { TaskMainButton } from "../shell/task-frame";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame } from "./mock-frame";
+import { canStartSpeaking } from "./use-speaking-start";
 
 type SpeakingTask = SpeakingSectionView["tasks"][number];
 
@@ -147,17 +148,21 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
       left={speaking.tasks.filter((task) => task.status !== "completed").length}
     />
   ) : (
-    !writing && (
-      <TaskActions>
-        <TaskMainButton
-          busy={runner.busy === "startSpeaking"}
-          disabled={runner.pending}
-          onClick={() => void runner.startSpeaking()}
-        >
-          {t("Start")}
-        </TaskMainButton>
-      </TaskActions>
-    )
+    <TaskActions>
+      <TaskMainButton
+        busy={runner.busy === "startSpeaking"}
+        disabled={
+          !canStartSpeaking({
+            error: runner.error,
+            pending: runner.pending,
+            writing: writing !== null,
+          })
+        }
+        onClick={() => void runner.startSpeaking()}
+      >
+        {t("Start")}
+      </TaskMainButton>
+    </TaskActions>
   );
 
   return (

@@ -40,27 +40,6 @@ const FIT_CLASS = {
   lg: { body: "lg:min-h-0 lg:overflow-y-auto", root: "lg:h-dvh lg:overflow-hidden" },
 } as const;
 
-/** With no buttons to keep still, the note takes the bar's row itself. */
-function TaskFrameBar({
-  footer,
-  note,
-  ref,
-}: {
-  footer: React.ReactNode;
-  note: React.ReactNode;
-  ref: React.Ref<HTMLDivElement>;
-}) {
-  if (!footer && !note) {
-    return null;
-  }
-
-  return (
-    <TaskActionBar note={footer ? note : null} ref={ref} tabIndex={-1}>
-      {footer || note}
-    </TaskActionBar>
-  );
-}
-
 export function TaskFrame({
   aside,
   beforeExit,
@@ -92,7 +71,10 @@ export function TaskFrame({
    */
   fit?: "always" | "lg";
   footer?: React.ReactNode;
-  /** An error or status line drawn over the screen above the bar, so the bar's buttons never move. */
+  /**
+   * An error or status line drawn over the screen above the bar, so the bar's buttons never move.
+   * It needs a `footer`: the bar it sits on.
+   */
   footerNote?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
@@ -159,7 +141,11 @@ export function TaskFrame({
         {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
 
-      <TaskFrameBar footer={footer} note={footerNote} ref={bar} />
+      {footer && (
+        <TaskActionBar note={footerNote} ref={bar} tabIndex={-1}>
+          {footer}
+        </TaskActionBar>
+      )}
 
       {aside && (
         <TaskAside footer={aside.footer} label={aside.label} meta={aside.meta} title={aside.title}>
