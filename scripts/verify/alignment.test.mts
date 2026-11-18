@@ -67,7 +67,7 @@ describe("the Plan's path and Android's captures", () => {
     assert.equal(line?.rule, "line");
     assert.match(line?.detail ?? "", /The Trickster.*the value 8\.25 above the row's center/u);
 
-    // Lane C's row piece puts it 0.26 above, within the line.
+    // The row puts it 0.26 above, within the line.
     assert.deepEqual(failures(real("plan path after 21c684874d, phone")), []);
   });
 
@@ -94,7 +94,7 @@ describe("the Plan's path and Android's captures", () => {
       (finding) => finding.rule === "end-edge",
     );
 
-    // b18-16: the chevron's ink ends inside its icon's box, short of where the dates end.
+    // The chevron's ink ends inside its icon's box, short of where the dates end.
     assert.deepEqual(
       ends.map((finding) => finding.measured),
       [5.67],
@@ -124,7 +124,7 @@ describe("the Plan's path and Android's captures", () => {
 
   it("calls a value beside a title that wraps trailing, so it belongs on the row's center (E5)", () => {
     // Three lines of a title with "12" beside its second: not a value stacked under its label.
-    const wrapped = evaluateCapture(real("round 3 wrapped-title-value"));
+    const wrapped = evaluateCapture(real("wrapped-title-value"));
 
     assert.equal(
       wrapped.find((finding) => finding.rule === "label-start"),
@@ -145,16 +145,12 @@ describe("the Plan's path and Android's captures", () => {
 
     // Two lines, the value on the row's center; and a title with a note, the control.
     assert.deepEqual(
-      evaluateCapture(real("round 3 corrected-wrap-value")).filter(
-        (finding) => finding.rule === "line",
-      ),
+      evaluateCapture(real("corrected-wrap-value")).filter((finding) => finding.rule === "line"),
       [],
     );
 
     assert.deepEqual(
-      evaluateCapture(real("round 3 corrected-note-value")).filter(
-        (finding) => finding.rule === "line",
-      ),
+      evaluateCapture(real("corrected-note-value")).filter((finding) => finding.rule === "line"),
       [],
     );
   });

@@ -55,8 +55,7 @@ async function fixture() {
 }
 
 /**
- * Bodies that show a device picture anywhere but in the section the tool writes, from RV77 and
- * RV78, each written as its reviewer wrote it.
+ * Bodies that show a device picture anywhere but in the section the tool writes.
  */
 function escapes(device: string): Record<string, string> {
   return {
@@ -75,8 +74,8 @@ function escapes(device: string): Record<string, string> {
   };
 }
 
-describe("a device picture shown anywhere but in the section the tool writes (RV77, RV78)", () => {
-  it("fails, for every way a reviewer wrote one, for that one reason", async () => {
+describe("a device picture shown anywhere but in the section the tool writes", () => {
+  it("reports every placement outside the designated section", async () => {
     const { check, device } = await fixture();
 
     const found = await Promise.all(
@@ -174,8 +173,8 @@ describe("the section pnpm pr:media device-section prints", () => {
   });
 });
 
-describe("the pictures device-section names (RV79)", () => {
-  it("prints a picture named twice once, which then passes its own check (RV79 P2)", async () => {
+describe("the pictures device-section names", () => {
+  it("prints a picture named twice once, which then passes its own check", async () => {
     const { check, device } = await fixture();
     const section = deviceSection(await readDeviceShots([device, device]));
 
@@ -184,7 +183,7 @@ describe("the pictures device-section names (RV79)", () => {
     assert.deepEqual(result.problems, []);
   });
 
-  it("refuses a path that holds anything but letters, digits, /, ., - and _ (RV79 P2)", async () => {
+  it("refuses a path that holds anything but letters, digits, /, ., - and _", async () => {
     const { repository } = checkFixture();
 
     await assert.rejects(
@@ -210,7 +209,7 @@ describe("the pictures device-section names (RV79)", () => {
     assert.ok(refused.every((why) => /another folder/u.test(why)));
   });
 
-  it("prints each picture once, by the file it names, in the order first named (RV82)", async () => {
+  it("prints each picture once, by the file it names, in the order first named", async () => {
     const { device } = await fixture();
     const other = join(dirname(device), "other.png");
 

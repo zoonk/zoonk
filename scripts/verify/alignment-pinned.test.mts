@@ -72,7 +72,7 @@ describe("nothing rests under a pinned bar at the scroll's end", () => {
     );
   });
 
-  it("leaves a control the bar holds alone: Skip beside Continue rides with the bar (C-L04)", () => {
+  it("leaves a control the bar holds alone: Skip beside Continue rides with the bar", () => {
     const capture = lastRow(752);
 
     const skip = (pinnedIn?: string) => ({

@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.util.UUID
 
-/** RV80's reproduction: Today's pronunciation notice on the narrowest phone at 200%, in Portuguese. */
+/** Today's pronunciation notice on the narrowest phone at 200%, in Portuguese. */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "pt-rBR-w320dp-h900dp")

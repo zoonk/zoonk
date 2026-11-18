@@ -25,7 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/** RV85's reproductions: when the plan's run fails, its wait is over, and the quiz goes with it, whatever the learner did in it. */
+/** When the plan's run fails, its wait is over, and the quiz goes with it, whatever the learner did in it. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class SetupFailedRunTest {

@@ -58,7 +58,7 @@ private struct BottomBar<Actions: View>: View {
   }
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
-    // Wide, a filling button would read as a banner across the page (main's E-102).
+    // Wide, a filling button would read as a banner across the page.
     let isWide = width >= wideBarWidth && !isStacked
 
     return Group {

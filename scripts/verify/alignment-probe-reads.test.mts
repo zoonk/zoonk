@@ -6,8 +6,7 @@ import { read, setUpProbeDom } from "./alignment-probe-dom.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /**
- * What the sweep's alignment read got wrong about real pages (CAUSES.md's C-L causes), each page
- * reduced to the markup the probe reads.
+ * Real page layouts reduced to the markup the probe reads.
  */
 setUpProbeDom();
 
@@ -25,7 +24,7 @@ function signInButton(family: string) {
   return read().elements.find((element) => element.part === "label");
 }
 
-describe("words in a system face (C-L01: the sign-in buttons)", () => {
+describe("words in a system face (the sign-in buttons)", () => {
   it("are read by the system face's capitals, which draws them, instead of left unmeasured", () => {
     const label = signInButton("ui-sans-serif, system-ui, sans-serif");
 
@@ -63,7 +62,7 @@ function categoryStrip(left: number) {
   return rule("column");
 }
 
-describe("a box in a strip that scrolls sideways (C-L02: the catalog's categories)", () => {
+describe("a box in a strip that scrolls sideways (the catalog's categories)", () => {
   it("isn't judged past the column on a side the strip fades because it continues there", () => {
     assert.deepEqual(categoryStrip(300), []);
   });
@@ -88,7 +87,7 @@ function skipInBar(inBar: boolean) {
   return rule("pinned");
 }
 
-describe("what a pinned bar holds (C-L04)", () => {
+describe("what a pinned bar holds", () => {
   it("rides with the bar instead of resting under it", () => {
     assert.deepEqual(skipInBar(true), []);
   });
@@ -105,7 +104,7 @@ function choiceRow(label: string, y: number) {
     <button data-slot="radio-group-item" data-box="350,${y + 12},20,20"></button></label>`;
 }
 
-describe("a list whose rows are a radio group's and one more (C-L06: the country step)", () => {
+describe("a list whose rows are a radio group's and one more (the country step)", () => {
   it("reads every choice as a row of the list, so each one's radio is on its own label's line", () => {
     document.body.innerHTML = `<div data-slot="page" data-box="16,0,358,800">
       <div data-slot="list-group" style="font-family: ui-sans-serif" data-box="16,100,358,180">
@@ -136,7 +135,7 @@ function ghostMenu(variant: string, glyphRight: number) {
   return rule("column");
 }
 
-describe("a control with no outline at the column's end (C-L07: Plan options, More)", () => {
+describe("a control with no outline at the column's end (Plan options, More)", () => {
   it("is read by its glyph's ink: its hover box hangs past the column so the glyph sits on it", () => {
     assert.deepEqual(ghostMenu("ghost", 374), []);
   });
@@ -147,7 +146,7 @@ describe("a control with no outline at the column's end (C-L07: Plan options, Mo
   });
 });
 
-describe("a task's side pane (C-L09: the challenge and call pages)", () => {
+describe("a task's side pane (the challenge and call pages)", () => {
   it("is a column of its own, so its rows' hairlines end on its edges, not the task's", () => {
     const rows = [100, 175, 250]
       .map(
@@ -181,7 +180,7 @@ function exampleCard(inset: number) {
   return rule("column");
 }
 
-describe("a card that pads its content in sections (C-L10: the example plans, a sheet's details)", () => {
+describe("a card that pads its content in sections (the example plans, a sheet's details)", () => {
   it("is a column at its section's padding, so a list that spans the section passes", () => {
     assert.deepEqual(exampleCard(20), []);
   });
@@ -191,7 +190,7 @@ describe("a card that pads its content in sections (C-L10: the example plans, a 
   });
 });
 
-describe("a list's nested numbered title (C-L08)", () => {
+describe("a list's nested numbered title", () => {
   it("finds the title slot past the wrapper without treating the number as the title", () => {
     document.body.innerHTML = `<div data-slot="list-group" data-box="16,0,358,120">
       <div data-slot="list-row" data-box="16,0,358,60">

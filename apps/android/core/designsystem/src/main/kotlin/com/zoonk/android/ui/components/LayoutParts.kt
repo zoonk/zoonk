@@ -8,7 +8,7 @@ import com.zoonk.android.designsystem.BuildConfig
 
 /**
  * What an element of a shared piece is, for the render tests' layout capture: the parts and pieces of
- * the alignment report every platform writes (`REPORT-SHAPE.md`). Only debug builds mark parts.
+ * the alignment report every platform writes. Only debug builds mark parts.
  */
 data class LayoutPart(
     val piece: String,

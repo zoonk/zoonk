@@ -40,7 +40,7 @@ import { lineEndLeads, loneWordLeads } from "./alignment-wrap.mts";
 
 /**
  * The one evaluator of the declared relationships. It reads captures, from the web page or from the
- * Android and Apple captures (`REPORT-SHAPE.md`), and never the page itself, so every platform is
+ * Android and Apple captures, and never the page itself, so every platform is
  * judged by the same rules.
  */
 

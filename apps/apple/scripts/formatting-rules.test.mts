@@ -77,7 +77,7 @@ const missedFormats = [
   "Text(timerInterval: start...end, countsDown: true)",
 ];
 
-describe("review regression fixtures", () => {
+describe("formatting rule fixtures", () => {
   it.each(missedFormats)("reports the missed form %s", (source) => {
     expect(formattingViolations(source, "Screen.swift")).toHaveLength(1);
     expect(formattingViolations(source, FORMATTING_MODULE)).toHaveLength(0);
@@ -138,7 +138,7 @@ const wireAndUntypedForms = [
   "ISO8601DateFormatter().string(from: date)",
 ];
 
-describe("round two scope regressions", () => {
+describe("formatting scope and wire values", () => {
   it.each(wireAndUntypedForms)("allows wire or untyped form %s", (source) => {
     expect(formattingViolations(source, "Screen.swift")).toHaveLength(0);
   });

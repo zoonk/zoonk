@@ -854,7 +854,7 @@ private fun SeeResult(
     }
 }
 
-/** Lane E's gate in a task's bar: what stopped, over Subscribe. */
+/** The challenge limit appears above Subscribe in the task bar. */
 @Composable
 private fun ChallengeGate(
     challenge: Challenge,

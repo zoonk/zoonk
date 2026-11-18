@@ -437,7 +437,7 @@ class MindMapsOfferTest {
     }
 
     /**
-     * RV81's data, against main's `countChapterMaps`: the line counts only the chapters under Other chapters. A failed map
+     * As in Main's `countChapterMaps`, the line counts only the chapters under Other chapters. A failed map
      * whose lessons are written has its own row with Try again; the one writing lessons is on its way.
      */
     @Test
