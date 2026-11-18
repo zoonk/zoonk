@@ -180,7 +180,9 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
         ) : (
           <>
             <SuggestionSummary>{insight.message}</SuggestionSummary>
-            <SuggestionOpen />
+            <SuggestionOpen>
+              {insight.kind === "planChange" ? t("See what changes") : t("Answer")}
+            </SuggestionOpen>
           </>
         )}
       </SuggestionLine>
