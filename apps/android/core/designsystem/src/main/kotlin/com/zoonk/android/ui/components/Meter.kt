@@ -33,10 +33,10 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlin.math.roundToInt
 
@@ -103,7 +103,7 @@ fun MeasureRows(
             ) {
                 Text(measure.name, Modifier.weight(1f).padding(vertical = 12.dp), style = MaterialTheme.typography.bodyMedium)
                 Meter(measure.share, Modifier.width(MEASURE_METER_WIDTH))
-                Text(measure.value, Modifier.width(valueWidth), style = valueStyle, textAlign = TextAlign.End, softWrap = false)
+                Text(measure.value, Modifier.width(valueWidth), style = valueStyle, textAlign = layoutEnd(), softWrap = false)
             }
         }
     }

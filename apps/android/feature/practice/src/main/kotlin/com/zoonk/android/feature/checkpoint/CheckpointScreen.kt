@@ -48,7 +48,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -64,7 +63,6 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunFrame
@@ -124,6 +122,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.CheckpointPhase
@@ -679,7 +678,7 @@ private fun DetailRow(
                 Text(
                     it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
@@ -724,7 +723,6 @@ internal fun DuelResult(
 
             TaskScaffold(
                 onClose = viewModel::close,
-                title = { LessonTitle(eyebrow(checkpoint)) },
                 bottomBar = {
                     TaskActionBar {
                         TaskActions { width ->
@@ -738,7 +736,13 @@ internal fun DuelResult(
                         }
                     }
                 },
-                aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
+                // As main's, the challenge's name titles the details beside the result, not the bar over it.
+                aside =
+                    outcome?.takeIf { !rows.isEmpty && !folded }?.let {
+                        TaskAside(
+                            title = eyebrow(checkpoint),
+                        ) { ResultDetails(duel, rows, won) }
+                    },
             ) { padding ->
                 val wide = taskAsideBeside()
                 ResultPages(

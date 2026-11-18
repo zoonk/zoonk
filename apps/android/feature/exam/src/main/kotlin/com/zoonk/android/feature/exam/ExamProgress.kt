@@ -24,7 +24,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockDate
@@ -38,6 +37,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockProgress
 import com.zoonk.api.models.ExamMockProgressSubjectsInner
@@ -193,7 +193,7 @@ private fun SubjectRow(
         } else {
             Meter(latest / PERCENT.toFloat(), Modifier.width(SUBJECT_METER_WIDTH))
         }
-        Text(percent(latest), Modifier.widthIn(min = 40.dp), textAlign = TextAlign.End, style = numbers)
+        Text(percent(latest), Modifier.widthIn(min = 40.dp), textAlign = layoutEnd(), style = numbers)
         if (trends) SubjectChange(trend.change)
     }
 }
