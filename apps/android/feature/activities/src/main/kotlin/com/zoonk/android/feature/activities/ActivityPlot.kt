@@ -222,7 +222,10 @@ fun ActivityPlot(
         val y = LinearScale(yDomain, bottom to top)
         val xStyle = style.copy(color = muted)
         // A caller's own ticks (an angle's quarter turns) show when they fit side by side; otherwise round ones that do.
-        val given = xTicks?.map { it to measurer.measure(formatX(it), xStyle) }?.takeIf { x.fitsSideBySide(it) }
+        val given =
+            xTicks?.map { it to measurer.measure(formatX(it), xStyle) }?.takeIf { labels ->
+                x.fitsSideBySide(labels.map { (tick, label) -> tick to label.size.width })
+            }
         drawPlotAxes(x, y, given ?: measurer.fittedPlotTicks(x, xStyle, formatX), yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
@@ -281,9 +284,10 @@ internal fun DrawScope.drawPlotAxes(
     }
 }
 
-private fun LinearScale.fitsSideBySide(labels: List<Pair<Double, TextLayoutResult>>): Boolean =
-    labels
-        .map { (tick, label) -> toPixel(tick) - label.size.width / 2f to toPixel(tick) + label.size.width / 2f }
+/** Whether labels [widths] wide, one per tick, sit side by side where the axis draws them. */
+internal fun LinearScale.fitsSideBySide(widths: List<Pair<Double, Int>>): Boolean =
+    widths
+        .map { (tick, width) -> toPixel(tick) - width / 2f to toPixel(tick) + width / 2f }
         .sortedBy { it.first }
         .zipWithNext()
         .all { (a, b) -> a.second < b.first }
