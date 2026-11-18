@@ -246,10 +246,6 @@ private fun share(
 ): Float = if (total > 0) (steps.coerceAtLeast(0).toFloat() / total).coerceAtMost(1f) else 0f
 
 /**
- * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
- * after [delayMillis], when the screen celebrates.
- */
-/**
  * When each part that moved starts filling, in milliseconds, one [ZoonkMotion.STAGGER_MILLIS] after the one before, as
  * main's `getFillMotion`; null for a part that didn't move.
  */
@@ -261,6 +257,10 @@ internal fun fillDelays(
     return fills.map { (start, fill) -> if (start < fill) delayMillis + ZoonkMotion.STAGGER_MILLIS * order++ else null }
 }
 
+/**
+ * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
+ * after [delayMillis], when the screen celebrates.
+ */
 @Composable
 internal fun MissionTrack(
     progress: MissionProgress,
