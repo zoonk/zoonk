@@ -136,7 +136,11 @@ private struct LevelButton: View {
           "Level \(level.level)", tableName: "Navigation",
           comment: "Beside the belt's dot in a wide top bar: the learner's level")
       }
+      // The system draws the goal's name beside it at one size, and shows both large on a long
+      // press.
+      .dynamicTypeSize(.large)
     }
+    .accessibilityShowsLargeContentViewer()
     .accessibilityLabel(
       Text(
         "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted())",
