@@ -53,7 +53,7 @@ export function touchesSegment(
   return Math.max(...xs) >= box.left - clearance && Math.min(...xs) <= box.right + clearance;
 }
 
-export function closestPoint(point: LabelPoint, { from, to }: LabelSegment): LabelPoint {
+function closestPoint(point: LabelPoint, { from, to }: LabelSegment): LabelPoint {
   const [dx, dy] = [to.x - from.x, to.y - from.y];
 
   const along =
