@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -228,15 +229,24 @@ internal class MissionProgress(
     val left get() = total - done
     val full get() = total > 0 && left == 0
 
-    /** Each part's fill before and after, finished ones first; the [justDone] fill from empty. */
+    /**
+     * Each part's fill before and after: how far its mission got, furthest first, as main's `mission-track`. A mission in
+     * [justDone] fills from the step before it.
+     */
     fun fills(justDone: Collection<DayMission> = emptyList()): List<Pair<Float, Float>> {
-        val from = done - missions.count { it in justDone }
-        return List(total) { index -> (if (index < from) 1f else 0f) to (if (index < done) 1f else 0f) }
+        val after = missions.map { if (it.done) 1f else share(it.progress, it.total) }
+        val before = missions.zip(after) { mission, fill -> if (mission in justDone) share(mission.total - 1, mission.total) else fill }
+        return before.sortedDescending().zip(after.sortedDescending())
     }
 }
 
+private fun share(
+    steps: Long,
+    total: Long,
+): Float = if (total > 0) (steps.coerceAtLeast(0).toFloat() / total).coerceAtMost(1f) else 0f
+
 /**
- * One part per mission, finished ones first, filling in Brain Power's violet. The [justDone] fill,
+ * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
  * after [delayMillis], when the screen celebrates.
  */
 @Composable
@@ -248,6 +258,7 @@ internal fun MissionTrack(
 ) {
     val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
+    val track = brain.copy(alpha = if (MaterialTheme.colorScheme.background.luminance() < HALF) DARK_TRACK_ALPHA else TRACK_ALPHA)
     val animates = celebrates() && fills.any { (start, fill) -> start < fill }
     val motion = remember { Animatable(if (animates) 0f else 1f) }
     LaunchedEffect(animates) {
@@ -261,7 +272,7 @@ internal fun MissionTrack(
                     .weight(1f)
                     .height(TRACK_HEIGHT)
                     .clip(MaterialTheme.shapes.extraSmall)
-                    .background(brain.copy(alpha = TRACK_ALPHA)),
+                    .background(track),
             ) {
                 Box(Modifier.fillMaxWidth(start + (fill - start) * motion.value).height(TRACK_HEIGHT).background(brain))
             }
@@ -269,7 +280,10 @@ internal fun MissionTrack(
     }
 }
 
-private const val TRACK_ALPHA = 0.2f
+/** Main's `bg-brain/15 dark:bg-brain/30`. */
+private const val TRACK_ALPHA = 0.15f
+private const val DARK_TRACK_ALPHA = 0.3f
+private const val HALF = 0.5f
 private val TRACK_HEIGHT = 6.dp
 
 @Composable
