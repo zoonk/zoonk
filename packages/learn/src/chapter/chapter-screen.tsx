@@ -24,7 +24,6 @@ import {
   ChapterMapProvider,
   ChapterMapRow,
   type ChapterMindMap,
-  WIDE_ONLY_CLASS,
   useHasAsideMap,
 } from "./chapter-mind-map";
 import { ChapterMistakes } from "./chapter-mistakes";
@@ -51,19 +50,16 @@ function ChapterSummary({
   }
 
   return (
-    <PageSection
-      aria-labelledby={REFERENCE_TITLE_ID}
-      // With only the map, the section is empty where the map sits under the header instead.
-      className={hasSummary ? undefined : WIDE_ONLY_CLASS}
-    >
+    <PageSection aria-labelledby={REFERENCE_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={REFERENCE_TITLE_ID}>{t("For reference")}</PageSectionTitle>
       </PageSectionHeader>
 
       <ChapterMapAside />
 
-      {hasSummary && (
-        <ListGroup>
+      {/* The map's row is for narrow screens, so wide ones without a summary show no list. */}
+      <ListGroup className={hasSummary ? undefined : "min-[72rem]:hidden"}>
+        {hasSummary && (
           <Disclosure
             icon={
               <ListRowIcon>
@@ -80,8 +76,10 @@ function ChapterSummary({
             )}
             <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
           </Disclosure>
-        </ListGroup>
-      )}
+        )}
+        {/* Last, so hidden on wide screens it leaves no line over the summary. */}
+        <ChapterMapRow />
+      </ListGroup>
     </PageSection>
   );
 }
@@ -132,7 +130,6 @@ function ChapterBody({
     >
       <DetailAside>
         <ChapterHeader />
-        <ChapterMapRow />
       </DetailAside>
 
       <DetailContent>
