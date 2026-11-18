@@ -22,6 +22,24 @@ test("Apple design gallery samples do not count as a learner page's actions", ()
   assert.ok(evaluateCapture(page).some((finding) => finding.rule === "one-filled"));
 });
 
+test("Android design gallery samples do not count as a learner page's actions", () => {
+  const capture = {
+    ...fixtureCapture(filledActions("page", 2)),
+    platform: "android" as const,
+    scenario: "not declared",
+    screen: "GalleryScreenshots.everySectionInEveryScheme",
+    unit: "dp" as const,
+  };
+
+  assert.ok(!evaluateCapture(capture).some((finding) => finding.rule === "one-filled"));
+
+  assert.ok(
+    evaluateCapture({ ...capture, screen: "TodayScreenshots.phone" }).some(
+      (finding) => finding.rule === "one-filled",
+    ),
+  );
+});
+
 test("declared Apple limits are visible and do not fail, while old and incomplete captures fail", () => {
   const parsed = readCaptures(APPLE);
   assert.equal(parsed.kind, "captures");
