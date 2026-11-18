@@ -9,9 +9,10 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ShowMore } from "../_components/show-more";
+import { useId, useState } from "react";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatRange } from "../_utils/range";
+import { FoldRow } from "../today/today-fold-row";
 import { useMockNumber } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
@@ -62,18 +63,29 @@ function TopicRows({ topics }: { topics: readonly Topic[] }) {
   const sorted = topics.toSorted(byShare);
   const first = sorted.slice(0, TOPICS_SHOWN);
   const rest = sorted.slice(TOPICS_SHOWN);
+  const [open, setOpen] = useState(false);
+  const listId = useId();
 
   return (
     <>
-      <TopicList topics={first} />
+      <div className="flex flex-col" id={listId}>
+        <TopicList topics={first} />
+        {open && <TopicList topics={rest} />}
+      </div>
       {rest.length > 0 && (
-        <ShowMore
-          label={t("{count, plural, one {# more topic} other {# more topics}}", {
-            count: rest.length,
-          })}
-        >
-          <TopicList topics={rest} />
-        </ShowMore>
+        <FoldRow
+          controls={listId}
+          done={false}
+          label={
+            open
+              ? t("Show less")
+              : t("{count, plural, one {# more topic} other {# more topics}}", {
+                  count: rest.length,
+                })
+          }
+          onToggle={() => setOpen((shown) => !shown)}
+          open={open}
+        />
       )}
     </>
   );
