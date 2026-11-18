@@ -84,6 +84,24 @@ test.describe("Placement and the plan", () => {
     expect(saved.planRevealedAt).not.toBeNull();
   });
 
+  test("the reveal's first week starts with today", async ({ browser }) => {
+    const { goal, user } = await createStudyDay();
+    const details = isJsonObject(goal.details) ? goal.details : {};
+    const setup = Array.isArray(details.answered) ? details.answered : [];
+
+    await prisma.goal.update({
+      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto(`/start/${goal.id}`);
+
+    const week = page.getByRole("region", { name: "Your first week" });
+    await expect(week.getByRole("region", { name: "Today" })).toBeVisible();
+    await expect(week).toContainText(/\d+ study days? · /u);
+  });
+
   test("Start pressed before the page hydrates opens the step tagged to start, not Today", async ({
     browser,
   }) => {
