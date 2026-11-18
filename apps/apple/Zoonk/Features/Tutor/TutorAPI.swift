@@ -454,6 +454,7 @@ extension TutorTurn {
       status: Status(rawValue: question.status.rawValue) ?? .failed,
       createdAt: question.createdAt,
       about: About(question.context),
+      step: Step(question.context),
       planChange: question.planChange?.value1,
       toolOffer: question.toolOffer?.value1)
   }
@@ -466,8 +467,27 @@ extension TutorTurn {
       status: Status(rawValue: question.status.rawValue) ?? .failed,
       createdAt: question.createdAt,
       about: About(question.context),
+      step: Step(question.context),
       planChange: question.planChange?.value1,
       toolOffer: question.toolOffer?.value1)
+  }
+}
+
+extension TutorTurn.Step {
+  fileprivate init?(_ context: Components.Schemas.LessonQuestion.ContextPayload) {
+    switch context {
+    case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
+    case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
+    case .case1, .case2, .case3: return nil
+    }
+  }
+
+  fileprivate init?(_ context: Components.Schemas.CreatedLessonQuestion.ContextPayload) {
+    switch context {
+    case .case4(let step): self.init(id: step.stepId, number: step.stepNumber)
+    case .case5(let answer): self.init(id: answer.stepId, number: answer.stepNumber)
+    case .case1, .case2, .case3: return nil
+    }
   }
 }
 

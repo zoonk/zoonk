@@ -19,12 +19,24 @@ struct TutorTurn: Identifiable, Equatable, Sendable {
     case subject
   }
 
+  /// The lesson screen a question is about: its id, or its number once it was deleted.
+  enum Step: Equatable, Sendable {
+    case id(String)
+    case number(Int)
+
+    init(id: String?, number: Int) {
+      self = id.map(Step.id) ?? .number(number)
+    }
+  }
+
   let id: String
   let question: String
   var answer: String?
   var status: Status
   let createdAt: Date
   let about: About
+  /// Nil when the question isn't about one lesson screen.
+  var step: Step?
   var planChange: Components.Schemas.PlanChange?
   var toolOffer: Components.Schemas.TutorToolOffer?
   /// A streamed answer links nothing until the server checked its links.
@@ -32,6 +44,12 @@ struct TutorTurn: Identifiable, Equatable, Sendable {
 
   var isInProgress: Bool {
     status == .pending || status == .running
+  }
+
+  /// Mirrors main's `isSameTopic`: "About …" shows where the topic changes, to another part of the
+  /// lesson or to the answer once it's checked.
+  func sharesTopic(with previous: TutorTurn?) -> Bool {
+    previous.map { $0.about == about && $0.step == step } ?? false
   }
 }
 

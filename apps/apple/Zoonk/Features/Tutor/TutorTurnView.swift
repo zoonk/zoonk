@@ -5,6 +5,8 @@ struct TutorTurnView: View {
   let conversation: TutorConversation
   let buddyName: String
   let isPage: Bool
+  /// "About …" above the question, where its topic changes.
+  let showsTopic: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -63,7 +65,7 @@ struct TutorTurnView: View {
 
   private var question: some View {
     VStack(alignment: .trailing, spacing: 4) {
-      if !isPage {
+      if !isPage, showsTopic {
         turn.about.label
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)

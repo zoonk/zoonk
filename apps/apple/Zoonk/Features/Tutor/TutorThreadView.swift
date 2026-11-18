@@ -166,7 +166,8 @@ private struct TutorConversationView<Header: View>: View {
           }
 
           TutorTurnView(
-            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage)
+            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage,
+            showsTopic: !turn.sharesTopic(with: index > 0 ? turns[index - 1] : nil))
         }
         .id(turn.id)
       }
