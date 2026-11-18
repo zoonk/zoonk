@@ -1,0 +1,48 @@
+{
+  "failedRuns": [
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-hydrogen",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 115753,
+            "outputTokens": 33838,
+            "reasoningTokens": 26916
+          }
+        }
+      ],
+      "message": "google/gemini-4-hydrogen stopped the blueprint reading for its content.",
+      "reason": "other",
+      "testCaseId": "camara-2026-registro-redacao-2"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-hydrogen",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 115753,
+            "outputTokens": 41722,
+            "reasoningTokens": 35364
+          }
+        }
+      ],
+      "message": "google/gemini-4-hydrogen stopped the blueprint reading for its content.",
+      "reason": "other",
+      "testCaseId": "camara-2026-registro-redacao-1"
+    }
+  ],
+  "generatedAt": "2026-11-18T11:03:30.529Z",
+  "modelId": "google/gemini-4-hydrogen",
+  "outputs": [],
+  "taskId": "extract-exam-blueprint"
+}

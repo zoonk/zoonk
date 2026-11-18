@@ -1,0 +1,4036 @@
+{
+  "modelId": "google/gemini-4-hydrogen",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4368,
+          "outputTokens": 261,
+          "reasoningTokens": 128
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None. The result identifies the confirmed error at release:reuse on Path 4 (start:compare → clarify:specific → release:reuse), quotes “os 7,5 mL calculados,” and explains that this route calculates only 500 mg per dose, not the initial prescription’s 7.5 mL volume. The location, path, and evidence satisfy the expectations.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The reviewer must identify these confirmed errors with a concrete location, path and evidence: release:reuse keeps 'os 7,5 mL calculados' on start:compare paths, where 7.5 mL was never calculated. Score missed errors down. Do not reward stylistic findings or claims unsupported by the case. Other findings count only if demonstrably correct.",
+        "id": "openai-gpt-6.1-sol-pt-nursing-dose-work-1-1",
+        "language": "pt",
+        "userInput": {
+          "field": "none",
+          "language": "pt",
+          "level": "intermediate",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Qual dose pode seguir para preparo?",
+            "setting": "Plantão no Hospital Vale Sereno",
+            "mission": "Você está no plantão de enfermagem e precisa **resolver uma divergência de dose antes do preparo**. Confira o cálculo por peso e leve a dúvida ao médico, mantendo a administração suspensa até esclarecer.",
+            "deadline": "Dose prevista para as 14h; agora são 13h40.",
+            "panels": [
+              {
+                "title": "Dados disponíveis no prontuário",
+                "metrics": [
+                  {
+                    "label": "Peso atual",
+                    "value": "20 kg",
+                    "note": "Aferido e registrado nesta manhã."
+                  },
+                  {
+                    "label": "Prescrição vigente",
+                    "value": "Cefazolina 750 mg IV a cada 8 h",
+                    "note": "IV significa via intravenosa."
+                  },
+                  {
+                    "label": "Plano médico registrado",
+                    "value": "25 mg/kg/dose a cada 8 h, IV",
+                    "note": "Plano validado para este paciente; não é uma recomendação geral."
+                  },
+                  {
+                    "label": "Solução disponível",
+                    "value": "100 mg/mL",
+                    "note": "Concentração identificada e conferida pela farmácia."
+                  }
+                ],
+                "note": "Caso pediátrico. O volume retirado da solução não substitui as checagens de diluição e tempo de infusão."
+              }
+            ],
+            "team": [
+              {
+                "id": "nurse",
+                "role": "Enfermeira supervisora",
+                "expertise": "Confere o processo de medicação e ajuda a interromper uma etapa insegura.",
+                "ai": false
+              },
+              {
+                "id": "doctor",
+                "role": "Médico assistente",
+                "expertise": "Esclarece o plano terapêutico e autoriza alterações na prescrição.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "Assistente de IA",
+                "expertise": "Confere contas e unidades com dados sem identificação; não autoriza doses.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "risk",
+                "label": "Risco de erro de dose",
+                "start": 40,
+                "goodWhen": "low"
+              },
+              {
+                "id": "time",
+                "label": "Margem até o horário da dose",
+                "start": 80,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "dose",
+                "name": "Calcular dose por peso",
+                "practice": "Em cinco minutos, calcule a dose para três pesos usando 25 mg/kg/dose e confira se a unidade final é mg por dose."
+              },
+              {
+                "id": "check",
+                "name": "Conferir a prescrição",
+                "practice": "Em uma prescrição fictícia, confira peso, medicamento, dose, unidade, intervalo e via antes de calcular o volume."
+              },
+              {
+                "id": "communicate",
+                "name": "Comunicar uma dúvida ao médico",
+                "practice": "Escreva uma mensagem de três frases com peso, divergência encontrada e pedido explícito de revisão da prescrição."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "A dose está prevista para as 14h. A prescrição e o plano registrado parecem diferentes; por onde você começa?"
+                  },
+                  {
+                    "from": "ai",
+                    "text": "Posso conferir a dose por peso e as unidades com dados sem identificação. Minha conta não substitui a conferência de vocês nem a autorização médica."
+                  }
+                ],
+                "prompt": "O que você faz antes de separar a medicação?",
+                "choices": [
+                  {
+                    "id": "volume-first",
+                    "text": "Uso os 750 mg da prescrição para calcular o volume e deixo a comparação com o plano para depois.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "750 mg ÷ 100 mg/mL = 7,5 mL. Isso apenas converte a dose prescrita em volume; não confirma se ela corresponde ao peso e ao plano."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "A conversão para mL pode estar certa mesmo quando a dose precisa de esclarecimento. Compare a prescrição com o plano antes de avançar.",
+                        "example": "Conferir peso, mg/kg/dose, intervalo e via antes de calcular o volume."
+                      }
+                    ],
+                    "next": "pause"
+                  },
+                  {
+                    "id": "compare",
+                    "text": "Confiro peso, unidade e via; peço à IA a conta por peso e comparo o resultado com a prescrição.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "20 kg × 25 mg/kg/dose = 500 mg por dose. O plano indica 500 mg a cada 8 h, IV; a prescrição traz 750 mg no mesmo intervalo e via."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Conferi a conta e os registros com você. Há uma divergência de 250 mg por dose; vamos manter o preparo suspenso até o esclarecimento."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você usou o peso atual e preservou a unidade mg por dose, sem confundir dose individual com total diário.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "Você usou a IA para conferir a conta e comparou o resultado com os registros, sem tratar a resposta como autorização.",
+                        "example": null
+                      }
+                    ],
+                    "next": "clarify"
+                  }
+                ]
+              },
+              {
+                "id": "clarify",
+                "messages": [
+                  {
+                    "from": "doctor",
+                    "text": "Estou entre atendimentos. O que você encontrou na dose?"
+                  },
+                  {
+                    "from": "nurse",
+                    "text": "Temos o peso e a conta conferidos. Uma mensagem objetiva ajuda {{doctor}} a decidir sem precisar buscar tudo de novo."
+                  }
+                ],
+                "prompt": "Como você leva a divergência a {{doctor}}?",
+                "choices": [
+                  {
+                    "id": "specific",
+                    "text": "Informo 20 kg, plano de 25 mg/kg/dose e cálculo de 500 mg; peço revisão dos 750 mg prescritos, mantendo a dose suspensa.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "Revisei o caso: mantenho o plano de 25 mg/kg/dose. Corrigi e assinei a prescrição para cefazolina 500 mg IV a cada 8 h."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "A correção já aparece no prontuário. Agora precisamos conferir o preparo com base nessa nova prescrição."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você apresentou os dados que sustentavam a dúvida e pediu revisão explícita, sem alterar a prescrição por conta própria.",
+                        "example": null
+                      }
+                    ],
+                    "next": "release"
+                  },
+                  {
+                    "id": "brief",
+                    "text": "Aviso que a dose parece alta e peço uma revisão quando possível, mantendo o preparo suspenso enquanto aguardo.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "Preciso do peso atual, da dose do plano e da diferença encontrada. Ainda não alterei a prescrição."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Você preservou a segurança ao suspender o preparo, mas faltaram dados para resolver a dúvida nesta troca."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 0
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "improve",
+                        "text": "A dúvida foi sinalizada, mas a mensagem exigiu uma nova troca. Inclua o peso, o cálculo e o pedido de revisão já no primeiro contato.",
+                        "example": "\"Peso atual de 20 kg; o plano resulta em 500 mg por dose, mas constam 750 mg. Pode revisar antes do preparo?\""
+                      }
+                    ],
+                    "next": "hold"
+                  }
+                ]
+              },
+              {
+                "id": "pause",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "Antes de separar os 7,5 mL, vou interromper o preparo. Ainda não conferimos se os 750 mg correspondem ao plano de 25 mg/kg/dose para 20 kg."
+                  },
+                  {
+                    "from": "nurse",
+                    "text": "Sei que conferir agora consome parte do tempo, mas uma conta de volume correta não resolve essa divergência."
+                  }
+                ],
+                "prompt": "Como você responde à interrupção?",
+                "choices": [
+                  {
+                    "id": "prepare-held",
+                    "text": "Peço à farmácia que adiante o preparo dos 750 mg, sem administrar, para ganhar tempo enquanto a dúvida é resolvida.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "A farmácia também bloqueou o preparo pela divergência. Não houve preparo nem administração; ainda precisamos esclarecer a dose com {{doctor}}."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "Adiantar um preparo com dose em dúvida cria risco e retrabalho. Resolva a divergência antes de solicitar o preparo.",
+                        "example": "Manter o preparo suspenso e conferir a dose por peso."
+                      }
+                    ],
+                    "next": "hold"
+                  },
+                  {
+                    "id": "recheck",
+                    "text": "Mantenho o preparo suspenso, confiro a conta com a IA e envio a {{doctor}} os dados e o pedido de revisão.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "20 kg × 25 mg/kg/dose = 500 mg por dose. São 250 mg a menos que os 750 mg prescritos. Confira esse resultado nos registros antes de enviar."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Conferimos peso, plano, unidade e via. Encaminhamos a {{doctor}} a diferença entre 500 mg calculados e 750 mg prescritos."
+                      },
+                      {
+                        "from": "doctor",
+                        "text": "Revisei o caso e corrigi a prescrição: cefazolina 500 mg IV a cada 8 h. A nova prescrição está assinada no prontuário."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -25
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você retomou o cálculo em mg por dose antes de usar o volume calculado inicialmente.",
+                        "example": null
+                      },
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você transformou a interrupção em uma consulta objetiva e obteve uma prescrição revisada pelo responsável.",
+                        "example": null
+                      }
+                    ],
+                    "next": "release"
+                  }
+                ]
+              },
+              {
+                "id": "release",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "A prescrição vigente agora é de 500 mg IV a cada 8 h. A solução continua com 100 mg/mL. Qual registro você usa para seguir?"
+                  },
+                  {
+                    "from": "ai",
+                    "text": "Posso conferir a divisão, mas vocês precisam validar a prescrição vigente e as demais condições de preparo."
+                  }
+                ],
+                "prompt": "Como você conclui a conferência da dose?",
+                "choices": [
+                  {
+                    "id": "reuse",
+                    "text": "Peço para manter os 7,5 mL calculados para a prescrição inicial e atualizar o registro para 500 mg.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "Vou bloquear essa liberação: 7,5 mL a 100 mg/mL contêm 750 mg, não 500 mg. Nada foi administrado; a conferência do volume precisa ser refeita."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 25
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "improve",
+                        "text": "Quando a dose muda, o volume também precisa ser recalculado. Atualizar apenas o registro deixaria uma diferença entre conteúdo e identificação.",
+                        "example": "500 mg ÷ 100 mg/mL = 5 mL da solução disponível."
+                      }
+                    ],
+                    "next": "pending"
+                  },
+                  {
+                    "id": "recalculate",
+                    "text": "Confiro os 500 mg na prescrição revisada, calculo 5 mL e sigo às checagens de diluição e infusão do protocolo.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "Conferência: 500 mg ÷ 100 mg/mL = 5 mL da solução disponível. Esse é o volume a retirar, não necessariamente o volume final da infusão."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Dose e volume conferidos. Podemos seguir ao preparo conforme o protocolo, incluindo identificação do paciente e demais checagens antes da administração."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você recalculou o volume a partir da dose revisada e da concentração disponível.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "Você distinguiu a conferência da dose das demais condições necessárias para administrar com segurança.",
+                        "example": null
+                      }
+                    ],
+                    "next": "ready"
+                  }
+                ]
+              },
+              {
+                "id": "hold",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "O preparo segue bloqueado e ainda não há prescrição revisada. Precisamos resolver a divergência ou registrar uma pendência clara para continuidade."
+                  },
+                  {
+                    "from": "doctor",
+                    "text": "Envie o peso atual, o plano registrado e a dose prescrita para eu revisar."
+                  }
+                ],
+                "prompt": "O que você faz com a pendência?",
+                "choices": [
+                  {
+                    "id": "complete",
+                    "text": "Envio 20 kg, plano de 25 mg/kg/dose e prescrição de 750 mg; peço revisão e registro que o preparo segue suspenso.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "20 × 25 resulta em 500 mg por dose. Revisei o caso e assinei a correção para cefazolina 500 mg IV a cada 8 h."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "A divergência foi resolvida. Antes de liberar o preparo, ainda precisamos conferir o volume pela nova prescrição."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -20
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você completou a comunicação com dados verificáveis e deixou explícito que o preparo permanecia suspenso.",
+                        "example": null
+                      }
+                    ],
+                    "next": "corrected"
+                  },
+                  {
+                    "id": "handoff",
+                    "text": "Registro a divergência para a próxima equipe, sem novo contato agora, e mantenho o preparo suspenso.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "A suspensão evita administrar uma dose não esclarecida, mas a pendência continua. Vou escalar o contato com {{doctor}} e registrar o possível atraso."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 0
+                      },
+                      {
+                        "meter": "time",
+                        "change": -25
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "improve",
+                        "text": "Registrar a pendência ajuda a continuidade, mas não substitui buscar uma decisão para a dose próxima. Faça contato objetivo e escale se não houver resposta.",
+                        "example": "\"A dose das 14h está suspensa por divergência. Preciso de revisão antes do preparo.\""
+                      }
+                    ],
+                    "next": "pending"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "ready",
+                "outcome": "A prescrição foi corrigida de 750 mg para 500 mg por dose, e o volume de 5 mL foi conferido. O preparo pode seguir conforme o protocolo; a administração ainda depende das demais checagens."
+              },
+              {
+                "id": "corrected",
+                "outcome": "A comunicação permitiu corrigir a prescrição para 500 mg IV a cada 8 h. O preparo permanece suspenso até a conferência do volume e das condições de preparo."
+              },
+              {
+                "id": "pending",
+                "outcome": "Nenhuma dose foi administrada: a barreira de segurança manteve o preparo bloqueado. A pendência ficou registrada para resolução pela equipe, com menos margem até o horário previsto."
+              }
+            ],
+            "summary": [
+              "A dose por peso deve preservar a unidade: kg × mg/kg/dose resulta em mg por dose.",
+              "Um volume calculado corretamente não confirma que a dose prescrita está adequada ao plano registrado.",
+              "Uma dúvida de dose deve ser comunicada com dados objetivos e resolvida pelo responsável antes de avançar no preparo."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4329,
+          "outputTokens": 202,
+          "reasoningTokens": 82
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None. The result identifies the confirmed error at release:reuse, names the affected start:compare paths (Paths 3 and 4), and quotes the unsupported reference to “os 7,5 mL calculados.” It correctly establishes that only start:volume-first calculates that volume. No unsupported additional findings are included.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The reviewer must identify these confirmed errors with a concrete location, path and evidence: release:reuse keeps 'os 7,5 mL calculados' on start:compare paths, where 7.5 mL was never calculated. Score missed errors down. Do not reward stylistic findings or claims unsupported by the case. Other findings count only if demonstrably correct.",
+        "id": "openai-gpt-6.1-sol-pt-nursing-dose-work-1-2",
+        "language": "pt",
+        "userInput": {
+          "field": "none",
+          "language": "pt",
+          "level": "intermediate",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Qual dose pode seguir para preparo?",
+            "setting": "Plantão no Hospital Vale Sereno",
+            "mission": "Você está no plantão de enfermagem e precisa **resolver uma divergência de dose antes do preparo**. Confira o cálculo por peso e leve a dúvida ao médico, mantendo a administração suspensa até esclarecer.",
+            "deadline": "Dose prevista para as 14h; agora são 13h40.",
+            "panels": [
+              {
+                "title": "Dados disponíveis no prontuário",
+                "metrics": [
+                  {
+                    "label": "Peso atual",
+                    "value": "20 kg",
+                    "note": "Aferido e registrado nesta manhã."
+                  },
+                  {
+                    "label": "Prescrição vigente",
+                    "value": "Cefazolina 750 mg IV a cada 8 h",
+                    "note": "IV significa via intravenosa."
+                  },
+                  {
+                    "label": "Plano médico registrado",
+                    "value": "25 mg/kg/dose a cada 8 h, IV",
+                    "note": "Plano validado para este paciente; não é uma recomendação geral."
+                  },
+                  {
+                    "label": "Solução disponível",
+                    "value": "100 mg/mL",
+                    "note": "Concentração identificada e conferida pela farmácia."
+                  }
+                ],
+                "note": "Caso pediátrico. O volume retirado da solução não substitui as checagens de diluição e tempo de infusão."
+              }
+            ],
+            "team": [
+              {
+                "id": "nurse",
+                "role": "Enfermeira supervisora",
+                "expertise": "Confere o processo de medicação e ajuda a interromper uma etapa insegura.",
+                "ai": false
+              },
+              {
+                "id": "doctor",
+                "role": "Médico assistente",
+                "expertise": "Esclarece o plano terapêutico e autoriza alterações na prescrição.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "Assistente de IA",
+                "expertise": "Confere contas e unidades com dados sem identificação; não autoriza doses.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "risk",
+                "label": "Risco de erro de dose",
+                "start": 40,
+                "goodWhen": "low"
+              },
+              {
+                "id": "time",
+                "label": "Margem até o horário da dose",
+                "start": 80,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "dose",
+                "name": "Calcular dose por peso",
+                "practice": "Em cinco minutos, calcule a dose para três pesos usando 25 mg/kg/dose e confira se a unidade final é mg por dose."
+              },
+              {
+                "id": "check",
+                "name": "Conferir a prescrição",
+                "practice": "Em uma prescrição fictícia, confira peso, medicamento, dose, unidade, intervalo e via antes de calcular o volume."
+              },
+              {
+                "id": "communicate",
+                "name": "Comunicar uma dúvida ao médico",
+                "practice": "Escreva uma mensagem de três frases com peso, divergência encontrada e pedido explícito de revisão da prescrição."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "A dose está prevista para as 14h. A prescrição e o plano registrado parecem diferentes; por onde você começa?"
+                  },
+                  {
+                    "from": "ai",
+                    "text": "Posso conferir a dose por peso e as unidades com dados sem identificação. Minha conta não substitui a conferência de vocês nem a autorização médica."
+                  }
+                ],
+                "prompt": "O que você faz antes de separar a medicação?",
+                "choices": [
+                  {
+                    "id": "volume-first",
+                    "text": "Uso os 750 mg da prescrição para calcular o volume e deixo a comparação com o plano para depois.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "750 mg ÷ 100 mg/mL = 7,5 mL. Isso apenas converte a dose prescrita em volume; não confirma se ela corresponde ao peso e ao plano."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "A conversão para mL pode estar certa mesmo quando a dose precisa de esclarecimento. Compare a prescrição com o plano antes de avançar.",
+                        "example": "Conferir peso, mg/kg/dose, intervalo e via antes de calcular o volume."
+                      }
+                    ],
+                    "next": "pause"
+                  },
+                  {
+                    "id": "compare",
+                    "text": "Confiro peso, unidade e via; peço à IA a conta por peso e comparo o resultado com a prescrição.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "20 kg × 25 mg/kg/dose = 500 mg por dose. O plano indica 500 mg a cada 8 h, IV; a prescrição traz 750 mg no mesmo intervalo e via."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Conferi a conta e os registros com você. Há uma divergência de 250 mg por dose; vamos manter o preparo suspenso até o esclarecimento."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você usou o peso atual e preservou a unidade mg por dose, sem confundir dose individual com total diário.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "Você usou a IA para conferir a conta e comparou o resultado com os registros, sem tratar a resposta como autorização.",
+                        "example": null
+                      }
+                    ],
+                    "next": "clarify"
+                  }
+                ]
+              },
+              {
+                "id": "clarify",
+                "messages": [
+                  {
+                    "from": "doctor",
+                    "text": "Estou entre atendimentos. O que você encontrou na dose?"
+                  },
+                  {
+                    "from": "nurse",
+                    "text": "Temos o peso e a conta conferidos. Uma mensagem objetiva ajuda {{doctor}} a decidir sem precisar buscar tudo de novo."
+                  }
+                ],
+                "prompt": "Como você leva a divergência a {{doctor}}?",
+                "choices": [
+                  {
+                    "id": "specific",
+                    "text": "Informo 20 kg, plano de 25 mg/kg/dose e cálculo de 500 mg; peço revisão dos 750 mg prescritos, mantendo a dose suspensa.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "Revisei o caso: mantenho o plano de 25 mg/kg/dose. Corrigi e assinei a prescrição para cefazolina 500 mg IV a cada 8 h."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "A correção já aparece no prontuário. Agora precisamos conferir o preparo com base nessa nova prescrição."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você apresentou os dados que sustentavam a dúvida e pediu revisão explícita, sem alterar a prescrição por conta própria.",
+                        "example": null
+                      }
+                    ],
+                    "next": "release"
+                  },
+                  {
+                    "id": "brief",
+                    "text": "Aviso que a dose parece alta e peço uma revisão quando possível, mantendo o preparo suspenso enquanto aguardo.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "Preciso do peso atual, da dose do plano e da diferença encontrada. Ainda não alterei a prescrição."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Você preservou a segurança ao suspender o preparo, mas faltaram dados para resolver a dúvida nesta troca."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 0
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "improve",
+                        "text": "A dúvida foi sinalizada, mas a mensagem exigiu uma nova troca. Inclua o peso, o cálculo e o pedido de revisão já no primeiro contato.",
+                        "example": "\"Peso atual de 20 kg; o plano resulta em 500 mg por dose, mas constam 750 mg. Pode revisar antes do preparo?\""
+                      }
+                    ],
+                    "next": "hold"
+                  }
+                ]
+              },
+              {
+                "id": "pause",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "Antes de separar os 7,5 mL, vou interromper o preparo. Ainda não conferimos se os 750 mg correspondem ao plano de 25 mg/kg/dose para 20 kg."
+                  },
+                  {
+                    "from": "nurse",
+                    "text": "Sei que conferir agora consome parte do tempo, mas uma conta de volume correta não resolve essa divergência."
+                  }
+                ],
+                "prompt": "Como você responde à interrupção?",
+                "choices": [
+                  {
+                    "id": "prepare-held",
+                    "text": "Peço à farmácia que adiante o preparo dos 750 mg, sem administrar, para ganhar tempo enquanto a dúvida é resolvida.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "A farmácia também bloqueou o preparo pela divergência. Não houve preparo nem administração; ainda precisamos esclarecer a dose com {{doctor}}."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "Adiantar um preparo com dose em dúvida cria risco e retrabalho. Resolva a divergência antes de solicitar o preparo.",
+                        "example": "Manter o preparo suspenso e conferir a dose por peso."
+                      }
+                    ],
+                    "next": "hold"
+                  },
+                  {
+                    "id": "recheck",
+                    "text": "Mantenho o preparo suspenso, confiro a conta com a IA e envio a {{doctor}} os dados e o pedido de revisão.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "20 kg × 25 mg/kg/dose = 500 mg por dose. São 250 mg a menos que os 750 mg prescritos. Confira esse resultado nos registros antes de enviar."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Conferimos peso, plano, unidade e via. Encaminhamos a {{doctor}} a diferença entre 500 mg calculados e 750 mg prescritos."
+                      },
+                      {
+                        "from": "doctor",
+                        "text": "Revisei o caso e corrigi a prescrição: cefazolina 500 mg IV a cada 8 h. A nova prescrição está assinada no prontuário."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -25
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você retomou o cálculo em mg por dose antes de usar o volume calculado inicialmente.",
+                        "example": null
+                      },
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você transformou a interrupção em uma consulta objetiva e obteve uma prescrição revisada pelo responsável.",
+                        "example": null
+                      }
+                    ],
+                    "next": "release"
+                  }
+                ]
+              },
+              {
+                "id": "release",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "A prescrição vigente agora é de 500 mg IV a cada 8 h. A solução continua com 100 mg/mL. Qual registro você usa para seguir?"
+                  },
+                  {
+                    "from": "ai",
+                    "text": "Posso conferir a divisão, mas vocês precisam validar a prescrição vigente e as demais condições de preparo."
+                  }
+                ],
+                "prompt": "Como você conclui a conferência da dose?",
+                "choices": [
+                  {
+                    "id": "reuse",
+                    "text": "Peço para manter os 7,5 mL calculados para a prescrição inicial e atualizar o registro para 500 mg.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "Vou bloquear essa liberação: 7,5 mL a 100 mg/mL contêm 750 mg, não 500 mg. Nada foi administrado; a conferência do volume precisa ser refeita."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 25
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "improve",
+                        "text": "Quando a dose muda, o volume também precisa ser recalculado. Atualizar apenas o registro deixaria uma diferença entre conteúdo e identificação.",
+                        "example": "500 mg ÷ 100 mg/mL = 5 mL da solução disponível."
+                      }
+                    ],
+                    "next": "pending"
+                  },
+                  {
+                    "id": "recalculate",
+                    "text": "Confiro os 500 mg na prescrição revisada, calculo 5 mL e sigo às checagens de diluição e infusão do protocolo.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "Conferência: 500 mg ÷ 100 mg/mL = 5 mL da solução disponível. Esse é o volume a retirar, não necessariamente o volume final da infusão."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "Dose e volume conferidos. Podemos seguir ao preparo conforme o protocolo, incluindo identificação do paciente e demais checagens antes da administração."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "dose",
+                        "kind": "good",
+                        "text": "Você recalculou o volume a partir da dose revisada e da concentração disponível.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "Você distinguiu a conferência da dose das demais condições necessárias para administrar com segurança.",
+                        "example": null
+                      }
+                    ],
+                    "next": "ready"
+                  }
+                ]
+              },
+              {
+                "id": "hold",
+                "messages": [
+                  {
+                    "from": "nurse",
+                    "text": "O preparo segue bloqueado e ainda não há prescrição revisada. Precisamos resolver a divergência ou registrar uma pendência clara para continuidade."
+                  },
+                  {
+                    "from": "doctor",
+                    "text": "Envie o peso atual, o plano registrado e a dose prescrita para eu revisar."
+                  }
+                ],
+                "prompt": "O que você faz com a pendência?",
+                "choices": [
+                  {
+                    "id": "complete",
+                    "text": "Envio 20 kg, plano de 25 mg/kg/dose e prescrição de 750 mg; peço revisão e registro que o preparo segue suspenso.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "doctor",
+                        "text": "20 × 25 resulta em 500 mg por dose. Revisei o caso e assinei a correção para cefazolina 500 mg IV a cada 8 h."
+                      },
+                      {
+                        "from": "nurse",
+                        "text": "A divergência foi resolvida. Antes de liberar o preparo, ainda precisamos conferir o volume pela nova prescrição."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": -20
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "good",
+                        "text": "Você completou a comunicação com dados verificáveis e deixou explícito que o preparo permanecia suspenso.",
+                        "example": null
+                      }
+                    ],
+                    "next": "corrected"
+                  },
+                  {
+                    "id": "handoff",
+                    "text": "Registro a divergência para a próxima equipe, sem novo contato agora, e mantenho o preparo suspenso.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "nurse",
+                        "text": "A suspensão evita administrar uma dose não esclarecida, mas a pendência continua. Vou escalar o contato com {{doctor}} e registrar o possível atraso."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "risk",
+                        "change": 0
+                      },
+                      {
+                        "meter": "time",
+                        "change": -25
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "communicate",
+                        "kind": "improve",
+                        "text": "Registrar a pendência ajuda a continuidade, mas não substitui buscar uma decisão para a dose próxima. Faça contato objetivo e escale se não houver resposta.",
+                        "example": "\"A dose das 14h está suspensa por divergência. Preciso de revisão antes do preparo.\""
+                      }
+                    ],
+                    "next": "pending"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "ready",
+                "outcome": "A prescrição foi corrigida de 750 mg para 500 mg por dose, e o volume de 5 mL foi conferido. O preparo pode seguir conforme o protocolo; a administração ainda depende das demais checagens."
+              },
+              {
+                "id": "corrected",
+                "outcome": "A comunicação permitiu corrigir a prescrição para 500 mg IV a cada 8 h. O preparo permanece suspenso até a conferência do volume e das condições de preparo."
+              },
+              {
+                "id": "pending",
+                "outcome": "Nenhuma dose foi administrada: a barreira de segurança manteve o preparo bloqueado. A pendência ficou registrada para resolução pela equipe, com menos margem até o horário previsto."
+              }
+            ],
+            "summary": [
+              "A dose por peso deve preservar a unidade: kg × mg/kg/dose resulta em mg por dose.",
+              "Um volume calculado corretamente não confirma que a dose prescrita está adequada ao plano registrado.",
+              "Uma dúvida de dose deve ser comunicada com dados objetivos e resolvida pelo responsável antes de avançar no preparo."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3602,
+          "outputTokens": 55,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-en-ab-test-work-1-1",
+        "language": "en",
+        "userInput": {
+          "field": "none",
+          "language": "en",
+          "level": "beginner",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Is checkout B ready to launch?",
+            "setting": "Monday at Brindle Cart",
+            "mission": "You are a junior web analyst at Brindle Cart. Recommend **whether checkout B should replace checkout A**, using evidence the product team can explain and act on.",
+            "deadline": "Give {{product}} a recommendation today at 3 p.m.",
+            "panels": [
+              {
+                "title": "First look at the checkout experiment",
+                "metrics": [
+                  {
+                    "label": "Checkout A",
+                    "value": "50 purchases / 1,000 visits",
+                    "note": "5% of visitors purchased."
+                  },
+                  {
+                    "label": "Checkout B",
+                    "value": "60 purchases / 1,000 visits",
+                    "note": "6% of visitors purchased."
+                  },
+                  {
+                    "label": "Available traffic",
+                    "value": "About 1,200 visitors per day",
+                    "note": "Visitors can be split equally between A and B."
+                  },
+                  {
+                    "label": "Improvement worth detecting",
+                    "value": "5% → 6%",
+                    "note": "One extra purchase per 100 visits."
+                  }
+                ],
+                "note": "Visitors were randomly assigned. B changes a shipping message; prices and checkout steps stay the same. No sample size or stopping rule was set."
+              }
+            ],
+            "team": [
+              {
+                "id": "data",
+                "role": "Experimentation analyst",
+                "expertise": "Checks whether experiments can separate a real effect from chance.",
+                "ai": false
+              },
+              {
+                "id": "product",
+                "role": "Product manager",
+                "expertise": "Wants a useful checkout improvement without delaying other work.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "AI analysis assistant",
+                "expertise": "Calculates test results and sample sizes for people to review.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "evidence",
+                "label": "Strength of the recommendation",
+                "start": 35,
+                "goodWhen": "high"
+              },
+              {
+                "id": "momentum",
+                "label": "Launch momentum",
+                "start": 70,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "chance",
+                "name": "Tell a real difference from chance",
+                "practice": "Write two sentences explaining why 60 purchases versus 50 does not, by itself, establish that one checkout works better."
+              },
+              {
+                "id": "sample",
+                "name": "Choose a sample size",
+                "practice": "Draft one AI request that includes the starting purchase rate, the improvement worth detecting, and a request for a sample-size explanation."
+              },
+              {
+                "id": "explain",
+                "name": "Explain a test result",
+                "practice": "Explain one experiment result in two sentences: what the evidence supports and what it does not promise."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "product",
+                    "text": "B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?"
+                  },
+                  {
+                    "from": "data",
+                    "text": "Random groups can differ even when a change does nothing. Hypothesis testing checks how surprising our results would be if there were no real difference."
+                  }
+                ],
+                "prompt": "How do you prepare your recommendation?",
+                "choices": [
+                  {
+                    "id": "use-gap",
+                    "text": "Use the current purchase rates to prepare a decision for today's meeting.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That keeps us moving. I'll need you to explain how much confidence we should put in the gap."
+                      },
+                      {
+                        "from": "data",
+                        "text": "We still haven't checked how much random variation could explain."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "improve",
+                        "text": "You compared the rates, but the size of the gap alone cannot tell you whether chance is a reasonable explanation.",
+                        "example": "Ask for a test of the current gap before describing B as a winner."
+                      }
+                    ],
+                    "next": "early"
+                  },
+                  {
+                    "id": "ask-ai",
+                    "text": "Ask {{ai}} to check the gap and plan a test for the improvement we care about.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "The current gap is not strong evidence against chance. To detect a change from 5% to 6%, a common planning calculation gives about 8,200 visitors per version."
+                      },
+                      {
+                        "from": "data",
+                        "text": "I'll review the calculation and the assumptions before we choose a plan."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "good",
+                        "text": "You tied the sample-size request to the starting rate and the improvement the business wants to detect.",
+                        "example": null
+                      },
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You used AI to check the evidence rather than asking it to justify a launch.",
+                        "example": null
+                      }
+                    ],
+                    "next": "plan"
+                  }
+                ]
+              },
+              {
+                "id": "plan",
+                "messages": [
+                  {
+                    "from": "data",
+                    "text": "I checked the plan: about 8,200 per version gives roughly an 80% chance of detecting the target improvement. We'll use a rule that falsely flags a difference about 5% of the time when there is none."
+                  },
+                  {
+                    "from": "data",
+                    "text": "Those are planning settings, not guarantees. Treat today's results as an early look and use fresh visitors for the planned test, without stopping early when B looks ahead."
+                  },
+                  {
+                    "from": "product",
+                    "text": "At our traffic level, that's about 14 days. Waiting is manageable, but it pushes back the launch and ties up our experiment slot."
+                  }
+                ],
+                "prompt": "What plan do you agree to?",
+                "choices": [
+                  {
+                    "id": "fresh-test",
+                    "text": "Run the fresh test to 8,200 visitors per version, then make the launch decision.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "I'll reserve the experiment slot and move the launch review. We can make today's meeting about approving the plan."
+                      },
+                      {
+                        "from": "data",
+                        "text": "We'll keep the assignment random and compare purchase rates once the planned sample is complete."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 30
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "About 14 days later",
+                      "panel": {
+                        "title": "Fresh test: planned sample complete",
+                        "metrics": [
+                          {
+                            "label": "Checkout A",
+                            "value": "410 purchases / 8,200 visits",
+                            "note": "5% purchased."
+                          },
+                          {
+                            "label": "Checkout B",
+                            "value": "492 purchases / 8,200 visits",
+                            "note": "6% purchased."
+                          },
+                          {
+                            "label": "Observed difference",
+                            "value": "1 percentage point",
+                            "note": "One extra purchase per 100 visits."
+                          }
+                        ],
+                        "note": "Only fresh-test visitors are included. The team reached the planned sample without stopping early."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "good",
+                        "text": "You accepted a real scheduling cost to collect enough observations for the improvement that matters.",
+                        "example": null
+                      },
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You set the stopping rule before collecting fresh data, rather than stopping whenever the result looked favorable.",
+                        "example": null
+                      }
+                    ],
+                    "next": "result"
+                  },
+                  {
+                    "id": "decide-now",
+                    "text": "Keep the experiment slot free and make today's decision from the first 2,000 visits.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That avoids the delay. We still need to decide whether this supports a launch or just a promising lead."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The sample-size calculation doesn't strengthen the data we already have. The initial gap is still uncertain."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "improve",
+                        "text": "You identified the needed sample but chose not to collect it. Keep the recommendation tentative rather than treating the planning work as new evidence.",
+                        "example": "\"B looks promising, but we have not collected enough evidence to call it better.\""
+                      }
+                    ],
+                    "next": "early"
+                  }
+                ]
+              },
+              {
+                "id": "early",
+                "messages": [
+                  {
+                    "from": "product",
+                    "text": "We're still looking at 50 purchases for A and 60 for B, out of 1,000 visits each. What should I put in today's decision note?"
+                  },
+                  {
+                    "from": "data",
+                    "text": "A launch decision and a claim that B truly works better are different things. We can choose a business action without pretending the evidence is stronger than it is."
+                  }
+                ],
+                "prompt": "What do you recommend with the evidence available?",
+                "choices": [
+                  {
+                    "id": "launch-winner",
+                    "text": "Launch B and report that its higher purchase rate shows the new message works.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "I'll launch it and schedule a review. But our launch note will be leaning heavily on just 10 extra purchases."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That gap could still be chance. Watching purchases after launch won't replace a planned comparison with A."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -20
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "improve",
+                        "text": "You treated an observed lead as evidence of a real effect. A larger planned comparison is needed to make that claim responsibly.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "improve",
+                        "text": "Separate a decision to launch from a conclusion that the experiment established a benefit.",
+                        "example": "\"We are launching a promising change, but this early comparison has not established that it increases purchases.\""
+                      }
+                    ],
+                    "next": "early-launch"
+                  },
+                  {
+                    "id": "hold-test",
+                    "text": "Keep A for now and request a planned test before calling B the better checkout.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "I'll review the sample target and stopping rule before new visitors enter the test. Today's results will remain an early look."
+                      },
+                      {
+                        "from": "product",
+                        "text": "I'll mark the result as inconclusive and find room for the test. That delays the release, but gives us a defensible next step."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You left room for chance instead of turning a promising result into a firm conclusion.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "good",
+                        "text": "You paired uncertainty with a concrete next step, so the team can act without overstating what it knows.",
+                        "example": null
+                      }
+                    ],
+                    "next": "held"
+                  }
+                ]
+              },
+              {
+                "id": "result",
+                "messages": [
+                  {
+                    "from": "ai",
+                    "text": "The fresh test gives a p-value of about 0.005. If A and B were equally effective, a gap at least this large in either direction would occur about 0.5% of the time under this test's assumptions."
+                  },
+                  {
+                    "from": "data",
+                    "text": "I checked the counts and calculation. This meets our planned evidence rule, but it doesn't mean there's a 99.5% chance B is better or that future purchases will stay at 6%."
+                  },
+                  {
+                    "from": "product",
+                    "text": "The gap is still 5% versus 6%, just like the first look. What's different now, and can we launch?"
+                  }
+                ],
+                "prompt": "How do you explain your recommendation?",
+                "choices": [
+                  {
+                    "id": "prove-forecast",
+                    "text": "Recommend B: the larger test proves it is better, so use 6% as a dependable forecast.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The test supports B, but 'proves' and 'dependable forecast' go too far. I'll correct those claims before the launch note goes out."
+                      },
+                      {
+                        "from": "product",
+                        "text": "We'll schedule B, but keep the sales forecast provisional and watch performance after launch."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "explain",
+                        "kind": "improve",
+                        "text": "Strong evidence is not proof or a promise about future performance. Describe the observed result and leave room for uncertainty.",
+                        "example": "\"The planned test supports B; 6% was its observed purchase rate, not a guaranteed future rate.\""
+                      }
+                    ],
+                    "next": "corrected"
+                  },
+                  {
+                    "id": "explain-evidence",
+                    "text": "Recommend B: the same gap is harder to explain by chance with more visitors, but future results can vary.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That's clear. We'll launch B and describe the observed improvement as one extra purchase per 100 visits."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The recommendation matches both the planned test and the size of the improvement we wanted to detect."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You explained why the same percentage gap can provide stronger evidence when it comes from a larger, properly planned comparison.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "good",
+                        "text": "You gave a clear recommendation, translated the improvement into purchases per 100 visits, and avoided promising future results.",
+                        "example": null
+                      }
+                    ],
+                    "next": "supported"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "early-launch",
+                "outcome": "B launches on the strength of 60 purchases versus A's 50, with 1,000 visits each. The team schedules a review, but the early comparison has not established that B increases purchases."
+              },
+              {
+                "id": "held",
+                "outcome": "A stays live while the team arranges a planned test. The 5% versus 6% early result remains a promising lead, not a demonstrated improvement."
+              },
+              {
+                "id": "corrected",
+                "outcome": "B is scheduled after the fresh test records 5% for A and 6% for B, with 8,200 visits each. {{data}} corrects the certainty claim before release, and the sales forecast remains provisional."
+              },
+              {
+                "id": "supported",
+                "outcome": "B is approved after the fresh test records 410 purchases for A and 492 for B, with 8,200 visits each. The team communicates strong evidence of an improvement, not a guarantee that future purchases will rise by the same amount."
+              }
+            ],
+            "summary": [
+              "A higher observed rate alone does not establish that a change works; hypothesis testing checks how compatible the gap is with chance.",
+              "Choose a sample size around the improvement worth detecting, and set a stopping rule before collecting the planned data.",
+              "Explain what the evidence supports without turning a test result into proof or a promise about future performance."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3602,
+          "outputTokens": 85,
+          "reasoningTokens": 28
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-en-ab-test-work-1-2",
+        "language": "en",
+        "userInput": {
+          "field": "none",
+          "language": "en",
+          "level": "beginner",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Is checkout B ready to launch?",
+            "setting": "Monday at Brindle Cart",
+            "mission": "You are a junior web analyst at Brindle Cart. Recommend **whether checkout B should replace checkout A**, using evidence the product team can explain and act on.",
+            "deadline": "Give {{product}} a recommendation today at 3 p.m.",
+            "panels": [
+              {
+                "title": "First look at the checkout experiment",
+                "metrics": [
+                  {
+                    "label": "Checkout A",
+                    "value": "50 purchases / 1,000 visits",
+                    "note": "5% of visitors purchased."
+                  },
+                  {
+                    "label": "Checkout B",
+                    "value": "60 purchases / 1,000 visits",
+                    "note": "6% of visitors purchased."
+                  },
+                  {
+                    "label": "Available traffic",
+                    "value": "About 1,200 visitors per day",
+                    "note": "Visitors can be split equally between A and B."
+                  },
+                  {
+                    "label": "Improvement worth detecting",
+                    "value": "5% → 6%",
+                    "note": "One extra purchase per 100 visits."
+                  }
+                ],
+                "note": "Visitors were randomly assigned. B changes a shipping message; prices and checkout steps stay the same. No sample size or stopping rule was set."
+              }
+            ],
+            "team": [
+              {
+                "id": "data",
+                "role": "Experimentation analyst",
+                "expertise": "Checks whether experiments can separate a real effect from chance.",
+                "ai": false
+              },
+              {
+                "id": "product",
+                "role": "Product manager",
+                "expertise": "Wants a useful checkout improvement without delaying other work.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "AI analysis assistant",
+                "expertise": "Calculates test results and sample sizes for people to review.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "evidence",
+                "label": "Strength of the recommendation",
+                "start": 35,
+                "goodWhen": "high"
+              },
+              {
+                "id": "momentum",
+                "label": "Launch momentum",
+                "start": 70,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "chance",
+                "name": "Tell a real difference from chance",
+                "practice": "Write two sentences explaining why 60 purchases versus 50 does not, by itself, establish that one checkout works better."
+              },
+              {
+                "id": "sample",
+                "name": "Choose a sample size",
+                "practice": "Draft one AI request that includes the starting purchase rate, the improvement worth detecting, and a request for a sample-size explanation."
+              },
+              {
+                "id": "explain",
+                "name": "Explain a test result",
+                "practice": "Explain one experiment result in two sentences: what the evidence supports and what it does not promise."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "product",
+                    "text": "B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?"
+                  },
+                  {
+                    "from": "data",
+                    "text": "Random groups can differ even when a change does nothing. Hypothesis testing checks how surprising our results would be if there were no real difference."
+                  }
+                ],
+                "prompt": "How do you prepare your recommendation?",
+                "choices": [
+                  {
+                    "id": "use-gap",
+                    "text": "Use the current purchase rates to prepare a decision for today's meeting.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That keeps us moving. I'll need you to explain how much confidence we should put in the gap."
+                      },
+                      {
+                        "from": "data",
+                        "text": "We still haven't checked how much random variation could explain."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "improve",
+                        "text": "You compared the rates, but the size of the gap alone cannot tell you whether chance is a reasonable explanation.",
+                        "example": "Ask for a test of the current gap before describing B as a winner."
+                      }
+                    ],
+                    "next": "early"
+                  },
+                  {
+                    "id": "ask-ai",
+                    "text": "Ask {{ai}} to check the gap and plan a test for the improvement we care about.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "The current gap is not strong evidence against chance. To detect a change from 5% to 6%, a common planning calculation gives about 8,200 visitors per version."
+                      },
+                      {
+                        "from": "data",
+                        "text": "I'll review the calculation and the assumptions before we choose a plan."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "good",
+                        "text": "You tied the sample-size request to the starting rate and the improvement the business wants to detect.",
+                        "example": null
+                      },
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You used AI to check the evidence rather than asking it to justify a launch.",
+                        "example": null
+                      }
+                    ],
+                    "next": "plan"
+                  }
+                ]
+              },
+              {
+                "id": "plan",
+                "messages": [
+                  {
+                    "from": "data",
+                    "text": "I checked the plan: about 8,200 per version gives roughly an 80% chance of detecting the target improvement. We'll use a rule that falsely flags a difference about 5% of the time when there is none."
+                  },
+                  {
+                    "from": "data",
+                    "text": "Those are planning settings, not guarantees. Treat today's results as an early look and use fresh visitors for the planned test, without stopping early when B looks ahead."
+                  },
+                  {
+                    "from": "product",
+                    "text": "At our traffic level, that's about 14 days. Waiting is manageable, but it pushes back the launch and ties up our experiment slot."
+                  }
+                ],
+                "prompt": "What plan do you agree to?",
+                "choices": [
+                  {
+                    "id": "fresh-test",
+                    "text": "Run the fresh test to 8,200 visitors per version, then make the launch decision.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "I'll reserve the experiment slot and move the launch review. We can make today's meeting about approving the plan."
+                      },
+                      {
+                        "from": "data",
+                        "text": "We'll keep the assignment random and compare purchase rates once the planned sample is complete."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 30
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "About 14 days later",
+                      "panel": {
+                        "title": "Fresh test: planned sample complete",
+                        "metrics": [
+                          {
+                            "label": "Checkout A",
+                            "value": "410 purchases / 8,200 visits",
+                            "note": "5% purchased."
+                          },
+                          {
+                            "label": "Checkout B",
+                            "value": "492 purchases / 8,200 visits",
+                            "note": "6% purchased."
+                          },
+                          {
+                            "label": "Observed difference",
+                            "value": "1 percentage point",
+                            "note": "One extra purchase per 100 visits."
+                          }
+                        ],
+                        "note": "Only fresh-test visitors are included. The team reached the planned sample without stopping early."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "good",
+                        "text": "You accepted a real scheduling cost to collect enough observations for the improvement that matters.",
+                        "example": null
+                      },
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You set the stopping rule before collecting fresh data, rather than stopping whenever the result looked favorable.",
+                        "example": null
+                      }
+                    ],
+                    "next": "result"
+                  },
+                  {
+                    "id": "decide-now",
+                    "text": "Keep the experiment slot free and make today's decision from the first 2,000 visits.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That avoids the delay. We still need to decide whether this supports a launch or just a promising lead."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The sample-size calculation doesn't strengthen the data we already have. The initial gap is still uncertain."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "sample",
+                        "kind": "improve",
+                        "text": "You identified the needed sample but chose not to collect it. Keep the recommendation tentative rather than treating the planning work as new evidence.",
+                        "example": "\"B looks promising, but we have not collected enough evidence to call it better.\""
+                      }
+                    ],
+                    "next": "early"
+                  }
+                ]
+              },
+              {
+                "id": "early",
+                "messages": [
+                  {
+                    "from": "product",
+                    "text": "We're still looking at 50 purchases for A and 60 for B, out of 1,000 visits each. What should I put in today's decision note?"
+                  },
+                  {
+                    "from": "data",
+                    "text": "A launch decision and a claim that B truly works better are different things. We can choose a business action without pretending the evidence is stronger than it is."
+                  }
+                ],
+                "prompt": "What do you recommend with the evidence available?",
+                "choices": [
+                  {
+                    "id": "launch-winner",
+                    "text": "Launch B and report that its higher purchase rate shows the new message works.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "I'll launch it and schedule a review. But our launch note will be leaning heavily on just 10 extra purchases."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That gap could still be chance. Watching purchases after launch won't replace a planned comparison with A."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -20
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "improve",
+                        "text": "You treated an observed lead as evidence of a real effect. A larger planned comparison is needed to make that claim responsibly.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "improve",
+                        "text": "Separate a decision to launch from a conclusion that the experiment established a benefit.",
+                        "example": "\"We are launching a promising change, but this early comparison has not established that it increases purchases.\""
+                      }
+                    ],
+                    "next": "early-launch"
+                  },
+                  {
+                    "id": "hold-test",
+                    "text": "Keep A for now and request a planned test before calling B the better checkout.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "I'll review the sample target and stopping rule before new visitors enter the test. Today's results will remain an early look."
+                      },
+                      {
+                        "from": "product",
+                        "text": "I'll mark the result as inconclusive and find room for the test. That delays the release, but gives us a defensible next step."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You left room for chance instead of turning a promising result into a firm conclusion.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "good",
+                        "text": "You paired uncertainty with a concrete next step, so the team can act without overstating what it knows.",
+                        "example": null
+                      }
+                    ],
+                    "next": "held"
+                  }
+                ]
+              },
+              {
+                "id": "result",
+                "messages": [
+                  {
+                    "from": "ai",
+                    "text": "The fresh test gives a p-value of about 0.005. If A and B were equally effective, a gap at least this large in either direction would occur about 0.5% of the time under this test's assumptions."
+                  },
+                  {
+                    "from": "data",
+                    "text": "I checked the counts and calculation. This meets our planned evidence rule, but it doesn't mean there's a 99.5% chance B is better or that future purchases will stay at 6%."
+                  },
+                  {
+                    "from": "product",
+                    "text": "The gap is still 5% versus 6%, just like the first look. What's different now, and can we launch?"
+                  }
+                ],
+                "prompt": "How do you explain your recommendation?",
+                "choices": [
+                  {
+                    "id": "prove-forecast",
+                    "text": "Recommend B: the larger test proves it is better, so use 6% as a dependable forecast.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The test supports B, but 'proves' and 'dependable forecast' go too far. I'll correct those claims before the launch note goes out."
+                      },
+                      {
+                        "from": "product",
+                        "text": "We'll schedule B, but keep the sales forecast provisional and watch performance after launch."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "explain",
+                        "kind": "improve",
+                        "text": "Strong evidence is not proof or a promise about future performance. Describe the observed result and leave room for uncertainty.",
+                        "example": "\"The planned test supports B; 6% was its observed purchase rate, not a guaranteed future rate.\""
+                      }
+                    ],
+                    "next": "corrected"
+                  },
+                  {
+                    "id": "explain-evidence",
+                    "text": "Recommend B: the same gap is harder to explain by chance with more visitors, but future results can vary.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "product",
+                        "text": "That's clear. We'll launch B and describe the observed improvement as one extra purchase per 100 visits."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The recommendation matches both the planned test and the size of the improvement we wanted to detect."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 15
+                      },
+                      {
+                        "meter": "momentum",
+                        "change": 10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "chance",
+                        "kind": "good",
+                        "text": "You explained why the same percentage gap can provide stronger evidence when it comes from a larger, properly planned comparison.",
+                        "example": null
+                      },
+                      {
+                        "skill": "explain",
+                        "kind": "good",
+                        "text": "You gave a clear recommendation, translated the improvement into purchases per 100 visits, and avoided promising future results.",
+                        "example": null
+                      }
+                    ],
+                    "next": "supported"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "early-launch",
+                "outcome": "B launches on the strength of 60 purchases versus A's 50, with 1,000 visits each. The team schedules a review, but the early comparison has not established that B increases purchases."
+              },
+              {
+                "id": "held",
+                "outcome": "A stays live while the team arranges a planned test. The 5% versus 6% early result remains a promising lead, not a demonstrated improvement."
+              },
+              {
+                "id": "corrected",
+                "outcome": "B is scheduled after the fresh test records 5% for A and 6% for B, with 8,200 visits each. {{data}} corrects the certainty claim before release, and the sales forecast remains provisional."
+              },
+              {
+                "id": "supported",
+                "outcome": "B is approved after the fresh test records 410 purchases for A and 492 for B, with 8,200 visits each. The team communicates strong evidence of an improvement, not a guarantee that future purchases will rise by the same amount."
+              }
+            ],
+            "summary": [
+              "A higher observed rate alone does not establish that a change works; hypothesis testing checks how compatible the gap is with chance.",
+              "Choose a sample size around the improvement worth detecting, and set a stopping rule before collecting the planned data.",
+              "Explain what the evidence supports without turning a test result into proof or a promise about future performance."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3585,
+          "outputTokens": 55,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-en-career-change-data-cleaning-1-1",
+        "language": "en",
+        "userInput": {
+          "field": "none",
+          "language": "en",
+          "level": "beginner",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "What sales total can you trust?",
+            "setting": "Monday morning at Willow Supply",
+            "mission": "You’re a junior data analyst preparing yesterday’s sales report. Deliver **a checked sales total** and a short record of anything you changed.",
+            "deadline": "Send the report to {{sales}} by 10:00 a.m.",
+            "panels": [
+              {
+                "title": "Yesterday’s sales export",
+                "metrics": [
+                  {
+                    "label": "Rows",
+                    "value": "8",
+                    "note": "Each row should represent one sold item."
+                  },
+                  {
+                    "label": "Recorded amounts",
+                    "value": "$132.00",
+                    "note": "Sum of the amounts that are filled in."
+                  },
+                  {
+                    "label": "Missing amounts",
+                    "value": "1",
+                    "note": "A blank is not necessarily a $0 sale."
+                  },
+                  {
+                    "label": "Payment labels",
+                    "value": "Paid / paid / PAID",
+                    "note": "These labels all mean the payment was received."
+                  }
+                ],
+                "note": "The original export is saved. Item-line IDs identify individual items; one order can contain several items."
+              }
+            ],
+            "team": [
+              {
+                "id": "data",
+                "role": "Data operations specialist",
+                "expertise": "Knows the export and can check item lines against the original sales records.",
+                "ai": false
+              },
+              {
+                "id": "sales",
+                "role": "Sales manager",
+                "expertise": "Needs a usable total for the morning planning meeting.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "AI assistant",
+                "expertise": "Can scan rows, suggest cleanup steps, and calculate totals for you to check.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "trust",
+                "label": "Report reliability",
+                "start": 40,
+                "goodWhen": "high"
+              },
+              {
+                "id": "time",
+                "label": "Time left before the meeting",
+                "start": 70,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "spot",
+                "name": "Find messy data",
+                "practice": "Inspect eight sample rows and mark one duplicate, one blank, and one inconsistent label."
+              },
+              {
+                "id": "clean",
+                "name": "Clean safely and record changes",
+                "practice": "Write a three-line change log showing what you changed, why, and which source supported it."
+              },
+              {
+                "id": "check",
+                "name": "Check AI cleanup",
+                "practice": "Check one AI cleanup suggestion against the original rows, then independently recalculate its total."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "sales",
+                    "text": "Can you get me yesterday’s total before the meeting? The export already adds up to $132.00."
+                  },
+                  {
+                    "from": "data",
+                    "text": "Data cleaning means finding and fixing problems before using the data. Watch for duplicates—extra copies of the same item line—but remember that two items can belong to the same order."
+                  },
+                  {
+                    "from": "ai",
+                    "text": "I can inspect the export and propose changes without editing the original. You’ll still need to check my suggestions."
+                  }
+                ],
+                "prompt": "How do you start?",
+                "choices": [
+                  {
+                    "id": "quick",
+                    "text": "Standardize the payment labels first; leave the row checks for the final pass.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The labels now all read “Paid” in a working copy. The eight rows, the blank amount, and the $132.00 recorded sum are unchanged."
+                      },
+                      {
+                        "from": "sales",
+                        "text": "That’s a start. I still need a number I can use."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 5
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "good",
+                        "text": "You recognized that different capitalization can describe the same payment status.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Label cleanup does not resolve missing amounts or extra rows. Keep the total on hold until those checks are complete.",
+                        "example": "\"The labels are consistent, but the sales total is not checked yet.\""
+                      }
+                    ],
+                    "next": "manual"
+                  },
+                  {
+                    "id": "audit",
+                    "text": "Ask {{ai}} to flag duplicates, blanks, and label differences without changing the export.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "I found a repeated order number and one blank amount. My proposed cleanup keeps the first row for each order, removes the blank row, and standardizes the payment labels. That leaves five rows totaling $87.00."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That’s a proposal, not a checked result. We need to inspect which rows would disappear."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You used AI to surface possible problems while keeping its proposed edits separate from the original.",
+                        "example": null
+                      }
+                    ],
+                    "next": "review"
+                  }
+                ]
+              },
+              {
+                "id": "review",
+                "messages": [
+                  {
+                    "from": "ai",
+                    "text": "The proposed removals are a second copy of item line L101 for $20.00, item line L103 for $25.00 because its order number repeats, and item line L104 because its amount is blank."
+                  },
+                  {
+                    "from": "data",
+                    "text": "L102 and L103 are different items on the same order. I can check L101 and the missing amount against the original sales records."
+                  },
+                  {
+                    "from": "sales",
+                    "text": "A full check uses the time I wanted for reviewing the report. Can we finish with what we have?"
+                  }
+                ],
+                "prompt": "What do you do with the AI’s proposed cleanup?",
+                "choices": [
+                  {
+                    "id": "accept",
+                    "text": "Use the $87.00 result and note that AI removed repeated orders and blank amounts.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ve put $87.00 into the meeting report."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That drops a real $25.00 item. The blank amount is also still unknown, so five rows is not a verified set of sales."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": -30
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "The AI used order numbers to remove rows even though an order can contain several items. Check the meaning of an identifier before accepting duplicate removal.",
+                        "example": "Compare item-line IDs and row contents, not order numbers alone."
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "A blank amount is unresolved information, not evidence that a sale should be deleted.",
+                        "example": "Look up L104 in the original sales record before deciding what to change."
+                      }
+                    ],
+                    "next": "flawed"
+                  },
+                  {
+                    "id": "verify",
+                    "text": "Check the flagged lines with {{data}}, then recalculate and record only supported changes.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The source confirms L101 is an exact duplicate and L104 should be $18.00. Keep both L102 and L103: they are separate items."
+                      },
+                      {
+                        "from": "ai",
+                        "text": "With those corrections, seven item lines total $130.00. The payment labels can all be standardized to “Paid.”"
+                      },
+                      {
+                        "from": "data",
+                        "text": "Your independent check matches: $132.00 − $20.00 + $18.00 = $130.00. The working copy and change log are saved beside the untouched export."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 40
+                      },
+                      {
+                        "meter": "time",
+                        "change": -25
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Ten minutes later",
+                      "panel": {
+                        "title": "Checked sales report",
+                        "metrics": [
+                          {
+                            "label": "Item lines",
+                            "value": "7",
+                            "note": "One exact duplicate removed."
+                          },
+                          {
+                            "label": "Sales total",
+                            "value": "$130.00",
+                            "note": "Missing $18.00 restored from the source."
+                          },
+                          {
+                            "label": "Payment label",
+                            "value": "Paid",
+                            "note": "Capitalization standardized."
+                          }
+                        ],
+                        "note": "Original preserved; row changes and supporting sources recorded."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You challenged the AI’s rule, checked the affected records, and independently reconciled the total.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "good",
+                        "text": "You removed only a confirmed duplicate, filled a blank from a reliable source, and kept a change log.",
+                        "example": null
+                      }
+                    ],
+                    "next": "checked"
+                  },
+                  {
+                    "id": "hold",
+                    "text": "Withhold the total for this meeting and send the flagged rows for a later source check.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ll leave yesterday’s total out and explain that it is still being checked."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The original eight rows are preserved. We haven’t resolved the duplicate or blank, so neither $132.00 nor $87.00 is ready to report."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You kept an unverified AI result out of the report.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Holding the total is safe, but the source check was available before the deadline. A focused check could have delivered a usable number.",
+                        "example": "Ask for confirmation of L101 and the source amount for L104."
+                      }
+                    ],
+                    "next": "held"
+                  }
+                ]
+              },
+              {
+                "id": "manual",
+                "messages": [
+                  {
+                    "from": "data",
+                    "text": "The labels are fixed, but the row checks are still open. The export includes two copies of L101 and two different item lines, L102 and L103, on one order."
+                  },
+                  {
+                    "from": "sales",
+                    "text": "Could we just keep one row per order and leave out the blank? I need to start preparing the meeting report."
+                  },
+                  {
+                    "from": "ai",
+                    "text": "I can compare the item lines and calculate a revised total once the source records confirm what should change."
+                  }
+                ],
+                "prompt": "How do you finish the report?",
+                "choices": [
+                  {
+                    "id": "hold",
+                    "text": "Send the label-cleaned file as unfinished and withhold the sales total until a later check.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ll leave the total out of this meeting."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The eight rows remain intact, with their labels standardized. The $132.00 recorded sum is still incomplete and may include an extra row."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "clean",
+                        "kind": "good",
+                        "text": "You clearly separated a partially cleaned file from a report-ready result.",
+                        "example": null
+                      },
+                      {
+                        "skill": "spot",
+                        "kind": "improve",
+                        "text": "Prioritize problems that affect the total before cosmetic differences such as capitalization.",
+                        "example": "Check repeated item lines and missing amounts before formatting labels."
+                      }
+                    ],
+                    "next": "held"
+                  },
+                  {
+                    "id": "shortcut",
+                    "text": "Keep the first row for each order, drop the blank amount, and send the resulting total.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "That rule leaves five rows totaling $87.00. It removes a $20.00 copy of L101, the separate $25.00 item L103, and the blank L104."
+                      },
+                      {
+                        "from": "sales",
+                        "text": "I’ve used $87.00 in the meeting report."
+                      },
+                      {
+                        "from": "data",
+                        "text": "L103 is a real item, not a duplicate. We also haven’t checked the missing amount, so this report needs correction."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": -30
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "improve",
+                        "text": "Repeated order numbers do not prove that rows are duplicates. Different items can share an order.",
+                        "example": "Use the item-line ID and matching row details to investigate duplicates."
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Removing a blank row hides the missing information rather than resolving it.",
+                        "example": "Check the original record or keep the amount explicitly unresolved."
+                      }
+                    ],
+                    "next": "flawed"
+                  },
+                  {
+                    "id": "source",
+                    "text": "Check the suspect lines with {{data}}, then ask {{ai}} to total the supported corrections.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The source confirms one exact extra copy of L101 for $20.00. L102 and L103 are separate items, and the blank L104 should be $18.00."
+                      },
+                      {
+                        "from": "ai",
+                        "text": "Removing only that extra copy and restoring $18.00 gives seven item lines totaling $130.00."
+                      },
+                      {
+                        "from": "data",
+                        "text": "Your own check agrees: $132.00 − $20.00 + $18.00 = $130.00. We’ve saved the corrected copy and a change log without altering the original."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 40
+                      },
+                      {
+                        "meter": "time",
+                        "change": -30
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Twelve minutes later",
+                      "panel": {
+                        "title": "Checked sales report",
+                        "metrics": [
+                          {
+                            "label": "Item lines",
+                            "value": "7",
+                            "note": "One exact duplicate removed."
+                          },
+                          {
+                            "label": "Sales total",
+                            "value": "$130.00",
+                            "note": "Missing $18.00 restored from the source."
+                          },
+                          {
+                            "label": "Payment label",
+                            "value": "Paid",
+                            "note": "Capitalization standardized."
+                          }
+                        ],
+                        "note": "Original preserved; row changes and supporting sources recorded."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "good",
+                        "text": "You distinguished an extra copy of an item from separate items on the same order.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You gave AI source-supported corrections and checked its arithmetic before using the result.",
+                        "example": null
+                      }
+                    ],
+                    "next": "checked"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "checked",
+                "outcome": "{{sales}} receives a checked total of $130.00 across seven item lines before the meeting, with less time for review. The original export and change log make the corrections traceable."
+              },
+              {
+                "id": "held",
+                "outcome": "The meeting goes ahead without yesterday’s sales total. You avoid presenting an unchecked number, but the duplicate and missing amount still need source checks."
+              },
+              {
+                "id": "flawed",
+                "outcome": "The meeting report uses $87.00 across five rows, including the mistaken removal of a real $25.00 item. {{data}} flags the report for correction; the missing amount still needs checking."
+              }
+            ],
+            "summary": [
+              "A repeated identifier is only a duplicate if it identifies something that should appear once.",
+              "Resolve missing values from a reliable source, preserve the original, and record supported changes.",
+              "Check an AI’s cleanup rules and affected rows before trusting its final total."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3585,
+          "outputTokens": 88,
+          "reasoningTokens": 31
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-en-career-change-data-cleaning-1-2",
+        "language": "en",
+        "userInput": {
+          "field": "none",
+          "language": "en",
+          "level": "beginner",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "What sales total can you trust?",
+            "setting": "Monday morning at Willow Supply",
+            "mission": "You’re a junior data analyst preparing yesterday’s sales report. Deliver **a checked sales total** and a short record of anything you changed.",
+            "deadline": "Send the report to {{sales}} by 10:00 a.m.",
+            "panels": [
+              {
+                "title": "Yesterday’s sales export",
+                "metrics": [
+                  {
+                    "label": "Rows",
+                    "value": "8",
+                    "note": "Each row should represent one sold item."
+                  },
+                  {
+                    "label": "Recorded amounts",
+                    "value": "$132.00",
+                    "note": "Sum of the amounts that are filled in."
+                  },
+                  {
+                    "label": "Missing amounts",
+                    "value": "1",
+                    "note": "A blank is not necessarily a $0 sale."
+                  },
+                  {
+                    "label": "Payment labels",
+                    "value": "Paid / paid / PAID",
+                    "note": "These labels all mean the payment was received."
+                  }
+                ],
+                "note": "The original export is saved. Item-line IDs identify individual items; one order can contain several items."
+              }
+            ],
+            "team": [
+              {
+                "id": "data",
+                "role": "Data operations specialist",
+                "expertise": "Knows the export and can check item lines against the original sales records.",
+                "ai": false
+              },
+              {
+                "id": "sales",
+                "role": "Sales manager",
+                "expertise": "Needs a usable total for the morning planning meeting.",
+                "ai": false
+              },
+              {
+                "id": "ai",
+                "role": "AI assistant",
+                "expertise": "Can scan rows, suggest cleanup steps, and calculate totals for you to check.",
+                "ai": true
+              }
+            ],
+            "meters": [
+              {
+                "id": "trust",
+                "label": "Report reliability",
+                "start": 40,
+                "goodWhen": "high"
+              },
+              {
+                "id": "time",
+                "label": "Time left before the meeting",
+                "start": 70,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "spot",
+                "name": "Find messy data",
+                "practice": "Inspect eight sample rows and mark one duplicate, one blank, and one inconsistent label."
+              },
+              {
+                "id": "clean",
+                "name": "Clean safely and record changes",
+                "practice": "Write a three-line change log showing what you changed, why, and which source supported it."
+              },
+              {
+                "id": "check",
+                "name": "Check AI cleanup",
+                "practice": "Check one AI cleanup suggestion against the original rows, then independently recalculate its total."
+              }
+            ],
+            "startNodeId": "start",
+            "nodes": [
+              {
+                "id": "start",
+                "messages": [
+                  {
+                    "from": "sales",
+                    "text": "Can you get me yesterday’s total before the meeting? The export already adds up to $132.00."
+                  },
+                  {
+                    "from": "data",
+                    "text": "Data cleaning means finding and fixing problems before using the data. Watch for duplicates—extra copies of the same item line—but remember that two items can belong to the same order."
+                  },
+                  {
+                    "from": "ai",
+                    "text": "I can inspect the export and propose changes without editing the original. You’ll still need to check my suggestions."
+                  }
+                ],
+                "prompt": "How do you start?",
+                "choices": [
+                  {
+                    "id": "quick",
+                    "text": "Standardize the payment labels first; leave the row checks for the final pass.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The labels now all read “Paid” in a working copy. The eight rows, the blank amount, and the $132.00 recorded sum are unchanged."
+                      },
+                      {
+                        "from": "sales",
+                        "text": "That’s a start. I still need a number I can use."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 5
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "good",
+                        "text": "You recognized that different capitalization can describe the same payment status.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Label cleanup does not resolve missing amounts or extra rows. Keep the total on hold until those checks are complete.",
+                        "example": "\"The labels are consistent, but the sales total is not checked yet.\""
+                      }
+                    ],
+                    "next": "manual"
+                  },
+                  {
+                    "id": "audit",
+                    "text": "Ask {{ai}} to flag duplicates, blanks, and label differences without changing the export.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "I found a repeated order number and one blank amount. My proposed cleanup keeps the first row for each order, removes the blank row, and standardizes the payment labels. That leaves five rows totaling $87.00."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That’s a proposal, not a checked result. We need to inspect which rows would disappear."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You used AI to surface possible problems while keeping its proposed edits separate from the original.",
+                        "example": null
+                      }
+                    ],
+                    "next": "review"
+                  }
+                ]
+              },
+              {
+                "id": "review",
+                "messages": [
+                  {
+                    "from": "ai",
+                    "text": "The proposed removals are a second copy of item line L101 for $20.00, item line L103 for $25.00 because its order number repeats, and item line L104 because its amount is blank."
+                  },
+                  {
+                    "from": "data",
+                    "text": "L102 and L103 are different items on the same order. I can check L101 and the missing amount against the original sales records."
+                  },
+                  {
+                    "from": "sales",
+                    "text": "A full check uses the time I wanted for reviewing the report. Can we finish with what we have?"
+                  }
+                ],
+                "prompt": "What do you do with the AI’s proposed cleanup?",
+                "choices": [
+                  {
+                    "id": "accept",
+                    "text": "Use the $87.00 result and note that AI removed repeated orders and blank amounts.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ve put $87.00 into the meeting report."
+                      },
+                      {
+                        "from": "data",
+                        "text": "That drops a real $25.00 item. The blank amount is also still unknown, so five rows is not a verified set of sales."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": -30
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "improve",
+                        "text": "The AI used order numbers to remove rows even though an order can contain several items. Check the meaning of an identifier before accepting duplicate removal.",
+                        "example": "Compare item-line IDs and row contents, not order numbers alone."
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "A blank amount is unresolved information, not evidence that a sale should be deleted.",
+                        "example": "Look up L104 in the original sales record before deciding what to change."
+                      }
+                    ],
+                    "next": "flawed"
+                  },
+                  {
+                    "id": "verify",
+                    "text": "Check the flagged lines with {{data}}, then recalculate and record only supported changes.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The source confirms L101 is an exact duplicate and L104 should be $18.00. Keep both L102 and L103: they are separate items."
+                      },
+                      {
+                        "from": "ai",
+                        "text": "With those corrections, seven item lines total $130.00. The payment labels can all be standardized to “Paid.”"
+                      },
+                      {
+                        "from": "data",
+                        "text": "Your independent check matches: $132.00 − $20.00 + $18.00 = $130.00. The working copy and change log are saved beside the untouched export."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 40
+                      },
+                      {
+                        "meter": "time",
+                        "change": -25
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Ten minutes later",
+                      "panel": {
+                        "title": "Checked sales report",
+                        "metrics": [
+                          {
+                            "label": "Item lines",
+                            "value": "7",
+                            "note": "One exact duplicate removed."
+                          },
+                          {
+                            "label": "Sales total",
+                            "value": "$130.00",
+                            "note": "Missing $18.00 restored from the source."
+                          },
+                          {
+                            "label": "Payment label",
+                            "value": "Paid",
+                            "note": "Capitalization standardized."
+                          }
+                        ],
+                        "note": "Original preserved; row changes and supporting sources recorded."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You challenged the AI’s rule, checked the affected records, and independently reconciled the total.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "good",
+                        "text": "You removed only a confirmed duplicate, filled a blank from a reliable source, and kept a change log.",
+                        "example": null
+                      }
+                    ],
+                    "next": "checked"
+                  },
+                  {
+                    "id": "hold",
+                    "text": "Withhold the total for this meeting and send the flagged rows for a later source check.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ll leave yesterday’s total out and explain that it is still being checked."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The original eight rows are preserved. We haven’t resolved the duplicate or blank, so neither $132.00 nor $87.00 is ready to report."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 15
+                      },
+                      {
+                        "meter": "time",
+                        "change": -20
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You kept an unverified AI result out of the report.",
+                        "example": null
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Holding the total is safe, but the source check was available before the deadline. A focused check could have delivered a usable number.",
+                        "example": "Ask for confirmation of L101 and the source amount for L104."
+                      }
+                    ],
+                    "next": "held"
+                  }
+                ]
+              },
+              {
+                "id": "manual",
+                "messages": [
+                  {
+                    "from": "data",
+                    "text": "The labels are fixed, but the row checks are still open. The export includes two copies of L101 and two different item lines, L102 and L103, on one order."
+                  },
+                  {
+                    "from": "sales",
+                    "text": "Could we just keep one row per order and leave out the blank? I need to start preparing the meeting report."
+                  },
+                  {
+                    "from": "ai",
+                    "text": "I can compare the item lines and calculate a revised total once the source records confirm what should change."
+                  }
+                ],
+                "prompt": "How do you finish the report?",
+                "choices": [
+                  {
+                    "id": "hold",
+                    "text": "Send the label-cleaned file as unfinished and withhold the sales total until a later check.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "sales",
+                        "text": "I’ll leave the total out of this meeting."
+                      },
+                      {
+                        "from": "data",
+                        "text": "The eight rows remain intact, with their labels standardized. The $132.00 recorded sum is still incomplete and may include an extra row."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 10
+                      },
+                      {
+                        "meter": "time",
+                        "change": -15
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "clean",
+                        "kind": "good",
+                        "text": "You clearly separated a partially cleaned file from a report-ready result.",
+                        "example": null
+                      },
+                      {
+                        "skill": "spot",
+                        "kind": "improve",
+                        "text": "Prioritize problems that affect the total before cosmetic differences such as capitalization.",
+                        "example": "Check repeated item lines and missing amounts before formatting labels."
+                      }
+                    ],
+                    "next": "held"
+                  },
+                  {
+                    "id": "shortcut",
+                    "text": "Keep the first row for each order, drop the blank amount, and send the resulting total.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "ai",
+                        "text": "That rule leaves five rows totaling $87.00. It removes a $20.00 copy of L101, the separate $25.00 item L103, and the blank L104."
+                      },
+                      {
+                        "from": "sales",
+                        "text": "I’ve used $87.00 in the meeting report."
+                      },
+                      {
+                        "from": "data",
+                        "text": "L103 is a real item, not a duplicate. We also haven’t checked the missing amount, so this report needs correction."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": -30
+                      },
+                      {
+                        "meter": "time",
+                        "change": -5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "improve",
+                        "text": "Repeated order numbers do not prove that rows are duplicates. Different items can share an order.",
+                        "example": "Use the item-line ID and matching row details to investigate duplicates."
+                      },
+                      {
+                        "skill": "clean",
+                        "kind": "improve",
+                        "text": "Removing a blank row hides the missing information rather than resolving it.",
+                        "example": "Check the original record or keep the amount explicitly unresolved."
+                      }
+                    ],
+                    "next": "flawed"
+                  },
+                  {
+                    "id": "source",
+                    "text": "Check the suspect lines with {{data}}, then ask {{ai}} to total the supported corrections.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "data",
+                        "text": "The source confirms one exact extra copy of L101 for $20.00. L102 and L103 are separate items, and the blank L104 should be $18.00."
+                      },
+                      {
+                        "from": "ai",
+                        "text": "Removing only that extra copy and restoring $18.00 gives seven item lines totaling $130.00."
+                      },
+                      {
+                        "from": "data",
+                        "text": "Your own check agrees: $132.00 − $20.00 + $18.00 = $130.00. We’ve saved the corrected copy and a change log without altering the original."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "trust",
+                        "change": 40
+                      },
+                      {
+                        "meter": "time",
+                        "change": -30
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Twelve minutes later",
+                      "panel": {
+                        "title": "Checked sales report",
+                        "metrics": [
+                          {
+                            "label": "Item lines",
+                            "value": "7",
+                            "note": "One exact duplicate removed."
+                          },
+                          {
+                            "label": "Sales total",
+                            "value": "$130.00",
+                            "note": "Missing $18.00 restored from the source."
+                          },
+                          {
+                            "label": "Payment label",
+                            "value": "Paid",
+                            "note": "Capitalization standardized."
+                          }
+                        ],
+                        "note": "Original preserved; row changes and supporting sources recorded."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "spot",
+                        "kind": "good",
+                        "text": "You distinguished an extra copy of an item from separate items on the same order.",
+                        "example": null
+                      },
+                      {
+                        "skill": "check",
+                        "kind": "good",
+                        "text": "You gave AI source-supported corrections and checked its arithmetic before using the result.",
+                        "example": null
+                      }
+                    ],
+                    "next": "checked"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "checked",
+                "outcome": "{{sales}} receives a checked total of $130.00 across seven item lines before the meeting, with less time for review. The original export and change log make the corrections traceable."
+              },
+              {
+                "id": "held",
+                "outcome": "The meeting goes ahead without yesterday’s sales total. You avoid presenting an unchecked number, but the duplicate and missing amount still need source checks."
+              },
+              {
+                "id": "flawed",
+                "outcome": "The meeting report uses $87.00 across five rows, including the mistaken removal of a real $25.00 item. {{data}} flags the report for correction; the missing amount still needs checking."
+              }
+            ],
+            "summary": [
+              "A repeated identifier is only a duplicate if it identifies something that should appear once.",
+              "Resolve missing values from a reliable source, preserve the original, and record supported changes.",
+              "Check an AI’s cleanup rules and affected rows before trusting its final total."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2333,
+          "outputTokens": 86,
+          "reasoningTokens": 29
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-pt-quantum-what-if-1-1",
+        "language": "pt",
+        "userInput": {
+          "field": "none",
+          "language": "pt",
+          "level": "overview",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Dá para ouvir a luz chegando em pacotes?",
+            "setting": "Visita ao Laboratório Lampejo",
+            "mission": "Explore uma máquina que transforma chegadas de luz em cliques. Seu desafio é **descobrir como a luz chega em pacotes e ainda forma desenhos de onda**.",
+            "deadline": null,
+            "panels": [
+              {
+                "title": "Sua bancada imaginária",
+                "metrics": [
+                  {
+                    "label": "Fonte de luz",
+                    "value": "Uma cor bem definida",
+                    "note": "Você pode mudar o brilho sem mudar a cor."
+                  },
+                  {
+                    "label": "Detector",
+                    "value": "Um clique por chegada",
+                    "note": "A máquina transforma cada detecção em som."
+                  }
+                ],
+                "note": "A luz não faz esse som sozinha: os cliques são produzidos pelo aparelho."
+              }
+            ],
+            "team": [
+              {
+                "id": "guide",
+                "role": "Mediadora científica",
+                "expertise": "Ajuda você a ligar as observações às ideias da física.",
+                "ai": false
+              },
+              {
+                "id": "tech",
+                "role": "Técnico do laboratório",
+                "expertise": "Ajusta a fonte e registra as chegadas de luz.",
+                "ai": false
+              }
+            ],
+            "meters": [
+              {
+                "id": "evidence",
+                "label": "Clareza das pistas",
+                "start": 40,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "packets",
+                "name": "Explicar os pacotes de energia",
+                "practice": "Explique em duas frases o que muda ao diminuir o brilho de uma luz sem mudar sua cor: a quantidade de pacotes ou a energia de cada pacote?"
+              },
+              {
+                "id": "duality",
+                "name": "Reconhecer onda e partícula",
+                "practice": "Faça dois desenhos pequenos: as chegadas isoladas de luz e o padrão de faixas formado por muitas chegadas. Escreva o que cada desenho revela."
+              }
+            ],
+            "startNodeId": "listen",
+            "nodes": [
+              {
+                "id": "listen",
+                "messages": [
+                  {
+                    "from": "tech",
+                    "text": "A máquina está pronta. Posso deixar a luz fraquinha ou aumentar o brilho, mantendo a mesma cor."
+                  },
+                  {
+                    "from": "guide",
+                    "text": "Um quantum é um pacote de energia. No caso da luz, esse pacote é chamado de fóton. Vamos procurar uma pista desses pacotes?"
+                  }
+                ],
+                "prompt": "Como você quer começar a escutar a luz?",
+                "choices": [
+                  {
+                    "id": "bright",
+                    "text": "Aumentar o brilho e gravar os cliques para ter bastante sinal logo.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Temos muitos cliques próximos uns dos outros. A gravação ajuda, mas fica difícil distinguir cada chegada só pelo ouvido."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Mais brilho trouxe mais pacotes por segundo, não pacotes maiores. Para essa mesma cor, a energia de cada fóton continua igual."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "packets",
+                        "kind": "improve",
+                        "text": "Um sinal forte é fácil de perceber, mas pode esconder as chegadas separadas. Reduzir o brilho, mantendo a cor, ajuda a investigar os pacotes.",
+                        "example": "“Vamos diminuir o número de chegadas para ouvir cada uma separadamente.”"
+                      }
+                    ],
+                    "next": "slits"
+                  },
+                  {
+                    "id": "dim",
+                    "text": "Diminuir o brilho e pedir o registro dos cliques separados.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Clique… silêncio… clique. Ao reduzir o brilho, as chegadas ficam mais espaçadas, em vez de virarem uma chegada contínua cada vez menor."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Para essa mesma cor, cada fóton carrega a mesma energia. Diminuir o brilho reduz quantos pacotes chegam por segundo."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 25
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "packets",
+                        "kind": "good",
+                        "text": "Você manteve a cor e mudou apenas o brilho. Isso ajuda a separar a energia de cada pacote da quantidade de pacotes que chegam.",
+                        "example": "“A luz mais fraca traz menos pacotes por segundo, não uma fração de cada pacote.”"
+                      }
+                    ],
+                    "next": "slits"
+                  }
+                ]
+              },
+              {
+                "id": "slits",
+                "messages": [
+                  {
+                    "from": "tech",
+                    "text": "Agora há duas fendas estreitas entre a fonte e uma tela que marca onde a luz chega. Vou usar luz bem fraca, com os fótons atravessando o aparelho um de cada vez."
+                  },
+                  {
+                    "from": "guide",
+                    "text": "Não vamos medir por qual fenda cada fóton passa. Cada chegada deixa um ponto na tela. Você prefere uma olhada rápida ou esperar o desenho crescer?"
+                  }
+                ],
+                "prompt": "O laboratório fecha em breve. O que você faz com o tempo que resta?",
+                "choices": [
+                  {
+                    "id": "accumulate",
+                    "text": "Ficar mais alguns minutos e juntar muitos pontos na mesma tela.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Os pontos continuam chegando um a um. Aos poucos, aparecem faixas com muitos pontos, separadas por faixas com poucos."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Esse padrão de interferência é uma marca do comportamento de onda. As chegadas são localizadas, como partículas, mas o desenho de muitas chegadas revela o lado de onda da luz."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 30
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Alguns minutos depois",
+                      "panel": {
+                        "title": "O desenho acumulado",
+                        "metrics": [
+                          {
+                            "label": "Cada chegada",
+                            "value": "Um ponto localizado",
+                            "note": null
+                          },
+                          {
+                            "label": "Muitas chegadas",
+                            "value": "Faixas alternadas",
+                            "note": "Regiões com muitos pontos e regiões com poucos."
+                          }
+                        ],
+                        "note": "O padrão aparece no conjunto, mesmo com chegadas individuais."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "duality",
+                        "kind": "good",
+                        "text": "Você observou tanto os eventos separados quanto o desenho coletivo. São pistas diferentes: uma mostra chegadas localizadas; a outra revela comportamento de onda.",
+                        "example": null
+                      }
+                    ],
+                    "next": "pattern"
+                  },
+                  {
+                    "id": "snapshot",
+                    "text": "Guardar só os primeiros pontos e liberar a bancada mais cedo.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Salvei a imagem. Há poucos pontos espalhados, sem um desenho claro. Liberamos a bancada, mas esse registro ainda não mostra como os pontos se distribuem."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Uma chegada localizada não conta a história toda. Com tão poucos pontos, não dá para concluir se o conjunto forma um padrão de onda."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "duality",
+                        "kind": "improve",
+                        "text": "Encerrar cedo poupou tempo, mas deixou pouca evidência sobre o comportamento de onda. Antes de concluir, acompanhe o desenho formado por muitas chegadas.",
+                        "example": "“Já vimos pontos separados; falta observar o padrão que muitos pontos formam.”"
+                      }
+                    ],
+                    "next": "unfinished"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "pattern",
+                "outcome": "Você sai com um registro de chegadas individuais que, juntas, formam faixas de interferência. A mesma luz oferece pistas de pacotes de energia e de comportamento de onda."
+              },
+              {
+                "id": "unfinished",
+                "outcome": "Você libera a bancada mais cedo e leva uma imagem com poucos pontos. O registro mostra chegadas localizadas, mas a investigação do comportamento de onda fica para outra visita."
+              }
+            ],
+            "summary": [
+              "Para uma luz de uma única cor bem definida, diminuir o brilho reduz a quantidade de fótons que chegam por segundo, não a energia de cada fóton.",
+              "A luz apresenta dualidade onda-partícula: é detectada em chegadas localizadas e pode formar padrões de interferência característicos de ondas."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2333,
+          "outputTokens": 89,
+          "reasoningTokens": 32
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
+        "id": "openai-gpt-6.1-sol-pt-quantum-what-if-1-2",
+        "language": "pt",
+        "userInput": {
+          "field": "none",
+          "language": "pt",
+          "level": "overview",
+          "writerModel": "openai/gpt-6.1-sol",
+          "written": {
+            "title": "Dá para ouvir a luz chegando em pacotes?",
+            "setting": "Visita ao Laboratório Lampejo",
+            "mission": "Explore uma máquina que transforma chegadas de luz em cliques. Seu desafio é **descobrir como a luz chega em pacotes e ainda forma desenhos de onda**.",
+            "deadline": null,
+            "panels": [
+              {
+                "title": "Sua bancada imaginária",
+                "metrics": [
+                  {
+                    "label": "Fonte de luz",
+                    "value": "Uma cor bem definida",
+                    "note": "Você pode mudar o brilho sem mudar a cor."
+                  },
+                  {
+                    "label": "Detector",
+                    "value": "Um clique por chegada",
+                    "note": "A máquina transforma cada detecção em som."
+                  }
+                ],
+                "note": "A luz não faz esse som sozinha: os cliques são produzidos pelo aparelho."
+              }
+            ],
+            "team": [
+              {
+                "id": "guide",
+                "role": "Mediadora científica",
+                "expertise": "Ajuda você a ligar as observações às ideias da física.",
+                "ai": false
+              },
+              {
+                "id": "tech",
+                "role": "Técnico do laboratório",
+                "expertise": "Ajusta a fonte e registra as chegadas de luz.",
+                "ai": false
+              }
+            ],
+            "meters": [
+              {
+                "id": "evidence",
+                "label": "Clareza das pistas",
+                "start": 40,
+                "goodWhen": "high"
+              }
+            ],
+            "skills": [
+              {
+                "id": "packets",
+                "name": "Explicar os pacotes de energia",
+                "practice": "Explique em duas frases o que muda ao diminuir o brilho de uma luz sem mudar sua cor: a quantidade de pacotes ou a energia de cada pacote?"
+              },
+              {
+                "id": "duality",
+                "name": "Reconhecer onda e partícula",
+                "practice": "Faça dois desenhos pequenos: as chegadas isoladas de luz e o padrão de faixas formado por muitas chegadas. Escreva o que cada desenho revela."
+              }
+            ],
+            "startNodeId": "listen",
+            "nodes": [
+              {
+                "id": "listen",
+                "messages": [
+                  {
+                    "from": "tech",
+                    "text": "A máquina está pronta. Posso deixar a luz fraquinha ou aumentar o brilho, mantendo a mesma cor."
+                  },
+                  {
+                    "from": "guide",
+                    "text": "Um quantum é um pacote de energia. No caso da luz, esse pacote é chamado de fóton. Vamos procurar uma pista desses pacotes?"
+                  }
+                ],
+                "prompt": "Como você quer começar a escutar a luz?",
+                "choices": [
+                  {
+                    "id": "bright",
+                    "text": "Aumentar o brilho e gravar os cliques para ter bastante sinal logo.",
+                    "quality": "fair",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Temos muitos cliques próximos uns dos outros. A gravação ajuda, mas fica difícil distinguir cada chegada só pelo ouvido."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Mais brilho trouxe mais pacotes por segundo, não pacotes maiores. Para essa mesma cor, a energia de cada fóton continua igual."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 5
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "packets",
+                        "kind": "improve",
+                        "text": "Um sinal forte é fácil de perceber, mas pode esconder as chegadas separadas. Reduzir o brilho, mantendo a cor, ajuda a investigar os pacotes.",
+                        "example": "“Vamos diminuir o número de chegadas para ouvir cada uma separadamente.”"
+                      }
+                    ],
+                    "next": "slits"
+                  },
+                  {
+                    "id": "dim",
+                    "text": "Diminuir o brilho e pedir o registro dos cliques separados.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Clique… silêncio… clique. Ao reduzir o brilho, as chegadas ficam mais espaçadas, em vez de virarem uma chegada contínua cada vez menor."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Para essa mesma cor, cada fóton carrega a mesma energia. Diminuir o brilho reduz quantos pacotes chegam por segundo."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 25
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "packets",
+                        "kind": "good",
+                        "text": "Você manteve a cor e mudou apenas o brilho. Isso ajuda a separar a energia de cada pacote da quantidade de pacotes que chegam.",
+                        "example": "“A luz mais fraca traz menos pacotes por segundo, não uma fração de cada pacote.”"
+                      }
+                    ],
+                    "next": "slits"
+                  }
+                ]
+              },
+              {
+                "id": "slits",
+                "messages": [
+                  {
+                    "from": "tech",
+                    "text": "Agora há duas fendas estreitas entre a fonte e uma tela que marca onde a luz chega. Vou usar luz bem fraca, com os fótons atravessando o aparelho um de cada vez."
+                  },
+                  {
+                    "from": "guide",
+                    "text": "Não vamos medir por qual fenda cada fóton passa. Cada chegada deixa um ponto na tela. Você prefere uma olhada rápida ou esperar o desenho crescer?"
+                  }
+                ],
+                "prompt": "O laboratório fecha em breve. O que você faz com o tempo que resta?",
+                "choices": [
+                  {
+                    "id": "accumulate",
+                    "text": "Ficar mais alguns minutos e juntar muitos pontos na mesma tela.",
+                    "quality": "strong",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Os pontos continuam chegando um a um. Aos poucos, aparecem faixas com muitos pontos, separadas por faixas com poucos."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Esse padrão de interferência é uma marca do comportamento de onda. As chegadas são localizadas, como partículas, mas o desenho de muitas chegadas revela o lado de onda da luz."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": 30
+                      }
+                    ],
+                    "timeJump": {
+                      "label": "Alguns minutos depois",
+                      "panel": {
+                        "title": "O desenho acumulado",
+                        "metrics": [
+                          {
+                            "label": "Cada chegada",
+                            "value": "Um ponto localizado",
+                            "note": null
+                          },
+                          {
+                            "label": "Muitas chegadas",
+                            "value": "Faixas alternadas",
+                            "note": "Regiões com muitos pontos e regiões com poucos."
+                          }
+                        ],
+                        "note": "O padrão aparece no conjunto, mesmo com chegadas individuais."
+                      }
+                    },
+                    "notes": [
+                      {
+                        "skill": "duality",
+                        "kind": "good",
+                        "text": "Você observou tanto os eventos separados quanto o desenho coletivo. São pistas diferentes: uma mostra chegadas localizadas; a outra revela comportamento de onda.",
+                        "example": null
+                      }
+                    ],
+                    "next": "pattern"
+                  },
+                  {
+                    "id": "snapshot",
+                    "text": "Guardar só os primeiros pontos e liberar a bancada mais cedo.",
+                    "quality": "weak",
+                    "replies": [
+                      {
+                        "from": "tech",
+                        "text": "Salvei a imagem. Há poucos pontos espalhados, sem um desenho claro. Liberamos a bancada, mas esse registro ainda não mostra como os pontos se distribuem."
+                      },
+                      {
+                        "from": "guide",
+                        "text": "Uma chegada localizada não conta a história toda. Com tão poucos pontos, não dá para concluir se o conjunto forma um padrão de onda."
+                      }
+                    ],
+                    "effects": [
+                      {
+                        "meter": "evidence",
+                        "change": -10
+                      }
+                    ],
+                    "timeJump": null,
+                    "notes": [
+                      {
+                        "skill": "duality",
+                        "kind": "improve",
+                        "text": "Encerrar cedo poupou tempo, mas deixou pouca evidência sobre o comportamento de onda. Antes de concluir, acompanhe o desenho formado por muitas chegadas.",
+                        "example": "“Já vimos pontos separados; falta observar o padrão que muitos pontos formam.”"
+                      }
+                    ],
+                    "next": "unfinished"
+                  }
+                ]
+              }
+            ],
+            "endings": [
+              {
+                "id": "pattern",
+                "outcome": "Você sai com um registro de chegadas individuais que, juntas, formam faixas de interferência. A mesma luz oferece pistas de pacotes de energia e de comportamento de onda."
+              },
+              {
+                "id": "unfinished",
+                "outcome": "Você libera a bancada mais cedo e leva uma imagem com poucos pontos. O registro mostra chegadas localizadas, mas a investigação do comportamento de onda fica para outra visita."
+              }
+            ],
+            "summary": [
+              "Para uma luz de uma única cor bem definida, diminuir o brilho reduz a quantidade de fótons que chegam por segundo, não a energia de cada fóton.",
+              "A luz apresenta dualidade onda-partícula: é detectada em chegadas localizadas e pode formar padrões de interferência característicos de ondas."
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "challenge-review"
+}
