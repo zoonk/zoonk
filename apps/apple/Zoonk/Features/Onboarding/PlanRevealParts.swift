@@ -260,58 +260,38 @@ extension StudyBlock {
   }
 }
 
-/// The loaded shape, its headers' facts included, so nothing moves as it comes: Today's heading a
-/// row under the week's, or Today alone when the week has no study days.
+/// The loaded week's shape, its headers' facts included, so nothing moves as it comes: Today's
+/// heading a row under the week's.
 struct RevealTodayPlaceholder: View {
-  var isInWeek = true
-
   var body: some View {
-    Group {
-      if isInWeek {
-        Section {
-          todayHeader
-            .listRowSeparator(.hidden)
+    Section {
+      SectionTitle(
+        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+      ) {
+        facts
+      }
+      .listRowSeparator(.hidden)
 
-          rows
-        } header: {
-          SectionTitle(
-            Text(
-              "Your first week", tableName: "Onboarding",
-              comment: "Header over the plan's next seven days")
-          ) {
-            facts
-          }
-        }
-      } else {
-        Section {
-          rows
-        } header: {
-          todayHeader
-        }
+      ForEach(0..<3, id: \.self) { _ in
+        Text(verbatim: "A lesson of the first day")
+          .typeStyle(.rowTitle)
+          .redacted(reason: .placeholder)
+      }
+    } header: {
+      SectionTitle(
+        Text(
+          "Your first week", tableName: "Onboarding",
+          comment: "Header over the plan's next seven days")
+      ) {
+        facts
       }
     }
     .accessibilityHidden(true)
   }
 
-  private var todayHeader: some View {
-    SectionTitle(
-      Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
-    ) {
-      facts
-    }
-  }
-
   private var facts: some View {
     FactSegments(["Mon, Nov 17", "30 min"])
       .redacted(reason: .placeholder)
-  }
-
-  private var rows: some View {
-    ForEach(0..<3, id: \.self) { _ in
-      Text(verbatim: "A lesson of the first day")
-        .typeStyle(.rowTitle)
-        .redacted(reason: .placeholder)
-    }
   }
 }
 
