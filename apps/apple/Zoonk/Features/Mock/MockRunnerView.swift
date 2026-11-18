@@ -646,19 +646,34 @@ private struct MockAnswerSheet: View {
 
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
-    let answered = run.isCountedAsAnswered(question.itemId)
-    let flagged = draft?.flagged ?? false
-    let isCurrent = index == run.position
 
-    let name =
-      question.format == .essay
-      ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
-      : String(
-        localized: "Question \(question.number)", table: "Mock", comment: "A question by number")
-
-    return Button {
+    return MockSheetRow(
+      name: question.format == .essay
+        ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
+        : String(
+          localized: "Question \(question.number)", table: "Mock", comment: "A question by number"),
+      answered: run.isCountedAsAnswered(question.itemId),
+      flagged: draft?.flagged ?? false,
+      isCurrent: index == run.position,
+      canOpen: run.moves.canOpen(index) && !run.timeUp
+    ) {
       onPick(index)
-    } label: {
+    }
+  }
+}
+
+/// A question on the answer sheet: its number, whether it's answered or marked, and the one the
+/// learner is on.
+struct MockSheetRow: View {
+  let name: String
+  let answered: Bool
+  let flagged: Bool
+  let isCurrent: Bool
+  let canOpen: Bool
+  let onPick: () -> Void
+
+  var body: some View {
+    Button(action: onPick) {
       HStack {
         Text(name)
           .typeWeight(isCurrent ? .semibold : .regular)
@@ -675,7 +690,7 @@ private struct MockAnswerSheet: View {
           .foregroundStyle(answered ? Color(.foreground) : .faint)
       }
     }
-    .disabled(!run.moves.canOpen(index) || run.timeUp)
+    .disabled(!canOpen)
     .currentRow(isCurrent)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(

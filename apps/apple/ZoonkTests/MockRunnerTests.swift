@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -250,6 +251,33 @@ final class MockAnswerSheetTests: XCTestCase {
     var japanese = MockLabels.markedForReview(2)
     japanese.locale = Locale(identifier: "ja")
     XCTAssertEqual(String(localized: japanese), "2問が見直し対象", "The web's words")
+  }
+
+  /// A question the learner can't go back to reads as dimmed, as it's drawn.
+  func testALockedQuestionReadsAsDimmed() async throws {
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      List {
+        MockSheetRow(
+          name: "Question 1", answered: true, flagged: false, isCurrent: false, canOpen: false
+        ) {}
+        MockSheetRow(
+          name: "Question 2", answered: false, flagged: false, isCurrent: true, canOpen: true
+        ) {}
+      }
+      .zoonkStyles())
+    try await waitForLayout(in: window)
+
+    let rows = accessibilityElements(in: window)
+    let locked = try XCTUnwrap(rows.first { $0.accessibilityLabel == "Question 1" })
+    let current = try XCTUnwrap(rows.first { $0.accessibilityLabel == "Question 2" })
+
+    XCTAssertTrue(locked.accessibilityTraits.contains(.notEnabled), "The locked row isn't dimmed")
+    XCTAssertTrue(locked.accessibilityTraits.contains(.button), "The locked row isn't a button")
+    XCTAssertFalse(current.accessibilityTraits.contains(.notEnabled), "The current row is dimmed")
+    XCTAssertTrue(
+      current.accessibilityTraits.contains([.button, .selected]),
+      "The current row isn't a selected button")
   }
 }
 
