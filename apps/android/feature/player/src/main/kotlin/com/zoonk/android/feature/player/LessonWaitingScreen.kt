@@ -117,7 +117,8 @@ fun LessonWaitingScreen(
         }
 
     LessonFrame(
-        title = outline.title,
+        // A lesson that isn't there has no name to show, only the way out, as the player's bar does.
+        title = outline.title.takeUnless { refused == LessonRefusal.NotFound },
         onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else exits.close() },
         modifier = if (waits) Modifier.watchTouches(hold) else Modifier,
         bottomBar =

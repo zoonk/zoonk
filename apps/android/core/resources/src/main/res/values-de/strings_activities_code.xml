@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "aea57e748748f73c53ad4b0f95d028989822707060963c8271a2ffc26d0d1961",
   "activities_code_you_said_wrong": "6b08f2befc57ab41a04b652109619c552f13bd2969d1436312ab9d0deafea8d1",
   "activities_code_your_formula": "2720d8e21acafdd42cf1cf966801514d4e8446afe5cb3fb6867a30da667b0964",
-  "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca",
   "activities_code_your_pattern": "1c8585e24a98b0ec7098aafcd8ea0aba141522c5c3700aafe67f145574f15dcb",
   "activities_code_your_predictions": "0816131488a8b77ba48803bff3fe0e2bad754214009f46efdc264024e1816481",
   "activities_code_your_query": "4e119bd5412d5d48fa3bfee772d346deb5bf4920ded68beaf0c21c51d365e6c1",
@@ -113,7 +112,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Zeile %1$d, die du bearbeiten kannst</string>
-    <string name="activities_code_your_output">Deine Ausgabe</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Ausgabe</string>
     <!-- The output the program should print. -->

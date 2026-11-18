@@ -45,6 +45,8 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -66,6 +68,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
@@ -207,7 +210,6 @@ internal fun CodeLine(
             Modifier
                 .alignByBaseline()
                 .weight(1f)
-                .clip(shape)
                 .then(toned)
                 .padding(start = NUMBER_GAP, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -259,6 +261,20 @@ internal val codeKeyboard =
 
 private fun KeyEvent.isEnter() = key == Key.Enter || key == Key.NumPadEnter
 
+/**
+ * Measures a field at a 48 dp touch height but takes only one code [line]'s room, reaching into the lines around it,
+ * so an editable line keeps the listing's rhythm.
+ */
+private fun Modifier.reachingNeighbors(line: Dp): Modifier =
+    layout { measurable, constraints ->
+        val touch = maxOf(constraints.minHeight, TOUCH_HEIGHT.roundToPx())
+        val placeable = measurable.measure(constraints.copy(minHeight = touch, maxHeight = maxOf(constraints.maxHeight, touch)))
+        val height = line.roundToPx()
+        layout(placeable.width, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+    }
+
+private val TOUCH_HEIGHT = 48.dp
+
 /** Main's `ActivityCodeLineInput`: one line of code to edit in place; Enter runs the program. */
 @Composable
 internal fun CodeLineField(
@@ -275,7 +291,7 @@ internal fun CodeLineField(
         onValueChange = onValueChange,
         modifier =
             modifier
-                .heightIn(min = 48.dp)
+                .reachingNeighbors(with(LocalDensity.current) { codeTextStyle().lineHeight.toDp() })
                 .semantics { contentDescription = label }
                 .onPreviewKeyEvent { event ->
                     if (event.isEnter() && event.type == KeyEventType.KeyDown) onSubmit()
