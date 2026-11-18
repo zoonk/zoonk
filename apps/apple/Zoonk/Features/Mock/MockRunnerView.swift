@@ -691,16 +691,15 @@ struct MockSheetRow: View {
           .foregroundStyle(answered ? Color(.foreground) : .faint)
       }
     }
-    .disabled(!canOpen)
-    .currentRow(isCurrent)
-    .accessibilityElement(children: .ignore)
     .accessibilityLabel(
       flagged
         ? Text("\(name), marked for review", tableName: "Mock")
         : Text(name)
     )
     .accessibilityValue(answered ? MockAnswerMark.answered : MockAnswerMark.blank)
-    .accessibilityAddTraits(isCurrent ? [.isButton, .isSelected] : .isButton)
+    .accessibilityAddTraits(isCurrent ? .isSelected : [])
+    .disabled(!canOpen)
+    .currentRow(isCurrent)
   }
 }
 
