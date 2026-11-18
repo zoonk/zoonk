@@ -76,7 +76,8 @@ test.describe("OTP Login Flow", () => {
     const tooMany = page.getByText("Too many wrong tries. Get a new code.");
 
     async function tryCode(attempt: string) {
-      await expect(continueButton).toBeEnabled();
+      await expect(input).toBeEnabled();
+      await expect(continueButton).not.toHaveAttribute("aria-busy", "true");
 
       const checked = page.waitForResponse((response) =>
         response.url().includes("/sign-in/email-otp"),
