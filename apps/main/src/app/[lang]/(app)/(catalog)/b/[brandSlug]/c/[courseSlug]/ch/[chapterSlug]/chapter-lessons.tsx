@@ -19,9 +19,7 @@ export async function ChapterLessons({
   const durationLabel = await getTotalDurationLabel(minutes);
 
   const facts = [
-    t("{count, plural, one {# short lesson} other {# short lessons}}", {
-      count: chapter.lessons.length,
-    }),
+    t("{count, plural, one {# lesson} other {# lessons}}", { count: chapter.lessons.length }),
     durationLabel,
   ];
 

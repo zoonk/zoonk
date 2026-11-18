@@ -75,7 +75,7 @@ export async function LibraryCourseOutline({
                     count: stats.chapterCount,
                   }),
                   stats.lessonCount > 0 &&
-                    t("{count, plural, one {# short lesson} other {# short lessons}}", {
+                    t("{count, plural, one {# lesson} other {# lessons}}", {
                       count: stats.lessonCount,
                     }),
                 ]}
