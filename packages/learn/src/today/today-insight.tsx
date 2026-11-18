@@ -45,17 +45,20 @@ function insightMark(insight: MemoryInsightView): React.ReactNode {
 function useInsightChoices(insight: MemoryInsightView) {
   const t = useExtracted();
 
+  const answer = t("Answer");
+
   if (insight.kind === "planChange") {
     return insight.planChange?.status === "proposed"
-      ? { accept: t("Add it"), dismiss: t("No thanks") }
-      : { accept: t("Keep it"), dismiss: t("Undo") };
+      ? { accept: t("Add it"), dismiss: t("No thanks"), open: t("See what changes") }
+      : { accept: t("Keep it"), dismiss: t("Undo"), open: answer };
   }
 
   if (insight.kind === "scheduleIdea") {
-    return { accept: t("Move it"), dismiss: t("Not now") };
+    return { accept: t("Move it"), dismiss: t("Not now"), open: answer };
   }
 
-  return { accept: t("Got it"), dismiss: null };
+  const gotIt = t("Got it");
+  return { accept: gotIt, dismiss: null, open: gotIt };
 }
 
 function useAnsweredText(insight: MemoryInsightView) {
@@ -118,15 +121,16 @@ function useInsightAnswer(insight: MemoryInsightView) {
 }
 
 function InsightActions({
+  choices,
   insight,
   isPending,
   onAnswer,
 }: {
+  choices: ReturnType<typeof useInsightChoices>;
   insight: MemoryInsightView;
   isPending: boolean;
   onAnswer: (status: InsightAnswer) => void;
 }) {
-  const choices = useInsightChoices(insight);
   const mainVariant = useMainActionVariant();
 
   return (
@@ -166,6 +170,7 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const repriced = state !== null && "repriced" in state;
   const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
+  const choices = useInsightChoices(insight);
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
   return (
@@ -180,9 +185,7 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
         ) : (
           <>
             <SuggestionSummary>{insight.message}</SuggestionSummary>
-            <SuggestionOpen>
-              {insight.kind === "planChange" ? t("See what changes") : t("Answer")}
-            </SuggestionOpen>
+            <SuggestionOpen>{choices.open}</SuggestionOpen>
           </>
         )}
       </SuggestionLine>
@@ -201,7 +204,12 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <InsightActions insight={insight} isPending={isPending} onAnswer={answer} />
+          <InsightActions
+            choices={choices}
+            insight={insight}
+            isPending={isPending}
+            onAnswer={answer}
+          />
         )}
 
         {state && "failed" in state && <SuggestionSaveError />}
