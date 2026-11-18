@@ -30,7 +30,6 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.tutor.CONFLICT
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.MemoryChangeReference
@@ -129,7 +128,6 @@ fun MemoryUpdated(
             OutlinedButton(
                 onClick = onUndo,
                 enabled = undo.canUndo,
-                size = ButtonSize.Small,
                 leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
             ) {
                 Text(stringResource(R.string.memory_undo))
