@@ -971,14 +971,16 @@ msgid "Welcome back"
 msgstr "다시 만나서 반가워요"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "EEMcKs"
-msgid "Try a quick explanation"
-msgstr "간단한 설명 보기"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
 msgid "Quick explanation"
 msgstr "간단한 설명"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
@@ -1019,12 +1021,6 @@ msgstr "내 계획 보기"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "{goal} 계획이 준비됐어요."
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"

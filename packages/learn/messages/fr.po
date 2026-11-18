@@ -13342,6 +13342,11 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} dans {days, plural, one {# jour} other {# jours}}"
 
 #: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "Répondre"
+
+#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "L’ajouter"
@@ -13383,11 +13388,6 @@ msgstr "C’est noté."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "D’après tes réponses récentes"
-
-#: src/today/today-insight.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "Répondre"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

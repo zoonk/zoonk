@@ -13342,6 +13342,11 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} için {days, plural, other {# gün}} kaldı"
 
 #: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "Cevapla"
+
+#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "Ekle"
@@ -13383,11 +13388,6 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
-
-#: src/today/today-insight.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "Cevapla"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

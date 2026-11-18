@@ -13342,6 +13342,11 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}まであと{days, plural, other {#日}}"
 
 #: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "答える"
+
+#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "追加する"
@@ -13383,11 +13388,6 @@ msgstr "わかりました。"
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "最近の回答から"
-
-#: src/today/today-insight.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "答える"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

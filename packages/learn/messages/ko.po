@@ -13342,6 +13342,11 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}까지 {days, plural, other {#일}}"
 
 #: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "답하기"
+
+#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "추가하기"
@@ -13383,11 +13388,6 @@ msgstr "확인했어요."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "최근 답변을 바탕으로"
-
-#: src/today/today-insight.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "답하기"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
