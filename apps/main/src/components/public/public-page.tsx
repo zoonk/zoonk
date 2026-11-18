@@ -13,24 +13,31 @@ export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-4 sm:px-6";
 export function PublicPage({
   children,
   className,
+  hideStart,
   ownStart,
   pathname,
+  rootClassName,
 }: {
   children: ReactNode;
   className?: string;
+  hideStart?: boolean;
   ownStart?: boolean;
   pathname?: string;
+  rootClassName?: string;
 }) {
   // The bar's last button reaches into the gutter so its words end on the column's edge; clipping
   // keeps that from scrolling the page sideways, as the app's own frame does.
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-clip" data-slot="public-page">
+    <div
+      className={cn("flex min-h-dvh flex-col overflow-x-clip", rootClassName)}
+      data-slot="public-page"
+    >
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
-      <PublicHeader ownStart={ownStart} pathname={pathname} />
+      <PublicHeader hideStart={hideStart} ownStart={ownStart} pathname={pathname} />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
 
-      {ownStart && (
+      {ownStart && !hideStart && (
         <VisitorOnly>
           <PublicStartBar />
         </VisitorOnly>

@@ -73,7 +73,10 @@ async function PlanLinkBody({ params }: Props) {
   const startHref = getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId });
 
   return (
-    <PublicPage ownStart>
+    <PublicPage
+      hideStart
+      rootClassName="max-sm:pb-[calc(--spacing(15)+1px+max(--spacing(4),env(safe-area-inset-bottom)))]"
+    >
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
         <PlanLinkTracker planId={planId} />
 
