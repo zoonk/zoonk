@@ -94,11 +94,11 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   };
 }
 
-export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
+export const AXIS_CLASS = "@container/phase relative flex h-4 flex-wrap gap-x-2 overflow-hidden";
 
 /** A date carries its own data face (`PlanDateText`); a word on the axis, such as "Today", keeps the text face. */
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 text-2xs leading-4 text-balance whitespace-normal";
+  "text-faint max-w-[100cqw] shrink-0 text-2xs leading-4 whitespace-nowrap";
 
 const MIDDLE_SHARE = 0.5;
 
@@ -114,7 +114,7 @@ function getAxisLabelBox({ after, share }: { after: boolean; share: number }): {
 } {
   if (after) {
     return {
-      className: "ml-auto flex max-w-full text-right",
+      className: "ml-auto flex max-w-full shrink-0 text-right",
       style: { paddingRight: `${(1 - share) * PERCENT}%` },
     };
   }
@@ -132,13 +132,7 @@ function getAxisLabelBox({ after, share }: { after: boolean; share: number }): {
   };
 }
 
-/**
- * Every label under a phase stays inside it: it sits at its point, slides back when there's no
- * room past it, takes the next line when it meets the label before it, and breaks between words
- * when it's wider than the phase. The phase's first label is placed from the phase's start and one
- * `after` it, always in the second half, from the phase's end, so the first can't push it off its
- * point. Its child carries `AXIS_TEXT_CLASS`.
- */
+/** A label stays at its mark. The axis clips later labels that wrap past the first line. */
 export function AxisLabel({
   after = false,
   children,
