@@ -59,7 +59,7 @@ export const SEEDED_SCREEN_SCENARIOS: Scenario[] = [
       evidence: ['button:has-text("Remove flag")'],
       fixture: "mock",
       id: "mock.flagged.save-failed",
-      proof: "Your answer isn't saved yet",
+      proof: "Try again before you move on",
       reach: [{ click: "Flag" }],
       screen: "/mock/[mock]",
     }),
