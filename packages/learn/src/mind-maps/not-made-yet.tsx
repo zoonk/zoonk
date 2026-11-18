@@ -139,6 +139,21 @@ export function canMakeNow(chapter: MindMapsPageChapter): boolean {
   );
 }
 
+/**
+ * Whether the row's action writes the chapter's lessons, so it counts toward free lessons: none
+ * were admitted yet, and the row offers Create, or Try again after a tap that never reached the
+ * server. A failed map's Try again writes nothing it didn't already count.
+ */
+function writesLessons(chapter: MindMapsPageChapter, library: MindMapsLibrary): boolean {
+  const request = library.row(chapter);
+
+  return (
+    chapter.status === "available" &&
+    chapter.lessonsToWrite > 0 &&
+    (request.create !== undefined || request.shown === "unreachable")
+  );
+}
+
 function NotMadeRows({
   chapters,
   library,
@@ -155,7 +170,7 @@ function NotMadeRows({
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
-            noteId={chapter.lessonsToWrite > 0 ? noteId : undefined}
+            noteId={noteId && writesLessons(chapter, library) ? noteId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -190,7 +205,7 @@ export function NotMadeYet({
   const titleId = useId();
   const listId = useId();
   const noteId = useId();
-  const showsNote = !plus && later.some((chapter) => chapter.lessonsToWrite > 0);
+  const showsNote = !plus && later.some((chapter) => writesLessons(chapter, library));
   const folds = now.length > 0 && later.length > 0;
   const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
   const laterRef = useRef<HTMLDivElement>(null);
