@@ -103,6 +103,61 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertEqual(router.path(for: .today).wrappedValue, below)
   }
 
+  /// A chapter opened from a mind map stays open as the window narrows and widens again.
+  func testAResizeKeepsAPagePushedOnASidebarPlace() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.subject(subjectKey: "math"))
+    router.open(.mindMaps())
+    router.open(.chapter(chapterId: "chapter"))
+    router.present(.feedback(screen: "chapter"))
+    let shown = router.shown
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    XCTAssertEqual(
+      router.path(for: .today).wrappedValue,
+      path(.subject(subjectKey: "math"), .mindMaps(), .chapter(chapterId: "chapter")))
+    XCTAssertEqual(router.shown, shown)
+
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    XCTAssertEqual(router.selectedTab, .mindMaps)
+    XCTAssertEqual(router.path(for: .mindMaps).wrappedValue, path(.chapter(chapterId: "chapter")))
+    XCTAssertEqual(router.path(for: .today).wrappedValue, path(.subject(subjectKey: "math")))
+    XCTAssertEqual(router.shown, shown)
+  }
+
+  /// Back from the chapter on the narrow window shows the mind maps, and widening keeps them.
+  func testAResizeKeepsOnlyThePagesStillOpen() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.mindMaps())
+    router.open(.chapter(chapterId: "chapter"))
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    router.path(for: .today).wrappedValue = path(.mindMaps())
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+
+    XCTAssertEqual(router.selectedTab, .mindMaps)
+    XCTAssertEqual(router.path(for: .mindMaps).wrappedValue, NavigationPath())
+  }
+
+  /// Today's link to the mock exams pushes the page itself, not through the router.
+  func testAResizeMovesAPlaceALinkOpenedToItsOwnRow() {
+    let router = AppRouter()
+    router.path(for: .today).wrappedValue = path(.chapter(chapterId: "chapter"), .mockChooser)
+
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+
+    XCTAssertEqual(router.selectedTab, .mockExam)
+    XCTAssertEqual(router.path(for: .today).wrappedValue, path(.chapter(chapterId: "chapter")))
+  }
+
+  private func path(_ routes: AppRoute...) -> NavigationPath {
+    NavigationPath(routes)
+  }
+
   func testWithoutASidebarAPageOpensOnTheTabItCameFrom() {
     let router = AppRouter()
 
