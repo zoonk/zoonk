@@ -1991,12 +1991,15 @@ describe("docked beside the lesson", () => {
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(lessonAside().getByRole("button", { name: "1 question" })).toBeVisible();
 
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();
+    await page.getByRole("button", { name: "Expand sidebar" }).click();
+    await expect.element(offer).not.toBeInTheDocument();
   });
 
   it('fills in the simpler suggestion when "I didn\'t get this" is tapped while a question is on its way', async () => {

@@ -59,7 +59,7 @@ async function crossTo(size: { height: number; width: number }) {
 }
 
 describe("a word bank's feedback across lg", () => {
-  it("keeps the control the learner was on, and an offer they dismissed, when the screen crosses lg both ways", async () => {
+  it("moves focus to Continue when the offer hides and remembers a dismissed offer", async () => {
     await atViewport(PHONE, async () => {
       await missTwiceOnTheBank();
       await feedbackFollowsBank(false);
@@ -69,11 +69,13 @@ describe("a word bank's feedback across lg", () => {
       ask?.focus();
       expect(document.activeElement).toBe(ask);
 
+      const next = page.getByRole("button", { name: /^Continue/u });
       await crossTo(LAPTOP);
-      expect(document.activeElement).toBe(ask);
+      await expect.element(noThanks()).not.toBeInTheDocument();
+      await expect.element(next).toHaveFocus();
 
       await crossTo(PHONE);
-      expect(document.activeElement).toBe(ask);
+      await expect.element(next).toHaveFocus();
 
       await noThanks().click();
       await expect.element(noThanks()).not.toBeInTheDocument();
