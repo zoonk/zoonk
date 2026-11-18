@@ -127,7 +127,7 @@ struct TodayMoreSection: View {
                   comment: "Adds the lessons earlier days left to today")
               }
               .buttonStyle(.outline)
-              .controlSize(.large)
+              .controlSize(.small)
               .disabled(busy != nil && busy != .catchUp)
 
               if failed == .catchUp {
@@ -240,7 +240,7 @@ struct TodayPlanChangeSection: View {
             }
           }
           .buttonStyle(.outline)
-          .controlSize(.large)
+          .controlSize(.small)
         }
         .listRowSeparator(.hidden)
       } else if isBehind, let behind = change.behind {
@@ -1191,7 +1191,7 @@ struct TodayLanguagePracticeSection: View {
           action
         }
         .buttonStyle(.outline)
-        .controlSize(.large)
+        .controlSize(.small)
       }
       .listRowSeparator(.hidden)
     }
