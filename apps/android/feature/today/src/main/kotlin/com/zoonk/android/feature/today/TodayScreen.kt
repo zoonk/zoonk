@@ -375,8 +375,9 @@ private fun GoalAtRest(
                     app.today,
                     app.mocks,
                     goal.id,
-                    isExam = goal.kind == LearnerSummaryGoal.Kind.EXAM,
-                    isLanguage = goal.kind == LearnerSummaryGoal.Kind.LANGUAGE,
+                    // A mock or a call starts only on an active goal.
+                    isExam = false,
+                    isLanguage = false,
                     completedLessons = summary.places.completedLessons,
                     navigate = navigator::open,
                 )
