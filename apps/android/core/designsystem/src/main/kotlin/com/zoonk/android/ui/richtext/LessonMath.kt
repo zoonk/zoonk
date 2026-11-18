@@ -100,6 +100,9 @@ private const val FUNCTION_GAP = "\u2006"
 /** The longest part a fraction sets small around its slash. */
 private const val SHORT_TERM = 4
 
+/** One number ("12000", "1,89") or one word ("distance"). */
+private val SINGLE_TERM = Regex("[0-9.,\u00A0\u202F]+|\\p{L}+")
+
 private class MathParser(
     private val source: String,
     private val words: MathWords,
@@ -397,8 +400,9 @@ private class MathParser(
         plain.length <= SHORT_TERM && plain.none { it == OPERATOR_GAP.single() || it in "√/\u2044" } &&
             text.spanStyles.none { it.item.baselineShift != null }
 
+    /** A sum or a product takes brackets beside the slash; a single number or word ("12000", "distance") needs none. */
     private fun Piece.grouped(style: Script): Piece =
-        if (plain.length <= 1) this else run("(", style, italic = false) + this + run(")", style, italic = false)
+        if (SINGLE_TERM.matches(plain)) this else run("(", style, italic = false) + this + run(")", style, italic = false)
 
     private fun scriptStyle(
         shift: BaselineShift,
