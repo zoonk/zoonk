@@ -13,7 +13,7 @@ export function CopyButton({ label, text }: { label: string; text: string }) {
   return (
     <Button
       aria-label={isCopied ? undefined : label}
-      className="shrink-0"
+      className="shrink-0 font-sans"
       onClick={() => void copy(text)}
       size="sm"
       type="button"
@@ -31,8 +31,8 @@ export function CertificateLinkCopy({ url }: { url: string }) {
   const codeStart = address.lastIndexOf("/") + 1;
 
   return (
-    <div className="flex min-w-0 items-center justify-end gap-2">
-      <span className="flex min-w-0 font-mono text-xs" title={address}>
+    <div className="flex min-w-0 items-center gap-2">
+      <span className="flex min-w-0 font-mono text-xs font-normal" dir="ltr" title={address}>
         <span className="sr-only">{address}</span>
         <span aria-hidden="true" className="truncate">
           {address.slice(0, codeStart)}

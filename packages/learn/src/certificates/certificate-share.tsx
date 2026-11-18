@@ -16,7 +16,8 @@ import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
-import { CertificateLinkCopy, CopyButton } from "./certificate-copy-button";
+import { CopyButton } from "./certificate-copy-button";
+import { CertificateLinkRow } from "./certificate-details";
 import { roundStudyMinutes, useCertificateName } from "./certificate-labels";
 
 const MINUTES_PER_HOUR = 60;
@@ -265,7 +266,9 @@ export function CertificateShareDialog({
             <NetworkLinks text={text} url={links.url} />
           </div>
 
-          <CertificateLinkCopy url={links.url} />
+          <dl>
+            <CertificateLinkRow layout="stacked" url={links.url} />
+          </dl>
         </DrawerContent>
       </DrawerPopup>
     </Drawer>

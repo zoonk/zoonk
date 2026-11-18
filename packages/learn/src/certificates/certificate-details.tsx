@@ -15,18 +15,28 @@ import { type CertificateOwner } from "./certificate-page";
 function DetailRow({
   children,
   label,
+  layout = "inline",
   mono,
 }: {
   children: React.ReactNode;
   label: string;
+  layout?: "inline" | "stacked";
   mono?: boolean;
 }) {
   return (
-    <div className="border-border text-compact flex min-h-11 items-baseline justify-between gap-4 border-t py-3">
+    <div
+      className={cn(
+        "flex",
+        layout === "stacked"
+          ? "flex-col gap-1.5 text-xs"
+          : "border-border text-compact min-h-11 items-baseline justify-between gap-4 border-t py-3",
+      )}
+    >
       <dt className="text-muted-foreground shrink-0">{label}</dt>
       <dd
         className={cn(
-          "min-w-0 text-right",
+          "min-w-0",
+          layout === "inline" && "text-end",
           mono ? "font-mono text-xs tabular-nums" : "font-medium",
         )}
       >
@@ -94,12 +104,18 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
   );
 }
 
-function OwnerLinkRow({ links }: { links: CertificateLinks }) {
+export function CertificateLinkRow({
+  layout,
+  url,
+}: {
+  layout?: "inline" | "stacked";
+  url: string;
+}) {
   const t = useExtracted();
 
   return (
-    <DetailRow label={t("Link")} mono>
-      <CertificateLinkCopy url={links.url} />
+    <DetailRow label={t("Link")} layout={layout}>
+      <CertificateLinkCopy url={url} />
     </DetailRow>
   );
 }
@@ -129,7 +145,7 @@ export function CertificateDetails({
             {row.value}
           </DetailRow>
         ))}
-        {owner && <OwnerLinkRow links={links} />}
+        {owner && <CertificateLinkRow url={links.url} />}
       </dl>
       {owner && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
