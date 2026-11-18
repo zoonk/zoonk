@@ -3991,7 +3991,7 @@
       }
     },
     "Plus" : {
-      "comment" : "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
+      "comment" : "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.\nZoonk Plus, the plan's name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5833,6 +5833,7 @@
       }
     },
     "Write to us" : {
+      "comment" : "Opens Zoonk's Help page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
