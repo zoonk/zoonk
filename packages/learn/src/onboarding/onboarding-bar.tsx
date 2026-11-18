@@ -7,12 +7,41 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { StepDots } from "../_components/step-dots";
 import { TaskClose } from "../_components/task-close";
 import { useAppLocale } from "../_utils/locale";
+import { type getProfileProgress, getSetupProgress } from "./_utils/setup-progress";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
 export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
+
+function ProfileCount({ current, total }: { current: number; total: number }) {
+  const t = useExtracted();
+
+  return (
+    <span className="text-muted-foreground text-xs whitespace-nowrap">
+      {t("{current, number} of {total, number}", { current, total })}
+    </span>
+  );
+}
+
+export function stepBarProgress(
+  state: Parameters<typeof getSetupProgress>[0],
+  profile: ReturnType<typeof getProfileProgress>,
+) {
+  if (profile) {
+    return profile.total > 1 ? (
+      <ProfileCount current={profile.current} total={profile.total} />
+    ) : null;
+  }
+
+  const setup = getSetupProgress(state);
+
+  return (
+    setup && <StepDots className={BAR_MIDDLE_CLASS} current={setup.current} total={setup.total} />
+  );
+}
 
 /** A step's bar has its own way back, progress or menu; the entry's holds only the way out. */
 export function isStepBar(bar: OnboardingBar): boolean {
