@@ -157,13 +157,13 @@ struct ExamList: View {
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
-    } else if pinsSpeakingAction, let mock = exam.speakingMock {
+    } else if pinsSpeakingAction {
       if let limit = speakingLimit, !limit.isOpen(at: now) {
         LimitWayOn(limit: limit)
           .buttonStyle(.outline)
       }
 
-      ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
+      ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: startSpeakingMock)
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
     }
@@ -1044,7 +1044,7 @@ private struct SpeakingMockSection: View {
       } else if !pinsAction {
         ExamSpeakingMockAction(
           goalId: goalId, start: start,
-          label: Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
+          label: startSpeakingMock
         )
         .buttonStyle(.outline)
 
@@ -1075,6 +1075,11 @@ extension ExamView.SpeakingMock {
       Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
     }
   }
+}
+
+/// The section above names the mock, so its start is the verb alone, in the bar or under it.
+private var startSpeakingMock: Text {
+  Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
 }
 
 private struct ExamSpeakingMockAction: View {
