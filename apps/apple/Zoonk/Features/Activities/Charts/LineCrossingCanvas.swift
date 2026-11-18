@@ -73,7 +73,7 @@ struct LineCrossingCanvas: View {
       } else {
         dragHint
           .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+          .foregroundStyle(.mutedForeground)
       }
 
       if showsAnswer, let shifted = fields.lines.first(where: { $0.id == fields.shift.line }) {

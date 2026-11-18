@@ -239,9 +239,9 @@ struct FormulaModelCanvas: View {
 
     let x = fields.start(at: inputs ?? []).sliders[view.axis.name] ?? view.axis.initial
     let rounded = context.roundedAnswer
-    let digits =
-      rounded?.places
-      ?? exactFractionDigitsFor(expected: answer, tolerance: tolerance, value: context.answer?.number)
+    let exactDigits = exactFractionDigitsFor(
+      expected: answer, tolerance: tolerance, value: context.answer?.number)
+    let digits = rounded?.places ?? exactDigits
     return (
       x, answer,
       ActivityNumberFormat.format(rounded?.value ?? answer, unit: unit, digits: digits)

@@ -98,7 +98,8 @@ enum LessonGrading {
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
       let rounded = content.roundedAnswer
-      let exactDigits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
+      let exactDigits = exactFractionDigitsFor(
+        expected: expected, tolerance: tolerance, value: value)
       let write = { (number: Double, places: Int?) in
         ActivityNumberFormat.format(number, unit: unit, digits: places ?? exactDigits)
       }
