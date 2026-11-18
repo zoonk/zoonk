@@ -68,6 +68,44 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertFalse(draft.savesAChange(answered))
   }
 
+  /// The job field hides again once the status has no work in it, so its text isn't saved.
+  func testAboutYouSaveStaysOffWhenOnlyAHiddenJobChanged() {
+    let saved = ProfileQuestionView(
+      id: .work, options: [], saved: .init(picks: ["student"], studies: [], text: ""),
+      status: .answered, version: 1)
+    var draft = ProfileDraft(saved)
+    draft.toggle("work")
+    draft.text = "Dev"
+    draft.toggle("student")
+
+    XCTAssertFalse(draft.savesAChange(saved))
+  }
+
+  /// A field picked, given an empty subject and unpicked again leaves the saved studies as they were.
+  func testAboutYouSaveStaysOffAfterAnEmptySubjectIsLeftBehind() {
+    let saved = ProfileQuestionView(
+      id: .studies, options: [],
+      saved: .init(picks: [], studies: [.init(field: "math", subject: "Algebra")], text: ""),
+      status: .answered, version: 1)
+    var draft = ProfileDraft(saved)
+    draft.toggle("physics")
+    draft.subjects["physics"] = ""
+    draft.toggle("physics")
+
+    XCTAssertFalse(draft.savesAChange(saved))
+  }
+
+  /// Saving trims what's typed, so a trailing space saves the same favorites.
+  func testAboutYouSaveStaysOffForATrailingSpace() {
+    let saved = ProfileQuestionView(
+      id: .tools, options: [], saved: .init(picks: [], studies: [], text: "Chess"),
+      status: .answered, version: 1)
+    var draft = ProfileDraft(saved)
+    draft.text = "Chess "
+
+    XCTAssertFalse(draft.savesAChange(saved))
+  }
+
   func testSavedPreferenceShowsTheServerReply() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
