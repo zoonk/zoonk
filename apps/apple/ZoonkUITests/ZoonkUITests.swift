@@ -228,6 +228,9 @@ final class ZoonkUITests: XCTestCase {
   /// - Dynamic Type and clipping in system bars and the search field, which keep their size (a long
   ///   press shows the Large Content Viewer) and truncate to their width, and in the elements
   ///   labeled `sizedBySystem`, which another system view sizes.
+  /// - Dynamic Type in labels no element covers, when the window shows iPad's floating tab bar: its
+  ///   tab names are labels inside its buttons, which XCUITest can't find, and keep their size as
+  ///   the iPhone's tab bar does.
   /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
   private func performAccessibilityAudit(
@@ -241,9 +244,11 @@ final class ZoonkUITests: XCTestCase {
     // button at 61.99999999999997.
     let frames = systemSized.filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
 
+    let showsFloatingTabBar = app.buttons["ToggleSideBar"].exists
+
     try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
       guard let element = issue.element else {
-        return false
+        return showsFloatingTabBar && issue.auditType == .dynamicType
       }
 
       switch issue.auditType {
