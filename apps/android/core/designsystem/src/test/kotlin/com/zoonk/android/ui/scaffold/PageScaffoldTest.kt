@@ -3,10 +3,19 @@ package com.zoonk.android.ui.scaffold
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,13 +23,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.R
@@ -121,5 +135,41 @@ class PageScaffoldTest {
 
         val goHome = rule.onNodeWithText(rule.activity.getString(R.string.not_found_go_home)).getUnclippedBoundsInRoot()
         assertTrue("in the bar at the window's foot: $goHome", goHome.bottom.value > 700f)
+    }
+
+    /**
+     * Beside a navigation rail that takes the screen's side inset (a cutout on the rail's side), the page receives none of
+     * it, so its named column, and the way back with it, center in the room the page actually has.
+     */
+    @Test
+    @Config(qualifiers = "w900dp-h400dp-mdpi")
+    fun theWayBackStaysOnANamedColumnBesideARailThatTookTheSideInset() {
+        rule.setContent {
+            ZoonkTheme {
+                Row(Modifier.fillMaxSize()) {
+                    Box(Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Start)).width(80.dp).fillMaxHeight())
+                    Box(Modifier.weight(1f).consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Start))) {
+                        PageScaffold(onBack = {}, columnWidth = 448.dp) { padding ->
+                            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+                                Column(Modifier.widthIn(max = 448.dp).fillMaxWidth().padding(horizontal = pageMargin())) {
+                                    Text("Account", Modifier.testTag(WORDS))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        val cutout = WindowInsetsCompat.Builder().setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(45, 0, 0, 0)).build()
+        rule.runOnUiThread { ViewCompat.dispatchApplyWindowInsets(rule.activity.window.decorView, cutout) }
+        rule.waitForIdle()
+
+        val back = rule.onNodeWithContentDescription(rule.activity.getString(R.string.navigation_back)).getUnclippedBoundsInRoot()
+        val words = rule.onNodeWithTag(WORDS, useUnmergedTree = true).getUnclippedBoundsInRoot()
+        assertEquals("the arrow's ink on the words' edge", words.left.value, (back.left + 12.dp).value, 1f)
+    }
+
+    private companion object {
+        const val WORDS = "words"
     }
 }
