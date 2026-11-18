@@ -29,10 +29,13 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
  * they ask about. Terra scored a bit higher on the 24-plan mix (8.76 to 8.52) at 40% of the cost.
  * On 4 plans (11 Nov 2026), Sol scored EN 9.62 and PT 9.27 at $82/1k, Opus 9.08 and 8.35 at
  * $365/1k, and Gemini 4 Carbon 9.08 and 8.00 at $268/1k with a 1,122 s p95; a blind read liked
- * Carbon's richer visuals on 3 of 4 despite its factual and scope flaws. A learner's own lesson is
+ * Carbon's richer visuals on 3 of 4 despite its factual and scope flaws. On 14 plans, 12 of them
+ * visual (18 Nov 2026), GPT-6.2 Sol tied 6.1 Sol (9.16 to 9.14, visuals 102 to 105) at a p50 of
+ * 39 s against 81 s and $37/1k against $43/1k; a blind read of two visual plans called one a tie and
+ * leaned 6.1 Sol on the other. Gemini 4 Hydrogen scored 8.57 at $181/1k. A learner's own lesson is
  * planned with its scope's models.
  */
-const defaultModel = "openai/gpt-6.1-sol";
+const defaultModel = "openai/gpt-6.2-sol";
 const defaultFallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 const skillSchema = z.object({
