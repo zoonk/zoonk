@@ -158,8 +158,8 @@ struct ExamList: View {
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
     } else if pinsSpeakingAction, let mock = exam.speakingMock {
-      if let limit = speakingLimit, !limit.isOpen(at: now), limit.offersSubscription {
-        SubscribeButton()
+      if let limit = speakingLimit, !limit.isOpen(at: now) {
+        LimitWayOn(limit: limit)
           .buttonStyle(.outline)
       }
 
