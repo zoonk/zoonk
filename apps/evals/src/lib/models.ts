@@ -87,6 +87,8 @@ const IMAGE_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-image-2", name: "gpt-image-2" },
   { id: "microsoft/mai-image-2.6", name: "mai-image-2.6" },
   { id: "microsoft/mai-image-2.6-flash", name: "mai-image-2.6-flash" },
+  { id: "microsoft/mai-image-2.7", name: "mai-image-2.7" },
+  { id: "microsoft/mai-image-2.7-flash", name: "mai-image-2.7-flash" },
   { id: "bytedance/seedream-5.0-pro", name: "seedream-5.0-pro" },
 ];
 
