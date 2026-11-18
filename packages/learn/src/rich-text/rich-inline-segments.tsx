@@ -112,7 +112,7 @@ function MarkedRun({
   }
 
   return (
-    <mark className="bg-warning/15 text-foreground rounded-meter box-decoration-clone px-0.5">
+    <mark className="bg-warning/15 text-foreground rounded-meter box-decoration-clone">
       {children}
     </mark>
   );
