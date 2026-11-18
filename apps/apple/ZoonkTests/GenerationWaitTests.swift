@@ -362,11 +362,12 @@ final class GenerationWaitTests: XCTestCase {
       [1, 1, 0, 1])
   }
 
+  /// The running step comes first in the list, and the step after it is already done.
   func testARunningStepFillsWhatTheBarDriftedPastTheDoneSteps() {
     XCTAssertEqual(
       GenerationWait.phaseFills(
-        share: 0.5, weights: [10, 20, 10], states: [.done, .working, .waiting]),
-      [1, 0.5, 0])
+        share: 0.625, weights: [10, 20, 10], states: [.working, .done, .waiting]),
+      [0.5, 1, 0])
   }
 
   func testAWaitingStepStaysEmptyWhateverTheBarReached() {
