@@ -451,7 +451,7 @@ private struct PlanToolChoiceSheet: View {
         }
       }
       .navigationTitle(
-        Text("Do you have it?", tableName: "Plan", comment: "Title of the tool choice")
+        Text("Do you have it?", tableName: "Plan")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -487,19 +487,15 @@ private struct PlanToolChoiceSheet: View {
     Section {
       Picker(selection: $choice) {
         option(
-          Text("I have it", tableName: "Plan", comment: "Tool choice"),
-          Text(
-            "You'll practice on your own device.", tableName: "Plan",
-            comment: "Tool choice detail")
+          Text("I have it", tableName: "Plan"),
+          Text("You'll practice on your own device.", tableName: "Plan")
         ).tag(ToolChoice.have)
         option(
-          Text("I'll set it up", tableName: "Plan", comment: "Tool choice"),
-          Text(
-            "A short lesson shows how, right before you need it.", tableName: "Plan",
-            comment: "Tool choice detail")
+          Text("I'll set it up", tableName: "Plan"),
+          Text("A short lesson shows how, right before you need it.", tableName: "Plan")
         ).tag(ToolChoice.setup)
         option(
-          Text("I won't use it", tableName: "Plan", comment: "Tool choice"),
+          Text("I won't use it", tableName: "Plan"),
           Text("You'll practice with examples instead.", tableName: "Plan")
         ).tag(ToolChoice.none)
       } label: {

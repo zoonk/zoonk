@@ -158,7 +158,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       isArchiving = true
     } label: {
       Label {
-        Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
+        Text("Archive goal", tableName: "Plan")
       } icon: {
         Image(systemName: "archivebox")
       }
@@ -412,7 +412,7 @@ struct ExamOverButtons: View {
     BusyButton(isBusy: pressed == .archive, icon: .archive) {
       isArchiving = true
     } label: {
-      Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
+      Text("Archive goal", tableName: "Plan")
     }
     .buttonStyle(.outline)
     .disabled(pressed == .keepStudying)
