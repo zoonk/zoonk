@@ -102,6 +102,14 @@ class LessonMathTest {
     }
 
     @Test
+    fun keepsTheBracketsOfAProductOfGreekSymbols() {
+        assertEquals("1/(μ0ε0)", math("\\frac{1}{\\mu_0 \\varepsilon_0}").text.text)
+        assertEquals("12000/(Δx)", math("\\frac{12000}{\\Delta x}").text.text)
+        assertEquals("12000/μ0", math("\\frac{12000}{\\mu_0}").text.text)
+        assertEquals("(mass volume)/12000", math("\\frac{\\text{mass}\\,\\text{volume}}{12000}").text.text)
+    }
+
+    @Test
     fun readsRootsUnitsAndSymbolsFromTheSeededLessons() {
         assertEquals("v$GAP=$GAP√GM\u2044r", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
         assertEquals("v = square root of GM over r", math("v = \\sqrt{\\frac{GM}{r}}").spoken)
