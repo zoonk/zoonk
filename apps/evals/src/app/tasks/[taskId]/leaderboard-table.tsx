@@ -12,6 +12,7 @@ import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
 import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
   Table,
@@ -88,10 +89,7 @@ export function measuredColumns<Entry extends MeasuredEntry>(entries: Entry[]) {
   return { categoryColumns, cost, latencyP50, latencyP95, provider };
 }
 
-/**
- * Covers its whole row: `LeaderboardTable`'s rows are its positioned box. The row has no chevron,
- * which would move when "More columns" widens the table.
- */
+/** Covers its whole row: `LeaderboardTable`'s rows are its positioned box, ended by a chevron. */
 export function ModelLink({
   children,
   modelId,
@@ -205,7 +203,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
           aria-pressed={showsMore}
           icon={<Columns3Icon />}
           onClick={() => setShowsMore((shown) => !shown)}
-          size="sm"
+          size="lg"
           variant="outline"
         >
           <SwapLabel
@@ -229,6 +227,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                 onSort={handleSort}
               />
             ))}
+            <TableHead className="w-4" />
           </TableRow>
         </TableHeader>
 
@@ -244,6 +243,9 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                   {column.cell(entry, index)}
                 </TableCell>
               ))}
+              <TableCell className={CELL_CLASS}>
+                <RowChevron />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

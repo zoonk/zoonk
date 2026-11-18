@@ -55,8 +55,7 @@ export function TaskModelFileActions({
           disabled={disabled}
           icon={<DownloadIcon />}
           onClick={exportAll}
-          size="bar"
-          className="lg:h-11"
+          size="lg"
           variant="outline"
         >
           Export outputs
@@ -64,8 +63,7 @@ export function TaskModelFileActions({
         <Button
           disabled={disabled}
           onClick={() => setReviewOpen(true)}
-          size="bar"
-          className="lg:h-11"
+          size="lg"
           variant="outline"
           icon={<FileTextIcon />}
         >
@@ -74,12 +72,11 @@ export function TaskModelFileActions({
         <Button
           disabled={disabled}
           onClick={() => setDeleteOpen(true)}
-          size="bar"
-          className="lg:h-11"
+          size="lg"
           variant="outline"
           icon={<Trash2Icon />}
         >
-          Delete results
+          Delete outputs and results
         </Button>
       </div>
       <DropdownMenu>
@@ -105,7 +102,7 @@ export function TaskModelFileActions({
             variant="destructive"
           >
             <Trash2Icon />
-            Delete results
+            Delete outputs and results
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
