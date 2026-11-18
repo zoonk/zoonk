@@ -61,6 +61,7 @@ data class MissionMomentFacts(
     val justDone: List<DayMission> get() = missions.filter { it.done && it.kind in completed }
     val shows: Boolean get() = justDone.isNotEmpty() || bonusPaid
     val payoff: Boolean get() = bonusPaid && missions.all { it.done }
+    internal val announcesCompletion: Boolean get() = missions.all { it.done } || justDone.isNotEmpty()
 }
 
 /** How long what follows waits, so the day's moment plays one thing at a time. */
@@ -89,6 +90,7 @@ fun MissionMoment(
     val brain = MaterialTheme.zoonk.brain
     val title =
         when {
+            !facts.announcesCompletion -> stringResource(R.string.missions_title)
             left == 0 -> stringResource(R.string.missions_moment_all_done)
             justDone.size == 1 -> stringResource(R.string.missions_moment_one_done)
             else -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
