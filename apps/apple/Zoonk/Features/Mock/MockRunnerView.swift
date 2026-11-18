@@ -486,6 +486,8 @@ struct MockSectionCounts {
       let draft = run.drafts[question.itemId]
       total += 1
 
+      if draft?.flagged == true { flagged += 1 }
+
       if question.format == .essay {
         essays += 1
         if !run.isCountedAsAnswered(question.itemId) { blankEssays += 1 }
@@ -493,7 +495,6 @@ struct MockSectionCounts {
       }
 
       if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
-      if draft?.flagged == true { flagged += 1 }
     }
   }
 
