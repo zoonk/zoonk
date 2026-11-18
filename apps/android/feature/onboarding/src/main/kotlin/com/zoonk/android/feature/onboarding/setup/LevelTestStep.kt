@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
@@ -517,6 +518,7 @@ private fun ColumnScope.LevelTestDone(
         Icon(
             painterResource(R.drawable.ic_check_circle),
             contentDescription = null,
+            modifier = Modifier.glyphInk(R.drawable.ic_check_circle),
             tint = MaterialTheme.colorScheme.onTertiaryContainer,
         )
         OnboardingHeading(
