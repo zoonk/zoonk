@@ -148,26 +148,23 @@ export function SqlPlaygroundActivity({
             value={query}
           />
 
-          {!isChecked && (
-            <>
-              <ActivitySnippetBar
-                label={t("SQL words, tables and columns")}
-                onInsert={insert}
-                snippets={snippets}
-              />
+          <ActivitySnippetBar
+            disabled={isChecked}
+            label={t("SQL words, tables and columns")}
+            onInsert={insert}
+            snippets={snippets}
+          />
 
-              <SandboxRunBar
-                canRun={query.trim() !== ""}
-                hasRun={state !== null}
-                isRunning={isRunning}
-                isExploring={phase === "explore"}
-                onRetry={runtime.retry}
-                onRun={() => void handleRun()}
-                runtimeName={RUNTIME_NAME}
-                runtimeStatus={runtime.status}
-              />
-            </>
-          )}
+          <SandboxRunBar
+            canRun={!isChecked && query.trim() !== ""}
+            hasRun={state !== null}
+            isRunning={isRunning}
+            isExploring={phase === "explore"}
+            onRetry={runtime.retry}
+            onRun={() => void handleRun()}
+            runtimeName={RUNTIME_NAME}
+            runtimeStatus={runtime.status}
+          />
         </div>
       )}
 
