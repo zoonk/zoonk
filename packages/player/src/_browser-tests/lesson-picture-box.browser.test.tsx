@@ -266,29 +266,44 @@ describe("a drawn lesson picture", () => {
         const getLessonPictures = pollPictures();
         const held = await heldPicture();
         const pictured = pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true });
-        const baroque = pictureCheckContent.options.find((option) => option.id === "baroque");
-        const alt = longAlt ?? baroque?.picture.alt ?? "";
+        const alt = longAlt ?? "A doorway";
+        const drawnAlt = `Already drawn: ${alt}`;
+
+        const descriptions = new Map([
+          ["baroque", alt],
+          ["gothic", drawnAlt],
+        ]);
 
         const step = contentStep("check", {
           content: {
             ...pictureCheckContent,
-            options: pictureCheckContent.options.map((choice) =>
-              choice.id === "baroque" ? { ...choice, picture: { ...choice.picture, alt } } : choice,
-            ),
+            options: pictureCheckContent.options.map((choice) => ({
+              ...choice,
+              picture: {
+                ...choice.picture,
+                alt: descriptions.get(choice.id) ?? choice.picture.alt,
+              },
+            })),
           },
           imagePending: true,
-          optionPictures: pictured.optionPictures,
+          optionPictures: {
+            ...pictured.optionPictures,
+            gothic: picture({ alt: drawnAlt, shape: "option", url: held.url }),
+          },
         });
 
         const lesson = buildLesson([step]);
 
         renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-        const option = page.getByRole("radio", { name: new RegExp(alt, "u") });
+        const option = page.getByRole("radio", { exact: true, name: alt });
         await expect.element(option).toBeVisible();
         const before = boxOf(option.element());
         const frame = option.element().querySelector("[data-slot='picture-option-frame']")!;
         const drawing = boxOf(frame);
+        const alreadyDrawn = imageOf(drawnAlt);
+        const drawnFrame = alreadyDrawn.parentElement!;
+        expect(boxOf(drawnFrame).height).toBe(boxOf(alreadyDrawn).height);
 
         getLessonPictures.mockResolvedValue([
           {
@@ -303,7 +318,8 @@ describe("a drawn lesson picture", () => {
 
         const { height, ...drawn } = boxOf(imageOf(alt));
         expect(drawn).toStrictEqual({ top: drawing.top, width: drawing.width });
-        expect(drawing.height === height).toBe(longAlt === null);
+        expectRatio(boxOf(imageOf(alt)), SQUARE);
+        expect(drawing.height).toBeGreaterThanOrEqual(height);
         expect(boxOf(option.element())).toStrictEqual(before);
       });
     },
