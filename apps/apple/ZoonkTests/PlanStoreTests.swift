@@ -368,11 +368,11 @@ final class PlanStoreTests: XCTestCase {
     let store = makeStore(api: api)
     await store.timeToCover(goalId: "goal").load()
 
-    let reopened = PlanCoverageSlot.found(store.timeToCover(goalId: "goal"), isAsked: true)
+    let reopened = PlanCoverageSlot.found(store.timeToCover(goalId: "goal"))
 
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 1)
-    guard case .time(let time)? = reopened else {
+    guard case .time(let time) = reopened else {
       return XCTFail("the answer it had shows at once, so See what changes needs no request")
     }
     XCTAssertEqual(time.recommendedMinutes, 45)
@@ -387,16 +387,11 @@ final class PlanStoreTests: XCTestCase {
 
     await time.refresh()
 
-    guard case .time? = PlanCoverageSlot.found(time, isAsked: true) else {
+    guard case .time = PlanCoverageSlot.found(time) else {
       return XCTFail("a failed refresh keeps the answer instead of an error")
     }
   }
 
-  func testACoverageSuggestionNotAskedYetWaitsForTheLearner() {
-    let store = makeStore(api: PlanAPIStub())
-
-    XCTAssertNil(PlanCoverageSlot.found(store.timeToCover(goalId: "goal"), isAsked: false))
-  }
 
   func testAChangedPlanFromTheServerHidesItsEarlierAnswersWithoutAsking() async {
     let api = PlanAPIStub()

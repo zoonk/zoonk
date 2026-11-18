@@ -82,8 +82,7 @@ final class PlanSlotCheckTests: XCTestCase {
       from: from, to: to, tap: "See what changes", api: api
     ) {
       PlanCoverageSlot(
-        context: context, title: "Coverage", asksAtOnce: false,
-        actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+        context: context, title: "Coverage", actions: PlanSlotActions(apply: { _ in }, notNow: {}))
     } completed: {
       context.slotCheck(.coverage("Coverage")).asked != nil
     }
