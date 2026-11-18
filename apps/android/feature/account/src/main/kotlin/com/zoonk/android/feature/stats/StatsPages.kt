@@ -182,7 +182,7 @@ private fun OverviewContent(
                     label = stringResource(R.string.stats_score),
                     value = progress.score?.let { metricPercent(it.score, locale) } ?: DASH,
                     tone = StatTone.Success,
-                    icon = icon(R.drawable.ic_target),
+                    icon = icon(R.drawable.ic_show_chart),
                     onClick = { context.open(StatsPage.Score) },
                     modifier = modifier,
                 )
@@ -594,7 +594,7 @@ internal fun ScorePage(context: StatsContext) {
                     whole(SCORE_WINDOW_DAYS.toLong(), locale),
                 ),
             tone = StatTone.Success,
-            icon = icon(R.drawable.ic_target),
+            icon = icon(R.drawable.ic_show_chart),
         )
         ScoreChart(score)
     }

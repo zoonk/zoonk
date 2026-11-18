@@ -26,7 +26,7 @@ struct MockPointsSection: View {
                   .accessibilityHidden(true)
               }
 
-              Text(requirement)
+              FactSegments(requirement)
             }
             .foregroundStyle(
               test.met == false ? AnyShapeStyle(.destructiveText) : AnyShapeStyle(.mutedForeground))
@@ -96,7 +96,7 @@ extension MockPoints.Test {
     asked > 0 ? earned / asked * 100 : 0
   }
 
-  var requirement: String? {
+  var requirement: [String]? {
     let lines = [
       minimum.map(requirement),
       qualifying
@@ -106,7 +106,7 @@ extension MockPoints.Test {
         : nil,
     ].compactMap { $0 }
 
-    return lines.isEmpty ? nil : lines.joinedFacts()
+    return lines.isEmpty ? nil : lines
   }
 
   private func requirement(_ minimum: PointsMinimum) -> String {

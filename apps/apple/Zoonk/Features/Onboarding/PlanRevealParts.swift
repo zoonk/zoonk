@@ -219,12 +219,11 @@ struct RevealToday: View {
         SectionTitle(
           Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
         ) {
-          Text(
+          FactSegments(
             [
               PlanDate.text(day.localDate, today: day.localDate, weekday: true),
               planDurationText(minutes: Double(minutes)),
-            ]
-            .joinedFacts())
+            ])
         }
       }
     }
@@ -259,12 +258,9 @@ struct RevealWeek: View {
   let days: [RevealDay]
   let week: PlanRevealRead.Week
 
-  @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.legibilityWeight) private var legibility
-
-  private static let marksShown = 4
 
   var body: some View {
     if days.contains(where: { !$0.items.isEmpty }) {
@@ -278,13 +274,13 @@ struct RevealWeek: View {
             "Your first week", tableName: "Onboarding",
             comment: "Header over the plan's next seven days")
         ) {
-          Text(
+          FactSegments(
             [
               String(
                 localized: "\(week.days) study days", table: "Onboarding",
                 comment: "How many days of the plan's first week have lessons, today among them"),
               planDurationText(minutes: Double(week.minutes)),
-            ].joinedFacts())
+            ])
         }
       }
     }
@@ -327,10 +323,6 @@ struct RevealWeek: View {
 
           names(day)
 
-          if !day.items.isEmpty, sizeClass != .compact {
-            marks(day)
-              .frame(height: firstLine)
-          }
         }
       }
     }
@@ -359,23 +351,6 @@ struct RevealWeek: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  private func marks(_ day: RevealDay) -> some View {
-    let rest = day.items.count - Self.marksShown
-
-    return HStack(spacing: 4) {
-      ForEach(Array(day.items.prefix(Self.marksShown).enumerated()), id: \.offset) { _, item in
-        KindMark(kind: item.kind.learnKind)
-      }
-
-      if rest > 0 {
-        Text(verbatim: "+\(rest)")
-          .foregroundStyle(.faint)
-      }
-    }
-    .typeStyle(.small)
-    .accessibilityHidden(true)
-    .layoutPart(.end)
-  }
 }
 
 extension RevealDay.Item {

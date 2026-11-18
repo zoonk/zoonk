@@ -110,7 +110,7 @@ enum AppTab: Hashable {
     case .stats(.level): "medal"
     case .stats(.energy): "bolt"
     case .stats(.patterns): "calendar"
-    case .stats(.score): "target"
+    case .stats(.score): "chart.line.uptrend.xyaxis"
     case .stats(.activity): "chart.bar"
     }
   }

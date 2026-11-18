@@ -152,9 +152,6 @@ private struct CertificateDetail: View {
     .disabled(!picturesAreCurrent)
   }
 
-  /// Main's owner actions: Share leads, Print and saving side by side, then LinkedIn. Saving opens
-  /// the share sheet with the print picture, so it takes the platform's word rather than main's
-  /// "Download".
   private var actions: some View {
     Section {
       VStack(spacing: 8) {
@@ -181,16 +178,15 @@ private struct CertificateDetail: View {
             }
           }
           .disabled(!picturesAreCurrent)
-        }
-
-        Button {
-          isLinkedInShown = true
-        } label: {
-          Label {
-            Text(
-              "Add to LinkedIn", tableName: "Certificates")
-          } icon: {
-            Image(systemName: "arrow.up.right")
+          Button {
+            isLinkedInShown = true
+          } label: {
+            Label {
+              Text(
+                "Add to LinkedIn", tableName: "Certificates")
+            } icon: {
+              Image(systemName: "arrow.up.right")
+            }
           }
         }
       }
@@ -543,12 +539,7 @@ private struct CertificateMeaning: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: paragraphSpacing) {
-        Text(
-          "What this certificate means", tableName: "Certificates"
-        )
-        .typeStyle(.section)
-        .foregroundStyle(Color(.foreground))
-        .accessibilityAddTraits(.isHeader)
+        SectionTitle(Text("What this certificate means", tableName: "Certificates"))
 
         ForEach(paragraphs, id: \.self) { paragraph in
           Text(verbatim: paragraph)

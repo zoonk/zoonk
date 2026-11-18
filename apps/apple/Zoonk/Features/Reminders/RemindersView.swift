@@ -183,6 +183,8 @@ struct RemindersView: View {
       localized: "study days", table: "Reminders",
       comment: "Link to the Plan inside “One reminder on your study days…”")
     link.link = planLink
+    link.foregroundColor = .accentColor
+    link.underlineStyle = .single
     return link
   }
 

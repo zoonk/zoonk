@@ -11,6 +11,7 @@ struct Chip: View {
   }
 
   let text: Text
+  var facts: [String] = []
   var systemImage: String?
   var tone = Tone.neutral
 
@@ -18,6 +19,11 @@ struct Chip: View {
     self.text = text
     self.systemImage = tone == .success ? systemImage ?? "checkmark" : systemImage
     self.tone = tone
+  }
+
+  init(facts: [String]) {
+    text = Text(verbatim: "")
+    self.facts = facts
   }
 
   var body: some View {
@@ -28,7 +34,11 @@ struct Chip: View {
           .accessibilityHidden(true)
       }
 
-      text
+      if facts.isEmpty {
+        text
+      } else {
+        FactSegments(facts)
+      }
     }
     // Before the chip's own muted style, which only fills in what this leaves unset.
     .foregroundStyle(tone == .success ? Color.successText : Color.mutedForeground)

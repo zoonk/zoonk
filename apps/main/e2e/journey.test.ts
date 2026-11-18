@@ -37,6 +37,7 @@ test.describe("Journey", () => {
 
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
       await expect(endDate.locator('[data-slot="plan-date"]')).toContainText(/^~/u);
     });
   });

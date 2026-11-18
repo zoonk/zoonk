@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
-import { getPlanFinish } from "../journey/phase-dates";
+import { useRoadmapFinish } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -188,13 +188,27 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const finish = getPlanFinish({ goalKind: goal.kind, plan });
+  const finish = useRoadmapFinish();
 
   if (!finish) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("No date");
+    return goal.kind === "exam" ? t("To be confirmed") : t("None set");
   }
 
-  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
+  const date = (
+    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+  );
+
+  if (goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate) {
+    return (
+      <>
+        {t("None set")}
+        {FACT_SEPARATOR}
+        {date}
+      </>
+    );
+  }
+
+  return date;
 }
 
 export function PlanProperties({

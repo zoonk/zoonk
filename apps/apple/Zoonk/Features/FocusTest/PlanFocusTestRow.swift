@@ -13,7 +13,7 @@ struct PlanFocusTestRow: View {
     } label: {
       ListRow(
         Text(FocusTestCopy.name),
-        description: Text(FocusTestCopy.planLine(summary))
+        descriptionFacts: FocusTestCopy.planLine(summary)
       ) {
         Image(systemName: "scope")
       }

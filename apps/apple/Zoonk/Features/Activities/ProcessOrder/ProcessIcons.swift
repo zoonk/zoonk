@@ -1,6 +1,7 @@
 import Foundation
 
-/// The closest SF Symbol for each Lucide icon a process step can name (core's `processIconNames`).
+/// The closest outline SF Symbol for each Lucide icon a process step can name (core's
+/// `processIconNames`), so a list's icons share one style as Lucide's do.
 /// A name the app doesn't know yet draws no picture, as main does with an unknown one.
 enum ProcessIcons {
   static func symbol(for name: String?) -> String? {
@@ -14,7 +15,7 @@ enum ProcessIcons {
     "atom": "atom",
     "baby": "figure.and.child.holdinghands",
     "banknote": "banknote",
-    "battery": "battery.100percent",
+    "battery": "battery.0percent",
     "battery-charging": "battery.100percent.bolt",
     "beaker": "flask",
     "bird": "bird",
@@ -35,7 +36,7 @@ enum ProcessIcons {
     "database": "cylinder.split.1x2",
     "dna": "allergens",
     "droplet": "drop",
-    "droplets": "drop.fill",
+    "droplets": "drop",
     "earth": "globe.americas",
     "egg": "oval.portrait",
     "eye": "eye",
@@ -48,7 +49,7 @@ enum ProcessIcons {
     "flame": "flame",
     "flask-conical": "testtube.2",
     "flower": "camera.macro",
-    "footprints": "shoeprints.fill",
+    "footprints": "figure.walk",
     "gauge": "gauge.with.dots.needle.33percent",
     "gavel": "hammer",
     "gem": "diamond",
@@ -72,12 +73,12 @@ enum ProcessIcons {
     "microscope": "microbe.circle",
     "moon": "moon",
     "mountain": "mountain.2",
-    "mountain-snow": "mountain.2.fill",
+    "mountain-snow": "mountain.2",
     "orbit": "circle.dashed",
     "package": "shippingbox",
     "pencil": "pencil",
     "person-standing": "figure.stand",
-    "pickaxe": "hammer.fill",
+    "pickaxe": "hammer",
     "pill": "pills",
     "plug": "powerplug",
     "rabbit": "hare",
@@ -98,7 +99,7 @@ enum ProcessIcons {
     "shopping-cart": "cart",
     "snowflake": "snowflake",
     "split": "arrow.triangle.branch",
-    "sprout": "leaf.fill",
+    "sprout": "leaf",
     "stethoscope": "stethoscope",
     "store": "storefront",
     "sun": "sun.max",
@@ -112,7 +113,7 @@ enum ProcessIcons {
     "tornado": "tornado",
     "trash": "trash",
     "tree-deciduous": "tree",
-    "tree-pine": "tree.fill",
+    "tree-pine": "tree",
     "truck": "truck.box",
     "users": "person.2",
     "utensils": "fork.knife",

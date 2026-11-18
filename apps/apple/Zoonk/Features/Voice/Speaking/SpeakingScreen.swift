@@ -176,7 +176,7 @@ private struct SpeakingPaperView: View {
         Text(task.name)
           .typeStyle(.body.weight(.semibold))
 
-        Text(facts(task))
+        FactSegments(facts(task))
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
@@ -276,7 +276,7 @@ private struct SpeakingPaperView: View {
     .padding(.vertical, 4)
   }
 
-  private func facts(_ task: Components.Schemas.SpeakingPaperTask) -> String {
+  private func facts(_ task: Components.Schemas.SpeakingPaperTask) -> [String] {
     let role =
       task.role == .partner
       ? String(
@@ -295,7 +295,7 @@ private struct SpeakingPaperView: View {
           table: "Voice", comment: "How long the exam gives to prepare"))
     }
 
-    return facts.joinedFacts()
+    return facts
   }
 
   private func lastTryText(

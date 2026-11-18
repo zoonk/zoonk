@@ -186,7 +186,7 @@ private struct ExamHero: View {
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
-          Text(facts.joinedFacts())
+          FactSegments(facts: facts)
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
@@ -294,33 +294,27 @@ private struct ExamHero: View {
       localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
-  private var facts: [String] {
-    let dates = exam.days.compactMap { day in studyDate(day.date).map { (day, $0) } }
-
+  private var facts: [FactSegments.Fact] {
+    let dates = exam.days.filter { studyDate($0.date) != nil }
+    let today = PlanDate.today()
     if exam.namedMonth {
-      return dates.map { PlanDate.format($0.0.date, .rowMonth, today: PlanDate.today()) }
-        + [daysLeft].compactMap(\.self)
+      return
+        (dates.map { PlanDate.format($0.date, .rowMonth, today: today) }
+        + [daysLeft].compactMap(\.self)).map { .init(text: $0) }
     }
-
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let today = PlanDate.today()
-    let days = dates.map { day, _ in
-      // An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet.
-      let date = PlanDate.text(
-        day.date, today: today, weekday: dates.count == 1 && !exam.daysEstimated)
-      let text = exam.daysEstimated ? "~" + date : date
+    var facts = dates.flatMap { day -> [FactSegments.Fact] in
+      let full = PlanDate.text(day.date, today: today, weekday: !exam.daysEstimated)
+      let compact = PlanDate.text(day.date, today: today, weekday: false)
+      let prefix = exam.daysEstimated ? "~" : ""
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
-      return time.map { "\(text)\u{00A0}· \($0)" } ?? text
+      return [FactSegments.Fact(text: prefix + full, compact: prefix + compact)]
+        + (time.map { [FactSegments.Fact(text: $0)] } ?? [])
     }
-
-    var facts = times.count > 1 ? days : (days.isEmpty ? [] : [days.formatted(.list(type: .and))])
-
-    if let shared, let time = examTimeOfDay(shared) {
-      facts.append(time)
-    }
-
-    return facts + [daysLeft].compactMap(\.self)
+    if let shared, let time = examTimeOfDay(shared) { facts.append(.init(text: time)) }
+    if let daysLeft { facts.append(.init(text: daysLeft)) }
+    return facts
   }
 
   private func useDate(_ date: String) {
@@ -609,7 +603,8 @@ private struct ExamMocksSection: View {
                 isNext: exam.runningMocks.isEmpty),
               description: Text(
                 "\(next.questions) questions", tableName: "Exam",
-                comment: "The number of questions in an exam or a mock exam.")
+                comment: "The number of questions in an exam or a mock exam."),
+              alignment: .firstTextBaseline
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
@@ -824,15 +819,15 @@ private struct ExamFormatSection: View {
   @ViewBuilder
   private func title(_ day: ExamView.FormatDay) -> some View {
     HStack(alignment: .firstTextBaseline) {
-      if exam.format.count > 1, day.date != nil {
-        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
-          .foregroundStyle(.mutedForeground)
-      }
+      Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+        .foregroundStyle(.mutedForeground)
+
+      Spacer(minLength: 12)
 
       if let date = day.date {
-        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
-      } else {
-        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: !exam.daysEstimated))
+          .typeStyle(.data)
+          .capitalsLevel(.data, with: .body)
       }
     }
   }

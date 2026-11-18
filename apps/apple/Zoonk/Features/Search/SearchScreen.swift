@@ -14,6 +14,7 @@ struct SearchScreen: View {
   @State private var query = ""
   @State private var isFeedbackPresented = false
   @State private var goalSwitch = GoalSwitch()
+  @ScaledMetric(relativeTo: .subheadline) private var symbolSize = 16.0
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -98,7 +99,20 @@ struct SearchScreen: View {
           Button {
             perform(item.action)
           } label: {
-            Label(item.title, systemImage: item.systemImage)
+            ListRow(Text(item.title)) {
+              if item.id == "buddy" {
+                BuddyCharacter(
+                  look: learner.summary.value?.buddy ?? BuddyLook(), expression: .happy, crop: .face
+                )
+                .frame(width: 20, height: 20)
+              } else {
+                Image(systemName: item.systemImage)
+                  .resizable()
+                  .scaledToFit()
+                  .fontWeight(.medium)
+                  .frame(width: symbolSize, height: symbolSize)
+              }
+            }
           }
           .badge(item.badge)
           .foregroundStyle(.primary)

@@ -124,13 +124,17 @@ struct PatternTableCanvas: View {
 
             form(row.model, stem: modelStem)
 
-            if !row.blank {
-              form(row.answer, stem: newStem)
-            } else if isChecked {
-              checkedBlank(index, row: row)
-            } else {
-              openBlank(index, row: row)
+            Group {
+              if !row.blank {
+                form(row.answer, stem: newStem)
+              } else if isChecked {
+                checkedBlank(index, row: row)
+              } else {
+                openBlank(index, row: row)
+              }
             }
+            // The columns share the card's width, so the table and its divider fill the card.
+            .frame(maxWidth: .infinity, alignment: .leading)
           }
         }
       }
@@ -208,13 +212,15 @@ struct PatternTableCanvas: View {
             .frame(width: 36, height: 20)
         }
       }
-      .frame(minHeight: 44)
-      .padding(.horizontal, 8)
+      // The ring and the 44-point target reach past the word, so the word keeps its column's edge
+      // and its row the table's rhythm.
       .overlay {
         RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
           .strokeBorder(isActive ? Color.vizAccent : .clear, lineWidth: 2)
+          .padding(.horizontal, -8)
+          .padding(.vertical, -6)
       }
-      .contentShape(.rect)
+      .contentShape(.rect.inset(by: -12))
     }
     .buttonStyle(.plain)
     .accessibilityLabel(

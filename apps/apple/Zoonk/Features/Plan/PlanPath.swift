@@ -8,7 +8,7 @@ struct PlanPathSection: View {
   var focusTest: PlanFocusTestRow?
 
   var body: some View {
-    Section {
+    PageSection {
       focusTest
 
       if context.goal.kind == .language,
@@ -54,7 +54,6 @@ struct PlanPathRows: View {
     PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
-    .chevronSlot()
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
@@ -104,22 +103,20 @@ private struct PlanPhaseRow: View {
         route: context.goal.kind == .language
           ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
       ) {
-        header(byPlace: false, next: own.state == .current)
+        header(next: own.state == .current)
       }
 
       if isOpen {
         events
       }
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
-      header(byPlace: false, next: false)
-        .chevronSlot()
+      header(next: false)
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
         events
       } label: {
-        // Open over a chapter of its name, it goes by its place, so the name never shows twice.
-        header(byPlace: isExpanded && namedLikeAChapter, next: false)
+        header(next: false)
       }
     }
   }
@@ -192,27 +189,17 @@ private struct PlanPhaseRow: View {
     return only
   }
 
-  private var namedLikeAChapter: Bool {
-    phase.chapters.contains { Self.isSameName($0.title, phase.title) }
-  }
-
   private static func isSameName(_ first: String, _ second: String) -> Bool {
     first.compare(second, options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive])
       == .orderedSame
   }
 
-  private func header(byPlace: Bool, next: Bool) -> some View {
-    let title = Text(
-      byPlace
-        ? String(
-          localized: "Phase \(phase.index + 1)", table: "Plan",
-          comment: "Name of an unnamed phase by its number")
-        : phase.title
-    )
-    .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
-    .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
+  private func header(next: Bool) -> some View {
+    let title = Text(phase.title)
+      .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
+      .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
-    return ListRow(title, description: meta) {
+    return ListRow(title, description: meta, alignment: .firstTextBaseline) {
       StatusMark(status: next ? .next : phase.mark)
     } trailing: {
       if let end {
@@ -300,7 +287,6 @@ private struct PlanChapterRow: View {
       }
     } else {
       content(isMuted: true)
-        .chevronSlot()
     }
   }
 
@@ -502,22 +488,26 @@ struct PlanSyllabusSection: View {
     // since neither is a subject with a preparation. Each is its own group: a row with a mark and a
     // sentence don't share one label edge.
     if let focusTest {
-      Section {
+      PageSection {
         focusTest
+      } header: {
+        EmptyView()
       }
     }
 
     if choices.contains(where: { $0.followingLine != nil }) {
-      Section {
+      PageSection {
         ForEach(choices) { choice in
           if let line = choice.followingLine {
             PlanChoiceLine(line: line) { change(choice.group) }
           }
         }
+      } header: {
+        EmptyView()
       }
     }
 
-    Section {
+    PageSection {
       SharedExamsNote(exams: syllabus.sharedExams)
 
       ForEach(syllabus.subjects) { subject in
@@ -686,18 +676,6 @@ struct SyllabusSubjectRow: View {
           alignment: .trailing)
     }
     .accessibilityElement(children: .combine)
-  }
-}
-
-extension View {
-  /// A row without a chevron in a list where others have one keeps the chevron's slot, so values
-  /// end on one edge.
-  func chevronSlot() -> some View {
-    HStack(spacing: 12) {
-      self
-      DisclosureChevron()
-        .hidden()
-    }
   }
 }
 
