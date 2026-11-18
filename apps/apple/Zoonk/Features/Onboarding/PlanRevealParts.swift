@@ -261,16 +261,20 @@ extension StudyBlock {
 }
 
 /// The loaded week's shape, its headers' facts included, so nothing moves as it comes: Today's
-/// heading a row under the week's.
-struct RevealTodayPlaceholder: View {
+/// heading a row under the week's, on a day with lessons.
+struct RevealWeekPlaceholder: View {
+  let hasToday: Bool
+
   var body: some View {
     Section {
-      SectionTitle(
-        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
-      ) {
-        facts
+      if hasToday {
+        SectionTitle(
+          Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+        ) {
+          facts
+        }
+        .listRowSeparator(.hidden)
       }
-      .listRowSeparator(.hidden)
 
       ForEach(0..<3, id: \.self) { _ in
         Text(verbatim: "A lesson of the first day")

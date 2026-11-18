@@ -37,6 +37,12 @@ final class PlanNextDaysTests: XCTestCase {
     XCTAssertFalse(plan.hasLessonsInNextSevenDays)
   }
 
+  /// Its loading week holds Today's place only when today has lessons, as the loaded week shows it.
+  func testARestDayHoldsNoPlaceForToday() throws {
+    XCTAssertFalse(try weekPlan(today: "2027-01-09", lessonsOn: []).hasLessonsToday)
+    XCTAssertTrue(try weekPlan(today: "2027-01-06", lessonsOn: ["2027-01-06"]).hasLessonsToday)
+  }
+
   func testAMondayWithNothingLaidOutHasNone() throws {
     let plan = try weekPlan(today: "2027-01-04", lessonsOn: [])
 
