@@ -32800,7 +32800,6 @@
       }
     },
     "To be confirmed" : {
-      "comment" : "An exam's date not known yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32829,13 +32828,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未定"
+            "value" : "未確定"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미정"
+            "value" : "추후 확정"
           }
         },
         "pl" : {
