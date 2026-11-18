@@ -2,6 +2,7 @@ package com.zoonk.android.feature.speaking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -91,8 +93,10 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
@@ -128,12 +132,20 @@ fun SpeakingScreen(
             )
         }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.speaking_title)) }) { padding ->
-        Box(Modifier.padding(padding)) {
-            if (goalId == null) {
-                PageLoading()
-            } else {
-                SpeakingContent(app.speaking.paper(goalId), goalId, route.task, actions)
+    BoxWithConstraints {
+        // The paper's column, its margins included, names where the way back sits; beside the aside the page has no centered column.
+        val besideAside = supportingPaneBeside(maxWidth)
+        PageScaffold(
+            onBack = { navigator.back() },
+            title = { Text(stringResource(R.string.speaking_title)) },
+            columnWidth = if (besideAside) Dp.Unspecified else PAGE_WIDTH + pageMargin() * 2,
+        ) { padding ->
+            Box(Modifier.padding(padding)) {
+                if (goalId == null) {
+                    PageLoading()
+                } else {
+                    SpeakingContent(app.speaking.paper(goalId), goalId, route.task, actions)
+                }
             }
         }
     }
@@ -211,7 +223,7 @@ private fun PaperHero(
     titled: Boolean,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        // In the page's column it's the page's title, which the way back lines up with; in the aside it's only a heading.
+        // In the page's column it's the page's title; in the aside it's only a heading.
         Text(
             paper.title,
             if (titled) Modifier.pageTitle() else Modifier.semantics { heading() },
