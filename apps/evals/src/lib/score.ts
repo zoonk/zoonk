@@ -21,11 +21,12 @@ import {
  * Scoring mode keeps one judge so scores stay comparable across runs. Battle
  * mode is where several judges from other model families compare outputs.
  * Rejudging 64 blind-read outputs (18 Nov 2026), GPT-6.2 Astra matched 9 of 32 blind verdicts to
- * this judge's 5 but picked the opposite winner as often (11 to 10), at about $0.09 a judgment
- * against $0.13 and 0.19 lower on average, so switching would mean rejudging every saved result
- * (about $250) for no clear gain.
+ * GPT-6 Astra's 5 and picked the opposite winner as often (11 to 10), at about $0.09 a judgment
+ * against $0.13 and half the wait. It scores about 0.19 lower, so compare a task's models only on
+ * results from the same judge (each saved result records `judge.modelId`); rows saved before then
+ * are GPT-6 Astra's.
  */
-const SCORING_JUDGE_MODEL_ID = "openai/gpt-6-astra";
+const SCORING_JUDGE_MODEL_ID = "openai/gpt-6.2-astra";
 
 const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;

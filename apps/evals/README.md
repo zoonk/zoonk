@@ -98,7 +98,7 @@ Eval runs use the apps' default provider too, so Anthropic and OpenAI models rea
 
 ## Judges
 
-Scoring mode uses one judge, GPT-6 Astra, so scores stay comparable. Battle mode uses one judge per model family (Anthropic, Google, OpenAI) and a judge never scores models from its own family, so models are ranked by their average score across the judges that scored them.
+Scoring mode uses one judge, GPT-6.2 Astra, so scores stay comparable. Each saved result records its judge; results saved before 18 Nov 2026 come from GPT-6 Astra, which scores about 0.19 higher, so compare models on results from the same judge. Battle mode uses one judge per model family (Anthropic, Google, OpenAI) and a judge never scores models from its own family, so models are ranked by their average score across the judges that scored them.
 
 ## Running Evals From the Command Line
 
