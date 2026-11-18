@@ -3,7 +3,6 @@ package com.zoonk.android.feature.conversation
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -11,8 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.MicrophoneOff
@@ -31,7 +28,7 @@ internal enum class DroppedReason { CallInProgress, CallsPaused, Ended, Limit, M
 
 internal enum class DroppedRetry { CallAgain, Microphone, Takeover }
 
-/** Why the call can't go on (null keeps the plain "call dropped" line) and how to call again, when that can work. */
+/** Why the call can't go on (null keeps the plain "call dropped" title) and how to call again, when that can work. */
 internal data class DroppedCall(
     val reason: DroppedReason?,
     val retry: DroppedRetry?,
@@ -51,10 +48,16 @@ internal fun droppedCall(
     if (micBlocked) return DroppedCall(DroppedReason.Microphone, DroppedRetry.Microphone)
     return when (failure) {
         LiveCallFailure.CallInProgress -> DroppedCall(DroppedReason.CallInProgress, DroppedRetry.Takeover)
-        LiveCallFailure.CallsPaused -> DroppedCall(DroppedReason.CallsPaused, DroppedRetry.CallAgain)
+
+        // Paused for everyone: calling again now can't work, so only ending the call is offered.
+        LiveCallFailure.CallsPaused -> DroppedCall(DroppedReason.CallsPaused, retry = null)
+
         LiveCallFailure.Ended -> DroppedCall(DroppedReason.Ended, retry = null)
+
         LiveCallFailure.Limit -> DroppedCall(DroppedReason.Limit, retry = null)
+
         LiveCallFailure.PlusRequired -> DroppedCall(DroppedReason.PlusRequired, retry = null)
+
         LiveCallFailure.Connect, LiveCallFailure.Dropped, null -> DroppedCall(reason = null, DroppedRetry.CallAgain)
     }
 }
@@ -82,6 +85,7 @@ internal fun DroppedCallScreen(
     val shown = if (opened) DroppedCall(reason = null, DroppedRetry.CallAgain) else dropped
     // Leaving a dropped call ends it, so what was said still gets its feedback.
     BackHandler(onBack = actions.onEnd)
+    val reached = limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
     CallFrame(
         title = { CallTitle(title) },
         onClose = actions.onEnd,
@@ -89,23 +93,35 @@ internal fun DroppedCallScreen(
         lonePage = true,
     ) {
         item(key = "dropped") {
-            CallOffMessage(stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
+            CallOffMessage(droppedTitle(dropped.reason, reached), Modifier.callItem()) {
                 if (opened) {
-                    Muted(
-                        stringResource(R.string.limit_try_again_now),
-                    )
+                    Muted(stringResource(R.string.limit_try_again_now))
                 } else {
-                    DroppedReasonText(shown.reason, limit, characterName, actions)
+                    DroppedReasonText(shown.reason, reached, characterName, actions)
                 }
             }
         }
     }
 }
 
+/** What stopped the call, as its title: only a lost connection is a call that dropped. */
+@Composable
+private fun droppedTitle(
+    reason: DroppedReason?,
+    limit: Limit.Reached,
+): String =
+    when (reason) {
+        DroppedReason.Limit -> callLimitTitle(limit) ?: stringResource(R.string.limit_call_time_back)
+        DroppedReason.CallsPaused -> stringResource(R.string.conversation_paused_title)
+        DroppedReason.Ended -> stringResource(R.string.conversation_ended_title)
+        DroppedReason.CallInProgress -> stringResource(R.string.conversation_in_progress_title)
+        DroppedReason.PlusRequired, DroppedReason.Microphone, null -> stringResource(R.string.conversation_dropped_title)
+    }
+
 @Composable
 private fun DroppedReasonText(
     reason: DroppedReason?,
-    limit: Limit.Reached?,
+    limit: Limit.Reached,
     characterName: String,
     actions: DroppedCallActions,
 ) {
@@ -115,22 +131,21 @@ private fun DroppedReasonText(
         }
 
         DroppedReason.CallsPaused -> {
-            Reason(stringResource(R.string.conversation_paused_title)) { Muted(stringResource(R.string.conversation_paused)) }
+            Muted(stringResource(R.string.conversation_paused))
         }
 
         DroppedReason.Ended -> {
-            Reason(stringResource(R.string.conversation_ended_title)) { Muted(stringResource(R.string.conversation_ended)) }
+            Muted(stringResource(R.string.conversation_ended))
         }
 
         DroppedReason.CallInProgress -> {
-            Reason(stringResource(R.string.conversation_in_progress_title)) { Muted(stringResource(R.string.conversation_in_progress)) }
+            Muted(stringResource(R.string.conversation_in_progress))
         }
 
         DroppedReason.Limit -> {
-            val reached = limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
-            Reason(callLimitTitle(reached).orEmpty()) {
-                comesBackLine(reached)?.let { Muted(it) }
-                LimitActions(reached, actions.onCreateAccount, actions.onSubscribe)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                comesBackLine(limit)?.let { Muted(it) }
+                LimitActions(limit, actions.onCreateAccount, actions.onSubscribe)
             }
         }
 
@@ -141,17 +156,6 @@ private fun DroppedReasonText(
         DroppedReason.Microphone -> {
             MicrophoneOff(stringResource(R.string.conversation_mic_off, characterName))
         }
-    }
-}
-
-@Composable
-private fun Reason(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-        content()
     }
 }
 

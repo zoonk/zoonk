@@ -86,27 +86,19 @@ class SubscriptionScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                PageScaffold(onBack = {}, title = { Text(stringResource(R.string.account_menu_subscription)) }) { padding ->
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        contentAlignment = Alignment.TopCenter,
-                    ) {
-                        val viewer = PlanViewer.entries[shown]
-                        key(viewer) {
-                            PlanOffer(
-                                viewer = viewer,
-                                offers = LoadState.Loaded(OFFERS),
-                                freePlan = LoadState.Loaded(LIMITS),
-                                purchase = PurchaseState.Idle,
-                                navigator = rememberAppNavigator(),
-                                onSubscribe = {},
-                                onRetryFreePlan = {},
-                            )
-                        }
+                SubscriptionPage(onBack = {}) {
+                    val viewer = PlanViewer.entries[shown]
+                    key(viewer) {
+                        PlanOffer(
+                            viewer = viewer,
+                            offers = LoadState.Loaded(OFFERS),
+                            freePlan = LoadState.Loaded(LIMITS),
+                            purchase = PurchaseState.Idle,
+                            navigator = rememberAppNavigator(),
+                            onSubscribe = {},
+                            onRetryOffers = {},
+                            onRetryFreePlan = {},
+                        )
                     }
                 }
             }

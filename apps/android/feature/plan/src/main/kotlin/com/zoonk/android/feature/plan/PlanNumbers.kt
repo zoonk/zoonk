@@ -237,7 +237,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
             PlanNumber(
                 label = stringResource(R.string.plan_progress),
                 value = formatProgressShare(share.toDouble(), locale),
-                detail = studiedLessonsLine(standing.done, standing.known),
+                detail = planLessonsLine(standing.done, standing.known),
                 share = share,
             )
         }
@@ -269,6 +269,21 @@ fun studiedLessonsLine(
     }
 }
 
+/** The Plan names lessons already known beside those studied, once there are some. */
+@Composable
+private fun planLessonsLine(
+    done: Long,
+    known: Long,
+): String {
+    if (known == 0L) return studiedLessonsLine(done, known)
+    val locale = currentLocale()
+    return stringResource(
+        R.string.plan_studied_and_known,
+        formatNumber(lessonsStudied(done, known).toDouble(), locale),
+        formatNumber(known.toDouble(), locale),
+    )
+}
+
 fun lessonsStudied(
     done: Long,
     known: Long,
@@ -288,7 +303,7 @@ private const val PERCENT = 100
 
 /**
  * The tile: the plan's state as its value, and its time a day or the lessons left as its one line. The
- * side column's numbers sit above the plan's details, whose "Time a day" row already says the time.
+ * side column's numbers sit above the plan's details, whose "Daily study time" row already says the time.
  */
 @Composable
 private fun paceNumber(

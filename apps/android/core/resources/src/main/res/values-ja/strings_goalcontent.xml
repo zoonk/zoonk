@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "goalcontent_adjust_plan": "db6013bb3d3cf8fe22e249938e6911ae04887ebe70330079deb93cb899e3f7c6",
-  "goalcontent_also": "f79e32f3dfc299363dc4eee5a64cc9c71bd5a23521792a16551d57597cad4365",
   "goalcontent_also_in_exam_count": "766f7a1d63d1d796b324c05a74f318ed5caf031bbef95fb56698ce9f880c96c0",
   "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
   "goalcontent_also_in_plan": "55d5c2936f025723288b341c1d7764918faa742a0a0ea3fbb959b84c4dccee38",
@@ -186,8 +185,6 @@
     <string name="goalcontent_topics_in_notice">試験に出るトピック</string>
     <string name="goalcontent_topics_in_guide">公式ガイドに載っているトピック</string>
     <string name="goalcontent_details">詳細</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
-    <string name="goalcontent_also">ほかにできること</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">問題</string>
     <string name="goalcontent_topics">トピック</string>

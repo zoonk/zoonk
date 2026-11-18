@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// One of the server's pictures of a certificate, a white sheet in light and dark alike. Its place
-/// holds the picture's shape while it loads, so nothing moves when it comes.
+/// holds the picture's shape while it loads, so nothing moves when it comes; a picture that doesn't
+/// come shows the certificate's name and date on the sheet, never an empty box.
 struct CertificatePicture: View {
   enum Size: Int {
     case thumbnail = 320
@@ -15,21 +16,25 @@ struct CertificatePicture: View {
 
   /// Nil while the certificate's links load.
   let url: URL?
+  let facts: CertificateFacts
   var size = Size.page
 
   var body: some View {
     let image = url.flatMap { cached($0) } ?? loaded
 
-    ZStack {
+    Group {
       if let image {
         Image(uiImage: image)
           .resizable()
           .scaledToFit()
+          .certificateFrame(size)
+      } else if isLoading {
+        MediaPendingFill()
+          .certificateFrame(size)
       } else {
-        MediaPendingFill(pulses: isLoading)
+        LockedCertificateCard(facts: facts, size: size)
       }
     }
-    .certificateFrame(size)
     .task(id: url) {
       guard let url, let images else {
         return
@@ -52,8 +57,8 @@ struct CertificatePicture: View {
   }
 }
 
-/// A certificate earned without a subscription, in its picture's place: the blank sheet, and on a
-/// page its name and date.
+/// A certificate earned without a subscription, or one whose picture didn't load, in its picture's
+/// place: the blank sheet, and on a page its name and date.
 struct LockedCertificateCard: View {
   let facts: CertificateFacts
   var size = CertificatePicture.Size.page

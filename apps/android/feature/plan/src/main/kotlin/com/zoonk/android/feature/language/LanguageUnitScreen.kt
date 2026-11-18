@@ -45,7 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -96,8 +95,8 @@ import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.LanguageUnit
@@ -218,8 +217,7 @@ internal fun UnitPage(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val lessons = remember(unit) { unit.lessons.map { it.listed() } }
-    val compact = !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val padding = PaddingValues(horizontal = (if (compact) 16.dp else 24.dp) - LIST_ITEM_INSET, vertical = 24.dp)
+    val padding = PaddingValues(horizontal = pageListMargin(), vertical = 24.dp)
     val aboutLabel = stringResource(R.string.language_unit_about)
     val openLesson = { id: UUID -> actions.open(AppRoute.Lesson(id.toString())) }
     // Practice and reference move between the aside and the page as the window changes, so what's open lives here.

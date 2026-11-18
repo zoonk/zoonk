@@ -8,7 +8,7 @@
   "mock_break_detail": "397ae2910ac7a6c4a9989ac684bb020d08e2bcdc49269fbf195881fc243ae9c0",
   "mock_break_time_left": "caf2d5097d2b6c806fb37d523031f6bbd1c512d4ded6f354e4fb5cfcdc3867d5",
   "mock_cell_answered": "e09f9582256d3801b275631b56bdfdf9a9d358390b674d5241ee92b7d337bdcc",
-  "mock_cell_flagged": "fd3b28ac86e08baf032b82a24ef1114662aad81822118dea29ee41efc72b89cc",
+  "mock_cell_marked_for_review": "db845cacb9e93923509a219601ee73ad8c7b57c0d25978b95a4b8177e3c25dac",
   "mock_continue": "01897c01a615fad3588a06fd5cae5d418ffc631a6d459cdb9a77f5dc447c9e1f",
   "mock_continue_section": "46ee19d55a1dab561333d0a00f8a3f4fc7b6bd627bec601ee76fbb77f57182b2",
   "mock_essay_blank": "81108836c829806b2283ab6dd5964e5985af71551f13f8041ff65ca4a9ddf848",
@@ -17,7 +17,6 @@
   "mock_expired_detail": "e2ccfbd788140d3c15c1739d9d01b69b50b98376cfbf90b4f6f97c2d5b8f2f83",
   "mock_expired_title": "909a29c8671454e99231f8ef9d285b4429ce1e3ab965400c13defa1a4eefe753",
   "mock_flag": "b43c9bf3908a2b24d695915fd7eba5848f4c9f0dfcac8765c2d4177de92357c5",
-  "mock_flagged_count": "7b29d2afe8b77690d0e6ad32ec2042ca6929b04b2b103ce69a4767ed0befe359",
   "mock_hand_in": "3eb719bf0ad89fe165b2fe62d0d5489fd9ce17daacfd3e740be854ab87300a63",
   "mock_hand_in_final": "5b955a15637ff62f7e3bdab8168f419f2c276ea3534098e582e356ffe69c4c7c",
   "mock_hand_in_mock_title": "2f933e6a551970418db2d40bc4fb454fedaf12999902abdfd1803805aaf3a09d",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "9e0a834ef9e48935965da623c1e759f580c064355e9ce1a0465b1a1e6febafcd",
   "mock_left_flagged": "7348ec63134b3fd92b157932ef2dc6f40b2c0f132e114d8393f987a0bc61152e",
   "mock_left_flagged_only": "c163ce4d0dad94b88be698638dc7e4fe5619c94c405a7cdc99b2daa5e9ce010c",
+  "mock_legend_answered": "19600b331943fa15294745210f663a0d113a3903f652d921a3d6c3a4c088f411",
+  "mock_legend_current": "2626a88d3e19c94a4e700c6fe80f3925fc42eacc23bac6cc95805a3813ba4044",
+  "mock_legend_review": "977c11ec2bde95deb07c5ac9db84c3dc6798135927203ba05dbef1306652380c",
+  "mock_legend_review_count": "c1f3dbd758da4453e70d0acbe22281be87f5d950c2e9487182f39f7f8d82beb5",
+  "mock_legend_unanswered": "632e106ba48acb97f9e2a6465b628ea8fa08e76a37b179aa072b14629fe21cd7",
   "mock_moves_forward": "acbc515bcb980cc6cbac47ce172c57723637ad055d68946c180a391a3599b894",
   "mock_moves_forward_must": "f7016cf8ca0010a0e353a4de491a0513737d0363e19af2496f192a0d504464c5",
   "mock_moves_must": "b1f4229e74544983b1da6f8e3510054082199cc69576c221e478e2e6fa84a239",
@@ -45,7 +49,6 @@
   "mock_next": "9d53dd050edcc78dcf1c772c21d55604fe9c42fa77440bba6fc2183928d4d123",
   "mock_next_named": "c15b1674b8f710b38daf2828b016021dfce9f179bf849e23b24edd95f1bb5f43",
   "mock_next_section": "7dc00763fa180dd8859f3cc3ebed44c14e78e7d2ae440907926041a9eb879464",
-  "mock_not_saved_retrying": "6a7b509bd94322a90aa2e8648fe771ed88d836e91ca14cc8e9750d29aea5a6a7",
   "mock_place": "4b5b7e09a78303ddca94df9a847bf54afa007747d930b3e25c42a920982778fa",
   "mock_points_of": "a13acef34ba69cf00f2c398bba677991350a4153ca10805e4427785b3d3de4ff",
   "mock_progress_label": "f82abb3130af1c21a87114a645b19ac71208f9c6dacfdaa5cd25a3455b917ca2",
@@ -55,11 +58,12 @@
   "mock_questions": "b2fc7d1673ae20d7360eb7dc7bdbcd0213fe5141abd2ba8f66e5c120926ea2f7",
   "mock_right_answers": "beb1536f071007290dce9869ee0ef45e2783f0c4a3b62026da65294216b1e2aa",
   "mock_row_detail": "498be311213aaf44985009f5d21946fe1a739a90a26b9547cac3da5a930e23a9",
-  "mock_section_answered": "789184bf50b4a2ab8ab2f522bbbf5608015f08f7c70797ab405918c6bfa93a98",
+  "mock_save_retry": "b22a97d82f41eec1de047e8dae3e6ec8ffa70ceb75c2723aa7468e4cec6fec41",
+  "mock_section_answered_of": "6e890bbc2f029d6b6df9cbe0beab6f34b5b9e3e7a7d9202a641f1f92eea2e2e4",
   "mock_section_number": "4bb8fcc892eca11eb23439f3f80e3e279011d23dbdde2fab3eb23d7e8a2fbaf9",
   "mock_sections": "e01a574d49d9b4d429d3e567e959ccb204b3d6e4852ce082d2f525ee28878f58",
   "mock_see_result": "67cf4b5a63688cdaae5c4d5e7ef8fb598caf16021181568044c4f46c0a628c46",
-  "mock_sheet": "43fc674dedda7b412d6e824c5cf8bee5c7a0d58e9b8862c835c81d6f25987d1c",
+  "mock_sheet": "d1f9f2305b4efcd53403aac15f51374164633bb3c315f015005386698b6996b6",
   "mock_speaking": "19f7fc8cf42d7815d160570709c83cf7b2cb6b6d4a008dfb6edd8c59b19fcdd1",
   "mock_speaking_all_done": "8e39379888b4d47dd4cd82e186036f3e1850bc28d4a5d91dd34d193f623f5bd5",
   "mock_speaking_done": "61391241bb7ac10374343291816368f0bd976d064f4cb909039c3ab3811a1834",
@@ -181,7 +185,8 @@
     <string name="mock_hand_in_final">Depois disso, suas respostas não poderão ser alteradas.</string>
     <string name="mock_keep_answering">Continuar respondendo</string>
     <string name="mock_hand_in">Entregar</string>
-    <string name="mock_sheet">Folha</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">Respostas</string>
     <string name="mock_answer_sheet">Folha de respostas</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -189,24 +194,26 @@
         <item quantity="many">%d respondidas</item>
         <item quantity="other">%d respondidas</item>
     </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d marcada</item>
-        <item quantity="many">%d marcadas</item>
-        <item quantity="other">%d marcadas</item>
+    <string name="mock_legend_unanswered">Sem resposta</string>
+    <string name="mock_legend_answered">Respondida</string>
+    <string name="mock_legend_current">Questão atual</string>
+    <string name="mock_legend_review">Marcada para revisão</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d marcada para revisão</item>
+        <item quantity="many">%d marcadas para revisão</item>
+        <item quantity="other">%d marcadas para revisão</item>
     </plurals>
     <string name="mock_questions">Perguntas</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Questão %1$d</string>
     <string name="mock_cell_answered">respondida</string>
-    <string name="mock_cell_flagged">marcada</string>
+    <string name="mock_cell_marked_for_review">%1$s, marcada para revisão</string>
     <string name="mock_sections">Seções</string>
     <string name="mock_section_number">Seção %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Entregue</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Ainda não deu para salvar · tentando de novo</string>
+    <string name="mock_section_answered_of">%1$s de %2$s</string>
+    <string name="mock_save_retry">Tente de novo antes de continuar</string>
     <string name="mock_try_again">Tentar de novo</string>
     <string name="mock_last_not_saved">Sua última resposta não foi salva.</string>
     <string name="mock_step_failed_saved">Não deu certo. Suas respostas estão salvas. Tente de novo em instantes.</string>

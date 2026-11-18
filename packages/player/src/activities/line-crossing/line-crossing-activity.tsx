@@ -1,6 +1,7 @@
 "use client";
 
-import { useSentenceSpace } from "@zoonk/learn/locale";
+import { useAppLocale, useSentenceSpace } from "@zoonk/learn/locale";
+import { toSentence } from "@zoonk/utils/locale";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas } from "../_components/activity-canvas";
@@ -107,6 +108,7 @@ export function LineCrossingActivity({
   const changeWords = useChangeWords();
   const lineWords = useLineWords();
   const space = useSentenceSpace();
+  const locale = useAppLocale();
   const { check, fields } = content;
   const [offsets, setOffsets] = useState(() => restoredOffsets(content, answer));
   const isChecked = phase === "checked";
@@ -127,7 +129,9 @@ export function LineCrossingActivity({
   const showsAnswer = isChecked && !sameOffsets(offsets, real);
   const shifted = fields.lines.find((line) => line.id === fields.shift.line);
 
-  const changes = [changeWords(fields.yLabel)[yChange], changeWords(fields.xLabel)[xChange]];
+  const changes = [changeWords(fields.yLabel)[yChange], changeWords(fields.xLabel)[xChange]].map(
+    (change) => toSentence(change, locale),
+  );
 
   const movedText = (line: FieldLine) => lineWords.moved(line, offsets[line.id] ?? 0, axis);
 

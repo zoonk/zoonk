@@ -68,10 +68,6 @@ internal fun finishText(
     }
 }
 
-@Composable
-private fun fullCourseRule(course: FullCourse): String =
-    stringResource(if (course.isExam) R.string.plan_full_course_rule_exam else R.string.plan_full_course_rule_goal)
-
 /** Main's `FullCourseSwitch`, under an exam's time a day. */
 @Composable
 internal fun FullCourseSwitch(
@@ -199,11 +195,6 @@ internal fun ColumnScope.StudyEverythingBody(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Text(
-                fullCourseRule(course),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         },
         actions = {
             Button(

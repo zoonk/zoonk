@@ -30,7 +30,6 @@
     <string name="subscription_save">save %1$s</string>
     <string name="subscription_per_month">per month</string>
     <string name="subscription_per_year">per year</string>
-    <string name="subscription_billed_monthly">Billed every month.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">That\'s %1$s a month.</string>
     <string name="subscription_unavailable">Plus can\'t be bought on this device right now. Make sure Google Play is installed and signed in.</string>

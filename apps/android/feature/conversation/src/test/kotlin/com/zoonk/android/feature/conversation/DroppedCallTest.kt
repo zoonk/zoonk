@@ -18,7 +18,7 @@ class DroppedCallTest {
         // A connect failure is also a reconnect the learner cancelled while it rang.
         assertEquals(plain, reconnect(LiveCallFailure.Connect))
         assertEquals(plain, reconnect(LiveCallFailure.Dropped))
-        assertEquals(DroppedCall(DroppedReason.CallsPaused, DroppedRetry.CallAgain), reconnect(LiveCallFailure.CallsPaused))
+        assertEquals(DroppedCall(DroppedReason.CallsPaused, retry = null), reconnect(LiveCallFailure.CallsPaused))
         assertEquals(DroppedCall(DroppedReason.CallInProgress, DroppedRetry.Takeover), reconnect(LiveCallFailure.CallInProgress))
         assertEquals(DroppedCall(DroppedReason.Limit, retry = null), reconnect(LiveCallFailure.Limit))
         assertEquals(DroppedCall(DroppedReason.PlusRequired, retry = null), reconnect(LiveCallFailure.PlusRequired))

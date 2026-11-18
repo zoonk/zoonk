@@ -21,8 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.country.lessonVarietyName
@@ -198,7 +201,7 @@ internal fun PlanProperties(
                 onClickLabel = adjust,
             )
             PropertyRow(
-                stringResource(R.string.plan_time_a_day_label),
+                stringResource(R.string.plan_daily_study_time),
                 dailyTimeValue(page),
                 onOpen?.let { { it(PlanSection.Time) } },
                 onClickLabel = adjust,
@@ -356,7 +359,14 @@ private fun goalDateValue(page: PlanPageState): AnnotatedString {
     }
     val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
     if (finish.estimate && page.plan.schedule.targetDate == null) {
-        return withData(factsLine(stringResource(R.string.plan_end_none_set), date), date)
+        // No date set, so the estimate goes under it as its own line, never read as the date.
+        val estimate = withData(stringResource(R.string.plan_estimated_finish, date), date)
+        val muted = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = MaterialTheme.typography.bodySmall.fontSize)
+        return buildAnnotatedString {
+            append(stringResource(R.string.plan_end_none_set))
+            append("\n")
+            withStyle(muted) { append(estimate) }
+        }
     }
     return withData(date, date)
 }

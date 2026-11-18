@@ -249,7 +249,6 @@ internal fun MindMapsPage(
     var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
     // Only on arrival: a learner who closes it keeps it closed.
     var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown || mindMaps.foldedMapToShow) }
-    val decks = StudyTab.entries.associateWith { mindMaps.deck(it).size }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = mindMaps.subjectItem(tab, subject) ?: 0)
     val title = stringResource(R.string.navigation_mind_maps)
 
@@ -262,7 +261,7 @@ internal fun MindMapsPage(
             toggleNotMade = { notMadeOpen = !notMadeOpen },
         )
 
-    val study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }
+    val study = { actions.study(tab, null) }.takeIf { mindMaps.deck(tab).isNotEmpty() }
 
     PageScaffold(
         onBack = actions.back,
@@ -280,10 +279,7 @@ internal fun MindMapsPage(
                         PageHeader(title, supporting = mindMaps.goal.displayName, modifier = Modifier.padding(bottom = 16.dp))
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") {
-                        MindMapsTabs(
-                            tab,
-                            decks + (StudyTab.Chapters to mindMaps.chapters.size),
-                        ) { picked = it.key }
+                        MindMapsTabs(tab, mindMaps.tabCounts(state.saves)) { picked = it.key }
                     }
 
                     val shown = IndexState(opened.toSet(), tab.key in showAll)
@@ -335,18 +331,18 @@ internal class TabActions(
     ) = state.saves[target] ?: server
 }
 
-/** Material's tabs, each with how many maps Study would open there. */
+/** Material's tabs, each with how many maps it lists. */
 @Composable
 private fun MindMapsTabs(
     tab: StudyTab,
-    decks: Map<StudyTab, Int>,
+    counts: Map<StudyTab, Int>,
     onPick: (StudyTab) -> Unit,
 ) {
     CountTabs(
         tabs =
             StudyTab.entries.map { each ->
                 val label = stringResource(each.label)
-                val count = decks.getValue(each)
+                val count = counts.getValue(each)
                 val number = formatNumber(count.toDouble(), currentLocale())
                 CountTab(label, count, spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number))
             },

@@ -102,8 +102,9 @@ internal fun YearCalendar(
                 MonthLabels(
                     months =
                         remember(shown, locale) {
-                            shown.mapIndexedNotNull { index, week ->
-                                week.firstOrNull { it.date.dayOfMonth == 1 }?.let { index to formatMonthName(it.date, locale) }
+                            monthLabelWeeks(shown.map { week -> week.map { it.date } }).map { (index, date) ->
+                                index to
+                                    formatMonthName(date, locale)
                             }
                         },
                     list = list,
@@ -208,6 +209,17 @@ internal fun calendarSize(
 }
 
 /**
+ * The weeks that carry a month's name: each week a month starts in, and the first week shown when its month
+ * started before it and the next name is far enough away, so every column of the grid falls under a month.
+ */
+internal fun monthLabelWeeks(weeks: List<List<LocalDate>>): List<Pair<Int, LocalDate>> {
+    val starts = weeks.mapIndexedNotNull { index, week -> week.firstOrNull { it.dayOfMonth == 1 }?.let { index to it } }
+    val lead = weeks.firstOrNull()?.firstOrNull() ?: return starts
+    val roomBefore = starts.firstOrNull()?.first ?: weeks.size
+    return if (roomBefore >= LEADING_MONTH_WEEKS) listOf(0 to lead) + starts else starts
+}
+
+/**
  * Each month's name over the week it starts, placed from the weeks in view and kept inside the
  * calendar's edges, so a week half scrolled out or the newest one never cuts its month's name.
  */
@@ -295,6 +307,8 @@ internal val ACTIVITY_SHADES = listOf(0.25f, 0.45f, 0.7f, 1f)
 /** Main softened Energy's steps so its calendar isn't the loudest thing on the page. */
 internal val ENERGY_SHADES = listOf(0.15f, 0.3f, 0.45f, 0.6f, 0.8f)
 
+/** Weeks a partial first month needs before the next month's name for its own to fit beside it. */
+private const val LEADING_MONTH_WEEKS = 3
 private val FITTED_CELL_MIN = 12.dp
 private val FITTED_CELL_MAX = 16.dp
 private val GAP = 2.dp

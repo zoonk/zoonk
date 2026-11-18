@@ -48,7 +48,7 @@ struct CertificatesScreen: View {
         Group {
           switch certificate {
           case .issued(let issued):
-            CertificatePicture(url: issued.pictures.screen, size: .thumbnail)
+            CertificatePicture(url: issued.pictures.screen, facts: issued.facts, size: .thumbnail)
           case .locked(let facts):
             LockedCertificateCard(facts: facts, size: .thumbnail)
           }

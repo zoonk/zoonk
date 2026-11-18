@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { TaskFrame } from "../shell/task-frame";
-import { useMockScreen } from "./mock-context";
+import { type MockStep, useMockScreen } from "./mock-context";
 import { getMockSubject } from "./mock-labels";
 
 export function MockFrame(
@@ -31,6 +31,20 @@ export function MockEyebrow() {
   return <Eyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</Eyebrow>;
 }
 
+function useSlowLine() {
+  const t = useExtracted();
+
+  return (step: MockStep): string => {
+    if (step === "submit") {
+      return t("Still handing it in. This is taking longer than usual.");
+    }
+
+    return step === "finish"
+      ? t("This is taking longer than usual.")
+      : t("Still starting. This is taking longer than usual.");
+  };
+}
+
 /**
  * What the last save or hand-in couldn't do, drawn over the screen above the bar (its `note`)
  * so the bar's buttons never move; null when there's nothing to say.
@@ -38,6 +52,7 @@ export function MockEyebrow() {
 function useMockStatusNote(): React.ReactNode {
   const t = useExtracted();
   const { runner } = useMockScreen();
+  const slowLine = useSlowLine();
   const saved = runner.saveStatus === "saved";
   // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
   const failed = runner.error && runner.saveStatus !== "retrying";
@@ -73,10 +88,10 @@ function useMockStatusNote(): React.ReactNode {
     );
   }
 
-  if (runner.slow) {
+  if (runner.slow && runner.busy) {
     return (
       <p className="text-muted-foreground" role="status">
-        {t("Still handing it in. This is taking longer than usual.")}
+        {slowLine(runner.busy)}
       </p>
     );
   }

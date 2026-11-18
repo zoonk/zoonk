@@ -60,7 +60,7 @@ import com.zoonk.api.models.MindMapOutline
 import java.io.OutputStream
 import java.util.UUID
 
-/** A map's picture through the session the screen shows; [original] decodes it whole, for zooming. */
+/** A map's picture through the session the screen shows; [original] decodes it whole, for zooming; [onLoaded] once it shows. */
 @Composable
 internal fun MapPicture(
     url: String,
@@ -68,6 +68,7 @@ internal fun MapPicture(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     original: Boolean = false,
+    onLoaded: () -> Unit = {},
 ) {
     val pictures = LocalPrivatePictures.current ?: return
     val context = LocalContext.current
@@ -84,6 +85,7 @@ internal fun MapPicture(
         contentDescription = contentDescription,
         modifier = modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh),
         contentScale = contentScale,
+        onSuccess = { onLoaded() },
     )
 }
 

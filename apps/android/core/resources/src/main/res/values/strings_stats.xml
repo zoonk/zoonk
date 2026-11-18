@@ -33,6 +33,21 @@
     <string name="stats_belt_comes_after">%1$s comes after %2$s %3$s, at %4$s Brain Power</string>
     <string name="stats_belt_earned">Earned</string>
     <string name="stats_belt_current">Current</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">Your trend shows after two weeks of study</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
+    <string name="stats_belt_coming">Coming</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
+    <string name="stats_belt_white">White</string>
+    <string name="stats_belt_yellow">Yellow</string>
+    <string name="stats_belt_orange">Orange</string>
+    <string name="stats_belt_green">Green</string>
+    <string name="stats_belt_blue">Blue</string>
+    <string name="stats_belt_purple">Purple</string>
+    <string name="stats_belt_brown">Brown</string>
+    <string name="stats_belt_red">Red</string>
+    <string name="stats_belt_gray">Gray</string>
+    <string name="stats_belt_black">Black</string>
 
     <string name="stats_today">Today</string>
     <string name="stats_days_at_full">Days at 100%</string>

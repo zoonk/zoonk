@@ -261,7 +261,8 @@ extension ActivityProgress {
   fileprivate static let testFixture = ActivityProgress(
     days: [
       ActivityProgressDay(
-        activitiesCompleted: 3, date: ProgressDate("2026-08-20")!, timeSpentSeconds: 600)
+        activitiesCompleted: 3, date: ProgressDate("2026-08-20")!, lessonCompletions: 1,
+        timeSpentSeconds: 600)
     ],
     summary: ActivitySummary(
       learningDays: 12, totalLearningSeconds: 7_200, totalLessonCompletions: 24))

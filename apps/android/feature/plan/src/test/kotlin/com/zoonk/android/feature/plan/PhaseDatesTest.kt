@@ -144,6 +144,13 @@ class PhaseDatesTest {
     }
 
     @Test
+    fun aPausedGoalHasNoFinishFromItsPaceButKeepsItsOwnDates() {
+        assertNull(planOf(phase(0), planEnd = "2026-12-12").finish(LEARN, paused = true))
+        assertEquals(day(EXAM_DAY), planOf(phase(0), target = EXAM_DAY).finish(LEARN, paused = true)?.date)
+        assertEquals(day(EXAM_DAY), planOf(phase(0), target = EXAM_DAY, targetEstimated = true).finish(EXAM, paused = true)?.date)
+    }
+
+    @Test
     fun noFinishForAPlanWithNoDateAndNoEndYetNorForAnExamWithoutADate() {
         assertNull(planOf(phase(0)).finish(LEARN))
         assertNull(planOf(phase(0), planEnd = "2026-12-12").finish(EXAM))

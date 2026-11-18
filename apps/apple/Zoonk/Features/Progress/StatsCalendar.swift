@@ -71,12 +71,15 @@ struct StatsCalendarWindow: Equatable {
 struct StatsCalendar: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
   let gridLabel: Text
+  let legendTitle: Text
   let legendLabel: Text
   let low: Text
   let high: Text
   let shades: [Color]
   let days: [CalendarDay]
   let chartTitle: String
+  /// How the Audio Graph speaks a day's value.
+  let valueText: (Double) -> String
   let chartSummary: ([CalendarDay], Int) -> String
 
   @Environment(ChartInspection.self) private var inspection
@@ -156,6 +159,10 @@ struct StatsCalendar: View {
 
   private var legend: some View {
     HStack(spacing: 4) {
+      legendTitle
+        .foregroundStyle(.foreground)
+        .fixedSize()
+        .padding(.trailing, 4)
       low.fixedSize()
 
       ForEach(shades.indices, id: \.self) { index in
@@ -255,7 +262,8 @@ struct StatsCalendar: View {
     }
     .accessibilityChartDescriptor(
       CalendarChartDescriptor(
-        title: chartTitle, summary: chartSummary(visibleDays, window.months), days: visibleDays))
+        title: chartTitle, summary: chartSummary(visibleDays, window.months), days: visibleDays,
+        valueText: valueText))
   }
 
   private func gridWidth(step: Double) -> Double {
@@ -317,6 +325,7 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
   let title: String
   let summary: String
   let days: [CalendarDay]
+  let valueText: (Double) -> String
 
   func makeChartDescriptor() -> AXChartDescriptor {
     let values = days.compactMap(\.value)
@@ -336,7 +345,7 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
       range: 0...max(values.max() ?? 1, 1),
       gridlinePositions: []
     ) { value in
-      value.formatted()
+      valueText(value)
     }
 
     let points = days.enumerated().compactMap { index, day in

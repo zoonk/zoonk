@@ -44,9 +44,24 @@ export function getFormattingLocale(language: string): string {
 /** Japanese and Chinese write sentences back to back: their full-width stops carry the space. */
 const NO_SENTENCE_SPACE_SCRIPTS = new Set(["Hans", "Hant", "Jpan"]);
 
-export function getSentenceSpace(locale: string): string {
+function writesFullWidthStops(locale: string): boolean {
   const { script } = new Intl.Locale(locale).maximize();
-  return script && NO_SENTENCE_SPACE_SCRIPTS.has(script) ? "" : " ";
+  return script !== undefined && NO_SENTENCE_SPACE_SCRIPTS.has(script);
+}
+
+export function getSentenceSpace(locale: string): string {
+  return writesFullWidthStops(locale) ? "" : " ";
+}
+
+const SENTENCE_END = /[.!?…。！？]$/u;
+
+/** Ends a phrase with the locale's full stop, unless it already ends a sentence. */
+export function toSentence(text: string, locale: string): string {
+  if (SENTENCE_END.test(text)) {
+    return text;
+  }
+
+  return `${text}${writesFullWidthStops(locale) ? "。" : "."}`;
 }
 
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {

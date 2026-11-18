@@ -1,12 +1,15 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.ui.components.ButtonIcon
@@ -19,6 +22,7 @@ import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.PlanCertificates
@@ -39,7 +43,46 @@ internal fun StudyNextSuggestion(
     val starting = start == NextLevelStart.Starting || start == NextLevelStart.Started
     val certificates = host.certificates?.takeIf { it.earned.isNotEmpty() || it.unclaimed.isNotEmpty() }
 
-    Suggestion(label = title, summary = title, layout = slot.layout, mark = SuggestionMark.Done) {
+    val certificateAction =
+        @Composable { secondary: Boolean ->
+            certificates?.let {
+                SuggestionAction(
+                    onClick = host.onCertificate,
+                    busy = host.claimingCertificate,
+                    secondary = secondary,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
+                ) { Text(it.actionLabel()) }
+            }
+        }
+    val more = next.nextLevel != null || next.related.isNotEmpty()
+
+    // The certificate is offered on the line too, so it reads the same at every width; View opens what's next.
+    Suggestion(
+        label = title,
+        summary = title,
+        layout = slot.layout,
+        mark = SuggestionMark.Done,
+        failed = host.claimFailed,
+        lineAction =
+            when {
+                certificates == null -> {
+                    { SuggestionOpen() }
+                }
+
+                more -> {
+                    {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            certificateAction(true)
+                            SuggestionOpen()
+                        }
+                    }
+                }
+
+                else -> {
+                    { certificateAction(true) }
+                }
+            },
+    ) {
         SuggestionHeader(title)
         if (next.nextLevel != null || next.related.isNotEmpty()) SuggestionDescription(stringResource(R.string.plan_study_next))
         if (certificates != null || next.nextLevel != null) {
@@ -49,14 +92,7 @@ internal fun StudyNextSuggestion(
                         Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
                     }
                 }
-                certificates?.let {
-                    SuggestionAction(
-                        onClick = host.onCertificate,
-                        busy = host.claimingCertificate,
-                        secondary = next.nextLevel != null,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
-                    ) { Text(it.actionLabel()) }
-                }
+                certificateAction(next.nextLevel != null)
             }
             if (start == NextLevelStart.Failed || host.claimFailed) SuggestionSaveError()
         }

@@ -420,13 +420,7 @@ struct PlusBenefits: View {
   }
 
   private func benefit(_ title: Text) -> some View {
-    Label {
-      title
-    } icon: {
-      Image(systemName: "checkmark")
-        .foregroundStyle(.mutedForeground)
-        .accessibilityHidden(true)
-    }
+    CheckItem(title: title)
   }
 }
 
@@ -810,13 +804,7 @@ private struct FreePlanCard: View {
   }
 
   private func item(_ title: Text) -> some View {
-    Label {
-      title
-    } icon: {
-      Image(systemName: "checkmark")
-        .foregroundStyle(.mutedForeground)
-        .accessibilityHidden(true)
-    }
+    CheckItem(title: title)
   }
 }
 
@@ -1002,5 +990,23 @@ extension SessionStore {
     }
 
     return AppStoreSubscriptionOwner(accountID: account.user.id, session: authenticatedSession)
+  }
+}
+
+/// Main's `CheckItem`: a gray check, not blue, since blue means a right answer in the app, drawn
+/// at the weight of the words beside it.
+private struct CheckItem: View {
+  let title: Text
+
+  var body: some View {
+    Label {
+      title
+    } icon: {
+      Image(systemName: "checkmark")
+        .imageScale(.small)
+        .fontWeight(.semibold)
+        .foregroundStyle(.mutedForeground)
+        .accessibilityHidden(true)
+    }
   }
 }

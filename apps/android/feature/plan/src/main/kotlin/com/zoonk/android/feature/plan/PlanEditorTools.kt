@@ -291,7 +291,7 @@ internal fun ColumnScope.ToolChoiceForm(
 
     PlanSheetContent(
         title = tool.name,
-        description = stringResource(R.string.plan_tool_how),
+        description = stringResource(R.string.plan_tool_have_question),
         body = {
             Column(Modifier.selectableGroup()) {
                 TOOL_CHOICES.forEach { option ->
@@ -351,7 +351,7 @@ private val TOOL_CHOICES =
     listOf(
         ToolOption(PlanTool.Choice.HAVE, R.string.plan_tool_have, R.string.plan_tool_have_description),
         ToolOption(PlanTool.Choice.SETUP, R.string.plan_tool_setup, R.string.plan_tool_setup_description),
-        ToolOption(PlanTool.Choice.NONE, R.string.plan_tool_none, R.string.plan_tool_none_description),
+        ToolOption(PlanTool.Choice.NONE, R.string.plan_tool_wont_use, R.string.plan_tool_none_description),
     )
 
 /** "Spreadsheet (Google Sheets or Excel)": the tool, then its usual choices. */
