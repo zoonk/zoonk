@@ -22,9 +22,9 @@ msgid "Ear training"
 msgstr "Trening słuchu"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "Najpierw oszacuj"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "Twój strzał się liczy"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -783,14 +783,9 @@ msgid "Error"
 msgstr "Błąd"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "DhXJyL"
-msgid "Step forward to run the next line. We'll stop for you to predict a value."
-msgstr "Przejdź o krok dalej, by wykonać kolejną linię kodu. Zatrzymamy się, by zapytać cię, jaka będzie wartość."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "Przejdź o krok dalej, aby wykonać następny wiersz."
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "Zatrzymamy się, by dać ci czas na przewidzenie wartości."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1156,6 +1151,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "Współrzędne: {x}, {y}. {summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "Przeciągnij go lub przesuń o jedno pole siatki klawiszami strzałek."
@@ -1393,7 +1389,6 @@ msgid "Names"
 msgstr "Nazwy"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "Co się stało"
@@ -1680,16 +1675,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Uproszczony plan ulic na podstawie mapy Johna Snowa z 1854 roku."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {Dopasowano # z {total} par}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# karta nie ma pary} few {# karty nie mają pary} many {# kart nie ma pary} other {# karty nie ma pary}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Z7Xcs6"
 msgid "Those two don't go together."
 msgstr "Te dwie karty nie pasują do siebie."
@@ -1823,11 +1808,6 @@ msgstr "{count, plural, one {# wiązanie} many {# wiązań} other {# wiązania}}
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "Usuń atom: {atom}"
-
-#: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "Usuń wybrany atom"
 
 #. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
@@ -2301,14 +2281,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "Zgadnij, a potem sprawdź swój strzał, aby uruchomić symulację."
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit}: {share} prób."
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit}: {share} prób. Dokładne prawdopodobieństwo wynosi {exact}."
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "Dokładne prawdopodobieństwo wynosi {exact}."
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2417,9 +2392,9 @@ msgid "All set."
 msgstr "Gotowe."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Q4pNZZ"
-msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
-msgstr "Głośniki i słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Stukaj w rytm {count} kliknięć, byśmy mogli uwzględnić to opóźnienie."
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "Stuknij „Włącz rytm”, a potem stukaj w rytm"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2681,6 +2656,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "Oś czasu od {start} do {end}."
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "Umieszczone wydarzenia: {count} z {total}"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "Pokaż rzeczywiste daty"
@@ -2722,19 +2702,14 @@ msgid "to"
 msgstr "a następnie"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, one {# wydarzenie do umieszczenia} many {# wydarzeń do umieszczenia} other {# wydarzenia do umieszczenia}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Przeciągnij na oś czasu."
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "Umieść na osi czasu: {event}"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "VvAPB9"
-msgid "Drag onto the timeline."
-msgstr "Przeciągnij na oś czasu."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2898,6 +2873,16 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Przetłumacz"
 
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {Dopasowano # z {total} par}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# karta nie ma pary} few {# karty nie mają pary} many {# kart nie ma pary} other {# karty nie ma pary}}"
+
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3050,6 +3035,12 @@ msgstr "Nic nie przepadło. Spróbuj ponownie za chwilę."
 msgctxt "ObBVZr"
 msgid "We couldn't open this lesson"
 msgstr "Nie udało nam się otworzyć tej lekcji"
+
+#: src/lesson/access/lesson-access-screen.tsx
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Przejdź do zakładki Dziś"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3415,6 +3406,11 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "Nadal sprawdzamy. Trwa to dłużej niż zwykle."
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "Posłuchaj ponownie"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "Nie do końca. Spójrz jeszcze raz i samodzielnie popraw odpowiedź, a potem ją sprawdź."
@@ -3455,9 +3451,9 @@ msgid "What you practiced"
 msgstr "Przećwiczony materiał"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "2thi6d"
-msgid "Try it yourself"
-msgstr "Spróbuj samodzielnie"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "Następnym razem spróbuj…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3503,6 +3499,21 @@ msgstr "trochę wyżej"
 msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "Jak rozwija się sytuacja"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "z 100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "im więcej, tym lepiej"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "im mniej, tym lepiej"
 
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
@@ -3556,6 +3567,11 @@ msgstr "Mogę już mówić"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Powiedz to zamiast pisać"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "Napisz, co chcesz powiedzieć"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"
@@ -3814,6 +3830,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "Zamknij panel pytań"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "lyjQP7"
+msgid "Ask Zu with a free account"
+msgstr "Pytania do Zu na bezpłatnym koncie"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -3989,6 +4010,11 @@ msgstr "{count, plural, one {# pytanie do: {name}} few {# pytania do: {name}} ot
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# pytanie} few {# pytania} other {# pytań}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Zapytaj"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"

@@ -22,9 +22,9 @@ msgid "Ear training"
 msgstr "Kulak eğitimi"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "Önce tahmin et"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "Tahminin önemli"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -783,14 +783,9 @@ msgid "Error"
 msgstr "Hata"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "DhXJyL"
-msgid "Step forward to run the next line. We'll stop for you to predict a value."
-msgstr "Sonraki satırı çalıştırmak için bir adım ilerle. Bir değeri tahmin etmen için duraklayacağız."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "Sonraki satırı çalıştırmak için bir adım ilerle."
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "Bir değeri tahmin etmen için duraklayacağız."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1156,6 +1151,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "{x}, {y} noktasında. {summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "Sürükle ya da ok tuşlarıyla ızgarada bir birim kaydır."
@@ -1393,7 +1389,6 @@ msgid "Names"
 msgstr "Adlar"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "Ne oldu"
@@ -1680,16 +1675,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "John Snow’un 1854 tarihli haritasına dayanan sadeleştirilmiş sokak planı."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {# kartın eşi yok}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Z7Xcs6"
 msgid "Those two don't go together."
 msgstr "Bu ikisi eşleşmiyor."
@@ -1823,11 +1808,6 @@ msgstr "{count, plural, other {# bağ}}"
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "{atom} atomunu kaldır"
-
-#: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "Seçili atomu kaldır"
 
 #. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
@@ -2301,14 +2281,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "Tahminini seç, ardından simülasyonu çalıştırmak için kontrol et."
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit} sonucu denemelerde {share} oranında görüldü."
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit} sonucu denemelerde {share} oranında görüldü. Kesin olasılık {exact}."
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "Olasılığın tam değeri {exact}."
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2417,9 +2392,9 @@ msgid "All set."
 msgstr "Her şey hazır."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Q4pNZZ"
-msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
-msgstr "Hoparlör ve kulaklıklardan ses biraz gecikmeli gelebilir. Vuruşlarının zamanlamasını ayarlamak için {count} tık sesinin her birinde dokun."
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "“Ritmi başlat” düğmesine dokun, sonra dokunarak ritme eşlik et"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2681,6 +2656,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "{start} ile {end} arasındaki zaman çizelgesi."
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "{count} / {total} olay yerleştirildi"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "Gerçek tarihleri göster"
@@ -2722,19 +2702,14 @@ msgid "to"
 msgstr "ile"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, other {Yerleştirilecek # olay}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Zaman çizelgesine sürükle."
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "{event} olayını zaman çizelgesine yerleştir"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "VvAPB9"
-msgid "Drag onto the timeline."
-msgstr "Zaman çizelgesine sürükle."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2898,6 +2873,16 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Çevir"
 
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {# kartın eşi yok}}"
+
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3050,6 +3035,12 @@ msgstr "Hiçbir şey kaybolmadı. Birazdan tekrar dene."
 msgctxt "ObBVZr"
 msgid "We couldn't open this lesson"
 msgstr "Bu dersi açamadık"
+
+#: src/lesson/access/lesson-access-screen.tsx
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Bugün sayfasına git"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3415,6 +3406,11 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "Hâlâ kontrol ediyoruz. Normalden uzun sürüyor."
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "Tekrar dinle"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "Tam olmadı. Bir daha bakıp kendin düzelt, sonra kontrol et."
@@ -3455,9 +3451,9 @@ msgid "What you practiced"
 msgstr "Çalıştıkların"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "2thi6d"
-msgid "Try it yourself"
-msgstr "Kendin dene"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "Bir dahaki sefere şunu dene…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3503,6 +3499,21 @@ msgstr "biraz daha yüksek"
 msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "Durumun gidişatı"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "/ 100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "yüksek olması daha iyi"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "düşük olması daha iyi"
 
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
@@ -3556,6 +3567,11 @@ msgstr "Şu an konuşabilirim"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Yazmak yerine sesli söyle"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "Söyleyeceklerini yaz"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"
@@ -3814,6 +3830,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "Soruları kapat"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "lyjQP7"
+msgid "Ask Zu with a free account"
+msgstr "Ücretsiz bir hesapla Zu ile konuş"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -3989,6 +4010,11 @@ msgstr "{count, plural, other {{name} için # soru}}"
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {# soru}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Sor"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"
