@@ -394,7 +394,7 @@ struct TodayPlanChangeSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      FlowLayout(spacing: 8) {
+      ButtonRow {
         // On a return after a break, nothing that asks for more hours leads.
         if view.session.freshStart == .welcomeBack {
           keepTimeButton
@@ -406,7 +406,8 @@ struct TodayPlanChangeSection: View {
 
         missedDaysMenu(behind)
       }
-      .controlSize(.large)
+      // A notice's answers beside its words, as main's suggestion panel draws them.
+      .controlSize(.small)
       .disabled(isSaving)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -438,6 +439,7 @@ struct TodayPlanChangeSection: View {
       }
     } label: {
       Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+        .typeStyle(.note.weight(.medium))
     }
     .buttonStyle(.outline)
   }
