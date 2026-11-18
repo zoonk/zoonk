@@ -1194,8 +1194,11 @@ private struct GenerationWaitBar: View {
       HStack(spacing: 12) {
         // A report eases the bar on; the drift between reports steps once a second, as the ring
         // does, so a wait left open isn't redrawn every frame.
-        FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
-          .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
+        FilledParts(
+          share: shown, weights: wait.visiblePhases.map(\.seconds),
+          states: wait.visiblePhases.map(\.state)
+        )
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
 
         Text(shown, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
@@ -1248,6 +1251,7 @@ extension GenerationWait.Kind {
 private struct FilledParts: View, Animatable {
   var share: Double
   let weights: [Double]
+  let states: [GenerationWait.PhaseState]
 
   var animatableData: Double {
     get { share }
@@ -1259,12 +1263,29 @@ private struct FilledParts: View, Animatable {
   }
 
   private var parts: [MeterParts.Part] {
-    var reached = share * weights.reduce(0, +)
+    zip(weights, GenerationWait.phaseFills(share: share, weights: weights, states: states)).map {
+      MeterParts.Part(weight: $0, fill: .share($1))
+    }
+  }
+}
 
-    return weights.map { weight in
-      let fill = weight > 0 ? min(1, max(0, reached / weight)) : 0
-      reached -= weight
-      return MeterParts.Part(weight: weight, fill: .share(fill))
+extension GenerationWait {
+  /// How much of each phase's part `share` (0 to 1) of the whole bar fills, each by its own state,
+  /// so phases running side by side fill as they finish: a done part is full, a waiting one empty,
+  /// and the running ones share what `share` reaches past the done ones.
+  static func phaseFills(share: Double, weights: [Double], states: [PhaseState]) -> [Double] {
+    let parts = zip(weights, states)
+    let done = parts.filter { $0.1 == .done }.reduce(0) { $0 + $1.0 }
+    let running = parts.filter { $0.1 == .working }.reduce(0) { $0 + $1.0 }
+    let reached = min(max(share, 0), 1) * weights.reduce(0, +)
+    let runningFill = running > 0 ? min(1, max(0, (reached - done) / running)) : 0
+
+    return states.map { state in
+      switch state {
+      case .done: 1
+      case .working: runningFill
+      case .waiting: 0
+      }
     }
   }
 }
