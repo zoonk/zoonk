@@ -5,6 +5,7 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useState } from "react";
+import { isDraftAnswered } from "./mock-answer-progress";
 import { useIsSectionExpired } from "./mock-clock";
 import {
   type MockActions,
@@ -15,7 +16,7 @@ import {
 } from "./mock-context";
 import { isSavedQuestionExpired } from "./mock-deadline";
 import { getSectionMoves } from "./section-moves";
-import { isDraftAnswered, useMockDrafts } from "./use-mock-drafts";
+import { useMockDrafts } from "./use-mock-drafts";
 import { useSpeakingStart } from "./use-speaking-start";
 
 /** A retry after the timeout is safe: a handed-in section stays handed in. */
@@ -300,6 +301,7 @@ export function useMockRunner({
     endBreak: () => step("endBreak", actions.endBreak),
     error,
     essayGrading,
+    failedDrafts: drafts.failedDrafts,
     finish: () => step("finish", actions.finish),
     go: (target) => move(target, false),
     gradeEssays,

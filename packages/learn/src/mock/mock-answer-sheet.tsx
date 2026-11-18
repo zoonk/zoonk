@@ -17,12 +17,12 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { type TaskFrameAside } from "../shell/task-frame";
+import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
-import { isDraftAnswered } from "./use-mock-drafts";
 
 function useSheetCountLine(): string {
   const t = useExtracted();
@@ -59,7 +59,7 @@ function QuestionCell({
       }
       className={cn(
         "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
-        isDraftAnswered(runner.savedDrafts[question.itemId]) && CELL_FILLED_CLASS,
+        countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
         draft?.flagged && CELL_FLAGGED_CLASS,
         isCurrent && cn("ring-foreground ring-2", !draft?.flagged && "text-foreground"),
       )}
@@ -143,7 +143,7 @@ function SheetLegend({ className }: { className?: string }) {
         aria-hidden="true"
         className={cn(
           "flex size-6 shrink-0 items-center justify-center rounded-md font-mono font-medium tabular-nums ring-inset",
-          isDraftAnswered(runner.savedDrafts[marked.itemId]) && CELL_FILLED_CLASS,
+          countsTowardMockProgress(runner, marked.itemId) && CELL_FILLED_CLASS,
           CELL_FLAGGED_CLASS,
         )}
       >

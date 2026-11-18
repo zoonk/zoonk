@@ -53,6 +53,7 @@ export type MockRunner = {
   drafts: Record<string, MockDraft>;
   error: boolean;
   essayGrading: MockEssayGradingStatus;
+  failedDrafts: Partial<Record<string, MockDraft>>;
   finish: () => Promise<void>;
   gradeEssays: () => Promise<void>;
   endBreak: () => Promise<void>;
