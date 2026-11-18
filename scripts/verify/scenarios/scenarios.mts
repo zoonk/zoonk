@@ -225,9 +225,10 @@ export const SCENARIOS: Scenario[] = [
   ...SEEDED_SCREEN_SCENARIOS,
   {
     anchors: [],
+    evidence: ["[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))"],
     id: "mind-maps.offer.lifted",
     prerequisites: { persona: { name: "maya" } },
-    proof: "Other chapters",
+    proof: "Without a map",
     reach: [],
     screen: "/mind-maps",
     sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],

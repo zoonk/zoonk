@@ -1692,6 +1692,10 @@ export function readAlignment({
           child,
           (descendant) =>
             !descendant.closest("svg") &&
+            !(
+              element.matches("[data-slot=route-stop]") &&
+              descendant.matches("[data-slot=route-mark][aria-hidden=true]")
+            ) &&
             !escapesClip(descendant, element) &&
             !deliberateClip(descendant, element) &&
             (descendant.matches("input,textarea,select") || !allowsOverflow(descendant)),
