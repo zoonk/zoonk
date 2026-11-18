@@ -3958,64 +3958,6 @@
         }
       }
     },
-    "No best day yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch liegt kein Tag vorn"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay un día que destaque"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun jour ne se démarque encore"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per ora nessun giorno spicca"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一番調子のよい曜日はまだわかりません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 두드러지는 요일 없음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Żaden dzień się jeszcze nie wyróżnia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhum dia se destacou ainda"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz öne çıkan bir gün yok"
-          }
-        }
-      }
-    },
     "No Energy recorded" : {
       "comment" : "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.",
       "localizations" : {
