@@ -1,6 +1,6 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
+import { answerForMockHeading, createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -9,7 +9,7 @@ type Answers = Awaited<ReturnType<typeof createAnytimeMockLearner>>["answers"];
 async function answerShown(page: Page, answers: Answers) {
   const main = page.getByRole("main");
   const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
-  const right = answers.get(heading.trim())?.right;
+  const right = answerForMockHeading({ answers, heading }).right;
 
   await page.getByRole("radio", { name: right }).click();
   await expect(page.getByRole("radio", { checked: true, name: right })).toBeVisible();

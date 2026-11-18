@@ -3,7 +3,7 @@ import { type Page, expect } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { typesetMoney } from "@zoonk/learn/rich-text/typography";
+import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -12,6 +12,7 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
+import { answerForMockHeading } from "./anytime-mock-fixtures";
 
 const MOCK_QUESTIONS = 6;
 const PASS_MARK = 4;
@@ -109,11 +110,13 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
       return [
         readQuestion(item.content),
         {
-          right: typesetMoney({
+          right: typesetNumbers({
+            group: false,
             locale: "en",
             text: options.find((option) => option.isCorrect)?.text ?? "",
           }),
-          wrong: typesetMoney({
+          wrong: typesetNumbers({
+            group: false,
             locale: "en",
             text: options.find((option) => !option.isCorrect)?.text ?? "",
           }),
@@ -144,10 +147,10 @@ async function answerMockQuestion(
 
   const main = page.getByRole("main");
   const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
-  const answer = answers.get(heading.trim());
+  const answer = answerForMockHeading({ answers, heading });
   const isFirst = number === 1;
 
-  await page.getByRole("radio", { name: isFirst ? answer?.wrong : answer?.right }).click();
+  await page.getByRole("radio", { name: isFirst ? answer.wrong : answer.right }).click();
 
   if (isFirst) {
     await page.getByRole("button", { name: "Flag" }).click();

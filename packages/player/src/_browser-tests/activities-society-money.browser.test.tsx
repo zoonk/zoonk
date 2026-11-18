@@ -235,9 +235,9 @@ describe("money and society activities", () => {
   it("map explorer: tapping places uncovers what's there", async () => {
     openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
-    await expect.element(page.getByText(/Over 70 workers and no cholera deaths/u)).toBeVisible();
+    await expect.element(page.getByText("Over 70 workers and no cholera deaths")).toBeVisible();
     await page.getByRole("button", { name: "Poland Street workhouse" }).click();
-    await expect.element(page.getByText(/535 people lived here/u)).toBeVisible();
+    await expect.element(page.getByText("535 people lived here")).toBeVisible();
     await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
 
     await page

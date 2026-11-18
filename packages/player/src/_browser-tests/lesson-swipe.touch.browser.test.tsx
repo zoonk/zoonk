@@ -171,7 +171,7 @@ describe("turning lesson screens with a finger", () => {
 
     renderLessonPlayer({ lesson });
 
-    await swipeFrom(page.getByText(/Sentence 1 explains/u), { x: -60, y: -220 });
+    await swipeFrom(page.getByText("Sentence 1 explains"), { x: -60, y: -220 });
 
     await expect.element(heading("How light reaches the eye")).toBeInTheDocument();
     await expect.element(heading(OCCIPITAL.title)).not.toBeInTheDocument();
