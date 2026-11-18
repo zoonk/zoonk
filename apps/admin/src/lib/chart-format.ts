@@ -1,4 +1,5 @@
 import { formatUsd } from "@/lib/ai-format";
+import { formatPercent } from "@/lib/format";
 import { formatDuration } from "@/lib/format-duration";
 
 export type ChartValueFormat = "duration" | "number" | "percent" | "usd";
@@ -19,11 +20,11 @@ export function formatChartValue({
   }
 
   if (format === "percent") {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value);
   }
 
   if (format === "usd") {
-    return formatUsd(value);
+    return formatUsd(value, "detailed");
   }
 
   return value.toLocaleString("en", { maximumFractionDigits: 1 });
@@ -45,11 +46,11 @@ export function formatChartTick({
   }
 
   if (format === "percent") {
-    return `${Math.round(value)}%`;
+    return formatPercent(value);
   }
 
   if (format === "usd") {
-    return `$${Math.round(value).toLocaleString("en")}`;
+    return formatUsd(value, "whole");
   }
 
   return Math.round(value).toLocaleString("en");

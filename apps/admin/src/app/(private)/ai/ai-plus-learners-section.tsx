@@ -4,7 +4,7 @@ import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminUserCell } from "@/components/admin-user-cell";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
-import { formatDollars, formatUsd } from "@/lib/ai-format";
+import { formatUsd } from "@/lib/ai-format";
 import { formatDay } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -85,7 +85,7 @@ function Summary({ learners, prices }: Pick<PlusLearners, "learners" | "prices">
         detail={`${formatUsd(learners.length > 0 ? total / learners.length : 0)} a learner on average`}
         icon={<CpuIcon />}
         title="Cost this month"
-        value={formatDollars(total)}
+        value={formatUsd(total)}
       />
       <StatTile
         detail={

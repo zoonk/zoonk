@@ -14,13 +14,7 @@ import { listAiSpendByTask } from "@/data/ai/list-ai-spend-by-task";
 import { listDailyAiSpend } from "@/data/ai/list-daily-ai-spend";
 import { listTopAiSpendingGoals, listTopAiSpendingLearners } from "@/data/ai/list-top-ai-spenders";
 import { buildAdminHref } from "@/lib/admin-href";
-import {
-  formatDollars,
-  formatLatency,
-  formatShare,
-  formatTokens,
-  formatUsd,
-} from "@/lib/ai-format";
+import { formatLatency, formatShare, formatTokens, formatUsd } from "@/lib/ai-format";
 import { formatCount, formatDay, toWords } from "@/lib/format";
 import { readEnumQueryParam } from "@/lib/query-param";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -58,11 +52,12 @@ async function SpendTiles({ days }: { days: number }) {
   return (
     <div className={STAT_TILES_CLASS}>
       <StatTile
-        detail={`AI Gateway estimates ${formatDollars(summary.gatewayCostUsd)}`}
+        detail={`AI Gateway estimates ${formatUsd(summary.gatewayCostUsd)}`}
         help="What our own provider keys paid, from our dated price list, plus what the gateway charged, such as its search fees. A gap from the gateway's estimate means the price list needs refreshing."
         icon={<CpuIcon />}
         title="Spend"
-        value={formatDollars(summary.costUsd)}
+        plainValue
+        value={formatUsd(summary.costUsd)}
       />
       <StatTile
         detail={
@@ -78,7 +73,8 @@ async function SpendTiles({ days }: { days: number }) {
       <StatTile
         icon={<ReceiptIcon />}
         title="Cost per call"
-        value={formatUsd(summary.calls > 0 ? summary.costUsd / summary.calls : 0)}
+        plainValue
+        value={formatUsd(summary.calls > 0 ? summary.costUsd / summary.calls : 0, "detailed")}
       />
       <StatTile
         detail={`${formatTokens(summary.cacheReadTokens)} of ${formatTokens(summary.inputTokens)} input tokens`}
@@ -94,11 +90,11 @@ async function DailySpend({ days }: { days: number }) {
   const daily = await listDailyAiSpend(days);
 
   return (
-    <AdminSection title="Spend a day">
+    <AdminSection title="Spend per day">
       <AdminBarChart
         className="h-52 w-full"
         format="usd"
-        label={`AI spend a day, the last ${days} days`}
+        label={`AI spend per day, the last ${days} days`}
         points={daily.map((row) => ({
           label: formatDay(row.day, { year: false }),
           value: row.costUsd,
@@ -140,7 +136,7 @@ const learnerColumns: AdminTableColumn[] = [
 function Cost({ value }: { value: number }) {
   return (
     <TableCell className="text-foreground font-medium" numeric>
-      {formatUsd(value)}
+      {formatUsd(value, "detailed")}
     </TableCell>
   );
 }
@@ -159,7 +155,9 @@ async function loadRanking({ by, days }: Pick<View, "by" | "days">) {
           </TableCell>
           <TableCell numeric>{row.calls.toLocaleString("en")}</TableCell>
           <Cost value={row.costUsd} />
-          <TableCell numeric>{formatUsd(row.calls > 0 ? row.costUsd / row.calls : 0)}</TableCell>
+          <TableCell numeric>
+            {formatUsd(row.calls > 0 ? row.costUsd / row.calls : 0, "detailed")}
+          </TableCell>
           <TableCell numeric>
             {formatLatency(row.p50LatencyMs === null ? null : row.p50LatencyMs / MS_PER_SECOND)}
           </TableCell>

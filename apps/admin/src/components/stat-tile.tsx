@@ -117,6 +117,7 @@ export function StatTile({
   help,
   href,
   icon,
+  plainValue = false,
   title,
   tone = "neutral",
   trend,
@@ -127,6 +128,7 @@ export function StatTile({
   help?: string;
   href?: Route;
   icon?: React.ReactNode;
+  plainValue?: boolean;
   title: string;
   tone?: StatTone;
   trend?: StatTrend;
@@ -140,7 +142,11 @@ export function StatTile({
       </StatLabel>
       <span className="flex min-w-0 flex-col gap-1.5">
         <StatValue className={cn(tone === "brain" && "text-brain-text")}>
-          <BigQuantity>{value}</BigQuantity>
+          {plainValue ? (
+            <span className="text-readout">{value}</span>
+          ) : (
+            <BigQuantity>{value}</BigQuantity>
+          )}
         </StatValue>
         {change ? <StatChangeLine change={change} /> : null}
         {detail ? <StatDetail>{detail}</StatDetail> : null}

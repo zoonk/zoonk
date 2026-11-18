@@ -12,7 +12,7 @@ function AdminSearchField(props: ComponentProps<"input">) {
   return (
     <AdminSmallInput
       className="md:text-compact pl-9 md:pl-8"
-      frameClassName="w-full sm:max-w-md"
+      frameClassName="w-full md:max-w-md"
       fullOnPhone
       leading={
         <Search
@@ -43,7 +43,7 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
 
 export function AdminSearchSkeleton() {
   return (
-    <div className="flex h-11 w-full items-center sm:max-w-md">
+    <div className="flex h-11 w-full items-center md:max-w-md">
       <Skeleton className="h-11 w-full rounded-lg md:h-7.5 md:rounded-md" />
     </div>
   );

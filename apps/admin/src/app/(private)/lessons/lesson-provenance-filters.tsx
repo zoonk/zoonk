@@ -30,7 +30,7 @@ function toPromptVersionOptions(options: StepProvenanceOption[], model?: string)
 }
 
 /** The two selects wrap as a pair, so one never sits alone on the toolbar's next line. */
-const PAIR_CLASS = "flex min-h-11 flex-wrap items-center gap-x-6 gap-y-2";
+const PAIR_CLASS = "flex min-h-11 min-w-0 flex-wrap items-center gap-x-6 gap-y-3 max-md:w-full";
 
 /**
  * Who wrote a lesson: the model and the prompt version. A model's versions are its own, so picking
@@ -63,8 +63,8 @@ export async function LessonProvenanceFilters({ model }: { model?: string }) {
 export function LessonProvenanceFiltersSkeleton() {
   return (
     <div className={PAIR_CLASS}>
-      <Skeleton className="h-7.5 w-32 rounded-md" />
-      <Skeleton className="h-7.5 w-44 rounded-md" />
+      <Skeleton className="h-7.5 w-32 rounded-md max-md:w-full" />
+      <Skeleton className="h-7.5 w-44 rounded-md max-md:w-full" />
     </div>
   );
 }

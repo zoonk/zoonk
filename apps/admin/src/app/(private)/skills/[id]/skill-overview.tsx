@@ -33,7 +33,7 @@ export function SkillUsedIn({ skill }: { skill: AdminSkill }) {
   ];
 
   return (
-    <AdminSection title="Used in">
+    <AdminSection title="Where it's used">
       <DetailFields>
         {rows.map((row) => (
           <DetailField key={row.label} label={row.label}>

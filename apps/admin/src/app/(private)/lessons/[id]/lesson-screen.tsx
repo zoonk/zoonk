@@ -87,8 +87,8 @@ export function LessonScreen({
   translation?: string;
 }) {
   return (
-    <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-5 first:pt-0">
-      <span className="text-muted-foreground text-right font-mono text-xs leading-5 tabular-nums">
+    <li className="grid grid-cols-[3ch_minmax(0,1fr)] gap-x-2 py-5 first:pt-0">
+      <span className="text-muted-foreground font-mono text-xs leading-5 tabular-nums">
         {step.position + 1}
       </span>
       <div className="flex min-w-0 flex-col gap-2">

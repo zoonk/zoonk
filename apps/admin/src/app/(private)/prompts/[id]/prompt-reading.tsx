@@ -87,7 +87,7 @@ export function PromptReading({ prompt }: { prompt: AdminPrompt }) {
   return (
     <div className="flex flex-col gap-1">
       <ReadingBody prompt={prompt} />
-      <AdminJson label="Stored reading" value={prompt.understanding} />
+      <AdminJson label="Saved interpretation of the request" value={prompt.understanding} />
     </div>
   );
 }
