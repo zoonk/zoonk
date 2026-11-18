@@ -228,10 +228,11 @@ describe("lesson activities", () => {
   it("guess then reveal: the difference uses the real value's displayed precision", async () => {
     openActivity({ template: "guessReveal" });
     await guessOnScale(activityContentFixtures.guessReveal.fields, 10);
+    await expect.element(page.getByText("Your guess: 9.9", { exact: true })).toBeVisible();
     await checkActivity();
 
     await expect.element(page.getByText("Real value: 11.6", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Your guess is off by 1.6.")).toBeVisible();
+    await expect.element(page.getByText("Your guess is off by 1.7.")).toBeVisible();
   });
 
   it("random simulation by chance: the runs start after the guess is checked", async () => {
