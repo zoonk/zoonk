@@ -445,12 +445,14 @@ private fun InsightActions(
         // A tip's only answer is secondary, so Today's own action stays the screen's one filled button.
         if (canAccept) {
             val onAccept = { viewModel.answerInsight(insight, accepted = true) }
+            // Main's accept shows its answer working while either answer saves.
+            val busy = viewModel.isAnsweringInsight
             if (dismiss ==
                 null
             ) {
-                SuggestionAction(accept, onAccept, enabled, secondary = true)
+                SuggestionAction(accept, onAccept, busy = busy, secondary = true)
             } else {
-                SuggestionMainAction(accept, onAccept, enabled)
+                SuggestionMainAction(accept, onAccept, busy = busy)
             }
         }
         dismiss?.let { SuggestionAction(it, { viewModel.answerInsight(insight, accepted = false) }, enabled, secondary = true) }
