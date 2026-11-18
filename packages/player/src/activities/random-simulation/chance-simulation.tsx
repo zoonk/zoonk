@@ -2,6 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { hashSeed } from "@zoonk/utils/seeded-random";
 import { RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -84,11 +85,16 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
         <ActivityCanvasLabel className="text-sm">{runsLabel}</ActivityCanvasLabel>
         <div className="flex items-baseline justify-between gap-3">
           <ActivityCanvasLabel className="text-sm">{fields.hitLabel}</ActivityCanvasLabel>
-          {isChecked && (
-            <ActivityReadout aria-hidden="true" className={ACTIVITY_COLOR.dataThird.text}>
-              {percent(share)}
-            </ActivityReadout>
-          )}
+          <ActivityReadout
+            aria-hidden="true"
+            className={cn(
+              ACTIVITY_COLOR.dataThird.text,
+              "min-w-[5ch] shrink-0 text-end whitespace-nowrap",
+              !isChecked && "invisible",
+            )}
+          >
+            {percent(share)}
+          </ActivityReadout>
         </div>
 
         {isChecked && guess !== null && (
