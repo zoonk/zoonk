@@ -43,12 +43,11 @@ struct MockRunnerView: View {
             answerSheetInSheet = !fitsTwoPages
           }
         } label: {
-          Label {
-            Text("Answer sheet", tableName: "Mock", comment: "Opens the mock's answer sheet")
-          } icon: {
-            Image(systemName: "list.number")
-          }
+          Text(
+            "Sheet", tableName: "Mock",
+            comment: "Short label of a small button that opens the mock exam's answer sheet.")
         }
+        .accessibilityLabel(Text("Answer sheet", tableName: "Mock"))
       }
     }
     .deadline(current.deadline, run: run)
@@ -548,7 +547,7 @@ private struct MockAnswerSheet: View {
     } else {
       NavigationStack {
         sheet
-          .navigationTitle(Text("Answer sheet", tableName: "Mock", comment: "The answer sheet"))
+          .navigationTitle(Text("Answer sheet", tableName: "Mock"))
           .navigationBarTitleDisplayMode(.inline)
       }
     }
@@ -557,7 +556,7 @@ private struct MockAnswerSheet: View {
   private var sheet: some View {
     ZoonkList {
       if isBeside {
-        Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
+        Text("Answer sheet", tableName: "Mock")
           .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
           .listRowBackground(Color.clear)
@@ -573,14 +572,20 @@ private struct MockAnswerSheet: View {
             Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
           AccessibilityStack(spacing: 12) {
             Label {
+              MockAnswerMark.blank
+            } icon: {
+              Image(systemName: "circle")
+            }
+            Label {
               MockAnswerMark.answered
             } icon: {
               Image(systemName: "circle.fill")
             }
             Label {
-              MockAnswerMark.blank
+              Text("Current question", tableName: "Mock")
             } icon: {
-              Image(systemName: "circle")
+              Image(systemName: "square.fill")
+                .foregroundStyle(.muted)
             }
             Label {
               MockAnswerMark.review
@@ -645,41 +650,47 @@ private struct MockAnswerSheet: View {
     let flagged = draft?.flagged ?? false
     let isCurrent = index == run.position
 
+    let name =
+      question.format == .essay
+      ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
+      : String(
+        localized: "Question \(question.number)", table: "Mock", comment: "A question by number")
+
     return Button {
       onPick(index)
     } label: {
       HStack {
-        Group {
-          if question.format == .essay {
-            Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-          } else {
-            Text("Question \(question.number)", tableName: "Mock", comment: "A question by number")
-          }
-        }
-        .typeWeight(isCurrent ? .semibold : .regular)
-        .foregroundStyle(.primary)
+        Text(name)
+          .typeWeight(isCurrent ? .semibold : .regular)
+          .foregroundStyle(.primary)
 
         Spacer()
 
         if flagged {
           Image(systemName: "flag.fill")
             .foregroundStyle(.warning)
-            .accessibilityLabel(MockAnswerMark.review)
         }
 
         Image(systemName: answered ? "circle.fill" : "circle")
           .foregroundStyle(answered ? Color(.foreground) : .faint)
-          .accessibilityLabel(answered ? MockAnswerMark.answered : MockAnswerMark.blank)
       }
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
     .currentRow(isCurrent)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      flagged
+        ? Text("\(name), marked for review", tableName: "Mock")
+        : Text(name)
+    )
+    .accessibilityValue(answered ? MockAnswerMark.answered : MockAnswerMark.blank)
+    .accessibilityAddTraits(isCurrent ? [.isButton, .isSelected] : .isButton)
   }
 }
 
 private enum MockAnswerMark {
-  static var answered: Text { Text("Answered", tableName: "Mock", comment: "An answered question") }
-  static var blank: Text { Text("Blank", tableName: "Mock", comment: "A blank question") }
+  static var answered: Text { Text("Answered", tableName: "Mock") }
+  static var blank: Text { Text("Unanswered", tableName: "Mock") }
   static var review: Text {
     Text("Marked for review", tableName: "Mock", comment: "A flagged question")
   }
