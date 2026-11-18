@@ -13,7 +13,7 @@ describe(createBoardScale, () => {
     expect(scale.toPixel({ x: 4, y: 2 })).toStrictEqual({ x: 210, y: 10 });
   });
 
-  it("aligns a tall board with the left inset and converts pixels back to board points", () => {
+  it("centers a tall board across the width and converts pixels back to board points", () => {
     const scale = createBoardScale({
       bounds: { maxX: 1, maxY: 10, minX: 0, minY: 0 },
       maxHeight: 220,
@@ -22,7 +22,8 @@ describe(createBoardScale, () => {
     });
 
     expect(scale.unit).toBe(20);
-    expect(scale.toPixel({ x: 0, y: 0 }).x).toBe(10);
+    expect(scale.toPixel({ x: 0, y: 0 }).x).toBe(140);
+    expect(scale.toPixel({ x: 1, y: 0 }).x).toBe(160);
     expect(scale.toData(scale.toPixel({ x: 0.5, y: 7 }))).toStrictEqual({ x: 0.5, y: 7 });
   });
 });
