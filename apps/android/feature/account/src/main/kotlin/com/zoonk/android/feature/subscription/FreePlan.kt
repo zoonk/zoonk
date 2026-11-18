@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -48,9 +51,13 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.api.models.FreePlan
 
-/** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
+/**
+ * Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today.
+ * Only what it includes waits for [limits], so the rows above it are in place from the start and the card
+ * beside it, which shares their heights, doesn't move when they arrive.
+ */
 internal fun freePlanRows(
-    limits: FreePlan,
+    limits: LoadState<FreePlan>,
     currency: String?,
     viewer: PlanViewer,
     navigator: AppNavigator,
@@ -66,28 +73,43 @@ internal fun freePlanRows(
             }
         },
         {
-            PlanIncludesRow {
-                PlanIncludes(
-                    summary =
-                        stringResource(
-                            R.string.subscription_free_summary,
-                            goals(limits.activeGoals),
-                            pluralStringResource(
-                                R.plurals.subscription_free_lessons_a_month,
-                                count(limits.lessonsPer30Days),
-                                count(limits.lessonsPer30Days),
-                            ),
-                        ),
-                    items =
-                        listOfNotNull(
-                            stringResource(R.string.subscription_free_plan),
-                            buddySentence(limits),
-                            stringResource(R.string.subscription_free_calls),
-                        ),
-                )
+            when (limits) {
+                is LoadState.Loaded -> {
+                    FreePlanIncludes(limits.value)
+                }
+
+                LoadState.Idle, LoadState.Loading -> {
+                    PlanIncludesRow { CircularProgressIndicator(Modifier.size(24.dp)) }
+                }
+
+                else -> {}
             }
         },
     )
+
+@Composable
+private fun FreePlanIncludes(limits: FreePlan) {
+    PlanIncludesRow {
+        PlanIncludes(
+            summary =
+                stringResource(
+                    R.string.subscription_free_summary,
+                    goals(limits.activeGoals),
+                    pluralStringResource(
+                        R.plurals.subscription_free_lessons_a_month,
+                        count(limits.lessonsPer30Days),
+                        count(limits.lessonsPer30Days),
+                    ),
+                ),
+            items =
+                listOfNotNull(
+                    stringResource(R.string.subscription_free_plan),
+                    buddySentence(limits),
+                    stringResource(R.string.subscription_free_calls),
+                ),
+        )
+    }
+}
 
 @Composable
 private fun ColumnScope.StartFree(
