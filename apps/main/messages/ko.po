@@ -1864,6 +1864,12 @@ msgid "Evening"
 msgstr "저녁"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "어느 요일에 풀든 결과가 비슷해요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "언제든"
@@ -1872,11 +1878,6 @@ msgstr "언제든"
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
 msgstr "{day}에 문제를 가장 잘 풀어요."
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "ZTJDAv"
-msgid "You answer about the same every day."
-msgstr "어느 요일에 풀든 결과가 비슷해요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"
