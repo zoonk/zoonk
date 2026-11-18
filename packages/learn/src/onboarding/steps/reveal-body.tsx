@@ -96,7 +96,7 @@ function RevealActions({
       }
     >
       <OnboardingSecondaryButton aria-haspopup="dialog" onClick={onAdjust}>
-        {t("Adjust")}
+        {t("Adjust plan")}
       </OnboardingSecondaryButton>
 
       {/* A submit, so a press before the page hydrates starts once it does. */}

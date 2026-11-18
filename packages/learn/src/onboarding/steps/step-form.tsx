@@ -66,7 +66,7 @@ export function StepForm({
             <OnboardingSecondaryButton
               busy={sender === "skip"}
               disabled={pending}
-              icon={skipIcon ?? <SkipForwardIcon aria-hidden="true" />}
+              icon={skipIcon === undefined ? <SkipForwardIcon aria-hidden="true" /> : skipIcon}
               onClick={() => send("skip", onSkip)}
             >
               {skipLabel ?? t("Skip")}

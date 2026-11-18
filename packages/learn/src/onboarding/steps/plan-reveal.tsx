@@ -147,6 +147,7 @@ export function PlanReveal({
         plan
           ? {
               document: plan.examDocument,
+              goalKind: goal.kind,
               lastNotice: plan.schedule.targetDateEstimated,
               stopped: getNoticeStop({ poll, run }),
             }

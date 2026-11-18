@@ -200,7 +200,7 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
         <MessageCircleQuestionIcon />
       </span>
       <OnboardingHeading>
-        <OnboardingTitle>{t("Tell us a bit more")}</OnboardingTitle>
+        <OnboardingTitle>{t("Write your goal again")}</OnboardingTitle>
         <OnboardingDescription>
           {t(
             "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.",
