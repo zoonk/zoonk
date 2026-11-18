@@ -4784,6 +4784,7 @@ msgid "Show fewer chapters"
 msgstr "Afficher moins de chapitres"
 
 #: src/journey/journey-chapters.tsx
+#: src/mind-maps/not-made-yet.tsx
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
