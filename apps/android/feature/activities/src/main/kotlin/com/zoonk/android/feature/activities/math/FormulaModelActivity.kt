@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.compositeOver
@@ -135,10 +136,11 @@ private fun FormulaModelBoard(
             }
         }
         OutputReadouts(readouts)
+        // At the compared input this line would repeat the readout, so it keeps its room and says nothing.
         compared?.let { (x, y) ->
             Text(
                 stringResource(R.string.activities_math_formula_compared, charted.label, x, y),
-                Modifier.clearAndSetSemantics {},
+                Modifier.clearAndSetSemantics {}.alpha(if (view.compared.first == view.x) 0f else 1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
@@ -306,13 +308,12 @@ private fun OutputReadouts(readouts: List<Readout>) {
                             readout.value,
                             color = if (readout.isPrimary) MaterialTheme.zoonk.vizAccent else MaterialTheme.colorScheme.onSurface,
                         )
-                        readout.note?.let {
-                            Text(
-                                it,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                            )
-                        }
+                        // The note's line is there before a slider adds one, so nothing under it moves.
+                        Text(
+                            readout.note ?: "\u00A0",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        )
                     }
                 }
                 repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
@@ -348,7 +349,7 @@ private fun FormulaChart(
     val density = LocalDensity.current
     val minDelta = with(density) { MIN_DELTA.toPx() }
 
-    Text(charted.label, style = MaterialTheme.typography.labelSmall, color = muted)
+    // The readouts and sliders name both values, so the chart repeats neither as an axis title.
     ActivityPlot(
         xDomain = axis.min..axis.max,
         yDomain = view.yDomain,
@@ -377,7 +378,6 @@ private fun FormulaChart(
             dot(view.x, it, accent, ring, radius = CURRENT_INNER)
         }
     }
-    Text(axis.label, style = MaterialTheme.typography.labelSmall, color = muted)
 }
 
 @Composable
