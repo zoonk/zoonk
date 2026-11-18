@@ -17,6 +17,7 @@ import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePlanStateLine } from "../plan/plan-notice";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
+import { useStudyDaysText } from "../plan/use-study-days-text";
 
 type PlanDay = PlanView["week"]["days"][number];
 
@@ -118,6 +119,18 @@ function PlanWeek() {
   );
 }
 
+function useResumeSchedule() {
+  const t = useExtracted();
+  const studyDays = useStudyDaysText();
+  const formatDuration = useFormatDuration();
+  const { dailyMinutes, weekdayMinutes } = usePlanScreen().plan.schedule;
+
+  return {
+    days: studyDays(weekdayMinutes),
+    time: t("{time} a day", { time: formatDuration(dailyMinutes) }),
+  };
+}
+
 export function useScheduleNumber({
   paused,
   status,
@@ -129,10 +142,12 @@ export function useScheduleNumber({
 }) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
-  const formatDuration = useFormatDuration();
-  const { plan } = usePlanScreen();
+  const schedule = useResumeSchedule();
   const label = t("Schedule");
-  const timeADay = t("{time} a day", { time: formatDuration(plan.schedule.dailyMinutes) });
+
+  if (paused) {
+    return { detail: schedule.days, label, value: schedule.time };
+  }
 
   if (status.kind === "pastDate") {
     return {
@@ -148,12 +163,8 @@ export function useScheduleNumber({
     return { detail: null, label, value: statusText(status) };
   }
 
-  if (paused) {
-    return { detail: null, label, value: t("Paused") };
-  }
-
   return {
-    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : timeADay,
+    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : schedule.time,
     label,
     value: statusText(status),
   };
@@ -175,23 +186,14 @@ export function ScheduleDetails({
   const statusText = usePlanStatusText();
   const stateLine = usePlanStateLine();
 
-  const resting =
-    paused &&
-    status.kind !== "finished" &&
-    status.kind !== "pastDate" &&
-    status.kind !== "challengesLeft";
-
-  const line = resting ? null : stateLine;
+  const schedule = useResumeSchedule();
+  const line = paused ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{resting ? t("Paused") : statusText(status)}</p>
-        {resting && (
-          <p className="text-muted-foreground text-sm">
-            {t("Nothing is planned until you resume it.")}
-          </p>
-        )}
+        <p className="font-medium">{paused ? schedule.time : statusText(status)}</p>
+        {paused && <p className="text-muted-foreground text-sm">{schedule.days}</p>}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
         {line?.adjust && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">
