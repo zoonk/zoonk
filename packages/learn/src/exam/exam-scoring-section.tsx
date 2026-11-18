@@ -109,7 +109,7 @@ function PassMarksRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading firstLine>
         <ListRowIcon>
           <FlagIcon />
         </ListRowIcon>
@@ -139,7 +139,7 @@ function NoticeScaleRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading firstLine>
         <ListRowIcon>
           <GaugeIcon />
         </ListRowIcon>
@@ -169,7 +169,7 @@ function NoticeScaleRow() {
 function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading firstLine>
         <ListRowIcon>
           <ScaleIcon />
         </ListRowIcon>

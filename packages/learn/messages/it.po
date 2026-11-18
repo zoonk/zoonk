@@ -513,7 +513,6 @@ msgstr "Lezioni"
 
 #: src/_components/lesson-list.tsx
 #: src/_utils/count-of.ts
-#: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
@@ -1281,6 +1280,7 @@ msgstr "Scopri cosa ricorda {buddy}"
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "Riepilogo settimanale"
@@ -2393,15 +2393,6 @@ msgstr "Argomenti"
 msgctxt "KV-O0y"
 msgid "Practice"
 msgstr "Esercizi"
-
-#: src/chapter/chapter-screen.tsx
-#: src/journey/journey-hero.tsx
-#: src/language/unit/language-unit-screen.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "Progressi"
 
 #: src/chapter/chapter-screen.tsx
 msgctxt "xY7fiy"
@@ -3671,14 +3662,14 @@ msgid "How the score works"
 msgstr "Come funziona il punteggio"
 
 #: src/exam/exam-screen.tsx
-msgctxt "QGnOZU"
-msgid "{date} at {time}"
-msgstr "{date} alle {time}"
-
-#: src/exam/exam-screen.tsx
 msgctxt "yft85U"
 msgid "Starts at {time}"
 msgstr "Inizia alle {time}"
+
+#: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} alle {time}"
 
 #: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
@@ -4726,16 +4717,15 @@ msgstr "Questo obiettivo è in pausa"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "Non ci sono attività in programma finché non riprendi l’obiettivo."
 
 #: src/journey/journey-chapters.tsx
-#: src/syllabus/use-subject-progress.ts
-msgctxt "B3fpYI"
-msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
-msgstr "{count, plural, one {# argomento che conoscevi già} other {# argomenti che conoscevi già}}"
+#: src/syllabus/subject-chapters.tsx
+msgctxt "duDcbL"
+msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
+msgstr "{count, plural, one {# capitolo che conoscevi già} other {# capitoli che conoscevi già}}"
 
 #: src/journey/journey-chapters.tsx
 #: src/onboarding/steps/reveal-week.tsx
@@ -4807,6 +4797,14 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/journey/journey-hero.tsx
+#: src/language/unit/language-unit-screen.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "sIMS7i"
+msgid "Progress"
+msgstr "Progressi"
+
+#: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -4832,9 +4830,9 @@ msgid "Your schedule"
 msgstr "Il tuo calendario"
 
 #: src/journey/journey-menu.tsx
-msgctxt "jgL8u5"
-msgid "Talk to {name}"
-msgstr "Parla con {name}"
+msgctxt "bH47Z4"
+msgid "Ask {name}"
+msgstr "Chiedi a {name}"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
@@ -5298,32 +5296,22 @@ msgid "Schedule"
 msgstr "Calendario"
 
 #: src/journey/schedule-details.tsx
-#: src/onboarding/understood/use-schedule-row.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "{time} al giorno"
-
-#: src/journey/schedule-details.tsx
 #: src/questions/test-out-aside.tsx
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, one {# lezione rimasta} other {# lezioni rimaste}}"
 
 #: src/journey/schedule-details.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "In pausa"
+#: src/onboarding/understood/use-schedule-row.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "{time} al giorno"
 
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Vai a Oggi"
-
-#: src/journey/schedule-details.tsx
-msgctxt "htY1di"
-msgid "Last week's recap"
-msgstr "Riepilogo della scorsa settimana"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -8076,9 +8064,9 @@ msgid "The practical test can't be part of a mock exam."
 msgstr "La prova pratica non può far parte di una simulazione."
 
 #: src/mock/mock-notes.tsx
-msgctxt "XOPRn8"
-msgid "{name} is only in full mock exams."
-msgstr "Solo le simulazioni complete includono {name}."
+msgctxt "HImQYk"
+msgid "This was a shorter mock exam, so it didn't include {name}."
+msgstr "Questa simulazione era più breve, quindi non includeva {name}."
 
 #: src/mock/mock-notes.tsx
 msgctxt "jvTx9o"
@@ -10785,9 +10773,9 @@ msgid "I'll set it up"
 msgstr "Lo configuro"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "lEMiev"
-msgid "Learn with examples. You won't practice on your own computer."
-msgstr "Impara con gli esempi. Non farai pratica sul tuo computer."
+msgctxt "yHP5HT"
+msgid "Learn with examples. You won't practice on your own device."
+msgstr "Impara con gli esempi. Non ti eserciterai sul tuo dispositivo."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -10850,9 +10838,9 @@ msgid "Choose how you'll use {tool}"
 msgstr "Scegli come userai {tool}"
 
 #: src/plan/plan-tools.tsx
-msgctxt "Z6SQB3"
-msgid "You won't practice on your own computer. Lessons use examples and simulations instead."
-msgstr "Non farai pratica sul tuo computer. Le lezioni usano invece esempi e simulazioni."
+msgctxt "u4q1Pf"
+msgid "You won't practice on your own device. Lessons use examples and simulations instead."
+msgstr "Non ti eserciterai sul tuo dispositivo. Le lezioni usano invece esempi e simulazioni."
 
 #. A link that switches the plan to learning from examples, without installing tools.
 #: src/plan/plan-tools.tsx
@@ -12901,6 +12889,11 @@ msgid "Counts your answers in lessons, practice and tests."
 msgstr "Tiene conto delle tue risposte nelle lezioni, negli esercizi e nei test."
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "nIwm4S"
+msgid "Questions from {exam}"
+msgstr "Domande tratte da {exam}"
+
+#: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
@@ -12925,11 +12918,6 @@ msgstr "Altro"
 msgctxt "JeoRv8"
 msgid "{count, plural, one {# chapter done} other {# chapters done}}"
 msgstr "{count, plural, one {# capitolo completato} other {# capitoli completati}}"
-
-#: src/syllabus/subject-chapters.tsx
-msgctxt "duDcbL"
-msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
-msgstr "{count, plural, one {# capitolo che conoscevi già} other {# capitoli che conoscevi già}}"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "oUXyHJ"
@@ -13124,6 +13112,11 @@ msgstr "Non è nel tuo piano · il tempo non basta"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Non ancora pronte"
+
+#: src/syllabus/use-subject-progress.ts
+msgctxt "B3fpYI"
+msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
+msgstr "{count, plural, one {# argomento che conoscevi già} other {# argomenti che conoscevi già}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "0O99bA"

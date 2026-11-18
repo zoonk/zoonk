@@ -101,7 +101,11 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
   const { plan } = usePlanScreen();
   const range = phaseRange(phase);
   const listsChapters = phase.kind === "learn";
-  const byPlace = listsChapters && isNamedLikeAChapter({ name: phaseName(phase), phase });
+
+  const byPlace =
+    phase.state !== "current" &&
+    listsChapters &&
+    isNamedLikeAChapter({ name: phaseName(phase), phase });
 
   return (
     <>

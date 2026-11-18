@@ -25,6 +25,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct End: Decodable, Equatable, Sendable {
+    let finishedOn: String?
     let kind: String
   }
 

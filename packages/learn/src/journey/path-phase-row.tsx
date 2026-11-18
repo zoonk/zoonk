@@ -12,7 +12,7 @@ import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 
 /** A row's end: when the phase ends, on the edge every row's value ends on. */
-export const PHASE_END_CLASS = "text-muted-foreground text-right text-xs stacked:text-left";
+export const PHASE_END_CLASS = "text-muted-foreground text-right text-xs";
 
 export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
   if (phase.state === "done") {
@@ -148,7 +148,7 @@ export function PhaseName({
   return (
     <>
       <span className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}>
-        {byPlace ? (
+        {byPlace && phase.state !== "current" ? (
           <>
             <span className="in-data-panel-open:hidden">{name}</span>
             <span className="hidden in-data-panel-open:inline">

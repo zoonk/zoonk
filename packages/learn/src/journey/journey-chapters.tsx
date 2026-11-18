@@ -4,6 +4,12 @@ import {
   type PlanChapterView,
   type PlanPhaseCheckpointView,
 } from "@zoonk/core/plans/view-contract";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  FoldChevron,
+} from "@zoonk/ui/components/collapsible";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MinusIcon, PlusIcon } from "lucide-react";
@@ -35,7 +41,7 @@ export function useChapterTitle() {
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
       return t(
-        "{count, plural, one {# topic you already know} other {# topics you already know}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: chapter.skills.length },
       );
     }
@@ -114,7 +120,29 @@ function ChapterRow({
         }
       >
         {content}
+        <RowChevron />
       </FarTopicSheet>
+    );
+  }
+
+  if (chapter.skills.length > 0) {
+    return (
+      <Collapsible>
+        <CollapsibleTrigger
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+        >
+          {content}
+          <FoldChevron />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
+            {chapter.skills.map((skill) => (
+              <li key={skill}>{skill}</li>
+            ))}
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
     );
   }
 

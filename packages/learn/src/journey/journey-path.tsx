@@ -1,6 +1,7 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
+import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
@@ -22,6 +23,7 @@ import {
   PathRowBody,
   usePhaseMocksLine,
 } from "./journey-phase-events";
+import { PhaseDetails } from "./phase-details";
 import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
 
@@ -99,22 +101,27 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
     <li aria-current={isCurrent ? "step" : undefined} className="relative pb-3" data-state={state}>
       <PathLine walked={state === "done"} />
 
-      <div className={PATH_ROW_CLASS} data-slot="path-row">
-        <PathMarker state={state} />
-        <PhaseTitle
-          note={
-            state === "upcoming" && mocks.count > 0
-              ? mocksLine({
-                  count: mocks.count,
-                  forNextSitting,
-                  nextSitting: plan.schedule.nextSitting,
-                })
-              : null
-          }
-          phase={phase}
-        />
-        <ListRowChevronSpace />
-      </div>
+      <Drawer>
+        <DrawerTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} data-slot="path-row">
+          <PathMarker state={state} />
+          <PhaseTitle
+            note={
+              state === "upcoming" && mocks.count > 0
+                ? mocksLine({
+                    count: mocks.count,
+                    forNextSitting,
+                    nextSitting: plan.schedule.nextSitting,
+                  })
+                : null
+            }
+            phase={phase}
+          />
+          <RowChevron />
+        </DrawerTrigger>
+        <DrawerPopup>
+          <PhaseDetails links={links} phase={phase} />
+        </DrawerPopup>
+      </Drawer>
 
       {hasEvents && (
         <ul className="nested-rows flex flex-col pb-1.5" data-slot="path-nested">

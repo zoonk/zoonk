@@ -16,6 +16,7 @@ type DatedPhase = Pick<
 >;
 
 type DatedPlan = {
+  end: PlanView["end"];
   estimate: Pick<PlanView["estimate"], "endDate">;
   phases: readonly DatedPhase[];
   schedule: Pick<
@@ -113,13 +114,18 @@ export function getPhaseStart({
 }
 
 /** The day the plan reaches its goal: the goal's date, or the plan's own end when it has none. */
-export function getRoadmapFinish({
+export function getPlanFinish({
   goalKind,
   plan,
 }: {
   goalKind: GoalKind;
   plan: DatedPlan;
 }): PlanDate | null {
+  if (goalKind !== "exam" && plan.end) {
+    const { finishedOn } = plan.end;
+    return finishedOn ? { estimate: false, isoDate: finishedOn, month: false } : null;
+  }
+
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
@@ -136,8 +142,21 @@ export function getRoadmapFinish({
 }
 
 /** The phases the roadmap draws: the after-exam ones and those left out aren't on it. */
-export function getRoadmapPhases<Phase extends DatedPhase>(phases: readonly Phase[]): Phase[] {
-  return phases.filter((phase) => phase.kind !== "afterExam" && phase.state !== "leftOut");
+export function getRoadmapPhases<Phase extends DatedPhase>(
+  phases: readonly Phase[],
+  finishedOn?: string | null,
+): Phase[] {
+  const drawn = phases.filter((phase) => phase.kind !== "afterExam" && phase.state !== "leftOut");
+
+  if (!finishedOn) {
+    return drawn;
+  }
+
+  return drawn.map((phase) => ({
+    ...phase,
+    endDate: phase.endDate && phase.endDate > finishedOn ? finishedOn : phase.endDate,
+    startDate: phase.startDate && phase.startDate > finishedOn ? finishedOn : phase.startDate,
+  }));
 }
 
 function endKey(end: PhaseEnd): string {
@@ -161,7 +180,7 @@ export function getAxisDatedPhases({
 }): Set<number> {
   const phases = getRoadmapPhases(plan.phases);
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
-  const finish = getRoadmapFinish({ goalKind, plan });
+  const finish = getPlanFinish({ goalKind, plan });
 
   const dated = phases.slice(currentIndex, -1).flatMap((phase) => {
     const end = getPhaseEnd({ phase, plan });
@@ -194,7 +213,7 @@ export function getAxisFinish({
   plan: DatedPlan;
   today: string;
 }): PlanDate | null {
-  const finish = getRoadmapFinish({ goalKind, plan });
+  const finish = getPlanFinish({ goalKind, plan });
   const underWay = getRoadmapPhases(plan.phases).some((phase) => phase.state === "current");
 
   return finish?.isoDate === today && underWay ? null : finish;

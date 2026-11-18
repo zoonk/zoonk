@@ -101,7 +101,7 @@ export type ShortExamFocus = (typeof SHORT_EXAM_FOCUSES)[number];
 
 export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay: number };
 
-type PlanEndView = { kind: "finished" };
+type PlanEndView = { finishedOn: string | null; kind: "finished" };
 
 export type PlanOffer = { effect: PlanEffect; fits: boolean; operations: LearnerPlanOperation[] };
 

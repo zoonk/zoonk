@@ -75,7 +75,11 @@ export function ExamMomentDay({ moment }: { moment: Moment }) {
   const dayText = useExamDayText();
   const day = moment.stage === "afterExam" ? null : moment.day;
 
-  return day && <p className="text-compact font-mono font-medium tabular-nums">{dayText(day)}</p>;
+  return (
+    day && (
+      <p className="text-compact font-mono font-medium text-pretty tabular-nums">{dayText(day)}</p>
+    )
+  );
 }
 
 /** What the learner has done, for the paragraph under the moment's title. */
@@ -98,7 +102,7 @@ export function ExamMomentCard({ moment }: { moment: Moment }) {
   const Icon = EXAM_MOMENT_ICONS[moment.stage];
 
   return (
-    <section aria-label={copy.title} className="flex flex-col gap-6" data-slot="exam-moment">
+    <section aria-label={copy.title} className="flex flex-col gap-8" data-slot="exam-moment">
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className="flex h-5 shrink-0 items-center">
           <Icon className="text-muted-foreground size-4" />

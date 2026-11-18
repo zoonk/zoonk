@@ -93,6 +93,12 @@ export const planResponseSchema = z
     currentPhase: z.int().nullable(),
     end: z
       .object({
+        finishedOn: isoDateSchema
+          .nullable()
+          .meta({
+            description:
+              "The learner-local day the plan finished, if its completion dates are known",
+          }),
         kind: z
           .literal("finished")
           .meta({

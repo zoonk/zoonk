@@ -90,15 +90,16 @@ function FlagButton() {
       aria-keyshortcuts={shortcutKeys("flag")}
       className={cn(
         "shrink-0",
-        flagged &&
-          "border-warning bg-warning/10 text-warning-text hover:bg-warning/15 hover:text-warning-text",
+        flagged && "border-warning text-warning-text hover:text-warning-text",
       )}
+      icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
       onClick={runner.toggleFlag}
       size="xl"
       variant="outline"
     >
-      <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
-      <SwapLabel current={flagged ? unflag : flag} labels={[flag, unflag]} />
+      <span className="*:justify-items-start">
+        <SwapLabel current={flagged ? unflag : flag} labels={[flag, unflag]} />
+      </span>
     </Button>
   );
 }

@@ -5,7 +5,7 @@ import { type CSSProperties } from "react";
 /* In a module of their own so server components (the public pages) can draw the bands too. */
 
 export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
-  current: "bg-surface-3 text-foreground ring-success isolate ring-[1.5px] ring-inset",
+  current: "bg-surface-3 text-foreground isolate",
   done: "bg-success/13 text-success-text",
   leftOut: "bg-muted text-muted-foreground",
   unfinished: "bg-muted text-muted-foreground",
@@ -76,7 +76,7 @@ export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";
  * The columns share their rows, so every band is as tall as the one whose name takes the most
  * lines, and one phase's labels taking two lines leaves the bands alike.
  */
-export const BAND_ROWS_CLASS = "grid gap-x-[3px]";
+export const BAND_ROWS_CLASS = "grid gap-x-2";
 
 /**
  * The floor is on the column, not the band: a grid sizes a column by the band's minimum width
@@ -94,11 +94,11 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   };
 }
 
-export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
+export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap content-start gap-x-2";
 
 /** A date carries its own data face (`PlanDateText`); a word on the axis, such as "Today", keeps the text face. */
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 text-2xs leading-4 text-balance whitespace-normal";
+  "text-faint min-w-0 max-w-full text-2xs leading-4 wrap-anywhere text-balance";
 
 const MIDDLE_SHARE = 0.5;
 
@@ -114,31 +114,25 @@ function getAxisLabelBox({ after, share }: { after: boolean; share: number }): {
 } {
   if (after) {
     return {
-      className: "ml-auto flex max-w-full text-right",
+      className: "ml-auto flex min-w-0 max-w-full text-right",
       style: { paddingRight: `${(1 - share) * PERCENT}%` },
     };
   }
 
   if (getPointSide(share) === "left") {
     return {
-      className: "flex max-w-full justify-end",
+      className: "flex min-w-0 max-w-full justify-end",
       style: { paddingLeft: `${share * PERCENT}%` },
     };
   }
 
   return {
-    className: "flex max-w-full min-w-fit justify-end text-right",
+    className: "flex min-w-0 max-w-full justify-end text-right",
     style: { width: `${share * PERCENT}%` },
   };
 }
 
-/**
- * Every label under a phase stays inside it: it sits at its point, slides back when there's no
- * room past it, takes the next line when it meets the label before it, and breaks between words
- * when it's wider than the phase. The phase's first label is placed from the phase's start and one
- * `after` it, always in the second half, from the phase's end, so the first can't push it off its
- * point. Its child carries `AXIS_TEXT_CLASS`.
- */
+/** Labels keep their gap and can wrap within the phase. */
 export function AxisLabel({
   after = false,
   children,

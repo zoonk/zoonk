@@ -4,7 +4,7 @@ import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { WEEKDAYS_FROM_MONDAY } from "@zoonk/utils/calendar-day";
 import { useExtracted } from "next-intl";
 import { TimeSelect } from "../../_components/daily-time-picker";
-import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../../_components/weekday-toggle";
+import { WeekdayGrid, WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
 
 export const EVERY_DAY = WEEKDAYS_FROM_MONDAY;
@@ -31,7 +31,7 @@ export function WeekdayToggles({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      <div className={WEEKDAY_GRID_CLASS}>
+      <WeekdayGrid>
         {EVERY_DAY.map((day) => (
           <WeekdayToggle
             key={day}
@@ -46,7 +46,7 @@ export function WeekdayToggles({
             weekday={day}
           />
         ))}
-      </div>
+      </WeekdayGrid>
     </fieldset>
   );
 }

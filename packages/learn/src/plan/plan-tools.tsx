@@ -78,7 +78,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
         }
         className="@max-2xs:col-start-2 @max-2xs:justify-self-start"
         onClick={onChoose}
-        size="sm"
+        size="lg"
         variant={tool.choice ? "ghost" : "outline"}
       >
         {tool.choice ? t("Change") : t("Choose")}
@@ -121,7 +121,7 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
           tabIndex={-1}
         >
           {t(
-            "You won't practice on your own computer. Lessons use examples and simulations instead.",
+            "You won't practice on your own device. Lessons use examples and simulations instead.",
           )}
         </p>
       ) : (
