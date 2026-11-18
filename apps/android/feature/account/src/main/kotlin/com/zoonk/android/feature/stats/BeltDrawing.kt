@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,12 +35,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -199,7 +200,7 @@ private fun RankStripe(
 
 /**
  * Main's `BeltRack`: every belt in order in equal columns, those earned tied and the rest folded, the
- * current one ringed and named under it (every belt named where the row has room), then a key to the two shapes.
+ * current one ringed and named under it (every belt named where all the names fit), then a key to the two shapes.
  */
 @Composable
 internal fun BeltRack(current: Belt) {
@@ -209,15 +210,13 @@ internal fun BeltRack(current: Belt) {
     val now = stringResource(R.string.stats_belt_current)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        BoxWithConstraints {
-            val namesAll = maxWidth >= NAMED_RACK_WIDTH
-
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(Modifier.fillMaxWidth()) {
                 Belt.entries.forEach { entry ->
                     val name = stringResource(entry.label)
                     val tied = entry <= current
 
-                    Column(
+                    Box(
                         Modifier.weight(1f).clearAndSetSemantics {
                             contentDescription = name
                             stateDescription =
@@ -227,8 +226,7 @@ internal fun BeltRack(current: Belt) {
                                     else -> coming
                                 }
                         },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Box(
                             Modifier
@@ -238,29 +236,49 @@ internal fun BeltRack(current: Belt) {
                         ) {
                             RackBelt(entry, tied, Modifier.fillMaxSize(RACK_FILL))
                         }
-                        if (namesAll || entry == current) {
-                            Text(
-                                stringResource(entry.shortLabel),
-                                color =
-                                    when {
-                                        entry == current -> ink
-                                        tied -> MaterialTheme.colorScheme.onSurfaceVariant
-                                        else -> MaterialTheme.zoonk.faint
-                                    },
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = if (entry == current) FontWeight.Medium else null,
-                                maxLines = 1,
-                                softWrap = false,
-                            )
-                        }
                     }
                 }
             }
+
+            BeltNames(current)
         }
 
         Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             RackKey(earned, tied = true)
             RackKey(coming, tied = false)
+        }
+    }
+}
+
+/** Each belt's one-word name under its column, never cut: a long one spills past its column, as main's does. */
+@Composable
+private fun BeltNames(current: Belt) {
+    val ink = MaterialTheme.colorScheme.onSurface
+
+    Layout(
+        content = {
+            Belt.entries.forEach { entry ->
+                Text(
+                    stringResource(entry.shortLabel),
+                    color =
+                        when {
+                            entry == current -> ink
+                            entry < current -> MaterialTheme.colorScheme.onSurfaceVariant
+                            else -> MaterialTheme.zoonk.faint
+                        },
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (entry == current) FontWeight.Medium else null,
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val names = measurables.map { it.measure(Constraints()) }
+        val spots = beltNameSpots(constraints.maxWidth, names.map { it.width }, current.ordinal, NAME_GAP.roundToPx())
+        layout(constraints.maxWidth, spots.maxOfOrNull { (index, _) -> names[index].height } ?: 0) {
+            spots.forEach { (index, x) -> names[index].placeRelative(x, 0) }
         }
     }
 }
@@ -362,8 +380,8 @@ private val RACK_WIDTH = 32.dp
 private val RACK_HEIGHT = 26.dp
 private val KEY_SIZE = 20.dp
 
-/** Wide enough for every belt's one-word name under it, as main shows them from `md`. */
-private val NAMED_RACK_WIDTH = 480.dp
+/** The least room between two belts' names before only the current belt keeps its name. */
+private val NAME_GAP = 8.dp
 
 /** Main's belt on a phone: band, rank bar and tail at 36 : 52 : 12. */
 private const val BAND_SHARE = 36f
