@@ -20,16 +20,16 @@ export function FoldRow({
     <button
       aria-controls={controls}
       aria-expanded={open}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg px-2.5 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg ps-2.5 pe-1 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
       onClick={onToggle}
       type="button"
     >
       <span aria-hidden="true" className="flex w-4 shrink-0 justify-center">
-        {done && <DoneMark className="size-3.5" />}
+        {done ? <DoneMark className="size-3.5" /> : <FoldChevron inline />}
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1.5 font-medium">
-        {label}
-        <FoldChevron inline />
+        <span className="min-w-0 text-balance">{label}</span>
+        {done && <FoldChevron inline />}
       </span>
     </button>
   );
