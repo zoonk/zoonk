@@ -104,35 +104,23 @@ private struct MapExplorerCanvas: View {
         ActivityCaption(note)
       }
 
-      Group {
-        if let selected {
-          let place = fields.places[selected]
+      if let selected {
+        let place = fields.places[selected]
 
-          VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "\(selected + 1). \(place.label)", tableName: "Activities",
-              comment: "A map place's number, then its name"
-            )
-            .typeStyle(.body.weight(.semibold))
-            LessonRichText(place.reveals)
-              .typeStyle(.body)
-          }
-          .accessibilityElement(children: .combine)
-        } else {
-          Label {
-            Text(
-              "Tap a numbered place to see what's there.", tableName: "Activities",
-              comment: "Before the learner taps a place on a map")
-          } icon: {
-            Image(systemName: "hand.tap")
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "\(selected + 1). \(place.label)", tableName: "Activities",
+            comment: "A map place's number, then its name"
+          )
+          .typeStyle(.body.weight(.semibold))
+          LessonRichText(place.reveals)
+            .typeStyle(.body)
         }
+        .accessibilityElement(children: .combine)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .activityBox(cornerRadius: Radius.option)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(12)
-      .activityBox(cornerRadius: Radius.option)
     }
   }
 

@@ -95,7 +95,6 @@ private var aboutYouTitle: Text {
   Text("About you", tableName: "AboutYou", comment: "Title of the About you page")
 }
 
-/// One About you question with Save and no Skip. Saving it empty records it as not shared.
 struct AboutYouQuestionView: View {
   let question: ProfileQuestion
 
@@ -126,7 +125,7 @@ struct AboutYouQuestionView: View {
             draft: draft)
         } buttons: {
           StepButtons(
-            canContinue: canEdit && draft.wrappedValue.isComplete,
+            canContinue: canEdit && draft.wrappedValue.canSave(view),
             continueLabel: Text(
               "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {

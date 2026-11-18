@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -111,9 +108,6 @@ fun ActivityGuessScale(
         }
         AtShare(share) {
             ScaleChip(container = MaterialTheme.colorScheme.surface, content = MaterialTheme.colorScheme.onSurface, outlined = true) {
-                if (disabled && guess != null) {
-                    Icon(painterResource(R.drawable.ic_lock), contentDescription = null, modifier = Modifier.size(12.dp))
-                }
                 Text(
                     if (guess ==
                         null

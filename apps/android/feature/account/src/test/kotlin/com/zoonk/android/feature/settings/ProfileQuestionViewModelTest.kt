@@ -34,8 +34,30 @@ import org.junit.runner.RunWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class ProfileQuestionViewModelTest {
-    private fun question(picks: List<String>) =
-        ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(picks, emptyList(), ""), null, 1)
+    private fun question(
+        picks: List<String>,
+        status: ProfileQuestionView.Status? = null,
+    ) = ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(picks, emptyList(), ""), status, 1)
+
+    @Test
+    fun anUnansweredProfileQuestionDoesNotSaveAnEmptyDraft() =
+        editing(question(emptyList())) { editor, api ->
+            editor.change(ProfileDraft(text = "  "))
+            editor.save(ProfileQuestion.TOOLS, true)
+            advanceUntilIdle()
+
+            assertNull(api.saved)
+        }
+
+    @Test
+    fun anAnsweredProfileQuestionCanBeCleared() =
+        editing(question(listOf("figma"), ProfileQuestionView.Status.ANSWERED)) { editor, api ->
+            editor.change(ProfileDraft())
+            editor.save(ProfileQuestion.TOOLS, true)
+            advanceUntilIdle()
+
+            assertEquals(ProfileDraft(declined = true).input(ProfileQuestion.TOOLS, true), api.saved)
+        }
 
     @Test
     fun aFreshReadRemovesDeletedFactsAndAddsNewAnswersBeforeSaving() =
@@ -122,27 +144,28 @@ class ProfileQuestionViewModelTest {
             assertFalse(editor.saving)
         }
 
-    /** An editor of the tools question with Figma picked, its save run by [test]'s scheduler. */
-    private fun editing(test: suspend TestScope.(ProfileQuestionViewModel, FakeProfileApi) -> Unit) =
-        runTest {
-            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-            val models = ViewModelStore()
-            try {
-                val api = FakeProfileApi()
-                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                val editor =
-                    ProfileQuestionViewModel(
-                        ProfileQuestionsStore(api, AppCache(session, backgroundScope)),
-                        question(listOf("figma")),
-                        SavedStateHandle(),
-                    )
-                models.put("editor", editor)
-                test(editor, api)
-            } finally {
-                models.clear()
-                Dispatchers.resetMain()
-            }
+    private fun editing(
+        source: ProfileQuestionView = question(listOf("figma")),
+        test: suspend TestScope.(ProfileQuestionViewModel, FakeProfileApi) -> Unit,
+    ) = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val models = ViewModelStore()
+        try {
+            val api = FakeProfileApi()
+            val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+            val editor =
+                ProfileQuestionViewModel(
+                    ProfileQuestionsStore(api, AppCache(session, backgroundScope)),
+                    source,
+                    SavedStateHandle(),
+                )
+            models.put("editor", editor)
+            test(editor, api)
+        } finally {
+            models.clear()
+            Dispatchers.resetMain()
         }
+    }
 
     private class FakeProfileApi : ProfileQuestionsApi {
         var saved: ProfileAnswerInput? = null
