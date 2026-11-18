@@ -13,7 +13,7 @@ const columns: AdminTableColumn[] = [
   { label: "Country", size: "wide" },
   { align: "right", label: "Exam date" },
   { align: "right", label: "Goals" },
-  { align: "right", label: "Next check", size: "wide" },
+  { align: "right", label: "Next check", size: "text" },
 ];
 
 export async function ExamList({ searchParams }: Pick<PageProps<"/exams">, "searchParams">) {

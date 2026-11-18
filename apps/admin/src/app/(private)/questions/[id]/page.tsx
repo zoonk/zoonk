@@ -11,6 +11,7 @@ import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatDateTime } from "@/lib/format";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -53,6 +54,17 @@ const UNANSWERED_LABELS = {
   running: "Being answered",
 } as const;
 
+/** The question and its answer are read as one, so their lines share one length. */
+const READING_CLASS = "max-w-2xl text-sm leading-6";
+
+function QuestionText({ question }: { question: string }) {
+  return (
+    <AdminSection title="Question">
+      <p className={cn(READING_CLASS, "wrap-anywhere whitespace-pre-wrap")}>{question}</p>
+    </AdminSection>
+  );
+}
+
 export default function QuestionDetailPage({ params, searchParams }: PageProps<"/questions/[id]">) {
   return (
     <AdminDetailPage>
@@ -87,12 +99,10 @@ async function QuestionDetailContent({ params, searchParams }: PageProps<"/quest
           question.status !== "completed" &&
             question.status !== "failed" &&
             UNANSWERED_LABELS[question.status],
-          user.name || user.username || user.email,
           `Asked ${formatDateTime(question.createdAt)}`,
         ]}
         parents={QUESTION_PARENTS}
-        title={questionTitle(question.question)}
-        titleClassName="max-w-3xl truncate"
+        title={`Question from ${user.name || user.username || user.email}`}
       />
 
       <AdminDetailBody>
@@ -103,17 +113,12 @@ async function QuestionDetailContent({ params, searchParams }: PageProps<"/quest
           tabs={QUESTION_TABS}
         />
 
-        <AdminSection title="Question">
-          <p className="max-w-column text-sm leading-6 wrap-anywhere whitespace-pre-wrap">
-            {question.question}
-          </p>
-        </AdminSection>
-
         {tab === "answer" ? (
           <AdminDetailColumns aside={<QuestionAskedIn question={question} />}>
+            <QuestionText question={question.question} />
             <AdminSection title="The buddy answered">
               {question.answer ? (
-                <div className="flex max-w-2xl flex-col gap-3 text-sm leading-6">
+                <div className={cn(READING_CLASS, "flex flex-col gap-3")}>
                   <AdminAnswerMarkdown answer={question.answer} />
                 </div>
               ) : (
@@ -123,7 +128,12 @@ async function QuestionDetailContent({ params, searchParams }: PageProps<"/quest
           </AdminDetailColumns>
         ) : null}
 
-        {tab === "written" ? <QuestionWrittenBy question={question} /> : null}
+        {tab === "written" ? (
+          <>
+            <QuestionText question={question.question} />
+            <QuestionWrittenBy question={question} />
+          </>
+        ) : null}
       </AdminDetailBody>
     </>
   );

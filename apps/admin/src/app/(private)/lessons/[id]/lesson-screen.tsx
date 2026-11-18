@@ -61,7 +61,7 @@ function ScreenLinks({ step }: { step: LibraryLessonStep }) {
 function ScreenJson({ step }: { step: LibraryLessonStep }) {
   return (
     <div className="flex flex-col">
-      <AdminJson label="Technical details" open value={step.content} />
+      <AdminJson open value={step.content} />
       {step.variants.map((variant) => (
         <AdminJson
           key={variant.id}

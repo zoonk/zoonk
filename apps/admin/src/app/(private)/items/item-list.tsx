@@ -17,7 +17,7 @@ const columns: AdminTableColumn[] = [
   { label: "Skill", size: "long" },
   { label: "Format", size: "wide" },
   { align: "right", label: "Answers" },
-  { align: "right", label: "Right", size: "wide" },
+  { align: "right", label: "Right" },
 ];
 
 /** Resolves the URL into primitive filters so each list state is its own cache entry. */
