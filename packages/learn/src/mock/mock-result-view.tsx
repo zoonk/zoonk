@@ -18,7 +18,7 @@ import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
-import { MockResultActions, MockResultMistakes } from "./mock-result-actions";
+import { MockResultActions, MockResultContinue } from "./mock-result-actions";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
@@ -289,7 +289,7 @@ function MockResultSteps({ result }: { result: MockResult }) {
       aside={aside}
       exitHref={hrefs.exit}
       finalAction={<MockResultActions />}
-      finalSecondAction={<MockResultMistakes />}
+      finalSecondAction={<MockResultContinue />}
       items={items.map((item) => ({
         ...item,
         action: (
