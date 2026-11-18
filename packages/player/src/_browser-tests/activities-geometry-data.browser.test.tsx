@@ -265,6 +265,20 @@ describe("geometry and data activities", () => {
     await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
   });
 
+  it("keeps the target label clear of the mean after a wrong check", async () => {
+    openActivity({ template: "distributionExplorer" });
+    await expect.element(page.getByRole("slider", { name: "Lower handle" })).toBeVisible();
+    await valueInput().fill("49.5");
+    await checkActivity();
+    await expectVerdict("Not quite");
+
+    const target = page.getByText("70 to 130: 95.45%", { exact: true });
+    await expect.element(target).toBeVisible();
+    const mean = dialText((label) => label === "100");
+    expect(mean).toBeDefined();
+    expect(target.element().getBoundingClientRect().top).toBeGreaterThanOrEqual(mean!.bottom);
+  });
+
   it("random simulation by sampling: bigger samples bunch up", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
     await expect.element(page.getByText("200 samples of 400", { exact: true })).toBeVisible();
