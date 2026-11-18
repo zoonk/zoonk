@@ -160,7 +160,7 @@ class CourseStartFlowTest {
     }
 }
 
-private const val QUICK_TEST = "Not sure, give me a quick test"
+private const val QUICK_TEST = "Not sure, give me a short test"
 
 private fun monthlyGoalsLimit(availableAt: Instant) =
     buildJsonObject {
