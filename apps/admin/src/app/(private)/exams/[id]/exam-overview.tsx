@@ -1,11 +1,11 @@
+import { AdminCheckDate } from "@/components/admin-check-date";
 import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
-import { StateMark } from "@/components/state-mark";
 import { type AdminExam } from "@/data/exams/get-exam";
 import { countryName } from "@/lib/country-name";
-import { formatCount, formatDate, formatDateTime, formatDay } from "@/lib/format";
+import { formatCount, formatDateTime, formatDay } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
 import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
@@ -112,11 +112,7 @@ export function ExamChecking({ exam }: { exam: AdminExam }) {
           )}
         </DetailField>
         <DetailField label="Next check" mono={false}>
-          {exam.nextCheckAt ? (
-            formatDate(exam.nextCheckAt)
-          ) : (
-            <StateMark state="paused">Not being checked</StateMark>
-          )}
+          <AdminCheckDate date={exam.nextCheckAt} kind="next-check" />
         </DetailField>
       </DetailFields>
     </AdminSection>

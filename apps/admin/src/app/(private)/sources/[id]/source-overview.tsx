@@ -1,30 +1,14 @@
+import { AdminCheckDate } from "@/components/admin-check-date";
 import { AdminJson } from "@/components/admin-json";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
-import { StateMark } from "@/components/state-mark";
 import { type AdminPublicSource } from "@/data/sources/get-source";
-import { formatDate, formatDateTime, formatShortDate } from "@/lib/format";
+import { formatDateTime, formatShortDate } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
 import { CalendarClockIcon, GraduationCapIcon, ListChecksIcon, UsersIcon } from "lucide-react";
 
 const SOURCE_LINK_CLASS = `${LINK_CLASS} break-all`;
-
-function isOutOfDate(until: Date | null): until is Date {
-  return until !== null && until < new Date();
-}
-
-function GoodUntil({ until }: { until: Date | null }) {
-  if (isOutOfDate(until)) {
-    return (
-      <StateMark className="whitespace-normal" state="out_of_date">
-        Out of date since <span className="whitespace-nowrap">{formatDate(until)}</span>
-      </StateMark>
-    );
-  }
-
-  return until ? `Good until ${formatDate(until)}` : "No end date";
-}
 
 /** What depends on the source, and when Zoonk looks at it next. */
 export function SourceTotals({ source }: { source: AdminPublicSource }) {
@@ -52,7 +36,7 @@ export function SourceTotals({ source }: { source: AdminPublicSource }) {
       />
 
       <StatTile
-        detail={<GoodUntil until={source.validUntil} />}
+        detail={<AdminCheckDate date={source.validUntil} kind="valid-until" prefix="Good until " />}
         icon={<CalendarClockIcon />}
         title="Last checked"
         value={source.fetchedAt ? formatShortDate(source.fetchedAt) : "Never"}
@@ -76,17 +60,10 @@ export function SourceChecking({ source }: { source: AdminPublicSource }) {
           {source.fetchedAt ? formatDateTime(source.fetchedAt) : null}
         </DetailField>
         <DetailField label="Good until" mono={false}>
-          <span className="flex flex-col gap-1">
-            {source.validUntil ? formatDateTime(source.validUntil) : "No end date"}
-            {isOutOfDate(source.validUntil) ? <StateMark state="out_of_date" /> : null}
-          </span>
+          <AdminCheckDate date={source.validUntil} dateTime kind="valid-until" />
         </DetailField>
         <DetailField label="Next check" mono={false}>
-          {source.nextCheckAt ? (
-            formatDateTime(source.nextCheckAt)
-          ) : (
-            <StateMark state="paused">Not being checked</StateMark>
-          )}
+          <AdminCheckDate date={source.nextCheckAt} dateTime kind="next-check" />
         </DetailField>
       </DetailFields>
     </AdminSection>

@@ -1,3 +1,4 @@
+import { AdminCheckDate } from "@/components/admin-check-date";
 import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { SourceKindIcon } from "@/components/source-kind-icon";
@@ -31,7 +32,9 @@ export function SourceRow({ source }: { source: ListedSource }) {
       />
       <TableCell>{capitalize(source.kind)}</TableCell>
       <TableCell>{formatDate(source.fetchedAt)}</TableCell>
-      <TableCell>{source.validUntil ? formatDate(source.validUntil) : "No end date"}</TableCell>
+      <TableCell>
+        <AdminCheckDate date={source.validUntil} kind="valid-until" />
+      </TableCell>
       <TableCell>{usedBy(source._count) || "—"}</TableCell>
     </AdminTableRow>
   );
