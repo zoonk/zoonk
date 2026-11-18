@@ -145,6 +145,7 @@ final class LessonPlayerStore {
   private var sendFailed = false
   /// Each screen's held answers being sent now, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
+  private var sendAgain: Set<String> = []
   private var reportedAbandonment = false
   private var reportedFirstScene = false
   private var reportedFirstAnswer = false
@@ -876,15 +877,28 @@ final class LessonPlayerStore {
 
   /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
   /// its first failure. Screens send at once, a screen already sending goes on to what was held
-  /// since, and each save sends the screens that stopped again.
+  /// since, and each save sends the screens that stopped again, including one whose send was out
+  /// when the save came and then failed.
   func sendUnsaved() {
     sendClock()
-    for stepId in Set(held.map(\.stepId)) where saving[stepId] == nil {
+    for stepId in Set(held.map(\.stepId)) {
+      guard saving[stepId] == nil else {
+        sendAgain.insert(stepId)
+        continue
+      }
+
       saving[stepId] = Task {
-        while let next = held.first(where: { $0.stepId == stepId }), await record(next) {
-          sendUnsaved()
+        while let next = held.first(where: { $0.stepId == stepId }) {
+          sendAgain.remove(stepId)
+
+          if await record(next) {
+            sendUnsaved()
+          } else if !sendAgain.contains(stepId) {
+            break
+          }
         }
 
+        sendAgain.remove(stepId)
         saving[stepId] = nil
       }
     }
