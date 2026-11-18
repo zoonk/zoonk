@@ -68,13 +68,13 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
     <div
       className={cn(
         TASK_COLUMN_CLASS,
-        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6",
+        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,calc(100dvh-13rem))_22rem] min-[72rem]:items-start min-[72rem]:justify-center min-[72rem]:gap-10 min-[72rem]:px-6",
       )}
       data-slot="chapter-map-slide"
     >
       <button
         aria-haspopup="dialog"
-        className="focus-visible:ring-ring/50 w-full cursor-zoom-in justify-self-center rounded-xl outline-none focus-visible:ring-[3px] min-[72rem]:sticky min-[72rem]:top-4 min-[72rem]:max-w-[calc(100dvh-13rem)]"
+        className="focus-visible:ring-ring/50 w-full cursor-zoom-in rounded-xl outline-none focus-visible:ring-[3px] min-[72rem]:sticky min-[72rem]:top-4"
         onClick={() => setIsZoomed(true)}
         type="button"
         {...SWIPE_THROUGH}
