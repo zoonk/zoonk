@@ -16,7 +16,6 @@ const LABEL_HALO = 1.5;
 export const MAP_PIN_RADIUS = 20;
 const HALF_TURN = 180;
 const MAP_STREET_SAMPLE_STEP = 4;
-const STREET_POSITION_CLEARANCE = 1;
 const MAX_STREET_OFFSET = 40;
 
 function axes(label: MapLabelSpot): readonly [MapPoint, MapPoint] {
@@ -73,7 +72,7 @@ export function besideOwnStreet(
           other.every(
             (point, index) => point.x === path[index]?.x && point.y === path[index]?.y,
           )) ||
-        distance + label.height / 2 + STREET_POSITION_CLEARANCE <= pathDistance(label, other),
+        distance + label.height / 2 <= pathDistance(label, other),
     )
   );
 }

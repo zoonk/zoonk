@@ -106,6 +106,8 @@ function MapLabels({
         const spot = labelSpots[index];
 
         const at = spot ?? label;
+        const offsetX = (labelSizes[index]?.offsetX ?? 0) * pixelSize;
+        const offsetY = (labelSizes[index]?.offsetY ?? 0) * pixelSize;
 
         return (
           <text
@@ -128,9 +130,7 @@ function MapLabels({
             strokeLinejoin="round"
             strokeWidth={LABEL_HALO * pixelSize}
             textAnchor="middle"
-            transform={`translate(${at.x} ${at.y}) rotate(${label.angle}) scale(${spot?.scale ?? 1}) translate(${-at.x} ${-at.y})`}
-            x={at.x - (labelSizes[index]?.offsetX ?? 0) * pixelSize}
-            y={at.y - (labelSizes[index]?.offsetY ?? 0) * pixelSize}
+            transform={`translate(${at.x} ${at.y}) rotate(${label.angle}) scale(${spot?.scale ?? 1}) translate(${-offsetX} ${-offsetY})`}
           >
             {labelText(label.key, label.text)}
           </text>
