@@ -129,7 +129,9 @@ struct MindMapsScreen: View {
 
     return switch tab {
     case .chapters:
-      Text(verbatim: "\(String(localized: "With a map", table: "MindMaps")) \(count.formatted())")
+      Text(
+        "With a map \(count)", tableName: "MindMaps",
+        comment: "Tab of chapter mind maps, with how many open")
     case .lessons:
       Text(
         "Lessons \(count)", tableName: "MindMaps", comment: "Tab of lesson maps, with how many open"
@@ -747,7 +749,7 @@ enum MindMapsCreateLine: Equatable {
     tier: LearnerTier
   ) {
     let offer = maps.createOffer
-    // As main's, only the chapters under "Other chapters": the others' rows say where they stand.
+    // As main's, only the chapters under "Without a map": the others' rows say where they stand.
     let others = maps.chapters.filter { !$0.canMakeNow }
     let onTheWay = others.count { $0.status.isOnItsWay }
 
