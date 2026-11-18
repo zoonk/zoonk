@@ -33820,6 +33820,11 @@
           "organization": {
             "$ref": "#/components/schemas/OrganizationSummary"
           },
+          "promise": {
+            "nullable": true,
+            "description": "What the course promises a learner, the line its page opens with; its description when it has none",
+            "type": "string"
+          },
           "slug": {
             "type": "string",
             "description": "URL slug"
@@ -33866,6 +33871,7 @@
           "languageFlag",
           "lessonCount",
           "organization",
+          "promise",
           "slug",
           "subject",
           "targetLanguage",

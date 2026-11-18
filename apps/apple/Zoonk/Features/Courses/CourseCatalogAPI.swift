@@ -195,6 +195,7 @@ private func makeCourseSummary(
     languageFlag: payload.languageFlag,
     lessonCount: payload.lessonCount,
     organization: makeCourseOrganization(payload.organization),
+    promise: payload.promise,
     slug: payload.slug,
     subject: payload.subject.flatMap { CourseCategory(rawValue: $0.rawValue) },
     targetLanguage: payload.targetLanguage,
