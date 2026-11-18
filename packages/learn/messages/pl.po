@@ -7080,14 +7080,19 @@ msgid "Create"
 msgstr "Utwórz"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "E0OtxV"
-msgid "{count, plural, one {Writes # lesson first} other {Writes # lessons first}}"
-msgstr "{count, plural, one {Najpierw przygotowuje # lekcję} few {Najpierw przygotowuje # lekcje} many {Najpierw przygotowuje # lekcji} other {Najpierw przygotowuje # lekcji}}"
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lekcja do przygotowania} few {# lekcje do przygotowania} other {# lekcji do przygotowania}}"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "hw0Ba_"
-msgid "{count, plural, one {Writes # lesson first, from your free lessons} other {Writes # lessons first, from your free lessons}}"
-msgstr "{count, plural, one {Najpierw przygotowuje # lekcję z bezpłatnych lekcji} few {Najpierw przygotowuje # lekcje z bezpłatnych lekcji} many {Najpierw przygotowuje # lekcji z bezpłatnych lekcji} other {Najpierw przygotowuje # lekcji z bezpłatnych lekcji}}"
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {Najpierw przygotujemy # lekcję, więc zajmie to kilka minut.} few {Najpierw przygotujemy # lekcje, więc zajmie to kilka minut.} other {Najpierw przygotujemy # lekcji, więc zajmie to kilka minut.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {Najpierw przygotujemy # lekcję i wliczymy ją do twojej puli bezpłatnych lekcji.} few {Najpierw przygotujemy # lekcje i wliczymy je do twojej puli bezpłatnych lekcji.} other {Najpierw przygotujemy # lekcji i wliczymy je do twojej puli bezpłatnych lekcji.}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
@@ -7282,9 +7287,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} many {Możesz teraz utworzyć jeszcze # map.} other {Możesz teraz utworzyć jeszcze # mapy.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "5LdPED"
-msgid "Making a map writes its chapter's lessons first, from your free lessons."
-msgstr "Aby utworzyć mapę, najpierw przygotowujemy lekcje z danego rozdziału, korzystając z bezpłatnych lekcji."
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
 
 #. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx

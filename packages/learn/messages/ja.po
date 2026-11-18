@@ -7080,14 +7080,19 @@ msgid "Create"
 msgstr "作成する"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "E0OtxV"
-msgid "{count, plural, one {Writes # lesson first} other {Writes # lessons first}}"
-msgstr "{count, plural, =1 {まず#レッスンを作成} other {先に#レッスンを作成}}"
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {#レッスンの作成が必要}}"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "hw0Ba_"
-msgid "{count, plural, one {Writes # lesson first, from your free lessons} other {Writes # lessons first, from your free lessons}}"
-msgstr "{count, plural, =1 {無料レッスンから、まず#レッスンを作成} other {無料レッスンから、先に#レッスンを作成}}"
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, other {まず#レッスンを作成するため、数分かかります。}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {まず#レッスンを作成します。作成分は無料レッスンの利用数に含まれます。}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
@@ -7282,9 +7287,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, other {今すぐ、マップをあと#枚作成できます。}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "5LdPED"
-msgid "Making a map writes its chapter's lessons first, from your free lessons."
-msgstr "マップを作成すると、まず無料レッスンからその章のレッスンが作成されます。"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "レッスンの作成には、無料で利用できるレッスン枠を使います。"
 
 #. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx

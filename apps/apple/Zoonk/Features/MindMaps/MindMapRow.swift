@@ -191,9 +191,9 @@ struct MindMapRow: View {
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite > 0 && !isPlus:
+        case .create where map.lessonsToWrite > 0:
           String(
-            localized: "Writes \(map.lessonsToWrite) lessons first", table: "MindMaps",
+            localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
         case .ready where map.image == nil:
           String(
@@ -217,17 +217,22 @@ struct MindMapRow: View {
   private func stateLine(ready: String?) -> String? {
     switch shown {
     case .create:
-      // Only a learner with a limit on lessons hears what writing them spends.
-      if map.lessonsToWrite > 0, !isPlus {
-        return String(
-          localized: "Writes \(map.lessonsToWrite) lessons first, from your free lessons",
-          table: "MindMaps",
-          comment: "A free learner's map of a chapter whose lessons aren't written yet")
+      if map.lessonsToWrite == 0 {
+        return place == .finish
+          ? String(localized: "A mind map of its main ideas", table: "MindMaps")
+          : Self.mainIdeas
       }
 
-      return place == .finish
-        ? String(localized: "A mind map of its main ideas", table: "MindMaps")
-        : Self.mainIdeas
+      return isPlus
+        ? String(
+          localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
+          table: "MindMaps",
+          comment: "A Plus learner's map of a chapter whose lessons aren't written yet")
+        : String(
+          localized:
+            "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
+          table: "MindMaps",
+          comment: "A free learner's map of a chapter whose lessons aren't written yet")
     case .ready:
       if map.image == nil {
         return String(

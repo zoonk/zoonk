@@ -23,13 +23,14 @@
   "mindmaps_empty_stopped": "1fe8df166e6a3f033615795a35795eb8fa4575454b4830b889ca45e3b68314dd",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
-  "mindmaps_free_lessons_note": "1be7b1666fb89fde45714b11c7819532af349529e64b6c771203d8837f66f446",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
   "mindmaps_lesson_map": "5bb30d0f45ecfde2b8e0f03f070e7671246641fbaf58a83675ef2e4e0b52df30",
   "mindmaps_lesson_maps": "f4c611dc71251ad1457882b1bd26d88a105f9b0f4deb3a81c5f80d628387c997",
+  "mindmaps_lessons_count_free": "76d3852bf2ed41cc4db29468c516344d3e6762d4831feec2582a6b593d119f2f",
   "mindmaps_lessons_empty": "e8f73c87acee88bd160b7635900a93f8066e0fc508d6d10ae63108631253fbeb",
-  "mindmaps_lessons_first_free": "e6522f55a64ffa5aac936875f89b0ba23bb3e06156095e5431b30873fe1b1339",
-  "mindmaps_lessons_to_write": "c11ca22688f77e89710291b8e64ba5b53920cbe82d1679bb23521c351d502416",
+  "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
+  "mindmaps_lessons_first_plus": "d387162e42ccd430f715ef8357d08e51576f2f917ba779ff9ed18e49ddd93153",
+  "mindmaps_lessons_to_write": "7faee3711fb245b146e9ad6aa4a118e7374b2467c82147cdf977ec33cf7ff818",
   "mindmaps_map_gone": "c82ece4765be89a798eac8121630990a9c39669386139a510bdfb2e278279a9b",
   "mindmaps_next": "0e5c421137a192f89eeb8f88728cfb2a2ad68139913e09bf5e14579fafd57e04",
   "mindmaps_no_longer_available": "dcfa4384b77018cb710abbab311c9f945f7d378032403f8c9e22df1229276248",
@@ -99,9 +100,21 @@
     <string name="mindmaps_shown_as_text">Metin olarak gösteriliyor</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="one">Önce ücretsiz derslerinden %1$s ders hazırlıyor</item>
-        <item quantity="other">Önce ücretsiz derslerinden %1$s ders hazırlıyor</item>
+        <item quantity="one">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
+        <item quantity="other">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
     </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
+        <item quantity="other">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">Hazırlanacak %1$s ders</item>
+        <item quantity="other">Hazırlanacak %1$s ders</item>
+    </plurals>
+    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
+    <string name="mindmaps_lessons_count_free">Hazırladığımız dersler ücretsiz ders hakkından düşülür.</string>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
     <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
     <string name="mindmaps_drawing">Zihin haritasını çiziyoruz…</string>
@@ -138,11 +151,6 @@
     <string name="mindmaps_create_all">Tümünü oluştur</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Henüz harita yok</string>
-    <string name="mindmaps_free_lessons_note">Harita oluşturulmadan önce, ünitenin dersleri ücretsiz derslerinden hazırlanır.</string>
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">Önce %1$s ders hazırlıyor</item>
-        <item quantity="other">Önce %1$s ders hazırlıyor</item>
-    </plurals>
     <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
     <string name="mindmaps_tab_chapters">Ünite haritaları</string>
     <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->

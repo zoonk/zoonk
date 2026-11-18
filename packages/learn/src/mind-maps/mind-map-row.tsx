@@ -67,7 +67,6 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
 
 function RowAction({
   isPending,
-  noteId,
   onCreate,
   onRetry,
   shown,
@@ -75,7 +74,6 @@ function RowAction({
   titleId,
 }: {
   isPending: boolean;
-  noteId?: string;
   onCreate?: () => void;
   onRetry: () => void;
   shown: MindMapShown;
@@ -83,12 +81,11 @@ function RowAction({
   titleId: string;
 }) {
   const t = useExtracted();
-  const describedBy = noteId ? `${titleId} ${noteId}` : titleId;
 
   if (shown === "failed" || shown === "unreachable") {
     return (
       <Button
-        aria-describedby={describedBy}
+        aria-describedby={titleId}
         busy={isPending}
         onClick={onRetry}
         size="sm"
@@ -102,7 +99,7 @@ function RowAction({
   if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
-        aria-describedby={describedBy}
+        aria-describedby={titleId}
         busy={isPending}
         onClick={onCreate}
         size="sm"
@@ -123,20 +120,15 @@ function RowAction({
 export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "retry" | "shown"> &
   Partial<Pick<MindMapRequest, "create" | "save">>;
 
-/**
- * The row for a map whose request someone else follows, like a page that shows it twice. `noteId`
- * names a line outside the row that its action also reads out, like what making the map costs.
- */
+/** The row for a map whose request someone else follows, like a page that shows it twice. */
 export function MindMapRowView({
   className,
-  noteId,
   place,
   plus,
   request,
   view,
 }: {
   className?: string;
-  noteId?: string;
   place: MindMapRowPlace;
   plus: boolean;
   request: MindMapRowRequest;
@@ -198,7 +190,6 @@ export function MindMapRowView({
           <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>
             <RowAction
               isPending={isPending}
-              noteId={noteId}
               onCreate={create}
               onRetry={retry}
               shown={shown}

@@ -218,11 +218,12 @@ private fun LazyListScope.notMadeBlock(
         }
     }
     if ((open || !folds) && later.isNotEmpty()) {
-        val note = !actions.state.plus && later.any { it.lessonsToWrite > 0 }
+        // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
+        val note = stop == null && !actions.state.plus && later.any { it.lessonsToWrite > 0 }
         if (note) {
             item(key = "not-made-spends", contentType = "line") {
                 Text(
-                    stringResource(R.string.mindmaps_free_lessons_note),
+                    stringResource(R.string.mindmaps_lessons_count_free),
                     Modifier.padding(vertical = 8.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,

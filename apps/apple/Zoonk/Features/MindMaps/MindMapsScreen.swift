@@ -271,11 +271,11 @@ private struct MindMapCreateSection: View {
       }
 
       if !others.isEmpty, showsChapters || !folds {
-        // A row's Create spends lessons from a free learner's allowance, so the list says so once.
-        if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 }) {
+        if offer.stop == nil, showsLessonsNote {
           Text(
-            "Making a map writes its chapter's lessons first, from your free lessons.",
-            tableName: "MindMaps"
+            "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
+            comment:
+              "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
@@ -373,6 +373,13 @@ private struct MindMapCreateSection: View {
     case .unreachable, .stopped, nil:
       nil
     }
+  }
+
+  /// Rows don't repeat that writing lessons spends free lessons: this says it once, when a row
+  /// would write them.
+  private var showsLessonsNote: Bool {
+    learner.summary.value?.tier != .plus
+      && notMade.contains { $0.status != .writingLessons && $0.lessonsToWrite > 0 }
   }
 }
 

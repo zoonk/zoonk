@@ -23,13 +23,14 @@
   "mindmaps_empty_stopped": "00f58805f198cc63ecafe40098b2501028a10cf079e553667e5109cf80da5075",
   "mindmaps_failed": "94875ba14adb7ae81978bbb1469601d0340c3348f6aec29c68213ae6a9859cfe",
   "mindmaps_fit": "25bb327d7426d900d38a8f3e341ea10e2843f67ceab5143fe12313a9419eaf7b",
-  "mindmaps_free_lessons_note": "4fa83b8aac8b9b4d50820be5d54f6d60269e36ce722571d58aa21528e51dfc66",
   "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
   "mindmaps_lesson_map": "f56b79f9b7da17b37772870b15fff5673baf2c4d93af86e6407c145fd294cabf",
   "mindmaps_lesson_maps": "349539b758b43accc1d45bac8ff1840eb8b7a0e23ac0a17fc1558763e47ed411",
+  "mindmaps_lessons_count_free": "265169232b037d8444e3941b04cecc1dfa1d5c6c47eb328e2722c25341630b02",
   "mindmaps_lessons_empty": "fa5254cc0822ec5b5592a61ce3beb7f737e0c961ab7308d8baec1dbb0ea1777c",
-  "mindmaps_lessons_first_free": "c3e185b17ef81caaf68758ddd0e95bea5651089589d22bbdd887d72d7d8f294f",
-  "mindmaps_lessons_to_write": "2573df875ff69e959e447acec9efeaa8400318f7f102346be0ea172b704adb64",
+  "mindmaps_lessons_first_free": "96768a9e8994e39fc18f80190029a833e8230c41f4c12553241cd1692e2cc36a",
+  "mindmaps_lessons_first_plus": "45bd7694a9a0766ec694e400921b7f07094c20235520e08b020b2a7bc99f2c10",
+  "mindmaps_lessons_to_write": "682e30358c4485203498540dd49fc181d014db95e1f7a8fa2358185ac90e9ad6",
   "mindmaps_map_gone": "65d68242aa2ed68e3e09dfd31fe25fbe1ff948ac58dea67967ceceb43b8e539b",
   "mindmaps_next": "ace667eec871f6a29376e55b539d5524b8ad1266dd7e2b7536e91545f0e65141",
   "mindmaps_no_longer_available": "ec5fd467fcecc8a54e73d7250d99883fc1ecf9be4d7cfd7adf1fb44e090ff147",
@@ -98,8 +99,18 @@
     <string name="mindmaps_shown_as_text">テキストで表示</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="other">無料レッスンから先に%1$sレッスンを作成します</item>
+        <item quantity="other">まず%1$sレッスンを作成します。作成分は無料レッスンの利用数に含まれます。</item>
     </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="other">まず%1$sレッスンを作成するため、数分かかります。</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="other">%1$sレッスンの作成が必要</item>
+    </plurals>
+    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
+    <string name="mindmaps_lessons_count_free">レッスンの作成には、無料で利用できるレッスン枠を使います。</string>
     <string name="mindmaps_writing_lessons">レッスン、マインドマップの順に作成しています…</string>
     <string name="mindmaps_writing_lessons_wait">数分かかります。画面を離れても、後でここから確認できます。</string>
     <string name="mindmaps_drawing">マインドマップを作成しています…</string>
@@ -136,10 +147,6 @@
     <string name="mindmaps_create_all">すべて作成する</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">マップはまだありません</string>
-    <string name="mindmaps_free_lessons_note">マップを作成すると、まず無料レッスンからその章のレッスンが作成されます。</string>
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="other">まず%1$sレッスンを作成します</item>
-    </plurals>
     <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
     <string name="mindmaps_tab_chapters">章のマップ</string>
     <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->
