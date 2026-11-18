@@ -812,6 +812,12 @@ test.describe("Mind maps", () => {
       const row = notMade.getByRole("listitem").filter({ hasText: second.chapter.title });
       await expect(row).toBeVisible();
       await expect(row.getByRole("button", { name: "Create" })).toBeHidden();
+
+      await notMade.getByRole("link", { name: "Subscribe" }).click();
+      await expect(page).toHaveURL(/\/subscription$/u);
+      await page.getByRole("link", { exact: true, name: "Back to Mind maps" }).click();
+      await expect(page).toHaveURL(/\/mind-maps$/u);
+      await expect(row).toBeVisible();
     } finally {
       await page.context().close();
     }
