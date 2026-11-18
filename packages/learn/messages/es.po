@@ -327,7 +327,6 @@ msgstr "Descargar"
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
-#: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
@@ -5954,6 +5953,11 @@ msgid "Words to practice saying"
 msgstr "Palabras para practicar la pronunciación"
 
 #: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "Se cortó la llamada"
+
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "253hZZ"
 msgid "Call again, or end the call to get feedback on what you said."
 msgstr "Vuelve a llamar o termina la llamada para recibir comentarios sobre lo que dijiste."
@@ -5967,11 +5971,6 @@ msgstr "Terminar la llamada"
 msgctxt "p5AWJt"
 msgid "Call again"
 msgstr "Volver a llamar"
-
-#: src/language/conversation/dropped-call-screen.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "Se cortó la llamada"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
