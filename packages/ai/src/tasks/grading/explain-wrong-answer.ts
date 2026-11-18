@@ -14,7 +14,8 @@ const systemPrompt = `${taskPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
 /**
  * Made once per mistake and shared, so quality wins: Terra scored 9.69 at 2.1s p50 against Sol's
- * 9.78, within noise, at half the cost (30 Oct 2026).
+ * 9.78, within noise, at half the cost (30 Oct 2026). Gemini 4 Hydrogen scored 9.14 (18 Nov 2026),
+ * with a 7.2 s p50 against 2.7 s, at $10.54/1k against $1.60/1k.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;

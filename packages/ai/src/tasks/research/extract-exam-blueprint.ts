@@ -23,7 +23,8 @@ import { type ResearchDocument, toDocumentParts } from "./research-documents";
 /**
  * On 12 notices (8 Nov 2026), Flash scored 9.61 on the 10 it read, at $149.75/1k, and kept the CGU
  * specialty facts Luna (9.29 on 11, $21.59/1k) missed, which every learner of that exam would
- * lose. Luna read the ENEM matrix Gemini stopped on; Haiku 5.5 parsed only 4.
+ * lose. Luna read the ENEM matrix Gemini stopped on; Haiku 5.5 parsed only 4. Gemini 4 Hydrogen tied
+ * Flash on short documents, but its content filter refused both long-notice runs (18 Nov 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;

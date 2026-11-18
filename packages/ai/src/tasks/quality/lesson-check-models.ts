@@ -7,7 +7,9 @@ import { pickReviewers } from "../../_utils/model-family";
  * Gemini 3.8 Flash, the reviewer before, passed 24 of those lessons. On those 6 errors among 18
  * cases (11 Nov 2026), Fable caught 2 and Gemini 4 Carbon 5, but Carbon also flagged a clean
  * lesson. So an Opus-written lesson has no fallback outside OpenAI: no other evaluated reviewer
- * helped.
+ * helped. On 18 PT errors (18 Nov 2026), GPT-6.2 Astra caught all to GPT-6 Astra's 12 but held
+ * all 6 clean controls over hedges a correct lesson can make, as GPT-6.2 Sol did; Gemini 4 Hydrogen
+ * caught 5.
  */
 const WRITTEN_REVIEWERS = [
   "openai/gpt-6-astra",
@@ -15,7 +17,11 @@ const WRITTEN_REVIEWERS = [
   "anthropic/claude-opus-5.5",
 ] as const;
 
-/** Luna writes alphabet lessons; Sonnet 5.5 blocked all 20 planted mistakes in the review eval (9 Oct 2026). */
+/**
+ * Luna writes alphabet lessons; Sonnet 5.5 blocked all 20 planted mistakes in the review eval (9 Oct
+ * 2026). Gemini 4 Hydrogen tied it (6 of 6 caught, no clean holds) on 18 Nov 2026 at $25.75/1k
+ * against $15.22/1k, with a 39 s p95 against 8 s.
+ */
 const ALPHABET_REVIEWERS = [
   "anthropic/claude-sonnet-5.5",
   "google/gemini-3.8-flash",
@@ -27,7 +33,8 @@ const ALPHABET_REVIEWERS = [
  * caught 26 of 27 slips on their screen and blocked no clean lesson, at $18 per 1k reviews; Gemini
  * 3.8 Flash caught 24, blocked 2 and costs about the same, with a 76 s p95. Haiku 5.5 and Gemini
  * 3.5 Flash-Lite missed a third of the slips. Luna, Terra and Sol blocked 9 to 12 of the 12 clean
- * runs over respelling conventions, so no OpenAI model reviews these lessons.
+ * runs over respelling conventions, so no OpenAI model reviews these lessons. Gemini 4 Hydrogen
+ * caught 26 of 27 slips but blocked 8 of 12 clean runs (18 Nov 2026).
  */
 const LANGUAGE_REVIEWERS = ["anthropic/claude-sonnet-5.5", "google/gemini-3.8-flash"] as const;
 

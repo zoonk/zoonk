@@ -19,7 +19,8 @@ import taskPrompt from "./write-item-set.prompt.md";
 /**
  * On 4 cases (8 Nov 2026), Terra scored 8.94 at $12.25/1k and Opus 9.19 at $121.32/1k, too small a
  * gain for ten times the cost; Luna, Haiku 5.5 and Flash Lite keyed answers the passage doesn't
- * support.
+ * support. Gemini 4 Hydrogen scored 8.87 to Terra's 8.62 (18 Nov 2026) but cost $101/1k against
+ * $13/1k and wrote one wrong answer key.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;

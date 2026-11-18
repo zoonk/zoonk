@@ -28,7 +28,9 @@ import {
 /**
  * On 10 cases (8 Nov 2026), Sonnet 5.5 found every gap at $7.67/1k and 6.46 s p95 and left alone
  * exam weights the notice didn't support; Haiku 5.5's 10.00 hid such edits, and Terra (9.93)
- * missed a planted gap.
+ * missed a planted gap. On 18 Nov 2026 Gemini 4 Hydrogen tied Sonnet 5.5 at 10.00 for $12.23/1k
+ * against $7.05/1k; GPT-6.2 Sol scored 9.97 at $4.30/1k but twice flagged a topic the course already
+ * covered.
  */
 const defaultModel = "anthropic/claude-sonnet-5.5";
 const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-haiku-5.5"] as const;
