@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "0de01b47bebdbd67c17c7b2c66cfbae9bf52c504ed8fb1809313c44bfcba12ee",
   "activities_sorting_drag_onto_timeline": "9097f56f119a94728c3ab997f4c49a5e35e2772101d38bce778951b2616290f1",
   "activities_sorting_drag_steps": "36533249dcea4c8c2d52708fd5e60c002260e72735953e500378935a40bcb60e",
-  "activities_sorting_events_placed": "7001a940363d4cc3a63b06a6cdf3c05a207fd37bbf152c7e29d311d5f61197ca",
+  "activities_sorting_events_placed": "07e9f4ffba1a324d955a5f761df2e7f1fca6e8b88b947a8a5a459afbc0087901",
   "activities_sorting_every_spot_named": "5e758d28e18d3b2259368d6e1b32b95bde8f598f85474752b9cc664530969ac6",
   "activities_sorting_gap_between": "241145fafac7d1dea3def6a9389ad9f8e643ac4aed784ee77ca450bcf1f97ee0",
   "activities_sorting_goes_with": "46c736a79a876bc37c0b2f36d0722c693f8f8e8e942a97195a3228ac76021103",
@@ -197,7 +197,12 @@
     <string name="activities_sorting_year_and_guess">%1$s. Tu suposición: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Tu suposición: %1$s</string>
-    <string name="activities_sorting_events_placed">%1$d de %2$d eventos colocados</string>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="one">Se colocó %1$d de %2$d eventos</item>
+        <item quantity="many">Se colocaron %1$d de %2$d eventos</item>
+        <item quantity="other">Se colocaron %1$d de %2$d eventos</item>
+    </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Colocar %1$s en la línea de tiempo</string>
     <string name="activities_sorting_drag_onto_timeline">Toca para colocarlo o mantenlo presionado y arrástralo a la línea de tiempo.</string>

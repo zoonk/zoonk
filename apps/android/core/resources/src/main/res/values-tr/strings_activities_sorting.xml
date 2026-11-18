@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "7959f1cc491a99bcd915086d477d6c4b88f6add7a6624f886e8fb24b503b8638",
   "activities_sorting_drag_onto_timeline": "e2e72f38045925e44754acb7dcd91c8845430d6a08fd6634915509a3f3110eda",
   "activities_sorting_drag_steps": "39c7f97cf18f7e9bf434c891f64ac0279663384f73e9ee42582abc46ad7b6721",
-  "activities_sorting_events_placed": "420dc9116714341a9446cdd8aea4bf910a5b8e626a8045629137122f01744b28",
+  "activities_sorting_events_placed": "b0369b0fdb7fea5a7dd405fd6d546f1108cf21f48c81325cab49f1dc0e43ed96",
   "activities_sorting_every_spot_named": "22683f75117be1b5b5d5899d0ce4459c4b2175d266cdf4e4fac6466235c81c4b",
   "activities_sorting_gap_between": "24752f2160cbc46466634de06c757f1d8dafff7f4d362fa73bd2d02efe957501",
   "activities_sorting_goes_with": "4e9474df023579d14530bc1a38d2cded04afe62b7633c4a0b515513845e79610",
@@ -193,7 +193,11 @@
     <string name="activities_sorting_year_and_guess">%1$s. Tahminin: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Tahminin: %1$s</string>
-    <string name="activities_sorting_events_placed">%1$d / %2$d olay yerleştirildi</string>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="one">%1$d / %2$d etkinlik yerleştirildi</item>
+        <item quantity="other">%1$d / %2$d etkinlik yerleştirildi</item>
+    </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">%1$s olayını zaman çizelgesine yerleştir</string>
     <string name="activities_sorting_drag_onto_timeline">Yerleştirmek için dokun veya basılı tutup zaman çizelgesine sürükle.</string>

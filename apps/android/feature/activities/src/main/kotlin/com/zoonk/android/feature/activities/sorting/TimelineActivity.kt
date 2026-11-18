@@ -673,7 +673,7 @@ private fun TimelineTray(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            stringResource(R.string.activities_sorting_events_placed, placed, total),
+            pluralStringResource(R.plurals.activities_sorting_events_placed, total, placed, total),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )

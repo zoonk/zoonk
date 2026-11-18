@@ -61,6 +61,7 @@
 }
 -->
 <resources>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
     <string name="activities_badge_estimate_first">予想も採点対象</string>
     <string name="activities_badge_read_chart">グラフを読み取る</string>
     <string name="activities_badge_before_after">変化の前後</string>
