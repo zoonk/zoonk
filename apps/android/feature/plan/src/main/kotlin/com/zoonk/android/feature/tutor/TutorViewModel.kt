@@ -455,7 +455,11 @@ class TutorViewModel internal constructor(
         saved[SENT_DRAFT] = written
         if (written.isNotEmpty()) draft.clearText()
         mutableState.update {
-            it.copy(sending = SendingQuestion(pending.question, pending.scope.about), askFailure = null, unresolvedQuestion = null)
+            it.copy(
+                sending = SendingQuestion(pending.question, pending.scope.about, pending.scope.topic),
+                askFailure = null,
+                unresolvedQuestion = null,
+            )
         }
 
         viewModelScope.launch {
@@ -667,6 +671,7 @@ class TutorViewModel internal constructor(
 data class SendingQuestion(
     val question: String,
     val about: TutorTurn.About,
+    val topic: String = about.name,
 )
 
 /** A suggested question; a lesson's own carries its [id] so its shared answer is reused. */

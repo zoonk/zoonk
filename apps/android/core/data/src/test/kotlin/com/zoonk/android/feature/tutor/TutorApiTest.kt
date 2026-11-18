@@ -18,6 +18,7 @@ import mockwebserver3.MockWebServer
 import mockwebserver3.SocketEffect
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
@@ -71,6 +72,26 @@ class TutorApiTest {
             assertEquals(BLOCK, context["blockId"]!!.jsonPrimitive.content)
             assertEquals(TutorTurn.Status.Pending, asked.turn.status)
             assertEquals(TutorTurn.About.Answer, asked.turn.about)
+        }
+
+    /** The topic line compares turns by part: a saved question matches the step it was asked on, and a removed step keeps its number. */
+    @Test
+    fun aQuestionsTopicIsItsStepOrItsNumberOnceTheStepIsGone() =
+        runTest {
+            val scope = TutorScope.Step(LESSON, STEP, stepNumber = 2)
+            server.enqueue(
+                json(question(status = "pending", context = """{"kind":"step","stepId":"$STEP","stepNumber":2}""", created = true)),
+            )
+            server.enqueue(json(question(status = "pending", context = """{"kind":"step","stepId":null,"stepNumber":3}""", created = true)))
+            server.enqueue(json(question(status = "pending", context = """{"kind":"step","stepId":null,"stepNumber":4}""", created = true)))
+
+            val asked = api.ask(scope, "Why?", suggestion = null, REQUEST, ana).turn
+            val gone = api.ask(scope, "Why?", suggestion = null, REQUEST, ana).turn
+            val goneToo = api.ask(scope, "Why?", suggestion = null, REQUEST, ana).turn
+
+            assertEquals(scope.topic, asked.topic)
+            assertNotEquals(asked.topic, gone.topic)
+            assertNotEquals(gone.topic, goneToo.topic)
         }
 
     @Test
@@ -188,6 +209,8 @@ class TutorApiTest {
     private companion object {
         const val GOAL = "6f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val ITEM = "3f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val LESSON = "1f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val STEP = "2f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val BLOCK = "4f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val QUESTION = "5f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val FACT = "8f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
