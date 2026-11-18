@@ -213,53 +213,36 @@ export function LearnPageBar({
   );
 }
 
-/**
- * The bar over a section's pages (settings, statistics, the catalog). A page under `parent` goes
- * back to it; the others leave the section for the app page the learner came from, or `back`.
- */
+/** The bar over a section's pages, including links that return to the app page that opened it. */
 export function LearnSectionBar({
   back,
   end,
+  history = "origin",
   listed,
-  parent,
   title,
 }: {
   back: { href: string; label?: string };
   end?: React.ReactNode;
+  /** A section entry returns to the page outside the section that opened it. */
+  history?: "destination" | "origin" | "section-entry";
   listed?: ListedBy;
-  /** `tabs`: the section's hub, which from a tablet up is these pages' own tabbed page. */
-  parent?: { href: string; label: string; tabs?: boolean };
   title?: string;
 }) {
   const fromApp = useCameFromApp();
-  const className = listed && LISTED_IN_SIDEBAR_CLASS[listed];
+  const toApp = history === "origin" || (history === "section-entry" && fromApp);
 
   useNameAppEntry(title);
-
-  const leave = (hidden?: string) => (
-    <LearnBackLink className={cn(className, hidden)} href={back.href} label={back.label} toApp />
-  );
-
-  if (!parent || fromApp) {
-    return <PageTopBar actions={end} back={leave()} />;
-  }
-
-  const toParent = (hidden?: string) => (
-    <LearnBackLink className={cn(className, hidden)} href={parent.href} label={parent.label} />
-  );
 
   return (
     <PageTopBar
       actions={end}
       back={
-        parent.tabs ? (
-          <>
-            {toParent("md:hidden")}
-            {leave("max-md:hidden")}
-          </>
-        ) : (
-          toParent()
-        )
+        <LearnBackLink
+          className={listed && LISTED_IN_SIDEBAR_CLASS[listed]}
+          href={back.href}
+          label={back.label}
+          toApp={toApp}
+        />
       }
     />
   );
