@@ -7269,14 +7269,20 @@ msgid "Without a map"
 msgstr "マップなし"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "すべて作成する"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {#章}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "すべて作成する"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13045,6 @@ msgstr "資料から"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "学習計画の追加項目"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {#章}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

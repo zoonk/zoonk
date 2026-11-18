@@ -7269,14 +7269,20 @@ msgid "Without a map"
 msgstr "Sin mapa"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "Crear todos"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "Para hacer uno de estos mapas, primero se preparan sus lecciones, y cuentan para tu límite de lecciones gratis."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "Crear todos"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13045,6 @@ msgstr "De tu material"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "También en tu plan"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
