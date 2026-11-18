@@ -72,6 +72,12 @@ class MockSaveQueue(
         state.first { stopped || (it != DraftSaveStatus.Saving && it != DraftSaveStatus.Retrying) }
     }
 
+    /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
+    fun forgetRefusals() {
+        refused.clear()
+        settle()
+    }
+
     fun retryNow() {
         if (retry == null) return
         retry?.cancel()

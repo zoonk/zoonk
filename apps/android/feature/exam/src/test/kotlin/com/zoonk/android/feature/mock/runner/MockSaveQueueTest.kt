@@ -131,6 +131,18 @@ class MockSaveQueueTest {
         }
 
     @Test
+    fun refusalsAreForgottenOnceTheSectionIsHandedIn() =
+        runTest {
+            results += SendResult.Refused
+            val queue = queue()
+            queue.add(draft("a", 0))
+            advanceUntilIdle()
+            queue.forgetRefusals()
+
+            assertEquals(DraftSaveStatus.Saved, queue.status.value)
+        }
+
+    @Test
     fun aHandInWaitsForEveryAnswerRetriesIncluded() =
         runTest {
             results += SendResult.Unreachable

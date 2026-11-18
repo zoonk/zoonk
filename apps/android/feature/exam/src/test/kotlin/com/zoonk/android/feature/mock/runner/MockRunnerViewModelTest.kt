@@ -185,6 +185,28 @@ class MockRunnerViewModelTest {
         }
 
     @Test
+    fun aRefusedAnswerIsNoLongerSaidOnceItsSectionIsHandedIn() =
+        runTest(dispatcher) {
+            api.saveOutcome = SaveOutcome.Refused
+            val viewModel = store().runner()
+            viewModel.answer(Answer.Choice(1))
+            runCurrent()
+            assertEquals(DraftSaveStatus.Refused, viewModel.saveStatus.value)
+
+            api.mock = secondSection()
+            viewModel.submitSection()
+            runCurrent()
+
+            assertEquals(
+                1,
+                viewModel.state.value.view.current
+                    ?.section
+                    ?.toInt(),
+            )
+            assertEquals(DraftSaveStatus.Saved, viewModel.saveStatus.value)
+        }
+
+    @Test
     fun aReadDuringAHandInThatFailsIsShownAfterIt() =
         runTest(dispatcher) {
             api.stepGate = CompletableDeferred()

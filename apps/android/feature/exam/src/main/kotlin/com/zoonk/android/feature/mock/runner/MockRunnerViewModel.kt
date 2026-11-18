@@ -427,6 +427,7 @@ class MockRunnerViewModel(
         heldRead = null
         textSave?.cancel()
         unsavedText = null
+        queue.forgetRefusals()
         run.value = start(next)
         enter(next, kept = emptyList())
     }
