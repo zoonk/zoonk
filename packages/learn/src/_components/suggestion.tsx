@@ -54,8 +54,6 @@ export function Suggestion({
   focusOnMount = false,
   label,
   mark,
-  onClose,
-  onOpen,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
   /**
@@ -66,10 +64,6 @@ export function Suggestion({
   focusOnMount?: boolean;
   label: string;
   mark?: React.ReactNode;
-  /** The learner closed the sheet: work it was waiting on is no longer wanted. */
-  onClose?: () => void;
-  /** The learner's tap on "View" opened the sheet: work the tap asked for can start. */
-  onOpen?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
@@ -88,13 +82,7 @@ export function Suggestion({
 
   return (
     <SuggestionContext value={{ answered: Boolean(answered), label, mark, section, setOpen }}>
-      <Drawer
-        onOpenChange={(next) => {
-          setOpen(next);
-          (next ? onOpen : onClose)?.();
-        }}
-        open={open}
-      >
+      <Drawer onOpenChange={setOpen} open={open}>
         <section
           aria-label={label}
           className={cn(
@@ -188,25 +176,33 @@ export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
 export function SuggestionContent({
   children,
   className,
+  everyWidth = false,
   statement = false,
 }: {
   children: React.ReactNode;
   className?: string;
-  /** No sheet: the line says it all, or the panel shows at every width with its answers. */
+  /** The panel at every width, with its answers in place: no line, no sheet. */
+  everyWidth?: boolean;
+  /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
   statement?: boolean;
 }) {
   return (
     <>
       <PresentationContext value="panel">
         <div
-          className={cn(SURFACE_CLASS, "hidden flex-col gap-2.5 p-4 min-[72rem]:flex", className)}
+          className={cn(
+            SURFACE_CLASS,
+            "flex-col gap-2.5 p-4",
+            everyWidth ? "flex" : "hidden min-[72rem]:flex",
+            className,
+          )}
           data-slot="suggestion-panel"
         >
           {children}
         </div>
       </PresentationContext>
 
-      {!statement && <SuggestionSheet>{children}</SuggestionSheet>}
+      {!statement && !everyWidth && <SuggestionSheet>{children}</SuggestionSheet>}
     </>
   );
 }
