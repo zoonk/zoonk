@@ -14,8 +14,10 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +32,15 @@ class PhraseWrapOnDeviceTest {
     @get:Rule
     val compose = createComposeRule()
 
+    private val deviceLocale = Locale.getDefault()
+
+    /** A Japanese phone's own language, which text without a locale of its own is broken by. */
+    @Before
+    fun speakJapanese() = Locale.setDefault(Locale.JAPANESE)
+
+    @After
+    fun restoreLocale() = Locale.setDefault(deviceLocale)
+
     @Test
     fun aJapaneseLabelAtItsNarrowestBreaksOnlyBetweenPhrases() {
         val ends = narrowestLineEnds { MaterialTheme.typography.labelLarge }
@@ -40,6 +51,13 @@ class PhraseWrapOnDeviceTest {
     @Test
     fun aJapaneseParagraphStillBreaksBetweenCharacters() {
         val ends = narrowestLineEnds { MaterialTheme.typography.bodyLarge }
+        assertEquals("a line per character", (1..LABEL.length).toList(), ends)
+    }
+
+    /** A question is a paragraph too, though its lines are balanced like a title's. */
+    @Test
+    fun aJapaneseQuestionStillBreaksBetweenCharacters() {
+        val ends = narrowestLineEnds { MaterialTheme.zoonkType.question }
         assertEquals("a line per character", (1..LABEL.length).toList(), ends)
     }
 

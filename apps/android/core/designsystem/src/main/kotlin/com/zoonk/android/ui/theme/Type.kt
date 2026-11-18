@@ -201,7 +201,13 @@ private fun phraseLocale(language: String): LocaleList? =
 private fun paragraphWrap(
     language: String,
     phrase: LocaleList,
-): (TextStyle) -> TextStyle = if (language == "ja") { style -> style } else { style -> style.byPhrase(phrase) }
+): (TextStyle) -> TextStyle = if (language == "ja") TextStyle::byCharacter else { style -> style.byPhrase(phrase) }
+
+/** A balanced paragraph (a question) keeps its balance but drops the phrase breaks `LineBreak.Heading` brings. */
+private fun TextStyle.byCharacter(): TextStyle {
+    if (lineBreak.wordBreak != LineBreak.WordBreak.Phrase) return this
+    return copy(lineBreak = lineBreak.copy(wordBreak = LineBreak.WordBreak.Default))
+}
 
 /**
  * Every paragraph starts on the screen's start side, as Android's `viewStart` does: an English
