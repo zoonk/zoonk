@@ -156,7 +156,8 @@ function inkRight(element: CaptureElement) {
 /**
  * One list, one end: a row's last drawn part (its end glyph, or its value where it has none) ends
  * on the group's end edge, by its ink. A row with no end glyph may instead keep the glyph's slot,
- * its value ending where the other rows' values end. And every value in the list ends on one edge,
+ * its value ending where the other rows' values end. When they only have glyphs, the empty slot
+ * still belongs on their edge and has their width. And every value in the list ends on one edge,
  * so a row that drops the slot (its value at the end edge, the others' before their chevrons) fails
  * too. An end glyph whose ink wasn't measured (clipped) is left to the not-measured record.
  */
@@ -217,8 +218,34 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
       return [];
     }
 
-    if (!hasEnd && valueColumns.some((column) => Math.abs(column - last) <= EDGE)) {
-      return [];
+    if (!hasEnd) {
+      if (valueColumns.some((column) => Math.abs(column - last) <= EDGE)) {
+        return [];
+      }
+
+      const keepsSlot =
+        valueColumns.length === 0 &&
+        holders.some((holder) => {
+          const [left, , width] = holder.bounds;
+
+          return (
+            holder.row === row.id &&
+            left >= last &&
+            Math.abs(left + width - edge) <= EDGE &&
+            parts.some(
+              (part) =>
+                part.part === "end" &&
+                part.row !== row.id &&
+                drawn(part) &&
+                Math.abs(reach(part) - edge) <= EDGE &&
+                Math.abs(part.bounds[2] - width) <= EDGE,
+            )
+          );
+        });
+
+      if (keepsSlot) {
+        return [];
+      }
     }
 
     const rowBox = box(row.bounds);
