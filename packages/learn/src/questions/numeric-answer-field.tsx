@@ -20,7 +20,7 @@ type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
 const DECIMAL_EXAMPLE = 2.5;
 
-function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
+function EntryRule({ entry, id }: { entry: NumericEntry; id?: string }) {
   const t = useExtracted();
 
   const rule = {
@@ -41,7 +41,8 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   ) : null;
 }
 
-function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) {
+/** Without an `id` it's a spacer: the line's room, not an alert. */
+function InvalidHint({ entry, id }: { entry: NumericEntry | null; id?: string }) {
   const t = useExtracted();
   const locale = useAppLocale();
 
@@ -55,12 +56,16 @@ function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) 
   };
 
   return (
-    <p className="text-destructive-text text-sm" id={id} role="alert">
+    <p className="text-destructive-text text-sm" id={id} role={id ? "alert" : undefined}>
       {hints[entry?.kind ?? "number"]}
     </p>
   );
 }
 
+/**
+ * The rule and a typing error share one line's room, as tall as the taller of the two, so the
+ * field never moves; with no rule the error goes under the field.
+ */
 function EntryNote({
   entry,
   hintId,
@@ -72,11 +77,27 @@ function EntryNote({
   invalid: boolean;
   ruleId: string;
 }) {
-  if (invalid) {
-    return <InvalidHint entry={entry} id={hintId} />;
+  const hasRule = entry !== null && entry.kind !== "number";
+
+  if (!hasRule) {
+    return invalid ? <InvalidHint entry={entry} id={hintId} /> : null;
   }
 
-  return entry && <EntryRule entry={entry} id={ruleId} />;
+  return (
+    <div className="grid *:col-start-1 *:row-start-1">
+      <div aria-hidden={invalid || undefined} className={cn(invalid && "invisible")}>
+        <EntryRule entry={entry} id={invalid ? undefined : ruleId} />
+      </div>
+
+      {invalid ? (
+        <InvalidHint entry={entry} id={hintId} />
+      ) : (
+        <div aria-hidden="true" className="invisible">
+          <InvalidHint entry={entry} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): string | undefined {
