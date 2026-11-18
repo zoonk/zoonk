@@ -2,6 +2,7 @@
 
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { BarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -46,9 +47,10 @@ function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
   if (buddy === undefined) {
     return (
       <>
-        <span className={LOADING_BUDDY_CLASS}>
+        <span className="signed-in:hidden">
           <BuddyTabName buddy={null} />
         </span>
+        <Skeleton aria-hidden="true" className="signed-in:inline-block hidden h-3 w-6 rounded-sm" />
         <span className="signed-in:inline sr-only hidden">{t("Buddy")}</span>
       </>
     );
@@ -71,8 +73,8 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 }
 
 const GLYPH_SIZES = {
-  md: { face: "size-6", icon: "size-5", ring: "size-6 shrink-0", ringedFace: "size-4.5" },
-  sm: { face: "size-5", icon: "size-4", ring: "size-6 shrink-0", ringedFace: "size-4" },
+  md: { face: "size-5", icon: "size-5", ring: "size-5 shrink-0", ringedFace: "size-4" },
+  sm: { face: "size-4", icon: "size-4", ring: "size-4 shrink-0", ringedFace: "size-3" },
 } as const;
 
 function TabIcon({
@@ -105,6 +107,18 @@ function TabIcon({
       view="face"
     />
   );
+
+  if (buddy === undefined) {
+    return (
+      <span className="relative">
+        {face}
+        <Skeleton
+          aria-hidden="true"
+          className={cn("signed-in:block absolute inset-0 hidden rounded-full", sizes.face)}
+        />
+      </span>
+    );
+  }
 
   if (!missions) {
     return face;

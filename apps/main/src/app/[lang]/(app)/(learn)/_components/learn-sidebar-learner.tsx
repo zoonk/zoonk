@@ -14,8 +14,13 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { SIDEBAR_ACCOUNT_CLASS, SidebarSection } from "@zoonk/ui/components/sidebar";
+import {
+  SIDEBAR_ACCOUNT_CLASS,
+  SIDEBAR_ITEM_CLASS,
+  SidebarSection,
+} from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
@@ -69,10 +74,31 @@ function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
   );
 }
 
-function PendingStudySection() {
+function SidebarRowSkeleton() {
   return (
-    <div className="signed-in:contents hidden">
-      <StudySectionView places={null} />
+    <div className={SIDEBAR_ITEM_CLASS}>
+      <Skeleton className="size-4 shrink-0 rounded-sm" />
+      <Skeleton className="h-3 w-3/5 rounded-sm" />
+    </div>
+  );
+}
+
+function PendingStudySection() {
+  const t = useExtracted();
+  const pages = useStatsPages();
+
+  return (
+    <div aria-hidden="true" className="signed-in:contents hidden">
+      <SidebarSection label={t("Study")}>
+        <SidebarRowSkeleton />
+        <SidebarRowSkeleton />
+        <SidebarRowSkeleton />
+      </SidebarSection>
+      <SidebarSection label={t("Statistics")}>
+        {pages.map(({ menu }) => (
+          <SidebarRowSkeleton key={menu} />
+        ))}
+      </SidebarSection>
     </div>
   );
 }

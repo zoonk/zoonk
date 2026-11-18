@@ -10,6 +10,7 @@ import {
   type LearnerSummaryWaitingGoal,
 } from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
@@ -101,8 +102,16 @@ export function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
       <VisitorLook>{getVisitorStart({ placement, visitor })}</VisitorLook>
       <div
         aria-hidden="true"
-        className={cn("signed-in:block hidden", placement === "sidebar" ? "h-8 w-full" : "h-9")}
-      />
+        className={cn(
+          "signed-in:block hidden",
+          placement === "sidebar" ? "h-8 w-full px-2" : "h-9",
+        )}
+      >
+        <div className="flex h-full items-center gap-2.5">
+          <Skeleton className="size-4 shrink-0 rounded-sm" />
+          <Skeleton className="h-3 w-24 rounded-sm" />
+        </div>
+      </div>
     </>
   );
 }
