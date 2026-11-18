@@ -449,6 +449,15 @@ internal fun ColumnScope.PlacementQuestion(
 }
 
 /** [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
+/** [start]'s width beside [end], which keeps [endMin]; null when [start] doesn't fit there on one line. */
+internal fun besideStartWidth(
+    label: Int,
+    longestWord: Int,
+    width: Int,
+    gap: Int,
+    endMin: Int,
+): Int? = label.takeIf { it + gap + endMin <= width }
+
 @Composable
 private fun BesideOrAbove(
     start: @Composable () -> Unit,
@@ -457,8 +466,17 @@ private fun BesideOrAbove(
     Layout(contents = listOf(start, end)) { (starts, ends), constraints ->
         val gap = ACTION_GAP.roundToPx()
         val width = constraints.maxWidth
-        val startWidth = starts.first().maxIntrinsicWidth(constraints.maxHeight)
-        val beside = startWidth + gap + END_MIN_WIDTH.roundToPx() <= width
+        val start = starts.first()
+        val besideWidth =
+            besideStartWidth(
+                label = start.maxIntrinsicWidth(constraints.maxHeight),
+                longestWord = start.minIntrinsicWidth(constraints.maxHeight),
+                width = width,
+                gap = gap,
+                endMin = END_MIN_WIDTH.roundToPx(),
+            )
+        val beside = besideWidth != null
+        val startWidth = besideWidth ?: width
         val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
         val endPlaceable = ends.first().measure(Constraints.fixedWidth(if (beside) width - gap - startWidth else width))
 
