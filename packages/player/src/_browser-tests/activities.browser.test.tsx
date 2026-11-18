@@ -198,8 +198,22 @@ describe("lesson activities", () => {
       .toBeVisible();
 
     await page.getByRole("radio", { name: /About 25% of the time/u }).click();
+
+    const hitLabel = page.getByText(activityContentFixtures.randomSimulation.fields.hitLabel, {
+      exact: true,
+    });
+
+    const label = hitLabel.element();
+    const card = label.closest("figure")!;
+    const top = label.getBoundingClientRect().top - card.getBoundingClientRect().top;
     await checkActivity();
     await expectVerdict("Correct!");
+
+    expect(label.getBoundingClientRect().top - card.getBoundingClientRect().top).toBeCloseTo(
+      top,
+      0,
+    );
+
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
     await page.getByRole("button", { name: "Run again" }).click();
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
