@@ -358,7 +358,7 @@ private fun LessonPlanDay(
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             FactsRow(
-                title = stringResource(R.string.catalog_example_plan),
+                title = stringResource(R.string.catalog_lesson_example_plan),
                 facts =
                     pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + FACT_SEPARATOR +
                         formatTotalDuration(steps.sumOf { it.minutes }, locale),

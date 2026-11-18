@@ -35,6 +35,7 @@
   "catalog_guess_chip": "003548d292305eb63f85b5f5ea966ee50e370301e73986dd183d42b03f46c728",
   "catalog_guess_note": "c7131a8617bad35b7a1f717ec35e14aac147b2a4307215c6ccad30084d4a4784",
   "catalog_ideas": "037f90d72ae88b96ef2d971ea3cca0c81d59579eac2764a15991a8adc79c417a",
+  "catalog_lesson_example_plan": "904b5b5774929b35c1dd94403cb28b5527bb2fafae28a63f1136f68fef5c2a04",
   "catalog_lesson_minutes": "0efc23caba81d50d6fa74fc14b747f2296b625fe1f54bf57dfcb90eae7b75728",
   "catalog_lesson_part_of": "18ceef194dbafaf658f2268de80af5a9691f5c9b6cb9c842615e78aaa1aed6e8",
   "catalog_lesson_started": "57219d0526ed22f60879e3a910f8eff570ab7a8ed836349cacf21b4ece73b67a",
@@ -50,7 +51,7 @@
   "catalog_outcomes": "110032a5aaa6aea620d01d7005594c7b07c91cc4baa356876c7ab9a503182fcd",
   "catalog_outline": "9c4de5447d05c85acce8e0ca483a6add9cef1b49ca3290a9f575b97fc651c310",
   "catalog_outline_unwritten": "37a79f68f1c60b381af3fe709c95e8e7369805c65da1aaa4fb804f84182d761c",
-  "catalog_plan_caption": "74289679073ba6bad5e10e3f1f4c8df02285c34c51b7ea4b2a9804697dc0dcba",
+  "catalog_plan_caption": "af1feb8a71d0d7c4562bd950c897cb5302bd079d8e3c34b63c3e0b85151b4e5d",
   "catalog_plan_lessons": "1a0e321284460467751346473d226c75047e7db6c5881c79ec6e4565ff8770c7",
   "catalog_plan_line": "205f3a22ec93fe1714887969a5b19db81a36d92a9803413b3c5b12ee48019027",
   "catalog_plan_line_chapter": "ca2a0fcb95d8a1b503a15ccf05ae725ec6370f9fcdd89fa3cf64edfe6d8942b7",
@@ -146,6 +147,8 @@
     <string name="catalog_quick_question">간단한 문제</string>
     <string name="catalog_guess_note">답을 고르면 %1$s분 레슨이 시작돼요.</string>
     <string name="catalog_example_plan">걸리는 시간</string>
+    <!-- Over a sample day of two or three lessons on a lesson's page. -->
+    <string name="catalog_lesson_example_plan">계획 예시</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="other">약 %1$s주</item>
     </plurals>
@@ -159,7 +162,7 @@
     <plurals name="catalog_plan_more_lessons">
         <item quantity="other">+ 레슨 %1$d개</item>
     </plurals>
-    <string name="catalog_plan_caption">이미 아는 내용은 계획에서 건너뛰니 시간이 덜 걸릴 수 있어요.</string>
+    <string name="catalog_plan_caption">예시예요. 실제 계획은 답변에 따라 달라져서 뒷부분부터 시작해 더 빨리 끝날 수 있어요.</string>
     <string name="catalog_audience">이런 분께 추천해요</string>
     <string name="catalog_outcomes">배우고 나면 할 수 있는 것</string>
     <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->

@@ -35,6 +35,7 @@
   "catalog_guess_chip": "ba3394d452fe426c87626e60228317457c1b53be130c2c06d86fae443563a76f",
   "catalog_guess_note": "de655001bd568dff6e289016fe79e0186fca5f7de903765485049054e773179b",
   "catalog_ideas": "23fccdad6aa5313ac47189546363e0a6d3bcd9bbe3d9e74cd92844d4649ad20b",
+  "catalog_lesson_example_plan": "4f18d9e01efbfaee2c645a29c9ab9f111584a427756b75790726712218c0c76c",
   "catalog_lesson_minutes": "84a59cc1384842625d0034f76b3c8a9748f5ed6c3c1a7832658cb1d30e9a391e",
   "catalog_lesson_part_of": "29bfe72a9ef878b164e19ef29441c5c9e09f9703d8a3ba08a3087b4877e37d98",
   "catalog_lesson_started": "3e15fdbe5d3aa066b18666e9120a20524d04c7adf95cd1de2a4a79ad1c6994cc",
@@ -50,7 +51,7 @@
   "catalog_outcomes": "7139cca87d62e967f6772512bdc4a4817a58f5be062dbe3b0367fa210f3fcb2a",
   "catalog_outline": "20392136a115e2c5fb8a3baeae0a2469c1dd906847b787448413719d6a93bab8",
   "catalog_outline_unwritten": "a96a7c1921afbddabb523a001c7b509251f27b8b446f2ed822224526a8d2c8c5",
-  "catalog_plan_caption": "0a1fa8305c32e3188b1fe33325c189039fd38cf280d3d10e481f10da7ba2f1f6",
+  "catalog_plan_caption": "45a21cdefa6daf3882d1ef1f45ab40eba82e015157573d463ee103ec9a5900d8",
   "catalog_plan_lessons": "9480866368139fdf6275d809277fe7bd3515d8a81692161dca78008aa513a124",
   "catalog_plan_line": "b93bdb99d4c2dcc38a72c5b59e8fa91c846958754a04e2699720bd571fcb8243",
   "catalog_plan_line_chapter": "b09cfee65cd4c9d468a01d9d5b95dc163e9cd4d22065dd33a4249a5889c2e2ae",
@@ -152,6 +153,8 @@
     <string name="catalog_quick_question">Pregunta rápida</string>
     <string name="catalog_guess_note">Tu respuesta inicia la lección de %1$s min.</string>
     <string name="catalog_example_plan">Cuánto tiempo toma</string>
+    <!-- Over a sample day of two or three lessons on a lesson's page. -->
+    <string name="catalog_lesson_example_plan">Plan de ejemplo</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s semana</item>
         <item quantity="many">~%1$s semanas</item>
@@ -173,7 +176,7 @@
         <item quantity="many">+ %1$d lecciones más</item>
         <item quantity="other">+ %1$d lecciones más</item>
     </plurals>
-    <string name="catalog_plan_caption">Tu plan se salta lo que ya sabes, así que puede tomarte menos tiempo.</string>
+    <string name="catalog_plan_caption">Es un ejemplo. Tu plan se adapta a tus respuestas, así que puede empezar más adelante y terminar antes.</string>
     <string name="catalog_audience">Para quién es</string>
     <string name="catalog_outcomes">Lo que podrás hacer</string>
     <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->
