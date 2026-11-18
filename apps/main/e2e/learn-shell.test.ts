@@ -54,6 +54,27 @@ test.describe("Learning tabs frame", () => {
   });
 });
 
+test("the loaded mistakes notebook still goes back to the page it was opened from", async ({
+  browser,
+}) => {
+  const { user } = await createTwoGoalLearner();
+  const page = await openAs(browser, user);
+  await page.setViewportSize({ height: 900, width: 1440 });
+  await page.goto("/plan");
+
+  const notebook = page
+    .getByRole("complementary", { name: "Sidebar" })
+    .getByRole("link", { name: "Mistakes notebook" });
+
+  await expectHydrated(notebook);
+  await notebook.click();
+  await expect(page.getByText(/^Nothing to fix right now/u)).toBeVisible();
+
+  await page.setViewportSize({ height: 844, width: 390 });
+  await page.getByRole("link", { exact: true, name: "Back to Plan" }).click();
+  await expect(page).toHaveURL(/\/plan$/u);
+});
+
 test.describe("The way back on a computer", () => {
   test("a page the learner's sidebar lists has none, and one it doesn't list keeps it", async ({
     browser,
@@ -90,6 +111,22 @@ test.describe("The way back on a computer", () => {
     ).toHaveCount(0);
 
     await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeVisible();
+
+    await unlisted.goto("/mistakes");
+
+    await expect(
+      unlisted.getByText(
+        "The questions you got wrong, why, and practice until you get them right.",
+      ),
+    ).toBeVisible();
+
+    await expect(
+      unlisted
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Mistakes notebook" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeHidden();
   });
 });
 

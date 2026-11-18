@@ -160,6 +160,23 @@ final class PhaseEndTests: XCTestCase {
     XCTAssertNil(plan.phaseEnd(plan.phases[0]))
   }
 
+  func testAFinishedPlanEndsOnItsCompletionDay() throws {
+    let plan = try goalPlanFixture(
+      targetDate: "2027-11-14", end: "finished", finishedOn: "2027-02-05")
+
+    let finish = try XCTUnwrap(plan.roadmapFinish(isExam: false))
+    XCTAssertEqual(finish.isoDate, "2027-02-05")
+    XCTAssertFalse(finish.estimate)
+    XCTAssertFalse(finish.month)
+    XCTAssertEqual(plan.roadmapFinish(isExam: true)?.isoDate, "2027-11-14")
+  }
+
+  func testAFinishedPlanWithoutAKnownCompletionDayHasNoFinishDate() throws {
+    let plan = try goalPlanFixture(targetDate: "2027-11-14", end: "finished")
+
+    XCTAssertNil(plan.roadmapFinish(isExam: false))
+  }
+
   func testTheFinishIsTheExamsDateAnEstimateWhenTheDateIs() throws {
     let plan = try goalPlanFixture(targetDate: "2027-11-14", targetDateEstimated: true)
 
@@ -213,10 +230,11 @@ func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
   fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7,
-  today: String = "2027-01-04", lessonsStudied: Int = 0
+  today: String = "2027-01-04", lessonsStudied: Int = 0, finishedOn: String? = nil
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
-  let over = planEnd.map { #"{"kind": "\#($0)"}"# } ?? "null"
+  let completion = finishedOn.map { "\"\($0)\"" } ?? "null"
+  let over = planEnd.map { #"{"kind": "\#($0)", "finishedOn": \#(completion)}"# } ?? "null"
   let target = targetDate.map { "\"\($0)\"" } ?? "null"
   let json = """
     {

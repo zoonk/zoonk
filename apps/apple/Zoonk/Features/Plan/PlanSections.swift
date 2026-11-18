@@ -270,9 +270,12 @@ extension GoalPlan {
       lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
   }
 
-  /// The day the plan reaches its goal: the goal's date, or the plan's own end, about, when it has
-  /// none. An exam without its date has none.
+  /// When the plan finished, or the goal's date or estimated end while it's under way.
   func roadmapFinish(isExam: Bool) -> (isoDate: String, estimate: Bool, month: Bool)? {
+    if !isExam, let end {
+      return end.finishedOn.map { ($0, false, false) }
+    }
+
     if let targetDate = schedule.targetDate {
       return (targetDate, schedule.targetDateEstimated, schedule.targetDateNamedMonth)
     }

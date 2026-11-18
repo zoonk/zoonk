@@ -241,7 +241,7 @@ export function CountryPicker({
     <Drawer onOpenChange={changeOpen} open={open}>
       {/* On a phone it rises over the keyboard and gives up that much height, so every row can scroll into view. */}
       <DrawerPopup
-        className="h-[calc(80dvh-var(--drawer-keyboard-inset,0px))] max-sm:mb-(--drawer-keyboard-inset) sm:h-auto"
+        className="h-[calc(80dvh-var(--drawer-keyboard-inset,0px))] pb-4 max-sm:mb-(--drawer-keyboard-inset) sm:h-auto"
         finalFocus={finalFocus}
         initialFocus={() =>
           globalThis.matchMedia("(pointer: fine)").matches ? inputRef.current : popupRef.current
@@ -276,7 +276,7 @@ export function CountryPicker({
           <div className="flex min-h-0 flex-1 flex-col sm:h-[min(60vh,28rem)] sm:flex-none">
             <CommandList
               after={<ListState catalog={catalog} noCountry={noCountry} />}
-              className="px-6 sm:px-2.5"
+              className="px-6 pb-[env(safe-area-inset-bottom)] sm:px-2.5"
             >
               <CountryGroups groups={groups} onPick={onPick} value={value} />
             </CommandList>

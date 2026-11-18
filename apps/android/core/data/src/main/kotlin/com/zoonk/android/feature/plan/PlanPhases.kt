@@ -70,8 +70,12 @@ sealed interface PhaseEnd {
     ) : PhaseEnd
 }
 
-/** Main's `getRoadmapFinish`: the day the plan reaches its goal, the goal's date or the plan's own end (never an exam's). */
+/** Main's `getPlanFinish`: the completion day, or the goal's date or estimated end while under way. */
 fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanEnd? {
+    val completion = end
+    if (goalKind != LearnerSummaryGoal.Kind.EXAM && completion != null) {
+        return completion.finishedOn?.let { PlanEnd(it.toJavaLocalDate(), estimate = false, month = false) }
+    }
     schedule.targetDate?.let {
         return PlanEnd(it.toJavaLocalDate(), schedule.targetDateEstimated, schedule.targetDateNamedMonth)
     }
@@ -152,6 +156,7 @@ data class PlanOverrun(
 )
 
 fun Plan.overrun(goalKind: LearnerSummaryGoal.Kind): PlanOverrun? {
+    if (goalKind != LearnerSummaryGoal.Kind.EXAM && end != null) return null
     val finish = finish(goalKind) ?: return null
     val phases = roadmapPhases
     val last = phases.lastOrNull()?.end ?: return null

@@ -84517,6 +84517,13 @@
             "description": "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`, or `needsAdjusting` while one has no room before the date)",
             "type": "object",
             "properties": {
+              "finishedOn": {
+                "nullable": true,
+                "description": "The learner-local day the plan finished, if its completion dates are known",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
               "kind": {
                 "type": "string",
                 "enum": [
@@ -84526,6 +84533,7 @@
               }
             },
             "required": [
+              "finishedOn",
               "kind"
             ],
             "additionalProperties": false

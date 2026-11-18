@@ -111,7 +111,7 @@ function Screen({ actions, served }: { actions: MindMapLibraryActions; served: G
   );
 }
 
-const notMade = () => page.getByRole("region", { name: "Other chapters" });
+const notMade = () => page.getByRole("region", { name: "Without a map" });
 const usedUp = () => notMade().getByText("You've used your mind maps");
 const createAll = () => notMade().getByRole("button", { name: "Create all" });
 
@@ -278,7 +278,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
       render(<Screen actions={actionsWith({})} served={writingView(stop)} />);
 
       await expect
-        .element(notMade().getByRole("button", { name: "Other chapters" }))
+        .element(notMade().getByRole("button", { name: "Without a map" }))
         .toHaveAttribute("aria-expanded", "true");
 
       await expect.element(writingRow()).toBeVisible();

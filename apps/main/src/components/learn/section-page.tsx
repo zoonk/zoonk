@@ -1,6 +1,5 @@
 import { AppEntryName } from "@zoonk/learn/bar";
 import {
-  MEASURED_CLASS,
   PAGE_COLUMN_CLASS,
   PageHeader,
   PageHeaderContent,
@@ -21,7 +20,7 @@ export function SectionPage({
   nav,
   note,
   parents,
-  root,
+  tabbedHub,
 }: {
   children: React.ReactNode;
   end?: React.ReactNode;
@@ -33,8 +32,8 @@ export function SectionPage({
   note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
-  /** The sidebar lists the section's pages, so from `lg` they need no way back. */
-  root?: boolean;
+  /** The hub becomes the first tab from a tablet up. */
+  tabbedHub?: boolean;
 }) {
   return (
     <div
@@ -48,9 +47,14 @@ export function SectionPage({
       )}
       data-slot="section-page"
     >
-      <SectionBarFrame end={end} hub={hub} parents={parents} root={root} />
+      <SectionBarFrame end={end} hub={hub} parents={parents} tabbedHub={tabbedHub} />
 
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", measure && MEASURED_CLASS)}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 flex-col gap-6",
+          measure && "[&>*:not([data-slot=page],.contents)]:max-w-(--page-measure)",
+        )}
+      >
         <div className="hidden flex-col gap-3 border-b pb-3 md:flex">
           <div className={PAGE_HEADER_CLASS}>
             <p className="text-title" data-slot="section-title">

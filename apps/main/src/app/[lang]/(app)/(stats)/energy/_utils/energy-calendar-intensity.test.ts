@@ -4,7 +4,7 @@ import { getEnergyCalendarIntensity } from "./energy-calendar-intensity";
 describe(getEnergyCalendarIntensity, () => {
   it.each([
     { energy: null, expectedIntensity: 0 },
-    { energy: 0, expectedIntensity: 0 },
+    { energy: 0, expectedIntensity: 1 },
     { energy: 1, expectedIntensity: 1 },
     { energy: 25, expectedIntensity: 1 },
     { energy: 26, expectedIntensity: 2 },

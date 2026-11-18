@@ -17,12 +17,12 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { type TaskFrameAside } from "../shell/task-frame";
+import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
-import { isDraftAnswered } from "./use-mock-drafts";
 
 function useSheetCountLine(): string {
   const t = useExtracted();
@@ -30,6 +30,11 @@ function useSheetCountLine(): string {
 
   return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
 }
+
+const CELL_FILLED_CLASS =
+  "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent";
+
+const CELL_FLAGGED_CLASS = "text-warning-text ring-warning ring-2";
 
 function QuestionCell({
   index,
@@ -54,9 +59,8 @@ function QuestionCell({
       }
       className={cn(
         "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
-        isDraftAnswered(draft) &&
-          "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent",
-        draft?.flagged && "text-warning-text ring-warning ring-2",
+        countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
+        draft?.flagged && CELL_FLAGGED_CLASS,
         isCurrent && cn("ring-foreground ring-2", !draft?.flagged && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
@@ -123,17 +127,28 @@ export function MockQuestionMap({ className }: { className?: string }) {
 function SheetLegend({ className }: { className?: string }) {
   const t = useExtracted();
   const { flagged } = useSectionCounts();
+  const { runner } = useMockScreen();
 
-  if (flagged === 0) {
+  const marked = runner.view.current?.questions.find(
+    (question) => runner.drafts[question.itemId]?.flagged,
+  );
+
+  if (!marked) {
     return null;
   }
 
   return (
-    <p className={cn("text-muted-foreground flex items-start gap-1.5 text-xs", className)}>
+    <p className={cn("text-muted-foreground flex items-center gap-1.5 text-xs", className)}>
       <span
         aria-hidden="true"
-        className="ring-warning mt-1 size-2 shrink-0 rounded-xs ring-[1.5px] ring-inset"
-      />
+        className={cn(
+          "flex size-6 shrink-0 items-center justify-center rounded-md font-mono font-medium tabular-nums ring-inset",
+          countsTowardMockProgress(runner, marked.itemId) && CELL_FILLED_CLASS,
+          CELL_FLAGGED_CLASS,
+        )}
+      >
+        {marked.format === "essay" ? <PenLineIcon className="size-3" /> : marked.number}
+      </span>
       {t("{flagged, plural, one {# flagged} other {# flagged}}", { flagged })}
     </p>
   );

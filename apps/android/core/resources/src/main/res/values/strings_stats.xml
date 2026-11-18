@@ -95,7 +95,7 @@
     </plurals>
     <string name="stats_throughout_week">Throughout the week</string>
     <string name="stats_throughout_day">Throughout the day</string>
-    <string name="stats_any_day">Any day</string>
+    <string name="stats_any_day">No best day yet</string>
     <string name="stats_any_time">Any time</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Your best day is %1$s.</string>

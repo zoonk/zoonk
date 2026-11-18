@@ -23,10 +23,7 @@ export type PageMeasure = keyof typeof MEASURE_CLASS;
 
 /** Sets the measure for what's inside, where the content takes `MEASURED_CLASS`. */
 export function pageMeasureClass(measure: PageMeasure): string {
-  return cn(
-    MEASURE_CLASS[measure],
-    "**:data-[slot=bottom-bar-row]:max-w-[calc(var(--page-measure)+2*var(--page-gutter))]",
-  );
+  return MEASURE_CLASS[measure];
 }
 
 export const MEASURED_CLASS = "max-w-(--page-measure)";

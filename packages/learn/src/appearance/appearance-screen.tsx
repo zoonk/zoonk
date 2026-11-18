@@ -99,7 +99,7 @@ export function AppearanceScreen({
       )}
 
       {view.canPersonalize && (
-        <PageSection>
+        <PageSection className="gap-0.5">
           <SectionTitle>{t("Lessons")}</SectionTitle>
           <ListGroup>
             <SwitchSettingRow

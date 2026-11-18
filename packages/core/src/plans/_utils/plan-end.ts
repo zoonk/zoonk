@@ -1,4 +1,7 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type PlanView } from "../plan-view-contract";
+import { addDays, toIsoDate } from "../planner/plan-calendar";
 import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase } from "../planner/plan-state";
@@ -138,6 +141,48 @@ export function isPlanFinished({
       isClosingWorkLeft({ goalKind, item, phaseChallengesRequired, targetDate, today }),
     )
   );
+}
+
+type PlanEndViewInput = Omit<PlanEndInput, "items"> & {
+  items: readonly (DatedEndItem & Pick<PlanItem, "completedAt">)[];
+  timeZone: string;
+};
+
+export function getPlanEnd(input: PlanEndViewInput): PlanView["end"] {
+  if (!isPlanFinished(input)) {
+    return null;
+  }
+
+  const { goalKind, items, phaseChallengesRequired = true, targetDate, timeZone } = input;
+  const deadline = hasPlanDeadline(input);
+
+  const required = items.filter(
+    (item) =>
+      isInLessonScope({ deadline, item }) ||
+      (phaseChallengesRequired && item.kind === "boss") ||
+      (goalKind === "exam" && EXAM_DAY_KINDS.has(item.kind)),
+  );
+
+  const days = required.map((item) => {
+    if (isWorkFinished(item.status)) {
+      return item.completedAt
+        ? toIsoDate(getDateInTimeZone({ date: item.completedAt, timeZone }))
+        : null;
+    }
+
+    if (isTodo(item) && targetDate && item.scheduledFor) {
+      const expired = addDays(item.scheduledFor, 1);
+      return toIsoDate(expired > targetDate ? expired : targetDate);
+    }
+
+    return null;
+  });
+
+  const finishedOn = days.every((day) => day !== null)
+    ? (days.toSorted((first, second) => first.localeCompare(second)).at(-1) ?? null)
+    : null;
+
+  return { finishedOn, kind: "finished" };
 }
 
 export function areLessonsFinished({

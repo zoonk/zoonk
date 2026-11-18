@@ -106,6 +106,26 @@ class PhaseDatesTest {
     }
 
     @Test
+    fun finishesALearningPlanOnItsActualCompletionDay() {
+        val shaped =
+            planOf(
+                phase(0, "done", "2027-01-02", start = "2026-11-15"),
+                target = EXAM_DAY,
+                end = """{"kind":"finished","finishedOn":"2026-12-05"}""",
+            )
+
+        assertEquals(PlanEnd(day("2026-12-05"), estimate = false, month = false), shaped.finish(LEARN))
+        assertEquals(day(EXAM_DAY), shaped.finish(EXAM)?.date)
+        assertNull(shaped.overrun(LEARN))
+    }
+
+    @Test
+    fun leavesAFinishedPlanWithoutAKnownCompletionDayUndated() {
+        val shaped = planOf(phase(0, "done"), target = EXAM_DAY, end = """{"kind":"finished","finishedOn":null}""")
+        assertNull(shaped.finish(LEARN))
+    }
+
+    @Test
     fun givesAPhaseStillBeingPlannedNoDate() {
         val shaped = planOf(phase(0), phase(1))
         assertNull(shaped.phaseEnd(shaped.phases[0]))
@@ -271,10 +291,12 @@ class PhaseDatesTest {
         target: String? = null,
         targetEstimated: Boolean = false,
         shortPlan: Boolean = false,
+        end: String = "null",
     ): Plan =
         plan(
             """
             "phases":[${phases.joinToString(",")}],
+            "end":$end,
             "estimate":{"remainingHours":10,"totalHours":12,"endDate":${planEnd.json()}},
             "schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":${target.json()},
               "targetDateEstimated":$targetEstimated,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
@@ -290,7 +312,9 @@ class PhaseDatesTest {
         kind: String = "learn",
         checkpoint: String? = null,
         short: String? = null,
-    ) = """{"chapterCount":0,"chapters":[],"checkpoint":${checkpoint ?: "null"},"startDate":null,"endDate":${end.json()},"hours":10,
+        start: String? = null,
+    ) =
+        """{"chapterCount":0,"chapters":[],"checkpoint":${checkpoint ?: "null"},"startDate":${start.json()},"endDate":${end.json()},"hours":10,
         "index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":0,"mocks":{"count":0},"name":"Phase $index","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state",
         "short":${short ?: "null"}}"""
 

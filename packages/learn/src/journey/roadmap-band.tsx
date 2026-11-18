@@ -5,6 +5,7 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
+import { CurrentPhaseMark } from "./current-phase-mark";
 import { EndDateSizer } from "./roadmap-lane";
 import { BAND_CHECK_CLASS, BandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
@@ -21,7 +22,11 @@ export function BandFace({ isLast, phase }: { isLast: boolean; phase: PlanPhaseV
     <>
       <BandName
         leading={
-          phase.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />
+          phase.state === "current" ? (
+            <CurrentPhaseMark className="mr-1.5 inline-block size-1.5 align-[0.08em] ring-2" />
+          ) : (
+            phase.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />
+          )
         }
         name={name}
       />

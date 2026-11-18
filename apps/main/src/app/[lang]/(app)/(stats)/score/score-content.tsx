@@ -5,9 +5,8 @@ import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
 import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
-import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ScoreChart, ScoreChartSkeleton } from "./score-chart";
-import { ScoreTile } from "./score-stats";
+import { ScoreTile, ScoreTileSkeleton } from "./score-stats";
 
 export async function ScoreContent() {
   const locale = await getAppLocale();
@@ -32,7 +31,7 @@ export async function ScoreContent() {
 export function ScoreContentSkeleton() {
   return (
     <ProgressContent>
-      <StatTilesSkeleton count={1} detailed={1} />
+      <ScoreTileSkeleton />
       <ScoreChartSkeleton />
     </ProgressContent>
   );

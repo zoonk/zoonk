@@ -27,6 +27,21 @@ async function openJourney(page: Page) {
 }
 
 test.describe("Journey", () => {
+  test("shows the estimated end date when the learner set no date", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+      expect(goal.targetDate).toBeNull();
+
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await openJourney(page);
+
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
+      await expect(endDate.locator('[data-slot="plan-date"]')).toContainText(/^~/u);
+    });
+  });
+
   test("says what a time change in the plan editor did, and Undo gives the plan back as it was", async ({
     browser,
   }) => {

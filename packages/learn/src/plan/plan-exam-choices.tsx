@@ -149,7 +149,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
 
   return (
     <Suggestion answered={answer !== null} label={title} mark={<SignpostIcon />}>
-      <SuggestionLine>
+      <SuggestionLine className="**:data-[slot=button]:min-h-11">
         {answer ? (
           <>
             <SuggestionResult>{answer.text}</SuggestionResult>

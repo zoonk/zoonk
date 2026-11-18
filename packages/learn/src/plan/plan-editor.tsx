@@ -103,7 +103,7 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
           <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
         </SidePanelHeader>
 
-        <div className="scroll-hairline-t flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
+        <div className="scroll-hairline-t flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8 *:shrink-0">
           <EditorSections />
         </div>
 
@@ -125,7 +125,7 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
           <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
         </DrawerHeader>
 
-        <DrawerContent className="flex flex-col gap-7 pt-2">
+        <DrawerContent className="flex min-h-0 flex-col gap-7 pt-2 *:shrink-0 has-[+div[data-slot=drawer-footer]]:border-b-0">
           <EditorSections />
         </DrawerContent>
 
