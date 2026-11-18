@@ -17,6 +17,7 @@ const STEP_MULTIPLIERS = [5, 2, 1] as const;
 const MULTIPLE_SLACK = 1e-9;
 const SD_TICKS = 3;
 const UNIFORM_TICKS = 4;
+const TAIL_DIGITS = 2;
 
 function densityAt(distribution: Distribution, value: number): number {
   if (distribution.kind === "uniform") {
@@ -126,10 +127,15 @@ export function distributionTicks(distribution: Distribution, domain: NumericDom
 
 export function distributionPercentFormat({
   check,
+  isTail,
 }: {
   check: ActivityContentFor<"distributionExplorer">["check"];
   isTail?: boolean;
 }) {
+  if (isTail) {
+    return { maximumFractionDigits: TAIL_DIGITS, unit: "%" };
+  }
+
   return {
     maximumFractionDigits:
       check.kind === "numeric"

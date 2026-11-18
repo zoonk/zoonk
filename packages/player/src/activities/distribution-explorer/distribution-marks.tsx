@@ -175,16 +175,26 @@ export function DistributionTarget({
   );
 }
 
-export function DistributionMean({ value }: { value: number }) {
+export function DistributionMean({ label, value }: { label: string; value: number }) {
   const { x, y } = usePlotScales();
   const [bottom, top] = y.range;
+  const at = x.toPixel(value);
 
   return (
-    <path
-      aria-hidden="true"
-      className="stroke-muted-foreground/50"
-      d={`M${x.toPixel(value)} ${bottom} V${top}`}
-      strokeDasharray="3 4"
-    />
+    <g aria-hidden="true">
+      <path
+        className="stroke-muted-foreground/50"
+        d={`M${at} ${bottom} V${top}`}
+        strokeDasharray="3 4"
+      />
+      <text
+        className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}
+        textAnchor="middle"
+        x={at}
+        y={top - TARGET_LABEL_RISE}
+      >
+        {label}
+      </text>
+    </g>
   );
 }

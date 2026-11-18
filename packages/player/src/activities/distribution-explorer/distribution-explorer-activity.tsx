@@ -138,13 +138,17 @@ export function DistributionExplorerActivity({
         <ActivityPlotArea
           points={curve.filter((point) => point.x >= handles.from && point.x <= handles.to)}
         />
-        {distribution.kind === "normal" && <DistributionMean value={distribution.mean} />}
+        {distribution.kind === "normal" && (
+          <DistributionMean label={format(distribution.mean)} value={distribution.mean} />
+        )}
         <ActivityPlotLine className="stroke-2" points={curve} />
 
         <DistributionTicks
           format={(value) => format(value)}
           handles={[handles.from, handles.to]}
-          ticks={distributionTicks(distribution, domain)}
+          ticks={distributionTicks(distribution, domain).filter(
+            (tick) => distribution.kind !== "normal" || tick !== distribution.mean,
+          )}
         />
 
         {isChecked && !isOnTarget && (
