@@ -25,9 +25,11 @@ const THREE_LINES_CLASS =
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
-    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
+    "before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
-    isNext && "before:bg-muted has-[[data-slot=today-row-open]:hover]:before:bg-muted border-b-0",
+    isNext
+      ? "before:bg-muted border-b-0"
+      : "[@media(hover:hover)]:has-[[data-slot=today-row-open]:hover]:before:bg-muted/70",
     THREE_LINES_CLASS,
   );
 }
@@ -184,7 +186,7 @@ export function BlockRow({
       aria-current={isNext ? "step" : undefined}
       className={cn(
         getRowClass({ finished, isNext }),
-        lessonAgainId && "has-[a:hover]:before:bg-muted/70",
+        lessonAgainId && "[@media(hover:hover)]:has-[a:hover]:before:bg-muted/70",
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
