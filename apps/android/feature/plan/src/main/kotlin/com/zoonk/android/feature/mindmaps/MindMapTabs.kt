@@ -29,11 +29,11 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
@@ -46,12 +46,10 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.LessonMapGroup
@@ -178,8 +176,9 @@ private fun GoalMindMap.canMakeNow(): Boolean =
         (status == GoalMindMap.Status.AVAILABLE || status == GoalMindMap.Status.DRAWING || status == GoalMindMap.Status.FAILED)
 
 /**
- * Main's `NotMadeYet`, after the chapters that have a map, under its own Without a map heading: each chapter whose
- * map can be made now as its own row, the rest folded under the heading (listed when none is ready), then Create all
+ * Main's `NotMadeYet`, after the chapters that have a map, under its own Without a map heading that counts them all:
+ * each chapter whose map can be made now as its own row, the rest folded behind a row that counts them (listed when
+ * none is ready), then Create all
  * when two or more can start and one line about them all, after the rows they act on. The rows mix subjects, so they
  * go without their number.
  */
@@ -195,19 +194,11 @@ private fun LazyListScope.notMadeBlock(
     val folds = now.isNotEmpty() && later.isNotEmpty()
 
     item(key = "not-made-title", contentType = "title") {
-        val title = stringResource(R.string.mindmaps_other_chapters)
-        val count = pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size)
-        if (!folds) {
-            SectionHeader(title, Modifier.padding(top = 24.dp, bottom = 8.dp), detail = count)
-        } else {
-            ListRow(
-                headline = { Text(title, Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.sectionTitle) },
-                modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 16.dp),
-                onClick = actions.toggleNotMade,
-                expanded = open,
-                meta = { Text(count, style = MaterialTheme.zoonkType.data) },
-            )
-        }
+        SectionHeader(
+            stringResource(R.string.mindmaps_other_chapters),
+            Modifier.padding(top = 24.dp, bottom = 8.dp),
+            detail = pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size),
+        )
     }
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
@@ -227,6 +218,20 @@ private fun LazyListScope.notMadeBlock(
         items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
             // The note parts the two lists; without it a hairline does, as between any two rows.
             Divided(map != later.first() || (now.isNotEmpty() && !note)) { ChapterRow(map, actions, stop = stop, numbered = false) }
+        }
+    }
+    if (folds) {
+        item(key = "not-made-fold", contentType = "fold") {
+            MoreChaptersRow(
+                text =
+                    if (open) {
+                        stringResource(R.string.plan_show_fewer_chapters)
+                    } else {
+                        pluralStringResource(R.plurals.plan_more_chapters, later.size, later.size)
+                    },
+                open = open,
+                onClick = actions.toggleNotMade,
+            )
         }
     }
     item(key = "not-made", contentType = "not-made") {
