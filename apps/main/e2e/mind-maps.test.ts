@@ -826,8 +826,12 @@ test.describe("Mind maps", () => {
       await expect(notMade.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
       const row = notMade.getByRole("listitem").filter({ hasText: second.chapter.title });
-      await expect(row).toBeVisible();
+      await expect(row.getByText("1 lesson to write", { exact: true })).toBeVisible();
       await expect(row.getByRole("button", { name: "Create" })).toBeHidden();
+
+      await expect(
+        notMade.getByText("Writing lessons counts toward your free lessons."),
+      ).toBeHidden();
 
       await notMade.getByRole("link", { name: "Subscribe" }).click();
       await expect(page).toHaveURL(/\/subscription$/u);

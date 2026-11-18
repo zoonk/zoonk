@@ -139,30 +139,13 @@ export function canMakeNow(chapter: MindMapsPageChapter): boolean {
   );
 }
 
-/**
- * Whether the row's action writes the chapter's lessons, so it counts toward free lessons: none
- * were admitted yet, and the row offers Create, or Try again after a tap that never reached the
- * server. A failed map's Try again writes nothing it didn't already count.
- */
-function writesLessons(chapter: MindMapsPageChapter, library: MindMapsLibrary): boolean {
-  const request = library.row(chapter);
-
-  return (
-    chapter.status === "available" &&
-    chapter.lessonsToWrite > 0 &&
-    (request.create !== undefined || request.shown === "unreachable")
-  );
-}
-
 function NotMadeRows({
   chapters,
   library,
-  noteId,
   plus,
 }: {
   chapters: readonly MindMapsPageChapter[];
   library: MindMapsLibrary;
-  noteId?: string;
   plus: boolean;
 }) {
   return (
@@ -170,7 +153,6 @@ function NotMadeRows({
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
-            noteId={noteId && writesLessons(chapter, library) ? noteId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -197,15 +179,13 @@ export function NotMadeYet({
 }) {
   const t = useExtracted();
   const { bulk, page } = library;
-  const { startable } = page.createOffer;
+  const { needLessons, startable, stop } = page.createOffer;
   const plus = tier === "plus";
   const now = chapters.filter((chapter) => canMakeNow(chapter));
   const later = chapters.filter((chapter) => !canMakeNow(chapter));
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
   const listId = useId();
-  const noteId = useId();
-  const showsNote = !plus && later.some((chapter) => writesLessons(chapter, library));
   const folds = now.length > 0 && later.length > 0;
   const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
   const laterRef = useRef<HTMLDivElement>(null);
@@ -226,17 +206,10 @@ export function NotMadeYet({
 
   const laterRows = (
     <div className="flex flex-col gap-3" ref={laterRef}>
-      {showsNote && (
-        <p className={LINE_CLASS} id={noteId}>
-          {t("Making a map writes its chapter's lessons first, from your free lessons.")}
-        </p>
+      {!plus && needLessons > 0 && stop === null && (
+        <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
       )}
-      <NotMadeRows
-        chapters={later}
-        library={library}
-        noteId={showsNote ? noteId : undefined}
-        plus={plus}
-      />
+      <NotMadeRows chapters={later} library={library} plus={plus} />
     </div>
   );
 
