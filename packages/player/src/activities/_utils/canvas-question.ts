@@ -17,3 +17,16 @@ export function useCanvasQuestion(isAsking: boolean) {
     return () => setAsking?.(false);
   }, [isAsking, setAsking]);
 }
+
+/** Set by `ActivityStep`: whether the canvas is taking the number keys from the step's question. */
+export const CanvasKeysContext = createContext<((hasKeys: boolean) => void) | null>(null);
+
+/** While the canvas picks with the number keys (a square being changed), the step's question stops answering them and hides their badges. */
+export function useCanvasNumberKeys(hasKeys: boolean) {
+  const setHasKeys = use(CanvasKeysContext);
+
+  useLayoutEffect(() => {
+    setHasKeys?.(hasKeys);
+    return () => setHasKeys?.(false);
+  }, [hasKeys, setHasKeys]);
+}
