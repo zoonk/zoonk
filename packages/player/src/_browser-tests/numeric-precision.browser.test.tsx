@@ -18,7 +18,7 @@ vi.mock("next-intl", async (importOriginal) => ({
 }));
 
 describe("numeric answer precision", () => {
-  it("keeps the exact Portuguese input and rounds the feedback to the stated precision", async () => {
+  it("keeps a canvas-produced close miss distinct in the Portuguese input and feedback", async () => {
     const { numberLine } = activityContentFixtures;
 
     const content = {
@@ -47,6 +47,6 @@ describe("numeric answer precision", () => {
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(valueInput()).toHaveValue("0,1254");
-    await expect.element(feedback.getByText("0,13", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("0,125", { exact: true })).toBeVisible();
   });
 });

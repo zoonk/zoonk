@@ -32,13 +32,14 @@ describe("activity numeric answers", () => {
     await expectVerdict("Correct!");
   });
 
-  it("shows the rounded right answer after a miss", async () => {
+  it("shows the value from the explanation after a calculator miss", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
-    await valueInput().fill("12");
+    await valueInput().fill("251.6");
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("252", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("251.54", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText(/251\.54 months/u)).toBeVisible();
   });
 
   it.each([

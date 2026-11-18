@@ -171,7 +171,7 @@ describe("lesson activities", () => {
     await expect.element(field).toHaveValue("3");
   });
 
-  it("keeps the typed near miss distinct from the rounded feedback", async () => {
+  it("keeps the typed near miss distinct from the right answer", async () => {
     const { numberLine } = activityContentFixtures;
 
     openActivity({
@@ -192,7 +192,7 @@ describe("lesson activities", () => {
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(valueInput()).toHaveValue("0.1254");
-    await expect.element(feedback.getByText("0.13", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("0.125", { exact: true })).toBeVisible();
   });
 
   it("chart reader: tapping a span measures it", async () => {
