@@ -218,11 +218,13 @@ private struct ExamHero: View {
             if isStacked {
               VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(facts.enumerated()), id: \.offset) { _, fact in
-                  Text(verbatim: fact.text)
+                  Text(verbatim: fact.shown.text)
+                    .accessibilityLabel(Text(verbatim: fact.spoken))
                 }
               }
             } else {
-              FactSegments(facts: facts)
+              FactSegments(facts: facts.map(\.shown))
+                .accessibilityLabel(Text(verbatim: facts.map(\.spoken).joinedFacts()))
             }
           }
           .typeStyle(.data)
@@ -330,26 +332,48 @@ private struct ExamHero: View {
       localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
-  private var facts: [FactSegments.Fact] {
+  /// An estimated day reads "About Nov 14", not its "~".
+  private struct HeroFact {
+    let shown: FactSegments.Fact
+    let spoken: String
+
+    init(_ text: String) {
+      shown = .init(text: text)
+      spoken = text
+    }
+
+    init(shown: FactSegments.Fact, spoken: String) {
+      self.shown = shown
+      self.spoken = spoken
+    }
+  }
+
+  private var facts: [HeroFact] {
     let dates = exam.days.filter { studyDate($0.date) != nil }
     let today = PlanDate.today()
     if exam.namedMonth {
       return
         (dates.map { PlanDate.format($0.date, .rowMonth, today: today) }
-        + [daysLeft].compactMap(\.self)).map { .init(text: $0) }
+        + [daysLeft].compactMap(\.self)).map(HeroFact.init)
     }
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    var facts = dates.flatMap { day -> [FactSegments.Fact] in
-      let full = PlanDate.text(day.date, today: today, weekday: !exam.daysEstimated)
-      let compact = PlanDate.text(day.date, today: today, weekday: false)
-      let prefix = exam.daysEstimated ? "~" : ""
+    var facts = dates.flatMap { day -> [HeroFact] in
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
-      return [FactSegments.Fact(text: prefix + full, compact: prefix + compact)]
-        + (time.map { [FactSegments.Fact(text: $0)] } ?? [])
+      let date: HeroFact
+      if exam.daysEstimated {
+        let estimate = PlanDate.estimate(day.date, today: today)
+        date = HeroFact(shown: .init(text: estimate.text), spoken: estimate.spoken)
+      } else {
+        let full = PlanDate.text(day.date, today: today, weekday: true)
+        date = HeroFact(
+          shown: .init(text: full, compact: PlanDate.text(day.date, today: today, weekday: false)),
+          spoken: full)
+      }
+      return [date] + (time.map { [HeroFact($0)] } ?? [])
     }
-    if let shared, let time = examTimeOfDay(shared) { facts.append(.init(text: time)) }
-    if let daysLeft { facts.append(.init(text: daysLeft)) }
+    if let shared, let time = examTimeOfDay(shared) { facts.append(HeroFact(time)) }
+    if let daysLeft { facts.append(HeroFact(daysLeft)) }
     return facts
   }
 
