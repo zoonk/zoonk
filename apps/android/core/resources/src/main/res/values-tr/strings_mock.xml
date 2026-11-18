@@ -17,7 +17,6 @@
   "mock_expired_detail": "998b93bf8ce02a2b73f450ee6c5d7010bf48cd0ccc05d44558b2e2af32acd706",
   "mock_expired_title": "80bcba749c71165a024b4e9592b373bea46679bcd80fc2effc4bb96791c0a5a4",
   "mock_flag": "3311cf72f33b5caf54163581e5070a0b7632583caf6fc6ce21d63b30b57a1904",
-  "mock_flagged_count": "760b6f7c6259b67f77802932a81d2da71e76e0e39db3f416ac37d42708f6e2b0",
   "mock_hand_in": "d9195a4830df55fb9cd575b3f3e70c8f1b7d07c8d28e52e7b574c90fa1fd9795",
   "mock_hand_in_final": "326b628a0f292a07014be78e6597f635046cb4a48122cabc54d74b54c6b1e8b3",
   "mock_hand_in_mock_title": "512d2f8b0150874bacc290a5f563082b2fcdf3bab2eb53eacbf27bf7874d7596",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
   "mock_left_flagged": "d7436fba742079f4e6d34a66821c5fa222e6a220285d9d32af0bcd8e29ca766a",
   "mock_left_flagged_only": "4efcc92ad8858a604d396b69121801c395bfc908bc1a12f1a29740bc92834358",
+  "mock_legend_answered": "2565ab2e18692a0f47ff912433369d847ee424d227c45646ff3e8e3a4028bad6",
+  "mock_legend_current": "b198b8b64b3959edf623750d7ddc1c577327b3126f622201a21dc555cdaa73cc",
+  "mock_legend_review": "df9fa22175080913fe3d5ad408041ac7cc6b7fe2c1b30707595c6945c8290a35",
+  "mock_legend_review_count": "d3d2c0f53e8aa2c8500f927ec831a23662c4358b1f335966bd07d2aebd04b322",
+  "mock_legend_unanswered": "7a57068ec3320ca634b75c564fd907502dac804aba1fa28e4e56825e5d741d76",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
   "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
   "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
@@ -45,7 +49,6 @@
   "mock_next": "30bfed0fd45a7dda4859985d6196ec013685316695a46ef9ed39c2ca9f429a23",
   "mock_next_named": "7cadca0650766e03bc0a6e545bccccf2eecfe26068b446e314cb52434a8a00fb",
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
-  "mock_not_saved_retrying": "5b80d094db7f34ae28dbffe1c0f7f765bc35fcaa61b5beae4aa30bef6aff8269",
   "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
   "mock_points_of": "ef001a020a1c9e8b03410ca6db37efc54b63b3386d11d16bd0a07b08efeb7537",
   "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
@@ -55,11 +58,11 @@
   "mock_questions": "2efb07f8ca59a04c084a583e6b8b734e1b274bdc0147e2f14dd3a3df8c5ef0df",
   "mock_right_answers": "c21a593e23ad6b0e3b0a39d754233b80213ee4d9e9deb5a0b198b537e53eda9a",
   "mock_row_detail": "ea625492a8ba49abb385afb706b632562a6e6b0a72f097bf12c3e3e305b38263",
-  "mock_section_answered": "0457032a09df13fb268f51df5dfc615588dbf0f59af069ab94a318747c5c8422",
+  "mock_save_retry": "87e0f80b17b7a8160c6e9afcb4f37ff3b82488fbb99c09c1d17a41d3524df0ea",
+  "mock_section_answered_of": "f49299a962296595ed8508738023ae535e924b38d4c0d363a805d2400ae09517",
   "mock_section_number": "bd03f7c4178b727c613b8cc40a7c66bf74d91018dedc9875f568436f6eac46f1",
   "mock_sections": "07b60af3daf2eb8ba6e95fc55bb19403667704536a3d40e5a0055d11afbb725a",
   "mock_see_result": "1889da3fe6e02cfd3a517f3fc43dce82f4e9cafa6037b0891e3e4809d2a2f6e7",
-  "mock_sheet": "a30f04ed4533d68f1de25385a3ee71a9c7d862168b918c73a4ce40cef1aa457f",
   "mock_speaking": "38e52dfa62c0f36fd950679fcc8119e8f823b5877088483d00ad950be55806e5",
   "mock_speaking_all_done": "6a6b14c348b5eea9dd7460863b9246e5eb7b82bb9e04cd17753c12f272cbc3b4",
   "mock_speaking_done": "3330f8b9de791e5b3eaf285b6d14a7e297a6b1a7cc3204b518de7fa36aa56bd7",
@@ -173,17 +176,11 @@
     <string name="mock_hand_in_final">Bundan sonra cevaplarını değiştiremezsin.</string>
     <string name="mock_keep_answering">Cevaplamaya devam et</string>
     <string name="mock_hand_in">Teslim et</string>
-    <string name="mock_sheet">Cevap kâğıdı</string>
     <string name="mock_answer_sheet">Cevap kağıdı</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
-    </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d soru işaretli</item>
-        <item quantity="other">%d soru işaretli</item>
     </plurals>
     <string name="mock_questions">Sorular</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
@@ -194,9 +191,8 @@
     <string name="mock_section_number">%1$d. oturum</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Teslim edildi</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Henüz kaydedilmedi · tekrar deniyoruz</string>
+    <string name="mock_section_answered_of">%1$s / %2$s</string>
+    <string name="mock_save_retry">Devam etmeden önce tekrar dene</string>
     <string name="mock_try_again">Tekrar dene</string>
     <string name="mock_last_not_saved">Son cevabın kaydedilemedi.</string>
     <string name="mock_step_failed_saved">İşlem tamamlanamadı. Cevapların kayıtlı. Birazdan tekrar dene.</string>
@@ -247,4 +243,12 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Tüm bölümleri tamamladın. Bundan sonra bu deneme sınavında onları tekrar yapamazsın.</string>
     <string name="mock_keep_going">Devam et</string>
+    <string name="mock_legend_unanswered">Cevaplanmadı</string>
+    <string name="mock_legend_answered">Cevaplandı</string>
+    <string name="mock_legend_current">Şu anki soru</string>
+    <string name="mock_legend_review">Tekrar bakmak için işaretlendi</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d soru tekrar bakmak için işaretlendi</item>
+        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
+    </plurals>
 </resources>

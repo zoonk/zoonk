@@ -7,11 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
@@ -40,32 +40,28 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestName
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-/** On a phone the coverage suggestion's search is asked from its sheet, which is what its answer belongs to. */
+/** The coverage suggestion's search is asked from its card, at every width, which is what its answer belongs to. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
-class CoverageSheetWindowTest {
+class CoverageCardWindowTest {
     @get:Rule
     val rule: ComposeTestRule = createEmptyComposeRule()
 
-    @get:Rule
-    val testName = TestName()
-
     private val api = FakePlanApi()
     private val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
-    private lateinit var scenario: ActivityScenario<CoverageSheetTestActivity>
+    private lateinit var scenario: ActivityScenario<CoverageCardTestActivity>
 
     @Before
     fun open() {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
-                name = CoverageSheetTestActivity::class.java.name
+                name = CoverageCardTestActivity::class.java.name
                 packageName = application.packageName
             },
         )
@@ -79,75 +75,62 @@ class CoverageSheetWindowTest {
             )
         val store = PlanStore(api, cache)
         runBlocking { store.plan[page.goal.id].refresh() }
-        CoverageSheetTest.page = page
-        CoverageSheetTest.viewModel =
+        CoverageCardTest.page = page
+        CoverageCardTest.shown.value = true
+        CoverageCardTest.viewModel =
             PlanViewModel(
                 store,
                 page.goal.id,
                 writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
                 PlanNavigationModel(GoalSwitch { true }),
             )
-        // One test starts as a wide panel, which a recreation then makes a closed line; the rest start in the line's sheet.
-        val startsAsPanel = testName.methodName == "aPanelRecreatedAsAClosedLineAsksNoPreviewWhenItOpens"
-        if (startsAsPanel) RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
-        scenario = ActivityScenario.launch(CoverageSheetTestActivity::class.java)
-        if (!startsAsPanel) rule.onNodeWithText("View").performClick()
-        rule.onNodeWithText("Find the time").performClick()
+        scenario = ActivityScenario.launch(CoverageCardTestActivity::class.java)
+        rule.onNodeWithText("See what changes").performClick()
     }
 
     @After
     fun close() = scenario.close()
 
     @Test
-    fun aPanelRecreatedAsAClosedLineAsksNoPreviewWhenItOpens() {
-        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
-        scenario.recreate()
-        rule.waitForIdle()
-        held.complete(Unit)
-        rule.waitForIdle()
-        assertEquals(PlanPreviewState.Idle, CoverageSheetTest.viewModel.slotPreview.value)
-        rule.onNodeWithText("View").performClick()
-        rule.waitForIdle()
-        assertEquals(PlanPreviewState.Idle, CoverageSheetTest.viewModel.slotPreview.value)
-    }
-
-    @Test
-    fun aSearchThatAnswersAfterItsSheetClosedAsksNoPreviewWhenItOpensAgain() {
-        rule.onNodeWithContentDescription("Close sheet").performClick()
+    fun aSearchThatAnswersAfterItsCardLeftAsksNoPreviewWhenItShowsAgain() {
+        CoverageCardTest.shown.value = false
         rule.waitForIdle()
         held.complete(Unit)
         rule.waitForIdle()
 
-        rule.onNodeWithText("View").performClick()
+        CoverageCardTest.shown.value = true
         rule.waitForIdle()
 
-        assertTrue(CoverageSheetTest.viewModel.timeToCover.value is TimeToCoverState.Answered)
-        assertEquals(PlanPreviewState.Idle, CoverageSheetTest.viewModel.slotPreview.value)
+        assertTrue(CoverageCardTest.viewModel.timeToCover.value is TimeToCoverState.Answered)
+        assertEquals(PlanPreviewState.Idle, CoverageCardTest.viewModel.slotPreview.value)
     }
 
     @Test
-    fun aSearchThatAnswersWhileTheOpenSheetIsRecreatedAsksItsPreviewOnce() {
+    fun aSearchThatAnswersWhileTheCardIsRecreatedAtAnotherWidthAsksItsPreviewOnce() {
         rule.waitForIdle()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
         scenario.recreate()
         held.complete(Unit)
         rule.waitForIdle()
 
-        assertNotNull((CoverageSheetTest.viewModel.slotPreview.value as? PlanPreviewState.Asked))
-        assertNull(CoverageSheetTest.viewModel.outcomes.coverageFound.value)
+        assertNotNull((CoverageCardTest.viewModel.slotPreview.value as? PlanPreviewState.Asked))
+        assertNull(CoverageCardTest.viewModel.outcomes.coverageFound.value)
     }
 }
 
-/** What outlives [CoverageSheetTestActivity]'s recreations, as a navigation entry's view models do. */
-object CoverageSheetTest {
+/** What outlives [CoverageCardTestActivity]'s recreations, as a navigation entry's view models do. */
+object CoverageCardTest {
+    val shown = mutableStateOf(true)
+
     lateinit var page: PlanPageState
     lateinit var viewModel: PlanViewModel
 }
 
-class CoverageSheetTestActivity : ComponentActivity() {
+class CoverageCardTestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val page = CoverageSheetTest.page
-        val viewModel = CoverageSheetTest.viewModel
+        val page = CoverageCardTest.page
+        val viewModel = CoverageCardTest.viewModel
         setContent {
             ZoonkTheme {
                 val timeToCover by viewModel.timeToCover.collectAsState()
@@ -155,33 +138,35 @@ class CoverageSheetTestActivity : ComponentActivity() {
                 val navigator = rememberAppNavigator()
                 VisitOf(viewModel.visit)
                 Column {
-                    CoverageSuggestion(
-                        Slot(
-                            page,
-                            PlanEdits(
-                                timeToCover = timeToCover,
-                                findTimeToCover = viewModel::findTimeToCover,
-                                outcomes = viewModel.outcomes,
+                    if (CoverageCardTest.shown.value) {
+                        CoverageSuggestion(
+                            Slot(
+                                page,
+                                PlanEdits(
+                                    timeToCover = timeToCover,
+                                    findTimeToCover = viewModel::findTimeToCover,
+                                    outcomes = viewModel.outcomes,
+                                ),
+                                PlanLinks(navigator, page),
+                                SlotHost(
+                                    preview = preview,
+                                    requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
+                                    clearPreview = viewModel::clearSlotPreview,
+                                ),
+                                viewModel.slotState,
+                                if (with(LocalDensity.current) {
+                                        LocalWindowInfo.current.containerSize.width
+                                            .toDp()
+                                    } > 900.dp
+                                ) {
+                                    SuggestionLayout.Panel
+                                } else {
+                                    SuggestionLayout.Line
+                                },
+                                SlotFocus(),
                             ),
-                            PlanLinks(navigator, page),
-                            SlotHost(
-                                preview = preview,
-                                requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
-                                clearPreview = viewModel::clearSlotPreview,
-                            ),
-                            viewModel.slotState,
-                            if (with(LocalDensity.current) {
-                                    LocalWindowInfo.current.containerSize.width
-                                        .toDp()
-                                } > 900.dp
-                            ) {
-                                SuggestionLayout.Panel
-                            } else {
-                                SuggestionLayout.Line
-                            },
-                            SlotFocus(),
-                        ),
-                    )
+                        )
+                    }
                 }
             }
         }

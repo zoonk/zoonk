@@ -96,11 +96,11 @@ private fun DailyMinutes(
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // The picker carries the name for screen readers; this is its visible title.
-        SectionLabel(stringResource(R.string.plan_time_a_day_label), Modifier.clearAndSetSemantics {})
+        SectionLabel(stringResource(R.string.plan_daily_study_time), Modifier.clearAndSetSemantics {})
         DailyTimePicker(
             times = page.plan.schedule.dailyTimes,
             minutes = shown,
-            label = stringResource(R.string.plan_time_a_day_label),
+            label = stringResource(R.string.plan_daily_study_time),
             onChange = ::setMinutes,
             modifier = Modifier.focusRequester(focus.pickedTime),
             enabled = !pending,

@@ -17,7 +17,6 @@
   "mock_expired_detail": "a3d7d6edc5580be04238146b56171d2215b3f873acf370aa18a1fb71c04bcf41",
   "mock_expired_title": "e07ec3207d714329967cd76cf88daf020148c0789ea894cd027d2c2d2874c37b",
   "mock_flag": "b218d92fa4c803e9890892843b926927d937a5c796fb21ce502745c2ab9cccec",
-  "mock_flagged_count": "c64cf530531238547012bb52968a2da3ecb7596eb6ba823592704847ce779bb1",
   "mock_hand_in": "383cd9ceb6d5d6b91af121f00065916e58a969d4ecdbfc808816ff9be73e83eb",
   "mock_hand_in_final": "b69b690f58f01043377b3acb0a0a7503fe4b75b164a59aba500008171bfc9b6d",
   "mock_hand_in_mock_title": "a9a6c87e8d8211e3bfb979f1e6f7d53946a08932c29d15088be8b0edf6286fdd",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "57a917a2bf5757a50b22ef1b1a3ffd3ed16f2dbd3231a988f756d2434b3de535",
   "mock_left_flagged": "fe9f06acce310af9cde66189e1086da1b3c790dd02bb013895a3cd39a70ec5be",
   "mock_left_flagged_only": "3bc435f88f4f0e494308ad1bb412990419ba52dab5de551aea3153627b52022e",
+  "mock_legend_answered": "6d31f85fc12b339abfdc626e7942fb577eead4d6fa96435f1ce3f0c7d4002dff",
+  "mock_legend_current": "0a0d9463892d288af13261bde68faf775eef3ce550f8bb8a899ad54e48b892a0",
+  "mock_legend_review": "4be4466b1479a1906194b7c96e89b1114c05444399ee84f3d8e29c5a80a68e35",
+  "mock_legend_review_count": "f5683a1a01ef7f1027c307e3eda3cc74524e982fd30ba3228d34f4b3eacc2568",
+  "mock_legend_unanswered": "d399804e23446dc1d38e691859feeaf7bd3746f0df5134805d77b86f88c37328",
   "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
   "mock_moves_forward_must": "7310517b3ce53cecc567124a4ce0e1d4cfb2ee2a41b539e141ba98ad9257e61c",
   "mock_moves_must": "97ee1542015a3e659628e73406014d59d36f531eb2578d0d14e65066bfb0708b",
@@ -45,7 +49,6 @@
   "mock_next": "55199c3327ab2fe94df88252d10f525dd965ee3f4fa5744384df8cdc5d9c2f7f",
   "mock_next_named": "df971af280fe32267112f97c21c590b0c35d8fcf8c6e628fcbcc704ef9aa28a2",
   "mock_next_section": "89517ad4965e09b827e1f354464008cdee29149eecaa4667b9e33f91363b8503",
-  "mock_not_saved_retrying": "f91d396fb8d18051cf66578684d6d6eb4aebc69523b1f12319ccd44181fca453",
   "mock_place": "ff4722c9820bee57713c87e7af6c0dd977cbab69ab2826e7021e829a9ab9d278",
   "mock_points_of": "aca46f5fa19c131b01ac174e8d043107a0f00f4ee45376f315770aa1d1627779",
   "mock_progress_label": "63b66069fb271fba4e4a0eedb6733ed4a4bebd0522b30e96f8e016ac5fbc83b0",
@@ -55,11 +58,11 @@
   "mock_questions": "c2a7bf9779da93b4ec7b495fc4dd2e220464ff2596ed4ac96207b8fe96888389",
   "mock_right_answers": "092e540f98eb045059104260eae064c8367d11611981305b37ff72659af95b21",
   "mock_row_detail": "5dec8e5cfb87c97a35ef04a48edeb12eefe47066043117cf3a261c64c440b29f",
-  "mock_section_answered": "8a0d5d8f36c737a1dd5571416821ddcce18fb11c51220d8cf6c8b65888b6ef11",
+  "mock_save_retry": "783d3282bcb3f4c3f9950bc95690acb53447d35a3937fa30f17702780b2386d7",
+  "mock_section_answered_of": "66d06da377d3ceb579e38603b175e4c8805e919da8281a15f2943133f34903cd",
   "mock_section_number": "3927c9b6cec9f97e46e850f171127680e387c72f1c7ba6eba1072ccdacbb5373",
   "mock_sections": "b432884c539056bb66f7bc31a1acfe16c681d86fac00b6a03c921d9ffb567240",
   "mock_see_result": "9b3fd4effee68d2ca07db5de84d8493c8479fc1fd8fa1cbfaae71e8119198dda",
-  "mock_sheet": "64795ad9ca808ef7b7296f0b9ccab8fc0474d1c9bc0e7ea4f4872b96fd67dfef",
   "mock_speaking": "85799a0ee3189076215ddab8d49033dd6a2a7c31c7ec777913be16dfc025b2b7",
   "mock_speaking_all_done": "ea34832b2ba6386f9b3a00771cc31f22c258627e2fa6b698859092dc01011822",
   "mock_speaking_done": "fdb52592ad6f98d57888e573655d02024e863cc671a1990926b3920ac35e8f7d",
@@ -189,7 +192,6 @@
     <string name="mock_hand_in_final">Po oddaniu nie zmienisz już odpowiedzi.</string>
     <string name="mock_keep_answering">Odpowiadaj dalej</string>
     <string name="mock_hand_in">Oddaj</string>
-    <string name="mock_sheet">Arkusz</string>
     <string name="mock_answer_sheet">Karta odpowiedzi</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -197,13 +199,6 @@
         <item quantity="few">%d z odpowiedzią</item>
         <item quantity="many">%d z odpowiedzią</item>
         <item quantity="other">%d z odpowiedzią</item>
-    </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d oznaczone pytanie</item>
-        <item quantity="few">%d oznaczone pytania</item>
-        <item quantity="many">%d oznaczonych pytań</item>
-        <item quantity="other">%d oznaczonego pytania</item>
     </plurals>
     <string name="mock_questions">Pytania</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
@@ -214,9 +209,8 @@
     <string name="mock_section_number">Część %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Oddano</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Jeszcze nie zapisano · próbujemy ponownie</string>
+    <string name="mock_section_answered_of">%1$s z %2$s</string>
+    <string name="mock_save_retry">Spróbuj ponownie, zanim przejdziesz dalej</string>
     <string name="mock_try_again">Spróbuj ponownie</string>
     <string name="mock_last_not_saved">Nie zapisano twojej ostatniej odpowiedzi.</string>
     <string name="mock_step_failed_saved">Nie udało się. Twoje odpowiedzi są zapisane. Spróbuj ponownie za chwilę.</string>
@@ -271,4 +265,14 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Wszystkie zadania są ukończone. Po oddaniu nie możesz ich powtórzyć w tym egzaminie próbnym.</string>
     <string name="mock_keep_going">Kontynuuj</string>
+    <string name="mock_legend_unanswered">Bez odpowiedzi</string>
+    <string name="mock_legend_answered">Z odpowiedzią</string>
+    <string name="mock_legend_current">Bieżące pytanie</string>
+    <string name="mock_legend_review">Oznaczone do sprawdzenia</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d pytanie oznaczono do sprawdzenia</item>
+        <item quantity="few">%d pytania oznaczono do sprawdzenia</item>
+        <item quantity="many">%d pytań oznaczono do sprawdzenia</item>
+        <item quantity="other">%d pytania oznaczono do sprawdzenia</item>
+    </plurals>
 </resources>

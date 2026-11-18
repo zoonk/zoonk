@@ -17,7 +17,6 @@
   "mock_expired_detail": "f43a3e596c2a0608ba58c8d975bdd6f7480e7e9594ceceb91538e5c995a772fa",
   "mock_expired_title": "69d7993225bed29175a7ee26bb3b37aac13f5442807f45d75868b919d0de653d",
   "mock_flag": "0dc55c439565e0d118a2d7324caa611c7979384c54ef900c60de6fdc97a7fdcb",
-  "mock_flagged_count": "d37894aee603a8ecea55358b494fd51410cdc1cd53158b980d574a632b6536e1",
   "mock_hand_in": "6bd471ecb3d67783ee05949464a142699d1dba328c2fb45eccf184eec88dc61d",
   "mock_hand_in_final": "17237c49b6498e915341eb73db9f1e4347ba038a03d89e9f71b863122e99a9eb",
   "mock_hand_in_mock_title": "2242d680dcada9996d57547bf6d38b4ab406ac90d0191df268724c47503c853b",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "a2746ee30d6a56d747baa632f6dd4ab2dabd5a3962c9c8f0385c1a3b7190ed1a",
   "mock_left_flagged": "9ce50a83812e8b38c1671d95c04cd88c1d18b50f8d089bf72823607941acb41c",
   "mock_left_flagged_only": "7a995ed76b273e5d435f2f1066631f51c3ee9b53df90799943a03e2c985f9741",
+  "mock_legend_answered": "4c2530c7a48851ad13c6e80f24ec3aad0e9f6926ea2c1e6f4dba507291a63c60",
+  "mock_legend_current": "a7380ee14a8707bf09bcf3812cc0bed1d988bdbcf6507d828c5b574566766763",
+  "mock_legend_review": "98814c290571173f409d3070fa96f5f65ae25a7caaeffe9bb75547bae5b23b04",
+  "mock_legend_review_count": "c464900edf177e141e35770920a04584419d5ba62852db0fb6f77e948aa0a5b5",
+  "mock_legend_unanswered": "67157ee412a6f1ba6f0d946161c931b1daa5af0147dfd319d1920342f5a7edbe",
   "mock_moves_forward": "e800f9db69839689ae0900f83196bf51540c5773d1654cd5704332c4dfcb0697",
   "mock_moves_forward_must": "9c1b1894d58c34f03a765fd7341588a09109276af2f872df2cfabc5d636666a5",
   "mock_moves_must": "f0fb694cf03828211fdba9f9ed0e24a14eca5eb9f7e9a582413022ffed50a61d",
@@ -45,7 +49,6 @@
   "mock_next": "5acbf216b383d47af8cd48391191286c1570cdb431cf6b0913d45753bcd858e6",
   "mock_next_named": "b1132c4ae736e121ac950be7f672eca6a2a075eb13971fd09564418f4c53ba73",
   "mock_next_section": "953ee7b107af6dd2e8eb6dac7679fd57bac86728f9378c0468518e66a00c59dd",
-  "mock_not_saved_retrying": "ce9cc2c42a51722e7532c1aa3df04205e191d292b54cbfcdbb8a4f913b8c476b",
   "mock_place": "1982a8fba9c61fe3b24030e3bfb432df40a7747d72c94fde219c2775ce23a73a",
   "mock_points_of": "f61ab2f0e606d6dcb55a4a4b055c97079707c99daf59a6c257dfd97882897c54",
   "mock_progress_label": "f718a74efe747e04ab176be13ef626c7a6693c3cffa7e94dbd841e4fdadae9d0",
@@ -55,11 +58,11 @@
   "mock_questions": "15f5d5c08104ba8438ca91fa581685d6dacec6ac27bfe7cdce2509d2ec60624e",
   "mock_right_answers": "c63387822c4181e8153b77b260f279ffa46f38a20768fb13f0cbdfa0796eee55",
   "mock_row_detail": "5639a0ea828bd304ede08c5fd8bbd15d1e16ac14b541d5560aa5aa98b75bace0",
-  "mock_section_answered": "af8edf43601830d560d40dd776fee57eebabe92471660f286ad06e75b6ca1eff",
+  "mock_save_retry": "0da122c96481116c1274731b540c854cff8991f5d298f04d9c800b2f83e00b4f",
+  "mock_section_answered_of": "42c890b7ef617296ea0e64a7e6c7589923b62e6edee1cc0468c772004f2fbad3",
   "mock_section_number": "829d14b85c570bf10b4bf6bc1ef9175114fd43109e80e3ba82f50e26d4819a8f",
   "mock_sections": "21e603daee1bed825c8b9abad208232337fd9f1dd638a193eeb16faf7410a13a",
   "mock_see_result": "e3c1c3996a386c834447ea398e81ac1198073bf950880446424a25b2491bc93b",
-  "mock_sheet": "0b65f8423fa48f3b7e33e8bcecd20c3a6f890eedda3568b0e3fa7a07235be8e4",
   "mock_speaking": "a1387e9b645646a3b281ea368adb807ba634384d05af72bf7d63f21bdffafafe",
   "mock_speaking_all_done": "2e00ff0e1a907ee429273c9ac79b114cc44e401229da3eb35caa1843c3d23493",
   "mock_speaking_done": "0392b8c2c54ca1a8160d26fecdfc699d2d6bd507c429942bbb4aec62d8de7426",
@@ -181,19 +184,12 @@
     <string name="mock_hand_in_final">Dopo la consegna non potrai più modificare le risposte.</string>
     <string name="mock_keep_answering">Continua a rispondere</string>
     <string name="mock_hand_in">Consegna</string>
-    <string name="mock_sheet">Foglio</string>
     <string name="mock_answer_sheet">Foglio delle risposte</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="one">%d risposta data</item>
         <item quantity="many">%d risposte date</item>
         <item quantity="other">%d risposte date</item>
-    </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d contrassegnata</item>
-        <item quantity="many">%d contrassegnate</item>
-        <item quantity="other">%d contrassegnate</item>
     </plurals>
     <string name="mock_questions">Domande</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
@@ -204,9 +200,8 @@
     <string name="mock_section_number">Sezione %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Consegnata</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Non ancora salvato · stiamo riprovando</string>
+    <string name="mock_section_answered_of">%1$s di %2$s</string>
+    <string name="mock_save_retry">Riprova prima di continuare</string>
     <string name="mock_try_again">Riprova</string>
     <string name="mock_last_not_saved">La tua ultima risposta non è stata salvata.</string>
     <string name="mock_step_failed_saved">L’operazione non è riuscita. Le tue risposte sono state salvate. Riprova tra poco.</string>
@@ -259,4 +254,13 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Hai completato tutti i compiti. Dopo la consegna, non potrai ripeterli in questa simulazione.</string>
     <string name="mock_keep_going">Continua</string>
+    <string name="mock_legend_unanswered">Senza risposta</string>
+    <string name="mock_legend_answered">Con risposta</string>
+    <string name="mock_legend_current">Domanda attuale</string>
+    <string name="mock_legend_review">Contrassegnate per la revisione</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d contrassegnata per la revisione</item>
+        <item quantity="many">%d contrassegnate per la revisione</item>
+        <item quantity="other">%d contrassegnate per la revisione</item>
+    </plurals>
 </resources>

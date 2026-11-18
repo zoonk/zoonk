@@ -46,8 +46,7 @@ import com.zoonk.android.ui.scaffold.supportingPaneBeside
  * Main's detail page: [hero] heads it, its title marked with `pageTitle()`, which the top app bar
  * shows once it has scrolled under the bar. Where the page splits into panes, [aside] runs beside it
  * behind a hairline (main's aside from 72rem, an unfolded book's second page); otherwise [content]
- * places what it needs of it in the page. [ask] sits in the bar, as the buddy's face on a narrow page, unless [askInAside] and
- * the aside is showing. The page's "⋯" goes in its [DetailHero]; its one main action, [action], in the bottom bar at
+ * places what it needs of it in the page. [ask] sits in the bar at every width, as the buddy's face on a narrow page. The page's "⋯" goes in its [DetailHero]; its one main action, [action], in the bottom bar at
  * the foot of the page's own column, never under the aside.
  */
 @Composable
@@ -58,7 +57,6 @@ internal fun DetailPage(
     modifier: Modifier = Modifier,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    askInAside: Boolean = false,
     action: (@Composable (Modifier) -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
@@ -73,7 +71,7 @@ internal fun DetailPage(
             title = { BarTitle(title) },
             actions = {
                 when {
-                    ask == null || (askInAside && asideBeside) -> Unit
+                    ask == null -> Unit
                     wide -> Box(Modifier.barButtonEnd()) { ask(AskTutorAppearance.Button) }
                     else -> ask(AskTutorAppearance.Icon)
                 }
