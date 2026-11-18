@@ -41,6 +41,7 @@ import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.EarlierQuestion
 import kotlinx.coroutines.launch
@@ -72,7 +73,11 @@ fun EarlierQuestionsScreen(
         }
     }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.earlier_questions_title)) }) { padding ->
+    PageScaffold(
+        onBack = { navigator.back() },
+        title = { Text(stringResource(R.string.earlier_questions_title)) },
+        columnWidth = COLUMN_WIDTH + pageMargin() * 2,
+    ) { padding ->
         BeforeFold(Modifier.padding(padding)) { beforeFold ->
             LazyColumn(
                 modifier = beforeFold.fillMaxSize(),

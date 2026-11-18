@@ -5,7 +5,6 @@
   "buddy_page_choose": "332e2f8788c6bc4a3d5df9af0d5d8e381cf1d30ff0cba7bb6e20eb2e560ab0f9",
   "buddy_page_count": "450a4de9b653ab8a54a489687a6c778da17df6621274a8cbc2bc508219325c91",
   "buddy_page_earlier_questions": "b24bd30d74892b4ef90d9f4e165b592b04d91771ff7171bf4f185dcbb6ebf4c8",
-  "buddy_page_energy": "12284981bc225fb16846030bca1c1f1c6a27d387a1e7fe099eeba608dc8c8e50",
   "buddy_page_energy_named": "6943ef5652b55f6a87e5283d5cacbeb697d02111373ac17781361cd20c98cf9f",
   "buddy_page_energy_napping": "11bfb22d9eaea27a48939684c5c61fe7a077aa66e9814f68cc2747a8c55788b6",
   "buddy_page_energy_starts": "45edaa4d35a435e9c79285cf32091bb08b922c377ab180081f4d4205cb0ec0db",
@@ -73,7 +72,6 @@
     <string name="buddy_page_suggest_mistake">마지막으로 틀린 부분을 설명해 주세요</string>
     <string name="buddy_page_suggest_focus">무엇부터 집중해서 공부하면 좋을까요?</string>
     <string name="buddy_page_today">오늘의 %1$s</string>
-    <string name="buddy_page_energy">에너지</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s의 에너지</string>
     <string name="buddy_page_energy_starts">첫 레슨을 하면 시작돼요.</string>

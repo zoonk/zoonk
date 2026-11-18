@@ -5,7 +5,6 @@
   "buddy_page_choose": "1a4adae2d3b347e9baeb2df0bf0bd7454cf55b098b6322119c73d51ca695a8eb",
   "buddy_page_count": "a1c5f65da1861afbac70eb8331988bacde12af5788d4ca05b62f0f3212655d35",
   "buddy_page_earlier_questions": "5bf81751a6d78218f9433548e7ce8e0bbbc55dc21241639b21be67232514afc1",
-  "buddy_page_energy": "a5851a504988747d08e5a56b414478f87daf42fcd7578b4572fb98f645ce5daa",
   "buddy_page_energy_named": "b9f9be4aaf2e83b17be0ed46897063b317da7c83f8a0c074e43eaba7d2ce9071",
   "buddy_page_energy_napping": "fe3204f45a79c764d4d65c7bd504a378b09b00ac5f2091c4a6154bcad5b4fce6",
   "buddy_page_energy_starts": "3c8df6053f325318dd2889974c7947c416fff895701db7e0fe2f027fec49c2bc",
@@ -73,7 +72,6 @@
     <string name="buddy_page_suggest_mistake">直前の間違いを説明してほしい</string>
     <string name="buddy_page_suggest_focus">まず取り組むことは？</string>
     <string name="buddy_page_today">今日の%1$s</string>
-    <string name="buddy_page_energy">エネルギー</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$sのエネルギー</string>
     <string name="buddy_page_energy_starts">最初のレッスンから始まります。</string>

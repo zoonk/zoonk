@@ -71,6 +71,7 @@ import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyActorState
+import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyEnergyState
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyGlassesPicker
@@ -324,7 +325,7 @@ internal fun BuddyHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.size(FACE_SIZE)) {
-            if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
+            if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), crop = BuddyCrop.Face, state = face) else BuddyStill(look)
         }
         NameAndLine(Modifier.weight(1f), line) {
             Text(
@@ -385,7 +386,7 @@ internal fun NameAndLine(
 
 @Composable
 private fun BuddyStill(look: BuddyLook) {
-    Buddy(look, Modifier.size(FACE_SIZE))
+    Buddy(look, Modifier.size(FACE_SIZE), crop = BuddyCrop.Face)
 }
 
 @Composable

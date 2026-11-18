@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.today
 
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -19,6 +21,7 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.Today
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -96,6 +99,23 @@ class TodayNotNowTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Your plan stays as it was.").assertExists()
+    }
+
+    @Test
+    fun aTipBeingAnsweredShowsItsAnswerWorking() {
+        todayApi.insightGate = CompletableDeferred()
+        show(
+            decodeFixture<Today>(
+                "today",
+                "notice" to "insight",
+                "insight" to fixture("memory-insight", "message" to "Short sessions help."),
+            ),
+        )
+
+        rule.onNodeWithText("Got it").performClick()
+        rule.waitForIdle()
+
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
     }
 
     private fun show(today: Today) {

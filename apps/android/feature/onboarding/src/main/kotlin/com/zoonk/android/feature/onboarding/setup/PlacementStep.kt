@@ -448,7 +448,22 @@ internal fun ColumnScope.PlacementQuestion(
     }
 }
 
-/** [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
+/**
+ * [start]'s width beside [end], which keeps [endMin]: its label's, or what's left, where the label wraps (main's
+ * `TASK_WRAPPING_ACTION_CLASS`); null only when its [longestWord] wouldn't fit there.
+ */
+internal fun besideStartWidth(
+    label: Int,
+    longestWord: Int,
+    width: Int,
+    gap: Int,
+    endMin: Int,
+): Int? {
+    val room = width - gap - endMin
+    return if (longestWord <= room) minOf(label, room) else null
+}
+
+/** [start] then [end] on one line, as main keeps them; under each other, [end] still last, only when a word wouldn't fit. */
 @Composable
 private fun BesideOrAbove(
     start: @Composable () -> Unit,
@@ -457,10 +472,22 @@ private fun BesideOrAbove(
     Layout(contents = listOf(start, end)) { (starts, ends), constraints ->
         val gap = ACTION_GAP.roundToPx()
         val width = constraints.maxWidth
-        val startWidth = starts.first().maxIntrinsicWidth(constraints.maxHeight)
-        val beside = startWidth + gap + END_MIN_WIDTH.roundToPx() <= width
+        val start = starts.first()
+        val besideWidth =
+            besideStartWidth(
+                label = start.maxIntrinsicWidth(constraints.maxHeight),
+                longestWord = start.minIntrinsicWidth(constraints.maxHeight),
+                width = width,
+                gap = gap,
+                endMin = END_MIN_WIDTH.roundToPx(),
+            )
+        val beside = besideWidth != null
+        val startWidth = besideWidth ?: width
         val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
-        val endPlaceable = ends.first().measure(Constraints.fixedWidth(if (beside) width - gap - startWidth else width))
+        val endWidth = if (beside) width - gap - startWidth else width
+        // Beside a label that wraps, Confirm takes its height, so the two share a top and a bottom.
+        val endPlaceable =
+            ends.first().measure(Constraints(endWidth, endWidth, if (beside) startPlaceable.height else 0, Constraints.Infinity))
 
         if (beside) {
             val height = max(startPlaceable.height, endPlaceable.height)
@@ -469,9 +496,9 @@ private fun BesideOrAbove(
                 endPlaceable.placeRelative(startWidth + gap, (height - endPlaceable.height) / 2)
             }
         } else {
-            layout(width, endPlaceable.height + gap + startPlaceable.height) {
-                endPlaceable.placeRelative(0, 0)
-                startPlaceable.placeRelative(0, endPlaceable.height + gap)
+            layout(width, startPlaceable.height + gap + endPlaceable.height) {
+                startPlaceable.placeRelative(0, 0)
+                endPlaceable.placeRelative(0, startPlaceable.height + gap)
             }
         }
     }

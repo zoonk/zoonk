@@ -21,7 +21,6 @@
     <string name="buddy_page_suggest_focus">What should I focus on first?</string>
 
     <string name="buddy_page_today">%1$s today</string>
-    <string name="buddy_page_energy">Energy</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s\'s Energy</string>
     <string name="buddy_page_energy_starts">It starts with your first lesson.</string>
