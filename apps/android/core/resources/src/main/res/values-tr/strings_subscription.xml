@@ -22,7 +22,6 @@
   "subscription_benefit_exam": "e8129354a3b08e7c7b7f1c11db826c955ad7f2c805be27e4aa3bc3e4455a7398",
   "subscription_benefit_mocks": "555fde75de93755e1cd84c0e1110a9f7f3e0758a0aa89f7be84fbbbd4d387c66",
   "subscription_benefits_summary": "d5033a0370823f8562629bddf498819793abd6115370d7ef833887bc54fcb6a7",
-  "subscription_billed_monthly": "44654592dbcdaa1fbf82916d7665dba08c89342dcfe7bf68591dbae8629311c9",
   "subscription_billing_period": "e922481b89bfdc4ee50eefce439c78f2825fb121396726b4b16fd3acb35d4b3a",
   "subscription_cancel_anytime": "01286831343c40949bbf7a456c5f87613dc7d964751f59b9dfec6c177a87dd59",
   "subscription_contact_support": "8064f05f931c772f3742264a14010577184faa0e6d2b2463b73ef442933f4e8d",
@@ -109,7 +108,6 @@
     <string name="subscription_save">%1$s tasarruf et</string>
     <string name="subscription_per_month">aylık</string>
     <string name="subscription_per_year">yıllık</string>
-    <string name="subscription_billed_monthly">Her ay ödeme alınır.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Bu da ayda %1$s ediyor.</string>
     <string name="subscription_unavailable">Şu anda bu cihazdan Plus satın alınamıyor. Google Play’in yüklü olduğundan ve Google Play’de oturum açtığından emin ol.</string>

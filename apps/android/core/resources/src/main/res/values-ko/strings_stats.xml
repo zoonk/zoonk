@@ -7,11 +7,22 @@
   "stats_answer_more": "71e9e2a69a5d5df9cacb1eb6cfb844f9d011063329ac336d8f24021ff6fc1310",
   "stats_answers_to_count": "2cba2f2fdcace6685ea0808cd1522d49bede1df05570b11fab55ea3f3de0e09e",
   "stats_any_time": "0eaf6fbb0457242d71ed8f47763e9cf8530d3a9bbb0d0de067059dc6679908b7",
+  "stats_belt_black": "97f8131281bff8b71a6e951df2e46b9f2fa591668d4927072f0175a0fb7fb72d",
+  "stats_belt_blue": "f31dab86824293f575ec2e4b92aad68cf05f67dad85af35740389176c55a8e14",
+  "stats_belt_brown": "ab65829306f93b7916e70fe3aed0160d053c1d7c58d21dd53cf4f058e18ee6ce",
   "stats_belt_comes_after": "d835bfa896e91e7e459fa823e2c8b54df8011ebb51d6e228e54c0015bec01115",
+  "stats_belt_coming": "515191a51ccb16878cdbfcd18280680e074a66c5f1fa81060bfdc511904f6f3d",
   "stats_belt_current": "5d7e0335808f5749a38b2897e3a8811ce247f4d02b3075f784aa837b4fb1f67c",
   "stats_belt_earned": "cabe57bbbc81f9c849950a0a2f319ca7f80f840eca63cbcb0e689bbbbf2d9715",
+  "stats_belt_gray": "1b063c55b88978f371c77f4225a98280df5561c86425e63501edb4edb91d9ae8",
+  "stats_belt_green": "34881691004b34af2965c54712c2d30deb1a55d6be5eb1689087fb635c94c253",
   "stats_belt_level": "36c9ca8b57b224adc55aa8f891875891f8d89e08a195928cd3029d5dc204622d",
   "stats_belt_line": "4ef7c177ce4745438a652cbd269ef5174a5705a75dd6fbd720b3e128772cc015",
+  "stats_belt_orange": "7b581e688f85d2448e10b2c57fa69e8bc36a6704b0f403900de7f33bfb9dc0ec",
+  "stats_belt_purple": "95ad0d814e74100ba837eb602b1ac16fd9b6d45295821521c6b5b274816967eb",
+  "stats_belt_red": "d2f9351bb1ef029c150ea9d131ebc2a91b20809bfae51a953edd597a6bdd6bd3",
+  "stats_belt_white": "5b556b242b93134fb22f976cc31cc71c0cf7c121cd5e18815017ca94cfd41f27",
+  "stats_belt_yellow": "f4dec2345f0b0ec8c1893c8533e8e4b71ee3041c7e32badbfd6c25f05a627a0a",
   "stats_best_day": "5594002f27e440769998407d05d75bfca5c7c26b77dd7206c12e030b91f58323",
   "stats_best_day_is": "a3fe8ffe1908ddf2ac9debff6c83bbcb7e075c2d26937160f7415eb1e38f3f7e",
   "stats_best_on": "0445ab6c185ac276a79c036e1b05fb07891112606370d8119ff215df810030ed",
@@ -66,7 +77,8 @@
   "stats_throughout_week": "f16e4910941caefbad13b2ccfb831e566506c7f6460ec065852150140b08f579",
   "stats_time": "ecebda5c3bcb67ee136b518c94fdbca926b0292693890b98554143a67c7c89c9",
   "stats_times_same": "ac82c86e68a6e3b60d29d49859849d4f890ee130359208937cb848acffb24341",
-  "stats_today": "d64a77387256a92045c126b0e68dc89d1c376270848892f4a35072d38fa5764e"
+  "stats_today": "d64a77387256a92045c126b0e68dc89d1c376270848892f4a35072d38fa5764e",
+  "stats_trend_after_two_weeks": "3a647069921371e125562e4633a95f64c2e71cddf487fd7b8b67bf3ad9208f85"
 }
 -->
 <resources>
@@ -101,6 +113,18 @@
     <string name="stats_belt_comes_after">%1$s는 %2$s %3$s 다음 띠로, 두뇌력이 %4$s에 도달하면 받아요</string>
     <string name="stats_belt_earned">획득</string>
     <string name="stats_belt_current">현재</string>
+    <string name="stats_belt_coming">획득 예정</string>
+    <string name="stats_belt_white">흰띠</string>
+    <string name="stats_belt_yellow">노란띠</string>
+    <string name="stats_belt_orange">주황띠</string>
+    <string name="stats_belt_green">초록띠</string>
+    <string name="stats_belt_blue">파란띠</string>
+    <string name="stats_belt_purple">보라띠</string>
+    <string name="stats_belt_brown">갈색띠</string>
+    <string name="stats_belt_red">빨간띠</string>
+    <string name="stats_belt_gray">회색띠</string>
+    <string name="stats_belt_black">검은띠</string>
+    <string name="stats_trend_after_two_weeks">2주 동안 학습하면 점수 변화를 볼 수 있어요</string>
     <string name="stats_today">오늘</string>
     <string name="stats_days_at_full">100%인 날</string>
     <string name="stats_energy_line">레슨을 할 때마다 에너지가 올라가고, 쉬는 날에는 조금 줄어들어요.</string>
