@@ -98,7 +98,13 @@ class LessonMathTest {
     @Test
     fun aBracedPowerKeepsItsOwnExponentApartFromTheNextOne() {
         val nested = math("{2^3}^2")
-        val shifts = nested.text.text.indices.map { at -> nested.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null } }
+        val shifts =
+            nested.text.text.indices.map { at ->
+                nested.text.spanStyles.any {
+                    it.start <= at && at < it.end &&
+                        it.item.baselineShift != null
+                }
+            }
 
         assertEquals("(23)2", nested.text.text)
         assertEquals(listOf(false, false, true, false, true), shifts)
