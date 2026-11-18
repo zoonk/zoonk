@@ -30,15 +30,17 @@ describe("activity numeric answers", () => {
     await valueInput().fill("251.54");
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(valueInput()).toHaveValue("252");
   });
 
-  it("shows the value from the explanation after a calculator miss", async () => {
+  it("shows the value named by the hint after a calculator miss", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
     await valueInput().fill("251.6");
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("251.54", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("251.6");
+    await expect.element(feedback.getByText("252", { exact: true })).toBeVisible();
   });
 
   it.each([
