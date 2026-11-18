@@ -48,11 +48,16 @@ internal fun droppedCall(
     if (micBlocked) return DroppedCall(DroppedReason.Microphone, DroppedRetry.Microphone)
     return when (failure) {
         LiveCallFailure.CallInProgress -> DroppedCall(DroppedReason.CallInProgress, DroppedRetry.Takeover)
+
         // Paused for everyone: calling again now can't work, so only ending the call is offered.
         LiveCallFailure.CallsPaused -> DroppedCall(DroppedReason.CallsPaused, retry = null)
+
         LiveCallFailure.Ended -> DroppedCall(DroppedReason.Ended, retry = null)
+
         LiveCallFailure.Limit -> DroppedCall(DroppedReason.Limit, retry = null)
+
         LiveCallFailure.PlusRequired -> DroppedCall(DroppedReason.PlusRequired, retry = null)
+
         LiveCallFailure.Connect, LiveCallFailure.Dropped, null -> DroppedCall(reason = null, DroppedRetry.CallAgain)
     }
 }

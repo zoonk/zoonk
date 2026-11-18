@@ -449,7 +449,10 @@ internal fun MapMark(
     if (thumbnail != null) {
         // Until the picture arrives, or when it can't, the tile shows the map's mark rather than an empty square.
         var loaded by remember(thumbnail) { mutableStateOf(false) }
-        Box(Modifier.size(MARK_SIZE).clip(shape).border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size(MARK_SIZE).clip(shape).border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+            contentAlignment = Alignment.Center,
+        ) {
             MapPicture(thumbnail, contentDescription = null, Modifier.matchParentSize(), onLoaded = { loaded = true })
             if (!loaded) MapGlyph()
         }
