@@ -142,7 +142,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
       {control.status === "paused" && (
         <DropdownMenuItem onClick={() => menu.onSetStatus("active")}>
           <PlayIcon aria-hidden="true" />
-          {t("Resume this goal")}
+          {t("Resume goal")}
         </DropdownMenuItem>
       )}
 
