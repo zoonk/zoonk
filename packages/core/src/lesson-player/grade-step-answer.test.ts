@@ -140,6 +140,7 @@ describe(gradeStepAnswer, () => {
     { answer: 251.54, answerText: "252", correctAnswer: null, tolerance: 0.05, value: 251.54 },
     { answer: 0.1667, answerText: "0.2", correctAnswer: "0.17", tolerance: 0.005, value: 0.2 },
     { answer: 0.1667, answerText: "0.17", correctAnswer: null, tolerance: 0.005, value: 0.1667 },
+    { answer: 251.54, answerText: "251.495", correctAnswer: null, tolerance: 0.05, value: 251.495 },
   ])(
     "writes $value as $answerText at the places the rounding hint names",
     ({ answer, answerText, correctAnswer, tolerance, value }) => {

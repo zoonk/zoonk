@@ -132,6 +132,21 @@ describe("asking the tutor", () => {
   beforeEach(showDrawerSize);
   afterEach(restoreViewport);
 
+  it("heads a guest's question sheet with the guest's own buddy", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([teachingStep("check")]),
+      tutor: { ...buildTutor(), canAsk: false },
+    });
+
+    await page.getByRole("button", { name: "Ask Pip" }).click();
+
+    await expect
+      .element(
+        page.getByRole("dialog").getByRole("heading", { name: "Ask Pip with a free account" }),
+      )
+      .toBeVisible();
+  });
+
   it("keeps the tutor in the aside at the lesson's end, where the host draws its own moment", async () => {
     await atViewport({ height: 900, width: 1440 }, async () => {
       const { lesson } = lessonWithTutor();

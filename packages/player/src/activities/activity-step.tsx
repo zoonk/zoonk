@@ -25,7 +25,7 @@ import { ActivityCheckQuestion } from "./_components/activity-check-question";
 import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
 import { ActivityFeedback } from "./_components/activity-feedback";
-import { CanvasQuestionContext } from "./_utils/canvas-question";
+import { CanvasKeysContext, CanvasQuestionContext } from "./_utils/canvas-question";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
 import { BrowserCanvas } from "./browser-canvas";
@@ -104,6 +104,17 @@ function ActivityCheckArea({
   return null;
 }
 
+/** Stops the step's question from answering number keys the canvas is using, its key badges hidden in place. */
+function QuestionKeys({ children, paused }: { children: React.ReactNode; paused: boolean }) {
+  const interactionState = usePlayerInteractionState();
+
+  return (
+    <PlayerInteractionContext value={paused ? "paused" : interactionState}>
+      <div className={cn("contents", paused && "**:data-[slot=kbd]:invisible")}>{children}</div>
+    </PlayerInteractionContext>
+  );
+}
+
 function numericValue(answer: ActivityStepProps["answer"]): number | undefined {
   return answer?.kind === "numeric" ? answer.value : undefined;
 }
@@ -145,6 +156,7 @@ export function ActivityStep({
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const badgeKind = badge(content);
   const [canvasAsks, setCanvasAsks] = useState(false);
+  const [canvasHasKeys, setCanvasHasKeys] = useState(false);
   const [typedValue, setTypedValue] = useState<number>();
   const value = numericValue(answer);
   const { check } = content;
@@ -153,7 +165,7 @@ export function ActivityStep({
   const maximumFractionDigits =
     check.kind === "numeric"
       ? ((phase === "checked" && value !== undefined
-          ? getCheckedAnswerPlaces({ isCorrect: isCorrect !== false, rounded: display, value })
+          ? getCheckedAnswerPlaces({ content, isCorrect: isCorrect !== false, value })
           : null) ??
         Math.max(
           exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
@@ -190,14 +202,16 @@ export function ActivityStep({
         {/* `inert` stops clicks but not the window-level keys a canvas listens to. */}
         <PlayerInteractionContext value={isLocked ? "paused" : interactionState}>
           <CanvasQuestionContext value={setCanvasAsks}>
-            <BrowserCanvas
-              answer={canvasAnswer}
-              content={content}
-              expected={expected}
-              labelId={labelId}
-              onAnswerChange={changeCanvasAnswer}
-              phase={phase}
-            />
+            <CanvasKeysContext value={setCanvasHasKeys}>
+              <BrowserCanvas
+                answer={canvasAnswer}
+                content={content}
+                expected={expected}
+                labelId={labelId}
+                onAnswerChange={changeCanvasAnswer}
+                phase={phase}
+              />
+            </CanvasKeysContext>
           </CanvasQuestionContext>
         </PlayerInteractionContext>
 
@@ -205,16 +219,18 @@ export function ActivityStep({
       </fieldset>
 
       {!canvasAsks && !answersOnCanvas && (
-        <ActivityCheckArea
-          isCorrect={isCorrect}
-          answer={answer}
-          className="pt-2"
-          content={content}
-          maximumFractionDigits={maximumFractionDigits}
-          onAnswerChange={changeFieldAnswer}
-          phase={phase}
-          places={places}
-        />
+        <QuestionKeys paused={canvasHasKeys}>
+          <ActivityCheckArea
+            isCorrect={isCorrect}
+            answer={answer}
+            className="pt-2"
+            content={content}
+            maximumFractionDigits={maximumFractionDigits}
+            onAnswerChange={changeFieldAnswer}
+            phase={phase}
+            places={places}
+          />
+        </QuestionKeys>
       )}
 
       {phase === "checked" && isCorrect !== null && (

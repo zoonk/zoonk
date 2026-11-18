@@ -93,21 +93,25 @@ export function getActivityAnswerRules(content: ActivityStepContent): {
   };
 }
 
-/** The hint's places for a checked learner's number, or null when there's no hint or a wrong answer would then read as the right one. */
+/** The hint's places for a checked learner's number, or null when there's no hint or the rounded number would grade differently from what was typed. */
 export function getCheckedAnswerPlaces({
+  content,
   isCorrect,
-  rounded,
   value,
 }: {
+  content: ActivityStepContent;
   isCorrect: boolean;
-  rounded: ActivityRoundedAnswer | null;
   value: number;
 }): number | null {
-  if (!rounded || rounded.places === null) {
+  const places = getActivityRoundedAnswer(content)?.places ?? null;
+
+  if (places === null) {
     return null;
   }
 
-  return !isCorrect && roundToPlaces(value, rounded.places) === rounded.value
-    ? null
-    : rounded.places;
+  const shown = roundToPlaces(value, places);
+
+  return checkActivityAnswer(content, { kind: "numeric", value: shown }) === isCorrect
+    ? places
+    : null;
 }

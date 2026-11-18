@@ -78,7 +78,9 @@ function LessonQuestionPanelHeader({
           </DrawerDescription>
         </BuddyIdentityRow>
       ) : (
-        <DrawerTitle className={BUDDY_NAME_CLASS}>{t("Ask Zu with a free account")}</DrawerTitle>
+        <DrawerTitle className={BUDDY_NAME_CLASS}>
+          {t("Ask {name} with a free account", { name: identity.name })}
+        </DrawerTitle>
       )}
     </DrawerHeader>
   );

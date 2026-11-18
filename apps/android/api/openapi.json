@@ -42057,7 +42057,7 @@
           },
           "expected": {
             "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number (rounded to its step's `roundedAnswer`) or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ActivityExpected"
@@ -76019,7 +76019,7 @@
       },
       "ActivityRoundedAnswer": {
         "nullable": true,
-        "description": "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's numbers in a check result: `expected`, `correctAnswer` and the learner's `answerText`, which keeps its own digits when a wrong answer would otherwise read as the right one. Null on other checks",
+        "description": "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's text in a check result: `correctAnswer` and the learner's `answerText`, which keeps its own digits when it would otherwise read as a different verdict. A check result's `expected` stays exact. Null on other checks",
         "type": "object",
         "properties": {
           "places": {
@@ -77921,7 +77921,7 @@
           },
           "expected": {
             "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number (rounded to its step's `roundedAnswer`) or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ActivityExpected"
