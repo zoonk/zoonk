@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { TaskFrame } from "../shell/task-frame";
@@ -9,10 +8,19 @@ import { useMockScreen } from "./mock-context";
 import { getMockSubject } from "./mock-labels";
 
 export function MockFrame(
-  props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
+  props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref" | "footerNote">,
 ) {
   const { hrefs, runner } = useMockScreen();
-  return <TaskFrame {...props} beforeExit={runner.savesInFlight} exitHref={hrefs.exit} />;
+  const note = useMockStatusNote();
+
+  return (
+    <TaskFrame
+      {...props}
+      beforeExit={runner.savesInFlight}
+      exitHref={hrefs.exit}
+      footerNote={note}
+    />
+  );
 }
 
 export function MockEyebrow() {
@@ -23,19 +31,21 @@ export function MockEyebrow() {
   return <Eyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</Eyebrow>;
 }
 
-function SaveStatusLine({ reserve }: { reserve: boolean }) {
+/**
+ * What the last save or hand-in couldn't do, drawn over the screen above the bar (its `note`)
+ * so the bar's buttons never move; null when there's nothing to say.
+ */
+function useMockStatusNote(): React.ReactNode {
   const t = useExtracted();
   const { runner } = useMockScreen();
+  const saved = runner.saveStatus === "saved";
+  // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
+  const failed = runner.error && runner.saveStatus !== "retrying";
 
-  const retrying = runner.saveStatus === "retrying";
-
-  if (retrying || reserve) {
+  if (runner.saveStatus === "retrying") {
     return (
-      <div
-        className={cn("flex items-center gap-2 text-sm", !retrying && "invisible")}
-        role="status"
-      >
-        <span className="text-destructive-text min-w-0 flex-1">
+      <div className="flex items-center gap-2" role="status">
+        <span className="text-destructive-text min-w-0 flex-1 text-start">
           {t("Try again before you move on")}
         </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
@@ -45,41 +55,31 @@ function SaveStatusLine({ reserve }: { reserve: boolean }) {
     );
   }
 
+  if (failed) {
+    return (
+      <p className="text-destructive-text" role="alert">
+        {saved
+          ? t("That didn't go through. Your answers are saved. Try again in a moment.")
+          : t("That didn't go through. Try again in a moment.")}
+      </p>
+    );
+  }
+
+  if (runner.saveStatus === "refused") {
+    return (
+      <p className="text-destructive-text" role="alert">
+        {t("Your last answer wasn't saved.")}
+      </p>
+    );
+  }
+
+  if (runner.slow) {
+    return (
+      <p className="text-muted-foreground" role="status">
+        {t("Still handing it in. This is taking longer than usual.")}
+      </p>
+    );
+  }
+
   return null;
-}
-
-export function MockStepStatus({ reserve = false }: { reserve?: boolean }) {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const saved = runner.saveStatus === "saved";
-  // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
-  const failed = runner.error && runner.saveStatus !== "retrying";
-
-  const status = (
-    <>
-      <SaveStatusLine reserve={reserve} />
-
-      {runner.saveStatus === "refused" && !failed && (
-        <p className="text-destructive-text self-center text-sm" role="alert">
-          {t("Your last answer wasn't saved.")}
-        </p>
-      )}
-
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {saved
-            ? t("That didn't go through. Your answers are saved. Try again in a moment.")
-            : t("That didn't go through. Try again in a moment.")}
-        </p>
-      )}
-
-      {!runner.error && runner.slow && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {t("Still handing it in. This is taking longer than usual.")}
-        </p>
-      )}
-    </>
-  );
-
-  return reserve ? <div className="grid w-full *:col-start-1 *:row-start-1">{status}</div> : status;
 }
