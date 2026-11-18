@@ -669,9 +669,7 @@ private struct PlanReveal: View {
     case .idle, .loading:
       // Today's rows hold their place, so the week doesn't move as they come. The reveal's week
       // holds the rest of the plan's, so when that has nothing left, the reveal draws nothing.
-      if plan.week.days.contains(where: {
-        [.today, .upcoming].contains($0.state) && !$0.items.isEmpty
-      }) {
+      if plan.hasLessonsInNextSevenDays {
         RevealTodayPlaceholder()
       }
     case .empty, .failed:

@@ -282,6 +282,10 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     week.days.first { $0.state == .today }?.date ?? week.startDate
   }
 
+  var hasLessonsInNextSevenDays: Bool {
+    week.days.contains { [.today, .upcoming].contains($0.state) && !$0.items.isEmpty }
+  }
+
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
   /// phase the plan holds nothing of has no days.
   var roadPhases: [PlanPhase] {
