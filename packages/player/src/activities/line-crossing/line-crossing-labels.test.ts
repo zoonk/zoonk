@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isOnNamedSide, touchesSegment } from "../_utils/drawing-label";
+import { belongsWith, isOnNamedSide, touchesBox, touchesSegment } from "../_utils/drawing-label";
 import {
   ARROW_HEAD,
   ARROW_STROKE,
   type LabelBox,
+  changeArrowBoxes,
   changeArrows,
   placeChartLabels,
   placeLineLabels,
@@ -18,6 +19,60 @@ const chartSegment = (x0: number, y0: number, x1: number, y1: number) => ({
   from: { x: x0, y: y0 },
   to: { x: x1, y: y1 },
 });
+
+function breakEvenPlot(costStart: number, costEnd: number, height: number, after: Point) {
+  const plot = { bottom: 248, left: 0, right: 230, top: 0 };
+  const cost = chartSegment(0, costStart, 230, costEnd);
+  const revenue = chartSegment(0, 248, 230, 51 + 1 / 3);
+  const original = chartSegment(0, 189, 230, 90 + 2 / 3);
+  const before = { x: 138, y: 130 };
+
+  const marks = {
+    boxes: [
+      { bottom: 14, left: 0, right: 60, top: 0 },
+      ...changeArrowBoxes({ after, before, bottom: 248, left: 0 }),
+    ],
+    circles: [before, after].map(({ x, y }) => ({ cx: x, cy: y, radius: 5 })),
+    lines: [before, after].flatMap(({ x, y }) => [
+      chartSegment(0, y, x, y),
+      chartSegment(x, y, x, 248),
+    ]),
+  };
+
+  const widths = height === 12 ? [26, 46, 40] : [35, 62, 53];
+
+  const shown = [cost, revenue, original].map((segment, index) => ({
+    isOptional: index === 2,
+    isUpper: index < 2,
+    segment,
+    size: { height, width: widths[index]! },
+  }));
+
+  return { marks, plot, shown };
+}
+
+function hasSampledPosition(
+  plot: LabelBox,
+  labelSize: { height: number; width: number },
+  accepts: (box: LabelBox) => boolean,
+): boolean {
+  const step = 0.25;
+  const maxTop = plot.bottom - labelSize.height;
+  const maxLeft = plot.right - labelSize.width;
+
+  for (let y = 0; y < maxTop + step; y += step) {
+    for (let x = 0; x < maxLeft + step; x += step) {
+      const top = Math.min(y, maxTop);
+      const left = Math.min(x, maxLeft);
+
+      if (accepts({ bottom: top + labelSize.height, left, right: left + labelSize.width, top })) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
 
 function gapToSegment(box: LabelBox, { from, to }: { from: Point; to: Point }): number {
   const samples = Array.from({ length: 201 }, (_, index) => ({
@@ -264,7 +319,7 @@ describe(placeChartLabels, () => {
     expect(after[1]).toStrictEqual(before[1]);
   });
 
-  it("moves an untouched name if the answer would read as its line", () => {
+  it("keeps an untouched name in place even when the answer is nearer", () => {
     const name = { isUpper: true, segment: chartSegment(22, 104, 311, 100), size };
 
     const revealed = [{ ...answer, segment: chartSegment(22, 75, 311, 75) }];
@@ -273,9 +328,7 @@ describe(placeChartLabels, () => {
 
     expect(before && touchesSegment(before, revealed[0]!.segment)).toBe(false);
 
-    expect(after && gapToSegment(after, name.segment)).toBeLessThan(
-      after ? gapToSegment(after, revealed[0]!.segment) : 0,
-    );
+    expect(after).toStrictEqual(before);
   });
 
   it("keeps a name closer to its own line than a dotted guide", () => {
@@ -376,7 +429,61 @@ describe(placeChartLabels, () => {
     );
   });
 
-  it("checks fractional plot-edge positions before giving up a name's line", () => {
+  it("keeps Cost nearer its own line than the crossing guides in a tight chart", () => {
+    const { marks, plot, shown } = breakEvenPlot(169 + 1 / 3, 71, 12, { x: 184, y: 90 + 2 / 3 });
+    const [name] = placeChartLabels({ area: plot, marks, revealed: [], shown });
+
+    if (!name || !shown[0]) {
+      throw new Error("Cost needs its name.");
+    }
+
+    expect(gapToSegment(name, shown[0].segment)).toBeLessThan(
+      Math.min(...marks.lines.map((guide) => gapToSegment(name, guide))),
+    );
+  });
+
+  it("uses a stroke-clear spot in the final search on a tight chart", () => {
+    const { marks, plot, shown } = breakEvenPlot(169 + 1 / 3, 71, 12, { x: 184, y: 90 + 2 / 3 });
+    const [costName] = placeChartLabels({ area: plot, marks, revealed: [], shown });
+
+    if (!costName) {
+      throw new Error("Cost needs its name.");
+    }
+
+    const strokes = [...shown.map((label) => label.segment), ...marks.lines];
+
+    expect(strokes.filter((stroke) => touchesSegment(costName, stroke))).toStrictEqual([]);
+    expect(marks.boxes.some((box) => touchesBox(costName, box))).toBe(false);
+  });
+
+  it("keeps Before from overlapping Cost after revealing the answer in a tight chart", () => {
+    const { marks, plot, shown } = breakEvenPlot(248, 149 + 2 / 3, 16, { x: 0, y: 248 });
+    const answerLine = chartSegment(0, 179 + 1 / 6, 230, 80 + 5 / 6);
+
+    const names = placeChartLabels({
+      area: plot,
+      marks,
+      revealed: [{ isUpper: false, segment: answerLine, size: { height: 16, width: 114 } }],
+      shown,
+    });
+
+    const [costName, , original] = names;
+
+    if (!costName || !original) {
+      throw new Error("Cost and the dashed line both need names.");
+    }
+
+    const overlapWidth =
+      Math.min(costName.right, original.right) - Math.max(costName.left, original.left);
+
+    const overlapHeight =
+      Math.min(costName.bottom, original.bottom) - Math.max(costName.top, original.top);
+
+    expect(Math.min(overlapWidth, overlapHeight)).toBeLessThanOrEqual(0);
+    expect(touchesSegment(original, answerLine)).toBe(false);
+  });
+
+  it("checks fractional plot-edge positions around names that stay put at Check", () => {
     const lines = [
       chartSegment(0, 206.6667, 330, 51.6667),
       chartSegment(38.8235, 0, 330, 155),
@@ -384,28 +491,59 @@ describe(placeChartLabels, () => {
     ];
 
     const answerLine = chartSegment(0, 144.6667, 308, 0);
+    const width = 158.7;
+    const height = 23;
+    const plot = { bottom: 248, left: 0, right: 330, top: 0 };
 
-    const [answerBox] = placeChartLabels({
-      area: { bottom: 248, left: 0, right: 330, top: 0 },
+    const shown = lines.map((segment, index) => ({
+      isOptional: index === 2,
+      isUpper: index < 2,
+      segment,
+      size: { height, width: 75.9 },
+    }));
+
+    const before = placeChartLabels({ area: plot, marks: noMarks, revealed: [], shown });
+
+    const checked = placeChartLabels({
+      area: plot,
       marks: noMarks,
-      revealed: [{ isUpper: false, segment: answerLine, size: { height: 23, width: 158.7 } }],
-      shown: lines.map((segment, index) => ({
-        isOptional: index === 2,
-        isUpper: index < 2,
-        segment,
-        size: { height: 23, width: 75.9 },
-      })),
-    }).slice(3);
+      revealed: [{ isUpper: false, segment: answerLine, size: { height, width } }],
+      shown,
+    });
 
-    if (!answerBox) {
-      throw new Error("The revealed line needs its name.");
+    const [supplyName, demandName, beforeName, answerName] = checked;
+
+    if (!supplyName || !demandName || !beforeName || !answerName) {
+      throw new Error("The full chart needs all four names.");
     }
 
-    expect(touchesSegment(answerBox, answerLine)).toBe(false);
+    expect(demandName).toStrictEqual(before[1]);
+    expect(beforeName).toStrictEqual(before[2]);
 
-    expect(gapToSegment(answerBox, answerLine)).toBeLessThan(
-      Math.min(...lines.map((line) => gapToSegment(answerBox, line))),
+    const names = [supplyName, demandName, beforeName, answerName];
+
+    for (const [index, name] of names.entries()) {
+      expect(touchesSegment(name, answerLine)).toBe(false);
+      expect(names.slice(0, index).some((other) => touchesBox(name, other, 0))).toBe(false);
+    }
+
+    const edge = { bottom: height, left: 90.75, right: 90.75 + width, top: 0 };
+    expect(belongsWith(edge, answerLine, lines)).toBe(true);
+    expect(touchesSegment(edge, answerLine)).toBe(false);
+    expect(touchesBox(edge, demandName, 0)).toBe(true);
+
+    const occupied = [supplyName, demandName, beforeName];
+
+    const available = hasSampledPosition(
+      plot,
+      { height, width },
+      (box) =>
+        !touchesSegment(box, answerLine) &&
+        occupied.every((name) => !touchesBox(box, name, 0)) &&
+        belongsWith(box, answerLine, lines),
     );
+
+    expect(available).toBe(false);
   });
 
   it("keeps the moved line out from between Before and its dashed line at 390 px", () => {
