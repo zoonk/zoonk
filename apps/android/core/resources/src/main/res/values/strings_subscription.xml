@@ -14,8 +14,6 @@
     <string name="subscription_contact_support">Get help</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
-    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
-    <string name="subscription_renewal_failed_website">Update your payment on the website, where you subscribed.</string>
     <string name="subscription_deletion_notice">Deleting your account ends Plus right away.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">Plus from the App Store keeps charging until you cancel it there.</string>
