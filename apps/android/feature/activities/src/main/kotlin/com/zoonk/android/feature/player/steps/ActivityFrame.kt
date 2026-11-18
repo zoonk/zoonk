@@ -94,12 +94,10 @@ import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
-import com.zoonk.android.ui.format.currencyFor
 import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
-import com.zoonk.android.ui.format.formatMoney
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
@@ -298,8 +296,6 @@ private fun NumericCheckField(
             ?: value?.let { formatNumber(it, locale, exactFractionDigitsFor(check.answer, check.allowed, it), grouping = false) }
             ?: typed.orEmpty()
     val unit = check.unit
-    val currency = currencyFor(unit)
-    val unitFirst = currency != null && formatMoney(1.0, currency, locale).indexOfFirst(Char::isDigit) > 0
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (showQuestion) CheckQuestion(check.question)
@@ -320,7 +316,7 @@ private fun NumericCheckField(
                 unit?.let {
                     com.zoonk.android.ui.components.NumberUnitTransformation(
                         it,
-                        unitFirst,
+                        locale,
                         MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
