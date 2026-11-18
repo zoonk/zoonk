@@ -22,6 +22,7 @@ import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
+import { chartReaderTicks } from "./chart-reader-axis";
 
 type ChartReaderProps = ActivityRendererProps<"chartReader">;
 type Fields = ChartReaderProps["content"]["fields"];
@@ -115,7 +116,7 @@ export function ChartReaderActivity({
         />
         <ActivityPlotAxisX
           format={(value) => format(value, { grouping: !plainX })}
-          ticks={niceTicks(xDomain, 3)}
+          ticks={chartReaderTicks({ domain: xDomain, label: fields.xLabel })}
         />
 
         {shownSpans.map((span) => (
