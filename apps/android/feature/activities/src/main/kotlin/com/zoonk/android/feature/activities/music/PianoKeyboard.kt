@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 private class PianoKey(
@@ -92,7 +93,7 @@ fun PianoKeyboard(
     val roving = rememberRovingFocus(keys.size)
     val colors = pianoColors(MaterialTheme.colorScheme)
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    ProvideLayoutDirection(LayoutDirection.Ltr) {
         BoxWithConstraints(modifier.fillMaxWidth()) {
             val fitted = maxWidth / whiteCount
             val whiteWidth = if (narrowest * whiteCount <= maxWidth) fitted else max(fitted, narrowest)

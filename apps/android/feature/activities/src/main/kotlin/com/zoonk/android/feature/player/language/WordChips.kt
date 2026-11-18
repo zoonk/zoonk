@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
 import java.util.Locale
 
@@ -120,7 +121,7 @@ internal fun TargetDirection(
         } else {
             LayoutDirection.Ltr
         }
-    CompositionLocalProvider(LocalLayoutDirection provides direction, content = content)
+    ProvideLayoutDirection(direction, content)
 }
 
 /**

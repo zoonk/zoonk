@@ -29,6 +29,7 @@ import com.zoonk.android.ui.format.formatMathAnswer
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 
 /**
  * What a checked question got (main's `QuestionFeedback`): the verdict and any streak, the right
@@ -186,7 +187,7 @@ fun WorkedSteps(
         }
 
     // A formula reads left to right in every language.
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    ProvideLayoutDirection(LayoutDirection.Ltr) {
         DiffLines(lines, added = stringResource(R.string.questions_result), modifier = modifier)
     }
 }

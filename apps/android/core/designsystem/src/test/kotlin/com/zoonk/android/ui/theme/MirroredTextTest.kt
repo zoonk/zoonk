@@ -75,6 +75,27 @@ class MirroredTextTest {
         assertMarkerBesideWords()
     }
 
+    @Test
+    fun aLeftToRightPartOfAMirroredScreenStartsItsLinesOnTheLeft() {
+        var layout: TextLayoutResult? = null
+        mirroredContent {
+            ProvideLayoutDirection(LayoutDirection.Ltr) {
+                Text("Subtract 3 from both sides, then divide both sides by 2.", Modifier.fillMaxWidth(), onTextLayout = { layout = it })
+            }
+        }
+        val shown = checkNotNull(layout)
+
+        assertTrue("wraps: ${shown.lineCount}", shown.lineCount > 1)
+        for (line in 0 until shown.lineCount) {
+            assertEquals(
+                "line $line starts on the left",
+                0f,
+                shown.getBoundingBox(shown.getLineStart(line)).left,
+                1f,
+            )
+        }
+    }
+
     /** Mirrored, the number's box sits after the words on their left, so the number ends that box's left side. */
     private fun assertMarkerBesideWords() {
         val node = compose.onNodeWithText("1.", useUnmergedTree = true).fetchSemanticsNode()

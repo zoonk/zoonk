@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.ui.scaffold.ReadWindowPosture
 
 /**
@@ -52,6 +53,15 @@ fun ZoonkTheme(
             TextStartsOnLayoutStart { ReadWindowPosture(content) }
         }
     }
+}
+
+/** Lays [content] out in [direction], its paragraphs starting on that direction's start, as a formula or a keyboard reads left to right in every language. */
+@Composable
+fun ProvideLayoutDirection(
+    direction: LayoutDirection,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(LocalLayoutDirection provides direction) { TextStartsOnLayoutStart(content) }
 }
 
 /**
