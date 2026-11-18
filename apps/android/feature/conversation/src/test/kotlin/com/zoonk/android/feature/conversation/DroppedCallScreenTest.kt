@@ -63,7 +63,7 @@ class DroppedCallScreenTest {
         compose.onNodeWithText("Call again").assertDoesNotExist()
     }
 
-    /** A call the month's cap cut off: once the day comes, its title stays over the one sentence "You can try again now.", and Call again. */
+    /** A call the month's cap cut off: once the day comes, its title says the time is back over "You can try again now.", and Call again. */
     @Test
     fun aCallTheCapCutOffCanBeCalledAgainOnceItsDayComes() {
         var retries = 0
@@ -84,14 +84,13 @@ class DroppedCallScreenTest {
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Call again").assertDoesNotExist()
-        val reason = compose.onNodeWithText("You've used your call time").getBoundsInRoot().top
+        val title = compose.onNodeWithText("You've used your call time").getBoundsInRoot().top
 
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Call again").fetchSemanticsNodes().isNotEmpty() }
-        // The title's room stays, so the sentence takes the reason's place.
-        assertEquals(reason, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
+        assertEquals(title, compose.onNodeWithText("Your call time is back").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
-        compose.onNodeWithText("The call dropped").assertExists()
+        compose.onNodeWithText("The call dropped").assertDoesNotExist()
         compose.onNodeWithText("You can try again now.").assertExists()
         compose.onNodeWithText("Call again").performClick()
 

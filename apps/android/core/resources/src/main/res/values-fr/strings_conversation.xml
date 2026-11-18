@@ -18,7 +18,6 @@
   "conversation_call_time": "ddb146443c0b47ee09fd91766a820e6cb512c996d0fb3bdc618cd1ff0438e2b1",
   "conversation_calling": "ece68cc1ef5f27db05e51d3f370386ba0f1c3b838b59ab0dec857f349d83b089",
   "conversation_calls_need_account": "3a8dda0450cc1ec89dd422b3d2daee744b972ceee08a652d6aeef9b80846c6f2",
-  "conversation_cancel": "89b7accc3616048c584c8e1797de12ece66d34ebfc02fb54940866a8fb04dd2c",
   "conversation_challenge_gate_line": "71c669604db631894190e6431f0f0a7256a0219d73b006d24a190b98a50d38a2",
   "conversation_challenge_gate_title": "704a4fe45afe99e6a792ef78b60d8407c7fd8aa68ec0c70f38668eeabbcaf57c",
   "conversation_challenge_passed": "0f3266a9b0d35415815520c3c062ecc4270cbbd0b68b32a6189be49b2c582366",
@@ -213,8 +212,6 @@
     <!-- The call is connecting; the character's name. -->
     <string name="conversation_calling">Appel à %1$s…</string>
     <string name="conversation_answers_first">%1$s prend la parole en premier.</string>
-    <!-- Ends a call that hasn't connected yet. -->
-    <string name="conversation_cancel">Annuler</string>
     <string name="conversation_muted">Micro coupé</string>
     <string name="conversation_muted_detail">Réactive le micro pour répondre à voix haute, ou écris ta réponse.</string>
     <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->

@@ -567,14 +567,13 @@ private fun CallControls(
 ) {
     val canMute = call.phase == LiveCallPhase.Live && !call.micBlocked
     val off = call.micBlocked || call.muted
-    val calling = call.phase != LiveCallPhase.Live
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
             FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE), shape = ICON_BUTTON_SHAPE) {
                 Icon(painterResource(R.drawable.ic_help), contentDescription = label)
             }
         }
-        Control(R.string.conversation_mute, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_mute, Modifier.weight(1f), enabled = canMute) { label ->
             FilledTonalIconToggleButton(
                 checked = call.muted,
                 onCheckedChange = { actions.onMute() },
@@ -593,7 +592,7 @@ private fun CallControls(
                 Icon(painterResource(if (off) R.drawable.ic_mic_off else R.drawable.ic_mic), contentDescription = label)
             }
         }
-        Control(if (calling) R.string.conversation_cancel else R.string.conversation_end, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_end, Modifier.weight(1f)) { label ->
             FilledIconButton(
                 onClick = actions.onEnd,
                 modifier = Modifier.size(CONTROL_SIZE),
@@ -610,17 +609,24 @@ private fun CallControls(
     }
 }
 
-/** A call control as phones show them: the button, its name under it. */
+/** A call control as phones show them: the button, its name under it, muted with it while it can't be used. */
 @Composable
 private fun Control(
     label: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     button: @Composable (label: String) -> Unit,
 ) {
     val name = stringResource(label)
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         button(name)
-        Text(name, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
+        Text(
+            name,
+            Modifier.clearAndSetSemantics {},
+            color = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
