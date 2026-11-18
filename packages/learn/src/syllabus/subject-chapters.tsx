@@ -8,13 +8,12 @@ import {
   CollapsibleTrigger,
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { NetworkIcon, PlusIcon } from "lucide-react";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
-  ListRowButton,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -27,6 +26,7 @@ import {
 } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
+import { FoldRow } from "../today/today-fold-row";
 import { getDoneChapters } from "./done-chapters";
 import { SyllabusChapterRow } from "./syllabus-chapter-row";
 
@@ -134,6 +134,7 @@ export function SubjectChapters({
 }) {
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
+  const listId = useId();
   const done = getDoneChapters(chapters);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
   const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
@@ -158,7 +159,7 @@ export function SubjectChapters({
         </span>
       </PageSectionHeader>
 
-      <ul className={LIST_GROUP_CLASS}>
+      <ul className={LIST_GROUP_CLASS} id={listId}>
         {done.length > 0 && (
           <li>
             <DoneChapters chapterHref={chapterHref} chapters={done} />
@@ -169,18 +170,15 @@ export function SubjectChapters({
 
         {hidden > 0 && (
           <li>
-            <ListRowButton chevron={false} onClick={() => setShowAll(true)}>
-              <ListRowLeading className="text-muted-foreground size-4 justify-center">
-                <PlusIcon aria-hidden="true" className="size-3.5" />
-              </ListRowLeading>
-              <ListRowContent>
-                <ListRowTitle className="text-muted-foreground">
-                  {t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                    count: hidden,
-                  })}
-                </ListRowTitle>
-              </ListRowContent>
-            </ListRowButton>
+            <FoldRow
+              controls={listId}
+              done={false}
+              label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                count: hidden,
+              })}
+              onToggle={() => setShowAll(true)}
+              open={showAll}
+            />
           </li>
         )}
       </ul>

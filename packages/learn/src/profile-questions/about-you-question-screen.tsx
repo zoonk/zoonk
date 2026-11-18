@@ -64,7 +64,12 @@ export function AboutYouQuestionScreen({
   const [isPending, startTransition] = useTransition();
   const formId = useId();
 
-  const input = canSendProfileDraft({ draft, from: "settings", question: question.id })
+  const input = canSendProfileDraft({
+    draft,
+    from: "settings",
+    question: question.id,
+    savedStatus: question.status,
+  })
     ? toProfileAnswer({ draft, memoryEnabled, question: question.id })
     : null;
 

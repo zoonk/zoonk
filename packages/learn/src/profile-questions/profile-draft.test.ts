@@ -152,8 +152,31 @@ describe(canSendProfileDraft, () => {
     ).toBe(true);
   });
 
-  it("Settings saves an empty screen", () => {
-    expect(canSendProfileDraft({ draft: draft(), from: "settings", question: "watch" })).toBe(true);
+  it("Settings needs an answer for an unanswered question", () => {
+    expect(canSendProfileDraft({ draft: draft(), from: "settings", question: "watch" })).toBe(
+      false,
+    );
+  });
+
+  it("Settings lets the learner clear a saved answer", () => {
+    expect(
+      canSendProfileDraft({
+        draft: draft(),
+        from: "settings",
+        question: "watch",
+        savedStatus: "answered",
+      }),
+    ).toBe(true);
+  });
+
+  it("Settings lets the learner explicitly decline an unanswered question", () => {
+    expect(
+      canSendProfileDraft({
+        draft: draft({ exclusive: "ratherNot" }),
+        from: "settings",
+        question: "work",
+      }),
+    ).toBe(true);
   });
 
   it("another field needs its name", () => {

@@ -12,12 +12,12 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MinusIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
+import { FoldRow } from "../today/today-fold-row";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
@@ -167,7 +167,7 @@ function ChapterRow({
   );
 }
 
-function ShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolean }) {
+function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolean }) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
 
@@ -192,13 +192,15 @@ export function JourneyChapters({
   links: JourneyPathLinks;
 }) {
   const [showAll, setShowAll] = useState(false);
+  const listId = useId();
   const rows = chapters.filter((chapter) => !isWritingAhead(chapter));
   const range = getChapterWindow({ states: rows.map((chapter) => chapter.state) });
   const hidden = rows.length - (range.end - range.start);
   const shown = showAll ? rows : rows.slice(range.start, range.end);
+  const showMoreLabel = useShowMoreLabel({ hidden, showAll });
 
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col" id={listId}>
       {shown.map((chapter) => (
         <li key={getChapterKey(chapter)}>
           <ChapterRow chapter={chapter} isNext={chapter.state === "current"} links={links} />
@@ -207,25 +209,13 @@ export function JourneyChapters({
 
       {hidden > 0 && (
         <li>
-          <button
-            aria-expanded={showAll}
-            className={cn(
-              PATH_ROW_CLASS,
-              "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-            )}
-            data-slot="path-row"
-            onClick={() => setShowAll(!showAll)}
-            type="button"
-          >
-            <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-              {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
-            </span>
-            <PathRowBody>
-              <span>
-                <ShowMoreLabel hidden={hidden} showAll={showAll} />
-              </span>
-            </PathRowBody>
-          </button>
+          <FoldRow
+            controls={listId}
+            done={false}
+            label={showMoreLabel}
+            onToggle={() => setShowAll((open) => !open)}
+            open={showAll}
+          />
         </li>
       )}
 
