@@ -269,6 +269,7 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
+#: src/onboarding/onboarding-skeletons.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/reveal-body.tsx
@@ -4813,6 +4814,7 @@ msgid "Progress"
 msgstr "진도"
 
 #: src/journey/journey-hero.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -9285,9 +9287,17 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "065UXh"
-msgid "No date"
-msgstr "날짜 없음"
+#: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "bpAaId"
+msgid "To be confirmed"
+msgstr "추후 확정"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "설정 안 됨"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10030,12 +10040,6 @@ msgid "Edit {field}"
 msgstr "{field} 수정하기"
 
 #: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-properties.tsx
-msgctxt "bpAaId"
-msgid "To be confirmed"
-msgstr "추후 확정"
-
-#: src/onboarding/understood/understood-date-row.ts
 msgctxt "H5ndh9"
 msgid "{year}, to be confirmed"
 msgstr "{year}년, 추후 확정"
@@ -10672,11 +10676,6 @@ msgstr "{days}, {weeks, plural, other {#주마다}}"
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "다음 <date></date>"
-
-#: src/plan/plan-properties.tsx
-msgctxt "LG_0wj"
-msgid "None set"
-msgstr "설정 안 됨"
 
 #: src/plan/plan-properties.tsx
 msgctxt "G6h29P"
