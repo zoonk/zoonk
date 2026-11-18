@@ -387,7 +387,7 @@ private struct FlagButton: View {
       run.toggleFlag()
     } label: {
       Label {
-        Text("Flag", tableName: "Mock", comment: "Flags a question to come back to")
+        Text("Mark for review", tableName: "Mock", comment: "Flags a question to come back to")
       } icon: {
         Image(systemName: flagged ? "flag.fill" : "flag")
       }
@@ -512,7 +512,7 @@ struct MockSectionCounts {
     if flagged > 0 {
       parts.append(
         String(
-          localized: "\(flagged) questions are flagged.", table: "Mock",
+          localized: "\(flagged) questions marked for review.", table: "Mock",
           comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
       )
     }
@@ -568,7 +568,29 @@ private struct MockAnswerSheet: View {
           row(question, at: index)
         }
       } header: {
-        SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
+        VStack(alignment: .leading, spacing: 8) {
+          SectionTitle(
+            Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
+          AccessibilityStack(spacing: 12) {
+            Label {
+              MockAnswerMark.answered
+            } icon: {
+              Image(systemName: "circle.fill")
+            }
+            Label {
+              MockAnswerMark.blank
+            } icon: {
+              Image(systemName: "circle")
+            }
+            Label {
+              MockAnswerMark.review
+            } icon: {
+              Image(systemName: "flag.fill")
+            }
+          }
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+        }
       } footer: {
         if let tools = view.currentSection?.tools {
           SectionFooter {
@@ -642,18 +664,23 @@ private struct MockAnswerSheet: View {
         if flagged {
           Image(systemName: "flag.fill")
             .foregroundStyle(.warning)
-            .accessibilityLabel(Text("Flagged", tableName: "Mock", comment: "A flagged question"))
+            .accessibilityLabel(MockAnswerMark.review)
         }
 
         Image(systemName: answered ? "circle.fill" : "circle")
           .foregroundStyle(answered ? Color(.foreground) : .faint)
-          .accessibilityLabel(
-            answered
-              ? Text("Answered", tableName: "Mock", comment: "An answered question")
-              : Text("Blank", tableName: "Mock", comment: "A blank question"))
+          .accessibilityLabel(answered ? MockAnswerMark.answered : MockAnswerMark.blank)
       }
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
     .currentRow(isCurrent)
+  }
+}
+
+private enum MockAnswerMark {
+  static var answered: Text { Text("Answered", tableName: "Mock", comment: "An answered question") }
+  static var blank: Text { Text("Blank", tableName: "Mock", comment: "A blank question") }
+  static var review: Text {
+    Text("Marked for review", tableName: "Mock", comment: "A flagged question")
   }
 }

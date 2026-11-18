@@ -88,7 +88,7 @@ extension XCTestCase {
   }
 
   @MainActor
-  private func accessibilityElements(in element: Any) -> [NSObject] {
+  func accessibilityElements(in element: Any) -> [NSObject] {
     guard let object = element as? NSObject else {
       return []
     }

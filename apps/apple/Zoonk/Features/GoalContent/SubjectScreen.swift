@@ -152,8 +152,8 @@ private struct SubjectContent: View {
       subject.questions.flatMap { questions in
         questions > 0
           ? String(
-            localized: "\(questions) questions", table: "Plan",
-            comment: "The number of questions in an exam or a mock exam.")
+            localized: "\(questions) questions from past exams", table: "Plan",
+            comment: "Past exam questions available for a subject")
           : nil
       },
       subject.topics.isEmpty
@@ -161,17 +161,6 @@ private struct SubjectContent: View {
         : String(
           localized: "\(subject.topics.count) topics", table: "Plan",
           comment: "How many topics a subject has"),
-      subject.chapters.isEmpty
-        ? nil
-        : String(
-          localized: "\(subject.chapters.count) chapters", table: "Plan",
-          comment: "How many chapters a subject has"),
-      subject.notPlannedReason == nil && subject.preparation == nil
-        ? String(
-          localized:
-            "\(subject.lessonShare.formatted(.percent.precision(.fractionLength(0)))) done",
-          table: "Plan", comment: "How much of a subject is done, as in 40% done")
-        : nil,
     ].compactMap(\.self)
   }
 
@@ -210,17 +199,11 @@ private struct SubjectContent: View {
           share: subject.lessonShare)
 
         if subject.lessonsKnown > 0 {
-          LabeledContent {
-            Text(
-              "\(subject.lessonsKnown) lessons skipped", tableName: "Plan",
-              comment: "Lessons of a subject the learner skipped because they already knew them"
-            )
-            .monospacedDigit()
-          } label: {
-            Text(
-              "Skipped", tableName: "Plan",
-              comment: "Label of a subject's lessons the learner already knew")
-          }
+          Text(
+            "\(subject.lessonsKnown) lessons skipped", tableName: "Plan",
+            comment: "Lessons of a subject the learner skipped because they already knew them"
+          )
+          .foregroundStyle(.mutedForeground)
         }
       }
     }
@@ -269,28 +252,26 @@ private struct SubjectContent: View {
         }
       } header: {
         SectionTitle(
-          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
-        ) {
-          HStack(spacing: 12) {
-            Text(
+          done.isEmpty
+            ? Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
+            : Text(
               "\(done.count) of \(chapters.count) chapters", tableName: "Plan",
-              comment: "Chapters done of the subject's chapters"
-            )
-            .monospacedDigit()
-
-            if learner.summary.value?.places.mindMaps == true {
-              Button {
-                router.open(.mindMaps(subjectKey: subject.key))
-              } label: {
-                Label {
-                  Text("Mind maps", tableName: "Plan", comment: "Opens the subject's mind maps")
-                } icon: {
-                  KindMark(kind: .mindMap)
-                }
+              comment: "Chapters done of the subject's chapters"),
+          alignment: .center
+        ) {
+          if learner.summary.value?.places.mindMaps == true {
+            Button {
+              router.open(.mindMaps(subjectKey: subject.key))
+            } label: {
+              Label {
+                Text("Mind maps", tableName: "Plan", comment: "Opens the subject's mind maps")
+              } icon: {
+                KindMark(kind: .mindMap)
               }
-              .buttonStyle(.ghost.endsRow)
-              .controlSize(.small)
             }
+            .buttonStyle(.ghost.endsRow)
+            .controlSize(.small)
+            .fixedSize(horizontal: true, vertical: false)
           }
         }
       }
@@ -322,16 +303,21 @@ private struct SubjectChapterRow: View {
   let chapter: SyllabusSubject.Chapter
 
   var body: some View {
-    if let chapterId = chapter.chapterId {
-      NavigationLink(
-        value: goal.kind == .language
-          ? AppRoute.languageUnit(chapterId: chapterId) : AppRoute.chapter(chapterId: chapterId)
-      ) {
+    Group {
+      if let chapterId = chapter.chapterId {
+        NavigationLink(
+          value: goal.kind == .language
+            ? AppRoute.languageUnit(chapterId: chapterId) : AppRoute.chapter(chapterId: chapterId)
+        ) {
+          content
+            .disclosureChevron()
+        }
+        .navigationLinkIndicatorVisibility(.hidden)
+      } else {
         content
       }
-    } else {
-      content
     }
+    .currentRow(chapter.state == .current)
   }
 
   /// Main's syllabus chapter row: numbered, what's left of the one in progress, and when the plan
@@ -350,7 +336,6 @@ private struct SubjectChapterRow: View {
         Text(PlanDate.text(nextDate, today: PlanDate.today()))
       }
     }
-    .currentRow(chapter.state == .current)
   }
 
   private var line: Text? {

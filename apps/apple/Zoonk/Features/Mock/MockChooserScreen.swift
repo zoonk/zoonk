@@ -402,9 +402,11 @@ private struct MockChooser: View {
 
       // The API gives the limit when no estimate covers the whole mock (an essay, too few answers).
       if estimatedMinutes < minutes {
+        let estimate = max(5, Int((Double(estimatedMinutes) / 5).rounded()) * 5)
         LabeledContent {
           Text(
-            "About \(MockLabels.duration(minutes: estimatedMinutes))", tableName: "Mock",
+            "About \(MockLabels.duration(minutes: estimate))",
+            tableName: "Mock",
             comment: "How long a picked mock usually takes")
         } label: {
           Text(
@@ -548,15 +550,13 @@ struct MockSummaryRow: View {
     } label: {
       ListRow(
         Text(MockLabels.title(number: mock.number)),
-        description: mock.shape?.kind == .area ? (mock.shape?.area).map { Text($0) } : nil,
-        alignment: .firstTextBaseline
+        description: mock.shape?.kind == .area ? (mock.shape?.area).map { Text($0) } : nil
       ) {
         StatusMark(status: .done)
       } trailing: {
-        VStack(alignment: .trailing, spacing: 2) {
+        VStack(alignment: .leading, spacing: 2) {
           Text(score)
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
-            .typeStyle(.data)
         }
       }
       .disclosureChevron()

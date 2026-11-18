@@ -162,7 +162,7 @@ extension MockRun {
     case .retrying:
       return BarNote(
         String(
-          localized: "Not saved yet\u{00A0}· retrying", table: "Mock",
+          localized: "Try again before you move on", table: "Mock",
           comment: "An answer waits to save"),
         tone: .status,
         action: BarNote.Action(
@@ -187,16 +187,23 @@ struct MockActionBar<Actions: View>: View {
   @ViewBuilder let actions: Actions
 
   var body: some View {
-    VStack(spacing: 10) {
+    AccessibilityStack(spacing: 12) {
+      actions
+    }
+    .environment(\.mainActionFillsRow, true)
+    .scenePadding(.horizontal)
+    .padding(.vertical, 10)
+    .overlay(alignment: .top) {
       if let note = run.barNote {
         note
           .typeStyle(.body)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .scenePadding(.horizontal)
+          .padding(.vertical, 8)
+          .background(.background)
+          .alignmentGuide(.top) { $0[.bottom] }
       }
-      HStack(spacing: 12) { actions }
     }
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
   }
 }
 

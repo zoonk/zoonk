@@ -179,7 +179,7 @@ struct PlanSuggestionSection: View {
             } else {
               resultLine(answer, change: applied.change, sentence: applied.sentence)
             }
-          } else if isInline {
+          } else if isInline && !isCoverage(item) {
             slot(item)
             answerFailure(item)
           } else if isStatement(item) {
@@ -418,6 +418,11 @@ struct PlanSuggestionSection: View {
   }
 
   /// The page's bottom bar answers it, so its line says everything and opens nothing.
+  private func isCoverage(_ item: PlanSlotItem) -> Bool {
+    if case .coverage = item { return true }
+    return false
+  }
+
   private func isStatement(_ item: PlanSlotItem) -> Bool {
     item == .paused || (item == .pastDate && context.goal.kind == .exam)
   }
@@ -488,7 +493,7 @@ struct PlanSuggestionSection: View {
         PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
       }
     case .coverage(let text):
-      PlanCoverageSlot(context: context, title: text, asksAtOnce: !isInline, actions: offers)
+      PlanCoverageSlot(context: context, title: text, asksAtOnce: true, actions: offers)
     case .courseComplete:
       PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)
@@ -635,7 +640,7 @@ private struct PlanPausedSlot: View {
         comment: "Title of the Plan's notice for a paused goal"),
       description: preview.value == true
         ? Text(
-          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+          "When you resume, your plan will pick up with the lessons planned for the days you paused.",
           tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
         : Text(
           "Nothing is planned until you resume it.", tableName: "Plan",

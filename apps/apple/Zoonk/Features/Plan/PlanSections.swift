@@ -101,7 +101,7 @@ struct RoadmapPhaseRow: View {
   let end: PhaseEnd?
 
   var body: some View {
-    ListRow(Text(phase.title), alignment: .firstTextBaseline) {
+    ListRow(Text(phase.title)) {
       StatusMark(status: phase.mark)
     } trailing: {
       if let end {
@@ -149,15 +149,15 @@ private struct RoadmapCompact: View {
   }
 
   private func line(phases: [PlanPhase], currentIndex: Int?) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
+    HStack(spacing: 12) {
       if let currentIndex {
         let phase = phases[currentIndex]
 
-        RowLayout(alignment: .firstTextBaseline) {
+        RowLayout {
         } words: {
           position(phase: phase, number: currentIndex + 1, count: phases.count)
         } value: {
-          if let end = context.plan.phaseEnd(phase) {
+          if !context.isPaused, let end = context.plan.phaseEnd(phase) {
             Text(verbatim: end.shown)
               .typeStyle(.data)
               .foregroundStyle(.mutedForeground)
@@ -325,20 +325,22 @@ struct PlanNumbersSection: View {
 
   var body: some View {
     let standing = standingNumber
+    let schedule = scheduleNumber
 
-    PageSection {
-      StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
-        if let standing {
-          tile(standing) { context.show(.standing) }
-        }
+    if standing != nil || schedule != nil {
+      Section {
+        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+          if let standing {
+            tile(standing) { context.show(.standing) }
+          }
 
-        if let schedule = scheduleNumber {
-          tile(schedule) { context.show(.schedule) }
+          if let schedule {
+            tile(schedule) { context.show(.schedule) }
+          }
         }
+        .buttonStyle(.plain)
+        .listRowSeparator(.hidden)
       }
-      .buttonStyle(.plain)
-    } header: {
-      EmptyView()
     }
   }
 
@@ -403,13 +405,17 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known), share: share)
+      detail: studiedText(lessons.done - lessons.known, known: lessons.known), share: share)
   }
 
-  /// Only the lessons studied: a long plan never leads with its total, which stays in the sheet,
-  /// and what the learner already knew stays in the percent and the bars.
-  private func studiedText(_ studied: Int) -> String {
-    studied == 0
+  private func studiedText(_ studied: Int, known: Int) -> String {
+    if known > 0 {
+      return String(
+        localized: "\(studied) studied · \(known) already known", table: "Plan",
+        comment: "Under the plan's progress percent: lessons studied and already known")
+    }
+
+    return studied == 0
       ? String(
         localized: "No lessons studied yet", table: "Plan",
         comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
@@ -597,12 +603,10 @@ struct NextOnPathSection: View {
 func planFinish(_ context: PlanContext) -> PlanWhen? {
   let plan = context.plan
 
+  guard context.goal.status != .paused else { return nil }
+
   guard let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) else {
-    return context.goal.kind == .exam
-      ? .words(
-        Text(
-          "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet"))
-      : nil
+    return nil
   }
 
   return .date(
@@ -658,7 +662,7 @@ struct PlanSettingsSection: View {
         value: dateValue, section: .date)
 
       setting(
-        label: Text("Time a day", tableName: "Plan", comment: "Setting: study time a day"),
+        label: Text("Daily study time", tableName: "Plan", comment: "Setting: study time a day"),
         value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).monospacedDigit(),
         section: .time)
 
@@ -746,10 +750,25 @@ struct PlanSettingsSection: View {
   private var dateValue: some View {
     let value = PlanEndDateValue(
       targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
-      finish: context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
+      finish: context.isPaused
+        ? context.plan.schedule.targetDate.map {
+          (
+            isoDate: $0, estimate: context.plan.schedule.targetDateEstimated,
+            month: context.plan.schedule.targetDateNamedMonth
+          )
+        }
+        : context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
       today: context.plan.today)
-    return Text(verbatim: value.shown).accessibilityLabel(Text(verbatim: value.spoken))
-      .typeStyle(.data)
+    return VStack(alignment: .leading, spacing: 2) {
+      Text(verbatim: value.shown)
+        .typeStyle(value.isDate ? .data : .body)
+        .accessibilityLabel(Text(verbatim: value.spoken))
+      if let detail = value.detail {
+        Text(verbatim: detail)
+          .typeStyle(.note)
+      }
+    }
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {

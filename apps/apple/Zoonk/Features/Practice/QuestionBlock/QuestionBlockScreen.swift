@@ -170,7 +170,7 @@ struct QuestionBlockView: View {
             certificates: onFinished == nil ? completion.certificates : [],
             ceremony: onFinished == nil ? completion.ceremony?.value1 : nil)
       } else {
-        PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
+        PracticeTaskLayout(segments: segments, index: run.state.index) {
           stimulus(phase: phase)
         } response: {
           response(phase: phase)
@@ -198,6 +198,16 @@ struct QuestionBlockView: View {
     .onDisappear {
       stopping.leave()
     }
+  }
+
+  private var segments: [TaskSegment] {
+    let segments = run.state.segments
+    if run.detail.isNetScored(run.question), segments.allSatisfy({ $0 == .current || $0 == .ahead })
+    {
+      return segments.map { _ in .ahead }
+    }
+
+    return segments
   }
 
   @ViewBuilder
@@ -296,7 +306,9 @@ struct QuestionBlockView: View {
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
-        run.detail.isNetScored(question) ? run.state.netTally.line.joinedFacts() : nil,
+        run.detail.isNetScored(question)
+          ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts()
+          : nil,
       ].compactMap(\.self).joined(separator: "\n")
     default:
       return nil
@@ -396,6 +408,14 @@ struct QuestionBlockView: View {
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
+          icon: .notSure, isBusy: phase.checking == .notSure,
+          isDisabled: !accepts, action: notSure
+        )
+        .practiceFocus(.notSure)
+      } else if let question, run.detail.isNetScored(question), question.format != .trueFalse {
+        PracticeSecondaryButton(
+          title: LocalizedStringResource(
+            "Leave blank", table: "Practice", comment: "Leaves an exam question unanswered."),
           icon: .notSure, isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
@@ -502,6 +522,11 @@ struct QuestionBlockView: View {
 }
 
 extension NetTally {
+  fileprivate var spokenScore: String {
+    let label = String(localized: "Score after wrong answers cancel right ones", table: "Practice")
+    return "\(label): \(net.formatted())"
+  }
+
   fileprivate var line: [String] {
     [
       right == 0
@@ -518,9 +543,7 @@ extension NetTally {
         : String(
           localized: "\(wrong) wrong", table: "Practice",
           comment: "A net-scored block's wrong answers so far."),
-      String(
-        localized: "net \(net)", table: "Practice",
-        comment: "A net-scored block's score: right answers minus wrong ones."),
+
     ]
   }
 }
@@ -530,6 +553,13 @@ private struct NetScoreLine: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
+      LabeledContent {
+        Text(tally.net, format: .number)
+          .typeStyle(.data)
+      } label: {
+        Text("Score after wrong answers cancel right ones", tableName: "Practice")
+      }
+
       FactSegments(tally.line)
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)

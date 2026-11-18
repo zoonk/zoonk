@@ -97,19 +97,7 @@ private struct SpeakingPaperView: View {
 
   private func exam(_ paper: Components.Schemas.SpeakingPaper) -> some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        Text(paper.title)
-          .typeStyle(.section)
-        Text(
-          "\(paper.tasks.count) tasks\u{00A0}· \(speakingTaskMinutes(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
-          tableName: "Voice",
-          comment: "How many tasks the speaking paper has and how long it is"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-      }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
+      PageHeader(Text(paper.title))
     }
   }
 

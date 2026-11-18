@@ -162,7 +162,7 @@ extension ExamMoment {
       Words(
         title: String(
           localized: "\(examName) is tomorrow", table: "Exam", comment: "The day before"),
-        lead: preparedLine, body: work)
+        lead: nil, body: work)
     case .examDay:
       Words(
         title: String(localized: "\(examName) is today", table: "Exam", comment: "Exam day"),

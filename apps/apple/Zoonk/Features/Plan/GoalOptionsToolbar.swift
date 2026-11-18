@@ -135,7 +135,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         set(.paused)
       } label: {
         Label {
-          Text("Pause this goal", tableName: "Plan", comment: "Pauses the goal")
+          Text("Pause goal", tableName: "Plan", comment: "Pauses the goal")
         } icon: {
           Image(systemName: "pause")
         }
@@ -158,7 +158,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       isArchiving = true
     } label: {
       Label {
-        Text("Archive this goal", tableName: "Plan", comment: "Archives the goal, after asking")
+        Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
       } icon: {
         Image(systemName: "archivebox")
       }
