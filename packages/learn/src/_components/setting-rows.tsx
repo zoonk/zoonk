@@ -36,7 +36,9 @@ export function SettingRow({
           </ListRowDescription>
         )}
       </ListRowContent>
-      <div className={cn("flex shrink-0 items-center", wide && "sm:w-75")}>{children}</div>
+      <div className={cn("flex shrink-0 items-center py-2", wide && "py-0 sm:w-75 sm:py-2")}>
+        {children}
+      </div>
     </ListRow>
   );
 }

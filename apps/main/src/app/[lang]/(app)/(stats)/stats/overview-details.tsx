@@ -7,6 +7,7 @@ import {
   ListRow,
   ListRowBody,
   ListRowContent,
+  ListRowDescription,
   ListRowLink,
   ListRowTitle,
   ListRowTrailing,
@@ -34,7 +35,7 @@ export async function ScoreTrend({
   const format = await getFormatter();
 
   return (
-    <PageSection aria-labelledby="overview-score">
+    <PageSection aria-labelledby="overview-score" className="gap-1">
       <PageSectionHeader>
         <PageSectionTitle id="overview-score">{t("Score · 90 days")}</PageSectionTitle>
         {history && (
@@ -72,11 +73,25 @@ function PatternsRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+async function getPatternValues(patterns: ScorePatternsData | null) {
+  const t = await getExtracted();
+  const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
+  const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
+
+  return {
+    day: day ?? t("Not yet"),
+    dayLabel: t("Best day"),
+    needsAnswers:
+      !patterns || [patterns.dayVerdict.kind, patterns.timeVerdict.kind].includes("notEnough"),
+    time: time ?? t("Not yet"),
+    timeLabel: t("Best time"),
+  };
+}
+
 export async function PatternsOverview({ patterns }: { patterns: ScorePatternsData | null }) {
   const t = await getExtracted();
 
-  const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
-  const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
+  const { day, dayLabel, needsAnswers, time, timeLabel } = await getPatternValues(patterns);
 
   return (
     <PageSection aria-labelledby="overview-patterns">
@@ -98,9 +113,14 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
       </PageSectionHeader>
 
       <ListGroup>
-        <PatternsRow label={t("Best day")} value={day ?? t("Not yet")} />
-        <PatternsRow label={t("Best time")} value={time ?? t("Not yet")} />
+        <PatternsRow label={dayLabel} value={day} />
+        <PatternsRow label={timeLabel} value={time} />
       </ListGroup>
+      {needsAnswers && (
+        <p className="text-muted-foreground text-sm">
+          {t("Answer more questions to see when you do best.")}
+        </p>
+      )}
     </PageSection>
   );
 }
@@ -108,22 +128,26 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
 export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsData | null }) {
   const t = await getExtracted();
 
-  const verdict = patterns?.dayVerdict;
-  const day = verdict?.kind === "best" ? await getBestDayName(verdict) : null;
+  const { day, dayLabel, needsAnswers, time, timeLabel } = await getPatternValues(patterns);
 
   return (
-    <ListGroup className="md:hidden">
-      <ListRowLink href={getMenu("patterns").url}>
-        <ListRowBody>
-          <ListRowContent>
-            <ListRowTitle>{t("Patterns")}</ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing className="font-sans">
-            {day && t("Best on {day}", { day })}
-            {!day && verdict?.kind !== "even" && t("Not yet")}
-          </ListRowTrailing>
-        </ListRowBody>
-      </ListRowLink>
-    </ListGroup>
+    <div className="flex flex-col gap-2 md:hidden">
+      <ListGroup>
+        <ListRowLink href={getMenu("patterns").url}>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{t("Patterns")}</ListRowTitle>
+              <ListRowDescription>{`${dayLabel} · ${day}`}</ListRowDescription>
+              <ListRowDescription>{`${timeLabel} · ${time}`}</ListRowDescription>
+            </ListRowContent>
+          </ListRowBody>
+        </ListRowLink>
+      </ListGroup>
+      {needsAnswers && (
+        <p className="text-muted-foreground text-sm">
+          {t("Answer more questions to see when you do best.")}
+        </p>
+      )}
+    </div>
   );
 }

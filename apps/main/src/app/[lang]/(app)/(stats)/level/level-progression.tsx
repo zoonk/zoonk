@@ -245,9 +245,11 @@ export function LevelProgressionSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-36 w-full rounded-xl md:h-36" />
-      <div className="flex justify-between">
+      <div className="flex">
         {BELT_COLORS_ORDER.map((color) => (
-          <Skeleton className="h-6.5 w-8 min-w-0 rounded-md md:h-9.5 md:w-13" key={color} />
+          <div className="flex min-w-0 flex-1 justify-center" key={color}>
+            <Skeleton className="h-6.5 w-full max-w-8 rounded-md md:h-9.5 md:max-w-13" />
+          </div>
         ))}
       </div>
     </div>

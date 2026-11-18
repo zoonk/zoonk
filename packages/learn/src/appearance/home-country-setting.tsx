@@ -9,6 +9,18 @@ import { useAppLocale } from "../_utils/locale";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 
+/** The country set now leads the suggestions, so the picker opens on its check. */
+function withCurrentCountry(
+  suggested: readonly SuggestedCountry[],
+  value: CountryName | null,
+): readonly SuggestedCountry[] {
+  if (!value || suggested.some((country) => country.code === value.code)) {
+    return suggested;
+  }
+
+  return [{ ...value, lessonVariety: null, tag: null }, ...suggested];
+}
+
 /**
  * Nothing rebuilds, so a pick saves at once and closes. The country starts as where the learner
  * signed in from; "Not set" shows only when that wasn't known.
@@ -63,7 +75,7 @@ export function HomeCountrySetting({
           }
         }}
         open={open}
-        suggested={suggested}
+        suggested={withCurrentCountry(suggested, value)}
         title={title}
         value={value?.code ?? null}
       />

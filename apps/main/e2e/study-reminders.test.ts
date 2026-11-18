@@ -91,7 +91,7 @@ test.describe("Study reminders", () => {
     const page = await openAs(browser, user);
     await page.goto("/settings/reminders");
 
-    const email = page.getByRole("switch", { name: "Email" });
+    const email = page.getByRole("switch", { name: "Email reminders" });
     const time = page.getByLabel("Time", { exact: true });
     await expectHydrated(email);
     await expect(time).toBeDisabled();

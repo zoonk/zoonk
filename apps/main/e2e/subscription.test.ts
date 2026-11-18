@@ -115,9 +115,8 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
     const dialog = page.getByRole("alertdialog");
 
-    await expect(dialog).toContainText(
-      "You keep Plus until the end of the period you already paid for.",
-    );
+    await expect(dialog).toContainText(/You have Plus until \w/u);
+    await expect(dialog.getByRole("button", { exact: true, name: "Keep Plus" })).toBeVisible();
 
     await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
     await expect(page.getByText("Ending", { exact: true })).toBeVisible();

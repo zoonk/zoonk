@@ -47,16 +47,18 @@ describe("authenticated users", () => {
       activitiesCompleted: 0,
       date: new Date("2024-01-07T00:00:00Z"),
       lessonCompletions: 0,
+      timeSpentSeconds: 0,
     });
 
     expect(result?.days.at(-1)).toStrictEqual({
       activitiesCompleted: 0,
       date: new Date("2025-01-10T00:00:00Z"),
       lessonCompletions: 0,
+      timeSpentSeconds: 0,
     });
   });
 
-  it("lights the calendar on every learning day, the same days the lifetime total counts", async () => {
+  it("lights the calendar on every learning day with its study time, the same days the lifetime total counts", async () => {
     const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     mockSession(user.id);
     mockCurrentDate(CURRENT_DATE);
@@ -115,6 +117,7 @@ describe("authenticated users", () => {
       activitiesCompleted: 3,
       date: new Date("2025-01-05T00:00:00Z"),
       lessonCompletions: 1,
+      timeSpentSeconds: 120,
     });
 
     expect(
@@ -123,6 +126,7 @@ describe("authenticated users", () => {
       activitiesCompleted: 0,
       date: new Date("2025-01-06T00:00:00Z"),
       lessonCompletions: 0,
+      timeSpentSeconds: 0,
     });
 
     expect(
@@ -131,6 +135,7 @@ describe("authenticated users", () => {
       activitiesCompleted: 2,
       date: new Date("2025-01-07T00:00:00Z"),
       lessonCompletions: 0,
+      timeSpentSeconds: 300,
     });
 
     expect(
@@ -139,6 +144,7 @@ describe("authenticated users", () => {
       activitiesCompleted: 1,
       date: new Date("2025-01-09T00:00:00Z"),
       lessonCompletions: 1,
+      timeSpentSeconds: 0,
     });
 
     expect(result?.days.filter((day) => day.activitiesCompleted > 0)).toHaveLength(4);
@@ -166,6 +172,7 @@ describe("authenticated users", () => {
       activitiesCompleted: 1,
       date: new Date("2025-01-11T00:00:00Z"),
       lessonCompletions: 1,
+      timeSpentSeconds: 0,
     });
   });
 });

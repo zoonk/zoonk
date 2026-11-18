@@ -37,8 +37,7 @@ const TILE_LINK_CLASS =
 
 const TILE_CLASS = "hover:bg-muted/40 relative transition-colors";
 
-const DETAILS_CLASS =
-  "hidden gap-8 md:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10";
+const DETAILS_CLASS = "hidden gap-8 md:grid lg:grid-cols-2 lg:gap-10";
 
 function TileLink<Href extends string>({
   href,
@@ -206,7 +205,7 @@ export async function StatsOverviewSkeleton() {
           <Skeleton className="h-34 w-full rounded-lg" />
         </PageSection>
       </div>
-      <Skeleton className="h-11 w-full rounded-lg md:hidden" />
+      <Skeleton className="h-18 w-full rounded-lg md:hidden" />
     </div>
   );
 }

@@ -10,7 +10,7 @@ export async function ScoreTile({ performance }: { performance: ScorePerformance
   const [t, format] = await Promise.all([getExtracted(), getFormatter()]);
 
   return (
-    <Stat className="self-start">
+    <Stat>
       <StatValue>
         <BigQuantity>{formatMetricPercent({ format, value: performance.score })}</BigQuantity>
       </StatValue>
@@ -27,7 +27,7 @@ export async function ScoreTile({ performance }: { performance: ScorePerformance
 
 export function ScoreTileSkeleton() {
   return (
-    <Stat aria-hidden="true" className="self-start">
+    <Stat aria-hidden="true">
       <Skeleton className="h-5 w-14 rounded-sm" />
       <Skeleton className="h-3.5 w-36 rounded-sm" />
     </Stat>

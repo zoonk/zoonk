@@ -1,6 +1,7 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type LearningActivityDay } from "@zoonk/core/progress/get-learning-activity";
 import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
+import { formatDuration } from "@zoonk/utils/duration";
 import { getExtracted } from "next-intl/server";
 import { getProgressDayFormatter } from "../_components/progress-insight-date-label";
 import { StatsCalendar } from "../_components/stats-calendar";
@@ -25,23 +26,33 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   ]);
 
   const formatDay = getProgressDayFormatter({ locale, newest: days.at(-1)?.date });
-  const maximumActivitiesCompleted = Math.max(0, ...days.map((day) => day.activitiesCompleted));
+  const maximumTimeSpentSeconds = Math.max(0, ...days.map((day) => day.timeSpentSeconds));
 
-  const details = days.map((day): ChartPointDetail => {
-    if (day.lessonCompletions > 0) {
-      return [
-        formatDay(day.date),
-        t("{count, plural, one {# lesson} other {# lessons}}", { count: day.lessonCompletions }),
-      ];
+  const formatStudy = (day: LearningActivityDay): string => {
+    if (day.activitiesCompleted === 0) {
+      return t("No study");
     }
 
-    return [formatDay(day.date), day.activitiesCompleted > 0 ? t("Studied") : t("No study")];
-  });
+    const time =
+      day.timeSpentSeconds > 0
+        ? formatDuration({ locale, totalSeconds: day.timeSpentSeconds })
+        : undefined;
+
+    const lessons =
+      day.lessonCompletions > 0
+        ? t("{count, plural, one {# lesson} other {# lessons}}", { count: day.lessonCompletions })
+        : undefined;
+
+    return [time, lessons].filter(Boolean).join(" · ") || t("Studied");
+  };
+
+  const details = days.map((day): ChartPointDetail => [formatDay(day.date), formatStudy(day)]);
 
   const calendarDays = days.map((day) => {
     const intensity = getActivityCalendarIntensity({
-      activitiesCompleted: day.activitiesCompleted,
-      maximumActivitiesCompleted,
+      maximumTimeSpentSeconds,
+      studied: day.activitiesCompleted > 0,
+      timeSpentSeconds: day.timeSpentSeconds,
     });
 
     return {
@@ -69,6 +80,12 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
         low: legend({
           description: "The light end of a heatmap's legend: less activity.",
           message: "Less",
+        }),
+        title: t({
+          description:
+            "Names the legend of a calendar of study days: a darker square means more minutes studied that day.",
+          id: "activityLegendStudyTime",
+          message: "Study time",
         }),
       }}
       titleId={ACTIVITY_CHART_TITLE_ID}

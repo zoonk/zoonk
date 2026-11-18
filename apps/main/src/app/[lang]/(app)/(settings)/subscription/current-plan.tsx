@@ -16,10 +16,7 @@ import { getExtracted } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { KeepPlusButton } from "./keep-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
-
-function renderDate(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
-}
+import { renderPlanDate } from "./plan-date";
 
 async function getStoreDateLine(subscription: Subscription): Promise<React.ReactNode> {
   const t = await getExtracted();
@@ -32,7 +29,7 @@ async function getStoreDateLine(subscription: Subscription): Promise<React.React
   if (endingAt) {
     return t.rich("Plus ends on <mono>{date}</mono>.", {
       date: toDate(endingAt),
-      mono: renderDate,
+      mono: renderPlanDate,
     });
   }
 
@@ -44,8 +41,8 @@ async function getStoreDateLine(subscription: Subscription): Promise<React.React
 
   // Nobody pays for a Plus that Zoonk added, so it has an end, not a renewal.
   return subscription.provider === "apple" || subscription.provider === "google"
-    ? t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderDate })
-    : t.rich("You have Plus until <mono>{date}</mono>.", { date, mono: renderDate });
+    ? t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderPlanDate })
+    : t.rich("You have Plus until <mono>{date}</mono>.", { date, mono: renderPlanDate });
 }
 
 type WebSubscription = Extract<
@@ -55,12 +52,15 @@ type WebSubscription = Extract<
 
 type WebSubscriptionResult = Awaited<ReturnType<typeof getWebPlusSubscription>>;
 
-function WebPlanAction({ state }: Pick<WebSubscription, "state">) {
-  return state === "ending" ? (
-    <KeepPlusButton />
-  ) : (
-    <CancelPlusButton endsNow={state === "unpaid"} />
-  );
+async function WebPlanAction({ periodEnd, state }: Pick<WebSubscription, "periodEnd" | "state">) {
+  if (state === "ending") {
+    return <KeepPlusButton />;
+  }
+
+  const formatDate = await getMomentDateFormatter();
+  const paidUntil = periodEnd ? formatDate(periodEnd, { year: "always" }) : undefined;
+
+  return <CancelPlusButton endsNow={state === "unpaid"} paidUntil={paidUntil} />;
 }
 
 async function getWebDateLine(web: WebSubscription) {
@@ -78,8 +78,8 @@ async function getWebDateLine(web: WebSubscription) {
   const date = formatDate(web.periodEnd, { year: "always" });
 
   return web.state === "ending"
-    ? t.rich("Plus ends on <mono>{date}</mono>.", { date, mono: renderDate })
-    : t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderDate });
+    ? t.rich("Plus ends on <mono>{date}</mono>.", { date, mono: renderPlanDate })
+    : t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderPlanDate });
 }
 
 async function WebsiteSubscription({ web }: { web: WebSubscription }) {
@@ -99,7 +99,7 @@ async function WebsiteSubscription({ web }: { web: WebSubscription }) {
         <PageSectionTitle>{title}</PageSectionTitle>
       </PageSectionHeader>
       {dateLine && <p className="text-muted-foreground text-sm">{dateLine}</p>}
-      <WebPlanAction state={web.state} />
+      <WebPlanAction periodEnd={web.periodEnd} state={web.state} />
     </PageSection>
   );
 }
@@ -150,7 +150,7 @@ export async function CurrentPlan({
 
       <div className="empty:hidden">
         {isWebManagedSubscriptionProvider(subscription.provider) ? (
-          web && <WebPlanAction state={web.state} />
+          web && <WebPlanAction periodEnd={web.periodEnd} state={web.state} />
         ) : (
           <div className="flex flex-col gap-6">
             <ManagedSubscription provider={subscription.provider} />

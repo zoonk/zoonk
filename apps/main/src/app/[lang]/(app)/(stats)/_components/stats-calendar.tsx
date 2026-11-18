@@ -18,12 +18,13 @@ import {
 } from "@zoonk/ui/components/contribution-calendar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
+  CONTRIBUTION_CALENDAR_DAYS_PER_WEEK,
   getContributionCalendarKeyboardStartDate,
   getContributionCalendarMonthDate,
   getContributionCalendarWeekKey,
   groupContributionCalendarDaysByWeek,
 } from "@zoonk/utils/contribution-calendar";
-import { formatIsoDate } from "@zoonk/utils/date-format";
+import { formatIsoDate, formatWeekdayName } from "@zoonk/utils/date-format";
 import { getExtracted } from "next-intl/server";
 
 export type StatsCalendarDay = {
@@ -39,6 +40,8 @@ type StatsCalendarLegend = {
   high: string;
   label: string;
   low: string;
+  /** What a darker square means, as in "Study time". */
+  title: string;
 };
 
 /**
@@ -87,6 +90,26 @@ export async function StatsCalendar({
     };
   });
 
+  const weekdays = Array.from({ length: CONTRIBUTION_CALENDAR_DAYS_PER_WEEK }, (_, weekday) => ({
+    label: weekday % 2 === 1 ? formatWeekdayName({ locale, weekday, width: "short" }) : "",
+    weekday,
+  }));
+
+  const weekNodes = weeks.map((week) => (
+    <ContributionCalendarWeek key={week.key}>
+      {week.periodLabel && (
+        <ContributionCalendarPeriod>{week.periodLabel}</ContributionCalendarPeriod>
+      )}
+      {week.days.map((day) => (
+        <ContributionCalendarDay
+          className={day.intensityClass}
+          index={day.index}
+          key={day.date.toISOString()}
+        />
+      ))}
+    </ContributionCalendarWeek>
+  ));
+
   return (
     <ContributionCalendar
       aria-labelledby={titleId}
@@ -108,6 +131,9 @@ export async function StatsCalendar({
         </ContributionCalendarTitle>
 
         <ContributionCalendarLegend aria-label={legend.label}>
+          <ContributionCalendarLegendLabel className="me-1">
+            {legend.title}
+          </ContributionCalendarLegendLabel>
           <ContributionCalendarLegendLabel>{legend.low}</ContributionCalendarLegendLabel>
           {legend.classes.map((className) => (
             <ContributionCalendarLegendSwatch className={className} key={className} />
@@ -116,27 +142,41 @@ export async function StatsCalendar({
         </ContributionCalendarLegend>
       </ContributionCalendarCaption>
 
-      <ContributionCalendarViewport>
-        <ContributionCalendarContent>
-          <ContributionCalendarGrid aria-label={gridLabel}>
-            {weeks.map((week) => (
-              <ContributionCalendarWeek key={week.key}>
-                {week.periodLabel && (
-                  <ContributionCalendarPeriod>{week.periodLabel}</ContributionCalendarPeriod>
-                )}
-                {week.days.map((day) => (
-                  <ContributionCalendarDay
-                    className={day.intensityClass}
-                    index={day.index}
-                    key={day.date.toISOString()}
-                  />
-                ))}
-              </ContributionCalendarWeek>
-            ))}
-          </ContributionCalendarGrid>
-        </ContributionCalendarContent>
-      </ContributionCalendarViewport>
+      <StatsCalendarBody weekdays={weekdays}>
+        <ContributionCalendarViewport>
+          <ContributionCalendarContent>
+            <ContributionCalendarGrid aria-label={gridLabel}>{weekNodes}</ContributionCalendarGrid>
+          </ContributionCalendarContent>
+        </ContributionCalendarViewport>
+      </StatsCalendarBody>
     </ContributionCalendar>
+  );
+}
+
+/**
+ * Weeks start on Sunday, so Monday, Wednesday and Friday are named, as calendars of days usually do.
+ * The days fit the width the weekday column leaves, the same while loading and loaded.
+ */
+function StatsCalendarBody({
+  children,
+  weekdays,
+}: {
+  children: React.ReactNode;
+  weekdays?: { label: string; weekday: number }[];
+}) {
+  return (
+    <div className="flex min-w-0 gap-2">
+      <div
+        aria-hidden="true"
+        className="text-faint text-2xs grid w-7 shrink-0 grid-rows-7 items-center pt-5 pb-1 font-mono leading-none"
+      >
+        {weekdays?.map((day) => (
+          <span key={day.weekday}>{day.label}</span>
+        ))}
+      </div>
+
+      <div className="@container/calendar min-w-0 flex-1">{children}</div>
+    </div>
   );
 }
 
@@ -147,7 +187,9 @@ export function StatsCalendarSkeleton() {
         <Skeleton className="h-3.5 w-28" />
         <ContributionCalendarLegendSkeleton />
       </ContributionCalendarCaption>
-      <ContributionCalendarGridSkeleton />
+      <StatsCalendarBody>
+        <ContributionCalendarGridSkeleton />
+      </StatsCalendarBody>
     </ContributionCalendar>
   );
 }

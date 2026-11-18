@@ -25,6 +25,11 @@ type LinkedInCertificate = Pick<
   "code" | "completedOn" | "courseLevel" | "kind" | "level" | "targetLanguage" | "title"
 >;
 
+/** "Python · Beginner" wraps before its last words, never leaving the level alone on a line. */
+function keepLevelWithName(value: string): string {
+  return value.replaceAll(" · ", "\u00A0·\u00A0");
+}
+
 function FieldRow({
   copy,
   label,
@@ -43,7 +48,7 @@ function FieldRow({
         <span
           className={cn("text-sm wrap-anywhere", mono ? "text-compact font-mono" : "font-medium")}
         >
-          {mono ? <SoftBreaks>{value}</SoftBreaks> : value}
+          {mono ? <SoftBreaks>{value}</SoftBreaks> : keepLevelWithName(value)}
         </span>
       </ListRowContent>
       {copy && <CopyButton label={copy} text={value} />}

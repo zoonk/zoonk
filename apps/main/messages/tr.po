@@ -407,7 +407,6 @@ msgstr "Bir sayfaya git, işlem yap veya soru sor."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Vazgeç"
@@ -1414,9 +1413,21 @@ msgid "Plus ends right away, and you won't be charged again."
 msgstr "Plus hemen sona erer ve senden bir daha ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "MUSFX9"
+msgid "You have Plus until <mono>{date}</mono>."
+msgstr "Plus paketin <mono>{date}</mono> tarihine kadar geçerli."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "KLKQ8N"
+msgid "Keep Plus"
+msgstr "Plus’ı koru"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
@@ -1427,11 +1438,6 @@ msgstr "Plus <mono>{date}</mono> tarihinde sona erer."
 msgctxt "AucmVG"
 msgid "Renews on <mono>{date}</mono>."
 msgstr "<mono>{date}</mono> tarihinde yenilenecek."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "MUSFX9"
-msgid "You have Plus until <mono>{date}</mono>."
-msgstr "Plus paketin <mono>{date}</mono> tarihine kadar geçerli."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1477,11 +1483,6 @@ msgstr "Plus’ı koruyamadık. Tekrar dene veya hello@zoonk.com adresine e-post
 msgctxt "aSfGh6"
 msgid "Keep Plus, and it renews as before."
 msgstr "Plus’ı koru, eskisi gibi yenilensin."
-
-#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "KLKQ8N"
-msgid "Keep Plus"
-msgstr "Plus’ı koru"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1596,6 +1597,7 @@ msgid "Your stats"
 msgstr "İstatistiklerin"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1624,14 +1626,14 @@ msgid "Patterns"
 msgstr "Eğilimler"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "cMaydB"
-msgid "Studied"
-msgstr "Çalışıldı"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "eos-eP"
 msgid "No study"
 msgstr "Çalışılmadı"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "cMaydB"
+msgid "Studied"
+msgstr "Çalışıldı"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "MnYAxL"
@@ -1655,6 +1657,12 @@ msgstr "Etkinlik düzeyi: azdan çoğa"
 msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "Daha az"
+
+#. Names the legend of a calendar of study days: a darker square means more minutes studied that day.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegendStudyTime"
+msgid "Study time"
+msgstr "Çalışma süresi"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1735,6 +1743,16 @@ msgctxt "GfOLmq"
 msgid "Belts"
 msgstr "Kuşaklar"
 
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Ysr8td"
+msgid "Earned"
+msgstr "Kazanıldı"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "Tw83HA"
+msgid "Coming"
+msgstr "Sırada"
+
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
 msgid "Every belt earned"
@@ -1798,6 +1816,11 @@ msgctxt "l0d7rx"
 msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
 msgstr "{count, plural, other {# cevap}}, dikkate alınması için en az {minimum, number} gerekli"
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "yJxUpG"
+msgid "Not enough answers yet"
+msgstr "Henüz yeterli cevap yok"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
@@ -1841,11 +1864,6 @@ msgid "Evening"
 msgstr "Akşam"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "VPQ8Rv"
-msgid "No best day yet"
-msgstr "Henüz öne çıkan bir gün yok"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "Günün her saati"
@@ -1871,6 +1889,7 @@ msgid "The time of day makes no difference."
 msgstr "Günün saati fark yaratmıyor."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "En iyi sonuçları ne zaman aldığını görmek için daha çok soru cevapla."
@@ -1900,6 +1919,11 @@ msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {# cevap}}"
 
+#: src/app/[lang]/(app)/(stats)/score/score-chart.tsx
+msgctxt "kUPk1B"
+msgid "Your trend shows after two weeks of study"
+msgstr "İki hafta çalıştıktan sonra puanındaki değişimi görebilirsin"
+
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "ElicHU"
 msgid "{correct} of {total} right in the last {days} days"
@@ -1917,6 +1941,11 @@ msgid "Shows after your first answers."
 msgstr "İlk cevaplarını verdikten sonra görünür."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "Henüz yok"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "hofSlo"
 msgid "Patterns · 90 days"
@@ -1926,16 +1955,6 @@ msgstr "Eğilimler · 90 gün"
 msgctxt "078WAr"
 msgid "See all"
 msgstr "Tümünü gör"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "lO7wKc"
-msgid "Not yet"
-msgstr "Henüz yok"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "nr7tEh"
-msgid "Best on {day}"
-msgstr "En iyi günün: {day}"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"

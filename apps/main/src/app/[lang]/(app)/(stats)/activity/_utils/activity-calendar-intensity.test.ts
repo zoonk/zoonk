@@ -3,17 +3,19 @@ import { getActivityCalendarIntensity } from "./activity-calendar-intensity";
 
 describe(getActivityCalendarIntensity, () => {
   it.each([
-    { activitiesCompleted: 0, expectedIntensity: 0, maximumActivitiesCompleted: 10 },
-    { activitiesCompleted: 0, expectedIntensity: 0, maximumActivitiesCompleted: 0 },
-    { activitiesCompleted: 1, expectedIntensity: 1, maximumActivitiesCompleted: 10 },
-    { activitiesCompleted: 5, expectedIntensity: 2, maximumActivitiesCompleted: 10 },
-    { activitiesCompleted: 6, expectedIntensity: 3, maximumActivitiesCompleted: 10 },
-    { activitiesCompleted: 10, expectedIntensity: 4, maximumActivitiesCompleted: 10 },
+    { expectedIntensity: 0, maximumTimeSpentSeconds: 600, studied: false, timeSpentSeconds: 0 },
+    { expectedIntensity: 0, maximumTimeSpentSeconds: 600, studied: false, timeSpentSeconds: 120 },
+    { expectedIntensity: 1, maximumTimeSpentSeconds: 600, studied: true, timeSpentSeconds: 0 },
+    { expectedIntensity: 1, maximumTimeSpentSeconds: 0, studied: true, timeSpentSeconds: 0 },
+    { expectedIntensity: 1, maximumTimeSpentSeconds: 600, studied: true, timeSpentSeconds: 60 },
+    { expectedIntensity: 2, maximumTimeSpentSeconds: 600, studied: true, timeSpentSeconds: 300 },
+    { expectedIntensity: 3, maximumTimeSpentSeconds: 600, studied: true, timeSpentSeconds: 360 },
+    { expectedIntensity: 4, maximumTimeSpentSeconds: 600, studied: true, timeSpentSeconds: 600 },
   ])(
-    "maps $activitiesCompleted of $maximumActivitiesCompleted activities to level $expectedIntensity",
-    ({ activitiesCompleted, expectedIntensity, maximumActivitiesCompleted }) => {
+    "shades a day studied=$studied with $timeSpentSeconds of $maximumTimeSpentSeconds seconds at level $expectedIntensity",
+    ({ expectedIntensity, maximumTimeSpentSeconds, studied, timeSpentSeconds }) => {
       expect(
-        getActivityCalendarIntensity({ activitiesCompleted, maximumActivitiesCompleted }),
+        getActivityCalendarIntensity({ maximumTimeSpentSeconds, studied, timeSpentSeconds }),
       ).toBe(expectedIntensity);
     },
   );

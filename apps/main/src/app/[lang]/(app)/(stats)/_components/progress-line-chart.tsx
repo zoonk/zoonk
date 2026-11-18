@@ -25,6 +25,7 @@ const PROGRESS_CHART_TICK_PROPS = { fill: "var(--muted-foreground)", fontSize: 1
 
 const X_AXIS_PADDING = { left: 16, right: 24 };
 
+const PERCENT_AXIS_WIDTH = 46;
 const PERCENT_GUIDES = 4;
 const PERCENT = 100;
 
@@ -71,12 +72,13 @@ export function ProgressChartPercentYAxis() {
     <YAxis
       axisLine={false}
       domain={[0, 100]}
-      tick={PROGRESS_CHART_TICK_PROPS}
+      tick={{ ...PROGRESS_CHART_TICK_PROPS, textAnchor: "start" }}
       tickLine={false}
       tickFormatter={(value: number) => formatMetricPercent({ format, value })}
-      tickMargin={8}
+      tickMargin={PERCENT_AXIS_WIDTH}
+      tickSize={0}
       ticks={PERCENT_TICKS}
-      width={46}
+      width={PERCENT_AXIS_WIDTH}
     />
   );
 }

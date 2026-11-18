@@ -57,6 +57,7 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
         high: t("High"),
         label: t("Energy intensity from low to high"),
         low: t("Low"),
+        title: t("Energy"),
       }}
       titleId={ENERGY_HISTORY_TITLE_ID}
     />

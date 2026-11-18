@@ -33,9 +33,9 @@ async function FollowUs() {
         <PageSectionTitle id={FOLLOW_US_ID}>{t("Follow us")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className="-ml-1.5 grid grid-cols-5 gap-y-2 sm:flex sm:gap-x-3">
+      <ul className="scroll-fade-x -mx-3 -my-1 flex gap-x-2 overflow-x-auto px-1.5 py-1 sm:gap-x-3">
         {socials.map((social) => (
-          <li key={social.name}>
+          <li className="shrink-0" key={social.name}>
             {/* oxlint-disable-next-line next/no-html-link-for-pages -- external links */}
             <a
               className={buttonVariants({

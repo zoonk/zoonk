@@ -12135,9 +12135,9 @@ msgid "Create an account to get email reminders"
 msgstr "Konto erstellen, um E-Mail-Erinnerungen zu bekommen"
 
 #: src/reminders/reminders-screen.tsx
-msgctxt "sy-pv5"
-msgid "Email"
-msgstr "E-Mail"
+msgctxt "QacXkK"
+msgid "Email reminders"
+msgstr "E-Mail-Erinnerungen"
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "Awq32I"

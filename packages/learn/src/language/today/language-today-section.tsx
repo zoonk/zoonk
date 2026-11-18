@@ -4,7 +4,7 @@ import {
   type LanguageTodayView,
   type NoticedPattern,
 } from "@zoonk/core/view-models/language/contract";
-import { KeyboardIcon, MicIcon, SparklesIcon } from "lucide-react";
+import { KeyboardIcon, MicIcon, SparkleIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   ListRowContent,
@@ -35,7 +35,7 @@ export function PatternRow({ href, pattern }: { href: string; pattern: NoticedPa
     <ListRowLink href={href}>
       <ListRowLeading>
         <ListRowIcon className={isTypos ? undefined : "text-warning"}>
-          {isTypos ? <KeyboardIcon /> : <SparklesIcon />}
+          {isTypos ? <KeyboardIcon /> : <SparkleIcon />}
         </ListRowIcon>
       </ListRowLeading>
       <ListRowContent>
