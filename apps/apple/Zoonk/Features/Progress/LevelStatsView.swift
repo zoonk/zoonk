@@ -5,10 +5,6 @@ struct LevelStatsView: View {
 
   var body: some View {
     StatsContent(state: progress.level.state, retry: { await progress.level.refresh() }) { level in
-      StatsLine(
-        text: Text(
-          "You earn Brain Power for everything you study, and it never goes down.",
-          tableName: "Progress", comment: "Under the Belt page's title: how Brain Power grows"))
       BeltProgression(level: level)
     }
     .loads(progress.level)

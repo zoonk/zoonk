@@ -90,6 +90,13 @@ extension [Components.Schemas.OnboardingStep] {
 struct SetupProgress: Equatable {
   let step: Int
   let total: Int
+
+  static func showsSkipAll(
+    current: Components.Schemas.OnboardingStep, steps: [Components.Schemas.OnboardingStep]
+  ) -> Bool {
+    current.profileQuestion != nil
+      && Set(([current] + steps).filter { $0.profileQuestion != nil }).count > 1
+  }
 }
 
 extension SetupProgress {
@@ -102,6 +109,8 @@ extension SetupProgress {
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep]
   ) {
+    guard !([current] + steps).contains(.purpose) else { return nil }
+
     self.init(current: current, history: history, steps: steps) { step in
       let counted = step.profileQuestion == nil ? step : .work
       return Self.questions.contains(counted) ? counted : nil
@@ -250,7 +259,7 @@ private struct GoalSteps: View {
         }
       }
 
-      if step.profileQuestion != nil {
+      if SetupProgress.showsSkipAll(current: step, steps: view.steps) {
         ToolbarItem(placement: .primaryAction) {
           Button {
             answer(["question": "skipProfile"])

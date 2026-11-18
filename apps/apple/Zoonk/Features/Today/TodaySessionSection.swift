@@ -451,7 +451,7 @@ struct BlockRow: View {
     if !block.isFinished {
       HStack(spacing: 6) {
         if countsTowardMission {
-          Image(systemName: "target")
+          Image(systemName: "checklist")
             .foregroundStyle(.brain)
             .accessibilityLabel(
               Text(
@@ -607,7 +607,7 @@ private struct FoldRow: View {
         HStack(spacing: 6) {
           Group {
             if isDone, skipped > 0 {
-              Text(doneAndSkipped)
+              FactSegments(doneAndSkipped)
             } else if isDone {
               Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
             } else if isOpen {
@@ -637,16 +637,16 @@ private struct FoldRow: View {
   }
 
   /// Skipped blocks fold with the done ones, but never count as done.
-  private var doneAndSkipped: String {
+  private var doneAndSkipped: [String] {
     let skippedFact = String(
       localized: "\(skipped) skipped", table: "Today", comment: "Folded skipped blocks")
 
-    guard !onlySkipped else { return skippedFact }
+    guard !onlySkipped else { return [skippedFact] }
 
     return [
       String(localized: "\(count - skipped) done", table: "Today", comment: "Folded done blocks"),
       skippedFact,
-    ].joinedFacts()
+    ]
   }
 }
 

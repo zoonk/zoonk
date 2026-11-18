@@ -9,11 +9,10 @@ struct ShellToolbar: ViewModifier {
   @Environment(\.tabBarPlacement) private var tabBarPlacement
   @State private var barWidth: CGFloat?
   /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
-  /// chevron (34), the gap the bar leaves before its next item (12), a two-digit level (45, or 83
-  /// as "Level 12" where the bar has room), the spacer (20) and the account (52). Less, and the bar
+  /// chevron (34), the gap the bar leaves before its next item (12), "Level 12" (83), the spacer
+  /// (20) and the account (52). Less, and the bar
   /// sends the level and the account to its overflow menu.
-  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 206
-  @ScaledMetric(relativeTo: .body) private var besideNameWide: CGFloat = 244
+  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 244
   /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
   /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
   @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
@@ -28,9 +27,11 @@ struct ShellToolbar: ViewModifier {
     if !isShown {
       content
     } else if #available(iOS 27, *) {
-      measured(content).toolbar { items(account: account.visibilityPriority(.high)) }
+      measured(content).toolbar {
+        items(account: account.visibilityPriority(.high), level: level.visibilityPriority(.low))
+      }
     } else {
-      measured(content).toolbar { items(account: account) }
+      measured(content).toolbar { items(account: account, level: level) }
     }
   }
 
@@ -38,8 +39,7 @@ struct ShellToolbar: ViewModifier {
     content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
   }
 
-  /// The goal's name takes the room the bar leaves (main's bar holds only the goal, the level and
-  /// the account), so it truncates there instead of sending the bar's items to its overflow menu.
+  /// The name keeps a readable minimum; lower-priority items overflow when they no longer fit.
   /// Where the tabs sit in the bar, centered, the name has the side they leave.
   private var nameWidth: CGFloat {
     guard let barWidth else {
@@ -50,8 +50,7 @@ struct ShellToolbar: ViewModifier {
       return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
     }
 
-    return max(
-      shortestName, barWidth - (horizontalSizeClass == .regular ? besideNameWide : besideName))
+    return max(shortestName, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -61,7 +60,9 @@ struct ShellToolbar: ViewModifier {
   }
 
   @ToolbarContentBuilder
-  private func items(account: some ToolbarContent) -> some ToolbarContent {
+  private func items(account: some ToolbarContent, level: some ToolbarContent)
+    -> some ToolbarContent
+  {
     switch session.state {
     case .restoring where session.authenticatedSession == nil:
       ToolbarItem(placement: .topBarTrailing) {
@@ -81,10 +82,8 @@ struct ShellToolbar: ViewModifier {
           GoalSwitcher(summary: summary, isCompact: isSwitcherCompact, maxTitleWidth: nameWidth)
         }
 
-        if let level = summary.level {
-          ToolbarItem(placement: .topBarTrailing) {
-            LevelButton(level: level)
-          }
+        if summary.level != nil {
+          level
 
           ToolbarSpacer(.fixed, placement: .topBarTrailing)
         }
@@ -104,6 +103,12 @@ struct ShellToolbar: ViewModifier {
     }
   }
 
+  private var level: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      if let level = learner.summary.value?.level { LevelButton(level: level) }
+    }
+  }
+
   private var account: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
       AccountToolbarButton {
@@ -113,11 +118,8 @@ struct ShellToolbar: ViewModifier {
   }
 }
 
-/// The belt's dot and the level: "Level 2" where the bar has room, as main's sidebar says it; a
-/// phone's bar keeps the number, so the goal's name keeps its room.
 private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
-  @Environment(\.horizontalSizeClass) private var sizeClass
 
   let level: LearnerLevel
 
@@ -130,14 +132,9 @@ private struct LevelButton: View {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
 
-        if sizeClass == .regular {
-          Text(
-            "Level \(level.level)", tableName: "Navigation",
-            comment: "Beside the belt's dot in a wide top bar: the learner's level")
-        } else {
-          Text(level.level, format: .number)
-            .monospacedDigit()
-        }
+        Text(
+          "Level \(level.level)", tableName: "Navigation",
+          comment: "Beside the belt's dot in a wide top bar: the learner's level")
       }
     }
     .accessibilityLabel(
@@ -255,6 +252,7 @@ private struct GoalSwitcher: View {
           if !isCompact {
             startGoalTitle
               .lineLimit(1)
+              .frame(maxWidth: maxTitleWidth)
           }
         }
         .typeWeight(.semibold)
@@ -327,7 +325,7 @@ private struct GoalSwitcher: View {
           } label: {
             Label {
               Text(
-                "New goal", tableName: "Navigation",
+                "Start a goal", tableName: "Navigation",
                 comment: "Goal switcher option that starts another goal")
             } icon: {
               Image(systemName: "plus")
@@ -357,6 +355,8 @@ private struct GoalSwitcher: View {
                 .frame(maxWidth: maxTitleWidth)
             } else {
               startGoalTitle
+                .lineLimit(1)
+                .frame(maxWidth: maxTitleWidth)
             }
 
             Image(systemName: "chevron.down")

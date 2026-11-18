@@ -13,6 +13,23 @@ struct GuessScale: Hashable, Sendable {
   let max: Double
   let kind: Kind
 
+  var ticks: [Double] {
+    if kind == .linear {
+      let room = (max - min) * 0.08
+      return [min]
+        + ChartsAxis.ticks(min...max).filter {
+          $0 - min > room && max - $0 > room
+        } + [max]
+    }
+
+    let first = ceil(log10(min))
+    let last = floor(log10(max))
+    let powers = (0..<Swift.max(Int(last - first + 1), 0)).map { pow(10, first + Double($0)) }
+    guard powers.count >= 2 else { return [min, max] }
+    let every = Int(ceil(Double(powers.count) / 6))
+    return powers.enumerated().compactMap { $0.offset % every == 0 ? $0.element : nil }
+  }
+
   func value(atPosition position: Double) -> Double {
     let share = Swift.min(Swift.max(position, 0), Self.positions) / Self.positions
 
@@ -30,6 +47,16 @@ struct GuessScale: Hashable, Sendable {
       : max == min ? 0 : (value - min) / (max - min)
 
     return Swift.min(Swift.max(share, 0), 1)
+  }
+
+  func tickLabel(_ tick: Double, unit: String?, locale: Locale = .courseLanguage) -> String {
+    let isMoney = unit.map(ActivityNumberFormat.isMoney) ?? false
+    let isShort = ChartsAxis.isShort(ticks) { value, compact in
+      ActivityNumberFormat.format(
+        value, unit: isMoney ? unit : nil, compact: compact, locale: locale)
+    }
+    return ActivityNumberFormat.format(
+      tick, unit: isMoney || tick == ticks.last ? unit : nil, compact: isShort, locale: locale)
   }
 
   static func roundGuess(_ value: Double) -> Double {
@@ -82,30 +109,31 @@ struct ActivityGuessScaleView: View {
             comment: "Before the learner guesses on a scale")
         }
       }
-      .typeStyle(.readout)
+      .typeStyle(.body.weight(.medium).monospacedDigit())
+      .foregroundStyle(.mutedForeground)
 
       if let actual {
         revealed(actual: actual)
       } else {
+        // Positions snap here rather than with a step, which would draw a row of ticks under the
+        // track.
         Slider(
           value: Binding(
             get: { (guess.map(scale.share(of:)) ?? 0.5) * GuessScale.positions },
-            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0))) }),
-          in: 0...GuessScale.positions, step: 1
+            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0.rounded()))) }),
+          in: 0...GuessScale.positions
         ) {
           Text(
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
-        } minimumValueLabel: {
-          Text(format(scale.min)).typeStyle(.data)
-        } maximumValueLabel: {
-          Text(format(scale.max)).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map { Text(verbatim: format($0)) }
             ?? Text(
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
+
+        tickLabels
       }
     }
   }
@@ -117,14 +145,7 @@ struct ActivityGuessScaleView: View {
       )
       .accessibilityHidden(true)
 
-      HStack {
-        Text(format(scale.min))
-        Spacer()
-        Text(format(scale.max))
-      }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-      .accessibilityHidden(true)
+      tickLabels
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
@@ -135,8 +156,51 @@ struct ActivityGuessScaleView: View {
     }
   }
 
+  private var tickLabels: some View {
+    let ticks = scale.ticks
+    return VStack(spacing: 4) {
+      Canvas { context, size in
+        for tick in ticks {
+          let x = scale.share(of: tick) * size.width
+          context.fill(Path(CGRect(x: x - 0.5, y: 0, width: 1, height: 4)), with: .color(.vizGrid))
+        }
+      }
+      .frame(height: 4)
+
+      GuessTickLayout(positions: ticks.map(scale.share(of:))) {
+        ForEach(ticks, id: \.self) { tick in
+          Text(verbatim: scale.tickLabel(tick, unit: unit))
+            .typeStyle(.meta.monospacedDigit())
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+    }
+  }
+
   private func format(_ value: Double) -> String {
     ActivityNumberFormat.format(value, unit: unit)
+  }
+}
+
+private struct GuessTickLayout: Layout {
+  let positions: [Double]
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    CGSize(
+      width: proposal.width ?? 0,
+      height: subviews.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    for (view, share) in zip(subviews, positions) {
+      let width = view.sizeThatFits(.unspecified).width
+      let x = share * bounds.width
+      let anchor = ChartsAxis.anchor(at: x, plotWidth: bounds.width, labelWidth: width)
+      view.place(
+        at: CGPoint(x: bounds.minX + x, y: bounds.minY), anchor: anchor, proposal: .unspecified)
+    }
   }
 }
 

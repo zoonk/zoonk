@@ -95,7 +95,7 @@ fun DayStepRow(
                 {
                     if (mission) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_target),
+                            painter = painterResource(R.drawable.ic_checklist),
                             contentDescription = stringResource(R.string.today_step_counts_toward_mission),
                             modifier = Modifier.size(14.dp),
                             tint = MaterialTheme.zoonk.brain,

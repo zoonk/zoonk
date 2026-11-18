@@ -517,7 +517,6 @@ msgstr "Lekcje"
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} z {total, number}"
@@ -9258,7 +9257,6 @@ msgid "Getting started"
 msgstr "Pierwsze kroki"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/plan/plan-properties.tsx
 msgctxt "065UXh"
 msgid "No date"
 msgstr "Brak daty"
@@ -10638,6 +10636,11 @@ msgstr "{days}, co {weeks, plural, one {# tydzień} few {# tygodnie} other {# ty
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "Najbliższy: <date></date>"
+
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "Nie ustawiono"
 
 #: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
@@ -12782,11 +12785,6 @@ msgid "Quick explanations"
 msgstr "Szybkie wyjaśnienia"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.Q25Oon"
-msgid "New goal"
-msgstr "Wyznacz nowy cel"
-
-#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
 msgid "Explore courses"
 msgstr "Przeglądaj kursy"
@@ -12898,6 +12896,12 @@ msgstr "{count, plural, one {Także na # egzaminie} other {Także na # egzaminac
 msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "Uwzględnia twoje odpowiedzi z lekcji, ćwiczeń i testów."
+
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "tDrkTA"
+msgid "{done, number} of {total, number} chapters"
+msgstr "{done, number} z {total, number} rozdziałów"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"

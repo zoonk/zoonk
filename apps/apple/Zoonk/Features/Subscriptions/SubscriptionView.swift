@@ -771,15 +771,15 @@ private struct FreePlanCard: View {
         }
 
         if let goals = limits.activeGoals, let lessons = limits.lessonsPer30Days {
-          Text(
-            verbatim: [
+          FactSegments(
+            [
               String(
                 localized: "\(goals) goals", table: "Subscriptions",
                 comment: "How many goals the free plan has at a time"),
               String(
                 localized: "\(lessons) lessons a month", table: "Subscriptions",
                 comment: "Free plan: lessons a month"),
-            ].joinedFacts()
+            ]
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)

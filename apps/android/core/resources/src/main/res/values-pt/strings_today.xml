@@ -52,7 +52,6 @@
   "today_mistakes_tomorrow": "383b5a04cb61e35207df6fbca1ea498bb3c4e99b0037846f0a998d6d109ddc57",
   "today_more_count": "97b69d2bdddd3659f05d0b6be894a709185daacf4ea5503d5cd57ef08993c2b5",
   "today_more_time_a_day": "03aa6cd822e16f7dbc6ae8d94267335ae9221c5fa346a9537745c5abe3d8b2b0",
-  "today_new_goal": "4965fe251758dac568a3456803d9d01b283767be982c1e3ac1aacb2c24ccc272",
   "today_next_suggestion": "e8de31f6e24713f426df1e0ead50041b0417b4c32294be3554ea7a666ae1927e",
   "today_not_enough_time": "4950f2d4c52560bec2c8bbe711e5d7d8323b5eecbc8da64488c830ded92413fa",
   "today_not_now": "84f92c6a12ba05addf0293bea0073200df315a0166941edcc83731c0c8c5ed2e",
@@ -243,7 +242,6 @@
     <string name="today_paused_this_goal">Este objetivo está pausado.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">Nada está planejado até você retomar o objetivo.</string>
-    <string name="today_new_goal">Novo objetivo</string>
     <string name="today_resume_effect">Seu plano continua a partir de hoje, começando pelas aulas planejadas para os dias em que você fez uma pausa.</string>
     <string name="today_setting_up_goal">Seu plano de %1$s precisa de mais algumas respostas.</string>
     <string name="today_building_plan_goal">Criando seu plano de %1$s</string>

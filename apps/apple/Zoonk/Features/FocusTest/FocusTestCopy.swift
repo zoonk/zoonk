@@ -13,13 +13,13 @@ enum FocusTestCopy {
   }
 
   /// "Focus test · 15 min", over the offer.
-  static func offered(minutes: Int) -> String {
-    [String(localized: name), studyDuration(minutes: minutes)].joinedFacts()
+  static func offered(minutes: Int) -> [String] {
+    [String(localized: name), studyDuration(minutes: minutes)]
   }
 
   /// "Focus test · 13 min left", over an open sitting the learner came back to.
-  static func left(minutes: Int) -> String {
-    [String(localized: name), timeLeft(minutes: minutes)].joinedFacts()
+  static func left(minutes: Int) -> [String] {
+    [String(localized: name), timeLeft(minutes: minutes)]
   }
 
   /// One subject, or no date, leaves nothing to focus on: the test only finds what to skip.
@@ -71,23 +71,25 @@ enum FocusTestCopy {
     comment: "Opens the Focus test for a learner whose time doesn't cover the exam")
 
   /// The test's one line on the plan: what tapping its row gives.
-  static func planLine(_ summary: FocusTestSummary) -> String {
+  static func planLine(_ summary: FocusTestSummary) -> [String] {
     switch summary.state {
     case .notStarted:
       return
         ([String(localized: title(findsFocus: summary.suggestsFocus))]
-        + (summary.offer.map { [studyDuration(minutes: $0.minutes)] } ?? [])).joinedFacts()
+        + (summary.offer.map { [studyDuration(minutes: $0.minutes)] } ?? []))
     case .sitting where summary.offer != nil:
       return [
         String(
           localized: "In progress", table: "FocusTest",
           comment: "The Focus test's line on the plan while a sitting is open"),
         timeLeft(minutes: summary.offer?.minutes ?? 0),
-      ].joinedFacts()
+      ]
     case .sitting, .checked:
-      return String(
-        localized: "See your result", table: "FocusTest",
-        comment: "The Focus test's line on the plan once it's taken: opens its result")
+      return [
+        String(
+          localized: "See your result", table: "FocusTest",
+          comment: "The Focus test's line on the plan once it's taken: opens its result")
+      ]
     }
   }
 

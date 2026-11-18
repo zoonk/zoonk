@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "8a6403dbbf37a2cdf0d71c4a70f51363f895c8e74d50468428e729c712de5463",
   "plan_effect_topics_leave": "e49231670521d6e5f6b0901dc2a7f3bc8e0b2974a13c9e4a2f0f1777a2fe0106",
   "plan_effect_weekly_challenge_on": "d4b529a5104c56a954edecd7f9208e46c4215c90f16dfacb550221cb15d65c3c",
+  "plan_end_none_set": "6c5f3c641f29c6d3d30ea6786d3102546a9b672c97f9ed2840a2838b49e06a34",
+  "plan_end_none_set_estimate": "519708bc9c69ca5848acc6cf0d1eb7069d0f23ad70f48302491e3dd1d29a93be",
   "plan_ends": "128311fbce2a11ac8cc0fc579e329ac4cf8322ed8fad61625e4c703b4206c288",
   "plan_ends_about": "863ea67538a2e0fb68ef83c071418f8bda4185682bf20f5448d056f03f7af789",
   "plan_ends_about_month": "768e50827622e19e6758c7b99974be4dd292ba52743149c60ac079fe13740a7c",
@@ -334,7 +336,6 @@
   "plan_next_review_forgetting": "472b9e9c22bdceff7d0232a47a4cf408054a62a6f8f39975b0cb28de948ac9f0",
   "plan_next_topics_count_most": "993fd38abda727307a0b3c8a90fe28a6befe8255a746f27230b153aa9289d39a",
   "plan_next_topics_in_reviews": "115ff8b458bc2ccc448d23d5f83c740c558f56ac75c5caeee33252d8f57a80ea",
-  "plan_no_date": "a64c4305505c6972c6ad7a5d003ff16dc6df63912f445a8495b19b934c110e81",
   "plan_no_deadline_note": "a0b9359c6594862ba4f628e306e719517acdf1ea5f1c760fd3090692236253b1",
   "plan_no_goal_description": "a03213fffbcb57ba977c3c255d2e8343616e70ef7a0b90cdca7d43173a1f5a36",
   "plan_no_lessons_studied_yet": "c52eefcb33545749dbc7f50d4cfaef75abf7dfc17e49ea40139593c9dba02dc0",
@@ -709,7 +710,6 @@
     <string name="plan_practice">연습하기</string>
     <string name="plan_everything">모두</string>
     <string name="plan_to_be_confirmed">추후 확정</string>
-    <string name="plan_no_date">날짜 없음</string>
     <string name="plan_time_weekends">%1$s · 주말 %2$s</string>
     <string name="plan_every_day">매일</string>
     <string name="plan_day_range">%1$s ~ %2$s</string>
@@ -1336,6 +1336,8 @@
     <string name="plan_ask_phase_dates_off_rest">단계별 종료일이 쉬는 날과 겹치지 않게 조정할까요?</string>
     <string name="plan_ask_phase_end_off_rest">%1$s 종료일을 %2$s 말고 다른 날로 옮길까요?</string>
     <string name="plan_why_phase_end_off_rest">%1$s에는 공부하지 않아요.</string>
+    <string name="plan_end_none_set">설정 안 됨</string>
+    <string name="plan_end_none_set_estimate">설정 안 됨 · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">계획에 없어요 · 학습 시간이 부족해요</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

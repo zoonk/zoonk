@@ -236,6 +236,8 @@
   "plan_effect_topics_added": "3c61dc7faed7a2563d0c3294554b4422a496caf2b807a88ae26816b11c8f1a41",
   "plan_effect_topics_leave": "3b1fee796a2c188ad3221aee90f26742e0107dda5def1eff6d6ed7f6b642a436",
   "plan_effect_weekly_challenge_on": "d07dda9ec56bc876544e8ea9c2026b7ea680ad8504a34e22a7e191b2d7c7a2e3",
+  "plan_end_none_set": "5417d908584651283f61877e6b66f1e17e0ef8564f3cbfc2bc17ef2c093c5048",
+  "plan_end_none_set_estimate": "81a938ad242a5e1f28250a03fe5ca70b5079eb4baa5dbe624b5324bb49e0a7a8",
   "plan_ends": "807874bc604aa565610eb80d92503e04783e5f8e8458376720673fcca5ac7f84",
   "plan_ends_about": "1ea5a7eb8c6dafa6248bc9aedfa42d257a09df8df8ee4f7ad33b7ce5018581a1",
   "plan_ends_about_month": "39d2eaa909291a194dae1359d73384d65e99412e1289a36a56440aefc7d99dfc",
@@ -334,7 +336,6 @@
   "plan_next_review_forgetting": "40964bb3dd876228d74b3b1a080c3e3642abc1b2afa5c106ddf96be56e1f694e",
   "plan_next_topics_count_most": "fb5c11a1fde1285e4b4324b537ef4afe60bc3a18bba36912e265f81c316db327",
   "plan_next_topics_in_reviews": "540630b9828353cd1d13967853710478c1af645ef8ce32292c1255a562eb4249",
-  "plan_no_date": "6e32a52f192077bfd5c023087bf05b1a669c337ba8d930a1be17100200756722",
   "plan_no_deadline_note": "ede4ffd8808e94bfb260dfb352ecd709fe112732eb734d4ecb889e212715029f",
   "plan_no_goal_description": "8c89e28fdce5de0929a3a525fb73c38d27b90f51cde49c5a7b811bae9c54fcbe",
   "plan_no_lessons_studied_yet": "35de57e29c4c86a87091b91851a1130872618815cf1bef17284ffd87e35ddd92",
@@ -737,7 +738,6 @@
     <string name="plan_practice">S’entraîner</string>
     <string name="plan_everything">Tout</string>
     <string name="plan_to_be_confirmed">À confirmer</string>
-    <string name="plan_no_date">Pas de date</string>
     <string name="plan_time_weekends">%1$s · %2$s le week-end</string>
     <string name="plan_every_day">Tous les jours</string>
     <string name="plan_day_range">%1$s – %2$s</string>
@@ -1476,6 +1476,8 @@
     <string name="plan_ask_phase_dates_off_rest">Décaler les dates de tes phases pour éviter les jours de repos ?</string>
     <string name="plan_ask_phase_end_off_rest">Décaler la fin de %1$s à un autre jour que %2$s ?</string>
     <string name="plan_why_phase_end_off_rest">%1$s est un jour où tu n’étudies pas.</string>
+    <string name="plan_end_none_set">Non définie</string>
+    <string name="plan_end_none_set_estimate">À définir · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Pas dans ton plan · le temps prévu ne suffit pas</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

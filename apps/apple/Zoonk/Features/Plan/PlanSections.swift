@@ -55,28 +55,40 @@ struct PlanRoadmapSection: View {
     let phases = context.plan.roadPhases
 
     if !phases.isEmpty {
-      Section {
-        if listsPhases {
+      if listsPhases {
+        Section {
           RoadmapCompact(context: context, opens: false, hasLine: false)
-
           ForEach(phases) { phase in
             RoadmapPhaseRow(phase: phase, end: context.plan.phaseEnd(phase))
           }
-        } else if structure != nil {
-          Button {
-            context.show(.path)
-          } label: {
-            RoadmapCompact(context: context, opens: true)
-          }
-          .foregroundStyle(.primary)
-        } else {
-          RoadmapCompact(context: context, opens: false)
-        }
-      } header: {
-        if listsPhases {
+        } header: {
           SectionTitle(
             Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
         }
+      } else {
+        Section {
+          PlanRoadmapContent(context: context, structure: structure)
+        }
+      }
+    }
+  }
+}
+
+struct PlanRoadmapContent: View {
+  let context: PlanContext
+  let structure: GoalSyllabus?
+
+  var body: some View {
+    if !context.plan.roadPhases.isEmpty {
+      if structure != nil {
+        Button {
+          context.show(.path)
+        } label: {
+          RoadmapCompact(context: context, opens: true)
+        }
+        .foregroundStyle(.primary)
+      } else {
+        RoadmapCompact(context: context, opens: false)
       }
     }
   }
@@ -89,7 +101,7 @@ struct RoadmapPhaseRow: View {
   let end: PhaseEnd?
 
   var body: some View {
-    ListRow(Text(phase.title)) {
+    ListRow(Text(phase.title), alignment: .firstTextBaseline) {
       StatusMark(status: phase.mark)
     } trailing: {
       if let end {
@@ -141,7 +153,7 @@ private struct RoadmapCompact: View {
       if let currentIndex {
         let phase = phases[currentIndex]
 
-        RowLayout {
+        RowLayout(alignment: .firstTextBaseline) {
         } words: {
           position(phase: phase, number: currentIndex + 1, count: phases.count)
         } value: {
@@ -311,7 +323,7 @@ struct PlanNumbersSection: View {
   var body: some View {
     let standing = standingNumber
 
-    Section {
+    PageSection {
       StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
         if let standing {
           tile(standing) { context.show(.standing) }
@@ -322,6 +334,8 @@ struct PlanNumbersSection: View {
         }
       }
       .buttonStyle(.plain)
+    } header: {
+      EmptyView()
     }
   }
 
@@ -633,7 +647,7 @@ struct PlanSettingsSection: View {
   var body: some View {
     let schedule = context.plan.schedule
 
-    Section {
+    PageSection {
       setting(
         label: context.goal.kind == .exam
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
@@ -717,23 +731,22 @@ struct PlanSettingsSection: View {
   /// Read-only: not a button, read as one label. It keeps the chevron's slot, so its value ends
   /// where the settings' values do.
   private func fact(label: Text, value: Text) -> some View {
-    LabeledContent {
+    IconLabeledContent {
       value
-    } label: {
+    } title: {
       label.foregroundStyle(.primary)
+    } icon: {
+      EmptyView()
     }
-    .chevronSlot()
-    .accessibilityElement(children: .combine)
   }
 
-  private var dateValue: Text {
-    if context.plan.schedule.targetDate == nil {
-      return context.goal.kind == .exam
-        ? Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
-        : Text("No date", tableName: "Plan", comment: "A goal without a date")
-    }
-
-    return planFinish(context)?.text ?? Text(verbatim: "")
+  private var dateValue: some View {
+    let value = PlanEndDateValue(
+      targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
+      finish: context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
+      today: context.plan.today)
+    return Text(verbatim: value.shown).accessibilityLabel(Text(verbatim: value.spoken))
+      .typeStyle(.data)
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
@@ -745,13 +758,17 @@ struct PlanSettingsSection: View {
     return Text(picked)
   }
 
-  private func setting(label: Text, value: Text, section: AdjustPlanSheet.Section) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, section: AdjustPlanSheet.Section)
+    -> some View
+  {
     setting(label: label, value: value) {
       context.adjust(section)
     }
   }
 
-  private func setting(label: Text, value: Text, action: @escaping () -> Void) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, action: @escaping () -> Void)
+    -> some View
+  {
     Button(action: action) {
       LabeledContent {
         value

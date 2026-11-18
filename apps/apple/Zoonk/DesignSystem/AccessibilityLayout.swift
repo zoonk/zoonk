@@ -173,6 +173,7 @@ extension View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
       .groupBoxStyle(.panel)
+      .toggleStyle(ColumnSwitchStyle())
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
       .environment(\.barHoldsMainAction, false)

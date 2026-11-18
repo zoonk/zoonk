@@ -8,7 +8,6 @@
   "goal_switcher_finished": "4a6ac7ec4f50bc968806d4859f012462ad6a2f44f9db360bcd1b7bbeff50ccd4",
   "goal_switcher_make_room_description": "cb3c59ee63f3af8df9c591357a89dce2df1de51cb86b3fd0ed35f029319bd4b7",
   "goal_switcher_make_room_title": "270a3b40a6d75d8db1a3664200165c7db943e0d494fa139b3b3c5757f1209e5e",
-  "goal_switcher_new_goal": "1147253f99dc78005a900b9254acb9ad2027d47c9ff46f3a74d15cfdf024f7c1",
   "goal_switcher_pause": "6186faa87b99a540878a5ebe3ddaf411f16b5ff5f2da4c28d1c3bc7156b13ed9",
   "goal_switcher_pause_goal": "556f1d6cafadf6980cdbc639a79f41774990905519d6a2827fa264e15d5204ee",
   "goal_switcher_pause_to_start": "0035e3889c8ca2f5a807301f10dc2cd221fa163807d5d2d0e7dd0b11fd409182",
@@ -27,7 +26,6 @@
     <string name="goal_switcher_current_goal">%1$s, objetivo atual. Trocar de objetivo</string>
     <string name="goal_switcher_your_goals">Seus objetivos</string>
     <string name="goal_switcher_quick_explanations">Explicações rápidas</string>
-    <string name="goal_switcher_new_goal">Novo objetivo</string>
     <string name="goal_switcher_explore_courses">Explorar cursos</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="goal_switcher_daily">%1$s por dia</string>

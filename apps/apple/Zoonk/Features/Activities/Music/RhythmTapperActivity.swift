@@ -407,12 +407,13 @@ private struct RhythmCalibrationView: View {
             .foregroundStyle(.mutedForeground)
         }
 
+        buttons(phase)
+          .opacity(calibration.isRunning ? 0 : 1)
+          .disabled(calibration.isRunning)
+          .accessibilityHidden(calibration.isRunning)
+
         RhythmTapPad(isActive: calibration.isRunning, isCountingIn: phase == .countIn) { time in
           calibration.tap(at: time)
-        }
-
-        if !calibration.isRunning {
-          buttons(phase)
         }
       }
       // Only the reading: speech over the clicks would throw off the taps it times.

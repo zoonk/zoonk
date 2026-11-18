@@ -68,7 +68,7 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(format(7, "R$ por metro", false, nil, true), "R$7 por metro")
     XCTAssertEqual(format(0.000075, nil, false, nil, true), "0.000075")
     XCTAssertEqual(format(49.4567, "%", false, 1, true), "49.5%")
-    XCTAssertEqual(ActivityNumberFormat.format(1_200_000, compact: true, locale: english), "1M")
+    XCTAssertEqual(ActivityNumberFormat.format(1_200_000, compact: true, locale: english), "1.2M")
     XCTAssertEqual(
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }

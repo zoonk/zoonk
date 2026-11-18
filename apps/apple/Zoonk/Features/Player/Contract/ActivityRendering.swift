@@ -34,6 +34,9 @@ struct ActivityRenderer: Sendable {
   let badge: ActivityBadge.Rule?
   /// Mirrors main's `checkFirst`.
   let showsCheckFirst: @Sendable (ActivityStepContent) -> Bool
+  /// Mirrors main's `answersOnCanvas`: the canvas takes the numeric answer itself, so the step asks
+  /// no second question with a field of its own.
+  let answersOnCanvas: Bool
   /// Computed like core's `checkActivityAnswer`, for instant feedback. Without it, the player waits
   /// for the server's verdict.
   let grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)?
@@ -43,14 +46,21 @@ struct ActivityRenderer: Sendable {
     template: String,
     badge: ActivityBadge.Rule? = nil,
     showsCheckFirst: @escaping @Sendable (ActivityStepContent) -> Bool = { _ in false },
+    answersOnCanvas: Bool = false,
     grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)? = nil,
     @ViewBuilder canvas: @escaping @MainActor @Sendable (ActivityCanvasContext) -> Canvas
   ) {
     self.template = template
     self.badge = badge
     self.showsCheckFirst = showsCheckFirst
+    self.answersOnCanvas = answersOnCanvas
     self.grade = grade
-    self.canvas = { context in AnyView(canvas(context)) }
+    self.canvas = { context in
+      AnyView(
+        canvas(context)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .activityPanel())
+    }
   }
 }
 

@@ -165,6 +165,7 @@ struct StepSender {
 
 struct StepHeader: View {
   var subject: String?
+  var subjectFacts: [String] = []
   let title: Text
   var description: Text?
 
@@ -179,7 +180,10 @@ struct StepHeader: View {
   var body: some View {
     Section {
       PageHeader(
-        title, chip: subject.map { Chip(Text(verbatim: $0)) }, keepsChipRoom: keepsChipRoom,
+        title,
+        chip: subjectFacts.isEmpty
+          ? subject.map { Chip(Text(verbatim: $0)) } : Chip(facts: subjectFacts),
+        keepsChipRoom: keepsChipRoom,
         supporting: description
       )
       .listRowBackground(Color.clear)
