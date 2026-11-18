@@ -8,7 +8,7 @@ export async function PlusBenefits() {
   return (
     <PlanIncludes
       items={[
-        { id: "exam", text: t("Your whole exam plan, every day to the exam") },
+        { id: "plan", text: t("Your whole study plan, every day to your deadline") },
         { id: "mocks", text: t("Mock exams, timed like the real one") },
         { id: "buddy", text: t("An AI study buddy whenever you're stuck") },
         { id: "calls", text: t("More speaking practice calls") },
