@@ -9,6 +9,7 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ShowMore } from "../_components/show-more";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatRange } from "../_utils/range";
 import { useMockNumber } from "./mock-labels";
@@ -66,15 +67,13 @@ function TopicRows({ topics }: { topics: readonly Topic[] }) {
     <>
       <TopicList topics={first} />
       {rest.length > 0 && (
-        <Collapsible>
-          <CollapsibleTrigger className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex min-h-10 items-center gap-1 rounded-lg text-sm font-medium outline-none focus-visible:ring-[3px]">
-            {t("{count, plural, one {# more topic} other {# more topics}}", { count: rest.length })}
-            <FoldChevron inline />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <TopicList topics={rest} />
-          </CollapsibleContent>
-        </Collapsible>
+        <ShowMore
+          label={t("{count, plural, one {# more topic} other {# more topics}}", {
+            count: rest.length,
+          })}
+        >
+          <TopicList topics={rest} />
+        </ShowMore>
       )}
     </>
   );
