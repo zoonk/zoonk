@@ -150,6 +150,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
           chapters: served.chapters.map((row, index) =>
             index === 2 ? { ...row, lessonsToWrite: 1 } : row,
           ),
+          createOffer: { eligible: 2, needLessons: 1, startable: 2, stop: null },
         }}
       />,
     );
@@ -166,6 +167,10 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await notMade().getByRole("button", { name: "1 more chapter" }).click();
     await expect.element(notMade().getByText("Reactions")).toBeVisible();
     await expect.element(rowCreate("Reactions")).toHaveFocus();
+
+    await expect
+      .element(rowCreate("Reactions"))
+      .toHaveAccessibleDescription(/counts toward your free lessons/iu);
 
     await expect
       .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
