@@ -37,8 +37,10 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
     model: codexCli("gpt-6-luna", {
       codexPath: getCodexPath(),
       // Codex otherwise sends AGENTS.md, memories, the skills list and agent context with every
-      // request, about 80% of each translation's input.
+      // request, about 80% of each translation's input. The apps list changes between runs, so
+      // with it the prompt cache stops before Eloqnt's rules and style guide.
       configOverrides: {
+        "features.apps": false,
         "features.memories": false,
         include_apps_instructions: false,
         include_collaboration_mode_instructions: false,
