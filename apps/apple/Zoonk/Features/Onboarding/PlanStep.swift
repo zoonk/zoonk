@@ -668,7 +668,7 @@ private struct PlanReveal: View {
           open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) }))
     case .idle, .loading:
       // Today's rows hold their place, so the week doesn't move as they come.
-      RevealTodayPlaceholder()
+      RevealTodayPlaceholder(isInWeek: day.value.map { $0.week.days > 0 } ?? true)
     case .empty, .failed:
       EmptyView()
     }

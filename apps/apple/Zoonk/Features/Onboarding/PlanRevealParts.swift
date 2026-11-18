@@ -260,27 +260,58 @@ extension StudyBlock {
   }
 }
 
-/// The loaded week's shape, Today's heading a row under the week's, so nothing moves as it comes.
+/// The loaded shape, its headers' facts included, so nothing moves as it comes: Today's heading a
+/// row under the week's, or Today alone when the week has no study days.
 struct RevealTodayPlaceholder: View {
-  var body: some View {
-    Section {
-      SectionTitle(
-        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
-      )
-      .listRowSeparator(.hidden)
+  var isInWeek = true
 
-      ForEach(0..<3, id: \.self) { _ in
-        Text(verbatim: "A lesson of the first day")
-          .typeStyle(.rowTitle)
-          .redacted(reason: .placeholder)
+  var body: some View {
+    Group {
+      if isInWeek {
+        Section {
+          todayHeader
+            .listRowSeparator(.hidden)
+
+          rows
+        } header: {
+          SectionTitle(
+            Text(
+              "Your first week", tableName: "Onboarding",
+              comment: "Header over the plan's next seven days")
+          ) {
+            facts
+          }
+        }
+      } else {
+        Section {
+          rows
+        } header: {
+          todayHeader
+        }
       }
-    } header: {
-      SectionTitle(
-        Text(
-          "Your first week", tableName: "Onboarding",
-          comment: "Header over the plan's next seven days"))
     }
     .accessibilityHidden(true)
+  }
+
+  private var todayHeader: some View {
+    SectionTitle(
+      Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+    ) {
+      facts
+    }
+  }
+
+  private var facts: some View {
+    FactSegments(["Mon, Nov 17", "30 min"])
+      .redacted(reason: .placeholder)
+  }
+
+  private var rows: some View {
+    ForEach(0..<3, id: \.self) { _ in
+      Text(verbatim: "A lesson of the first day")
+        .typeStyle(.rowTitle)
+        .redacted(reason: .placeholder)
+    }
   }
 }
 
