@@ -1,13 +1,16 @@
 "use client";
 
+import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { TASK_MAIN_ACTION_CLASS } from "../_components/task-layout";
 import { GoalEntrySubmit } from "./entry/goal-entry-submit";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
 import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -108,7 +111,7 @@ export function StartWaitSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
-        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
+        <OnboardingColumn aria-busy="true">
           <Skeleton className="h-11 w-3/5 self-end rounded-xl rounded-br-sm" />
 
           <div className="flex flex-col gap-6">
@@ -128,6 +131,19 @@ export function StartWaitSkeleton() {
   );
 }
 
+/** A step's bar holds one main action, so the skeleton holds its place. */
+function StepActionSkeleton() {
+  const t = useExtracted();
+
+  return (
+    <OnboardingActions>
+      <ButtonSkeleton className={TASK_MAIN_ACTION_CLASS} size="xl">
+        {t("Continue")}
+      </ButtonSkeleton>
+    </OnboardingActions>
+  );
+}
+
 export function StepsSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
@@ -137,7 +153,7 @@ export function StepsSkeleton() {
           middle: <Skeleton className={cn("h-1", BAR_MIDDLE_CLASS)} />,
         }}
       >
-        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
+        <OnboardingColumn aria-busy="true" bar={<StepActionSkeleton />}>
           <HeadingSkeleton eyebrow />
           <RowsSkeleton rows={4} twoLines />
         </OnboardingColumn>
