@@ -220,7 +220,7 @@ final class LineCrossingPlacementParityTests: XCTestCase {
     XCTAssertLessThan(distance(box, to: original), 40)
   }
 
-  func testAnswerKeepsClearAndNamesThatStillBelongStayPut() {
+  func testAnswerKeepsClearAndUncrossedNamesStayPut() {
     for width in [176.0, 260, 320] {
       for height in [156.0, 240, 480] {
         for offset in [-40.0, -20, 20, 40] {
@@ -256,17 +256,12 @@ final class LineCrossingPlacementParityTests: XCTestCase {
                 XCTAssertNil(after)
                 continue
               }
-              let own = shown[index].segment
               let answerClears = !LineCrossingLabelLayout.touches(
                 before.insetBy(dx: -3, dy: -3), answer.segment)
-              let answerIsFarther =
-                distance(before, to: answer.segment) > distance(before, to: own) + 0.1
-              if answerClears && answerIsFarther
-                && !lineSeparates(before, from: own, by: answer.segment)
-              {
+              if answerClears {
                 XCTAssertEqual(
                   before, after, "\(width) × \(height), \(offset), \(labelHeight), \(index)")
-              } else if !answerClears {
+              } else {
                 XCTAssertNotNil(after)
               }
             }
@@ -274,27 +269,6 @@ final class LineCrossingPlacementParityTests: XCTestCase {
         }
       }
     }
-  }
-
-  private func lineSeparates(
-    _ box: CGRect, from own: LineCrossingLabelLayout.Segment,
-    by other: LineCrossingLabelLayout.Segment
-  ) -> Bool {
-    let dx = own.to.x - own.from.x
-    let dy = own.to.y - own.from.y
-    let projection = min(
-      1,
-      max(
-        0,
-        ((box.midX - own.from.x) * dx + (box.midY - own.from.y) * dy)
-          / (dx * dx + dy * dy)))
-    let center = CGPoint(x: box.midX, y: box.midY)
-    let nearest = CGPoint(x: own.from.x + projection * dx, y: own.from.y + projection * dy)
-    func cross(_ a: CGPoint, _ b: CGPoint, _ c: CGPoint) -> CGFloat {
-      (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
-    }
-    return cross(other.from, other.to, center) * cross(other.from, other.to, nearest) < 0
-      && cross(center, nearest, other.from) * cross(center, nearest, other.to) < 0
   }
 
   private func distance(_ box: CGRect, to line: LineCrossingLabelLayout.Segment) -> Double {

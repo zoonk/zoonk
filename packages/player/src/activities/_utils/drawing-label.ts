@@ -133,7 +133,7 @@ export function isOnNamedSide(box: LabelBox, named: LabelSegment, line: LabelSeg
   return sideOf(center, line) * sideOf(closestPoint(center, named), line) >= 0;
 }
 
-export function separatesName(box: LabelBox, named: LabelSegment, line: LabelSegment): boolean {
+function separatesName(box: LabelBox, named: LabelSegment, line: LabelSegment): boolean {
   const center = centerOf(box);
   const connector = { from: center, to: closestPoint(center, named) };
 
@@ -159,4 +159,37 @@ export function measureDrawingLabel({
     offsetY: inPixels(box.y + box.height / 2 - Number(element.getAttribute("y"))),
     width: inPixels(box.width),
   };
+}
+
+export function isInside(box: LabelBox, area: LabelBox): boolean {
+  return (
+    box.left >= area.left &&
+    box.right <= area.right &&
+    box.top >= area.top &&
+    box.bottom <= area.bottom
+  );
+}
+
+export function touchesBox(box: LabelBox, other: LabelBox, clearance = LABEL_CLEARANCE): boolean {
+  return (
+    box.left < other.right + clearance &&
+    box.right > other.left - clearance &&
+    box.top < other.bottom + clearance &&
+    box.bottom > other.top - clearance
+  );
+}
+
+export function belongsWith(
+  box: LabelBox,
+  named: LabelSegment,
+  lines: readonly LabelSegment[],
+  unobstructed = true,
+): boolean {
+  const own = segmentGapSquared(box, named);
+
+  return lines.every(
+    (line) =>
+      line === named ||
+      (own < segmentGapSquared(box, line) && (!unobstructed || !separatesName(box, named, line))),
+  );
 }
