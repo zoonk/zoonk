@@ -67,6 +67,7 @@ function UnderstandingWaitScreen({
           <GenerationTimelineProgress
             aria-label={t("Understanding your goal")}
             locale={getFormattingLocale(locale)}
+            statuses={["active"]}
             value={progress}
             weights={[1]}
           />

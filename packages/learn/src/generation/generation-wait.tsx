@@ -64,12 +64,14 @@ function WaitProgress({
   label,
   run,
   since,
+  statuses,
   weights,
 }: {
   kind: GenerationKind;
   label: string;
   run: GenerationRun;
   since?: number;
+  statuses: PhaseStatus[];
   weights: number[];
 }) {
   const locale = useAppLocale();
@@ -79,6 +81,7 @@ function WaitProgress({
     <GenerationTimelineProgress
       aria-label={label}
       locale={locale}
+      statuses={statuses}
       value={value}
       weights={weights}
     />
@@ -230,6 +233,7 @@ export function GenerationWait({
           label={copy.name}
           run={run}
           since={since}
+          statuses={progress.phases.map((phase) => phase.status)}
           weights={progress.phases.map((phase) => phase.seconds)}
         />
       </GenerationTimelineHeader>
