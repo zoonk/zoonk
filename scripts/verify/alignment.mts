@@ -110,6 +110,16 @@ function wordsOf(action: CaptureElement) {
     .join(" ");
 }
 
+/** Apple gallery captures name a Debug component section, such as `fields`, as `gallery-fields`. */
+function specimen(capture: Capture) {
+  return (
+    capture.specimen ??
+    (capture.platform === "apple" &&
+      /^[a-z]+$/iu.test(capture.screen) &&
+      capture.scenario === `gallery-${capture.screen}`)
+  );
+}
+
 /**
  * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
  * action offered again (the same words and the same `target`: a link's destination, or the action
@@ -120,7 +130,7 @@ function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;
 
   // A gallery shows pieces side by side as samples; it isn't a screen a learner acts on.
-  if (capture.specimen) {
+  if (specimen(capture)) {
     return [];
   }
 
@@ -288,7 +298,7 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
     // A gallery's specimens each draw in a frame of their own, not on the page's column.
-    ...(capture.specimen ? [] : [...bleedLeads(context), ...spanLeads(context)]),
+    ...(specimen(capture) ? [] : [...bleedLeads(context), ...spanLeads(context)]),
     ...pinnedLeads(context),
     ...lineEndLeads(context),
     ...loneWordLeads(context),
