@@ -40,9 +40,9 @@
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Name</string>
     <string name="plan_rename_description">Choose a name you recognize. Your study plan stays the same.</string>
-    <string name="plan_pause_goal">Pause this goal</string>
-    <string name="plan_resume_goal">Resume this goal</string>
-    <string name="plan_archive_goal">Archive this goal</string>
+    <string name="plan_menu_pause_goal">Pause goal</string>
+    <string name="plan_menu_resume_goal">Resume goal</string>
+    <string name="plan_menu_archive_goal">Archive goal</string>
     <!-- The button that archives a goal whose exam date has passed; it asks first. -->
     <string name="plan_archive_goal_short">Archive goal</string>
     <string name="plan_keep_studying">Keep studying</string>
@@ -168,7 +168,7 @@
 
     <string name="plan_your_plan">Your plan</string>
     <string name="plan_exam_date">Exam date</string>
-    <string name="plan_time_a_day_label">Time a day</string>
+    <string name="plan_daily_study_time">Daily study time</string>
     <string name="plan_study_days">Study days</string>
     <string name="plan_mock_exams">Mock exams</string>
     <string name="plan_choose">Choose</string>
@@ -546,12 +546,12 @@
     <string name="plan_tools_none">No tools? You can do it all with examples.</string>
     <string name="plan_tools_without">You won\'t practice on your own device. Lessons use examples and simulations instead.</string>
     <string name="plan_tools_later">More later: %1$s</string>
-    <string name="plan_tool_how">How will you use it?</string>
+    <string name="plan_tool_have_question">Do you have it?</string>
     <string name="plan_tool_have">I have it</string>
     <string name="plan_tool_have_description">You\'ll practice on your own device.</string>
     <string name="plan_tool_setup">I\'ll set it up</string>
     <string name="plan_tool_setup_description">A short lesson shows how, right before you need it.</string>
-    <string name="plan_tool_none">No install</string>
+    <string name="plan_tool_wont_use">I won\'t use it</string>
     <string name="plan_tool_none_description">You\'ll practice with examples instead.</string>
     <string name="plan_tool_updates_when_ready">Your plan updates as soon as it\'s ready.</string>
     <string name="plan_tool_writing_setup">Adding a setup lesson</string>
@@ -865,6 +865,7 @@
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
     <string name="plan_end_none_set">None set</string>
+    <string name="plan_estimated_finish">Estimated finish %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
