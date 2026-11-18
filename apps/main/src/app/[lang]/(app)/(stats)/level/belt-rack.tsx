@@ -75,8 +75,10 @@ export async function BeltRack({
             <span
               aria-label={belt.label}
               className={cn(
-                "flex h-6.5 w-full items-center justify-center rounded-md max-md:group-first/belt:justify-start max-md:group-last/belt:justify-end md:h-9.5 md:rounded-lg",
-                index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
+                "flex h-6.5 w-full items-center justify-center rounded-md md:h-9.5 md:rounded-lg",
+                index === currentIndex
+                  ? "ring-foreground ring-[1.5px] ring-inset"
+                  : "max-md:group-first/belt:justify-start max-md:group-last/belt:justify-end",
               )}
               role="img"
               style={{ color: `var(--belt-${belt.key})` }}
