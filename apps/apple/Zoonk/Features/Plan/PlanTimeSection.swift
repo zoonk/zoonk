@@ -147,9 +147,8 @@ struct PlanTimeSection: View {
       ? String(
         localized: "Working out when you'd finish…", table: "Plan",
         comment: "While a change to the time saves, in place of when the plan finishes")
-      : String(
-        localized: "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
-        table: "Plan", comment: "When the plan finishes, as a month and year")
+      : PlanEndDateValue.estimatedFinish(
+        PlanDate.estimate(end, today: plan.today, month: true).text)
   }
 
   private func moveDate(to fittingDate: String) -> some View {

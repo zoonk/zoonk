@@ -24,9 +24,7 @@ struct PlanEndDateValue: Equatable {
       if targetDate == nil {
         shown = String(localized: "None set", table: "Plan")
         spoken = shown
-        detail = String(
-          localized: "Estimated finish \(value.text)", table: "Plan",
-          comment: "Estimated end of a plan that has no deadline")
+        detail = Self.estimatedFinish(value.text)
       } else {
         shown = value.text
         spoken = value.spoken
@@ -37,5 +35,11 @@ struct PlanEndDateValue: Equatable {
       spoken = shown
       isDate = true
     }
+  }
+
+  static func estimatedFinish(_ date: String) -> String {
+    String(
+      localized: "Estimated finish \(date)", table: "Plan",
+      comment: "Estimated end of a plan that has no deadline")
   }
 }

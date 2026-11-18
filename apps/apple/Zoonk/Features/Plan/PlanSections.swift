@@ -606,11 +606,7 @@ func planFinish(_ context: PlanContext) -> PlanWhen? {
   guard context.goal.status != .paused else { return nil }
 
   guard let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) else {
-    return context.goal.kind == .exam
-      ? .words(
-        Text(
-          "Date not set", tableName: "Plan", comment: "An exam date that is not set"))
-      : nil
+    return nil
   }
 
   return .date(
