@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player.steps
 
+import com.zoonk.android.feature.player.model.ActivityTolerance
 import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.api.models.ActivityRoundedAnswer
 import java.math.BigDecimal
@@ -32,6 +33,7 @@ internal fun NumericCheck.checkedAnswerDigits(
     value: Double,
     isCorrect: Boolean,
     rounded: ActivityRoundedAnswer?,
+    minTolerance: ActivityTolerance?,
 ): Int {
     val places = rounded?.places?.toInt() ?: return answerDigits(value)
     val readsAsRight = BigDecimal.valueOf(value).setScale(places, RoundingMode.HALF_UP).compareTo(BigDecimal.valueOf(rounded.`value`)) == 0

@@ -53,6 +53,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 322
   },
@@ -107,6 +108,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": null, "value": 3 },
     "value": 3
   },
@@ -180,6 +182,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 0, "value": 3870 },
     "value": 2653.2977051444223
   },
@@ -215,6 +218,7 @@
     "expected": { "kind": "numeric", "value": 12 },
     "explore": null,
     "picture": null,
+    "minTolerance": { "kind": "relative", "value": 0.1 },
     "roundedAnswer": { "places": 0, "value": 12 },
     "value": 11.574074074074074
   },
@@ -259,6 +263,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": null, "value": 5 },
     "value": 5
   },
@@ -327,6 +332,7 @@
     },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 3.6
   },
@@ -407,6 +413,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 9
   },
@@ -449,6 +456,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 0, "value": 95 },
     "value": 95.44998742254873
   },
@@ -493,6 +501,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": null, "value": 180 },
     "value": 180
   },
@@ -569,6 +578,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 0.24609375000000025
   },
@@ -608,6 +618,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 1, "value": 0.5 },
     "value": 0
   },
@@ -667,6 +678,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 0.5
   },
@@ -759,6 +771,7 @@
       "alt": "A human heart cut open from the front, with five numbered spots",
       "required": true
     },
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -816,6 +829,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 4.666666666666666
   },
@@ -843,6 +857,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 4
   },
@@ -929,6 +944,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -967,6 +983,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1089,6 +1106,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1139,6 +1157,7 @@
     "expected": { "answer": { "ids": ["polite"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1209,6 +1228,7 @@
     },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1261,6 +1281,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1389,6 +1410,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1438,6 +1460,7 @@
     "expected": { "answer": { "ids": ["e1", "r1"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1471,6 +1494,7 @@
     },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1524,6 +1548,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1561,6 +1586,7 @@
     "expected": { "answer": { "ids": ["s2"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1766,6 +1792,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1804,6 +1831,7 @@
     },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1847,6 +1875,7 @@
     "expected": { "answer": { "ids": ["p1", "p2"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1887,6 +1916,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -1941,6 +1971,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 2, "value": 0.12 },
     "value": 0.12
   },
@@ -1976,6 +2007,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2022,6 +2054,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2055,6 +2088,7 @@
     },
     "explore": null,
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2093,6 +2127,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 2, "value": 0.17 },
     "value": null
   },
@@ -2130,6 +2165,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2198,6 +2234,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 0, "value": 252 },
     "value": 360.08488878299187
   },
@@ -2276,6 +2313,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": null, "value": 1000 },
     "value": 1000
   },
@@ -2381,6 +2419,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": 0, "value": 41 },
     "value": 35.311943069701876
   },
@@ -2409,6 +2448,7 @@
     "expected": { "kind": "numeric", "value": 14 },
     "explore": null,
     "picture": null,
+    "minTolerance": { "kind": "relative", "value": 0.1 },
     "roundedAnswer": { "places": null, "value": 14 },
     "value": 14
   },
@@ -2441,6 +2481,7 @@
     "expected": { "kind": "numeric", "value": 1200 },
     "explore": null,
     "picture": null,
+    "minTolerance": { "kind": "relative", "value": 0.1 },
     "roundedAnswer": { "places": null, "value": 1200 },
     "value": 1200
   },
@@ -2473,6 +2514,7 @@
     "expected": { "kind": "numeric", "value": 1200000 },
     "explore": null,
     "picture": null,
+    "minTolerance": { "kind": "relative", "value": 0.1 },
     "roundedAnswer": { "places": null, "value": 1200000 },
     "value": 1200000
   },
@@ -2505,6 +2547,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2551,6 +2594,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": null
   },
@@ -2607,6 +2651,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": { "places": null, "value": 250 },
     "value": 3750
   },
@@ -2670,6 +2715,7 @@
       "picture": null
     },
     "picture": null,
+    "minTolerance": null,
     "roundedAnswer": null,
     "value": 0.5
   }

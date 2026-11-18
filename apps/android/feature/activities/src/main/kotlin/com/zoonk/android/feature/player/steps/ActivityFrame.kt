@@ -76,6 +76,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.feature.player.model.ActivityTolerance
 import com.zoonk.android.feature.player.model.ExploredActivity
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
@@ -185,6 +186,7 @@ internal fun ActivityView(
                 locked,
                 onAnswerChange,
                 rounded,
+                content.minTolerance,
                 result?.isCorrect,
                 numericQuestion != null,
             )
@@ -247,6 +249,7 @@ private fun ActivityCheckArea(
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
     rounded: ActivityRoundedAnswer?,
+    minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
     questionAlreadyShown: Boolean = false,
 ) {
@@ -264,7 +267,16 @@ private fun ActivityCheckArea(
             )
         }
     } else if (check is NumericCheckValue) {
-        NumericCheckField(check.value, answer, locked, onAnswerChange, rounded, isCorrect, showQuestion = !questionAlreadyShown)
+        NumericCheckField(
+            check.value,
+            answer,
+            locked,
+            onAnswerChange,
+            rounded,
+            minTolerance,
+            isCorrect,
+            showQuestion = !questionAlreadyShown,
+        )
     }
 }
 
@@ -284,6 +296,7 @@ private fun NumericCheckField(
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
     rounded: ActivityRoundedAnswer?,
+    minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
     showQuestion: Boolean = true,
 ) {
@@ -297,7 +310,7 @@ private fun NumericCheckField(
                 formatNumber(
                     value,
                     locale,
-                    check.checkedAnswerDigits(value, isCorrect, rounded),
+                    check.checkedAnswerDigits(value, isCorrect, rounded, minTolerance),
                     grouping = false,
                 )
             }

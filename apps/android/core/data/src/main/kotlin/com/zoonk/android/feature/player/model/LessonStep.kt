@@ -38,6 +38,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
+import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
 import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.StepMarks
 
@@ -49,6 +50,7 @@ typealias ActivityAnswer = LessonStepAnswerOneOf3Answer
 typealias ChoiceCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf
 typealias InteractionCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf1
 typealias NumericCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
+typealias ActivityTolerance = PlayableLibraryStepAnyOfMinTolerance
 typealias ChallengeStepContent = PlayableLibraryStepAnyOf1Content
 typealias ChallengeNode = PlayableLibraryStepAnyOf1ContentNodesInner
 typealias ChallengeChoice = PlayableLibraryStepAnyOf1ContentNodesInnerChoicesInner
@@ -116,6 +118,7 @@ sealed interface StepContent {
         val frame: ActivityFrame,
         val baseMap: ActivityBaseMap? = null,
         val roundedAnswer: ActivityRoundedAnswer? = null,
+        val minTolerance: ActivityTolerance? = null,
     ) : StepContent {
         override val kind get() = StepKind.Activity
     }
