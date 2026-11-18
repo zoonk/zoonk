@@ -91,6 +91,14 @@ async function PlanLinkBody({ params }: Props) {
             <p className={HERO_LEAD_CLASS}>{outline.subject.description}</p>
           )}
 
+          {!session && (
+            <p className={HERO_LEAD_CLASS}>
+              {t(
+                "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
+              )}
+            </p>
+          )}
+
           {session ? (
             <div className="mt-7 flex max-w-sm flex-col gap-3 sm:mt-9">
               <ClientMessagesProvider scope="learn">
@@ -98,11 +106,7 @@ async function PlanLinkBody({ params }: Props) {
               </ClientMessagesProvider>
             </div>
           ) : (
-            <StartBlock
-              note={t(
-                "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
-              )}
-            >
+            <StartBlock>
               <PlanLinkStartBar>
                 <Link className={getStartControlClassName()} href={startHref}>
                   {t({
