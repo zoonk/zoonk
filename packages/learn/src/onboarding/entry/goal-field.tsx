@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
 
-export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
+const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
 const GOAL_FIELD = "goal";
 
