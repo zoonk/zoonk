@@ -23,7 +23,8 @@ final class PlanEndDateValueTests: XCTestCase {
       finish: ("2027-07-01", true, true), today: "2026-11-16")
     XCTAssertEqual(value.shown, "None set")
     XCTAssertEqual(value.spoken, "None set")
-    XCTAssertEqual(value.detail, "Estimated finish ~Jul 2027")
+    XCTAssertEqual(value.detail?.shown, "Estimated finish ~Jul 2027")
+    XCTAssertEqual(value.detail?.spoken, "Estimated finish About Jul 2027")
   }
 
   func testNoDateWithoutAnEstimateSaysNoneSet() {

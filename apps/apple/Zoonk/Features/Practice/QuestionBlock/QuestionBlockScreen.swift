@@ -170,7 +170,7 @@ struct QuestionBlockView: View {
             certificates: onFinished == nil ? completion.certificates : [],
             ceremony: onFinished == nil ? completion.ceremony?.value1 : nil)
       } else {
-        PracticeTaskLayout(segments: segments, index: run.state.index) {
+        PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
           stimulus(phase: phase)
         } response: {
           response(phase: phase)
@@ -198,16 +198,6 @@ struct QuestionBlockView: View {
     .onDisappear {
       stopping.leave()
     }
-  }
-
-  private var segments: [TaskSegment] {
-    let segments = run.state.segments
-    if run.detail.isNetScored(run.question), segments.allSatisfy({ $0 == .current || $0 == .ahead })
-    {
-      return segments.map { _ in .ahead }
-    }
-
-    return segments
   }
 
   @ViewBuilder

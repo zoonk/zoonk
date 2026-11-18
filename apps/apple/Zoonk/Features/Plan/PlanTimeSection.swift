@@ -43,7 +43,7 @@ struct PlanTimeSection: View {
       .loads(
         plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
       )
-      .announcesStatus(editor.isSaving ? nil : finish)
+      .announcesStatus(editor.isSaving ? nil : finish?.spoken)
 
       coverage(time: time, found: found, minutes: current)
     } footer: {
@@ -128,27 +128,30 @@ struct PlanTimeSection: View {
         moveDate(to: fittingDate)
       }
     } else if let finish {
-      Text(finish)
+      Text(verbatim: finish.shown)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
+        .accessibilityLabel(Text(verbatim: finish.spoken))
     }
   }
 
   /// A plan without a date says when it finishes. The end is the saved schedule's last day, laid
   /// out again only by a change, so once it has passed it no longer says that.
-  private var finish: String? {
+  private var finish: PlanEndDateValue.Line? {
     guard plan.feasibility?.deadline == nil || plan.schedule.targetDate == nil,
       let end = plan.estimate.endDate, end >= plan.today, plan.end == nil
     else {
       return nil
     }
 
-    return editor.isSaving
-      ? String(
+    guard !editor.isSaving else {
+      let working = String(
         localized: "Working out when you'd finish…", table: "Plan",
         comment: "While a change to the time saves, in place of when the plan finishes")
-      : PlanEndDateValue.estimatedFinish(
-        PlanDate.estimate(end, today: plan.today, month: true).text)
+      return .init(shown: working, spoken: working)
+    }
+
+    return PlanEndDateValue.estimatedFinish(end, today: plan.today, month: true)
   }
 
   private func moveDate(to fittingDate: String) -> some View {

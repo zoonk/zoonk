@@ -554,7 +554,7 @@ struct MockSummaryRow: View {
       ) {
         StatusMark(status: .done)
       } trailing: {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .trailing, spacing: 2) {
           Text(score)
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
         }

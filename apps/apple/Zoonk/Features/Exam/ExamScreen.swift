@@ -95,7 +95,7 @@ struct ExamList: View {
         }
       }
     }
-    .bottomBar {
+    .bottomBar(note: speakingMockNote) {
       if let options, options.offersMock, !exam.isLastDays {
         Button {
           if let running = options.running {
@@ -112,8 +112,13 @@ struct ExamList: View {
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
-      } else if pinsSpeakingAction {
-        ExamSpeakingMockAction(goalId: exam.goalId, start: callStart)
+      } else if pinsSpeakingAction, let mock = exam.speakingMock {
+        if case .limit(let limit) = callStart.refusal, limit.offersSubscription {
+          SubscribeButton()
+            .buttonStyle(.outline)
+        }
+
+        ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
           .buttonStyle(.mainAction)
           .keyboardShortcut(.defaultAction)
       }
@@ -164,6 +169,19 @@ struct ExamList: View {
   private var pinsSpeakingAction: Bool {
     exam.speakingMock != nil && !exam.speakingMockPaused
       && (exam.isLastDays || options?.offersMock == false)
+  }
+
+  /// A start from the bar says how it ended over the bar, where the learner tapped.
+  private var speakingMockNote: BarNote? {
+    guard pinsSpeakingAction, let refusal = callStart.refusal else {
+      return nil
+    }
+
+    if case .limit(let limit) = refusal, let sentence = limit.words(.callTime).sentence {
+      return BarNote(sentence)
+    }
+
+    return BarNote(speakingMockFailure)
   }
 
   /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
@@ -938,15 +956,8 @@ private struct SpeakingMockSection: View {
     Section {
       Label {
         VStack(alignment: .leading, spacing: 4) {
-          Group {
-            switch mock {
-            case .ielts:
-              Text("IELTS speaking mock", tableName: "Exam", comment: "A speaking mock's name")
-            case .toefl:
-              Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
-            }
-          }
-          .typeStyle(.body.weight(.semibold))
+          mock.name
+            .typeStyle(.body.weight(.semibold))
           Group {
             switch mock {
             case .ielts:
@@ -986,11 +997,12 @@ private struct SpeakingMockSection: View {
           hint: Text(
             "Your mock opens as soon as it's ready.", tableName: "Exam",
             comment: "A speaking mock opens by itself once it's written"))
-      } else {
-        if !pinsAction {
-          ExamSpeakingMockAction(goalId: goalId, start: start)
-            .buttonStyle(.outline)
-        }
+      } else if !pinsAction {
+        ExamSpeakingMockAction(
+          goalId: goalId, start: start,
+          label: Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
+        )
+        .buttonStyle(.outline)
 
         switch start.refusal {
         case .limit(let limit):
@@ -999,12 +1011,24 @@ private struct SpeakingMockSection: View {
         case nil:
           EmptyView()
         case .some:
-          FailureLine(
-            message: LocalizedStringResource(
-              "The mock didn't start. Try again in a moment.", table: "Exam",
-              comment: "Starting the speaking mock failed"))
+          FailureLine(message: speakingMockFailure)
         }
       }
+    }
+  }
+}
+
+private let speakingMockFailure = LocalizedStringResource(
+  "The mock didn't start. Try again in a moment.", table: "Exam",
+  comment: "Starting the speaking mock failed")
+
+extension ExamView.SpeakingMock {
+  fileprivate var name: Text {
+    switch self {
+    case .ielts:
+      Text("IELTS speaking mock", tableName: "Exam", comment: "A speaking mock's name")
+    case .toefl:
+      Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
     }
   }
 }
@@ -1015,6 +1039,7 @@ private struct ExamSpeakingMockAction: View {
 
   let goalId: String
   let start: CallStart
+  let label: Text
 
   var body: some View {
     BusyButton(isBusy: start.isStarting || start.isWriting) {
@@ -1022,7 +1047,7 @@ private struct ExamSpeakingMockAction: View {
         router.open(.conversation(conversationId: $0))
       }
     } label: {
-      Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
+      label
     }
   }
 }
