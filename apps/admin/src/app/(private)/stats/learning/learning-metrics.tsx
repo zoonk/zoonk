@@ -3,6 +3,7 @@ import {
   getActiveLearnerRhythmTrend,
 } from "@/data/stats/get-active-learner-rhythm";
 import { getStudySessionTrend } from "@/data/stats/get-study-session-trend";
+import { formatChartValue } from "@/lib/chart-format";
 import { formatPercent } from "@/lib/format";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
@@ -86,7 +87,7 @@ async function ActiveLearnerRhythmAnalysis({
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: value, previous: previousAverages[rhythm] }}
       description={RHYTHM_COPY[rhythm].description}
-      value={Math.round(value).toLocaleString("en")}
+      value={formatChartValue({ format: "number", value })}
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}
