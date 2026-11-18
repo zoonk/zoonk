@@ -76,6 +76,18 @@ fun BottomBar(
     DisposableEffect(anchors) { onDispose { anchors.remove(key) } }
 
     Box(modifier.onGloballyPositioned { anchors.set(key, it.boundsInRoot().top) }.onPageSpan { span = it }) {
+        // Placed before the bar, so Tab reaches the note's action before the buttons under it, as on the web.
+        Box(
+            Modifier
+                .aboveBar()
+                .onSizeChanged { noteRoom?.height = with(density) { it.height.toDp() } }
+                .fillMaxWidth()
+                .semantics { liveRegion = LiveRegionMode.Polite },
+        ) {
+            note?.let {
+                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
+            }
+        }
         Surface {
             BoxWithConstraints {
                 val fold = screenSplit(maxWidth, span)
@@ -102,17 +114,6 @@ fun BottomBar(
                         }
                     }
                 }
-            }
-        }
-        Box(
-            Modifier
-                .aboveBar()
-                .onSizeChanged { noteRoom?.height = with(density) { it.height.toDp() } }
-                .fillMaxWidth()
-                .semantics { liveRegion = LiveRegionMode.Polite },
-        ) {
-            note?.let {
-                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
             }
         }
     }

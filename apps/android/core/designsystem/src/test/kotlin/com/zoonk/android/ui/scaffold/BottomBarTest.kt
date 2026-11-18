@@ -7,10 +7,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.Button
@@ -47,6 +52,23 @@ class BottomBarTest {
         val withIt = compose.onNodeWithTag(BAR).getUnclippedBoundsInRoot().let { it.bottom - it.top }
         assertEquals("the bar keeps its height", barOnly.value, withIt.value, 1f)
         assertEquals("the note's 64 and its 16 of padding", 80f, room.height.value, 1f)
+    }
+
+    /** Tab reaches the note's action before the bar's buttons under it, as the web's order does. */
+    @Test
+    fun focusReachesTheNotesActionBeforeTheBarsButtons() {
+        lateinit var focus: FocusManager
+        compose.setContent {
+            ZoonkTheme {
+                focus = LocalFocusManager.current
+                BottomBar(note = { Button(onClick = {}) { Text("Subscribe") } }) { Button(onClick = {}) { Text("Start") } }
+            }
+        }
+
+        compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }
+        compose.onNodeWithText("Subscribe").assertIsFocused()
+        compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }
+        compose.onNodeWithText("Start").assertIsFocused()
     }
 
     private companion object {
