@@ -176,7 +176,6 @@
     <string name="player_activity_example_data">Example numbers, not real data</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">Source: %1$s</string>
-    <string name="player_activity_your_answer">Your answer:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">Challenge · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->

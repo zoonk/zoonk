@@ -40,14 +40,18 @@ class NumericAnswersTest {
 
         assertEquals(2, check(dice).checkedAnswerDigits(0.1667, isCorrect = true, rounded = dice.roundedAnswer))
         assertEquals(2, check(dice).checkedAnswerDigits(0.25, isCorrect = false, rounded = dice.roundedAnswer))
-        assertEquals("0.174", formatAmount(0.174, Locale.US, maximumFractionDigits = check(dice).checkedAnswerDigits(0.174, false, dice.roundedAnswer)))
+        assertEquals(
+            "0.174",
+            formatAmount(0.174, Locale.US, maximumFractionDigits = check(dice).checkedAnswerDigits(0.174, false, dice.roundedAnswer)),
+        )
     }
 
     @Test
     fun aModelsAskedOutputReadsAtOnePrecisionWhetherOrNotTheStepAsksForIt() {
         val start = 2653.2977051444223
-        val explored = formatModelOutput(start, Locale.US, "$", null, null)
-        val asked = formatModelOutput(start, Locale.US, "$", 3869.68, 0.01)
+        val model = activity("formulaModel")
+        val explored = formatModelOutput(start, Locale.US, "$", null)
+        val asked = formatModelOutput(start, Locale.US, "$", model.roundedAnswer?.places?.toInt())
 
         assertEquals("$2,653", explored)
         assertEquals(explored, asked)

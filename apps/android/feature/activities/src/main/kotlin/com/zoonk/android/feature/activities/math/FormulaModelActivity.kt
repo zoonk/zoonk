@@ -45,10 +45,8 @@ import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.steps.allowed
-import com.zoonk.android.feature.player.steps.answerDigits
 import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -116,9 +114,9 @@ private fun FormulaModelBoard(
     var events by rememberSaveable { mutableStateOf(eventsOff(fields).mapValues { (name, off) -> answered[name] ?: off }) }
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
     val askedOutput = numeric?.let { askedOutputId(fields, it.output) }
+    val places = props.roundedAnswer?.places?.toInt()
     val formatOutput = { output: ModelOutput, value: Double? ->
-        val check = numeric?.takeIf { output.id == askedOutput }
-        value?.let { formatModelOutput(it, locale, output.unit, check?.answer, check?.allowed) }.orEmpty()
+        value?.let { formatModelOutput(it, locale, output.unit, places.takeIf { output.id == askedOutput }) }.orEmpty()
     }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }
     val readouts = readouts(charted, view, formatOutput)
@@ -152,11 +150,10 @@ private fun FormulaModelBoard(
             expected =
                 numeric?.let { check ->
                     props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
-                        val digits = check.answerDigits(props.answer.numericValue)
                         AnswerPoint(
                             x = answerX(check.inputs, axis),
                             y = y,
-                            label = formatAmount(y, locale, check.unit ?: charted.unit, maximumFractionDigits = digits),
+                            label = formatModelOutput(y, locale, charted.unit ?: check.unit, places),
                         )
                     }
                 },
@@ -457,23 +454,10 @@ private val EXPECTED_INNER = 5.75.dp
 private val EXPECTED_LIFT = 20.dp
 private val CURRENT_INNER = 4.75.dp
 
+/** A model's output as its readouts write it: the asked output at its answer's rounding [places], every other output as numbers are. */
 internal fun formatModelOutput(
     value: Double,
     locale: java.util.Locale,
     unit: String?,
-    answer: Double?,
-    allowed: Double?,
-): String =
-    formatAmount(
-        value,
-        locale,
-        unit,
-        maximumFractionDigits =
-            if (answer != null &&
-                allowed != null
-            ) {
-                exactFractionDigitsFor(answer, allowed)
-            } else {
-                1
-            },
-    )
+    places: Int?,
+): String = formatAmount(value, locale, unit, maximumFractionDigits = places)
