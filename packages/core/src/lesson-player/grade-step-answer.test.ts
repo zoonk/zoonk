@@ -135,9 +135,39 @@ describe(gradeStepAnswer, () => {
   });
 
   it.each([
-    { answerText: "0.1254", correctAnswer: "0.125", language: "en", value: 0.1254 },
-    { answerText: "0,1254", correctAnswer: "0,125", language: "pt", value: 0.1254 },
-    { answerText: "0.126", correctAnswer: "0.125", language: "en", value: 0.126 },
+    { answer: 251.54, answerText: "240", correctAnswer: "252", tolerance: 0.05, value: 240 },
+    { answer: 251.54, answerText: "252", correctAnswer: null, tolerance: 0.05, value: 251.54 },
+    { answer: 0.1667, answerText: "0.2", correctAnswer: "0.17", tolerance: 0.005, value: 0.2 },
+    { answer: 0.1667, answerText: "0.17", correctAnswer: null, tolerance: 0.005, value: 0.1667 },
+  ])(
+    "writes $value as $answerText at the places the rounding hint names",
+    ({ answer, answerText, correctAnswer, tolerance, value }) => {
+      const { activity } = playableStepContent;
+
+      const step = activityStep({
+        ...activity,
+        check: {
+          ...activity.check,
+          answer,
+          tolerance: { kind: "absolute", value: tolerance },
+          unit: undefined,
+        },
+      });
+
+      const graded = gradeStepAnswer({
+        answer: { answer: { kind: "numeric", value }, kind: "activity" },
+        language: "en",
+        step,
+      });
+
+      expect(graded).toMatchObject({ answerText, correctAnswer });
+    },
+  );
+
+  it.each([
+    { answerText: "0.1254", correctAnswer: "0.13", language: "en", value: 0.1254 },
+    { answerText: "0,1254", correctAnswer: "0,13", language: "pt", value: 0.1254 },
+    { answerText: "0.126", correctAnswer: "0.13", language: "en", value: 0.126 },
   ])(
     "keeps a close wrong answer distinct in $language",
     ({ answerText, correctAnswer, language, value }) => {
