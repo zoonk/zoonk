@@ -7,9 +7,11 @@ import { useAxisLabels } from "./use-axis-labels";
 const X_LABEL_OFFSET = 18;
 
 export function ActivityPlotAxisX({
+  fallbackTicks,
   format,
   ticks,
 }: {
+  fallbackTicks?: readonly number[][];
   format: (value: number) => string;
   ticks: readonly number[];
 }) {
@@ -19,9 +21,10 @@ export function ActivityPlotAxisX({
   const { ref, shown, starts } = useAxisLabels({
     choices: [
       [...ticks],
-      ...tickCounts()
-        .slice(1)
-        .map((count) => niceTicks(x.domain, count)),
+      ...(fallbackTicks ??
+        tickCounts()
+          .slice(1)
+          .map((count) => niceTicks(x.domain, count))),
     ],
     domain: x.domain,
     format,

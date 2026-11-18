@@ -2,7 +2,8 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
+import { useFormatTimeOfDay } from "@zoonk/learn/time-format";
+import { niceDomain, niceTicks, tickCounts } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -22,7 +23,7 @@ import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { chartReaderTicks } from "./chart-reader-axis";
+import { chartReaderTicks, clockTime, isHourAxis } from "./chart-reader-axis";
 
 type ChartReaderProps = ActivityRendererProps<"chartReader">;
 type Fields = ChartReaderProps["content"]["fields"];
@@ -67,6 +68,7 @@ export function ChartReaderActivity({
   const t = useExtracted();
   const format = useFormatNumber();
   const formatMeasure = useFormatMeasure(content.fields);
+  const formatTimeOfDay = useFormatTimeOfDay();
   const space = useSentenceSpace();
   const { check, fields } = content;
   const [selected, setSelected] = useState<string[]>([]);
@@ -82,6 +84,12 @@ export function ChartReaderActivity({
   const measure = (spanId: string) => computeActivityValue(content, { output: spanId });
   const targetId = check.kind === "numeric" ? (check.output ?? fields.spans[0]?.id) : null;
   const plainX = isPlainAxis(xs);
+  const axis = { domain: xDomain, label: fields.xLabel };
+  const hours = isHourAxis(axis);
+  const ticks = chartReaderTicks(axis);
+
+  const formatX = (value: number) =>
+    hours ? formatTimeOfDay(clockTime(value)) : format(value, { grouping: !plainX });
 
   function handleToggle(spanId: string) {
     const next = selected.includes(spanId)
@@ -115,8 +123,19 @@ export function ChartReaderActivity({
           ticks={niceTicks(yDomain, 3)}
         />
         <ActivityPlotAxisX
-          format={(value) => format(value, { grouping: !plainX })}
-          ticks={chartReaderTicks({ domain: xDomain, label: fields.xLabel })}
+          fallbackTicks={
+            hours
+              ? [
+                  ...tickCounts()
+                    .slice(0, -1)
+                    .toReversed()
+                    .map((step) => ticks.filter((_, index) => index % step === 0)),
+                  ticks.slice(0, 1),
+                ]
+              : undefined
+          }
+          format={formatX}
+          ticks={ticks}
         />
 
         {shownSpans.map((span) => (
@@ -163,6 +182,7 @@ export function ChartReaderActivity({
       <ActivitySelectGrid label={t("Spans to measure")}>
         {fields.spans.map((span) => (
           <ActivitySelectGridItem
+            className="[&>span]:items-center"
             disabled={isChecked}
             isSelected={selected.includes(span.id)}
             key={span.id}
@@ -177,8 +197,8 @@ export function ChartReaderActivity({
       <ActivityTextAlternative>
         {t("A line chart of {y} by {x}, from {start} at {firstX} to {end} at {lastX}.", {
           end: format(pointAt(fields, xDomain[1]), { unit: fields.yUnit }),
-          firstX: format(xDomain[0], { grouping: !plainX }),
-          lastX: format(xDomain[1], { grouping: !plainX }),
+          firstX: formatX(xDomain[0]),
+          lastX: formatX(xDomain[1]),
           start: format(pointAt(fields, xDomain[0]), { unit: fields.yUnit }),
           x: fields.xLabel,
           y: fields.yLabel,
