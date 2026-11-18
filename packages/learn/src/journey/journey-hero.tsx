@@ -82,12 +82,21 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   if (standing.kind === "preparation") {
     const lessons = standing.lessons ?? { done: 0, known: 0, total: 0 };
     const share = getLessonShare(lessons);
+    const studied = lessons.done - lessons.known;
 
     return {
-      detail: t("{studied, number} studied · {known, number} already known", {
-        known: lessons.known,
-        studied: lessons.done - lessons.known,
-      }),
+      detail:
+        lessons.known > 0
+          ? t("{studied, number} studied · {known, number} already known", {
+              known: lessons.known,
+              studied,
+            })
+          : t({
+              description: "A short line under the progress percent, in a small tile.",
+              message:
+                "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}",
+              values: { studied },
+            }),
       label: t("Progress"),
       numeric: true,
       share,
