@@ -1,3 +1,4 @@
+import { formatLocalizedNumber, parseLocalizedNumber } from "@zoonk/utils/localized-number";
 import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { type ActivityAnswer } from "./activity-answer-schema";
 import { type ActivityStepContent, getActivityTemplate } from "./activity-templates";
@@ -50,19 +51,22 @@ export function getActivityNumericDisplay(
   }
 
   const exactPlaces = countDecimalPlaces(check.answer);
+  const locale = "en";
 
   for (let places = 0; places < exactPlaces; places += 1) {
-    const scale = 10 ** places;
-    const value = Math.round(check.answer * scale) / scale;
+    const text = formatLocalizedNumber({
+      grouping: false,
+      locale,
+      maximumFractionDigits: places,
+      value: check.answer,
+    });
 
-    if (Number.isFinite(value) && checkActivityAnswer(content, { kind: "numeric", value })) {
-      return { places, value: value || 0 };
+    const value = parseLocalizedNumber({ locale, text });
+
+    if (value !== null && checkActivityAnswer(content, { kind: "numeric", value })) {
+      return { places, value };
     }
   }
 
   return { places: exactPlaces, value: check.answer };
-}
-
-export function getActivityDecimalPlaces(content: ActivityStepContent): number | null {
-  return getActivityNumericDisplay(content)?.places ?? null;
 }
