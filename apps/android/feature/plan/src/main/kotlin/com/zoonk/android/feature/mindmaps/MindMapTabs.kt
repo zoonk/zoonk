@@ -179,8 +179,9 @@ private fun GoalMindMap.canMakeNow(): Boolean =
 
 /**
  * Main's `NotMadeYet`, after the chapters that have a map, under its own Without a map heading: each chapter whose
- * map can be made now as its own row, the rest folded under the heading, then Create all when two or more can start
- * and one line about them all, after the rows they act on. The rows mix subjects, so they go without their number.
+ * map can be made now as its own row, the rest folded under the heading (listed when none is ready), then Create all
+ * when two or more can start and one line about them all, after the rows they act on. The rows mix subjects, so they
+ * go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
@@ -191,11 +192,12 @@ private fun LazyListScope.notMadeBlock(
     val now = notMade.filter { it.canMakeNow() }
     val later = notMade.filterNot { it.canMakeNow() }
     val stop = mindMaps.createOffer.stop
+    val folds = now.isNotEmpty() && later.isNotEmpty()
 
     item(key = "not-made-title", contentType = "title") {
         val title = stringResource(R.string.mindmaps_other_chapters)
         val count = pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size)
-        if (later.isEmpty()) {
+        if (!folds) {
             SectionHeader(title, Modifier.padding(top = 24.dp, bottom = 8.dp), detail = count)
         } else {
             ListRow(
@@ -210,7 +212,7 @@ private fun LazyListScope.notMadeBlock(
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
     }
-    if (open && later.isNotEmpty()) {
+    if ((open || !folds) && later.isNotEmpty()) {
         val note = !actions.state.plus && later.any { it.lessonsToWrite > 0 }
         if (note) {
             item(key = "not-made-spends", contentType = "line") {

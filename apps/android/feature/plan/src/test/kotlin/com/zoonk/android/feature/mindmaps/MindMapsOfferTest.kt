@@ -436,6 +436,21 @@ class MindMapsOfferTest {
         compose.onNodeWithText("Optics").assertDoesNotExist()
     }
 
+    /** As main: with no chapter ready to make, the chapters that need their lessons first are listed, not folded. */
+    @Test
+    fun chaptersNeedingLessonsShowWhenNoneIsReadyToMake() {
+        api.mindMaps = {
+            goalMindMaps(
+                listOf(mapJson(1, "Waves", "available", lessonsToWrite = 2), mapJson(2, "Optics", "available", lessonsToWrite = 3)),
+                offer = FRESH_OFFER,
+            )
+        }
+        show()
+
+        waitFor("Optics")
+        compose.onNodeWithText("Waves").assertExists()
+    }
+
     /** The line counts every map on its way: a failed one has its own row with Try again, the one writing lessons is on its way. */
     @Test
     fun theLineCountsTheMapsOnTheirWay() {
