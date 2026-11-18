@@ -206,7 +206,7 @@ private struct MindMapChaptersTab: View {
 }
 
 /// The chapters without a map yet. Those that can be made now come first, each with its own button;
-/// the rest wait folded under one row, with one line for where they stand.
+/// the rest wait folded under one row (listed when none is ready), with one line for where they stand.
 private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
@@ -282,35 +282,32 @@ private struct MindMapCreateSection: View {
     }
 
     if !others.isEmpty {
+      // As main: they fold only under chapters that can be made now; alone, they are listed.
+      let folds = !ready.isEmpty
+
       Section {
-        FoldRow(isUnfolded: $showsChapters) {
-          // Centered, not on one baseline: a small count's capitals sit low on the label's.
-          HStack(spacing: 8) {
-            Text("Without a map", tableName: "MindMaps")
-              .typeStyle(.body)
-              .layoutPart(.label)
-
-            Spacer(minLength: 8)
-
-            Text(verbatim: others.count.formatted())
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
-              .layoutPart(.value)
+        if folds {
+          FoldRow(isUnfolded: $showsChapters) {
+            othersLabel(count: others.count)
           }
-        }
-        .onAppear {
-          guard !arrived else {
-            return
-          }
+          .onAppear {
+            guard !arrived else {
+              return
+            }
 
-          arrived = true
+            arrived = true
 
-          if others.contains(where: \.opensItsGroupOnArrival) {
-            showsChapters = true
+            if others.contains(where: \.opensItsGroupOnArrival) {
+              showsChapters = true
+            }
           }
+        } else {
+          othersLabel(count: others.count)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
         }
 
-        if showsChapters {
+        if showsChapters || !folds {
           // A row's Create spends lessons from a free learner's allowance, so the list says so once.
           if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 })
           {
@@ -328,6 +325,22 @@ private struct MindMapCreateSection: View {
           }
         }
       }
+    }
+  }
+
+  /// Centered, not on one baseline: a small count's capitals sit low on the label's.
+  private func othersLabel(count: Int) -> some View {
+    HStack(spacing: 8) {
+      Text("Without a map", tableName: "MindMaps")
+        .typeStyle(.body)
+        .layoutPart(.label)
+
+      Spacer(minLength: 8)
+
+      Text(verbatim: count.formatted())
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+        .layoutPart(.value)
     }
   }
 
