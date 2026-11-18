@@ -13,3 +13,13 @@ export function parseCourseLandingPageContent(value: unknown): CourseLandingPage
   const result = courseLandingPageContentSchema.safeParse(value);
   return result.success ? result.data : null;
 }
+
+export function getCoursePromise({
+  description,
+  landingPage,
+}: {
+  description: string | null;
+  landingPage: unknown;
+}): string | null {
+  return parseCourseLandingPageContent(landingPage)?.valueProposition || description;
+}

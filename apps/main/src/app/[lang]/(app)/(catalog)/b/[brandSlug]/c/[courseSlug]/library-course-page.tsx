@@ -27,7 +27,7 @@ import {
   isDatedEstimate,
 } from "@zoonk/core/catalog/course-plan-example-contract";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
-import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
+import { getCoursePromise, parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page } from "@zoonk/learn/page";
 import { ROUTE_CLASS, Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
@@ -183,7 +183,7 @@ export async function LibraryCoursePage({
   const landingPage = parseCourseLandingPageContent(course.landingPage);
   const courseUrl = getCourseUrl({ ...params, language: course.language });
   const isOtherLanguage = getContentLocale(course.language) !== locale;
-  const promise = landingPage?.valueProposition || course.description;
+  const promise = getCoursePromise(course);
   const outlineLead = promise === course.description ? null : course.description;
 
   const t = await getExtracted();

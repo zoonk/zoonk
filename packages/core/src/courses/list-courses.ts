@@ -5,6 +5,7 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
 import { withOutlineTotals } from "./_utils/course-outline-totals";
+import { getCoursePromise } from "./course-landing-page";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -26,6 +27,7 @@ const COURSE_CARD_SELECT = {
   description: true,
   id: true,
   imageUrl: true,
+  landingPage: true,
   language: true,
   organization: { select: { id: true, logo: true, name: true, slug: true } },
   slug: true,
@@ -68,7 +70,14 @@ async function findCourses({
     }),
   });
 
-  return withOutlineTotals(courses.filter((course) => hasBrandOrganization(course)));
+  return withOutlineTotals(
+    courses
+      .filter((course) => hasBrandOrganization(course))
+      .map(({ landingPage, ...course }) => ({
+        ...course,
+        promise: getCoursePromise({ description: course.description, landingPage }),
+      })),
+  );
 }
 
 /** Outline totals can lag writes until the listing's default cache revalidation. */

@@ -154,6 +154,7 @@ describe(listCourses, () => {
       "language",
       "lessonCount",
       "organization",
+      "promise",
       "slug",
       "targetLanguage",
       "title",
