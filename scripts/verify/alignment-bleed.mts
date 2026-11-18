@@ -143,7 +143,7 @@ function short(by: number, edge: "ends" | "starts") {
  */
 export function spanLeads(context: Context): AlignmentFinding[] {
   const tops = context.capture.elements
-    .filter((group) => group.part === "group" && group.column)
+    .filter((group) => group.part === "group" && group.column && group.piece !== "bottom-bar")
     .toSorted((one, other) => one.bounds[1] - other.bounds[1]);
 
   const bands: (typeof tops)[] = [];

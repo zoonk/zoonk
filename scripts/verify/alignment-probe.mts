@@ -1504,8 +1504,8 @@ export function readAlignment({
   }
 
   function readPageControls(): CaptureElement[] {
-    const selectors =
-      "button,input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea,[role=button],[data-slot=button],[data-slot=input-group]";
+    const composite = "[data-slot=input-group],[data-slot=command-search-field]";
+    const selectors = `button,input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea,[role=button],[data-slot=button],${composite}`;
 
     const parents = new Map<Element | null, string>();
 
@@ -1517,7 +1517,7 @@ export function readAlignment({
             "[role=checkbox],[role=radio],[role=switch],[data-slot=composer-send],[data-slot=checkbox],[data-slot=radio-group-item],[data-slot=switch]",
           ) &&
           !element.parentElement?.closest(
-            "button,[role=button],[data-slot=button],[data-slot=input-group],[data-slot=input-group-addon]",
+            `button,[role=button],[data-slot=button],${composite},[data-slot=input-group-addon]`,
           ),
       )
       .map((element, index) => {
