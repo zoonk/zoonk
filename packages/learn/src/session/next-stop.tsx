@@ -33,7 +33,7 @@ import {
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import { SessionQueue, useSessionQueueAside } from "./session-queue";
+import { SessionQueueSection, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
@@ -304,7 +304,7 @@ export function NextStop({
               lesson={lesson}
             />
           )}
-          <SessionQueue className="with-aside:hidden" rows={rows} />
+          <SessionQueueSection aside={aside} />
         </TaskBody>
 
         <NextStopActionBar

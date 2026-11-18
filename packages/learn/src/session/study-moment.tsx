@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
@@ -23,8 +22,8 @@ import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import {
   BlockRow,
-  SessionQueue,
   SessionQueueAsideContent,
+  SessionQueueSection,
   useSessionQueueAside,
 } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
@@ -32,29 +31,15 @@ import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-function NextBlock({
-  block,
-  rows,
-  subject,
-}: {
-  block: StudyBlock;
-  rows: ReturnType<typeof getSessionQueue>;
-  subject: boolean;
-}) {
+function NextBlock({ block }: { block: StudyBlock }) {
   const t = useExtracted();
 
   return (
-    <section
-      className={cn("flex flex-col gap-2", !subject && "with-aside:hidden")}
-      data-slot="study-moment-next"
-    >
+    <section className="without-aside:hidden flex flex-col gap-2" data-slot="study-moment-next">
       <PageSectionTitle>{t("Up next")}</PageSectionTitle>
-      <SessionQueue className="with-aside:hidden" rows={rows} />
-      {subject && (
-        <ListGroup className="without-aside:hidden" role="list">
-          <BlockRow block={block} state="next" />
-        </ListGroup>
-      )}
+      <ListGroup role="list">
+        <BlockRow block={block} state="next" />
+      </ListGroup>
     </section>
   );
 }
@@ -200,11 +185,10 @@ export function StudyMoment({
         <DayMoment buddy={buddy} {...dayMoment} />
 
         {nextBlock && (
-          <NextBlock
-            block={nextBlock}
-            rows={queue.rows}
-            subject={Boolean(testChapterId && onStartTestOut)}
-          />
+          <>
+            <SessionQueueSection aside={aside} />
+            {testChapterId && onStartTestOut && <NextBlock block={nextBlock} />}
+          </>
         )}
 
         {testChapterId && onStartTestOut && (
@@ -224,7 +208,7 @@ export function StudyMoment({
   if (!hasHeader) {
     return (
       <>
-        <SessionQueueAsideContent queue={queue} />
+        <SessionQueueAsideContent aside={aside} />
         {content}
       </>
     );
