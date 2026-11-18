@@ -171,6 +171,7 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
 
         <Button
           aria-pressed={pasting === "text"}
+          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
           disabled={isPending}
           icon={<FileTextIcon aria-hidden="true" />}
           onClick={() => toggle("text")}
@@ -181,6 +182,7 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
 
         <Button
           aria-pressed={pasting === "link"}
+          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
           disabled={isPending}
           icon={<LinkIcon aria-hidden="true" />}
           onClick={() => toggle("link")}

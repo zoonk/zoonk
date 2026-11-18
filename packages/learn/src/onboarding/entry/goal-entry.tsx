@@ -98,7 +98,6 @@ export function GoalEntry({
             aria-expanded={attachOpen}
             aria-label={t("Study your own material")}
             className="text-muted-foreground mr-auto shrink-0 @xl:ms-0 @xl:mr-0"
-            edge="start"
             onClick={onAttach}
             ref={attachRef}
             size="icon-lg"

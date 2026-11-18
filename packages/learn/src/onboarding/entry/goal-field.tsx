@@ -62,7 +62,7 @@ export function GoalField({ className, ...props }: React.ComponentProps<"form">)
     <form
       className={cn(
         GOAL_PANEL_CLASS,
-        "flex min-h-14 items-end gap-2 p-1.5 pl-4 text-left",
+        "flex min-h-14 items-end gap-2 px-3 py-2 text-left",
         className,
       )}
       data-slot="goal-field"
@@ -135,7 +135,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none placeholder:truncate",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-pretty outline-none",
         className,
       )}
       enterKeyHint="go"

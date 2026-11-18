@@ -70,7 +70,7 @@ export function GoalForm({
           }
         }}
       >
-        <div className="flex min-w-0 flex-auto items-start gap-2 pr-2.5">
+        <div className="flex min-w-0 flex-auto items-start gap-2">
           <GoalFieldLabel htmlFor={fieldId}>{t("I want to")}</GoalFieldLabel>
 
           <div className="group/goal grid min-w-0 flex-1">
@@ -78,7 +78,7 @@ export function GoalForm({
               aria-hidden="true"
               className={cn(
                 FIELD_TEXT_CLASS,
-                "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none min-w-0 text-balance select-none",
+                "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none min-w-0 text-pretty select-none",
                 // The field's own state (it holds words), so it's right before scripts run and without them.
                 "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
               )}

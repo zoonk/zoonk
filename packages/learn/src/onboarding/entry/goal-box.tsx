@@ -35,7 +35,7 @@ export function GoalBox({
       className="@container grid grid-cols-[minmax(0,1fr)_auto]"
       id={id}
     >
-      <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
+      <div className="col-span-2 flex min-w-0 items-start gap-2 @xl:col-span-1">
         <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
         <GoalFieldText
