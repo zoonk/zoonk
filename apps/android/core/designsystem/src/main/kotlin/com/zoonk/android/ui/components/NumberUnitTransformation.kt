@@ -10,6 +10,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import com.zoonk.android.ui.format.currencyFor
 import com.zoonk.android.ui.format.formatMoney
+import com.zoonk.android.ui.format.withUnit
+import com.zoonk.android.ui.richtext.moneySignGap
 import java.util.Locale
 
 /** A number field's [unit] around the typed number, where the learner's [locale] writes it: money's sign before or after it. */
@@ -20,8 +22,9 @@ class NumberUnitTransformation(
 ) : VisualTransformation {
     private val prefix = currencyFor(unit)?.let { formatMoney(1.0, it, locale).indexOfFirst(Char::isDigit) > 0 } == true
 
-    // A sign ("°", "%", "$") closes up on its number, as the answer's feedback writes it; a word ("kg", "R$") keeps a space.
-    private val gap = if (unit.length == 1 && !unit.first().isLetterOrDigit()) "" else "\u00A0"
+    // The gap the answer's feedback writes: money's from the learner's language ("R$80", "R$ 80"), any other unit's
+    // from the app's unit rule ("180°", "3 kg").
+    private val gap = if (prefix) moneySignGap(locale, unit) ?: NO_BREAK_SPACE else withUnit("", unit).removeSuffix(unit)
 
     override fun filter(text: AnnotatedString): TransformedText {
         val start = if (prefix) unit.length + gap.length else 0
@@ -51,3 +54,5 @@ class NumberUnitTransformation(
         )
     }
 }
+
+private const val NO_BREAK_SPACE = "\u00A0"
