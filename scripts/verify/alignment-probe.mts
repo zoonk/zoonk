@@ -566,9 +566,18 @@ export function readAlignment({
       chain.push(link);
     }
 
-    // Its own margins count with its unit's: both are the layout's declared room.
-    const margin = (side: "marginBottom" | "marginTop") =>
-      chain.reduce((total, link) => total + pixels(getComputedStyle(link)[side]), 0);
+    const outerSpace = (side: "Bottom" | "Top", neighbor: Element | undefined) =>
+      chain.reduce((total, link) => {
+        if (isContents(link) || (neighbor && link.contains(neighbor))) {
+          return total;
+        }
+
+        const style = getComputedStyle(link);
+        const margin = pixels(style[`margin${side}`]);
+        const padding = pixels(style[`padding${side}`]);
+        const border = pixels(style[`border${side}Width`]);
+        return total + margin + (link === row ? 0 : padding + border);
+      }, 0);
 
     const rowInk = inkOf(row);
     const { note } = read.piece.parts;
@@ -582,7 +591,10 @@ export function readAlignment({
         group: read.groupId,
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
-        margins: [margin("marginTop"), margin("marginBottom")],
+        margins: [
+          outerSpace("Top", read.rows[rowIndex - 1]),
+          outerSpace("Bottom", read.rows[rowIndex + 1]),
+        ],
         middle: rowMiddle(row, read.piece.group) + scrollY,
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
