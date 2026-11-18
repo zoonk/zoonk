@@ -771,8 +771,9 @@ struct PlanSettingsSection: View {
         .typeStyle(value.isDate ? .data : .body)
         .accessibilityLabel(Text(verbatim: value.spoken))
       if let detail = value.detail {
-        Text(verbatim: detail)
+        Text(verbatim: detail.shown)
           .typeStyle(.note)
+          .accessibilityLabel(Text(verbatim: detail.spoken))
       }
     }
     .fixedSize(horizontal: false, vertical: true)
