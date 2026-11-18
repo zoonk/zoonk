@@ -127,7 +127,7 @@ struct TodayMoreSection: View {
                   comment: "Adds the lessons earlier days left to today")
               }
               .buttonStyle(.outline)
-              .controlSize(.small)
+              .controlSize(.large)
               .disabled(busy != nil && busy != .catchUp)
 
               if failed == .catchUp {
@@ -240,7 +240,7 @@ struct TodayPlanChangeSection: View {
             }
           }
           .buttonStyle(.outline)
-          .controlSize(.small)
+          .controlSize(.large)
         }
         .listRowSeparator(.hidden)
       } else if isBehind, let behind = change.behind {
@@ -403,43 +403,43 @@ struct TodayPlanChangeSection: View {
           addTimeButton
           keepTimeButton
         }
-      }
-      // A notice's answers beside its words, as main's suggestion panel draws them.
-      .controlSize(.small)
-      .disabled(isSaving)
 
-      Menu {
-        if behind.canFocus {
-          Button {
-            adjust(.focus)
-          } label: {
-            Text(
-              "Choose where to focus", tableName: "Today",
-              comment: "Opens the choice of the plan's areas to focus on")
-          }
-        }
-
-        Button {
-          adjust(.everything)
-        } label: {
-          isExam
-            ? Text(
-              "Keep studying after the exam", tableName: "Today",
-              comment: "Opens studying every topic, past the exam's date")
-            : Text("Remove end date", tableName: "Today")
-        }
-      } label: {
-        Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
-          .typeStyle(.note.weight(.medium))
+        missedDaysMenu(behind)
       }
-      .buttonStyle(.outline)
-      .controlSize(.small)
+      .controlSize(.large)
       .disabled(isSaving)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+  }
+
+  private func missedDaysMenu(_ behind: TodayView.PlanChange.Behind) -> some View {
+    Menu {
+      if behind.canFocus {
+        Button {
+          adjust(.focus)
+        } label: {
+          Text(
+            "Choose where to focus", tableName: "Today",
+            comment: "Opens the choice of the plan's areas to focus on")
+        }
+      }
+
+      Button {
+        adjust(.everything)
+      } label: {
+        isExam
+          ? Text(
+            "Keep studying after the exam", tableName: "Today",
+            comment: "Opens studying every topic, past the exam's date")
+          : Text("Remove end date", tableName: "Today")
+      }
+    } label: {
+      Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+    }
+    .buttonStyle(.outline)
   }
 
   private var addTimeButton: some View {
@@ -1149,7 +1149,7 @@ struct TodayLanguagePracticeSection: View {
           action
         }
         .buttonStyle(.outline)
-        .controlSize(.small)
+        .controlSize(.large)
       }
       .listRowSeparator(.hidden)
     }
