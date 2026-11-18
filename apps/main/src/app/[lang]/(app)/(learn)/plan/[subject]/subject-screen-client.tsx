@@ -60,7 +60,7 @@ export function SubjectScreenClient({
             restore: (areas) => change([{ areas, kind: "restoreAreas" }]),
             setWrittenCadence: (cadence) => change([{ cadence, kind: "setWrittenCadence" }]),
           }}
-          ask={{ bar: <AskTutorEntry size="bar" />, row: <AskTutorEntry appearance="row" /> }}
+          ask={<AskTutorEntry size="bar" />}
           hrefs={{
             adjust: "/plan",
             back: "/plan",

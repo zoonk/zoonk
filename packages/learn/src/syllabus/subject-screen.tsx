@@ -233,7 +233,7 @@ export function SubjectScreen({
   syllabus,
 }: {
   actions: SubjectActions;
-  ask?: { bar: React.ReactNode; row: React.ReactNode };
+  ask?: React.ReactNode;
   hrefs: SubjectHrefs;
   subject: SyllabusSubject;
   syllabus: Pick<
@@ -252,7 +252,7 @@ export function SubjectScreen({
           back={{ href: hrefs.back, label: t("Plan") }}
           title={subject.shortName ?? subject.name}
         >
-          {ask?.bar}
+          {ask}
           <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
