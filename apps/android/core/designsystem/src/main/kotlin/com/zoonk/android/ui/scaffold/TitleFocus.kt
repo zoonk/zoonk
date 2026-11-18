@@ -25,12 +25,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toSize
 import com.zoonk.android.ui.components.rememberMoveFocus
 import kotlinx.coroutines.delay
@@ -54,8 +57,15 @@ val LocalShownOnTop = compositionLocalOf { false }
 fun Modifier.pageTitle(): Modifier {
     val focus = LocalTitleFocus.current ?: return semantics { heading() }
     val target = focus.heading
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     DisposableEffect(target) { onDispose { target.shown = false } }
-    return onGloballyPositioned { focus.headingBottom = it.localToScreen(Offset(0f, it.size.height.toFloat())).y }.titleTarget(target)
+    return onGloballyPositioned {
+        focus.headingBottom = it.localToScreen(Offset(0f, it.size.height.toFloat())).y
+        // The column the heading starts: what holds it, so a centered heading still names its column's edge.
+        val column = it.parentLayoutCoordinates ?: it
+        val left = column.positionInWindow().x
+        focus.columnStart = if (rtl) left + column.size.width else left
+    }.titleTarget(target)
 }
 
 /** The scaffold around a screen's content, whose heading [pageTitle] marks. */
@@ -77,6 +87,9 @@ internal class TitleFocus {
     var area: Rect? = null
     var barBottom by mutableFloatStateOf(0f)
     var headingBottom by mutableFloatStateOf(0f)
+
+    /** Where, in the window, the column the heading sits in starts (its right edge in a mirrored layout); the way back lines up with it. */
+    var columnStart by mutableStateOf<Float?>(null)
 
     fun content(): Rect? = area?.let { it.copy(top = maxOf(it.top, barBottom)) }
 
