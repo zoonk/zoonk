@@ -142,8 +142,21 @@ export function getPlanFinish({
 }
 
 /** The phases the roadmap draws: the after-exam ones and those left out aren't on it. */
-export function getRoadmapPhases<Phase extends DatedPhase>(phases: readonly Phase[]): Phase[] {
-  return phases.filter((phase) => phase.kind !== "afterExam" && phase.state !== "leftOut");
+export function getRoadmapPhases<Phase extends DatedPhase>(
+  phases: readonly Phase[],
+  finishedOn?: string | null,
+): Phase[] {
+  const drawn = phases.filter((phase) => phase.kind !== "afterExam" && phase.state !== "leftOut");
+
+  if (!finishedOn) {
+    return drawn;
+  }
+
+  return drawn.map((phase) => ({
+    ...phase,
+    endDate: phase.endDate && phase.endDate > finishedOn ? finishedOn : phase.endDate,
+    startDate: phase.startDate && phase.startDate > finishedOn ? finishedOn : phase.startDate,
+  }));
 }
 
 function endKey(end: PhaseEnd): string {

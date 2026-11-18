@@ -22,9 +22,9 @@ export function getLessonShare(phase: PlanPhaseView): number {
 }
 
 export function useRoadmapPhases() {
-  const { plan, today } = usePlanScreen();
+  const { goal, plan, today } = usePlanScreen();
 
-  const phases = getRoadmapPhases(plan.phases);
+  const phases = getRoadmapPhases(plan.phases, goal.kind === "exam" ? null : plan.end?.finishedOn);
 
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
 

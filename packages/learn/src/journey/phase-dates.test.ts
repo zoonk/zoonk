@@ -307,6 +307,24 @@ describe(getPlanFinish, () => {
 });
 
 describe(getRoadmapPhases, () => {
+  it("ends all phases by the day the learner finished ahead of schedule", () => {
+    const finishedOn = "2026-12-05";
+
+    const phases = [
+      phase(0, { endDate: "2026-11-28", state: "done" }),
+      phase(1, { endDate: "2026-12-19", startDate: "2026-11-29", state: "done" }),
+      phase(2, { endDate: "2027-01-02", startDate: "2026-12-20", state: "done" }),
+    ];
+
+    expect(
+      getRoadmapPhases(phases, finishedOn).map(({ startDate, endDate }) => [startDate, endDate]),
+    ).toStrictEqual([
+      [null, "2026-11-28"],
+      ["2026-11-29", finishedOn],
+      [finishedOn, finishedOn],
+    ]);
+  });
+
   it("draws neither the phases after the exam nor those left out", () => {
     const drawn = getRoadmapPhases([
       phase(0, { state: "current" }),
