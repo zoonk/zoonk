@@ -161,7 +161,8 @@ extension MockRun {
           "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
     case .retrying:
       return BarNote(
-        String(localized: "Your answer isn't saved yet", table: "Mock"),
+        String(localized: "Try again before you move on", table: "Mock"),
+        tone: .waiting,
         action: BarNote.Action(
           label: Text("Try again", tableName: "Mock"),
           perform: { [queue] in queue.retryNow() }))
@@ -190,7 +191,8 @@ struct MockActionBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, true)
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
-    .overlay(alignment: .top) {
+    .announcesStatus(run.barNote?.politeLine)
+    .floatingAbove {
       if let note = run.barNote {
         note
           .typeStyle(.body)
@@ -198,7 +200,6 @@ struct MockActionBar<Actions: View>: View {
           .scenePadding(.horizontal)
           .padding(.vertical, 8)
           .background(.background)
-          .alignmentGuide(.top) { $0[.bottom] }
       }
     }
   }

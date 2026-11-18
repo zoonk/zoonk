@@ -88,8 +88,8 @@ struct CallProblemView: View {
       } label: {
         Text("Try again", tableName: "Voice", comment: "Calls again")
       }
-    case .call(.limit, let limit?) where limit.tier != .plus:
-      CallLimitUpsell(limit: limit)
+    case .call(.limit, let limit?) where limit.needsAccount || limit.offersSubscription:
+      LimitWayOn(limit: limit)
     default:
       Button {
         onAction(.back)
@@ -210,8 +210,8 @@ struct DroppedCallView: View {
       endButton
     case nil where dropped.reason == .limit:
       // The limit's way on holds Call again's place until its day comes, then Call again takes it.
-      if let limit, limit.tier == .free || limit.tier == .guest {
-        CallLimitUpsell(limit: limit)
+      if let limit, limit.needsAccount || limit.offersSubscription {
+        LimitWayOn(limit: limit)
           .buttonStyle(.mainAction)
           .controlSize(.large)
       } else {
@@ -311,31 +311,6 @@ private enum CallRefusal {
       comment: "Ends the learner's other call and starts this one")
   }
 
-}
-
-/// More calls: a free account for a guest, a subscription for a free learner. A subscriber has no
-/// more to offer.
-private struct CallLimitUpsell: View {
-  @Environment(AppRouter.self) private var router
-
-  let limit: HelpLimit
-
-  var body: some View {
-    switch limit.tier {
-    case .guest?:
-      Button {
-        router.present(.signIn)
-      } label: {
-        Text(
-          "Create a free account", tableName: "Voice",
-          comment: "Button to sign up after a guest used the free help")
-      }
-    case .free?:
-      SubscribeButton()
-    case .plus?, nil:
-      EmptyView()
-    }
-  }
 }
 
 private struct CallMainButton<Title: View>: View {

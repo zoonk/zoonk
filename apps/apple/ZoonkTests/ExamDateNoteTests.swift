@@ -1,3 +1,5 @@
+import HTTPTypes
+import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -30,10 +32,23 @@ final class ExamDateNoteTests: XCTestCase {
     let line = try XCTUnwrap(
       accessibilityElements(in: window).first { $0.accessibilityLabel == failure })
     let action = try speakingMockAction(in: window)
-    XCTAssertLessThan(line.accessibilityFrame.midY, action.accessibilityFrame.midY)
+    XCTAssertLessThanOrEqual(line.accessibilityFrame.maxY, action.accessibilityFrame.minY)
     XCTAssertLessThan(
       action.accessibilityFrame.minY - line.accessibilityFrame.maxY, 44,
       "The failure should sit just above the action that failed")
+  }
+
+  func testAGuestAtTheCallLimitIsOfferedAnAccountInTheBar() async throws {
+    let window = try await showExamDay(transport: GuestCallLimit())
+
+    try await activate("IELTS speaking mock", in: window)
+
+    let signUp = String(localized: "Create a free account", table: "Subscriptions")
+    try await waitForTestCondition("No way on: \(spoken(in: window))") {
+      self.accessibilityElements(in: window).contains {
+        $0.accessibilityLabel == signUp && $0.accessibilityTraits.contains(.button)
+      }
+    }
   }
 
   private func speakingMockAction(in window: UIWindow) throws -> NSObject {
@@ -43,7 +58,9 @@ final class ExamDateNoteTests: XCTestCase {
       })
   }
 
-  private func showExamDay() async throws -> UIWindow {
+  private func showExamDay(transport: any ClientTransport = OfflineTransport()) async throws
+    -> UIWindow
+  {
     var exam = try Self.exam()
     exam.stage = .examDay
     exam.daysEstimated = false
@@ -54,7 +71,7 @@ final class ExamDateNoteTests: XCTestCase {
     exam.sessionsDone = 10
     exam.prepared = true
     exam.speakingMock = .ielts
-    let dependencies = AppDependencies.hosted()
+    let dependencies = AppDependencies.hosted(transport: transport)
     try readsWhatVoiceOverReads()
 
     let window = try show(
@@ -73,6 +90,28 @@ final class ExamDateNoteTests: XCTestCase {
       .zoonkStyles())
     try await waitForLayout(in: window)
     return window
+  }
+
+  func testEstimatedExamDaysReadAsAboutADay() async throws {
+    try readsWhatVoiceOverReads()
+    let exam = try Self.exam()
+    let window = try show(
+      NavigationStack {
+        ExamList(exam: exam, options: nil)
+      }
+      .appDependencies(AppDependencies.hosted())
+      .environment(AppRouter())
+      .zoonkStyles())
+    try await waitForLayout(in: window)
+
+    try await waitForTestCondition("The exam's facts never showed: \(spoken(in: window))") {
+      self.spoken(in: window).contains { $0.hasPrefix("About ") }
+    }
+    XCTAssertTrue(
+      spoken(in: window).contains { $0.contains("About 364 days left") },
+      "An estimated date's days left read as about: \(spoken(in: window))")
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains("~") }, "Read as written: \(spoken(in: window))")
   }
 
   func testTheDateNoteStaysWhenTheMocksPaneGoes() async throws {
@@ -131,4 +170,22 @@ final class ExamDateNoteTests: XCTestCase {
         """#.utf8))
   }
 
+}
+
+/// A guest's call is refused at their limit.
+private struct GuestCallLimit: ClientTransport {
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    guard operationID == "startLanguageConversation" else {
+      throw APIError.network
+    }
+
+    return (
+      HTTPResponse(status: .tooManyRequests, headerFields: [.contentType: "application/json"]),
+      HTTPBody(
+        #"{"error":{"code":"CONVERSATION_LIMIT_REACHED","message":"Limit","details":{"limit":{"period":"total","tier":"guest"}}}}"#
+      )
+    )
+  }
 }

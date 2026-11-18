@@ -154,7 +154,8 @@ final class MockDraftQueue {
   }
 
   private func settle() {
-    if retryTask != nil {
+    // A retry on its way is still retrying: its note stays up until an answer gets through.
+    if retryTask != nil || attempt > 0 && isBusy {
       status = .retrying
     } else if isBusy {
       status = .saving

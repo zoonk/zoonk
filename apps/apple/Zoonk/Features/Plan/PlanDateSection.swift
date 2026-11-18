@@ -40,7 +40,7 @@ struct PlanDateSection: View {
             if namedMonth, let date = schedule.targetDate {
               Text(PlanDate.text(date, today: plan.today, month: true))
             } else if isExam {
-              Text("Date not set", tableName: "Plan", comment: "An exam date that is not set")
+              Text("To be confirmed", tableName: "Plan")
             } else {
               Text("None set", tableName: "Plan")
             }

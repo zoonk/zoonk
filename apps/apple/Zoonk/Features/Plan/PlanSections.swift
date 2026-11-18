@@ -672,7 +672,7 @@ struct PlanSettingsSection: View {
         value: dateValue, section: .date)
 
       setting(
-        label: Text("Daily study time", tableName: "Plan", comment: "Setting: study time a day"),
+        label: Text("Daily study time", tableName: "Plan"),
         value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).monospacedDigit(),
         section: .time)
 

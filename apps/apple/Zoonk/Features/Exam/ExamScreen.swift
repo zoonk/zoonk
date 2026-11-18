@@ -76,52 +76,13 @@ struct ExamList: View {
   @State private var isReporting = false
 
   var body: some View {
-    // The page's list keeps its sections as the mocks' pane comes and goes beside it, so the date
-    // note's sheet stays open through a rotation, a resize or a fold.
-    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      ZoonkList {
-        ExamMocksSection(exam: exam, options: options)
-        about
-      }
-    } content: { isBeside in
-      ZoonkList {
-        ForEach(ExamPart.order(isBeside: isBeside), id: \.self) { part in
-          switch part {
-          case .moment: moment
-          case .mocks: ExamMocksSection(exam: exam, options: options)
-          case .progress: ExamProgressSection(exam: exam)
-          case .about: about
-          }
+    // A refused start's notice follows the limit's clock: once the limit opens, the bar offers the
+    // start alone again.
+    OpeningClock(availableAt: speakingLimit?.availableAt) { now in
+      panes
+        .bottomBar(note: speakingMockNote(at: now)) {
+          bar(at: now)
         }
-      }
-    }
-    .bottomBar(note: speakingMockNote) {
-      if let options, options.offersMock, !exam.isLastDays {
-        Button {
-          if let running = options.running {
-            router.open(.mock(blockId: running.id))
-          } else {
-            router.open(.mockChooser)
-          }
-        } label: {
-          if options.running != nil {
-            Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
-          } else {
-            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
-          }
-        }
-        .buttonStyle(.mainAction)
-        .keyboardShortcut(.defaultAction)
-      } else if pinsSpeakingAction, let mock = exam.speakingMock {
-        if case .limit(let limit) = callStart.refusal, limit.offersSubscription {
-          SubscribeButton()
-            .buttonStyle(.outline)
-        }
-
-        ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
-          .buttonStyle(.mainAction)
-          .keyboardShortcut(.defaultAction)
-      }
     }
     .onDisappear {
       callStart.leave()
@@ -156,6 +117,58 @@ struct ExamList: View {
       isPresented: $isReporting, context: FeedbackContext(screen: "exam"), isReport: true)
   }
 
+  /// The page's list keeps its sections as the mocks' pane comes and goes beside it, so the date
+  /// note's sheet stays open through a rotation, a resize or a fold.
+  private var panes: some View {
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
+      ZoonkList {
+        ExamMocksSection(exam: exam, options: options)
+        about
+      }
+    } content: { isBeside in
+      ZoonkList {
+        ForEach(ExamPart.order(isBeside: isBeside), id: \.self) { part in
+          switch part {
+          case .moment: moment
+          case .mocks: ExamMocksSection(exam: exam, options: options)
+          case .progress: ExamProgressSection(exam: exam)
+          case .about: about
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func bar(at now: Date) -> some View {
+    if let options, options.offersMock, !exam.isLastDays {
+      Button {
+        if let running = options.running {
+          router.open(.mock(blockId: running.id))
+        } else {
+          router.open(.mockChooser)
+        }
+      } label: {
+        if options.running != nil {
+          Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+        } else {
+          Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+        }
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    } else if pinsSpeakingAction, let mock = exam.speakingMock {
+      if let limit = speakingLimit, !limit.isOpen(at: now) {
+        LimitWayOn(limit: limit)
+          .buttonStyle(.outline)
+      }
+
+      ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    }
+  }
+
   @ViewBuilder
   private var moment: some View {
     ExamHero(exam: exam, change: dateChange)
@@ -171,17 +184,26 @@ struct ExamList: View {
       && (exam.isLastDays || options?.offersMock == false)
   }
 
+  /// The limit a start from the bar ran into.
+  private var speakingLimit: HelpLimit? {
+    guard pinsSpeakingAction, case .limit(let limit) = callStart.refusal else {
+      return nil
+    }
+
+    return limit
+  }
+
   /// A start from the bar says how it ended over the bar, where the learner tapped.
-  private var speakingMockNote: BarNote? {
+  private func speakingMockNote(at now: Date) -> BarNote? {
     guard pinsSpeakingAction, let refusal = callStart.refusal else {
       return nil
     }
 
-    if case .limit(let limit) = refusal, let sentence = limit.words(.callTime).sentence {
-      return BarNote(sentence)
+    guard case .limit(let limit) = refusal else {
+      return BarNote(speakingMockFailure)
     }
 
-    return BarNote(speakingMockFailure)
+    return limit.isOpen(at: now) ? nil : BarNote(limit.sentence(.callTime, now: now))
   }
 
   /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
@@ -218,11 +240,13 @@ private struct ExamHero: View {
             if isStacked {
               VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(facts.enumerated()), id: \.offset) { _, fact in
-                  Text(verbatim: fact.text)
+                  Text(verbatim: fact.shown.text)
+                    .accessibilityLabel(Text(verbatim: fact.spoken))
                 }
               }
             } else {
-              FactSegments(facts: facts)
+              FactSegments(facts: facts.map(\.shown))
+                .accessibilityLabel(Text(verbatim: facts.map(\.spoken).joinedFacts()))
             }
           }
           .typeStyle(.data)
@@ -319,35 +343,57 @@ private struct ExamHero: View {
   }
 
   /// The day before, on the day and after, the moment card says where the learner is instead.
-  private var daysLeft: String? {
+  private var daysLeft: HeroFact? {
     guard let days = exam.daysLeft, days > 0, !exam.isLastDays else {
       return nil
     }
 
-    return String(
-      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
+    let text = daysLeftText(days, estimated: exam.daysEstimated)
+    return HeroFact(shown: .init(text: text.shown), spoken: text.spoken)
   }
 
-  private var facts: [FactSegments.Fact] {
+  /// An estimated day reads "About Nov 14", not its "~".
+  private struct HeroFact {
+    let shown: FactSegments.Fact
+    let spoken: String
+
+    init(_ text: String) {
+      shown = .init(text: text)
+      spoken = text
+    }
+
+    init(shown: FactSegments.Fact, spoken: String) {
+      self.shown = shown
+      self.spoken = spoken
+    }
+  }
+
+  private var facts: [HeroFact] {
     let dates = exam.days.filter { studyDate($0.date) != nil }
     let today = PlanDate.today()
     if exam.namedMonth {
       return
         (dates.map { PlanDate.format($0.date, .rowMonth, today: today) }
-        + [daysLeft].compactMap(\.self)).map { .init(text: $0) }
+        .map(HeroFact.init) + [daysLeft].compactMap(\.self))
     }
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    var facts = dates.flatMap { day -> [FactSegments.Fact] in
-      let full = PlanDate.text(day.date, today: today, weekday: !exam.daysEstimated)
-      let compact = PlanDate.text(day.date, today: today, weekday: false)
-      let prefix = exam.daysEstimated ? "~" : ""
+    var facts = dates.flatMap { day -> [HeroFact] in
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
-      return [FactSegments.Fact(text: prefix + full, compact: prefix + compact)]
-        + (time.map { [FactSegments.Fact(text: $0)] } ?? [])
+      let date: HeroFact
+      if exam.daysEstimated {
+        let estimate = PlanDate.estimate(day.date, today: today)
+        date = HeroFact(shown: .init(text: estimate.text), spoken: estimate.spoken)
+      } else {
+        let full = PlanDate.text(day.date, today: today, weekday: true)
+        date = HeroFact(
+          shown: .init(text: full, compact: PlanDate.text(day.date, today: today, weekday: false)),
+          spoken: full)
+      }
+      return [date] + (time.map { [HeroFact($0)] } ?? [])
     }
-    if let shared, let time = examTimeOfDay(shared) { facts.append(.init(text: time)) }
-    if let daysLeft { facts.append(.init(text: daysLeft)) }
+    if let shared, let time = examTimeOfDay(shared) { facts.append(HeroFact(time)) }
+    if let daysLeft { facts.append(daysLeft) }
     return facts
   }
 

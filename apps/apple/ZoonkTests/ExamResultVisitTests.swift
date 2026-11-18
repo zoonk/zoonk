@@ -34,23 +34,26 @@ final class ExamResultVisitTests: XCTestCase {
   private static let failure = String(
     localized: "That didn't go through. Try again in a moment.", table: "Exam")
 
-  /// Types a score, as the keyboard does, and taps Save.
+  /// Enters a score in the field on screen and taps Save once the form has it. SwiftUI hears the
+  /// field's edits only through its editing-changed event, so this sets the text and sends that
+  /// event, as a keyboard's edit does, rather than trusting `insertText` to send it. A list keeps
+  /// cells it took off screen, hidden, for reuse, so only a field with nothing hidden above it is
+  /// the one the learner sees.
   private func save(in visit: PageVisit) async throws {
+    var shown: [UITextField] = []
     try await waitForTestCondition("The score field did not appear") {
-      textField(in: visit.window) != nil
+      shown = requestViews(UITextField.self, in: visit.window).filter { field in
+        !sequence(first: field as UIView, next: \.superview).contains {
+          $0.isHidden || $0.alpha < 0.01
+        }
+      }
+      return !shown.isEmpty
     }
-    let field = try XCTUnwrap(textField(in: visit.window), "No score field")
-    field.becomeFirstResponder()
-    field.insertText("700")
+    XCTAssertEqual(shown.count, 1, "One score field on screen")
+    let field = try XCTUnwrap(shown.first)
+    field.text = "700"
+    field.sendActions(for: .editingChanged)
     try await visit.activate(String(localized: "Save my result", table: "Exam"))
-  }
-
-  private func textField(in view: UIView) -> UITextField? {
-    if let field = view as? UITextField {
-      return field
-    }
-
-    return view.subviews.lazy.compactMap { self.textField(in: $0) }.first
   }
 
   /// The exam is over and its result isn't in yet.

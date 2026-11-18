@@ -541,6 +541,7 @@ private struct MockChooser: View {
 
 struct MockSummaryRow: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.stacksContent) private var isStacked
   let mock: ExamMockSummary
   let blockId: String
 
@@ -554,7 +555,7 @@ struct MockSummaryRow: View {
       ) {
         StatusMark(status: .done)
       } trailing: {
-        VStack(alignment: .trailing, spacing: 2) {
+        VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
           Text(score)
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
         }

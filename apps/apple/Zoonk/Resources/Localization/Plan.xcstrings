@@ -3949,7 +3949,7 @@
       }
     },
     "%lld days left" : {
-      "comment" : "Plan subtitle: how many days are left until the goal's date",
+      "comment" : "How many days are left until the goal's date",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -11231,7 +11231,7 @@
       }
     },
     "~%lld days left" : {
-      "comment" : "Plan subtitle: about how many days are left until the goal's estimated date",
+      "comment" : "About how many days are left until the goal's estimated date",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -11652,7 +11652,6 @@
       }
     },
     "A short lesson shows how, right before you need it." : {
-      "comment" : "Tool choice detail",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11663,7 +11662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una lección breve te enseña a usarla justo antes de que la necesites."
+            "value" : "Una lección breve te muestra cómo hacerlo justo antes de que lo necesites."
           }
         },
         "fr" : {
@@ -11675,37 +11674,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve lezione ti mostra come fare, poco prima che ti serva."
+            "value" : "Una breve lezione ti mostra come configurarlo, poco prima che ti serva."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "必要になる直前に、短いレッスンで使い方を学べます。"
+            "value" : "必要になる直前に、短いレッスンで準備の手順を学べます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "필요해지기 바로 전에 짧은 레슨으로 방법을 배워요."
+            "value" : "사용할 때가 되면 짧은 레슨으로 설치 방법을 알려 드려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótka lekcja pokaże ci, jak to zrobić, tuż zanim będzie ci to potrzebne."
+            "value" : "Krótka lekcja pokaże ci, jak to zrobić, tuż zanim będzie to potrzebne."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma aula curta ensina como usar, pouco antes de você precisar."
+            "value" : "Uma aula rápida ensina como configurar, pouco antes de você precisar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa bir ders, ihtiyaç duymandan hemen önce nasıl kullanacağını gösterir."
+            "value" : "İhtiyaç duymadan hemen önce kısa bir dersle nasıl kuracağını öğrenirsin."
           }
         }
       }
@@ -11765,6 +11764,185 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ civarı"
+          }
+        }
+      }
+    },
+    "About %lld days left" : {
+      "comment" : "\"~60 days left\" read aloud: about how many days are left",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch etwa %lld Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch etwa %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld days left"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Queda aproximadamente %lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Quedan aproximadamente %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Encore environ %lld jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Encore environ %lld jours"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Manca circa %lld giorno"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mancano circa %lld giorni"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "あと約%lld日"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "약 %lld일 남았어요"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostały mniej więcej %lld dni"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostało mniej więcej %lld dni"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Został mniej więcej %lld dzień"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostało mniej więcej %lld dnia"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Falta cerca de %lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faltam cerca de %lld dias"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Yaklaşık %lld gün kaldı"
+                }
+              }
+            }
           }
         }
       }
@@ -13313,7 +13491,6 @@
       }
     },
     "Archive goal" : {
-      "comment" : "Archives the goal, after asking",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13367,65 +13544,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefi arşivle"
-          }
-        }
-      }
-    },
-    "Archive this goal" : {
-      "comment" : "Archives the goal, after asking",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Ziel archivieren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archivar este objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archiver cet objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archivia questo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この目標をアーカイブする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 목표 보관하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zarchiwizuj ten cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arquivar este objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu hedefi arşivle"
           }
         }
       }
@@ -16528,7 +16646,6 @@
       }
     },
     "Daily study time" : {
-      "comment" : "Setting: study time a day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16539,7 +16656,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo diario"
+            "value" : "Tiempo diario de estudio"
           }
         },
         "fr" : {
@@ -16551,7 +16668,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo giornaliero"
+            "value" : "Tempo di studio giornaliero"
           }
         },
         "ja" : {
@@ -16575,7 +16692,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo diário de estudo"
+            "value" : "Tempo diário"
           }
         },
         "tr" : {
@@ -16641,65 +16758,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedef tarihin %@ olarak değiştirildi."
-          }
-        }
-      }
-    },
-    "Date not set" : {
-      "comment" : "An exam date that is not set",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termin nicht festgelegt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fecha sin definir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date non définie"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data non impostata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日付未設定"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "날짜 미설정"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie ustawiono daty"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data não definida"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarih belirlenmedi"
           }
         }
       }
@@ -16882,12 +16940,11 @@
       }
     },
     "Do you have it?" : {
-      "comment" : "Title of the tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hast du das?"
+            "value" : "Hast du es?"
           }
         },
         "es" : {
@@ -17837,7 +17894,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voraussichtlicher Abschluss %@"
+            "value" : "Voraussichtlicher Abschluss am %@"
           }
         },
         "es" : {
@@ -17861,7 +17918,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "完了予定日：%@"
+            "value" : "完了予定日 %@"
           }
         },
         "ko" : {
@@ -17873,7 +17930,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przewidywane zakończenie: %@"
+            "value" : "Przewidywany koniec: %@"
           }
         },
         "pt" : {
@@ -20428,7 +20485,6 @@
       }
     },
     "I have it" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -20439,13 +20495,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo tengo"
+            "value" : "Ya lo tengo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je l’ai"
+            "value" : "Je l’ai déjà"
           }
         },
         "it" : {
@@ -20457,19 +20513,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "持っている"
+            "value" : "準備済み"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 갖고 있어요"
+            "value" : "이미 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mam je"
+            "value" : "Już mam"
           }
         },
         "pt" : {
@@ -20487,12 +20543,11 @@
       }
     },
     "I won't use it" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht verwenden"
+            "value" : "Ich werde es nicht nutzen"
           }
         },
         "es" : {
@@ -20510,7 +20565,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne farò a meno"
+            "value" : "Non lo userò"
           }
         },
         "ja" : {
@@ -20522,7 +20577,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "안 쓸 거예요"
+            "value" : "사용하지 않을게요"
           }
         },
         "pl" : {
@@ -20546,7 +20601,6 @@
       }
     },
     "I'll set it up" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -20557,7 +20611,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo voy a configurar"
+            "value" : "Lo configuraré"
           }
         },
         "fr" : {
@@ -20581,19 +20635,19 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "준비할게요"
+            "value" : "설치할게요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotuję je"
+            "value" : "Zainstaluję"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vou instalar e configurar"
+            "value" : "Vou configurar"
           }
         },
         "tr" : {
@@ -24476,65 +24530,6 @@
         }
       }
     },
-    "No install" : {
-      "comment" : "Tool choice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Installation"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No instalar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sans installation"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senza installazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "インストールしない"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설치 안 함"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bez instalacji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem instalar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurulum yapmadan"
-          }
-        }
-      }
-    },
     "No lessons studied yet" : {
       "comment" : "Under the plan's progress percent, in a small tile, before any lesson is studied",
       "localizations" : {
@@ -25774,7 +25769,6 @@
       }
     },
     "Pause goal" : {
-      "comment" : "Pauses the goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -25815,7 +25809,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wstrzymaj cel"
+            "value" : "Wstrzymaj realizację celu"
           }
         },
         "pt" : {
@@ -25828,65 +25822,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefi duraklat"
-          }
-        }
-      }
-    },
-    "Pause this goal" : {
-      "comment" : "Pauses the goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Ziel pausieren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pausar este objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mettre cet objectif en pause"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metti in pausa questo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この目標を一時停止する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 목표 일시 중지하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wstrzymaj ten cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pausar este objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu hedefi duraklat"
           }
         }
       }
@@ -32865,7 +32800,6 @@
       }
     },
     "To be confirmed" : {
-      "comment" : "An exam's date not known yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32894,13 +32828,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未定"
+            "value" : "未確定"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미정"
+            "value" : "추후 확정"
           }
         },
         "pl" : {
@@ -36955,7 +36889,6 @@
       }
     },
     "You'll practice on your own device." : {
-      "comment" : "Tool choice detail",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -36978,31 +36911,31 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ti eserciterai sul tuo dispositivo."
+            "value" : "Farai pratica sul tuo dispositivo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自分のデバイスで練習します。"
+            "value" : "自分の端末で練習します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가지고 있는 기기로 연습해요."
+            "value" : "사용하는 기기에서 직접 연습해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Będziesz ćwiczyć na własnym urządzeniu."
+            "value" : "Będziesz ćwiczyć na swoim urządzeniu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você vai praticar no seu próprio aparelho."
+            "value" : "Você vai praticar no seu próprio dispositivo."
           }
         },
         "tr" : {

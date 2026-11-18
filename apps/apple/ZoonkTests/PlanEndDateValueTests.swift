@@ -36,6 +36,6 @@ final class PlanEndDateValueTests: XCTestCase {
   func testAnUnknownExamDateStaysUnconfirmed() {
     let value = PlanEndDateValue(
       targetDate: nil, isExam: true, finish: nil, today: "2026-11-16")
-    XCTAssertEqual(value.shown, "Date not set")
+    XCTAssertEqual(value.shown, "To be confirmed")
   }
 }

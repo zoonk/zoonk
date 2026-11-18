@@ -505,7 +505,6 @@ private struct LanguageUnitContent: View {
 struct PracticeCallSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(VoiceServices.self) private var voice
-  @Environment(AppRouter.self) private var router
   /// The line shows a limit on this visit, so its room is kept once the limit lifts.
   @State private var showedLimit = false
 
@@ -601,17 +600,12 @@ struct PracticeCallSection: View {
     }
 
     switch PracticeCallAction(limit: limit, isLocked: isLocked, isWriting: start.isWriting) {
-    case .signUp:
-      Button {
-        router.present(.signIn)
-      } label: {
-        Text(
-          "Create a free account", tableName: "Subscriptions",
-          comment: "Opens sign-up for a guest who reached what they can try without an account")
-      }
-    case .subscribe where limit != nil:
+    case .signUp,
+      .subscribe where limit != nil:
       // In Start's row, as Start: the row keeps its height when Start comes back.
-      SubscribeButton()
+      if let limit {
+        LimitWayOn(limit: limit)
+      }
     case .subscribe:
       SubscribeGate(
         title: Text(

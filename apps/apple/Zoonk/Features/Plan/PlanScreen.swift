@@ -22,6 +22,10 @@ private struct GoalPlanView: View {
 
   let goal: LearnerGoal
 
+  private func daysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
+    goal.isSettingUp ? nil : planDaysLeft(plan)
+  }
+
   var body: some View {
     let plan = store.plan(goalId: goal.id)
     let syllabus = store.syllabus(goalId: goal.id)
@@ -42,9 +46,15 @@ private struct GoalPlanView: View {
       }
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(
-      goal.isSettingUp ? "" : daysLeft(plan.value?.plan) ?? ""
-    )
+    .toolbar {
+      // A bar subtitle drawn from text drops its spoken form; a view keeps it.
+      if let days = daysLeft(plan.value?.plan) {
+        ToolbarItem(placement: .subtitle) {
+          Text(verbatim: days.shown)
+            .accessibilityLabel(Text(verbatim: days.spoken))
+        }
+      }
+    }
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
     }
@@ -85,7 +95,8 @@ private struct GoalPlanView: View {
 }
 
 /// The days left to a date still to come; nothing while the plan is set up or built, as main's.
-private func daysLeft(_ plan: GoalPlan?) -> String? {
+/// An estimated date's "~60 days left" reads "About 60 days left".
+func planDaysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
   guard let plan, plan.ready, let targetDate = plan.schedule.targetDate, targetDate >= plan.today
   else {
     return nil
@@ -94,19 +105,32 @@ private func daysLeft(_ plan: GoalPlan?) -> String? {
   let days = PlanDate.days(from: plan.today, to: targetDate)
 
   if days == 0 {
-    return String(
+    let line = String(
       localized: "The day is here", table: "Plan", comment: "Plan subtitle on the goal's day")
+    return (line, line)
   }
 
-  if plan.schedule.targetDateEstimated {
-    return String(
+  return daysLeftText(days, estimated: plan.schedule.targetDateEstimated)
+}
+
+/// Main's `daysLeftText`: the days left to a date, one way on every screen. An estimated date's
+/// count is marked "~60 days left" and read "About 60 days left".
+func daysLeftText(_ days: Int, estimated: Bool) -> (shown: String, spoken: String) {
+  guard estimated else {
+    let line = String(
+      localized: "\(days) days left", table: "Plan",
+      comment: "How many days are left until the goal's date")
+    return (line, line)
+  }
+
+  return (
+    String(
       localized: "~\(days) days left", table: "Plan",
-      comment: "Plan subtitle: about how many days are left until the goal's estimated date")
-  }
-
-  return String(
-    localized: "\(days) days left", table: "Plan",
-    comment: "Plan subtitle: how many days are left until the goal's date")
+      comment: "About how many days are left until the goal's estimated date"),
+    String(
+      localized: "About \(days) days left", table: "Plan",
+      comment: "\"~60 days left\" read aloud: about how many days are left")
+  )
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
