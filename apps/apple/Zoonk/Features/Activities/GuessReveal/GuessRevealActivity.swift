@@ -71,22 +71,25 @@ private struct GuessRevealCanvas: View {
           }
 
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
-            VStack(alignment: .leading, spacing: 4) {
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 8, verticalSpacing: 4) {
               ForEach(Array(workings.enumerated()), id: \.offset) { _, working in
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                  if let value = ActivityExpression.evaluate(working.expression) {
-                    Text(ActivityNumberFormat.format(value))
-                      .typeWeight(.semibold)
-                      .monospacedDigit()
-                  }
+                GridRow {
+                  Text(
+                    verbatim: ActivityExpression.evaluate(working.expression).map {
+                      ActivityNumberFormat.format($0)
+                    } ?? ""
+                  )
+                  .typeWeight(.semibold)
+                  .monospacedDigit()
+                  .gridColumnAlignment(.trailing)
                   Text(working.label)
                     .foregroundStyle(.mutedForeground)
                 }
-                .typeStyle(.note)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
               }
             }
+            .typeStyle(.note)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(12)
             .activityBox(cornerRadius: Radius.option)
           }

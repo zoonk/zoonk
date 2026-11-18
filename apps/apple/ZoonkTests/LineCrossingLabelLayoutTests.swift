@@ -135,8 +135,8 @@ final class LineCrossingLabelLayoutTests: XCTestCase {
           let g = Int(rgba[index + 1])
           let b = Int(rgba[index + 2])
           let purple = r > g + 35 && b > g + 35 && r > 70
-          let teal = g > r + 25 && b > r + 15 && g > 65
-          if name == "What happened" ? (purple || teal) : (name == "Cost" ? purple : teal) {
+          let orange = r > g + 35 && g > b + 25 && r > 120
+          if name == "What happened" ? (purple || orange) : (name == "Cost" ? purple : orange) {
             otherLinePixels += 1
           }
         }

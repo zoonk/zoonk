@@ -10,13 +10,13 @@ enum ChartsAxis {
       .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: alignment)
   }
   static func fittingTicks(
-    _ domain: ClosedRange<Double>, frame: (Double) -> (left: Double, right: Double),
-    values: ((Int) -> [Double])? = nil
+    _ domain: ClosedRange<Double>, gap: Double = 4,
+    frame: (Double) -> (left: Double, right: Double), values: ((Int) -> [Double])? = nil
   ) -> [Double] {
     for count in stride(from: 4, through: 1, by: -1) {
       let ticks = values?(count) ?? Self.ticks(domain, count: count)
       let boxes = ticks.map(frame)
-      if zip(boxes, boxes.dropFirst()).allSatisfy({ $0.right + 4 <= $1.left }) { return ticks }
+      if zip(boxes, boxes.dropFirst()).allSatisfy({ $0.right + gap <= $1.left }) { return ticks }
     }
     return []
   }

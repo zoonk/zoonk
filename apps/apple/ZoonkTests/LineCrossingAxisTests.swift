@@ -31,20 +31,52 @@ final class LineCrossingAxisTests: XCTestCase {
     let attachment = XCTAttachment(image: image)
     attachment.lifetime = .keepAlways
     add(attachment)
-    let request = VNRecognizeTextRequest()
-    request.recognitionLevel = .accurate
-    request.recognitionLanguages = ["en-US"]
-    request.usesLanguageCorrection = false
-    try VNImageRequestHandler(cgImage: XCTUnwrap(image.cgImage)).perform([request])
-    let lines = (request.results ?? []).compactMap { $0.topCandidates(1).first?.string }
-    let numbers = lines.filter { $0.range(of: #"^[0-9, .]+$"#, options: .regularExpression) != nil }
+    let page = try XCTUnwrap(image.cgImage)
+    let pageWords = try recognizedWords(in: page)
+    // Read on the whole page, Vision can take the short monospaced ticks for upside-down text
+    // ("00z" for 200), so each axis is read on its own: the values in the column left of the
+    // plot, the ticks in the strip above the bottom axis's title.
+    let title = try XCTUnwrap(
+      pageWords.first { $0.text.hasPrefix("Lamps") }?.box, "Rendered text: \(pageWords)")
+    let strip = try XCTUnwrap(
+      page.cropping(
+        to: CGRect(
+          x: 0, y: title.minY - title.height * 3, width: CGFloat(page.width),
+          height: title.height * 3
+        ).integral))
+    let values = pageWords.map(\.text).filter { $0.contains(",") }
+    let ticks = try recognizedWords(in: strip).map(\.text)
+    let numbers = (values + ticks)
+      .filter { $0.range(of: #"^[0-9, .]+$"#, options: .regularExpression) != nil }
       .flatMap {
         $0.split(separator: " ").compactMap { Double($0.replacingOccurrences(of: ",", with: "")) }
       }
       // Vision can omit a single-character label; the value test covers both zero ticks.
       .filter { $0 != 0 }
       .sorted()
-    XCTAssertEqual(numbers, [100, 200, 300, 2000, 4000], "Rendered text: \(lines)")
+    XCTAssertEqual(numbers, [100, 200, 300, 2000, 4000], "Read values \(values), ticks \(ticks)")
+  }
+
+  /// Each line Vision reads, with its box in the image's pixels from the top left.
+  private func recognizedWords(in image: CGImage) throws -> [(text: String, box: CGRect)] {
+    let request = VNRecognizeTextRequest()
+    request.recognitionLevel = .accurate
+    request.recognitionLanguages = ["en-US"]
+    request.usesLanguageCorrection = false
+    try VNImageRequestHandler(cgImage: image).perform([request])
+    let size = CGSize(width: image.width, height: image.height)
+    return (request.results ?? []).compactMap { observation in
+      observation.topCandidates(1).first.map { candidate in
+        let box = observation.boundingBox
+        return (
+          candidate.string,
+          CGRect(
+            x: box.minX * size.width, y: (1 - box.maxY) * size.height,
+            width: box.width * size.width,
+            height: box.height * size.height)
+        )
+      }
+    }
   }
 
   func testFixedLampDomainAndRoundTicksMatchMain() {

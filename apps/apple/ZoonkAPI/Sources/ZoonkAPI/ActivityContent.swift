@@ -11,6 +11,8 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   /// Sent on the step beside `content`, so `LessonStep` fills it in.
   public internal(set) var minTolerance: ActivityCheck.Tolerance?
   /// Sent on the step beside `content`, so `LessonStep` fills it in.
+  public internal(set) var roundedAnswer: ActivityRoundedAnswer?
+  /// Sent on the step beside `content`, so `LessonStep` fills it in.
   public internal(set) var baseMap: ActivityBaseMap?
 
   private enum CodingKeys: String, CodingKey {
@@ -32,6 +34,18 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
 
   public func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)
+  }
+}
+
+/// Core's `ActivityRoundedAnswer`: a numeric check's answer as every app writes it, rounded to the
+/// places its hint names. `places` is nil for a whole-number answer, which needs no rounding.
+public struct ActivityRoundedAnswer: Codable, Hashable, Sendable {
+  public let places: Int?
+  public let value: Double
+
+  public init(places: Int?, value: Double) {
+    self.places = places
+    self.value = value
   }
 }
 
@@ -236,6 +250,8 @@ public struct ActivityBaseMap: Codable, Hashable, Sendable {
   }
 
   public struct Region: Codable, Hashable, Sendable {
+    public let id: String
+    public let name: String
     public let path: String
     public let tone: Tone
   }
