@@ -207,7 +207,7 @@ function renderHeldOffer(plan: PlanView = PLAN) {
 }
 
 async function addFromSheet(held: ReturnType<typeof renderHeldOffer>) {
-  await page.getByRole("button", { name: "View" }).click();
+  await page.getByRole("button", { name: "See what changes" }).click();
   await page.getByRole("button", { name: "Add to my plan" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
 }
@@ -304,7 +304,7 @@ async function checkCoverage() {
     { findTimeToCover: async () => COVERAGE_TIME, plan: COVERAGE_PLAN },
   );
 
-  await page.getByRole("button", { name: "View" }).click();
+  await page.getByRole("button", { name: "See what changes" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "See what changes" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
   return held;
