@@ -724,14 +724,13 @@ struct LabeledField: View {
   let prompt: Text?
   @Binding var text: String
 
+  @FocusState private var isFocused: Bool
+
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      label
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .accessibilityHidden(true)
+    FormField(title: label, isFocused: isFocused) {
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
       MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
+        .focused($isFocused)
     }
   }
 }
