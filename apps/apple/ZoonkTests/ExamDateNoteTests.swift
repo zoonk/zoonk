@@ -75,6 +75,25 @@ final class ExamDateNoteTests: XCTestCase {
     return window
   }
 
+  func testEstimatedExamDaysReadAsAboutADay() async throws {
+    try readsWhatVoiceOverReads()
+    let exam = try Self.exam()
+    let window = try show(
+      NavigationStack {
+        ExamList(exam: exam, options: nil)
+      }
+      .appDependencies(AppDependencies.hosted())
+      .environment(AppRouter())
+      .zoonkStyles())
+    try await waitForLayout(in: window)
+
+    try await waitForTestCondition("The exam's facts never showed: \(spoken(in: window))") {
+      self.spoken(in: window).contains { $0.hasPrefix("About ") }
+    }
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains("~") }, "Read as written: \(spoken(in: window))")
+  }
+
   func testTheDateNoteStaysWhenTheMocksPaneGoes() async throws {
     try await staysOpen(from: 1376, to: 420)
   }
