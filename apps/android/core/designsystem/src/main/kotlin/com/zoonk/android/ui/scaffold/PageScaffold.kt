@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
@@ -148,10 +149,16 @@ fun pagePadding(): PaddingValues {
 @Composable
 fun pageListMargin(): Dp = pageMargin() - LIST_ITEM_INSET
 
-/** Material's window margin: 16dp on a phone, 24dp from medium windows up. */
+/**
+ * Material's window margin: 16dp on a phone, 24dp from medium windows up. A book foldable's pages are each
+ * about a phone wide, so a window a fold splits keeps a phone's margin, the way back and the bars included.
+ */
 @Composable
-fun pageMargin(): Dp =
-    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) 24.dp else 16.dp
+fun pageMargin(): Dp {
+    val window = windowAdaptiveInfo()
+    val wide = window.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    return if (wide && window.windowPosture.allVerticalHingeBounds.isEmpty()) 24.dp else 16.dp
+}
 
 /**
  * Where the back arrow's ink starts unpulled: Material's bar insets its navigation icon 4dp, the button centers
