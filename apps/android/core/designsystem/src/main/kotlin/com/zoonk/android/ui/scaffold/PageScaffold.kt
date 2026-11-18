@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -31,8 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
@@ -79,20 +78,22 @@ fun PageScaffold(
                     // the fold, so what they opened stays open as the book folds.
                     val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
                     var span by remember { mutableStateOf<PageSpan?>(null) }
-                    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-                        // Across a fold the column is the page before it. The content centers its column between the side system
-                        // bars, which the top bar already keeps clear of, so the inset is half the room left between them.
-                        val density = LocalDensity.current
-                        val direction = LocalLayoutDirection.current
-                        val sides = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                        val sideRoom = with(density) { (sides.getLeft(density, direction) + sides.getRight(density, direction)).toDp() }
+                    // The bar lays out in the room the page's content has: clear of the side system bars the page still receives,
+                    // not of one the shell's rail already took. The content centers its column there, and the bar keeps to it.
+                    BoxWithConstraints(
+                        Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)).onPageSpan {
+                            span =
+                                it
+                        },
+                    ) {
+                        // Across a fold the column is the page before it.
                         val columnInset =
                             if (columnWidth == Dp.Unspecified ||
                                 screenSplit(maxWidth, span) != null
                             ) {
                                 0.dp
                             } else {
-                                ((maxWidth - sideRoom - columnWidth) / 2).coerceAtLeast(0.dp)
+                                ((maxWidth - columnWidth) / 2).coerceAtLeast(0.dp)
                             }
                         TopAppBar(
                             title = {
