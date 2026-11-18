@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,8 +33,11 @@ import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -123,12 +128,23 @@ private fun NumberKey(
                 .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
-        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words.
+        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. Every key is as
+        // wide as its widest digit, so a "1" doesn't start its option's words before a "2" does.
+        val style = MaterialTheme.typography.labelSmall.withTabularFigures()
+        val text = number.toString()
+        val measurer = rememberTextMeasurer()
+        val widest =
+            remember(
+                style,
+                text.length,
+                measurer,
+            ) { ('0'..'9').maxOf { measurer.measure(it.toString().repeat(text.length), style).size.width } }
         Text(
-            text = number.toString(),
-            modifier = Modifier.padding(horizontal = 4.dp),
+            text = text,
+            modifier = Modifier.padding(horizontal = 4.dp).widthIn(min = with(LocalDensity.current) { widest.toDp() }),
             color = if (glyph == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent,
-            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
+            textAlign = TextAlign.Center,
+            style = style,
         )
         glyph?.let {
             Icon(
