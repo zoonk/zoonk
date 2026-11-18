@@ -56,12 +56,13 @@ fun CreateAccountButton(onClick: () -> Unit) {
  * Main's `SubscribeGate`: where a learner tried something that needs a subscription, in place of
  * what they asked for, on the column's edge with no card or icon. Nothing announces it before the try.
  *
+ * - [title] is null under a heading that already says what needs the subscription.
  * - [line] is at most one sentence, only where the learner would otherwise think they're stuck.
  * - [action] is one way on that isn't paying, such as "Go to your Plan", after "Subscribe".
  */
 @Composable
 fun SubscribeGate(
-    title: String,
+    title: String?,
     onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
     line: String? = null,

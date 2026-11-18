@@ -12,12 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
-import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
@@ -155,9 +152,7 @@ private fun DroppedReasonText(
         }
 
         DroppedReason.PlusRequired -> {
-            TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            Muted(stringResource(R.string.conversation_challenge_gate_line))
-            SubscribeButton(actions.onSubscribe)
+            ChallengeCallGate(actions.onSubscribe, titled = false)
         }
 
         DroppedReason.Microphone -> {
