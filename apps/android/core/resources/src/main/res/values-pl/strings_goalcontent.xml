@@ -230,7 +230,6 @@
     <string name="goalcontent_topics_in_notice">Tematy na egzaminie</string>
     <string name="goalcontent_topics_in_guide">Tematy z oficjalnego informatora</string>
     <string name="goalcontent_details">Szczegóły</string>
-    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Pytania</string>
     <string name="goalcontent_topics">Tematy</string>

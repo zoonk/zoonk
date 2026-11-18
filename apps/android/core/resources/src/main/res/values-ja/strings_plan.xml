@@ -1107,7 +1107,6 @@
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
     <string name="plan_time_covers_share_goal">1日%1$sで目標に必要な内容の約%2$sを学べます</string>
     <string name="plan_covered_not_enough">1日%1$sでは、目標に必要な内容をすべて学びきれません。</string>
-    <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_finding">学習時間を調べています…</string>
     <string name="plan_try_again">もう一度試す</string>
     <string name="plan_find_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>

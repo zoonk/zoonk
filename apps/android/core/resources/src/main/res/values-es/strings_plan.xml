@@ -1217,7 +1217,6 @@
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
     <string name="plan_time_covers_share_goal">Con %1$s al día cubres aproximadamente el %2$s de tu objetivo</string>
     <string name="plan_covered_not_enough">Con %1$s al día no te alcanza para cubrir tu objetivo.</string>
-    <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_finding">Calculando el tiempo…</string>
     <string name="plan_try_again">Intentar de nuevo</string>
     <string name="plan_find_building">Aún estamos preparando tu plan. Inténtalo de nuevo en un momento.</string>
