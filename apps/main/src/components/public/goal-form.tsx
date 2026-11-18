@@ -72,11 +72,7 @@ export function GoalForm({
           <GoalFieldLabel htmlFor={fieldId}>{t("I want to")}</GoalFieldLabel>
 
           <div className="group/goal grid min-w-0 flex-1">
-            <GoalFieldExample>{example}</GoalFieldExample>
-
-            <span className="sr-only" id={exampleId}>
-              {t.rich("For example: <example></example>", { example: () => example })}
-            </span>
+            <GoalFieldExample id={exampleId}>{example}</GoalFieldExample>
 
             <GoalFieldText
               aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}

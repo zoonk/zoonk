@@ -2,6 +2,7 @@
 
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
 
@@ -95,19 +96,26 @@ export function GoalFieldLabel({
 }
 
 /** The example keeps its line wraps in the grid even after the field holds words. */
-export function GoalFieldExample({ children }: { children: React.ReactNode }) {
+export function GoalFieldExample({ children, id }: { children: React.ReactNode; id: string }) {
+  const t = useExtracted("goalField");
+
   return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        GOAL_FIELD_TEXT_CLASS,
-        "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
-        "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
-      )}
-      data-slot="goal-example"
-    >
-      {children}
-    </span>
+    <>
+      <span
+        aria-hidden="true"
+        className={cn(
+          GOAL_FIELD_TEXT_CLASS,
+          "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
+          "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
+        )}
+        data-slot="goal-example"
+      >
+        {children}
+      </span>
+      <span className="sr-only" id={id}>
+        {t.rich("For example: <example></example>", { example: () => children })}
+      </span>
+    </>
   );
 }
 

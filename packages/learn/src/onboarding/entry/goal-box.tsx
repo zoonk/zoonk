@@ -54,10 +54,7 @@ export function GoalBox({
         <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
         <div className="group/goal grid min-w-0 flex-1">
-          <GoalFieldExample>{exampleText}</GoalFieldExample>
-          <span className="sr-only" id={exampleId}>
-            {exampleText}
-          </span>
+          <GoalFieldExample id={exampleId}>{exampleText}</GoalFieldExample>
           <GoalFieldText
             aria-describedby={exampleId}
             autoFocusOnPointer
