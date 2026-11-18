@@ -154,6 +154,29 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertEqual(router.path(for: .today).wrappedValue, path(.chapter(chapterId: "chapter")))
   }
 
+  /// The catalog pushes a course itself, so the router doesn't know the pages over Mistakes. The
+  /// narrow window shows Mistakes, and widening it again shows the course with its back stack.
+  func testAResizeKeepsPagesTheRouterDidntPush() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.mistakes)
+    router.open(.catalog)
+    router.push("course")
+    router.present(.feedback(screen: "course"))
+    let pages = router.path(for: .mistakes).wrappedValue
+    let shown = router.shown
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    XCTAssertEqual(router.path(for: .today).wrappedValue, path(.mistakes))
+    XCTAssertEqual(router.shown, shown)
+
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    XCTAssertEqual(router.selectedTab, .mistakes)
+    XCTAssertEqual(router.path(for: .mistakes).wrappedValue, pages)
+    XCTAssertEqual(router.shown, shown)
+  }
+
   private func path(_ routes: AppRoute...) -> NavigationPath {
     NavigationPath(routes)
   }

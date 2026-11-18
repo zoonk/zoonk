@@ -38,6 +38,9 @@ final class AppRouter {
   }
   private var hiddenTasks: Set<Int> = []
   private var stacks: [AppTab: TabStack] = [:]
+  /// A sidebar place's pages that a resize couldn't carry to Today because the router doesn't know
+  /// them, kept to put back over the place while Today shows it as the resize left it.
+  private var parked: (place: AppTab, today: NavigationPath, stack: TabStack)?
   let playback = SessionPlayback()
   @ObservationIgnored private let openBlock: BlockOpener
 
@@ -176,7 +179,9 @@ final class AppRouter {
   var shown: Shown {
     let stack = stacks[selectedTab] ?? TabStack()
     let page: Shown.Page =
-      if let listed = Self.listedPlace(of: selectedTab, stack: stack) {
+      if let parked = parkedPages(on: stack) {
+        .stack(parked.place, parked.stack.path)
+      } else if let listed = Self.listedPlace(of: selectedTab, stack: stack) {
         .place(listed.place, listed.above)
       } else {
         .stack(selectedTab, stack.path)
@@ -293,6 +298,7 @@ final class AppRouter {
   func popToRoots() {
     tasks = []
     stacks = [:]
+    parked = nil
   }
 
   private func moveListedPlaceToItsRow() {
@@ -302,11 +308,21 @@ final class AppRouter {
 
     if let (tab, above) = Self.listedPlace(of: selectedTab, stack: stack), sidebarTabs.contains(tab)
     {
+      let kept = parkedPages(on: stack)?.stack
       stack.removeLast(above.count + 1)
       stacks[selectedTab] = stack
-      stacks[tab] = TabStack(above)
+      stacks[tab] = kept ?? TabStack(above)
       selectedTab = tab
+      parked = nil
     }
+  }
+
+  private func parkedPages(on stack: TabStack) -> (place: AppTab, stack: TabStack)? {
+    guard let parked, selectedTab == .today, parked.today == stack.path else {
+      return nil
+    }
+
+    return (parked.place, parked.stack)
   }
 
   /// `keepingPlace` when the place still exists (the window became compact) rather than gone (a
@@ -316,14 +332,27 @@ final class AppRouter {
       return
     }
 
-    let above = stacks.removeValue(forKey: selectedTab)?.routes ?? []
+    let place = selectedTab
+    let left = stacks.removeValue(forKey: place) ?? TabStack()
     selectedTab = .today
+    parked = nil
 
-    if keepingPlace {
-      for page in [route] + above {
-        stacks[.today, default: TabStack()].append(page)
-      }
+    guard keepingPlace else {
+      return
     }
+
+    var today = stacks[.today] ?? TabStack()
+    today.append(route)
+
+    if let above = left.routes {
+      for page in above {
+        today.append(page)
+      }
+    } else {
+      parked = (place, today.path, left)
+    }
+
+    stacks[.today] = today
   }
 }
 
