@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -56,6 +57,8 @@ fun BottomBar(
     columnWidth: Dp = Dp.Unspecified,
     columnAtStart: Boolean = false,
     columnMargin: Dp = pageMargin(),
+    /** The [note]'s height as it changes, 0 without one, for a screen to keep its content's end clear of it. */
+    onNoteHeight: ((Int) -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val anchors = LocalSnackbarAnchors.current
@@ -94,7 +97,13 @@ fun BottomBar(
                 }
             }
         }
-        Box(Modifier.aboveBar().fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
+        Box(
+            Modifier
+                .aboveBar()
+                .onSizeChanged { onNoteHeight?.invoke(it.height) }
+                .fillMaxWidth()
+                .semantics { liveRegion = LiveRegionMode.Polite },
+        ) {
             note?.let {
                 Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
             }
