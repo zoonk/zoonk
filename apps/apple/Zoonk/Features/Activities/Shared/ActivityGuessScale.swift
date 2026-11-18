@@ -125,21 +125,21 @@ struct ActivityGuessScaleView: View {
       .typeStyle(.readout)
       .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
 
-      if let actual {
-        Text(
-          "Real value: \(format(actual))", tableName: "Activities",
-          comment: "The real value revealed after a guess"
-        )
-        .typeStyle(.readout)
-        .foregroundStyle(Color.successText)
-        .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
-      }
+      // The real value's row and the revealed bar hold their room from the start, so nothing
+      // moves on Check.
+      Text(
+        "Real value: \(format(actual ?? scale.max))", tableName: "Activities",
+        comment: "The real value revealed after a guess"
+      )
+      .typeStyle(.readout)
+      .foregroundStyle(Color.successText)
+      .opacity(actual == nil ? 0 : 1)
+      .accessibilityHidden(actual == nil)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
 
       if let label = guessUnitLabel(unit) { ActivityCaption(label) }
 
-      if let actual {
-        revealed(actual: actual)
-      } else {
+      ZStack {
         Slider(
           value: Binding(
             get: { (guess.map(scale.share(of:)) ?? 0.5) * GuessScale.positions },
@@ -157,18 +157,19 @@ struct ActivityGuessScaleView: View {
           }
             ?? Text(
               "No guess yet", tableName: "Activities",
-              comment: "VoiceOver: a guess slider not moved yet"))
-        GuessScaleAxis(scale: scale, unit: unit)
-      }
-    }
-  }
+              comment: "VoiceOver: a guess slider not moved yet")
+        )
+        .opacity(actual == nil ? 1 : 0)
+        .disabled(actual != nil)
+        .accessibilityHidden(actual != nil)
 
-  private func revealed(actual: Double) -> some View {
-    VStack(alignment: .leading, spacing: 6) {
-      GuessScaleBar(
-        guessShare: guess.map(scale.share(of:)), actualShare: scale.share(of: actual)
-      )
-      .accessibilityHidden(true)
+        if let actual {
+          GuessScaleBar(
+            guessShare: guess.map(scale.share(of:)), actualShare: scale.share(of: actual)
+          )
+          .accessibilityHidden(true)
+        }
+      }
 
       GuessScaleAxis(scale: scale, unit: unit)
     }

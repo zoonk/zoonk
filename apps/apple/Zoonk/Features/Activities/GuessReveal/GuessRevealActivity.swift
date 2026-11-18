@@ -74,10 +74,14 @@ private struct GuessRevealCanvas: View {
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 8, verticalSpacing: 4) {
               ForEach(Array(workings.enumerated()), id: \.offset) { _, working in
                 GridRow {
-                  Text(verbatim: workingValue(working.expression, actual: actual))
-                    .typeWeight(.semibold)
-                    .monospacedDigit()
-                    .gridColumnAlignment(.trailing)
+                  Text(
+                    verbatim: ActivityExpression.evaluate(working.expression).map {
+                      ActivityNumberFormat.format($0)
+                    } ?? ""
+                  )
+                  .typeWeight(.semibold)
+                  .monospacedDigit()
+                  .gridColumnAlignment(.trailing)
                   Text(working.label)
                     .foregroundStyle(.mutedForeground)
                 }
@@ -85,6 +89,9 @@ private struct GuessRevealCanvas: View {
               }
             }
             .typeStyle(.note)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .activityBox(cornerRadius: Radius.option)
           }
 
           if let comparison = fields.comparison {
@@ -98,14 +105,6 @@ private struct GuessRevealCanvas: View {
         }
       }
     }
-  }
-
-  /// A working that lands on the real value is written as the reveal writes it, unit included.
-  private func workingValue(_ expression: String, actual: Double) -> String {
-    guard let value = ActivityExpression.evaluate(expression) else { return "" }
-    let real = ActivityNumberFormat.guess(actual, unit: fields.unit)
-    return ActivityNumberFormat.guess(value, unit: fields.unit) == real
-      ? real : ActivityNumberFormat.format(value)
   }
 
   private var checkAnswer: Double? {
