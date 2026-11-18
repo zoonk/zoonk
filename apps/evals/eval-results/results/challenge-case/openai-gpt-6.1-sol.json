@@ -213,112 +213,6 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional pediatric ward, conflicting clinical records, available suspension, competing demands and handover deadline create a credible nursing task. However, without a current time, the urgency and time costs are less concrete than the clinical problem.",
-          "score": 8,
-          "label": "Real work (or a fun What if)",
-          "weight": 20
-        },
-        {
-          "categoryId": "decisions",
-          "reasoning": "Choices produce different replies, resource costs, recovery opportunities and endings. All alternatives preserve the administration hold, and requesting bedside assessment provides a credible middle option rather than making maximal caution automatically best. Strong choices vary in position. Some calculation and handover choices are comparatively easy to identify, but the alternatives are not uniformly trivial or consequence-free.",
-          "score": 8,
-          "label": "Decisions that matter",
-          "weight": 20
-        },
-        {
-          "categoryId": "team",
-          "reasoning": "The supervisory nurse, prescribing physician and AI have distinct responsibilities and useful contributions. Colleagues express workload concerns and competing priorities, and consulting them materially advances the case. Only placeholders identify colleagues; the first colleague's marked language is feminine and the second's masculine, as required.",
-          "score": 10,
-          "label": "Team and asking for help",
-          "weight": 15
-        },
-        {
-          "categoryId": "debrief",
-          "reasoning": "Feedback identifies the specific calculation, checking or communication strategy used without judging the learner. Improvement notes provide actionable alternatives, including respectful example messages to the physician. Each practice activity is suitably short, and the summary statements capture distinct lessons from the case.",
-          "score": 10,
-          "label": "Debrief: specific and kind",
-          "weight": 20
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The calculations are correct throughout: 20 kg × 50 mg/kg/day gives 1,000 mg/day; four daily doses give 250 mg per dose; 250 mg/5 mL gives 50 mg/mL, making the corrected volume 5 mL and the discrepant order 20 mL. No branch administers the questionable order. Successful branches require formal prescription correction and checks of identification, allergies, medication, dose, route and timing before administration.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 15
-        },
-        {
-          "categoryId": "depth",
-          "reasoning": "The learner-facing content uses appropriate Brazilian Portuguese, local number formatting and intermediate nursing terminology. It meaningfully distinguishes daily dosing from dosing per administration, calculation support from prescribing authority, and immediate handover needs from wider safety review. It makes no unsupported promises.",
-          "score": 10,
-          "label": "Depth, language and honesty",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 6713,
-          "outputTokens": 1226,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The 14h30 handover deadline lacks a current time, so the available time and consequences of delays remain vague. Some decisions are strongly signposted, particularly comparing the discrepant records versus merely converting the active prescription, which reduces the challenge.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Anchor the opening to a current time and show updated times after resource-intensive actions. Consider inviting the learner to calculate a provisional dose before requesting the AI's comparison, while retaining the colleague's double-check and mandatory prescriber validation.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking. Not counting the AI assistant, the first colleague's role and every word about them is feminine and the second's masculine where Portuguese marks it (\"a farmacêutica\", \"o médico plantonista\"), since the app names them a woman and then a man.",
-        "id": "pt-nursing-dose-work-1",
-        "userInput": {
-          "chapterDescription": "Calcular e conferir doses de medicamentos por peso com segurança.",
-          "chapterTitle": "Cálculo de doses",
-          "courseTitle": "Farmacologia para enfermagem",
-          "language": "pt",
-          "level": "intermediate",
-          "skills": [
-            {
-              "description": "Calcular a dose a partir do peso do paciente.",
-              "name": "Calcular dose por peso"
-            },
-            {
-              "description": "Conferir prescrição, unidade e via antes de administrar.",
-              "name": "Conferir a prescrição"
-            },
-            {
-              "description": "Levar uma dúvida ao médico de forma clara e segura.",
-              "name": "Comunicar uma dúvida ao médico"
-            }
-          ],
-          "variant": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "realism",
           "reasoning": "The fictional workplace, 14h medication deadline, competing nursing duties, signed prescription and available prescriber create a credible nursing task rather than a calculation quiz. However, a hospital ward is not explicitly established by 'Plantão na Clínica Várzea Clara'.",
           "score": 8,
           "label": "Real work (or a fun What if)",
@@ -531,112 +425,6 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional retailer, messy order export, 3:00 p.m. deadline, staffing discussion, and competing reporting workload create a credible beginner analyst task. Preserving the original export and documenting corrections fit real professional practice.",
-          "score": 9,
-          "label": "Real work (or a fun What if)",
-          "weight": 20
-        },
-        {
-          "categoryId": "decisions",
-          "reasoning": "Choices change replies, reliability, team capacity, and endings, and the strong option moves between positions. However, the best answer remains obvious at every node. In particular, the AI openly describes unsupported edits, and the final competing option adds a broad review when one receipt would resolve the gap. The explicit maximum of 6 therefore applies.",
-          "score": 6,
-          "label": "Decisions that matter",
-          "weight": 20
-        },
-        {
-          "categoryId": "team",
-          "reasoning": "The analyst, operations manager, and AI assistant have distinct functions and priorities. The manager presses for speed, the analyst supplies source evidence, and asking the AI to explain its edits exposes specific errors. Help-seeking is actionable and rewarded. Colleagues use placeholders, and the learner is unnamed.",
-          "score": 10,
-          "label": "Team and asking for help",
-          "weight": 15
-        },
-        {
-          "categoryId": "debrief",
-          "reasoning": "Feedback identifies the exact records and assumptions affected, praises verification strategies rather than ability, and gives concrete alternatives and useful example requests. The three practice activities are appropriately small, and the summaries each express a distinct cleaning strategy.",
-          "score": 10,
-          "label": "Debrief: specific and kind",
-          "weight": 20
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "All totals reconcile: the original filled cells sum to $170.00; removing the $30.00 duplicate gives $140.00; incorrectly dropping R103's $20.00 produces the AI's $120.00; and the verified $60.00 receipt produces $200.00. The intentionally faulty AI method is consistently identified as unsupported rather than taught as correct. Before-tax amounts, record identities, and endings remain consistent.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 15
-        },
-        {
-          "categoryId": "depth",
-          "reasoning": "The case stays within beginner-level inspection, cleaning, source checking, and reporting. It explains data cleaning and the known-amount subtotal in chat, clarifies blank cells and stored spaces in the panels, and uses consistent English and currency formatting. It makes no promises about learning outcomes or employment.",
-          "score": 10,
-          "label": "Depth, language and honesty",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 5494,
-          "outputTokens": 1237,
-          "reasoningTokens": 496
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The strong choice is obvious at every decision: inspect all relevant fields, verify the explicitly unsupported AI edits, then retrieve the receipt for the identified missing amount. The final alternative bundles an otherwise reasonable subtotal report with an unnecessarily broad review, making the targeted check clearly preferable. This triggers the decisions category's maximum score of 6, despite meaningful meter changes and different endings.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Make the trade-offs less predetermined. For example, give receipt retrieval a concrete turnaround time and offer sending the clearly labeled subtotal now without requiring a wider audit. This would let the learner weigh completeness against the manager's deadline rather than select the visibly best cleaning procedure.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A first-weeks case for someone new to data analysis (a career changer in a junior analyst role): a messy spreadsheet (duplicates, blanks, inconsistent dates or names) and a manager who needs numbers soon. The strong path inspects and cleans before summarizing, uses the AI assistant to speed up the work but checks what it produced, and tells the manager about the limits of the data. Numbers must add up after cleaning.",
-        "id": "en-career-change-data-cleaning-1",
-        "userInput": {
-          "chapterDescription": "Find and fix the problems in real-world data before analyzing it.",
-          "chapterTitle": "Cleaning messy data",
-          "courseTitle": "Data analysis",
-          "language": "en",
-          "level": "beginner",
-          "skills": [
-            {
-              "description": "Spot duplicates, blanks and inconsistent entries.",
-              "name": "Find problems in a data set"
-            },
-            {
-              "description": "Fix or remove bad rows and say what you changed.",
-              "name": "Clean data safely"
-            },
-            {
-              "description": "Check an AI assistant's output before using it.",
-              "name": "Check what AI produced"
-            }
-          ],
-          "variant": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "realism",
           "reasoning": "The fictional market, purchasing discussion, 3:00 p.m. deadline, and competing demand for customer-support capacity create a credible small-business task. Preparing a checked sales report is appropriate junior-analyst work, and the small dataset is plausible for an introductory case. No realism cap applies.",
           "score": 9,
           "label": "Real work (or a fun What if)",
@@ -839,113 +627,6 @@
             {
               "description": "Check an AI assistant's output before using it.",
               "name": "Check what AI produced"
-            }
-          ],
-          "variant": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "realism",
-          "reasoning": "The ward improvement project feels like nursing work: a charge nurse wants an actionable recommendation for an afternoon huddle, a quality specialist checks the evidence, and project capacity creates practical pressure. Patient ratings and enrollment numbers are plausible. The quieter-rounding example fits the requested nursing context without making clinical knowledge determine the answers.",
-          "score": 9,
-          "label": "Real work (or a fun What if)",
-          "weight": 20
-        },
-        {
-          "categoryId": "decisions",
-          "reasoning": "Choices change replies, workload and overclaim meters, subsequent opportunities, and endings. Recovery is possible after an initially weak decision, and holding implementation for capacity reasons is treated as a legitimate middle option. Strong choices vary in position and are not simply the most cautious. The four-week jump supplies new results.",
-          "score": 9,
-          "label": "Decisions that matter",
-          "weight": 20
-        },
-        {
-          "categoryId": "team",
-          "reasoning": "The two nursing colleagues have distinct expertise and competing priorities, and neither receives a personal name. Asking the AI is an explicit, consequential option; its useful calculations are paired with human verification of planning assumptions. Colleague references in dialogue use placeholders.",
-          "score": 10,
-          "label": "Team and asking for help",
-          "weight": 15
-        },
-        {
-          "categoryId": "debrief",
-          "reasoning": "Feedback identifies the specific strategy used or missed, distinguishes operational decisions from statistical conclusions, and remains kind. Communication corrections include usable replacement wording. Each skill has a short practice activity, and the summary sentences each express a practiced idea.",
-          "score": 9,
-          "label": "Debrief: specific and kind",
-          "weight": 20
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The counts, percentages, and percentage-point differences are consistent. The reported two-sided p-values of approximately 0.15 and 0.004 agree with standard two-proportion calculations, and approximately 100 patients per group is a reasonable plan for detecting a change from 50% to 70% with 80% power at a 5% cutoff. The result correctly avoids interpreting a p-value as the probability the intervention works. Required care remains unchanged, and no ending depicts patient harm.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 15
-        },
-        {
-          "categoryId": "depth",
-          "reasoning": "The English and number formats are appropriate, and hypothesis testing and p-values receive helpful beginner explanations. However, percentage points, random assignment, and pooling are not clearly defined in the chat despite the beginner requirement to explain terminology. There are no promises of a learner result, job, or grade.",
-          "score": 8,
-          "label": "Depth, language and honesty",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 6939,
-          "outputTokens": 1233,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Some beginner-facing terminology remains unexplained. In particular, “percentage points,” “random assignment,” and “pooled across shifts” appear without clear plain-English definitions. The p-value explanations are substantially more accessible.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Strengthen sample-size practice by letting the learner compare two feasible sample plans and their trade-offs, rather than mainly approving the assistant’s recommended 100 patients per routine. This would make the sample-size skill more active without requiring calculations.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The same statistics chapter as \"en-ab-test-work\", but for a learner who works in nursing: the case happens on a hospital ward, such as a nurse manager asked whether a new fall-prevention or hand-hygiene routine really lowered a rate between two units or two months, with colleagues a nursing ward works with (a charge nurse, an infection-control nurse, a unit manager) and an AI assistant. It must still train telling a real difference from chance, sample size and explaining the result, without marketing or A/B tests, and nursing knowledge must not decide the right choices. Numbers must be realistic and consistent (a small gap on few patients isn't called significant). General to the field: a fictional hospital, no real names, no personal details, and no path ends with harm to a patient.",
-        "id": "en-statistics-field-nursing-1",
-        "userInput": {
-          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
-          "chapterTitle": "Hypothesis testing",
-          "courseTitle": "Statistics",
-          "field": "nursing",
-          "language": "en",
-          "level": "beginner",
-          "skills": [
-            {
-              "description": "Decide whether a gap between two groups could be chance.",
-              "name": "Tell a real difference from chance"
-            },
-            {
-              "description": "Know how many observations a comparison needs.",
-              "name": "Choose a sample size"
-            },
-            {
-              "description": "Explain a test result to people who aren't data people.",
-              "name": "Explain a test result"
             }
           ],
           "variant": "work"
@@ -1885,6 +1566,444 @@
             {
               "description": "Calcular a margem de lucro sobre o preço de venda.",
               "name": "Calcular a margem"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional hospital, pediatric medication preparation, discrepant records, available suspension, and 14h deadline establish a credible nursing task rather than a detached quiz. However, the supervisor's repeated shortcut suggestions feel staged, and the absence of a current time makes the urgency less concrete.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different replies, sensible resource and risk changes, and distinct endings. Strong choices also vary in position. Nevertheless, every decision clearly signals its preferred answer, especially the explicitly nonurgent queue and the incomplete documentation alternative. The explicit maximum of 6 therefore applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The female supervising nurse and male pediatrician satisfy the role and grammatical-gender requirements; colleagues use placeholders rather than names. The AI provides useful, verifiable calculations without claiming prescribing authority, and seeking help is rewarded. The main weakness is the supervisor's repeated, conspicuously suboptimal suggestions, which reduce the authenticity of the collaboration.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, respectful, and focused on strategies rather than talent. Improvement notes explain what to do instead and provide concrete wording for contacting the physician. All three practice activities are feasible as short exercises, and the summary statements each express a practiced idea. A communication-focused summary would make the recap more balanced.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Calculations and units are consistent: 45 mg/kg/day × 20 kg gives 900 mg/day, divided into two 450 mg doses; 250 mg/5 mL gives 50 mg/mL and 9 mL per confirmed dose. The original order correctly converts to 18 mL per dose and 1.800 mg/day. Every path with unresolved discrepancies blocks administration, and the strong path verifies the replacement prescription rather than treating arithmetic or AI advice as authorization.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Learner-facing content is in Brazilian Portuguese, uses appropriate local number formatting and intermediate nursing terminology, and explains the clinically important distinction between daily dose, dose per administration, and volume. It makes no unsupported promises and keeps the AI's authority appropriately limited.",
+          "score": 10,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6626,
+          "outputTokens": 1042,
+          "reasoningTokens": 255
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The preferred answer is apparent at every decision: complete comparison versus deferred checks, a focused call versus unnecessary history or an explicitly unsuitable queue, and a complete record versus deliberately omitted details. Although choices change replies, meters, and endings, this triggers the decisions category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The supervising nurse repeatedly proposes shortcuts that the learner is expected to reject. This makes her sound more like a device for presenting distractors than an experienced colleague, particularly when she suggests documenting only the volume after helping verify the prescription.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give the current time alongside the 14h deadline to make the operational pressure concrete. Include a summary sentence about presenting the discrepancy respectfully and confirming the prescriber's response, so the communication strategy is reinforced alongside calculation and documentation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking. Not counting the AI assistant, the first colleague's role and every word about them is feminine and the second's masculine where Portuguese marks it (\"a farmacêutica\", \"o médico plantonista\"), since the app names them a woman and then a man.",
+        "id": "pt-nursing-dose-work-1",
+        "userInput": {
+          "chapterDescription": "Calcular e conferir doses de medicamentos por peso com segurança.",
+          "chapterTitle": "Cálculo de doses",
+          "courseTitle": "Farmacologia para enfermagem",
+          "language": "pt",
+          "level": "intermediate",
+          "skills": [
+            {
+              "description": "Calcular a dose a partir do peso do paciente.",
+              "name": "Calcular dose por peso"
+            },
+            {
+              "description": "Conferir prescrição, unidade e via antes de administrar.",
+              "name": "Conferir a prescrição"
+            },
+            {
+              "description": "Levar uma dúvida ao médico de forma clara e segura.",
+              "name": "Comunicar uma dúvida ao médico"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "Bramble Cart has a concrete sales-reporting problem, a 3:00 p.m. deadline, plausible spreadsheet errors, and managerial pressure to reuse an existing draft. The work is appropriate for a junior analyst and directly uses data-cleaning skills.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices affect preparation capacity, confidence, subsequent nodes, and delivery outcomes. Whole-row matching and row-count validation are credible shortcuts, so the correct answer is not obvious at every step and the cap does not apply. However, the blank-field and release decisions are strongly signposted by the preceding dialogue, reducing their challenge. Strong choices vary in position, and the cautious hold option receives balanced feedback.",
+          "score": 8,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The senior analyst, sales operations manager, and AI assistant have distinct responsibilities and useful contributions. The manager pushes for speed and completeness, while the analyst emphasizes traceability. Asking the AI for grouped evidence is an actionable, valued choice, followed by source verification. No colleague or learner is given a personal name.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Decision notes are kind, strategy-specific, and actionable; communication feedback includes usable wording. The practice activities are small enough for approximately five minutes, and each summary sentence expresses one practiced idea. The main weakness is that early unchecked endings never complete the numerical explanation of the error, leaving those paths less instructive than the successful path.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The numbers reconcile throughout: six distinct orders total $500.00; duplicate amounts of $80.00 and $100.00 raise the eight-row source to $680.00; removing the exact $100.00 repeat and the valid $60.00 blank-channel order leaves six draft rows totaling $520.00. The case correctly preserves known sales amounts, avoids inventing the missing channel, retains the source, and checks AI output. Incorrect shortcuts are presented as mistakes, not taught as correct.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English-language case uses consistent currency formatting and beginner-appropriate spreadsheet concepts. Duplicate identity, label normalization, and the limitations of row-count checks are explained concretely in the conversation. The scope remains focused on cleaning and verification, with no promises of employment, grades, or guaranteed results.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5770,
+          "outputTokens": 1229,
+          "reasoningTokens": 448
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The unchecked ending describes $520.00 only as unverified rather than explaining that it overstates sales by $20.00. Learners taking either early exit therefore miss the numerical reconciliation. Some later decisions are heavily signposted: the dialogue explains why the blank-channel sale remains valid before the learner chooses.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the eight source rows in a compact reference panel so learners can inspect the evidence themselves. In the unchecked ending, explain that retaining the $80.00 duplicate while excluding the valid $60.00 sale produces the $20.00 overstatement.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A first-weeks case for someone new to data analysis (a career changer in a junior analyst role): a messy spreadsheet (duplicates, blanks, inconsistent dates or names) and a manager who needs numbers soon. The strong path inspects and cleans before summarizing, uses the AI assistant to speed up the work but checks what it produced, and tells the manager about the limits of the data. Numbers must add up after cleaning.",
+        "id": "en-career-change-data-cleaning-1",
+        "userInput": {
+          "chapterDescription": "Find and fix the problems in real-world data before analyzing it.",
+          "chapterTitle": "Cleaning messy data",
+          "courseTitle": "Data analysis",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Spot duplicates, blanks and inconsistent entries.",
+              "name": "Find problems in a data set"
+            },
+            {
+              "description": "Fix or remove bad rows and say what you changed.",
+              "name": "Clean data safely"
+            },
+            {
+              "description": "Check an AI assistant's output before using it.",
+              "name": "Check what AI produced"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional ward, comfort-check decision, documentation pressure, and nursing authorization create a credible workplace case. Nursing expertise does not determine the answers. However, the collection window is vague relative to the evening-shift setting, next-schedule deadline, and substantial patient counts.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change evidence, replies, meters, and adoption outcomes. The smaller pilot offers a plausible workload trade-off, and requesting more data is not automatically treated as best. Strong choices vary in position, and time jumps supply new counts. Some evidence-checking options are relatively easy to distinguish, but the decisions are not uniformly obvious or inconsequential.",
+          "score": 9,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The charge nurse and research nurse have distinct priorities and speak as colleagues with competing concerns. Asking the AI is an explicit, valuable choice that returns useful calculations and explanations. No colleague or learner receives a personal name, and the AI does not authorize practice changes.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback identifies the actual strategy used, praises actions rather than ability, and explains how to improve unsupported conclusions. Communication corrections include usable replacement wording. Practice activities are suitably small, and each summary sentence states a distinct statistical idea practiced in the case.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The percentages and 15-percentage-point differences are consistent. The reported p-values match standard two-sided pooled proportion tests: approximately 2.8% for 70/100 versus 55/100 and 16.6% for 28/40 versus 22/40. The sample-planning claim is reasonable, and the case correctly distinguishes insufficient evidence from equality. Required care remains unchanged, authorization stays with nursing leadership, and no ending harms a patient.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English is clear, hypothesis testing and p-values receive accessible explanations, and the case avoids formulas, marketing, and guarantees. However, random assignment and percentage points are not explained in the chat despite the beginner-level requirement to explain terminology.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7299,
+          "outputTokens": 1201,
+          "reasoningTokens": 488
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The collection timeline is under-specified: an evening-shift setting and next-schedule deadline do not establish how collecting 80 or 200 patient responses fits the available time. For beginners, terms such as random assignment and percentage points are used without explanation in the chat.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Specify a realistic collection window and scheduling deadline. Briefly explain random assignment and percentage points when introduced. Providing a small comparison directly in each practice activity would also make the five-minute follow-up easier to start.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The same statistics chapter as \"en-ab-test-work\", but for a learner who works in nursing: the case happens on a hospital ward, such as a nurse manager asked whether a new fall-prevention or hand-hygiene routine really lowered a rate between two units or two months, with colleagues a nursing ward works with (a charge nurse, an infection-control nurse, a unit manager) and an AI assistant. It must still train telling a real difference from chance, sample size and explaining the result, without marketing or A/B tests, and nursing knowledge must not decide the right choices. Numbers must be realistic and consistent (a small gap on few patients isn't called significant). General to the field: a fictional hospital, no real names, no personal details, and no path ends with harm to a patient.",
+        "id": "en-statistics-field-nursing-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "field": "nursing",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional research workplace, detector-run recommendation, 3:00 p.m. deadline, acquisition-slot constraint, and competing colleague priorities create a credible work task. Reading detector plots belongs naturally in this role, and no real laboratory is invoked.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "The strongest answer is apparent at every step from the stated request and option wording, triggering the explicit cap of 6. There are nevertheless meaningful meter changes, different replies, three endings, a middle option, and new measurement data after the time jump. Strong choices are not always first or most cautious.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "Two colleagues have distinct expertise and priorities: the lead protects capacity and wants a reusable recommendation, while the scientist favors measurement checks. Asking the AI is an explicit, valued choice, and its answer correctly uses supplied data while distinguishing estimates from measurements. Colleague references use placeholders, and the learner is unnamed.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is kind, decision-specific, and focused on strategies rather than talent. Practice activities are short and actionable, and the summaries capture the main lessons. However, the values-only improvement example is an instruction to compare rather than a better sentence communicating the actual comparison.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The arithmetic and distinctions are correct: the midpoint estimates are 230 and 250 counts, the original endpoint increase is 20 counts, and heights above a 200-count baseline double without the readings doubling. The new 249-count acquisition remains separate from the original scan. All requested readings are available as text, with no drawn charts or display instructions. However, the required axis metadata is incomplete: the horizontal range and tick interval are absent.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English, number formats, arithmetic, and scope generally suit a beginner, and there are no outcome guarantees. The chat usefully explains why a curve is not a measurement and why a cropped baseline can mislead. However, it leaves 'ns,' the physical meaning of the setting, and terms such as 'acquisition' insufficiently explained for the requested beginner level.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5990,
+          "outputTokens": 1194,
+          "reasoningTokens": 366
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The strongest choice is obvious at every decision: use measured dots for the explicitly requested measured result, obtain the requested estimate without an unnecessary acquisition, and report the correct difference rather than doubling or omitting it. This triggers the decisions category's cap of 6. The panels also omit the horizontal axis range and tick interval, despite the explicit requirement to supply axis ranges and intervals as metrics.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Beginner-facing terms such as 'ns,' 'acquisition,' and 'fitted curve' are not adequately explained in the chat. The improvement example for the values-only choice tells the learner to compare the readings rather than supplying the improved wording of the requested comparison.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make an early choice influence a later practical constraint or colleague response instead of automatically repairing both initial recommendations at the next node. Briefly explain what the nanosecond setting controls, and give a ready-to-use comparison example: 'The measured count increased by 20, from 220 to 240.'",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.",
+        "id": "en-plot-reading-field-research-1",
+        "userInput": {
+          "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
+          "chapterTitle": "Reading quantum experiment plots",
+          "courseTitle": "Quantum physics from scratch",
+          "field": "research",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": null,
+              "name": "Read values from an experimental plot"
+            },
+            {
+              "description": null,
+              "name": "Estimate values between axis ticks"
+            },
+            {
+              "description": null,
+              "name": "Read values from plotted data points"
+            },
+            {
+              "description": null,
+              "name": "Estimate values from a plotted curve"
+            },
+            {
+              "description": null,
+              "name": "Read values on a truncated axis"
+            },
+            {
+              "description": null,
+              "name": "Interpret axis intervals"
             }
           ],
           "variant": "work"
