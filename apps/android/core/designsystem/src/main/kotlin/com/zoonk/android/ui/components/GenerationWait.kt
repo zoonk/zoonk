@@ -85,29 +85,24 @@ fun GenerationWait(
         modifier = modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row).fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        // The wait's state: its failure, or its progress toward its name.
+        // The wait's progress toward its name; a failure stops it where it got to.
         val state =
             @Composable { stateModifier: Modifier ->
-                val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
-                if (failure != null) {
-                    GenerationFailureNotice(failure, onRetry, stateModifier)
-                } else {
-                    WaitProgress(
-                        modifier = stateModifier,
-                        name = stringResource(kind.label),
-                        share =
-                            share
-                                ?: driftedShare(
-                                    progress.share,
-                                    progress.target,
-                                    progress.activeMillis,
-                                    following,
-                                    now,
-                                    progress.activeSince ?: since,
-                                ),
-                        weights = progress.phases.map { it.phase.seconds },
-                    )
-                }
+                WaitProgress(
+                    modifier = stateModifier,
+                    name = stringResource(kind.label),
+                    share =
+                        share
+                            ?: driftedShare(
+                                progress.share,
+                                progress.target,
+                                progress.activeMillis,
+                                following,
+                                now,
+                                progress.activeSince ?: since,
+                            ),
+                    weights = progress.phases.map { it.phase.seconds },
+                )
             }
         if (header == null) {
             state(Modifier)
@@ -132,6 +127,9 @@ fun GenerationWait(
                 )
             }
         }
+
+        // Under the steps, as main's, so a failure moves none of them.
+        run.failure.takeIf { run.status == GenerationRun.Status.Failed }?.let { GenerationFailureNotice(it, onRetry) }
     }
 }
 
@@ -153,7 +151,14 @@ fun rememberGenerationProgress(
         following,
         now,
         progress.activeSince ?: opened,
-    ).coerceAtLeast(0.08f)
+    ).coerceAtLeast(startedShare(progress.phases.map { it.phase.seconds }))
+}
+
+/** A bar that has started shows a little fill, never past what its first step's part can hold while it runs. */
+private fun startedShare(weights: List<Int>): Float {
+    val total = weights.sumOf { it.coerceAtLeast(0) }
+    val first = weights.firstOrNull()?.coerceAtLeast(0) ?: 0
+    return if (total == 0) 0f else minOf(STARTED_SHARE, first.toFloat() / total * RUNNING_PART_CAP)
 }
 
 /** Main's `WritingWait`: [hint] says what happens once it's written, so a failed run leaves it out. */
@@ -491,7 +496,7 @@ private fun driftedShare(
         if (since != null) drift.startedAt = since
         drift.since = since
     }
-    val ceiling = minOf(target, DRIFT_CAP)
+    val ceiling = driftCeiling(share, target)
     val constant = (activeMillis?.takeIf { it > 0 } ?: DEFAULT_ESTIMATE_MILLIS) / 2.0
     val drifted =
         when {
@@ -501,6 +506,12 @@ private fun driftedShare(
         }
     return (if (following) maxOf(drifted, share, drift.shown) else share).also { drift.shown = it }
 }
+
+/** How far the bar drifts while a step runs from [share] toward its end at [target]. */
+internal fun driftCeiling(
+    share: Float,
+    target: Float,
+): Float = minOf(share + (target - share) * RUNNING_PART_CAP, DRIFT_CAP)
 
 /** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
 internal fun segmentFills(
@@ -536,8 +547,11 @@ private fun elapsed(
     val startedAt = phase.startedAt ?: return null
     val endedAt = phase.endedAt
     return when {
-        phase.status == PhaseStatus.Completed && endedAt != null -> endedAt - startedAt
+        // A step done within a second has no time worth showing: "0:00" reads as a clock that never ran.
+        phase.status == PhaseStatus.Completed && endedAt != null -> (endedAt - startedAt).takeIf { it >= TICK_MILLIS }
+
         phase.status == PhaseStatus.Active && following && clockOffsetMillis != null -> now - clockOffsetMillis - startedAt
+
         else -> null
     }?.coerceAtLeast(0)
 }
@@ -548,6 +562,11 @@ private const val DETAIL_MAX_MILLIS = 3600L
 
 /** Estimates are never the finish line: only the end of the work shows a full bar. */
 private const val DRIFT_CAP = 0.97f
+
+/** A running step's part fills at most this much of itself, so the bar never shows it done before the list does. */
+private const val RUNNING_PART_CAP = 0.9f
+
+private const val STARTED_SHARE = 0.08f
 private const val DEFAULT_ESTIMATE_MILLIS = 30_000L
 private const val FAINT_ALPHA = 0.35f
 

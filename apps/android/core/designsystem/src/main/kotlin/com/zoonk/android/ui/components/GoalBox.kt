@@ -62,8 +62,8 @@ const val MAX_GOAL_LENGTH = 2000
 
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
- * [onSubmit] gets the trimmed words; an empty box asks for them unless [canSubmitEmpty] (material and
- * an intent are already chosen). [leading] holds the attach button; [placeholder] is a page's own
+ * [onSubmit] gets the trimmed words; Build my plan waits for them unless [canSubmitEmpty] (material and
+ * an intent are already chosen), and Enter in an empty box asks for them. [leading] holds the attach button; [placeholder] is a page's own
  * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
  * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
@@ -160,8 +160,10 @@ fun GoalBox(
             }
 
             val submitButton: @Composable () -> Unit = {
+                // As main's, it waits for words: a button that would send nothing doesn't look ready.
                 Button(
                     onClick = submit,
+                    enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
                     busy = isSubmitting,
                     size = ButtonSize.Large,
                 ) {
