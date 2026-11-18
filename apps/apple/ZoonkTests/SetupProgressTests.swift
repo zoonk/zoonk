@@ -10,6 +10,12 @@ final class SetupProgressTests: XCTestCase {
       SetupProgress(current: .level, history: [], steps: [.level, .purpose, .plan]))
   }
 
+  func testNoCountWhileTheLanguageReasonCanAddExamQuestions() {
+    XCTAssertNil(
+      SetupProgress(
+        current: .reason, history: [.level, .followUps, .targetDate, .schedule], steps: [.plan]))
+  }
+
   func testSkipAllOnlyWithMoreThanOneProfileQuestionLeft() {
     XCTAssertFalse(SetupProgress.showsSkipAll(current: .watch, steps: [.watch, .buddy, .plan]))
     XCTAssertTrue(
