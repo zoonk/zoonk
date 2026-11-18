@@ -173,7 +173,7 @@ function DailyMinutes({
   };
 
   return (
-    <div className="flex flex-col gap-3" id={getEditorSectionId("time")}>
+    <div className="flex flex-col gap-2" id={getEditorSectionId("time")}>
       <DailyTimePicker
         disabled={isPending}
         full={marked.full}
@@ -310,14 +310,12 @@ export function PlanSchedule() {
         weekendOn={weekendOn}
       />
       <StudyDays planChange={schedule} />
-      <div className="flex flex-col">
-        <WeekendMinutes
-          checked={weekendOn}
-          onCheckedChange={setWeekendChoice}
-          planChange={schedule}
-        />
-        <FullCourseSwitch />
-      </div>
+      <WeekendMinutes
+        checked={weekendOn}
+        onCheckedChange={setWeekendChoice}
+        planChange={schedule}
+      />
+      <FullCourseSwitch />
     </>
   );
 }

@@ -270,6 +270,7 @@ export function ChooseFocus() {
     <Button
       aria-haspopup="dialog"
       className={TIME_ANSWER_BUTTON_CLASS}
+      icon={<CrosshairIcon aria-hidden="true" />}
       onClick={open}
       size="sm"
       type="button"
