@@ -110,8 +110,9 @@ fun ChartTooltip(
 /**
  * [tooltip] beside the chart point whose bounds [anchor] gives from this layout's start edge, hidden
  * while it gives `null` or the point is outside the part of the page [inspector]'s [holdsChartTooltips]
- * area shows: above the point, below it when that doesn't fit, beside it when neither does, and never
- * past the layout's sides or out of that part of the page, so it never covers the words around the chart.
+ * area shows: above the point, below it when that doesn't fit, beside it when neither does. It may rise past
+ * the chart's top over what's above it on the page, as main's tooltip does, but never below the chart's bottom,
+ * past the layout's sides or out of that part of the page.
  * It takes no touches and TalkBack skips it, since the points say their own detail.
  */
 @Composable
