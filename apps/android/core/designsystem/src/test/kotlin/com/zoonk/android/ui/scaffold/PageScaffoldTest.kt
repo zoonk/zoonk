@@ -85,7 +85,7 @@ class PageScaffoldTest {
         assertTrue("the title at ${title.left} starts after the way back at ${back.right}", title.left >= back.right)
     }
 
-    /** A page that names its centered column has its way back and its bar's title on that column. */
+    /** A page that names its centered column has its way back and its bar's title on that column's margin, wherever its content sits. */
     @Test
     @Config(qualifiers = "w900dp-h900dp")
     fun theWayBackStartsOnTheColumnAPageNames() {
@@ -93,9 +93,8 @@ class PageScaffoldTest {
             ZoonkTheme {
                 PageScaffold(onBack = {}, title = { Text("Settings") }, columnWidth = 448.dp) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-                        Column(
-                            Modifier.widthIn(max = 448.dp).fillMaxWidth().padding(horizontal = pageMargin()),
-                        ) { PageTitleRow("Settings") }
+                        // The title sits 16dp in; the column the page names, not where its title happens to sit, places the way back.
+                        Column(Modifier.widthIn(max = 448.dp).fillMaxWidth().padding(horizontal = 16.dp)) { PageTitleRow("Account") }
                     }
                 }
             }
