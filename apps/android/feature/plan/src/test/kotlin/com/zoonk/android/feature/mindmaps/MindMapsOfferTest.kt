@@ -375,7 +375,7 @@ class MindMapsOfferTest {
     }
 
     /**
-     * Main's rows for maps that didn't finish: one with its lessons written and one under Other chapters each show their own Try
+     * Main's rows for maps that didn't finish: one with its lessons written and one under Without a map each show their own Try
      * again on arrival, so the group opens for the second; no line counts them.
      */
     @Test
@@ -393,7 +393,7 @@ class MindMapsOfferTest {
         compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
-    /** With a stop, the page line is the stop's notice, and a map under Other chapters that didn't finish is still in view. */
+    /** With a stop, the page line is the stop's notice, and a map under Without a map that didn't finish is still in view. */
     @Test
     fun aStopIsThePageLineWhileAMapDidntFinish() {
         api.mindMaps = {
@@ -415,7 +415,7 @@ class MindMapsOfferTest {
         compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
-    /** A chapter under Other chapters being made opens the group on arrival, so its progress is in view; a learner's close holds. */
+    /** A chapter under Without a map being made opens the group on arrival, so its progress is in view; a learner's close holds. */
     @Test
     fun otherChaptersOpenOnArrivalWhileOneIsBeingMade() {
         api.mindMaps = { goalMindMaps(chapters + mapJson(4, "Lenses", "writingLessons", lessonsToWrite = 3), offer = FRESH_OFFER) }
@@ -437,7 +437,7 @@ class MindMapsOfferTest {
     }
 
     /**
-     * As in Main's `countChapterMaps`, the line counts only the chapters under Other chapters. A failed map
+     * As in Main's `countChapterMaps`, the line counts only the chapters under Without a map. A failed map
      * whose lessons are written has its own row with Try again; the one writing lessons is on its way.
      */
     @Test

@@ -910,7 +910,7 @@ final class MindMapsStoreTests: XCTestCase {
       line)
   }
 
-  /// The web's `NotMadeLine` counts only the chapters under "Other chapters": a failed map whose
+  /// The web's `NotMadeLine` counts only the chapters under "Without a map": a failed map whose
   /// lessons are written shows its own row above them, and so does a map being drawn.
   func testTheLineCountsOnlyTheChaptersUnderOtherChapters() {
     let failed = ChapterMindMap(
@@ -937,7 +937,7 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(line([drawing]))
   }
 
-  /// As main's `isOpenOnArrival`: "Other chapters" opens on arrival to show a map on its way, and
+  /// As main's `isOpenOnArrival`: "Without a map" opens on arrival to show a map on its way, and
   /// a map that didn't finish with its row's Try again.
   func testOtherChaptersOpensOnArrivalForAMapOnItsWayOrOneThatDidntFinish() {
     func map(_ status: ChapterMindMap.Status) -> ChapterMindMap {
