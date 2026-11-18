@@ -35,7 +35,7 @@ export function AuthFrame({
 }) {
   return (
     <>
-      <div className="absolute inset-x-0 top-0 px-(--page-gutter) [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(6)] lg:[--page-gutter:--spacing(8)]">
+      <div className="absolute inset-x-0 top-0 px-(--page-gutter) [--page-gutter:--spacing(4)]">
         <PageTopBar
           back={
             <Suspense fallback={null}>

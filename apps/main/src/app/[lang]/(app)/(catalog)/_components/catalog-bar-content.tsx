@@ -17,12 +17,15 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
 
   if (learner.status === "visitor") {
     return (
-      <LearnSectionBar
-        back={{ href: "/", label: t("Home") }}
-        end={<PhoneEnd>{visitor}</PhoneEnd>}
-        listed="visitor"
-        title={t("Explore courses")}
-      />
+      <div className="**:data-[slot=back-link]:text-foreground contents">
+        <LearnSectionBar
+          back={{ href: "/", label: "Zoonk" }}
+          end={<PhoneEnd>{visitor}</PhoneEnd>}
+          history="destination"
+          listed="visitor"
+          title={t("Explore courses")}
+        />
+      </div>
     );
   }
 
