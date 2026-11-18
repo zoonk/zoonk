@@ -16,6 +16,7 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePlanStateLine } from "../plan/plan-notice";
+import { DailyTimeValue } from "../plan/plan-properties";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
 import { useStudyDaysText } from "../plan/use-study-days-text";
 
@@ -119,16 +120,10 @@ function PlanWeek() {
   );
 }
 
-function useResumeSchedule() {
-  const t = useExtracted();
+function useResumeScheduleDays() {
   const studyDays = useStudyDaysText();
-  const formatDuration = useFormatDuration();
-  const { dailyMinutes, weekdayMinutes } = usePlanScreen().plan.schedule;
-
-  return {
-    days: studyDays(weekdayMinutes),
-    time: t("{time} a day", { time: formatDuration(dailyMinutes) }),
-  };
+  const { weekdayMinutes } = usePlanScreen().plan.schedule;
+  return studyDays(weekdayMinutes);
 }
 
 export function useScheduleNumber({
@@ -142,11 +137,13 @@ export function useScheduleNumber({
 }) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
-  const schedule = useResumeSchedule();
+  const scheduleDays = useResumeScheduleDays();
+  const formatDuration = useFormatDuration();
+  const { dailyMinutes } = usePlanScreen().plan.schedule;
   const label = t("Schedule");
 
   if (paused) {
-    return { detail: schedule.days, label, value: schedule.time };
+    return { detail: scheduleDays, label, value: <DailyTimeValue /> };
   }
 
   if (status.kind === "pastDate") {
@@ -164,7 +161,10 @@ export function useScheduleNumber({
   }
 
   return {
-    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : schedule.time,
+    detail:
+      status.kind === "needsAdjusting" || timeShownBeside
+        ? null
+        : t("{time} a day", { time: formatDuration(dailyMinutes) }),
     label,
     value: statusText(status),
   };
@@ -186,14 +186,14 @@ export function ScheduleDetails({
   const statusText = usePlanStatusText();
   const stateLine = usePlanStateLine();
 
-  const schedule = useResumeSchedule();
+  const scheduleDays = useResumeScheduleDays();
   const line = paused ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{paused ? schedule.time : statusText(status)}</p>
-        {paused && <p className="text-muted-foreground text-sm">{schedule.days}</p>}
+        <p className="font-medium">{paused ? <DailyTimeValue /> : statusText(status)}</p>
+        {paused && <p className="text-muted-foreground text-sm">{scheduleDays}</p>}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
         {line?.adjust && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">

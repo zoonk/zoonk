@@ -25,7 +25,7 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-function DailyTimeValue() {
+export function DailyTimeValue() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
