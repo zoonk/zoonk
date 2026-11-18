@@ -36,7 +36,7 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
     disposableEmail: t("Temporary emails don't work. Use another."),
     error: t("We couldn't log you in. Try again."),
     idle: "",
-    invalidEmail: t("Enter a valid email address"),
+    invalidEmail: t("Enter a valid email address."),
     rateLimited: t("Too many tries. Try again in a minute."),
   }[state.status];
 

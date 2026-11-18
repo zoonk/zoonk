@@ -220,7 +220,7 @@ export function OTPForm({
   };
 
   return (
-    <AuthForm className="items-center" onSubmit={handleSubmit} ref={formRef}>
+    <AuthForm onSubmit={handleSubmit} ref={formRef}>
       <OTPInput
         aria-label={t("Code from the email")}
         autoFocus

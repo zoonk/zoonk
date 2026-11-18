@@ -29,9 +29,11 @@ async function AuthBackLink({ appUrl }: { appUrl: string | Promise<string> }) {
 export function AuthFrame({
   appUrl,
   children,
+  footer,
 }: {
   appUrl: string | Promise<string>;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
     <>
@@ -46,9 +48,11 @@ export function AuthFrame({
       </div>
 
       <div className="flex w-full max-w-[360px] flex-col items-center gap-6">
-        <ZoonkLogo className="size-8" />
+        {!footer && <ZoonkLogo className="size-8" />}
         {children}
       </div>
+
+      {footer}
     </>
   );
 }
