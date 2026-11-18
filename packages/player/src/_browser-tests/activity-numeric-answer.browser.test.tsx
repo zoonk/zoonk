@@ -51,7 +51,7 @@ describe("activity numeric answers", () => {
     );
   });
 
-  it("keeps a right answer's own digits when the hint's rounding would grade it wrong", async () => {
+  it("shows a right answer with the fewest digits that keep it right", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
 
     openActivity({
@@ -59,17 +59,17 @@ describe("activity numeric answers", () => {
         ...calculator,
         check: {
           ...calculator.check,
-          answer: 251.54,
+          answer: 251.5421,
           tolerance: { kind: "absolute", value: 0.05 },
         },
       },
       template: "formulaModel",
     });
 
-    await valueInput().fill("251.495");
+    await valueInput().fill("251.4922");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(valueInput()).toHaveValue("251.495");
+    await expect.element(valueInput()).toHaveValue("251.492");
   });
 
   it("keeps a field with no rounding rule in place when a typing error shows", async () => {
