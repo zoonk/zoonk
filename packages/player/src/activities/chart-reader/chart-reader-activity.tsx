@@ -156,10 +156,10 @@ export function ChartReaderActivity({
       </ActivityPlot>
 
       <ActivityCanvasLabel className="text-sm">
-        {t("Pick a span to measure it")}
+        {t("Pick a part of the chart to measure it")}
       </ActivityCanvasLabel>
 
-      <ActivitySelectGrid label={t("Spans to measure")}>
+      <ActivitySelectGrid label={t("Parts of the chart to measure")}>
         {fields.spans.map((span) => (
           <ActivitySelectGridItem
             disabled={isChecked}

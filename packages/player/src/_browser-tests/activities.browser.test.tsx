@@ -206,11 +206,11 @@ describe("lesson activities", () => {
 
     await guessOnScale(source.fields, 1);
     await expect.element(page.getByText("Your guess: 1", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("in days", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Unit: days", { exact: true })).toBeVisible();
 
     await expect
       .element(page.getByRole("slider", { name: "Your guess" }))
-      .toHaveAttribute("aria-valuetext", "1. in days");
+      .toHaveAttribute("aria-valuetext", "1. Unit: days");
   });
 
   it("guess then reveal: the computed value shows next to the guess, with its workings", async () => {

@@ -183,10 +183,10 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "音を読み込めませんでした。音符はすべて表示されます。"
 
-#. Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h
+#. Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.
 #: src/activities/_components/guess-format.ts
-msgctxt "rfH5Nn"
-msgid "in {unit}"
+msgctxt "da0cNH"
+msgid "Unit: {unit}"
 msgstr "単位：{unit}"
 
 #: src/activities/_components/guitar-fretboard.tsx
@@ -692,14 +692,14 @@ msgid "{value} per {unit}"
 msgstr "{value}（{unit}あたり）"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "BvV4Lw"
-msgid "Pick a span to measure it"
-msgstr "測りたい区間を選んでください"
+msgctxt "ISwdKr"
+msgid "Pick a part of the chart to measure it"
+msgstr "グラフの測りたい部分を選んでください"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "OmKD_i"
-msgid "Spans to measure"
-msgstr "測定する区間"
+msgctxt "pljLCT"
+msgid "Parts of the chart to measure"
+msgstr "グラフで測る部分"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "CWM6BM"
@@ -1856,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "すべての原子が必要な数だけ結合しています。"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "TFHgRi"
-msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom}を選択中です。別の原子を選ぶと結合できます。元素を選ぶと、新しい原子が結合した状態で追加されます。"
-
-#: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "5EQ069"
 msgid "Pick an atom to select it."
 msgstr "原子を選択してください。"
+
+#: src/activities/molecule-builder/molecule-status.tsx
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "{atom}を選択中です。別の原子を選ぶと結合できます。元素を選ぶと、新しい原子が結合した状態で追加されます。"
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2002,8 +2002,8 @@ msgid "Bar {bar}: {notes}."
 msgstr "{bar}小節目：{notes}。"
 
 #: src/activities/number-line/number-line-activity.tsx
-msgctxt "-s66db"
-msgid "{label} in {unit}"
+msgctxt "6EheS7"
+msgid "{label} ({unit})"
 msgstr "{label}（{unit}）"
 
 #: src/activities/number-line/number-line-activity.tsx
@@ -2722,14 +2722,9 @@ msgid "to"
 msgstr "から"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "rkQXpI"
-msgid "1 of {count} events here, the next comes after"
-msgstr "{count}件の出来事のうち1件を表示しています。置くと次が表示されます"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, other {配置する出来事はあと#件}}"
+msgctxt "HF2MOq"
+msgid "{count, plural, one {# event to place} other {# events to place, one at a time}}"
+msgstr "{count, plural, other {あと#件の出来事を1件ずつ並べます}}"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
@@ -2792,8 +2787,8 @@ msgid "undefined"
 msgstr "未定義"
 
 #: src/components/alphabet-step.tsx
-msgctxt "DGr2DU"
-msgid "Latin spelling"
+msgctxt "V08Uj0"
+msgid "In Latin letters"
 msgstr "ローマ字表記"
 
 #: src/components/alphabet-step.tsx
@@ -2975,7 +2970,6 @@ msgctxt "pHv5DW"
 msgid "Each level sits inside the next one."
 msgstr "各階層は、次の階層の中に入っています。"
 
-#: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
@@ -3861,9 +3855,9 @@ msgid "Questions about this lesson"
 msgstr "このレッスンについての質問"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "qrX_U9"
-msgid "Ask {name} about any screen with a free account"
-msgstr "無料アカウントがあれば、どの画面の内容でも{name}さんに質問できます"
+msgctxt "lzRuXz"
+msgid "With a free account, you can ask about any screen."
+msgstr "無料アカウントがあれば、どの画面についても質問できます。"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

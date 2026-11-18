@@ -183,11 +183,11 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "Der Ton konnte nicht geladen werden. Du kannst weiterhin alle Noten sehen."
 
-#. Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h
+#. Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.
 #: src/activities/_components/guess-format.ts
-msgctxt "rfH5Nn"
-msgid "in {unit}"
-msgstr "in {unit}"
+msgctxt "da0cNH"
+msgid "Unit: {unit}"
+msgstr "Einheit: {unit}"
 
 #: src/activities/_components/guitar-fretboard.tsx
 msgctxt "MgBNC_"
@@ -692,14 +692,14 @@ msgid "{value} per {unit}"
 msgstr "{value} pro {unit}"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "BvV4Lw"
-msgid "Pick a span to measure it"
-msgstr "Wähl einen Abschnitt aus, um ihn zu messen"
+msgctxt "ISwdKr"
+msgid "Pick a part of the chart to measure it"
+msgstr "Wähl einen Teil des Diagramms aus, um ihn zu messen"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "OmKD_i"
-msgid "Spans to measure"
-msgstr "Abschnitte zum Messen"
+msgctxt "pljLCT"
+msgid "Parts of the chart to measure"
+msgstr "Teile des Diagramms zum Messen"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "CWM6BM"
@@ -1856,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "Alle Atome haben ihre möglichen Bindungen."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "TFHgRi"
-msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom} ist ausgewählt. Wähl ein anderes Atom, um beide zu verbinden, oder ein Element, um ein neues Atom hinzuzufügen und mit dem ausgewählten zu verbinden."
-
-#: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "5EQ069"
 msgid "Pick an atom to select it."
 msgstr "Wähl ein Atom aus."
+
+#: src/activities/molecule-builder/molecule-status.tsx
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "{atom} ist ausgewählt. Wähl ein anderes Atom, um beide zu verbinden, oder ein Element, um ein neues Atom hinzuzufügen und mit dem ausgewählten zu verbinden."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2002,9 +2002,9 @@ msgid "Bar {bar}: {notes}."
 msgstr "Takt {bar}: {notes}."
 
 #: src/activities/number-line/number-line-activity.tsx
-msgctxt "-s66db"
-msgid "{label} in {unit}"
-msgstr "{label} in {unit}"
+msgctxt "6EheS7"
+msgid "{label} ({unit})"
+msgstr "{label} ({unit})"
 
 #: src/activities/number-line/number-line-activity.tsx
 msgctxt "BDKQJ4"
@@ -2722,14 +2722,9 @@ msgid "to"
 msgstr "bis"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "rkQXpI"
-msgid "1 of {count} events here, the next comes after"
-msgstr "Hier ist 1 von {count} Ereignissen, danach kommt das nächste"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, one {# Ereignis zu platzieren} other {# Ereignisse zu platzieren}}"
+msgctxt "HF2MOq"
+msgid "{count, plural, one {# event to place} other {# events to place, one at a time}}"
+msgstr "{count, plural, one {# Ereignis zum Einordnen} other {# Ereignisse zum Einordnen, eines nach dem anderen}}"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
@@ -2792,9 +2787,9 @@ msgid "undefined"
 msgstr "nicht definiert"
 
 #: src/components/alphabet-step.tsx
-msgctxt "DGr2DU"
-msgid "Latin spelling"
-msgstr "Lateinische Umschrift"
+msgctxt "V08Uj0"
+msgid "In Latin letters"
+msgstr "In lateinischen Buchstaben"
 
 #: src/components/alphabet-step.tsx
 msgctxt "hd_Nz8"
@@ -2975,7 +2970,6 @@ msgctxt "pHv5DW"
 msgid "Each level sits inside the next one."
 msgstr "Jede Ebene liegt innerhalb der nächstgrößeren."
 
-#: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
@@ -3861,9 +3855,9 @@ msgid "Questions about this lesson"
 msgstr "Fragen zu dieser Lektion"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "qrX_U9"
-msgid "Ask {name} about any screen with a free account"
-msgstr "Mit einem kostenlosen Konto kannst du {name} Fragen zu jeder Seite stellen"
+msgctxt "lzRuXz"
+msgid "With a free account, you can ask about any screen."
+msgstr "Mit einem kostenlosen Konto kannst du zu jeder Seite Fragen stellen."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

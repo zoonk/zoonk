@@ -34,7 +34,7 @@ function AlphabetReading({
   return (
     <div className="flex flex-col gap-1">
       <dl>
-        <dt className="text-muted-foreground text-xs font-medium">{t("Latin spelling")}</dt>
+        <dt className="text-muted-foreground text-xs font-medium">{t("In Latin letters")}</dt>
         <dd className="text-foreground text-xl font-medium">{readingAid}</dd>
       </dl>
       <p className="text-muted-foreground text-sm">{pronunciation}</p>

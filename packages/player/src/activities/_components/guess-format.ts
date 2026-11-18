@@ -12,8 +12,8 @@ export function useGuessFormat(unit?: string) {
     unit && !money
       ? t({
           description:
-            "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h",
-          message: "in {unit}",
+            "Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.",
+          message: "Unit: {unit}",
           values: { unit },
         })
       : null;

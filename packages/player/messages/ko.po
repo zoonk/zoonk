@@ -183,10 +183,10 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "소리를 불러오지 못했어요. 그래도 모든 음표를 볼 수 있어요."
 
-#. Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h
+#. Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.
 #: src/activities/_components/guess-format.ts
-msgctxt "rfH5Nn"
-msgid "in {unit}"
+msgctxt "da0cNH"
+msgid "Unit: {unit}"
 msgstr "단위: {unit}"
 
 #: src/activities/_components/guitar-fretboard.tsx
@@ -692,14 +692,14 @@ msgid "{value} per {unit}"
 msgstr "{value} ({unit}당)"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "BvV4Lw"
-msgid "Pick a span to measure it"
-msgstr "측정할 구간을 골라 보세요"
+msgctxt "ISwdKr"
+msgid "Pick a part of the chart to measure it"
+msgstr "차트에서 측정할 부분을 고르세요"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "OmKD_i"
-msgid "Spans to measure"
-msgstr "측정할 구간"
+msgctxt "pljLCT"
+msgid "Parts of the chart to measure"
+msgstr "차트에서 측정할 부분"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "CWM6BM"
@@ -1856,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "모든 원자의 결합 자리가 채워졌어요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "TFHgRi"
-msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom}을(를) 선택했어요. 결합할 다른 원자를 고르거나, 원소를 골라 이 원자와 결합된 새 원자를 추가하세요."
-
-#: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "5EQ069"
 msgid "Pick an atom to select it."
 msgstr "원자를 선택하세요."
+
+#: src/activities/molecule-builder/molecule-status.tsx
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "{atom}을(를) 선택했어요. 결합할 다른 원자를 고르거나, 원소를 골라 이 원자와 결합된 새 원자를 추가하세요."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2002,8 +2002,8 @@ msgid "Bar {bar}: {notes}."
 msgstr "{bar}번째 마디: {notes}."
 
 #: src/activities/number-line/number-line-activity.tsx
-msgctxt "-s66db"
-msgid "{label} in {unit}"
+msgctxt "6EheS7"
+msgid "{label} ({unit})"
 msgstr "{label} ({unit})"
 
 #: src/activities/number-line/number-line-activity.tsx
@@ -2722,14 +2722,9 @@ msgid "to"
 msgstr "부터"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "rkQXpI"
-msgid "1 of {count} events here, the next comes after"
-msgstr "사건 {count}개 중 1개예요. 배치하면 다음 사건이 나와요"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, other {배치할 사건 #개}}"
+msgctxt "HF2MOq"
+msgid "{count, plural, one {# event to place} other {# events to place, one at a time}}"
+msgstr "{count, plural, =1 {배치할 사건 #개} other {배치할 사건 #개, 하나씩 배치하세요}}"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
@@ -2792,8 +2787,8 @@ msgid "undefined"
 msgstr "정의되지 않음"
 
 #: src/components/alphabet-step.tsx
-msgctxt "DGr2DU"
-msgid "Latin spelling"
+msgctxt "V08Uj0"
+msgid "In Latin letters"
 msgstr "로마자 표기"
 
 #: src/components/alphabet-step.tsx
@@ -2975,7 +2970,6 @@ msgctxt "pHv5DW"
 msgid "Each level sits inside the next one."
 msgstr "각 단계는 다음 단계 안에 들어 있어요."
 
-#: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
@@ -3861,9 +3855,9 @@ msgid "Questions about this lesson"
 msgstr "이 레슨에 대한 질문"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "qrX_U9"
-msgid "Ask {name} about any screen with a free account"
-msgstr "무료 계정으로 어떤 화면에 대해서든 {name}에게 물어보세요"
+msgctxt "lzRuXz"
+msgid "With a free account, you can ask about any screen."
+msgstr "무료 계정이 있으면 어떤 화면에 대해서든 질문할 수 있어요."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
