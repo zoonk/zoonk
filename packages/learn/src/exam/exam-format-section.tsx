@@ -86,7 +86,7 @@ function useDayTitle() {
         {dayDate(day.date, { estimated: exam.daysEstimated })}
       </span>
     ) : (
-      t("Day not set yet")
+      t("Date to be confirmed")
     );
 
     return numbered ? (
