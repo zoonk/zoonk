@@ -43,6 +43,13 @@ class MissionTrackTest {
         assertEquals(listOf(2f / 3 to 1f), facts.progress.fills(facts.justDone))
     }
 
+    @Test
+    fun missionsFinishedTogetherFillOneAfterAnother() {
+        val fills = listOf(0f to 1f, 1f to 1f, 2f / 3 to 1f, 0f to 0f)
+
+        assertEquals(listOf(250, null, 350, null), fillDelays(fills, delayMillis = 250))
+    }
+
     private fun mission(
         kind: StudyMission.Kind,
         done: Boolean,

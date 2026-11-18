@@ -301,6 +301,7 @@ class PlanRevealStepFlowTest {
         navigator.open(SETUP)
         rule.waitForIdle()
 
+        rule.onNodeWithText("Your first week").assertExists()
         rule.onAllNodesWithText("Today").assertCountEquals(0)
     }
 

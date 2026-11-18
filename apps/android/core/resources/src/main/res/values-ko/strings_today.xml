@@ -80,7 +80,6 @@
   "today_progress_known": "f7e3e0cbf04ddd25efa5230d139bc4cf2199344f55b66f9e2b9d759624c43e39",
   "today_progress_lessons_today": "82ec4ee177663cd75e3d8f6239aa45fe99b7f88f4fc12c6709f5f70a89e07d98",
   "today_progress_studied": "fbe6044e2fd0f0a64dc2f12b80c6827e2cba7f613fdaf046f493d92b4b450e44",
-  "today_progress_today": "9268f22417c356be81d06872576401e2cc97bc95420927b55de88b223f6323ca",
   "today_quick_explanation": "a85e7002b6629d1a6be3e94a40ffdc753d3220f853c136016e7db550b4f75c7e",
   "today_reconnect": "b111bcaaf9a5f69b67078c50468e237ab030ba1f49af1475e8ea4fa3acb4b72d",
   "today_rest": "e8e68c8826f857001a1dc6048f368870531db2c7117163d09a0f090e0fc46a30",
@@ -343,8 +342,6 @@
     <string name="today_progress_studied">학습한 것</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
     <string name="today_progress_known">이미 알던 것</string>
-    <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
-    <string name="today_progress_today">오늘</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">다음 레슨</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
