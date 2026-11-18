@@ -53,6 +53,7 @@ describe("the goal menu's trigger", () => {
     await expect.element(page.getByText("Start a goal")).not.toBeInTheDocument();
 
     await trigger.click();
-    await expect.element(page.getByRole("menuitem", { name: "Start a goal" })).toBeVisible();
+    // The test's link stand-in keeps only its address, so the menu's row reads as a link.
+    await expect.element(page.getByRole("link", { name: "Start a goal" })).toBeVisible();
   });
 });
