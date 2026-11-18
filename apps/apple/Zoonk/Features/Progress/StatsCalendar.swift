@@ -9,14 +9,19 @@ struct CalendarDay: Equatable, Sendable {
 }
 
 enum CalendarSteps {
-  /// Relative steps, so a learner tells quieter days from busier ones even while their counts are
-  /// small.
-  static func activity(_ count: Int, maximum: Int) -> Int {
-    guard count > 0, maximum > 0 else {
+  /// Relative steps of time studied, so a learner tells shorter days from longer ones even while
+  /// their minutes are few. A study day with no recorded time (older imported days) takes the
+  /// lightest step.
+  static func activity(studied: Bool, seconds: Int, maximumSeconds: Int) -> Int {
+    guard studied else {
       return 0
     }
 
-    return max(1, Int((Double(count) / Double(maximum) * 4).rounded(.up)))
+    guard maximumSeconds > 0 else {
+      return 1
+    }
+
+    return max(1, Int((Double(seconds) / Double(maximumSeconds) * 4).rounded(.up)))
   }
 
   static func energy(_ energy: Double?) -> Int {

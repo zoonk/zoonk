@@ -1864,6 +1864,12 @@ msgid "Evening"
 msgstr "Soir"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Tu réussis à peu près aussi bien chaque jour."
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "N’importe quand"
@@ -1872,11 +1878,6 @@ msgstr "N’importe quand"
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
 msgstr "Tu réussis le mieux le {day}."
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "ZTJDAv"
-msgid "You answer about the same every day."
-msgstr "Tu réussis à peu près aussi bien chaque jour."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"

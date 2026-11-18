@@ -52,7 +52,7 @@ struct ActivityCalendar: View {
   let days: [ActivityProgressDay]
 
   var body: some View {
-    let maximum = days.map(\.activitiesCompleted).max() ?? 0
+    let maximumSeconds = days.map(\.timeSpentSeconds).max() ?? 0
     let today = PlanDate.today()
 
     StatsCalendar(
@@ -77,10 +77,12 @@ struct ActivityCalendar: View {
       days: days.map { day in
         CalendarDay(
           date: day.date,
-          step: CalendarSteps.activity(day.activitiesCompleted, maximum: maximum),
+          step: CalendarSteps.activity(
+            studied: day.activitiesCompleted > 0, seconds: day.timeSpentSeconds,
+            maximumSeconds: maximumSeconds),
           detail: ChartPointDetail(
             label: PlanDate.text(day.date.id, today: today),
-            value: activityCount(day.activitiesCompleted)),
+            value: studyDetail(day)),
           value: Double(day.activitiesCompleted))
       },
       chartTitle: String(
@@ -95,9 +97,14 @@ struct ActivityCalendar: View {
       })
   }
 
-  private func activityCount(_ count: Int) -> String {
-    count == 0
-      ? String(localized: "No study", table: "Progress", comment: "A calendar day without study")
+  private func studyDetail(_ day: ActivityProgressDay) -> String {
+    if day.activitiesCompleted == 0 {
+      return String(
+        localized: "No study", table: "Progress", comment: "A calendar day without study")
+    }
+
+    return day.timeSpentSeconds > 0
+      ? progressLearningTime(day.timeSpentSeconds)
       : String(localized: "Studied", table: "Progress", comment: "A calendar day with study")
   }
 }

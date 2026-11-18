@@ -4,7 +4,7 @@
   "reminders_cancel": "baa1b31bb43491b70b8889c1958ed44eeb85ec5307990053d579541ea6384671",
   "reminders_channel_description": "5b12b6d95f38f8c18b05a308b1fff5dd3db33c884ae1515a055debcaad5f6870",
   "reminders_channel_name": "e46ed0df0027fd525257accba999c4c5109766ce53fee037750eb0ab4d978f98",
-  "reminders_email": "b17d2c1c0e484f6a6e49fc5f8acf4360fa5ea44d6e6639cf8cb96de637172259",
+  "reminders_email": "bc70b547b552e74910673a401b86100569023564ac1a6cd35d2a35c162b13ed9",
   "reminders_email_instead": "bec618de27f1b0950d03e9f9b95cea9e564301f882ef095d7609297277db322b",
   "reminders_email_needs_account": "302aa96fb48872f869b69852c51bb9dd7351c87930da6daf740ddb6973880278",
   "reminders_email_on": "0b52795d5780667019a9e94bbb0c7123017210367f0400ac5c6c6a48fda04db4",
@@ -71,7 +71,7 @@
     <string name="reminders_title">リマインダー</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">時刻</string>
-    <string name="reminders_email">メールアドレス</string>
+    <string name="reminders_email">メールでのリマインダー</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">アカウントを作成してメールでリマインダーを受け取る</string>
     <string name="reminders_push">プッシュ通知</string>
