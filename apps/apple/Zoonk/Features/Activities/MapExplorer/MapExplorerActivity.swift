@@ -153,11 +153,12 @@ private struct MapExplorerCanvas: View {
     let shown = MapViewport.spread(
       pins.map(\.spot), distance: Self.pinSpacing, in: CGSize(width: width, height: height))
 
+    let naming = MapNaming(
+      map: map, crop: crop, scale: scale, question: question, references: references,
+      pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) })
+
     ZStack(alignment: .topLeading) {
-      MapShapes(
-        map: map, crop: crop, scale: scale,
-        pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
-      )
+      MapShapes(naming: naming)
       .accessibilityElement()
       .accessibilityLabel(textAlternative)
 
@@ -165,10 +166,7 @@ private struct MapExplorerCanvas: View {
         self.pin(pin.place, number: pin.index + 1)
           .position(shown[order])
       }
-      MapLabels(
-        map: map, crop: crop, scale: scale, question: question, references: references,
-        pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
-      )
+      MapLabels(naming: naming)
       .allowsHitTesting(false)
       .accessibilityHidden(true)
     }
@@ -228,15 +226,13 @@ private struct MapExplorerCanvas: View {
 
 /// Mirrors main's `BaseMapView`.
 private struct MapShapes: View {
-  let map: ActivityBaseMap
-  let crop: CGRect
-  let scale: Double
-  let pins: [(spot: CGPoint, shown: CGPoint)]
+  let naming: MapNaming
 
   var body: some View {
     Canvas { context, size in
-      let transform = CGAffineTransform(scaleX: scale, y: scale)
-        .translatedBy(x: -crop.minX, y: -crop.minY)
+      let map = naming.map
+      let transform = naming.transform
+      let unnamed = naming.unnamedRegions(naming.layout(in: context, size: size).spots)
 
       func path(_ data: String) -> Path {
         svg(data).applying(transform)
@@ -246,7 +242,7 @@ private struct MapShapes: View {
         context.fill(path(sphere), with: .color(ActivityBaseMap.Tone.water))
       }
 
-      for region in map.regions {
+      for (index, region) in map.regions.enumerated() where !unnamed.contains(index) {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
@@ -268,7 +264,7 @@ private struct MapShapes: View {
           with: .color(Color.vizGrid), lineWidth: 1)
       }
 
-      for pin in pins {
+      for pin in naming.pins {
         if pin.spot != pin.shown {
           var line = Path()
           line.move(to: pin.spot)
@@ -284,54 +280,87 @@ private struct MapShapes: View {
   }
 }
 
-private struct MapLabels: View {
+/// Where the map's names go, measured as the labels draw them. The shapes read it too, so a
+/// colored block whose name can't be placed isn't drawn unnamed.
+private struct MapNaming {
   let map: ActivityBaseMap
   let crop: CGRect
   let scale: Double
   let question: String
   let references: String
   let pins: [(spot: CGPoint, shown: CGPoint)]
+
+  var transform: CGAffineTransform {
+    CGAffineTransform(scaleX: scale, y: scale).translatedBy(x: -crop.minX, y: -crop.minY)
+  }
+
+  func layout(in context: GraphicsContext, size: CGSize) -> (
+    texts: [Text], spots: [MapViewport.Placement?]
+  ) {
+    let transform = self.transform
+    func path(_ data: String) -> Path { svg(data).applying(transform) }
+    let texts = map.labels.map { label in
+      MapWords.label(key: label.key, text: label.text).font(
+        (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
+          in: context.environment))
+    }
+    let streetPaths = map.streets.map { streetPositions(path($0.path)) }
+    let labels = map.labels.enumerated().map { index, label in
+      let positions = map.streets.firstIndex { $0.name == label.text }.map { streetPaths[$0] }
+      return MapViewport.Label(
+        center: CGPoint(x: label.x, y: label.y).applying(transform),
+        size: context.resolve(texts[index]).measure(
+          in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
+        street: label.kind == .street,
+        priority: MapViewport.isNamed(
+          references: references, source: label.text,
+          text: String(
+            localized: String.LocalizationValue(label.text), table: "Activities",
+            locale: context.environment.locale)),
+        positions: positions,
+        question: MapViewport.isNamed(
+          references: question, source: label.text,
+          text: String(
+            localized: String.LocalizationValue(label.text), table: "Activities",
+            locale: context.environment.locale))
+      )
+    }
+    let pinFont = mapPinNumberStyle.uiFont(
+      context.environment.dynamicTypeSize, legibility: context.environment.legibilityWeight)
+    let pinNumbers = pins.enumerated().map { index, pin in
+      let size = (String(index + 1) as NSString).size(withAttributes: [.font: pinFont])
+      return CGRect(
+        x: pin.shown.x - size.width / 2, y: pin.shown.y - size.height / 2, width: size.width,
+        height: size.height)
+    }
+    let spots = MapViewport.placeLabels(
+      labels, pins: pins.map(\.shown), frame: size, streets: streetPaths, pinNumbers: pinNumbers)
+    return (texts, spots)
+  }
+
+  /// The colored regions whose name has no room on the map.
+  func unnamedRegions(_ spots: [MapViewport.Placement?]) -> Set<Int> {
+    Set(
+      map.regions.indices.filter { index in
+        let region = map.regions[index]
+        guard region.tone != .context, region.tone != .focus else { return false }
+        let bounds = svg(region.path).boundingRect
+        let names = map.labels.indices.filter {
+          map.labels[$0].kind == .region
+            && bounds.contains(CGPoint(x: map.labels[$0].x, y: map.labels[$0].y))
+        }
+        return !names.isEmpty && names.allSatisfy { spots[$0] == nil }
+      })
+  }
+}
+
+private struct MapLabels: View {
+  let naming: MapNaming
+
   var body: some View {
     Canvas { context, size in
-      let transform = CGAffineTransform(scaleX: scale, y: scale).translatedBy(
-        x: -crop.minX, y: -crop.minY)
-      func path(_ data: String) -> Path { svg(data).applying(transform) }
-      let texts = map.labels.map { label in
-        MapWords.label(key: label.key, text: label.text).font(
-          (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
-            in: context.environment))
-      }
-      let streetPaths = map.streets.map { streetPositions(path($0.path)) }
-      let labels = map.labels.enumerated().map { index, label in
-        let positions = map.streets.firstIndex { $0.name == label.text }.map { streetPaths[$0] }
-        return MapViewport.Label(
-          center: CGPoint(x: label.x, y: label.y).applying(transform),
-          size: context.resolve(texts[index]).measure(
-            in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
-          street: label.kind == .street,
-          priority: MapViewport.isNamed(
-            references: references, source: label.text,
-            text: String(
-              localized: String.LocalizationValue(label.text), table: "Activities",
-              locale: context.environment.locale)),
-          positions: positions,
-          question: MapViewport.isNamed(
-            references: question, source: label.text,
-            text: String(
-              localized: String.LocalizationValue(label.text), table: "Activities",
-              locale: context.environment.locale))
-        )
-      }
-      let pinFont = mapPinNumberStyle.uiFont(
-        context.environment.dynamicTypeSize, legibility: context.environment.legibilityWeight)
-      let pinNumbers = pins.enumerated().map { index, pin in
-        let size = (String(index + 1) as NSString).size(withAttributes: [.font: pinFont])
-        return CGRect(
-          x: pin.shown.x - size.width / 2, y: pin.shown.y - size.height / 2, width: size.width,
-          height: size.height)
-      }
-      let spots = MapViewport.placeLabels(
-        labels, pins: pins.map(\.shown), frame: size, streets: streetPaths, pinNumbers: pinNumbers)
+      let map = naming.map
+      let (texts, spots) = naming.layout(in: context, size: size)
       for (index, label) in map.labels.enumerated() {
         guard let point = spots[index] else { continue }
         let text = texts[index]
@@ -361,7 +390,7 @@ private struct MapLabels: View {
 
 extension ActivityBaseMap.Tone {
   /// Main's `viz-accent`, the pins' color.
-  static var pin: Color { .teal }
+  static var pin: Color { .vizAccent }
   /// Main's `viz-secondary-soft`, the sea around a map.
   static var water: Color { .purple.opacity(0.14) }
 
