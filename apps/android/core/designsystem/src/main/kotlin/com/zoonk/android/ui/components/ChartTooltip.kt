@@ -153,11 +153,14 @@ private fun ChartInspector.shownRows(layout: LayoutCoordinates): IntRange? {
     return ceil(shown.top).toInt()..floor(shown.bottom).toInt()
 }
 
-/** The rows a tooltip may use: the part of the page [shown] in this layout's coordinates, else the layout's own [height]. */
+/**
+ * The rows a tooltip may use, in this layout's coordinates: up into the part of the page [shown] above the chart, as
+ * main's tooltip opens over what's above it, and down to the chart's own bottom, past which the page's next part draws over it.
+ */
 internal fun tooltipRoom(
     shown: IntRange?,
     height: Int,
-): IntRange = shown?.let { maxOf(0, it.first)..minOf(height, it.last) } ?: 0..height
+): IntRange = shown?.let { it.first..minOf(height, it.last) } ?: 0..height
 
 /**
  * Where a [card] goes beside [point] in a layout [width] wide, kept within the rows of [room], or
