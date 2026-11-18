@@ -426,7 +426,7 @@ private struct BuddyContent: View {
       isWearing = true
     } label: {
       Label {
-        Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+        Text("\(name)'s glasses", tableName: "Buddy")
       } icon: {
         Image(systemName: "eyeglasses")
       }
