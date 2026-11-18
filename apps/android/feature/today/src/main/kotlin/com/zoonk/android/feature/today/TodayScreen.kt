@@ -42,6 +42,7 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.feature.plan.ResumeFailure
@@ -349,9 +350,33 @@ private fun GoalAtRest(
     summary: LearnerSummary?,
     padding: PaddingValues,
 ) {
-    val goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId }
+    GoalAtRestPage(
+        goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId },
+        completedLessons = summary?.places?.completedLessons == true,
+        viewModel = viewModel,
+        today = app.today,
+        mocks = app.mocks,
+        padding = padding,
+        navigate = navigator::open,
+        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
+        resume = { ResumeEffect(app, it) },
+    )
+}
 
-    val newGoal = { navigator.open(AppRoute.StartGoal()) }
+/** [goal] is the active one, finished or paused; [resume] keeps a paused one's resume preview in step. */
+@Composable
+internal fun GoalAtRestPage(
+    goal: LearnerSummaryGoal?,
+    completedLessons: Boolean,
+    viewModel: TodayViewModel,
+    today: TodayStore,
+    mocks: MockStore,
+    padding: PaddingValues,
+    navigate: (AppRoute) -> Unit,
+    banner: @Composable () -> Unit = {},
+    resume: @Composable (LearnerSummaryGoal) -> Unit = {},
+) {
+    val newGoal = { navigate(AppRoute.StartGoal()) }
 
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
@@ -364,7 +389,7 @@ private fun GoalAtRest(
 
     TodayAtRest(
         padding = padding,
-        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
+        banner = banner,
         icon = R.drawable.ic_pause,
         sentence =
             goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
@@ -372,8 +397,17 @@ private fun GoalAtRest(
         statusAsCard = true,
         detail = {
             if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
-                ResumeEffect(app, goal)
-                PausedPractice(app.today, app.mocks, goal, summary.places.completedLessons, navigator::open)
+                resume(goal)
+                // A mock or a call starts only on an active goal, so a paused one offers neither.
+                TodayPractice(
+                    today,
+                    mocks,
+                    goal.id,
+                    isExam = false,
+                    isLanguage = false,
+                    completedLessons = completedLessons,
+                    navigate = navigate,
+                )
             }
         },
         failure =
