@@ -362,7 +362,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
     { titles: ["Reactions"], which: "underFold" },
     { titles: ["Atoms", "Reactions"], which: "both" },
   ] as const)(
-    "shows every map that didn't finish as a row with its own Try again, on arrival: $which",
+    "shows every map that didn't finish as a row with its own Try again, read with only its chapter, on arrival: $which",
     async ({ titles, which }) => {
       render(<Screen actions={actionsWith({})} served={failedView(which)} />);
 
@@ -378,6 +378,17 @@ describe("the Mind maps page's gate is the list's offer", () => {
               .getByRole("button", { name: "Try again" }),
           )
           .toBeVisible();
+
+        // A retry writes nothing it didn't already count, so it reads only its chapter.
+        // oxlint-disable-next-line no-await-in-loop -- One row after the other.
+        await expect
+          .element(
+            notMade()
+              .getByRole("listitem")
+              .filter({ hasText: title })
+              .getByRole("button", { name: "Try again" }),
+          )
+          .toHaveAccessibleDescription(title);
       }
     },
   );
