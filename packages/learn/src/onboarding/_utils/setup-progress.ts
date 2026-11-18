@@ -44,8 +44,8 @@ export function getSetupProgress({
   history,
   view,
 }: ProgressInput): { current: number; total: number } | null {
-  const countKnown = ![current, ...view.steps].some((step) =>
-    QUESTIONS_THAT_ADD_QUESTIONS.includes(step),
+  const countKnown = ![current, ...view.steps].some(
+    (step) => step === "reason" || QUESTIONS_THAT_ADD_QUESTIONS.includes(step),
   );
 
   if (!isSetupQuestion(current) || isProfileQuestion(current) || !countKnown) {

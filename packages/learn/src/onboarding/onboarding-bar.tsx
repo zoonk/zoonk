@@ -109,6 +109,7 @@ export function OnboardingPageBar({
           {barEnd}
         </>
       }
+      middle={bar.middle}
       back={
         <>
           {/* `data-onboarding-bar` keeps the frame's first paint from drawing the tab bar under onboarding. */}
@@ -117,12 +118,6 @@ export function OnboardingPageBar({
             <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />
           ) : (
             <TaskClose href={backHref} toApp />
-          )}
-          {/* Centered on the bar's row: 12px over it, half of its 44px. */}
-          {bar.middle && (
-            <div className="absolute top-8.5 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              {bar.middle}
-            </div>
           )}
         </>
       }

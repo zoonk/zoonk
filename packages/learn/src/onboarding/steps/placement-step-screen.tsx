@@ -60,6 +60,7 @@ export function PlacementStepScreen({
       onFinishFailed={onFinishFailed}
       run={run}
       subject={subject}
+      testMinutes={view.quickTestMinutes}
     />
   );
 }

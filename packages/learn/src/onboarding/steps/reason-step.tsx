@@ -28,7 +28,7 @@ function ReasonWords({
 
   return (
     <TextField
-      label={reason === "certificate" ? t("Which certificate?") : t("In your own words")}
+      label={reason === "certificate" ? t("Which exam?") : t("In your own words")}
       onChange={onChange}
       value={value}
     />

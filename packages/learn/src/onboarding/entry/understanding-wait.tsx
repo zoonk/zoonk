@@ -1,11 +1,16 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  GenerationTimeline,
+  GenerationTimelineHeader,
+  GenerationTimelineProgress,
+} from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { FollowedRun } from "../../generation/generation-follower";
 import { type GenerationRun } from "../../generation/generation-run";
-import { GenerationWait } from "../../generation/generation-wait";
+import { GenerationFailureNotice, useGenerationProgress } from "../../generation/generation-wait";
 import { useVisibleWait } from "../../generation/use-visible-wait";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError } from "../goal-errors";
@@ -34,6 +39,7 @@ function UnderstandingWaitScreen({
 }) {
   const t = useExtracted();
   const { track } = useLearnAnalytics();
+  const progress = useGenerationProgress({ kind: "understanding", run, since });
 
   useVisibleWait({
     attemptId,
@@ -47,12 +53,24 @@ function UnderstandingWaitScreen({
     <OnboardingColumn>
       <TypedGoal goal={goal} />
 
-      <GenerationWait kind="understanding" run={run} since={since}>
-        <OnboardingHeading>
-          <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
-          <OnboardingDescription>{t("We're reading your goal")}</OnboardingDescription>
-        </OnboardingHeading>
-      </GenerationWait>
+      <GenerationTimeline>
+        <GenerationTimelineHeader>
+          <OnboardingHeading>
+            <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
+            <OnboardingDescription>
+              {t("Next, we'll show you what we understood.")}
+            </OnboardingDescription>
+          </OnboardingHeading>
+          <GenerationTimelineProgress
+            aria-label={t("Understanding your goal")}
+            value={progress}
+            weights={[1]}
+          />
+        </GenerationTimelineHeader>
+        {run.status === "failed" && (
+          <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
+        )}
+      </GenerationTimeline>
     </OnboardingColumn>
   );
 }

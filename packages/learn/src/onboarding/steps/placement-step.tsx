@@ -155,6 +155,7 @@ export function PlacementStep({
   onFinishFailed,
   run,
   subject,
+  testMinutes,
 }: {
   actions: OnboardingActions;
   goalId: string;
@@ -164,6 +165,7 @@ export function PlacementStep({
   onFinishFailed: (failed: boolean) => void;
   run: GenerationRun | null;
   subject: string;
+  testMinutes: number;
 }) {
   const { countAnswer, phase, reopen, setPhase, showReady, start } = useResumedPlacement({
     actions,
@@ -273,6 +275,7 @@ export function PlacementStep({
           pending={isPending}
           starting={isStarting}
           subject={subject}
+          testMinutes={testMinutes}
         />
       );
     case "waiting":

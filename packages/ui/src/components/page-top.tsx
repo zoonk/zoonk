@@ -62,12 +62,14 @@ function BackLink({
 function PageTopBar({
   actions,
   back,
+  middle,
   ref,
 }: {
   /** The page's own actions, at the bar's end, 8px apart: `Button size="bar"`, or `"icon-bar"` for a glyph alone. */
   actions?: React.ReactNode;
   /** A `BackLink` to the parent page; a page with no parent has none. */
   back?: React.ReactNode;
+  middle?: React.ReactNode;
   ref?: React.Ref<HTMLDivElement>;
 }) {
   const scrolled = useScrolled();
@@ -81,13 +83,19 @@ function PageTopBar({
       data-slot="page-top-bar"
       ref={ref}
     >
-      <div className="flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="relative flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2">
         <div
           className="flex min-w-(--bar-start-min,0px) grow basis-0 items-center gap-3"
           data-slot="page-top-start"
         >
           {back}
         </div>
+
+        {middle && (
+          <div className="pointer-events-none absolute top-5.5 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            {middle}
+          </div>
+        )}
 
         <div
           className="ms-auto flex shrink-0 items-center justify-end gap-2"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { useFormatDuration } from "../../_utils/time-format";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -16,14 +17,17 @@ export function PlacementIntro({
   pending,
   starting,
   subject,
+  testMinutes,
 }: {
   onScratch: () => void;
   onStart: () => void;
   pending: boolean;
   starting: boolean;
   subject: string;
+  testMinutes: number;
 }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
 
   return (
     <OnboardingColumn
@@ -41,6 +45,9 @@ export function PlacementIntro({
         <OnboardingTitle>{t("Already know some of this?")}</OnboardingTitle>
         <OnboardingDescription>
           {t("A short test finds the lessons you don't need.")}
+        </OnboardingDescription>
+        <OnboardingDescription>
+          {t("About {time}", { time: formatDuration(testMinutes) })}
         </OnboardingDescription>
       </OnboardingHeading>
     </OnboardingColumn>

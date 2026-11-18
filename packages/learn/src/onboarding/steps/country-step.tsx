@@ -78,6 +78,7 @@ export function CountryStep({
   return (
     <StepForm
       canContinue={picked !== null}
+      description={t("We use it for examples, money and units in your lessons.")}
       notice={lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
       onContinue={() => picked && onAnswer({ country: picked.code, question: "contentCountry" })}
       onSkip={() => onAnswer({ country: null, question: "contentCountry" })}
