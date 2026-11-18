@@ -12,6 +12,7 @@ import {
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
 import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
+import { CodeLineNumber } from "./activity-code-gutter";
 import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
@@ -90,12 +91,7 @@ export function ActivityCodeLine({
       data-tone={tone}
       {...props}
     >
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground pr-3 text-right tabular-nums select-none"
-      >
-        {number}
-      </span>
+      <CodeLineNumber number={number} />
       <div className="min-w-0">{children}</div>
     </div>
   );
@@ -197,26 +193,20 @@ export function ActivityCodeEditor({
       <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
         <div
           className={cn("grid w-full grid-cols-[max-content_minmax(0,1fr)] px-3 py-3", CODE_TEXT)}
+          style={{ gridTemplateRows: `repeat(${lines.length}, auto)` }}
         >
-          <div
-            aria-hidden="true"
-            className="text-muted-foreground col-start-1 row-start-1 pr-3 text-right tabular-nums select-none"
-          >
-            {keyedByPosition(lines, (line) => line).map(({ key }, index) => (
-              <div key={key}>{index + 1}</div>
-            ))}
-          </div>
+          {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }, index) => (
+            <div aria-hidden="true" className="contents" key={key}>
+              <CodeLineNumber number={index + 1} style={{ gridRow: index + 1 }} />
 
-          <div
-            aria-hidden="true"
-            className="col-start-2 row-start-1 wrap-anywhere whitespace-pre-wrap"
-          >
-            {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
-              <div key={key}>
+              <div
+                className="col-start-2 wrap-anywhere whitespace-pre-wrap"
+                style={{ gridRow: index + 1 }}
+              >
                 <ActivityCodeTokens tokens={item} />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
 
           <textarea
             autoCapitalize="off"
@@ -224,7 +214,7 @@ export function ActivityCodeEditor({
             autoCorrect="off"
             className={cn(
               FIELD_RESET,
-              "col-start-2 min-h-lh w-full wrap-anywhere whitespace-pre-wrap [font:inherit]",
+              "col-start-2 row-span-full min-h-lh w-full wrap-anywhere whitespace-pre-wrap [font:inherit]",
             )}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {
