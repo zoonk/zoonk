@@ -8,6 +8,9 @@ import SwiftUI
 ///
 /// Rows are main's `ListRowContent`, at least 44pt high, rather than a plain list's 52pt. A row that
 /// sets its own insets keeps them.
+/// The space between a page list's sections.
+let listSectionGap: CGFloat = 24
+
 struct ZoonkList<Content: View>: View {
   @ViewBuilder let content: Content
 
@@ -36,7 +39,7 @@ struct ZoonkList<Content: View>: View {
     .modifier(ListRowTrailingHost())
     .modifier(ListRowTrailingScope())
     .listStyle(.plain)
-    .listSectionSpacing(24)
+    .listSectionSpacing(listSectionGap)
     .environment(\.defaultMinListRowHeight, 44)
     .pageColumn()
     .headsPage()

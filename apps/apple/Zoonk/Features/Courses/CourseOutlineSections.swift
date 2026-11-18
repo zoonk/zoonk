@@ -96,6 +96,10 @@ struct CourseOutlineSections: View {
       (estimate?.chapters ?? []).compactMap { place in place.area.map { (place.chapterID, $0) } },
       uniquingKeysWith: { first, _ in first })
 
+    // A heading with nothing under it of its own heads the first part of the outline: the section's
+    // gap goes above it instead of between them.
+    let headsOutline = lead == nil && !chapters.isEmpty
+
     Section {
       if let lead {
         Text(lead)
@@ -120,7 +124,9 @@ struct CourseOutlineSections: View {
           FactSegments(size)
         }
       }
+      .padding(.top, headsOutline ? listSectionGap : 0)
     }
+    .listSectionSpacing(headsOutline ? 0 : listSectionGap)
 
     if case .byDate(let areas) = estimate?.reach, !chapters.isEmpty {
       CourseAreaOutline(
