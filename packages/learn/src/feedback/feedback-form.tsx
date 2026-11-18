@@ -165,28 +165,28 @@ export function FeedbackForm({
   const email = (viewerEmail ?? typedEmail).trim();
   const isSaveReport = context.reportType === "saveFailure";
 
-  // React clears the form after every send, so a failed one gives the message back as its default.
-  const [{ message: unsentMessage, status }, formAction, isPending] = useActionState<
-    { message: string; status: FormStatus },
-    FormData
-  >(
+  const [draft, setDraft] = useState(isSaveReport ? t("I couldn't save my answers.") : "");
+  const sendDisabled = viewerEmail === undefined || draft.trim() === "";
+
+  const [status, formAction, isPending] = useActionState<FormStatus, FormData>(
     async (_state, formData) => {
       const message = parseFormField(formData, "message") ?? "";
 
       if (!feedback || (!isSaveReport && !email) || !message) {
-        return { message, status: "error" };
+        return "error";
       }
 
       const result = await sendMessage({ context, email, feedback, message });
 
       if (result === "success") {
+        const submitted = formData.get("message");
+        setDraft((current) => (current === submitted ? "" : current));
         onSent?.();
-        return { message: "", status: result };
       }
 
-      return { message, status: result };
+      return result;
     },
-    { message: isSaveReport ? t("I couldn't save my answers.") : "", status: "idle" },
+    "idle",
   );
 
   return (
@@ -197,11 +197,12 @@ export function FeedbackForm({
             <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
             <Textarea
               className="min-h-32"
-              defaultValue={unsentMessage}
               id={messageId}
               name="message"
+              onChange={(event) => setDraft(event.target.value)}
               placeholder={t("How can we help you?")}
               required
+              value={draft}
             />
 
             <FieldDynamicDescription
@@ -228,7 +229,7 @@ export function FeedbackForm({
 
         {layout === "dialog" && (
           <div className="flex sm:justify-end">
-            <SendButton busy={isPending} disabled={viewerEmail === undefined} />
+            <SendButton busy={isPending} disabled={sendDisabled} />
           </div>
         )}
       </form>
@@ -238,7 +239,7 @@ export function FeedbackForm({
       {layout === "page" && (
         <BottomBar>
           <BottomBarActions>
-            <SendButton busy={isPending} disabled={viewerEmail === undefined} form={formId} />
+            <SendButton busy={isPending} disabled={sendDisabled} form={formId} />
           </BottomBarActions>
         </BottomBar>
       )}

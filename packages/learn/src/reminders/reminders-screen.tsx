@@ -30,11 +30,13 @@ function applyChange(reminder: StudyReminderView, change: ReminderChange): Study
 }
 
 function TimeSetting({
+  disabled,
   namesZone,
   onChange,
   time,
   timeZone,
 }: {
+  disabled: boolean;
   namesZone: boolean;
   onChange: (time: string) => void;
   time: string;
@@ -62,8 +64,10 @@ function TimeSetting({
     >
       <ReminderTimeSelect
         aria-describedby={zone ? zoneId : undefined}
+        disabled={disabled}
         id={selectId}
         onChange={onChange}
+        size="default"
         time={time}
       />
     </SettingRow>
@@ -76,7 +80,7 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
   return (
     <SettingRow description={t("Create an account to get email reminders")} label={t("Email")}>
       <PendingLink
-        className={buttonVariants({ size: "sm", variant: "outline" })}
+        className={buttonVariants({ size: "lg", variant: "outline" })}
         data-account-ask
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
@@ -101,6 +105,7 @@ export function RemindersScreen({
   const t = useExtracted();
   const [view, applyOptimistic] = useOptimistic(reminder, applyChange);
   const { run } = useOptimisticSave();
+  const isOff = !(view.email.on || view.push.on);
 
   const change = (next: ReminderChange) =>
     run(
@@ -113,6 +118,7 @@ export function RemindersScreen({
       <div className="flex flex-col gap-3">
         <ListGroup>
           <TimeSetting
+            disabled={isOff}
             // Nothing is sent to a guest without the phone app, so no clock needs naming.
             namesZone={Boolean(view.email.address ?? view.push.phone)}
             onChange={(time) => change({ time })}
@@ -141,15 +147,16 @@ export function RemindersScreen({
           )}
         </ListGroup>
 
-        {!view.push.phone && (
-          <PageSectionFooter>
-            {t({
-              description:
-                "Stands in for the Push notifications row: name them in the same words as that row",
-              message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
-            })}
-          </PageSectionFooter>
-        )}
+        <PageSectionFooter aria-live="polite" className="empty:hidden">
+          {isOff
+            ? t("Reminders are off.")
+            : !view.push.phone &&
+              t({
+                description:
+                  "Stands in for the Push notifications row: name them in the same words as that row",
+                message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
+              })}
+        </PageSectionFooter>
       </div>
 
       {view.quiet && (
