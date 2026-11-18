@@ -384,6 +384,18 @@ describe("science activities", () => {
     expect(choiceKeys.length).toBeGreaterThan(0);
     expect(choiceKeys.map((key) => getComputedStyle(key).visibility)).not.toContain("visible");
 
+    expect(
+      page
+        .getByRole("radio")
+        .elements()
+        .map((radio) => radio.getAttribute("aria-keyshortcuts")),
+    ).toStrictEqual(
+      page
+        .getByRole("radio")
+        .elements()
+        .map(() => null),
+    );
+
     await userEvent.keyboard("1");
 
     await expect.element(page.getByRole("radio", { checked: true })).not.toBeInTheDocument();
