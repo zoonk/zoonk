@@ -187,8 +187,8 @@ internal data class LessonCounts(
 internal enum class LessonCell { Studied, Known, Today, Rest }
 
 /**
- * Main's `getLessonCells`: at most [MAX_CELLS] cells, each one whole state. A cell stands for as many lessons as it
- * takes once the plan is longer, and each state takes its share of the cells.
+ * At most [MAX_CELLS] cells, each one whole state. A cell stands for as many lessons as it takes once the plan is
+ * longer, and each state takes its share of the cells.
  */
 internal fun lessonCells(counts: LessonCounts): List<LessonCell> {
     val (known, studied, today, total) = counts

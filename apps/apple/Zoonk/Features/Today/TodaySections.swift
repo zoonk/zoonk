@@ -997,7 +997,7 @@ struct TodayProgressSection: View {
         comment: "Lessons studied, under the goal's progress")
   }
 
-  /// Main's `LessonCells`: whole cells, studied, known, today's outlined, then the rest.
+  /// Whole cells: studied, known, today's outlined, then the rest.
   private func cells(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
     let known = min(lessons.done, known)
     let today = min(lessons.today, max(0, lessons.total - lessons.done))
