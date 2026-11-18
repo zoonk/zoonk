@@ -47,7 +47,6 @@ import com.zoonk.android.ui.components.SuggestionFrame
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
-import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.rememberMoveFocus
@@ -494,13 +493,15 @@ internal fun Slot.shownAnswer(item: SlotItem): SlotAnswer? {
     return SlotAnswer(text, answer.change, edits) { focus.next = true }
 }
 
-/** Main's `PlanChangeSuggestion`: a change to offer, which says what it did, with Undo, once applied. */
+/**
+ * Main's `PlanChangeSuggestion`: a change to offer, one card at every width with what it changes and its
+ * answers in place, which says what it did, with Undo, once applied.
+ */
 @Composable
 internal fun PlanChangeSuggestion(
     item: SlotItem,
     title: String,
     slot: Slot,
-    mark: SuggestionMark = SuggestionMark.New,
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
     val answer = slot.shownAnswer(item)
@@ -508,12 +509,8 @@ internal fun PlanChangeSuggestion(
     Suggestion(
         label = stringResource(R.string.plan_suggestion),
         summary = answer?.text ?: title,
-        layout = slot.layout,
-        mark = if (answer != null) SuggestionMark.Done else mark,
+        layout = SuggestionLayout.Panel,
         answered = answer != null,
-        failed = answer?.failed == true,
-        lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen() }),
-        failure = stringResource(R.string.plan_undo_failed),
     ) {
         if (answer != null) {
             SuggestionHeader(stringResource(R.string.plan_updated))
