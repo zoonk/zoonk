@@ -294,7 +294,6 @@
   "plan_going_deeper": "94fb0cff69cebfe4114dc7eda9f884837ed8d4d7e83be869c1e4eaaf323f3d46",
   "plan_how_calculated": "25827d5969869d99dfe361df9fc4b07849612b7a6ebfa656275201902691f853",
   "plan_keep_studying": "716930c38be9bec15a782e37c666f8fcec348cc911d62a9d833bc6c04bc5c032",
-  "plan_last_week_recap": "e526e6d309aa663bc10fe506f0f4840df302a1fdd55d86564f3caa89a16c37c6",
   "plan_lessons": "65b934f8502d6bae30024110402ab5c46f99ce9fed92f06c648472609e95628f",
   "plan_lessons_done_of": "c7f221d32f4f021ec452747cc7279169daec5bc7cf62bd844598a18f274f403a",
   "plan_lessons_left": "55a24c068ae0992093647424252421bc3c72a3d3281bebb4daf8f970bb5958e0",
@@ -418,7 +417,7 @@
   "plan_short_mock_and_review": "a5c37162ef3becb7457f1e65b8ce811616f4f4c7c685e440fc5ab3e0480ce640",
   "plan_show_fewer_chapters": "f967a7eea2ea8177d80b1c5e1e4f823099a73a6a5854b172e8f76421c84ea751",
   "plan_show_fewer_units": "86b4669c8bc32ae169b7b9d3b69f45f62dea420eb6fe02e96c4539e3cf678011",
-  "plan_skills_you_know": "c7a4cff9990c6dd05496794d0c6699d0b49ed4da240a7c8bc2879b0b22975d3a",
+  "plan_skills_you_know": "09150d9b7313d9a1dffd3d701caf658299b96017e7a7f21fb31e437c00d5efb6",
   "plan_skipped": "f2ec8ebeb085a46e5351f009d3ac2d5d1d4ee5e2900542e0eec5a4564bc4b43f",
   "plan_skipped_known": "0ccb7daa5200f64766a14f71c442fba9dc6697ae31a1080921634bfb3527aa19",
   "plan_stays_as_it_is": "c8a2b7c39f6b20740e7efda0e62813cd2ab29ddb62c26e52b9153ce29185b543",
@@ -436,7 +435,6 @@
   "plan_suggestion_previous": "62cec93ba77f7e0f9fbc5299000b62f7b1b69bec7ba48209a1365830ce0c7b62",
   "plan_sundays": "769466baec8f2aecd8ada2a16b48cc8455b26d9f749a6b367164e29cad75f68b",
   "plan_system_phone": "602eeda2741b6cdcb14374bb17df0498af8fbcc8fec1b7b6288c0f19283b01f7",
-  "plan_talk_to": "af3ac44b04d228e388421f56ee17ceac5ff257a0572d5a985eccf143a3456a42",
   "plan_tests_taken": "097d1139eeecfa87849accc709b81dd47630d304248e3ee0ff935b8f10a41c30",
   "plan_this_week": "711721e0d9252c9ab4fbcce3378696713200538ee32e1701892fb69feb7139ca",
   "plan_thursdays": "40fa8d2e25c9b31fa6fb22721a4a676d6815eae0395597d3bdcfe89891d70928",
@@ -575,7 +573,6 @@
     <string name="plan_about_exam">試験について</string>
     <string name="plan_full_course">コース全体を見る</string>
     <string name="plan_share">学習計画を共有する</string>
-    <string name="plan_talk_to">%1$sと話す</string>
     <string name="plan_rename_goal">目標の名前を変更</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">名前</string>
@@ -638,7 +635,7 @@
     <string name="plan_skipped">スキップ</string>
     <string name="plan_done">完了</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="other">もともと知っていた%d個のスキル</item>
+        <item quantity="other">もともと知っていた%d章</item>
     </plurals>
     <string name="plan_more_lessons">ほかのレッスン</string>
     <string name="plan_lessons_on_the_way">レッスンを準備しています</string>
@@ -772,7 +769,6 @@
     <string name="plan_day_rest">休みの日</string>
     <string name="plan_day_today">今日</string>
     <string name="plan_day_planned">学習予定</string>
-    <string name="plan_last_week_recap">週間まとめ</string>
     <string name="plan_preparation">準備状況</string>
     <string name="plan_progress">進み具合</string>
     <string name="plan_your_preparation">準備状況</string>

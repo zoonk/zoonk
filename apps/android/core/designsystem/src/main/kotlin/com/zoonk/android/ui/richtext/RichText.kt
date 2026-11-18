@@ -166,25 +166,45 @@ data class SpokenText(
 private fun typeset(
     segments: List<RichSegment>,
     locale: Locale,
+    group: Boolean = true,
 ): List<RichSegment> =
-    segments.map {
-        when (it.kind) {
-            SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
-            else -> it.copy(text = typesetNumbers(locale, it.text))
+    segments.mapIndexed { index, segment ->
+        if (!segment.isProse) return@mapIndexed segment
+
+        val before =
+            segments
+                .getOrNull(index - 1)
+                ?.takeIf { it.isProse }
+                ?.text
+                .orEmpty()
+        val after =
+            segments
+                .getOrNull(index + 1)
+                ?.takeIf { it.isProse }
+                ?.text
+                .orEmpty()
+        var text = typesetNumbers(locale, segment.text, group)
+        if (before.lastOrNull()?.let { it in '0'..'9' } == true && STARTS_WITH_WORD.containsMatchIn(text.trimStart())) {
+            text = text.replaceFirst(LEADING_SPACE, "\u00A0")
         }
+        if (STARTS_WITH_WORD.containsMatchIn(after)) {
+            text = text.replace(NUMBER_AT_END, "\u00A0")
+        }
+        segment.copy(text = text)
     }
 
-/** [segments]' money as the learner's money format writes it ([typesetMoney]); math and code keep theirs. */
+private val RichSegment.isProse: Boolean
+    get() = kind != SegmentKind.Math && kind != SegmentKind.DisplayMath && kind != SegmentKind.Code
+
+private val STARTS_WITH_WORD = Regex("^[\\p{L}%°]")
+private val LEADING_SPACE = Regex("^[ \t]+")
+private val NUMBER_AT_END = Regex("(?<=[0-9])[ \t]+$")
+
+/** Keep a question's digits as written while keeping its numbers with their words. */
 fun typesetMoney(
     segments: List<RichSegment>,
     locale: Locale,
-): List<RichSegment> =
-    segments.map {
-        when (it.kind) {
-            SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
-            else -> it.copy(text = typesetMoney(locale, it.text))
-        }
-    }
+): List<RichSegment> = typeset(segments, locale, group = false)
 
 private fun typesetBlock(
     block: RichBlock,

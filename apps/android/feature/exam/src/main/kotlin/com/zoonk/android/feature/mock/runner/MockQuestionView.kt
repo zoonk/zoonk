@@ -300,7 +300,7 @@ internal fun QuestionCell(
     modifier: Modifier,
 ) {
     val draft = run.drafts[question.itemId]
-    val answered = draft.isAnswered
+    val answered = run.isCountedAsAnswered(question.itemId)
     val flagged = draft?.flagged == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)

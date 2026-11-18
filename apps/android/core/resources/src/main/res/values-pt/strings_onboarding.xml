@@ -229,7 +229,6 @@
   "onboarding_read_limit_guest": "c6d0caf05df768cd5a00509b1e010f3e8b98ea26feb7b3111fbda1516de274e3",
   "onboarding_read_limit_plus": "aca95c4e2cfeec1e708df3c79d7968a1ba8569a061263c73597c3f984e989266",
   "onboarding_reason_certificate": "089e7acffdd747b90e8d7d925ffa433629b53ddaada13c36c319a9a82fb24547",
-  "onboarding_reason_certificate_description": "25c0e8bbec75fa1634d1fc6705afa586bac650baf294ebc85c231f574b1dddfa",
   "onboarding_reason_choices": "1ff90c92b30ff3b1a86bf044d7cbbf66fa0729463e4bc74cd678b6e72f295129",
   "onboarding_reason_description": "901975b7828d382ac84327a1de94fb190ef91ab5d7a30c88a3386ec6566a9684",
   "onboarding_reason_exam_plan": "c19e6f1672269be1269d06225a5e57d33afd45895b8c2b20a1816897313453d0",
@@ -1034,7 +1033,6 @@
     <string name="onboarding_reason_fluent">Falar com fluência</string>
     <string name="onboarding_reason_fluent_description">Conversar sobre quase tudo com facilidade</string>
     <string name="onboarding_reason_certificate">Conseguir um certificado</string>
-    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI e outros</string>
     <string name="onboarding_reason_other_description">Com suas palavras</string>
     <string name="onboarding_reason_which_exam">Qual?</string>
     <string name="onboarding_reason_exam_plan">Seu plano segue a estrutura e a pontuação dessa prova.</string>

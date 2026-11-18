@@ -580,7 +580,6 @@
     <string name="onboarding_reason_fluent">Speak it fluently</string>
     <string name="onboarding_reason_fluent_description">Talk about almost anything with ease</string>
     <string name="onboarding_reason_certificate">Pass a certificate</string>
-    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI and others</string>
     <string name="onboarding_reason_other_description">In your own words</string>
     <string name="onboarding_reason_which_exam">Which one?</string>
     <string name="onboarding_reason_exam_plan">Your plan follows that exam\'s papers and score.</string>

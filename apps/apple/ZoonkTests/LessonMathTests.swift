@@ -123,7 +123,7 @@ final class LessonMathTests: XCTestCase {
 
     XCTAssertEqual(
       String(LessonRichText.typeset("It costs $5 and $10.").text.characters),
-      "It costs $5 and $10.")
+      "It costs $5\u{00A0}and $10.")
     XCTAssertNil(LessonRichText.typeset("It costs $5 and $10.").spoken)
     XCTAssertEqual(
       String(sentence.text.characters), "So 1\u{2044}4\(gap)×\(gap)80\(gap)=\(gap)20 now")

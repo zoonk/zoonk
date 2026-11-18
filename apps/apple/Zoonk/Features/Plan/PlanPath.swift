@@ -336,8 +336,7 @@ private struct PlanChapterRow: View {
   private var title: Text {
     if !chapter.skills.isEmpty {
       return Text(
-        "\(chapter.skills.count) topics you already know", tableName: "Plan",
-        comment: "A row of topics placement showed the learner knows")
+        "\(chapter.skills.count) chapters you already know", tableName: "Plan")
     }
 
     return chapter.title.isEmpty

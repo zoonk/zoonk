@@ -9930,6 +9930,64 @@
         }
       }
     },
+    "Round to the nearest whole number." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde auf die nächstgelegene ganze Zahl."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redondea al número entero más cercano."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrondis à l’entier le plus proche."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrotonda al numero intero più vicino."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "四捨五入して整数にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소수 첫째 자리에서 반올림하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaokrąglij do najbliższej liczby całkowitej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arredonde para o número inteiro mais próximo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yakın tam sayıya yuvarla."
+          }
+        }
+      }
+    },
     "Saved to your mistakes" : {
       "comment" : "After a wrong answer saved to the mistakes notebook.",
       "localizations" : {

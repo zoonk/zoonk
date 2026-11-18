@@ -10,7 +10,7 @@
   "tutor_about_step": "b2878a19a7c9295667c37b7ac4760defa347194b46de8ac9fade921f2f0a5648",
   "tutor_about_subject": "6b06574a84b1686b5f2df4b9a3da55424fbfda8934124a8ab320bf22dd3c036b",
   "tutor_answer_failed": "ac57f2b55220f11db8ee9ebbeb8945a97bfd2f7bd20e34439fe9ca234cf2010a",
-  "tutor_ask": "b8a67cbfeb060bae1e0409e43ecdd9b08be6e3b1109d138444b61f9eb396fed8",
+  "tutor_ask": "312a1784eb4da4b0be243fda0a0ce6820e529c9d4a2edb4fed0f0245cafd40c5",
   "tutor_ask_answer": "b206fbc5e1e327a12388f608777bcc06f86944a0c4296fbf8a01d8ea6ca9086c",
   "tutor_ask_chapter": "b45737d3815aaec02dbd74af1fdba03264a91d73a6389ced1973e5014be464aa",
   "tutor_ask_for_help": "ff3fa95bcffde4b82fff68585ce3bc3a4da30beb79f7a8051ef7de3ec324563a",
@@ -131,7 +131,7 @@
 <resources>
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">Twój kumpel</string>
-    <string name="tutor_ask">Zapytaj: %1$s</string>
+    <string name="tutor_ask">Zapytaj. Odpowie %1$s</string>
     <!-- The button that opens the buddy's chat before the buddy's name is known. -->
     <string name="tutor_ask_for_help">Poproś o pomoc</string>
     <string name="tutor_ask_chapter">Zapytaj o ten rozdział: %1$s</string>

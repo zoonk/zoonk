@@ -19,6 +19,7 @@
   "questions_entry_decimals": "f697232daa753e1efc84b0b1f891af35811861bb18f3410468f533dfc4bdf616",
   "questions_entry_fraction": "bba07614df3ec12a828b4b495ccf89adde1562154607e7003a6f0ec4f66c1c9b",
   "questions_entry_integer": "93785f1af66ff8386d8a73e3de2d331e1e9ecb2d07cb6f03505f0a932da67986",
+  "questions_entry_round_to_whole": "6862ad152038a1e10f1e909eb500095facf4186fe6acd666bd09446dfd4a91ef",
   "questions_false": "2d905561958e19e5721f71a8d8e545478b8ef87b8491a1dba92b9234f8e48b9c",
   "questions_feedback_label": "8811c0a259e7f81c5d68a90d7a849fbe2b797ae428ddf2ea255d4642fa1d5a27",
   "questions_invalid_fraction": "2495f053daa82243a59138405d29879e0fb4b539e6c06b3dfa8bf3d7e93c3f9d",
@@ -81,6 +82,7 @@
     <string name="questions_your_answer">La tua risposta</string>
     <string name="questions_mark_correct">Corretto</string>
     <string name="questions_mark_wrong">Errata</string>
+    <string name="questions_entry_round_to_whole">Arrotonda al numero intero più vicino.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Arrotonda a %d cifra decimale.</item>
         <item quantity="many">Arrotonda a %d cifre decimali.</item>

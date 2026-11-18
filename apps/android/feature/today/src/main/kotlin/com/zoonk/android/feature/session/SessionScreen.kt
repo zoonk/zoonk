@@ -56,6 +56,7 @@ import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
 import com.zoonk.android.feature.player.lessonWaitWords
 import com.zoonk.android.feature.today.TodayRead
+import com.zoonk.android.feature.today.heldMinutes
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.feature.warmup.WaitContent
 import com.zoonk.android.feature.warmup.WaitQuizAction
@@ -80,8 +81,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
@@ -508,7 +507,6 @@ internal fun NextStop(
                         day,
                         step,
                         Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
-                        counted = true,
                     )
                 }
                 // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
@@ -611,48 +609,19 @@ internal fun NextStop(
     }
 }
 
-/** Beside its count ("0 of 2 done") a bar lights only what's done, so the two agree; the header marks the learner's place. */
-internal fun sessionSegments(
-    steps: List<DayStep>,
-    position: Long,
-    counted: Boolean,
-): List<TaskSegment> =
-    steps.map {
-        when {
-            it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
-            it.position == position -> TaskSegment.Current
-            else -> TaskSegment.Ahead
-        }
-    }
-
-/**
- * Main's session header segments: the day's work by its minutes, done in blue and the shown step as
- * the learner's place. [counted] says how many are done above them, for a page of their own.
- */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
-    counted: Boolean = false,
 ) {
-    val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
-    if (steps.isEmpty()) return
+    val parts = dayParts(day.steps, isNext = { it.position == step.position })
+    val held = day.heldMinutes > 0
+    if (parts.isEmpty() && !held) return
 
-    val segments = sessionSegments(steps, step.position, counted)
-    val weights = steps.map { it.estimatedMinutes.toFloat() }
-    val progress = stepsDone(day.sessionBar)
-
-    if (counted) {
-        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-            TaskSegments(segments, weights = weights)
-        }
-    } else {
-        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-            TaskSegments(segments, weights = weights)
-        }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stepsDone(day.sessionBar), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+        if (drawsDayProgress(parts.size, held)) DayProgress(parts, held)
     }
 }
 

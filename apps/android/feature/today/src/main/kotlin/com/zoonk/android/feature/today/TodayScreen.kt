@@ -60,6 +60,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
@@ -296,17 +297,16 @@ private fun ExplanationContinue(
     explanation: LearnerSummaryGoal,
     navigator: AppNavigator,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(title = stringResource(R.string.today_quick_explanation))
         ListRow(
             headline = { Text(explanation.displayName) },
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             highlighted = true,
             leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null) },
-            supporting = { Text(stringResource(R.string.today_quick_explanation)) },
+            supporting = { Text(stringResource(R.string.today_continue_draft)) },
+            onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) },
         )
-        Button(onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) }) {
-            Text(stringResource(R.string.today_continue_draft))
-        }
     }
 }
 

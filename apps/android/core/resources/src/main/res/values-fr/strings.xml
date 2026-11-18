@@ -65,7 +65,7 @@
   "navigation_today": "9f041d69008467bfb5a3641f61fcc944b933c7323a7a2c1fd8a4429d2ce836fa",
   "navigation_user_menu": "519d13f66fa303b0080c9da45526bea41f4150663f8b1fc3e7674624fdb89b94",
   "not_found_description": "f9a92ace3b35477b3397f0b09141177936313d20e52aa4379a4393bfd6009c02",
-  "not_found_go_home": "1973394b75d6eca01015c246a88a7c58be5c412c98e676cf05ea66f8a61cd6e1",
+  "not_found_go_home": "32e5ee5a87ab90abcb9eb9b9a8695ac1f91c5004dbc5d2ee15f6a827fd87dedf",
   "not_found_title": "8283917f147ffb6ad6c3f29743501f2e31d2ae3b0fb93bd98a9eab2eb8055eb9",
   "player_not_saved": "f28c4879fbe8daab9ec7864d2c5dece90fcd8ee23714b04db3d711e509750ac5",
   "player_not_saved_description": "4412cb778f504ae495be61b409893447cfabc3b92f1fd5ed9ebade72ef71264b",
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">Passer le test et sauter l’unité</string>
     <string name="not_found_title">Nous n’avons pas trouvé cette page</string>
     <string name="not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
-    <string name="not_found_go_home">Aller à l’accueil</string>
+    <string name="not_found_go_home">Aller à Aujourd’hui</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

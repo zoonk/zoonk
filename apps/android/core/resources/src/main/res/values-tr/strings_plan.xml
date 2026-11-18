@@ -294,7 +294,6 @@
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
-  "plan_last_week_recap": "ca97129ede9d2d01485ed297be4e9ac218fab4c55402e312d73c96e61b402add",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
   "plan_lessons_left": "4df3969bdd163b0ddda3930cd6e9d1e54870bced633dd784f911ef1332b0bb91",
@@ -418,7 +417,7 @@
   "plan_short_mock_and_review": "d7f08fbc923cbda1ae49deb259f185a60a7c3b5ba477c9f1a537bfcd2d65b945",
   "plan_show_fewer_chapters": "cde0cce702cb6088073a5e2b027c7996f5e3f81467c459247781f66e28d2e129",
   "plan_show_fewer_units": "7c6f6848eecddb306c5beb6e7ac2decedab92842a2ac2aeffcb76eef9e77be2c",
-  "plan_skills_you_know": "1274ac9a53579713ff2f0fbc9ca2a14c890251f25442d58fd8ae80eb697dfadd",
+  "plan_skills_you_know": "b959418e292a9c918336c259cf1d705cdc32bb6f7cafb627883ddc6d380c87fd",
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "8b004075fdfb4bc428e7d62f13ea9d7984c8aa4c154b95edd576e6e195438a66",
   "plan_stays_as_it_is": "84a1e70fda784ceddc957528b94ead1000dda12273b0b52572bbecb1b6965f59",
@@ -436,7 +435,6 @@
   "plan_suggestion_previous": "f78b9d5614c192345c11a4c0057c8d6bf8ffc758d723b4affca8e70f757e3479",
   "plan_sundays": "c9b4c635df3f9ec7d80eababcdcd09cd94968a9b063c50c1323f5cbb2f5eb3c1",
   "plan_system_phone": "5a45c58e0b4dd5531591940871e38a83f12370c0e50fca1c30e9cc341a24853a",
-  "plan_talk_to": "fc253fabdc3b223c879f22a272ec990e8906bcf376bfe56f43d1447584044138",
   "plan_tests_taken": "ef3aa72320b9afd898788202dd6ef72e1e27275522346c4d2da34b3eabeddd9f",
   "plan_this_week": "2e54fbc27fc9a1b9e90f0b099d78f7ee01418248ac7826095b4680530047a789",
   "plan_thursdays": "3f23c4a01e21bf27547e341271ed55cf0da340f0e50d7337be6948e037a9bc25",
@@ -578,7 +576,6 @@
     <string name="plan_about_exam">Sınav hakkında</string>
     <string name="plan_full_course">Kursun tamamını gör</string>
     <string name="plan_share">Planı paylaş</string>
-    <string name="plan_talk_to">%1$s ile konuş</string>
     <string name="plan_rename_goal">Hedefin adını değiştir</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Ad</string>
@@ -644,8 +641,8 @@
     <string name="plan_skipped">Atlandı</string>
     <string name="plan_done">Tamamlandı</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="one">Zaten sahip olduğun %d beceri</item>
-        <item quantity="other">Zaten sahip olduğun %d beceri</item>
+        <item quantity="other">Zaten bildiğin %d ünite</item>
+    <item quantity="one">Zaten bildiğin %d ünite</item>
     </plurals>
     <string name="plan_more_lessons">Daha fazla ders</string>
     <string name="plan_lessons_on_the_way">Dersleri hazırlıyoruz</string>
@@ -795,7 +792,6 @@
     <string name="plan_day_rest">dinlenme günü</string>
     <string name="plan_day_today">bugün</string>
     <string name="plan_day_planned">planlandı</string>
-    <string name="plan_last_week_recap">Haftalık özet</string>
     <string name="plan_preparation">Hazırlık</string>
     <string name="plan_progress">İlerleme</string>
     <string name="plan_your_preparation">Hazırlığın</string>

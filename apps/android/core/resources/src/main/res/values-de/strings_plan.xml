@@ -294,7 +294,6 @@
   "plan_going_deeper": "fea689e4d7bfde9c769d43469297ec6852a449c7904b82a9e18ea74a798d9f24",
   "plan_how_calculated": "0739cd6e655c7f2749b75c10ea4dd2ba2866b4d58c54f8ac05514fc0539dfa06",
   "plan_keep_studying": "9ada847af1875e7b362a18294cd07ef0c4e36c5486b80281ea65723d7f92fdd2",
-  "plan_last_week_recap": "8205343779cbb896f349453e8377ae0ad0dd24d7aedbb7afe679adee1ea665a7",
   "plan_lessons": "99948753edd71a789e3be2c03926c6c38f227595fc5cf4d5185c4e955bd97c4f",
   "plan_lessons_done_of": "a9bce00871f113a2e5afe30edfbccf9510a09cba8c6431db29620f512130a5f9",
   "plan_lessons_left": "6706051b5a8d345d55723b56befc82276738a297198efbd4aae409d0ce01c17b",
@@ -418,7 +417,7 @@
   "plan_short_mock_and_review": "469f92b3d088dd8c97e08efe8e562318c5b11ad62c83ba741ae8d584f14c7614",
   "plan_show_fewer_chapters": "3fcb7bd3a6816305f3d9a468dd398fbde89717a09d3999a21239e3a7ba8b5a50",
   "plan_show_fewer_units": "2bd883ca96314306d3226a9050c725b4edce57806bac5811f429bb87c7b695d3",
-  "plan_skills_you_know": "1ead470d797c7154f28ff65460e5db801ea50c8421188f0dcdf6af5c0c73ad46",
+  "plan_skills_you_know": "4d354c24677d88bf1e7b0b2937c8d45993638e4b0805478959ff7cb755833ab5",
   "plan_skipped": "d27a1b4db78cd5c32f2bb065f19e7aa78d5526cce010edaa158dac8b28047a69",
   "plan_skipped_known": "ee084da0202dfd5ca86788513de70aec8a9d2fdfa2c490f5ab7810789ad95af9",
   "plan_stays_as_it_is": "864b0c4b50fbf042d35e168d8f7795849190501871481835fede5eafb1e17aa0",
@@ -436,7 +435,6 @@
   "plan_suggestion_previous": "498a5ab5c80a33a25f68db69b8c086bc551751f88581022ffdc325667fe52776",
   "plan_sundays": "1cbe53139fce734b53c79153b295f24c1694565f9b514aa88f2e1db63358f328",
   "plan_system_phone": "590e2b62607d52bd511bb755082d86e65420cb7469e41521281eaaf74260b6fd",
-  "plan_talk_to": "2947fe997e263a8d6ebe1a1c300cfeb9992eb2b2b776e87c78f46f466f3c247d",
   "plan_tests_taken": "d2e0844a619e70dc2c5dee4f58346d31b87a7c400777578461ee09a0d04ef5f3",
   "plan_this_week": "44062bfe95423eba0ded476eeb0884ffc7e410ae398864af3f3f38a1613afe37",
   "plan_thursdays": "f9385653e23e1eb64a580e4a508ef623e7d99f9eb8f03deeb345a21045ee906c",
@@ -578,7 +576,6 @@
     <string name="plan_about_exam">Über die Prüfung</string>
     <string name="plan_full_course">Gesamten Kurs ansehen</string>
     <string name="plan_share">Plan teilen</string>
-    <string name="plan_talk_to">Mit %1$s sprechen</string>
     <string name="plan_rename_goal">Ziel umbenennen</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Name</string>
@@ -644,8 +641,8 @@
     <string name="plan_skipped">Übersprungen</string>
     <string name="plan_done">Abgeschlossen</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="one">%d Fähigkeit, die du schon beherrschst</item>
-        <item quantity="other">%d Fähigkeiten, die du schon beherrschst</item>
+        <item quantity="other">%d Kapitel kennst du schon</item>
+    <item quantity="one">%d Kapitel kennst du schon</item>
     </plurals>
     <string name="plan_more_lessons">Weitere Lektionen</string>
     <string name="plan_lessons_on_the_way">Lektionen folgen</string>
@@ -795,7 +792,6 @@
     <string name="plan_day_rest">Pausentag</string>
     <string name="plan_day_today">heute</string>
     <string name="plan_day_planned">geplant</string>
-    <string name="plan_last_week_recap">Wochenübersicht</string>
     <string name="plan_preparation">Vorbereitung</string>
     <string name="plan_progress">Fortschritt</string>
     <string name="plan_your_preparation">Deine Vorbereitung</string>

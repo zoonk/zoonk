@@ -229,7 +229,6 @@
   "onboarding_read_limit_guest": "7c91cde0324af652f41592cf28db16ebe9f43df057f0f286dffce5540de73ea0",
   "onboarding_read_limit_plus": "de0820a713c1658959e17724389b86e12bdf3ee5b0ee6ffce1b062f53d52c6bd",
   "onboarding_reason_certificate": "f181f9e088cfb2d953d376643b09a052c66543da0401f1780135150523c57f36",
-  "onboarding_reason_certificate_description": "3843e3906cdafc27c1402f9b3a03705d6bce223f947dff8395d361d7611350b8",
   "onboarding_reason_choices": "f8cbc4ca916fd4d7252b24c4f1dc94c07d71422ed52beebd853e6684a949f076",
   "onboarding_reason_description": "70bc69ab50d6a5eb17d4526de9ed401b8a2e63acae9a4b93bdc3717cc53673b3",
   "onboarding_reason_exam_plan": "6648d97efa55ca86a097202b64bbe6ac60f325f95755364bd097e985ec8f5171",
@@ -1034,7 +1033,6 @@
     <string name="onboarding_reason_fluent">Hablarlo con fluidez</string>
     <string name="onboarding_reason_fluent_description">Hablar de casi cualquier tema con facilidad</string>
     <string name="onboarding_reason_certificate">Obtener una certificación</string>
-    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI y otros</string>
     <string name="onboarding_reason_other_description">Con tus propias palabras</string>
     <string name="onboarding_reason_which_exam">¿Cuál?</string>
     <string name="onboarding_reason_exam_plan">Tu plan se basa en las secciones y el puntaje de ese examen.</string>

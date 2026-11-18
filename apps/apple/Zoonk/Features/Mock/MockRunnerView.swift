@@ -489,11 +489,11 @@ struct MockSectionCounts {
 
       if question.format == .essay {
         essays += 1
-        if draft?.isAnswered != true { blankEssays += 1 }
+        if !run.isCountedAsAnswered(question.itemId) { blankEssays += 1 }
         continue
       }
 
-      if draft?.isAnswered == true { answered += 1 } else { blank += 1 }
+      if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
       if draft?.flagged == true { flagged += 1 }
     }
   }
@@ -619,7 +619,7 @@ private struct MockAnswerSheet: View {
 
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
-    let answered = draft?.isAnswered ?? false
+    let answered = run.isCountedAsAnswered(question.itemId)
     let flagged = draft?.flagged ?? false
     let isCurrent = index == run.position
 

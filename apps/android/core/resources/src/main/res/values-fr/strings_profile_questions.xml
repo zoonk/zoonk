@@ -13,6 +13,7 @@
   "profile_questions_conditions_description_settings": "7ee65e4b742d0d622a8f11a92daecbb1ccc65875a32b56830fe2a47715749d69",
   "profile_questions_conditions_saved": "642ac4860fb448cfe551ff752a93f84b06f6ebb05f57fd00749c349918420a00",
   "profile_questions_conditions_title": "f8e222e2ff5f428cd85f9b8646558a48412a8b9feaf801862e9ef3d2b570e899",
+  "profile_questions_count": "acf30063dd54e7faf9a3743fae1acaa3a96333ca318b6d17667da66a5f190072",
   "profile_questions_description": "cd68a2bf08dafdf6f82043e5cc73fc0aad29eb5be3bb129ec121f2b31856c5b6",
   "profile_questions_earlier_answer": "817c74f735a4040672f6a2e425e0fa8a8dc8de4473d8d713f9d48bd2792e03eb",
   "profile_questions_for_fun": "297a17d7b0a150255b77025c0518e58a7a88e4f27542c143102cf5c7d590cccb",
@@ -33,7 +34,6 @@
   "profile_questions_play_placeholder": "cc0efe3e2351c0953f0608fb550a624d8abea0cd77c89c6d42a4559ef10ddc18",
   "profile_questions_play_title": "7e28ec943e2568233d4ffa2d66fe287b758fe4c388edaa277dee1686ab9f76a4",
   "profile_questions_prefer_not": "4f6a18cc246b30b280ad725ecd6fbed919d177e67bbe085f312f2290380ae8bb",
-  "profile_questions_progress": "5f8c2f0bdf4ac8839a6bda63032fbd4e2044cb5e837ce60e17e2a1c9af8a8261",
   "profile_questions_read_favorites": "e218962e3b7b907c31960f08da615f8ca894503a07e19a055468621c7d0927b2",
   "profile_questions_read_placeholder": "89d80d7df69cb133e0ff32dc433076f282157386a68594aa1d5b6f404daaa44d",
   "profile_questions_read_title": "47be6a7680294a7630817206c31edd9fa4e987fca5f0ab45bedb9f196faf9989",
@@ -83,7 +83,7 @@
 <resources>
     <string name="profile_questions_title">À propos de toi</string>
     <string name="profile_questions_description">Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton compagnon. Tout est facultatif.</string>
-    <string name="profile_questions_progress">À propos de toi · %1$d sur %2$d</string>
+    <string name="profile_questions_count">%1$d sur %2$d</string>
     <string name="profile_questions_skip_all">Tout sauter</string>
     <string name="profile_questions_skip_all_label">Sauter les questions restantes sur toi</string>
     <string name="profile_questions_never_ask">Ne plus me poser ces questions</string>

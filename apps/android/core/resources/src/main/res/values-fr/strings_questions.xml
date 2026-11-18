@@ -19,6 +19,7 @@
   "questions_entry_decimals": "c248efd4d241fc2a4aa9592d44b2f3a714b1476505870d0465f96b5b1d2dbd40",
   "questions_entry_fraction": "a2a5ba009b9604a0ad0994173a5d4a2b1cd1301838d0bbffa307f7c86f407303",
   "questions_entry_integer": "f56596e4bf730481e05a48593a98530e6f2d7e75f6fe010f08e7d09f256c5fe0",
+  "questions_entry_round_to_whole": "75f05ea99dd3f27c78fc332a281353b46b6bbdeb0b64e5675a55a606b486bffe",
   "questions_false": "ea38a84cf0006c52a97503465e00a5fa5f15a83d89d7ed5bcc98a1cd1180387d",
   "questions_feedback_label": "739796f874bf5de8e1073d2b1a6595764edecb7f9ccd791e7fe789c8a9b542a3",
   "questions_invalid_fraction": "a1d683179047899bfc5373e0ea2aae0513be125cde81055fb1cdd98444f3db8d",
@@ -81,6 +82,7 @@
     <string name="questions_your_answer">Ta réponse</string>
     <string name="questions_mark_correct">Correct</string>
     <string name="questions_mark_wrong">Incorrect</string>
+    <string name="questions_entry_round_to_whole">Arrondis à l’entier le plus proche.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Arrondis à %d décimale.</item>
         <item quantity="many">Arrondis à %d décimales.</item>

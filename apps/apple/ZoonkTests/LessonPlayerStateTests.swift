@@ -1022,6 +1022,20 @@ final class LessonGradingTests: XCTestCase {
       "an answer that doesn't fit the check isn't graded")
   }
 
+  func testNumericActivityKeepsEnoughDigitsForTheCorrection() throws {
+    let source = numericActivity.replacingOccurrences(
+      of: "\"answer\": 10", with: "\"answer\": 251.54"
+    ).replacingOccurrences(
+      of: "\"kind\": \"relative\", \"value\": 0.05", with: "\"kind\": \"absolute\", \"value\": 0.01"
+    )
+    let activity = try step(source)
+    let grade = try XCTUnwrap(LessonGrading.grade(.activity(.numeric(251.6)), step: activity))
+
+    XCTAssertEqual(LessonGrading.grade(.activity(.numeric(252)), step: activity)?.isCorrect, true)
+    XCTAssertFalse(grade.isCorrect)
+    XCTAssertEqual(grade.correctAnswer, "251.54")
+  }
+
   // Mirrors core's `activity-answers.test.ts` and `@zoonk/utils` `rounded-answer.test.ts`.
   func testANumberRoundedToThePlacesTypedIsRightWithTwoSignificantDigits() {
     let rise = { (typed: Double) in

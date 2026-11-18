@@ -23,6 +23,7 @@
     <string name="questions_your_answer">Your answer</string>
     <string name="questions_mark_correct">Correct</string>
     <string name="questions_mark_wrong">Wrong</string>
+    <string name="questions_entry_round_to_whole">Round to the nearest whole number.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Round to %d decimal place.</item>
         <item quantity="other">Round to %d decimal places.</item>

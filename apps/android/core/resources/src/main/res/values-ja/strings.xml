@@ -65,7 +65,7 @@
   "navigation_today": "4a7f4a6930e3f644ba54e264fcb278e543e241eb4fb3808094dadafd92fab526",
   "navigation_user_menu": "96f94594c1591d29a646a2e1776108e8a03d2454d1bf7a02b8d88636bd8ce649",
   "not_found_description": "ce3925aee7c5a6fdf101e58e54f660d3dadbea286d0bd5a497fe4effff5d48dc",
-  "not_found_go_home": "8705540c6bd7c40f8ec2cdfe0f6d64a5d31bc9914ba5898f0cf47934aa2b168c",
+  "not_found_go_home": "6a6b96f6086fde4ef7f459e8a1828bb8fdd399d1ea89f10d637ab0d7c365f440",
   "not_found_title": "1fb8cec8ca480ca78264b0eaa619f04f058c316fe639e6176734cf37f500d269",
   "player_not_saved": "935a3eb56de624d863959c0f9087faf9f745fdb110e86d99fa21d3c4ccb428fe",
   "player_not_saved_description": "c26124139fa6a455aacde74cc77c906102c28ccb4392a9856a1e5c027284f715",
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">テストを受けてユニットをスキップする</string>
     <string name="not_found_title">ページが見つかりませんでした</string>
     <string name="not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
-    <string name="not_found_go_home">ホームに戻る</string>
+    <string name="not_found_go_home">「今日」へ移動する</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s、%2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

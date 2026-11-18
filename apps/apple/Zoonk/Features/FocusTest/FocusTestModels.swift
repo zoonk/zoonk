@@ -9,7 +9,7 @@ struct FocusTest: Decodable, Equatable, Sendable {
     let name: String
     let shortName: String?
 
-    var shown: String { shortName ?? name }
+    var shown: String { name }
   }
 
   /// A subject as a sentence names it.
@@ -17,7 +17,7 @@ struct FocusTest: Decodable, Equatable, Sendable {
     let name: String
     let shortName: String?
 
-    var shown: String { shortName ?? name }
+    var shown: String { name }
   }
 
   enum Part: String, Decodable, Sendable {
@@ -46,7 +46,7 @@ struct FocusTest: Decodable, Equatable, Sendable {
     let right: Int
 
     var id: String { key }
-    var shown: String { shortName ?? name }
+    var shown: String { name }
   }
 
   struct Sitting: Decodable, Equatable, Sendable {

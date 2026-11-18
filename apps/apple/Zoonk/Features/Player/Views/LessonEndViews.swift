@@ -426,6 +426,7 @@ struct LessonUnavailableView: View {
 
 /// Once a free learner's next lesson has opened, "Start the lesson" asks again where "Subscribe" was.
 private struct LessonUnavailableBody: View {
+  @Environment(\.lessonPlayerRoutes) private var routes
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
 
@@ -460,7 +461,15 @@ private struct LessonUnavailableBody: View {
       .bottomBar {
         VStack(spacing: 8) {
           action.buttonStyle(.mainAction)
-          if case .limitReached(tier: .free, _) = refusal {
+          if case .limitReached(tier: .guest, _) = refusal, !isReady {
+            Button {
+              routes.signIn()
+            } label: {
+              Text("Log in", tableName: "Player")
+            }
+            .buttonStyle(.ghost)
+            .controlSize(.small)
+          } else if case .limitReached(tier: .free, _) = refusal {
             Button {
               router.open(.mistakes)
             } label: {
@@ -510,7 +519,13 @@ private struct LessonUnavailableBody: View {
     case .limitReached(tier: .free, _):
       SubscribeButton()
     case .limitReached(tier: .guest, _):
-      SignUpButton()
+      Button {
+        routes.signIn()
+      } label: {
+        Text(
+          "Create a free account", tableName: "Player",
+          comment: "Opens account creation for a guest")
+      }
     case .limitReached(tier: .plus, _), .notFound:
       if !isNotice {
         Button {
@@ -645,19 +660,6 @@ private struct LessonGuestEndingView: View {
       }
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
-    }
-  }
-}
-
-private struct SignUpButton: View {
-  @Environment(\.lessonPlayerRoutes) private var routes
-
-  var body: some View {
-    Button {
-      routes.signIn()
-    } label: {
-      Text(
-        "Create a free account", tableName: "Player", comment: "Opens account creation for a guest")
     }
   }
 }

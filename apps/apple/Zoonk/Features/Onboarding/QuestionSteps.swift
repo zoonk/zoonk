@@ -25,7 +25,10 @@ struct QuestionStep: View {
         subject: subject, isCareerChange: detail("purpose") == "careerChange", onAnswer: onAnswer)
     case .reason:
       ReasonQuestion(
-        subject: subject, reasons: view.languageAimView?.reasons ?? [], onAnswer: onAnswer)
+        subject: subject, reasons: view.languageAimView?.reasons ?? [],
+        certificateExample: certificateExample(
+          language: view.goal.targetLanguage, region: view.goal.targetRegion),
+        onAnswer: onAnswer)
     case .target:
       TextQuestion(
         kind: TextQuestion.Kind(examTarget: detail("examTarget")), subject: subject,
@@ -471,12 +474,38 @@ private struct PurposeQuestion: View {
   }
 }
 
+func certificateExample(language: String?, region: String?) -> String? {
+  guard let language else { return nil }
+  let tag = Locale.Components(identifier: language).languageComponents
+  switch tag.languageCode?.identifier {
+  case "de": return "Goethe-Zertifikat"
+  case "en": return "IELTS"
+  case "es": return "DELE"
+  case "fr": return "DELF"
+  case "it": return "CELI"
+  case "ja": return "JLPT"
+  case "ko": return "TOPIK"
+  case "pt":
+    let tagRegion =
+      tag.script == nil || tag.script?.identifier == "Latn"
+      ? tag.region?.identifier : nil
+    switch region ?? tagRegion {
+    case "BR": return "Celpe-Bras"
+    case "PT": return "CAPLE"
+    default: return "ACTFL OPI"
+    }
+  case "zh": return "HSK"
+  default: return nil
+  }
+}
+
 /// Main's `ReasonStep`: each reason with the level it aims for. One with a level moves on when it's
 /// picked; a certificate and Something else ask for words first, in a box under the list, so no row
 /// moves.
 private struct ReasonQuestion: View {
   let subject: String
   let reasons: [LanguageAimView.Reason]
+  let certificateExample: String?
   let onAnswer: ([String: Any]) -> Void
 
   @State private var picked: String?
@@ -550,8 +579,13 @@ private struct ReasonQuestion: View {
     let copy = Self.copy(reason.reason)
 
     return HStack(spacing: 12) {
-      ChoiceWords(title: Text(copy.label), detail: Text(copy.description))
-        .frame(maxWidth: .infinity, alignment: .leading)
+      ChoiceWords(
+        title: Text(copy.label),
+        detail: (reason.reason == "certificate" ? certificateExample : copy.description).map {
+          Text(verbatim: $0)
+        }
+      )
+      .frame(maxWidth: .infinity, alignment: .leading)
 
       VStack(alignment: .trailing, spacing: 2) {
         if let aim = reason.aim {
@@ -587,8 +621,8 @@ private struct ReasonQuestion: View {
   }
 
   /// Main's `useReasonCopy`.
-  private static func copy(_ reason: String) -> (label: String, description: String) {
-    let description =
+  private static func copy(_ reason: String) -> (label: String, description: String?) {
+    let description: String? =
       switch reason {
       case "travel":
         String(
@@ -607,9 +641,7 @@ private struct ReasonQuestion: View {
           localized: "Talk about almost anything with ease", table: "Onboarding",
           comment: "Under the Speak it fluently reason")
       case "certificate":
-        String(
-          localized: "IELTS, DELE, CELI and others", table: "Onboarding",
-          comment: "Under the Pass a certificate reason")
+        nil
       default:
         String(
           localized: "In your own words", table: "Onboarding",
