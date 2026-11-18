@@ -27,9 +27,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -312,22 +315,38 @@ internal fun ChapterMark(
     )
 }
 
-/** Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do. */
+/**
+ * Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do.
+ * With [open] it folds them away again, and TalkBack hears whether it's open and can open or close it.
+ */
 @Composable
 internal fun MoreChaptersRow(
     text: String,
-    open: Boolean = false,
+    open: Boolean? = null,
     indent: Dp = 0.dp,
     onClick: () -> Unit,
 ) {
+    val openWords = stringResource(if (open == true) R.string.disclosure_expanded else R.string.disclosure_collapsed)
+
     ListRow(
         headline = { Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        modifier =
+            Modifier.semantics {
+                if (open != null) {
+                    stateDescription = openWords
+                    val toggle = {
+                        onClick()
+                        true
+                    }
+                    if (open) collapse(action = toggle) else expand(action = toggle)
+                }
+            },
         onClick = onClick,
         indent = indent,
         leading = {
             Box(Modifier.size(MARK_COLUMN), contentAlignment = Alignment.Center) {
                 Icon(
-                    painterResource(if (open) R.drawable.ic_remove else R.drawable.ic_add),
+                    painterResource(if (open == true) R.drawable.ic_remove else R.drawable.ic_add),
                     contentDescription = null,
                     modifier = Modifier.size(FOOTER_PLUS),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
