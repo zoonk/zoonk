@@ -56,8 +56,8 @@ export async function CoursesBarLink({
 export function PublicNavLinks({ pathname }: { pathname?: string }) {
   return (
     <>
-      <CoursesBarLink className="max-sm:signed-in:hidden hidden min-[22.5rem]:inline-flex" />
-      <PricingBarLink className="max-sm:signed-in:hidden" current={pathname === "/pricing"} />
+      <CoursesBarLink className="hidden min-[22.5rem]:inline-flex" />
+      <PricingBarLink current={pathname === "/pricing"} />
     </>
   );
 }

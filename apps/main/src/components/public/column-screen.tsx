@@ -29,7 +29,10 @@ export function ColumnScreen({
       <PublicTopBar
         actions={null}
         start={
-          <BackLink aria-label={BRAND_NAME} render={<Link href="/" />}>
+          <BackLink
+            aria-label={BRAND_NAME}
+            render={<Link className="text-foreground text-reading h-11" href="/" />}
+          >
             {BRAND_NAME}
           </BackLink>
         }

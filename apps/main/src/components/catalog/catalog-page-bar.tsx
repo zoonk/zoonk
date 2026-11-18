@@ -13,7 +13,7 @@ export function CatalogPageBar({
   title?: string;
 }) {
   return (
-    <div className="max-sm:**:data-[slot=back-link]:text-foreground contents">
+    <div className="max-sm:**:data-[slot=back-link]:text-foreground max-sm:**:data-[slot=back-link]:text-reading contents max-sm:**:data-[slot=back-link]:h-11">
       <LearnPageBar back={back} section title={title}>
         {/* On a phone the way back names the course or the chapter, so it gets the room: only "Log in" stays, at every scroll, since a visitor has no other way in. The "…" ends the bar, so "Log in" doesn't take its edge. */}
         <NoAccountNote>
