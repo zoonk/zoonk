@@ -44,14 +44,14 @@ function FailureAction({
   if (remedy === "subscribe" || remedy === "upgrade") {
     return (
       <>
-        <Link className={className} href="/subscription" prefetch={false}>
-          {t("Subscribe")}
-        </Link>
         {remedy === "upgrade" && (
           <Link className={secondaryClassName} href="/plan" prefetch>
             {t("Go to your Plan")}
           </Link>
         )}
+        <Link className={className} href="/subscription" prefetch={false}>
+          {t("Subscribe")}
+        </Link>
       </>
     );
   }
