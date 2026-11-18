@@ -196,21 +196,20 @@ final class AppRouter {
     let sheet: AppSheet?
   }
 
-  /// The sidebar place a tab shows: its own root, or the one place pushed on it.
+  /// The sidebar place a tab shows: its own root, or a place pushed on top of its stack.
   private static func listedPlace(of tab: AppTab, path: NavigationPath) -> AppTab? {
     if path.isEmpty {
       return tab.studyRoute == nil ? nil : tab
     }
 
-    guard path.count == 1 else {
-      return nil
-    }
+    var below = path
+    below.removeLast()
 
     let places = AppTab.sidebarPlaces.compactMap(\.studyRoute) + [.statistics()]
     return places.first { route in
-      var only = NavigationPath()
-      only.append(route)
-      return only == path
+      var candidate = below
+      candidate.append(route)
+      return candidate == path
     }?.sidebarTab
   }
 
@@ -287,7 +286,9 @@ final class AppRouter {
     }
 
     if let tab = Self.listedPlace(of: selectedTab, path: path), sidebarTabs.contains(tab) {
-      paths[selectedTab] = nil
+      var below = path
+      below.removeLast()
+      paths[selectedTab] = below
       paths[tab] = nil
       selectedTab = tab
     }

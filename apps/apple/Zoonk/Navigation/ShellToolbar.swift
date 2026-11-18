@@ -231,6 +231,29 @@ struct GoalSwitcher: View {
     followed == 0 && waiting == 0 && explanations <= 1
   }
 
+  /// The menu's "Your goals" section: the goals followed and the ones waiting to start.
+  static func listsGoals(followed: Int, waiting: Int) -> Bool {
+    followed > 0 || waiting > 0
+  }
+
+  enum Trigger: Equatable {
+    case goal
+    case startGoal
+    case explanations
+  }
+
+  /// What the menu's button says: the goal shown, or the quick explanations it lists when they're
+  /// all the learner has.
+  static func trigger(hasShownGoal: Bool, followed: Int, waiting: Int, explanations: Int)
+    -> Trigger
+  {
+    if hasShownGoal {
+      return .goal
+    }
+
+    return followed == 0 && waiting == 0 && explanations > 1 ? .explanations : .startGoal
+  }
+
   /// Said in an alert, since the menu the learner chose from has closed.
   private enum Failure {
     case start
@@ -269,7 +292,7 @@ struct GoalSwitcher: View {
       .accessibilityLabel(startGoalTitle)
     } else {
       Menu {
-        if !followed.isEmpty {
+        if GoalSwitcher.listsGoals(followed: followed.count, waiting: summary.waitingGoals.count) {
           Section {
             ForEach(followed, id: \.id) { goal in
               Toggle(isOn: isShown(goal)) {
@@ -358,15 +381,9 @@ struct GoalSwitcher: View {
           Image(systemName: "target")
         } else {
           HStack(spacing: 4) {
-            if let goal = shownGoal {
-              Text(goal.displayName)
-                .lineLimit(1)
-                .frame(maxWidth: maxTitleWidth)
-            } else {
-              startGoalTitle
-                .lineLimit(1)
-                .frame(maxWidth: maxTitleWidth)
-            }
+            triggerTitle
+              .lineLimit(1)
+              .frame(maxWidth: maxTitleWidth)
 
             Image(systemName: "chevron.down")
               .imageScale(.small)
@@ -376,11 +393,26 @@ struct GoalSwitcher: View {
           .typeWeight(.semibold)
         }
       }
-      .accessibilityLabel(shownGoal.map { Text($0.displayName) } ?? startGoalTitle)
+      .accessibilityLabel(triggerTitle)
       .accessibilityHint(
         Text(
           "Current goal. Switch goal", tableName: "Navigation",
           comment: "Spoken hint of the goal switcher, after the current goal's title"))
+    }
+  }
+
+  private var triggerTitle: Text {
+    let trigger = GoalSwitcher.trigger(
+      hasShownGoal: shownGoal != nil, followed: summary.followedGoals.count,
+      waiting: summary.waitingGoals.count, explanations: summary.openExplanations.count)
+
+    return switch trigger {
+    case .goal: Text(shownGoal?.displayName ?? "")
+    case .startGoal: startGoalTitle
+    case .explanations:
+      Text(
+        "Quick explanations", tableName: "Navigation",
+        comment: "Heading over the quick explanations the learner hasn't finished")
     }
   }
 

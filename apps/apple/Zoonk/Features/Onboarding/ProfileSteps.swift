@@ -161,9 +161,8 @@ struct ProfileQuestionSections: View {
             label: Text(
               "What should we know?", tableName: "AboutYou",
               comment: "Box for a condition the list doesn't name, in the learner's words"),
-            prompt: nil, text: limited($draft.text, to: 120)
+            prompt: nil, text: limited($draft.text, to: 120), focus: $otherFocused
           )
-          .focused($otherFocused)
           .onAppear {
             if asksOther {
               otherFocused = true
@@ -283,8 +282,7 @@ private func limited(_ text: Binding<String>, to limit: Int) -> Binding<String> 
   }
 }
 
-/// A text chip, its check and ink ring on its tint once picked. The check's room is kept from the
-/// start, so picking a chip never widens it or pushes its neighbors.
+/// Main's profile chip: picked, its tint and ink line, so picking it never changes its width.
 private struct ProfileChip: View {
   let label: Text
   let isOn: Bool
@@ -292,21 +290,14 @@ private struct ProfileChip: View {
 
   var body: some View {
     Button(action: action) {
-      HStack(spacing: 4) {
-        Image(systemName: "checkmark")
-          .fontWeight(.semibold)
-          .opacity(isOn ? 1 : 0)
-          .accessibilityHidden(true)
-
-        label
-          .multilineTextAlignment(.leading)
-      }
-      .typeStyle(.body)
-      .foregroundStyle(Color(.foreground))
-      .padding(.horizontal, 12)
-      .padding(.vertical, 6)
-      .frame(minHeight: 44)
-      .answerSurface(isOn ? .picked : .idle, cornerRadius: Radius.md)
+      label
+        .multilineTextAlignment(.leading)
+        .typeStyle(.body)
+        .foregroundStyle(Color(.foreground))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .frame(minHeight: 44)
+        .answerSurface(isOn ? .picked : .idle, cornerRadius: Radius.md)
     }
     .buttonStyle(.plain)
     .accessibilityAddTraits(isOn ? .isSelected : [])

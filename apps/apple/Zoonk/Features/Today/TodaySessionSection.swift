@@ -589,9 +589,7 @@ extension StudyDay {
     let count = hidden.count + (lessonsAhead ? 1 : 0)
 
     return !lessonsAhead && hidden.allSatisfy({ $0.kind == .learn })
-      ? String(
-        localized: "\(count) more lessons", table: "Today",
-        comment: "Folded later rows of Today, every one a lesson")
+      ? String(localized: "\(count) more lessons", table: "Today")
       : String(localized: "\(count) more", table: "Plan")
   }
 }

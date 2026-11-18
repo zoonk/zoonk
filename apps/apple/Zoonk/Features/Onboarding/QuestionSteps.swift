@@ -723,14 +723,18 @@ struct LabeledField: View {
   let label: Text
   let prompt: Text?
   @Binding var text: String
+  /// The screen's, where it moves focus into the field itself.
+  var focus: FocusState<Bool>.Binding?
 
-  @FocusState private var isFocused: Bool
+  @FocusState private var ownFocus: Bool
 
   var body: some View {
-    FormField(title: label, isFocused: isFocused) {
+    let focus = focus ?? $ownFocus
+
+    FormField(title: label, isFocused: focus.wrappedValue) {
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
       MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
-        .focused($isFocused)
+        .focused(focus)
     }
   }
 }
