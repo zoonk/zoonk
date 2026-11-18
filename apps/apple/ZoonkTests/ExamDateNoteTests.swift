@@ -7,6 +7,47 @@ import XCTest
 /// mocks are a pane beside the page: the note stays open.
 @MainActor
 final class ExamDateNoteTests: XCTestCase {
+  func testLastExamActionClearsTheTabBar() async throws {
+    var exam = try Self.exam()
+    exam.stage = .examDay
+    exam.daysEstimated = false
+    exam.days = [.init(date: "2026-11-17", label: nil, startTime: "13:30")]
+    exam.daysLeft = 0
+    exam.examName = "IELTS"
+    exam.noticeDay = .init(date: "2027-11-21", estimated: true)
+    exam.sessionsDone = 10
+    exam.prepared = true
+    exam.speakingMock = .ielts
+    let dependencies = AppDependencies.hosted()
+    try readsWhatVoiceOverReads()
+
+    let window = try show(
+      TabView {
+        Tab("Today", systemImage: "sun.max") {
+          NavigationStack {
+            ExamList(exam: exam, options: nil)
+          }
+        }
+        Tab("Plan", systemImage: "list.bullet") { Color.clear }
+        Tab("Search", systemImage: "magnifyingglass", role: .search) { Color.clear }
+      }
+      .tabViewStyle(.sidebarAdaptable)
+      .appDependencies(dependencies)
+      .environment(AppRouter())
+      .zoonkStyles())
+    try await waitForLayout(in: window)
+
+    let action = try XCTUnwrap(
+      accessibilityElements(in: window).first {
+        $0.accessibilityLabel == "Start" && $0.accessibilityTraits.contains(.button)
+      })
+    let tabBar = try XCTUnwrap(requestViews(UITabBar.self, in: window).first)
+    let tabBarFrame = tabBar.convert(tabBar.bounds, to: nil)
+    XCTAssertLessThanOrEqual(
+      action.accessibilityFrame.maxY, tabBarFrame.minY,
+      "The speaking mock action should be reachable when the exam opens")
+  }
+
   func testTheDateNoteStaysWhenTheMocksPaneGoes() async throws {
     try await staysOpen(from: 1376, to: 420)
   }
