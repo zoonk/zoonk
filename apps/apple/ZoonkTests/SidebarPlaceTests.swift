@@ -80,6 +80,29 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertNotEqual(router.shown, shown)
   }
 
+  /// The place sits on top of whatever Today already had pushed.
+  func testAResizeShowsTheSamePageOverAnEarlierPage() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.chapter(chapterId: "chapter"))
+    router.open(.mistakes)
+    router.open(.mistakePractice())
+    router.present(.feedback(screen: "practice"))
+    let shown = router.shown
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    XCTAssertEqual(router.shown, shown)
+
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    XCTAssertEqual(router.shown, shown)
+    XCTAssertEqual(router.selectedTab, .mistakes)
+
+    var below = NavigationPath()
+    below.append(AppRoute.chapter(chapterId: "chapter"))
+    XCTAssertEqual(router.path(for: .today).wrappedValue, below)
+  }
+
   func testWithoutASidebarAPageOpensOnTheTabItCameFrom() {
     let router = AppRouter()
 
