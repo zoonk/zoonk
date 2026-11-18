@@ -11,7 +11,6 @@ export const PAGE_COLUMN_CLASS = "w-full min-w-0";
  * content does.
  */
 const MEASURE_CLASS = {
-  column: "[--page-measure:var(--container-column)]",
   form: "[--page-measure:var(--container-form)]",
   /**
    * A list on a computer: the list (20rem), the gap and the pane's inset (4rem), its hairline

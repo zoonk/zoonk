@@ -4,7 +4,7 @@
   "reminders_cancel": "d85c9d78af6a3fff11a2433dbe764f121184dca85705f7ed52ceb59122537569",
   "reminders_channel_description": "74427a47f4bc1c7b3aa781892b2d6c98687600a8e6ae13831e5cc127b7324cf0",
   "reminders_channel_name": "4536d4010f4459f958a45c7cf968b7e705a6e1a8a2e0112a633cfe860ccd2397",
-  "reminders_email": "e78c3d6cd19cf0ed685135270eb15a55144281474ff90c3579c3a375e112a9d4",
+  "reminders_email": "c42cea069747a5462e60b14c49556745537a98b1a2eea548190f264b6a9870ba",
   "reminders_email_instead": "099c65dff4e27384d3cc80988685c9021e39b22773d73c363ef4f47f4e1e03e8",
   "reminders_email_needs_account": "a958726df123af7bc80954b6800d9f39db4d0c68ef4b2ce84dfc0b33804c8e3b",
   "reminders_email_on": "117948a99c98533bdd66bc4f62777638b214f0b3301d3cb3f1c8c70208246e8e",
@@ -71,7 +71,7 @@
     <string name="reminders_title">Promemoria</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Orario</string>
-    <string name="reminders_email">Email</string>
+    <string name="reminders_email">Promemoria via email</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Crea un account per ricevere i promemoria via email</string>
     <string name="reminders_push">Notifiche push</string>

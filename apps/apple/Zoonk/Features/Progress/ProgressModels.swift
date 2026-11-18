@@ -14,6 +14,7 @@ struct ActivityProgress: Codable, Equatable, Sendable {
 struct ActivityProgressDay: Codable, Equatable, Identifiable, Sendable {
   let activitiesCompleted: Int
   let date: ProgressDate
+  let timeSpentSeconds: Int
 
   var id: ProgressDate { date }
 }

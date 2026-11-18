@@ -212,6 +212,7 @@ test.describe("Learner Progress API", () => {
       activitiesCompleted: 2,
       date: today.toISOString().slice(0, 10),
       lessonCompletions: 1,
+      timeSpentSeconds: 120,
     });
 
     expect(energyBody.energy).toMatchObject({

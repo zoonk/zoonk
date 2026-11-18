@@ -4,7 +4,7 @@
   "reminders_cancel": "79f8def944e0e859ce42d770c81e5a83463cb8120676d08a8585050c0787d8ea",
   "reminders_channel_description": "04ec539f9bdb1d0ffa4ac0d2d3cf58539277294a6dbb121bf9fd1b87e188ad1b",
   "reminders_channel_name": "6a17432697e217a52ac214cb4e078e4a4357c7463603ad99c4591b2e9889cb5d",
-  "reminders_email": "fe303b239b49cb0446ca505db6b9328b0f0c20e3f19498f7d405d3d05010c59f",
+  "reminders_email": "8d9a99a8c15b98d03e475959b19bcd379ee8dfbe83af35cc54aaf8d16ef52d90",
   "reminders_email_instead": "b72031fe6916709f11a07b043dcf95005fbbc541484d48e94e2e82123ba5c38b",
   "reminders_email_needs_account": "fcc99fe0add9f8a76ac2a6ce2919c9f3c3693d8d1a6679ec38ec1246190f55f4",
   "reminders_email_on": "2e01f58c40b779f03492964539598aa422bbae9ccb54cce0a486c92d38d7cbac",
@@ -71,7 +71,7 @@
     <string name="reminders_title">Hatırlatmalar</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Saat</string>
-    <string name="reminders_email">E-posta</string>
+    <string name="reminders_email">E-posta hatırlatmaları</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">E-posta hatırlatmaları almak için hesap oluştur</string>
     <string name="reminders_push">Anlık bildirimler</string>

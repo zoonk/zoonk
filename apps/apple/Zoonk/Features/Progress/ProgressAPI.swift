@@ -110,7 +110,8 @@ private func makeActivityProgressDay(
 ) throws -> ActivityProgressDay {
   ActivityProgressDay(
     activitiesCompleted: payload.activitiesCompleted,
-    date: try makeProgressDate(payload.date))
+    date: try makeProgressDate(payload.date),
+    timeSpentSeconds: payload.timeSpentSeconds)
 }
 
 private func makeEnergyProgress(
