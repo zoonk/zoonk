@@ -28,7 +28,6 @@ export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLoca
             onChange(event.target.value);
           }
         }}
-        size="sm"
       >
         {SUPPORTED_LOCALES.map((option) => (
           <NativeSelectOption key={option} lang={option} value={option}>

@@ -21,7 +21,6 @@ export function SectionPage({
   nav,
   note,
   parents,
-  root,
 }: {
   children: React.ReactNode;
   end?: React.ReactNode;
@@ -33,8 +32,6 @@ export function SectionPage({
   note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
-  /** The sidebar lists the section's pages, so from `lg` they need no way back. */
-  root?: boolean;
 }) {
   return (
     <div
@@ -48,7 +45,7 @@ export function SectionPage({
       )}
       data-slot="section-page"
     >
-      <SectionBarFrame end={end} hub={hub} parents={parents} root={root} />
+      <SectionBarFrame end={end} hub={hub} parents={parents} />
 
       <div className={cn("flex min-w-0 flex-1 flex-col gap-6", measure && MEASURED_CLASS)}>
         <div className="hidden flex-col gap-3 border-b pb-3 md:flex">

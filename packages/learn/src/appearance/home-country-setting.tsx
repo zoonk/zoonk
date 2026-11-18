@@ -40,9 +40,9 @@ export function HomeCountrySetting({
         aria-describedby={descriptionId}
         aria-haspopup="dialog"
         aria-labelledby={`${labelId} ${valueId}`}
-        className="h-auto min-h-7.5 max-w-48 py-1 text-left whitespace-normal"
+        className="h-auto min-h-11 max-w-48 py-1 text-left whitespace-normal"
         onClick={() => setOpen(true)}
-        size="sm"
+        size="lg"
         type="button"
         variant="outline"
       >
