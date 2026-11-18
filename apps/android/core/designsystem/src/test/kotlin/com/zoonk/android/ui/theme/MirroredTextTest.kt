@@ -48,11 +48,13 @@ class MirroredTextTest {
 
     @Test
     fun aSignedNumberKeepsItsSignBeforeItsDigits() {
-        for (number in listOf("+50", "−3", "<1%")) {
-            val layout = mirrored(number, fill = false)
-            val sign = layout.getBoundingBox(0)
-            val digit = layout.getBoundingBox(1)
-            assertTrue("$number: sign at ${sign.left}, digit at ${digit.left}", sign.left < digit.left)
+        val number = "+50 · −3 · <1%"
+        val layout = mirrored(number, fill = false)
+        for (sign in listOf("+", "−", "<")) {
+            val at = number.indexOf(sign)
+            val signBox = layout.getBoundingBox(at)
+            val digit = layout.getBoundingBox(at + 1)
+            assertTrue("$sign: sign at ${signBox.left}, digit at ${digit.left}", signBox.left < digit.left)
         }
     }
 
@@ -61,9 +63,10 @@ class MirroredTextTest {
         fill: Boolean = true,
     ): TextLayoutResult {
         var result: TextLayoutResult? = null
+        // As an app in a right-to-left language gets its direction: from the window, around the theme.
         compose.setContent {
-            ZoonkTheme {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                ZoonkTheme {
                     Box(Modifier.width(WIDTH)) {
                         Text(text, modifier = if (fill) Modifier.fillMaxWidth() else Modifier, onTextLayout = { result = it })
                     }

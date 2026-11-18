@@ -24,6 +24,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /**
  * A page a tab or another page opened: its top bar with the way back, [title] and [actions]. A page
@@ -48,41 +49,47 @@ fun PageScaffold(
 ) {
     val focus = rememberTitleFocus()
 
-    WithLoadFailureBar(enabled = bottomBar == null) { retry ->
-        Scaffold(
-            modifier = Modifier.pageFocus(focus).then(modifier),
-            topBar = {
-                // Across an unfolded book's fold the title ends at the fold. The actions keep their slot at the bar's end, past
-                // the fold, so what they opened stays open as the book folds.
-                val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
-                TopAppBar(
-                    title = {
-                        BeforeFold { beforeFold ->
-                            Box(
-                                // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
-                                Modifier
-                                    .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
-                                    .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
-                                    .then(beforeFold.titleTarget(focus.bar)),
-                            ) { title() }
-                        }
-                    },
-                    modifier = Modifier.pageBar(focus),
-                    navigationIcon = {
-                        BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START), enabled = backEnabled)
-                    },
-                    actions = { PageBarActions(actions) },
-                )
-            },
-            bottomBar = {
-                if (bottomBar != null) {
-                    BottomBar(columnWidth = barWidth, content = bottomBar)
-                } else if (retry != null) {
-                    BottomBar(columnWidth = barWidth) { retry() }
-                }
-            },
-            content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
-        )
+    TextStartsOnLayoutStart {
+        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+            Scaffold(
+                modifier = Modifier.pageFocus(focus).then(modifier),
+                topBar = {
+                    // Across an unfolded book's fold the title ends at the fold. The actions keep their slot at the bar's end, past
+                    // the fold, so what they opened stays open as the book folds.
+                    val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
+                    TopAppBar(
+                        title = {
+                            BeforeFold { beforeFold ->
+                                Box(
+                                    // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
+                                    Modifier
+                                        .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
+                                        .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
+                                        .then(beforeFold.titleTarget(focus.bar)),
+                                ) { title() }
+                            }
+                        },
+                        modifier = Modifier.pageBar(focus),
+                        navigationIcon = {
+                            BackButton(
+                                onClick = onBack,
+                                modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
+                                enabled = backEnabled,
+                            )
+                        },
+                        actions = { PageBarActions(actions) },
+                    )
+                },
+                bottomBar = {
+                    if (bottomBar != null) {
+                        BottomBar(columnWidth = barWidth, content = bottomBar)
+                    } else if (retry != null) {
+                        BottomBar(columnWidth = barWidth) { retry() }
+                    }
+                },
+                content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
+            )
+        }
     }
 }
 

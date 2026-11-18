@@ -17,6 +17,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.zoonk.android.ui.scaffold.ReadWindowPosture
 
 /**
@@ -48,8 +49,25 @@ fun ZoonkTheme(
         LocalMoreContrast provides moreContrast,
     ) {
         MaterialTheme(colorScheme = scheme.material, typography = typography, shapes = ZoonkMaterialShapes) {
-            ReadWindowPosture(content)
+            TextStartsOnLayoutStart { ReadWindowPosture(content) }
         }
+    }
+}
+
+/**
+ * Starts every paragraph inside on the side [LocalLayoutDirection] starts, which the theme reads where it's
+ * given and the page and task scaffolds read again under anything that set it after the theme.
+ */
+@Composable
+fun TextStartsOnLayoutStart(content: @Composable () -> Unit) {
+    val direction = LocalLayoutDirection.current
+    val typography = MaterialTheme.typography
+    val roles = MaterialTheme.zoonkType
+    val aligned = remember(typography, direction) { typography.startingOn(direction) }
+    val alignedRoles = remember(roles, direction) { roles.startingOn(direction) }
+
+    MaterialTheme(colorScheme = MaterialTheme.colorScheme, typography = aligned, shapes = MaterialTheme.shapes) {
+        CompositionLocalProvider(LocalZoonkTypography provides alignedRoles, content = content)
     }
 }
 

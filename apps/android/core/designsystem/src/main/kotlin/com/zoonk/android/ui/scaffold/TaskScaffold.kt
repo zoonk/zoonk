@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -179,20 +180,22 @@ fun TaskScaffold(
     }
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
-    Box(Modifier.pageFocus(focus).then(modifier)) {
-        PageWithSupportingPane(
-            supportingPane = aside?.let { { TaskAsideRail(it) } },
-            panesTouch = true,
-            halfWidth = aside?.half == true,
-        ) { beside ->
-            // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
-            CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
-                if (lonePage) {
-                    BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
-                        Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+    TextStartsOnLayoutStart {
+        Box(Modifier.pageFocus(focus).then(modifier)) {
+            PageWithSupportingPane(
+                supportingPane = aside?.let { { TaskAsideRail(it) } },
+                panesTouch = true,
+                halfWidth = aside?.half == true,
+            ) { beside ->
+                // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
+                CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
+                    if (lonePage) {
+                        BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
+                            Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+                        }
+                    } else {
+                        frame(!beside || aside?.footer == null)
                     }
-                } else {
-                    frame(!beside || aside?.footer == null)
                 }
             }
         }
