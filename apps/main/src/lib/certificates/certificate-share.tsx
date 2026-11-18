@@ -101,13 +101,7 @@ export function CertificateLink({
 
       {view.graph.kind === "ladder" && (
         <div style={{ display: "flex", marginTop: link.graph.above }}>
-          <CertificateGraph
-            ladder={link.ladder}
-            route={link.route}
-            scale={1}
-            showLabels={false}
-            view={view}
-          />
+          <CertificateGraph ladder={link.ladder} route={link.route} scale={1} view={view} />
         </div>
       )}
 
@@ -140,13 +134,7 @@ function PostGraph({ view }: { view: CertificateView }) {
       {view.graph.kind === "route" && view.graph.label ? (
         <RouteLabel label={view.graph.label} spec={post.route} />
       ) : (
-        <CertificateGraph
-          ladder={post.ladder}
-          route={post.route}
-          scale={1}
-          showLabels
-          view={view}
-        />
+        <CertificateGraph ladder={post.ladder} route={post.route} scale={1} view={view} />
       )}
     </div>
   );
