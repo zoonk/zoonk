@@ -106,7 +106,10 @@ export function StepSolverStep({
   const firstWrongPick = isFirstPickWrong ? wrongPicks[0] : undefined;
 
   return (
-    <li className="relative flex gap-3" data-slot="step-solver-step">
+    <li
+      className="not-last:before:bg-border relative isolate flex gap-3 not-last:before:absolute not-last:before:top-4 not-last:before:-bottom-9 not-last:before:left-[15px] not-last:before:-z-10 not-last:before:w-0.5"
+      data-slot="step-solver-step"
+    >
       <StepMarker index={index} isFirstPickWrong={isChecked && isFirstPickWrong} status={status} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">

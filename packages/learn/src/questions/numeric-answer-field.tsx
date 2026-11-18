@@ -7,6 +7,7 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -64,9 +65,12 @@ function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): s
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
 
-function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
+function UnitAddon({ id, nearValue, unit }: { id: string; nearValue: boolean; unit: NumericUnit }) {
   return (
-    <InputGroupAddon align={unit.position === "prefix" ? "inline-start" : "inline-end"}>
+    <InputGroupAddon
+      align={unit.position === "prefix" ? "inline-start" : "inline-end"}
+      className={nearValue ? "min-w-fit flex-1 justify-start" : undefined}
+    >
       <InputGroupText className="text-base" id={id}>
         {unit.symbol}
       </InputGroupText>
@@ -151,6 +155,7 @@ export function NumericAnswerField({
   const [invalid, setInvalid] = useState(false);
   const hasRule = entry !== null && entry.kind !== "number";
 
+  const showsDegree = unit?.position === "suffix" && unit.symbol === "°";
   const showsRule = hasRule && !invalid;
 
   const describedBy = describeField({
@@ -189,14 +194,15 @@ export function NumericAnswerField({
       </label>
 
       <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
-        {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}
-
         <InputGroupInput
           aria-describedby={describedBy}
           aria-labelledby={labelledBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
-          className="text-lg tabular-nums md:text-lg"
+          className={cn(
+            "text-lg tabular-nums md:text-lg",
+            showsDegree && "field-sizing-content w-auto min-w-10 flex-[0_1_auto]",
+          )}
           enterKeyHint="done"
           id={inputId}
           // A phone's decimal keypad has no slash, so a fraction box opens the full keyboard.
@@ -213,7 +219,7 @@ export function NumericAnswerField({
           value={text}
         />
 
-        {unit?.position === "suffix" && <UnitAddon id={unitId} unit={unit} />}
+        {unit && <UnitAddon id={unitId} nearValue={showsDegree} unit={unit} />}
 
         <InputGroupAddon
           align="inline-end"
