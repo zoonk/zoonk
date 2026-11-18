@@ -217,6 +217,33 @@ describe(placeMapLabels, () => {
     expect(scale).toBeGreaterThanOrEqual(0.8);
   });
 
+  it("keeps a wide street name between the frame and the pin number", () => {
+    const streets = [80, 100, 120].map((y) => [
+      { x: 36, y },
+      { x: 244, y },
+    ]);
+
+    const [spot] = placeMapLabels({
+      frame: { height: 200, width: 288 },
+      labels: [{ ...named, height: 28, positions: streets[1], width: 150, x: 188, y: 100 }],
+      pinNumbers: [
+        { height: 20, width: 14, x: 124, y: 90 },
+        { height: 20, width: 16, x: 162, y: 90 },
+      ],
+      pins: [
+        { x: 131, y: 100 },
+        { x: 170, y: 100 },
+      ],
+      streets,
+    });
+
+    expect(spot).not.toBeNull();
+    expect(spot?.y).toBe(100);
+    const halfWidth = 75 * (spot?.scale ?? 1) + 1.5;
+    expect(spot!.x - halfWidth).toBeGreaterThanOrEqual(0);
+    expect(spot!.x + halfWidth).toBeLessThanOrEqual(121);
+  });
+
   it("keeps a named label box clear of every pin box", () => {
     const pins = [
       { x: 160, y: 120 },

@@ -113,7 +113,10 @@ export function streetCandidates(
       ? [
           rx,
           inline.frame.width - rx,
-          ...inline.boxes.flatMap((box) => [box.x - rx, box.x + box.width + rx]),
+          ...inline.boxes.flatMap((box) => [
+            box.x - rx - LABEL_CLEARANCE,
+            box.x + box.width + rx + LABEL_CLEARANCE,
+          ]),
         ]
       : [];
 
@@ -121,7 +124,10 @@ export function streetCandidates(
       ? [
           ry,
           inline.frame.height - ry,
-          ...inline.boxes.flatMap((box) => [box.y - ry, box.y + box.height + ry]),
+          ...inline.boxes.flatMap((box) => [
+            box.y - ry - LABEL_CLEARANCE,
+            box.y + box.height + ry + LABEL_CLEARANCE,
+          ]),
         ]
       : [];
 
