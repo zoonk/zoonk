@@ -165,7 +165,7 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertTrue(queue.countsTowardsProgress(flagged, initiallyStored: storedAnswer))
   }
 
-  func testARefusedAnswerSaysSoUntilALaterOneIsStored() async {
+  func testARefusedAnswerSaysSoUntilItsQuestionsAnswerIsStored() async {
     var refuse = true
     let queue = MockDraftQueue { _ in refuse ? .refused : .stored }
 
@@ -174,9 +174,50 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertEqual(queue.status, .refused)
 
     refuse = false
-    queue.add(draft("b", .choice(1)))
+    queue.add(draft("a", .choice(1)))
     await queue.idle()
     XCTAssertEqual(queue.status, .saved)
+  }
+
+  /// Another device moved a forward-only section on, so the first question's change is refused
+  /// while the next one is stored: the first still isn't saved.
+  func testAnotherAnswerStoredAfterARefusalDoesntSayEveryAnswerIsSaved() async {
+    let queue = MockDraftQueue { draft in draft.itemId == "a" ? .refused : .stored }
+
+    queue.add(draft("a", .choice(0)))
+    queue.add(draft("b", .choice(1)))
+    await queue.idle()
+
+    XCTAssertEqual(queue.status, .refused)
+  }
+
+  /// "Try again" sends an answer that didn't get through, and it stays unanswered until the server
+  /// keeps it.
+  func testAnAnswerSentAgainCountsOnlyOnceItIsStored() async {
+    let gate = Gate()
+    var saves = 0
+    let queue = MockDraftQueue(
+      retryDelay: { _ in .seconds(60) },
+      save: { _ in
+        saves += 1
+        if saves == 1 { return .unreachable }
+        await gate.wait()
+        return .stored
+      })
+    let answer = draft("a", .choice(0))
+
+    queue.add(answer)
+    _ = try? await waitForTestCondition("The first save never failed") { queue.status == .retrying }
+    XCTAssertFalse(queue.countsTowardsProgress(answer, initiallyStored: nil))
+
+    queue.retryNow()
+    _ = try? await waitForTestCondition("The answer never went again") { saves == 2 }
+    XCTAssertFalse(
+      queue.countsTowardsProgress(answer, initiallyStored: nil), "It counts while on its way")
+
+    gate.open()
+    await queue.idle()
+    XCTAssertTrue(queue.countsTowardsProgress(answer, initiallyStored: nil))
   }
 
   func testStoppingDropsAnAnswerStillOnItsWayInsteadOfSendingItAgain() async {
@@ -236,8 +277,20 @@ final class MockBarNoteTests: XCTestCase {
     XCTAssertEqual(note(failed: true, save: .saving)?.tone, .failure)
   }
 
+  /// A slow step says what it's doing, as the web's: starting the next section hands nothing in.
+  func testASlowStepSaysWhatItIsDoing() {
+    func line(_ step: MockRun.Step) -> String? {
+      MockRun.barNote(failed: false, save: .saved, slow: step) {}?.politeLine
+    }
+
+    XCTAssertEqual(line(.submit), "Still handing it in. This is taking longer than usual.")
+    XCTAssertEqual(line(.endBreak), "Still starting. This is taking longer than usual.")
+    XCTAssertEqual(line(.startSpeaking), "Still starting. This is taking longer than usual.")
+    XCTAssertEqual(line(.finish), "This is taking longer than usual.")
+  }
+
   private func note(failed: Bool = false, save: MockDraftQueue.Status) -> BarNote? {
-    MockRun.barNote(failed: failed, save: save, slow: false) {}
+    MockRun.barNote(failed: failed, save: save, slow: nil) {}
   }
 }
 
@@ -251,6 +304,13 @@ final class MockAnswerSheetTests: XCTestCase {
     var japanese = MockLabels.markedForReview(2)
     japanese.locale = Locale(identifier: "ja")
     XCTAssertEqual(String(localized: japanese), "2問が見直し対象", "The web's words")
+  }
+
+  /// Beside the sheet's title, as the web's: how many of the section's questions are answered.
+  func testTheSheetSaysHowManyQuestionsAreAnswered() {
+    XCTAssertEqual(String(localized: MockLabels.answered(0)), "0 answered")
+    XCTAssertEqual(String(localized: MockLabels.answered(1)), "1 answered")
+    XCTAssertEqual(String(localized: MockLabels.answered(2)), "2 answered")
   }
 
   /// A question the learner can't go back to reads as dimmed, as it's drawn.
