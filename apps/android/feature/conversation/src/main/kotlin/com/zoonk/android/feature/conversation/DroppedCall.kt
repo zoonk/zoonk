@@ -12,9 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
+import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
@@ -115,7 +118,9 @@ private fun droppedTitle(
         DroppedReason.CallsPaused -> stringResource(R.string.conversation_paused_title)
         DroppedReason.Ended -> stringResource(R.string.conversation_ended_title)
         DroppedReason.CallInProgress -> stringResource(R.string.conversation_in_progress_title)
-        DroppedReason.PlusRequired, DroppedReason.Microphone, null -> stringResource(R.string.conversation_dropped_title)
+        DroppedReason.PlusRequired -> stringResource(R.string.conversation_challenge_gate_title)
+        DroppedReason.Microphone -> stringResource(R.string.audio_microphone_off_title)
+        null -> stringResource(R.string.conversation_dropped_title)
     }
 
 @Composable
@@ -150,11 +155,13 @@ private fun DroppedReasonText(
         }
 
         DroppedReason.PlusRequired -> {
-            ChallengeCallGate(actions.onSubscribe)
+            TrackShown(AnalyticsEvent.SubscriptionGateShown)
+            Muted(stringResource(R.string.conversation_challenge_gate_line))
+            SubscribeButton(actions.onSubscribe)
         }
 
         DroppedReason.Microphone -> {
-            MicrophoneOff(stringResource(R.string.conversation_mic_off, characterName))
+            MicrophoneOff(stringResource(R.string.conversation_mic_off, characterName), titled = false)
         }
     }
 }

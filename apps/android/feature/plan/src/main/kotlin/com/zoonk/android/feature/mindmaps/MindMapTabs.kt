@@ -29,6 +29,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -191,25 +192,27 @@ private fun LazyListScope.notMadeBlock(
     val later = notMade.filterNot { it.canMakeNow() }
     val stop = mindMaps.createOffer.stop
 
-    item(key = "not-made-title", contentType = "toggle") {
-        ListRow(
-            headline = { Text(stringResource(R.string.mindmaps_other_chapters), style = MaterialTheme.zoonkType.sectionTitle) },
-            modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 16.dp),
-            onClick = actions.toggleNotMade.takeIf { later.isNotEmpty() },
-            expanded = open.takeIf { later.isNotEmpty() },
-            meta = {
-                Text(
-                    pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size),
-                    style = MaterialTheme.zoonkType.data,
-                )
-            },
-        )
+    item(key = "not-made-title", contentType = "title") {
+        val title = stringResource(R.string.mindmaps_other_chapters)
+        val count = pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size)
+        if (later.isEmpty()) {
+            SectionHeader(title, Modifier.padding(top = 24.dp, bottom = 8.dp), detail = count)
+        } else {
+            ListRow(
+                headline = { Text(title, Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.sectionTitle) },
+                modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 16.dp),
+                onClick = actions.toggleNotMade,
+                expanded = open,
+                meta = { Text(count, style = MaterialTheme.zoonkType.data) },
+            )
+        }
     }
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
     }
     if (open && later.isNotEmpty()) {
-        if (!actions.state.plus && later.any { it.lessonsToWrite > 0 }) {
+        val note = !actions.state.plus && later.any { it.lessonsToWrite > 0 }
+        if (note) {
             item(key = "not-made-spends", contentType = "line") {
                 Text(
                     stringResource(R.string.mindmaps_free_lessons_note),
@@ -220,7 +223,8 @@ private fun LazyListScope.notMadeBlock(
             }
         }
         items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
-            Divided(map != later.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
+            // The note parts the two lists; without it a hairline does, as between any two rows.
+            Divided(map != later.first() || (now.isNotEmpty() && !note)) { ChapterRow(map, actions, stop = stop, numbered = false) }
         }
     }
     item(key = "not-made", contentType = "not-made") {

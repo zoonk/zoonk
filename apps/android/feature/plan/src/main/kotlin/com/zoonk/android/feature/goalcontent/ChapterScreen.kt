@@ -143,10 +143,7 @@ fun ChapterScreen(
     }
 }
 
-/**
- * The chapter's map row, and whether it shows one. A narrow page puts the row under the hero; with
- * the sidebar beside it, the row sits in "For reference" there instead.
- */
+/** The chapter's map row, and whether it shows one: it sits in "For reference", wherever that section is. */
 internal class ChapterMapSlot(
     val shown: Boolean,
     val row: @Composable (Modifier) -> Unit,
@@ -272,10 +269,6 @@ internal fun ChapterPage(
             ChapterReference(chapter, shownMap)
         },
     ) { asideBeside ->
-        if (shownMap != null && !asideBeside) {
-            item(key = "mind-map", contentType = "mind-map") { shownMap.row(Modifier.padding(top = SECTION_GAP)) }
-        }
-
         if (lessons.isNotEmpty()) {
             item(key = "lessons", contentType = "lessons") {
                 LessonList(lessons, upNext = true, onOpen = actions.openLesson, modifier = Modifier.padding(top = SECTION_GAP))
@@ -287,7 +280,7 @@ internal fun ChapterPage(
                 key = "practice",
                 contentType = "practice",
             ) { ChapterPractice(chapter, practice, actions, Modifier.padding(top = SECTION_GAP)) }
-            item(key = "reference", contentType = "reference") { ChapterReference(chapter, null, Modifier.padding(top = SECTION_GAP)) }
+            item(key = "reference", contentType = "reference") { ChapterReference(chapter, shownMap, Modifier.padding(top = SECTION_GAP)) }
         }
     }
 }
@@ -413,10 +406,7 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
         is PracticeOutcome.Opened, null -> null
     }
 
-/**
- * What the chapter leaves to look back at: its map, when the sidebar holds it, and its skills and
- * their summaries.
- */
+/** What the chapter leaves to look back at: its map, and its skills and their summaries. */
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
