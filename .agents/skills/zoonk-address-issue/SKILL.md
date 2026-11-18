@@ -1,15 +1,15 @@
 ---
 name: zoonk-address-issue
-description: Verify and address a zoonk/zoonk GitHub issue together with the issues related to it. Find them through its links and issue searches, make sure no other agent is already on them, mark them In Progress on the project board, close duplicates, link an open PR that covers them, then fix a bug, research the best way to build an enhancement, or discuss a new feature before building it, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
+description: Verify and address a zoonk/zoonk GitHub issue together with the issues related to it. Find them through its links and issue searches, make sure no other agent is already on them, mark them In Progress on the project board, close duplicates, link an open PR that covers them, question whether each still holds on the latest main and whether a better design would make it impossible, then fix a bug, research the best way to build an enhancement, or discuss a new feature before building it, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # Addressing an issue
 
-An issue is someone's report of a problem or an idea, not a spec. Agents file and address issues in parallel, so one problem often arrives as a few slightly different issues, and agents that take them separately end up with competing PRs. Find the issues related to this one, make sure nobody else is already on them, mark them In Progress so the team sees an agent has them, check that they hold up, then address them together the way their kind calls for. Related issues, duplicates and open PRs come first because finding them takes minutes while reproducing a problem can take an hour, and a duplicate is verified on the issue it duplicates.
+An issue is someone's report of a problem or an idea, not a spec. Agents file and address issues in parallel, so one problem often arrives as a few slightly different issues, and agents that take them separately end up with competing PRs. Find the issues related to this one, make sure nobody else is already on them, mark them In Progress so the team sees an agent has them, question them, check that they hold up, then address them together the way their kind calls for. Related issues, duplicates and open PRs come first because finding them takes minutes while reproducing a problem can take an hour, and a duplicate is verified on the issue it duplicates.
 
 Being asked to address or verify an issue covers the issues related to it too, and is the go-ahead for what this skill does on GitHub for all of them: comments, closing, links, type, priority, labels and their status on the project board. Every comment you post opens with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure).
 
@@ -110,14 +110,22 @@ gh project item-edit 37 --owner zoonk --url https://github.com/zoonk/zoonk/issue
 
 These need `gh` 2.97 or newer, which sets a field by name, and the `project` scope on its token. If `gh` says the scope is missing, ask the user to run `gh auth refresh -s project`, carry on with the issues, and set the status once they have.
 
-## 5. Verify them
+## 5. Question them
+
+An issue describes a problem as someone saw it on the day they filed it. Question it before you spend time reproducing it:
+
+- **Is it still relevant?** Issues that sat a while are often overtaken by later work. Read what changed on the latest `main` since it was filed in the code it touches (`git log --since=<filed date> -- <paths>`, merged PRs, linked issues). A fix may have shipped, or a different approach, a redesign or a change of direction may have made it moot or changed what the right fix is. If it's moot, close it with a comment naming what fixed or superseded it: as completed when a change fixed it, as not planned when the product moved on. If it changed, address it as it stands now.
+- **Does it make sense as framed?** Find the need behind it: what the learner was trying to do, and what got in the way. The issue's framing, like its suggested fix, is one view of that need.
+- **What would we build today?** If we built this part from scratch, what experience would serve the learner best, and would it make the problem impossible rather than patched? Treat a bug as a possible symptom of a design. Signs include clients disagreeing on the behavior, the same kind of bug recurring in one area, and a fix that needs a guard, flag, special case or second code path.
+
+## 6. Verify them
 
 Confirm each problem before judging it:
 
 - **A bug:** reproduce it at the cheapest layer that shows it: trace the code path, write a failing test, or use the running app. When it depends on what's stored in production, such as one learner's goal or sessions, read it with [zoonk-staff-data](../zoonk-staff-data/SKILL.md).
 - **Anything else:** see how Zoonk handles it today, in the code or the running app, on each platform it touches.
 
-If it doesn't reproduce, find out why. It may be fixed on `main` since it was filed: close it as completed, with a comment naming the PR or commit that fixed it. Or the issue may lack what you need ([when information is missing](#when-information-is-missing)).
+If it doesn't reproduce, find out why. A change since it was filed may have fixed it after all ([question them](#5-question-them)), or the issue may lack what you need ([when information is missing](#when-information-is-missing)).
 
 Then judge whether it's worth addressing, the way [zoonk-pull-request](../zoonk-pull-request/SKILL.md#3-judge-every-comment) judges a review comment: can it really happen, who reaches it and with what, and what does it cost when it does? Double taps, retries, concurrent requests, forged fields and partial failures are ordinary traffic here, not rare. A problem nothing reaches, or a rare one with a harmless result, isn't worth a fix: comment with what you checked and why, then close it as not planned (`gh issue close <n> --repo zoonk/zoonk --reason "not planned"`).
 
@@ -129,13 +137,15 @@ A valid issue doesn't always need a PR:
 
 - A question, or a problem with someone's own account or payment: answer it or point them to the [Help page](https://www.zoonk.com/support), then close it.
 - A security hole, such as one learner seeing another's data: tell the user at once and add nothing about it on GitHub.
-- A new feature: discuss it first (next step).
+- A new feature: discuss it first ([address them](#7-address-them)).
 
-## 6. Address them
+## 7. Address them
 
 Whatever the kind, the fix or approach an issue suggests is one idea, not the plan. Work out the best way to solve the problem, and when it differs from the issue's suggestion, say why in the PR. Judge the kind from what the issue asks, not from its type, label or title. Related issues usually share one fix at their common cause.
 
-- **Bug** (something doesn't do what it's meant to): fix it. Find the root cause rather than patching the symptom the issue shows, and start from a regression test that fails for the right reason ([zoonk-testing](../zoonk-testing/SKILL.md)). A bug in a dependency gets a workaround here and an upstream report ([zoonk-upstream-issue](../zoonk-upstream-issue/SKILL.md)).
+When the design holds up ([question them](#5-question-them)), fix narrowly. When the better approach changes what learners see or is a real UX or structural call, don't quietly ship either the narrow fix or the redesign: bring it to the user as a recommendation, with the narrow fix as the alternative. Check it first with a model from another family, or with a [design debate](../../guides/orchestration.md#design-debate) when it's a big new flow or a structural change. The PR, or the issue while it waits on the user, says which you chose and why.
+
+- **Bug** (something doesn't do what it's meant to): fix its root cause rather than the symptom the issue shows. That cause may be the design rather than one code path ([question them](#5-question-them)). Start from a regression test that fails for the right reason ([zoonk-testing](../zoonk-testing/SKILL.md)). A bug in a dependency gets a workaround here and an upstream report ([zoonk-upstream-issue](../zoonk-upstream-issue/SKILL.md)).
 - **Enhancement** (something Zoonk does that should work better, or a specific piece of work): research the best way to do it. Find the need behind it, look at how strong products solve the same need, and check what our dependencies already offer ([zoonk-capability-research](../zoonk-capability-research/SKILL.md)). Build the simplest approach that serves learners best. If it needs a product decision, such as changing what learners pay for or removing something they use, bring it to the user first.
 - **New feature** (something Zoonk doesn't do at all, such as a new flow, screen, kind of content or platform): discuss it before any plan, design or code. Bring the user the need behind it and who has it, what Zoonk does today, the decisions it needs, the options and your recommendation. Once they decide, build it like an enhancement.
 
@@ -150,4 +160,4 @@ When you can't verify or address the issue without something only people know, s
 
 ## Hand back
 
-Say what you found and what you did for each issue, with links: closed as a duplicate (of which issue), closed as completed or not planned (and why), linked to an open PR, left to another agent (which one) or held because someone else is likely on a related issue, a PR opened, a question waiting on an answer, or a feature waiting on the user's decision.
+Say what you found and what you did for each issue, with links: closed as a duplicate (of which issue), closed as completed or not planned (and why, including what superseded it), linked to an open PR, left to another agent (which one) or held because someone else is likely on a related issue, a PR opened, a question waiting on an answer, or a feature waiting on the user's decision.
