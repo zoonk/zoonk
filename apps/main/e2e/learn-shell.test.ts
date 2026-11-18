@@ -111,6 +111,22 @@ test.describe("The way back on a computer", () => {
     ).toHaveCount(0);
 
     await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeVisible();
+
+    await unlisted.goto("/mistakes");
+
+    await expect(
+      unlisted.getByText(
+        "The questions you got wrong, why, and practice until you get them right.",
+      ),
+    ).toBeVisible();
+
+    await expect(
+      unlisted
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Mistakes notebook" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeHidden();
   });
 });
 
