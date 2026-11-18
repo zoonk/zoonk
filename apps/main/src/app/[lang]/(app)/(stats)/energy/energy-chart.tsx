@@ -12,7 +12,7 @@ const ENERGY_HISTORY_TITLE_ID = "energy-history-title";
 /** Softened: most days sit in the upper steps, and at full strength the calendar was the loudest thing on the page. */
 const ENERGY_INTENSITY_CLASSES = [
   "bg-surface-3",
-  "bg-energy/15",
+  "bg-energy/25",
   "bg-energy/30",
   "bg-energy/45",
   "bg-energy/60",
@@ -53,7 +53,7 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
       details={details}
       gridLabel={t("Energy by day")}
       legend={{
-        classes: ENERGY_INTENSITY_CLASSES,
+        classes: ENERGY_INTENSITY_CLASSES.slice(1),
         high: t("High"),
         label: t("Energy intensity from low to high"),
         low: t("Low"),
