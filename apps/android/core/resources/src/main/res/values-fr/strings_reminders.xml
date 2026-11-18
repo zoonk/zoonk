@@ -4,7 +4,7 @@
   "reminders_cancel": "02b00eb5e82389ec7a6657d4b162d3287fbdeb9a28a2a81da21ab8f412f7c1f0",
   "reminders_channel_description": "7490cb2487e14a37a42acbcdcc964ff4385ea994e5d90376fda17d849ad07ffd",
   "reminders_channel_name": "c4410f048a84c755fefe3bed0b0e2623a2034ae3ae5896545c511f485a52897a",
-  "reminders_email": "c3e1c114c7878e459678cc049d3841be3aa1d63808ed2e568aa456176963ffe4",
+  "reminders_email": "a6439ebdc90ffca29a981654d5c3b6d51fe63d46730530e62a43adc0190862f2",
   "reminders_email_instead": "ee9f72f163af8d8163222ecada561e1355fd2243410bb6cc4f7b81aadef07fc9",
   "reminders_email_needs_account": "7043fa1c91517e1b8036ebe902e32bcd6d63bf68cf81422849235780fdc6aa90",
   "reminders_email_on": "fb3745e38a7aa6ae4b232e0170b5071951ac6a1ad3325a0e22d48ae9ac9b1063",
@@ -71,7 +71,7 @@
     <string name="reminders_title">Rappels</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Heure</string>
-    <string name="reminders_email">Adresse e-mail</string>
+    <string name="reminders_email">Rappels par e-mail</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Crée un compte pour recevoir des rappels par e-mail</string>
     <string name="reminders_push">Notifications push</string>

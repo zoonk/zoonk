@@ -204,6 +204,10 @@ private fun ReminderSettings(
     val time = reminderTime(reminder.time)
 
     Column {
+        EmailRow(reminder, viewModel, navigator)
+        ListDivider()
+        PushRows(reminder, thisPhone, viewModel)
+        ListDivider()
         ListRow(
             headline = { Text(stringResource(R.string.reminders_time)) },
             // The zone is said only when it isn't the phone's own.
@@ -211,10 +215,6 @@ private fun ReminderSettings(
             meta = { Text(time) },
             onClick = { picking = true },
         )
-        ListDivider()
-        EmailRow(reminder, viewModel, navigator)
-        ListDivider()
-        PushRows(reminder, thisPhone, viewModel)
     }
 
     if (reminder.quiet) {

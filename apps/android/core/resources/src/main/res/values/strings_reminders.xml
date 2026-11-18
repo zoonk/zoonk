@@ -38,7 +38,7 @@
     <string name="reminders_title">Reminders</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">Time</string>
-    <string name="reminders_email">Email</string>
+    <string name="reminders_email">Email reminders</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Create an account to get email reminders</string>
     <string name="reminders_push">Push notifications</string>
