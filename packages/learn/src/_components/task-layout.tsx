@@ -36,7 +36,8 @@ export const TASK_HEADER_BAR_CLASS =
  */
 export const TASK_HEADER_SIDE_CLASS = {
   end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
-  start: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1",
+  start:
+    "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1 [&_[data-slot=task-close]]:-translate-x-0.5 rtl:[&_[data-slot=task-close]]:translate-x-0.5",
 } as const;
 
 /** The bar's room over and under its buttons, for a foot that sits level with it. */
@@ -116,7 +117,7 @@ export function TaskAsideHeader({
       data-slot="task-aside-header"
     >
       {title && (
-        <h2 className="text-label min-w-0 truncate" id={titleId}>
+        <h2 className="text-muted-foreground min-w-0 truncate text-xs font-medium" id={titleId}>
           {title}
         </h2>
       )}

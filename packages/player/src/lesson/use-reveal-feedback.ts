@@ -16,6 +16,15 @@ const FEEDBACK_SELECTOR = [
 const STAGE_SELECTOR = '[data-slot="lesson-stage"]';
 const CHIP_SELECTOR = '[data-slot="activity-badge"]';
 const TITLE_SELECTOR = "h2";
+
+const PROTECTED_PARTS = [
+  '[data-slot="activity-canvas"] p',
+  '[data-slot="activity-canvas"] button',
+  '[data-slot="activity-plot"]',
+  '[data-slot="activity-numeric-check"] p',
+  '[data-slot="activity-numeric-check"] [data-slot="input-group"]',
+].join(",");
+
 const OWN_SCROLL_EVENTS = ["wheel", "touchmove", "keydown"] as const;
 
 function getVisibleArea(scroller: HTMLElement) {
@@ -41,11 +50,7 @@ function getScrollReveal({
 
   const boxes = parts.map((part) => part.getBoundingClientRect());
 
-  const captions = [
-    ...stage.querySelectorAll<HTMLElement>(
-      '[data-slot="activity-canvas"] p, [data-slot="activity-canvas"] button',
-    ),
-  ]
+  const captions = [...stage.querySelectorAll(PROTECTED_PARTS)]
     .map((part) => part.getBoundingClientRect())
     .filter((box) => box.height > 0);
 

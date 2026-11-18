@@ -2,7 +2,7 @@
 
 import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { LessonVisual } from "@zoonk/learn/visual";
-import { SparklesIcon } from "lucide-react";
+import { DicesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/player-choice-scene";
 import { PlayerReadScene } from "../../components/player-read-scene";
@@ -35,7 +35,7 @@ function HookGuess({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <Eyebrow icon={<SparklesIcon aria-hidden="true" />}>
+        <Eyebrow icon={<DicesIcon aria-hidden="true" />}>
           {t({
             description:
               "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.",

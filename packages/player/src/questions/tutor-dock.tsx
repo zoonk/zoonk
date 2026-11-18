@@ -262,14 +262,15 @@ export function TutorAskButton() {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="with-aside:hidden ml-auto size-11 shrink-0 lg:ml-0"
-            size="icon"
+            className="with-aside:hidden ml-auto h-11 shrink-0 lg:ml-0"
+            size="lg"
             type="button"
             variant="outline"
           />
         }
       >
         <AskTutorFace identity={buddy.identity} />
+        {t("Ask")}
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>
