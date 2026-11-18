@@ -42,7 +42,7 @@ private val CURRENCY_SYMBOLS =
  * The gap the learner's money format puts after the sign: nothing in English ("R$80"), a no-break
  * space in Portuguese ("R$ 80"). Null for a language that writes money after the amount ("80 €").
  */
-private fun moneySignGap(
+internal fun moneySignGap(
     locale: Locale,
     sign: String,
 ): String? {

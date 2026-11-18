@@ -88,6 +88,20 @@ class LessonMathTest {
     }
 
     @Test
+    fun groupsOnlyTheSumsAndProductsOfALongFraction() {
+        assertEquals("distance/time", math("\\frac{\\text{distance}}{\\text{time}}").text.text)
+        assertEquals("12000/60", math("\\frac{12000}{60}").text.text)
+        assertEquals("12 000/60", math("\\frac{12\\,000}{60}").text.text)
+    }
+
+    @Test
+    fun keepsAProductsBracketsAndLeavesASinglePowerOrSubscriptBare() {
+        assertEquals("8.314/(RT)", math("\\frac{8.314}{RT}").text.text)
+        assertEquals("12000/r2", math("\\frac{12000}{r^2}").text.text)
+        assertEquals("12000/v0", math("\\frac{12000}{v_0}").text.text)
+    }
+
+    @Test
     fun readsRootsUnitsAndSymbolsFromTheSeededLessons() {
         assertEquals("v$GAP=$GAP√GM\u2044r", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
         assertEquals("v = square root of GM over r", math("v = \\sqrt{\\frac{GM}{r}}").spoken)

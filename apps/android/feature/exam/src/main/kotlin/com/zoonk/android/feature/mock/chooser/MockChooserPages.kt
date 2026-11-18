@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -83,6 +84,7 @@ import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
@@ -284,15 +286,19 @@ private fun ChooserPage(
 ) {
     // Main's screen Enter: a focused control that acts (the last mock, the bar's button, a notice's
     // action) keeps its own, and only an Enter none of them took starts; the picks hand theirs over.
+    val noteRoom = rememberBarNoteRoom()
     Column(Modifier.onKeyEvent { event -> enterTakes(event, onEnter) }) {
         DetailPage(
             aside = aside,
             asideLabel = stringResource(R.string.mock_chooser_picked),
             modifier = Modifier.weight(1f),
             listState = listState,
-            content = content,
-        )
-        BottomBar(note = note, content = bar)
+        ) { asideBeside ->
+            content(asideBeside)
+            // The note draws over the list's end just above the bar, so the list keeps that room clear.
+            item(key = "note-room", contentType = "note-room") { Spacer(Modifier.height(noteRoom.height)) }
+        }
+        BottomBar(note = note, noteRoom = noteRoom, content = bar)
     }
 }
 

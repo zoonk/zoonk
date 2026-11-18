@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.only
@@ -22,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +36,8 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -46,8 +52,9 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * keeps the page's margin ([pageMargin]) on all four sides of its buttons, clear of the system bars and
  * the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
  * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
- * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) shows over the screen just above the bar, so the
- * bar and its buttons never move; its slot stays in place as a polite live region, so a new note is read out. The window's snackbars show above it. Across an unfolded book's fold,
+ * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) draws over the page
+ * just above the bar, so the bar never grows and its buttons never move; [noteRoom] tells the page how tall it is, for its scrolling
+ * content to end clear of it. Its slot stays in place as a polite live region, so a new note is read out. The window's snackbars show above it. Across an unfolded book's fold,
  * or a spread's split on a wide window ([screenSplit]), it sits on the page after it, off the fold.
  */
 @Composable
@@ -57,14 +64,14 @@ fun BottomBar(
     columnWidth: Dp = Dp.Unspecified,
     columnAtStart: Boolean = false,
     columnMargin: Dp = pageMargin(),
-    /** The [note]'s height as it changes, 0 without one, for a screen to keep its content's end clear of it. */
-    onNoteHeight: ((Int) -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val anchors = LocalSnackbarAnchors.current
     val key = remember { Any() }
     var span by remember { mutableStateOf<PageSpan?>(null) }
     val margin = pageMargin()
+    val density = LocalDensity.current
 
     DisposableEffect(anchors) { onDispose { anchors.remove(key) } }
 
@@ -100,7 +107,7 @@ fun BottomBar(
         Box(
             Modifier
                 .aboveBar()
-                .onSizeChanged { onNoteHeight?.invoke(it.height) }
+                .onSizeChanged { noteRoom?.height = with(density) { it.height.toDp() } }
                 .fillMaxWidth()
                 .semantics { liveRegion = LiveRegionMode.Polite },
         ) {
@@ -109,6 +116,28 @@ fun BottomBar(
             }
         }
     }
+}
+
+/** The room a page keeps clear at its scrolling content's end for its [BottomBar]'s note, which draws over the page. */
+@Stable
+class BarNoteRoom {
+    var height by mutableStateOf(0.dp)
+        internal set
+}
+
+@Composable
+fun rememberBarNoteRoom(): BarNoteRoom = remember { BarNoteRoom() }
+
+/** [this] with [extra] more at its bottom, such as a [BarNoteRoom]'s height for a scaffold's content. */
+@Composable
+fun PaddingValues.plusBottom(extra: Dp): PaddingValues {
+    val direction = LocalLayoutDirection.current
+    return PaddingValues(
+        start = calculateStartPadding(direction),
+        top = calculateTopPadding(),
+        end = calculateEndPadding(direction),
+        bottom = calculateBottomPadding() + extra,
+    )
 }
 
 /** Laid out with no height of its own and drawn just above its parent's top, so what it holds never moves the bar. */

@@ -55,9 +55,11 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -186,12 +188,13 @@ fun TodayDay(
             supportingPane = { TodayAsidePane(model, aside) },
             modifier = Modifier.alpha(if (switching) SWITCHING_ALPHA else 1f),
         ) { beside ->
+            val noteRoom = rememberBarNoteRoom()
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     state = list,
                     horizontalAlignment = if (beside) Alignment.Start else Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
+                    contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp + noteRoom.height),
                 ) {
                     item(key = "heading", contentType = "heading") {
                         TodayHeading(model, onAdjustPlan = { actions.navigate(AppRoute.Plan()) }, Modifier.pageItem())
@@ -207,7 +210,7 @@ fun TodayDay(
                     }
                 }
 
-                TodayActionBar(model, viewModel, actions, beside)
+                TodayActionBar(model, viewModel, actions, beside, noteRoom)
             }
         }
     }
@@ -252,6 +255,7 @@ private fun TodayActionBar(
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     beside: Boolean,
+    noteRoom: BarNoteRoom,
 ) {
     if (!model.hasAction) return
 
@@ -262,6 +266,7 @@ private fun TodayActionBar(
         columnAtStart = beside,
         columnMargin = LIST_ITEM_INSET,
         note = if (status.speaking) ({ TodayActionStatus(status) }) else null,
+        noteRoom = noteRoom,
     ) {
         TodayAction(model, viewModel, actions, status)
     }
