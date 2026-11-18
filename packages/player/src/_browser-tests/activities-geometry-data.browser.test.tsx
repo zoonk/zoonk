@@ -292,6 +292,7 @@ describe("geometry and data activities", () => {
 
   it("random simulation by sampling: the wrong guess is marked", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
+    await expect.element(page.getByRole("slider")).toBeVisible();
     await page.getByRole("radio", { name: /The same/u }).click();
     await checkActivity();
     await expectVerdict("Not quite");
