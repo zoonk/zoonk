@@ -354,7 +354,6 @@ private fun FormulaChart(
         xDomain = axis.min..axis.max,
         yDomain = view.yDomain,
         yTicks = niceTicks(view.yDomain, Y_TICKS),
-        xTicks = listOf(axis.min, axis.max),
         formatY = { formatAmount(it, locale, charted.unit, compact = true) },
         formatX = formatX,
         area = CHART_AREA * density.fontScale.coerceIn(1f, MAX_CHART_GROWTH),
