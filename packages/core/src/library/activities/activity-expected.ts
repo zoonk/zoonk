@@ -1,3 +1,4 @@
+import { getActivityNumericDisplay } from "./activity-answers";
 import { type ActivityExpected } from "./activity-expected-answer";
 import {
   type ActivityStepContent,
@@ -15,7 +16,8 @@ export function getActivityExpected(content: ActivityStepContent): ActivityExpec
   }
 
   if (check.kind === "numeric") {
-    return { kind: "numeric", value: check.answer };
+    const display = getActivityNumericDisplay(content);
+    return { kind: "numeric", value: display?.value ?? check.answer };
   }
 
   const answer = getActivityTemplate(content.template)?.computeExpected(content.fields) ?? null;

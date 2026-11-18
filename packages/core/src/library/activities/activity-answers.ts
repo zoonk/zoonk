@@ -36,20 +36,33 @@ export function checkActivityAnswer(content: ActivityStepContent, answer: Activi
   return expected !== null && matchesExpectedAnswer(expected, answer);
 }
 
-export function getActivityDecimalPlaces(content: ActivityStepContent): number | null {
+export function getActivityNumericDisplay(
+  content: ActivityStepContent,
+): { places: number | null; value: number } | null {
   const { check } = content;
 
-  if (check.kind !== "numeric" || Number.isInteger(check.answer)) {
+  if (check.kind !== "numeric") {
     return null;
   }
 
-  return (
-    Array.from({ length: countDecimalPlaces(check.answer) + 1 }, (_, places) => places).find(
-      (places) => {
-        const scale = 10 ** places;
-        const value = Math.round(check.answer * scale) / scale;
-        return checkActivityAnswer(content, { kind: "numeric", value });
-      },
-    ) ?? null
-  );
+  if (Number.isInteger(check.answer)) {
+    return { places: null, value: check.answer };
+  }
+
+  const exactPlaces = countDecimalPlaces(check.answer);
+
+  for (let places = 0; places < exactPlaces; places += 1) {
+    const scale = 10 ** places;
+    const value = Math.round(check.answer * scale) / scale;
+
+    if (Number.isFinite(value) && checkActivityAnswer(content, { kind: "numeric", value })) {
+      return { places, value: value || 0 };
+    }
+  }
+
+  return { places: exactPlaces, value: check.answer };
+}
+
+export function getActivityDecimalPlaces(content: ActivityStepContent): number | null {
+  return getActivityNumericDisplay(content)?.places ?? null;
 }
