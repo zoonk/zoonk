@@ -48,10 +48,20 @@ export function UsageDataNotice({ className }: { className: string }) {
         </p>
 
         <div className="flex shrink-0 gap-2">
-          <Button className="flex-1 sm:flex-none" onClick={() => choose(false)} variant="outline">
+          <Button
+            className="flex-1 sm:flex-none"
+            onClick={() => choose(false)}
+            size="lg"
+            variant="outline"
+          >
             {t("Decline")}
           </Button>
-          <Button className="flex-1 sm:flex-none" onClick={() => choose(true)} variant="outline">
+          <Button
+            className="flex-1 sm:flex-none"
+            onClick={() => choose(true)}
+            size="lg"
+            variant="outline"
+          >
             {t("Accept")}
           </Button>
         </div>

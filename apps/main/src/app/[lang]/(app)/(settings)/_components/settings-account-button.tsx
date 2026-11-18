@@ -50,7 +50,7 @@ export function SettingsAccountButton({ status }: { status: "guest" | "visitor" 
 
   return (
     <CurrentPageLoginLink className={className} icon={<UserPlusIcon aria-hidden="true" />}>
-      {t("Create an account")}
+      {t("Create a free account")}
     </CurrentPageLoginLink>
   );
 }

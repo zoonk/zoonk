@@ -28,10 +28,6 @@ function revealChip(chip: HTMLAnchorElement | null) {
 
 type CategoryNavProps = { categories: CategoryLink[]; openCategory: string | null; total: number };
 
-/**
- * An empty category would only lead to "Start a goal", which the goal box already offers; one opened
- * from a link stays listed while it's the page.
- */
 function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps) {
   const t = useExtracted();
   const locale = useAppLocale();
@@ -46,7 +42,7 @@ function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps)
       subject: null,
     },
     ...categories
-      .filter((category) => category.courseCount > 0 || category.key === openCategory)
+      .filter((category) => category.courseCount > 0)
       .toSorted((a, b) => a.label.localeCompare(b.label, locale))
       .map((category) => ({
         courseCount: category.courseCount,

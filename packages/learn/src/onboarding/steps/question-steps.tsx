@@ -28,32 +28,32 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   });
 
   const choices: Choice<OnboardingPurpose>[] = [
-    { description: t("The big ideas, in short"), label: t("Get an overview"), value: "overview" },
     {
-      description: t("The full path, from the basics to advanced"),
+      description: t("I want a quick look at the big ideas"),
+      label: t("Get an overview"),
+      value: "overview",
+    },
+    {
+      description: t("I want to go from the basics to advanced topics"),
       label: t("Understand it well"),
       value: "deep",
     },
     {
-      description: t("Only what your work uses, in the order it needs"),
+      description: t("I want to learn what I use at work"),
       label: t("Use it at work"),
       value: "work",
     },
     {
-      description: t("What the new role needs, portfolio included"),
+      description: t("I want to learn what I need for a new role and build a portfolio"),
       label: t("Change careers"),
       value: "careerChange",
     },
     {
-      description: t("Back to the level I had, after a short test"),
+      description: t("I want to get back to the level I had"),
       label: t("Refresh what I studied"),
       value: "refresh",
     },
-    {
-      description: t("Tell us later, in your own words"),
-      label: t("Something else"),
-      value: "other",
-    },
+    { description: t("I want something different"), label: t("Something else"), value: "other" },
   ];
 
   return (

@@ -34,7 +34,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
       </head>
       <body className="bg-background font-sans antialiased">
         <NextIntlClientProvider>
-          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center px-4 py-16">
+          <main className="relative flex min-h-dvh w-full flex-col items-center px-4 pt-28 pb-0 [--page-dock:0px] [--page-gutter:--spacing(4)]">
             {children}
           </main>
           <Toaster />

@@ -1,3 +1,4 @@
+import { LegalCompanyNumber } from "@/components/public/legal-company-number";
 import { LegalDocument } from "@/components/public/legal-document";
 import { getAppLocale } from "@/i18n/locale";
 import { type Metadata } from "next";
@@ -23,7 +24,7 @@ export default async function Terms() {
 
   return (
     <LegalDocument pathname="/terms">
-      <TermsOfService />
+      <TermsOfService components={{ LegalCompanyNumber }} />
     </LegalDocument>
   );
 }

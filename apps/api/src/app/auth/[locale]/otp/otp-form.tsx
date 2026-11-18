@@ -155,6 +155,7 @@ export function OTPForm({
   const isLockedRef = useRef(false);
   const [status, setStatus] = useState<OTPStatus>("idle");
   const [codeRound, setCodeRound] = useState(0);
+  const [code, setCode] = useState("");
   const resendCode = useResendCode(email);
   const isCodeGone = needsNewCode(status);
   const isChecking = status === "pending";
@@ -189,8 +190,7 @@ export function OTPForm({
     const form = event.currentTarget;
     const otp = readCode(form);
 
-    if (!otp) {
-      setStatus("wrongCode");
+    if (otp.length !== OTP_LENGTH) {
       return;
     }
 
@@ -215,18 +215,20 @@ export function OTPForm({
     if (await resendCode.resend()) {
       isLockedRef.current = false;
       setStatus("idle");
+      setCode("");
       setCodeRound((round) => round + 1);
     }
   };
 
   return (
-    <AuthForm className="items-center" onSubmit={handleSubmit} ref={formRef}>
+    <AuthForm onSubmit={handleSubmit} ref={formRef}>
       <OTPInput
         aria-label={t("Code from the email")}
         autoFocus
         disabled={isCodeGone}
         invalid={status === "wrongCode"}
         key={codeRound}
+        onChange={setCode}
         onComplete={() => formRef.current?.requestSubmit()}
       />
       <CodeStatus resendStatus={resendCode.status} status={status} />
@@ -246,7 +248,12 @@ export function OTPForm({
             {t("Send a new code")}
           </Button>
         ) : (
-          <AuthSubmit isLoading={isChecking}>{t("Continue")}</AuthSubmit>
+          <AuthSubmit
+            disabled={code.length !== OTP_LENGTH || resendCode.status === "sending"}
+            isLoading={isChecking}
+          >
+            {t("Continue")}
+          </AuthSubmit>
         )}
       </OTPActions>
 

@@ -29,6 +29,7 @@ export function SubjectsLevelStep({
 
   return (
     <StepForm
+      canContinue={known.length > 0}
       description={t("Your plan skips their basics.")}
       onContinue={() => onAnswer({ knownSubjects: known, level: null, question: "level" })}
       onSkip={() => onAnswer({ level: "none", question: "level" })}

@@ -51,6 +51,7 @@ export function PlanBuilding({
     <>
       <GenerationWait
         barHasMainAction={barHasMainAction}
+        className="**:data-[slot=generation-timeline-progress]:[&>span:first-child]:rounded-meter **:data-[slot=generation-timeline-segment]:rounded-none **:data-[slot=generation-timeline-segment]:*:rounded-none **:data-[slot=generation-timeline-progress]:[&>span:first-child]:gap-0 **:data-[slot=generation-timeline-progress]:[&>span:first-child]:overflow-hidden"
         doneLabel={holding ? t("Your plan is ready") : undefined}
         kind="curriculum"
         run={holding ? toHeldRun(run) : run}

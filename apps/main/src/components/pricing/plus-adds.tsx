@@ -19,8 +19,7 @@ const WEEKDAYS_IN_WEEK = 5;
 const WEEKS = Array.from({ length: WEEKS_IN_PICTURE }, (_, week) => week);
 const WEEKDAYS = Array.from({ length: WEEKDAYS_IN_WEEK }, (_, day) => day);
 
-const MONTH_ROW_CLASS =
-  "grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1fr)]";
+const MONTH_ROW_CLASS = "grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5";
 
 const WEEKS_CLASS = "grid grid-cols-4 gap-2";
 
@@ -51,7 +50,7 @@ function MonthRow({
         ))}
       </div>
 
-      <p className="text-muted-foreground text-compact col-start-2 sm:col-start-3">{caption}</p>
+      <p className="text-muted-foreground text-compact col-start-2">{caption}</p>
     </div>
   );
 }
@@ -108,6 +107,8 @@ export async function PlusAdds() {
               })}
             </p>
           </div>
+
+          <p className="text-muted-foreground text-compact">{t("One block is one study day")}</p>
 
           <WeekLabels />
 

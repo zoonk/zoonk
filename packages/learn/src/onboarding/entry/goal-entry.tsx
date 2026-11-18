@@ -1,17 +1,14 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { EnterButton } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
 import { FreeStartNote } from "../free-start-note";
 import { type GoalError } from "../goal-errors";
 import {
-  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -19,28 +16,10 @@ import {
 } from "../onboarding-frame";
 import { useOnboardingSection } from "../onboarding-host";
 import { GoalBox } from "./goal-box";
+import { GoalEntrySubmit } from "./goal-entry-submit";
 import { GoalExamples } from "./goal-examples";
-import { GoalFieldSubmit, useGoalFieldAction } from "./goal-field";
+import { useGoalFieldAction } from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
-
-/** In a section the box holds its own button; on its own page the button is the page's main action. */
-function SubmitButton({ form }: { form?: string }) {
-  const t = useExtracted();
-  const ref = useEnterClick<HTMLButtonElement>();
-
-  if (!form) {
-    return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
-  }
-
-  return (
-    <OnboardingActions>
-      {/* Enter in the goal's field submits its form, so the key is the field's. */}
-      <EnterButton enter="host" form={form} ref={ref} type="submit">
-        {t("Build my plan")}
-      </EnterButton>
-    </OnboardingActions>
-  );
-}
 
 export function GoalEntry({
   attachOpen,
@@ -70,11 +49,16 @@ export function GoalEntry({
   const t = useExtracted();
   const section = useOnboardingSection();
   const formId = useId();
-  const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
+
+  const goal = useGoalFieldAction({
+    canSendEmpty: canSubmitEmpty,
+    defaultValue: defaultGoal,
+    onSend: onSubmit,
+  });
 
   return (
     <OnboardingColumn
-      bar={!section && <SubmitButton form={formId} />}
+      bar={!section && <GoalEntrySubmit disabled={goal.disabled} form={formId} />}
       className={cn(section && "gap-4")}
     >
       {section ? (
@@ -97,7 +81,8 @@ export function GoalEntry({
           <Button
             aria-expanded={attachOpen}
             aria-label={t("Study your own material")}
-            className="text-muted-foreground mr-auto shrink-0 @xl:ms-0 @xl:mr-0"
+            className="text-muted-foreground me-auto shrink-0 @xl:ms-0 @xl:me-0"
+            edge="start"
             onClick={onAttach}
             ref={attachRef}
             size="icon-lg"
@@ -108,7 +93,7 @@ export function GoalEntry({
           </Button>
         )}
 
-        {section && <SubmitButton />}
+        {section && <GoalEntrySubmit disabled={goal.disabled} />}
       </GoalBox>
 
       {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}

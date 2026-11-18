@@ -24,9 +24,9 @@ msgid "We couldn't log you in. Try again."
 msgstr "ログインできませんでした。もう一度お試しください。"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
-msgctxt "YRe93Y"
-msgid "Enter a valid email address"
-msgstr "有効なメールアドレスを入力してください"
+msgctxt "TBZNYA"
+msgid "Enter a valid email address."
+msgstr "正しいメールアドレスを入力してください。"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
@@ -178,19 +178,19 @@ msgid "Use 150 characters or fewer."
 msgstr "150文字以内で入力してください。"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Zoonkへ移動する"
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
 msgid "That link didn't work"
 msgstr "このリンクは使えません"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "4Wp5HU"
-msgid "The link may have expired. Go to Zoonk and log in again for a new one."
-msgstr "リンクの有効期限が切れている可能性があります。新しいリンクを取得するには、Zoonkにアクセスしてもう一度ログインしてください。"
-
-#: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Zoonkへ移動する"
+msgctxt "__q7P3"
+msgid "Go to Zoonk and log in again."
+msgstr "Zoonkにアクセスして、もう一度ログインしてください。"
 
 #. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
 #: src/components/auth-frame.tsx

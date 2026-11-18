@@ -25,12 +25,18 @@ import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions } from "../onboarding-actions";
 import { useOnboardingWait } from "../onboarding-clock";
 import { OnboardingColumn, OnboardingPrimaryButton } from "../onboarding-frame";
-import { FirstLessonReadContext, useOnboardingHost } from "../onboarding-host";
+import {
+  FirstLessonReadContext,
+  NO_BAR,
+  OnboardingScreenProvider,
+  useOnboardingHost,
+  useOnboardingScreen,
+} from "../onboarding-host";
 import { useOnboardingRail } from "../onboarding-rail";
 import { NoticeReading, useNoticeProgress, useNoticeTitle } from "./notice-reading";
 import { PlanBuilding, type PlanNext } from "./plan-building";
 import { PlanStartNoticeProvider } from "./plan-start-notice";
-import { WaitBackToQuiz, WaitBar, WaitLinkAction } from "./wait-parts";
+import { WaitBar, WaitLinkAction } from "./wait-parts";
 import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 
 type Notice = { document: ExamDocument; lastNotice: boolean; stopped: WaitStop | null };
@@ -178,6 +184,7 @@ function PlanWaitPage({
 }) {
   const since = useMountTime().getTime();
   const flowRail = useOnboardingRail();
+  const screen = useOnboardingScreen();
   const stop = holding ? null : getStop({ notice, run });
   // "Start lesson 1" is the bar's main action then.
   const barHasMainAction = firstLesson?.status === "ready";
@@ -222,7 +229,7 @@ function PlanWaitPage({
   return (
     // The wait says its own run stopped, so its bar doesn't say it again.
     <PlanStartNoticeProvider run={null}>
-      <WaitBackToQuiz>
+      <OnboardingScreenProvider value={{ ...screen, bar: NO_BAR }}>
         {use(FirstLessonReadContext)}
         <OnboardingColumn
           bar={
@@ -243,7 +250,7 @@ function PlanWaitPage({
         >
           <WaitContent progress={progress} status={status} />
         </OnboardingColumn>
-      </WaitBackToQuiz>
+      </OnboardingScreenProvider>
     </PlanStartNoticeProvider>
   );
 }

@@ -31,7 +31,7 @@ export function useReasonCopy() {
           label: t("Speak it fluently"),
         };
       case "certificate":
-        return { description: t("IELTS, DELE, CELI and others"), label: t("Pass a certificate") };
+        return { description: t("IELTS, DELE, CELI and others"), label: t("Pass an exam") };
       case "other":
         return { description: t("In your own words"), label: t("Something else") };
       default:

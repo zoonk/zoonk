@@ -46,11 +46,7 @@ export async function PricingHero() {
       <Eyebrow>{t("Pricing")}</Eyebrow>
 
       <h1 className="text-headline mt-3 max-w-[16em]" id="pricing-title">
-        {t({
-          description:
-            "The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.",
-          message: "Follow your study plan all the way to your date.",
-        })}
+        {t("Follow your study plan all the way to your exam, move or deadline.")}
       </h1>
 
       <p className="text-lead mt-4 max-w-152">

@@ -97,9 +97,9 @@ function CourseItem({
             )}
           </span>
 
-          {course.description && (
+          {course.promise && (
             <span className="text-muted-foreground text-compact mt-1 line-clamp-2 leading-snug">
-              {getFirstSentence(course.description, course.language)}
+              {getFirstSentence(course.promise, course.language)}
             </span>
           )}
 

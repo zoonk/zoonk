@@ -99,7 +99,7 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         className="self-start"
         disabled={pending || !text.trim()}
         focusableWhenDisabled
-        size="sm"
+        size="lg"
         type="submit"
         variant="outline"
       >

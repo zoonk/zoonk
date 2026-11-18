@@ -119,17 +119,10 @@ async function PlusAction({
     );
   }
 
-  // A visitor's strongest button on the page is "Build my plan", as on every public page; a guest already has a plan.
   return (
     <PlusLoginLink
       billingSwitch={billingSwitch}
-      className={cn(
-        buttonVariants({
-          size: "lg",
-          variant: viewerState.status === "visitor" ? "outline" : "default",
-        }),
-        PLUS_CTA_CLASS,
-      )}
+      className={cn(buttonVariants({ size: "lg" }), PLUS_CTA_CLASS)}
       hasChoice={hasChoice}
     />
   );
@@ -153,10 +146,7 @@ async function PlusPrices({
   }
 
   const monthly = (
-    <>
-      <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
-      <p className="text-muted-foreground text-compact">{t("Billed every month.")}</p>
-    </>
+    <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
   );
 
   if (!yearlyPrice || !monthlyEquivalent) {

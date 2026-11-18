@@ -7,13 +7,17 @@ import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
 /** Rows a little larger than the app's, so a phone reads them at a glance. */
+export const EXAMPLE_ROW_HEIGHT_CLASS = "min-h-15";
+
 export const EXAMPLE_ROWS_CLASS =
-  "**:data-[slot=list-row-description]:text-compact **:data-[slot=list-row-description]:leading-4.5 **:data-[slot=list-row-title]:text-reading **:data-[slot=list-row-title]:leading-5 **:data-[slot=list-row-trailing]:text-compact";
+  "*:data-[slot=list-row]:min-h-15 **:data-[slot=list-row-description]:text-compact **:data-[slot=list-row-description]:leading-4.5 **:data-[slot=list-row-title]:text-reading **:data-[slot=list-row-title]:leading-5 **:data-[slot=list-row-trailing]:text-compact";
+
+const EXAMPLE_CARD_PADDING_CLASS = "p-5 sm:p-6";
 
 const EXAMPLE_TITLE_CLASS = "text-base leading-snug font-semibold tracking-[-0.015em]";
 
 export function ExampleCard({ className, ...props }: React.ComponentProps<"div">) {
-  return <ProductWindow className={cn("p-5 sm:p-6", className)} {...props} />;
+  return <ProductWindow className={cn(EXAMPLE_CARD_PADDING_CLASS, className)} {...props} />;
 }
 
 export async function ExampleCardHead({ detail, title }: { detail?: ReactNode; title: string }) {
@@ -84,7 +88,7 @@ export async function ExampleDayCard({
         <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={title} />
       </div>
 
-      <div className="border-t px-5 pt-4 pb-1.5 sm:px-6">
+      <div className="border-t px-5 pt-4 pb-5 sm:px-6 sm:pb-6">
         <ExampleDay steps={steps} />
       </div>
     </ProductWindow>

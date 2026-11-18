@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
 import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
@@ -57,4 +57,18 @@ test.describe("Login Page", () => {
 
     await cleanupVerifications(email);
   });
+});
+
+test("requires an email address before continuing", async ({ page }) => {
+  await page.goto("/auth/login");
+
+  const email = page.getByRole("textbox", { name: "Email" });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
+  await expectHydrated(email);
+
+  await expect(next).toBeDisabled();
+  await email.fill("learner@example.test");
+  await expect(next).toBeEnabled();
+  await email.fill(" ");
+  await expect(next).toBeDisabled();
 });

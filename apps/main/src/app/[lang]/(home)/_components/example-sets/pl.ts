@@ -17,7 +17,7 @@ export const pl: ExampleSet = {
     day: [
       { detail: "Powtórka", kind: "review", minutes: 6, title: "Funkcja kwadratowa" },
       { detail: "Matematyka", kind: "practice", minutes: 7, title: "Zadania z prawdopodobieństwa" },
-      { detail: "Język polski", kind: "lesson", minutes: 8, title: "„Lalka” Prusa" },
+      { detail: "Język polski", kind: "lesson", minutes: 8, title: '"Lalka" Prusa' },
       { detail: "Powtórka", kind: "review", minutes: 4, title: "Genetyka" },
     ],
     goal: () => "przygotować się do matury w maju",

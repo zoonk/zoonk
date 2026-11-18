@@ -1,6 +1,7 @@
 import { type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
@@ -75,7 +76,8 @@ test.describe("OTP Login Flow", () => {
     const tooMany = page.getByText("Too many wrong tries. Get a new code.");
 
     async function tryCode(attempt: string) {
-      await expect(continueButton).toBeEnabled();
+      await expect(input).toBeEnabled();
+      await expect(continueButton).not.toHaveAttribute("aria-busy", "true");
 
       const checked = page.waitForResponse((response) =>
         response.url().includes("/sign-in/email-otp"),
@@ -235,4 +237,16 @@ test.describe("OTP Login Flow", () => {
 
     await cleanupVerifications(email);
   });
+});
+
+test("requires the email code before continuing", async ({ page }) => {
+  await page.goto("/auth/en/otp?email=learner%40example.test");
+
+  const code = page.getByRole("textbox", { name: "Code from the email" });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
+  await expectHydrated(code);
+
+  await expect(next).toBeDisabled();
+  await code.fill("123");
+  await expect(next).toBeDisabled();
 });

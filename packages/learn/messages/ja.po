@@ -1340,7 +1340,7 @@ msgid "Earlier questions"
 msgstr "以前の質問"
 
 #: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-entry.tsx
+#: src/onboarding/entry/goal-entry-submit.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "学習計画を作成する"
@@ -5412,9 +5412,9 @@ msgid "IELTS, DELE, CELI and others"
 msgstr "英検、TOEIC、IELTSなど"
 
 #: src/language-aim/use-reason-copy.ts
-msgctxt "sY1qPu"
-msgid "Pass a certificate"
-msgstr "資格試験に合格する"
+msgctxt "3wvH7G"
+msgid "Pass an exam"
+msgstr "試験に合格する"
 
 #: src/language-aim/use-reason-copy.ts
 #: src/onboarding/steps/reason-step.tsx
@@ -7904,6 +7904,7 @@ msgstr "所要時間の目安"
 
 #: src/mock/mock-chooser-picked.tsx
 #: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "約{time}"
@@ -8977,9 +8978,9 @@ msgid "Write your goal again"
 msgstr "目標をもう一度書く"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Rt585I"
-msgid "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”."
-msgstr "学びたいことや、できるようになりたいことは何ですか？たとえば「運転免許試験に合格する」「仕事で使う統計を理解する」「旅行でフランス語を話す」などです。"
+msgctxt "M2yYBP"
+msgid "We couldn't tell what you want to learn from what you wrote."
+msgstr "入力された内容からは、学びたいことがわかりませんでした。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
@@ -9147,9 +9148,9 @@ msgid "Understanding your goal"
 msgstr "目標の内容を読み取っています"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "Du-NAs"
-msgid "We're reading your goal"
-msgstr "目標を読んでいます"
+msgctxt "yN-ccj"
+msgid "Next, we'll show you what we understood."
+msgstr "次に、入力内容から読み取ったことをお見せします。"
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9370,6 +9371,11 @@ msgstr "{count, plural, other {1日あたり{time}以上を#個の目標の学�
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "学ぶにつれて、相棒も成長します。"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "pBUysu"
+msgid "We use it for examples, money and units in your lessons."
+msgstr "レッスンで使う例や通貨、単位を国に合わせます。"
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -9665,9 +9671,9 @@ msgid "About you"
 msgstr "自分について"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "l7i_x_"
-msgid "The big ideas, in short"
-msgstr "大事なポイントを手短に"
+msgctxt "SNyNNm"
+msgid "I want a quick look at the big ideas"
+msgstr "主なポイントをざっと知りたいです"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "2ne17k"
@@ -9675,9 +9681,9 @@ msgid "Get an overview"
 msgstr "全体像をつかむ"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "kYQaaW"
-msgid "The full path, from the basics to advanced"
-msgstr "基礎から上級まで、ひと通り学ぶコース"
+msgctxt "KzC5E1"
+msgid "I want to go from the basics to advanced topics"
+msgstr "基礎から応用まで学びたいです"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "70ejro"
@@ -9685,9 +9691,9 @@ msgid "Understand it well"
 msgstr "しっかり理解する"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "yI7Bsd"
-msgid "Only what your work uses, in the order it needs"
-msgstr "仕事で使うことだけを、必要な順に"
+msgctxt "9KaXOx"
+msgid "I want to learn what I use at work"
+msgstr "仕事で使うことを学びたいです"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
@@ -9695,9 +9701,9 @@ msgid "Use it at work"
 msgstr "仕事に活かす"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHQ_Su"
-msgid "What the new role needs, portfolio included"
-msgstr "新しい仕事に必要なことを学び、ポートフォリオも作る"
+msgctxt "J3TL_F"
+msgid "I want to learn what I need for a new role and build a portfolio"
+msgstr "新しい仕事に必要なことを学び、ポートフォリオを作りたいです"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "D05Dha"
@@ -9705,9 +9711,9 @@ msgid "Change careers"
 msgstr "転職する"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "cp6QBi"
-msgid "Back to the level I had, after a short test"
-msgstr "短いテストを受けてから、以前のレベルを取り戻します"
+msgctxt "rOoGXV"
+msgid "I want to get back to the level I had"
+msgstr "以前の実力を取り戻したいです"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -9715,9 +9721,9 @@ msgid "Refresh what I studied"
 msgstr "以前学んだことを復習する"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "pHhNk1"
-msgid "Tell us later, in your own words"
-msgstr "あとで自分の言葉で教えてください"
+msgctxt "xAm26I"
+msgid "I want something different"
+msgstr "ほかの目的で学びたいです"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -9779,9 +9785,9 @@ msgid "Tell us a bit more"
 msgstr "もう少し教えてください"
 
 #: src/onboarding/steps/reason-step.tsx
-msgctxt "P5KfyI"
-msgid "Which certificate?"
-msgstr "どの証明書ですか？"
+msgctxt "22M_i9"
+msgid "Which exam?"
+msgstr "どの試験ですか？"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "j4_o5O"

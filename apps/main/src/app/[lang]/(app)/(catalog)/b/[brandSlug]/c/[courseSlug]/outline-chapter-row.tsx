@@ -2,7 +2,6 @@ import { CourseChapterFold, CourseHere } from "@/components/catalog/course-progr
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
-import { FactSegments } from "@zoonk/learn/facts";
 import { RouteMark } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -16,11 +15,11 @@ const CHAPTERS_NAMED = 3;
 /** A closed level or subject says what it holds; open, its rows do. */
 export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
   return (
-    <FactSegments
-      facts={chapters
-        .slice(0, CHAPTERS_NAMED)
-        .map((chapter) => ({ content: chapter.title, key: chapter.id }))}
-    />
+    <span className="flex flex-col gap-1">
+      {chapters.slice(0, CHAPTERS_NAMED).map((chapter) => (
+        <span key={chapter.id}>{chapter.title}</span>
+      ))}
+    </span>
   );
 }
 

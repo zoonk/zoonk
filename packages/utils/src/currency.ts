@@ -89,14 +89,36 @@ function toMajorUnits(amount: number, currency: string): number {
   return ZERO_DECIMAL_CURRENCIES.has(currency.toLowerCase()) ? amount : amount / 100;
 }
 
-export function formatPrice(amount: number, currency: string, locale = "en-US"): string {
+export function formatPrice(
+  amount: number,
+  currency: string,
+  locale = "en-US",
+  { compactCurrency = false }: { compactCurrency?: boolean } = {},
+): string {
   const value = toMajorUnits(amount, currency);
   const fractionDigits = Number.isInteger(value) ? 0 : 2;
 
-  return new Intl.NumberFormat(getFormattingLocale(locale), {
-    currency: currency.toUpperCase(),
+  const code = currency.toUpperCase();
+
+  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), {
+    currency: code,
+    currencyDisplay: compactCurrency ? "narrowSymbol" : "symbol",
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
     style: "currency",
-  }).format(value);
+  });
+
+  if (!compactCurrency) {
+    return formatter.format(value);
+  }
+
+  const parts = formatter.formatToParts(value);
+  const currencyPart = parts.find((part) => part.type === "currency");
+  const gap = currencyPart?.value === code ? "\u00A0" : "\u202F";
+
+  return parts
+    .map((part) =>
+      part.type === "literal" ? part.value.replaceAll(/[ \u00A0\u202F]/gu, gap) : part.value,
+    )
+    .join("");
 }

@@ -46,7 +46,7 @@ export async function NotFoundMessage({
   );
 }
 
-export async function PageNotFound() {
+export async function PageNotFound({ action }: { action?: React.ReactNode } = {}) {
   const words = await getNotFoundWords();
 
   return (
@@ -55,7 +55,7 @@ export async function PageNotFound() {
 
       <BottomBar>
         <BottomBarActions>
-          <MainDocumentLink href="/today">{words.today}</MainDocumentLink>
+          {action ?? <MainDocumentLink href="/today">{words.today}</MainDocumentLink>}
         </BottomBarActions>
       </BottomBar>
     </Page>

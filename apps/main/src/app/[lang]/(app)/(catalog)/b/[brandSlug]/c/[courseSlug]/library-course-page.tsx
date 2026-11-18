@@ -16,7 +16,6 @@ import { JsonLd } from "@/components/public/json-ld";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { type LibraryCourseRoute, type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getCourseHref } from "@/data/courses/course-href";
-import { Link } from "@/i18n/navigation";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
@@ -28,56 +27,26 @@ import {
   isDatedEstimate,
 } from "@zoonk/core/catalog/course-plan-example-contract";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
-import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
-import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
+import { getCoursePromise, parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page } from "@zoonk/learn/page";
 import { ROUTE_CLASS, Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
-import { ChevronRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ContentCountryLine } from "./content-country-line";
 import { CourseFit } from "./course-fit";
 import { CourseStart } from "./course-start";
+import { EditionNotice } from "./edition-notice";
 import { LibraryCourseOutline } from "./library-course-outline";
 
 type Params = { brandSlug: string; courseSlug: string };
 type Course = LibraryCourseRoute["course"];
 
 const STOP_CLASS = "pb-16 sm:pb-24";
-
-async function EditionNotice({ courseId, locale }: { courseId: string; locale: SupportedLocale }) {
-  const t = await getExtracted();
-  const editions = await listPublishedCourseEditions({ courseId });
-  const edition = editions.find((item) => getContentLocale(item.language) === locale);
-
-  if (!edition) {
-    return null;
-  }
-
-  return (
-    <Link
-      className="bg-card ring-border hover:bg-muted focus-visible:ring-ring/50 mb-6 flex min-h-11 max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug ring-1 transition-colors outline-none focus-visible:ring-[3px]"
-      href={getCourseHref(edition)}
-      prefetch
-    >
-      <LineMarker>
-        <LanguagesIcon aria-hidden="true" className="text-muted-foreground size-4" />
-      </LineMarker>
-      <span className="flex-1 text-pretty">
-        {t("This course is also available in your language.")}
-      </span>
-      <LineMarker>
-        <ChevronRightIcon aria-hidden="true" className="size-4" />
-      </LineMarker>
-    </Link>
-  );
-}
 
 function CourseHero({
   contentCountry,
@@ -103,7 +72,10 @@ function CourseHero({
   const titleId = `course-title-${course.id}`;
 
   return (
-    <section aria-labelledby={titleId} className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}>
+    <section
+      aria-labelledby={titleId}
+      className={cn(PAGE_HEADER_CLASS, "max-w-column w-full gap-0 wrap-anywhere")}
+    >
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
       <CourseMark align="start" course={course} loading="eager" locale={locale} />
@@ -211,7 +183,7 @@ export async function LibraryCoursePage({
   const landingPage = parseCourseLandingPageContent(course.landingPage);
   const courseUrl = getCourseUrl({ ...params, language: course.language });
   const isOtherLanguage = getContentLocale(course.language) !== locale;
-  const promise = landingPage?.valueProposition || course.description;
+  const promise = getCoursePromise(course);
   const outlineLead = promise === course.description ? null : course.description;
 
   const t = await getExtracted();

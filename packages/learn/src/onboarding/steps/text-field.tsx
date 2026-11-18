@@ -33,7 +33,9 @@ export function TextField({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={inputId}>{label}</Label>
+      <Label className="leading-5" htmlFor={inputId}>
+        {label}
+      </Label>
       <Input
         aria-describedby={description ? descriptionId : undefined}
         autoFocus={autoFocus}

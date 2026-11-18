@@ -31,7 +31,7 @@ export function AccountDropdownItem({ status }: { status: "account" | "guest" | 
           closeOnClick={false}
           render={<PendingLink href={loginHref} icon={<UserPlusIcon aria-hidden="true" />} />}
         >
-          {t("Create an account")}
+          {t("Create a free account")}
         </DropdownMenuItem>
         <DropdownMenuItem
           closeOnClick={false}
