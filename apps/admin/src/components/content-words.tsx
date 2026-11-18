@@ -1,4 +1,5 @@
 import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
+import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CheckIcon } from "lucide-react";
@@ -17,13 +18,17 @@ function strings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
 }
 
+/** A word set in code is one chip: it wraps inside itself instead of splitting in two past the column. */
+const CODE_CHIP_CLASS =
+  "**:data-[streamdown=inline-code]:inline-block **:data-[streamdown=inline-code]:max-w-full";
+
 function Prose({ children, quiet }: { children: string | null; quiet?: boolean }) {
   if (!children) {
     return null;
   }
 
   return (
-    <div className={quiet ? "text-muted-foreground" : undefined}>
+    <div className={cn(CODE_CHIP_CLASS, quiet && "text-muted-foreground")}>
       <AdminAnswerMarkdown answer={children} />
     </div>
   );

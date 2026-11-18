@@ -1,4 +1,4 @@
-import { AdminDisclosure } from "@/components/admin-json";
+import { AdminTechnicalDetails } from "@/components/admin-json";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
@@ -62,7 +62,7 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
           {screen ? <DetailField label="Sent from">{screen}</DetailField> : null}
         </DetailFields>
 
-        <AdminDisclosure label="Technical details">
+        <AdminTechnicalDetails>
           <div className="divide-y pb-2">
             <DetailFields>
               <DetailField label="URL" mono={Boolean(context.url)}>
@@ -72,7 +72,7 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
             </DetailFields>
             {context.provenance ? <ProvenanceFields provenance={context.provenance} /> : null}
           </div>
-        </AdminDisclosure>
+        </AdminTechnicalDetails>
       </div>
     </>
   );

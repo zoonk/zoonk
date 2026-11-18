@@ -63,8 +63,8 @@ export async function LessonProvenanceFilters({ model }: { model?: string }) {
 export function LessonProvenanceFiltersSkeleton() {
   return (
     <div className={PAIR_CLASS}>
-      <Skeleton className="h-7.5 w-32 rounded-md max-md:w-full" />
-      <Skeleton className="h-7.5 w-44 rounded-md max-md:w-full" />
+      <Skeleton className="h-7.5 w-32 rounded-md max-md:h-11 max-md:w-full max-md:rounded-lg" />
+      <Skeleton className="h-7.5 w-44 rounded-md max-md:h-11 max-md:w-full max-md:rounded-lg" />
     </div>
   );
 }

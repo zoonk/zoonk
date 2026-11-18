@@ -184,7 +184,7 @@ export async function ContentFixChanges({
     <ul className="flex flex-col gap-6">
       {fix.changes.map((change) => (
         <li className="flex flex-col gap-1" key={`${rowKeyOf(change)}:${change.op}`}>
-          <h3 className="text-base font-semibold">
+          <h3 className="text-sm font-semibold">
             {fix.rowLabels.get(rowKeyOf(change)) ?? MODEL_LABELS[change.model]}
           </h3>
           <ChangeBody change={change} compact={compact} names={fix.names} />

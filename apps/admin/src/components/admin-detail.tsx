@@ -82,7 +82,6 @@ export function AdminDetailHeader({
   menu,
   parents,
   title,
-  titleClassName,
 }: {
   /** The page's buttons, in its top bar: `Button size="bar"`. */
   actions?: React.ReactNode;
@@ -94,7 +93,6 @@ export function AdminDetailHeader({
   /** The pages over this record, the list first. The way back names the nearest one. */
   parents: AdminParent[];
   title: string;
-  titleClassName?: string;
 }) {
   return (
     <AdminHeader
@@ -111,10 +109,10 @@ export function AdminDetailHeader({
         mark ? (
           <span className="flex min-w-0 items-center gap-3">
             {mark}
-            <PageTitle className={cn(TITLE_CLASS, titleClassName)}>{title}</PageTitle>
+            <PageTitle className={TITLE_CLASS}>{title}</PageTitle>
           </span>
         ) : (
-          <PageTitle className={cn(TITLE_CLASS, titleClassName)}>{title}</PageTitle>
+          <PageTitle className={TITLE_CLASS}>{title}</PageTitle>
         )
       }
     >

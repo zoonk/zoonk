@@ -44,14 +44,24 @@ export function formatDayRange({ end, start }: { end: Date; start: Date }): stri
   });
 }
 
+/** A date or a time never breaks inside itself: "Nov 18," never ends a line before "2026". */
+function keepTogether(text: string): string {
+  return text.replaceAll(" ", "\u00A0");
+}
+
 export function formatDate(date: Date | string | null | undefined): string {
-  return date ? new Date(date).toLocaleDateString("en", { dateStyle: "medium" }) : "—";
+  return date
+    ? keepTogether(new Date(date).toLocaleDateString("en", { dateStyle: "medium" }))
+    : "—";
 }
 
 export function formatDateTime(date: Date | string | null | undefined): string {
-  return date
-    ? new Date(date).toLocaleString("en", { dateStyle: "medium", timeStyle: "short" })
-    : "—";
+  if (!date) {
+    return "—";
+  }
+
+  const time = new Date(date).toLocaleTimeString("en", { timeStyle: "short" });
+  return `${formatDate(date)}, ${keepTogether(time)}`;
 }
 
 /** Takes a time of day as "21:00", as reminders store it. */

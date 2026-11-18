@@ -1,8 +1,7 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
-import { MasteryMeter } from "@/components/mastery-meter";
-import { StateMark } from "@/components/state-mark";
+import { MasteryMark, MasteryMeter } from "@/components/mastery-meter";
 import { getUserLearnerSkills } from "@/data/users/get-user-learner-skills";
 import { formatCount, formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -38,7 +37,7 @@ export async function UserLearnerSkills({ userId }: { userId: string }) {
               </AdminTableRowLink>
             </TableCell>
             <TableCell>
-              <StateMark state={learnerSkill.state} />
+              <MasteryMark state={learnerSkill.state} />
             </TableCell>
             <TableCell className="text-foreground">{formatDate(learnerSkill.due)}</TableCell>
             <TableCell numeric>{learnerSkill.reps}</TableCell>

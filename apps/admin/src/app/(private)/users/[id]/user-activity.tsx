@@ -5,7 +5,6 @@ import { formatDuration } from "@/lib/format-duration";
 import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
-  ContributionCalendarCaption,
   ContributionCalendarContent,
   ContributionCalendarDay,
   ContributionCalendarGrid,
@@ -66,6 +65,9 @@ function ActivityWeek({ longest, week }: { longest: number; week: ActivityDay[] 
 
 const TITLE = "Study time by day, the last 12 months";
 
+/** A phone shows the last 26 weeks, fitted to its column, as the learner's own Activity page does. */
+const PHONE_WEEKS = 26;
+
 /** The last 12 months, a square a day, as the learner's own Activity page draws them. */
 export async function UserActivity({ userId }: { userId: string }) {
   "use cache: private";
@@ -89,7 +91,12 @@ export async function UserActivity({ userId }: { userId: string }) {
   ]);
 
   const weeks = groupContributionCalendarDaysByWeek(days);
-  const studied = rows.filter((row) => row.timeSpentSeconds > 0).length;
+  const studied = days.filter((day) => (day.row?.timeSpentSeconds ?? 0) > 0).length;
+
+  const studiedRecently = weeks
+    .slice(-PHONE_WEEKS)
+    .flat()
+    .filter((day) => (day.row?.timeSpentSeconds ?? 0) > 0).length;
 
   return (
     <AdminSection
@@ -102,11 +109,22 @@ export async function UserActivity({ userId }: { userId: string }) {
           <ContributionCalendarLegendLabel>More</ContributionCalendarLegendLabel>
         </ContributionCalendarLegend>
       }
-      description={`Studied on ${formatCount(studied, "day")}`}
-      title="The last 12 months"
+      description={
+        <>
+          <span className="max-sm:hidden">Studied on {formatCount(studied, "day")}</span>
+          <span className="sm:hidden">Studied on {formatCount(studiedRecently, "day")}</span>
+        </>
+      }
+      title={
+        <>
+          <span className="max-sm:hidden">The last 12 months</span>
+          <span className="sm:hidden">The last 6 months</span>
+        </>
+      }
     >
       <ContributionCalendar
         aria-label={TITLE}
+        recentOnPhone
         defaultIndex={Math.max(
           0,
           days.findLastIndex((day) => day.row),
@@ -127,9 +145,6 @@ export async function UserActivity({ userId }: { userId: string }) {
             </ContributionCalendarGrid>
           </ContributionCalendarContent>
         </ContributionCalendarViewport>
-        <ContributionCalendarCaption className="text-muted-foreground text-xs lg:hidden">
-          Scroll to see earlier months.
-        </ContributionCalendarCaption>
       </ContributionCalendar>
     </AdminSection>
   );

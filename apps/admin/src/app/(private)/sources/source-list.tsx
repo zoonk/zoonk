@@ -15,7 +15,7 @@ const SOURCE_COLUMNS: AdminTableColumn[] = [
   { label: "Source", twoLines: true },
   { label: "Kind" },
   { align: "right", label: "Last checked" },
-  { align: "right", label: "Good until" },
+  { align: "right", label: "Good until", size: "text" },
   { align: "right", label: "Used by", size: "wide" },
 ];
 

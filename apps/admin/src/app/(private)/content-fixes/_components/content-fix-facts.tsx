@@ -1,4 +1,4 @@
-import { AdminDisclosure } from "@/components/admin-json";
+import { AdminTechnicalDetails } from "@/components/admin-json";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { capitalize, formatDateTime } from "@/lib/format";
 import { getEnvironment } from "@zoonk/utils/environment";
@@ -32,7 +32,7 @@ export function proposalFacts(fix: {
 /** The ids a developer needs, closed, under the environment they belong to. */
 export function ContentFixTechnicalDetails({ children }: { children: React.ReactNode }) {
   return (
-    <AdminDisclosure label="Technical details">
+    <AdminTechnicalDetails>
       <div className="pb-2 text-sm">
         <DetailFields>
           <DetailField label="Environment" mono={false}>
@@ -41,6 +41,6 @@ export function ContentFixTechnicalDetails({ children }: { children: React.React
           {children}
         </DetailFields>
       </div>
-    </AdminDisclosure>
+    </AdminTechnicalDetails>
   );
 }

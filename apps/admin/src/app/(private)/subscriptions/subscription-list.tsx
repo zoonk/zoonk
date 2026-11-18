@@ -25,7 +25,7 @@ const COLUMNS: AdminTableColumn[] = [
   { label: "Plan" },
   { label: "Billed by", size: "text" },
   { label: "State" },
-  { label: "Started" },
+  { align: "right", label: "Started" },
   { align: "right", label: "Renews or ends", size: "wide" },
 ];
 

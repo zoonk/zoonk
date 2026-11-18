@@ -38,6 +38,7 @@ export function SourceTotals({ source }: { source: AdminPublicSource }) {
       <StatTile
         detail={<AdminCheckDate date={source.validUntil} kind="valid-until" prefix="Good until " />}
         icon={<CalendarClockIcon />}
+        plainValue
         title="Last checked"
         value={source.fetchedAt ? formatDate(source.fetchedAt) : "Never"}
       />

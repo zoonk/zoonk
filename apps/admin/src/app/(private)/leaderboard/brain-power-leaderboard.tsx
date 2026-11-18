@@ -33,7 +33,7 @@ export async function BrainPowerLeaderboard({
   return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} period={period} />;
 }
 
-/** A learner's place, photo and name; the row opens their page. */
+/** A learner's place, photo and name; the row opens their page. The place starts on the page's edge. */
 function LeaderName({ leader }: { leader: BrainPowerLeader }) {
   const label = getLearnerLabel(leader.user);
 
@@ -43,7 +43,7 @@ function LeaderName({ leader }: { leader: BrainPowerLeader }) {
       href={`/users/${leader.user.id}`}
       prefetch
     >
-      <span className="text-muted-foreground text-compact w-6 shrink-0 text-end font-mono tabular-nums">
+      <span className="text-muted-foreground text-compact w-6 shrink-0 font-mono tabular-nums">
         {leader.rank.toLocaleString("en")}
       </span>
       <AdminUserAvatar user={leader.user} />

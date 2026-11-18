@@ -31,9 +31,9 @@ export function SourceRow({ source }: { source: ListedSource }) {
         title={source.title ?? "Private upload"}
       />
       <TableCell>{capitalize(source.kind)}</TableCell>
-      <TableCell className="text-right">{formatDate(source.fetchedAt)}</TableCell>
-      <TableCell className="text-right">
-        <AdminCheckDate date={source.validUntil} kind="valid-until" />
+      <TableCell>{formatDate(source.fetchedAt)}</TableCell>
+      <TableCell>
+        <AdminCheckDate date={source.validUntil} emptyLabel="—" kind="valid-until" />
       </TableCell>
       <TableCell>{usedBy(source._count) || "—"}</TableCell>
     </AdminTableRow>

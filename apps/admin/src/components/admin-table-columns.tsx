@@ -46,10 +46,49 @@ const SIZES = {
 } as const;
 
 // A cell that holds a control keeps its focus ring: it isn't cut. Narrower than its set columns
-// and a first column worth reading (wider on a phone, where it is most of the screen), the table
-// scrolls sideways.
+// and a first column worth reading, the table scrolls sideways.
 const FIXED_TABLE_CLASS =
-  "table-fixed min-w-[calc(var(--facts-width)+14rem)] md:min-w-[calc(var(--facts-width)+6rem)] [&_:is(td,th)]:overflow-hidden [&_:is(td,th)]:text-ellipsis [&_td:has(button,input,select)]:overflow-visible";
+  "table-fixed md:min-w-[calc(var(--facts-width)+6rem)] [&_:is(td,th)]:overflow-hidden [&_:is(td,th)]:text-ellipsis [&_td:has(button,input,select)]:overflow-visible";
+
+/**
+ * On a phone a row is a card: its name, then each other value on a line of its own beside its
+ * column's name, so no column hides past the screen's edge. The header keeps only the columns that
+ * sort the list, as one line of links.
+ */
+const PHONE_ROWS_CLASS = cn(
+  "max-md:block max-md:[&_:is(tbody,td)]:block max-md:[&_tbody_tr]:flex max-md:[&_tbody_tr]:flex-col max-md:[&_tbody_tr]:gap-1.5 max-md:[&_tbody_tr]:py-3",
+  "max-md:[&_td]:py-0! max-md:[&_td]:ps-0 max-md:[&_td]:pe-0 max-md:[&_td]:text-left max-md:[&_td]:whitespace-normal",
+  // Floated into the cell's start padding, so the cell stays unpositioned and a row's link still
+  // stretches over the whole row.
+  "max-md:[&_td]:before:text-muted-foreground max-md:[&_td]:before:float-start max-md:[&_td]:before:-ms-32 max-md:[&_td]:before:w-28 max-md:[&_td]:before:truncate max-md:[&_td]:before:font-sans max-md:[&_td]:before:text-sm max-md:[&_td]:before:leading-5",
+  "max-md:[&_th]:w-auto max-md:[&_th]:px-0 max-md:[&_th:not(:has(a))]:hidden max-md:[&_thead_tr]:flex max-md:[&_thead_tr]:flex-wrap max-md:[&_thead_tr]:gap-x-6 max-md:[&_thead:not(:has(a))]:hidden",
+);
+
+/**
+ * A value's room beside its column's name on a phone. Tailwind reads class names from the source,
+ * so each column's is written out; the name itself comes from `--column-n`.
+ */
+const PHONE_LABELED_CELL_CLASS = [
+  "",
+  "max-md:[&_td:nth-child(2)]:ps-32 max-md:[&_td:nth-child(2)]:before:content-(--column-2)",
+  "max-md:[&_td:nth-child(3)]:ps-32 max-md:[&_td:nth-child(3)]:before:content-(--column-3)",
+  "max-md:[&_td:nth-child(4)]:ps-32 max-md:[&_td:nth-child(4)]:before:content-(--column-4)",
+  "max-md:[&_td:nth-child(5)]:ps-32 max-md:[&_td:nth-child(5)]:before:content-(--column-5)",
+  "max-md:[&_td:nth-child(6)]:ps-32 max-md:[&_td:nth-child(6)]:before:content-(--column-6)",
+  "max-md:[&_td:nth-child(7)]:ps-32 max-md:[&_td:nth-child(7)]:before:content-(--column-7)",
+  "max-md:[&_td:nth-child(8)]:ps-32 max-md:[&_td:nth-child(8)]:before:content-(--column-8)",
+] as const;
+
+function phoneColumnLabels(columns: AdminTableColumn[]) {
+  const labeled = columns.flatMap((column, index) => (index > 0 && column.label ? [index] : []));
+
+  return {
+    className: labeled.map((index) => PHONE_LABELED_CELL_CLASS[index]),
+    style: Object.fromEntries(
+      labeled.map((index) => [`--column-${index + 1}`, JSON.stringify(columns[index]?.label)]),
+    ),
+  };
+}
 
 // A control keeps the row at 44 px and sits on its first line, like the text beside it: a 44 px
 // field or select fills that line, and a 30 px button sits 9 px down, where its 13 px label shares
@@ -57,10 +96,28 @@ const FIXED_TABLE_CLASS =
 // lift its label 5 px.) A file input hides inside a button (`FileButton`), so it counts as one. A
 // cell that leads with text and puts its control under it (`data-stacked`) keeps the text's room.
 const CONTROL_CELL_CLASS =
-  "[&_td:not([data-stacked]):has(button,input,select)]:py-0 [&_td:not([data-stacked]):has(button,input,select)]:align-top [&_td:not([data-stacked]):has(button):not(:has(input:not([type=hidden],[type=file]),select))]:pt-[0.5625rem]";
+  "md:[&_td:not([data-stacked]):has(button,input,select)]:py-0 md:[&_td:not([data-stacked]):has(button,input,select)]:align-top md:[&_td:not([data-stacked]):has(button):not(:has(input:not([type=hidden],[type=file]),select))]:pt-[0.5625rem]";
 
-/** A row's last value ends on the row's end edge, whoever draws its cell. */
-const LAST_COLUMN_END_CLASS = "[&_td:last-child]:text-right";
+/**
+ * A column set to the right ends its values on its header's edge, whoever draws its cells. Tailwind
+ * reads class names from the source, so each column's is written out.
+ */
+const RIGHT_CELL_CLASS = [
+  "md:[&_td:nth-child(1)]:text-right",
+  "md:[&_td:nth-child(2)]:text-right",
+  "md:[&_td:nth-child(3)]:text-right",
+  "md:[&_td:nth-child(4)]:text-right",
+  "md:[&_td:nth-child(5)]:text-right",
+  "md:[&_td:nth-child(6)]:text-right",
+  "md:[&_td:nth-child(7)]:text-right",
+  "md:[&_td:nth-child(8)]:text-right",
+] as const;
+
+function rightCellClass(columns: AdminTableColumn[]) {
+  return columns.flatMap((column, index) =>
+    column.align === "right" ? [RIGHT_CELL_CLASS[index]] : [],
+  );
+}
 
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(
@@ -84,25 +141,30 @@ function factsWidth(columns: AdminTableColumn[]) {
 function AdminTable({
   children,
   columns,
-  unsized = false,
 }: {
   children: React.ReactNode;
   columns: AdminTableColumn[];
-  unsized?: boolean;
 }) {
-  const factsStyle: CSSPropertiesWithVariables = { "--facts-width": factsWidth(columns) };
+  const phone = phoneColumnLabels(columns);
+
+  const style: CSSPropertiesWithVariables = {
+    "--facts-width": factsWidth(columns),
+    ...phone.style,
+  };
 
   return (
     <Table
       scrollLabels={SCROLL_LABELS}
       className={cn(
         CONTROL_CELL_CLASS,
-        !unsized && FIXED_TABLE_CLASS,
-        columns.at(-1)?.align === "right" && LAST_COLUMN_END_CLASS,
+        FIXED_TABLE_CLASS,
+        PHONE_ROWS_CLASS,
+        phone.className,
+        rightCellClass(columns),
       )}
-      style={unsized ? undefined : factsStyle}
+      style={style}
     >
-      <AdminTableColumnsHeader columns={columns} unsized={unsized} />
+      <AdminTableColumnsHeader columns={columns} />
       {children}
     </Table>
   );
@@ -150,53 +212,38 @@ function AdminTableColumnHead({ column, sized }: { column: AdminTableColumn; siz
   );
 }
 
-function AdminTableColumnsHeader({
-  columns,
-  unsized,
-}: {
-  columns: AdminTableColumn[];
-  unsized: boolean;
-}) {
+function AdminTableColumnsHeader({ columns }: { columns: AdminTableColumn[] }) {
   const fillIndex = fillIndexOf(columns);
 
   return (
     <TableHeader>
       <TableRow>
         {columns.map((column, index) => (
-          <AdminTableColumnHead
-            column={column}
-            key={column.label}
-            sized={!unsized && index !== fillIndex}
-          />
+          <AdminTableColumnHead column={column} key={column.label} sized={index !== fillIndex} />
         ))}
       </TableRow>
     </TableHeader>
   );
 }
 
-/**
- * Every Admin table: its columns, its rows, and a sentence instead of an empty table. `unsized`
- * is only for the pages not rebuilt yet, whose nine or ten columns still size to their text.
- */
+/** Every Admin table: its columns, its rows, and a sentence instead of an empty table. */
 export function AdminTableColumns({
   children,
   columns,
   emptyLabel,
   isEmpty,
-  unsized,
 }: {
   children: React.ReactNode;
   columns: AdminTableColumn[];
   emptyLabel: string;
   isEmpty: boolean;
-  unsized?: boolean;
 }) {
   if (isEmpty) {
     return <AdminSectionEmpty>{emptyLabel}</AdminSectionEmpty>;
   }
 
   return (
-    <AdminTable columns={columns} unsized={unsized}>
+    <AdminTable columns={columns}>
       <TableBody>{children}</TableBody>
     </AdminTable>
   );
@@ -221,15 +268,9 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
   );
 }
 
-export function AdminTableColumnsSkeleton({
-  columns,
-  unsized,
-}: {
-  columns: AdminTableColumn[];
-  unsized?: boolean;
-}) {
+export function AdminTableColumnsSkeleton({ columns }: { columns: AdminTableColumn[] }) {
   return (
-    <AdminTable columns={columns} unsized={unsized}>
+    <AdminTable columns={columns}>
       <AdminTableSkeletonRows>
         <AdminTableColumnsSkeletonRow columns={columns} />
       </AdminTableSkeletonRows>

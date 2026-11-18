@@ -27,7 +27,7 @@ export function AdminQuerySelect({
   return (
     <NativeSelect
       aria-label={label}
-      className="max-w-60 min-w-0 max-md:w-full max-md:max-w-none max-md:before:h-11 max-md:before:rounded-lg max-md:[&_select]:text-base"
+      className="max-w-60 min-w-0 max-md:w-full max-md:max-w-none max-md:before:h-11! max-md:before:rounded-lg! max-md:[&_select]:text-base"
       onChange={(event) =>
         setQuery({
           ...(clears && { [clears]: null }),

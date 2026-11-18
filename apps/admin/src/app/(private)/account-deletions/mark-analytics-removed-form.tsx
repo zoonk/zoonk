@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminConfirmDialog } from "@/components/admin-confirm-dialog";
+import { ROW_BUTTON_CLASS } from "@/lib/row-button-class";
 import { Button } from "@zoonk/ui/components/button";
 import { CheckIcon } from "lucide-react";
 import { markAnalyticsRemovedAction } from "./_actions/mark-analytics-removed";
@@ -25,7 +26,12 @@ export function MarkAnalyticsRemovedForm({
       }
       title="Mark these analytics as removed?"
       trigger={
-        <Button icon={<CheckIcon aria-hidden="true" />} size="sm" variant="outline">
+        <Button
+          className={ROW_BUTTON_CLASS}
+          icon={<CheckIcon aria-hidden="true" />}
+          size="sm"
+          variant="outline"
+        >
           Mark removed
         </Button>
       }

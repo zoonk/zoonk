@@ -59,7 +59,7 @@ export function Screen({
       </div>
 
       {children && (
-        <figcaption className="text-muted-foreground mt-3 text-center text-sm text-pretty">
+        <figcaption className="text-muted-foreground mt-3 text-center text-sm text-balance">
           {children}
         </figcaption>
       )}

@@ -24,8 +24,8 @@ function userColumns({ search, sort }: { search?: string; sort?: UserSort }): Ad
     { label: "User", twoLines: true },
     { label: "Plan" },
     { align: "right", label: "Brain Power", sort: sortBy("brain-power") },
-    { label: "Last active" },
-    { label: "Joined", sort: sortBy("newest-signups") },
+    { align: "right", label: "Last active" },
+    { align: "right", label: "Joined", sort: sortBy("newest-signups") },
   ];
 }
 

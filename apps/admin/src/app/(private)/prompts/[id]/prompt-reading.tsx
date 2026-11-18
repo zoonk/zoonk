@@ -72,10 +72,10 @@ function ReadingBody({ prompt }: { prompt: AdminPrompt }) {
   return <AdminSectionEmpty>{readingNotes[prompt.outcome]}</AdminSectionEmpty>;
 }
 
-const OLDER_FORMAT_NOTE = "This reading is in an older format. Open the stored reading below.";
+const OLDER_FORMAT_NOTE = "This reading is in an older format. Open its technical details below.";
 
 const readingNotes: Record<PromptOutcome, string> = {
-  failed: "The words couldn't be read.",
+  failed: "Reading the words failed, so nothing was saved.",
   goalCreated: OLDER_FORMAT_NOTE,
   inProgress: "Still reading the words.",
   noGoal: OLDER_FORMAT_NOTE,
@@ -87,7 +87,7 @@ export function PromptReading({ prompt }: { prompt: AdminPrompt }) {
   return (
     <div className="flex flex-col gap-1">
       <ReadingBody prompt={prompt} />
-      <AdminJson label="Saved interpretation of the request" value={prompt.understanding} />
+      <AdminJson value={prompt.understanding} />
     </div>
   );
 }

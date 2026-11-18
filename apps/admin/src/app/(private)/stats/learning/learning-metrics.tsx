@@ -86,7 +86,7 @@ async function ActiveLearnerRhythmAnalysis({
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: value, previous: previousAverages[rhythm] }}
       description={RHYTHM_COPY[rhythm].description}
-      value={value.toLocaleString("en", { maximumFractionDigits: 1 })}
+      value={Math.round(value).toLocaleString("en")}
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}

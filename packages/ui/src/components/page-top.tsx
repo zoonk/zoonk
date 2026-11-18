@@ -145,7 +145,7 @@ function PageTitle({
 }: React.ComponentProps<"h1"> & { variant?: keyof typeof TITLE_CLASS }) {
   return (
     <h1
-      className={cn(TITLE_CLASS[variant], className)}
+      className={cn("text-balance", TITLE_CLASS[variant], className)}
       data-slot="page-title"
       data-title={variant}
       {...props}

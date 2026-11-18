@@ -26,7 +26,7 @@ export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; i
       {answerStats.attempts > 0 ? (
         <TableCell numeric>{formatPercent(getItemAccuracy(answerStats))}</TableCell>
       ) : (
-        <TableCell className="text-right">No answers yet</TableCell>
+        <TableCell>—</TableCell>
       )}
     </AdminTableRow>
   );

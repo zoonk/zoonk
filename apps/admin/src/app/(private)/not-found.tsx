@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <AdminPage>
       <AdminPageHeader title="Nothing here">
-        This record doesn&apos;t exist. It may have been deleted, or the link is wrong.
+        The link may be wrong, or what it pointed to was deleted.
       </AdminPageHeader>
 
       <AdminPageBody>

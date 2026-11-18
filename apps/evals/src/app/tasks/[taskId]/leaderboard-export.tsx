@@ -136,7 +136,7 @@ export function LeaderboardExport({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button icon={<Download />} size="sm" variant="outline" />}>
+      <DropdownMenuTrigger render={<Button icon={<Download />} size="lg" variant="outline" />}>
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

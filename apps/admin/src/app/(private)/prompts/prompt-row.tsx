@@ -14,23 +14,24 @@ import {
   promptOutcomeTones,
 } from "./_utils/prompt-labels";
 
-/** What Zoonk made of the words: the goal's name over its kind, with the kind's icon. */
+/**
+ * What Zoonk made of the words: the goal's name over its kind, after the kind's icon. A reading
+ * with no kind keeps the icon's room, so every name in the column starts on one edge.
+ */
 function PromptReadingCell({ prompt }: { prompt: ListedPrompt }) {
   const summary = getReadingSummary(parsePromptReading(prompt.understanding));
 
   if (!summary) {
-    return null;
+    return "—";
   }
 
   return (
     <span className="flex min-w-0 items-start gap-2.5">
-      {summary.kind ? (
-        <span className="flex h-5 shrink-0 items-center">
-          <GoalKindIcon kind={summary.kind} />
-        </span>
-      ) : null}
+      <span className="flex h-5 w-4 shrink-0 items-center">
+        {summary.kind ? <GoalKindIcon kind={summary.kind} /> : null}
+      </span>
       <span className="min-w-0 self-baseline">
-        <span className="text-foreground block wrap-anywhere whitespace-normal">
+        <span className="text-foreground block text-balance wrap-anywhere whitespace-normal">
           {summary.text}
         </span>
         <span className="block text-xs wrap-anywhere whitespace-normal">{summary.label}</span>

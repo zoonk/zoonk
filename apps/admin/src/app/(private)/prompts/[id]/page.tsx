@@ -102,10 +102,7 @@ async function PromptDetail({ id }: { id: string }) {
           <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{prompt.prompt}</p>
         </AdminSection>
 
-        <AdminSection
-          description="What Zoonk read in the words, with any fixes the learner made to the card."
-          title="Zoonk read it as"
-        >
+        <AdminSection title="Zoonk read it as">
           <PromptReading prompt={prompt} />
         </AdminSection>
 
@@ -133,7 +130,7 @@ function PromptDetailSkeleton() {
             <Skeleton className="h-4 w-3/5" />
           </div>
         </AdminSectionSkeleton>
-        <AdminSectionSkeleton description rows={2} />
+        <AdminSectionSkeleton rows={2} />
         <AdminSectionSkeleton rows={1} />
         <AdminSectionSkeleton rows={4} />
       </AdminDetailBody>

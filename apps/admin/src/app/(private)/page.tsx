@@ -21,7 +21,7 @@ async function HomeWeek() {
 function Week() {
   return (
     <AdminSection
-      description="Compared with the 7 days before, the gray part of each line"
+      description="The gray part of each line is the 7 days before."
       title="Last 7 days"
     >
       <Suspense fallback={<WeekTilesSkeleton />}>

@@ -12,6 +12,22 @@ const MASTERY: { fill: string; state: MasteryState }[] = [
 
 export type MasteryCount = { count: number; state: MasteryState };
 
+const SWATCH_CLASS = "size-2.5 shrink-0 rounded-xs";
+
+function fillOf(state: MasteryState): string {
+  return MASTERY.find((row) => row.state === state)?.fill ?? "";
+}
+
+/** One skill's state, with its swatch from the meter's key, so a row and the key read alike. */
+export function MasteryMark({ state }: { state: MasteryState }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+      <span aria-hidden="true" className={`${SWATCH_CLASS} ${fillOf(state)}`} />
+      {toWords(state)}
+    </span>
+  );
+}
+
 /**
  * A set of skills, or of learners on one skill, at a glance: a part per state, sized by how many
  * are in it, then its key.
@@ -32,7 +48,7 @@ export function MasteryMeter({ states }: { states: MasteryCount[] }) {
       <ul className="text-muted-foreground flex flex-wrap gap-x-5 gap-y-1 text-xs">
         {parts.map((part) => (
           <li className="flex items-center gap-1.5" key={part.state}>
-            <span aria-hidden="true" className={`size-2.5 rounded-xs ${part.fill}`} />
+            <span aria-hidden="true" className={`${SWATCH_CLASS} ${part.fill}`} />
             {toWords(part.state)}
             <span className="text-foreground font-mono tabular-nums">
               {part.count.toLocaleString("en")}
