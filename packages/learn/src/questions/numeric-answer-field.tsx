@@ -212,6 +212,9 @@ export function NumericAnswerField({
         {t("Your answer")}
       </label>
 
+      {showsRule && <EntryRule entry={entry} id={ruleId} />}
+      {invalid && <InvalidHint entry={entry} id={hintId} />}
+
       <InputGroup
         className={cn(
           ANSWER_GROUP_CLASS,
@@ -266,9 +269,6 @@ export function NumericAnswerField({
           )}
         </InputGroupAddon>
       </InputGroup>
-
-      {showsRule && <EntryRule entry={entry} id={ruleId} />}
-      {invalid && <InvalidHint entry={entry} id={hintId} />}
     </form>
   );
 }

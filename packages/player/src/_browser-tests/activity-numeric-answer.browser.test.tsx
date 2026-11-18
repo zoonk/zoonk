@@ -42,7 +42,7 @@ describe("activity numeric answers", () => {
     expect(ruleBottom).toBeLessThanOrEqual(numericGroup().getBoundingClientRect().top);
 
     await valueInput().fill("12,,5");
-    await checkActivity();
+    await userEvent.keyboard("{Enter}");
     const error = page.getByRole("alert");
     await expect.element(error).toBeVisible();
 
