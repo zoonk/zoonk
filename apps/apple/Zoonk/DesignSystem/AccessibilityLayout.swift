@@ -262,16 +262,22 @@ private struct StackingLabelLayout: Layout {
   private func placements(for proposal: ProposedViewSize, _ subviews: Subviews) -> [Placement] {
     guard let title = subviews.last else { return [] }
 
+    let unwrapped = title.sizeThatFits(ProposedViewSize(width: .infinity, height: nil))
+    // Asked for its ideal size, a label is its title on one line: in a list row, a label measured
+    // without a width reports a narrow column, which would pass a button as fitting anywhere
+    // (`ViewThatFits` then picks a row that breaks its labels).
+    let idealWidth = unwrapped.width.isInfinite ? nil : unwrapped.width
+
     guard subviews.count == 2, let icon = subviews.first else {
+      let proposal = ProposedViewSize(width: proposal.width ?? idealWidth, height: proposal.height)
       return [Placement(origin: .zero, size: title.sizeThatFits(proposal), proposal: proposal)]
     }
 
     let iconSize = icon.sizeThatFits(.unspecified)
     let besideWidth = iconSize.width + Self.besideSpacing
     let besideProposal = ProposedViewSize(
-      width: proposal.width.map { max($0 - besideWidth, 0) }, height: nil)
+      width: proposal.width.map { max($0 - besideWidth, 0) } ?? idealWidth, height: nil)
     let besideSize = title.sizeThatFits(besideProposal)
-    let unwrapped = title.sizeThatFits(ProposedViewSize(width: .infinity, height: nil))
     // Beside the icon, the label must neither wrap nor truncate. A label that takes any width it
     // gets, like a `LabeledContent`, only has to keep its lines.
     let keepsItsWidth =
