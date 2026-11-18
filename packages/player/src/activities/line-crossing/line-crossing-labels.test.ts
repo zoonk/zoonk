@@ -4,6 +4,7 @@ import {
   ARROW_HEAD,
   ARROW_STROKE,
   type LabelBox,
+  changeArrowBoxes,
   changeArrows,
   placeChartLabels,
   placeLineLabels,
@@ -18,6 +19,37 @@ const chartSegment = (x0: number, y0: number, x1: number, y1: number) => ({
   from: { x: x0, y: y0 },
   to: { x: x1, y: y1 },
 });
+
+function breakEvenPlot(costStart: number, costEnd: number, height: number, after: Point) {
+  const plot = { bottom: 248, left: 0, right: 230, top: 0 };
+  const cost = chartSegment(0, costStart, 230, costEnd);
+  const revenue = chartSegment(0, 248, 230, 51 + 1 / 3);
+  const original = chartSegment(0, 189, 230, 90 + 2 / 3);
+  const before = { x: 138, y: 130 };
+
+  const marks = {
+    boxes: [
+      { bottom: 14, left: 0, right: 60, top: 0 },
+      ...changeArrowBoxes({ after, before, bottom: 248, left: 0 }),
+    ],
+    circles: [before, after].map(({ x, y }) => ({ cx: x, cy: y, radius: 5 })),
+    lines: [before, after].flatMap(({ x, y }) => [
+      chartSegment(0, y, x, y),
+      chartSegment(x, y, x, 248),
+    ]),
+  };
+
+  const widths = height === 12 ? [26, 46, 40] : [35, 62, 53];
+
+  const shown = [cost, revenue, original].map((segment, index) => ({
+    isOptional: index === 2,
+    isUpper: index < 2,
+    segment,
+    size: { height, width: widths[index]! },
+  }));
+
+  return { marks, plot, shown };
+}
 
 function gapToSegment(box: LabelBox, { from, to }: { from: Point; to: Point }): number {
   const samples = Array.from({ length: 201 }, (_, index) => ({
@@ -376,6 +408,46 @@ describe(placeChartLabels, () => {
     );
   });
 
+  it("keeps Cost nearer its own line than the crossing guides in a tight chart", () => {
+    const { marks, plot, shown } = breakEvenPlot(169 + 1 / 3, 71, 12, { x: 184, y: 90 + 2 / 3 });
+    const [name] = placeChartLabels({ area: plot, marks, revealed: [], shown });
+
+    if (!name || !shown[0]) {
+      throw new Error("Cost needs its name.");
+    }
+
+    expect(gapToSegment(name, shown[0].segment)).toBeLessThan(
+      Math.min(...marks.lines.map((guide) => gapToSegment(name, guide))),
+    );
+  });
+
+  it("keeps Before from overlapping Cost after revealing the answer in a tight chart", () => {
+    const { marks, plot, shown } = breakEvenPlot(248, 149 + 2 / 3, 16, { x: 0, y: 248 });
+    const answerLine = chartSegment(0, 179 + 1 / 6, 230, 80 + 5 / 6);
+
+    const names = placeChartLabels({
+      area: plot,
+      marks,
+      revealed: [{ isUpper: false, segment: answerLine, size: { height: 16, width: 114 } }],
+      shown,
+    });
+
+    const [costName, , original] = names;
+
+    if (!costName || !original) {
+      throw new Error("Cost and the dashed line both need names.");
+    }
+
+    const overlapWidth =
+      Math.min(costName.right, original.right) - Math.max(costName.left, original.left);
+
+    const overlapHeight =
+      Math.min(costName.bottom, original.bottom) - Math.max(costName.top, original.top);
+
+    expect(Math.min(overlapWidth, overlapHeight)).toBeLessThanOrEqual(0);
+    expect(touchesSegment(original, answerLine)).toBe(false);
+  });
+
   it("checks fractional plot-edge positions before giving up a name's line", () => {
     const lines = [
       chartSegment(0, 206.6667, 330, 51.6667),
@@ -385,17 +457,12 @@ describe(placeChartLabels, () => {
 
     const answerLine = chartSegment(0, 144.6667, 308, 0);
 
-    const [answerBox] = placeChartLabels({
+    const [answerBox] = placeLineLabels({
       area: { bottom: 248, left: 0, right: 330, top: 0 },
-      marks: noMarks,
-      revealed: [{ isUpper: false, segment: answerLine, size: { height: 23, width: 158.7 } }],
-      shown: lines.map((segment, index) => ({
-        isOptional: index === 2,
-        isUpper: index < 2,
-        segment,
-        size: { height: 23, width: 75.9 },
-      })),
-    }).slice(3);
+      labels: [{ isUpper: false, segment: answerLine, size: { height: 23, width: 158.7 } }],
+      marks: { ...noMarks, lines: [...lines, answerLine] },
+      requiredLines: [answerLine],
+    });
 
     if (!answerBox) {
       throw new Error("The revealed line needs its name.");
