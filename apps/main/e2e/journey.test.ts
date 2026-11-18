@@ -62,6 +62,21 @@ test.describe("Journey", () => {
     });
   });
 
+  test("shows a paused goal's schedule on a phone", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page }) => {
+      await page.setViewportSize({ height: 844, width: 390 });
+      await openJourney(page);
+
+      const options = page.getByRole("button", { name: "Plan options" });
+      await expectHydrated(options);
+      await options.click();
+      await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
+
+      await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+      await expect(page.getByRole("button", { name: /^Schedule/u })).toBeVisible();
+    });
+  });
+
   test("says what a time change in the plan editor did, and Undo gives the plan back as it was", async ({
     browser,
   }) => {
