@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.takeOrElse
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.components.WithStatusAction
 import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /**
@@ -66,7 +66,7 @@ fun PageScaffold(
     val focus = rememberTitleFocus()
 
     TextStartsOnLayoutStart {
-        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+        WithStatusAction(enabled = bottomBar == null) { retry ->
             Scaffold(
                 modifier = Modifier.pageFocus(focus).then(modifier),
                 topBar = {

@@ -58,7 +58,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.components.WithStatusAction
 import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
@@ -182,7 +182,7 @@ fun TaskScaffold(
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable (snackbars: Boolean) -> Unit = { snackbars ->
-        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+        WithStatusAction(enabled = bottomBar == null) { retry ->
             Scaffold(
                 topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
                 bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }) { noteHeight = it } } },

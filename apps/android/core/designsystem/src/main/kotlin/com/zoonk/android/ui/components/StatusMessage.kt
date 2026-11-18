@@ -127,7 +127,7 @@ fun NotFoundMessage(
         description = stringResource(R.string.not_found_description),
         modifier = modifier,
     ) {
-        Button(onClick = onGoHome) { Text(stringResource(R.string.not_found_go_home)) }
+        NotFoundGoHome(onGoHome)
     }
 }
 
