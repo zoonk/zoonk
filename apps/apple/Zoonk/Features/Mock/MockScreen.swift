@@ -169,7 +169,9 @@ extension MockRun {
       return BarNote(
         String(localized: "Try again before you move on", table: "Mock"),
         tone: .waiting,
-        action: BarNote.Action(label: Text("Try again", tableName: "Mock"), perform: retry))
+        action: BarNote.Action(
+          label: Text("Try again", tableName: "Mock"), isEnabled: save == .retrying,
+          perform: retry))
     case .saved, .saving:
       break
     }
