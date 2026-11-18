@@ -76,52 +76,13 @@ struct ExamList: View {
   @State private var isReporting = false
 
   var body: some View {
-    // The page's list keeps its sections as the mocks' pane comes and goes beside it, so the date
-    // note's sheet stays open through a rotation, a resize or a fold.
-    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      ZoonkList {
-        ExamMocksSection(exam: exam, options: options)
-        about
-      }
-    } content: { isBeside in
-      ZoonkList {
-        ForEach(ExamPart.order(isBeside: isBeside), id: \.self) { part in
-          switch part {
-          case .moment: moment
-          case .mocks: ExamMocksSection(exam: exam, options: options)
-          case .progress: ExamProgressSection(exam: exam)
-          case .about: about
-          }
+    // A refused start's notice follows the limit's clock: once the limit opens, the bar offers the
+    // start alone again.
+    OpeningClock(availableAt: speakingLimit?.availableAt) { now in
+      panes
+        .bottomBar(note: speakingMockNote(at: now)) {
+          bar(at: now)
         }
-      }
-    }
-    .bottomBar(note: speakingMockNote) {
-      if let options, options.offersMock, !exam.isLastDays {
-        Button {
-          if let running = options.running {
-            router.open(.mock(blockId: running.id))
-          } else {
-            router.open(.mockChooser)
-          }
-        } label: {
-          if options.running != nil {
-            Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
-          } else {
-            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
-          }
-        }
-        .buttonStyle(.mainAction)
-        .keyboardShortcut(.defaultAction)
-      } else if pinsSpeakingAction, let mock = exam.speakingMock {
-        if case .limit(let limit) = callStart.refusal, limit.offersSubscription {
-          SubscribeButton()
-            .buttonStyle(.outline)
-        }
-
-        ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
-          .buttonStyle(.mainAction)
-          .keyboardShortcut(.defaultAction)
-      }
     }
     .onDisappear {
       callStart.leave()
@@ -156,6 +117,58 @@ struct ExamList: View {
       isPresented: $isReporting, context: FeedbackContext(screen: "exam"), isReport: true)
   }
 
+  /// The page's list keeps its sections as the mocks' pane comes and goes beside it, so the date
+  /// note's sheet stays open through a rotation, a resize or a fold.
+  private var panes: some View {
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
+      ZoonkList {
+        ExamMocksSection(exam: exam, options: options)
+        about
+      }
+    } content: { isBeside in
+      ZoonkList {
+        ForEach(ExamPart.order(isBeside: isBeside), id: \.self) { part in
+          switch part {
+          case .moment: moment
+          case .mocks: ExamMocksSection(exam: exam, options: options)
+          case .progress: ExamProgressSection(exam: exam)
+          case .about: about
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func bar(at now: Date) -> some View {
+    if let options, options.offersMock, !exam.isLastDays {
+      Button {
+        if let running = options.running {
+          router.open(.mock(blockId: running.id))
+        } else {
+          router.open(.mockChooser)
+        }
+      } label: {
+        if options.running != nil {
+          Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+        } else {
+          Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+        }
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    } else if pinsSpeakingAction, let mock = exam.speakingMock {
+      if let limit = speakingLimit, !limit.isOpen(at: now), limit.offersSubscription {
+        SubscribeButton()
+          .buttonStyle(.outline)
+      }
+
+      ExamSpeakingMockAction(goalId: exam.goalId, start: callStart, label: mock.name)
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    }
+  }
+
   @ViewBuilder
   private var moment: some View {
     ExamHero(exam: exam, change: dateChange)
@@ -171,17 +184,26 @@ struct ExamList: View {
       && (exam.isLastDays || options?.offersMock == false)
   }
 
+  /// The limit a start from the bar ran into.
+  private var speakingLimit: HelpLimit? {
+    guard pinsSpeakingAction, case .limit(let limit) = callStart.refusal else {
+      return nil
+    }
+
+    return limit
+  }
+
   /// A start from the bar says how it ended over the bar, where the learner tapped.
-  private var speakingMockNote: BarNote? {
+  private func speakingMockNote(at now: Date) -> BarNote? {
     guard pinsSpeakingAction, let refusal = callStart.refusal else {
       return nil
     }
 
-    if case .limit(let limit) = refusal, let sentence = limit.words(.callTime).sentence {
-      return BarNote(sentence)
+    guard case .limit(let limit) = refusal else {
+      return BarNote(speakingMockFailure)
     }
 
-    return BarNote(speakingMockFailure)
+    return limit.isOpen(at: now) ? nil : BarNote(limit.sentence(.callTime, now: now))
   }
 
   /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
