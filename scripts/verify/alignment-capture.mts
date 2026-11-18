@@ -2,8 +2,7 @@ import { type Summary } from "./alignment-summary.mts";
 import { PART_NAMES } from "./alignment-table.mts";
 
 /**
- * What every platform writes for one screen and configuration, and what the one evaluator reads
- * (`REPORT-SHAPE.md` in the alignment build notes).
+ * What every platform writes for one screen and configuration, and what the one evaluator reads.
  */
 /** `[x, y, width, height]` in the capture's logical units. */
 export type Bounds = [number, number, number, number];

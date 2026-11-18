@@ -75,7 +75,7 @@ struct TutorPanel: View {
     summary.buddyDisplayName
   }
 
-  /// Main's E-020: inside a lesson, the whole buddy greets an empty conversation.
+  /// Inside a lesson, the whole buddy greets an empty conversation.
   private var showsBuddy: Bool {
     switch scope {
     case .step, .lesson: tutor.conversation(scope).turns.isEmpty

@@ -4381,7 +4381,7 @@
       }
     ]
   },
-  "round 2 pending-line": {
+  "pending-line": {
     "activeSurface": "page",
     "elements": [
       {
@@ -4469,7 +4469,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 2 missing-end": {
+  "missing-end": {
     "activeSurface": "page",
     "elements": [
       {
@@ -4557,7 +4557,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 2 explicit-missing-type": {
+  "explicit-missing-type": {
     "activeSurface": "page",
     "elements": [
       {
@@ -4632,7 +4632,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 2 missing-gap": {
+  "missing-gap": {
     "activeSurface": "page",
     "elements": [
       {
@@ -4706,7 +4706,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 2 partial-gap": {
+  "partial-gap": {
     "activeSurface": "page",
     "elements": [
       {
@@ -4782,7 +4782,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 2 invalid-unit": {
+  "invalid-unit": {
     "activeSurface": "page",
     "elements": [
       {
@@ -5742,7 +5742,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 line-unknown-middle": {
+  "line-unknown-middle": {
     "activeSurface": "page",
     "elements": [
       {
@@ -5822,7 +5822,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 known-middle": {
+  "known-middle": {
     "activeSurface": "page",
     "elements": [
       {
@@ -5902,7 +5902,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 bad-specimen": {
+  "bad-specimen": {
     "activeSurface": "page",
     "elements": [
       {
@@ -5945,7 +5945,7 @@
     "version": 1,
     "specimen": "false"
   },
-  "round 3 missing-word-value-type": {
+  "missing-word-value-type": {
     "activeSurface": "page",
     "elements": [
       {
@@ -6033,7 +6033,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 wrapped-title-value": {
+  "wrapped-title-value": {
     "activeSurface": "page",
     "elements": [
       {
@@ -6134,7 +6134,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 corrected-wrap-value": {
+  "corrected-wrap-value": {
     "activeSurface": "page",
     "elements": [
       {
@@ -6201,7 +6201,7 @@
     "unit": "px",
     "version": 1
   },
-  "round 3 corrected-note-value": {
+  "corrected-note-value": {
     "activeSurface": "page",
     "elements": [
       {

@@ -67,7 +67,7 @@ describe("a bottom bar's note sits as far from its line as its buttons sit from 
     ]);
   });
 
-  it("fails a note that draws nothing and still holds its room over the bar (C-L03, the course start)", () => {
+  it("fails a note that draws nothing and still holds its room over the bar (the course start)", () => {
     const capture = bar(16, 16);
 
     const empty = {

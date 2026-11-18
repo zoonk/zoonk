@@ -93,7 +93,7 @@ export const MANIFEST = "capture.json";
 
 /**
  * The alignment checks' report beside a capture's manifest, as far as the gate reads it: the
- * relationship lane owns its shape (unresolved means failing and not excepted).
+ * alignment evaluator owns its shape (unresolved means failing and not excepted).
  */
 export type AlignmentReport = {
   captures?: { elements?: unknown[]; picture?: { file?: string } }[];

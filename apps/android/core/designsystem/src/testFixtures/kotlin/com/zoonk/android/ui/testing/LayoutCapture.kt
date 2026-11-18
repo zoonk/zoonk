@@ -41,7 +41,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * The alignment report's capture of one render (`REPORT-SHAPE.md`): the shared pieces' parts, named by
+ * The alignment report's capture of one render: the shared pieces' parts, named by
  * [LayoutPart], read from the unmerged semantics tree in the frame [captureRender] copied. Units are dp,
  * from the picture's top start. What the tree doesn't give is written "not measured", never estimated:
  * a text whose own semantics were cleared has no text layout, and lazy rows that weren't
