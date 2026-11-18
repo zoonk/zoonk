@@ -334,14 +334,11 @@ export function TaskStopMessage({
 }) {
   return (
     <>
-      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
+      {/* Lucide draws 2px inside its box, so the mark's ink starts on the title's edge. */}
+      <span className="text-muted-foreground -ms-0.5 flex [&_svg]:size-6">{icon}</span>
       <div className="flex flex-col gap-2" role="status">
         <Heading className="text-title">{title}</Heading>
-        {description && (
-          <p className="text-muted-foreground text-base leading-relaxed text-pretty">
-            {description}
-          </p>
-        )}
+        {description && <p className="text-muted-foreground text-sm text-pretty">{description}</p>}
       </div>
     </>
   );
