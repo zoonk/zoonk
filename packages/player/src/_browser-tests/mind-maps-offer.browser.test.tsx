@@ -167,6 +167,26 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect.element(notMade().getByText("Reactions")).toBeVisible();
   });
 
+  it("shows the chapters that need their lessons first when no other chapter is listed", async () => {
+    const served = view(null);
+
+    render(
+      <Screen
+        actions={actionsWith({})}
+        served={{
+          ...served,
+          chapters: served.chapters.map((row) => ({ ...row, lessonsToWrite: 1 })),
+        }}
+      />,
+    );
+
+    await expect.element(notMade().getByText("Reactions")).toBeVisible();
+
+    await expect
+      .element(notMade().getByRole("button", { name: /more chapter/u }))
+      .not.toBeInTheDocument();
+  });
+
   it.each([
     ["the newer read answers first", ["newer", "older"]],
     ["the older read answers first", ["older", "newer"]],
