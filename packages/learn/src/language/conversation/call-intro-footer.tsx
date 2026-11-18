@@ -181,7 +181,7 @@ export function useMicrophoneOffWords({
       };
 }
 
-export function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
+function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
   const words = useMicrophoneOffWords({ name, problem });
 
   return (
