@@ -23,6 +23,7 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .announcesStatus(bar.note?.politeLine)
       .onPreferenceChange(ColumnMarginsKey.self) { columns = $0 }
       .safeAreaBar(edge: .bottom) {
         bar.environment(\.barColumn, columns.count == 1 ? columns.first : nil)
@@ -137,11 +138,17 @@ extension EnvironmentValues {
 }
 
 /// A bottom bar's one line over its buttons: what a tap couldn't do, or a status the screen waits on
-/// (muted), with at most one small action such as "Retry".
+/// (muted), with at most one small action such as "Retry". As main's bar, whose note sits in a live
+/// region that stays on screen, VoiceOver reads a status as it shows, but not one the screen opens
+/// with.
 struct BarNote: View {
   enum Tone {
+    /// Read out at once, over what VoiceOver is saying.
     case failure
     case status
+    /// A failure the screen is still working through, such as an answer being sent again: drawn as
+    /// a failure, read as a status.
+    case waiting
   }
 
   struct Action {
@@ -168,6 +175,11 @@ struct BarNote: View {
     self.action = action
   }
 
+  /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
+  var politeLine: String? {
+    tone == .failure ? nil : String(message.characters)
+  }
+
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       switch tone {
@@ -176,7 +188,9 @@ struct BarNote: View {
       case .status:
         Text(message)
           .foregroundStyle(.mutedForeground)
-          .announcesStatus(String(message.characters))
+      case .waiting:
+        Text(message)
+          .foregroundStyle(.destructiveText)
       }
 
       if let action {

@@ -162,7 +162,7 @@ extension MockRun {
     case .retrying:
       return BarNote(
         String(localized: "Try again before you move on", table: "Mock"),
-        tone: .status,
+        tone: .waiting,
         action: BarNote.Action(
           label: Text("Try again", tableName: "Mock"),
           perform: { [queue] in queue.retryNow() }))
@@ -191,6 +191,7 @@ struct MockActionBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, true)
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
+    .announcesStatus(run.barNote?.politeLine)
     .floatingAbove {
       if let note = run.barNote {
         note
