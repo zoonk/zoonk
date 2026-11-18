@@ -95,7 +95,7 @@ struct SetupProgress: Equatable {
     current: Components.Schemas.OnboardingStep, steps: [Components.Schemas.OnboardingStep]
   ) -> Bool {
     current.profileQuestion != nil
-      && Set(([current] + steps).filter { $0.profileQuestion != nil }).count > 1
+      && Set(steps.filter { $0.profileQuestion != nil }).count > 1
   }
 }
 
