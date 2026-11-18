@@ -7,10 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
@@ -38,7 +38,10 @@ class DetailPageTest {
                 val room = rememberBarNoteRoom()
                 Column {
                     DetailPage(
-                        aside = { repeat(20) { Text("Part $it", Modifier.height(48.dp).let { line -> if (it == 19) line.testTag(LAST) else line }) } },
+                        aside = {
+                            repeat(19) { Text("Part $it", Modifier.height(48.dp)) }
+                            Text("Last part", Modifier.height(48.dp).testTag(LAST))
+                        },
                         asideLabel = "Picked",
                         modifier = Modifier.weight(1f),
                         noteRoom = room,

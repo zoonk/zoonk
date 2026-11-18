@@ -288,7 +288,13 @@ private class MathParser(
         return when (name) {
             "text", "mathrm", "textrm", "operatorname", "mbox", "textnormal" -> {
                 val word = run(textArgument(), style, italic = false)
-                Piece(buildAnnotatedString { append(word.text); addStringAnnotation(WORD, "", 0, length) }, word.spoken)
+                Piece(
+                    buildAnnotatedString {
+                        append(word.text)
+                        addStringAnnotation(WORD, "", 0, length)
+                    },
+                    word.spoken,
+                )
             }
 
             "mathit", "textit", "emph" -> {
