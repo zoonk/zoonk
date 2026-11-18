@@ -31,7 +31,7 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
  * $365/1k, and Gemini 4 Carbon 9.08 and 8.00 at $268/1k with a 1,122 s p95; a blind read liked
  * Carbon's richer visuals on 3 of 4 despite its factual and scope flaws. On 14 plans, 12 of them
  * visual (18 Nov 2026), GPT-6.2 Sol tied 6.1 Sol's score (9.16 to 9.14) at about half the wait (p50
- * 45 s against 85 s) and $42/1k against $48/1k, but a blind read of 16 plans preferred 6.1 Sol 10
+ * 41 s against 82 s) and $42/1k against $48/1k, but a blind read of 16 plans preferred 6.1 Sol 10
  * to 3: 6.2 Sol left a lobe unnamed on its own screen, a compound-interest lesson without a balance
  * table and a molecule explanation without a picture. Gemini 4 Hydrogen scored 8.57 at $181/1k. A
  * learner's own lesson is planned with its scope's models.
