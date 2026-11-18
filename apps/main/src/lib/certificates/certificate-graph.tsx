@@ -91,6 +91,22 @@ function CertificateRoute({
   showLabels: boolean;
   spec: RouteSpec;
 }) {
+  if (graph.label && showLabels) {
+    return (
+      <div style={{ alignItems: "center", display: "flex", gap: spec.labelGap }}>
+        <span
+          style={{
+            background: CERTIFICATE_COLORS.success,
+            borderRadius: spec.station,
+            height: spec.station * 2,
+            width: spec.station * 2,
+          }}
+        />
+        <RouteLabel label={graph.label} spec={{ ...spec, labelGap: 0 }} />
+      </div>
+    );
+  }
+
   const { end, middle, pad, station, stations } = getRouteGeometry({
     spec,
     stations: graph.stations,
@@ -98,8 +114,6 @@ function CertificateRoute({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: spec.width }}>
-      {showLabels && graph.label && <RouteLabel label={graph.label} spec={spec} />}
-
       <div
         style={{ display: "flex", height: spec.height, position: "relative", width: spec.width }}
       >
