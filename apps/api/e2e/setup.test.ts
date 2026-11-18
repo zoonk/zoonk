@@ -79,7 +79,7 @@ test.describe("Profile Setup Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("a name typed before the page loaded is saved with a free username when another learner took the email's one meanwhile", async ({
+  test("a name typed and sent before the page loaded is saved with a free username when another learner took the email's one meanwhile", async ({
     page,
   }) => {
     const prefix = `e2eearly${Date.now()}`;
@@ -100,8 +100,10 @@ test.describe("Profile Setup Flow", () => {
     });
 
     await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Early Learner");
+    const submit = page.getByRole("button", { name: /^continue$/iu });
+    await expect(submit).toBeEnabled();
+    await submit.click();
     await loadScripts();
-    await page.getByRole("button", { name: /^continue$/iu }).click();
     await handoff;
 
     const saved = await prisma.user.findUniqueOrThrow({ where: { email } });
