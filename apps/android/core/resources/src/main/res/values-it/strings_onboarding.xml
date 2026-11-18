@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "4b952a0174e7d580779592f9fa3c7958baa48e80ea5dd3f4c7c81924d07e7fae",
   "onboarding_musicianship_title": "cde891126a2492b479e739a9108855c3691c6b9c38fccdcb635d2f0bff239b74",
   "onboarding_my_notes": "f1b2d668a714a1881dae197e2575f824746a579ddb341e1d2f12b32143800d45",
-  "onboarding_no_date": "b83054b61eaa8f12e1847d6f6eceeb54ebb715c57fc4594a4c7ef0d6fafabb00",
   "onboarding_paste_link": "07fda5fbac60653e0a06ede08fa87beddd8a3b71d6da3a1baa004d74f8d3e58e",
   "onboarding_paste_link_placeholder": "9237d0dc9998ecb171c3b2328e97bc6674e72a28553d2053948bc9b549e61dca",
   "onboarding_paste_text": "22b20fc99fc3071caf4036ad6e12841853b35948f2efe884314fc917d7a9bc2a",
@@ -922,8 +921,6 @@
     <string name="onboarding_date_continue_without">Continua senza data</string>
     <string name="onboarding_date_remove">Rimuovi la data</string>
     <string name="onboarding_date_label">Data</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">Nessuna data</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">La data che hai scelto, %1$s, è passata.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->
