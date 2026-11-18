@@ -11926,6 +11926,11 @@ msgid "A whole number."
 msgstr "Um número inteiro."
 
 #: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "Arredonde para o número inteiro mais próximo."
+
+#: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"
 msgid "Type a number, like {example}."
 msgstr "Digite um número, como {example}."

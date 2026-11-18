@@ -11926,6 +11926,11 @@ msgid "A whole number."
 msgstr "整数で入力してください。"
 
 #: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "四捨五入して整数にしてください。"
+
+#: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"
 msgid "Type a number, like {example}."
 msgstr "{example}のような数を入力してください。"

@@ -11926,6 +11926,11 @@ msgid "A whole number."
 msgstr "Bir tam sayı."
 
 #: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "En yakın tam sayıya yuvarla."
+
+#: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"
 msgid "Type a number, like {example}."
 msgstr "{example} gibi bir sayı yaz."

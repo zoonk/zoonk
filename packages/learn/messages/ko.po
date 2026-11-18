@@ -11926,6 +11926,11 @@ msgid "A whole number."
 msgstr "정수로 입력하세요."
 
 #: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "소수 첫째 자리에서 반올림하세요."
+
+#: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"
 msgid "Type a number, like {example}."
 msgstr "{example} 같은 숫자를 입력하세요."
