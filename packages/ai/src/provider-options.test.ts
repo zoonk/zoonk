@@ -217,7 +217,7 @@ describe(buildImageProviderOptions, () => {
       gateway: {
         models: [
           "openai/gpt-image-2.5-sunburst",
-          "microsoft/mai-image-2.6",
+          "microsoft/mai-image-2.7-flash",
           "bfl/flux-3-image",
           "recraft/recraft-v4.1-utility",
         ],
@@ -236,7 +236,7 @@ describe(buildImageProviderOptions, () => {
       }).gateway.models,
     ).toStrictEqual([
       "openai/gpt-image-2.5-sunburst",
-      "microsoft/mai-image-2.6",
+      "microsoft/mai-image-2.7-flash",
       "bfl/flux-3-image",
     ]);
   });
@@ -250,7 +250,7 @@ describe(buildImageProviderOptions, () => {
         useFallback: true,
       }),
     ).toStrictEqual({
-      gateway: { models: ["openai/gpt-image-2.5-sunburst", "microsoft/mai-image-2.6"] },
+      gateway: { models: ["openai/gpt-image-2.5-sunburst", "microsoft/mai-image-2.7-flash"] },
       openai: { output_format: "webp", quality: "medium" },
     });
   });

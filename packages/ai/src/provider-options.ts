@@ -121,10 +121,15 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
 }
 
 /**
- * The other no-training models fell short: MAI-Image-2.6-Flash misdraws lesson scenes, Seedream
- * misspells words, Muse rejects the `quality` option and Grok ignores `size`.
+ * MAI-Image-2.7-Flash matched or beat MAI-Image-2.6 on the lesson-image, course-icon and
+ * mind-map-image evals at about a quarter of the cost (18 Nov 2026). The other no-training models
+ * fell short: MAI-Image-2.7 draws flawed course icons, MAI-Image-2.6-Flash misdraws lesson scenes,
+ * Seedream misspells words, Muse rejects the `quality` option and Grok ignores `size`.
  */
-const IMAGE_FALLBACK_MODELS = ["openai/gpt-image-2.5-sunburst", "microsoft/mai-image-2.6"] as const;
+const IMAGE_FALLBACK_MODELS = [
+  "openai/gpt-image-2.5-sunburst",
+  "microsoft/mai-image-2.7-flash",
+] as const;
 
 /**
  * These draw subjects OpenAI's models won't, but may train on prompts, so they only draw where

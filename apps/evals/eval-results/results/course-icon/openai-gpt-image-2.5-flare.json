@@ -5,22 +5,22 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A shield with an antibody next to a germ reads clearly and specifically as immunology and the body's defenses. It is not a generic medical symbol.",
+          "reasoning": "A shield with an antibody facing a virus reads instantly as immune defense against germs. It is specific to immunology rather than generic medicine.",
           "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The object is centered, rendered in smooth matte 3D with soft lighting and a subtle shadow, uses three colors, and sits on a plain white background. The added virus makes the composite busier and breaks the shield's outline.",
-          "score": 8,
+          "reasoning": "The rendering is smooth matte 3D with soft lighting, uses three colors and sits on a plain white background. However, the virus is a second object that sticks out past the shield's outline, so the silhouette is not clean and the composition is not centered.",
+          "score": 6,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There is no actual text, but the stylized antibody closely resembles the letter 'Y', which leaves slight ambiguity.",
-          "score": 8,
+          "reasoning": "There are no letters, numbers or captions. The Y-shaped antibody is a standard symbol, though it is stylized enough that it could faintly be read as the letter Y.",
+          "score": 9,
           "label": "No text",
           "weight": 20
         }
@@ -28,22 +28,26 @@
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
           "inputTokens": 3006,
-          "outputTokens": 710,
-          "reasoningTokens": 244
+          "outputTokens": 819,
+          "reasoningTokens": 283
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The white antibody is drawn so upright and symmetrical that it could read as the letter 'Y' at small sizes. The green virus sits on the shield as a third element that sticks out past the shield's edge, which makes the design more of a composite than one clean silhouette.",
-          "kind": "minorErrors",
+          "conclusion": "A green virus particle sits on the shield's left edge as a second object. It breaks the single-object silhouette the brief asks for and shifts the shield's visual weight off-center.",
+          "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "Tilt the antibody or give it more distinct heavy and light chain shapes so it no longer reads as a letter. Also drop the virus, or keep it fully inside the shield, so the icon has a single clean silhouette.",
+          "conclusion": "The plain white Y-shaped antibody, set flat on the shield face, could briefly read as the letter 'Y'. The shadow under the shield is very faint.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Drop the protruding virus, or tuck it fully inside the shield outline, so there is one compact, centered silhouette. Give the antibody a slightly more molecular look, such as rounded joints or a subtle hinge, so it cannot be mistaken for a letter. Strengthen the soft ground shadow a little.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -63,22 +67,22 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "The coin, rising arrow and growth bars clearly signal money, prices and growth, so the icon reads as economics at a glance. It leans slightly toward finance or investing rather than choices about scarce resources, but it is still a fitting symbol.",
+          "reasoning": "A shield with an antibody fighting a virus reads instantly as immunology and the body's defenses. It is specific to the subject, not a generic medical symbol.",
           "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The rendering is smooth matte 3D with soft lighting and a subtle shadow, uses two main colors (gold and blue), and sits on a plain white background, like an app icon. However, it is a composite of a coin, an arrow and a bar chart rather than exactly one object, and it is slightly off-center.",
-          "score": 7,
+          "reasoning": "The rendering fits the brief: smooth matte 3D, soft lighting, a subtle shadow, three colors and a plain white background. However, the protruding virus is a second object that disrupts the single clean silhouette and the centering.",
+          "score": 6,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, words or numbers. The only glyph is the embossed dollar sign, a currency symbol that is borderline typographic, so a small deduction applies.",
-          "score": 8,
+          "reasoning": "There is no text. The Y-shaped antibody is a symbol, though it is slightly letter-like.",
+          "score": 9,
           "label": "No text",
           "weight": 20
         }
@@ -86,28 +90,152 @@
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
-          "inputTokens": 3013,
-          "outputTokens": 929,
-          "reasoningTokens": 298
+          "inputTokens": 3006,
+          "outputTokens": 705,
+          "reasoningTokens": 225
         }
       },
       "steps": [
         {
-          "conclusion": "The icon combines three parts: a coin, a rising arrow and a four-bar chart. The rubric's example allows a coin with a rising arrow, but the added bar chart makes it read as a small cluster rather than one single object.",
+          "conclusion": "A separate green virus is attached to the shield's left edge. This adds a second object that the brief rules out, breaks the clean shield silhouette and pushes the visual weight off-center.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "The dollar sign embossed on the coin is a typographic glyph close to text. It is a common currency symbol rather than a letter or number, but it slightly strains the no-text rule. The coin-and-bar grouping is also a little off-center to the right, and the bar chart leans toward stock-market or finance imagery rather than economics broadly.",
+          "conclusion": "The antibody is drawn as a very stylized white Y, so a learner could read it as the letter 'Y' at small icon sizes.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Remove the virus, or fully integrate it inside the shield, so a single centered shield-and-antibody form remains. Give the antibody a little more molecular detail, such as rounded binding tips, so it does not read as a letter.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-immunology-2",
+        "userInput": {
+          "caseId": "en-immunology",
+          "description": "Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.",
+          "language": "en",
+          "title": "Immunology"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A shield with an antibody, facing a virus, clearly communicates immune defense and telling friend from foe. It reads as immunology at a glance, not as generic medicine.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The rendering is smooth matte 3D with soft lighting and a subtle shadow, uses three colors (blue, white, green) and sits on a plain white background, much like an app icon. However, the protruding virus adds a second element that breaks the silhouette and shifts the balance off-center.",
+          "score": 7,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions. The antibody's Y shape is a standard symbol, though it could faintly be read as a letter.",
+          "score": 9,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3006,
+          "outputTokens": 764,
+          "reasoningTokens": 269
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A green virus overlaps and protrudes past the left edge of the shield. This acts as a second element, breaks the clean shield silhouette and pulls the composition off-center to the left, against the single-object brief.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Reduce the icon to one unified object, such as a single coin with a rising arrow wrapped around it. Replace the dollar sign with a plain rim or ridged edge so there is no glyph at all. Center the composition.",
+          "conclusion": "Drop the virus or tuck it fully inside the shield so the icon reads as one centered object with a clean outline. The antibody's simple Y shape could also be given slightly more molecular detail, such as varied arm thickness, so it is less likely to be read as the letter Y.",
           "kind": "potentialImprovements",
           "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-immunology-3",
+        "userInput": {
+          "caseId": "en-immunology",
+          "description": "Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.",
+          "language": "en",
+          "title": "Immunology"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "Coins, a rising arrow and a globe read clearly as economics, money and markets at a glance. It still leans toward a generic finance or growth look.",
+          "score": 8,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The matte 3D rendering, soft shadow and white background fit the style. However, there are three separate objects rather than one centered object, which caps this score.",
+          "score": 4,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "A '$' symbol appears on the top coin. It is a currency glyph and counts as a character or letter-like mark, so it is treated as text.",
+          "score": 3,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3013,
+          "outputTokens": 515,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The icon is a cluster of three distinct objects: a globe, a rising zigzag arrow and a stack of coins. The brief asks for exactly one single object with no second object. The '$' symbol on the top coin is a glyph, which strictly breaks the no-text rule.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The composition sits off-center: the globe is left of center and the coins weigh down the lower right, so the silhouette is busy rather than clean. There are four or more colors (blue, green, red, yellow).",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Reduce the icon to one object, such as a single coin with a small rising arrow integrated into it. Remove the dollar sign, center the object and limit the palette to 2 to 3 colors for a clean app-icon silhouette.",
+          "kind": "potentialImprovements",
+          "score": 7
         }
       ],
       "testCase": {
@@ -125,21 +253,145 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A bar chart on a report with a magnifying glass reads instantly as data analysis. This is the exact kind of object the rubric suggests, not a generic computer.",
+          "reasoning": "Coins with a rising arrow clearly read as economics, prices and growth, and the globe suggests the global economy. The subject is instantly recognizable, though the globe adds generic noise.",
+          "score": 8,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The smooth matte 3D rendering with soft lighting, a subtle shadow and a white background fits the icon style. However, there are three distinct objects (globe, arrow, coin stack), which violates the single-object rule and caps this category at 4.",
+          "score": 4,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions. A '$' symbol is embossed on the coin; it is a currency glyph rather than text, but it is borderline.",
+          "score": 8,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3013,
+          "outputTokens": 595,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The image is a composition of several objects rather than one single object: a globe, a rising red arrow and a stack of coins. The rubric explicitly forbids a second object and props, which caps the style category. The '$' symbol on the coin is a currency glyph that could count as text, though it reads as an icon mark rather than letters.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The composition is off-center and crowded toward the lower right where the coins and arrow overlap the globe. The globe is the largest element yet the least economics-specific, which dilutes the focus. There are four or more colors (blue, green, red, yellow).",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Reduce the image to a single centered object, such as one coin with a subtle rising arrow integrated into it, or a balance scale with goods and coins. Drop the globe, and consider removing the '$' glyph to avoid any text-like marks.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "pt-economia-2",
+        "userInput": {
+          "caseId": "pt-economia",
+          "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.",
+          "language": "pt",
+          "title": "Economia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "Coins and a rising arrow read as economics, money and growth at a glance. The globe hints at the global economy. The meaning is clear.",
           "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The rendering is smooth matte 3D with soft lighting and a subtle shadow. It uses blue, gray and white on a plain white background, which fits the app-icon look. However, it stacks a document, two charts, placeholder lines and a magnifier into one composite, so it is busier than a single clean silhouette. It is also slightly off-center.",
-          "score": 7,
+          "reasoning": "The rendering is smooth matte 3D with soft lighting, a subtle shadow, about four colors and a plain white background. However, it shows several objects (globe, arrow and coins) arranged off-center, which triggers the cap for multiple objects.",
+          "score": 4,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The gray bars are abstract placeholder lines, not readable text.",
+          "reasoning": "There are no words or numbers. The only mark is a '$' currency symbol on the coin, a minor typographic element.",
+          "score": 8,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3013,
+          "outputTokens": 883,
+          "reasoningTokens": 291
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The icon is a composition of three separate objects rather than one focal object: a globe, a red rising arrow and a stack of coins. The expectations ask for a single centered object. A coin with an arrow would have been acceptable, but the globe adds a clear second subject and turns the icon into a small grouped scene.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The coin stack and arrow pull the visual weight to the lower right, so the group is not well centered and the silhouette is busy rather than clean. The '$' glyph on the top coin is a currency symbol rather than a letter or number, but it is still a typographic mark that brushes against the no-text rule.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Drop the globe and center one object, for example a single coin with a small rising arrow, or a balance holding goods and coins. Replace the '$' with an embossed plain disc or abstract mark to stay fully text-free and avoid tying a Portuguese course to the dollar.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "pt-economia-3",
+        "userInput": {
+          "caseId": "pt-economia",
+          "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.",
+          "language": "pt",
+          "title": "Economia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A magnifying glass over an ascending bar chart reads at once as data analysis. This is exactly the motif the rubric suggests, and it is clearly not a generic computer.",
+          "score": 10,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "A single icon object with a clean silhouette, smooth matte 3D, soft lighting and a subtle shadow. It uses blue, green and a light gray lens on a plain white background. Centering is only slightly off because of the handle.",
+          "score": 9,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "No letters, numbers or captions appear anywhere.",
           "score": 10,
           "label": "No text",
           "weight": 20
@@ -148,29 +400,157 @@
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
           "inputTokens": 2996,
-          "outputTokens": 778,
-          "reasoningTokens": 253
+          "outputTokens": 411,
+          "reasoningTokens": 0
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The icon combines several elements: a document, a bar chart, gray placeholder lines, a magnifying glass and a pie chart inside the lens. Showing two chart types is redundant and busier than a single clean object. The magnifier extends past the right edge of the sheet, so the visual weight sits off-center.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Simplify to one strong silhouette, such as a magnifying glass over a small bar chart. Drop the document, the placeholder lines and the pie chart. Center the combined shape so the icon reads more cleanly at small app-icon sizes.",
+          "conclusion": "The composite object sits slightly right of center because the handle extends to the lower right, and the shadow below is very faint, making the object feel a little lifted.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Adding a slightly firmer contact shadow and nudging the whole glass-and-handle group left would center the overall silhouette. A thin baseline under the bars would make the chart read even more clearly as data.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-1",
+        "userInput": {
+          "caseId": "en-data-analysis",
+          "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
+          "language": "en",
+          "title": "Data analysis"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A magnifying glass over a bar chart reads immediately as data analysis. It is not a generic computer.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "It is a single object in smooth matte 3D with soft lighting and a subtle shadow. It uses two main colors (blue and green) plus a light lens on a plain white background, like an app icon. Centering is a little off because of the handle.",
+          "score": 9,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions anywhere.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2996,
+          "outputTokens": 370,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The magnifier sits slightly off-center: the handle extends to the lower right, so the visual mass leans right and down. The shadow under the handle is very faint.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Shift the object slightly up and left so its visual weight is centered. A slightly stronger contact shadow would better ground the icon.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-data-analysis-2",
+        "userInput": {
+          "caseId": "en-data-analysis",
+          "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
+          "language": "en",
+          "title": "Data analysis"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A magnifying glass over a bar chart is exactly the suggested symbol and reads as data analysis at a glance. The ascending bars without an axis are slightly ambiguous.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This is a single object in smooth matte 3D with soft lighting and a subtle shadow on a plain white background. It uses two main colors plus a white lens and has a clean app-icon silhouette. It is slightly off-center.",
+          "score": 9,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2996,
+          "outputTokens": 425,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The bars float inside the lens with no baseline or axis, so the chart reads slightly more like a signal-strength icon than a data chart. The composition also sits a little off-center, with the handle pushing the visual weight toward the lower right.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Add a subtle baseline under the bars so they read clearly as a bar chart. Shift the whole object slightly up and left so it sits optically centered.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-data-analysis-3",
         "userInput": {
           "caseId": "en-data-analysis",
           "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
