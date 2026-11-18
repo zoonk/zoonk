@@ -167,6 +167,7 @@ export function LineCrossingActivity({
         real={real}
         xLabel={fields.xLabel}
         yLabel={fields.yLabel}
+        units={check.kind === "numeric" ? { [readsX ? "x" : "y"]: check.unit } : {}}
       />
 
       <LineCrossingChanges

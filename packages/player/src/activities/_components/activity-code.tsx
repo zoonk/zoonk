@@ -12,6 +12,7 @@ import {
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
 import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
+import { CodeLineNumber } from "./activity-code-gutter";
 import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
@@ -52,7 +53,7 @@ export function ActivityCodeBlock({
     <ActivityHorizontalScroll box={{ label }} className={cn(CODE_SCROLL_SIGN, "-mx-2", className)}>
       <div
         className={cn(
-          "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1",
+          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
           CODE_TEXT,
         )}
       >
@@ -78,7 +79,7 @@ export function ActivityCodeLine({
   return (
     <div
       className={cn(
-        "col-span-full -mx-1.5 grid grid-cols-subgrid items-center rounded-lg px-1.5 whitespace-pre",
+        "col-span-full -mx-1.5 grid grid-cols-subgrid items-start rounded-lg px-1.5 wrap-anywhere whitespace-pre-wrap sm:whitespace-pre",
         tone === "current" &&
           "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
@@ -90,12 +91,7 @@ export function ActivityCodeLine({
       data-tone={tone}
       {...props}
     >
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground pr-3 text-right tabular-nums select-none"
-      >
-        {number}
-      </span>
+      <CodeLineNumber number={number} />
       <div className="min-w-0">{children}</div>
     </div>
   );
@@ -136,12 +132,11 @@ const FIELD_RESET =
   "col-start-1 row-start-1 m-0 min-w-0 resize-none overflow-hidden border-0 bg-transparent p-0 whitespace-pre text-transparent caret-foreground outline-none selection:bg-viz-accent-soft placeholder:text-muted-foreground";
 
 export function ActivityCodeLineInput({
-  className,
   language,
   onChange,
   value,
   ...props
-}: Omit<React.ComponentProps<"input">, "onChange" | "value"> & {
+}: Omit<React.ComponentProps<"textarea">, "onChange" | "value"> & {
   language: CodeLanguage;
   onChange: (value: string) => void;
   value: string;
@@ -149,19 +144,26 @@ export function ActivityCodeLineInput({
   const kept = useKeptTyping({ value });
 
   return (
-    <span className={cn("grid min-w-0 flex-1", className)} data-slot="activity-code-line-input">
-      <span aria-hidden="true" className="col-start-1 row-start-1 self-center whitespace-pre">
+    <span className="grid min-w-0 flex-1" data-slot="activity-code-line-input">
+      <span
+        aria-hidden="true"
+        className="col-start-1 row-start-1 wrap-anywhere whitespace-pre-wrap"
+      >
         <ActivityCodeTokens tokens={highlightCode(value, language)[0] ?? []} />
       </span>
 
-      <input
+      {/* Reaches a 44 px tap target into the rows around it, so its own row keeps one line height. */}
+      <textarea
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={cn(FIELD_RESET, "min-h-11 w-full [font:inherit]")}
-        onChange={(event) => onChange(event.target.value)}
+        className={cn(
+          FIELD_RESET,
+          "relative z-10 -my-(--target-pad) w-full py-(--target-pad) wrap-anywhere whitespace-pre-wrap [--target-pad:max(0px,calc((44px-1lh)/2))]",
+        )}
+        onChange={(event) => onChange(event.target.value.replaceAll(/[\r\n]/gu, ""))}
+        rows={1}
         spellCheck={false}
-        type="text"
         value={value}
         {...props}
         {...kept}
@@ -194,33 +196,30 @@ export function ActivityCodeEditor({
     <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
       <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
         <div
-          className={cn(
-            "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-4 py-3",
-            CODE_TEXT,
-          )}
+          className={cn("grid w-full grid-cols-[max-content_minmax(0,1fr)] px-3 py-3", CODE_TEXT)}
+          style={{ gridTemplateRows: `repeat(${lines.length}, auto)` }}
         >
-          <div
-            aria-hidden="true"
-            className="text-muted-foreground col-start-1 row-start-1 pr-3 text-right tabular-nums select-none"
-          >
-            {keyedByPosition(lines, (line) => line).map(({ key }, index) => (
-              <div key={key}>{index + 1}</div>
-            ))}
-          </div>
+          {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }, index) => (
+            <div aria-hidden="true" className="contents" key={key}>
+              <CodeLineNumber number={index + 1} style={{ gridRow: index + 1 }} />
 
-          <div aria-hidden="true" className="col-start-2 row-start-1 whitespace-pre">
-            {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
-              <div key={key}>
+              <div
+                className="col-start-2 wrap-anywhere whitespace-pre-wrap"
+                style={{ gridRow: index + 1 }}
+              >
                 <ActivityCodeTokens tokens={item} />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
 
           <textarea
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className={cn(FIELD_RESET, "col-start-2 min-h-11 w-full [font:inherit]")}
+            className={cn(
+              FIELD_RESET,
+              "relative col-start-2 row-span-full -my-3 min-h-lh w-full py-3 wrap-anywhere whitespace-pre-wrap [font:inherit]",
+            )}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {
               if (onSubmit && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -232,7 +231,7 @@ export function ActivityCodeEditor({
             rows={lines.length}
             spellCheck={false}
             value={value}
-            wrap="off"
+            wrap="soft"
             {...props}
             {...kept}
           />
@@ -301,7 +300,10 @@ export function ActivitySnippetBar({
   snippets: readonly (CodeSnippet & { label: string; name: string })[];
 }) {
   return (
-    <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
+    <ActivityHorizontalScroll
+      box={{ label }}
+      className={cn(CODE_SCROLL_SIGN, "has-[>button]:px-12 [&>button]:size-11")}
+    >
       <div className="flex w-max min-w-full gap-2" data-slot="activity-snippet-bar">
         {snippets.map((snippet) => (
           <button

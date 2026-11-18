@@ -144,6 +144,40 @@ describe("feedback after a check", () => {
     });
   });
 
+  it("leaves no sliver of the chart or numeric question under the top bar", async () => {
+    await onDevice({ reducedMotion: "reduce" }, async () => {
+      for (const height of [520, 580, 640, 700, 760, 820]) {
+        // oxlint-disable-next-line no-await-in-loop -- Each height is a fresh screen.
+        await atViewport({ height, width: 390 }, async () => {
+          const view = openActivity({ template: "formulaModel" });
+          await valueInput().fill("3869.68");
+          await checkActivity();
+          await expectVerdict("Correct!");
+          await nextFrame();
+          await nextFrame();
+
+          const top = page.getByRole("main").element().getBoundingClientRect().top;
+
+          const parts = document.querySelectorAll(
+            '[data-slot="activity-plot"], [data-slot="activity-numeric-check"] p, [data-slot="input-group"]',
+          );
+
+          const sliced = [...parts].filter((element) => {
+            const box = element.getBoundingClientRect();
+            return box.top < top - 1 && box.bottom > top + 1;
+          });
+
+          expect(
+            sliced.map((element) => element.textContent),
+            `height ${height}`,
+          ).toStrictEqual([]);
+
+          view.unmount();
+        });
+      }
+    });
+  });
+
   it("starts a feedback taller than the screen at its top, so the verdict is read first", async () => {
     const content = {
       ...playableStepContent.check,

@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityCanvasLabel } from "../_components/activity-canvas";
-import { exactAnswerFormat } from "../_components/activity-feedback";
 import { ActivityFormulaChart } from "../_components/activity-formula-chart";
 import { ActivityModelSliders } from "../_components/activity-model-sliders";
 import { ActivityOutputReadouts } from "../_components/activity-output-readouts";
@@ -17,6 +16,7 @@ import { FormulaModelEvents, FormulaModelLegend } from "./formula-model-events";
 import {
   type Output,
   changeFormat,
+  modelOutputFormat,
   modelView,
   startingModel,
   useModelReadouts,
@@ -58,11 +58,7 @@ function expectedPoint({
 
   const input = check.inputs?.findLast((item) => item.name === axis.name);
 
-  return {
-    label: formatOutput(expected.value),
-    x: input?.value ?? axis.initial,
-    y: expected.value,
-  };
+  return { label: formatOutput(expected.value), x: input?.value ?? axis.initial, y: check.answer };
 }
 
 export function FormulaModelActivity(props: FormulaModelProps) {
@@ -73,7 +69,6 @@ export function FormulaModelActivity(props: FormulaModelProps) {
 }
 
 function FormulaModelBoard({
-  answer,
   axis,
   charted,
   content,
@@ -92,25 +87,12 @@ function FormulaModelBoard({
   const outputAt = (output: Output, at: ModelValues) =>
     computeActivityValue(content, { inputs: at, output: output.id });
 
-  const answerFormat =
-    check.kind === "numeric" &&
-    exactAnswerFormat({
-      check,
-      value: isChecked && answer?.kind === "numeric" ? answer.value : undefined,
-    });
+  const answerFormat = modelOutputFormat({ charted, content });
 
   const formatOutput = (output: Output, value: number | null) =>
     value === null
       ? ""
-      : format(value, {
-          maximumFractionDigits:
-            output.id === charted.id && answerFormat
-              ? answerFormat.maximumFractionDigits
-              : undefined,
-          unit:
-            output.unit ??
-            (output.id === charted.id && answerFormat ? answerFormat.unit : undefined),
-        });
+      : format(value, output.id === charted.id ? answerFormat : { unit: output.unit });
 
   const formatX = (value: number) => format(value, { unit: axis.unit });
 
@@ -169,9 +151,7 @@ function FormulaModelBoard({
           formatX={formatX}
           x={view.x}
           xDomain={[axis.min, axis.max]}
-          xLabel={axis.label}
           yDomain={view.yDomain}
-          yLabel={charted.label}
         />
 
         {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
@@ -193,7 +173,6 @@ function FormulaModelBoard({
         disabled={isChecked}
         onChange={(name, value) => update({ ...sliders, [name]: value }, events)}
         output={{ label: charted.label, value: formatOutput(charted, view.chartedNow) }}
-        scaledAbove={axis.name}
         values={sliders}
         variables={fields.variables}
       />

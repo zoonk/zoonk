@@ -16,14 +16,12 @@ export function TimelineTray({
   onDragMove,
   onDragStart,
   onPlace,
-  remaining,
 }: {
   label: string;
   onDragEnd: () => void;
   onDragMove: (point: PointerPoint) => void;
   onDragStart: () => void;
   onPlace: () => void;
-  remaining: number;
 }) {
   const t = useExtracted();
   const hasDragged = useRef(false);
@@ -31,12 +29,9 @@ export function TimelineTray({
 
   return (
     <div className="flex flex-col gap-2" data-slot="timeline-tray">
-      <p className="text-muted-foreground text-xs">
-        {t("{count, plural, one {# event to place} other {# events to place}}", {
-          count: remaining,
-        })}
+      <p aria-hidden="true" className="text-muted-foreground text-sm">
+        {t("Drag onto the timeline.")}
       </p>
-
       <button
         aria-label={t("Place {event} on the timeline", { event: label })}
         className={cn(
@@ -77,10 +72,6 @@ export function TimelineTray({
         <GripVertical aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="flex-1 text-sm font-medium">{label}</span>
       </button>
-
-      <p aria-hidden="true" className="text-muted-foreground text-sm">
-        {t("Drag onto the timeline.")}
-      </p>
     </div>
   );
 }

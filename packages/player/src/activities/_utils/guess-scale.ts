@@ -57,7 +57,9 @@ export function scaleTicks({ max, min, scale }: GuessScale, count = LINEAR_TICKS
 
   const every = Math.ceil(powers.length / (count === LINEAR_TICKS ? MAX_LOG_TICKS : count));
 
-  return powers.length < 2 ? [min, max] : powers.filter((_, index) => index % every === 0);
+  const inside = powers.filter((tick, index) => tick > min && tick < max && index % every === 0);
+
+  return [min, ...inside, max];
 }
 
 type GuessComparison =

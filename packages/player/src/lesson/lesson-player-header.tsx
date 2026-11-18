@@ -5,6 +5,7 @@ import { TaskClose } from "@zoonk/learn/task-close";
 import {
   TaskHeader,
   TaskHeaderBar,
+  TaskHeaderProgress,
   TaskHeaderSegments,
   TaskHeaderSide,
   TaskHeaderTitle,
@@ -19,6 +20,7 @@ import {
 import { CloudOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTutorBuddy } from "../questions/tutor-buddy";
+import { getChallengeProgress } from "./_utils/challenge-progress";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { LessonScreenMenu } from "./lesson-screen-menu";
@@ -79,18 +81,42 @@ function UnsavedAnswers() {
   );
 }
 
-function useLessonProgress(): number {
-  const { screen } = useLessonPlayer();
+function LessonProgress() {
+  const t = useExtracted();
+  const { screen, state } = useLessonPlayer();
   const { current, total } = screen.progress;
+  const { step } = screen;
+  const label = t("Lesson progress");
 
-  return total === 0 ? 0 : Math.round((current / total) * 100);
+  if (step?.kind === "challenge") {
+    const progress = getChallengeProgress({
+      answer: state.answers[step.id],
+      shown: state.revealed[step.id] ?? 0,
+      step,
+    });
+
+    const share = {
+      deciding:
+        progress.stage === "deciding" ? progress.confirmed.length / step.content.nodes.length : 0,
+      ended: 1,
+      intro: 0,
+    }[progress.stage];
+
+    return <TaskHeaderProgress label={label} value={Math.round(share * 100)} />;
+  }
+
+  return (
+    <TaskHeaderSegments
+      label={label}
+      segments={screen.segments}
+      value={total === 0 ? 0 : Math.round((current / total) * 100)}
+    />
+  );
 }
 
 export function LessonPlayerHeader() {
-  const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
-  const { screen, state } = useLessonPlayer();
-  const progress = useLessonProgress();
+  const { state } = useLessonPlayer();
 
   if (state.run.status === "refused" && state.run.refusal.reason === "notFound") {
     return (
@@ -118,11 +144,7 @@ export function LessonPlayerHeader() {
         </TaskHeaderSide>
       </TaskHeaderBar>
 
-      <TaskHeaderSegments
-        label={t("Lesson progress")}
-        segments={screen.segments}
-        value={progress}
-      />
+      <LessonProgress />
     </TaskHeader>
   );
 }

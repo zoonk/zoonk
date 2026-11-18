@@ -56,7 +56,7 @@ export function MoleculeElements({
           className={cn(
             ACTIVITY_BOX_CLASS,
             ACTIVITY_PRESS_CLASS,
-            "hover:bg-accent flex items-center justify-center gap-2 px-2 disabled:opacity-50",
+            "hover:bg-accent flex items-center gap-2 px-2 disabled:opacity-50",
           )}
           disabled={!canAdd}
           key={element}
@@ -106,21 +106,20 @@ export function MoleculeTools({
         {t("Undo")}
       </Button>
 
-      <Button
-        aria-label={
-          selectedName ? t("Remove {atom}", { atom: selectedName }) : t("Remove the selected atom")
-        }
-        disabled={!selectedName}
-        icon={<Trash aria-hidden="true" />}
-        onClick={onRemove}
-        size="lg"
-        variant="outline"
-      >
-        {t({
-          description: "Button that removes the atom the learner selected from the molecule.",
-          message: "Remove",
-        })}
-      </Button>
+      {selectedName && (
+        <Button
+          aria-label={t("Remove {atom}", { atom: selectedName })}
+          icon={<Trash aria-hidden="true" />}
+          onClick={onRemove}
+          size="lg"
+          variant="outline"
+        >
+          {t({
+            description: "Button that removes the atom the learner selected from the molecule.",
+            message: "Remove",
+          })}
+        </Button>
+      )}
     </div>
   );
 }

@@ -17,11 +17,10 @@ export function StepWayOut({
       aria-label={label}
       className="w-fit"
       data-slot="step-way-out"
-      edge="start"
       onClick={onClick}
-      size="sm"
+      size="lg"
       type="button"
-      variant="ghost"
+      variant="outline"
     >
       {icon}
       {children}

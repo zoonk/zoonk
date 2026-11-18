@@ -134,7 +134,7 @@ export function ChallengeDebriefView({
           className="flex w-full flex-col gap-2"
           data-slot="challenge-practice"
         >
-          <PageSectionLabel id="challenge-practice">{t("Try it yourself")}</PageSectionLabel>
+          <PageSectionLabel id="challenge-practice">{t("Next time, try…")}</PageSectionLabel>
           <p className="text-foreground text-base leading-relaxed">
             <LessonRichText text={fill(debrief.practice.practice)} />
           </p>

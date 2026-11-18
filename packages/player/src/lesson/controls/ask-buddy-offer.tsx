@@ -57,7 +57,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
           aria-haspopup={buddy.popup}
           className="pl-1.5"
           onClick={() => buddy.open("simpler")}
-          size="sm"
+          size="lg"
           variant="outline"
         >
           <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
@@ -66,7 +66,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
           {t("Ask {name}", { name })}
         </Button>
 
-        <Button onClick={() => setDismissed(true)} size="sm" variant="ghost">
+        <Button onClick={() => setDismissed(true)} size="lg" variant="ghost">
           {t("No thanks")}
         </Button>
       </div>

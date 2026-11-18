@@ -272,7 +272,7 @@ describe("geometry and data activities", () => {
     await pressOnSlider("Lower handle", "ArrowLeft", 4);
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
+    await expect.element(page.getByText("70 to 130: 95%", { exact: true })).toBeVisible();
   });
 
   it("keeps the target label clear of the mean after a wrong check", async () => {
@@ -282,7 +282,7 @@ describe("geometry and data activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
 
-    const target = page.getByText("70 to 130: 95.45%", { exact: true });
+    const target = page.getByText("70 to 130: 95%", { exact: true });
     await expect.element(target).toBeVisible();
     const mean = dialText((label) => label === "100");
     expect(mean).toBeDefined();

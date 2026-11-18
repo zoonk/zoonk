@@ -67,11 +67,13 @@ function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): s
 
 function UnitAddon({
   id,
+  hasValue = true,
   nearValue = false,
   position,
   unit,
 }: {
   id: string;
+  hasValue?: boolean;
   nearValue?: boolean;
   position: NumericUnit["position"];
   unit: NumericUnit | null;
@@ -83,7 +85,10 @@ function UnitAddon({
   return (
     <InputGroupAddon
       align={unit.position === "prefix" ? "inline-start" : "inline-end"}
-      className={nearValue ? "min-w-fit flex-1 justify-start" : undefined}
+      className={cn(
+        nearValue && "min-w-fit flex-1 justify-start",
+        nearValue && !hasValue && "sr-only",
+      )}
     >
       <InputGroupText className="text-base" id={id}>
         {unit.symbol}
@@ -207,7 +212,16 @@ export function NumericAnswerField({
         {t("Your answer")}
       </label>
 
-      <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
+      {showsRule && <EntryRule entry={entry} id={ruleId} />}
+      {invalid && <InvalidHint entry={entry} id={hintId} />}
+
+      <InputGroup
+        className={cn(
+          ANSWER_GROUP_CLASS,
+          "data-result:has-[[data-slot=input-group-control]:focus-visible]:ring-0!",
+        )}
+        data-result={result ?? undefined}
+      >
         <UnitAddon id={unitId} position="prefix" unit={unit} />
 
         <InputGroupInput
@@ -217,7 +231,7 @@ export function NumericAnswerField({
           autoComplete="off"
           className={cn(
             "text-lg tabular-nums md:text-lg",
-            showsDegree && "field-sizing-content w-auto min-w-11 flex-[0_1_auto]",
+            showsDegree && text && "field-sizing-content w-auto min-w-0 flex-[0_1_auto] pr-0!",
           )}
           enterKeyHint="done"
           id={inputId}
@@ -235,7 +249,13 @@ export function NumericAnswerField({
           value={text}
         />
 
-        <UnitAddon id={unitId} nearValue={showsDegree} position="suffix" unit={unit} />
+        <UnitAddon
+          hasValue={Boolean(text)}
+          id={unitId}
+          nearValue={showsDegree}
+          position="suffix"
+          unit={unit}
+        />
 
         <InputGroupAddon
           align="inline-end"
@@ -249,9 +269,6 @@ export function NumericAnswerField({
           )}
         </InputGroupAddon>
       </InputGroup>
-
-      {showsRule && <EntryRule entry={entry} id={ruleId} />}
-      {invalid && <InvalidHint entry={entry} id={hintId} />}
     </form>
   );
 }

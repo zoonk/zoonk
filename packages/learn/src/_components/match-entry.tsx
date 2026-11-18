@@ -44,7 +44,11 @@ function EntryMarker({
   return (
     <LineMarker aria-hidden="true" className="w-5">
       {state !== "none" && cap && (
-        <Kbd className={cn(paired && "bg-foreground text-background ring-0")}>{cap}</Kbd>
+        <Kbd
+          className={paired ? "bg-foreground text-background ring-0" : "hidden pointer-fine:flex"}
+        >
+          {cap}
+        </Kbd>
       )}
     </LineMarker>
   );
@@ -84,7 +88,7 @@ export function MatchEntry({
       aria-pressed={settled ? undefined : state === "selected"}
       className={cn(
         ANSWER_BOX_CLASS,
-        "gap-2 px-3",
+        "items-center gap-2 px-3",
         "focus-visible:outline-ring press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
         ENTRY_TONE[state],
         className,

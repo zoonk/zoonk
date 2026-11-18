@@ -42030,7 +42030,7 @@
           },
           "correctAnswer": {
             "nullable": true,
-            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
             "type": "string"
           },
           "corrections": {
@@ -42057,7 +42057,7 @@
           },
           "expected": {
             "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number (rounded to its step's `roundedAnswer`) or the canvas's end state. Null for other screens, and for an activity whose template computes none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ActivityExpected"
@@ -61501,6 +61501,9 @@
                   "value"
                 ],
                 "additionalProperties": false
+              },
+              "roundedAnswer": {
+                "$ref": "#/components/schemas/ActivityRoundedAnswer"
               }
             },
             "required": [
@@ -61515,7 +61518,8 @@
               "marks",
               "picture",
               "baseMap",
-              "minTolerance"
+              "minTolerance",
+              "roundedAnswer"
             ],
             "additionalProperties": false
           },
@@ -76013,6 +76017,29 @@
         ],
         "additionalProperties": false
       },
+      "ActivityRoundedAnswer": {
+        "nullable": true,
+        "description": "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's numbers in a check result: `expected`, `correctAnswer` and the learner's `answerText`, which keeps its own digits when a wrong answer would otherwise read as the right one. Null on other checks",
+        "type": "object",
+        "properties": {
+          "places": {
+            "nullable": true,
+            "description": "The decimal places the answer is rounded to, the coarsest rounding the check accepts. Null when the answer is a whole number, so it needs no rounding",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "value": {
+            "type": "number",
+            "description": "The answer rounded to `places`"
+          }
+        },
+        "required": [
+          "places",
+          "value"
+        ],
+        "additionalProperties": false
+      },
       "LessonTutorSuggestion": {
         "type": "object",
         "properties": {
@@ -77867,7 +77894,7 @@
           },
           "correctAnswer": {
             "nullable": true,
-            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
             "type": "string"
           },
           "corrections": {
@@ -77894,7 +77921,7 @@
           },
           "expected": {
             "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number (rounded to its step's `roundedAnswer`) or the canvas's end state. Null for other screens, and for an activity whose template computes none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ActivityExpected"

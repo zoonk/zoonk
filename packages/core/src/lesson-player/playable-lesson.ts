@@ -1,4 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
+import { type ActivityRoundedAnswer } from "../library/activities/activity-answers";
 import { type ActivityExpected } from "../library/activities/activity-expected-answer";
 import { type ActivityTolerance } from "../library/activities/activity-schemas";
 import { type LessonMap } from "../library/lessons/lesson-map";
@@ -59,9 +60,10 @@ export type PlayableSpokenAnswerStep = PlayableTeachingStepOf<"spokenAnswer"> & 
   listening: SerializedStep | null;
 };
 
-/** `minTolerance` is the template's floor for a `numeric` answer, so apps grade as core does. */
+/** `minTolerance` is the template's floor for a `numeric` answer, so apps grade as core does; `roundedAnswer` is that answer as every app writes it. */
 export type PlayableActivityStep = PlayableTeachingStepOf<"activity"> & {
   minTolerance: ActivityTolerance | null;
+  roundedAnswer: ActivityRoundedAnswer | null;
 };
 
 /** `exploreExpected` is set only when its explore's template checks just the end state: that solved end state, drawn as main draws it. */

@@ -1,6 +1,10 @@
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
-import { checkActivityAnswer } from "../library/activities/activity-answers";
+import {
+  checkActivityAnswer,
+  getActivityRoundedAnswer,
+  getCheckedAnswerPlaces,
+} from "../library/activities/activity-answers";
 import { getActivityExpected } from "../library/activities/activity-expected";
 import { type ActivityExpected } from "../library/activities/activity-expected-answer";
 import { gradeChallengePath } from "../library/challenges/challenge-run";
@@ -95,28 +99,37 @@ function gradeActivity({
   }
 
   const isCorrect = checkActivityAnswer(step.content, answer.answer);
-  const unit = check.kind === "numeric" ? (check.unit ?? null) : null;
 
-  const maximumFractionDigits =
-    check.kind === "numeric"
-      ? exactFractionDigitsFor({
-          expected: check.answer,
-          tolerance: check.tolerance,
-          value: answer.answer.kind === "numeric" ? answer.answer.value : undefined,
-        })
-      : undefined;
+  if (check.kind !== "numeric" || answer.answer.kind !== "numeric") {
+    return {
+      answerText: null,
+      correctAnswer: null,
+      expected: getActivityExpected(step.content),
+      feedback: check.explanation,
+      isCorrect,
+    };
+  }
 
-  const exact = (value: number) =>
-    formatMathAnswer({ language, maximumFractionDigits, unit, value });
+  const { value } = answer.answer;
+  const rounded = getActivityRoundedAnswer(step.content);
 
-  const expected = check.kind === "numeric" ? exact(check.answer) : null;
+  const exactDigits = exactFractionDigitsFor({
+    expected: check.answer,
+    tolerance: check.tolerance,
+    value,
+  });
+
+  const write = (number: number, places: number | null | undefined) =>
+    formatMathAnswer({
+      language,
+      maximumFractionDigits: places ?? exactDigits,
+      unit: check.unit ?? null,
+      value: number,
+    });
 
   return {
-    answerText:
-      answer.answer.kind === "numeric" && check.kind === "numeric"
-        ? exact(answer.answer.value)
-        : null,
-    correctAnswer: isCorrect ? null : expected,
+    answerText: write(value, getCheckedAnswerPlaces({ isCorrect, rounded, value })),
+    correctAnswer: isCorrect ? null : write(rounded?.value ?? check.answer, rounded?.places),
     expected: getActivityExpected(step.content),
     feedback: check.explanation,
     isCorrect,

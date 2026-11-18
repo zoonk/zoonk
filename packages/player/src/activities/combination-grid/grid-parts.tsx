@@ -2,7 +2,6 @@
 
 import { isDominantPhenotype } from "@zoonk/core/library/activities/combination-grid";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 
 export type GridTraits = { dominant: string; recessive: string } | null;
 
@@ -75,20 +74,18 @@ export function GridHeader({
 }) {
   const numberSize = isCompact ? "text-sm" : "text-lg";
 
+  // A label, not a box: only the asked square is highlighted, and answer tiles never read as table heads.
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        ACTIVITY_BOX_CLASS,
-        "flex min-h-11 items-center justify-center motion-safe:transition-colors",
-        isCompact && "rounded-lg",
-        isAllele ? "text-xl" : numberSize,
-        isLit && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft"),
-      )}
+      className={cn("flex min-h-11 items-center justify-center", isAllele ? "text-xl" : numberSize)}
     >
       {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}
       <CellValue
-        className={cn(!isAllele && !isLit && "text-muted-foreground")}
+        className={cn(
+          !isAllele && !isLit && "text-muted-foreground",
+          isLit && "decoration-viz-accent underline decoration-2 underline-offset-4",
+        )}
         isAllele={isAllele}
         value={value}
       />

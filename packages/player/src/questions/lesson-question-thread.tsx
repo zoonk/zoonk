@@ -89,10 +89,14 @@ export function TutorIntro({
 
   return (
     <EmptyHeader>
-      <EmptyMedia aria-hidden="true">{identity.figure}</EmptyMedia>
+      <EmptyMedia aria-hidden="true" className={guest ? "-ms-1" : undefined}>
+        {identity.figure}
+      </EmptyMedia>
       {guest && (
         <>
-          <EmptyTitle>{t("Ask {name}", { name: identity.name })}</EmptyTitle>
+          <EmptyTitle className="in-data-[slot=lesson-question-drawer]:hidden">
+            {t("Ask {name}", { name: identity.name })}
+          </EmptyTitle>
           <EmptyDescription>
             {t("With a free account, you can ask about any screen.")}
           </EmptyDescription>

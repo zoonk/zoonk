@@ -7,15 +7,11 @@ import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { MatchBoard } from "../../components/match-board";
+import { MatchBoard, MatchBoardCount } from "../../components/match-board";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
-import {
-  ActivityCanvas,
-  ActivityCanvasLabel,
-  ActivityTextAlternative,
-} from "../_components/activity-canvas";
+import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import {
@@ -69,28 +65,6 @@ function cardState({
   }
 
   return selection[side] === card.id ? "selected" : "idle";
-}
-
-function MatchCount({ matched, total, traps }: { matched: number; total: number; traps: number }) {
-  const t = useExtracted();
-
-  return (
-    <ActivityCanvasLabel className="tabular-nums">
-      {t("{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}", {
-        matched,
-        total: String(total),
-      })}
-
-      {traps > 0 && (
-        <>
-          {" · "}
-          {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
-            count: traps,
-          })}
-        </>
-      )}
-    </ActivityCanvasLabel>
-  );
 }
 
 function MissNote({ explanation }: { explanation: string | null }) {
@@ -236,7 +210,7 @@ export function MatchPairsActivity({
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <MatchCount matched={progress.matched.length} total={pairIds.length} traps={trapCount} />
+      <MatchBoardCount matched={progress.matched.length} total={pairIds.length} traps={trapCount} />
 
       <MatchBoard
         className="text-sm sm:text-base"

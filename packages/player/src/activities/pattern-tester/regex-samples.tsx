@@ -113,7 +113,8 @@ export function RegexSampleList({
           : keyedByPosition(samples, (sample) => sample).map(({ item, key }) => (
               <li
                 className={cn(
-                  "border-border flex min-h-11 items-center border-b py-2 font-mono text-sm whitespace-pre",
+                  ACTIVITY_CARD_CLASS,
+                  "flex min-h-11 items-center py-2 font-mono text-sm whitespace-pre",
                 )}
                 key={key}
               >

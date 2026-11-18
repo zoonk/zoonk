@@ -1666,14 +1666,14 @@ describe("the learner's buddy", () => {
       playLesson({ lesson });
 
       const buddy = page.getByRole("button", { name: "Ask Pip" });
-      await expect.element(buddy).toHaveTextContent("");
+      await expect.element(buddy).toHaveTextContent("Ask");
       const before = buddy.element().getBoundingClientRect();
 
       await page.getByRole("radio", { name: "The electron's size" }).click();
       await page.getByRole("button", { name: /^Check/u }).click();
       await expect.element(page.getByText("Not quite")).toBeVisible();
 
-      await expect.element(buddy).toHaveTextContent("");
+      await expect.element(buddy).toHaveTextContent("Ask");
       const after = buddy.element().getBoundingClientRect();
       expect([after.width, after.height]).toStrictEqual([before.width, before.height]);
     });

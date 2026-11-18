@@ -273,8 +273,12 @@ describe("coming back to a lesson", () => {
     await page.getByRole("button", { name: "Previous screen" }).click();
 
     await expect
-      .element(page.getByRole("textbox", { name: "Line 2, yours to edit" }))
-      .toHaveValue("for n in range(1, 101):");
+      .element(
+        page
+          .getByRole("group", { name: "Code" })
+          .getByText("for n in range(1, 101):", { exact: true }),
+      )
+      .toBeVisible();
   });
 
   it("shows a reopened code tracer as its trace ended", async () => {

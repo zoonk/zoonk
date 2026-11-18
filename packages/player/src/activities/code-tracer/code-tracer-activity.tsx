@@ -62,11 +62,11 @@ function RunHint({
 
   if (!isLastStep) {
     return (
-      <p className="text-muted-foreground text-xs">
-        {asksAhead
-          ? t("Step forward to run the next line. We'll stop for you to predict a value.")
-          : t("Step forward to run the next line.")}
-      </p>
+      asksAhead && (
+        <p className="text-muted-foreground text-xs">
+          {t("We'll stop for you to predict a value.")}
+        </p>
+      )
     );
   }
 

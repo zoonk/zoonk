@@ -22,9 +22,9 @@ msgid "Ear training"
 msgstr "Ear training"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "Estimate first"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "Your guess counts"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -783,14 +783,9 @@ msgid "Error"
 msgstr "Error"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "DhXJyL"
-msgid "Step forward to run the next line. We'll stop for you to predict a value."
-msgstr "Step forward to run the next line. We'll stop for you to predict a value."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "Step forward to run the next line."
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "We'll stop for you to predict a value."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1156,6 +1151,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "At {x}, {y}. {summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "Drag it, or use the arrow keys to move it one grid step."
@@ -1393,7 +1389,6 @@ msgid "Names"
 msgstr "Names"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "What happened"
@@ -1680,16 +1675,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Simplified street plan, after John Snow's 1854 map."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# card has no match} other {# cards have no match}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Z7Xcs6"
 msgid "Those two don't go together."
 msgstr "Those two don't go together."
@@ -1823,11 +1808,6 @@ msgstr "{count, plural, one {# bond} other {# bonds}}"
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "Remove {atom}"
-
-#: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "Remove the selected atom"
 
 #. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
@@ -2301,14 +2281,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "Pick your guess, then check it to run the simulation."
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit} in {share} of the runs."
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit} in {share} of the runs. The exact chance is {exact}."
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "The exact chance is {exact}."
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2417,9 +2392,9 @@ msgid "All set."
 msgstr "All set."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Q4pNZZ"
-msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
-msgstr "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "Tap Start the beat, then tap along"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2681,6 +2656,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "A timeline from {start} to {end}."
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "{count} of {total} events placed"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "Show the real dates"
@@ -2722,19 +2702,14 @@ msgid "to"
 msgstr "to"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, one {# event to place} other {# events to place}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Drag onto the timeline."
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "Place {event} on the timeline"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "VvAPB9"
-msgid "Drag onto the timeline."
-msgstr "Drag onto the timeline."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2898,6 +2873,16 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Translate"
 
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# card has no match} other {# cards have no match}}"
+
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3050,6 +3035,12 @@ msgstr "Nothing was lost. Try again in a moment."
 msgctxt "ObBVZr"
 msgid "We couldn't open this lesson"
 msgstr "We couldn't open this lesson"
+
+#: src/lesson/access/lesson-access-screen.tsx
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Go to Today"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3415,6 +3406,11 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "Still checking. This is taking longer than usual."
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "Listen again"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "Not quite. Look again and fix it yourself, then check."
@@ -3455,9 +3451,9 @@ msgid "What you practiced"
 msgstr "What you practiced"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "2thi6d"
-msgid "Try it yourself"
-msgstr "Try it yourself"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "Next time, try…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3503,6 +3499,21 @@ msgstr "a bit higher"
 msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "How the case is going"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "out of 100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "higher is better"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "lower is better"
 
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
@@ -3556,6 +3567,11 @@ msgstr "I can talk now"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Say it instead"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "Type what you'd say"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"
@@ -3814,6 +3830,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "Close questions"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "lyjQP7"
+msgid "Ask Zu with a free account"
+msgstr "Ask Zu with a free account"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -3989,6 +4010,11 @@ msgstr "{count, plural, one {# question to {name}} other {# questions to {name}}
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# question} other {# questions}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Ask"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"

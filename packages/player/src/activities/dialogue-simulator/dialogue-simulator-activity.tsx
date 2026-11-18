@@ -65,12 +65,7 @@ function ChatLine({
       )}
 
       {canSpeak && isThem && (
-        <ActivitySpeakButton
-          className="ms-auto"
-          label={t("Hear this line")}
-          onClick={onSpeak}
-          state={speechState}
-        />
+        <ActivitySpeakButton label={t("Hear this line")} onClick={onSpeak} state={speechState} />
       )}
     </li>
   );

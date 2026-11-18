@@ -1,6 +1,7 @@
 "use client";
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
+import { type getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
@@ -19,20 +20,12 @@ import {
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
+type NumericDisplay = ReturnType<typeof getActivityRoundedAnswer>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
-export function exactAnswerFormat({
-  check,
-  places,
-  value,
-}: {
-  check: NumericCheck;
-  places?: number | null;
-  value?: number;
-}) {
+function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
   return {
     maximumFractionDigits: Math.max(
-      places ?? 0,
       exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
       countDecimalPlaces(value ?? 0),
     ),
@@ -73,20 +66,26 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
 function NumericFeedback({
   answer,
   check,
+  display,
   isCorrect,
-  places,
   showsNumbers,
 }: {
   answer: ActivityAnswer | null;
   check: NumericCheck;
+  display: NumericDisplay;
   isCorrect: boolean;
-  places: number | null;
   showsNumbers: boolean;
 }) {
   const format = useFormatNumber();
 
   const value = answer?.kind === "numeric" ? answer.value : undefined;
-  const rightAnswer = format(check.answer, exactAnswerFormat({ check, places, value }));
+
+  const rightAnswer = format(
+    display?.value ?? check.answer,
+    !display || display.places === null
+      ? exactAnswerFormat({ check, value })
+      : { maximumFractionDigits: display.places, unit: check.unit },
+  );
 
   return (
     <>
@@ -103,14 +102,14 @@ function NumericFeedback({
 export function ActivityFeedback({
   answer,
   content,
+  display,
   isCorrect,
-  places,
   showsNumbers = true,
 }: {
   answer: ActivityAnswer | null;
   content: ActivityStepContent;
+  display: NumericDisplay;
   isCorrect: boolean;
-  places: number | null;
   /** False when the canvas already shows the learner's number beside the right one. */
   showsNumbers?: boolean;
 }) {
@@ -133,8 +132,8 @@ export function ActivityFeedback({
         <NumericFeedback
           answer={answer}
           check={check}
+          display={display}
           isCorrect={isCorrect}
-          places={places}
           showsNumbers={showsNumbers}
         />
       )}

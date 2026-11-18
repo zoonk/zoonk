@@ -90,10 +90,9 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
             className={cn(
               ACTIVITY_COLOR.dataThird.text,
               "min-w-[5ch] shrink-0 text-end whitespace-nowrap",
-              !isChecked && "invisible",
             )}
           >
-            {percent(share)}
+            {shown.length === 0 ? "–" : percent(share)}
           </ActivityReadout>
         </div>
 
@@ -130,15 +129,11 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
 
       {isDone && (
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p aria-live="polite" className="text-sm tabular-nums">
-            {exact === null
-              ? t("{hit} in {share} of the runs.", { hit: fields.hitLabel, share: percent(share) })
-              : t("{hit} in {share} of the runs. The exact chance is {exact}.", {
-                  exact: percent(exact),
-                  hit: fields.hitLabel,
-                  share: percent(share),
-                })}
-          </p>
+          {exact !== null && (
+            <p aria-live="polite" className="text-sm tabular-nums">
+              {t("The exact chance is {exact}.", { exact: percent(exact) })}
+            </p>
+          )}
 
           <Button onClick={() => setRunIndex(runIndex + 1)} size="lg" variant="outline">
             <RotateCcw aria-hidden="true" />

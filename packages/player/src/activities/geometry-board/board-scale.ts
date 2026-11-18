@@ -28,14 +28,16 @@ export function createBoardScale({
     1,
   );
 
+  const insetX = (width - spanX * unit) / 2;
+
   return {
     height: spanY * unit + 2 * padding,
     toData: (pixel) => ({
-      x: bounds.minX + (pixel.x - padding) / unit,
+      x: bounds.minX + (pixel.x - insetX) / unit,
       y: bounds.maxY - (pixel.y - padding) / unit,
     }),
     toPixel: (point) => ({
-      x: padding + (point.x - bounds.minX) * unit,
+      x: insetX + (point.x - bounds.minX) * unit,
       y: padding + (bounds.maxY - point.y) * unit,
     }),
     unit,

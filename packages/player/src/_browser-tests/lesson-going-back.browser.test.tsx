@@ -179,7 +179,10 @@ describe("going back to reread", () => {
     await page.getByRole("button", { name: "Previous screen" }).click();
 
     await expectVerdict("Correct!");
-    await expect.element(line).toHaveValue(DOUBLED_LINE);
+
+    await expect
+      .element(page.getByRole("group", { name: "Code" }).getByText(DOUBLED_LINE, { exact: true }))
+      .toBeVisible();
   });
 
   it("shows a missed activity's first attempt where the learner left it, after its retry starts over", async () => {

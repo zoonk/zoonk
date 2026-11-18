@@ -1,7 +1,13 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
+import {
+  Slider,
+  SliderControl,
+  SliderIndicator,
+  SliderThumb,
+  SliderTrack,
+} from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { tickCounts } from "@zoonk/utils/plot-scale";
@@ -119,7 +125,7 @@ export function ActivityGuessScale({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
+      <div className="relative pt-18" ref={trackRef}>
         {actual !== null && actualShare !== null && (
           <ScaleChip
             className={cn(
@@ -136,7 +142,7 @@ export function ActivityGuessScale({
 
         <ScaleChip
           className="bg-background text-muted-foreground"
-          isLower={actualShare !== null}
+          isLower
           share={share}
           trackWidth={trackWidth}
         >
@@ -157,7 +163,8 @@ export function ActivityGuessScale({
           value={Math.round(share * SCALE_POSITIONS)}
         >
           <SliderControl className="data-disabled:opacity-100">
-            <SliderTrack>
+            <SliderTrack className="bg-neutral-500">
+              {guess !== null && <SliderIndicator />}
               {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
 
               {actualShare !== null && (
