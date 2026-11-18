@@ -3,6 +3,7 @@ import {
   getContentLocale,
   getFormattingLocale,
   getSentenceSpace,
+  toSentence,
   getSupportedLocaleFromLanguage,
   isValidLocale,
 } from "./locale";
@@ -78,5 +79,17 @@ describe(getSentenceSpace, () => {
 
   it.each(["en", "ko", "tr", "es-MX", "pt", "fr"])("joins %s sentences with a space", (locale) => {
     expect(getSentenceSpace(locale)).toBe(" ");
+  });
+});
+
+describe(toSentence, () => {
+  it.each([
+    { locale: "en", sentence: "Price: up.", text: "Price: up" },
+    { locale: "pt", sentence: "Preço: sobe.", text: "Preço: sobe" },
+    { locale: "ja", sentence: "価格：上がる。", text: "価格：上がる" },
+    { locale: "en", sentence: "Cost moved up.", text: "Cost moved up." },
+    { locale: "ja", sentence: "動いた。", text: "動いた。" },
+  ])("ends $text as a sentence in $locale", ({ locale, sentence, text }) => {
+    expect(toSentence(text, locale)).toBe(sentence);
   });
 });
