@@ -94,6 +94,23 @@ export function GoalFieldLabel({
   );
 }
 
+/** The example keeps its line wraps in the grid even after the field holds words. */
+export function GoalFieldExample({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        GOAL_FIELD_TEXT_CLASS,
+        "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
+        "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
+      )}
+      data-slot="goal-example"
+    >
+      {children}
+    </span>
+  );
+}
+
 /**
  * Takes focus as it shows only with a fine pointer, and not from a control the keyboard is on: on a
  * phone, focus would raise the keyboard.
