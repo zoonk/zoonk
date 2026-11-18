@@ -65,7 +65,21 @@ function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): s
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
 
-function UnitAddon({ id, nearValue, unit }: { id: string; nearValue: boolean; unit: NumericUnit }) {
+function UnitAddon({
+  id,
+  nearValue = false,
+  position,
+  unit,
+}: {
+  id: string;
+  nearValue?: boolean;
+  position: NumericUnit["position"];
+  unit: NumericUnit | null;
+}) {
+  if (unit?.position !== position) {
+    return null;
+  }
+
   return (
     <InputGroupAddon
       align={unit.position === "prefix" ? "inline-start" : "inline-end"}
@@ -194,6 +208,8 @@ export function NumericAnswerField({
       </label>
 
       <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
+        <UnitAddon id={unitId} position="prefix" unit={unit} />
+
         <InputGroupInput
           aria-describedby={describedBy}
           aria-labelledby={labelledBy}
@@ -201,7 +217,7 @@ export function NumericAnswerField({
           autoComplete="off"
           className={cn(
             "text-lg tabular-nums md:text-lg",
-            showsDegree && "field-sizing-content w-auto min-w-10 flex-[0_1_auto]",
+            showsDegree && "field-sizing-content w-auto min-w-11 flex-[0_1_auto]",
           )}
           enterKeyHint="done"
           id={inputId}
@@ -219,7 +235,7 @@ export function NumericAnswerField({
           value={text}
         />
 
-        {unit && <UnitAddon id={unitId} nearValue={showsDegree} unit={unit} />}
+        <UnitAddon id={unitId} nearValue={showsDegree} position="suffix" unit={unit} />
 
         <InputGroupAddon
           align="inline-end"
