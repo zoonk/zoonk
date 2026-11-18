@@ -2,6 +2,8 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -240,14 +242,15 @@ private fun ExamChoiceNotice(
                 SuggestionMainAction(stringResource(R.string.plan_save), save, enabled, busy = saving)
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Main's `SuggestionChoices`: equal picks, one under the other, each as wide as the column.
+            Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->
                     SuggestionAction(
-                        text = option.shortName ?: option.name,
                         onClick = { choose(listOf(option.name)) },
+                        modifier = Modifier.fillMaxWidth(),
                         enabled = !saving,
                         secondary = true,
-                    )
+                    ) { Text(option.shortName ?: option.name) }
                 }
             }
         }
