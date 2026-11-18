@@ -469,20 +469,22 @@ internal fun PlanOffer(
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
             PlanCards(
                 sideBySide,
-                listOfNotNull(
-                    plusPlanRows(offers, purchase, hasAccount, navigator, onSubscribe, onRetryOffers),
-                    limits?.let {
-                        freePlanRows(
-                            it,
-                            currency =
-                                offers.value?.let { plans ->
-                                    (plans.monthly ?: plans.yearly)?.currency
-                                },
-                            viewer,
-                            navigator,
-                        )
-                    },
-                ),
+                plans = 2,
+                cards =
+                    listOfNotNull(
+                        plusPlanRows(offers, purchase, hasAccount, navigator, onSubscribe, onRetryOffers),
+                        limits?.let {
+                            freePlanRows(
+                                it,
+                                currency =
+                                    offers.value?.let { plans ->
+                                        (plans.monthly ?: plans.yearly)?.currency
+                                    },
+                                viewer,
+                                navigator,
+                            )
+                        },
+                    ),
             )
             if (freePlan is LoadState.Failed) LoadFailedMessage(onRetry = onRetryFreePlan, inBar = false)
 
@@ -498,11 +500,13 @@ internal typealias PlanRows = List<@Composable ColumnScope.() -> Unit>
  * Main's plan cards: side by side, each row lines up with the same row of the card beside it and the cards
  * are as tall as each other, as main's subgrid lays them out; one above the other otherwise. One layout
  * either way, so what the cards hold survives a resize. TalkBack reads a card's rows before the next card's.
+ * Side by side, the row keeps a place for each of [plans], so a card that arrives late doesn't move the others.
  */
 @Composable
 internal fun PlanCards(
     sideBySide: Boolean,
     cards: List<PlanRows>,
+    plans: Int = cards.size,
 ) {
     Layout(
         content = {
@@ -510,7 +514,10 @@ internal fun PlanCards(
                 OutlinedCard(Modifier) {}
                 rows.forEach { row ->
                     Column(
-                        Modifier.fillMaxWidth().semantics { traversalIndex = card.toFloat() },
+                        Modifier.fillMaxWidth().semantics {
+                            isTraversalGroup = true
+                            traversalIndex = card.toFloat()
+                        },
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         content = row,
                     )
@@ -523,7 +530,7 @@ internal fun PlanCards(
         val padding = CARD_PADDING.roundToPx()
         val rowGap = CARD_ROW_GAP.roundToPx()
         val cardGap = (if (sideBySide) PLAN_GAP else STACKED_PLAN_GAP).roundToPx()
-        val cardWidth = if (sideBySide) (width - cardGap * (cards.size - 1)) / cards.size else width
+        val cardWidth = if (sideBySide) (width - cardGap * (plans - 1)) / plans else width
         val inner = Constraints(maxWidth = (cardWidth - padding * 2).coerceAtLeast(0))
 
         var next = 0
