@@ -141,7 +141,27 @@ internal fun SubjectCoverage(
     }
 }
 
-enum class LegendDot { Studied, Known, New, Today }
+enum class LegendDot { Studied, Known, New }
+
+/**
+ * Main's `CoverageLegend`: what the coverage bar's parts are, in its order, in one set of words wherever the bar shows;
+ * "Already knew" only where some lessons are [known]. The words beside the bar say the numbers, so TalkBack skips it.
+ */
+@Composable
+fun CoverageLegend(
+    modifier: Modifier = Modifier,
+    known: Boolean = true,
+) {
+    FlowRow(
+        modifier.clearAndSetSemantics {},
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
+        if (known) LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
+        LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))
+    }
+}
 
 @Composable
 fun LegendItem(
@@ -164,7 +184,6 @@ private fun LegendMark(dot: LegendDot) {
         LegendDot.Studied -> FilledDot(MaterialTheme.colorScheme.tertiary, modifier)
         LegendDot.Known -> FilledDot(quiet, modifier)
         LegendDot.New -> Box(modifier.border(1.dp, quiet, CircleShape))
-        LegendDot.Today -> Box(modifier.border(1.dp, MaterialTheme.colorScheme.tertiary, CircleShape))
     }
 }
 
