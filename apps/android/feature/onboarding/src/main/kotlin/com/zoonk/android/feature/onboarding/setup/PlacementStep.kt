@@ -257,7 +257,7 @@ internal fun ColumnScope.PlacementWaiting(
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String = stringResource(R.string.onboarding_skip),
+    skipLabel: String = stringResource(R.string.onboarding_language_test_skip),
     skipNote: String? = null,
 ) {
     var patient by remember { mutableStateOf(false) }

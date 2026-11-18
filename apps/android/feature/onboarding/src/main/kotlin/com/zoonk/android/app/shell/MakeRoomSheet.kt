@@ -2,6 +2,8 @@ package com.zoonk.android.app.shell
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -31,7 +34,9 @@ import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.goalSpokenName
+import com.zoonk.android.ui.scaffold.CloseButton
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.UUID
 
@@ -52,7 +57,7 @@ internal fun MakeRoomSheet(
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        MakeRoomContent(waitingName, active, pausing, failed, onPause, onSubscribe)
+        MakeRoomContent(waitingName, active, pausing, failed, onPause, onSubscribe, onDismiss)
     }
 }
 
@@ -64,6 +69,7 @@ internal fun MakeRoomContent(
     failed: Boolean,
     onPause: (UUID) -> Unit,
     onSubscribe: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val title = stringResource(R.string.goal_switcher_make_room_title, waitingName)
 
@@ -75,7 +81,10 @@ internal fun MakeRoomContent(
             .semantics { paneTitle = title },
     ) {
         Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+                CloseButton(onDismiss, label = stringResource(R.string.close_sheet))
+            }
             Text(
                 stringResource(R.string.goal_switcher_make_room_description),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -99,7 +108,12 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            SubscribeButton(onSubscribe)
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.today_not_now)) }
+                SubscribeButton(onSubscribe)
+            }
         }
     }
 }

@@ -388,8 +388,11 @@ private fun ColumnScope.RevealBody(
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-        studyDay?.let { RevealToday(it, requireNotNull(reveal).minutes, playMoment, onOpenStep, openingStep, failedStep) }
-        reveal?.let { RevealWeek(it) }
+        if (reveal != null && studyDay != null) {
+            RevealWeek(reveal) {
+                RevealToday(studyDay, reveal.minutes, playMoment, onOpenStep, openingStep, failedStep)
+            }
+        }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
         PageActions {

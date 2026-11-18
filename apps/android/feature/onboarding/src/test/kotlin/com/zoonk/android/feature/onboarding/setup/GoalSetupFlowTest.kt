@@ -161,9 +161,9 @@ class GoalSetupFlowTest {
         show()
 
         rule.onNodeWithText("Which subjects do you already know well?").assertIsDisplayed()
-        rule.onNode(hasText("Continue") or hasText("None of them yet")).assertIsNotEnabled()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
 
-        rule.onNodeWithText("Statistics").performClick()
+        rule.onNodeWithText("Algebra").performClick()
         rule.onNodeWithText("Continue").performClick()
         rule.waitForIdle()
 

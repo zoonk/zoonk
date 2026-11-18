@@ -195,7 +195,7 @@ internal fun RevealToday(
             stringResource(R.string.today_title),
             detail =
                 listOf(
-                    formatDate(day.localDate.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDayShort),
+                    formatDate(day.localDate.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDayOfMonth),
                     formatMinutes(minutes.toInt(), currentLocale()),
                 ).factsLine(),
         )
@@ -218,7 +218,7 @@ internal fun RevealToday(
                                         if (started) R.string.onboarding_reveal_up_next else R.string.onboarding_reveal_start_here,
                                     ),
                                     Modifier.revealSettle(play, 2 * ZoonkMotion.BEAT_MILLIS),
-                                    color = MaterialTheme.colorScheme.tertiary,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         } else {
@@ -231,28 +231,32 @@ internal fun RevealToday(
 }
 
 /**
- * Main's `RevealWeek`: the six days after today. Each row reads as a table row: the date is a lead as
- * wide as the week's longest, never wrapping, and it and the first name share the first line; the names
- * follow one per line, with no kind marks (Today's rows lead with theirs).
+ * The week's count includes today. Today's startable rows come first, then the dates still ahead.
  */
 @Composable
-internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
+internal fun RevealWeek(
+    reveal: com.zoonk.api.models.PlanRevealToday,
+    today: @Composable () -> Unit,
+) {
     val days = reveal.nextDays
-    if (days.none { it.items.isNotEmpty() }) return
     val locale = currentLocale()
     val dateStyle = MaterialTheme.zoonkType.data.copy(fontSize = MaterialTheme.typography.bodySmall.fontSize)
     val dates = days.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.WeekdayDayOfMonth) }
     val measurer = rememberTextMeasurer()
-    val dateWidth = with(LocalDensity.current) { dates.maxOf { measurer.measure(it, dateStyle, softWrap = false).size.width }.toDp() }
-    Column {
-        SectionHeader(
-            stringResource(R.string.onboarding_reveal_first_week),
-            detail =
-                listOf(
-                    pluralStringResource(R.plurals.onboarding_reveal_study_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
-                    formatMinutes(reveal.week.minutes.toInt(), locale),
-                ).factsLine(),
-        )
+    val dateWidth =
+        with(LocalDensity.current) { (dates.maxOfOrNull { measurer.measure(it, dateStyle, softWrap = false).size.width } ?: 0).toDp() }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (reveal.week.days > 0) {
+            SectionHeader(
+                stringResource(R.string.onboarding_reveal_first_week),
+                detail =
+                    listOf(
+                        pluralStringResource(R.plurals.onboarding_reveal_study_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
+                        formatMinutes(reveal.week.minutes.toInt(), locale),
+                    ).factsLine(),
+            )
+        }
+        today()
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             days.forEachIndexed { index, day ->
                 val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
