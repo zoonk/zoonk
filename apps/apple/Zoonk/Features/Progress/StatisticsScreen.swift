@@ -272,21 +272,19 @@ private struct PatternsOverview: View {
         comment: "Title of the patterns on the overview"),
       trailing: seeAll
     ) {
-      VStack(spacing: 0) {
-        row(
-          Text(
-            "Best day", tableName: "Progress",
-            comment: "The day of the week the learner answers best"),
-          value: patterns?.bestDayName)
-        Divider()
-        row(
-          Text(
-            "Best time", tableName: "Progress",
-            comment: "The part of the day the learner answers best"),
-          value: patterns?.bestTimeName)
+      VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 0) {
+          row(Text(LocalizedStringResource.bestDay), value: patterns?.bestDayName)
+          Divider()
+          row(Text(LocalizedStringResource.bestTime), value: patterns?.bestTimeName)
+        }
+        .padding(.horizontal)
+        .panel(cornerRadius: 16)
+
+        if patterns.needsAnswers {
+          PatternsHint()
+        }
       }
-      .padding(.horizontal)
-      .panel(cornerRadius: 16)
     }
   }
 
@@ -304,12 +302,8 @@ private struct PatternsOverview: View {
 
   private func row(_ label: Text, value: String?) -> some View {
     LabeledContent {
-      Text(
-        value
-          ?? String(
-            localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-      )
-      .foregroundStyle(.primary)
+      Text(value ?? .notYet)
+        .foregroundStyle(.primary)
     } label: {
       label
     }
@@ -318,51 +312,82 @@ private struct PatternsOverview: View {
   }
 }
 
+/// Main's phone row: both patterns under its title, and what fills a "Not yet" under the row.
 private struct PatternsLinkRow: View {
-  @Environment(\.stacksContent) private var isStacked
-
   let patterns: ScorePatterns?
 
-  private var value: String {
-    guard let day = patterns?.dayVerdict.best?.weekday.localizedTitle() else {
-      return patterns?.bestDayName
-        ?? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-    }
-
-    return String(
-      localized: "Best on \(day)", table: "Progress",
-      comment: "Beside Patterns on the overview: the day of the week the learner answers best")
-  }
-
   var body: some View {
-    StatsSectionLink(section: .patterns) {
-      HStack(spacing: 12) {
-        AccessibilityStack(spacing: 12, stackedSpacing: 4) {
-          Text(StatsSection.patterns.title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
-            .frame(maxWidth: .infinity, alignment: .leading)
+    VStack(alignment: .leading, spacing: 8) {
+      StatsSectionLink(section: .patterns) {
+        HStack(spacing: 12) {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(StatsSection.patterns.title)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
 
-          Text(value)
+            Group {
+              Text(fact(.bestDay, patterns?.bestDayName))
+              Text(fact(.bestTime, patterns?.bestTimeName))
+            }
             .typeStyle(.body)
             .foregroundStyle(.mutedForeground)
-            .multilineTextAlignment(isStacked ? .leading : .trailing)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
 
-        Image(systemName: "chevron.forward")
-          .typeStyle(.note.weight(.semibold))
-          .foregroundStyle(.faint)
-          .accessibilityHidden(true)
+          Image(systemName: "chevron.forward")
+            .typeStyle(.note.weight(.semibold))
+            .foregroundStyle(.faint)
+            .accessibilityHidden(true)
+        }
+        // Main's flat row on the page, not a box.
+        .padding(.vertical, 11)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .contentShape(.rect)
+        .modifier(
+          StatsSelection(
+            section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+          ))
       }
-      // Main's flat row on the page, not a box.
-      .padding(.vertical, 11)
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .contentShape(.rect)
-      .modifier(
-        StatsSelection(
-          section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)))
+      .buttonStyle(.plain)
+
+      if patterns.needsAnswers {
+        PatternsHint()
+      }
     }
-    .buttonStyle(.plain)
   }
+
+  private func fact(_ label: LocalizedStringResource, _ value: String?) -> String {
+    [String(localized: label), value ?? .notYet].joinedFacts()
+  }
+}
+
+/// What makes an empty pattern fill.
+private struct PatternsHint: View {
+  var body: some View {
+    Text("Answer more questions to see when you do best.", tableName: "Progress")
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+extension Optional where Wrapped == ScorePatterns {
+  /// Main's `needsAnswers`: a pattern still says "Not yet".
+  fileprivate var needsAnswers: Bool {
+    guard let patterns = self else { return true }
+    return patterns.dayVerdict == .notEnough || patterns.timeVerdict == .notEnough
+  }
+}
+
+extension String {
+  fileprivate static var notYet: String {
+    String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+  }
+}
+
+extension LocalizedStringResource {
+  fileprivate static let bestDay = LocalizedStringResource(
+    "Best day", table: "Progress", comment: "The day of the week the learner answers best")
+  fileprivate static let bestTime = LocalizedStringResource(
+    "Best time", table: "Progress", comment: "The part of the day the learner answers best")
 }
