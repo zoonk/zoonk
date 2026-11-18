@@ -279,7 +279,7 @@ final class MindMapsStore {
       }
     case .done(.refused(let limit)):
       fail(.refused(limit), goalId: goalId, chapterId: chapterId)
-      // Main's b09-16: every other Create would be refused for the same cap.
+      // Every other Create would be refused for the same cap.
       if let stop = limit.pageStop {
         stopOffer(stop, goalId: goalId)
       }

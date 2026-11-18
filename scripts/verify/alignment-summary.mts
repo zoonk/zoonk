@@ -130,7 +130,7 @@ export function alignmentLines(findings: AlignmentFinding[]): string[] {
 
         return [
           `- **${first.rule}**: ${first.message}${count}${first.exception ? ` (excepted: ${first.exception})` : ""}`,
-          // What wasn't measured lists every row: it is the list a platform's lane works down.
+          // List every unmeasured relationship so the missing captures can be identified.
           ...[...places].map(
             ([place, here]) =>
               `  - ${place}${instanceText(here, level === "not-measured" ? here.length : LISTED)}`,

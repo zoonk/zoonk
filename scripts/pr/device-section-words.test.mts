@@ -40,8 +40,8 @@ const anyText = string({
   ),
 }).filter((text) => fold(text) !== "" && !REFERENCE.test(text));
 
-describe("the section's words, whatever a device or an author gives (RV79)", () => {
-  it("keeps every caption whole: a device that reports a | (RV79 P1)", () => {
+describe("the section's words, whatever a device or an author gives", () => {
+  it("keeps every caption whole: a device that reports a |", () => {
     const { shot } = checkFixture();
 
     const item = shot({

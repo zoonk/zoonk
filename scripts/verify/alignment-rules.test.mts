@@ -159,7 +159,7 @@ function run(...files: { content: unknown; name: string }[]) {
 
 const MOVED: Bounds = [0, 46, 358, 44];
 
-describe("what the review found the checks could pass unmeasured", () => {
+describe("relationships with missing measurements", () => {
   const group = GROUP;
 
   it("compares marks by their measured centers: 1.3 apart fails, 0.8 apart passes", () => {
