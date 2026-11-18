@@ -202,13 +202,12 @@ export function PatternTesterActivity({
           )}
         </div>
 
-        {!isChecked && (
-          <ActivitySnippetBar
-            label={t("Symbols")}
-            onInsert={insert}
-            snippets={isRegex ? regexSnippets : formulaSnippets}
-          />
-        )}
+        <ActivitySnippetBar
+          disabled={isChecked}
+          label={t("Symbols")}
+          onInsert={insert}
+          snippets={isRegex ? regexSnippets : formulaSnippets}
+        />
       </div>
 
       <PatternExamples fields={fields} pattern={pattern} regexResults={regexResults} />

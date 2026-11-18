@@ -56,7 +56,7 @@ describe("the lesson map", () => {
     const adapters = buildAdapters(lesson);
     renderLessonPlayer({ adapters, lesson });
 
-    await next(/^Next/u);
+    await next();
     await answer(WRONG_OPTION, "Not quite");
     await next();
 

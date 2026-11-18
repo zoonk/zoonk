@@ -36,7 +36,7 @@ export function RhythmTapPad({
         ACTIVITY_BOX_CLASS,
         "flex h-32 w-full touch-none flex-col items-center justify-center gap-1 outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        isActive ? "press cursor-pointer [--press-scale:0.98]" : "cursor-default opacity-60",
+        isActive ? "press cursor-pointer [--press-scale:0.98]" : "cursor-default",
       )}
       data-slot="rhythm-tap-pad"
       onPointerDown={handlePointerDown}

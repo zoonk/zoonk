@@ -45,7 +45,7 @@ describe("lesson screens", () => {
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).not.toBeInTheDocument();
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
   });
 
@@ -72,7 +72,7 @@ describe("lesson screens", () => {
       await expect.element(summaryItem).not.toBeInTheDocument();
       await press("Escape");
 
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
       await page.getByRole("radio", { name: RIGHT_OPTION }).click();
       await page.getByRole("button", { name: /^Check/u }).click();
       await page.getByRole("button", { name: /^Continue/u }).click();
@@ -460,7 +460,7 @@ describe("lesson screens", () => {
     await expect.element(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
     await expect.element(page.getByText("O r do começo é suave, não como em rato.")).toBeVisible();
     await expect.element(page.getByText("r", { exact: true })).toHaveProperty("tagName", "CODE");
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
     await page.getByRole("radio", { name: "Rent" }).click();
@@ -565,11 +565,11 @@ describe("lesson screens", () => {
     const example = page.getByRole("complementary", { name: "Your example" });
 
     await expect.element(example).toHaveTextContent(lines[discount.id] ?? "");
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByText("Interest", { exact: true })).toBeVisible();
     await expect.element(example).toHaveTextContent(lines[interest.id] ?? "");
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByText("Markups", { exact: true })).toBeVisible();
     await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: markup.id }));
@@ -612,7 +612,7 @@ describe("lesson screens", () => {
 
     await expect.element(page.getByText("Percents", { exact: true })).toBeVisible();
     expect(requestExampleLine).not.toHaveBeenCalled();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     const example = page.getByRole("complementary", { name: "Your example" });
     await expect.element(page.getByText("Discounts", { exact: true })).toBeVisible();
@@ -624,7 +624,7 @@ describe("lesson screens", () => {
     writing.resolve({ line });
     await expect.element(example).toHaveTextContent(line);
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByText("Interest", { exact: true })).toBeVisible();
     await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: interest.id }));
     await expect.element(example).not.toBeInTheDocument();
@@ -665,7 +665,7 @@ describe("lesson screens", () => {
       lesson,
     });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByText("A discount lowers the price.")).toBeVisible();
 
     await vi.waitFor(() => expect(readAfterWrite).toHaveBeenCalledWith());
@@ -697,12 +697,12 @@ describe("lesson screens", () => {
     await expect.element(row("Molecules that spin")).toHaveAttribute("aria-current", "step");
     await expect.element(outline.getByText("1 quick question at the end")).toBeVisible();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(row("From spin to heat")).toHaveAttribute("aria-current", "step");
     await expect.element(row("Molecules that spin")).not.toHaveAttribute("aria-current");
     await expect.element(row("Molecules that spin").getByText(", read")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(outline).not.toBeInTheDocument();
 
     await expect

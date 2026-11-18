@@ -252,35 +252,76 @@ describe("a drawn lesson picture", () => {
     });
   });
 
-  it("keeps an option picture's box when it finishes drawing", async () => {
-    await atViewport(PHONE, async () => {
-      const getLessonPictures = pollPictures();
-      const held = await heldPicture();
-      const step = pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true });
-      const lesson = buildLesson([step]);
-      const baroque = pictureCheckContent.options.find((option) => option.id === "baroque");
-      const alt = baroque?.picture.alt ?? "";
+  it.each([
+    { description: "short", longAlt: null },
+    {
+      description: "long",
+      longAlt:
+        "A doorway framed by twisting columns and swirling decoration, with two small cherubs above the arch and a carved shell beneath the topmost window. The whole scene is made of pale stone with deep shadows behind the columns.",
+    },
+  ])(
+    "keeps a picture option with a $description description in place when it draws",
+    async ({ longAlt }) => {
+      await atViewport(PHONE, async () => {
+        const getLessonPictures = pollPictures();
+        const held = await heldPicture();
+        const pictured = pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true });
+        const alt = longAlt ?? "A doorway";
+        const drawnAlt = `Already drawn: ${alt}`;
 
-      renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+        const descriptions = new Map([
+          ["baroque", alt],
+          ["gothic", drawnAlt],
+        ]);
 
-      const option = page.getByRole("radio", { name: new RegExp(alt, "u") });
-      await expect.element(option).toBeVisible();
-      const status = option.element().querySelector('[role="status"]');
-      const drawing = boxOf(status?.parentElement?.parentElement ?? document.body);
-      expectRatio(drawing, SQUARE);
+        const step = contentStep("check", {
+          content: {
+            ...pictureCheckContent,
+            options: pictureCheckContent.options.map((choice) => ({
+              ...choice,
+              picture: {
+                ...choice.picture,
+                alt: descriptions.get(choice.id) ?? choice.picture.alt,
+              },
+            })),
+          },
+          imagePending: true,
+          optionPictures: {
+            ...pictured.optionPictures,
+            gothic: picture({ alt: drawnAlt, shape: "option", url: held.url }),
+          },
+        });
 
-      getLessonPictures.mockResolvedValue([
-        {
-          image: picture({ alt, shape: "option", url: held.url }),
-          optionId: "baroque",
-          stepId: step.id,
-        },
-      ]);
+        const lesson = buildLesson([step]);
 
-      await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
-      await expect.poll(() => document.querySelector(`img[alt="${alt}"]`)).not.toBeNull();
+        renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-      expect(boxOf(imageOf(alt))).toStrictEqual(drawing);
-    });
-  });
+        const option = page.getByRole("radio", { exact: true, name: alt });
+        await expect.element(option).toBeVisible();
+        const before = boxOf(option.element());
+        const frame = option.element().querySelector("[data-slot='media-pending']")!;
+        const drawing = boxOf(frame);
+        const alreadyDrawn = imageOf(drawnAlt);
+        const drawnFrame = alreadyDrawn.parentElement!;
+        expect(boxOf(drawnFrame).height).toBe(boxOf(alreadyDrawn).height);
+
+        getLessonPictures.mockResolvedValue([
+          {
+            image: picture({ alt, shape: "option", url: held.url }),
+            optionId: "baroque",
+            stepId: step.id,
+          },
+        ]);
+
+        await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+        await expect.poll(() => document.querySelector(`img[alt="${alt}"]`)).not.toBeNull();
+
+        const { height, ...drawn } = boxOf(imageOf(alt));
+        expect(drawn).toStrictEqual({ top: drawing.top, width: drawing.width });
+        expectRatio(boxOf(imageOf(alt)), SQUARE);
+        expect(drawing.height).toBeGreaterThanOrEqual(height);
+        expect(boxOf(option.element())).toStrictEqual(before);
+      });
+    },
+  );
 });

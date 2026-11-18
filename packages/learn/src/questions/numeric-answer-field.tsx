@@ -7,12 +7,13 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
-import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
+import { type NumericEntry, getNumericEntryRule, parseEntryAnswer } from "./_utils/numeric-entry";
 import { ANSWER_GROUP_CLASS, focusAnswerOnPointer, putAwayOnScreenKeyboard } from "./answer-field";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
@@ -22,8 +23,6 @@ const DECIMAL_EXAMPLE = 2.5;
 function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   const t = useExtracted();
 
-  const kind = entry.kind === "decimals" && entry.places === 0 ? "integer" : entry.kind;
-
   const rule = {
     decimals: t(
       "{places, plural, one {Round to # decimal place.} other {Round to # decimal places.}}",
@@ -32,7 +31,8 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
     fraction: t("A fraction, like 2/3, or a decimal."),
     integer: t("A whole number."),
     number: null,
-  }[kind];
+    roundToWhole: t("Round to the nearest whole number."),
+  }[getNumericEntryRule(entry)];
 
   return rule ? (
     <p className="text-muted-foreground text-sm" id={id}>
@@ -65,9 +65,26 @@ function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): s
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
 
-function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
+function UnitAddon({
+  id,
+  nearValue = false,
+  position,
+  unit,
+}: {
+  id: string;
+  nearValue?: boolean;
+  position: NumericUnit["position"];
+  unit: NumericUnit | null;
+}) {
+  if (unit?.position !== position) {
+    return null;
+  }
+
   return (
-    <InputGroupAddon align={unit.position === "prefix" ? "inline-start" : "inline-end"}>
+    <InputGroupAddon
+      align={unit.position === "prefix" ? "inline-start" : "inline-end"}
+      className={nearValue ? "min-w-fit flex-1 justify-start" : undefined}
+    >
       <InputGroupText className="text-base" id={id}>
         {unit.symbol}
       </InputGroupText>
@@ -152,6 +169,7 @@ export function NumericAnswerField({
   const [invalid, setInvalid] = useState(false);
   const hasRule = entry !== null && entry.kind !== "number";
 
+  const showsDegree = unit?.position === "suffix" && unit.symbol === "°";
   const showsRule = hasRule && !invalid;
 
   const describedBy = describeField({
@@ -190,14 +208,17 @@ export function NumericAnswerField({
       </label>
 
       <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
-        {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}
+        <UnitAddon id={unitId} position="prefix" unit={unit} />
 
         <InputGroupInput
           aria-describedby={describedBy}
           aria-labelledby={labelledBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
-          className="text-lg tabular-nums md:text-lg"
+          className={cn(
+            "text-lg tabular-nums md:text-lg",
+            showsDegree && "field-sizing-content w-auto min-w-11 flex-[0_1_auto]",
+          )}
           enterKeyHint="done"
           id={inputId}
           // A phone's decimal keypad has no slash, so a fraction box opens the full keyboard.
@@ -214,7 +235,7 @@ export function NumericAnswerField({
           value={text}
         />
 
-        {unit?.position === "suffix" && <UnitAddon id={unitId} unit={unit} />}
+        <UnitAddon id={unitId} nearValue={showsDegree} position="suffix" unit={unit} />
 
         <InputGroupAddon
           align="inline-end"

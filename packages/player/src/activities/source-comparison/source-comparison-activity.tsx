@@ -12,7 +12,6 @@ import {
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type SourceComparisonProps = ActivityRendererProps<"sourceComparison">;
@@ -44,7 +43,7 @@ function passageState({
 const PASSAGE_CLASS: Record<PassageState, string> = {
   correct: "bg-success/15 text-foreground",
   incorrect: "bg-destructive/15 text-foreground",
-  marked: cn(ACTIVITY_COLOR.data.soft, "text-foreground"),
+  marked: "bg-selected-tint text-foreground ring-selected ring-2 ring-inset",
   missed: "decoration-success-text underline decoration-2 decoration-dashed underline-offset-4",
   unmarked:
     "bg-muted decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",

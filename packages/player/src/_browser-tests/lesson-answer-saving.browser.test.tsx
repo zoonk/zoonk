@@ -392,7 +392,7 @@ describe("saving answers", () => {
 
   it.each([
     ["the tab shows again", () => document.dispatchEvent(new Event("visibilitychange"))],
-    ["the learner moves on", () => page.getByRole("button", { name: /^Next/u }).click()],
+    ["the learner moves on", () => page.getByRole("button", { name: /^Continue/u }).click()],
   ])("sends an answer that didn't get through again when %s", async (_, trigger) => {
     const lesson = buildLesson([
       teachingStep("check"),
@@ -441,7 +441,7 @@ describe("saving answers", () => {
 
     await answer(WRONG_OPTION, "Not quite");
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(notSaved()).toBeVisible();
 
     connection.online = true;
@@ -491,7 +491,7 @@ describe("saving answers", () => {
     expect(server.checkStep.mock.calls[0]?.[0]).toStrictEqual(cutOff.mock.calls[0]?.[0]);
     expect(unsentKeys()).toStrictEqual([]);
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
     await page.getByRole("button", { name: /^Continue/u }).click();
 

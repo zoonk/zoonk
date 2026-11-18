@@ -215,11 +215,6 @@ msgid "Try again"
 msgstr "다시 시도"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "실행"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "처음부터 다시 시작하기"
@@ -230,6 +225,11 @@ msgstr "처음부터 다시 시작하기"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "다시 실행"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "실행"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -312,6 +312,11 @@ msgid "{note} minor seventh"
 msgstr "{note} 마이너 세븐스"
 
 #: src/activities/area-model/area-model-activity.tsx
+msgctxt "B3Vw-p"
+msgid "Drag to split"
+msgstr "끌어서 나누세요"
+
+#: src/activities/area-model/area-model-activity.tsx
 msgctxt "hL2YKx"
 msgid "Split into {count, plural, one {# part} other {# parts}}: {parts}."
 msgstr "{count, plural, other {#개}}로 나뉘어 있어요: {parts}."
@@ -342,9 +347,9 @@ msgid "Take the quote out"
 msgstr "인용문 빼기"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "tNI8yF"
-msgid "Tap or drag the quote that best supports the claim"
-msgstr "주장을 가장 잘 뒷받침하는 인용문을 누르거나 끌어다 놓으세요"
+msgctxt "LyB4NV"
+msgid "Pick or drag the quote that best supports the claim"
+msgstr "주장을 가장 잘 뒷받침하는 인용문을 고르거나 끌어다 놓으세요"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -357,9 +362,9 @@ msgid "Take the reasoning out"
 msgstr "논리적 설명 빼기"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "x197fZ"
-msgid "Tap or drag how the quote proves the claim"
-msgstr "인용문이 주장을 어떻게 입증하는지 설명한 내용을 누르거나 끌어다 놓으세요"
+msgctxt "IyaCYo"
+msgid "Pick or drag how the quote proves the claim"
+msgstr "인용문이 주장을 입증하는 이유를 고르거나 끌어다 놓으세요"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -546,11 +551,6 @@ msgctxt "Cwq6lj"
 msgid "<item></item> belongs in <group></group>."
 msgstr "<item></item>은(는) <group></group>에 속해요."
 
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Y4KaZD"
-msgid "{right} of {total} in the right group"
-msgstr "올바르게 분류한 항목 {right}/{total}개"
-
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
 msgctxt "AfxJ0y"
@@ -568,6 +568,11 @@ msgstr ", 올바른 그룹"
 msgctxt "NTZ7fO"
 msgid ", wrong group"
 msgstr ", 잘못된 그룹"
+
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "Y4KaZD"
+msgid "{right} of {total} in the right group"
+msgstr "올바르게 분류한 항목 {right}/{total}개"
 
 #. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
 #: src/activities/categorize/categorize-sorted.tsx
@@ -1368,14 +1373,14 @@ msgid "Put {name} on spot {number}"
 msgstr "{name}을(를) {number}번 자리에 놓기"
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "d_eYHc"
-msgid "Every spot has a name. Tap a spot to change it."
-msgstr "모든 자리에 이름이 있어요. 바꾸려면 자리를 누르세요."
+msgctxt "J7KJCP"
+msgid "Every spot has a name. Pick a spot to change it."
+msgstr "모든 자리에 이름이 있어요. 바꾸려면 자리를 고르세요."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "ITUJOF"
-msgid "Tap a name for spot {number}, or drag it onto any spot."
-msgstr "{number}번 자리에 놓을 이름을 누르거나, 원하는 자리로 이름을 끌어다 놓으세요."
+msgctxt "uuB8t6"
+msgid "Pick a name for spot {number}, or drag it onto any spot."
+msgstr "{number}번 자리에 넣을 이름을 고르거나 원하는 자리로 끌어다 놓으세요."
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "TNAgYA"
@@ -1775,14 +1780,14 @@ msgid "Nothing selected."
 msgstr "선택한 항목이 없어요."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "thePhu"
-msgid "Built: {formula}"
-msgstr "만든 분자: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "ymqUu2"
 msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
 msgstr "{atom}: 결합 {used}개 사용, {valence, plural, =0 {최대 #개} other {#개까지 가능}}"
+
+#: src/activities/molecule-builder/molecule-builder-activity.tsx
+msgctxt "thePhu"
+msgid "Built: {formula}"
+msgstr "만든 분자: {formula}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -1831,9 +1836,9 @@ msgid "Remove"
 msgstr "제거"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "hXYqS7"
-msgid "Tap an element to add its first atom."
-msgstr "원소를 눌러 첫 원자를 추가하세요."
+msgctxt "GyuZyo"
+msgid "Pick an element to add its first atom."
+msgstr "원소를 골라 첫 원자를 추가하세요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -1851,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "모든 원자의 결합 자리가 채워졌어요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "cSgkWf"
-msgid "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom}을(를) 선택했어요. 다른 원자를 눌러 결합하거나, 원소를 눌러 선택한 원자에 결합된 새 원자를 추가하세요."
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "{atom}을(를) 선택했어요. 결합할 다른 원자를 고르거나, 원소를 골라 이 원자와 결합된 새 원자를 추가하세요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "FaoZuv"
-msgid "Tap an atom to select it."
-msgstr "원자를 눌러 선택하세요."
+msgctxt "5EQ069"
+msgid "Pick an atom to select it."
+msgstr "원자를 선택하세요."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2372,14 +2377,14 @@ msgid "±{value}"
 msgstr "±{value}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "pSyQZq"
-msgid "{tempo} bpm · Round {round} of {rounds}"
-msgstr "{tempo} bpm · {round}라운드(총 {rounds}라운드)"
+msgctxt "lSvfb0"
+msgid "{tempo} beats a minute · Round {round} of {rounds}"
+msgstr "분당 {tempo}박 · {round}/{rounds}라운드"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "HDtGU-"
-msgid "{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}"
-msgstr "{tempo} bpm · {rounds, plural, other {#라운드}}"
+msgctxt "vQ73wa"
+msgid "{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}"
+msgstr "분당 {tempo}박 · {rounds, plural, other {#라운드}}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "vbF2AY"
@@ -2422,9 +2427,9 @@ msgid "Set up your sound"
 msgstr "소리 설정"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "시작하기"
+msgctxt "Nl2YDQ"
+msgid "Start the beat"
+msgstr "박자 재생하기"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -2717,6 +2722,11 @@ msgid "to"
 msgstr "부터"
 
 #: src/activities/timeline/timeline-tray.tsx
+msgctxt "rkQXpI"
+msgid "1 of {count} events here, the next comes after"
+msgstr "사건 {count}개 중 1개예요. 배치하면 다음 사건이 나와요"
+
+#: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
 msgid "{count, plural, one {# event to place} other {# events to place}}"
 msgstr "{count, plural, other {배치할 사건 #개}}"
@@ -2780,6 +2790,21 @@ msgstr "{value} rad"
 msgctxt "FqMy6J"
 msgid "undefined"
 msgstr "정의되지 않음"
+
+#: src/components/alphabet-step.tsx
+msgctxt "DGr2DU"
+msgid "Latin spelling"
+msgstr "로마자 표기"
+
+#: src/components/alphabet-step.tsx
+msgctxt "hd_Nz8"
+msgid "Hiragana"
+msgstr "히라가나"
+
+#: src/components/alphabet-step.tsx
+msgctxt "74gN_v"
+msgid "Katakana"
+msgstr "가타카나"
 
 #: src/components/alphabet-step.tsx
 msgctxt "w0J_gv"
@@ -3012,9 +3037,20 @@ msgid "Create a free account"
 msgstr "무료 계정 만들기"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/lesson-question-errors.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "로그인"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "KFO_vV"
 msgid "Everything you learned comes with you."
 msgstr "지금까지 배운 내용은 모두 그대로 남아요."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr "사라진 내용은 없어요. 잠시 후 다시 시도해 보세요."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3022,25 +3058,19 @@ msgid "We couldn't open this lesson"
 msgstr "이 레슨을 열지 못했어요"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr "로그인"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
 msgid "The link may be old or mistyped."
 msgstr "오래된 링크이거나 주소가 잘못 입력되었을 수 있어요."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
-msgstr "로그아웃됐어요"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "t12Boe"
 msgid "This lesson isn't available"
 msgstr "이 레슨은 이용할 수 없어요"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "로그아웃됐어요"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "z7s-vx"
@@ -3115,6 +3145,7 @@ msgstr "생각할 시간이 더 필요한가요? {name}(이)가 다른 방식으
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
 #: src/questions/lesson-question-panel.tsx
+#: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3224,6 +3255,7 @@ msgid "sounds like {respelling}"
 msgstr "{respelling}처럼 들려요"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "zhvWvI"
 msgid "Listen"
 msgstr "듣기"
@@ -3517,6 +3549,11 @@ msgid "I can't talk now"
 msgstr "지금은 말할 수 없어요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "KBc0tZ"
+msgid "Type instead"
+msgstr "글로 대화하기"
+
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
 msgid "I can talk now"
 msgstr "이제 말할 수 있어요"
@@ -3527,14 +3564,9 @@ msgid "Say it instead"
 msgstr "대신 말로 답하기"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "iFYEjY"
-msgid "The microphone is blocked."
-msgstr "마이크 사용이 차단됐어요."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "NTpdCz"
-msgid "We can't use your microphone."
-msgstr "마이크를 사용할 수 없어요."
+msgctxt "uTDJ3g"
+msgid "We can't use your microphone, so type what you'd say."
+msgstr "마이크를 사용할 수 없어요. 말하려던 내용을 글로 입력하세요."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -3829,15 +3861,14 @@ msgid "Questions about this lesson"
 msgstr "이 레슨에 대한 질문"
 
 #: src/questions/lesson-question-thread.tsx
+msgctxt "qrX_U9"
+msgid "Ask {name} about any screen with a free account"
+msgstr "무료 계정으로 어떤 화면에 대해서든 {name}에게 물어보세요"
+
+#: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "AI 공부 짝꿍 {name}도 실수할 수 있어요."
-
-#: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "uTM1IU"
-msgid "Questions need a free account"
-msgstr "질문하려면 무료 계정이 필요해요"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3944,6 +3975,11 @@ msgstr "{name}에게 이 문제에 대해 물어보기"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "{name}에게 이 화면에 대해 물어보기"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "질문하려면 무료 계정이 필요해요"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

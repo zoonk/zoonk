@@ -215,11 +215,6 @@ msgid "Try again"
 msgstr "Try again"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Run"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "Start over"
@@ -230,6 +225,11 @@ msgstr "Start over"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Run again"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "Run"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -312,6 +312,11 @@ msgid "{note} minor seventh"
 msgstr "{note} minor seventh"
 
 #: src/activities/area-model/area-model-activity.tsx
+msgctxt "B3Vw-p"
+msgid "Drag to split"
+msgstr "Drag to split"
+
+#: src/activities/area-model/area-model-activity.tsx
 msgctxt "hL2YKx"
 msgid "Split into {count, plural, one {# part} other {# parts}}: {parts}."
 msgstr "Split into {count, plural, one {# part} other {# parts}}: {parts}."
@@ -342,9 +347,9 @@ msgid "Take the quote out"
 msgstr "Take the quote out"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "tNI8yF"
-msgid "Tap or drag the quote that best supports the claim"
-msgstr "Tap or drag the quote that best supports the claim"
+msgctxt "LyB4NV"
+msgid "Pick or drag the quote that best supports the claim"
+msgstr "Pick or drag the quote that best supports the claim"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -357,9 +362,9 @@ msgid "Take the reasoning out"
 msgstr "Take the reasoning out"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "x197fZ"
-msgid "Tap or drag how the quote proves the claim"
-msgstr "Tap or drag how the quote proves the claim"
+msgctxt "IyaCYo"
+msgid "Pick or drag how the quote proves the claim"
+msgstr "Pick or drag how the quote proves the claim"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -546,11 +551,6 @@ msgctxt "Cwq6lj"
 msgid "<item></item> belongs in <group></group>."
 msgstr "<item></item> belongs in <group></group>."
 
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Y4KaZD"
-msgid "{right} of {total} in the right group"
-msgstr "{right} of {total} in the right group"
-
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
 msgctxt "AfxJ0y"
@@ -568,6 +568,11 @@ msgstr ", right group"
 msgctxt "NTZ7fO"
 msgid ", wrong group"
 msgstr ", wrong group"
+
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "Y4KaZD"
+msgid "{right} of {total} in the right group"
+msgstr "{right} of {total} in the right group"
 
 #. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
 #: src/activities/categorize/categorize-sorted.tsx
@@ -1368,14 +1373,14 @@ msgid "Put {name} on spot {number}"
 msgstr "Put {name} on spot {number}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "d_eYHc"
-msgid "Every spot has a name. Tap a spot to change it."
-msgstr "Every spot has a name. Tap a spot to change it."
+msgctxt "J7KJCP"
+msgid "Every spot has a name. Pick a spot to change it."
+msgstr "Every spot has a name. Pick a spot to change it."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "ITUJOF"
-msgid "Tap a name for spot {number}, or drag it onto any spot."
-msgstr "Tap a name for spot {number}, or drag it onto any spot."
+msgctxt "uuB8t6"
+msgid "Pick a name for spot {number}, or drag it onto any spot."
+msgstr "Pick a name for spot {number}, or drag it onto any spot."
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "TNAgYA"
@@ -1775,14 +1780,14 @@ msgid "Nothing selected."
 msgstr "Nothing selected."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "thePhu"
-msgid "Built: {formula}"
-msgstr "Built: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "ymqUu2"
 msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
 msgstr "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
+
+#: src/activities/molecule-builder/molecule-builder-activity.tsx
+msgctxt "thePhu"
+msgid "Built: {formula}"
+msgstr "Built: {formula}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -1831,9 +1836,9 @@ msgid "Remove"
 msgstr "Remove"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "hXYqS7"
-msgid "Tap an element to add its first atom."
-msgstr "Tap an element to add its first atom."
+msgctxt "GyuZyo"
+msgid "Pick an element to add its first atom."
+msgstr "Pick an element to add its first atom."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -1851,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "Every atom has all its bonds."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "cSgkWf"
-msgid "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "FaoZuv"
-msgid "Tap an atom to select it."
-msgstr "Tap an atom to select it."
+msgctxt "5EQ069"
+msgid "Pick an atom to select it."
+msgstr "Pick an atom to select it."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2372,14 +2377,14 @@ msgid "±{value}"
 msgstr "±{value}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "pSyQZq"
-msgid "{tempo} bpm · Round {round} of {rounds}"
-msgstr "{tempo} bpm · Round {round} of {rounds}"
+msgctxt "lSvfb0"
+msgid "{tempo} beats a minute · Round {round} of {rounds}"
+msgstr "{tempo} beats a minute · Round {round} of {rounds}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "HDtGU-"
-msgid "{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}"
-msgstr "{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}"
+msgctxt "vQ73wa"
+msgid "{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}"
+msgstr "{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "vbF2AY"
@@ -2422,9 +2427,9 @@ msgid "Set up your sound"
 msgstr "Set up your sound"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Start"
+msgctxt "Nl2YDQ"
+msgid "Start the beat"
+msgstr "Start the beat"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -2717,6 +2722,11 @@ msgid "to"
 msgstr "to"
 
 #: src/activities/timeline/timeline-tray.tsx
+msgctxt "rkQXpI"
+msgid "1 of {count} events here, the next comes after"
+msgstr "1 of {count} events here, the next comes after"
+
+#: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
 msgid "{count, plural, one {# event to place} other {# events to place}}"
 msgstr "{count, plural, one {# event to place} other {# events to place}}"
@@ -2780,6 +2790,21 @@ msgstr "{value} rad"
 msgctxt "FqMy6J"
 msgid "undefined"
 msgstr "undefined"
+
+#: src/components/alphabet-step.tsx
+msgctxt "DGr2DU"
+msgid "Latin spelling"
+msgstr "Latin spelling"
+
+#: src/components/alphabet-step.tsx
+msgctxt "hd_Nz8"
+msgid "Hiragana"
+msgstr "Hiragana"
+
+#: src/components/alphabet-step.tsx
+msgctxt "74gN_v"
+msgid "Katakana"
+msgstr "Katakana"
 
 #: src/components/alphabet-step.tsx
 msgctxt "w0J_gv"
@@ -3012,9 +3037,20 @@ msgid "Create a free account"
 msgstr "Create a free account"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/lesson-question-errors.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Log in"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "KFO_vV"
 msgid "Everything you learned comes with you."
 msgstr "Everything you learned comes with you."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr "Nothing was lost. Try again in a moment."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3022,25 +3058,19 @@ msgid "We couldn't open this lesson"
 msgstr "We couldn't open this lesson"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr "Log in"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
 msgid "The link may be old or mistyped."
 msgstr "The link may be old or mistyped."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
-msgstr "You've been logged out"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "t12Boe"
 msgid "This lesson isn't available"
 msgstr "This lesson isn't available"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "You've been logged out"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "z7s-vx"
@@ -3115,6 +3145,7 @@ msgstr "Taking your time? {name} can explain it another way."
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
 #: src/questions/lesson-question-panel.tsx
+#: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3224,6 +3255,7 @@ msgid "sounds like {respelling}"
 msgstr "sounds like {respelling}"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "zhvWvI"
 msgid "Listen"
 msgstr "Listen"
@@ -3517,6 +3549,11 @@ msgid "I can't talk now"
 msgstr "I can't talk now"
 
 #: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "KBc0tZ"
+msgid "Type instead"
+msgstr "Type instead"
+
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
 msgid "I can talk now"
 msgstr "I can talk now"
@@ -3527,14 +3564,9 @@ msgid "Say it instead"
 msgstr "Say it instead"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "iFYEjY"
-msgid "The microphone is blocked."
-msgstr "The microphone is blocked."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "NTpdCz"
-msgid "We can't use your microphone."
-msgstr "We can't use your microphone."
+msgctxt "uTDJ3g"
+msgid "We can't use your microphone, so type what you'd say."
+msgstr "We can't use your microphone, so type what you'd say."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -3829,15 +3861,14 @@ msgid "Questions about this lesson"
 msgstr "Questions about this lesson"
 
 #: src/questions/lesson-question-thread.tsx
+msgctxt "qrX_U9"
+msgid "Ask {name} about any screen with a free account"
+msgstr "Ask {name} about any screen with a free account"
+
+#: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} is an AI study buddy and can make mistakes."
-
-#: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "uTM1IU"
-msgid "Questions need a free account"
-msgstr "Questions need a free account"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3944,6 +3975,11 @@ msgstr "Ask {name} about this question"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Ask {name} about this screen"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Questions need a free account"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

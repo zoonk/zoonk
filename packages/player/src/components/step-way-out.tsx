@@ -4,14 +4,17 @@ import { Button } from "@zoonk/ui/components/button";
 export function StepWayOut({
   children,
   icon,
+  label,
   onClick,
 }: {
   children: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
+  label?: string;
   onClick: () => void;
 }) {
   return (
     <Button
+      aria-label={label}
       className="w-fit"
       data-slot="step-way-out"
       edge="start"

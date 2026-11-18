@@ -7,6 +7,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import { useExtracted } from "next-intl";
 import { use } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -20,13 +21,21 @@ type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
-export function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
+export function exactAnswerFormat({
+  check,
+  places,
+  value,
+}: {
+  check: NumericCheck;
+  places?: number | null;
+  value?: number;
+}) {
   return {
-    maximumFractionDigits: exactFractionDigitsFor({
-      expected: check.answer,
-      tolerance: check.tolerance,
-      value,
-    }),
+    maximumFractionDigits: Math.max(
+      places ?? 0,
+      exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
+      countDecimalPlaces(value ?? 0),
+    ),
     unit: check.unit,
   };
 }
@@ -65,27 +74,25 @@ function NumericFeedback({
   answer,
   check,
   isCorrect,
+  places,
   showsNumbers,
 }: {
   answer: ActivityAnswer | null;
   check: NumericCheck;
   isCorrect: boolean;
+  places: number | null;
   showsNumbers: boolean;
 }) {
   const format = useFormatNumber();
 
-  const written = exactAnswerFormat({
-    check,
-    value: answer?.kind === "numeric" ? answer.value : undefined,
-  });
-
-  const exact = (value: number) => format(value, written);
+  const value = answer?.kind === "numeric" ? answer.value : undefined;
+  const rightAnswer = format(check.answer, exactAnswerFormat({ check, places, value }));
 
   return (
     <>
       {/* The learner's number is in the box right above, so only the right one is added. */}
       {showsNumbers && !isCorrect && (
-        <RightAnswerLine answer={<span className="tabular-nums">{exact(check.answer)}</span>} />
+        <RightAnswerLine answer={<span className="tabular-nums">{rightAnswer}</span>} />
       )}
 
       <FeedbackText>{check.explanation}</FeedbackText>
@@ -97,11 +104,13 @@ export function ActivityFeedback({
   answer,
   content,
   isCorrect,
+  places,
   showsNumbers = true,
 }: {
   answer: ActivityAnswer | null;
   content: ActivityStepContent;
   isCorrect: boolean;
+  places: number | null;
   /** False when the canvas already shows the learner's number beside the right one. */
   showsNumbers?: boolean;
 }) {
@@ -125,6 +134,7 @@ export function ActivityFeedback({
           answer={answer}
           check={check}
           isCorrect={isCorrect}
+          places={places}
           showsNumbers={showsNumbers}
         />
       )}

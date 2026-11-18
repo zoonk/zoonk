@@ -1,5 +1,6 @@
 "use client";
 
+import { LearnerBubble } from "@zoonk/ui/components/message";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -41,6 +42,8 @@ export function ChallengeAvatar({ name, slot }: { name: string; slot: ChallengeS
   );
 }
 
+const METRIC_NUMBER = /^[+−-]?\p{N}[\p{N}.,\s]*%?$/u;
+
 export function ChallengePanelView({
   fill,
   panel,
@@ -60,7 +63,12 @@ export function ChallengePanelView({
           <div className="flex min-w-0 flex-col gap-0.5" key={metric.label}>
             <dt className="text-muted-foreground text-xs">{fill(metric.label)}</dt>
             <dd className="flex flex-col gap-0.5">
-              <span className="text-foreground text-2xl font-semibold text-balance tabular-nums">
+              <span
+                className={cn(
+                  "text-foreground font-semibold text-pretty",
+                  METRIC_NUMBER.test(metric.value) && "text-2xl tabular-nums",
+                )}
+              >
                 {metric.value}
               </span>
               {metric.note && (
@@ -116,10 +124,10 @@ export function ChallengePickView({ text }: { text: string }) {
 
   return (
     <li className="flex justify-end" data-slot="challenge-pick">
-      <p className="bg-primary text-primary-foreground max-w-[85%] rounded-xl px-4 py-2.5 text-base leading-relaxed">
+      <LearnerBubble>
         <span className="sr-only">{`${t("You:")} `}</span>
         <LessonRichText text={text} />
-      </p>
+      </LearnerBubble>
     </li>
   );
 }

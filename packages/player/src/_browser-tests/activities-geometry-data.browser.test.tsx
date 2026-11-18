@@ -35,6 +35,16 @@ describe("geometry and data activities", () => {
       .toHaveAttribute("aria-valuetext", expect.stringMatching(/Angles: 72°, 45°, 63°\.$/u));
 
     await valueInput().fill("180");
+
+    const degree = page.getByText("°", { exact: true });
+    const input = valueInput().element();
+    const group = input.closest('[data-slot="input-group"]')!;
+    await expect.element(valueInput()).toHaveAccessibleDescription("°");
+
+    expect(degree.element().getBoundingClientRect().left).toBeLessThan(
+      group.getBoundingClientRect().left + group.getBoundingClientRect().width / 2,
+    );
+
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("The angles always add to 180°.")).toBeVisible();

@@ -207,7 +207,7 @@ test.describe("public Library lesson page", () => {
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
 
-    await page.getByRole("button", { name: "Next" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
   });
 

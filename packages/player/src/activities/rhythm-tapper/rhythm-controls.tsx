@@ -18,12 +18,12 @@ export function RhythmStatus({
   return (
     <p aria-live="polite" className="text-muted-foreground text-sm tabular-nums">
       {round
-        ? t("{tempo} bpm · Round {round} of {rounds}", {
+        ? t("{tempo} beats a minute · Round {round} of {rounds}", {
             round: String(round),
             rounds: String(rounds),
             tempo: String(tempo),
           })
-        : t("{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}", {
+        : t("{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}", {
             rounds,
             tempo: String(tempo),
           })}

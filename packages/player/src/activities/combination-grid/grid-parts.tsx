@@ -88,7 +88,7 @@ export function GridHeader({
     >
       {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}
       <CellValue
-        className={cn(!isAllele && "font-normal", !isAllele && !isLit && "text-muted-foreground")}
+        className={cn(!isAllele && !isLit && "text-muted-foreground")}
         isAllele={isAllele}
         value={value}
       />

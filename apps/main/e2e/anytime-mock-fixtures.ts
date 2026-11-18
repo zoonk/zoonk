@@ -132,6 +132,22 @@ export async function createAnytimeMockLearner({
   return { answers, goal, plan, skills, user };
 }
 
+export function answerForMockHeading<Answer>({
+  answers,
+  heading,
+}: {
+  answers: ReadonlyMap<string, Answer>;
+  heading: string;
+}): Answer {
+  const answer = answers.get(heading.replaceAll("\u00A0", " ").trim());
+
+  if (answer === undefined) {
+    throw new Error(`No fixture answer for the visible question: ${heading}`);
+  }
+
+  return answer;
+}
+
 export async function answerMockQuestions({
   answers,
   knows,
@@ -156,12 +172,11 @@ export async function answerMockQuestions({
     await expect(title).not.toBeEmpty();
     // oxlint-disable-next-line no-await-in-loop -- The question on screen decides the answer.
     const heading = (await title.textContent()) ?? "";
-    const question = answers.get(heading.trim());
-    expect(question, `No fixture answer for the visible question: ${heading}`).toBeDefined();
+    const question = answerForMockHeading({ answers, heading });
 
     // oxlint-disable-next-line no-await-in-loop -- One answer, then the next question.
     await page
-      .getByRole("radio", { name: question && knows(question) ? question.right : question?.wrong })
+      .getByRole("radio", { name: knows(question) ? question.right : question.wrong })
       .click();
 
     const next = page.getByRole("button", { name: "Next" });

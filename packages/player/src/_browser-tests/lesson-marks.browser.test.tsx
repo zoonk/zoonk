@@ -84,7 +84,7 @@ function underlined() {
 }
 
 async function next() {
-  await page.getByRole("button", { name: /^Next/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
 const NO_BACKGROUND = "rgba(0, 0, 0, 0)";

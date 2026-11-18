@@ -37,7 +37,7 @@ export function PromptAudioButton({
   }
 
   const inline = variant === "inline";
-  const inlineTone = audio.isPlaying ? "bg-muted text-foreground" : "text-muted-foreground";
+  const quiet = inline && !audio.isPlaying;
 
   return (
     <Tooltip>
@@ -45,9 +45,9 @@ export function PromptAudioButton({
         {...shared}
         render={
           <Button
-            className={inline ? inlineTone : "size-11"}
+            className={inline ? undefined : "size-11"}
             size="icon"
-            variant={inline ? "ghost" : "outline"}
+            variant={quiet ? "ghost" : "outline"}
           />
         }
       >

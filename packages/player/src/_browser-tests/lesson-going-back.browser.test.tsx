@@ -118,7 +118,7 @@ async function turnToThirtyDegrees() {
 async function goBackAndReturn() {
   await page.getByRole("button", { name: "Previous screen" }).click();
   await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
-  await page.getByRole("button", { name: /^Next/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
 describe("going back to reread", () => {
@@ -133,7 +133,7 @@ describe("going back to reread", () => {
 
   it("keeps an activity as the learner left it until they come back and check it", async () => {
     playLesson([reading, activity()]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await sortCard({ group: "Same substance", item: "Melting ice" });
 
     await goBackAndReturn();
@@ -148,7 +148,7 @@ describe("going back to reread", () => {
   it("brings a chart back where the learner moved it, never at the check's answer", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
     playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await pressOnSlider("Extra per month", "ArrowRight", 2);
     await expect.element(valueInput()).not.toHaveValue("");
     const field = valueInput().element();
@@ -185,7 +185,7 @@ describe("going back to reread", () => {
   it("shows a missed activity's first attempt where the learner left it, after its retry starts over", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
     playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await pressOnSlider("Extra per month", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Not quite");
@@ -264,7 +264,7 @@ describe("going back to reread", () => {
 
   it("starts a missed activity over when it comes back, its first attempt a screen back", async () => {
     playLesson([reading, activity()]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await sortCard({ group: "Same substance", item: "Melting ice" });
     await sortCard({ group: "New substance", item: "Rusting iron" });
     await sortCard({ group: "Same substance", item: "Burning wood" });
@@ -285,7 +285,7 @@ describe("going back to reread", () => {
   it("keeps a retry's work while the learner looks back at its first attempt", async () => {
     const { calculator } = engineModeFixtures.formulaModel;
     playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await pressOnSlider("Extra per month", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Not quite");
@@ -308,8 +308,8 @@ describe("going back to reread", () => {
     localStorage.removeItem(DEVICE_DELAY_KEY);
     const stop = vi.spyOn(AudioScheduledSourceNode.prototype, "stop");
     playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start the beat" }).click();
 
     await expect
       .element(page.getByRole("button", { name: "Skip for now" }))
@@ -352,7 +352,7 @@ describe("going back to reread", () => {
       ),
     });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.poll(() => played).toContain(LETTER_SOUND);
     const playedBefore = played.length;
 
@@ -367,23 +367,26 @@ describe("going back to reread", () => {
     const sound = Promise.withResolvers<null>();
     audioStart.hold = sound.promise;
     playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start the beat" }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
     const createOscillator = vi.spyOn(AudioContext.prototype, "createOscillator");
     sound.resolve(null);
     await expect.poll(() => audioStart.started).toBe(1);
     expect(createOscillator).not.toHaveBeenCalled();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
-    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Start the beat" }))
+      .toBeVisible();
+
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
   });
 
   it("stops every note of a melody when the learner leaves it", async () => {
     playLesson([reading, activity(activityContentFixtures.notationPlayer)]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("button", { name: "Play the melody" }).click();
     await expect.element(page.getByText(/^Bar \d of 4$/u)).toBeVisible();
     expect(piano.silenced).not.toHaveBeenCalled();
@@ -399,7 +402,7 @@ describe("going back to reread", () => {
     audioStart.hold = sound.promise;
 
     playLesson([reading, activity(activityContentFixtures.notationPlayer)]);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("button", { name: "Play the melody" }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();

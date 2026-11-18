@@ -215,11 +215,6 @@ msgid "Try again"
 msgstr "Spróbuj ponownie"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Uruchom"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "Zacznij od nowa"
@@ -230,6 +225,11 @@ msgstr "Zacznij od nowa"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Uruchom ponownie"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "Uruchom"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -312,6 +312,11 @@ msgid "{note} minor seventh"
 msgstr "{note} molowy z septymą małą"
 
 #: src/activities/area-model/area-model-activity.tsx
+msgctxt "B3Vw-p"
+msgid "Drag to split"
+msgstr "Przeciągnij, aby podzielić"
+
+#: src/activities/area-model/area-model-activity.tsx
 msgctxt "hL2YKx"
 msgid "Split into {count, plural, one {# part} other {# parts}}: {parts}."
 msgstr "Podzielono na {count, plural, one {# część} other {# części}}: {parts}."
@@ -342,8 +347,8 @@ msgid "Take the quote out"
 msgstr "Usuń cytat"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "tNI8yF"
-msgid "Tap or drag the quote that best supports the claim"
+msgctxt "LyB4NV"
+msgid "Pick or drag the quote that best supports the claim"
 msgstr "Wybierz lub przeciągnij cytat, który najlepiej potwierdza tezę"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
@@ -357,8 +362,8 @@ msgid "Take the reasoning out"
 msgstr "Usuń uzasadnienie"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "x197fZ"
-msgid "Tap or drag how the quote proves the claim"
+msgctxt "IyaCYo"
+msgid "Pick or drag how the quote proves the claim"
 msgstr "Wybierz lub przeciągnij wyjaśnienie, jak cytat potwierdza tezę"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
@@ -546,11 +551,6 @@ msgctxt "Cwq6lj"
 msgid "<item></item> belongs in <group></group>."
 msgstr "Element „<item></item>” należy do grupy: <group></group>."
 
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Y4KaZD"
-msgid "{right} of {total} in the right group"
-msgstr "{right} z {total} we właściwej grupie"
-
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
 msgctxt "AfxJ0y"
@@ -568,6 +568,11 @@ msgstr ", właściwa grupa"
 msgctxt "NTZ7fO"
 msgid ", wrong group"
 msgstr ", niewłaściwa grupa"
+
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "Y4KaZD"
+msgid "{right} of {total} in the right group"
+msgstr "{right} z {total} we właściwej grupie"
 
 #. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
 #: src/activities/categorize/categorize-sorted.tsx
@@ -1368,14 +1373,14 @@ msgid "Put {name} on spot {number}"
 msgstr "Umieść nazwę „{name}” w miejscu {number}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "d_eYHc"
-msgid "Every spot has a name. Tap a spot to change it."
-msgstr "Każde miejsce ma nazwę. Dotknij miejsca, aby ją zmienić."
+msgctxt "J7KJCP"
+msgid "Every spot has a name. Pick a spot to change it."
+msgstr "Każde miejsce ma nazwę. Wybierz miejsce, aby ją zmienić."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "ITUJOF"
-msgid "Tap a name for spot {number}, or drag it onto any spot."
-msgstr "Dotknij nazwy dla miejsca {number} lub przeciągnij ją na dowolne miejsce."
+msgctxt "uuB8t6"
+msgid "Pick a name for spot {number}, or drag it onto any spot."
+msgstr "Wybierz nazwę dla miejsca {number} lub przeciągnij ją na dowolne miejsce."
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "TNAgYA"
@@ -1775,14 +1780,14 @@ msgid "Nothing selected."
 msgstr "Nic nie wybrano."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "thePhu"
-msgid "Built: {formula}"
-msgstr "Zbudowano: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "ymqUu2"
 msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
 msgstr "{atom}: {used} z {valence, plural, =0 {# wiązań łącznie} one {łącznie # wiązania} other {łącznie # wiązań}}"
+
+#: src/activities/molecule-builder/molecule-builder-activity.tsx
+msgctxt "thePhu"
+msgid "Built: {formula}"
+msgstr "Zbudowano: {formula}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -1831,9 +1836,9 @@ msgid "Remove"
 msgstr "Usuń"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "hXYqS7"
-msgid "Tap an element to add its first atom."
-msgstr "Dotknij pierwiastka, aby dodać jego pierwszy atom."
+msgctxt "GyuZyo"
+msgid "Pick an element to add its first atom."
+msgstr "Wybierz pierwiastek, aby dodać jego pierwszy atom."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -1851,14 +1856,14 @@ msgid "Every atom has all its bonds."
 msgstr "Każdy atom ma komplet wiązań."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "cSgkWf"
-msgid "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
-msgstr "Wybrany atom: {atom}. Dotknij innego atomu, aby je połączyć, lub pierwiastka, aby dodać atom połączony z wybranym."
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "Wybrany atom: {atom}. Wybierz inny atom, aby połączyć je wiązaniem, lub pierwiastek, aby dodać atom połączony z wybranym."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "FaoZuv"
-msgid "Tap an atom to select it."
-msgstr "Dotknij atomu, aby go wybrać."
+msgctxt "5EQ069"
+msgid "Pick an atom to select it."
+msgstr "Wybierz atom, aby go zaznaczyć."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2372,14 +2377,14 @@ msgid "±{value}"
 msgstr "±{value}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "pSyQZq"
-msgid "{tempo} bpm · Round {round} of {rounds}"
-msgstr "{tempo} BPM · Runda {round} z {rounds}"
+msgctxt "lSvfb0"
+msgid "{tempo} beats a minute · Round {round} of {rounds}"
+msgstr "{tempo} BPM · Runda {round} z {rounds}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "HDtGU-"
-msgid "{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}"
-msgstr "{tempo} BPM · {rounds, plural, one {# runda} many {# rund} other {# rundy}}"
+msgctxt "vQ73wa"
+msgid "{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}"
+msgstr "{tempo} BPM · {rounds, plural, one {# runda} many {# rund} other {# rundy}}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "vbF2AY"
@@ -2422,9 +2427,9 @@ msgid "Set up your sound"
 msgstr "Ustaw dźwięk"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Zacznij"
+msgctxt "Nl2YDQ"
+msgid "Start the beat"
+msgstr "Włącz rytm"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -2717,6 +2722,11 @@ msgid "to"
 msgstr "a następnie"
 
 #: src/activities/timeline/timeline-tray.tsx
+msgctxt "rkQXpI"
+msgid "1 of {count} events here, the next comes after"
+msgstr "Tu jest 1 z {count} wydarzeń. Po jego umieszczeniu pojawi się kolejne"
+
+#: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
 msgid "{count, plural, one {# event to place} other {# events to place}}"
 msgstr "{count, plural, one {# wydarzenie do umieszczenia} few {# wydarzenia do umieszczenia} other {# wydarzeń do umieszczenia}}"
@@ -2780,6 +2790,21 @@ msgstr "{value} rad"
 msgctxt "FqMy6J"
 msgid "undefined"
 msgstr "nieokreślony"
+
+#: src/components/alphabet-step.tsx
+msgctxt "DGr2DU"
+msgid "Latin spelling"
+msgstr "Zapis alfabetem łacińskim"
+
+#: src/components/alphabet-step.tsx
+msgctxt "hd_Nz8"
+msgid "Hiragana"
+msgstr "Hiragana"
+
+#: src/components/alphabet-step.tsx
+msgctxt "74gN_v"
+msgid "Katakana"
+msgstr "Katakana"
 
 #: src/components/alphabet-step.tsx
 msgctxt "w0J_gv"
@@ -3012,9 +3037,20 @@ msgid "Create a free account"
 msgstr "Załóż bezpłatne konto"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/lesson-question-errors.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Zaloguj się"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "KFO_vV"
 msgid "Everything you learned comes with you."
 msgstr "Zachowasz wszystko, czego udało ci się nauczyć."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr "Nic nie przepadło. Spróbuj ponownie za chwilę."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3022,25 +3058,19 @@ msgid "We couldn't open this lesson"
 msgstr "Nie udało nam się otworzyć tej lekcji"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr "Zaloguj się"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
 msgid "The link may be old or mistyped."
 msgstr "Link może być nieaktualny lub zawierać literówkę."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
-msgstr "Wylogowano cię"
-
-#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "t12Boe"
 msgid "This lesson isn't available"
 msgstr "Ta lekcja jest niedostępna"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "Wylogowano cię"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "z7s-vx"
@@ -3115,6 +3145,7 @@ msgstr "Potrzebujesz chwili? {name} może wyjaśnić to inaczej."
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
 #: src/questions/lesson-question-panel.tsx
+#: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3224,6 +3255,7 @@ msgid "sounds like {respelling}"
 msgstr "brzmi jak {respelling}"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "zhvWvI"
 msgid "Listen"
 msgstr "Posłuchaj"
@@ -3517,6 +3549,11 @@ msgid "I can't talk now"
 msgstr "Nie mogę teraz mówić"
 
 #: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "KBc0tZ"
+msgid "Type instead"
+msgstr "Pisz zamiast mówić"
+
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
 msgid "I can talk now"
 msgstr "Mogę już mówić"
@@ -3527,14 +3564,9 @@ msgid "Say it instead"
 msgstr "Powiedz to zamiast pisać"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "iFYEjY"
-msgid "The microphone is blocked."
-msgstr "Dostęp do mikrofonu jest zablokowany."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "NTpdCz"
-msgid "We can't use your microphone."
-msgstr "Nie możemy użyć twojego mikrofonu."
+msgctxt "uTDJ3g"
+msgid "We can't use your microphone, so type what you'd say."
+msgstr "Nie możemy skorzystać z twojego mikrofonu, więc napisz to, co chcesz powiedzieć."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -3829,15 +3861,14 @@ msgid "Questions about this lesson"
 msgstr "Pytania o tę lekcję"
 
 #: src/questions/lesson-question-thread.tsx
+msgctxt "qrX_U9"
+msgid "Ask {name} about any screen with a free account"
+msgstr "Z bezpłatnym kontem możesz pytać o treść każdego ekranu. Odpowie {name}"
+
+#: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} to kumpel do nauki z AI i może popełniać błędy."
-
-#: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "uTM1IU"
-msgid "Questions need a free account"
-msgstr "Do zadawania pytań potrzebujesz bezpłatnego konta"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3944,6 +3975,11 @@ msgstr "Zapytaj o to pytanie. Odpowie {name}"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Zapytaj o ten ekran. Odpowie {name}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Do zadawania pytań potrzebujesz bezpłatnego konta"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

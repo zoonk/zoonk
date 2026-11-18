@@ -11,16 +11,15 @@ type Vector = { x: number; y: number };
 const HIT_RADIUS = 22;
 const HALO_RADIUS = 17;
 const HANDLE_RADIUS = 9;
-const FIXED_RADIUS = 5.5;
 
 export function BoardFixedCorner({ pixel }: { pixel: Vector }) {
   return (
     <circle
       aria-hidden="true"
-      className="fill-background stroke-foreground"
+      className="fill-foreground stroke-background"
       cx={pixel.x}
       cy={pixel.y}
-      r={FIXED_RADIUS}
+      r={HANDLE_RADIUS}
       strokeWidth={2}
     />
   );

@@ -305,7 +305,7 @@ describe("lesson activities", () => {
     await expect.element(field).toHaveValue("3");
   });
 
-  it("shows the close wrong number separately from the expected answer", async () => {
+  it("keeps the typed near miss distinct from the right answer", async () => {
     const { numberLine } = activityContentFixtures;
 
     openActivity({

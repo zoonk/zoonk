@@ -404,9 +404,9 @@ describe("money and society activities", () => {
   it("keeps the explored map count visible after check", async () => {
     openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
-    await expect.element(page.getByText(/Over 70 workers and no cholera deaths/u)).toBeVisible();
+    await expect.element(page.getByText("Over 70 workers and no cholera deaths")).toBeVisible();
     await page.getByRole("button", { name: "Poland Street workhouse" }).click();
-    await expect.element(page.getByText(/535 people lived here/u)).toBeVisible();
+    await expect.element(page.getByText("535 people lived here")).toBeVisible();
     await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
 
     await page
@@ -426,6 +426,26 @@ describe("money and society activities", () => {
     await expectVerdict("Not quite");
   });
 
+  it("cause and effect: the first link keeps the cards in place", async () => {
+    openActivity({ template: "causeEffectChain" });
+    const cause = chainNode("1920 Prairie plowed for wheat");
+    const effect = chainNode("1934 Dust storms");
+    const card = page.getByRole("figure");
+
+    const effectBounds = () => {
+      const { left, width } = effect.element().getBoundingClientRect();
+      return { left: left - card.element().getBoundingClientRect().left, width };
+    };
+
+    await expect.element(effect).toBeVisible();
+    const before = effectBounds();
+
+    await cause.click();
+    await effect.click();
+    await expect.element(page.getByText("1 of 2 links")).toBeVisible();
+    expect(effectBounds()).toStrictEqual(before);
+  });
+
   it("cause and effect: linking both causes to the storms is right", async () => {
     openActivity({ template: "causeEffectChain" });
     await chainNode("1920 Prairie plowed for wheat").click();
@@ -433,9 +453,42 @@ describe("money and society activities", () => {
     await chainNode("1931 Years of drought").click();
     await chainNode("1934 Dust storms").click();
     await expect.element(page.getByText("2 of 2 links")).toBeVisible();
+    const chain = page.getByRole("list", { name: "Causes and effects" });
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    const top = boardTop();
+
     await checkActivity();
     await expectVerdict("Correct!");
+    expect(boardTop()).toBe(top);
+
+    await expect
+      .element(page.getByText("Linked: Years of drought led to Dust storms."))
+      .not.toBeVisible();
+
     await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
+  });
+
+  it("cause and effect: Check keeps the board in place without a link notice", async () => {
+    openActivity({ content: chainQuestion, template: "causeEffectChain" });
+    const instruction = page.getByText("Pick a cause, then pick what it led to.");
+    const chain = page.getByRole("list", { name: "Causes and effects" });
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    await page.getByRole("radio", { name: "Plowing and drought together" }).click();
+    await expect.element(instruction).toBeVisible();
+    const top = boardTop();
+
+    await checkActivity();
+    await expectVerdict("Correct!");
+    expect(boardTop()).toBe(top);
+    await expect.element(instruction).not.toBeVisible();
   });
 
   it("cause and effect: a picked cause is named once, under the cards", async () => {

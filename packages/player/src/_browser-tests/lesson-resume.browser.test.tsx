@@ -131,7 +131,7 @@ describe("coming back to a lesson", () => {
     await expect.element(page.getByText("Reading it")).toBeVisible();
     expect(adapters.checkStep).not.toHaveBeenCalled();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
@@ -162,7 +162,7 @@ describe("coming back to a lesson", () => {
 
       renderLessonPlayer({ adapters, lesson, resume: [] });
 
-      await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
       await activate();
 
       start.resolve(
@@ -180,7 +180,7 @@ describe("coming back to a lesson", () => {
       await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
       await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
 
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
       await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     },
@@ -371,10 +371,10 @@ describe("coming back to a lesson", () => {
       lesson,
     });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 

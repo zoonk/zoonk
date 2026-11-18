@@ -110,7 +110,7 @@ export function ArgumentBuilderActivity({
 
           <ArgumentSlot
             clearLabel={t("Take the quote out")}
-            hint={t("Tap or drag the quote that best supports the claim")}
+            hint={t("Pick or drag the quote that best supports the claim")}
             isOpen={openPart === "evidence" && !isChecked}
             label={t("Evidence")}
             onClear={
@@ -131,7 +131,7 @@ export function ArgumentBuilderActivity({
             clearLabel={t("Take the reasoning out")}
             hint={
               openPart === "reasoning"
-                ? t("Tap or drag how the quote proves the claim")
+                ? t("Pick or drag how the quote proves the claim")
                 : t("Next: explain how the quote proves the claim")
             }
             isOpen={openPart === "reasoning" && !isChecked}

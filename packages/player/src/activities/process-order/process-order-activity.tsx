@@ -60,28 +60,22 @@ function StepMarks({
 }
 
 function OrderedStep({
-  isEven,
   position,
   result,
   step,
 }: {
-  /** Other steps carry a second line, so a step without one keeps their height. */
-  isEven: boolean;
   position: number;
   result?: StepResult;
   step: ProcessStep;
 }) {
   const t = useExtracted();
   const state = result && (result.learnerPosition === result.position ? "correct" : "incorrect");
-  const keepsRoom = isEven && !step.why;
 
   return (
     <li
       className={cn(
         ACTIVITY_CARD_CLASS,
         "flex gap-3 text-sm leading-snug",
-        // Two lines, their gap, the text's top room, the padding and the border.
-        keepsRoom && "min-h-[calc(2lh+2rem)]",
         state === "correct" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
         state === "incorrect" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
@@ -102,10 +96,10 @@ function OrderedStep({
         )}
       </div>
       {state === "correct" && (
-        <Check aria-hidden="true" className="text-success-text size-4 shrink-0 self-center" />
+        <Check aria-hidden="true" className="text-success-text mt-2 size-4 shrink-0" />
       )}
       {state === "incorrect" && (
-        <X aria-hidden="true" className="text-destructive-text size-4 shrink-0 self-center" />
+        <X aria-hidden="true" className="text-destructive-text mt-2 size-4 shrink-0" />
       )}
     </li>
   );
@@ -150,13 +144,7 @@ export function ProcessOrderActivity({
 
         <ol className="flex flex-col gap-2">
           {steps.map((step, index) => (
-            <OrderedStep
-              isEven={steps.some((other) => other.why)}
-              key={step.id}
-              position={index + 1}
-              result={results[index]}
-              step={step}
-            />
+            <OrderedStep key={step.id} position={index + 1} result={results[index]} step={step} />
           ))}
         </ol>
       </ActivityCanvas>

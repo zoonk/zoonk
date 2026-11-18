@@ -142,11 +142,11 @@ describe("exact lesson mistake practice", () => {
     const actions = openPractice(step);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await page.getByRole("radio").first().click();
-    await page.getByRole("button", { exact: true, name: "Confirm" }).click();
+    await page.getByRole("button", { exact: true, name: "Check" }).click();
     await page.getByRole("radio").first().click();
-    await page.getByRole("button", { exact: true, name: "Confirm" }).click();
+    await page.getByRole("button", { exact: true, name: "Check" }).click();
     await page.getByRole("radio").first().click();
-    await page.getByRole("button", { exact: true, name: "Confirm" }).click();
+    await page.getByRole("button", { exact: true, name: "Check" }).click();
     await page.getByRole("button", { exact: true, name: "See how it went" }).click();
 
     expect(actions.answer).toHaveBeenCalledWith(

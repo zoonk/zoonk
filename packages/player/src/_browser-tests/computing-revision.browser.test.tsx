@@ -75,9 +75,7 @@ describe("output belongs to the editor revision that ran", () => {
       await expect.element(run).toHaveAttribute("aria-busy", "true");
       await expect.element(run).toBeDisabled();
 
-      await expect
-        .element(page.getByRole("button", { exact: true, name: "Check" }))
-        .not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
       await act(async () => {
         vi.mocked(runInSandbox).mock.calls[1]?.[0].onMessage({
@@ -117,7 +115,7 @@ describe("output belongs to the editor revision that ran", () => {
 
       const reading = explanationStep({ text: "Read before running." });
       renderLessonPlayer({ lesson: buildLesson([reading, activityStep({ content })]) });
-      await page.getByRole("button", { exact: true, name: "Next" }).click();
+      await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
       if (template === "sqlPlayground") {
         await page.getByRole("textbox", { name: "Query" }).fill("SELECT name FROM countries;");
@@ -126,7 +124,7 @@ describe("output belongs to the editor revision that ran", () => {
       await page.getByRole("button", { exact: true, name: "Run" }).click();
       await pressOnPage("ArrowLeft");
       await expect.element(page.getByText(reading.content.text)).toBeVisible();
-      await page.getByRole("button", { exact: true, name: "Next" }).click();
+      await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
       if (template === "sqlPlayground") {
         await page.getByRole("textbox", { name: "Query" }).fill("SELECT name FROM countries;");
@@ -186,9 +184,7 @@ describe("output belongs to the editor revision that ran", () => {
       .element(page.getByText("You changed the code. Run it again to see the new output."))
       .toBeVisible();
 
-    await expect
-      .element(page.getByRole("button", { exact: true, name: "Check" }))
-      .not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
     await page.getByRole("button", { exact: true, name: "Run" }).click();
     await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();
@@ -224,9 +220,7 @@ describe("output belongs to the editor revision that ran", () => {
         .element(page.getByText("You changed the query. Run it again to see the new result."))
         .toBeVisible();
 
-      await expect
-        .element(page.getByRole("button", { exact: true, name: "Check" }))
-        .not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
       await page.getByRole("button", { exact: true, name: "Run" }).click();
       await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();

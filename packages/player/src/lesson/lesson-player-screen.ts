@@ -68,11 +68,7 @@ function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): Ques
     return "nextStep";
   }
 
-  if (step.kind === "summary") {
-    return "continue";
-  }
-
-  return state.position === state.queue.length - 1 ? "continue" : "next";
+  return "continue";
 }
 
 function getChallengeAction(
@@ -93,7 +89,7 @@ function getChallengeAction(
     return { action: "check", busy: false, disabled: false, label: "seeResult" };
   }
 
-  return { action: "continue", busy: false, disabled: !progress.pendingChoiceId, label: "confirm" };
+  return { action: "continue", busy: false, disabled: !progress.pendingChoiceId, label: "check" };
 }
 
 function getAnswerAction(state: LessonPlayerState, step: PlayableLibraryStep): LessonPrimaryAction {

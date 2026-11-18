@@ -168,9 +168,9 @@ export function CauseEffectChainActivity({
     <ActivityCanvas labelId={labelId}>
       {!isExploring && (
         <p
+          aria-hidden={isChecked}
           aria-live="polite"
-          aria-hidden={isLocked}
-          className={cn("text-muted-foreground text-sm text-pretty", isLocked && "invisible")}
+          className={cn("text-muted-foreground text-sm text-pretty", isChecked && "invisible")}
         >
           {notice || t("Pick a cause, then pick what it led to.")}
         </p>

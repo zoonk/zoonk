@@ -81,7 +81,7 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="-mx-2" ref={ref}>
+      <div ref={ref}>
         <BoardDrawing
           bounds={bounds}
           cornerLabel={(index) => t("Corner {name}", { name: cornerName(index) })}
