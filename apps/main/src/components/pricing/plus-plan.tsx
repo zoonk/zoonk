@@ -6,7 +6,7 @@ import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { type PriceInfo } from "@zoonk/utils/currency";
+import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
 import { PlanNextStep } from "./for-viewer";
@@ -17,7 +17,6 @@ import {
   PLAN_PRICE_CLASS,
   PlanPrice,
 } from "./plan-includes";
-import { formatPlanPrice } from "./plan-price";
 import { PlusBenefits } from "./plus-benefits";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
 import { SubscribeButton } from "./subscribe-button";
@@ -146,7 +145,10 @@ async function PlusPrices({
   }
 
   const monthly = (
-    <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
+    <PlanPrice
+      amount={formatPrice(monthlyPrice.amount, monthlyPrice.currency, locale)}
+      per={t("per month")}
+    />
   );
 
   if (!yearlyPrice || !monthlyEquivalent) {
@@ -160,10 +162,13 @@ async function PlusPrices({
       </Variant>
 
       <Variant className="flex flex-col gap-2" name={billingSwitch} value="yearly">
-        <PlanPrice amount={formatPlanPrice({ locale, price: yearlyPrice })} per={t("per year")} />
+        <PlanPrice
+          amount={formatPrice(yearlyPrice.amount, yearlyPrice.currency, locale)}
+          per={t("per year")}
+        />
         <p className="text-muted-foreground text-compact">
           {t.rich("That's <mono>{amount}</mono> a month.", {
-            amount: formatPlanPrice({ locale, price: monthlyEquivalent }),
+            amount: formatPrice(monthlyEquivalent.amount, monthlyEquivalent.currency, locale),
             mono: renderMono,
           })}
         </p>
@@ -228,7 +233,11 @@ export async function PlusPlan({
               {comparison && (
                 <span className="font-normal opacity-70">
                   {t("save {amount}", {
-                    amount: formatPlanPrice({ locale, price: comparison.savings }),
+                    amount: formatPrice(
+                      comparison.savings.amount,
+                      comparison.savings.currency,
+                      locale,
+                    ),
                   })}
                 </span>
               )}
