@@ -266,11 +266,20 @@ private fun Legend(
     }
 }
 
-/** Main's relative bands: a quieter day reads apart from a busier one even while the counts are small. */
+/**
+ * Main's relative bands of time studied: a shorter day reads apart from a longer one even while the
+ * minutes are few. A study day with no recorded time (older imported days) takes the lightest band.
+ */
 internal fun activityBand(
-    count: Long,
-    maximum: Long,
-): Int = if (count == 0L || maximum == 0L) 0 else maxOf(1, Math.ceil(count.toDouble() / maximum * ACTIVITY_SHADES.size).toInt())
+    studied: Boolean,
+    seconds: Long,
+    maximumSeconds: Long,
+): Int =
+    when {
+        !studied -> 0
+        maximumSeconds == 0L -> 1
+        else -> maxOf(1, Math.ceil(seconds.toDouble() / maximumSeconds * ACTIVITY_SHADES.size).toInt())
+    }
 
 /** Energy's 0–100% is absolute, so its bands are fixed; the strongest is full Energy alone. */
 internal fun energyBand(energy: Double?): Int =

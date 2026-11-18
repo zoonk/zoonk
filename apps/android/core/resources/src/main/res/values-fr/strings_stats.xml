@@ -6,7 +6,6 @@
   "stats_answer_count": "5fee7ebe4a2e2ef4479a707b080ce12a67923b15d66cc113f45a032e7deaacf8",
   "stats_answer_more": "155d47d293ba6c071e5d03055e8d5388d9bf6da37bac33dd687a1176037f4889",
   "stats_answers_to_count": "8a10022f1d50056030a44c7923cb852eb4d26fc7b1cf1aacf6b58645e1309714",
-  "stats_any_day": "6158458d56ddacf0afd1f2875410472f567c183320722b0ca42d40f57a76341f",
   "stats_any_time": "2e39c34f886fefbb895305f83f733c3734ac106afb962544420439185742020d",
   "stats_belt_comes_after": "6bf6ff9f1cae94cf2124e60dc475cfb17577ee1e6ca8ad51459ae32e72b0a331",
   "stats_belt_current": "d965f5b5f7d00eaba2cb2bf7b0766eb81dcbb28adcaf3341d7ea5f4bcf07c5d6",
@@ -167,7 +166,6 @@
     </plurals>
     <string name="stats_throughout_week">Au fil de la semaine</string>
     <string name="stats_throughout_day">Au fil de la journée</string>
-    <string name="stats_any_day">Aucun jour ne se démarque encore</string>
     <string name="stats_any_time">À tout moment</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Tu réussis le mieux le %1$s.</string>

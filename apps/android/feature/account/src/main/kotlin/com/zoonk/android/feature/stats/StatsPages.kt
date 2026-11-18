@@ -214,11 +214,11 @@ private fun OverviewContent(
                         headline = { Text(stringResource(R.string.stats_patterns)) },
                         modifier = Modifier.bleed(LIST_ITEM_INSET),
                         onClick = { context.open(StatsPage.Patterns) },
-                        trailing = {
-                            PatternValue(
+                        supporting = {
+                            Text(
                                 when (days) {
                                     is Verdict.Best -> stringResource(R.string.stats_best_on, weekdayName(days.key, locale))
-                                    is Verdict.Even -> stringResource(R.string.stats_any_day)
+                                    is Verdict.Even -> stringResource(R.string.stats_days_same)
                                     else -> stringResource(R.string.stats_not_yet)
                                 },
                             )
@@ -538,21 +538,24 @@ private fun ActivityCalendar(
     inspector: ChartInspector,
 ) {
     val locale = currentLocale()
-    val maximum = activity.days.maxOfOrNull { it.activitiesCompleted } ?: 0
+    val maximumSeconds = activity.days.maxOfOrNull { it.timeSpentSeconds } ?: 0
     val active = activity.days.count { it.activitiesCompleted > 0 }
     val days =
         activity.days.map { day ->
             val date = day.date.toJavaLocalDate()
             val lessons = day.lessonCompletions
+            val studied = day.activitiesCompleted > 0
+            val time = formatDuration(day.timeSpentSeconds, locale).takeIf { day.timeSpentSeconds > 0 }
+            val lessonCount =
+                pluralStringResource(R.plurals.stats_lesson_count, lessons.toInt(), whole(lessons, locale)).takeIf { lessons > 0 }
             CalendarDay(
                 date = date,
-                band = activityBand(day.activitiesCompleted, maximum),
+                band = activityBand(studied, day.timeSpentSeconds, maximumSeconds),
                 label = formatDate(date, locale, DateStyle.Day),
                 value =
                     when {
-                        lessons > 0 -> pluralStringResource(R.plurals.stats_lesson_count, lessons.toInt(), whole(lessons, locale))
-                        day.activitiesCompleted > 0 -> stringResource(R.string.stats_studied)
-                        else -> stringResource(R.string.stats_no_study)
+                        !studied -> stringResource(R.string.stats_no_study)
+                        else -> listOfNotNull(time, lessonCount).joinToString(" · ").ifEmpty { stringResource(R.string.stats_studied) }
                     },
             )
         }
@@ -796,7 +799,7 @@ private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) 
 @Composable
 private fun bestDayName(verdict: Verdict): String? =
     when (verdict) {
-        is Verdict.Even -> stringResource(R.string.stats_any_day)
+        is Verdict.Even -> stringResource(R.string.stats_days_same)
         is Verdict.Best -> weekdayName(verdict.key, currentLocale())
         Verdict.NotEnough -> null
     }
