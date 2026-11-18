@@ -63,9 +63,12 @@ import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.LocalBarNoteRoom
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
@@ -206,11 +209,18 @@ internal fun StepColumn(
 ) {
     BeforeFold(modifier) { beforeFold ->
         key(step) {
-            Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            val noteRoom = LocalBarNoteRoom.current
+            Box(
+                beforeFold.fillMaxSize().barNoteViewport(noteRoom).verticalScroll(rememberScrollState()),
+                contentAlignment = Alignment.TopCenter,
+            ) {
                 Column(
                     Modifier.taskColumn().padding(vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
-                ) { content() }
+                ) {
+                    content()
+                    BarNoteInPage(noteRoom)
+                }
             }
         }
     }

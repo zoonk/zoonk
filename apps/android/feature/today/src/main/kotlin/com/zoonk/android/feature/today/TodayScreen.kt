@@ -71,10 +71,12 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LearnerSummary
@@ -570,7 +572,12 @@ internal fun TodayPage(
     BeforeFold { beforeFold ->
         Column(beforeFold.fillMaxSize().padding(padding)) {
             Box(
-                modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .barNoteViewport(noteRoom)
+                        .verticalScroll(rememberScrollState()),
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Column(
@@ -583,6 +590,7 @@ internal fun TodayPage(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     content()
+                    BarNoteInPage(noteRoom)
                 }
             }
             if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, noteRoom = noteRoom, content = bottomBar)

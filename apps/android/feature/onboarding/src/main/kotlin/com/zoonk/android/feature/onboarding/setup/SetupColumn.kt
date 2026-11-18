@@ -40,10 +40,12 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 
@@ -145,7 +147,13 @@ private fun SetupColumnBody(
 
                 CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, barSlot)) {
                     Box(
-                        if (spread == null) Modifier.fillMaxSize().verticalScroll(scroll) else Modifier.fillMaxSize(),
+                        if (spread ==
+                            null
+                        ) {
+                            Modifier.fillMaxSize().barNoteViewport(noteRoom).verticalScroll(scroll)
+                        } else {
+                            Modifier.fillMaxSize()
+                        },
                         contentAlignment = Alignment.TopCenter,
                     ) {
                         Column(
@@ -161,8 +169,10 @@ private fun SetupColumnBody(
                                     Modifier.fillMaxSize()
                                 },
                             verticalArrangement = Arrangement.spacedBy(GAP),
-                            content = content,
-                        )
+                        ) {
+                            content()
+                            if (spread == null) BarNoteInPage(noteRoom)
+                        }
                     }
                 }
             }

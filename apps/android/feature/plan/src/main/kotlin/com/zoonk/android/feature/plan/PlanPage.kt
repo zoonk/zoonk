@@ -65,6 +65,8 @@ import com.zoonk.android.ui.scaffold.BarError
 import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.barNoteInPage
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -417,10 +419,10 @@ internal fun PlanContent(
     val list = rememberLazyListState()
     val main =
         @Composable { asideBeside: Boolean ->
-            val noteRoom = rememberBarNoteRoom()
+            val noteRoom = rememberBarNoteRoom(list)
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).barNoteViewport(noteRoom),
                     state = list,
                     contentPadding = PaddingValues(start = margin, end = margin, top = 8.dp, bottom = 32.dp + noteRoom.height),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -489,6 +491,7 @@ internal fun PlanContent(
                     if (!asideBeside) {
                         item(key = "next", contentType = "next") { NextAndMore(page, links, next = structure != null) }
                     }
+                    barNoteInPage(noteRoom)
                 }
                 if (page.isPaused) {
                     ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure, noteRoom = noteRoom) {

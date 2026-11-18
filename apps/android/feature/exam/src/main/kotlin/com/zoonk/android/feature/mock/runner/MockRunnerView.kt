@@ -82,8 +82,11 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.BarNoteInPage
+import com.zoonk.android.ui.scaffold.LocalBarNoteRoom
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -145,7 +148,15 @@ internal fun MockRunnerView(
         LaunchedEffect(beside) { if (beside) sheetOpen = false }
 
         // The whole pane scrolls, margins included, with the question held to a readable column.
-        Box(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+        val noteRoom = LocalBarNoteRoom.current
+        Box(
+            Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .barNoteViewport(noteRoom)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter,
+        ) {
             Column(Modifier.taskColumn()) {
                 RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
                 Column(Modifier.padding(vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -158,6 +169,7 @@ internal fun MockRunnerView(
                             MovesNote(run.moves)
                         }
                     }
+                    BarNoteInPage(noteRoom)
                 }
             }
         }
