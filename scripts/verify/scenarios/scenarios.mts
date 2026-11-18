@@ -228,7 +228,7 @@ export const SCENARIOS: Scenario[] = [
     evidence: ["[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))"],
     id: "mind-maps.offer.lifted",
     prerequisites: { persona: { name: "maya" } },
-    proof: "Without a map",
+    proof: "No map yet",
     reach: [],
     screen: "/mind-maps",
     sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
