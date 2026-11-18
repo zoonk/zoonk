@@ -3823,60 +3823,61 @@
         }
       }
     },
-    "With a map" : {
+    "With a map %lld" : {
+      "comment" : "Tab of chapter mind maps, with how many open",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Mindmap"
+            "value" : "Mit Mindmap %lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con mapa"
+            "value" : "Con mapa %lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec une carte mentale"
+            "value" : "Avec une carte mentale %lld"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con mappa"
+            "value" : "Con mappa %lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マップあり"
+            "value" : "マップあり（%lld）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "마인드맵 있음"
+            "value" : "마인드맵 있음 %lld개"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z mapą"
+            "value" : "Z mapą %lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com mapa"
+            "value" : "Com mapa %lld"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haritası olanlar"
+            "value" : "Haritası olanlar %lld"
           }
         }
       }
