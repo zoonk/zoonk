@@ -320,7 +320,6 @@ private fun CutHandle(
     }
 }
 
-/** Main's cell text: big in big cells, small in small ones; a smaller one where a long product or large text wouldn't fit. */
 private fun DrawScope.centered(
     measurer: TextMeasurer,
     text: String,

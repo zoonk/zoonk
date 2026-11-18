@@ -18,7 +18,7 @@ class LineCrossingModelTest {
             com.zoonk.android.ui.components.fittingTicks(0.0..375.0, frame = { value ->
                 val x = (value / 375 * 140).toFloat()
                 x to x + if (value == 0.0) 14f else 43f
-            })
+            }, gap = 4f)
         assertEquals(listOf(0.0, 200.0), ticks)
     }
 

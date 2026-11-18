@@ -54,13 +54,14 @@ data class GuessScale(
 
     fun fittedTicks(
         width: Int,
+        gap: Float,
         measure: (Double) -> Int,
     ): List<Double> =
         fittingTicks(min..max, frame = { value ->
             val size = measure(value)
             val left = (shareOf(value) * width - size / 2.0).coerceIn(0.0, maxOf(0.0, width - size.toDouble())).toFloat()
             left to left + size
-        }, values = { ticks(it) })
+        }, values = { ticks(it) }, gap = gap)
 
     companion object {
         const val POSITIONS = 200

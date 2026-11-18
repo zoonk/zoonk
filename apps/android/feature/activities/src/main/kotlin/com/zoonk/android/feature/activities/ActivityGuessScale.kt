@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.TICK_LABEL_GAP
 import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.displayDigits
@@ -270,7 +271,7 @@ private fun ScaleTicks(
         val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0)) }
         val width = constraints.maxWidth
         layout(width, placeables.maxOfOrNull { it.height } ?: 0) {
-            val shown = scale.fittedTicks(width) { value -> placeables[values.indexOf(value)].width }
+            val shown = scale.fittedTicks(width, TICK_LABEL_GAP.toPx()) { value -> placeables[values.indexOf(value)].width }
             placeables.forEachIndexed { index, placeable ->
                 if (values[index] in shown) {
                     val left =

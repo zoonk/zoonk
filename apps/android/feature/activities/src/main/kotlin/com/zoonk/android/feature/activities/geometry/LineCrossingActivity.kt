@@ -56,6 +56,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.ui.components.LinearScale
+import com.zoonk.android.ui.components.TICK_LABEL_GAP
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.joinSentences
@@ -285,7 +286,8 @@ private fun LineCrossingChart(
         Box(Modifier.fillMaxWidth().height(height)) {
             val x = LinearScale(domain.min.x..domain.max.x, left to right)
             val y = LinearScale(domain.min.y..domain.max.y, bottom to top)
-            val xLabels = measurer.fittedPlotTicks(x, axisStyle.copy(color = colors.muted)) { formatAmount(it, locale) }
+            val tickGap = with(density) { TICK_LABEL_GAP.toPx() }
+            val xLabels = measurer.fittedPlotTicks(x, axisStyle.copy(color = colors.muted), tickGap) { formatAmount(it, locale) }
             val pixel = { point: Vec -> Offset(x.toPixel(point.x), y.toPixel(point.y)) }
             val segment = { line: Line ->
                 val (from, to) = LineCrossingModel.segment(line, domain)
