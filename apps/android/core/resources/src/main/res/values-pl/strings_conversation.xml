@@ -98,6 +98,7 @@
   "conversation_opens_when_ready": "2a332bbac273071b8e07cb80ee2ab3a73cce266df692d9eda291f93850f0649a",
   "conversation_paused": "bcc331087ed7c2d87a8ab9e47aaa4a3b726b0b4aefa532087e56473fcea0a694",
   "conversation_paused_title": "a8b6d0c7b6c3619a1e9327e1571aeafda946c624170cf36c3ab85d10a5eaf486",
+  "conversation_phrase": "095438311880f1b9c51139cbc99bbf29acbbf91a03384049b6e8b4f1ee5650c8",
   "conversation_phrases": "06ece88c5ccc923134804a29075bf975f78d217da8dc577f5e370b442606ce49",
   "conversation_practice": "cc4e1b42330b45b7168bb233104d78d6600aa22abcc10db0b5f025bdfbac6252",
   "conversation_practice_call": "b57e3a2a5ced8a5404b8ec77ce8846a4aa583206a68b9c87817f46d62af8188e",
@@ -197,6 +198,8 @@
     <string name="conversation_type_reply">Wpisz odpowiedź</string>
     <string name="conversation_type_reply_hint">Lub wpisz odpowiedź</string>
     <string name="conversation_send">Wyślij</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">Zwrot, którego możesz użyć</string>
     <string name="conversation_phrases">Zwroty, których możesz użyć</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">Wskazówka: %1$s</string>

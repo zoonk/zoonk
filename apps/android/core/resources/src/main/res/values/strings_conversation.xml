@@ -29,6 +29,8 @@
     <string name="conversation_type_reply">Type your reply</string>
     <string name="conversation_type_reply_hint">Or type your reply</string>
     <string name="conversation_send">Send</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">A phrase you can use</string>
     <string name="conversation_phrases">Phrases you can use</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">Tip: %1$s</string>

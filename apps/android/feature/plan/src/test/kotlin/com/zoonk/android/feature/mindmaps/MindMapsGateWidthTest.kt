@@ -98,13 +98,13 @@ class MindMapsGateWidthTest {
         show()
         waitFor("You've used your mind maps")
         compose.waitForIdle()
-        val narrow = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val narrow = compose.onNodeWithText("No map yet").getBoundsInRoot().top
         compose.runOnIdle { width.value = 700.dp }
         compose.waitForIdle()
-        val widened = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val widened = compose.onNodeWithText("No map yet").getBoundsInRoot().top
         compose.runOnIdle { visit.value++ }
         compose.waitForIdle()
-        val freshWide = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val freshWide = compose.onNodeWithText("No map yet").getBoundsInRoot().top
         assertEquals("A held slot must not retain another width's height", freshWide, widened)
     }
 
@@ -118,10 +118,10 @@ class MindMapsGateWidthTest {
         waitFor("Create all")
         compose.runOnIdle { width.value = 700.dp }
         compose.waitForIdle()
-        val widened = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val widened = compose.onNodeWithText("No map yet").getBoundsInRoot().top
         compose.runOnIdle { visit.value++ }
         compose.waitForIdle()
-        val freshWide = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val freshWide = compose.onNodeWithText("No map yet").getBoundsInRoot().top
         assertEquals("A lifted slot must not keep another width's height", freshWide, widened)
     }
 }

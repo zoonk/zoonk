@@ -30,7 +30,7 @@
   "memory_undo_failed": "e7db3f07c39f328713b9e6373d667e9b2caea304d4484255f9ee29067d3e4f5c",
   "memory_undo_retry": "7109a9a582ecc8dedb96aad158ae985938fa551348401e697802890565a60ad7",
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
-  "memory_updated_more": "f8c2d97214f2be28037800d695c393137bc9afe6e75ee22f810e77810927fe11",
+  "memory_updated_more": "80d0da63e9f33e9646a7880960600015277717b141669a362fcde9637702687d",
   "memory_use": "3ffead7c761f1704ad003c12bd057f7a0564ae47e18238e3764703bd1a215372",
   "memory_use_description": "29a266a4e871998bdd8563df382d19caabc6c257d946f64f174edbf09270b857"
 }
@@ -68,7 +68,7 @@
     <string name="memory_sensitive_note">따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요.</string>
     <string name="memory_updated">메모리 업데이트:</string>
     <plurals name="memory_updated_more">
-        <item quantity="other">외 %d건</item>
+        <item quantity="other">그리고 변경 사항 %d개 더</item>
     </plurals>
     <string name="memory_undo">실행 취소</string>
     <string name="memory_change_undone">변경 사항을 되돌렸어요</string>

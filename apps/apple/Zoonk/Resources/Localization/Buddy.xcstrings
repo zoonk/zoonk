@@ -238,6 +238,7 @@
       }
     },
     "%@'s glasses" : {
+      "comment" : "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; %@ is the buddy's name. A name, not an action.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -290,7 +291,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ için gözlük seç"
+            "value" : "%@ için topladığın gözlükler"
           }
         }
       }

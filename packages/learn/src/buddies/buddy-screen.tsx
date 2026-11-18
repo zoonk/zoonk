@@ -157,7 +157,14 @@ function BuddyMenu({
 
         <DropdownMenuItem onClick={onGlasses}>
           <GlassesIcon aria-hidden="true" />
-          <span className="flex-1">{t("{buddy}'s glasses", { buddy: name })}</span>
+          <span className="flex-1">
+            {t({
+              description:
+                "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.",
+              message: "{buddy}'s glasses",
+              values: { buddy: name },
+            })}
+          </span>
           <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
         </DropdownMenuItem>
 

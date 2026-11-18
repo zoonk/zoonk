@@ -89,6 +89,7 @@ fun TodayPracticeRows(
                     PracticeRow(
                         kind = LearnKind.Lesson,
                         title = stringResource(R.string.navigation_completed_lessons),
+                        description = stringResource(R.string.today_completed_lessons_line),
                     ) { navigate(AppRoute.CompletedLessons) }
                 }
             }

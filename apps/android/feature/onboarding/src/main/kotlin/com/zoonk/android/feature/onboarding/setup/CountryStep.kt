@@ -55,7 +55,7 @@ internal fun ColumnScope.CountryStep(
         suggested.ifEmpty { listOfNotNull(country.defaultCountry?.let { CountryChoice(it.code, it.name) }) }
     // A country from the full list comes back as the list's first row, picked.
     val shown = listOfNotNull(picked?.takeIf { pick -> listed.none { it.code == pick.code } }) + listed
-    val home = stringResource(R.string.settings_home_country)
+    val home = stringResource(R.string.country_home_tag)
     val announce = LocalOnboardingAnnounce.current
     val resources = LocalResources.current
     val title = stringResource(R.string.onboarding_variety_title)

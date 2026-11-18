@@ -329,7 +329,7 @@ export function useCallLimitLine(limit: CallLimit): LimitWords {
   return useComesBackLine(toCapLimit(limit));
 }
 
-/** Without `title`, its screen's title says what ran out, and this is only the line and the way on. */
+/** Without `title`, its screen's title says what ran out or that it came back, and this is only the line and the way on. */
 export function CallLimitNotice({
   limit,
   title,
@@ -338,11 +338,5 @@ export function CallLimitNotice({
   const reached = toCapLimit(limit);
   const comesBack = useComesBackLine(reached);
 
-  return (
-    <LimitNoticeBody
-      {...props}
-      limit={reached}
-      words={{ ...comesBack, title: comesBack.opened ? undefined : title }}
-    />
-  );
+  return <LimitNoticeBody {...props} limit={reached} words={{ ...comesBack, title }} />;
 }

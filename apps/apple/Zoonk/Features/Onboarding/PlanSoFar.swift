@@ -157,7 +157,10 @@ struct PlanFact: Identifiable, Equatable {
           LocalizedStringResource("\(Locale.current.languageName($0)) level", table: "Plan")
         }
           ?? LocalizedStringResource(
-            "Level", table: "Onboarding", comment: "Row with the level the learner described"),
+            "What you know", table: "Onboarding",
+            comment:
+              "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\"."
+          ),
         value: $0)
     }
   }

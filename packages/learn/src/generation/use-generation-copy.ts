@@ -154,7 +154,7 @@ function useLevelTestBankCopy(): KindCopy<"levelTestBank"> {
     name: t("Preparing your level test"),
     phases: {
       bank: {
-        label: t("Writing the level test questions"),
+        label: t("Getting the questions ready"),
         lines: [
           t("Choosing texts from beginner to advanced…"),
           t("Writing the reading questions…"),

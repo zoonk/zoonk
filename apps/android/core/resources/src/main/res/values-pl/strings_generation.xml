@@ -18,7 +18,7 @@
   "generation_goal_line_1": "e9e28d9b3540bad25383c69f309df3acd1824870c02f9a71a3ebc2cf8d3fdd6e",
   "generation_goal_line_2": "8227bd681457ac82c9db627f6f6419d5292c34b7614498221ad18e60490f3810",
   "generation_level_test": "ee6372803b65748efd7b59610b96c2836de8d490419041733bce655893c36d4c",
-  "generation_level_test_bank": "516f02b4d86fefd673a901a443f8b42732e3d92d7d9fc1538ac9eac5fa64f591",
+  "generation_level_test_bank": "220b64462cc74da27360d8e2b7a4be241d4f09957922ef48efc8530159888856",
   "generation_level_test_bank_line_1": "6bbdc8bbbeab0ff38287d1cc9e2e280a2ee3e83fc7eb49d2b93ffcf44cf75ff6",
   "generation_level_test_bank_line_2": "45be3d0bb9705ee4976197ff63bff3e91fadbb6caff1ee6ebc7c11aaa9c59e6f",
   "generation_level_test_bank_line_3": "110724772de07f24423085e77ab6476a13cd3443e5232f04cc0f0ed93f0caecc",
@@ -108,7 +108,7 @@
     <string name="generation_first_lesson_day_line_2">Wybieramy, od czego zacząć…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Przygotowujemy twój test poziomujący</string>
-    <string name="generation_level_test_bank">Przygotowujemy pytania do testu poziomującego</string>
+    <string name="generation_level_test_bank">Przygotowujemy pytania</string>
     <string name="generation_level_test_bank_line_1">Wybieramy teksty od poziomu początkującego do zaawansowanego…</string>
     <string name="generation_level_test_bank_line_2">Przygotowujemy pytania do tekstu…</string>
     <string name="generation_level_test_bank_line_3">Przygotowujemy pytania do nagrania…</string>

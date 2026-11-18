@@ -313,7 +313,7 @@ private fun Phrases(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
-        SectionTitle(stringResource(R.string.conversation_phrases))
+        SectionTitle(stringResource(if (conversation.hints.size == 1) R.string.conversation_phrase else R.string.conversation_phrases))
         conversation.hints.forEachIndexed { index, hint ->
             if (index > 0) HorizontalDivider()
             Text(

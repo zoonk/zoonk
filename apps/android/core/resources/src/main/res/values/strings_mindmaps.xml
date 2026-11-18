@@ -26,8 +26,8 @@
     <string name="mindmaps_shown_as_text">Shown as text</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="one">%1$s lesson gets written first and counts toward your free lessons.</item>
-        <item quantity="other">%1$s lessons get written first and count toward your free lessons.</item>
+        <item quantity="one">Writes %1$s lesson first, from your free lessons</item>
+        <item quantity="other">Writes %1$s lessons first, from your free lessons</item>
     </plurals>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
@@ -63,14 +63,17 @@
     <string name="mindmaps_viewer_hint">Pinch, scroll or use + and - to zoom; drag or use the arrows to move.</string>
     <string name="mindmaps_study">Study mind maps</string>
     <string name="mindmaps_create_all">Create all</string>
-    <string name="mindmaps_other_chapters">Without a map</string>
-    <string name="mindmaps_free_lessons_note">Making one of these maps writes its lessons first, and they count toward your free lessons.</string>
+    <!-- Heading over the chapters whose mind map hasn't been made yet. -->
+    <string name="mindmaps_other_chapters">No map yet</string>
+    <string name="mindmaps_free_lessons_note">Making a map writes its chapter\'s lessons first, from your free lessons.</string>
     <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">%1$s lesson to write</item>
-        <item quantity="other">%1$s lessons to write</item>
+        <item quantity="one">Writes %1$s lesson first</item>
+        <item quantity="other">Writes %1$s lessons first</item>
     </plurals>
-    <string name="mindmaps_tab_chapters">With a map</string>
-    <string name="mindmaps_tab_lessons">Lessons</string>
+    <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
+    <string name="mindmaps_tab_chapters">Chapter maps</string>
+    <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->
+    <string name="mindmaps_tab_lessons">Lesson maps</string>
     <string name="mindmaps_tab_saved">Saved</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->
     <plurals name="mindmaps_tab_spoken">

@@ -206,8 +206,14 @@ function useTabLabels(): Record<MindMapTab, string> {
   const t = useExtracted();
 
   return {
-    chapters: t("With a map"),
-    lessons: t("Lessons"),
+    chapters: t({
+      description: "A tab's name: the mind maps of the goal's chapters, one per chapter.",
+      message: "Chapter maps",
+    }),
+    lessons: t({
+      description: "A tab's name: the small mind maps of single lessons, grouped by chapter.",
+      message: "Lesson maps",
+    }),
     saved: t({
       description: "A tab's name: the list of mind maps the learner saved.",
       id: "mindMapsSavedTab",

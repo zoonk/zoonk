@@ -64,7 +64,8 @@ final class HeldSlotTests: XCTestCase {
     }
   }
 
-  /// Its title goes when the day comes, in the room it had, so the centered screen stays still.
+  /// Its title says the call time is back when the day comes, in the room the old one had, so
+  /// the centered screen stays still.
   func testARefusedCallScreenKeepsItsPlaceAtTheInstant() async throws {
     for tier in [LearnerTier.plus, .free] {
       let limit = HelpLimit.usedUp(tier: tier, availableAt: .now.addingTimeInterval(1.5))
@@ -79,7 +80,8 @@ final class HeldSlotTests: XCTestCase {
       let noMovementWindow: Duration = .seconds(2)
       try await Task.sleep(for: noMovementWindow)
 
-      XCTAssertNil(limit.words(.callTime).title)
+      XCTAssertEqual(
+        limit.words(.callTime).title.map { String(localized: $0) }, "Your call time is back")
       XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
       window.isHidden = true
     }

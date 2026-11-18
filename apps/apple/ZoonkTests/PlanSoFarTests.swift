@@ -26,11 +26,11 @@ final class PlanSoFarTests: XCTestCase {
     XCTAssertEqual(String(localized: level.label), "Spanish level")
   }
 
-  func testAnotherGoalsLevelIsCalledLevel() throws {
+  func testAnotherGoalsLevelIsCalledWhatYouKnow() throws {
     let facts = PlanFact.all(of: try goal(kind: "learn"), today: "2026-11-18")
     let level = try XCTUnwrap(facts.first { $0.id == "level" })
 
-    XCTAssertEqual(String(localized: level.label), "Level")
+    XCTAssertEqual(String(localized: level.label), "What you know")
   }
 
   private func goal(kind: String, targetLanguage: String? = nil) throws

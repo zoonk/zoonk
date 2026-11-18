@@ -505,7 +505,6 @@ msgstr "예정"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
-#: src/mind-maps/mind-maps-screen.tsx
 #: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
 msgid "Lessons"
@@ -1230,7 +1229,6 @@ msgid "Choose your buddy"
 msgstr "짝꿍 고르기"
 
 #: src/appearance/home-country-setting.tsx
-#: src/country/country-picker.tsx
 msgctxt "h4cg3V"
 msgid "Where you live"
 msgstr "사는 나라"
@@ -1286,6 +1284,7 @@ msgctxt "16z6WC"
 msgid "What {buddy} remembers"
 msgstr "{buddy}(이)가 기억하는 것"
 
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
 msgctxt "86EPQq"
@@ -1625,8 +1624,6 @@ msgid "Copy link"
 msgstr "링크 복사"
 
 #: src/certificates/certificate-details.tsx
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "레벨"
@@ -2598,6 +2595,12 @@ msgctxt "odE1Ih"
 msgid "Completed lessons"
 msgstr "완료한 레슨"
 
+#. The line under Completed lessons in Practice anytime.
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "jlhait"
+msgid "Do a lesson again"
+msgstr "레슨 다시 하기"
+
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
@@ -2939,6 +2942,12 @@ msgstr "저장했어요. 계획에서 바꿀 수 있어요."
 msgctxt "WOyCjS"
 msgid "{country}, where you live"
 msgstr "{country}, 현재 사는 나라"
+
+#. Tag beside the country the learner said they live in, in a list of countries
+#: src/country/country-picker.tsx
+msgctxt "pQl5LF"
+msgid "You live here"
+msgstr "여기에 살아요"
 
 #: src/country/country-picker.tsx
 msgctxt "Gw94lo"
@@ -4537,9 +4546,9 @@ msgid "Preparing your level test"
 msgstr "레벨 테스트를 준비하고 있어요"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "ebo_zh"
-msgid "Writing the level test questions"
-msgstr "레벨 테스트 문제를 만들고 있어요"
+msgctxt "A5uGfq"
+msgid "Getting the questions ready"
+msgstr "문제를 준비하고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "CUwgbT"
@@ -5663,6 +5672,12 @@ msgctxt "fZ-NXt"
 msgid "Calls need a free account"
 msgstr "대화하려면 무료 계정이 필요해요"
 
+#. The title over "You can try again now." once a call the learner's call time stopped can be made again.
+#: src/language/conversation/call-limit-message.tsx
+msgctxt "IvKi9v"
+msgid "Your call time is back"
+msgstr "다시 대화할 수 있어요"
+
 #: src/language/conversation/call-objectives.tsx
 #: src/language/conversation/conversation-live.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -5671,9 +5686,9 @@ msgid "Goals of the call"
 msgstr "대화 목표"
 
 #: src/language/conversation/call-phrases.tsx
-msgctxt "OelCmv"
-msgid "Phrases you can use"
-msgstr "쓸 수 있는 표현"
+msgctxt "L4PVup"
+msgid "{count, plural, one {A phrase you can use} other {Phrases you can use}}"
+msgstr "{count, plural, =1 {쓸 수 있는 표현 한 가지} other {쓸 수 있는 표현들}}"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "ll0AMp"
@@ -6365,9 +6380,9 @@ msgid "Skip the test"
 msgstr "테스트 건너뛰기"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "fLPXYn"
-msgid "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once."
-msgstr "사용하는 언어로 된 {language} 테스트가 아직 없어 지금 문제를 만들고 있어요. 보통 1~2분 정도 걸리고, 이번 한 번만 기다리면 돼요."
+msgctxt "ucHaxO"
+msgid "We're writing the questions for the {language} test now. It takes a minute or two, and only this once."
+msgstr "{language} 레벨 테스트 문제를 만들고 있어요. 처음 한 번만 진행되며 1~2분 정도 걸려요."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -7019,9 +7034,9 @@ msgid "Memory updated:"
 msgstr "메모리 업데이트:"
 
 #: src/memory/memory-updated.tsx
-msgctxt "Kj5nOZ"
-msgid "{count, plural, one {and # more} other {and # more}}"
-msgstr "{count, plural, other {외 #건}}"
+msgctxt "4djuRG"
+msgid "{count, plural, one {and # more change} other {and # more changes}}"
+msgstr "{count, plural, =1 {그리고 변경 사항 #개 더} other {그리고 변경 사항을 #개 더}}"
 
 #: src/memory/memory-updated.tsx
 msgctxt "to7ZbS"
@@ -7065,14 +7080,14 @@ msgid "Create"
 msgstr "만들기"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, other {만들 레슨 #개}}"
+msgctxt "E0OtxV"
+msgid "{count, plural, one {Writes # lesson first} other {Writes # lessons first}}"
+msgstr "{count, plural, =1 {레슨 #개부터 만들어요} other {레슨 #개를 먼저 만들어요}}"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, other {레슨 #개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.}}"
+msgctxt "hw0Ba_"
+msgid "{count, plural, one {Writes # lesson first, from your free lessons} other {Writes # lessons first, from your free lessons}}"
+msgstr "{count, plural, =1 {무료 레슨에서 레슨 #개부터 만들어요} other {무료 레슨에서 레슨 #개를 먼저 만들어요}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
@@ -7203,6 +7218,7 @@ msgctxt "RNV4nB"
 msgid "Study mind maps"
 msgstr "마인드맵 공부하기"
 
+#. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
 msgid "Chapter maps"
@@ -7243,10 +7259,11 @@ msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "더 이상 볼 수 없음"
 
+#. A tab's name: the small mind maps of single lessons, grouped by chapter.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "YvO5Tq"
-msgid "With a map"
-msgstr "마인드맵 있음"
+msgctxt "vV6CgL"
+msgid "Lesson maps"
+msgstr "레슨 마인드맵"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7265,14 +7282,15 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, other {지금 마인드맵을 #개 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "_tV21i"
-msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
-msgstr "이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
+msgctxt "5LdPED"
+msgid "Making a map writes its chapter's lessons first, from your free lessons."
+msgstr "마인드맵을 만들려면 먼저 무료 레슨에서 해당 챕터의 레슨을 만들어요."
 
+#. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "uPTv7C"
-msgid "Without a map"
-msgstr "마인드맵 없음"
+msgctxt "TeRns5"
+msgid "No map yet"
+msgstr "아직 마인드맵 없음"
 
 #: src/mind-maps/not-made-yet.tsx
 #: src/syllabus/subject-screen.tsx
@@ -7788,25 +7806,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {답한 문제 #개} other {답한 문제 #개}}"
 
 #: src/mock/mock-answer-sheet.tsx
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "서술형"
-
-#: src/mock/mock-answer-sheet.tsx
-#: src/mock/mock-review.tsx
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "{number}번 문제"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, 다시 볼 문제로 표시됨"
-
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
 msgid "Later questions"
 msgstr "뒤쪽 문제"
@@ -7844,7 +7843,7 @@ msgctxt "cFcHmf"
 msgid "Answer sheet"
 msgstr "답안지"
 
-#. Short label of a small button that opens the mock exam's answer sheet.
+#. Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "OWfUXC"
 msgid "Sheet"
@@ -7932,6 +7931,14 @@ msgstr "보통 걸리는 시간"
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "약 {time}"
+
+#: src/mock/mock-chooser-picked.tsx
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "서술형"
 
 #: src/mock/mock-chooser-picked.tsx
 msgctxt "TX7Ut7"
@@ -8634,6 +8641,12 @@ msgid "Question {number} · {area}"
 msgstr "문제 {number} · {area}"
 
 #: src/mock/mock-review.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "{number}번 문제"
+
+#: src/mock/mock-review.tsx
 msgctxt "lN9qqG"
 msgid "Partly right: it earned part of its points."
 msgstr "일부가 맞아 부분 점수를 받았어요."
@@ -8788,6 +8801,12 @@ msgstr "과제마다 실제 시험처럼 면접관과 실시간으로 대화해�
 msgctxt "eBhrqS"
 msgid "{score} of {total}"
 msgstr "{score} / {total}"
+
+#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#: src/mock/use-question-cell-label.ts
+msgctxt "HmJ6DK"
+msgid "{question}, marked for review"
+msgstr "{question}, 다시 볼 문제로 표시됨"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9333,6 +9352,13 @@ msgstr "설정 안 됨"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "목표"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "이미 아는 것"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx

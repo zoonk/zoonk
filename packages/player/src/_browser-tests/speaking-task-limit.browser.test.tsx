@@ -80,7 +80,7 @@ describe("a speaking task refused for call time", () => {
     await expect.element(first.getByRole("alert")).not.toBeInTheDocument();
   });
 
-  it("says only that the learner can try again once the call time comes back, under the Start that stayed", async () => {
+  it("says the call time is back and the learner can try again, under the Start that stayed", async () => {
     const onStart = vi.fn(async () => ({
       limit: {
         availableAt: new Date(Date.now() + 1500).toISOString(),
@@ -108,6 +108,7 @@ describe("a speaking task refused for call time", () => {
 
     await expect.element(task.getByText("You can try again now.")).toBeVisible();
     await expect.element(task.getByText("You've used your call time")).not.toBeInTheDocument();
+    await expect.element(task.getByText("Your call time is back")).toBeVisible();
     await expect.element(task.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
     await expect.element(task.getByRole("button", { name: "Start" })).toBeVisible();
   });

@@ -233,7 +233,7 @@ struct CountryPickerSheet: View {
 
   private var homeTag: Text {
     Text(
-      "Where you live", tableName: "Plan",
+      "You live here", tableName: "Plan",
       comment: "Tag beside the country the learner said they live in, in a list of countries")
   }
 

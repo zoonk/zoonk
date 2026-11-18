@@ -4,13 +4,17 @@ import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
-/** With enough answers and no day ahead, it says so in the Patterns page's words. */
+/** With enough answers and no day ahead, any day is the best one, as "Any time" says of the time. */
 export async function getBestDayName(
   verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
   if (verdict.kind === "even") {
     const t = await getExtracted();
-    return t("You answer about the same every day.");
+
+    return t({
+      description: "Best day when every day of the week scores about the same",
+      message: "Any day",
+    });
   }
 
   if (verdict.kind !== "best") {

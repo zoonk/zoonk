@@ -24,6 +24,7 @@ import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
+import { useQuestionCellLabel } from "./use-question-cell-label";
 
 function useSheetCountLine(): string {
   const t = useExtracted();
@@ -48,20 +49,17 @@ function QuestionCell({
   onPick: (position: number) => void;
   question: MockQuestion;
 }) {
-  const t = useExtracted();
   const { runner } = useMockScreen();
   const draft = runner.drafts[question.itemId];
   const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
 
-  const label = isEssay
-    ? t("Written part")
-    : t("Question {number}", { number: String(question.number) });
+  const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), question });
 
   return (
     <button
       aria-current={isCurrent ? "true" : undefined}
-      aria-label={draft?.flagged ? t("{question}, marked for review", { question: label }) : label}
+      aria-label={label}
       className={cn(
         "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
@@ -292,7 +290,8 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
         render={<Button className="with-aside:hidden shrink-0" size="sm" variant="outline" />}
       >
         {t({
-          description: "Short label of a small button that opens the mock exam's answer sheet.",
+          description:
+            'Short label of a small button that opens the mock exam\'s answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word.',
           message: "Sheet",
         })}
       </DrawerTrigger>

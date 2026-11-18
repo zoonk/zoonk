@@ -505,7 +505,6 @@ msgstr "À venir"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
-#: src/mind-maps/mind-maps-screen.tsx
 #: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
 msgid "Lessons"
@@ -1230,7 +1229,6 @@ msgid "Choose your buddy"
 msgstr "Choisis ton compagnon"
 
 #: src/appearance/home-country-setting.tsx
-#: src/country/country-picker.tsx
 msgctxt "h4cg3V"
 msgid "Where you live"
 msgstr "Là où tu vis"
@@ -1286,6 +1284,7 @@ msgctxt "16z6WC"
 msgid "What {buddy} remembers"
 msgstr "Ce dont {buddy} se souvient"
 
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
 msgctxt "86EPQq"
@@ -1625,8 +1624,6 @@ msgid "Copy link"
 msgstr "Copier le lien"
 
 #: src/certificates/certificate-details.tsx
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Niveau"
@@ -2598,6 +2595,12 @@ msgctxt "odE1Ih"
 msgid "Completed lessons"
 msgstr "Leçons terminées"
 
+#. The line under Completed lessons in Practice anytime.
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "jlhait"
+msgid "Do a lesson again"
+msgstr "Refaire une leçon"
+
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
@@ -2939,6 +2942,12 @@ msgstr "Enregistré. Tu peux modifier ce choix dans ton plan."
 msgctxt "WOyCjS"
 msgid "{country}, where you live"
 msgstr "{country}, là où tu vis"
+
+#. Tag beside the country the learner said they live in, in a list of countries
+#: src/country/country-picker.tsx
+msgctxt "pQl5LF"
+msgid "You live here"
+msgstr "Tu habites ici"
 
 #: src/country/country-picker.tsx
 msgctxt "Gw94lo"
@@ -4537,9 +4546,9 @@ msgid "Preparing your level test"
 msgstr "Préparation de ton test de niveau"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "ebo_zh"
-msgid "Writing the level test questions"
-msgstr "Préparation des questions du test de niveau"
+msgctxt "A5uGfq"
+msgid "Getting the questions ready"
+msgstr "Préparation des questions"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "CUwgbT"
@@ -5663,6 +5672,12 @@ msgctxt "fZ-NXt"
 msgid "Calls need a free account"
 msgstr "Un compte gratuit est nécessaire pour les appels"
 
+#. The title over "You can try again now." once a call the learner's call time stopped can be made again.
+#: src/language/conversation/call-limit-message.tsx
+msgctxt "IvKi9v"
+msgid "Your call time is back"
+msgstr "Tu as de nouveau du temps d’appel"
+
 #: src/language/conversation/call-objectives.tsx
 #: src/language/conversation/conversation-live.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -5671,9 +5686,9 @@ msgid "Goals of the call"
 msgstr "Objectifs de l’appel"
 
 #: src/language/conversation/call-phrases.tsx
-msgctxt "OelCmv"
-msgid "Phrases you can use"
-msgstr "Phrases que tu peux utiliser"
+msgctxt "L4PVup"
+msgid "{count, plural, one {A phrase you can use} other {Phrases you can use}}"
+msgstr "{count, plural, one {Une phrase à utiliser} other {Des phrases à utiliser}}"
 
 #: src/language/conversation/call-problem.tsx
 msgctxt "ll0AMp"
@@ -6365,9 +6380,9 @@ msgid "Skip the test"
 msgstr "Passer le test"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "fLPXYn"
-msgid "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once."
-msgstr "Le test de {language} est nouveau dans ta langue, alors ses questions sont en cours de préparation. Cela prend généralement une ou deux minutes, et seulement cette fois-ci."
+msgctxt "ucHaxO"
+msgid "We're writing the questions for the {language} test now. It takes a minute or two, and only this once."
+msgstr "On prépare les questions du test de {language}. Ça prend une ou deux minutes, et ça n’arrivera qu’une seule fois."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -7019,9 +7034,9 @@ msgid "Memory updated:"
 msgstr "Mémoire mise à jour :"
 
 #: src/memory/memory-updated.tsx
-msgctxt "Kj5nOZ"
-msgid "{count, plural, one {and # more} other {and # more}}"
-msgstr "{count, plural, other {et # de plus}}"
+msgctxt "4djuRG"
+msgid "{count, plural, one {and # more change} other {and # more changes}}"
+msgstr "{count, plural, one {et # autre modification} other {et # autres modifications}}"
 
 #: src/memory/memory-updated.tsx
 msgctxt "to7ZbS"
@@ -7065,14 +7080,14 @@ msgid "Create"
 msgstr "Créer"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, one {# leçon à préparer} other {# leçons à préparer}}"
+msgctxt "E0OtxV"
+msgid "{count, plural, one {Writes # lesson first} other {Writes # lessons first}}"
+msgstr "{count, plural, one {Prépare d’abord # leçon} other {Prépare d’abord # leçons}}"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {On prépare d’abord # leçon, qui est décomptée de tes leçons gratuites.} other {On prépare d’abord # leçons, qui sont décomptées de tes leçons gratuites.}}"
+msgctxt "hw0Ba_"
+msgid "{count, plural, one {Writes # lesson first, from your free lessons} other {Writes # lessons first, from your free lessons}}"
+msgstr "{count, plural, one {Prépare d’abord # leçon parmi tes leçons gratuites} other {Prépare d’abord # leçons parmi tes leçons gratuites}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
@@ -7203,6 +7218,7 @@ msgctxt "RNV4nB"
 msgid "Study mind maps"
 msgstr "Étudier les cartes mentales"
 
+#. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
 msgid "Chapter maps"
@@ -7243,10 +7259,11 @@ msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "Plus disponible"
 
+#. A tab's name: the small mind maps of single lessons, grouped by chapter.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "YvO5Tq"
-msgid "With a map"
-msgstr "Avec une carte mentale"
+msgctxt "vV6CgL"
+msgid "Lesson maps"
+msgstr "Cartes mentales des leçons"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7265,14 +7282,15 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, one {Tu peux créer # carte mentale de plus dès maintenant.} other {Tu peux créer # cartes mentales de plus dès maintenant.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "_tV21i"
-msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
-msgstr "Pour créer une de ces cartes, on prépare d’abord ses leçons, qui sont décomptées de tes leçons gratuites."
+msgctxt "5LdPED"
+msgid "Making a map writes its chapter's lessons first, from your free lessons."
+msgstr "Créer une carte mentale prépare d’abord les leçons du chapitre en utilisant tes leçons gratuites."
 
+#. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "uPTv7C"
-msgid "Without a map"
-msgstr "Sans carte mentale"
+msgctxt "TeRns5"
+msgid "No map yet"
+msgstr "Pas encore de carte mentale"
 
 #: src/mind-maps/not-made-yet.tsx
 #: src/syllabus/subject-screen.tsx
@@ -7788,25 +7806,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# réponse} one {# réponse} other {# réponses}}"
 
 #: src/mock/mock-answer-sheet.tsx
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "Partie écrite"
-
-#: src/mock/mock-answer-sheet.tsx
-#: src/mock/mock-review.tsx
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Question {number}"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, marquée pour révision"
-
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
 msgid "Later questions"
 msgstr "Questions suivantes"
@@ -7844,11 +7843,11 @@ msgctxt "cFcHmf"
 msgid "Answer sheet"
 msgstr "Feuille de réponses"
 
-#. Short label of a small button that opens the mock exam's answer sheet.
+#. Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "OWfUXC"
 msgid "Sheet"
-msgstr "Réponses"
+msgstr "Feuille"
 
 #: src/mock/mock-break.tsx
 msgctxt "zMR5Za"
@@ -7932,6 +7931,14 @@ msgstr "Durée habituelle"
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "Environ {time}"
+
+#: src/mock/mock-chooser-picked.tsx
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "Partie écrite"
 
 #: src/mock/mock-chooser-picked.tsx
 msgctxt "TX7Ut7"
@@ -8634,6 +8641,12 @@ msgid "Question {number} · {area}"
 msgstr "Question {number} · {area}"
 
 #: src/mock/mock-review.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Question {number}"
+
+#: src/mock/mock-review.tsx
 msgctxt "lN9qqG"
 msgid "Partly right: it earned part of its points."
 msgstr "Partiellement juste : cette réponse a rapporté une partie des points."
@@ -8788,6 +8801,12 @@ msgstr "Chaque tâche se déroule lors d’un appel en direct avec un examinateu
 msgctxt "eBhrqS"
 msgid "{score} of {total}"
 msgstr "{score} sur {total}"
+
+#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#: src/mock/use-question-cell-label.ts
+msgctxt "HmJ6DK"
+msgid "{question}, marked for review"
+msgstr "{question}, marquée pour révision"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9333,6 +9352,13 @@ msgstr "Non définie"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Objectif"
+
+#. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "TdP-3q"
+msgid "What you know"
+msgstr "Ce que tu sais"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/schedule-step.tsx

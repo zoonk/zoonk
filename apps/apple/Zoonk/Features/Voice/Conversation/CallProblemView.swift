@@ -23,7 +23,7 @@ struct CallProblemView: View {
 
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
-      // Once a limit's day comes its title goes, and the words keep the room they had.
+      // Once a limit's day comes its words change, and keep the room they had.
       GateScreen(title: title(now), symbol: symbol, held: limit?.isOpen(at: now) == false) {
         description(now)
       }
@@ -123,7 +123,7 @@ struct DroppedCallView: View {
   }
 
   /// What stopped the call, one title: only a lost connection is a call that dropped. Once the
-  /// cap's day has come nothing ran out, so it has none.
+  /// cap's day has come, it says the call time is back.
   private func title(_ now: Date) -> Text? {
     switch dropped.reason {
     case nil:
@@ -258,7 +258,7 @@ struct DroppedCallView: View {
 
 /// Each refusal's words, on its own screen or as why a dropped call can't go on.
 private enum CallRefusal {
-  /// None for a limit whose day has come: nothing ran out any more.
+  /// For a limit whose day has come, that the call time is back.
   static func title(_ failure: LiveCall.Failure, limit: HelpLimit?, now: Date = .now) -> Text? {
     switch failure {
     case .ended:

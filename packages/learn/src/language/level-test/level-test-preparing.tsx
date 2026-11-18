@@ -54,7 +54,7 @@ export function LevelTestPreparing({
           <OnboardingTitle>{t("Preparing your level test")}</OnboardingTitle>
           <OnboardingDescription>
             {t(
-              "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
+              "We're writing the questions for the {language} test now. It takes a minute or two, and only this once.",
               { language },
             )}
           </OnboardingDescription>

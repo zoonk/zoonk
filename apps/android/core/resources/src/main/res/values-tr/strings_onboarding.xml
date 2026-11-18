@@ -121,7 +121,7 @@
   "onboarding_language_test_new_alphabet": "ba559d32f9c177ca90c78dbc5e8362b5a3def8aced93b715ec95443ad79aa08c",
   "onboarding_language_test_play": "a5f557ba5a236ddae87c6e709ff753830d7c362ae7bd6eb1e216d149f86a7a59",
   "onboarding_language_test_play_again": "cab320e380d9f1ea91eda59247d91b8c831c905f4810cf15368df218af53e23e",
-  "onboarding_language_test_preparing_description": "0d4bca16581976b07ee949f0541a5d8eef50aa9199efa2cbd521add14dd21aed",
+  "onboarding_language_test_preparing_description": "dc2e2115078f89eb6920dea6207dd0f64880dd5f601b7ab93ad7ea77a5198f68",
   "onboarding_language_test_preparing_title": "2f230c19dedb46084ffc7695a5531e878bc3eb67c9cf26d1c788d9fe66b5ba10",
   "onboarding_language_test_reading": "7d5c4d036fd25eac8ec7a96ff29c8e9137edd163bba985fd899a3d0b5a7efc6b",
   "onboarding_language_test_say_it": "f003a1125f16219cfbb5fa4930597deebc1c910a5340920f14fde3137f5bba41",
@@ -350,7 +350,7 @@
   "onboarding_row_goal": "a59be5c00a84e8b7311ed10456ced582af37838d60690723a2ad6e6a0314ef41",
   "onboarding_row_language": "4d74cad54cfcceff2e929fd89f1db3c584d5883bc638ffbdb1ed1494acd07ef7",
   "onboarding_row_last_cutoff": "a06407f833e34c317632076b7e9969a90ec0194f6815c1c98b9bab0a92ebb2db",
-  "onboarding_row_level": "119cf94feda53e5682449bba9b6b415a388c48e8c98f11d5943f689a0a9f1ff8",
+  "onboarding_row_level": "6ae6c24be1eb08fe2c72b015d6aead347bc96ead90945707dd9a373140dbdc68",
   "onboarding_row_material": "5115e0ca3274d96cdc10937e4c24a50fedcd7abd7ea743c9902044484a491a17",
   "onboarding_row_material_note": "876b8fa4f94d9f7b7aaffd003f882c9f056186b45d22d8c328972bd21f905ac5",
   "onboarding_row_minutes_a_day": "8e0b47a6718989766fba7ed290a75afebe7e287e470d7b9f7f51b81bcf71a35a",
@@ -515,7 +515,8 @@
     <!-- A link to where a fact came from. %1$s is a site or document name. -->
     <string name="onboarding_source">Kaynak: %1$s</string>
     <string name="onboarding_row_goal">Hedef</string>
-    <string name="onboarding_row_level">Seviye</string>
+    <!-- Row with what the learner said they already know about their goal's subject, such as "I know a few things". -->
+    <string name="onboarding_row_level">Bildiklerin</string>
     <!-- A small mark beside a fact the learner stated themselves. -->
     <string name="onboarding_row_you_said">sen söyledin</string>
     <string name="onboarding_row_language">Dil</string>
@@ -672,7 +673,7 @@
     <string name="onboarding_language_test_use_app_in">Uygulamayı %1$s dilinde kullan</string>
     <string name="onboarding_language_test_preparing_title">Seviye tespit testini hazırlıyoruz</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">%1$s testi senin dilinde yeni olduğu için sorularını şimdi hazırlıyoruz. Bu genelde bir iki dakika sürüyor ve yalnızca bu sefer gerekiyor.</string>
+    <string name="onboarding_language_test_preparing_description">Şimdi %1$s testi için soruları hazırlıyoruz. Bir iki dakika sürer ve bunu yalnızca bir kez yapıyoruz.</string>
     <string name="onboarding_language_test_skip_note">Planın belirttiğin seviyeden başlar ve ilk çalışmalarına göre ayarlanır.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Dinlediğimi anlamadım</string>

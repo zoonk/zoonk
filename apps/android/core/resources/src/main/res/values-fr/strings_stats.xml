@@ -6,6 +6,7 @@
   "stats_answer_count": "5fee7ebe4a2e2ef4479a707b080ce12a67923b15d66cc113f45a032e7deaacf8",
   "stats_answer_more": "155d47d293ba6c071e5d03055e8d5388d9bf6da37bac33dd687a1176037f4889",
   "stats_answers_to_count": "8a10022f1d50056030a44c7923cb852eb4d26fc7b1cf1aacf6b58645e1309714",
+  "stats_any_day": "55923cd97ecb3ac27c3d473b3634c6b743ef0d110123d38bf0eea6cba9b2d2f7",
   "stats_any_time": "2e39c34f886fefbb895305f83f733c3734ac106afb962544420439185742020d",
   "stats_belt_black": "6a2756066ef4c40d2bebede81aaf6d2ebd6592b1961ee1838881c691f17647a4",
   "stats_belt_blue": "7672d6052477645df371b2545f6318b6bb6e8006382b63f699fbbe1e64c85d56",
@@ -113,7 +114,11 @@
     <string name="stats_belt_comes_after">La %1$s vient après la %2$s %3$s, à %4$s points de Puissance Mentale</string>
     <string name="stats_belt_earned">Obtenue</string>
     <string name="stats_belt_current">Actuelle</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">L’évolution de ton Score s’affiche après deux semaines d’étude</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
     <string name="stats_belt_coming">À venir</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">Blanche</string>
     <string name="stats_belt_yellow">Jaune</string>
     <string name="stats_belt_orange">Orange</string>
@@ -124,7 +129,6 @@
     <string name="stats_belt_red">Rouge</string>
     <string name="stats_belt_gray">Grise</string>
     <string name="stats_belt_black">Noire</string>
-    <string name="stats_trend_after_two_weeks">L’évolution de ton Score s’affiche après deux semaines d’étude</string>
     <string name="stats_today">Aujourd’hui</string>
     <string name="stats_days_at_full">Jours à 100 %</string>
     <string name="stats_energy_line">L’Énergie augmente à chaque leçon et baisse un peu les jours de pause.</string>
@@ -191,6 +195,8 @@
     <string name="stats_throughout_week">Au fil de la semaine</string>
     <string name="stats_throughout_day">Au fil de la journée</string>
     <string name="stats_any_time">À tout moment</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">N’importe quel jour</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Tu réussis le mieux le %1$s.</string>
     <string name="stats_days_same">Tes résultats sont à peu près les mêmes chaque jour.</string>

@@ -3,7 +3,7 @@
 {
   "today_add_to_today": "9534c74430271e6a9ebb9344ff3ffddc510c1a61d80e4f3b1a0f691443dfef3f",
   "today_adjust_your_plan": "8e3a5c0dfd3221cac8857c4c5b4bbf695818a2231cc6ad69cdcb48fd248e491d",
-  "today_already_know_this": "a129cbe426e9e7e6f73a44a37955be1288e5136938feada0b9272c530c0f7027",
+  "today_already_know_chapter": "37acd26458816f28210df3f3c804a2d17446a44968896e34e29fbc34b1db0abb",
   "today_behind_exam": "7b55b82e15e0a8cab17aa5d11374765e7378504ee81473264eab3a283ae00b20",
   "today_behind_goal": "eb2501d6cd7df2f3ef6873adb757459325f5610717a5328185d72f3f26bf55cf",
   "today_behind_kept": "a9fcd3ea3974406c39559e4814bc3307f64d6fc1eda6300002929b89f1d346a3",
@@ -14,6 +14,7 @@
   "today_coming_stalled": "90a3353e7c211de5f5faabc1fee1cccac4072aa96c163d4f0193f9e64ff9a1af",
   "today_coming_title": "4b85ad32e14b179ff8e21af16bfef336b81bb8c3f5f2f07d8529f3df32190da6",
   "today_coming_writing": "0cb41dfcc5b1a0cd008d2f4a6f9bd7636d278ee4da64e4a4e4497f0da5df95f0",
+  "today_completed_lessons_line": "5ad391f66a3bf7f9a8c9c8ffb1dd91919d03492b63476f1a5efb6d1b09eaf4d7",
   "today_continue_draft": "43adf5c979c09dfdfea91ea7979ac312a6e997f9c351be47eb8e8912e00240df",
   "today_continue_mock": "f9e1967605fc30916fe310803cad07a2d1966d71f2b4d3f50f4027374c069681",
   "today_continue_mock_detail": "8c91461462f3e29d8da41729c3991325a77aa3d5075756d3da65e3ec9caf953f",
@@ -48,7 +49,8 @@
   "today_mistakes_redo": "c53793107f5e8bdf4c05f908f0cc7fe4c65415808fe635660e5915afb4a1b9fd",
   "today_mistakes_return_tomorrow": "052a8946d4ea781649754978de08405fbe227f7c2144f1d9813ad25ef192ce88",
   "today_mistakes_tomorrow": "acedc1046c8adddd7c31be1b6f4ca5cb78bb8f90a5fe50555c03b86dcaedc9a8",
-  "today_more_count": "e25386ee87d51212b85170167cb6fa4d3e5680e96aa8e029017645c8803e8e4f",
+  "today_more_count": "850970a0f626f73c3800d57a93017f5da854b9a5fca9c15faf1fb7365874c5df",
+  "today_more_lessons": "c3dcc33ec20a572fc5fb453e3f780b4f304b4119ee7b85267cd5d7eaa55184b6",
   "today_more_time_a_day": "45d6cdadbde0956ab755a74d45726777c5fe5b5c8c1f455c720046f854f217bd",
   "today_next_suggestion": "fc2bd4a43d2f2f524059aa54aaff288b73e78ba68c1c7b95db7fa20813967aa8",
   "today_not_enough_time": "8572a3b1b0528dae6a31f7d7096db1e0ac3f67e9621446f83c92ec34717cc783",
@@ -194,10 +196,16 @@
         <item quantity="other">Pominięto %d</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d więcej</item>
-        <item quantity="few">+%d więcej</item>
-        <item quantity="many">+%d więcej</item>
-        <item quantity="other">+%d więcej</item>
+        <item quantity="one">jeszcze %d</item>
+        <item quantity="few">i %d więcej</item>
+        <item quantity="many">dodatkowo %d</item>
+        <item quantity="other">a do tego %d</item>
+    </plurals>
+    <plurals name="today_more_lessons">
+        <item quantity="one">jeszcze %d lekcja</item>
+        <item quantity="few">jeszcze %d lekcje</item>
+        <item quantity="many">jeszcze %d lekcji</item>
+        <item quantity="other">i dodatkowo %d lekcji</item>
     </plurals>
     <!-- Folds the session's later steps back under today_more_count. -->
     <string name="today_show_less">Pokaż mniej</string>
@@ -273,10 +281,12 @@
     <string name="today_see_day_mock">Zobacz egzamin próbny (%1$s)</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="today_practice_with_buddy">Ćwicz z: %1$s</string>
-    <string name="today_already_know_this">Już to znasz?</string>
+    <string name="today_already_know_chapter">Znasz już ten rozdział?</string>
     <string name="today_practice_anytime">Ćwicz, kiedy chcesz</string>
     <string name="today_mistakes_notebook">Zeszyt błędów</string>
     <string name="today_mistakes_redo">Popraw błędne odpowiedzi</string>
+    <!-- The line under Completed lessons in Practice anytime. -->
+    <string name="today_completed_lessons_line">Zrób lekcję jeszcze raz</string>
     <string name="today_mistakes_return_tomorrow">Dzisiejsze błędy wrócą jutro</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d do przećwiczenia</item>

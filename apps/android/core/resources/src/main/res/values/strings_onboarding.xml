@@ -79,7 +79,8 @@
     <string name="onboarding_source">Source: %1$s</string>
 
     <string name="onboarding_row_goal">Goal</string>
-    <string name="onboarding_row_level">Level</string>
+    <!-- Row with what the learner said they already know about their goal's subject, such as "I know a few things". -->
+    <string name="onboarding_row_level">What you know</string>
     <!-- A small mark beside a fact the learner stated themselves. -->
     <string name="onboarding_row_you_said">you said</string>
     <string name="onboarding_row_language">Language</string>
@@ -241,7 +242,7 @@
     <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
     <string name="onboarding_language_test_preparing_title">Preparing your level test</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">The %1$s test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.</string>
+    <string name="onboarding_language_test_preparing_description">We\'re writing the questions for the %1$s test now. It takes a minute or two, and only this once.</string>
     <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first sessions fine-tune it.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>

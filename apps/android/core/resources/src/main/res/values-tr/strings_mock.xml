@@ -63,7 +63,7 @@
   "mock_section_number": "bd03f7c4178b727c613b8cc40a7c66bf74d91018dedc9875f568436f6eac46f1",
   "mock_sections": "07b60af3daf2eb8ba6e95fc55bb19403667704536a3d40e5a0055d11afbb725a",
   "mock_see_result": "1889da3fe6e02cfd3a517f3fc43dce82f4e9cafa6037b0891e3e4809d2a2f6e7",
-  "mock_sheet": "b20d2deb59ac5f914f5a67c2b47a7fbe9cbc47b7052912afdc144f69d575be42",
+  "mock_sheet": "6ee52f54fe0ca96c1c8272b9d7743ce06127324d2adf919c2344ac0430b64bb9",
   "mock_speaking": "38e52dfa62c0f36fd950679fcc8119e8f823b5877088483d00ad950be55806e5",
   "mock_speaking_all_done": "6a6b14c348b5eea9dd7460863b9246e5eb7b82bb9e04cd17753c12f272cbc3b4",
   "mock_speaking_done": "3330f8b9de791e5b3eaf285b6d14a7e297a6b1a7cc3204b518de7fa36aa56bd7",
@@ -177,8 +177,8 @@
     <string name="mock_hand_in_final">Bundan sonra cevaplarını değiştiremezsin.</string>
     <string name="mock_keep_answering">Cevaplamaya devam et</string>
     <string name="mock_hand_in">Teslim et</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
-    <string name="mock_sheet">Cevaplar</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
+    <string name="mock_sheet">Cevap</string>
     <string name="mock_answer_sheet">Cevap kağıdı</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -197,6 +197,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d. soru</string>
     <string name="mock_cell_answered">cevaplandı</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, tekrar bakmak için işaretlendi</string>
     <string name="mock_sections">Oturumlar</string>
     <string name="mock_section_number">%1$d. oturum</string>

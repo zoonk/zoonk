@@ -11170,61 +11170,61 @@
         }
       }
     },
-    "Tap an element to add its first atom." : {
+    "Tap an element to start your molecule." : {
       "comment" : "An empty molecule build",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf ein Element, um sein erstes Atom hinzuzufügen."
+            "value" : "Tippe auf ein Element, um dein Molekül zu starten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca un elemento para agregar su primer átomo."
+            "value" : "Toca un elemento para empezar tu molécula."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuie sur un élément pour ajouter son premier atome."
+            "value" : "Appuie sur un élément pour commencer ta molécule."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca un elemento per aggiungere il primo atomo."
+            "value" : "Tocca un elemento per iniziare la tua molecola."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "元素をタップして、最初の原子を追加します。"
+            "value" : "元素をタップして分子を作り始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "원소를 탭해 첫 번째 원자를 추가하세요."
+            "value" : "원소를 눌러 분자 만들기를 시작해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotknij pierwiastka, aby dodać jego pierwszy atom."
+            "value" : "Dotknij pierwiastka, aby zacząć budować cząsteczkę."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em um elemento para adicionar o primeiro átomo."
+            "value" : "Toque em um elemento para começar sua molécula."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İlk atomunu eklemek için bir elemente dokun."
+            "value" : "Molekülünü oluşturmaya başlamak için bir elemente dokun."
           }
         }
       }

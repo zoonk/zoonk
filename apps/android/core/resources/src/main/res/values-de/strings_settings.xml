@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "country_home_tag": "62761ffc4cb3fc96efd2921155e50a5afe022f5cfec101d9b2192f34b44596cc",
   "settings_account_deleted": "4e985d272495e7aa641558f478082a6469ace3ff8bd10482b0a8eabbbbbbbaee",
   "settings_account_deleted_title": "aa32fa33230cac3b79f35ac252f84c9aeb70448818fa59737e222a95e905282f",
   "settings_apple_not_revoked": "319cf665d40340126066d8fd22f90680bb1704dfbe0facb105a16779fe99eb6b",
@@ -100,6 +101,8 @@
     <string name="settings_preferences_share_usage_data_description">Zeigt uns, wie du Zoonk nutzt, damit wir die App verbessern können</string>
     <!-- A setting in Preferences: the country the learner lives in. -->
     <string name="settings_home_country">Wo du lebst</string>
+    <!-- Tag beside the country the learner said they live in, in a list of countries -->
+    <string name="country_home_tag">Du wohnst hier</string>
     <!-- Under that setting. -->
     <string name="settings_home_country_why">Damit Beispiele und Prüfungen zu deinem Land passen.</string>
     <!-- The tutor's offer to save where the learner lives: what it changes. -->

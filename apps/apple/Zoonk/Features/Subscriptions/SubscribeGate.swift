@@ -214,6 +214,8 @@ extension HelpLimit {
       LimitWords(title: Self.guestTitle(kind))
     case .usedUp where kind == .lessons && isOpen(at: now):
       Self.freeLessonReady
+    case .usedUp where kind == .callTime && isOpen(at: now):
+      LimitWords(title: Self.callTimeBack, line: Self.tryAgainNow)
     // Once the day has come nothing ran out, so no title says it did.
     case .usedUp where isOpen(at: now):
       LimitWords(line: Self.tryAgainNow)
@@ -237,6 +239,12 @@ extension HelpLimit {
 
   static let freeLessonReady = LimitWords(
     title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
+
+  private static let callTimeBack = LocalizedStringResource(
+    "Your call time is back", table: "Subscriptions",
+    comment:
+      "The title over \"You can try again now.\" once a call the learner's call time stopped can be made again."
+  )
 
   private static let tryAgainNow = LocalizedStringResource(
     "You can try again now.", table: "Subscriptions",

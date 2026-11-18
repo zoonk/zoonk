@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "country_home_tag": "3cbbd5a3f1951837152a58846e7dd3b1439e5edcaffdc705f623f7a2df459cfb",
   "settings_account_deleted": "0b70d74b60a0dc12e8574e9f035618c57dd8cbf748b1a1bf696f7f5c61284bce",
   "settings_account_deleted_title": "f3d949ade624f7f9fbcb8a1d3c5b02636ae2c6a7d8dcbfe2f547f24246ce3954",
   "settings_apple_not_revoked": "159ada195c332aa65c497f51e395fad9716453515d72c52518cedc2fb8b14802",
@@ -100,6 +101,8 @@
     <string name="settings_preferences_share_usage_data_description">Zoonkの利用状況を把握し、改善に役立てます</string>
     <!-- A setting in Preferences: the country the learner lives in. -->
     <string name="settings_home_country">住んでいる国</string>
+    <!-- Tag beside the country the learner said they live in, in a list of countries -->
+    <string name="country_home_tag">ここに住んでいる</string>
     <!-- Under that setting. -->
     <string name="settings_home_country_why">国に合った例や試験を使うためです。</string>
     <!-- The tutor's offer to save where the learner lives: what it changes. -->

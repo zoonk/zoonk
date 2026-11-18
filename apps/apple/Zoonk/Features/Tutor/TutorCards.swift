@@ -238,7 +238,7 @@ struct TutorMemoryUpdate: View {
 
     return first + " "
       + String(
-        localized: "and \(more) more", table: "Tutor",
+        localized: "and \(more) more changes", table: "Tutor",
         comment: "More memory changes after the first one")
   }
 }

@@ -95,7 +95,7 @@ function CallLimitScreen({
       }
       headerTitle={title}
     >
-      <CallOffMessage title={opened ? undefined : limitTitle}>
+      <CallOffMessage title={limitTitle}>
         {line && (
           <p
             className={cn(

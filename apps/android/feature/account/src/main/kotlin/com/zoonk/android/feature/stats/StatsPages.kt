@@ -297,7 +297,7 @@ private fun PatternRow(
     label: String,
     value: String?,
 ) {
-    // A long answer ("You answer about the same every day.") moves under its label rather than crushing it.
+    // A long answer moves under its label rather than crushing it.
     ListRow(headline = { Text(label) }, meta = { PatternValue(value ?: stringResource(R.string.stats_not_yet)) })
 }
 
@@ -801,7 +801,7 @@ private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) 
 @Composable
 private fun bestDayName(verdict: Verdict): String? =
     when (verdict) {
-        is Verdict.Even -> stringResource(R.string.stats_days_same)
+        is Verdict.Even -> stringResource(R.string.stats_any_day)
         is Verdict.Best -> weekdayName(verdict.key, currentLocale())
         Verdict.NotEnough -> null
     }

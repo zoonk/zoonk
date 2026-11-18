@@ -13410,6 +13410,7 @@
       }
     },
     "Your guess counts" : {
+      "comment" : "A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13432,19 +13433,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La tua stima conta"
+            "value" : "La tua ipotesi conta"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "予想も大切です"
+            "value" : "予想も採点対象"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "예상도 중요해요"
+            "value" : "예상도 점수에 반영"
           }
         },
         "pl" : {
@@ -13462,7 +13463,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tahminin önemli"
+            "value" : "Tahminin puan kazandırır"
           }
         }
       }

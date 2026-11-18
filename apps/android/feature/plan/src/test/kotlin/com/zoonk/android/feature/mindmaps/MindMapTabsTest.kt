@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/** Each tab counts what it lists: "With a map" its ready maps, Saved every saved map it shows. */
+/** Each tab counts what it lists: "Chapter maps" its ready maps, Saved every saved map it shows. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class MindMapTabsTest {
@@ -36,13 +36,13 @@ class MindMapTabsTest {
     @Test fun theWithAMapTabCountsOnlyTheChaptersWhoseMapIsReady() {
         show()
 
-        compose.onNodeWithContentDescription("With a map, 2 maps").assertExists()
+        compose.onNodeWithContentDescription("Chapter maps, 2 maps").assertExists()
     }
 
     @Test fun withoutAMapIsAHeadingForScreenReaders() {
         show()
 
-        compose.onNode(hasText("Without a map") and isHeading()).assertExists()
+        compose.onNode(hasText("No map yet") and isHeading()).assertExists()
     }
 
     @Test fun theSavedTabCountsEverySavedMapItLists() {

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "442d68013a0eb3d3e1d51d8c9fccb7a8ca08124c927209172cf8e4567c98c504",
-  "activities_badge_estimate_first": "c2b8aac7498c64ffa82b3b8a437771286f5e6655967ce0a214297b2d0eb101f7",
+  "activities_badge_estimate_first": "96e279dc771ba264e695c73763c4fdd3354be1a9764477095b3737483793f5c4",
   "activities_badge_find_error": "4e59e37f9ba714e416e153fe7a51bbbb9257a7fff4544d57fa36038cc63549d1",
   "activities_badge_read_chart": "66443945d5a213050d4b1a29f2d4334ccefd7b6bd162f5647a9511555b257c13",
   "activities_badge_reply": "6016c33f19b66338f411655df3a8aeadc6d51c3b62be1804699c834a3f682ba7",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Najpierw oszacuj</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Twój strzał się liczy</string>
     <string name="activities_badge_read_chart">Odczytaj wykres</string>
     <string name="activities_badge_before_after">Przed i po</string>
     <string name="activities_badge_find_error">Znajdź błąd</string>
