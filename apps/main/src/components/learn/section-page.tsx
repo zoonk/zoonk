@@ -1,6 +1,5 @@
 import { AppEntryName } from "@zoonk/learn/bar";
 import {
-  MEASURED_CLASS,
   PAGE_COLUMN_CLASS,
   PageHeader,
   PageHeaderContent,
@@ -47,7 +46,12 @@ export function SectionPage({
     >
       <SectionBarFrame end={end} hub={hub} parents={parents} />
 
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", measure && MEASURED_CLASS)}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 flex-col gap-6",
+          measure && "[&>*:not([data-slot=page],.contents)]:max-w-(--page-measure)",
+        )}
+      >
         <div className="hidden flex-col gap-3 border-b pb-3 md:flex">
           <div className={PAGE_HEADER_CLASS}>
             <p className="text-title" data-slot="section-title">
