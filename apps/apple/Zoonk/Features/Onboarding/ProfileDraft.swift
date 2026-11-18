@@ -167,6 +167,10 @@ struct ProfileDraft: Equatable {
     }
   }
 
+  func canSave(_ view: ProfileQuestionView) -> Bool {
+    isComplete && (view.status == .answered || !isEmpty)
+  }
+
   /// Saving declines an empty screen.
   var isDeclined: Bool {
     decline != nil || isEmpty

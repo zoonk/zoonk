@@ -68,7 +68,13 @@ class ProfileQuestionWindowTest {
         val save = CompletableDeferred<Unit>()
         val refresh = CompletableDeferred<Unit>()
         val question =
-            ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(emptyList(), emptyList(), ""), null, 1)
+            ProfileQuestionView(
+                ProfileQuestion.TOOLS,
+                emptyList(),
+                ProfileQuestionViewSaved(emptyList(), emptyList(), "Python"),
+                ProfileQuestionView.Status.ANSWERED,
+                1,
+            )
         var reads = 0
         val api =
             object : ProfileQuestionsApi {

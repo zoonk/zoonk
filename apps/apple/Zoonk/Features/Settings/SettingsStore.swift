@@ -134,6 +134,8 @@ final class SettingsStore {
   /// Replaces one About you answer. False when it didn't save.
   func answerProfileQuestion(_ draft: ProfileDraft) async -> Bool {
     guard
+      let view = profileQuestions.value?.questions.first(where: { $0.id == draft.question }),
+      draft.canSave(view),
       let input = try? JSONDecoder().decode(
         Components.Schemas.ProfileAnswerInput.self,
         from: JSONSerialization.data(withJSONObject: draft.input))

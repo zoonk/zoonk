@@ -223,12 +223,11 @@ fun ProfileQuestionScreen(
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
-                    val empty = editor.draft.empty(question.id, memoryEnabled)
                     Button(
                         onClick = { editor.save(question.id, memoryEnabled) },
                         busy = editor.saving,
                         enabled =
-                            canEdit && (empty || editor.draft.valid(question.id, memoryEnabled)) && !editor.saving &&
+                            canEdit && editor.canSave(memoryEnabled) && !editor.saving &&
                                 editor.source == question,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -328,11 +327,18 @@ internal class ProfileQuestionViewModel(
         if (source?.id != ProfileQuestion.CONDITIONS) saved = value
     }
 
+    fun canSave(memoryEnabled: Boolean): Boolean {
+        val question = source ?: return false
+        if (!draft.empty(question.id, memoryEnabled)) return draft.valid(question.id, memoryEnabled)
+        return question.status == ProfileQuestionView.Status.ANSWERED ||
+            (draft.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
+    }
+
     fun save(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
     ) {
-        if (saving) return
+        if (saving || source?.id != question || !canSave(memoryEnabled)) return
         saving = true
         failure.clear()
         val answer = if (draft.empty(question, memoryEnabled)) draft.copy(declined = true) else draft
