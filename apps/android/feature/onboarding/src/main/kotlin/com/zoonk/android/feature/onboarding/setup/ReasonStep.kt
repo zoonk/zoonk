@@ -26,6 +26,7 @@ import com.zoonk.api.models.OnboardingLanguageAim
 internal fun ColumnScope.ReasonStep(
     subject: String,
     aim: OnboardingLanguageAim?,
+    certificateExample: String?,
     pending: Boolean,
     words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
@@ -60,16 +61,19 @@ internal fun ColumnScope.ReasonStep(
                     Choice(
                         key,
                         stringResource(requireNotNull(reasonTitleResource(key))),
-                        stringResource(
-                            when (key) {
-                                "travel" -> R.string.onboarding_reason_travel_description
-                                "talk" -> R.string.onboarding_reason_talk_description
-                                "work" -> R.string.onboarding_reason_work_description
-                                "fluent" -> R.string.onboarding_reason_fluent_description
-                                "certificate" -> R.string.onboarding_reason_certificate_description
-                                else -> R.string.onboarding_reason_other_description
-                            },
-                        ),
+                        if (key == "certificate") {
+                            certificateExample
+                        } else {
+                            stringResource(
+                                when (key) {
+                                    "travel" -> R.string.onboarding_reason_travel_description
+                                    "talk" -> R.string.onboarding_reason_talk_description
+                                    "work" -> R.string.onboarding_reason_work_description
+                                    "fluent" -> R.string.onboarding_reason_fluent_description
+                                    else -> R.string.onboarding_reason_other_description
+                                },
+                            )
+                        },
                     )
                 },
             value = reason,
@@ -106,3 +110,53 @@ internal fun ColumnScope.ReasonStep(
         )
     }
 }
+
+internal fun certificateExample(
+    language: String?,
+    region: String?,
+): String? =
+    when (language?.substringBefore('-')) {
+        "de" -> {
+            "Goethe-Zertifikat"
+        }
+
+        "en" -> {
+            "IELTS"
+        }
+
+        "es" -> {
+            "DELE"
+        }
+
+        "fr" -> {
+            "DELF"
+        }
+
+        "it" -> {
+            "CELI"
+        }
+
+        "ja" -> {
+            "JLPT"
+        }
+
+        "ko" -> {
+            "TOPIK"
+        }
+
+        "pt" -> {
+            when (region ?: language.substringAfter('-', "")) {
+                "BR" -> "Celpe-Bras"
+                "PT" -> "CAPLE"
+                else -> "ACTFL OPI"
+            }
+        }
+
+        "zh" -> {
+            "HSK"
+        }
+
+        else -> {
+            null
+        }
+    }

@@ -98,16 +98,17 @@ enum LessonGrading {
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
 
-      // One precision for both, as main's verdict shows them.
       let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
-      let format = { (number: Double) in
-        ActivityNumberFormat.format(number, unit: unit, digits: digits)
-      }
+      let places = activityDecimalPlaces(
+        expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
 
       return LocalGrade(
         isCorrect: isCorrect,
-        answerText: format(value),
-        correctAnswer: isCorrect ? nil : format(expected),
+        answerText: ActivityNumberFormat.format(value, unit: unit, digits: digits),
+        correctAnswer: isCorrect
+          ? nil
+          : ActivityNumberFormat.format(
+            expected, unit: unit, digits: places ?? digits),
         feedback: explanation)
     case .interaction(let explanation):
       guard let gradeInteraction else {
@@ -131,6 +132,18 @@ enum LessonGrading {
 
     return tolerances.contains { isWithin(value, of: expected, tolerance: $0) }
       || isRoundedAnswer(value, expected: expected)
+  }
+
+  static func activityDecimalPlaces(
+    expected: Double, tolerance: ActivityCheck.Tolerance, minTolerance: ActivityCheck.Tolerance?
+  ) -> Int? {
+    guard expected.isFinite, expected.rounded() != expected else { return nil }
+    return (0...countDecimalPlaces(expected)).first { places in
+      let scale = pow(10, Double(places))
+      let value = floor(expected * scale + 0.5) / scale
+      return isNumericAnswerRight(
+        value, expected: expected, tolerance: tolerance, minTolerance: minTolerance)
+    }
   }
 
   /// Core's `withinTolerance`: relative slack takes rounded boundaries without overwhelming a

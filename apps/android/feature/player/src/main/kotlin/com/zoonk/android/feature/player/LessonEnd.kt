@@ -176,7 +176,7 @@ fun lessonAccessBar(
             is LessonRefusal.Limited -> {
                 val reached = refusal.reached() ?: return null
                 when (reached.tier) {
-                    LimitTier.Guest -> R.string.limit_create_account to { exits.open(AppRoute.Login) }
+                    LimitTier.Guest -> R.string.gate_log_in to { exits.open(AppRoute.Login) }
                     LimitTier.Free -> return { FreeLessonsBar(reached, onRetry, exits) }
                     LimitTier.Plus -> R.string.player_back to exits::close
                 }

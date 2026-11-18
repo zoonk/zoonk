@@ -297,7 +297,6 @@
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
-  "plan_last_week_recap": "43c91a29f350fb875253e9bcac3abf613cdfe567951a031de10f4204fef2b3ab",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
   "plan_lessons_left": "4df3969bdd163b0ddda3930cd6e9d1e54870bced633dd784f911ef1332b0bb91",
@@ -421,7 +420,7 @@
   "plan_short_mock_and_review": "d7f08fbc923cbda1ae49deb259f185a60a7c3b5ba477c9f1a537bfcd2d65b945",
   "plan_show_fewer_chapters": "cde0cce702cb6088073a5e2b027c7996f5e3f81467c459247781f66e28d2e129",
   "plan_show_fewer_units": "7c6f6848eecddb306c5beb6e7ac2decedab92842a2ac2aeffcb76eef9e77be2c",
-  "plan_skills_you_know": "1274ac9a53579713ff2f0fbc9ca2a14c890251f25442d58fd8ae80eb697dfadd",
+  "plan_skills_you_know": "b959418e292a9c918336c259cf1d705cdc32bb6f7cafb627883ddc6d380c87fd",
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "8b004075fdfb4bc428e7d62f13ea9d7984c8aa4c154b95edd576e6e195438a66",
   "plan_stays_as_it_is": "84a1e70fda784ceddc957528b94ead1000dda12273b0b52572bbecb1b6965f59",
@@ -439,7 +438,6 @@
   "plan_suggestion_previous": "f78b9d5614c192345c11a4c0057c8d6bf8ffc758d723b4affca8e70f757e3479",
   "plan_sundays": "c9b4c635df3f9ec7d80eababcdcd09cd94968a9b063c50c1323f5cbb2f5eb3c1",
   "plan_system_phone": "5a45c58e0b4dd5531591940871e38a83f12370c0e50fca1c30e9cc341a24853a",
-  "plan_talk_to": "fc253fabdc3b223c879f22a272ec990e8906bcf376bfe56f43d1447584044138",
   "plan_tests_taken": "ef3aa72320b9afd898788202dd6ef72e1e27275522346c4d2da34b3eabeddd9f",
   "plan_this_week": "2e54fbc27fc9a1b9e90f0b099d78f7ee01418248ac7826095b4680530047a789",
   "plan_thursdays": "3f23c4a01e21bf27547e341271ed55cf0da340f0e50d7337be6948e037a9bc25",
@@ -497,7 +495,7 @@
   "plan_tool_how": "0a1cb26e45301272c593eba1c42043b2a79f7e98a7b52f6ab9ea4c7de67a80ad",
   "plan_tool_needed": "e09bed746f6fd6cac2eda17f92598b2be89ffcef5692eec1b53b1efa290535b8",
   "plan_tool_none": "1e8db6c9160634c98b1f2fbe45459fdeca8e2f747438ac31d85a5b689be2394e",
-  "plan_tool_none_description": "bf2a02d5bd6b196a465183b7761a2fa2cca0face277908ff40490d1fe1c1a72c",
+  "plan_tool_none_description": "e12efee658ee29d99bfce0e43a790e5a52e65a727f980bf29dd0c41e30f7d5a4",
   "plan_tool_optional": "3ceed2e24af566989f3d80d6b7cbdb491ed12bafaf1505d06553e77d8cf62499",
   "plan_tool_setup": "3d0aaa5ac7fe379aa3c99454640a6205fe0348b3889c16b4ff1446d7e6888ba5",
   "plan_tool_setup_description": "d07dee6981f6b8ddc3c26f8c6248a45447c0babd71082d3f95417125f3243224",
@@ -512,7 +510,7 @@
   "plan_tools_later": "91e37c2c70ec8015f9e397279e1622084ba3e8f6f73f51507c8fe3ba569b8af0",
   "plan_tools_none": "67a69cf1f31ba9c854ecd399557a38abab27734d24e1090dc96badf250dca757",
   "plan_tools_title": "d2bf63f9fd6ba66dae899de4c40ae35a8a66e7cb35a0b49752ee27e1f7f419b3",
-  "plan_tools_without": "b7431ff5a4e46a1493469e7727a5b551c6c8f22e5b317243017de124d5a2d7a6",
+  "plan_tools_without": "d55d03ab8173aeaebbd03b389603dcf36aadad0e24929631b18a01cece9eaad5",
   "plan_topics_studied": "e1a300fa446e01cda154edd09207bd1c4b5bc82b48bea23d161e46ad4144bf7b",
   "plan_trickster_not_in_plan": "323e7d53c9101f3036b356a41b04f22cff5a7ca40e8db712a6fd3ecae50603ea",
   "plan_try_again": "50e02d0d3e47d8caa6a659dc55954ac010d31d3325bb5159c45e4891d509fb84",
@@ -581,7 +579,6 @@
     <string name="plan_about_exam">Sınav hakkında</string>
     <string name="plan_full_course">Kursun tamamını gör</string>
     <string name="plan_share">Planı paylaş</string>
-    <string name="plan_talk_to">%1$s ile konuş</string>
     <string name="plan_rename_goal">Hedefin adını değiştir</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Ad</string>
@@ -647,8 +644,8 @@
     <string name="plan_skipped">Atlandı</string>
     <string name="plan_done">Tamamlandı</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="one">Zaten sahip olduğun %d beceri</item>
-        <item quantity="other">Zaten sahip olduğun %d beceri</item>
+        <item quantity="other">Zaten bildiğin %d ünite</item>
+    <item quantity="one">Zaten bildiğin %d ünite</item>
     </plurals>
     <string name="plan_more_lessons">Daha fazla ders</string>
     <string name="plan_lessons_on_the_way">Dersleri hazırlıyoruz</string>
@@ -802,7 +799,6 @@
     <string name="plan_day_rest">dinlenme günü</string>
     <string name="plan_day_today">bugün</string>
     <string name="plan_day_planned">planlandı</string>
-    <string name="plan_last_week_recap">Geçen haftanın özetine bak</string>
     <string name="plan_preparation">Hazırlık</string>
     <string name="plan_progress">İlerleme</string>
     <string name="plan_your_preparation">Hazırlığın</string>
@@ -1083,7 +1079,7 @@
     <string name="plan_tool_change_how">%1$s kullanma şeklini değiştir</string>
     <string name="plan_tool_choose_how">%1$s kullanma şeklini seç</string>
     <string name="plan_tools_none">Araçların yok mu? Her şeyi örneklerle yapabilirsin.</string>
-    <string name="plan_tools_without">Kendi bilgisayarında pratik yapmayacaksın. Derslerde bunun yerine örnekler ve simülasyonlar kullanılır.</string>
+    <string name="plan_tools_without">Kendi cihazında uygulama yapmayacaksın. Bunun yerine derslerde örnekler ve simülasyonlar kullanılır.</string>
     <string name="plan_tools_later">Daha sonra: %1$s</string>
     <string name="plan_tool_how">Nasıl kullanacaksın?</string>
     <string name="plan_tool_have">Bende var</string>
@@ -1091,7 +1087,7 @@
     <string name="plan_tool_setup">Kuracağım</string>
     <string name="plan_tool_setup_description">İhtiyaç duymadan hemen önce kısa bir dersle nasıl kuracağını öğrenirsin.</string>
     <string name="plan_tool_none">Kurulum yapmadan</string>
-    <string name="plan_tool_none_description">Örneklerle öğren. Kendi bilgisayarında pratik yapmayacaksın.</string>
+    <string name="plan_tool_none_description">Örneklerle öğren. Kendi cihazında uygulama yapmayacaksın.</string>
     <string name="plan_tool_updates_when_ready">Planın hazır olur olmaz güncellenir.</string>
     <string name="plan_tool_writing_setup">Kurulum dersi ekliyoruz</string>
     <string name="plan_tool_writing_setup_phase">Cihazın için kurulum adımları hazırlanıyor</string>

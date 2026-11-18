@@ -13,6 +13,7 @@
   "profile_questions_conditions_description_settings": "a6c67f54d835de1e0588ec492736336617ebcff26a0e7176eedb224806c5030a",
   "profile_questions_conditions_saved": "4b6ad5691478e86710740421c422a3ccbbec9a7677ccab100914f44dfd476ec3",
   "profile_questions_conditions_title": "8d166896a970fc3bb9dce6e5c91c574ccc863ac7838f64131c78aa9a5e6cbba1",
+  "profile_questions_count": "3cb52ebe63cd7d35b1a37dabbb07936450429cc5ea4f827527e878413b4e0152",
   "profile_questions_description": "2b7e129301372058e29449306ae0baae192ce5639ec384dda022cd9a7d595301",
   "profile_questions_earlier_answer": "2181daf0095cda194d9d7db77e0671fc05f07ead9e87702b4771c9c6ee5ce866",
   "profile_questions_for_fun": "07e6fb1fc47529659580a5003d92b07e7b4ef1e022344009772681114300b26d",
@@ -33,7 +34,6 @@
   "profile_questions_play_placeholder": "5791dd117aca29e3f8f8283c723d43857addf5cf2bd53aedec09b374d81bf93d",
   "profile_questions_play_title": "5a1598a5305f351cef5a9b3b1cf42ba745f8b53220f8ba680b232eb7de7da19c",
   "profile_questions_prefer_not": "3529a3804c27c18008686c17a5d54db4f559036d90dbefa96d166bfd800b14e8",
-  "profile_questions_progress": "88923455587f1372cc9e2939d62b14b3fcf602a7f81c2d2d912f7caf7d66a0d6",
   "profile_questions_read_favorites": "41aa8a0160059cd8542b3fb7d862924c516d374d4604b72881499390abc313e1",
   "profile_questions_read_placeholder": "b345c2ba10f80164903a883a34159f24a7e8a63f7849249d3d732b691f55ae46",
   "profile_questions_read_title": "f2f11e45600e24225e42b55ba5d018fd4d476b7290725b47202e87df03d65e42",
@@ -83,7 +83,7 @@
 <resources>
     <string name="profile_questions_title">내 소개</string>
     <string name="profile_questions_description">여기서 알려 주신 내용은 예시와 짝꿍에 반영돼요. 모든 항목은 선택 사항이에요.</string>
-    <string name="profile_questions_progress">내 소개 · %1$d/%2$d</string>
+    <string name="profile_questions_count">%1$d / %2$d</string>
     <string name="profile_questions_skip_all">모두 건너뛰기</string>
     <string name="profile_questions_skip_all_label">나에 대한 나머지 질문 건너뛰기</string>
     <string name="profile_questions_never_ask">이 질문들 다시 묻지 않기</string>

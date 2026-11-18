@@ -451,7 +451,7 @@ internal fun PaceDetails(
     PlanWeek(page)
 
     ListRow(
-        headline = { Text(stringResource(R.string.plan_last_week_recap)) },
+        headline = { Text(stringResource(R.string.buddy_page_weekly_summary)) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = links::logbook,
     )

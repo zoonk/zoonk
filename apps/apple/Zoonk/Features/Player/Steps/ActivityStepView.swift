@@ -126,6 +126,13 @@ struct ActivityStepView: View {
       ) { number in
         context.select(number.map { .activity(.numeric($0)) })
       }
+      if let places = LessonGrading.activityDecimalPlaces(
+        expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
+      {
+        Text(decimalEntryRule(places))
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
     }
   }
 }

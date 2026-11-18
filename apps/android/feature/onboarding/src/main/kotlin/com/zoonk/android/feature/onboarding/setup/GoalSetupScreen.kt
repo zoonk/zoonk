@@ -189,6 +189,8 @@ fun GoalSetupScreen(
                 !first.stopped,
         key = run.id,
     ) { store.onboardings[vm.goalId].refreshed() }
+    val profileSteps = (vm.flow.history + listOfNotNull(step) + view?.steps.orEmpty()).filter { it.profileQuestion != null }.distinct()
+    val profileIndex = profileSteps.indexOf(step)
     val inQuestions = step != null && step != OnboardingStep.PLAN
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
     val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.goingBack() != null }
@@ -221,6 +223,12 @@ fun GoalSetupScreen(
                     Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
                 }
 
+                profileIndex >= 0 -> {
+                    if (profileSteps.size > 1) {
+                        Text(stringResource(R.string.profile_questions_count, profileIndex + 1, profileSteps.size))
+                    }
+                }
+
                 else -> {
                     view?.let { setupProgress(vm.flow, it.steps) }?.let { StepDots(it) }
                 }
@@ -228,7 +236,7 @@ fun GoalSetupScreen(
         },
         actions = {
             if (view != null && inQuestions && testing == null) {
-                if (step.profileQuestion != null) {
+                if (step.profileQuestion != null && view.steps.any { it != step && it.profileQuestion != null }) {
                     val skipLabel = stringResource(R.string.profile_questions_skip_all_label)
                     TextButton(
                         onClick = { vm.skipProfiles(false) },
@@ -445,7 +453,14 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.REASON -> {
-            ReasonStep(subject, view.languageAim, pending, rememberUnsentWords(vm.goalId, step.value, count = 2), vm::answer)
+            ReasonStep(
+                subject,
+                view.languageAim,
+                certificateExample(view.goal.targetLanguage, view.goal.targetRegion),
+                pending,
+                rememberUnsentWords(vm.goalId, step.value, count = 2),
+                vm::answer,
+            )
         }
 
         OnboardingStep.TARGET -> {

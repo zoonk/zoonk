@@ -233,7 +233,6 @@
   "onboarding_read_limit_guest": "64dc2246299762d474626f17293e0e5a0a317fc073b1dd815ec4bde6d81e36f9",
   "onboarding_read_limit_plus": "0465838f4ad8845d65a5857fbe44a510a6c6aafb7ebd91797bfcb51f07ce4fdb",
   "onboarding_reason_certificate": "9a4934e169220c3e6859d6fc95bad5d4ba0cc8639a9ab2c41a535f8ee8e6de2b",
-  "onboarding_reason_certificate_description": "608964eec14f4fb993d0c04b3284171421b6a9c0cb0c297d662a266067f9f330",
   "onboarding_reason_choices": "f1b3607fee636e20d4d85579d2fed10fa77a996d52adf8980a080e22c4582bbd",
   "onboarding_reason_description": "f0b19d33f630824cf10840511abd7c50150b3d61f2ea9a2afe609e66926b4e84",
   "onboarding_reason_exam_plan": "abb402b8c3c957289b01a37cb08540962aed4c494306aaf74600d2cae919b0b2",
@@ -1021,7 +1020,6 @@
     <string name="onboarding_reason_fluent">流暢に話す</string>
     <string name="onboarding_reason_fluent_description">ほぼどんな話題でも、無理なく話す</string>
     <string name="onboarding_reason_certificate">資格試験に合格する</string>
-    <string name="onboarding_reason_certificate_description">英検、TOEIC、IELTSなど</string>
     <string name="onboarding_reason_other_description">自分の言葉で</string>
     <string name="onboarding_reason_which_exam">どの試験ですか？</string>
     <string name="onboarding_reason_exam_plan">その試験の出題内容とスコアに合わせて学習計画を立てます。</string>

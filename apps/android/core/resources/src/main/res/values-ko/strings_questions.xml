@@ -19,6 +19,7 @@
   "questions_entry_decimals": "95f474c44103df9e3c37582468a3681da8b9123c45124ad7259ce503cc877b33",
   "questions_entry_fraction": "e389f2e91d1c24cc1414487db559f7bdc6bdccfb921419b1b66711fbc8febb7e",
   "questions_entry_integer": "5de16fc709c02f018eb5f0156e47c26037718bc0a241f19d0691fbb66c607b1a",
+  "questions_entry_round_to_whole": "0d17c8386eb72ef7448cfc34140717aaf773f51c71ea9d8970ae4dc151f121f6",
   "questions_false": "1ba342d3d91ba49a5e6ca0f0950f2becdf48b7d714d6565ce93581b6a58f5741",
   "questions_feedback_label": "c37f7d8049f4241cc08ec8b10d1318d8af49bfbdbd06fa71d2c0c1a2e973c8ee",
   "questions_invalid_fraction": "4aa580f793dc35818a92562f208078b03e99e65673a1799ad31df5e72558fb7c",
@@ -79,6 +80,7 @@
     <string name="questions_your_answer">내 답</string>
     <string name="questions_mark_correct">정답</string>
     <string name="questions_mark_wrong">오답</string>
+    <string name="questions_entry_round_to_whole">소수 첫째 자리에서 반올림하세요.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="other">반올림해 소수점 아래 %d자리까지 쓰세요.</item>
     </plurals>

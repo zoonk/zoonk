@@ -19,6 +19,7 @@
   "questions_entry_decimals": "a4aaadf164b9ae8c45dd267bfad9f5a94fda06709511a005c276c2c32108df41",
   "questions_entry_fraction": "76afae46f23d8ca0c2207101bf0ff283292f0dfab4d19821b44826705ec43461",
   "questions_entry_integer": "e908199333708bdf1dd370066dff6ee1b9acb1decea869623c03b031b9596511",
+  "questions_entry_round_to_whole": "7940465a01325e2ac8562ebe5ffa09ecc76f296ff5954c6b88f0a40aa2e65629",
   "questions_false": "eb938ed0d62b29a3c82e4a3feeb478c117770ff20aa0856ae3fdbf735b3616ca",
   "questions_feedback_label": "04986548176f308b4b769d3f2d289d987b678172c728e378d8bd4e346c5532e6",
   "questions_invalid_fraction": "aaa19a833dffb617cf765e08cbf9b21fde5ab3baced64a89b99affb45fe62d54",
@@ -80,6 +81,7 @@
     <string name="questions_your_answer">Deine Antwort</string>
     <string name="questions_mark_correct">Richtig</string>
     <string name="questions_mark_wrong">Falsch</string>
+    <string name="questions_entry_round_to_whole">Runde auf die nächstgelegene ganze Zahl.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Runde auf %d Nachkommastelle.</item>
         <item quantity="other">Runde auf %d Nachkommastellen.</item>

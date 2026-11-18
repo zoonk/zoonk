@@ -117,6 +117,23 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertEqual(queue.status, .saved)
   }
 
+  func testAFailedSaveHidesOnlyAnUnsavedAnswerFromProgress() async {
+    let newAnswer = draft("new", .choice(1))
+    let storedAnswer = draft("stored", .choice(2))
+    let queue = MockDraftQueue { _ in .refused }
+
+    queue.add(newAnswer)
+    XCTAssertTrue(queue.countsTowardsProgress(newAnswer, initiallyStored: nil))
+    await queue.idle()
+    XCTAssertFalse(queue.countsTowardsProgress(newAnswer, initiallyStored: nil))
+
+    var flagged = storedAnswer
+    flagged.flagged = true
+    queue.add(flagged)
+    await queue.idle()
+    XCTAssertTrue(queue.countsTowardsProgress(flagged, initiallyStored: storedAnswer))
+  }
+
   func testARefusedAnswerSaysSoUntilALaterOneIsStored() async {
     var refuse = true
     let queue = MockDraftQueue { _ in refuse ? .refused : .stored }

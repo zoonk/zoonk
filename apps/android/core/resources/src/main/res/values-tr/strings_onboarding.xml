@@ -233,7 +233,6 @@
   "onboarding_read_limit_guest": "48863644abd2217a2cba30f52d8d5a09b9034920711e284a6f49f0cbc7c16b60",
   "onboarding_read_limit_plus": "19e8f81cb2f96fe656e886edcd4e480717c11ff294fb39c92c8b1fc667e207e2",
   "onboarding_reason_certificate": "3dc65bd9b6565810b17bb348ce8003a6fa7cce4f98917240b718dd326f643742",
-  "onboarding_reason_certificate_description": "0c8055f058530ec39640e6383b11036535e3a4fca148d411fee342bc56b1fa72",
   "onboarding_reason_choices": "373e79ce7269665c1ab57ae8bd34e9677dfb2512f48f1b32deb0d24f1168d546",
   "onboarding_reason_description": "919c91740ee844ad833a0ef4ce8481279a9f55ef1322f23a7f8f79f799239fa6",
   "onboarding_reason_exam_plan": "411643c373cbd5b55f985f656df0ff85a6b1b38e172685f5c2a1e43cb33f479d",
@@ -1046,7 +1045,6 @@
     <string name="onboarding_reason_fluent">Akıcı konuşmak</string>
     <string name="onboarding_reason_fluent_description">Hemen her konuda rahatça konuşmak</string>
     <string name="onboarding_reason_certificate">Sertifika sınavını geçmek</string>
-    <string name="onboarding_reason_certificate_description">IELTS, YDS, YÖKDİL ve diğerleri</string>
     <string name="onboarding_reason_other_description">Kendi cümlelerinle</string>
     <string name="onboarding_reason_which_exam">Hangisi?</string>
     <string name="onboarding_reason_exam_plan">Planın, o sınavın bölümlerine ve puanlamasına göre hazırlanır.</string>

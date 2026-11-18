@@ -233,7 +233,6 @@
   "onboarding_read_limit_guest": "8a2530445ba57f4a07f3a790f9ade21041720b6aae373b1e99780a8ff684d0e2",
   "onboarding_read_limit_plus": "7c39b9f2b9c5f46701552d8e76a9bd5ab59fa6f25f3e3be761636dc8905ebbbe",
   "onboarding_reason_certificate": "a0a660697253f9865a4c05d55b00792c1ef9dd32bdcf376a6cfb07d5e396dc24",
-  "onboarding_reason_certificate_description": "f203e208afb348c9807d8c02dfaaafa55095d266aeb17de5955d681f121add90",
   "onboarding_reason_choices": "d85bd5ad80517b9f63c04196af97079a895f7d03982a3593d08c9e32fd1450e3",
   "onboarding_reason_description": "c059f9491549536f366eb3f0a9bfaafdbb16357441f5de6d439fc35ef96162e0",
   "onboarding_reason_exam_plan": "f085aaf18ac1757c527bb81f49f39f213d2ec5eca9e4a2cb694ec1a275ea3b9e",
@@ -1071,7 +1070,6 @@
     <string name="onboarding_reason_fluent">Parlarla con scioltezza</string>
     <string name="onboarding_reason_fluent_description">Parlare con scioltezza di quasi tutto</string>
     <string name="onboarding_reason_certificate">Ottenere una certificazione</string>
-    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI e altri</string>
     <string name="onboarding_reason_other_description">Con parole tue</string>
     <string name="onboarding_reason_which_exam">Quale?</string>
     <string name="onboarding_reason_exam_plan">Il tuo piano si basa sulle prove e sul punteggio di quell’esame.</string>

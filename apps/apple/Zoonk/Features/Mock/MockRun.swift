@@ -33,6 +33,7 @@ final class MockRun {
   let queue: MockDraftQueue
 
   private(set) var drafts: [String: MockDraft] = [:]
+  private var initiallyStored: [String: MockDraft] = [:]
   private var partials: [String: PracticeAnswer] = [:]
   private(set) var position = 0
   private(set) var busy: Step?
@@ -80,6 +81,10 @@ final class MockRun {
     questions.indices.contains(position) ? questions[position] : nil
   }
 
+  func isCountedAsAnswered(_ itemId: String) -> Bool {
+    queue.countsTowardsProgress(drafts[itemId], initiallyStored: initiallyStored[itemId])
+  }
+
   var timeUp: Bool { sectionTimeUp || questionTimeUp }
   var pending: Bool { busy != nil }
 
@@ -105,6 +110,7 @@ final class MockRun {
     shown = nil
     drafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })
+    initiallyStored = drafts
     position = view.current?.resume ?? 0
     reached = position
     changed = []

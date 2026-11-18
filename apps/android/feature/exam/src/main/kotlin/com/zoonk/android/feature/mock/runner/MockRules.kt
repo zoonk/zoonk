@@ -124,8 +124,9 @@ data class SectionCounts(
 fun sectionCounts(
     questions: List<MockQuestion>,
     drafts: Map<String, MockDraft>,
+    isAnswered: (String) -> Boolean = { drafts[it].isAnswered },
 ): SectionCounts {
-    val blank = questions.filter { !drafts[it.itemId].isAnswered }
+    val blank = questions.filterNot { isAnswered(it.itemId) }
     return SectionCounts(
         answered = questions.size - blank.size,
         blank = blank.count { !it.essay },

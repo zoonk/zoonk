@@ -1025,7 +1025,7 @@ final class LessonGradingTests: XCTestCase {
   func testNumericActivityShowsTheRequestedRoundingOnAMiss() throws {
     let source = numericActivity.replacingOccurrences(
       of: "\"answer\": 10", with: "\"answer\": 251.54")
-    let missed = LessonGrading.grade(.activity(.numeric(240)), step: try step(source))
+    let missed = LessonGrading.grade(.activity(.numeric(230)), step: try step(source))
 
     XCTAssertEqual(missed?.isCorrect, false)
     XCTAssertEqual(missed?.correctAnswer, "252")

@@ -243,7 +243,7 @@ private fun PlanItems(
     )
     MenuItem(
         R.drawable.ic_contact_support,
-        stringResource(R.string.plan_talk_to, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
+        stringResource(R.string.tutor_ask, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
         closing(links::buddy),
     )
     report?.let { ReportProblemItem(it, onClick = closing {}) }

@@ -19,6 +19,7 @@
   "questions_entry_decimals": "a584d730b7922685526ef9dae2ece32bb4888d323fa3d3295c96736b4fd9ef81",
   "questions_entry_fraction": "73fa47cb2488a472a5981ff519b505fd4d1a94d4297700f42a3e8853ba06a183",
   "questions_entry_integer": "6d906c3462f1e5e134c7a4bb2a4046e4de1265808707017fc506aa00cf12a0ca",
+  "questions_entry_round_to_whole": "8badea92aeabd11e6427490bbf14a42c73e40cc3e0cfa3f54814af5550ff9b8f",
   "questions_false": "0f42e0117cb2cf0eee51952fd5d10607b6776a15465af7c81a9b170a9a40311a",
   "questions_feedback_label": "ac6f368ec892fae7e0bc0542f215c89d0930db1188c297583736b670fe9ae745",
   "questions_invalid_fraction": "03a9482ee857250ccb8239adbd9e1ee0f837a0dca30553e0463ac353277ca4ea",
@@ -80,6 +81,7 @@
     <string name="questions_your_answer">Cevabın</string>
     <string name="questions_mark_correct">Doğru</string>
     <string name="questions_mark_wrong">Yanlış</string>
+    <string name="questions_entry_round_to_whole">En yakın tam sayıya yuvarla.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">%d ondalık basamağa yuvarla.</item>
         <item quantity="other">%d ondalık basamağa yuvarla.</item>

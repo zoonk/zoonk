@@ -297,7 +297,6 @@
   "plan_going_deeper": "fea689e4d7bfde9c769d43469297ec6852a449c7904b82a9e18ea74a798d9f24",
   "plan_how_calculated": "0739cd6e655c7f2749b75c10ea4dd2ba2866b4d58c54f8ac05514fc0539dfa06",
   "plan_keep_studying": "9ada847af1875e7b362a18294cd07ef0c4e36c5486b80281ea65723d7f92fdd2",
-  "plan_last_week_recap": "11d91d99bfe59050e1325bc37214aa85cef3ec0df8276e64a42bd69838ec7e1a",
   "plan_lessons": "99948753edd71a789e3be2c03926c6c38f227595fc5cf4d5185c4e955bd97c4f",
   "plan_lessons_done_of": "a9bce00871f113a2e5afe30edfbccf9510a09cba8c6431db29620f512130a5f9",
   "plan_lessons_left": "6706051b5a8d345d55723b56befc82276738a297198efbd4aae409d0ce01c17b",
@@ -421,7 +420,7 @@
   "plan_short_mock_and_review": "469f92b3d088dd8c97e08efe8e562318c5b11ad62c83ba741ae8d584f14c7614",
   "plan_show_fewer_chapters": "3fcb7bd3a6816305f3d9a468dd398fbde89717a09d3999a21239e3a7ba8b5a50",
   "plan_show_fewer_units": "2bd883ca96314306d3226a9050c725b4edce57806bac5811f429bb87c7b695d3",
-  "plan_skills_you_know": "1ead470d797c7154f28ff65460e5db801ea50c8421188f0dcdf6af5c0c73ad46",
+  "plan_skills_you_know": "4d354c24677d88bf1e7b0b2937c8d45993638e4b0805478959ff7cb755833ab5",
   "plan_skipped": "d27a1b4db78cd5c32f2bb065f19e7aa78d5526cce010edaa158dac8b28047a69",
   "plan_skipped_known": "ee084da0202dfd5ca86788513de70aec8a9d2fdfa2c490f5ab7810789ad95af9",
   "plan_stays_as_it_is": "864b0c4b50fbf042d35e168d8f7795849190501871481835fede5eafb1e17aa0",
@@ -439,7 +438,6 @@
   "plan_suggestion_previous": "498a5ab5c80a33a25f68db69b8c086bc551751f88581022ffdc325667fe52776",
   "plan_sundays": "1cbe53139fce734b53c79153b295f24c1694565f9b514aa88f2e1db63358f328",
   "plan_system_phone": "590e2b62607d52bd511bb755082d86e65420cb7469e41521281eaaf74260b6fd",
-  "plan_talk_to": "2947fe997e263a8d6ebe1a1c300cfeb9992eb2b2b776e87c78f46f466f3c247d",
   "plan_tests_taken": "d2e0844a619e70dc2c5dee4f58346d31b87a7c400777578461ee09a0d04ef5f3",
   "plan_this_week": "44062bfe95423eba0ded476eeb0884ffc7e410ae398864af3f3f38a1613afe37",
   "plan_thursdays": "f9385653e23e1eb64a580e4a508ef623e7d99f9eb8f03deeb345a21045ee906c",
@@ -497,7 +495,7 @@
   "plan_tool_how": "c176f813cd0575e55f5a63545927307c947cfc137583ccba8bf1edb36ee3c67e",
   "plan_tool_needed": "91b95f7fd5b0563a63c95385a37b8db20b8ba8861afe07289b3bbd8740d78e22",
   "plan_tool_none": "122be78d70cff41181c8e5586a962bcf75b5d09443b4ccacdaff7208f85e2982",
-  "plan_tool_none_description": "b5bdb52be0daa0e65ac6c65b20be1afddd041305695ce9bc664b6dc03df70a84",
+  "plan_tool_none_description": "e70dc17705e3b406b672b2e88b58234fc0d769bbe8d9a4dbc61f8109c4b85215",
   "plan_tool_optional": "77b9383bc9ef796ea3d10d12a12189dace5ab07eaacf2b0901b89b93981d4099",
   "plan_tool_setup": "004f2a7657bcf1c9cd7ab2d65611f3bee29a201ade8da035221d365096783e33",
   "plan_tool_setup_description": "7d0d8c2d9ce2cdf5a99495a1a3e74b4bb94de0c455f06332e6de7ddf5f116f62",
@@ -512,7 +510,7 @@
   "plan_tools_later": "4e44a56dc87436df4e70755489f5e08dc5d49b8888202071ebd0b0441b767c4f",
   "plan_tools_none": "481db05a0a39354826d22466a95948c3b6d626d47d01d98edf2ce40d555913c3",
   "plan_tools_title": "8d24fd600c7915ed2c844b3ae2d92ddfe025856ec493c75c96d1d0d2e9d079c3",
-  "plan_tools_without": "16cf00c2dccb73605b70b5fd5822d24d49aa608c7a84da426547db4faffb2456",
+  "plan_tools_without": "ebfa12805cb8683bc975b5cd879de45f6bb05be1098f81c38de9741fcf7a3813",
   "plan_topics_studied": "664feaff4cd491a7a11b18f295eb023d703100b05131b38aa61c8628957df0c5",
   "plan_trickster_not_in_plan": "ed782ead8e7e67aed325ccbcb4f943152ff543f85861b96b7616efc104e049b2",
   "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
@@ -581,7 +579,6 @@
     <string name="plan_about_exam">Über die Prüfung</string>
     <string name="plan_full_course">Gesamten Kurs ansehen</string>
     <string name="plan_share">Plan teilen</string>
-    <string name="plan_talk_to">Mit %1$s sprechen</string>
     <string name="plan_rename_goal">Ziel umbenennen</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Name</string>
@@ -647,8 +644,8 @@
     <string name="plan_skipped">Übersprungen</string>
     <string name="plan_done">Abgeschlossen</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="one">%d Fähigkeit, die du schon beherrschst</item>
-        <item quantity="other">%d Fähigkeiten, die du schon beherrschst</item>
+        <item quantity="other">%d Kapitel kennst du schon</item>
+    <item quantity="one">%d Kapitel kennst du schon</item>
     </plurals>
     <string name="plan_more_lessons">Weitere Lektionen</string>
     <string name="plan_lessons_on_the_way">Lektionen folgen</string>
@@ -802,7 +799,6 @@
     <string name="plan_day_rest">Pausentag</string>
     <string name="plan_day_today">heute</string>
     <string name="plan_day_planned">geplant</string>
-    <string name="plan_last_week_recap">Rückblick auf letzte Woche</string>
     <string name="plan_preparation">Vorbereitung</string>
     <string name="plan_progress">Fortschritt</string>
     <string name="plan_your_preparation">Deine Vorbereitung</string>
@@ -1083,7 +1079,7 @@
     <string name="plan_tool_change_how">Ändern, wie du %1$s nutzen möchtest</string>
     <string name="plan_tool_choose_how">Wähle, wie du %1$s nutzen möchtest</string>
     <string name="plan_tools_none">Keine Tools? Du kannst alles mit Beispielen lernen.</string>
-    <string name="plan_tools_without">Du übst nicht auf deinem eigenen Computer. Die Lektionen nutzen stattdessen Beispiele und Simulationen.</string>
+    <string name="plan_tools_without">Du übst nicht an deinem eigenen Gerät. Stattdessen lernst du in den Lektionen mit Beispielen und Simulationen.</string>
     <string name="plan_tools_later">Später mehr: %1$s</string>
     <string name="plan_tool_how">Wie möchtest du es nutzen?</string>
     <string name="plan_tool_have">Ich habe es</string>
@@ -1091,7 +1087,7 @@
     <string name="plan_tool_setup">Ich richte es ein</string>
     <string name="plan_tool_setup_description">Eine kurze Lektion zeigt dir rechtzeitig, wie es geht.</string>
     <string name="plan_tool_none">Ohne Installation</string>
-    <string name="plan_tool_none_description">Lern mit Beispielen. Du übst nicht an deinem eigenen Computer.</string>
+    <string name="plan_tool_none_description">Lern anhand von Beispielen. Du übst nicht an deinem eigenen Gerät.</string>
     <string name="plan_tool_updates_when_ready">Dein Plan wird aktualisiert, sobald alles fertig ist.</string>
     <string name="plan_tool_writing_setup">Wir fügen eine Lektion zur Einrichtung hinzu</string>
     <string name="plan_tool_writing_setup_phase">Wir erstellen die Einrichtungsanleitung für dein Gerät</string>

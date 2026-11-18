@@ -127,25 +127,20 @@ private struct TodayStartGoal: View {
   private var resume: some View {
     if let explanation = learner.summary.value?.openExplanations.last {
       Section {
-        Label {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(explanation.displayName)
-            Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        } icon: {
-          Image(systemName: "play")
-            .foregroundStyle(.mutedForeground)
-        }
-
         Button {
           router.open(.explain(goalId: explanation.id))
         } label: {
-          Text(
-            "Continue", tableName: "Today",
-            comment: "Opens the learner's unfinished quick explanation")
+          ListRow(
+            Text(explanation.displayName),
+            description: Text("Continue", tableName: "Today")
+          ) {
+            Image(systemName: "play")
+          }
         }
+        .buttonStyle(.plain)
+        .currentRow()
+      } header: {
+        Text("Quick explanation", tableName: "Today")
       }
     }
 

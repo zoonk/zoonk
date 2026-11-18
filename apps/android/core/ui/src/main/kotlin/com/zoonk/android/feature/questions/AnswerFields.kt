@@ -198,9 +198,17 @@ private fun markColors(mark: AnswerMark?): TextFieldColors {
 }
 
 @Composable
+fun decimalEntryRule(places: Int): String =
+    if (places == 0) {
+        stringResource(R.string.questions_entry_round_to_whole)
+    } else {
+        pluralStringResource(R.plurals.questions_entry_decimals, places, places)
+    }
+
+@Composable
 private fun entryRule(entry: NumericEntry): String =
     when (entry.kind) {
-        NumericEntry.Kind.Decimals -> pluralStringResource(R.plurals.questions_entry_decimals, entry.places ?: 0, entry.places ?: 0)
+        NumericEntry.Kind.Decimals -> decimalEntryRule(entry.places ?: 0)
         NumericEntry.Kind.Fraction -> stringResource(R.string.questions_entry_fraction)
         NumericEntry.Kind.Integer -> stringResource(R.string.questions_entry_integer)
         NumericEntry.Kind.Number -> ""
