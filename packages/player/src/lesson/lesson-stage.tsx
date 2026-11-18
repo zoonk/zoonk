@@ -177,7 +177,7 @@ function getCheckAdditions({
   return selfCorrect || feedback ? { feedback, selfCorrect } : null;
 }
 
-function SelfCorrectLine() {
+function SelfCorrectLine({ listening }: { listening: boolean }) {
   const t = useExtracted();
 
   return (
@@ -185,7 +185,7 @@ function SelfCorrectLine() {
       <LineMarker>
         <PencilIcon aria-hidden="true" className="size-4" />
       </LineMarker>
-      {t("Not quite. Look again and fix it yourself, then check.")}
+      {listening ? t("Listen again") : t("Not quite. Look again and fix it yourself, then check.")}
     </p>
   );
 }
@@ -250,9 +250,12 @@ function useOwnCardNotes({ isShown, step }: { isShown: boolean; step: PlayableLi
 }
 
 function CheckAdded({ additions, step }: { additions: CheckAdditions; step: PlayableLibraryStep }) {
+  const { state } = useLessonPlayer();
+  const answered = getAnsweredStep({ answer: state.answers[step.id], step });
+
   return (
     <div className="flex flex-col gap-3">
-      {additions.selfCorrect && <SelfCorrectLine />}
+      {additions.selfCorrect && <SelfCorrectLine listening={answered.kind === "listening"} />}
       {additions.feedback && <CheckFeedback step={step} />}
     </div>
   );

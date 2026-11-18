@@ -34,6 +34,8 @@ const OPTION_DESCRIPTION_STYLE = {
   aspectRatio: "auto",
 };
 
+const PENDING_PICTURE_STYLE = pictureBoxStyle(DRAWN_PICTURE_SIZE.option);
+
 function PictureOptionContent({
   isChecked,
   option,
@@ -54,8 +56,15 @@ function PictureOptionContent({
         {(startedPending || pending) && (
           <LessonPicturePending
             aria-hidden={!pending || undefined}
-            className={cn(OPTION_DESCRIPTION_CLASS, !pending && "invisible")}
-            style={OPTION_DESCRIPTION_STYLE}
+            className={cn(
+              OPTION_PICTURE_CLASS,
+              PICTURE_BOX_CLASS,
+              PICTURE_FRAME_CLASS.question,
+              "col-start-1 row-start-1 overflow-hidden",
+              "[&>div:last-child]:gap-1 [&>div:last-child]:p-2 [&>div:last-child]:text-xs [&>div:last-child>svg]:size-4",
+              !pending && "invisible",
+            )}
+            style={PENDING_PICTURE_STYLE}
           >
             <p className="leading-snug wrap-anywhere">{pictureText}</p>
           </LessonPicturePending>

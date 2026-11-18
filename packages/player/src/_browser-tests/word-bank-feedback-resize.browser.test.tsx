@@ -19,14 +19,13 @@ function offerAsk(): HTMLButtonElement | null {
   return document.querySelector('[data-slot="lesson-ask-buddy-offer"] button');
 }
 
-/** The feedback sits under the bank from `lg` and above it below `lg`, in the page's order too. */
-async function feedbackFollowsBank(follows: boolean) {
+async function feedbackFollowsBank() {
   await expect
     .poll(() => {
       const position = bank().element().compareDocumentPosition(feedback().element());
       return position === Node.DOCUMENT_POSITION_FOLLOWING;
     })
-    .toBe(follows);
+    .toBe(true);
 }
 
 /** A second miss on a translate step, after a missed question, offers the buddy in the feedback. */
@@ -55,14 +54,14 @@ async function missTwiceOnTheBank() {
 
 async function crossTo(size: { height: number; width: number }) {
   await page.viewport(size.width, size.height);
-  await feedbackFollowsBank(size === LAPTOP);
+  await feedbackFollowsBank();
 }
 
 describe("a word bank's feedback across lg", () => {
   it("moves focus to Continue when the offer hides and remembers a dismissed offer", async () => {
     await atViewport(PHONE, async () => {
       await missTwiceOnTheBank();
-      await feedbackFollowsBank(false);
+      await feedbackFollowsBank();
 
       const ask = offerAsk();
       expect(ask).not.toBeNull();
