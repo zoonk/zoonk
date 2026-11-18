@@ -124,7 +124,7 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
     <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
-      <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 flex-col text-pretty">
         <span>
           {goal.displayName}
           <GoalCountryName goal={goal} />
@@ -144,7 +144,7 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
       <LineMarker aria-hidden="true">
         <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
       </LineMarker>
-      <span className="min-w-0">{goal.displayName}</span>
+      <span className="min-w-0 text-pretty">{goal.displayName}</span>
     </DropdownMenuItem>
   );
 }
@@ -152,13 +152,10 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
 /** The bar's trigger hangs 10px into the gutter like a highlighted row, so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
   // The end's padding plus the chevron's blank side match the start's padding, so the fill is even by ink.
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-3 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-1 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
-
-/** Each trigger's start padding above, so its menu opens on the trigger's mark rather than its fill. */
-const MENU_ALIGN_OFFSET = { bar: 10, sidebar: 8 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
 
@@ -173,7 +170,9 @@ function NoGoalLink({
 
   return (
     <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
-      <NoGoalMark />
+      <span className="me-1.5 flex shrink-0">
+        <NoGoalMark />
+      </span>
       <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
@@ -211,11 +210,13 @@ export function GoalSwitcher({
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
-  const [selectedId, setSelectedId] = useOptimistic(activeGoalId ?? followed[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useOptimistic(activeGoalId);
   const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
-  const selected = followed.find((goal) => goal.id === selectedId) ?? followed[0];
+  const selected = followed.find((goal) => goal.id === selectedId);
 
-  if (!selected && explanations.length === 0) {
+  const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
+
+  if (!hasGoalOptions && explanations.length === 0) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
   }
 
@@ -243,9 +244,13 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
+          {selected && (
+            <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
+              <GoalMark goal={selected} />
+            </span>
+          )}
           <span className="min-w-0 flex-1 truncate text-left">
-            {selected?.displayName ?? t("Start a goal")}
+            {selected?.displayName ?? t("Your goals")}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
           {selected && <GoalCountryName goal={selected} />}
@@ -253,16 +258,12 @@ export function GoalSwitcher({
           <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent
-          alignOffset={MENU_ALIGN_OFFSET[placement]}
-          className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
-          collisionPadding={16}
-        >
-          {selected && (
+        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)] p-1.5">
+          {hasGoalOptions && (
             <DropdownMenuGroup>
               <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
 
-              <DropdownMenuRadioGroup onValueChange={select} value={selected.id}>
+              <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
                 {followed.map((goal) => (
                   <GoalOption goal={goal} key={goal.id} />
                 ))}
@@ -292,7 +293,7 @@ export function GoalSwitcher({
 
           {explanations.length > 0 && (
             <DropdownMenuGroup>
-              {selected && <DropdownMenuSeparator className="-mx-1.5" />}
+              {hasGoalOptions && <DropdownMenuSeparator className="-mx-1.5" />}
               <DropdownMenuLabel className={MENU_LABEL_CLASS}>
                 {t("Quick explanations")}
               </DropdownMenuLabel>
