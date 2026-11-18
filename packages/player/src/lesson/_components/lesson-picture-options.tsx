@@ -61,12 +61,15 @@ function PictureOptionContent({
     if (pending) {
       return (
         <MediaPending
-          className={OPTION_PICTURE_BOX_CLASS}
+          className={cn(
+            OPTION_PICTURE_BOX_CLASS,
+            "max-h-none min-h-[min(100cqw,var(--picture-max-h))]",
+          )}
           icon={<ImageIcon aria-hidden="true" className="size-5 shrink-0" />}
-          style={OPTION_PICTURE_BOX_STYLE}
+          style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
         >
           <p role="status">{t("Drawing the picture…")}</p>
-          <p className="line-clamp-3 leading-snug wrap-anywhere">{pictureText}</p>
+          <p className="leading-snug wrap-anywhere">{pictureText}</p>
         </MediaPending>
       );
     }
@@ -85,7 +88,7 @@ function PictureOptionContent({
   }
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="@container flex w-full flex-col gap-2">
       {picture()}
 
       {isChecked && (
