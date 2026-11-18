@@ -3,18 +3,18 @@
 import { useSelectedLayoutSegment } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
 
-type PlaceholderProps = { children: ReactNode; fallback?: ReactNode };
+type PlaceholderProps = { children: ReactNode };
 
-function PrivatePlaceholder({ children, fallback }: PlaceholderProps) {
+function PrivatePlaceholder({ children }: PlaceholderProps) {
   const section = useSelectedLayoutSegment();
-  return section === "(learn)" || section === "(onboarding)" ? children : fallback;
+  return section === "(catalog)" ? null : children;
 }
 
 /** The public catalog uses the same frame, but has no learner content to stream. */
-export function PrivateShellPlaceholder({ children, fallback }: PlaceholderProps) {
+export function PrivateShellPlaceholder({ children }: PlaceholderProps) {
   return (
-    <Suspense fallback={fallback}>
-      <PrivatePlaceholder fallback={fallback}>{children}</PrivatePlaceholder>
+    <Suspense>
+      <PrivatePlaceholder>{children}</PrivatePlaceholder>
     </Suspense>
   );
 }
