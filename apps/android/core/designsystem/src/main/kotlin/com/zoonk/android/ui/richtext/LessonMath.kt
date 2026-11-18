@@ -100,7 +100,7 @@ private const val FUNCTION_GAP = "\u2006"
 /** The longest part a fraction sets small around its slash. */
 private const val SHORT_TERM = 4
 
-/** Marks a `\text` word, so a fraction can tell one word ("distance") from side-by-side symbols ("RT"). */
+/** Marks a one-word `\text`, so a fraction can tell one word ("distance") from side-by-side symbols or words ("RT", "total time"). */
 private const val WORD = "math-word"
 
 /** One number, its digits grouped by any space ("12 000", "1,89"). */
@@ -287,14 +287,18 @@ private class MathParser(
 
         return when (name) {
             "text", "mathrm", "textrm", "operatorname", "mbox", "textnormal" -> {
-                val word = run(textArgument(), style, italic = false)
-                Piece(
-                    buildAnnotatedString {
-                        append(word.text)
-                        addStringAnnotation(WORD, "", 0, length)
-                    },
-                    word.spoken,
-                )
+                val words = run(textArgument(), style, italic = false)
+                if (words.plain.any(Char::isWhitespace)) {
+                    words
+                } else {
+                    Piece(
+                        buildAnnotatedString {
+                            append(words.text)
+                            addStringAnnotation(WORD, "", 0, length)
+                        },
+                        words.spoken,
+                    )
+                }
             }
 
             "mathit", "textit", "emph" -> {
