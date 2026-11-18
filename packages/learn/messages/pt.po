@@ -7190,11 +7190,10 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Faça o gesto de pinça, role a tela ou use + e - para ajustar o zoom; arraste ou use as setas para mover."
 
-#. A button: study the mind maps, one by one. A verb, not the noun.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "mindMapsStudyAction"
-msgid "Study"
-msgstr "Estudar"
+msgctxt "RNV4nB"
+msgid "Study mind maps"
+msgstr "Estudar mapas mentais"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "IFE_-l"
@@ -7237,12 +7236,9 @@ msgid "No longer available"
 msgstr "Não está mais disponível"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Capítulos"
+msgctxt "YvO5Tq"
+msgid "With a map"
+msgstr "Com mapa"
 
 #. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7261,9 +7257,9 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, one {Você pode criar mais # mapa agora.} other {Você pode criar mais # mapas agora.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "BekXxP"
-msgid "Other chapters"
-msgstr "Outros capítulos"
+msgctxt "uPTv7C"
+msgid "Without a map"
+msgstr "Sem mapa"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -9597,6 +9593,13 @@ msgstr "A gente está escolhendo o que você vai aprender primeiro e organizando
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "A criação do seu plano parou"
+
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Capítulos"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -12077,6 +12080,11 @@ msgstr "E-mail"
 msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "Notificações push"
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "Os lembretes estão desativados."
 
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
