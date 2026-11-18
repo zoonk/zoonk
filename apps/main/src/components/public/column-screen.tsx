@@ -31,7 +31,8 @@ export function ColumnScreen({
         start={
           <BackLink
             aria-label={BRAND_NAME}
-            render={<Link className="text-foreground! text-reading h-11" href="/" />}
+            render={<Link className="text-reading h-11" href="/" />}
+            tone="foreground"
           >
             {BRAND_NAME}
           </BackLink>
