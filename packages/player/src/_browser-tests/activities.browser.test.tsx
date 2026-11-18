@@ -306,4 +306,29 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
   });
+
+  it("chart reader: an axis label alone does not turn numbers into clock times", async () => {
+    const chart = activityContentFixtures.chartReader;
+
+    openActivity({
+      content: {
+        ...chart,
+        fields: {
+          ...chart.fields,
+          points: [
+            { x: 10, y: 390 },
+            { x: 12.5, y: 400 },
+            { x: 15, y: 414 },
+          ],
+          spans: [{ from: 10, id: "late", label: "The trading window", to: 15 }],
+          xLabel: "Hour of the day",
+        },
+      },
+      template: "chartReader",
+    });
+
+    await expect.element(page.getByText("Hour of the day", { exact: true })).toBeVisible();
+    const labels = [...document.querySelectorAll('[data-slot="plot-axis-x"] text')];
+    expect(labels.map((label) => label.textContent)).toContain("10");
+  });
 });
