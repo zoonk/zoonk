@@ -147,10 +147,6 @@ export function RemindersScreen({
           )}
         </ListGroup>
 
-        <PageSectionFooter aria-live="polite" className="empty:hidden">
-          {isOff && t("Reminders are off.")}
-        </PageSectionFooter>
-
         {!view.push.phone && (
           <PageSectionFooter>
             {t({
@@ -160,6 +156,10 @@ export function RemindersScreen({
             })}
           </PageSectionFooter>
         )}
+
+        <PageSectionFooter aria-live="polite" className="empty:hidden">
+          {isOff && t("Reminders are off.")}
+        </PageSectionFooter>
       </div>
 
       {view.quiet && (
