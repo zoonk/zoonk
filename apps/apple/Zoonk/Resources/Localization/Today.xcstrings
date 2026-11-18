@@ -1500,7 +1500,6 @@
       }
     },
     "%lld more lessons" : {
-      "comment" : "Folded later rows of Today, every one a lesson",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -3817,61 +3816,60 @@
         }
       }
     },
-    "Already know this chapter? **Take the test**" : {
-      "comment" : "Skips the next lesson's chapter with its test",
+    "Already know this chapter?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kennst du dieses Kapitel schon? **Mach den Test**"
+            "value" : "Kennst du dieses Kapitel schon?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Ya conoces este capítulo? **Hacer la prueba**"
+            "value" : "¿Ya conoces este capítulo?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu connais déjà ce chapitre ? **Passe le test**"
+            "value" : "Tu connais déjà ce chapitre ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conosci già questo capitolo? **Fai il test**"
+            "value" : "Conosci già questo capitolo?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この章の内容はもう知っていますか？**テストを受ける**"
+            "value" : "この章の内容はもう知っていますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 챕터 내용을 이미 알고 있나요? **테스트 보기**"
+            "value" : "이 챕터 내용을 이미 알고 있나요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Znasz już ten rozdział? **Rozwiąż test**"
+            "value" : "Znasz już ten rozdział?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já sabe o conteúdo deste capítulo? **Faça o teste**"
+            "value" : "Já sabe o conteúdo deste capítulo?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu üniteyi zaten biliyor musun? **Testi çöz**"
+            "value" : "Bu üniteyi zaten biliyor musun?"
           }
         }
       }

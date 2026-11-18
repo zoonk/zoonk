@@ -16,21 +16,13 @@ struct TestOutLine: View {
   }
 
   private var line: AttributedString {
-    let line = AttributedString(
-      localized: "Already know this chapter? **Take the test**", table: "Today",
-      comment: "Skips the next lesson's chapter with its test")
+    let question = String(localized: "Already know this chapter?", table: "Today")
+    var link = AttributedString(localized: "Take the test", table: "Tutor")
+    link.foregroundColor = Color(.foreground)
+    link.underlineStyle = .single
 
-    return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
-      result, run in
-      var piece = AttributedString(line[run.1])
-
-      if run.0?.contains(.stronglyEmphasized) == true {
-        piece.inlinePresentationIntent = nil
-        piece.foregroundColor = Color(.foreground)
-        piece.underlineStyle = .single
-      }
-
-      result += piece
-    }
+    // The words and the link sit as two sentences do, with no space after a full-width ？.
+    let space = [question, ""].joinedSentences().dropFirst(question.count)
+    return AttributedString(question + space) + link
   }
 }
