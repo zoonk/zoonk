@@ -12,7 +12,8 @@ import basePrompt from "./language-sentence-orders.prompt.md";
 /**
  * Finds candidates generously, since `checkSentenceOrders` reviews each one. Over 12 lessons Terra
  * found every right order any other generator found; Gemini 4 Argon, the best from another
- * provider, found 91% (8 Nov 2026).
+ * provider, found 91% (8 Nov 2026). Gemini 4 Hydrogen kept every valid order like Terra but scored
+ * 8.01 to Terra's 8.25 at $23.48/1k against $19.48/1k (18 Nov 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-4-argon"] as const;

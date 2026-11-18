@@ -24,7 +24,8 @@ import basePrompt from "./language-lesson.prompt.md";
  * Written once per pair and shared, so quality wins: on 15 cases (8 Nov 2026), Terra scored 8.95
  * (EN 9.18, PT 8.74) at $12.96/1k; Luna at high reasoning scored 8.33 and wrote an English
  * speaker's instructions in Portuguese. Gemini 3.8 Flash (7.36) is below the floor, so it's only an
- * outage route.
+ * outage route. Gemini 4 Hydrogen scored 7.93 to Terra's 8.84 at $107/1k against $13/1k (18 Nov
+ * 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;

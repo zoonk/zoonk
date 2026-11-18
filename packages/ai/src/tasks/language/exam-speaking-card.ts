@@ -19,7 +19,8 @@ import {
 
 /**
  * Not GPT-6 Luna, though cheaper: it wrote the learner's summary, role or a photo's alt in the
- * exam's language, such as a Brazilian learner's Goethe summary in German.
+ * exam's language, such as a Brazilian learner's Goethe summary in German. Gemini 4 Hydrogen scored
+ * 9.03 to Terra's 9.40 (18 Nov 2026), with a 31 s p95 against 17 s, at $27.87/1k against $4.06/1k.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;

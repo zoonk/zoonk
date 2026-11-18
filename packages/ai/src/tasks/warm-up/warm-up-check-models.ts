@@ -8,7 +8,9 @@ import { pickReviewers } from "../../_utils/model-family";
  * card; Luna missed it at both efforts, so Sonnet reviews before Luna. Haiku 5.5 lets a second right
  * answer through, and Flash Lite and Muse Ember miss the false side detail. A deck is shared, and
  * in production it's saved about 18 s into a goal build, long before the plan it waits beside
- * (about 46 s for the skill graph), so the check can spend the time.
+ * (about 46 s for the skill graph), so the check can spend the time. Gemini 4 Hydrogen also caught
+ * every planted error with no false blocks over 3 runs (18 Nov 2026), at $15.35 a 1k decks against
+ * Flash's $9.48.
  */
 const WARM_UP_REVIEWERS = [
   "google/gemini-3.8-flash",

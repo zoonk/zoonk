@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-18T10:11:24.210Z",
+  "fetchedAt": "2026-11-18T11:59:45.510Z",
   "models": {
     "alibaba/qwen-3-14b": { "input": 1.2e-7, "output": 2.4e-7 },
     "alibaba/qwen-3-30b": { "input": 1.2e-7, "output": 5e-7 },

@@ -27,7 +27,8 @@ import template from "./course-outline.prompt.md";
 /**
  * Shared courses are reused, so coverage is worth paying for: on 20 cases (8 Nov 2026), Terra
  * scored 9.22 (EN 9.51, PT 9.12) at $32.24/1k and covered every required area, where Luna (8.86,
- * $2.62/1k) left four ENEM extensions out. Haiku 5.5 scored 8.64.
+ * $2.62/1k) left four ENEM extensions out. Haiku 5.5 scored 8.64. Gemini 4 Hydrogen scored 9.12 to
+ * Terra's 9.42 at $115/1k against $34/1k (18 Nov 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;

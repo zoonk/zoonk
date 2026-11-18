@@ -11,7 +11,9 @@ import systemPrompt from "./word-ipa.prompt.md";
 /**
  * A wrong IPA makes the voice and its check agree on a wrong word. Claude Sonnet 5.5 wrote all 115
  * look-alike readings right on the word-ipa eval; Haiku, Luna and Flash Lite got some wrong (11 Oct
- * 2026).
+ * 2026). On 18 Nov 2026 GPT-6.2 Sol tied 6.1 Sol's 9.78 at $1.03/1k against $1.64/1k, but a blind
+ * read preferred 6.1 Sol on 7 of the 8 words where they differed (vowel length, nasal vowels);
+ * Gemini 4 Hydrogen scored 9.85 to Sonnet's 9.93 at $5.56/1k.
  */
 const defaultModel = "anthropic/claude-sonnet-5.5";
 const fallbackModels = ["openai/gpt-6.1-sol", "google/gemini-3.8-flash"] as const;

@@ -22,7 +22,8 @@ import { formatUsedSituations, getSituationSeed } from "./used-situations";
 /**
  * On 28 cases (8 Nov 2026), Terra scored 9.09 (EN 9.22, PT 8.92) at $10.00/1k; Luna (8.71),
  * Haiku 5.5 (8.46) and Flash Lite (7.66) cost less but wrote wrong keys or facts, and Flash Lite
- * reversed a missed-dose instruction. Opus hasn't run the current prompt.
+ * reversed a missed-dose instruction. Opus hasn't run the current prompt. Gemini 4 Hydrogen scored
+ * 8.79 to Terra's 9.14 at $94.54/1k against $9.77/1k, with 11 of 83 items flagged (18 Nov 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;

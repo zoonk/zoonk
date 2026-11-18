@@ -17,7 +17,8 @@ export type { TopicFrequencyFinding } from "./topic-frequency-finding";
 /**
  * Ratings are shared, so completeness wins: at low reasoning on 6 cases (8 Nov 2026), Flash scored
  * 10.00 (EN and PT) at $26.66/1k, and the cheaper families 9.00 to 9.67, missing Biology or rating
- * a brand-new syllabus as if it had a history. Terra also scored 10.00 on the current prompt.
+ * a brand-new syllabus as if it had a history. Terra also scored 10.00 on the current prompt. At low
+ * reasoning Gemini 4 Hydrogen scored 9.56 to Flash's 9.78 at $33/1k against $18/1k (18 Nov 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6.1-terra"] as const;

@@ -10,7 +10,8 @@ import systemPrompt from "./check-cited-facts.prompt.md";
 /**
  * This gate decides which shared facts are kept: on 74 facts (8 Nov 2026), Flash accepted no
  * unsupported one and rejected 2 supported ones, scoring 9.91 at $13.25/1k. Luna, the other
- * provider, accepted an unsupported fact, so it's only an outage route.
+ * provider, accepted an unsupported fact, so it's only an outage route. Gemini 4 Hydrogen got 213 of
+ * 222 fact decisions right to Flash's 217 (18 Nov 2026), at $20.84/1k against $9.71/1k.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;

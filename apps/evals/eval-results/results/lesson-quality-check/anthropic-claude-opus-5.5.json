@@ -3766,483 +3766,6 @@
     },
     {
       "classification": {
-        "expected": "pass",
-        "predicted": "pass"
-      },
-      "steps": [
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "verdict": "pass"
-        },
-        "id": "en-tax-deadlines-sourced-clean-1",
-        "userInput": {
-          "chapterTitle": "Income taxes",
-          "courseTitle": "Personal finance",
-          "language": "en",
-          "level": "beginner",
-          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
-          "spec": {
-            "canDo": "Plan your federal tax return around its deadlines",
-            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
-                "kind": "hook",
-                "skills": [],
-                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
-                "visualKind": "picture"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
-                "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
-                "kind": "guess",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
-                "kind": "explanation",
-                "skills": [
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
-                "kind": "check",
-                "skills": [
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
-                "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              }
-            ],
-            "skills": [
-              {
-                "description": "A year's federal return is due on April 15 of the following year.",
-                "example": "The 2025 return is due April 15, 2026.",
-                "hard": false,
-                "name": "Know the federal tax filing deadline",
-                "topic": "Tax filing deadlines",
-                "useCase": "Planning when to gather forms and file."
-              },
-              {
-                "description": "An extension delays filing by 6 months, but not paying.",
-                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
-                "hard": false,
-                "name": "Use a filing extension correctly",
-                "topic": "Tax filing extensions",
-                "useCase": "Avoiding penalties when a return isn't ready in time."
-              }
-            ],
-            "title": "Federal tax deadlines and extensions"
-          },
-          "lesson": {
-            "screens": [
-              {
-                "image": {
-                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
-                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
-                },
-                "kind": "hookText",
-                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": null,
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
-                "title": "Your return is due in April",
-                "visual": null
-              },
-              {
-                "image": null,
-                "kind": "hookGuess",
-                "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Yes, 6 more months to pay"
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "No, the tax is still due in April"
-                  }
-                ],
-                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
-                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": null,
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
-                "title": "More time to file, not to pay",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": null,
-                "image": null,
-                "kind": "check",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "picture": null,
-                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
-                    "text": "April 15, 2026"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
-                    "text": "October 15, 2026"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
-                    "text": "Whenever she files"
-                  }
-                ],
-                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
-                "image": null,
-                "kind": "check",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "picture": null,
-                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
-                    "text": "Send Form 4868 and pay about $1,200 by April 15"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
-                    "text": "Send Form 4868 and pay in October"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Without the form by April 15, both filing and paying are late.",
-                    "text": "Wait and file everything by October 15"
-                  }
-                ],
-                "question": "What should he do?",
-                "visual": null
-              }
-            ],
-            "summary": {
-              "ideas": [
-                {
-                  "label": "Filing deadline",
-                  "text": "Your federal tax return for 2025 is due April 15, 2026."
-                },
-                {
-                  "label": "Form 4868 extension",
-                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
-                }
-              ],
-              "shape": "hub"
-            }
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
-      "steps": [
-        {
-          "conclusion": "[screen 3] The screen says Form 4868 makes \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" and it is titled \"Six more months for everything.\" The IRS source says an extension gives \"more time to file, not more time to pay,\" and tax owed must be paid by April 15, 2026 to avoid interest and penalties. The screen also contradicts the hook, screen 4, screen 5 and the summary.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "[screen 3] The screen says Form 4868 makes \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" and it is titled \"Six more months for everything.\" The IRS source says an extension gives \"more time to file, not more time to pay,\" and tax owed must be paid by April 15, 2026 to avoid interest and penalties. The screen also contradicts the hook, screen 4, screen 5 and the summary.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "[screen 3] The screen says Form 4868 makes \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" and it is titled \"Six more months for everything.\" The IRS source says an extension gives \"more time to file, not more time to pay,\" and tax owed must be paid by April 15, 2026 to avoid interest and penalties. The screen also contradicts the hook, screen 4, screen 5 and the summary.",
-          "kind": "potentialImprovements",
-          "score": 7
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "screen": 4,
-          "verdict": "fail"
-        },
-        "id": "en-tax-deadlines-contradicts-source-1",
-        "userInput": {
-          "chapterTitle": "Income taxes",
-          "courseTitle": "Personal finance",
-          "language": "en",
-          "level": "beginner",
-          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
-          "spec": {
-            "canDo": "Plan your federal tax return around its deadlines",
-            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
-                "kind": "hook",
-                "skills": [],
-                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
-                "visualKind": "picture"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
-                "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
-                "kind": "guess",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
-                "kind": "explanation",
-                "skills": [
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
-                "kind": "check",
-                "skills": [
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
-                "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
-                "visual": null,
-                "visualKind": "none"
-              }
-            ],
-            "skills": [
-              {
-                "description": "A year's federal return is due on April 15 of the following year.",
-                "example": "The 2025 return is due April 15, 2026.",
-                "hard": false,
-                "name": "Know the federal tax filing deadline",
-                "topic": "Tax filing deadlines",
-                "useCase": "Planning when to gather forms and file."
-              },
-              {
-                "description": "An extension delays filing by 6 months, but not paying.",
-                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
-                "hard": false,
-                "name": "Use a filing extension correctly",
-                "topic": "Tax filing extensions",
-                "useCase": "Avoiding penalties when a return isn't ready in time."
-              }
-            ],
-            "title": "Federal tax deadlines and extensions"
-          },
-          "lesson": {
-            "screens": [
-              {
-                "image": {
-                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
-                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
-                },
-                "kind": "hookText",
-                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": null,
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
-                "title": "Your return is due in April",
-                "visual": null
-              },
-              {
-                "image": null,
-                "kind": "hookGuess",
-                "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Yes, 6 more months to pay"
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "No, the tax is still due in April"
-                  }
-                ],
-                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
-                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": null,
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
-                "title": "Six more months for everything",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": null,
-                "image": null,
-                "kind": "check",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "picture": null,
-                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
-                    "text": "April 15, 2026"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
-                    "text": "October 15, 2026"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
-                    "text": "Whenever she files"
-                  }
-                ],
-                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
-                "image": null,
-                "kind": "check",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "picture": null,
-                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
-                    "text": "Send Form 4868 and pay about $1,200 by April 15"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
-                    "text": "Send Form 4868 and pay in October"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Without the form by April 15, both filing and paying are late.",
-                    "text": "Wait and file everything by October 15"
-                  }
-                ],
-                "question": "What should he do?",
-                "visual": null
-              }
-            ],
-            "summary": {
-              "ideas": [
-                {
-                  "label": "Filing deadline",
-                  "text": "Your federal tax return for 2025 is due April 15, 2026."
-                },
-                {
-                  "label": "Form 4868 extension",
-                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
-                }
-              ],
-              "shape": "hub"
-            }
-          }
-        }
-      }
-    },
-    {
-      "classification": {
         "expected": "fail",
         "predicted": "fail"
       },
@@ -8554,6 +8077,1437 @@
               }
             ],
             "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "verdict": "pass"
+        },
+        "id": "en-tax-deadlines-sourced-clean-1",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
+                "title": "More time to file, not to pay",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "verdict": "pass"
+        },
+        "id": "en-tax-deadlines-sourced-clean-2",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
+                "title": "More time to file, not to pay",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "verdict": "pass"
+        },
+        "id": "en-tax-deadlines-sourced-clean-3",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
+                "title": "More time to file, not to pay",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
+      "steps": [
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.\" The title \"Six more months for everything\" says the same. This contradicts the IRS source, which says an extension gives \"more time to file, not more time to pay.\" It also contradicts screens 3, 5 and 6 and the summary, which all keep payment due April 15.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.\" The title \"Six more months for everything\" says the same. This contradicts the IRS source, which says an extension gives \"more time to file, not more time to pay.\" It also contradicts screens 3, 5 and 6 and the summary, which all keep payment due April 15.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.\" The title \"Six more months for everything\" says the same. This contradicts the IRS source, which says an extension gives \"more time to file, not more time to pay.\" It also contradicts screens 3, 5 and 6 and the summary, which all keep payment due April 15.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screen": 4,
+          "verdict": "fail"
+        },
+        "id": "en-tax-deadlines-contradicts-source-1",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
+                "title": "Six more months for everything",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
+      "steps": [
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost\" and is titled \"Six more months for everything.\" That is false: per the IRS source, an extension gives more time to file, not to pay, and tax owed is still due April 15, 2026. It also contradicts screens 3, 5 and 6 and the summary.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost\" and is titled \"Six more months for everything.\" That is false: per the IRS source, an extension gives more time to file, not to pay, and tax owed is still due April 15, 2026. It also contradicts screens 3, 5 and 6 and the summary.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost\" and is titled \"Six more months for everything.\" That is false: per the IRS source, an extension gives more time to file, not to pay, and tax owed is still due April 15, 2026. It also contradicts screens 3, 5 and 6 and the summary.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screen": 4,
+          "verdict": "fail"
+        },
+        "id": "en-tax-deadlines-contradicts-source-2",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
+                "title": "Six more months for everything",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
+      "steps": [
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" under the title \"Six more months for everything.\" This is wrong. Per the IRS source, an extension gives more time to file, not to pay, and tax owed must be paid by April 15, 2026 to avoid interest and penalties. It also contradicts screens 3, 5, 6 and the summary.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" under the title \"Six more months for everything.\" This is wrong. Per the IRS source, an extension gives more time to file, not to pay, and tax owed must be paid by April 15, 2026 to avoid interest and penalties. It also contradicts screens 3, 5, 6 and the summary.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 4] The screen says \"both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost,\" under the title \"Six more months for everything.\" This is wrong. Per the IRS source, an extension gives more time to file, not to pay, and tax owed must be paid by April 15, 2026 to avoid interest and penalties. It also contradicts screens 3, 5, 6 and the summary.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screen": 4,
+          "verdict": "fail"
+        },
+        "id": "en-tax-deadlines-contradicts-source-3",
+        "userInput": {
+          "chapterTitle": "Income taxes",
+          "courseTitle": "Personal finance",
+          "language": "en",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>",
+          "spec": {
+            "canDo": "Plan your federal tax return around its deadlines",
+            "description": "When a federal tax return is due, and what an extension does and doesn't delay.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A year's federal return is due on April 15 of the following year.",
+                "example": "The 2025 return is due April 15, 2026.",
+                "hard": false,
+                "name": "Know the federal tax filing deadline",
+                "topic": "Tax filing deadlines",
+                "useCase": "Planning when to gather forms and file."
+              },
+              {
+                "description": "An extension delays filing by 6 months, but not paying.",
+                "example": "With Form 4868 you file by October 15, 2026 and still pay by April 15, 2026.",
+                "hard": false,
+                "name": "Use a filing extension correctly",
+                "topic": "Tax filing extensions",
+                "useCase": "Avoiding penalties when a return isn't ready in time."
+              }
+            ],
+            "title": "Federal tax deadlines and extensions"
+          },
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
+                "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
+                "title": "Six more months for everything",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The extension only moves the filing date, so payment stays on April 15.",
+                    "text": "April 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Tempting, since that's her new filing date, but the extension doesn't move payment.",
+                    "text": "October 15, 2026"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
+                    "text": "Whenever she files"
+                  }
+                ],
+                "question": "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
+                    "text": "Send Form 4868 and pay about $1,200 by April 15"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The form gives him time to file, but paying in October adds interest and penalties.",
+                    "text": "Send Form 4868 and pay in October"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Without the form by April 15, both filing and paying are late.",
+                    "text": "Wait and file everything by October 15"
+                  }
+                ],
+                "question": "What should he do?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
           }
         }
       }

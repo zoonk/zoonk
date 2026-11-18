@@ -50,6 +50,10 @@ const [defaultModel, sharedLessonModel] = WRITER_MODELS;
  * and Sonnet 8.06 (EN 7.93) at $179/1k against $125/1k, which a shared lesson spreads across its
  * readers. Personal: Terra scored 8.25 (EN 8.29, PT 8.20) at $21/1k; a blind Argon judge rated
  * Haiku 5.5 at high reasoning ($14/1k) about the same, but Terra led accuracy 9.20 to 8.27.
+ * On 18 shared lessons (18 Nov 2026), a blind Argon judge tied GPT-6.2 Sol with Opus (+0.05 for
+ * Opus, ±0.33; Opus more engaging, Sol better checks) at $41/1k against $201/1k and half the wait,
+ * but a Sol-written lesson is reviewed by Opus, which caught 2 of the 6 errors Astra caught, so
+ * Opus keeps writing. Gemini 4 Hydrogen scored 8.08 to Terra's 8.29 at $150/1k against $25/1k.
  */
 export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
   return reuse === "personal" ? defaultModel : sharedLessonModel;

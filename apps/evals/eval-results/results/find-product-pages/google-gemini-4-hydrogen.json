@@ -1,0 +1,758 @@
+{
+  "modelId": "google/gemini-4-hydrogen",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "vercel.com"
+          ],
+          "docsUrl": [
+            "nextjs.org/docs"
+          ],
+          "productUrl": [
+            "nextjs.org"
+          ],
+          "releasesUrl": [
+            "nextjs.org/blog",
+            "github.com/vercel/next.js/releases"
+          ]
+        },
+        "id": "nextjs-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Vercel",
+            "name": "Next.js",
+            "release": null
+          },
+          "officialDomains": [
+            "nextjs.org",
+            "vercel.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "vercel.com"
+          ],
+          "docsUrl": [
+            "nextjs.org/docs"
+          ],
+          "productUrl": [
+            "nextjs.org"
+          ],
+          "releasesUrl": [
+            "nextjs.org/blog",
+            "github.com/vercel/next.js/releases"
+          ]
+        },
+        "id": "nextjs-2",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Vercel",
+            "name": "Next.js",
+            "release": null
+          },
+          "officialDomains": [
+            "nextjs.org",
+            "vercel.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "apple.com"
+          ],
+          "docsUrl": [
+            "support.apple.com"
+          ],
+          "productUrl": [
+            "apple.com/iphone"
+          ],
+          "releaseUrl": [
+            "support.apple.com",
+            "apple.com"
+          ],
+          "releasesUrl": [
+            "support.apple.com/en-us/108044",
+            "support.apple.com/108044"
+          ]
+        },
+        "id": "iphone-13-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Apple",
+            "name": "iPhone",
+            "release": "iPhone 13"
+          },
+          "officialDomains": [
+            "apple.com",
+            "support.apple.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "apple.com"
+          ],
+          "docsUrl": [
+            "support.apple.com"
+          ],
+          "productUrl": [
+            "apple.com/iphone"
+          ],
+          "releaseUrl": [
+            "support.apple.com",
+            "apple.com"
+          ],
+          "releasesUrl": [
+            "support.apple.com/en-us/108044",
+            "support.apple.com/108044"
+          ]
+        },
+        "id": "iphone-13-2",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Apple",
+            "name": "iPhone",
+            "release": "iPhone 13"
+          },
+          "officialDomains": [
+            "apple.com",
+            "support.apple.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": null
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-2",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": null
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releaseUrl": [
+            "tdn.totvs.com"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-release-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "12.1.2410"
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "totvs.com"
+          ],
+          "docsUrl": [
+            "tdn.totvs.com"
+          ],
+          "productUrl": [
+            "totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus",
+            "produtos.totvs.com/produto/totvs-backoffice/totvs-backoffice-linha-protheus"
+          ],
+          "releaseUrl": [
+            "tdn.totvs.com"
+          ],
+          "releasesUrl": [
+            "tdn.totvs.com"
+          ]
+        },
+        "id": "protheus-release-2",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "12.1.2410"
+          },
+          "officialDomains": [
+            "totvs.com",
+            "tdn.totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "releaseUrl": [
+            "tdn.totvs.com/pages/viewpage.action?pageId=836052340",
+            "tdn.totvs.com/pages/releaseview.action?pageId=836052340"
+          ]
+        },
+        "id": "protheus-known-release-notes-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "Protheus 12.1.2410"
+          },
+          "knownWebsite": "https://www.totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus/",
+          "officialDomains": [
+            "totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "releaseUrl": [
+            "tdn.totvs.com/pages/viewpage.action?pageId=836052340",
+            "tdn.totvs.com/pages/releaseview.action?pageId=836052340"
+          ]
+        },
+        "id": "protheus-known-release-notes-2",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "TOTVS",
+            "name": "Protheus",
+            "release": "Protheus 12.1.2410"
+          },
+          "knownWebsite": "https://www.totvs.com/sistema-de-gestao/totvs-backoffice-linha-protheus/",
+          "officialDomains": [
+            "totvs.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": null,
+          "docsUrl": null,
+          "productUrl": null,
+          "releaseUrl": null,
+          "releasesUrl": null
+        },
+        "id": "internal-tool-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Brightwave Dental",
+            "name": "Brightwave Scheduler",
+            "release": null
+          },
+          "officialDomains": []
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": null,
+          "docsUrl": null,
+          "productUrl": null,
+          "releaseUrl": null,
+          "releasesUrl": null
+        },
+        "id": "internal-tool-2",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Brightwave Dental",
+            "name": "Brightwave Scheduler",
+            "release": null
+          },
+          "officialDomains": []
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "figma.com"
+          ],
+          "docsUrl": [
+            "help.figma.com",
+            "developers.figma.com"
+          ],
+          "productUrl": [
+            "figma.com"
+          ],
+          "releasesUrl": [
+            "figma.com/release-notes",
+            "figma.com/whats-new"
+          ]
+        },
+        "id": "figma-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Figma",
+            "name": "Figma",
+            "release": null
+          },
+          "officialDomains": [
+            "figma.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "figma.com"
+          ],
+          "docsUrl": [
+            "help.figma.com",
+            "developers.figma.com"
+          ],
+          "productUrl": [
+            "figma.com"
+          ],
+          "releasesUrl": [
+            "figma.com/release-notes",
+            "figma.com/whats-new"
+          ]
+        },
+        "id": "figma-2",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Figma",
+            "name": "Figma",
+            "release": null
+          },
+          "officialDomains": [
+            "figma.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "rdstation.com"
+          ],
+          "docsUrl": [
+            "ajuda.rdstation.com",
+            "developers.rdstation.com"
+          ],
+          "productUrl": [
+            "rdstation.com/produtos/marketing",
+            "rdstation.com/marketing"
+          ]
+        },
+        "id": "rd-station-marketing-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "RD Station",
+            "name": "RD Station Marketing",
+            "release": null
+          },
+          "officialDomains": [
+            "rdstation.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "rdstation.com"
+          ],
+          "docsUrl": [
+            "ajuda.rdstation.com",
+            "developers.rdstation.com"
+          ],
+          "productUrl": [
+            "rdstation.com/produtos/marketing",
+            "rdstation.com/marketing"
+          ]
+        },
+        "id": "rd-station-marketing-2",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "RD Station",
+            "name": "RD Station Marketing",
+            "release": null
+          },
+          "officialDomains": [
+            "rdstation.com"
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "find-product-pages"
+}
