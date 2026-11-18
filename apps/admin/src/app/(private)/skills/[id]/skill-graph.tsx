@@ -12,7 +12,10 @@ function SkillRows({ empty, skills }: { empty: string; skills: GraphSkill[] }) {
   return (
     <ul className="divide-y">
       {skills.map((skill) => (
-        <li className="flex min-h-11 items-center justify-between gap-4 text-sm" key={skill.id}>
+        <li
+          className="flex items-baseline justify-between gap-4 py-2 text-sm first:pt-0 last:pb-0"
+          key={skill.id}
+        >
           <Link
             className={cn(
               "hit-area relative truncate hover:underline",

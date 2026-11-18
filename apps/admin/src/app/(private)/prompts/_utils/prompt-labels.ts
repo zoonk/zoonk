@@ -27,7 +27,7 @@ export const promptOutcomeTones: Record<PromptOutcome, StateTone> = {
   goalCreated: "done",
   inProgress: "going",
   noGoal: "waiting",
-  unclear: "off",
+  unclear: "attention",
   unsafe: "off",
 };
 

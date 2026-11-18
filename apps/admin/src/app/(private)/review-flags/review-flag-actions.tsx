@@ -29,10 +29,6 @@ function sayingWhatItDid(action: ReviewFlagAction): ReviewFlagAction {
   };
 }
 
-/**
- * Dismissing is the decision only a person can make (this is still right), so it's the row's
- * button; a rewrite is what the daily run does anyway, so starting one now is the quiet action.
- */
 export function ReviewFlagActions({ flagId }: { flagId: string }) {
   const [, rewriteAction] = useAdminActionState({
     action: sayingWhatItDid(rewriteReviewFlagAction),
@@ -46,15 +42,15 @@ export function ReviewFlagActions({ flagId }: { flagId: string }) {
 
   return (
     <div className="flex justify-end gap-2">
-      <form action={rewriteAction}>
-        <input name="flagId" type="hidden" value={flagId} />
-        <AdminActionSubmitButton icon={<RefreshCwIcon />} variant="ghost">
-          Rewrite now
-        </AdminActionSubmitButton>
-      </form>
       <form action={dismissAction}>
         <input name="flagId" type="hidden" value={flagId} />
-        <AdminActionSubmitButton icon={<CheckIcon />}>Dismiss</AdminActionSubmitButton>
+        <AdminActionSubmitButton icon={<CheckIcon />} variant="ghost">
+          Dismiss
+        </AdminActionSubmitButton>
+      </form>
+      <form action={rewriteAction}>
+        <input name="flagId" type="hidden" value={flagId} />
+        <AdminActionSubmitButton icon={<RefreshCwIcon />}>Rewrite now</AdminActionSubmitButton>
       </form>
     </div>
   );

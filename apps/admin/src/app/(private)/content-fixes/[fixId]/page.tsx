@@ -281,7 +281,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
           <Outcome fix={fix} viewer={viewer} />
           <Why fix={fix} />
 
-          <AdminSection title="Changes">
+          <AdminSection title="Changes" titleClassName="text-lg leading-6">
             <ContentFixChanges fix={fix} />
             {fix.status === "proposed" && <ContentFixVoice fix={fix} />}
           </AdminSection>

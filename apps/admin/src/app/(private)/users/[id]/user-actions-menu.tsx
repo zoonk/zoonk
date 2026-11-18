@@ -106,6 +106,7 @@ export function UserActionsMenu({
         confirmLabel="Ban"
         description="They're logged out everywhere and can't log back in until you unban them."
         destructive
+        sheet
         title={`Ban ${userName}?`}
       >
         {userField}

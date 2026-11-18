@@ -19,7 +19,7 @@ export function ExamRow({ exam }: { exam: ListedExam }) {
         title={exam.name}
       />
       <TableCell>{countryName(exam.country)}</TableCell>
-      <TableCell>{formatExamDate(exam.examDate)}</TableCell>
+      <TableCell className="text-right">{formatExamDate(exam.examDate)}</TableCell>
       <TableCell numeric>{exam._count.goals.toLocaleString("en")}</TableCell>
       <TableCell>
         <AdminCheckDate date={exam.nextCheckAt} kind="next-check" />

@@ -24,7 +24,7 @@ export function AdminCheckDate({
   const label = dateTime ? formatDateTime(date) : formatDate(date);
 
   return (
-    <span className="justify-[inherit] inline-flex flex-wrap gap-x-2 gap-y-1">
+    <span className="inline-flex flex-wrap gap-x-2 gap-y-1 in-[td]:justify-end">
       <span className="whitespace-nowrap">
         {prefix}
         {label}

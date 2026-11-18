@@ -94,21 +94,18 @@ async function SkillDetailContent({ params, searchParams }: PageProps<"/skills/[
         />
 
         {tab === "overview" ? (
-          <AdminDetailColumns
-            aside={
-              <>
-                <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
-                  <SkillLearners skillId={skill.id} />
-                </Suspense>
-                <SkillUsedIn skill={skill} />
-              </>
-            }
-          >
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-x-10">
             <SkillCard skill={skill} />
             <Suspense fallback={<AdminSectionSkeleton />}>
               <SkillGraph skillId={skill.id} />
             </Suspense>
-          </AdminDetailColumns>
+            <aside className="grid min-w-0 gap-8 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:grid-rows-subgrid">
+              <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
+                <SkillLearners skillId={skill.id} />
+              </Suspense>
+              <SkillUsedIn skill={skill} />
+            </aside>
+          </div>
         ) : null}
 
         {tab === "used" ? (

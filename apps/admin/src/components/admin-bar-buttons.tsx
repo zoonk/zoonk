@@ -9,18 +9,16 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { BarSearch } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
+import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon, MenuIcon } from "lucide-react";
 
 /**
  * A record's "…" at the end of the page's bar: what staff do to it less often, after its buttons.
- * Where the sidebar is hidden, search and the menu follow it, so only a laptop pulls it to the edge.
  */
 export function AdminBarMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className="max-lg:me-0" edge="end" size="icon-bar" variant="ghost" />}
-      >
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-bar" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>
       </DropdownMenuTrigger>
@@ -33,11 +31,11 @@ export function AdminBarMenu({ children, label }: { children: React.ReactNode; l
 }
 
 /** Where the sidebar is hidden, the page's bar opens the menu from its end. */
-export function AdminBarMenuButton() {
+export function AdminBarMenuButton({ last }: { last: boolean }) {
   return (
     <Button
       aria-haspopup="dialog"
-      className="lg:hidden"
+      className={cn("lg:hidden", !last && "me-0")}
       edge="end"
       onClick={openAdminMenu}
       size="icon-bar"

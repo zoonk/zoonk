@@ -38,7 +38,7 @@ function messageColumns(filter: FeedbackFilter): AdminTableColumn[] {
     { label: "Message", twoLines: true },
     ...(filter === "all" ? [{ label: "State" }] : []),
     { label: "About", size: "text" },
-    { label: "Sent" },
+    { align: "right", label: "Sent" },
   ];
 }
 
