@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type Build, atomFill } from "./molecule-model";
+import { type Build, MAX_ATOMS, atomFill } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
 
 function useBuildState(build: Build) {
@@ -35,16 +35,60 @@ function useBuildState(build: Build) {
   return { text: t("Every atom has all its bonds."), tone: "success" as const };
 }
 
+function MoleculeSelectionGuidance({
+  build,
+  elements,
+  selectedName,
+}: {
+  build: Build;
+  elements: readonly string[];
+  selectedName: string | null;
+}) {
+  const t = useExtracted();
+  const nameOf = useAtomName();
+  const pick = t("Pick an atom to select it.");
+
+  const bond = (atom: string) =>
+    t(
+      "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it.",
+      { atom },
+    );
+
+  const variants = new Set([
+    pick,
+    ...elements.map((element) => bond(nameOf({ element, id: String(MAX_ATOMS) }))),
+    ...build.atoms.map((atom) => bond(nameOf(atom))),
+  ]);
+
+  return (
+    <div className="text-muted-foreground grid grid-cols-1 text-xs wrap-anywhere tabular-nums">
+      {/* Size the same grid cell with every possible hint before the learner selects an atom. */}
+      {[...variants].map((text) => (
+        <span
+          aria-hidden="true"
+          className="invisible col-start-1 row-start-1 before:content-[attr(data-label)]"
+          data-label={text}
+          key={text}
+        />
+      ))}
+      <p className="col-start-1 row-start-1">
+        {selectedName ? bond(selectedName) : build.atoms.length > 0 && pick}
+      </p>
+    </div>
+  );
+}
+
 export function MoleculeStatus({
   build,
+  elements,
   isChecked,
   selectedName,
 }: {
   build: Build;
+  elements: readonly string[];
   isChecked: boolean;
   selectedName: string | null;
 }) {
-  const t = useExtracted();
   const state = useBuildState(build);
 
   return (
@@ -59,15 +103,8 @@ export function MoleculeStatus({
         {state.text}
       </p>
 
-      {!isChecked && build.atoms.length > 0 && (
-        <p className="text-muted-foreground text-xs">
-          {selectedName
-            ? t(
-                "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it.",
-                { atom: selectedName },
-              )
-            : t("Pick an atom to select it.")}
-        </p>
+      {!isChecked && (
+        <MoleculeSelectionGuidance build={build} elements={elements} selectedName={selectedName} />
       )}
     </div>
   );

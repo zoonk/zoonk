@@ -7,6 +7,8 @@ export type Build = { atoms: readonly BuildAtom[]; bonds: readonly BuildBond[] }
 
 type AtomFill = "full" | "open" | "over";
 
+export const MAX_ATOMS = 16;
+
 export const EMPTY_BUILD: Build = { atoms: [], bonds: [] };
 
 const SUBSCRIPTS = "₀₁₂₃₄₅₆₇₈₉";

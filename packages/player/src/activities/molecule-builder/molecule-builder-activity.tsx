@@ -20,6 +20,7 @@ import { MoleculeCanvas } from "./molecule-canvas";
 import { ExploredMolecule, MoleculeExample } from "./molecule-example";
 import {
   type Build,
+  MAX_ATOMS,
   bondTotal,
   bondsUsed,
   builtCounts,
@@ -34,8 +35,6 @@ import { type BuilderChange, useMoleculeBuilder } from "./use-molecule-builder";
 import { useTweenedLayout } from "./use-tweened-layout";
 
 type MoleculeProps = ActivityRendererProps<"moleculeBuilder">;
-
-const MAX_ATOMS = 16;
 
 function answerFor(content: MoleculeProps["content"], build: Build): ActivityAnswer | null {
   if (content.check.kind === "numeric") {
@@ -140,6 +139,7 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
 
         <MoleculeStatus
           build={build}
+          elements={elements}
           isChecked={isChecked}
           selectedName={selected ? nameOf(selected) : null}
         />
