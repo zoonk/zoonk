@@ -247,6 +247,23 @@ describe("science activities", () => {
     await expect.element(page.getByText(/You had it at/u).first()).toBeVisible();
   });
 
+  it("molecule builder: the first atom keeps the build status in place", async () => {
+    openActivity({ template: "moleculeBuilder" });
+    const card = page.getByRole("figure");
+
+    const statusTop = (text: string) =>
+      page.getByText(text, { exact: true }).element().getBoundingClientRect().top -
+      card.element().getBoundingClientRect().top;
+
+    const initialStatus = "Pick an element to add its first atom.";
+    await expect.element(page.getByText(initialStatus, { exact: true })).toBeVisible();
+    const top = statusTop(initialStatus);
+
+    await page.getByRole("button", { name: "Add Carbon" }).click();
+    await expect.element(page.getByText("Built: C", { exact: true })).toBeVisible();
+    expect(statusTop("1 atom has open bonds, shown as dots.")).toBe(top);
+  });
+
   it("molecule builder: two double bonds make carbon dioxide", async () => {
     openActivity({ template: "moleculeBuilder" });
     await buildCarbonDioxide({ doubleBonds: true });
