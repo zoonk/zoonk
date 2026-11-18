@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import com.zoonk.android.data.PhaseStatus
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -21,6 +22,23 @@ class GenerationWaitTest {
 
         assertEquals(1, segmentFills(drifted, weights).count { it == 1f })
         assertEquals(true, segmentFills(drifted, weights)[1] > 0f)
+    }
+
+    @Test
+    fun aStepThatFinishesBeforeTheOneBesideItFillsItsOwnPart() {
+        // A lesson's mark (10) and draw (45) run side by side, and draw finished first.
+        val statuses = listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active, PhaseStatus.Completed)
+        val fills = phaseFills(share = 135f / 145f, weights = listOf(40, 50, 10, 45), statuses = statuses)
+
+        assertEquals(listOf(1f, 1f, 0f, 1f), fills)
+    }
+
+    @Test
+    fun aRunningStepFillsWhatTheBarDriftedPastTheDoneSteps() {
+        val statuses = listOf(PhaseStatus.Completed, PhaseStatus.Active, PhaseStatus.Pending)
+        val fills = phaseFills(share = 0.5f, weights = listOf(10, 20, 10), statuses = statuses)
+
+        assertEquals(listOf(1f, 0.5f, 0f), fills)
     }
 
     @Test

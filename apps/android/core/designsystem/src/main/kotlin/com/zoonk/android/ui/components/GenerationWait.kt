@@ -102,6 +102,7 @@ fun GenerationWait(
                                 progress.activeSince ?: since,
                             ),
                     weights = progress.phases.map { it.phase.seconds },
+                    statuses = progress.phases.map { it.status },
                 )
             }
         if (header == null) {
@@ -262,6 +263,7 @@ private fun WaitProgress(
     name: String,
     share: Float,
     weights: List<Int>,
+    statuses: List<PhaseStatus>,
     modifier: Modifier = Modifier,
 ) {
     val shown by animateFloatAsState(share, label = "generation progress")
@@ -279,9 +281,10 @@ private fun WaitProgress(
     ) {
         MeterParts(
             parts =
-                segmentFills(
+                phaseFills(
                     shown,
                     weights,
+                    statuses,
                 ).zip(weights) { part, weight -> MeterPart(MeterPart.Fill.Solid(fill, part), weight.toFloat()) },
             modifier = Modifier.weight(1f),
         )
@@ -512,6 +515,13 @@ internal fun driftCeiling(
     share: Float,
     target: Float,
 ): Float = minOf(share + (target - share) * RUNNING_PART_CAP, DRIFT_CAP)
+
+/** How much of each step's part [share] (0 to 1) of the whole bar fills, each step by its [statuses]. */
+internal fun phaseFills(
+    share: Float,
+    weights: List<Int>,
+    statuses: List<PhaseStatus>,
+): List<Float> = segmentFills(share, weights)
 
 /** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
 internal fun segmentFills(
