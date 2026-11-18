@@ -974,11 +974,15 @@ struct TodayProgressSection: View {
             detail: syllabus.value.map { studied(lessons, known: $0.lessons.known) }
           ) {
             if lessons.total > 0 {
-              MeterParts(
-                parts: cells(lessons, known: syllabus.value?.lessons.known ?? 0), gap: 3
-              )
-              .frame(height: 6)
-              .accessibilityHidden(true)
+              let known = min(lessons.done, syllabus.value?.lessons.known ?? 0)
+              let total = Double(lessons.total)
+
+              VStack(alignment: .leading, spacing: 10) {
+                CoverageBar(
+                  studied: Double(lessons.done - known) / total, known: Double(known) / total)
+
+                CoverageLegend(states: known > 0 ? [.studied, .known, .new] : [.studied, .new])
+              }
             }
           }
         }
@@ -1042,23 +1046,6 @@ struct TodayProgressSection: View {
       : Text(
         "\(studied) lessons studied", tableName: "Today",
         comment: "Lessons studied, under the goal's progress")
-  }
-
-  /// Whole cells: studied, known, today's outlined, then the rest.
-  private func cells(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
-    let known = min(lessons.done, known)
-    let today = min(lessons.today, max(0, lessons.total - lessons.done))
-
-    return LessonCells.of(
-      studied: lessons.done - known, known: known, today: today, total: lessons.total
-    ).map { state in
-      switch state {
-      case .studied: MeterParts.Part(fill: .color(.success))
-      case .known: MeterParts.Part(fill: .color(.mutedForeground.opacity(0.7)))
-      case .today: MeterParts.Part(fill: .current)
-      case .rest: MeterParts.Part(fill: .track)
-      }
-    }
   }
 
   /// Nothing in a week without a whole point either way.
