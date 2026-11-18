@@ -384,54 +384,62 @@ struct TodayPlanChangeSection: View {
 
   @ViewBuilder
   private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
-        .typeStyle(.body.weight(.semibold))
+    VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
+          .typeStyle(.body.weight(.semibold))
 
-      Text(behindSentence(behind))
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-    }
-
-    ButtonRow {
-      // On a return after a break, nothing that asks for more hours leads.
-      if view.session.freshStart == .welcomeBack {
-        keepTimeButton
-        addTimeButton
-      } else {
-        addTimeButton
-        keepTimeButton
+        Text(behindSentence(behind))
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
-    }
-    // A notice's answers beside its words, as main's suggestion panel draws them.
-    .controlSize(.small)
-    .disabled(isSaving)
 
-    Menu {
-      if behind.canFocus {
-        Button {
-          adjust(.focus)
-        } label: {
-          Text(
-            "Choose where to focus", tableName: "Today",
-            comment: "Opens the choice of the plan's areas to focus on")
+      ButtonRow {
+        // On a return after a break, nothing that asks for more hours leads.
+        if view.session.freshStart == .welcomeBack {
+          keepTimeButton
+          addTimeButton
+        } else {
+          addTimeButton
+          keepTimeButton
         }
       }
+      // A notice's answers beside its words, as main's suggestion panel draws them.
+      .controlSize(.small)
+      .disabled(isSaving)
 
-      Button {
-        adjust(.everything)
+      Menu {
+        if behind.canFocus {
+          Button {
+            adjust(.focus)
+          } label: {
+            Text(
+              "Choose where to focus", tableName: "Today",
+              comment: "Opens the choice of the plan's areas to focus on")
+          }
+        }
+
+        Button {
+          adjust(.everything)
+        } label: {
+          isExam
+            ? Text(
+              "Keep studying after the exam", tableName: "Today",
+              comment: "Opens studying every topic, past the exam's date")
+            : Text("Remove end date", tableName: "Today")
+        }
       } label: {
-        isExam
-          ? Text(
-            "Keep studying after the exam", tableName: "Today",
-            comment: "Opens studying every topic, past the exam's date")
-          : Text("Remove end date", tableName: "Today")
+        Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+          .typeStyle(.note.weight(.medium))
       }
-    } label: {
-      Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
-        .typeStyle(.note.weight(.medium))
+      .buttonStyle(.outline)
+      .controlSize(.small)
+      .disabled(isSaving)
     }
-    .disabled(isSaving)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(14)
+    .panel()
+    .listRowSeparator(.hidden)
   }
 
   private var addTimeButton: some View {

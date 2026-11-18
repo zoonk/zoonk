@@ -135,7 +135,7 @@ struct NumberLineCanvas: View {
     .chartYScale(domain: 0...1)
     .chartYAxis(.hidden)
     .chartXAxis {
-      AxisMarks(values: fields.ticks.map(\.value)) { value in
+      AxisMarks(preset: .aligned, position: .bottom, values: fields.ticks.map(\.value)) { value in
         AxisTick(
           length: value.as(Double.self) == 0 ? 12 : 6,
           stroke: StrokeStyle(lineWidth: value.as(Double.self) == 0 ? 2 : 1.5)
@@ -143,14 +143,17 @@ struct NumberLineCanvas: View {
         if let tick = value.as(Double.self),
           fields.ticks.contains(where: { $0.value == tick && $0.isLabelled })
         {
-          AxisValueLabel(verticalSpacing: 16) {
-            Text(verbatim: ActivityNumberFormat.format(tick))
+          let label = ActivityNumberFormat.format(tick)
+
+          AxisValueLabel(centered: false, verticalSpacing: 16) {
+            Text(verbatim: label)
               .typeWeight(tick == 0 ? .semibold : .regular)
           }
         }
       }
     }
     .chartsMarksHidden()
+
     .chartOverlay { proxy in
       GeometryReader { geometry in
         if let plot = proxy.plotFrame.map({ geometry[$0] }) {

@@ -202,7 +202,7 @@ struct DistributionExplorerCanvas: View {
       }
 
       Chart {
-        ForEach(curve.filter { $0.x >= handles.from && $0.x <= handles.to }, id: \.x) { point in
+        ForEach(area(curve), id: \.x) { point in
           AreaMark(x: .value(verbatim: "x", point.x), y: .value(verbatim: "density", point.y))
             .foregroundStyle(Color.vizAccent.opacity(0.25))
         }
@@ -242,18 +242,14 @@ struct DistributionExplorerCanvas: View {
       }
       .chartXScale(domain: domain)
       .chartYAxis(.hidden)
-      .chartXAxis {
-        AxisMarks(values: ticks) { value in
-          AxisGridLine().foregroundStyle(.vizGrid)
-          // Below the handles that sit on the baseline.
-          AxisValueLabel(verticalSpacing: 16) {
-            if let x = value.as(Double.self) {
-              Text(verbatim: ActivityNumberFormat.format(x))
-            }
-          }
+      .chartsXAxis {
+        // Below the handles that sit on the baseline.
+        ChartsAxis.bottom(ticks: ticks, labelSpacing: 16) {
+          ActivityNumberFormat.format($0)
         }
       }
       .chartsMarksHidden()
+
       .chartOverlay { proxy in
         GeometryReader { geometry in
           if let plot = proxy.plotFrame.map({ geometry[$0] }) {
@@ -277,6 +273,14 @@ struct DistributionExplorerCanvas: View {
       .accessibilityElement(children: .contain)
       .accessibilityLabel(Text(verbatim: summary(between: between, below: below, above: above)))
     }
+  }
+
+  /// The curve between the handles, from one handle's line to the other's.
+  private func area(_ curve: [(x: Double, y: Double)]) -> [(x: Double, y: Double)] {
+    let edge = { (x: Double) in (x: x, y: DistributionModel.density(fields.distribution, x)) }
+
+    return [edge(handles.from)] + curve.filter { $0.x > handles.from && $0.x < handles.to }
+      + [edge(handles.to)]
   }
 
   private var lowerLabel: Text {

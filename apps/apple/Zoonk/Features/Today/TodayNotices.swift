@@ -27,38 +27,33 @@ struct SuggestedGoalSection: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(
-          "Continue \(suggestion.title)?", tableName: "Today",
-          comment: "Offers a goal from the learner's last course"
-        )
-        .typeStyle(.body.weight(.semibold))
+      VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "Continue \(suggestion.title)?", tableName: "Today",
+            comment: "Offers a goal from the learner's last course"
+          )
+          .typeStyle(.body.weight(.semibold))
 
-        Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-          .foregroundStyle(.mutedForeground)
-      }
-
-      if !buttonsInBar {
-        // A card's answers under its words, small, as main's suggestion panel draws them.
-        ButtonRow {
-          SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+          Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
+            .foregroundStyle(.mutedForeground)
         }
-        .controlSize(.small)
-      }
-    } header: {
-      Label {
-        Text(
-          "Suggested goal", tableName: "Today", comment: "A goal from the learner's last course")
-      } icon: {
-        Image(systemName: "safari")
-      }
-      .sectionTitleStyle()
-    } footer: {
-      SectionFooter {
+
+        if !buttonsInBar {
+          // A card's answers under its words, small, as main's suggestion panel draws them.
+          ButtonRow {
+            SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+          }
+          .controlSize(.small)
+        }
         if answer.failed, !buttonsInBar {
           FailureLine(message: SuggestedGoalAnswer.failure)
         }
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(14)
+      .panel()
+      .listRowSeparator(.hidden)
     }
   }
 }
