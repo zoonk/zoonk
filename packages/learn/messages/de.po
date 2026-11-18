@@ -47,6 +47,7 @@ msgstr "Brain Power"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -76,6 +77,7 @@ msgstr "Übersprungen"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -759,7 +761,6 @@ msgstr "Wir konnten diesen Schritt nicht öffnen. Versuch es noch einmal."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
-#: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Zurück"
@@ -807,6 +808,11 @@ msgstr "Seitenoptionen"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "Der Test ließ sich nicht öffnen. Versuch es noch einmal."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "M-RtUs"
+msgid "Already know this chapter?"
+msgstr "Kennst du dieses Kapitel schon?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1196,10 +1202,8 @@ msgid "Language"
 msgstr "Sprache"
 
 #: src/appearance/buddy-settings.tsx
-#: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-glasses-picker.tsx
 #: src/buddies/buddy-glasses-sheet.tsx
-#: src/buddies/buddy-screen.tsx
 msgctxt "T9w4Km"
 msgid "Glasses"
 msgstr "Brillen"
@@ -1264,6 +1268,7 @@ msgid "Study today to keep it up."
 msgstr "Lern heute, um die Energie hochzuhalten."
 
 #: src/buddies/buddy-day-parts.tsx
+#: src/buddies/buddy-today.tsx
 msgctxt "RquZa1"
 msgid "{buddy}'s Energy"
 msgstr "Energie von {buddy}"
@@ -1280,13 +1285,18 @@ msgstr "Woran sich {buddy} erinnert"
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "Brillen von {buddy}"
+
+#: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-screen.tsx
 #: src/journey/schedule-details.tsx
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "Wochenübersicht"
 
 #: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energie"
@@ -1421,6 +1431,7 @@ msgid "Comes with your buddy"
 msgstr "Dein Kumpel bringt sie mit"
 
 #: src/buddies/buddy-picker.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 msgctxt "1L2nnA"
 msgid "Buddy"
@@ -5262,6 +5273,7 @@ msgid "today"
 msgstr "heute"
 
 #: src/journey/schedule-details.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
@@ -13359,12 +13371,6 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} in {days, plural, one {# Tag} other {# Tagen}}"
 
 #: src/today/today-insight.tsx
-#: src/today/today-suggested-goal.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "Antworten"
-
-#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "Hinzufügen"
@@ -13504,11 +13510,10 @@ msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {# erledigt}} · {skipped, plural, other {# übersprungen}}"
 
-#. Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.
 #: src/today/today-session-card.tsx
-msgctxt "zdB-3c"
-msgid "{count, plural, one {+# more} other {+# more}}"
-msgstr "{count, plural, other {+# mehr}}"
+msgctxt "AHBKOX"
+msgid "{count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "{count, plural, one {# weitere Lektion} other {# weitere Lektionen}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"
@@ -13519,6 +13524,11 @@ msgstr "{course} fortsetzen?"
 msgctxt "Vr1VPb"
 msgid "Suggested goal"
 msgstr "Vorgeschlagenes Ziel"
+
+#: src/today/today-suggested-goal.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "Antworten"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "Ie2Ije"
@@ -13599,6 +13609,11 @@ msgstr "{studied} von {planned} gelernt"
 msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time} geplant"
+
+#: src/today/today-week.tsx
+msgctxt "-FZPmK"
+msgid "Not studied"
+msgstr "Nicht gelernt"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
