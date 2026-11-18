@@ -4,7 +4,7 @@ import {
   getAxisFinish,
   getPhaseEnd,
   getPhaseStart,
-  getRoadmapFinish,
+  getPlanFinish,
   getRoadmapPhases,
 } from "./phase-dates";
 
@@ -255,26 +255,36 @@ describe(getPhaseStart, () => {
   });
 });
 
-describe(getRoadmapFinish, () => {
+describe(getPlanFinish, () => {
+  it("shows the finish estimate when the learner set no end date", () => {
+    const shaped = plan([phase(0)], { estimate: { endDate: "2027-07-01" } });
+
+    expect(getPlanFinish({ goalKind: "learn", plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2027-07-01",
+      month: true,
+    });
+  });
+
   it("is the exam's date, an estimate when the date is", () => {
     const shaped = plan([phase(0)], { schedule: EXAM_DAY });
-    const finish = getRoadmapFinish({ goalKind: "exam", plan: shaped });
+    const finish = getPlanFinish({ goalKind: "exam", plan: shaped });
     expect(finish).toStrictEqual({ estimate: true, isoDate: "2027-11-14", month: false });
   });
 
   it("is the plan's own end, about, when the learner set no date", () => {
     const shaped = plan([phase(0)], { estimate: { endDate: "2026-12-12" } });
-    const finish = getRoadmapFinish({ goalKind: "learn", plan: shaped });
+    const finish = getPlanFinish({ goalKind: "learn", plan: shaped });
     expect(finish).toStrictEqual({ estimate: true, isoDate: "2026-12-12", month: false });
   });
 
   it("is none for a plan with no date and no end yet", () => {
-    expect(getRoadmapFinish({ goalKind: "learn", plan: plan([phase(0)]) })).toBeNull();
+    expect(getPlanFinish({ goalKind: "learn", plan: plan([phase(0)]) })).toBeNull();
   });
 
   it("is none for an exam without a date", () => {
     const shaped = plan([phase(0)], { estimate: { endDate: "2026-12-12" } });
-    expect(getRoadmapFinish({ goalKind: "exam", plan: shaped })).toBeNull();
+    expect(getPlanFinish({ goalKind: "exam", plan: shaped })).toBeNull();
   });
 });
 
@@ -380,7 +390,7 @@ describe(getAxisFinish, () => {
   });
 
   it("still names the goal's day and the phase's end everywhere else", () => {
-    const finish = getRoadmapFinish({ goalKind: "learn", plan: endsToday });
+    const finish = getPlanFinish({ goalKind: "learn", plan: endsToday });
     const end = getPhaseEnd({ phase: endsToday.phases[1] ?? phase(1), plan: endsToday });
     expect(finish).toStrictEqual({ estimate: false, isoDate: TODAY, month: false });
     expect(end).toStrictEqual({ estimate: false, isoDate: TODAY, month: false });

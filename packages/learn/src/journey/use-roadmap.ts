@@ -9,7 +9,7 @@ import {
   type PlanDate,
   getAxisDatedPhases,
   getAxisFinish,
-  getRoadmapFinish,
+  getPlanFinish,
   getRoadmapPhases,
 } from "./phase-dates";
 
@@ -33,7 +33,7 @@ export function useRoadmapPhases() {
 
 export function useRoadmapFinish(): PlanDate | null {
   const { goal, plan } = usePlanScreen();
-  return getRoadmapFinish({ goalKind: goal.kind, plan });
+  return getPlanFinish({ goalKind: goal.kind, plan });
 }
 
 /** The goal's date under the timeline's axis (`getAxisFinish`). */

@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
+import { getPlanFinish } from "../journey/phase-dates";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -187,19 +188,13 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
+  const finish = getPlanFinish({ goalKind: goal.kind, plan });
 
-  if (!targetDate) {
+  if (!finish) {
     return goal.kind === "exam" ? t("To be confirmed") : t("No date");
   }
 
-  return (
-    <PlanDateText
-      estimate={targetDateEstimated}
-      isoDate={targetDate}
-      month={targetDateNamedMonth}
-    />
-  );
+  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
 }
 
 export function PlanProperties({

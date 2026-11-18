@@ -113,7 +113,7 @@ export function getPhaseStart({
 }
 
 /** The day the plan reaches its goal: the goal's date, or the plan's own end when it has none. */
-export function getRoadmapFinish({
+export function getPlanFinish({
   goalKind,
   plan,
 }: {
@@ -161,7 +161,7 @@ export function getAxisDatedPhases({
 }): Set<number> {
   const phases = getRoadmapPhases(plan.phases);
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
-  const finish = getRoadmapFinish({ goalKind, plan });
+  const finish = getPlanFinish({ goalKind, plan });
 
   const dated = phases.slice(currentIndex, -1).flatMap((phase) => {
     const end = getPhaseEnd({ phase, plan });
@@ -194,7 +194,7 @@ export function getAxisFinish({
   plan: DatedPlan;
   today: string;
 }): PlanDate | null {
-  const finish = getRoadmapFinish({ goalKind, plan });
+  const finish = getPlanFinish({ goalKind, plan });
   const underWay = getRoadmapPhases(plan.phases).some((phase) => phase.state === "current");
 
   return finish?.isoDate === today && underWay ? null : finish;
