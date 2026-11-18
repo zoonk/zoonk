@@ -115,7 +115,11 @@ internal fun MakeRoomContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onDismiss, edge = ButtonEdge.Start, size = ButtonSize.Small) { Text(stringResource(R.string.today_not_now)) }
+                TextButton(
+                    onClick = onDismiss,
+                    edge = ButtonEdge.Start,
+                    size = ButtonSize.Small,
+                ) { Text(stringResource(R.string.today_not_now)) }
                 SubscribeButton(onSubscribe)
             }
         }
