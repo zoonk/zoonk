@@ -70,24 +70,27 @@ describe("alignment across layout boundaries", () => {
     assert.equal(hits("cut").length, 1);
   });
 
-  it("measures a route stop's content without counting its clipped decorative rail", () => {
-    document.body.innerHTML = `
-      <section data-slot="route-stop" style="position:relative;overflow-y:clip" data-box="16,0,358,130">
+  it.each(["section", "li"])(
+    "measures clipped route content without counting the rail in %s",
+    (tag) => {
+      document.body.innerHTML = `
+      <${tag} ${tag === "section" ? 'data-slot="route-stop"' : ""} style="position:relative;overflow-y:clip" data-box="16,0,358,130">
         <h2 data-box="44,0,300,26">
           <span data-slot="route-mark" aria-hidden="true" style="position:absolute" data-box="24,13,0,0">
             <span style="position:absolute;background-color:rgb(240, 220, 200)" data-box="22,13,4,100000"></span>
           </span>
           Course outline
         </h2>
-      </section>`;
+      </${tag}>`;
 
-    assert.deepEqual(hits("cut"), []);
+      assert.deepEqual(hits("cut"), []);
 
-    const stop = document.querySelector("[data-slot=route-stop]");
-    assert.ok(stop);
-    stop.insertAdjacentHTML("beforeend", '<p data-box="44,119,200,24">Chapter one</p>');
-    assert.equal(hits("cut")[0]?.measured, 13);
-  });
+      const stop = document.querySelector(tag);
+      assert.ok(stop);
+      stop.insertAdjacentHTML("beforeend", '<p data-box="44,119,200,24">Chapter one</p>');
+      assert.equal(hits("cut")[0]?.measured, 13);
+    },
+  );
 
   it("ignores an absolute descendant with a viewport containing block, but not a local one", () => {
     document.body.innerHTML = `<div style="overflow-y:hidden" data-box="16,0,200,100"><span style="position:absolute" data-box="16,700,100,44"><button data-box="16,700,100,44">Continue</button></span></div>`;

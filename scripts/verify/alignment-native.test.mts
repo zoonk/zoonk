@@ -1,11 +1,26 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are native control measurements. */
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { element, fixtureCapture } from "./alignment-fixtures.mts";
+import { element, filledActions, fixtureCapture } from "./alignment-fixtures.mts";
 import { alignmentLines, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
 import { evaluateCapture, evaluateFile } from "./alignment.mts";
 import APPLE from "./fixtures/apple-platform-limits.json" with { type: "json" };
+
+test("Apple design gallery samples do not count as a learner page's actions", () => {
+  const capture = {
+    ...fixtureCapture(filledActions("page", 2)),
+    platform: "apple" as const,
+    scenario: "gallery-fields",
+    screen: "fields",
+    unit: "pt" as const,
+  };
+
+  assert.ok(!evaluateCapture(capture).some((finding) => finding.rule === "one-filled"));
+
+  const page = { ...capture, scenario: "fields", screen: "/settings" };
+  assert.ok(evaluateCapture(page).some((finding) => finding.rule === "one-filled"));
+});
 
 test("declared Apple limits are visible and do not fail, while old and incomplete captures fail", () => {
   const parsed = readCaptures(APPLE);
