@@ -270,6 +270,7 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
+#: src/onboarding/onboarding-skeletons.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/reveal-body.tsx
@@ -3322,9 +3323,10 @@ msgid "Day {number, number}"
 msgstr "{number, number}일차"
 
 #: src/exam/exam-format-section.tsx
-#: src/exam/exam-screen.tsx
-msgctxt "1L3MIn"
-msgid "Day not set yet"
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
 msgstr "날짜 미정"
 
 #: src/exam/exam-labels.tsx
@@ -3689,6 +3691,11 @@ msgstr "{date} {time}"
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "시험 옵션"
+
+#: src/exam/exam-screen.tsx
+msgctxt "1L3MIn"
+msgid "Day not set yet"
+msgstr "날짜 미정"
 
 #: src/exam/exam-screen.tsx
 msgctxt "pV2uIU"
@@ -4825,6 +4832,7 @@ msgid "Progress"
 msgstr "진도"
 
 #: src/journey/journey-hero.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -4912,12 +4920,6 @@ msgstr ", 완료"
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, other {아직 공부하지 않은 레슨 #개}}"
-
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "날짜 미정"
 
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
@@ -8569,11 +8571,11 @@ msgctxt "P0PLlQ"
 msgid "Points"
 msgstr "점수"
 
-#. In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).
+#. Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it.
 #: src/mock/mock-result-view.tsx
-msgctxt "estimatedExamScore"
-msgid "Estimated {exam} score"
-msgstr "{exam} 예상 점수"
+msgctxt "estimatedScoreNamedExam"
+msgid "Estimated score · {exam}"
+msgstr "예상 점수 · {exam}"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "bYZf2G"
@@ -9298,9 +9300,17 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "065UXh"
-msgid "No date"
-msgstr "날짜 없음"
+#: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "bpAaId"
+msgid "To be confirmed"
+msgstr "추후 확정"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "설정 안 됨"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10038,12 +10048,6 @@ msgid "Edit {field}"
 msgstr "{field} 수정하기"
 
 #: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-properties.tsx
-msgctxt "bpAaId"
-msgid "To be confirmed"
-msgstr "추후 확정"
-
-#: src/onboarding/understood/understood-date-row.ts
 msgctxt "H5ndh9"
 msgid "{year}, to be confirmed"
 msgstr "{year}년, 추후 확정"
@@ -10365,9 +10369,9 @@ msgid "The exam's likely date is now {date}."
 msgstr "현재 예상 시험일은 {date}이에요."
 
 #: src/plan/notice-day.tsx
-msgctxt "4Q_yNQ"
-msgid "The exam is on {date}."
-msgstr "시험은 {date}에 있어요."
+msgctxt "cnlSzV"
+msgid "The official exam date is {date}. Use it as your exam date?"
+msgstr "공식 시험일은 {date}이에요. 이 날짜를 시험일로 설정할까요?"
 
 #: src/plan/notice-day.tsx
 msgctxt "78R32n"
@@ -10378,11 +10382,6 @@ msgstr "{month}에는 예정된 시험이 없어요"
 msgctxt "wMxWx9"
 msgid "Use {date}"
 msgstr "{date} 선택하기"
-
-#: src/plan/notice-day.tsx
-msgctxt "3L56jf"
-msgid "The official {exam} date is {date}. Use it as your exam date?"
-msgstr "{exam} 공식 시험일은 {date}로 정해졌어요. 이 날짜를 시험일로 설정할까요?"
 
 #: src/plan/plan-activities.tsx
 msgctxt "Np3v0G"
@@ -10682,11 +10681,6 @@ msgid "Next <date></date>"
 msgstr "다음 <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "LG_0wj"
-msgid "None set"
-msgstr "설정 안 됨"
-
-#: src/plan/plan-properties.tsx
 msgctxt "G6h29P"
 msgid "Estimated finish <date></date>"
 msgstr "예상 완료일 <date></date>"
@@ -10797,6 +10791,15 @@ msgstr "종료일이 지났어요"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "계획 제안"
+
+#: src/plan/plan-suggestion-context.tsx
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "달라지는 내용 보기"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11543,14 +11546,6 @@ msgstr "모든 내용을 공부할 수 있는 시간을 찾고 있어요…"
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "모든 내용을 마칠 수 있는 날짜를 찾지 못했어요."
-
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "달라지는 내용 보기"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
@@ -12965,11 +12960,11 @@ msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "레슨, 연습, 테스트에서 제출한 답을 반영해요."
 
-#. In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).
+#. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
-msgctxt "questionsFromExamEdition"
-msgid "Questions from {exam}"
-msgstr "{exam} 기출문제"
+msgctxt "questionsNamedExamEdition"
+msgid "Questions · {exam}"
+msgstr "문제 수 · {exam}"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"

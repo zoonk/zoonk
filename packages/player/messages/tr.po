@@ -3831,9 +3831,9 @@ msgid "Close questions"
 msgstr "Soruları kapat"
 
 #: src/questions/lesson-question-panel.tsx
-msgctxt "lyjQP7"
-msgid "Ask Zu with a free account"
-msgstr "Ücretsiz bir hesapla Zu ile konuş"
+msgctxt "dmlJ5t"
+msgid "Ask {name} with a free account"
+msgstr "Ücretsiz hesapla {name} ile konuş"
 
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"

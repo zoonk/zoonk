@@ -168,7 +168,7 @@ fun MissionMoment(
             MissionTrack(
                 progress = facts.progress,
                 modifier = Modifier.padding(top = 16.dp),
-                from = facts.progress.done - justDone.size,
+                justDone = justDone,
                 delayMillis = ZoonkMotion.BEAT_MILLIS,
             )
 

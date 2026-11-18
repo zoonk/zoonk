@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="mock_result_estimated_score">Estimated score</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Estimated %1$s score</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Estimated score · %1$s</string>
     <string name="mock_result_net_score">Score out of %1$d</string>
     <string name="mock_result_right_answers">Right answers</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

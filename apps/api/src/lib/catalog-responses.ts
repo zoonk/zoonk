@@ -59,6 +59,7 @@ export function toCatalogCourse(course: CourseSummary) {
     estimatedMinutes: course.estimatedMinutes,
     languageFlag: toLanguageFlag(course.targetLanguage),
     lessonCount: course.lessonCount,
+    promise: course.promise,
     subject: course.categories[0]?.category ?? null,
     targetLanguage: course.targetLanguage,
   };

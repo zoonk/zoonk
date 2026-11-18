@@ -23,7 +23,7 @@ private struct GoalPlanView: View {
   let goal: LearnerGoal
 
   private func subtitle(_ plan: GoalPlan?) -> Text {
-    guard !goal.isSettingUp, goal.status != .paused, let days = planDaysLeft(plan) else {
+    guard !goal.isSettingUp, let days = planDaysLeft(plan) else {
       return Text(verbatim: "")
     }
 

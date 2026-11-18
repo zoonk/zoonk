@@ -24537,65 +24537,6 @@
         }
       }
     },
-    "No install for %@: you'll learn with examples." : {
-      "comment" : "Says the tool is learned with examples",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Installation für %@: Du lernst anhand von Beispielen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin instalar %@: aprenderás con ejemplos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas d’installation pour %@ : tu apprendras avec des exemples."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non installerai %@: imparerai con gli esempi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@はインストールせず、例を使って学びます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 설치 없이 예제로 배워요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: nauka na przykładach, bez instalacji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem instalar %@: você vai aprender com exemplos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için kurulum yok: örneklerle öğreneceksin."
-          }
-        }
-      }
-    },
     "No lessons studied yet" : {
       "comment" : "Under the plan's progress percent, in a small tile, before any lesson is studied",
       "localizations" : {
@@ -28160,61 +28101,60 @@
         }
       }
     },
-    "Resume this goal" : {
-      "comment" : "Resumes the paused goal",
+    "Resume goal" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Ziel fortsetzen"
+            "value" : "Ziel fortsetzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reanudar este objetivo"
+            "value" : "Reanudar objetivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reprendre cet objectif"
+            "value" : "Reprendre l’objectif"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riprendi questo obiettivo"
+            "value" : "Riprendi l’obiettivo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この目標を再開する"
+            "value" : "目標を再開する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 목표 다시 시작하기"
+            "value" : "목표 재개하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wznów ten cel"
+            "value" : "Wznów cel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retomar este objetivo"
+            "value" : "Retomar objetivo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu hedefe devam et"
+            "value" : "Hedefe devam et"
           }
         }
       }
@@ -31681,65 +31621,6 @@
         }
       }
     },
-    "The exam is on %@." : {
-      "comment" : "The exam's day its notice or official calendar gives; the argument is a date like 'May 5, 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Prüfung ist am %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El examen es el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’examen a lieu le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’esame è il %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験日は%@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 시험이 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termin egzaminu: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A prova é em %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınav %@ tarihinde."
-          }
-        }
-      }
-    },
     "The exam's likely date is now %@." : {
       "comment" : "The exam's likely day while its notice isn't out; the argument is a date like 'May 5, 2027'",
       "localizations" : {
@@ -31860,6 +31741,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En fazla yaklaşık %1$@ tamamlanabiliyor; bunun için günde %2$@ çalışmak gerekiyor."
+          }
+        }
+      }
+    },
+    "The official exam date is %@. Use it as your exam date?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der offizielle Prüfungstermin ist am %@. Diesen Termin für deine Prüfung übernehmen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha oficial del examen es %@. ¿Quieres usarla como tu fecha de examen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date officielle de l’examen est le %@. Utiliser cette date pour ton examen ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla come data del tuo esame?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正式な試験日は%@です。この日を試験日に設定しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 시험일은 %@이에요. 이 날짜를 시험일로 설정할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oficjalny termin egzaminu to %@. Ustawić go jako termin twojego egzaminu?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A data oficial da prova é %@. Quer usar essa data para sua prova?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resmî sınav tarihi %@. Bu tarihi sınav tarihin olarak kullanalım mı?"
           }
         }
       }
@@ -32863,65 +32802,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Günlük çalışma süresi"
-          }
-        }
-      }
-    },
-    "Time on weekends" : {
-      "comment" : "Setting: study time on Saturday and Sunday",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lernzeit am Wochenende"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo los fines de semana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Durée le week-end"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo nel fine settimana"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "週末の学習時間"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "주말 학습 시간"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Czas nauki w weekendy"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo nos fins de semana"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hafta sonu çalışma süresi"
           }
         }
       }
@@ -34830,6 +34710,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ için yeni bir plan hazırlayacağız. Bitirdiğin dersler yine tamamlanmış sayılır."
+          }
+        }
+      }
+    },
+    "Weekend time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernzeit am Wochenende"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de estudio los fines de semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée d’étude le week-end"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo nel fine settimana"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週末の学習時間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주말 학습 시간"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas nauki w weekendy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo no fim de semana"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hafta sonu çalışma süresi"
           }
         }
       }
@@ -36896,6 +36834,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu branşı planından çıkardın."
+          }
+        }
+      }
+    },
+    "You won't use %@: you'll learn with examples." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du nutzt %@ nicht: Du lernst anhand von Beispielen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No usarás %@: aprenderás con ejemplos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’utiliseras pas %@ : tu apprendras avec des exemples."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non userai %@: imparerai con degli esempi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は使わず、例を通して学びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 없이 예시로 배울 거예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie będziesz używać tych narzędzi: %@. Będziesz uczyć się na przykładach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não vai usar %@: vai aprender com exemplos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kullanmayacaksın: örneklerle öğreneceksin."
           }
         }
       }

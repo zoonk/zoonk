@@ -213,11 +213,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
   };
 
   return (
-    <PlanChangeSuggestion
-      item={item}
-      mark={<CalendarClockIcon />}
-      title={previewing ? question : title}
-    >
+    <PlanChangeSuggestion item={item} title={previewing ? question : title}>
       {body()}
     </PlanChangeSuggestion>
   );

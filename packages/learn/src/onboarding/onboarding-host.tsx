@@ -7,7 +7,7 @@ export const FirstLessonReadContext = createContext<ReactNode>(null);
 
 type OnboardingHost =
   | { backHref: string; barEnd: ReactNode; kind: "page" }
-  | { header: ReactNode; kind: "section"; title: boolean };
+  | { header: ReactNode; kind: "section"; titleClassName?: string };
 
 const OnboardingHostContext = createContext<OnboardingHost | null>(null);
 
@@ -27,18 +27,18 @@ export function OnboardingPage({
   );
 }
 
-/** `title`: false where the page's own menu already says "Start a goal". */
+/** `titleClassName` hides the section's title where the page's own menu already says it. */
 export function OnboardingEmbedded({
   children,
   header,
-  title = true,
+  titleClassName,
 }: {
   children: ReactNode;
   header: ReactNode;
-  title?: boolean;
+  titleClassName?: string;
 }) {
   return (
-    <OnboardingHostContext value={{ header, kind: "section", title }}>
+    <OnboardingHostContext value={{ header, kind: "section", titleClassName }}>
       {children}
     </OnboardingHostContext>
   );

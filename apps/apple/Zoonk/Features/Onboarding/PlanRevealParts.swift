@@ -181,6 +181,8 @@ struct RevealToday: View {
   let failed: Int?
   /// Nil while Start opens.
   let open: ((StudyBlock) -> Void)?
+  /// Inside the first week's section, as main nests it, its header is a row of that section.
+  var isInWeek = false
 
   var body: some View {
     let next = day.nextBlock
@@ -192,41 +194,62 @@ struct RevealToday: View {
       : Text("Start here", tableName: "Onboarding", comment: "Tags the plan's first lesson today")
 
     if !rows.isEmpty {
-      Section {
-        ForEach(rows, id: \.position) { block in
-          let isNext = block.position == next?.position
-          let row = BlockRow(
-            block: block, view: nil, isNext: isNext, countsTowardMission: false,
-            isBusy: busy == block.position, failed: failed == block.position,
-            tag: isNext ? tag : nil)
+      if isInWeek {
+        header
+          .listRowSeparator(.hidden)
 
-          Group {
-            if block.opensFromReveal {
-              Button {
-                open?(block)
-              } label: {
-                row
-              }
-              .tint(.primary)
-              .disabled(open == nil || (busy != nil && busy != block.position))
-              .accessibilityBusy(busy == block.position)
-            } else {
-              row
-            }
-          }
-          .currentRow(isNext)
-        }
-      } header: {
-        SectionTitle(
-          Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
-        ) {
-          FactSegments(
-            [
-              PlanDate.text(day.localDate, today: day.localDate, weekday: true),
-              planDurationText(minutes: Double(minutes)),
-            ])
+        list(rows, next: next, tag: tag)
+      } else {
+        Section {
+          list(rows, next: next, tag: tag)
+        } header: {
+          header
         }
       }
+    }
+  }
+
+  func inWeek() -> RevealToday {
+    var today = self
+    today.isInWeek = true
+    return today
+  }
+
+  private var header: some View {
+    SectionTitle(
+      Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+    ) {
+      FactSegments(
+        [
+          PlanDate.text(day.localDate, today: day.localDate, weekday: true),
+          planDurationText(minutes: Double(minutes)),
+        ])
+    }
+  }
+
+  private func list(_ rows: [StudyBlock], next: StudyBlock?, tag: Text) -> some View {
+    ForEach(rows, id: \.position) { block in
+      let isNext = block.position == next?.position
+      let row = BlockRow(
+        block: block, view: nil, isNext: isNext, countsTowardMission: false,
+        isBusy: busy == block.position, failed: failed == block.position,
+        tag: isNext ? tag : nil)
+
+      Group {
+        if block.opensFromReveal {
+          Button {
+            open?(block)
+          } label: {
+            row
+          }
+          .tint(.primary)
+          .disabled(open == nil || (busy != nil && busy != block.position))
+          .accessibilityBusy(busy == block.position)
+        } else {
+          row
+        }
+      }
+      .currentRow(isNext)
     }
   }
 }
@@ -253,19 +276,24 @@ struct RevealTodayPlaceholder: View {
   }
 }
 
-/// Main's `RevealWeek`: the six days after today, each day's lessons by name. A phone's short
-/// rows leave out the lessons' marks.
+/// Main's `RevealWeek`: the week the learner is in, Today first, then the six days after it, each
+/// day's lessons by name. A phone's short rows leave out the lessons' marks.
 struct RevealWeek: View {
   let days: [RevealDay]
   let week: PlanRevealRead.Week
+  var today: RevealToday?
 
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.legibilityWeight) private var legibility
 
   var body: some View {
-    if days.contains(where: { !$0.items.isEmpty }) {
+    if week.days == 0 {
+      today
+    } else {
       Section {
+        today?.inWeek()
+
         ForEach(days) { day in
           row(day)
         }

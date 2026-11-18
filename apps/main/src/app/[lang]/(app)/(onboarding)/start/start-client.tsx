@@ -16,6 +16,12 @@ import {
 } from "./onboarding-client-actions";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
+/**
+ * The goal menu's own "Start a goal" shows in a phone's bar and in the open sidebar; the page says
+ * it only where the menu doesn't, with the sidebar collapsed.
+ */
+const BESIDE_START_MENU_CLASS = "hidden in-data-[sidebar-collapsed]:lg:block";
+
 export function StartClient({
   canAttach,
   defaultGoal,
@@ -23,6 +29,7 @@ export function StartClient({
   goalLimit,
   header,
   initialDraft,
+  keepsTitle = false,
   needsAccount,
   planId,
 }: {
@@ -32,6 +39,8 @@ export function StartClient({
   goalLimit: GoalLimit | null;
   header?: React.ReactNode;
   initialDraft: OnboardingDraftView | null;
+  /** `header` has sections of its own, so the box's title keeps it apart from them. */
+  keepsTitle?: boolean;
   needsAccount: boolean;
   planId: string | null;
 }) {
@@ -83,7 +92,10 @@ export function StartClient({
   );
 
   return embedded ? (
-    <OnboardingEmbedded header={header} title={!menuStartsGoal}>
+    <OnboardingEmbedded
+      header={header}
+      titleClassName={menuStartsGoal && !keepsTitle ? BESIDE_START_MENU_CLASS : undefined}
+    >
       {flow}
     </OnboardingEmbedded>
   ) : (

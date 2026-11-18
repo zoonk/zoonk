@@ -101,6 +101,7 @@ export function serializeLearningActivity(activity: LearningActivityData) {
       activitiesCompleted: day.activitiesCompleted,
       date: serializeLogicalDate(day.date),
       lessonCompletions: day.lessonCompletions,
+      timeSpentSeconds: day.timeSpentSeconds,
     })),
   };
 }

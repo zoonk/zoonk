@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "b33f130f686793a46ab32b14fe502090da73058d40b3989ceab2c24485a6c8d9",
   "mock_result_easy_questions": "037602198ad8a7060708bf71f6ed9321fc41ace8daf26b94b926097b705e75dc",
   "mock_result_estimate_detail": "891b014e68bcccc898460995367814d4315e61f22d1e032865d7f451447c4673",
-  "mock_result_estimated_exam_score": "3a862eab44151f33e6c392ba6295ade5628954e974f3492f612c3c188519946d",
+  "mock_result_estimated_exam_score": "a66fa78372257b2ee93721d11c4e5f4d6d1342b84e0c9be83e017626caf28eff",
   "mock_result_estimated_score": "4c8f15fe642d4e90ea377b727a6e8bb0fb79ccb1bd8f11a7e0036870db834a61",
   "mock_result_every_minimum": "9f362a27731c8b075cd6c00af1828ae4afc044f48200e99062b7d2319d1c6363",
   "mock_result_flagged_answers": "425606c735dbb8b49a3b427e37e3fd6b94fd08450aff0475f70a2b1d26345a83",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">Estimativa de pontuação</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">Pontuação estimada (%1$s)</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">Pontuação estimada · %1$s</string>
     <string name="mock_result_net_score">De um total de %1$d</string>
     <string name="mock_result_right_answers">Respostas certas</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

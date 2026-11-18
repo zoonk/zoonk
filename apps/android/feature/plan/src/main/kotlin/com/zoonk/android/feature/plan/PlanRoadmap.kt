@@ -55,7 +55,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
@@ -73,6 +72,8 @@ import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.Geist
+import com.zoonk.android.ui.theme.layoutEnd
+import com.zoonk.android.ui.theme.layoutStart
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
@@ -632,7 +633,7 @@ private fun PhaseAxis(
                     it.text,
                     style = style,
                     color = it.color,
-                    textAlign = if (it.share < MIDDLE_SHARE) TextAlign.Start else TextAlign.End,
+                    textAlign = if (it.share < MIDDLE_SHARE) layoutStart() else layoutEnd(),
                 )
             }
         },

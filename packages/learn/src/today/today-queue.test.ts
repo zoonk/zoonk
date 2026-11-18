@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
+import { getFoldedRows, getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
 
 describe(splitTodayQueue, () => {
   it("keeps pending lessons before a later active block out of the done fold", () => {
@@ -78,5 +78,41 @@ describe(getLessonAgainId, () => {
     { kind: "checkpoint", lessonId: null, status: "completed" },
   ] as const)("keeps $kind ($status) closed", (block) => {
     expect(getLessonAgainId(block)).toBeNull();
+  });
+});
+
+describe(getFoldedRows, () => {
+  const lesson = { kind: "learn" } as const;
+  const review = { kind: "review" } as const;
+
+  it("names the folded rows lessons when every one is a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson, lesson];
+
+    expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
+      count: 2,
+      lessonsOnly: true,
+    });
+  });
+
+  it("doesn't call a folded review a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson, review];
+
+    expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
+      count: 2,
+      lessonsOnly: false,
+    });
+  });
+
+  it("counts the lessons-coming row it folds without calling it a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson];
+
+    expect(getFoldedRows({ after, lessonsAhead: true })).toStrictEqual({
+      count: 2,
+      lessonsOnly: false,
+    });
+  });
+
+  it("folds nothing while the rows fit", () => {
+    expect(getFoldedRows({ after: [lesson, review, lesson], lessonsAhead: true }).count).toBe(0);
   });
 });

@@ -25,7 +25,7 @@ function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-sm font-medium">{account.name}</span>
-          <span className="text-muted-foreground truncate text-xs">{account.email}</span>
+          <span className="text-muted-foreground text-xs wrap-anywhere">{account.email}</span>
         </span>
       </div>
       <DropdownMenuSeparator />

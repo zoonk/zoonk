@@ -268,9 +268,7 @@ private struct ExamHero: View {
               "Based on past exams, the likely date is \(day). Use it as your exam date?",
               tableName: "Exam", comment: "An estimated date and what adopting it changes")
           } else {
-            Text(
-              "The official \(exam.examName) date is \(day). Use it as your exam date?",
-              tableName: "Exam", comment: "An official date and what adopting it changes")
+            Text("The official exam date is \(day). Use it as your exam date?", tableName: "Exam")
           }
           if change.outcome == false {
             FailureLine(
@@ -897,7 +895,7 @@ private struct ExamFormatSection: View {
     let date =
       day.date.map {
         PlanDate.text($0, today: PlanDate.today(), weekday: !exam.daysEstimated)
-      } ?? String(localized: "Date not set", table: "Exam", comment: "An exam day with no date")
+      } ?? String(localized: "Date to be confirmed", table: "Exam")
     guard let minutes = day.minutes, minutes > 0 else { return [date] }
     return [date, MockLabels.duration(minutes: minutes)]
   }

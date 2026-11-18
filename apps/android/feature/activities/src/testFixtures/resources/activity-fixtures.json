@@ -146,7 +146,7 @@
       "prompt": "Move the rate and watch $1,000 grow over 20 years.",
       "template": "formulaModel"
     },
-    "expected": { "kind": "numeric", "value": 3870 },
+    "expected": { "kind": "numeric", "value": 3869.68 },
     "explore": {
       "content": {
         "data": { "isExample": true },
@@ -209,7 +209,7 @@
       "prompt": "How long is a million seconds?",
       "template": "guessReveal"
     },
-    "expected": { "kind": "numeric", "value": 12 },
+    "expected": { "kind": "numeric", "value": 11.57 },
     "explore": null,
     "picture": null,
     "value": 11.574074074074074
@@ -425,7 +425,7 @@
       "prompt": "Drag the handles to cover 2 standard deviations.",
       "template": "distributionExplorer"
     },
-    "expected": { "kind": "numeric", "value": 95 },
+    "expected": { "kind": "numeric", "value": 95.45 },
     "explore": {
       "content": {
         "data": { "source": { "title": "Wechsler Adult Intelligence Scale norms" } },
@@ -2044,7 +2044,7 @@
       "prompt": "Every way two dice can land. How often do they add up to 7?",
       "template": "combinationGrid"
     },
-    "expected": { "kind": "numeric", "value": 0.17 },
+    "expected": { "kind": "numeric", "value": 0.1667 },
     "explore": {
       "content": {
         "fields": {
@@ -2132,7 +2132,7 @@
       "prompt": "Add an extra payment to the example mortgage.",
       "template": "formulaModel"
     },
-    "expected": { "kind": "numeric", "value": 252 },
+    "expected": { "kind": "numeric", "value": 251.54 },
     "explore": {
       "content": {
         "data": { "isExample": true },
@@ -2295,7 +2295,7 @@
       "prompt": "Move the angle and watch where the ball lands.",
       "template": "formulaModel"
     },
-    "expected": { "kind": "numeric", "value": 41 },
+    "expected": { "kind": "numeric", "value": 40.77 },
     "explore": {
       "content": {
         "data": { "isExample": true },

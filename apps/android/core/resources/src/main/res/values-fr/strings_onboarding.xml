@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "7d38b0a6944826eca6a50a18c3bdd9853fe5f42541f4de7c450b7c3162ba6802",
   "onboarding_musicianship_title": "6c5e6b273aa112219a9a3b54e32f927dce3eff2aafbac730607ed407b4467f43",
   "onboarding_my_notes": "89cd51846fc36e4490e59f38cf8841d11664ccf71df820886a404787f59a86b3",
-  "onboarding_no_date": "f1827252bfb07a797fe1004f59710dd053a188066ad8624ea155c3568d34eea5",
   "onboarding_paste_link": "ad3ddc1eeb88ef2e8a4f322d08f46e0452e259db81f547e92847ae29228c8b0d",
   "onboarding_paste_link_placeholder": "2b011902329a34a3c385eca1991e79cb128d3683882cd517f1c73b0945ef757e",
   "onboarding_paste_text": "e8493920e4fbf0d05bcfa59e5889c77dba4d516b7be55972fbf36c5ad8f98b23",
@@ -284,7 +283,7 @@
   "onboarding_reveal_most_questions": "d8cec2baebf2ba082dbf3cf1786c9090044da297177a9c7992fea2906e91e306",
   "onboarding_reveal_no_sitting": "80554bdfa1749f17da1d5b064ae0a4792963d8e3def02fa0f54b1e1b73ee686e",
   "onboarding_reveal_notice_day_estimated": "4714b6ff37bbf4b61fdb20f25d0499d6a383784b4fea46983aa69892fbc053d8",
-  "onboarding_reveal_notice_day_notice": "721de08ca5ef72daf9a8e1ed7ba360148acc02c14d10ceea026603bcaae4c046",
+  "onboarding_reveal_notice_day_notice": "9ab76ee03ed26fc38264a1850554bf9225a7a346d442521bcdee66ddc97ff564",
   "onboarding_reveal_notice_subjects": "b9d88f5da16d663fb15f4707b5b83ec0b7d0af8d5832dc67e81efb5edde0e750",
   "onboarding_reveal_pace_covers": "b9233d6b5e86f816a4a857a8f90369bbe709eb21fad057eb553d18b9263a2ade",
   "onboarding_reveal_pace_time": "bf82b0681ad22ff56b7ca10694d9ff24df8d754096f8063454259d4a408987f6",
@@ -355,7 +354,7 @@
   "onboarding_row_material": "425d2a66eb7c500fd8291251ff5a84fb1152c8f0fe30e05a3e6c94ddb38f1a43",
   "onboarding_row_material_note": "1694aba036d86e35468d850cf298eb2fb5cf1f465f55ae83c80a673d83d4e12c",
   "onboarding_row_minutes_a_day": "a745b2d5cfa18449e3716e51fbbb5b964abd6a84499e4118263679862af8eb47",
-  "onboarding_row_notice_says": "5f595f44891e3568111c01f253db599c9aab8406f39a3c77b7682b0880391001",
+  "onboarding_row_notice_says": "3a3804f26aff7425271e7c5298b3a1dade0cf1fe0f032ff0d7758a88fbccd42a",
   "onboarding_row_pick_date": "9d857c48eb0c0dab04a315ef7a3d1969907bacc6b130c1ab739ac2ee9b223cb3",
   "onboarding_row_position": "578a7340aa895f7cb0740c0ddc7df8af2bc45c649d96022f36b710420d9c88be",
   "onboarding_row_reason": "0d90c90e0bb175502ee41ceba0d322ee883ced0d9abc492ee43016a2f2e1ec03",
@@ -561,7 +560,7 @@
     <string name="onboarding_row_dates_estimated">D’après les dates habituelles de cet examen. On te préviendra dès que les dates officielles seront publiées.</string>
     <string name="onboarding_row_pick_date">Choisis ta date</string>
     <string name="onboarding_row_several_sittings">Cet examen a lieu plusieurs fois par an. Tant que tu n’as pas choisi de date, ton plan utilise la première.</string>
-    <string name="onboarding_row_notice_says">L’examen a lieu le %1$s.</string>
+    <string name="onboarding_row_notice_says">La date officielle de l’examen est le %1$s. Utiliser cette date pour ton examen ?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">On te préparera une courte explication qui se lit en 5 minutes environ.</string>
@@ -755,7 +754,7 @@
     <string name="onboarding_reveal_phase_light_review">Révision légère</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La date probable de l’examen est désormais le %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">L’examen a lieu le %1$s.</string>
+    <string name="onboarding_reveal_notice_day_notice">La date officielle de l’examen est le %1$s. Utiliser cette date pour ton examen ?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">Aucune date d’examen en %1$s</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -922,8 +921,6 @@
     <string name="onboarding_date_continue_without">Continuer sans date</string>
     <string name="onboarding_date_remove">Supprimer la date</string>
     <string name="onboarding_date_label">Date</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">Sans date</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">La date prévue (%1$s) est passée.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

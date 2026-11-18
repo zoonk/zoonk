@@ -13,7 +13,14 @@ import {
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, HistoryIcon, PencilIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  EllipsisIcon,
+  GlassesIcon,
+  HistoryIcon,
+  PencilIcon,
+  SmileIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   createContext,
@@ -143,8 +150,8 @@ function BuddyMenu({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuItem className="min-h-11" onClick={onEdit}>
-          {buddy.picked && <PencilIcon aria-hidden="true" />}
+        <DropdownMenuItem onClick={onEdit}>
+          {buddy.picked ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
           {buddy.picked ? t("Change {buddy}", { buddy: name }) : t("Choose your buddy")}
         </DropdownMenuItem>
 

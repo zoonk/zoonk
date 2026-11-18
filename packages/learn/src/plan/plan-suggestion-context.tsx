@@ -9,17 +9,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
-import { DoneMark } from "../_components/status-mark";
 import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
   SuggestionHeader,
-  SuggestionLine,
-  SuggestionOpen,
   SuggestionResult,
-  SuggestionSummary,
 } from "../_components/suggestion";
 import { type PlanCertificates } from "../journey/course-certificate";
 import { type GoalStatusControl } from "../journey/goal-actions";
@@ -152,50 +148,23 @@ export function SlotUndo({ item }: { item: SlotItem }) {
   );
 }
 
+/** A change to the plan is one card at every width: what it changes, and its answers, in place. */
 export function PlanChangeSuggestion({
   children,
   item,
-  mark,
-  onOpen,
-  summary,
   title,
 }: {
   children: React.ReactNode;
   item: SlotItem;
-  mark?: React.ReactNode;
-  onOpen?: () => void;
-  /** The line on the page, when the sheet it opens has a title of its own. */
-  summary?: string;
   title: string;
 }) {
   const t = useExtracted();
-  const { setPreview } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const undo = answer && <SlotUndo item={item} />;
 
   return (
-    <Suggestion
-      answered={answer !== null}
-      label={t("Plan suggestion")}
-      mark={answer ? <DoneMark /> : mark}
-      onClose={setPreview}
-      onOpen={onOpen}
-    >
-      <SuggestionLine>
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            {undo}
-          </>
-        ) : (
-          <>
-            <SuggestionSummary>{summary ?? title}</SuggestionSummary>
-            <SuggestionOpen>{t("See what changes")}</SuggestionOpen>
-          </>
-        )}
-      </SuggestionLine>
-
-      <SlotContent>
+    <Suggestion answered={answer !== null} label={t("Plan suggestion")}>
+      <SuggestionContent className="flex min-[72rem]:bg-transparent min-[72rem]:ring-0" statement>
         <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
 
         {answer ? (
@@ -206,7 +175,7 @@ export function PlanChangeSuggestion({
         ) : (
           children
         )}
-      </SlotContent>
+      </SuggestionContent>
     </Suggestion>
   );
 }

@@ -14,7 +14,7 @@
   "plan_apply": "30e6202ba66d0f7b4ea23e97010d21257f597021954a18ace3a17236f3ddcea8",
   "plan_archive": "5fb8ac38e5e52be8943c7fc1b11639fc09f6f2d5d6892310dfd787a14425ca88",
   "plan_archive_description": "32101850acd7aa5f9b3bbfcf2f741d2d28fb63a085dc7d5d0526a294932443dd",
-  "plan_archive_goal": "2d8ec7f7995c15e8c75e0bb5e701f2ded6bb3510f383e5dfe3a88f4db90209f6",
+  "plan_archive_goal": "4a8b856d6641a8abbae5942f00690062d2b2c0b1a4340cbf88ca3cf417da519e",
   "plan_archive_goal_short": "bcb6659135a0a52b293155b4eb15d41bcae4f7d570c4c617f0a4510b439e5901",
   "plan_archive_title": "a608c81b76bae6f04b5cebfa19057abedacaa91ca8d6af6d13f11c53cd1d0c8b",
   "plan_ask_add_topics": "7ded63a8d2a3bfaf033bde9b4624ef204e228ced9d02539005aab2d8dc6bf464",
@@ -136,7 +136,7 @@
   "plan_change_names_and_more_topics": "9170d4bf73cf7a90fcfd7a374e8343090bb5efc3ab69caced8cd38a957999900",
   "plan_change_no_deadline": "19a455287c55bcf75fbe32afb1360b1179d774cb61dfeb483ed49c6edcff513f",
   "plan_change_no_focus": "322a8f34af566be6c359ecd277f0d46c12b4a7adcf265049c01ee9469c9eb449",
-  "plan_change_notice_says": "9cb5605c590d3a2915b7751409e7a45728d4970257c8925b3adb05c7c957b164",
+  "plan_change_notice_says": "76aa304f628f82b88d1e37d2138d2d10afbbc20348d973c69223ac51557ce0c2",
   "plan_change_official_date": "065a607c880fcacb28a3502d9fa190bb3997e325c910c4b7500c86bcfc04c183",
   "plan_change_other_subjects": "1b0d5d5bc815857e9744330650f63a5f1fd6b33113edfe170d8fcddc834ccd51",
   "plan_change_own_level_first": "902d43b383a23bf6569309c65c2b140cbab140fdc64c00fe52cc2625b3e3fdf1",
@@ -151,7 +151,7 @@
   "plan_change_today_changed": "b7a59fc9ffa82eb5ba1884bb8e82dea629cc3562dc400f3382984038402f75b9",
   "plan_change_today_unchanged": "68d76532df47b86905dc5860f1bd8e349a4cd62e586f4a0cc141846de970f19b",
   "plan_change_tool_have": "595b77f918ee42f5c051bd887fb161bbed694abb5af113e04ed06423b3940fc6",
-  "plan_change_tool_none": "c2bdc2bf4094a591aedfada2a5778895503e1b4463bff198e7fd65551f5065ba",
+  "plan_change_tool_none": "21e7142b5d9e1ff1e0f65f7972875ce5818889d35b447ce3dc51a48d8f20ff7b",
   "plan_change_tool_setup": "7a57bc46eac2842e41837b24787629b1148afd8aac49347dc71ad4a894061dd9",
   "plan_change_topics_added": "7a61ef076514fb34d1200e5a0d5ac22695d5cf4854f6e21c9eef7d5f91e80457",
   "plan_change_undone": "553fa3b70bfc3eb43e98b6949b0fa9544a1d4a6193d04a18c43bc8df2e764ce6",
@@ -366,7 +366,7 @@
   "plan_past_date_goal_sentence": "6d7f96bda0b125ae81c6a95dfc929cec8d303615d413d2f3bf78afd67009683b",
   "plan_past_date_goal_title": "d70f0bf5b269039e9c6606e3905d8259e3798bb2a0099a96ec4d6c09ccdbea3c",
   "plan_past_date_offer": "0789601792d4291177e8eab0e18088d40a7bb9a412b0ebf80e2f869885b6d349",
-  "plan_pause_goal": "7f74c047f9f4d448dbe4fc73c72417717a0f9c99f712cb6a5ff2bb118d337468",
+  "plan_pause_goal": "f557fbaaed30fbb5dd73a3743f33d006aa4c184a08c1e3c77bb13ee9040197cd",
   "plan_phase_after_exam": "884b9433dd28f8bbc6be7dcb07255af7abac4821cb88b43a2b2cde53152f43ce",
   "plan_phase_final_stretch": "cd7c72340de9b44de5455d07e863219b33b753e82ea56f49c39f1c5494403483",
   "plan_phase_foundations": "350da5bdabb2199d4aaf439ca671e73eb410bb9f40e5e729013dbf0adaa2a5d6",
@@ -389,7 +389,7 @@
   "plan_rename_label": "789bcb14f44b2f4ec7040fa54036354f4d4b033c318bd0f371285ba67a57abf8",
   "plan_resume": "8c08e8362b364fb448b630c01117c30d27818efb066498f781b4f8f1b29bcddb",
   "plan_resume_effect": "97b99a94f79497b6c2d605a7723221e23e175e713df845f262e0202cd680a569",
-  "plan_resume_goal": "b70119e95c7fe5f30271ebdaeef52953af33d9c3d62362c0a9dee3383436807e",
+  "plan_resume_goal": "93ed07bf9d0d69f0aa2a7ce07fc716894a7e04c39aee4b092967403953b90c66",
   "plan_resume_title": "2b1c0f7be097824418474cf9fedd00525e2ed890b5f22f3e62748084caaedae6",
   "plan_reviews_done": "81801369760715ec6dc51c7cb84f4cdb6be11b6b0900748813badc2a9f9d4d72",
   "plan_reviews_of_every_topic": "f0de0cb61780acc5fa6ae35340f38185fbf0da3528428b2378d3c7cab6d9129d",
@@ -583,9 +583,9 @@
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Nombre</string>
     <string name="plan_rename_description">Elige un nombre que reconozcas. Tu plan de estudio no cambia.</string>
-    <string name="plan_pause_goal">Pausar este objetivo</string>
-    <string name="plan_resume_goal">Reanudar este objetivo</string>
-    <string name="plan_archive_goal">Archivar este objetivo</string>
+    <string name="plan_pause_goal">Pausar objetivo</string>
+    <string name="plan_resume_goal">Reanudar objetivo</string>
+    <string name="plan_archive_goal">Archivar objetivo</string>
     <!-- The button that archives a goal whose exam date has passed; it asks first. -->
     <string name="plan_archive_goal_short">Archivar objetivo</string>
     <string name="plan_keep_studying">Seguir estudiando</string>
@@ -649,7 +649,7 @@
     <plurals name="plan_skills_you_know">
         <item quantity="one">%d capítulo que ya conocías</item>
         <item quantity="other">%d capítulos que ya conocías</item>
-    <item quantity="many">%d capítulos que ya conocías</item>
+        <item quantity="many">%d capítulos que ya conocías</item>
     </plurals>
     <string name="plan_more_lessons">Más lecciones</string>
     <string name="plan_lessons_on_the_way">Lecciones en camino</string>
@@ -908,7 +908,7 @@
     <string name="plan_change_follows_guide">Tu plan se basa en la guía oficial del examen.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">La fecha probable del examen ahora es el %1$s.</string>
-    <string name="plan_change_notice_says">El examen es el %1$s.</string>
+    <string name="plan_change_notice_says">La fecha oficial del examen es %1$s. ¿Quieres usarla como tu fecha de examen?</string>
     <string name="plan_change_keep_official_date">Conservar la fecha oficial</string>
     <string name="plan_change_daily_time_changed">Ahora estudias %1$s al día.</string>
     <string name="plan_change_rest_day">%1$s: día de descanso.</string>
@@ -964,7 +964,7 @@
     <string name="plan_change_start_past_basics">Tu plan se salta lo básico de %1$s.</string>
     <string name="plan_change_tool_setup">El plan incluye una lección para configurar %1$s en %2$s antes de que haga falta.</string>
     <string name="plan_change_tool_have">Ya tienes %1$s, así que no hay nada que configurar.</string>
-    <string name="plan_change_tool_none">No necesitas instalar %1$s: aprenderás con ejemplos.</string>
+    <string name="plan_change_tool_none">No usarás %1$s: aprenderás con ejemplos.</string>
     <string name="plan_system_phone">Solo celular</string>
     <string name="plan_change_missed_days">Tu plan se ajustó por los días que no estudiaste.</string>
     <plurals name="plan_change_tested_out">

@@ -635,10 +635,7 @@ private fun SummaryBar(
     }
 }
 
-/**
- * Main's `SHARED_ROW_ACTION_CLASS` grows each button from its label's width; a `FlowRow` weight would
- * split the line evenly and wrap the longer label.
- */
+/** Main's `SHARED_ROW_ACTION_CLASS`: a `FlowRow` weight would split the line evenly and wrap the longer label. */
 @Composable
 private fun SharedRow(
     modifier: Modifier,
@@ -647,17 +644,12 @@ private fun SharedRow(
     Layout(content, modifier) { measurables, constraints ->
         val gap = 8.dp.roundToPx()
         val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
-        val row = (labels.maxOrNull() ?: 0) * labels.size + gap * (labels.size - 1)
+        val widths = sharedRowWidths(labels, gap, constraints.minWidth, constraints.maxWidth)
 
-        if (row <= constraints.maxWidth) {
-            val width = max(row, constraints.minWidth)
-            val buttonWidth = (width - gap * (labels.size - 1)) / labels.size
-            val placeables =
-                measurables.mapIndexed { index, measurable ->
-                    measurable.measure(Constraints.fixedWidth(buttonWidth))
-                }
+        if (widths != null) {
+            val placeables = measurables.zip(widths) { measurable, width -> measurable.measure(Constraints.fixedWidth(width)) }
             val height = placeables.maxOf { it.height }
-            layout(width, height) {
+            layout(widths.sum() + gap * (widths.size - 1), height) {
                 var x = 0
                 placeables.forEach {
                     it.placeRelative(x, (height - it.height) / 2)
@@ -675,6 +667,22 @@ private fun SharedRow(
             }
         }
     }
+}
+
+/**
+ * Each button's width on one line, [gap] apart: its label's, each grown by an equal share of what [minWidth] leaves (main's
+ * `grow` on a phone's bar); null when the labels don't fit in [maxWidth] together and stack.
+ */
+internal fun sharedRowWidths(
+    labels: List<Int>,
+    gap: Int,
+    minWidth: Int,
+    maxWidth: Int,
+): List<Int>? {
+    val row = labels.sum() + gap * (labels.size - 1)
+    if (row > maxWidth) return null
+    val share = (max(row, minWidth) - row) / labels.size
+    return labels.map { it + share }
 }
 
 @Composable

@@ -500,9 +500,7 @@ struct ScheduleQuestion: View {
               .tag(time)
           }
         } label: {
-          Text(
-            "Time on weekends", tableName: "Onboarding",
-            comment: "Picks the weekend's own time a day")
+          Text("Weekend time", tableName: "Onboarding")
         }
         .pickerStyle(.menu)
       }

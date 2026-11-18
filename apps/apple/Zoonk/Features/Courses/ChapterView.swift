@@ -100,8 +100,6 @@ private struct ChapterLandingList: View {
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
-        Chip(facts: [chapter.courseTitle, areas?[chapter.id]].compactMap { $0 })
-
         Text(chapter.title)
           .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)

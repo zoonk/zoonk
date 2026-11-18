@@ -73,11 +73,7 @@ export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFram
 export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
   return (
     <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
-      <TaskAsideHeader
-        className="h-auto px-0 xl:h-auto [&>h2]:normal-case"
-        meta={aside.meta}
-        title={aside.title}
-      />
+      <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
       {aside.children}
     </section>
   );
@@ -86,7 +82,7 @@ export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
 export function SessionQueueAsideContent({ aside }: { aside: TaskFrameAside }) {
   return (
     <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0 with-aside:group-data-aside/task:pt-0">
-      <TaskAsideHeader className="[&>h2]:normal-case" meta={aside.meta} title={aside.title} />
+      <TaskAsideHeader meta={aside.meta} title={aside.title} />
       <div className="px-6">{aside.children}</div>
     </TaskAsideContent>
   );

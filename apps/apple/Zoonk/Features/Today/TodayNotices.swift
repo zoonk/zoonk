@@ -40,10 +40,11 @@ struct SuggestedGoalSection: View {
         }
 
         if !buttonsInBar {
+          // A card's answers under its words, small, as main's suggestion panel draws them.
           ButtonRow {
             SuggestedGoalButtons(suggestion: suggestion, answer: answer)
           }
-          .controlSize(.large)
+          .controlSize(.small)
         }
         if answer.failed, !buttonsInBar {
           FailureLine(message: SuggestedGoalAnswer.failure)

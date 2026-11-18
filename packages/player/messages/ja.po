@@ -3831,9 +3831,9 @@ msgid "Close questions"
 msgstr "質問パネルを閉じる"
 
 #: src/questions/lesson-question-panel.tsx
-msgctxt "lyjQP7"
-msgid "Ask Zu with a free account"
-msgstr "無料アカウントでズーに質問する"
+msgctxt "dmlJ5t"
+msgid "Ask {name} with a free account"
+msgstr "無料アカウントで{name}に質問する"
 
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"

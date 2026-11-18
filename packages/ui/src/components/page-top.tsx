@@ -10,7 +10,8 @@ import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 const BACK_LINK_CLASS = cn(
   buttonVariants({ edge: "start", size: "sm", variant: "ghost" }),
-  "min-w-0 shrink",
+  // Rounded down, the chevron's ink lands about a pixel inside the title's first letter on a phone.
+  "min-w-0 shrink [--edge-start-round:up]",
 );
 
 /**

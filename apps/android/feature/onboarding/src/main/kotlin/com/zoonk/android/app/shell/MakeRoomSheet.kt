@@ -2,7 +2,6 @@ package com.zoonk.android.app.shell
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -36,7 +35,6 @@ import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.goalSpokenName
 import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.scaffold.CloseButton
@@ -111,17 +109,7 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                itemVerticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(
-                    onClick = onDismiss,
-                    edge = ButtonEdge.Start,
-                    size = ButtonSize.Small,
-                ) { Text(stringResource(R.string.today_not_now)) }
-                SubscribeButton(onSubscribe)
-            }
+            SubscribeButton(onSubscribe, Modifier.fillMaxWidth(), ButtonSize.Large)
         }
     }
 }

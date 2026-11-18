@@ -26,7 +26,7 @@
   "mock_result_easy_missed": "e97cb246509ce135109cbc8f2bf50dbae11ced1b5d896ecbb4e816073adf8f45",
   "mock_result_easy_questions": "d21d54d83051e0f4dc8944029aec26f21eff50d983780f20015cefaa7c8aec06",
   "mock_result_estimate_detail": "14b29b092170f5d2fa7da2a744758d1557c8964946c1d0f9e90770b09c21d279",
-  "mock_result_estimated_exam_score": "5fc99cb04858789d9a14c6f87fae8a590452c2fb9ed37f6b7b980a12c6473772",
+  "mock_result_estimated_exam_score": "3cc96c094357cadf016cc23e42fe154f54f3e53a5f0b879de101684c8a169a1c",
   "mock_result_estimated_score": "9ed24c03ed62f635266a41a060aeee06545c047f858a468b6d043d83d19646df",
   "mock_result_every_minimum": "1faf00c817d642af4707640392990cdb668460c0495da3ac50d510418985b02a",
   "mock_result_flagged_answers": "4b26c6ab53eeea0a5f1948878a27559e8072b361767b0549d31c3c599a741d8f",
@@ -131,8 +131,8 @@
 -->
 <resources>
     <string name="mock_result_estimated_score">推定スコア</string>
-    <!-- The line under a mock exam's estimated score. %1$s is the exam's name, such as "ENEM". -->
-    <string name="mock_result_estimated_exam_score">%1$sの推定スコア</string>
+    <!-- Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it. -->
+    <string name="mock_result_estimated_exam_score">推定スコア・%1$s</string>
     <string name="mock_result_net_score">スコア（満点：%1$d）</string>
     <string name="mock_result_right_answers">正解率</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->

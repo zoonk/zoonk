@@ -63,7 +63,7 @@ export function GoalEntry({
       className={cn(section && "gap-4")}
     >
       {section ? (
-        host.title && <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
+        <PageSectionTitle className={host.titleClassName}>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
           <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>

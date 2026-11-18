@@ -374,6 +374,8 @@ private struct BuddyContent: View {
             Image(systemName: "bolt.fill")
               .foregroundStyle(.energy)
           }
+          .frame(minHeight: 44)
+          .contentShape(.rect)
         }
 
         if let today = status.today, !today.missions.isEmpty {
@@ -387,6 +389,8 @@ private struct BuddyContent: View {
             } icon: {
               Image(systemName: "checklist")
             }
+            .frame(minHeight: 44)
+            .contentShape(.rect)
           }
         }
       }

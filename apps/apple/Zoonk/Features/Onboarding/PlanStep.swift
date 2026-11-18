@@ -661,10 +661,11 @@ private struct PlanReveal: View {
 
     switch day.state {
     case .loaded(let reveal):
-      RevealToday(
-        day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
-        open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) })
-      RevealWeek(days: reveal.nextDays, week: reveal.week)
+      RevealWeek(
+        days: reveal.nextDays, week: reveal.week,
+        today: RevealToday(
+          day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
+          open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) }))
     case .idle, .loading:
       // Today's rows hold their place, so the week doesn't move as they come.
       RevealTodayPlaceholder()

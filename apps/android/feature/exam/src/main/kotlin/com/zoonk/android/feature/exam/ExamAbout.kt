@@ -112,13 +112,10 @@ private fun FormatDayRow(
 ) {
     val locale = currentLocale()
     val number = stringResource(R.string.exam_format_day, day.day.toInt())
-    val date = day.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), locale) }
-    val title =
-        when {
-            date == null -> number
-            numbered -> listOf(number, date).factsLine()
-            else -> date
-        }
+    val date =
+        day.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), locale) }
+            ?: stringResource(R.string.plan_date_to_be_confirmed)
+    val title = if (numbered) listOf(number, date).factsLine() else date
     val questions =
         day.parts
             .filterNot { it.written }

@@ -3,7 +3,6 @@ import { getExtracted } from "next-intl/server";
 import { formatCount } from "./certificate-format";
 import {
   type SheetCovered,
-  type SheetGraphKind,
   getCoveredFallbacks,
   getLinkOverflow,
   getPostOverflow,
@@ -147,14 +146,6 @@ function toSheetCovered(view: CertificateView): SheetCovered {
   return view.covered && { topics: view.covered.topics };
 }
 
-function getSheetGraphKind(view: CertificateView): SheetGraphKind {
-  if (view.graph.kind === "ladder") {
-    return "ladder";
-  }
-
-  return view.graph.label ? "labelledRoute" : "route";
-}
-
 export type FittedSheet = {
   covered: SheetCovered;
   moreTopics: string | null;
@@ -209,7 +200,7 @@ export async function fitSheet({
     getSheetOverflow({
       covered: parts.covered,
       finePrint: view.finePrint,
-      graph: getSheetGraphKind(view),
+      graph: view.graph.kind,
       nameHeight: parts.name.blockHeight / shaping.scale,
       titleHeight: parts.title.blockHeight / shaping.scale,
     });

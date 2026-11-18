@@ -8,11 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
@@ -27,6 +32,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.takeOrElse
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -39,7 +45,8 @@ import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
  * only once that heading scrolls under it. A page's main action goes in [bottomBar], pinned to the
  * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
  * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
- * bar stays under what it acts on and the way back starts where the column does. The page lays out its content in [pagePadding].
+ * bar stays under what it acts on. A page that centers its column says its width with [columnWidth] instead,
+ * and the way back and the actions keep to it too. The page lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +57,7 @@ fun PageScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     barWidth: Dp = Dp.Unspecified,
+    columnWidth: Dp = Dp.Unspecified,
     /** Off while a request that moves the learner on is out: Back waits with it. */
     backEnabled: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
@@ -66,14 +74,14 @@ fun PageScaffold(
                     val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
                     var span by remember { mutableStateOf<PageSpan?>(null) }
                     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-                        // The way back and the actions keep to the page's column, as its bottom bar does; across a fold the column is the page before it.
+                        // Across a fold the column is the page before it.
                         val columnInset =
-                            if (barWidth == Dp.Unspecified ||
+                            if (columnWidth == Dp.Unspecified ||
                                 screenSplit(maxWidth, span) != null
                             ) {
                                 0.dp
                             } else {
-                                ((maxWidth - barWidth) / 2).coerceAtLeast(0.dp)
+                                ((maxWidth - columnWidth) / 2).coerceAtLeast(0.dp)
                             }
                         TopAppBar(
                             title = {
@@ -102,9 +110,9 @@ fun PageScaffold(
                 },
                 bottomBar = {
                     if (bottomBar != null) {
-                        BottomBar(columnWidth = barWidth, content = bottomBar)
+                        BottomBar(columnWidth = barWidth.takeOrElse { columnWidth }, content = bottomBar)
                     } else if (retry != null) {
-                        BottomBar(columnWidth = barWidth) { retry() }
+                        BottomBar(columnWidth = barWidth.takeOrElse { columnWidth }) { retry() }
                     }
                 },
                 content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
@@ -122,6 +130,10 @@ fun PageBarActions(content: @Composable RowScope.() -> Unit) {
     Row(Modifier.offset(x = BAR_GLYPH_END - pageMargin()), verticalAlignment = Alignment.CenterVertically, content = content)
 }
 
+/** A page's column of at most [width], centered where the page is wider: the column a [PageScaffold]'s `columnWidth` names. */
+fun Modifier.centeredColumn(width: Dp): Modifier =
+    fillMaxSize().wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = width).fillMaxWidth()
+
 /**
  * The room around a page's content: Material's margins at the sides ([pageMargin]), a little over its
  * title under the top bar and more under its last line. Every page and tab root lays its content out
@@ -137,10 +149,16 @@ fun pagePadding(): PaddingValues {
 @Composable
 fun pageListMargin(): Dp = pageMargin() - LIST_ITEM_INSET
 
-/** Material's window margin: 16dp on a phone, 24dp from medium windows up. */
+/**
+ * Material's window margin: 16dp on a phone, 24dp from medium windows up. A book foldable's pages are each
+ * about a phone wide, so a window a fold splits keeps a phone's margin, the way back and the bars included.
+ */
 @Composable
-fun pageMargin(): Dp =
-    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) 24.dp else 16.dp
+fun pageMargin(): Dp {
+    val window = windowAdaptiveInfo()
+    val wide = window.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    return if (wide && window.windowPosture.allVerticalHingeBounds.isEmpty()) 24.dp else 16.dp
+}
 
 /**
  * Where the back arrow's ink starts unpulled: Material's bar insets its navigation icon 4dp, the button centers

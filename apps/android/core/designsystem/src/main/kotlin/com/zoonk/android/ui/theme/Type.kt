@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -230,13 +231,22 @@ internal fun ZoonkTypography.startingOn(direction: LayoutDirection): ZoonkTypogr
         message = message.startingOn(direction),
     )
 
-private fun TextStyle.startingOn(direction: LayoutDirection): TextStyle = copy(textAlign = layoutStart(direction))
+private fun TextStyle.startingOn(direction: LayoutDirection): TextStyle = copy(textAlign = startOf(direction))
 
-/** The screen's start side whatever the text's direction; for a cell or a box that sets its own alignment. */
-fun layoutStart(direction: LayoutDirection): TextAlign = if (direction == LayoutDirection.Rtl) TextAlign.Right else TextAlign.Left
+private fun startOf(direction: LayoutDirection): TextAlign = if (direction == LayoutDirection.Rtl) TextAlign.Right else TextAlign.Left
 
-/** The screen's end side whatever the text's direction, as a number column ends. */
-fun layoutEnd(direction: LayoutDirection): TextAlign = if (direction == LayoutDirection.Rtl) TextAlign.Left else TextAlign.Right
+/**
+ * The screen's start side whatever the text's direction, for text that sets its own alignment: Compose's
+ * `TextAlign.Start` follows the text, so a number, which reads left to right, would start on the left of a mirrored screen.
+ */
+@Composable
+@ReadOnlyComposable
+fun layoutStart(): TextAlign = startOf(LocalLayoutDirection.current)
+
+/** The screen's end side whatever the text's direction, as a list's number or a column of values ends. */
+@Composable
+@ReadOnlyComposable
+fun layoutEnd(): TextAlign = if (LocalLayoutDirection.current == LayoutDirection.Rtl) TextAlign.Left else TextAlign.Right
 
 private fun TextStyle.byPhrase(): TextStyle =
     copy(

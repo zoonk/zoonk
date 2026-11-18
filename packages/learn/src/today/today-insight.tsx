@@ -41,19 +41,18 @@ function insightMark(insight: MemoryInsightView): React.ReactNode {
   return insight.planChange?.status === "applied" ? <ListPlusIcon /> : undefined;
 }
 
+/** Only a proposed plan change opens a sheet, to show what changes; the card's line says the rest. */
 function useInsightChoices(insight: MemoryInsightView) {
   const t = useExtracted();
 
-  const open = t("See what changes");
-
   if (insight.kind === "planChange") {
     return insight.planChange?.status === "proposed"
-      ? { accept: t("Add it"), dismiss: t("No thanks"), open }
-      : { accept: t("Keep it"), dismiss: t("Undo"), open };
+      ? { accept: t("Add it"), dismiss: t("No thanks"), open: t("See what changes") }
+      : { accept: t("Keep it"), dismiss: t("Undo"), open: null };
   }
 
   if (insight.kind === "scheduleIdea") {
-    return { accept: t("Move it"), dismiss: t("Not now"), open };
+    return { accept: t("Move it"), dismiss: t("Not now"), open: null };
   }
 
   return { accept: t("Got it"), dismiss: null, open: null };
@@ -140,7 +139,7 @@ function InsightActions({
           insight.planChange?.canApply) && (
           <SuggestionAction
             action={() => onAnswer("accepted")}
-            disabled={isPending}
+            busy={isPending}
             variant={choices.dismiss ? mainVariant : "outline"}
           >
             {choices.accept}
@@ -169,7 +168,6 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
   const choices = useInsightChoices(insight);
-  const answersOnLine = choices.open === null;
   const failed = state !== null && "failed" in state;
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
@@ -186,37 +184,22 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
           <>
             <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
             <SuggestionDescription>{insight.message}</SuggestionDescription>
-            <SuggestionActions
-              main={
-                answersOnLine ? (
-                  <SuggestionAction
-                    action={() => answer("accepted")}
-                    busy={isPending}
-                    variant="outline"
-                  >
-                    {choices.accept}
-                  </SuggestionAction>
-                ) : (
-                  <SuggestionOpen>{choices.open}</SuggestionOpen>
-                )
-              }
-            >
-              {insight.kind === "scheduleIdea" && (
-                <SuggestionAction
-                  action={() => answer("dismissed")}
-                  disabled={isPending}
-                  variant="outline"
-                >
-                  {t("Not now")}
-                </SuggestionAction>
-              )}
-            </SuggestionActions>
+            {choices.open ? (
+              <SuggestionActions main={<SuggestionOpen>{choices.open}</SuggestionOpen>} />
+            ) : (
+              <InsightActions
+                choices={choices}
+                insight={insight}
+                isPending={isPending}
+                onAnswer={answer}
+              />
+            )}
           </>
         )}
         {failed && <SuggestionSaveError />}
       </TodaySuggestionCard>
 
-      {!answersOnLine && (
+      {choices.open && (
         <SuggestionSheet>
           <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
           {insight.planChange?.status === "proposed" && (

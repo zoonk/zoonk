@@ -257,13 +257,7 @@ export function CertificateSheet({
       <SheetTopics covered={fitted.covered} moreTopics={fitted.moreTopics} px={px} view={view} />
 
       <div style={{ display: "flex", marginTop: "auto", paddingTop: px(SHEET.graph.above) }}>
-        <CertificateGraph
-          ladder={SHEET.ladder}
-          route={SHEET.route}
-          scale={scale}
-          showLabels
-          view={view}
-        />
+        <CertificateGraph ladder={SHEET.ladder} route={SHEET.route} scale={scale} view={view} />
       </div>
 
       <SheetFooter px={px} view={view} />

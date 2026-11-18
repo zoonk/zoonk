@@ -45,7 +45,10 @@ function ShareCard({ children, variant }: React.PropsWithChildren<{ variant: Sha
   );
 }
 
+/** A long address gives way in its middle, so the date and the certificate's code stay whole. */
 function ShareBottom({ size, view }: { size: number; view: CertificateView }) {
+  const codeStart = view.displayUrl.lastIndexOf("/") + 1;
+
   return (
     <div
       style={{
@@ -57,10 +60,32 @@ function ShareBottom({ size, view }: { size: number; view: CertificateView }) {
         gap: size,
         justifyContent: "space-between",
         letterSpacing: 0,
+        minWidth: 0,
       }}
     >
-      <span>{view.date}</span>
-      <span>{view.displayUrl}</span>
+      <span style={{ flexShrink: 0 }}>{view.date}</span>
+      <span
+        style={{
+          display: "flex",
+          flexBasis: 0,
+          flexGrow: 1,
+          justifyContent: "flex-end",
+          minWidth: 0,
+        }}
+      >
+        <span
+          style={{
+            flexShrink: 1,
+            minWidth: 0,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {view.displayUrl.slice(0, codeStart)}
+        </span>
+        <span style={{ flexShrink: 0 }}>{view.displayUrl.slice(codeStart)}</span>
+      </span>
     </div>
   );
 }
@@ -101,13 +126,7 @@ export function CertificateLink({
 
       {view.graph.kind === "ladder" && (
         <div style={{ display: "flex", marginTop: link.graph.above }}>
-          <CertificateGraph
-            ladder={link.ladder}
-            route={link.route}
-            scale={1}
-            showLabels={false}
-            view={view}
-          />
+          <CertificateGraph ladder={link.ladder} route={link.route} scale={1} view={view} />
         </div>
       )}
 
@@ -140,13 +159,7 @@ function PostGraph({ view }: { view: CertificateView }) {
       {view.graph.kind === "route" && view.graph.label ? (
         <RouteLabel label={view.graph.label} spec={post.route} />
       ) : (
-        <CertificateGraph
-          ladder={post.ladder}
-          route={post.route}
-          scale={1}
-          showLabels
-          view={view}
-        />
+        <CertificateGraph ladder={post.ladder} route={post.route} scale={1} view={view} />
       )}
     </div>
   );

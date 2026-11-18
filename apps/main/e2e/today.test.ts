@@ -189,7 +189,7 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
   try {
     const page = await context.newPage();
     await page.goto("/today");
-    const expand = page.getByRole("button", { name: /^\d+ more lessons?$/u });
+    const expand = page.getByRole("button", { name: /^\d+ more(?: lessons?)?$/u });
     await expectHydrated(expand);
     await expand.tap();
 
@@ -265,6 +265,52 @@ test("one tap acknowledges today's tip on a phone", async ({ browser }) => {
     await expect(
       prisma.memoryInsight.findUniqueOrThrow({ where: { id: insight.id } }),
     ).resolves.toMatchObject({ status: "accepted" });
+  } finally {
+    await context.close();
+  }
+});
+
+test("one tap moves the study time from a schedule idea on a phone", async ({ browser }) => {
+  const { goal, user } = await createStudyDay({ reviewDone: true });
+
+  const [insight] = await Promise.all([
+    memoryInsightFixture({
+      goalId: goal.id,
+      kind: "scheduleIdea",
+      message: "Want to study at 8 pm?",
+      payload: { studyTime: "20:00" },
+      userId: user.id,
+    }),
+    learningProfileFixture({ activeGoalId: goal.id, memoryEnabled: true, userId: user.id }),
+  ]);
+
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    storageState: user.storageState,
+    timezoneId: "UTC",
+    viewport: { height: 844, width: 390 },
+  });
+
+  try {
+    const page = await context.newPage();
+    await page.goto("/today");
+
+    const idea = page.getByRole("region", { name: "From your recent answers" });
+    const move = idea.getByRole("button", { name: "Move it" });
+    await expectHydrated(move);
+    await move.tap();
+
+    await expect(idea.getByRole("status")).toHaveText("Study time moved.");
+    await expect(page.getByRole("dialog", { name: "From your recent answers" })).toHaveCount(0);
+
+    await expect(
+      prisma.memoryInsight.findUniqueOrThrow({ where: { id: insight.id } }),
+    ).resolves.toMatchObject({ status: "accepted" });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ select: { studyTime: true }, where: { id: goal.id } }),
+    ).resolves.toStrictEqual({ studyTime: "20:00" });
   } finally {
     await context.close();
   }

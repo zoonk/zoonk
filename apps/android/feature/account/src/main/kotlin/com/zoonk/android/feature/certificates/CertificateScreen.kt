@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -72,6 +71,7 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.centeredColumn
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
@@ -102,7 +102,7 @@ fun CertificateScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_certificate)) },
-        barWidth = DETAIL_PAGE_WIDTH,
+        columnWidth = DETAIL_PAGE_WIDTH,
         bottomBar =
             if (certificate?.locked == true) {
                 {
@@ -217,10 +217,9 @@ private fun DetailColumn(
 ) {
     Column(
         Modifier
-            .fillMaxSize()
             .verticalScroll(scroll)
-            .padding(pagePadding())
-            .widthIn(max = DETAIL_PAGE_WIDTH),
+            .centeredColumn(DETAIL_PAGE_WIDTH)
+            .padding(pagePadding()),
         content = content,
     )
 }

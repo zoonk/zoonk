@@ -61,8 +61,23 @@ class TodayMockReadsTest {
         assertEquals(1, api.requests(MOCKS))
     }
 
+    @Test
+    fun aPausedExamGoalsPracticeNeverReadsItsMocks() {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        val cache = AppCache(FakeSession(AuthenticatedSession(ANA, "token-a", "local-a")), scope)
+        val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
+        val mocks = MockStore(LiveMockApi(api.clients), cache)
+
+        rule.setContent { ZoonkTheme { PausedPractice(today, mocks, GOAL, completedLessons = true) {} } }
+        rule.waitFor { api.requests(MISTAKES) == 1 }
+        rule.waitForIdle()
+
+        assertEquals(0, api.requests(MOCKS))
+    }
+
     private companion object {
         val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00")
         val MOCKS = "/goals/$GOAL/mocks"
+        const val MISTAKES = "/me/mistakes"
     }
 }

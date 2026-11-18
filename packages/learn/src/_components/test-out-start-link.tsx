@@ -67,6 +67,7 @@ export function TestOutStartStatus({
   );
 }
 
+/** Always a chapter's test, so it says so wherever it shows. */
 export function TestOutStartLink({
   compact = false,
   onStart,
@@ -84,7 +85,7 @@ export function TestOutStartLink({
         action={start}
         className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}
       >
-        {compact ? t("Already know this chapter?") : t("Already know this?")}
+        {t("Already know this chapter?")}
         {space}
         <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
           {t("Take the test")}

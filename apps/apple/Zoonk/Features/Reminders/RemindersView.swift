@@ -34,17 +34,17 @@ struct RemindersView: View {
 
       if let reminder = reminders.reminder.value {
         Section {
+          emailRow(reminder)
+          pushRows(reminder)
+        }
+
+        Section {
           DatePicker(selection: timeBinding(reminder), displayedComponents: .hourAndMinute) {
             ListRow(
               Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
               description: ReminderTime.zoneName(reminder.timeZone).map { Text($0) })
           }
           .environment(\.timeZone, .gmt)
-        }
-
-        Section {
-          emailRow(reminder)
-          pushRows(reminder)
         }
 
         if reminder.quiet {
@@ -108,12 +108,12 @@ struct RemindersView: View {
         isOn: Binding(
           get: { reminder.emailOn },
           set: { on in save(StudyReminderChange(emailOn: on), in: emailSave) }),
-        title: Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
+        title: Text("Email reminders", tableName: "Reminders"),
         description: Text(verbatim: address))
     } else {
       Button(action: createAccount) {
         ListRow(
-          Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
+          Text("Email reminders", tableName: "Reminders"),
           description: Text(
             "Create an account to get email reminders", tableName: "Reminders")
         )
