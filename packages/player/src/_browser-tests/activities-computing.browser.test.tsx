@@ -189,10 +189,24 @@ describe("computing activities", () => {
     const editor = page.getByRole("textbox", { name: "Query" });
     await editor.fill(query);
 
-    await page.getByRole("button", { name: "Run" }).click();
-    await expect.element(page.getByText("Your result: 4 rows")).toBeVisible();
+    const run = page.getByRole("button", { exact: true, name: "Run" });
+    const chip = page.getByRole("button", { exact: true, name: "WHERE" });
+    const result = page.getByText("Your result: 4 rows");
+    const card = page.getByRole("figure");
+
+    const resultTop = () =>
+      result.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    await run.click();
+    await expect.element(result).toBeVisible();
+    await expect.element(chip).toBeEnabled();
+    const top = resultTop();
+
     await checkActivity();
     await expectVerdict("Not quite");
+    expect(resultTop()).toBe(top);
+    await expect.element(run).toBeDisabled();
+    await expect.element(chip).toBeDisabled();
     await expect.element(editor).toHaveValue(query);
     await expect.element(page.getByText("Expected result, in this order")).toBeVisible();
     await expect.element(page.getByText("OR keeps rows that pass either test.")).toBeVisible();
