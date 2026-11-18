@@ -33,6 +33,15 @@ describe(isSameTopic, () => {
     expect(isSameTopic({ kind: "plan" }, { kind: "plan" })).toBe(true);
   });
 
+  it("tells apart questions about two parts the lesson no longer has", () => {
+    expect(
+      isSameTopic(
+        { kind: "step", stepId: null, stepNumber: 2 },
+        { kind: "step", stepId: null, stepNumber: 5 },
+      ),
+    ).toBe(false);
+  });
+
   it("starts the thread with a topic", () => {
     expect(isSameTopic(null, { kind: "lesson" })).toBe(false);
   });

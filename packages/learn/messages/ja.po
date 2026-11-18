@@ -327,7 +327,6 @@ msgstr "ダウンロード"
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
-#: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
@@ -5954,6 +5953,11 @@ msgid "Words to practice saying"
 msgstr "声に出して練習する単語"
 
 #: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "会話の接続が切れました"
+
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "253hZZ"
 msgid "Call again, or end the call to get feedback on what you said."
 msgstr "もう一度つなぐか、会話を終了して話した内容へのフィードバックを受け取ってください。"
@@ -5967,11 +5971,6 @@ msgstr "会話を終了する"
 msgctxt "p5AWJt"
 msgid "Call again"
 msgstr "もう一度つなぐ"
-
-#: src/language/conversation/dropped-call-screen.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "会話の接続が切れました"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -7269,14 +7268,20 @@ msgid "Without a map"
 msgstr "マップなし"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "すべて作成する"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {#章}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "すべて作成する"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13044,6 @@ msgstr "資料から"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "学習計画の追加項目"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {#章}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

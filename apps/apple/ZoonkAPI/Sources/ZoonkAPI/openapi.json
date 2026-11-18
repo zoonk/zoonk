@@ -76025,7 +76025,7 @@
       },
       "ActivityRoundedAnswer": {
         "nullable": true,
-        "description": "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's text in a check result: `correctAnswer` and the learner's `answerText`, which keeps its own digits when it would otherwise read as a different verdict. A check result's `expected` stays exact. Null on other checks",
+        "description": "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's text in a check result: `correctAnswer`, and the learner's `answerText` when rounding it to them keeps its grade; otherwise `answerText` has the fewest digits that keep its grade. A check result's `expected` stays exact. Null on other checks",
         "type": "object",
         "properties": {
           "places": {

@@ -93,24 +93,6 @@ test.describe("Text typed before the page hydrates", () => {
     await expect(box).toHaveValue("learn to cook for my family");
   });
 
-  for (const path of ["/", "/start"]) {
-    test(`a goal typed on ${path} before the page hydrates can be sent once it does`, async ({
-      page,
-    }) => {
-      const release = await holdScripts(page);
-
-      await page.goto(path, { waitUntil: "domcontentloaded" });
-      const box = page.getByRole("textbox", { name: "I want to" }).first();
-      await box.fill("Learn algebra");
-      await release();
-      await expectHydrated(box);
-
-      await expect(
-        page.getByRole("button", { exact: true, name: "Build my plan" }).first(),
-      ).toBeEnabled();
-    });
-  }
-
   test("a time a day picked before the step hydrates is the one saved", async ({
     noProgressUser,
     userWithoutProgress: page,

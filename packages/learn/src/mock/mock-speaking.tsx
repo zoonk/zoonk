@@ -174,7 +174,9 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
 
         {!speaking && writing && (
           <WritingWait
-            hint={t("Your speaking paper opens as soon as it's ready.")}
+            barHasMainAction
+            // Once opening the written paper failed, it opens only from Start.
+            hint={runner.error ? undefined : t("Your speaking paper opens as soon as it's ready.")}
             kind="speakingPaper"
             writing={writing}
           />

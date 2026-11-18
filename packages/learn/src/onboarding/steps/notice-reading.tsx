@@ -138,6 +138,7 @@ export function NoticeReading({
           <GenerationTimelineProgress
             aria-label={title}
             locale={locale}
+            statuses={["active"]}
             value={value}
             weights={[100]}
           />

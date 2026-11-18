@@ -5,9 +5,7 @@ import { useRender } from "@base-ui/react/use-render";
 import { ProgressRoot, type ProgressRootProps, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
-import { getSegmentFills } from "./_utils/segment-fills";
-
-type GenerationTimelineStepStatus = "active" | "completed" | "failed" | "pending";
+import { type GenerationTimelineStepStatus, getSegmentFills } from "./_utils/segment-fills";
 
 /** `data-paused` (a lost connection) stops the rows' working animations; their statuses stay. */
 function GenerationTimeline({ className, ...props }: React.ComponentProps<"div">) {
@@ -49,13 +47,19 @@ function GenerationTimelineDescription({ className, ...props }: React.ComponentP
   );
 }
 
+/** One part per step, sized by `weights` and filled by the step's own status (`statuses`). */
 function GenerationTimelineProgress({
   className,
+  statuses,
   value,
   weights,
   ...props
-}: ProgressRootProps & { "aria-label": string; weights: readonly number[] }) {
-  const fills = getSegmentFills({ value: value ?? 0, weights });
+}: ProgressRootProps & {
+  "aria-label": string;
+  statuses: readonly GenerationTimelineStepStatus[];
+  weights: readonly number[];
+}) {
+  const fills = getSegmentFills({ statuses, value: value ?? 0, weights });
 
   return (
     <ProgressRoot

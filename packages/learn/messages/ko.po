@@ -327,7 +327,6 @@ msgstr "다운로드"
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
-#: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
@@ -5954,6 +5953,11 @@ msgid "Words to practice saying"
 msgstr "발음을 연습할 단어"
 
 #: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "대화 연결이 끊겼어요"
+
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "253hZZ"
 msgid "Call again, or end the call to get feedback on what you said."
 msgstr "다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요."
@@ -5967,11 +5971,6 @@ msgstr "대화 끝내기"
 msgctxt "p5AWJt"
 msgid "Call again"
 msgstr "다시 연결하기"
-
-#: src/language/conversation/dropped-call-screen.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "대화 연결이 끊겼어요"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -7269,14 +7268,20 @@ msgid "Without a map"
 msgstr "마인드맵 없음"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "모두 만들기"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {챕터 #개}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "모두 만들기"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13044,6 @@ msgstr "내 자료에서 가져옴"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "내 계획에도 포함"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {챕터 #개}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

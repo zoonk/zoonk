@@ -61,7 +61,8 @@ export function SubscribeGate({
   children?: ReactNode;
   className?: string;
   provisional?: boolean;
-  title: string;
+  /** None where the screen's own title already says what stopped. */
+  title?: string;
 }) {
   const routes = useLearnRoutes();
 

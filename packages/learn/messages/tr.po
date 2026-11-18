@@ -327,7 +327,6 @@ msgstr "İndir"
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
-#: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
@@ -5954,6 +5953,11 @@ msgid "Words to practice saying"
 msgstr "Sesli söyleyerek çalışacağın kelimeler"
 
 #: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "Sohbet bağlantısı kesildi"
+
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "253hZZ"
 msgid "Call again, or end the call to get feedback on what you said."
 msgstr "Tekrar bağlan veya söylediklerin hakkında geri bildirim almak için sohbeti bitir."
@@ -5967,11 +5971,6 @@ msgstr "Sohbeti bitir"
 msgctxt "p5AWJt"
 msgid "Call again"
 msgstr "Tekrar bağlan"
-
-#: src/language/conversation/dropped-call-screen.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "Sohbet bağlantısı kesildi"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -7269,14 +7268,20 @@ msgid "Without a map"
 msgstr "Haritası olmayanlar"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "Hepsini oluştur"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {# ünite}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "Bu haritalardan birini yapmak için önce derslerini hazırlıyoruz ve bunlar ücretsiz ders hakkından düşüyor."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "Hepsini oluştur"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13044,6 @@ msgstr "Materyalinden"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "Planında da var"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {# ünite}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

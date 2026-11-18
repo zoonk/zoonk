@@ -327,7 +327,6 @@ msgstr "Pobierz"
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
-#: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
@@ -5954,6 +5953,11 @@ msgid "Words to practice saying"
 msgstr "Słowa do ćwiczenia wymowy"
 
 #: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "Rozmowa została przerwana"
+
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "253hZZ"
 msgid "Call again, or end the call to get feedback on what you said."
 msgstr "Zadzwoń ponownie lub zakończ rozmowę, by otrzymać informację zwrotną o swojej wypowiedzi."
@@ -5967,11 +5971,6 @@ msgstr "Zakończ rozmowę"
 msgctxt "p5AWJt"
 msgid "Call again"
 msgstr "Zadzwoń ponownie"
-
-#: src/language/conversation/dropped-call-screen.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "Rozmowa została przerwana"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -7269,14 +7268,20 @@ msgid "Without a map"
 msgstr "Bez mapy"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
-msgstr "Utwórz wszystkie"
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, one {# rozdział} few {# rozdziały} many {# rozdziałów} other {# rozdziału}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "_tV21i"
 msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
 msgstr "Żeby zrobić jedną z tych map, najpierw przygotujemy jej lekcje i wliczymy je do twojej puli bezpłatnych lekcji."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "Utwórz wszystkie"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -13039,11 +13044,6 @@ msgstr "Z twoich materiałów"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "Także w twoim planie"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, one {# rozdział} few {# rozdziały} many {# rozdziałów} other {# rozdziału}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

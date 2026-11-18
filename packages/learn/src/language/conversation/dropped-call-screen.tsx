@@ -10,7 +10,7 @@ import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { MicrophoneOff } from "./call-intro-footer";
 import { CallLimitReason, useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
-import { ChallengeCallGate } from "./challenge-call-gate";
+import { ChallengeCallGate, useChallengeCallGateTitle } from "./challenge-call-gate";
 import { CallOffMessage } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
 import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
@@ -33,9 +33,14 @@ function useDroppedTitle({
   const t = useExtracted();
   const copy = useRefusalCopy();
   const limitTitle = useCallLimitTitle(limit);
+  const gateTitle = useChallengeCallGateTitle();
 
   if (reason === "limit") {
     return opened ? undefined : limitTitle;
+  }
+
+  if (reason === "plusRequired") {
+    return gateTitle;
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
@@ -68,7 +73,7 @@ function DroppedCallReason({
   }
 
   if (reason === "plusRequired") {
-    return <ChallengeCallGate form="inPlace" />;
+    return <ChallengeCallGate form="untitled" />;
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
