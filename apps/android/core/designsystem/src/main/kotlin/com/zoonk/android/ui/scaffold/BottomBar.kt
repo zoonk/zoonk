@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ fun BottomBar(
     columnWidth: Dp = Dp.Unspecified,
     columnAtStart: Boolean = false,
     columnMargin: Dp = pageMargin(),
+    noteRoom: BarNoteRoom? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val anchors = LocalSnackbarAnchors.current
@@ -101,6 +103,16 @@ fun BottomBar(
         }
     }
 }
+
+/** The room a page keeps clear at its scrolling content's end for its [BottomBar]'s note, which draws over the page. */
+@Stable
+class BarNoteRoom {
+    var height by mutableStateOf(0.dp)
+        internal set
+}
+
+@Composable
+fun rememberBarNoteRoom(): BarNoteRoom = remember { BarNoteRoom() }
 
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp

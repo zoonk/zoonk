@@ -25,15 +25,17 @@ class BottomBarTest {
     @get:Rule
     val compose = createAndroidComposeRule<ComponentActivity>()
 
-    /** A note above the bar is part of the bar's room, so whatever lays out above the bar ends clear of it. */
+    /** A note draws over the page just above the bar, which never grows; the bar says how much room the page keeps clear for it. */
     @Test
-    fun aNoteAddsItsHeightToTheBarsRoom() {
+    fun aNoteLeavesTheBarsHeightAndTellsThePageItsRoom() {
         var withNote by mutableStateOf(false)
+        val room = BarNoteRoom()
         compose.setContent {
             ZoonkTheme {
                 BottomBar(
                     Modifier.testTag(BAR),
                     note = if (withNote) ({ Text("That didn't save", Modifier.height(64.dp)) }) else null,
+                    noteRoom = room,
                 ) { Button(onClick = {}) { Text("Save") } }
             }
         }
@@ -43,7 +45,8 @@ class BottomBarTest {
         compose.waitForIdle()
 
         val withIt = compose.onNodeWithTag(BAR).getUnclippedBoundsInRoot().let { it.bottom - it.top }
-        assertEquals("the bar's ${barOnly.value} plus the note's 64 and its 16 of padding", (barOnly + 80.dp).value, withIt.value, 1f)
+        assertEquals("the bar keeps its height", barOnly.value, withIt.value, 1f)
+        assertEquals("the note's 64 and its 16 of padding", 80f, room.height.value, 1f)
     }
 
     private companion object {
