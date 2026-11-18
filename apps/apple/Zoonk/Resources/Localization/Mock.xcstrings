@@ -10765,6 +10765,64 @@
         }
       }
     },
+    "Still starting. This is taking longer than usual." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Start läuft noch. Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún se está iniciando. Está tardando más de lo normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le démarrage est en cours. Cela prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ開始の準備をしています。いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda está iniciando. Está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor."
+          }
+        }
+      }
+    },
     "Strongest: %@. Work on: %@." : {
       "comment" : "Under a mock exam's score: its best and worst subjects",
       "localizations" : {
@@ -12144,6 +12202,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerçek sınavda %1$@ ölçeği kullanılır; puanlar %2$@ ile %3$@ arasındadır."
+          }
+        }
+      }
+    },
+    "This is taking longer than usual." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto está tardando más de lo habitual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci stiamo mettendo più del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "평소보다 시간이 더 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To trwa dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalden uzun sürüyor."
           }
         }
       }

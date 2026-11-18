@@ -277,8 +277,20 @@ final class MockBarNoteTests: XCTestCase {
     XCTAssertEqual(note(failed: true, save: .saving)?.tone, .failure)
   }
 
+  /// A slow step says what it's doing, as the web's: starting the next section hands nothing in.
+  func testASlowStepSaysWhatItIsDoing() {
+    func line(_ step: MockRun.Step) -> String? {
+      MockRun.barNote(failed: false, save: .saved, slow: step) {}?.politeLine
+    }
+
+    XCTAssertEqual(line(.submit), "Still handing it in. This is taking longer than usual.")
+    XCTAssertEqual(line(.endBreak), "Still starting. This is taking longer than usual.")
+    XCTAssertEqual(line(.startSpeaking), "Still starting. This is taking longer than usual.")
+    XCTAssertEqual(line(.finish), "This is taking longer than usual.")
+  }
+
   private func note(failed: Bool = false, save: MockDraftQueue.Status) -> BarNote? {
-    MockRun.barNote(failed: failed, save: save, slow: false) {}
+    MockRun.barNote(failed: failed, save: save, slow: nil) {}
   }
 }
 
