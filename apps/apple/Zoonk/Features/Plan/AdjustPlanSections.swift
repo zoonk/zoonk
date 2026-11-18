@@ -154,7 +154,7 @@ private struct PlanFocusSection: View {
           } label: {
             ListRow(
               Text(FocusTestCopy.name),
-              description: Text(FocusTestCopy.planLine(focusTest))
+              descriptionFacts: FocusTestCopy.planLine(focusTest)
             ) {
               Image(systemName: "scope")
             }

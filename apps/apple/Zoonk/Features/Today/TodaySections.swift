@@ -191,7 +191,7 @@ struct TodayChallengeRow: View {
 }
 
 /// Main answers a proposal right on Today, where the Plan never shows it, and missed days that put
-/// the goal's date at risk with their choices (C-42, C-43).
+/// the goal's date at risk with their choices.
 struct TodayPlanChangeSection: View {
   @AccessibilityFocusState private var isResultFocused: Bool
 
@@ -283,7 +283,7 @@ struct TodayPlanChangeSection: View {
       dateKind: GoalDateKind(isExam: isExam))
   }
 
-  /// The question; a focus the Focus test proposes keeps the test's own words (lane A's).
+  /// The question; a focus the Focus test proposes keeps the test's own words.
   private var title: String {
     if change.source == "focusTest", let areas = change.operations.first?.areas, !areas.isEmpty {
       return String(
@@ -380,7 +380,7 @@ struct TodayPlanChangeSection: View {
       : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
   }
 
-  // MARK: Missed days (C-43)
+  // MARK: Missed days
 
   @ViewBuilder
   private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
@@ -658,7 +658,7 @@ private struct WeekChallengeRow: View {
         challenge.kind == "mock"
           ? Text("Mock exam", tableName: "Today", comment: "The week's mock")
           : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
-        Text(facts)
+        FactSegments(facts)
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
@@ -667,7 +667,7 @@ private struct WeekChallengeRow: View {
     }
   }
 
-  private var facts: String {
+  private var facts: [String] {
     var parts = [day]
 
     if let questions = challenge.questions, questions > 0 {
@@ -681,7 +681,7 @@ private struct WeekChallengeRow: View {
       parts.append(studyDuration(minutes: minutes))
     }
 
-    return parts.joinedFacts()
+    return parts
   }
 }
 
@@ -719,7 +719,8 @@ private struct WeekDayMark: View {
     .accessibilityLabel(label(weekday: weekday))
     .popover(isPresented: $isShown, arrowEdge: .top) {
       TodayFactsPopover(
-        title: weekday.labelCased(), facts: time, factsStyle: Color(.foreground), note: note,
+        title: weekday.labelCased(), facts: time.map { [$0] }, factsStyle: Color(.foreground),
+        note: note,
         challenge: challengeLine)
     }
   }

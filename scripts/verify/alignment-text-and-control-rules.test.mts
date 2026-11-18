@@ -12,8 +12,8 @@ function hits(rule: string) {
   return evaluateCapture(read()).filter((finding) => finding.rule === rule);
 }
 
-describe("reviewed relationships", () => {
-  it("excludes the composer's addon and a checkbox from full-height controls (q01, p08)", () => {
+describe("alignment rules for controls and text", () => {
+  it("excludes the composer's addon and a checkbox from full-height controls", () => {
     document.body.innerHTML = `<div data-slot="input-group" data-box="16,0,358,44">
       <textarea data-box="16,0,310,44"></textarea><div data-slot="input-group-addon" data-box="326,0,48,44">
       <button data-slot="composer-send" data-box="330,7,30,30">Send</button></div></div>
@@ -47,7 +47,7 @@ describe("reviewed relationships", () => {
     assert.deepEqual(hits("one-height"), []);
   });
 
-  it("reads a palette's and cause button's stacked blocks as separate text flows (q02, q03)", () => {
+  it("reads a palette's and cause button's stacked blocks as separate text flows", () => {
     document.body.innerHTML = `<button style="display:flex;flex-direction:column" data-box="16,0,170,56">
       <span data-box="60,0,50,24">Aa</span><span style="display:flex" data-box="60,26,50,16">Tall</span></button>
       <button style="display:flex;flex-direction:column" data-box="16,70,358,70">
@@ -57,12 +57,12 @@ describe("reviewed relationships", () => {
     assert.equal(read().elements.filter((part) => part.part === "text").length, 4);
   });
 
-  it("reads different font sizes on one baseline as one line (p04)", () => {
+  it("reads different font sizes on one baseline as one line", () => {
     document.body.innerHTML = `<h2 data-box="16,0,200,40"><span data-box="16,0,50,40">$9</span><span data-box="66,23,50,16">/month</span></h2>`;
     assert.deepEqual(hits("lone-word"), []);
   });
 
-  it("does not judge a dash alone or wrapped prose as a trailing separator (p01, p02)", () => {
+  it("does not judge a dash alone or wrapped prose as a trailing separator", () => {
     document.body.innerHTML = `<div data-box="16,0,100,20">–</div><p data-box="16,30,150,40">A sentence – then more words</p>`;
 
     vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
@@ -81,7 +81,7 @@ describe("reviewed relationships", () => {
     assert.deepEqual(hits("line-end"), []);
   });
 
-  it("fails plain horizontal overflow but allows the kit's signposted scroller (c02)", () => {
+  it("fails plain horizontal overflow but allows the kit's signposted scroller", () => {
     document.body.innerHTML = `<div style="overflow-x:auto" data-box="16,0,200,44"><button data-box="16,0,400,44">SELECT FROM WHERE</button></div>`;
     const scroller = document.querySelector("div");
     assert.ok(scroller);
@@ -91,7 +91,7 @@ describe("reviewed relationships", () => {
     assert.deepEqual(hits("cut"), []);
   });
 
-  it("fails a final word of any length (f05: concluído)", () => {
+  it("fails a final word of any length (concluído)", () => {
     const capture = fixtureCapture([
       element({
         group: null,
@@ -109,7 +109,7 @@ describe("reviewed relationships", () => {
     );
   });
 
-  it("never turns a helper-only row into a title (h03)", () => {
+  it("never turns a helper-only row into a title", () => {
     document.body.innerHTML = `<div data-slot="list-group" data-box="16,0,358,44"><div data-slot="list-row" data-box="16,0,358,44">
       <span data-slot="list-row-content" data-box="16,0,358,44"><span data-slot="list-row-description" data-box="16,12,200,20">Nothing to review yet</span></span></div></div>`;
 
@@ -117,7 +117,7 @@ describe("reviewed relationships", () => {
     assert.deepEqual(hits("helper"), []);
   });
 
-  it("fails a ghost hang whose glyph stops inside the column (g01)", () => {
+  it("fails a ghost hang whose glyph stops inside the column", () => {
     document.body.innerHTML = `<div data-slot="page" data-box="16,0,358,200"><button style="--button-variant:ghost;background:rgb(240,240,240)" data-box="254,20,160,36">
       <span data-box="318,28,32,20">Skip</span></button></div>`;
 

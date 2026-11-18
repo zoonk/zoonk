@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useEffectEvent, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
 import { ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
 import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { DRAWING_LABEL_HALO, measureDrawingLabel } from "../_utils/drawing-label";
@@ -42,20 +42,24 @@ export function LineMark({
   );
 }
 
+export type LineLabelMetrics = LabelSize & { left: number; top: number };
+
 export function LineLabel({
   box,
   className,
   label,
   onMeasure,
+  metrics,
 }: {
   box: LabelBox | null;
   className: string;
   label: string;
-  onMeasure: (size: LabelSize) => void;
+  metrics: LineLabelMetrics | undefined;
+  onMeasure: (size: LineLabelMetrics) => void;
 }) {
   const ref = useRef<SVGTextElement>(null);
   const measured = useEffectEvent(onMeasure);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const last = useRef<LineLabelMetrics>(undefined);
 
   useLayoutEffect(() => {
     const node = ref.current;
@@ -66,9 +70,27 @@ export function LineLabel({
 
     const measure = () => {
       const size = measureDrawingLabel({ element: node });
-      const next = { x: size.offsetX - size.width / 2, y: size.offsetY };
-      setOffset((known) => (known.x === next.x && known.y === next.y ? known : next));
-      measured({ height: size.height, width: size.width });
+
+      const next = {
+        height: size.height,
+        left: size.offsetX - size.width / 2,
+        top: size.offsetY - size.height / 2,
+        width: size.width,
+      };
+
+      const previous = last.current;
+
+      if (
+        previous?.height === next.height &&
+        previous.width === next.width &&
+        previous.left === next.left &&
+        previous.top === next.top
+      ) {
+        return;
+      }
+
+      last.current = next;
+      measured(next);
     };
 
     measure();
@@ -90,23 +112,35 @@ export function LineLabel({
       dominantBaseline="central"
       ref={ref}
       visibility={box ? undefined : "hidden"}
-      x={box ? box.left - offset.x : 0}
-      y={box ? (box.top + box.bottom) / 2 - offset.y : 0}
+      x={box && metrics ? box.left - metrics.left : 0}
+      y={box && metrics ? box.top - metrics.top : 0}
     >
       {label}
     </text>
   );
 }
 
+export function crossingGuides(point: Point, left: number, bottom: number) {
+  return [
+    { from: { x: left, y: point.y }, to: point },
+    { from: point, to: { x: point.x, y: bottom } },
+  ] as const;
+}
+
 export function CrossingGuide({ isBefore, point }: { isBefore: boolean; point: Point }) {
   const { x, y } = usePlotScales();
-  const [px, py] = [x.toPixel(point.x), y.toPixel(point.y)];
+
+  const [horizontal, vertical] = crossingGuides(
+    { x: x.toPixel(point.x), y: y.toPixel(point.y) },
+    x.range[0],
+    y.range[0],
+  );
 
   return (
     <path
       aria-hidden="true"
       className={cn("fill-none", isBefore ? "stroke-muted-foreground/50" : "stroke-foreground/60")}
-      d={`M${x.range[0]} ${py} H${px} V${y.range[0]}`}
+      d={`M${horizontal.from.x} ${horizontal.from.y} H${horizontal.to.x} V${vertical.to.y}`}
       strokeDasharray="3 3"
       strokeWidth={1.5}
     />

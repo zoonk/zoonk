@@ -351,7 +351,7 @@ private fun GoalAtRest(
             padding = padding,
             icon = R.drawable.ic_flag,
             sentence = stringResource(R.string.today_finished_goal, goal.displayName),
-        ) { main -> Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.today_new_goal)) } }
+        ) { main -> Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.gate_start_goal)) } }
         return
     }
 
@@ -369,14 +369,14 @@ private fun GoalAtRest(
                 ResumeFailure.Failed -> stringResource(R.string.today_save_failed)
                 null -> null
             },
-        other = if (goal != null) ({ OutlinedButton(onClick = newGoal) { Text(stringResource(R.string.today_new_goal)) } }) else null,
+        other = if (goal != null) ({ OutlinedButton(onClick = newGoal) { Text(stringResource(R.string.gate_start_goal)) } }) else null,
     ) { main ->
         if (goal != null) {
             Button(busy = viewModel.resuming != null, onClick = { viewModel.resume(goal.id) }, modifier = main) {
                 Text(stringResource(R.string.today_resume))
             }
         } else {
-            Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.today_new_goal)) }
+            Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.gate_start_goal)) }
         }
     }
 }

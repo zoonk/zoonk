@@ -6,8 +6,7 @@ import { element, fixtureCapture } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /**
- * The relationships the sweep found by eye that no check measured (WHY-MISSED.md, class M), each
- * with its number: what a capture records of the page, and the count that fails.
+ * Page rule fixtures describe what a capture records and how many findings it produces.
  */
 function findings(rule: string, elements: CaptureElement[]) {
   return evaluateCapture(fixtureCapture(elements))
@@ -28,7 +27,7 @@ function text(lineTexts: string[], textRole?: CaptureElement["textRole"]) {
 }
 
 describe("a line never ends with a separator: lines ending in a dot, a dash or a slash = 0", () => {
-  it("fails a facts line that wraps after its middle dot (C-W04)", () => {
+  it("fails a facts line that wraps after its middle dot", () => {
     assert.deepEqual(findings("line-end", [text(["2 min · Nível A2 ·", "4 objetivos"], "facts")]), [
       '"2 min · Nível A2 · 4 objetivos": line 1 ends with "·"',
     ]);
@@ -47,7 +46,7 @@ describe("a line never ends with a separator: lines ending in a dot, a dash or a
 });
 
 describe("a wrapped title, facts line or button label never leaves one word alone", () => {
-  it('fails a last line of one word at any length (C-W04\'s "dias")', () => {
+  it('fails a last line of one word at any length ("dias")', () => {
     assert.deepEqual(findings("lone-word", [text(["Faltam 3", "dias"], "title")]), [
       '"Faltam 3 dias": "dias" alone on its last line',
     ]);
@@ -60,7 +59,7 @@ describe("a wrapped title, facts line or button label never leaves one word alon
     assert.deepEqual(findings("lone-word", [text(["A sentence that wraps", "here"])]), []);
   });
 
-  it("passes one word on every line when large text leaves no better break (FS-D35)", () => {
+  it("passes one word on every line when large text leaves no better break", () => {
     assert.deepEqual(findings("lone-word", [text(["Explore", "courses"], "title")]), []);
 
     assert.deepEqual(
@@ -69,7 +68,7 @@ describe("a wrapped title, facts line or button label never leaves one word alon
     );
   });
 
-  it("still fails a lone last word after a multiword line (FS-D35)", () => {
+  it("still fails a lone last word after a multiword line", () => {
     assert.equal(
       findings("lone-word", [text(["Advanced quantum", "physics"], "button")]).length,
       1,
@@ -99,7 +98,7 @@ function control(
 }
 
 describe("controls in one row share a height: distinct heights per row = 1", () => {
-  it("fails a 36 px Save beside a 44 px date field (C-W06)", () => {
+  it("fails a 36 px Save beside a 44 px date field", () => {
     assert.deepEqual(
       findings("one-height", [
         control("date", [16, 100, 260, 44]),
@@ -109,7 +108,7 @@ describe("controls in one row share a height: distinct heights per row = 1", () 
     );
   });
 
-  it("fails a label that wraps to 62 px beside a 44 px button (C-W07)", () => {
+  it("fails a label that wraps to 62 px beside a 44 px button", () => {
     assert.equal(
       findings("one-height", [
         control("Back to Today", [16, 780, 170, 44]),
@@ -168,7 +167,7 @@ function cut(name: string, overflow: [number, number]) {
 }
 
 describe("nothing is cut that isn't in a scroller: a text or control past its visible box = 0", () => {
-  it("fails a keyboard wider than its card, by how far it passes (C-W51)", () => {
+  it("fails a keyboard wider than its card, by how far it passes", () => {
     assert.deepEqual(findings("cut", [cut('"C D E F G A B"', [96, 0])]), [
       '"C D E F G A B" is cut by "Card": 96 past it across',
     ]);
@@ -223,7 +222,7 @@ describe("a helper's text is smaller than its title in the same group", () => {
     assert.deepEqual(findings("helper", helped(9.9, 8.5)), []);
   });
 
-  it("fails a helper as large as its title or larger (C-A06, C-N10)", () => {
+  it("fails a helper as large as its title or larger", () => {
     assert.deepEqual(findings("helper", helped(9.9, 9.9)), [
       '"Rename": its helper "Change what you call it" is 9.9 tall, its title 9.9',
     ]);

@@ -72,7 +72,7 @@ const STATUS: BuddyStatusView = {
   },
 };
 
-describe("the founder's calls with partial or empty days", () => {
+describe("calls with partial or empty days", () => {
   afterEach(cleanup);
 
   it.each(["learn", "language"] as const)("names only the omitted %s event", async (kind) => {

@@ -42,7 +42,7 @@ struct CertificatesScreen: View {
       open(certificate.id)
     } label: {
       ListRow(
-        Text(certificate.facts.rowName), description: Text(certificate.facts.rowLine),
+        Text(certificate.facts.rowName), descriptionFacts: certificate.facts.rowLine,
         alignment: .center
       ) {
         Group {

@@ -68,7 +68,7 @@ describe("the validator reads what the probes write", () => {
       readCaptures(capture).kind === "captures" ? [] : [name],
     );
 
-    assert.deepEqual(refused, ["round 2 invalid-unit", "round 3 bad-specimen"]);
+    assert.deepEqual(refused, ["invalid-unit", "bad-specimen"]);
   });
 
   it("reads every part name each platform's capture can write, from the writers' own sources", () => {

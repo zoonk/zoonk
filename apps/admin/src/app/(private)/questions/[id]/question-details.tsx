@@ -68,7 +68,7 @@ export async function QuestionWrittenBy({ question }: { question: LessonQuestion
         <DetailField label="Cost">
           {usage?.costUsd === null || usage?.costUsd === undefined
             ? null
-            : formatUsd(usage.costUsd)}
+            : formatUsd(usage.costUsd, "detailed")}
         </DetailField>
         <DetailField label="Finish reason">{question.finishReason}</DetailField>
         <DetailField label="Updated" mono={false}>

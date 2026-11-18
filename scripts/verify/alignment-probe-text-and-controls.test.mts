@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-/* oxlint-disable no-magic-numbers -- Fixtures reproduce browser geometry measured in review. */
+/* oxlint-disable no-magic-numbers -- Fixtures reproduce browser geometry measured on real pages. */
 import assert from "node:assert/strict";
 import { describe, it, vi } from "vitest";
 import { read, setUpProbeDom } from "./alignment-probe-dom.mts";
@@ -20,8 +20,8 @@ function rangeRect(rect: DOMRect) {
   };
 }
 
-describe("second alignment review", () => {
-  it("separates Geist title lines even when their glyph boxes overlap (b10, b14)", () => {
+describe("alignment of text and controls", () => {
+  it("separates Geist title lines even when their glyph boxes overlap", () => {
     document.body.innerHTML = '<h2 data-box="16,0,150,48">Faltam 3 dias</h2>';
 
     vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
@@ -36,7 +36,7 @@ describe("second alignment review", () => {
     assert.equal(hits("lone-word").length, 1);
   });
 
-  it("keeps a row description distinct from its button label (b11, b04)", () => {
+  it("keeps a row description distinct from its button label", () => {
     document.body.innerHTML = `<button data-slot="list-row" style="display:flex" data-box="16,0,358,80">
       <span data-slot="list-row-content" style="display:flex;flex-direction:column" data-box="16,0,358,80">
       <span data-slot="list-row-title" data-box="16,0,200,20">Mistakes</span>
@@ -60,7 +60,7 @@ describe("second alignment review", () => {
     );
   });
 
-  it("recognizes the calendar's kit viewport by slot (b08)", () => {
+  it("recognizes the calendar's kit viewport by slot", () => {
     document.body.innerHTML =
       '<div data-slot="contribution-calendar-viewport" style="overflow-x:auto" data-box="16,0,200,100"><div data-box="16,0,600,100">Calendar</div></div>';
 
@@ -73,7 +73,7 @@ describe("second alignment review", () => {
     assert.equal(hits("cut").length, 1);
   });
 
-  it("compares row controls across a display-contents form (b01)", () => {
+  it("compares row controls across a display-contents form", () => {
     document.body.innerHTML = `<div data-box="16,0,358,44"><form style="display:contents"><button data-box="16,4,120,36">Skip</button></form><button data-box="144,0,120,44">Continue</button></div>`;
     assert.equal(hits("one-height").length, 1);
     const form = document.querySelector("form");
@@ -82,7 +82,7 @@ describe("second alignment review", () => {
     assert.deepEqual(hits("one-height"), []);
   });
 
-  it("does not clip a viewport-fixed descendant, but clips one contained by the wrapper (c01)", () => {
+  it("does not clip a viewport-fixed descendant, but clips one contained by the wrapper", () => {
     document.body.innerHTML = `<div data-box="16,0,200,100" style="overflow-y:hidden"><span data-box="16,0,200,20">Short page</span><div style="position:fixed" data-box="16,700,200,44"><span data-box="16,712,100,20">Continue</span></div></div>`;
     assert.deepEqual(hits("cut"), []);
     const clip = document.querySelector("div");

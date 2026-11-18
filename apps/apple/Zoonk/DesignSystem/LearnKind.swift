@@ -51,6 +51,8 @@ struct KindMark: View {
 
   var body: some View {
     Image(systemName: kind.systemImage)
+      .typeStyle(.rowTitle)
+      .imageScale(.medium)
       .foregroundStyle(kind.color)
       .accessibilityHidden(true)
   }

@@ -13,7 +13,7 @@ function texts(context: Context): CaptureElement[] {
   return context.capture.elements.filter((element) => element.part === "text" && element.lineTexts);
 }
 
-/** A line never ends with a separator (C-W04: a facts line that wraps after its middle dot). */
+/** A line never ends with a separator. */
 export function lineEndLeads(context: Context): AlignmentFinding[] {
   return texts(context).flatMap((text) => {
     if (!text.textRole || (text.lineTexts?.length ?? 0) < 2) {

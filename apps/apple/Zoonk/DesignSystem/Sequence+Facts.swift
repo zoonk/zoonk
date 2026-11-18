@@ -1,16 +1,58 @@
+import SwiftUI
+
 extension Sequence<String> {
-  /// Joins facts with “ · ”. A no-break space holds the dot to the fact before it, so a wrapped line
-  /// never starts with it or leaves it alone, and a fact that leads with its number ("23 short
-  /// lessons") keeps to one line, so the number never parts from its noun.
+  /// Plain text for VoiceOver, editor values and names interpolated into sentences.
+  /// Visible metadata uses `FactSegments` so wrapping happens between facts.
   func joinedFacts() -> String {
     map(\.asFact).joined(separator: "\u{00A0}· ")
   }
 }
 
 extension String {
-  fileprivate var asFact: String {
+  var asFact: String {
     guard let lead = first, lead.isNumber || lead == "~" else { return self }
 
     return replacing(" ", with: "\u{00A0}")
+  }
+}
+
+struct FactSegments: View {
+  struct Fact {
+    let text: String
+    var compact: String?
+    var color: Color?
+  }
+
+  let facts: [Fact]
+
+  init(_ facts: [String]) { self.facts = facts.map { Fact(text: $0) } }
+  init(facts: [Fact]) { self.facts = facts }
+
+  var body: some View {
+    FlowLayout(spacing: 5, alignment: .firstTextBaseline, rowSpacing: 4) {
+      ForEach(Array(facts.enumerated()), id: \.offset) { index, fact in
+        if index > 0 {
+          Canvas { context, size in
+            context.fill(Path(ellipseIn: CGRect(origin: .zero, size: size)), with: .foreground)
+          }
+          .frame(idealWidth: 2, idealHeight: 2)
+          .alignmentGuide(.firstTextBaseline) { $0[.bottom] + 4 }
+          .layoutValue(key: FlowLayout.Separator.self, value: true)
+          .accessibilityHidden(true)
+        }
+        ViewThatFits(in: .horizontal) {
+          text(fact.text, color: fact.color).fixedSize()
+          if let compact = fact.compact { text(compact, color: fact.color).fixedSize() }
+          text(fact.compact ?? fact.text, color: fact.color)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+      }
+    }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(Text(verbatim: facts.map(\.text).joinedFacts()))
+  }
+
+  @ViewBuilder private func text(_ words: String, color: Color?) -> some View {
+    if let color { Text(verbatim: words).foregroundStyle(color) } else { Text(verbatim: words) }
   }
 }

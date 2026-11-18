@@ -705,6 +705,10 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
+extension Array where Element == SyllabusSubject.Chapter {
+  var doneChapters: [Element] { filter { $0.state == .done } }
+}
+
 struct GoalStanding: Decodable, Equatable, Sendable {
   struct Preparation: Decodable, Equatable, Sendable {
     struct Area: Decodable, Equatable, Identifiable, Sendable {
@@ -809,7 +813,7 @@ enum PlanDate {
     _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
   ) -> String {
     month
-      ? format(isoDate, .sentenceMonth, today: today, year: .always)
+      ? format(isoDate, .rowMonth, today: today, year: .always)
       : format(isoDate, .row, today: today, weekday: weekday)
   }
 

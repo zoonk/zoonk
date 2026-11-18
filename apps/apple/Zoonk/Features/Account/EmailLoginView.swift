@@ -112,6 +112,7 @@ struct EmailLoginView: View {
         }
       }
     }
+    .readableColumn(480)
     .navigationTitle(
       Text("Log in", tableName: "Account", comment: "Email login navigation title")
     )

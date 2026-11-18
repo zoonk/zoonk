@@ -53,6 +53,96 @@ export function touchesSegment(
   return Math.max(...xs) >= box.left - clearance && Math.min(...xs) <= box.right + clearance;
 }
 
+function closestPoint(point: LabelPoint, { from, to }: LabelSegment): LabelPoint {
+  const [dx, dy] = [to.x - from.x, to.y - from.y];
+
+  const along =
+    dx === 0 && dy === 0
+      ? 0
+      : ((point.x - from.x) * dx + (point.y - from.y) * dy) / (dx ** 2 + dy ** 2);
+
+  const t = Math.max(0, Math.min(1, along));
+  return { x: from.x + t * dx, y: from.y + t * dy };
+}
+
+function pointBoxGapSquared(point: LabelPoint, box: LabelBox): number {
+  const x = Math.max(box.left - point.x, 0, point.x - box.right);
+  const y = Math.max(box.top - point.y, 0, point.y - box.bottom);
+  return x ** 2 + y ** 2;
+}
+
+export function segmentGapSquared(box: LabelBox, segment: LabelSegment): number {
+  if (touchesSegment(box, segment, 0)) {
+    return 0;
+  }
+
+  const cornerGap = (x: number, y: number) => {
+    const nearest = closestPoint({ x, y }, segment);
+    return (x - nearest.x) ** 2 + (y - nearest.y) ** 2;
+  };
+
+  return Math.min(
+    pointBoxGapSquared(segment.from, box),
+    pointBoxGapSquared(segment.to, box),
+    cornerGap(box.left, box.top),
+    cornerGap(box.left, box.bottom),
+    cornerGap(box.right, box.top),
+    cornerGap(box.right, box.bottom),
+  );
+}
+
+export function edgeSpots(area: LabelBox, size: { width: number; height: number }): LabelBox[] {
+  const right = area.right - size.width;
+  const bottom = area.bottom - size.height;
+
+  if (right < area.left || bottom < area.top) {
+    return [];
+  }
+
+  const step = 0.25;
+
+  const along = (start: number, end: number) =>
+    Array.from({ length: Math.ceil((end - start) / step) + 1 }, (_, index) =>
+      Math.min(end, start + index * step),
+    );
+
+  const at = (left: number, top: number) => ({
+    bottom: top + size.height,
+    left,
+    right: left + size.width,
+    top,
+  });
+
+  return [
+    ...along(area.left, right).flatMap((x) => [at(x, area.top), at(x, bottom)]),
+    ...along(area.top, bottom).flatMap((y) => [at(area.left, y), at(right, y)]),
+  ];
+}
+
+function centerOf(box: LabelBox): LabelPoint {
+  return { x: (box.left + box.right) / 2, y: (box.top + box.bottom) / 2 };
+}
+
+function sideOf(point: LabelPoint, { from, to }: LabelSegment): number {
+  return (to.x - from.x) * (point.y - from.y) - (to.y - from.y) * (point.x - from.x);
+}
+
+export function isOnNamedSide(box: LabelBox, named: LabelSegment, line: LabelSegment): boolean {
+  const center = centerOf(box);
+
+  return sideOf(center, line) * sideOf(closestPoint(center, named), line) >= 0;
+}
+
+export function separatesName(box: LabelBox, named: LabelSegment, line: LabelSegment): boolean {
+  const center = centerOf(box);
+  const connector = { from: center, to: closestPoint(center, named) };
+
+  return (
+    sideOf(connector.from, line) * sideOf(connector.to, line) < 0 &&
+    sideOf(line.from, connector) * sideOf(line.to, connector) < 0
+  );
+}
+
 function touchesLine(box: LabelBox, line: readonly LabelPoint[]): boolean {
   return line.some((from, index) => {
     const to = line[index + 1];

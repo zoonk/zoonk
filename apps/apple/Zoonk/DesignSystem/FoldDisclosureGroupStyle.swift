@@ -27,6 +27,7 @@ private struct Fold: View {
     } label: {
       HStack(spacing: 12) {
         configuration.label
+          .environment(\.rowHasChevron, true)
           .frame(maxWidth: .infinity, alignment: .leading)
 
         DisclosureChevron(pointsDown: configuration.isExpanded)

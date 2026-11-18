@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type FactChange, barShares, describeChange } from "./fact-change";
 
 type Fields = ActivityContentFor<"beforeAfter">["fields"];
@@ -123,10 +124,10 @@ export function BeforeAfterState({
       ref={ref}
       tabIndex={-1}
       className={cn(
-        "flex flex-col gap-3 rounded-xl p-4 outline-none",
+        "flex flex-col gap-3 p-4 outline-none",
         isAfter
-          ? "bg-viz-accent-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2"
-          : "bg-background",
+          ? "bg-viz-accent-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 rounded-xl"
+          : ACTIVITY_BOX_CLASS,
       )}
     >
       <p

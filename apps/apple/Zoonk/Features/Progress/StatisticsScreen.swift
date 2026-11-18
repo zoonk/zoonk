@@ -184,7 +184,7 @@ private struct OverviewTiles: View {
         StatTile(
           label: Text(StatsSection.score.title),
           value: Text(verbatim: score.map { metricPercent($0.score) } ?? "–"),
-          systemImage: "target", tone: .success)
+          systemImage: "chart.line.uptrend.xyaxis", tone: .success)
       }
     }
   }

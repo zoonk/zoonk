@@ -622,8 +622,8 @@ struct TodayExamMomentSection: View {
       .foregroundStyle(Color(.foreground))
       .accessibilityAddTraits(.isHeader)
 
-    if let day = moment.dayLine {
-      Text(verbatim: day)
+    if let day = moment.dayFacts {
+      FactSegments(facts: day)
         .typeStyle(.data)
     }
 

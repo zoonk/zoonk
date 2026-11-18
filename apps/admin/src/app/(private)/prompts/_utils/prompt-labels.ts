@@ -1,6 +1,6 @@
 import { type StateTone } from "@/components/state-mark";
 import { PROMPT_OUTCOMES, type PromptOutcome } from "@/data/prompts/_utils/prompt-outcomes";
-import { toWords } from "@/lib/format";
+import { formatCount, toWords } from "@/lib/format";
 import { getLearnerLabel } from "@/lib/learner-label";
 import { readEnumQueryParam } from "@/lib/query-param";
 import { type GoalUnderstandingView } from "@zoonk/core/view-models/onboarding/contract";
@@ -27,7 +27,7 @@ export const promptOutcomeTones: Record<PromptOutcome, StateTone> = {
   goalCreated: "done",
   inProgress: "going",
   noGoal: "waiting",
-  unclear: "off",
+  unclear: "attention",
   unsafe: "off",
 };
 
@@ -44,9 +44,14 @@ type ReadingSummary = {
 
 export function getReadingSummary(reading: GoalUnderstandingView | null): ReadingSummary | null {
   if (reading?.status === "goals") {
+    const kinds = [...new Set(reading.goals.map((goal) => toWords(goal.draft.kind)))];
+    const count = reading.goals.length;
+
     return {
       kind: reading.goals[0]?.draft.kind ?? null,
-      label: reading.goals.map((goal) => toWords(goal.draft.kind)).join(FACT_SEPARATOR),
+      label: [count > 1 && formatCount(count, "goal"), ...kinds]
+        .filter(Boolean)
+        .join(FACT_SEPARATOR),
       text: reading.goals.map((goal) => goal.draft.title).join(FACT_SEPARATOR),
     };
   }

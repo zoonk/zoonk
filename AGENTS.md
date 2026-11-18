@@ -77,7 +77,7 @@ Some models over-engineer, and a reviewer from another family catches the bugs, 
 
 CI is the full gate. Every push to a PR runs the PR pipelines in [.github/workflows](.github/workflows) on GitHub's machines (every Vitest and E2E suite and all the quality checks), so agents don't run those suites again on the machine they share.
 
-- Before opening a PR, run the change's relevant checks from the [development guide](.agents/guides/development.md#commands) on the final tree. Their native rows also cover what PR CI leaves out: CI runs Apple's tests only after merge, and Android's lint and release build only on demand.
+- Before opening a PR, run the change's relevant checks from the [development guide](.agents/guides/development.md#commands) on the final tree. Their native rows also cover what PR CI leaves out: Apple's unit tests and Android's lint and release build run after merge or on demand (`gh workflow run apple-tests.yml --ref <branch>`, `gh workflow run android.yml --ref <branch>`), not on PR pushes.
 - Hand the PR back only when no check on its head commit is failing, blocked, or still running ([zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md)): fix failures in the affected scope, start a new thread for an unrelated failure ([scope](#scope-and-completion)), report missing prerequisites with evidence, and report the checks and results with the handoff.
 
 ### Finishing a task

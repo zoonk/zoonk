@@ -623,7 +623,7 @@ private struct UnderstoodRowView: View {
             .foregroundStyle(.mutedForeground)
 
           HStack(alignment: .firstTextBaseline) {
-            Text(row.value)
+            if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
             if let badge = row.badge {
               Text(badge)
                 .typeStyle(.meta)
@@ -631,7 +631,11 @@ private struct UnderstoodRowView: View {
             }
           }
 
-          if let note = row.note {
+          if !row.noteFacts.isEmpty {
+            FactSegments(row.noteFacts)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          } else if let note = row.note {
             Text(note)
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)

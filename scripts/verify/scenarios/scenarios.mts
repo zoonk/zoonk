@@ -1,15 +1,15 @@
+import { SEEDED_SCREEN_SCENARIOS } from "./seeded-screens.mts";
 import { type Anchor, PHONE_AND_LAPTOP, type Scenario } from "./shape.mts";
 import { STATE_SCENARIOS } from "./states.mts";
-import { SWEEP_SCENARIOS } from "./sweep.mts";
 
 export type { Prerequisites, Scenario, Step } from "./shape.mts";
 
 /**
- * The named states a screen can be in, shared by the web, Android and Apple (`REPORT-SHAPE.md`).
+ * The named states a screen can be in, shared by the web, Android and Apple.
  * A capture says which scenario it shows; the evaluator fails a scenario a run was asked for and
  * didn't capture, one it doesn't know, and an anchor that moved between the two scenarios of a
  * pair. Whoever adds a branch to a screen (a gate, a limit, a notice, a wait) adds its scenario
- * here; a screen's lane fills in the rest of its own.
+ * to the registry.
  */
 /** A laptop at twice the default text: large-text learners on the web, otherwise unmeasured. */
 const LAPTOP_TEXT_2X: Scenario["sizes"][number] = { pointer: "keys", size: "laptop", textScale: 2 };
@@ -222,7 +222,7 @@ export const SCENARIOS: Scenario[] = [
     sizes: PHONE_AND_LAPTOP,
   },
   ...STATE_SCENARIOS,
-  ...SWEEP_SCENARIOS,
+  ...SEEDED_SCREEN_SCENARIOS,
   {
     anchors: [],
     id: "mind-maps.offer.lifted",

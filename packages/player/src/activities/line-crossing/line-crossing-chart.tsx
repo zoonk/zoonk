@@ -8,7 +8,7 @@ import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { estimatedLabelWidth } from "../_utils/drawing-label";
 import { PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { LineHandle } from "./line-crossing-handle";
-import { type LabelSize, changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
+import { changeArrowBoxes, placeChartLabels } from "./line-crossing-labels";
 import {
   Axes,
   CROSSING_RADIUS,
@@ -17,7 +17,9 @@ import {
   CrossingDot,
   CrossingGuide,
   LineLabel,
+  type LineLabelMetrics,
   LineMark,
+  crossingGuides,
 } from "./line-crossing-marks";
 import {
   type ChartDomain,
@@ -72,7 +74,7 @@ function LineLabels({
 }) {
   const t = useExtracted();
   const scales = usePlotScales();
-  const [sizes, setSizes] = useState<Readonly<Record<string, LabelSize>>>({});
+  const [sizes, setSizes] = useState<Readonly<Record<string, LineLabelMetrics>>>({});
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const pixel = (point: Point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) });
 
@@ -95,6 +97,15 @@ function LineLabels({
       : [],
   );
 
+  const guideLines = [crossings.after, crossings.before].flatMap((point) =>
+    point ? crossingGuides(pixel(point), area.left, area.bottom) : [],
+  );
+
+  const segment = (line: Line) => {
+    const { from, to } = visibleSegment(line, domain);
+    return { from: pixel(from), to: pixel(to) };
+  };
+
   const marks = {
     boxes: [
       ...(crossings.before
@@ -107,6 +118,7 @@ function LineLabels({
         : []),
     ],
     circles: [...handles, ...dots],
+    lines: guideLines,
   };
 
   const shown: ChartLabel[] = [
@@ -146,14 +158,13 @@ function LineLabels({
   const measure = (list: readonly ChartLabel[]) =>
     list.flatMap((label) => {
       const size = sizes[label.id];
-      const { from, to } = visibleSegment(label.line, domain);
 
       return size
         ? [
             {
               isOptional: label.isOptional,
               isUpper: label.isUpper,
-              segment: { from: pixel(from), to: pixel(to) },
+              segment: segment(label.line),
               size,
             },
           ]
@@ -162,12 +173,12 @@ function LineLabels({
 
   const isMeasured = (list: readonly ChartLabel[]) => list.every((label) => sizes[label.id]);
 
-  // The answer's name is measured once Check shows it; the names already shown keep their spots meanwhile.
   const boxes = isMeasured(shown)
     ? placeChartLabels({
         area,
         marks,
         revealed: isMeasured(revealed) ? measure(revealed) : [],
+        revealedLine: answerLine ? segment(answerLine) : undefined,
         shown: measure(shown),
       })
     : [];
@@ -178,6 +189,7 @@ function LineLabels({
       className={label.className}
       key={label.id}
       label={label.label}
+      metrics={sizes[label.id]}
       onMeasure={(size) => setSizes((known) => ({ ...known, [label.id]: size }))}
     />
   ));

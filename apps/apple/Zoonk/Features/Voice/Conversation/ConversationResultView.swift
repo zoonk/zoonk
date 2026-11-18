@@ -229,18 +229,6 @@ struct ConversationResultView: View {
         .listRowSeparator(.hidden)
       }
 
-      if showsStars, !conversation.objectives.isEmpty {
-        LabeledContent {
-          Text(
-            "\(conversation.objectives.filter(\.met).count) of \(conversation.objectives.count)",
-            tableName: "Voice", comment: "Goals met out of all"
-          )
-          .monospacedDigit()
-        } label: {
-          Text("Goals", tableName: "Voice", comment: "Readout label for the call's goals")
-        }
-      }
-
       // Never "0": a call that earned nothing doesn't list it, as on main.
       if result.brainPower > 0 {
         IconLabeledContent {
@@ -278,18 +266,31 @@ private struct CallFeedbackSections: View {
   var body: some View {
     let language = conversation.targetLanguage
     let met = conversation.objectives.filter(\.met)
-    let missed = conversation.objectives.filter { !$0.met }
+
+    if !conversation.objectives.isEmpty {
+      Section {
+        ForEach(conversation.objectives, id: \.label) { objective in
+          Label {
+            Text(objective.label).typesettingLanguage(.init(identifier: language))
+          } icon: {
+            Image(systemName: objective.met ? "checkmark.circle.fill" : "circle")
+              .foregroundStyle(objective.met ? .success : .faint)
+          }
+        }
+      } header: {
+        SectionTitle(
+          Text("Goals", tableName: "Voice", comment: "Readout label for the call's goals")
+        ) {
+          Text(
+            "\(met.count) of \(conversation.objectives.count)",
+            tableName: "Voice", comment: "Goals met out of all")
+        }
+      }
+    }
 
     Section {
       Text(feedback.encouragement)
 
-      ForEach(met, id: \.label) { objective in
-        Label {
-          Text(objective.label).typesettingLanguage(.init(identifier: language))
-        } icon: {
-          Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
-        }
-      }
     } header: {
       SectionTitle(
         Text("What went well", tableName: "Voice", comment: "A call result's first part"))
@@ -303,11 +304,11 @@ private struct CallFeedbackSections: View {
             .typesettingLanguage(.init(identifier: language))
         }
       } header: {
-        Text("Phrases you said well", tableName: "Voice")
+        SectionTitle(Text("Phrases you said well", tableName: "Voice"))
       }
     }
 
-    if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
+    if feedback.improve != nil || !feedback.pronunciation.isEmpty {
       Section {
         if let improve = feedback.improve {
           VStack(alignment: .leading, spacing: 8) {
@@ -336,14 +337,6 @@ private struct CallFeedbackSections: View {
               .foregroundStyle(.mutedForeground)
           }
           .labeledContentStyle(.vertical)
-        }
-
-        ForEach(missed, id: \.label) { objective in
-          Label {
-            Text(objective.label).typesettingLanguage(.init(identifier: language))
-          } icon: {
-            Image(systemName: "circle").foregroundStyle(.faint)
-          }
         }
 
         ForEach(feedback.pronunciation, id: \.word) { item in

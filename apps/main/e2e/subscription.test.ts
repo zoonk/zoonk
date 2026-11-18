@@ -173,7 +173,7 @@ test("keeps website billing controls alongside a newer store purchase", async ({
   const store = await addNewerStoreSubscription(user.id);
   await page.goto("/subscription");
   await expect(page.getByRole("link", { exact: true, name: "Manage in App Store" })).toBeVisible();
-  const website = page.getByRole("region", { name: "Bought on the website" });
+  const website = page.getByRole("region", { name: "Through the website" });
   await website.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
 
   await page

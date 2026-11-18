@@ -1,5 +1,4 @@
 import SwiftUI
-import Vision
 import XCTest
 
 @testable import Zoonk
@@ -19,14 +18,15 @@ final class LineCrossingPlacementParityTests: XCTestCase {
     let answer = try ActivityAnswer(encoding: LineShiftAnswer(curve: "supply", direction: .right))
     for width in [320.0, 375] {
       for size in [DynamicTypeSize.large, .accessibility3] {
-        let before = try await names(
+        let before = try await nameFrames(
           fields, answer: answer, checked: false, width: width, size: size)
-        let after = try await names(fields, answer: answer, checked: true, width: width, size: size)
-        for name in ["Supply", "Demand"] {
-          let a = try XCTUnwrap(before[name])
-          let b = try XCTUnwrap(after[name])
-          XCTAssertEqual(a.midX, b.midX, accuracy: 1.0 / 3, "\(name), \(width), \(size)")
-          XCTAssertEqual(a.midY, b.midY, accuracy: 1.0 / 3, "\(name), \(width), \(size)")
+        let after = try await nameFrames(
+          fields, answer: answer, checked: true, width: width, size: size)
+        for line in fields.lines {
+          let a = try XCTUnwrap(before[line.id])
+          let b = try XCTUnwrap(after[line.id])
+          XCTAssertEqual(a.midX, b.midX, accuracy: 1.0 / 3, "\(line.label), \(width), \(size)")
+          XCTAssertEqual(a.midY, b.midY, accuracy: 1.0 / 3, "\(line.label), \(width), \(size)")
         }
       }
     }
@@ -104,6 +104,7 @@ final class LineCrossingPlacementParityTests: XCTestCase {
           shown: shown, revealed: [], in: CGRect(x: 0, y: 0, width: width, height: height),
           guides: guides, obstacles: [])
         for (index, box) in boxes.enumerated() {
+          if index < own.count { XCTAssertNotNil(box, "\(width) × \(height), name \(index)") }
           guard let box else { continue }
           let ownLine = shown[index].segment
           let nearestOwn = distance(box, to: ownLine)
@@ -121,7 +122,105 @@ final class LineCrossingPlacementParityTests: XCTestCase {
     XCTAssertTrue(failures.isEmpty, failures.first ?? "")
   }
 
-  func testShownNamesKeepExactPositionsAcrossRevealMatrix() {
+  func testMovedLineDoesNotSeparateBeforeFromItsLineAt390Points() throws {
+    func line(_ x: CGFloat, _ y: CGFloat, _ endX: CGFloat, _ endY: CGFloat)
+      -> LineCrossingLabelLayout.Segment
+    {
+      .init(from: .init(x: x, y: y), to: .init(x: endX, y: endY))
+    }
+
+    let supply = line(1, 218, 326, 134.8)
+    let demand = line(1, 64.4, 301, 218)
+    let original = line(1, 202.64, 326, 119.44)
+    let answer = line(1, 187.28, 326, 104.08)
+    let shown = [
+      LineCrossingLabelLayout.Label(segment: supply, size: .init(width: 40, height: 16)),
+      .init(segment: demand, size: .init(width: 49, height: 16)),
+      .init(
+        segment: original, size: .init(width: 38, height: 16), isUpper: false, isOptional: true),
+    ]
+    let area = CGRect(x: 1, y: 0, width: 325, height: 218)
+    let guides = [
+      line(1, 166.8, 201, 166.8), line(201, 166.8, 201, 218),
+      line(1, 156.56, 181, 156.56), line(181, 156.56, 181, 218),
+    ]
+    let boxes = LineCrossingLabelLayout.chart(
+      shown: shown,
+      revealed: [.init(segment: answer, size: .init(width: 87, height: 16), isUpper: false)],
+      in: area, guides: guides, obstacles: [.init(x: 1, y: 0, width: 105, height: 20)])
+    let name = try XCTUnwrap(boxes[2])
+
+    XCTAssertFalse(LineCrossingLabelLayout.touches(name.insetBy(dx: -3, dy: -3), answer))
+    XCTAssertLessThan(name.midY, 218 - 83.2 * (name.midX - 1) / 325)
+    XCTAssertLessThan(distance(name, to: original), distance(name, to: supply))
+  }
+
+  func testChartNameIsNearerItsLineThanTheGuide() throws {
+    let own = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 104), to: .init(x: 311, y: 100))
+    let guide = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 76), to: .init(x: 311, y: 76))
+    let boxes = LineCrossingLabelLayout.chart(
+      shown: [.init(segment: own, size: .init(width: 50, height: 12))],
+      revealed: [], in: CGRect(x: 0, y: 0, width: 320, height: 220), guides: [guide], obstacles: [])
+    let box = try XCTUnwrap(boxes[0])
+
+    XCTAssertLessThan(distance(box, to: own), distance(box, to: guide))
+  }
+
+  func testCrossedNameMovesToTheNearestClearSpot() throws {
+    let own = LineCrossingLabelLayout.Segment(from: .init(x: 22, y: 104), to: .init(x: 311, y: 100))
+    let other = LineCrossingLabelLayout.Segment(
+      from: .init(x: 22, y: 170), to: .init(x: 311, y: 160))
+    let answer = LineCrossingLabelLayout.Segment(
+      from: .init(x: 22, y: 86), to: .init(x: 311, y: 86))
+    let size = CGSize(width: 50, height: 12)
+    let area = CGRect(x: 0, y: 0, width: 320, height: 220)
+    let shown = [own, other].map { LineCrossingLabelLayout.Label(segment: $0, size: size) }
+    let before = LineCrossingLabelLayout.chart(
+      shown: shown, revealed: [], in: area, guides: [], obstacles: [])
+    let after = LineCrossingLabelLayout.chart(
+      shown: shown, revealed: [.init(segment: answer, size: size, isUpper: false)],
+      in: area, guides: [], obstacles: [])
+
+    XCTAssertTrue(LineCrossingLabelLayout.touches(try XCTUnwrap(before[0]), answer))
+    XCTAssertEqual(after[0], CGRect(x: 252, y: 104, width: 50, height: 12))
+    XCTAssertEqual(after[1], before[1])
+  }
+
+  func testCrossedNameKeepsItsSideOfTheAnswerAt320PointsWithLargestText() throws {
+    func segment(_ x: CGFloat, _ y: CGFloat, _ endX: CGFloat, _ endY: CGFloat)
+      -> LineCrossingLabelLayout.Segment
+    {
+      .init(from: .init(x: x, y: y), to: .init(x: endX, y: endY))
+    }
+
+    let area = CGRect(x: 0, y: 0, width: 230, height: 248)
+    let supply = segment(0, 248, 230, 141)
+    let demand = segment(0, 50, 214, 248)
+    let original = segment(0, 229, 230, 121)
+    let answer = segment(0, 208, 230, 101)
+    let guides = [segment(0, 182, 140, 182), segment(140, 182, 140, 248)]
+    let shown = [
+      LineCrossingLabelLayout.Label(segment: supply, size: .init(width: 55, height: 23)),
+      .init(segment: demand, size: .init(width: 68, height: 23)),
+      .init(
+        segment: original, size: .init(width: 55, height: 23), isUpper: false, isOptional: true),
+    ]
+    let before = LineCrossingLabelLayout.chart(
+      shown: shown, revealed: [], in: area, guides: guides, obstacles: [])
+    let after = LineCrossingLabelLayout.chart(
+      shown: shown,
+      revealed: [.init(segment: answer, size: .init(width: 82, height: 46), isUpper: false)],
+      in: area, guides: guides, obstacles: [])
+    let box = try XCTUnwrap(after[2])
+
+    XCTAssertTrue(LineCrossingLabelLayout.touches(try XCTUnwrap(before[2]), answer))
+    XCTAssertEqual(before.prefix(2), after.prefix(2))
+    XCTAssertGreaterThan(box.midY, 208 - 107 * box.midX / 230)
+    XCTAssertGreaterThanOrEqual(distance(box, to: answer), 3)
+    XCTAssertLessThan(distance(box, to: original), 40)
+  }
+
+  func testAnswerKeepsClearAndNamesThatStillBelongStayPut() {
     for width in [176.0, 260, 320] {
       for height in [156.0, 240, 480] {
         for offset in [-40.0, -20, 20, 40] {
@@ -148,11 +247,54 @@ final class LineCrossingPlacementParityTests: XCTestCase {
               shown: shown, revealed: [], in: area, guides: [], obstacles: [])
             let afterCheck = LineCrossingLabelLayout.chart(
               shown: shown, revealed: [answer], in: area, guides: [], obstacles: [])
-            XCTAssertEqual(beforeCheck, Array(afterCheck.prefix(shown.count)))
+            for box in afterCheck.compactMap({ $0 }) {
+              XCTAssertFalse(LineCrossingLabelLayout.touches(box, answer.segment))
+            }
+            for (index, pair) in zip(beforeCheck, afterCheck).enumerated() {
+              let (before, after) = pair
+              guard let before else {
+                XCTAssertNil(after)
+                continue
+              }
+              let own = shown[index].segment
+              let answerClears = !LineCrossingLabelLayout.touches(
+                before.insetBy(dx: -3, dy: -3), answer.segment)
+              let answerIsFarther =
+                distance(before, to: answer.segment) > distance(before, to: own) + 0.1
+              if answerClears && answerIsFarther
+                && !lineSeparates(before, from: own, by: answer.segment)
+              {
+                XCTAssertEqual(
+                  before, after, "\(width) × \(height), \(offset), \(labelHeight), \(index)")
+              } else if !answerClears {
+                XCTAssertNotNil(after)
+              }
+            }
           }
         }
       }
     }
+  }
+
+  private func lineSeparates(
+    _ box: CGRect, from own: LineCrossingLabelLayout.Segment,
+    by other: LineCrossingLabelLayout.Segment
+  ) -> Bool {
+    let dx = own.to.x - own.from.x
+    let dy = own.to.y - own.from.y
+    let projection = min(
+      1,
+      max(
+        0,
+        ((box.midX - own.from.x) * dx + (box.midY - own.from.y) * dy)
+          / (dx * dx + dy * dy)))
+    let center = CGPoint(x: box.midX, y: box.midY)
+    let nearest = CGPoint(x: own.from.x + projection * dx, y: own.from.y + projection * dy)
+    func cross(_ a: CGPoint, _ b: CGPoint, _ c: CGPoint) -> CGFloat {
+      (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+    }
+    return cross(other.from, other.to, center) * cross(other.from, other.to, nearest) < 0
+      && cross(center, nearest, other.from) * cross(center, nearest, other.to) < 0
   }
 
   private func distance(_ box: CGRect, to line: LineCrossingLabelLayout.Segment) -> Double {
@@ -164,74 +306,11 @@ final class LineCrossingPlacementParityTests: XCTestCase {
     }.min()!
   }
 
-  private func inkBounds(image: CGImage, near rough: CGRect, name: String) throws -> CGRect {
-    let scale = CGFloat(image.width) / 375
-    let wordBounds = rough.applying(.init(scaleX: scale, y: scale))
-    let region = wordBounds.insetBy(dx: -12 * scale, dy: -12 * scale)
-      .intersection(CGRect(x: 0, y: 0, width: image.width, height: image.height)).integral
-    let left = Int(region.minX)
-    let top = Int(region.minY)
-    let width = Int(region.width)
-    let height = Int(region.height)
-    var pixels = [UInt8](repeating: 0, count: image.width * image.height * 4)
-    let context = try XCTUnwrap(
-      CGContext(
-        data: &pixels, width: image.width, height: image.height, bitsPerComponent: 8,
-        bytesPerRow: image.width * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
-        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
-    context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-    var mask = [Bool](repeating: false, count: width * height)
-    for y in 0..<height {
-      for x in 0..<width {
-        let index = ((top + y) * image.width + left + x) * 4
-        let r = Int(pixels[index])
-        let g = Int(pixels[index + 1])
-        let b = Int(pixels[index + 2])
-        mask[y * width + x] =
-          name == "Supply"
-          ? g > r + 25 && b > r + 15 && g > 65
-          : r > g + 35 && b > g + 35 && r > 70
-      }
-    }
-    var ink = CGRect.null
-    for start in mask.indices where mask[start] {
-      var pending = [start]
-      mask[start] = false
-      var component = CGRect.null
-      var touchesEdge = false
-      while let point = pending.popLast() {
-        let x = point % width
-        let y = point / width
-        component = component.union(CGRect(x: left + x, y: top + y, width: 1, height: 1))
-        touchesEdge = touchesEdge || x == 0 || y == 0 || x == width - 1 || y == height - 1
-        for dy in -1...1 {
-          for dx in -1...1 {
-            let nx = x + dx
-            let ny = y + dy
-            guard nx >= 0 && nx < width && ny >= 0 && ny < height else { continue }
-            let next = ny * width + nx
-            if mask[next] {
-              mask[next] = false
-              pending.append(next)
-            }
-          }
-        }
-      }
-      // The padded crop can include detached chart ink outside the recognized word.
-      if !touchesEdge && component.width > 1 && component.height > 1
-        && wordBounds.intersects(component)
-      {
-        ink = ink.union(component)
-      }
-    }
-    XCTAssertFalse(ink.isNull, "No rendered \(name) glyphs near \(rough)")
-    return ink.applying(.init(scaleX: 1 / scale, y: 1 / scale))
-  }
-
-  private func names(
+  private func nameFrames(
     _ fields: LineCrossingFields, answer: ActivityAnswer, checked: Bool, width: Double,
     size: DynamicTypeSize
   ) async throws -> [String: CGRect] {
+    var frames: [String: CGRect] = [:]
     let window = try show(
       ScrollView {
         LineCrossingCanvas(
@@ -244,38 +323,21 @@ final class LineCrossingPlacementParityTests: XCTestCase {
         .activityPanel().padding(16)
       }.frame(width: width).frame(maxWidth: .infinity)
         .environment(ActivityWork()).zoonkStyles().dynamicTypeSize(size)
+        .environment(\.lineCrossingNameFrame) { id, frame in frames[id] = frame }
         .preferredColorScheme(.light))
     window.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
-    try await Task.sleep(for: .milliseconds(600))
-    let format = UIGraphicsImageRendererFormat()
-    format.scale = 3
-    let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { _ in
-      window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
-    }
-    let attachment = XCTAttachment(image: image)
-    attachment.lifetime = .keepAlways
-    add(attachment)
-    let request = VNRecognizeTextRequest()
-    request.recognitionLevel = .accurate
-    request.recognitionLanguages = ["en-US"]
-    request.usesLanguageCorrection = false
-    try VNImageRequestHandler(cgImage: XCTUnwrap(image.cgImage)).perform([request])
-    window.isHidden = true
-    var result: [String: CGRect] = [:]
-    for word in request.results ?? [] {
-      guard let recognized = word.topCandidates(1).first else { continue }
-      let text = recognized.string.folding(
-        options: .diacriticInsensitive, locale: Locale(identifier: "en_US"))
-      for name in ["Supply", "Demand"] {
-        guard result[name] == nil, text.contains(name) else { continue }
-        let box = word.boundingBox
-        let rough = CGRect(
-          x: box.minX * 375, y: (1 - box.maxY) * 667,
-          width: box.width * 375, height: box.height * 667)
-        result[name] = try inkBounds(image: XCTUnwrap(image.cgImage), near: rough, name: name)
-
+    defer { window.isHidden = true }
+    try await waitForLayout(in: window)
+    let expected = fields.lines.map(\.id) + (checked ? ["answer"] : [])
+    try await waitForTestCondition(
+      "Missing chart labels at \(width) pt, \(size), checked: \(checked). Frames: \(frames)"
+    ) {
+      expected.allSatisfy { id in
+        guard let frame = frames[id], !frame.isEmpty else { return false }
+        return window.bounds.contains(frame)
       }
     }
-    return result
+    if !checked { XCTAssertNil(frames["answer"]) }
+    return frames
   }
 }

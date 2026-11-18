@@ -24,7 +24,7 @@ struct PreferencesView: View {
       }
 
       if let preferences = settings.preferences.value {
-        Section {
+        PageSection {
           IconLabeledContent {
             Button {
               isEditingBuddy = true
@@ -50,7 +50,7 @@ struct PreferencesView: View {
               "Your buddy", tableName: "Settings", comment: "Preferences section about the buddy"))
         }
 
-        Section {
+        PageSection {
           SettingToggle(
             isOn: soundsBinding(preferences),
             title: Text("Sounds", tableName: "Settings", comment: "Switch for the lessons' sounds"),
@@ -64,7 +64,7 @@ struct PreferencesView: View {
 
       }
 
-      Section {
+      PageSection {
         Button {
           if let url = URL(string: UIApplication.openSettingsURLString) {
             openURL(url)

@@ -5,6 +5,7 @@ import { formatDuration } from "@/lib/format-duration";
 import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
+  ContributionCalendarCaption,
   ContributionCalendarContent,
   ContributionCalendarDay,
   ContributionCalendarGrid,
@@ -113,7 +114,7 @@ export async function UserActivity({ userId }: { userId: string }) {
         details={details}
         weeks={weeks.length}
       >
-        <ContributionCalendarViewport>
+        <ContributionCalendarViewport className="max-lg:scrollbar-thin">
           <ContributionCalendarContent>
             <ContributionCalendarGrid aria-label={TITLE}>
               {weeks.map((week) => (
@@ -126,6 +127,9 @@ export async function UserActivity({ userId }: { userId: string }) {
             </ContributionCalendarGrid>
           </ContributionCalendarContent>
         </ContributionCalendarViewport>
+        <ContributionCalendarCaption className="text-muted-foreground text-xs lg:hidden">
+          Scroll to see earlier months.
+        </ContributionCalendarCaption>
       </ContributionCalendar>
     </AdminSection>
   );

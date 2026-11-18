@@ -30,7 +30,7 @@ struct FocusTestInvitation: View {
 
     ZoonkList {
       StepHeader(
-        subject: focusTest.offer.map { FocusTestCopy.offered(minutes: $0.minutes) },
+        subjectFacts: focusTest.offer.map { FocusTestCopy.offered(minutes: $0.minutes) } ?? [],
         title: Text(FocusTestCopy.title(findsFocus: findsFocus)),
         description: Text(FocusTestCopy.offerLine(findsFocus: findsFocus)))
 
@@ -63,7 +63,7 @@ struct FocusTestResume: View {
   var body: some View {
     ZoonkList {
       StepHeader(
-        subject: FocusTestCopy.left(minutes: sitting.minutes),
+        subjectFacts: FocusTestCopy.left(minutes: sitting.minutes),
         title: Text(
           "Continue your test", tableName: "FocusTest",
           comment: "Title of an open Focus test sitting the learner came back to"),

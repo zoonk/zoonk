@@ -8,18 +8,20 @@ struct ListRow<Leading: View, Trailing: View>: View {
   /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
   var number: Int?
   var description: Text?
+  var descriptionFacts: [String]
   var alignment = VerticalAlignment.center
   @ViewBuilder let leading: Leading
   @ViewBuilder let trailing: Trailing
 
   init(
-    _ title: Text, number: Int? = nil, description: Text? = nil,
+    _ title: Text, number: Int? = nil, description: Text? = nil, descriptionFacts: [String] = [],
     alignment: VerticalAlignment = .center,
     @ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
     self.number = number
     self.description = description
+    self.descriptionFacts = descriptionFacts
     self.alignment = alignment
     self.leading = leading()
     self.trailing = trailing()
@@ -46,6 +48,12 @@ struct ListRow<Leading: View, Trailing: View>: View {
       if let description {
         description
           .layoutPart(.note, text: description)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
+      if !descriptionFacts.isEmpty {
+        FactSegments(descriptionFacts)
+          .layoutPart(.note)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
@@ -91,7 +99,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
         if isStacked {
           column
         } else {
-          HStack(spacing: 12) {
+          HStack(alignment: alignment, spacing: 12) {
             column
               .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -99,7 +107,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
           }
         }
       } else {
-        HStack(spacing: 12) {
+        HStack(alignment: alignment, spacing: 12) {
           MarkedRow(alignment: alignment, stackedSpacing: 4) {
             mark
               .markColumn()
@@ -115,6 +123,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
         }
       }
     }
+    .modifier(ListRowTrailing())
     .layoutStacks(isStacked)
     .layoutRow(.listGroup)
   }
@@ -141,14 +150,18 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
 }
 
 extension ListRow where Trailing == EmptyView {
-  init(_ title: Text, description: Text? = nil, @ViewBuilder leading: () -> Leading) {
-    self.init(title, description: description, leading: leading) { EmptyView() }
+  init(
+    _ title: Text, description: Text? = nil, descriptionFacts: [String] = [],
+    @ViewBuilder leading: () -> Leading
+  ) {
+    self.init(title, description: description, descriptionFacts: descriptionFacts, leading: leading)
+    { EmptyView() }
   }
 }
 
 extension ListRow where Leading == EmptyView, Trailing == EmptyView {
-  init(_ title: Text, description: Text? = nil) {
-    self.init(title, description: description) {
+  init(_ title: Text, description: Text? = nil, descriptionFacts: [String] = []) {
+    self.init(title, description: description, descriptionFacts: descriptionFacts) {
       EmptyView()
     } trailing: {
       EmptyView()

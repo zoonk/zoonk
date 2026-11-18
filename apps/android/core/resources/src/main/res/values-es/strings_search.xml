@@ -20,7 +20,6 @@
   "search_group_goals": "5352e837900c49634152726f342d23d5c5f3f1bddaaf71fdee34ded676f2460b",
   "search_group_help": "bb9b0d47e3109b250fe935bac9e1e000b3d529956c7f0bee1c9ddc0ba382e12e",
   "search_group_mocks": "0494deb09db97061058f9da2e8a12234e672acf6011b990641ae2fe79b667906",
-  "search_group_new_goal": "4eeee81dfbf6073d09ab03f6080418b020428aaf8bbb444b6184fe175fbe9131",
   "search_group_plan": "78c6d0ef9a62ed8cff40ef700afaa8a11dc89489010e27d1f26b334f3937308e",
   "search_help": "027a93a1de32f411ffbd35e932e08e15b8d8740ba8765eec06ef1379abb7c557",
   "search_home": "603db6def84d1dc374be2f9554e3a61d97299a88130946b49a3e4d5ec1cb4be4",
@@ -65,7 +64,6 @@
     <string name="search_group_account">Mi cuenta</string>
     <string name="search_group_help">Ayuda</string>
     <string name="search_group_ask">Preguntar</string>
-    <string name="search_group_new_goal">Nuevo objetivo</string>
     <string name="search_continue">Continuar la sesión de hoy</string>
     <string name="search_take_mock">Hacer un simulacro</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->

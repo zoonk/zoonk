@@ -8,7 +8,7 @@ import { evaluateFile } from "./alignment.mts";
 
 const USAGE = `Usage: pnpm verify:alignment <file or folder>... [--write]
 
-Evaluates alignment captures from any platform (REPORT-SHAPE.md): an alignment.json
+Evaluates alignment captures from any platform: an alignment.json
 ({ "captures": [...] }), a single capture ({ "version": 2, ... }), or a folder holding them.
 Prints each fault once with its instances, then one line: PASS or FAIL, unresolved findings,
 missing scenarios, discovery leads and what wasn't measured.

@@ -52,7 +52,6 @@
   "today_mistakes_tomorrow": "be94e6e949de7b000c04c8e946d4cccc32398dd8608c2bf6d46f046ed97de9b7",
   "today_more_count": "80771fdf920ca4a9dd14c5a7175ebf4a73b7e9c0400c6bb86f52a1962a1e1fe9",
   "today_more_time_a_day": "ea486e0b25beddb5edb349aeeacf5544398e102da6c8c241a64bbb53a2391e90",
-  "today_new_goal": "31ab56d9490dd48f91fe88ac09897507735e7d43fa7d9ce738ac33d03594bc83",
   "today_next_suggestion": "b02b9c24edb21d86ea9c7179d42030839c030c6ff7fdb1b5f642395d401167a6",
   "today_not_enough_time": "078392e8e49d2ed6880ee6ab401afabe88d448a9ef439877b26065da83556f68",
   "today_not_now": "7e7c3677391e7dc46ea35f27d6f43f18a3358f89cb7e4ae0ae1ddcdbcd0460f2",
@@ -238,7 +237,6 @@
     <string name="today_paused_this_goal">Bu hedef duraklatıldı.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">Devam edene kadar hiçbir şey planlanmaz.</string>
-    <string name="today_new_goal">Yeni bir hedefe başla</string>
     <string name="today_resume_effect">Planın bugünden itibaren devam eder; önce ara verdiğin günler için planlanan dersler gelir.</string>
     <string name="today_setting_up_goal">%1$s planın için birkaç cevap daha gerekiyor.</string>
     <string name="today_building_plan_goal">%1$s planını hazırlıyoruz</string>
