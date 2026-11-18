@@ -33,6 +33,24 @@ describe("activity numeric answers", () => {
     await expect.element(valueInput()).toHaveValue("252");
   });
 
+  it("says how to round above the field it explains, where a typing error then shows", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    const rule = page.getByText("Round to the nearest whole number.", { exact: true });
+    await expect.element(rule).toBeVisible();
+    const ruleBottom = rule.element().getBoundingClientRect().bottom;
+
+    expect(ruleBottom).toBeLessThanOrEqual(numericGroup().getBoundingClientRect().top);
+
+    await valueInput().fill("12,,5");
+    await checkActivity();
+    const error = page.getByRole("alert");
+    await expect.element(error).toBeVisible();
+
+    expect(error.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      numericGroup().getBoundingClientRect().top,
+    );
+  });
+
   it("shows the value named by the hint after a calculator miss", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
     await valueInput().fill("251.6");
