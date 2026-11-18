@@ -133,11 +133,10 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
       </div>
 
       <div className="flex flex-col gap-3">
-        {build.atoms.length > 0 && (
-          <ActivityCanvasLabel className="text-sm tabular-nums">
-            {t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
-          </ActivityCanvasLabel>
-        )}
+        <ActivityCanvasLabel className="min-h-5 text-sm tabular-nums">
+          {build.atoms.length > 0 &&
+            t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
+        </ActivityCanvasLabel>
 
         <MoleculeStatus
           build={build}
