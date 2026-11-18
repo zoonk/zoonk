@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { type getScoreHistory } from "@zoonk/core/progress/get-score-history";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
+import { toLabelCase } from "@zoonk/learn/label-case";
 import {
   ListGroup,
   ListRow,
@@ -65,9 +66,7 @@ function PatternsRow({ label, value }: { label: string; value: string }) {
         <ListRowContent>
           <ListRowTitle>{label}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing className="text-foreground font-sans text-sm first-letter:uppercase">
-          {value}
-        </ListRowTrailing>
+        <ListRowTrailing className="text-foreground font-sans text-sm">{value}</ListRowTrailing>
       </ListRowBody>
     </ListRow>
   );
@@ -79,11 +78,11 @@ async function getPatternValues(patterns: ScorePatternsData | null) {
   const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
 
   return {
-    day: day ?? t("Not yet"),
+    day: toLabelCase(day ?? t("Not yet")),
     dayLabel: t("Best day"),
     needsAnswers:
       !patterns || [patterns.dayVerdict.kind, patterns.timeVerdict.kind].includes("notEnough"),
-    time: time ?? t("Not yet"),
+    time: toLabelCase(time ?? t("Not yet")),
     timeLabel: t("Best time"),
   };
 }
