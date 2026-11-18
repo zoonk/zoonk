@@ -18,7 +18,6 @@
   "conversation_call_time": "bdb53a38bfd61a598a284567a7bddfd0f67da027cbb6e0f18c5ab3c639aa2fb0",
   "conversation_calling": "8653b7b99ba7905a348911df347913f039d16caa2e94c5aa21e72ec078526e78",
   "conversation_calls_need_account": "19e8cca2dc29f97a60eb4353dd69af2e9b1b24fdd46c21da347f4c329dc79ae2",
-  "conversation_cancel": "13b0ae0affca9fcc60f6cc7d91b671ff9938045a708d009255a2ae39acacb1a9",
   "conversation_challenge_gate_line": "b1fcbdca59a232f0df6156ffcf96e424a8a77a8348295cf174a42c139a15720b",
   "conversation_challenge_gate_title": "780e6ec922491ec518fcd770182c3b513746648ff9d0e2c985708177cc482370",
   "conversation_challenge_passed": "cda489cb3315d7e50998fb908fb23cf025e82c90080e54d2f5a0081bb64fbba5",
@@ -213,8 +212,6 @@
     <!-- The call is connecting; the character's name. -->
     <string name="conversation_calling">%1$s에게 연결하고 있어요…</string>
     <string name="conversation_answers_first">%1$s(이)가 먼저 받아요.</string>
-    <!-- Ends a call that hasn't connected yet. -->
-    <string name="conversation_cancel">취소</string>
     <string name="conversation_muted">음소거 중</string>
     <string name="conversation_muted_detail">소리 내어 답하려면 음소거를 해제하세요. 글로 답해도 돼요.</string>
     <!-- Says whose turn it is: the character, whose name comes first, is speaking. -->
