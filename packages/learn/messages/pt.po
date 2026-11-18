@@ -622,7 +622,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Isso está demorando mais que o normal. Vai abrir sozinho, não precisa tocar de novo."
 
 #: src/_components/practice-outcome-message.tsx
-#: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "Não deu certo. Tente de novo em instantes."
@@ -805,6 +804,11 @@ msgstr "Expandir barra lateral"
 msgctxt "y7b8vA"
 msgid "Screen options"
 msgstr "Opções da tela"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "WE1eNa"
+msgid "The test didn't open. Try again."
+msgstr "O teste não abriu. Tente de novo."
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1289,6 +1293,7 @@ msgid "Energy"
 msgstr "Energia"
 
 #: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
 #: src/missions/missions-card.tsx
 #: src/session/summary/summary-rewards.tsx
 msgctxt "IFviMa"
@@ -1449,11 +1454,6 @@ msgstr "{buddy} hoje"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Ainda não"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {# de {total} missões} other {# de {total} missões}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -7489,6 +7489,12 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr ", depois das aulas de hoje"
 
+#. Under the title Today's missions: how many of today's missions are done.
+#: src/missions/mission-list.tsx
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done} de {total} concluídas"
+
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
@@ -7508,12 +7514,6 @@ msgstr "{count, plural, one {Mais # missão para +{points} de Poder Mental} othe
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Você ganhou +{points} Poder Mental."
-
-#. Under the title Today's missions: how many of today's missions are done.
-#: src/missions/missions-card.tsx
-msgctxt "deISVW"
-msgid "{done} of {total} done"
-msgstr "{done} de {total} concluídas"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
@@ -11479,6 +11479,9 @@ msgid "We couldn't find a date that covers everything."
 msgstr "A gente não conseguiu encontrar uma data para estudar tudo."
 
 #: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "OgCCUY"
 msgid "See what changes"
 msgstr "Ver o que muda"
@@ -12758,15 +12761,15 @@ msgid "We couldn't start this goal. Try again."
 msgstr "A gente não conseguiu começar esse objetivo. Tente de novo."
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr ", objetivo atual. Trocar de objetivo"
-
-#: src/shell/goal-switcher.tsx
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "Seus objetivos"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", objetivo atual. Trocar de objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
@@ -13380,6 +13383,11 @@ msgstr "Anotado."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Com base nas suas respostas recentes"
+
+#: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "Responder"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

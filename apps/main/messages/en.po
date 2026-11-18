@@ -971,9 +971,9 @@ msgid "Welcome back"
 msgstr "Welcome back"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "N2AOpV"
-msgid "Your quick explanation"
-msgstr "Your quick explanation"
+msgctxt "EEMcKs"
+msgid "Try a quick explanation"
+msgstr "Try a quick explanation"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
