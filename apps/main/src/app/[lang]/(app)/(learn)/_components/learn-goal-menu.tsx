@@ -73,10 +73,10 @@ function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
   });
 }
 
-/** In the sidebar the 24px logo centers on the items' icons, like the account's picture. */
+/** In the sidebar the logo starts on the items' icon edge. */
 function SidebarHomeLink() {
   return (
-    <span className="flex px-1">
+    <span className="flex px-2">
       <PublicHomeLink />
     </span>
   );
