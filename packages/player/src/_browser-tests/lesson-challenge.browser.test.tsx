@@ -32,16 +32,16 @@ describe("challenge lesson", () => {
 
     await page.getByRole("radio", { name: "Keep it live" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
-    await expect.element(page.getByText(/the early gap was chance/u)).toBeVisible();
 
     await press("Enter");
+    await expect.element(page.getByText(/the early gap was chance/u)).toBeVisible();
     await expect.element(page.getByRole("heading", { name: "To improve" })).toBeVisible();
 
     await expect
       .element(page.getByText("One day of data can't tell a real gain from chance."))
       .toBeVisible();
 
-    await expect.element(page.getByRole("heading", { name: "Try it yourself" })).toBeVisible();
+    await expect.element(page.getByRole("heading", { name: "Next time, try…" })).toBeVisible();
 
     await press("Enter");
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
@@ -61,7 +61,6 @@ describe("challenge lesson", () => {
         await page.getByRole("button", { name: /^Check/u }).click();
         await page.getByRole("radio", { name: "Keep it live" }).click();
         await page.getByRole("button", { name: /^Check/u }).click();
-        await expect.element(page.getByText(/the early gap was chance/u)).toBeVisible();
 
         await press("Enter");
 

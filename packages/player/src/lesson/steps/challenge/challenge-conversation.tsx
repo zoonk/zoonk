@@ -15,12 +15,7 @@ import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeEffectsView, ChallengeMeters } from "./challenge-meters";
-import {
-  ChallengeLabel,
-  ChallengeMessageView,
-  ChallengePickView,
-  ChallengeTimeJump,
-} from "./challenge-parts";
+import { ChallengeMessageView, ChallengePickView, ChallengeTimeJump } from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
@@ -167,20 +162,7 @@ export function ChallengeConversation({
             onPick={onPick}
             progress={progress}
           />
-        ) : (
-          <section
-            aria-labelledby="challenge-outcome"
-            className="bg-muted/50 flex flex-col gap-2 rounded-xl p-4"
-            data-slot="challenge-outcome"
-          >
-            <ChallengeLabel as="h3" id="challenge-outcome">
-              {t("What happened")}
-            </ChallengeLabel>
-            <p className="text-foreground text-base leading-relaxed">
-              <LessonRichText text={names.fill(progress.walk.ending.outcome)} />
-            </p>
-          </section>
-        )}
+        ) : null}
       </div>
     </PlayerReadScene>
   );
