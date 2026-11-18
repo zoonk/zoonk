@@ -10,7 +10,10 @@ final class MockDraftQueue {
   enum Status: Equatable {
     case saved
     case saving
+    /// An answer didn't get through and waits to go again; "Try again" sends it now.
     case retrying
+    /// An answer that didn't get through is on its way again.
+    case resending
     case refused
   }
 

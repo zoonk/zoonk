@@ -153,12 +153,13 @@ struct BarNote: View {
 
   struct Action {
     let label: Text
+    var isEnabled = true
     let perform: () -> Void
   }
 
   private let message: AttributedString
-  private let tone: Tone
-  private let action: Action?
+  let tone: Tone
+  let action: Action?
 
   init(_ message: LocalizedStringResource, tone: Tone = .failure, action: Action? = nil) {
     self.init(AttributedString(localized: message), tone: tone, action: action)
@@ -199,6 +200,7 @@ struct BarNote: View {
         }
         .buttonStyle(.outline)
         .controlSize(.small)
+        .disabled(!action.isEnabled)
       }
     }
     .multilineTextAlignment(action == nil ? .center : .leading)

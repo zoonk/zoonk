@@ -118,13 +118,17 @@ final class MockDraftQueueTests: XCTestCase {
   }
 
   /// Its "not saved yet" note stays up while each retry is on its way, so it isn't drawn and read
-  /// out again on every attempt.
-  func testAnAnswerBeingSentAgainStaysRetryingUntilItGetsThrough() async {
+  /// out again on every attempt, but only an answer waiting to go again can be sent now.
+  func testAnAnswerBeingSentAgainStaysUnsavedUntilItGetsThrough() async {
     var statuses: [MockDraftQueue.Status] = []
+    var waits: [MockDraftQueue.Status] = []
     var failures = 3
     var queue: MockDraftQueue?
     queue = MockDraftQueue(
-      retryDelay: { _ in .milliseconds(10) },
+      retryDelay: { _ in
+        Task { @MainActor in waits.append(queue?.status ?? .saved) }
+        return .milliseconds(10)
+      },
       save: { _ in
         statuses.append(queue?.status ?? .saved)
         if failures > 0 {
@@ -138,7 +142,8 @@ final class MockDraftQueueTests: XCTestCase {
     queue?.add(draft("a", .choice(0)))
     await queue?.idle()
 
-    XCTAssertEqual(statuses, [.saving, .retrying, .retrying, .retrying])
+    XCTAssertEqual(statuses, [.saving, .resending, .resending, .resending])
+    XCTAssertEqual(waits, [.retrying, .retrying, .retrying])
     XCTAssertEqual(queue?.status, .saved)
   }
 
@@ -200,6 +205,38 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertFalse(draft("a", .dontKnow).isAnswered, "Leave blank is a blank")
     XCTAssertTrue(draft("a", .number(0)).isAnswered)
     XCTAssertTrue(draft("a", .choice(0)).isAnswered)
+  }
+}
+
+/// The one line over a mock step's buttons, as the web's.
+@MainActor
+final class MockBarNoteTests: XCTestCase {
+  func testTryAgainWaitsWhileTheAnswerIsOnItsWayAgain() throws {
+    let waiting = try XCTUnwrap(note(save: .retrying))
+    let sending = try XCTUnwrap(note(save: .resending))
+
+    XCTAssertEqual(waiting.politeLine, sending.politeLine, "The note stays as it was")
+    XCTAssertEqual(sending.tone, .waiting)
+    XCTAssertEqual(waiting.action?.isEnabled, true)
+    XCTAssertEqual(sending.action?.isEnabled, false, "Nothing more to try while it's being sent")
+  }
+
+  /// A hand-in that timed out waiting on an answer that keeps failing is that one failure, so the
+  /// answer's own note and its "Try again" stay.
+  func testAHandInThatTimedOutOnAnUnsavedAnswerKeepsItsTryAgain() throws {
+    for save in [MockDraftQueue.Status.retrying, .resending] {
+      let note = try XCTUnwrap(note(failed: true, save: save))
+
+      XCTAssertEqual(note.tone, .waiting)
+      XCTAssertEqual(note.politeLine, "Try again before you move on")
+      XCTAssertNotNil(note.action)
+    }
+
+    XCTAssertEqual(note(failed: true, save: .saving)?.tone, .failure)
+  }
+
+  private func note(failed: Bool = false, save: MockDraftQueue.Status) -> BarNote? {
+    MockRun.barNote(failed: failed, save: save, slow: false) {}
   }
 }
 

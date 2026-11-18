@@ -141,11 +141,17 @@ struct MockClock: View {
 }
 
 extension MockRun {
-  /// The one line over a mock step's buttons: what didn't go through first, then what it waits on.
   var barNote: BarNote? {
+    Self.barNote(failed: failed, save: queue.status, slow: slow) { [queue] in queue.retryNow() }
+  }
+
+  /// The one line over a mock step's buttons: what didn't go through first, then what it waits on.
+  static func barNote(
+    failed: Bool, save: MockDraftQueue.Status, slow: Bool, retry: @escaping () -> Void
+  ) -> BarNote? {
     if failed {
       return BarNote(
-        queue.status == .saved
+        save == .saved
           ? String(
             localized: "That didn't go through. Your answers are saved. Try again in a moment.",
             table: "Mock", comment: "A mock step failed; the answers are saved")
@@ -154,18 +160,16 @@ extension MockRun {
             comment: "A mock step failed"))
     }
 
-    switch queue.status {
+    switch save {
     case .refused:
       return BarNote(
         LocalizedStringResource(
           "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
-    case .retrying:
+    case .retrying, .resending:
       return BarNote(
         String(localized: "Try again before you move on", table: "Mock"),
         tone: .waiting,
-        action: BarNote.Action(
-          label: Text("Try again", tableName: "Mock"),
-          perform: { [queue] in queue.retryNow() }))
+        action: BarNote.Action(label: Text("Try again", tableName: "Mock"), perform: retry))
     case .saved, .saving:
       break
     }
