@@ -50,6 +50,16 @@ function readByInk(element: CaptureElement) {
   return element.part === "mark" || element.part === "end" || glyphsOnly(element);
 }
 
+// Apple records both ListRow's number and the plan reveal's date as `lead`. The former is
+// attached to the title by ListRow's 6pt spacing, while the latter sits in its own column.
+function isNumberedLabel(context: Context, lead: CaptureElement, label: CaptureElement) {
+  const [leadX, , leadWidth] = lead.bounds;
+  const [labelX, , labelWidth] = label.bounds;
+  const gap = Math.max(labelX - (leadX + leadWidth), leadX - (labelX + labelWidth));
+
+  return context.capture.platform === "apple" && Math.abs(gap - 6) <= 1 / context.capture.scale;
+}
+
 /**
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
  * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
@@ -112,7 +122,9 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
   const oneLine = !stacked && lines === 1 && notes === 0;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
-  const led = others.some((element) => element.part === "lead");
+  const led = others.some(
+    (element) => element.part === "lead" && !isNumberedLabel(context, element, label),
+  );
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
@@ -123,7 +135,7 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
     }
 
     // A row with a text lead sits on its first line; a mark does beside three lines or more.
-    if (led || (element.part === "mark" && notes >= 2)) {
+    if (led || element.part === "lead" || (element.part === "mark" && notes >= 2)) {
       return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 

@@ -89,6 +89,10 @@ function appleLead(at: number, gap: number): Capture {
   return {
     ...capture,
     elements: capture.elements.map((part) => {
+      if (part.part === "row") {
+        return { ...part, ink: part.bounds };
+      }
+
       if (part.id === "date") {
         return { ...part, bounds: [22 - gap, 9, 20, 12], ink: [22 - gap, 9, 20, 12] };
       }
