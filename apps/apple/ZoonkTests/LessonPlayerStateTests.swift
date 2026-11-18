@@ -1022,13 +1022,18 @@ final class LessonGradingTests: XCTestCase {
       "an answer that doesn't fit the check isn't graded")
   }
 
-  func testNumericActivityShowsTheRequestedRoundingOnAMiss() throws {
+  func testNumericActivityKeepsEnoughDigitsForTheCorrection() throws {
     let source = numericActivity.replacingOccurrences(
-      of: "\"answer\": 10", with: "\"answer\": 251.54")
-    let missed = LessonGrading.grade(.activity(.numeric(230)), step: try step(source))
+      of: "\"answer\": 10", with: "\"answer\": 251.54"
+    ).replacingOccurrences(
+      of: "\"kind\": \"relative\", \"value\": 0.05", with: "\"kind\": \"absolute\", \"value\": 0.01"
+    )
+    let activity = try step(source)
+    let grade = try XCTUnwrap(LessonGrading.grade(.activity(.numeric(251.6)), step: activity))
 
-    XCTAssertEqual(missed?.isCorrect, false)
-    XCTAssertEqual(missed?.correctAnswer, "252")
+    XCTAssertEqual(LessonGrading.grade(.activity(.numeric(252)), step: activity)?.isCorrect, true)
+    XCTAssertFalse(grade.isCorrect)
+    XCTAssertEqual(grade.correctAnswer, "251.54")
   }
 
   // Mirrors core's `activity-answers.test.ts` and `@zoonk/utils` `rounded-answer.test.ts`.
