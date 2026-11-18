@@ -219,7 +219,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
       <ol
         className={cn(
           BAND_ROWS_CLASS,
-          "grid-rows-[repeat(3,auto)] gap-x-2 transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
+          "grid-rows-[repeat(3,auto)] transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
         )}
         onKeyDown={moveBetweenBands}
         style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}

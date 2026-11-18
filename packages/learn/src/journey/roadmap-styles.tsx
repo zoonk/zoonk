@@ -76,7 +76,7 @@ export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";
  * The columns share their rows, so every band is as tall as the one whose name takes the most
  * lines, and one phase's labels taking two lines leaves the bands alike.
  */
-export const BAND_ROWS_CLASS = "grid gap-x-[3px]";
+export const BAND_ROWS_CLASS = "grid gap-x-2";
 
 /**
  * The floor is on the column, not the band: a grid sizes a column by the band's minimum width
@@ -94,7 +94,8 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   };
 }
 
-export const AXIS_CLASS = "@container/phase relative flex h-4 flex-wrap gap-x-2 overflow-hidden";
+export const AXIS_CLASS =
+  "@container/phase relative flex h-4 flex-wrap content-start gap-x-2 overflow-hidden";
 
 /** A date carries its own data face (`PlanDateText`); a word on the axis, such as "Today", keeps the text face. */
 export const AXIS_TEXT_CLASS =
