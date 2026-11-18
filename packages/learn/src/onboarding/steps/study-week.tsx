@@ -66,8 +66,6 @@ export function WeekendMinutes({
   onCheckedChange: (checked: boolean) => void;
   weekdayMinutes: number;
 }) {
-  const t = useExtracted();
-
   return (
     <WeekendTime
       checked={checked}
@@ -75,10 +73,10 @@ export function WeekendMinutes({
       missing={missing}
       onCheckedChange={onCheckedChange}
     >
-      {(on) => (
+      {(on, label) => (
         <TimeSelect
           disabled={!on}
-          label={t("Time on weekends")}
+          label={label}
           onChange={onChange}
           value={on ? minutes : weekdayMinutes}
         />
