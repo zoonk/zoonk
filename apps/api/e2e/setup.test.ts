@@ -51,6 +51,7 @@ test.describe("Profile Setup Flow", () => {
 
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
+    await expectHydrated(name);
     await expect(submit).toBeDisabled();
     await name.fill("   ");
     await expect(submit).toBeDisabled();
