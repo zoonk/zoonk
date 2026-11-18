@@ -256,6 +256,26 @@ describe("money and society activities", () => {
     await expectVerdict("Not quite");
   });
 
+  it("cause and effect: the first link keeps the cards in place", async () => {
+    openActivity({ template: "causeEffectChain" });
+    const cause = chainNode("1920 Prairie plowed for wheat");
+    const effect = chainNode("1934 Dust storms");
+    const card = page.getByRole("figure");
+
+    const effectBounds = () => {
+      const { left, width } = effect.element().getBoundingClientRect();
+      return { left: left - card.element().getBoundingClientRect().left, width };
+    };
+
+    await expect.element(effect).toBeVisible();
+    const before = effectBounds();
+
+    await cause.click();
+    await effect.click();
+    await expect.element(page.getByText("1 of 2 links")).toBeVisible();
+    expect(effectBounds()).toStrictEqual(before);
+  });
+
   it("cause and effect: linking both causes to the storms is right", async () => {
     openActivity({ template: "causeEffectChain" });
     await chainNode("1920 Prairie plowed for wheat").click();
