@@ -145,10 +145,11 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(page.getByRole("button", { name: /^Planning the lesson/u })).toBeVisible();
 });
 
-test("closing the plan's progress returns to the quiz instead of leaving setup", async ({
+test("closing the plan's progress on a phone returns to the quiz instead of leaving setup", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
+  await page.setViewportSize({ height: 844, width: 390 });
   const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
 
