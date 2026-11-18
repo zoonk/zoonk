@@ -34,7 +34,9 @@ final class ExamResultVisitTests: XCTestCase {
   private static let failure = String(
     localized: "That didn't go through. Try again in a moment.", table: "Exam")
 
-  /// Types a score into the field on screen, as the keyboard does, and taps Save. A list keeps
+  /// Enters a score in the field on screen and taps Save once the form has it. SwiftUI hears the
+  /// field's edits only through its editing-changed event, so this sets the text and sends that
+  /// event, as a keyboard's edit does, rather than trusting `insertText` to send it. A list keeps
   /// cells it took off screen, hidden, for reuse, so only a field with nothing hidden above it is
   /// the one the learner sees.
   private func save(in visit: PageVisit) async throws {
@@ -49,8 +51,8 @@ final class ExamResultVisitTests: XCTestCase {
     }
     XCTAssertEqual(shown.count, 1, "One score field on screen")
     let field = try XCTUnwrap(shown.first)
-    XCTAssertTrue(field.becomeFirstResponder(), "The score field takes focus")
-    field.insertText("700")
+    field.text = "700"
+    field.sendActions(for: .editingChanged)
     try await visit.activate(String(localized: "Save my result", table: "Exam"))
   }
 
