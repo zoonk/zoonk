@@ -70,6 +70,7 @@ internal class ConversationHarness {
         }
     private val speech by lazy { silentSpeech(context, session, scope) }
     private val models = mutableMapOf<UUID, ConversationViewModel>()
+    val ongoing = OngoingCalls(context, scope)
     private val prep = MemoryPrepTimes()
 
     init {
@@ -90,7 +91,7 @@ internal class ConversationHarness {
                         soFar = soFar,
                     )
                 },
-                ongoing = OngoingCalls(context, scope),
+                ongoing = ongoing,
                 timeZone = { "Europe/Madrid" },
                 prep = prep,
                 scope = scope,

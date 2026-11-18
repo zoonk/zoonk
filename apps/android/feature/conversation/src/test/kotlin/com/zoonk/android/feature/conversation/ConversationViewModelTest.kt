@@ -86,6 +86,25 @@ class ConversationViewModelTest {
         )
     }
 
+    /** The notification's Hang up does what the screen's End does: a dropped call ringing again ends, on what was said. */
+    @Test
+    fun hangingUpFromTheNotificationWhileADroppedCallRingsAgainSavesWhatWasSaid() {
+        val gate = reconnectHeld(setup(continuesCall = true, connectionId = SECOND))
+        harness.ongoing.current.value!!
+            .hangUp()
+        idle()
+
+        gate.complete(Unit)
+        idle()
+
+        assertEquals(
+            SECOND,
+            harness.api.completions
+                .single()
+                .connectionId,
+        )
+    }
+
     @Test
     fun anotherTryThatStartsWhileTheScreenIsRecreatedOpensOnce() {
         val held = CompletableDeferred<Unit>()
