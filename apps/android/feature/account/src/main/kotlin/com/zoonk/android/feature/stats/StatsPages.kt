@@ -278,12 +278,7 @@ private fun PatternsOverview(
     val summary = patterns?.let { patternsSummary(it) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // Centered on "See all" the way the score's heading beside it is, so the two headings line up.
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = LocalMinimumInteractiveComponentSize.current),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            SectionHeader(stringResource(R.string.stats_patterns_90), Modifier.weight(1f))
+        SectionHeader(stringResource(R.string.stats_patterns_90)) {
             TextButton(onClick = { context.open(StatsPage.Patterns) }, edge = ButtonEdge.End) {
                 Text(stringResource(R.string.stats_see_all))
             }
