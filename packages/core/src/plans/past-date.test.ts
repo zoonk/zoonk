@@ -219,7 +219,7 @@ describe("a plan whose date came with lessons left", () => {
     const view = await readPlan();
 
     expect(view?.status).toStrictEqual({ kind: "finished" });
-    expect(view?.end).toStrictEqual({ kind: "finished" });
+    expect(view?.end).toStrictEqual({ finishedOn: null, kind: "finished" });
   });
 });
 

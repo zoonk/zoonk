@@ -42,6 +42,7 @@ function phase(index: number, attrs: Partial<Phase> = {}): Phase {
 
 function plan(phases: Phase[], attrs: Partial<Plan> = {}): Plan {
   return {
+    end: null,
     estimate: { endDate: null },
     phases,
     schedule: { targetDate: null, targetDateEstimated: false, targetDateNamedMonth: false },
@@ -256,14 +257,31 @@ describe(getPhaseStart, () => {
 });
 
 describe(getPlanFinish, () => {
-  it("shows the finish estimate when the learner set no end date", () => {
-    const shaped = plan([phase(0)], { estimate: { endDate: "2027-07-01" } });
+  it("uses the actual completion day instead of the scheduled end of a finished plan", () => {
+    const shaped = plan([phase(0, { state: "done" })], {
+      end: { finishedOn: "2026-12-05", kind: "finished" },
+      estimate: { endDate: "2027-07-01" },
+      schedule: {
+        targetDate: "2027-08-01",
+        targetDateEstimated: false,
+        targetDateNamedMonth: false,
+      },
+    });
 
     expect(getPlanFinish({ goalKind: "learn", plan: shaped })).toStrictEqual({
-      estimate: true,
-      isoDate: "2027-07-01",
-      month: true,
+      estimate: false,
+      isoDate: "2026-12-05",
+      month: false,
     });
+  });
+
+  it("leaves a finished plan without a known completion day undated", () => {
+    const shaped = plan([phase(0, { state: "done" })], {
+      end: { finishedOn: null, kind: "finished" },
+      estimate: { endDate: "2027-07-01" },
+    });
+
+    expect(getPlanFinish({ goalKind: "learn", plan: shaped })).toBeNull();
   });
 
   it("is the exam's date, an estimate when the date is", () => {

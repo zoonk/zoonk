@@ -29,7 +29,7 @@ import { listPlanAreaNames } from "./plan-area-order";
 import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
-import { isPlanFinished } from "./plan-end";
+import { getPlanEnd } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
@@ -252,17 +252,16 @@ export async function buildPlanView({
     changes: changes.map((change) => foldChangeAreas({ change, partAreas })),
     course,
     currentPhase,
-    end: isPlanFinished({
+    end: getPlanEnd({
       goalKind: goal.kind,
       items,
       phaseChallengesRequired,
       phases,
       studiesPastTarget: fullCourse,
       targetDate: goal.targetDate,
+      timeZone: context.timeZone,
       today: context.today,
-    })
-      ? { kind: "finished" }
-      : null,
+    }),
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),

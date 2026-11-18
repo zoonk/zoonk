@@ -16,6 +16,7 @@ type DatedPhase = Pick<
 >;
 
 type DatedPlan = {
+  end: PlanView["end"];
   estimate: Pick<PlanView["estimate"], "endDate">;
   phases: readonly DatedPhase[];
   schedule: Pick<
@@ -120,6 +121,11 @@ export function getPlanFinish({
   goalKind: GoalKind;
   plan: DatedPlan;
 }): PlanDate | null {
+  if (goalKind !== "exam" && plan.end) {
+    const { finishedOn } = plan.end;
+    return finishedOn ? { estimate: false, isoDate: finishedOn, month: false } : null;
+  }
+
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
