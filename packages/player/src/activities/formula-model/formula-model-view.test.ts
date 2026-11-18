@@ -1,6 +1,7 @@
 import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { describe, expect, it } from "vitest";
+import { exactAnswerFormat } from "../_components/activity-feedback";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ModelValues } from "../_utils/formula-model";
 import { modelView, startingModel } from "./formula-model-view";
@@ -73,6 +74,20 @@ describe(startingModel, () => {
 });
 
 describe(modelView, () => {
+  it("keeps the readout precision after checking a more precise entry", () => {
+    const { check } = engineModeFixtures.formulaModel.calculator;
+    const value = 2653.300135;
+
+    const formatReadout = (entry?: number) =>
+      formatLocalizedNumber({
+        locale: "en",
+        maximumFractionDigits: exactAnswerFormat({ check, value: entry }).maximumFractionDigits,
+        value,
+      });
+
+    expect(formatReadout(251.54012)).toBe(formatReadout());
+  });
+
   it("has no change for a readout that rounds to its starting value", () => {
     expect(changes(viewAt(simulation, { sliders: { angle: 60, speed: 20 } }))).toStrictEqual({
       distance: null,
