@@ -127,21 +127,22 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertGreaterThan(longDay.step, shortDay.step)
   }
 
-  /// Every weekday has enough answers and none scores apart, so the best day is a sentence saying
-  /// so, not a weekday and not "Not yet".
-  func testBestDayWhenEveryDayScoresTheSameSaysSo() {
-    let even = ScorePerformance(
+  /// The server decides whether a day stands out; Best day shows its verdict.
+  func testBestDayShowsTheServersVerdict() {
+    let performance = ScorePerformance(
       correctAnswers: 16, incorrectAnswers: 4, score: 80, totalAnswers: 20)
-    let patterns = ScorePatterns(
-      dayparts: [], dayVerdict: .even(points: 2), minimumAnswers: 10, strongestDaypart: nil,
-      strongestWeekday: nil, timeVerdict: .notEnough,
-      weekdays: ProgressWeekday.allCases.map { WeekdayScorePattern(performance: even, weekday: $0) }
-    )
+    let thursday = WeekdayScorePattern(performance: performance, weekday: .thursday)
 
-    XCTAssertTrue(
-      patterns.weekdays.allSatisfy { $0.performance.totalAnswers >= patterns.minimumAnswers })
-    XCTAssertNil(patterns.dayVerdict.best)
-    XCTAssertEqual(patterns.bestDayName, "You answer about the same every day.")
+    XCTAssertEqual(
+      patterns(dayVerdict: .even(points: 2)).bestDayName, "You answer about the same every day.")
+    XCTAssertEqual(patterns(dayVerdict: .best(thursday)).bestDayName, "Thursday")
+    XCTAssertNil(patterns(dayVerdict: .notEnough).bestDayName)
+  }
+
+  private func patterns(dayVerdict: PatternVerdict<WeekdayScorePattern>) -> ScorePatterns {
+    ScorePatterns(
+      dayparts: [], dayVerdict: dayVerdict, minimumAnswers: 10, strongestDaypart: nil,
+      strongestWeekday: nil, timeVerdict: .notEnough, weekdays: [])
   }
 
   private func activityDay(activities: Int, lessons: Int, seconds: Int) -> ActivityProgressDay {
