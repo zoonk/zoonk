@@ -656,8 +656,6 @@
     <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="plan_finish_after_exam_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
-    <string name="plan_full_course_rule_exam">You study every topic. What doesn\'t fit before the exam comes after it.</string>
-    <string name="plan_full_course_rule_goal">Every part of your goal, with no end date.</string>
     <string name="plan_study_everything">Remove end date</string>
     <string name="plan_study_everything_exam_description">You study every topic. What doesn\'t fit before the exam comes after it.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, with no end date.</string>
