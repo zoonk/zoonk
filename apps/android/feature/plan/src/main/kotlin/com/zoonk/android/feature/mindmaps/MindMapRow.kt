@@ -359,7 +359,7 @@ private fun MapFacts.statusLine(
 
         MindMapShown.Ready -> {
             when {
-                image == null -> stringResource(if (library) R.string.mindmaps_as_text else R.string.mindmaps_shown_as_text)
+                image == null -> stringResource(R.string.mindmaps_shown_as_text)
                 place == MindMapPlace.Finish -> stringResource(R.string.mindmaps_ready)
                 library -> null
                 else -> offer
@@ -447,11 +447,12 @@ internal fun MapMark(
 ) {
     val shape = RoundedCornerShape(MARK_CORNER)
     if (thumbnail != null) {
-        MapPicture(
-            thumbnail,
-            contentDescription = null,
-            Modifier.size(MARK_SIZE).clip(shape).border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
-        )
+        // Until the picture arrives, or when it can't, the tile shows the map's mark rather than an empty square.
+        var loaded by remember(thumbnail) { mutableStateOf(false) }
+        Box(Modifier.size(MARK_SIZE).clip(shape).border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape), contentAlignment = Alignment.Center) {
+            MapPicture(thumbnail, contentDescription = null, Modifier.matchParentSize(), onLoaded = { loaded = true })
+            if (!loaded) MapGlyph()
+        }
         return
     }
 
@@ -472,15 +473,15 @@ internal fun MapMark(
             }
 
             else -> {
-                Icon(
-                    painterResource(R.drawable.ic_lan),
-                    contentDescription = null,
-                    Modifier.size(16.dp),
-                    tint = MaterialTheme.zoonk.kindMindMap,
-                )
+                MapGlyph()
             }
         }
     }
+}
+
+@Composable
+private fun MapGlyph() {
+    Icon(painterResource(R.drawable.ic_lan), contentDescription = null, Modifier.size(16.dp), tint = MaterialTheme.zoonk.kindMindMap)
 }
 
 private val MARK_SIZE = 48.dp
