@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -15,11 +15,11 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { ShowMore } from "../_components/show-more";
 import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { FoldRow } from "../today/today-fold-row";
 import {
   type MindMapsPageChapter,
   countChapterMaps,
@@ -185,6 +185,9 @@ export function NotMadeYet({
   const later = chapters.filter((chapter) => !canMakeNow(chapter));
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
+  const listId = useId();
+  const folds = now.length > 0 && later.length > 0;
+  const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
 
   const laterRows = (
     <div className="flex flex-col gap-3">
@@ -208,19 +211,25 @@ export function NotMadeYet({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
+      <div className="flex flex-col gap-3 empty:hidden" id={listId}>
+        {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
+        {later.length > 0 && (!folds || open) && laterRows}
+      </div>
 
-      {later.length > 0 && now.length === 0 && laterRows}
-
-      {later.length > 0 && now.length > 0 && (
-        <ShowMore
-          defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
-          label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
-            count: later.length,
-          })}
-        >
-          {laterRows}
-        </ShowMore>
+      {folds && (
+        <FoldRow
+          controls={listId}
+          done={false}
+          label={
+            open
+              ? t("Show fewer chapters")
+              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                  count: later.length,
+                })
+          }
+          onToggle={() => setOpen((shown) => !shown)}
+          open={open}
+        />
       )}
 
       <div
