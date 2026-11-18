@@ -160,7 +160,8 @@ test.describe("Mocks whenever the learner wants", () => {
       await page.getByRole("button", { name: "Start" }).click();
       await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
-      const bar = page.locator('[data-slot="bottom-bar"]');
+      const frame = page.locator('[data-slot="task-frame"]');
+      const bar = frame.locator('[data-slot="bottom-bar"]');
       const height = () => bar.evaluate((element) => element.getBoundingClientRect().height);
       await expect(bar).toBeVisible();
       const before = await height();
@@ -174,7 +175,7 @@ test.describe("Mocks whenever the learner wants", () => {
         return saving ? route.abort() : route.fallback();
       });
 
-      const answer = page.getByRole("radio").first();
+      const answer = frame.getByRole("radio").first();
       await answer.click();
 
       await expect(bar.getByRole("button", { name: "Try again" })).toBeVisible();
