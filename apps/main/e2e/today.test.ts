@@ -4,6 +4,7 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
@@ -12,7 +13,7 @@ import {
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { expect, test } from "./fixtures";
-import { carryLessons, openAs } from "./study-day";
+import { carryLessons, createStudyDay, openAs } from "./study-day";
 
 const DAYS_PER_WEEK = 7;
 
@@ -213,6 +214,42 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
       );
 
     expect(filled).toStrictEqual(["step"]);
+  } finally {
+    await context.close();
+  }
+});
+
+test("one tap acknowledges today's tip on a phone", async ({ browser }) => {
+  const { goal, user } = await createStudyDay({ reviewDone: true });
+
+  const [insight] = await Promise.all([
+    memoryInsightFixture({ goalId: goal.id, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, memoryEnabled: true, userId: user.id }),
+  ]);
+
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    storageState: user.storageState,
+    timezoneId: "UTC",
+    viewport: { height: 844, width: 390 },
+  });
+
+  try {
+    const page = await context.newPage();
+    await page.goto("/today");
+
+    const tip = page.getByRole("region", { name: "From your recent answers" });
+    const acknowledge = tip.getByRole("button", { name: "Got it" });
+    await expectHydrated(acknowledge);
+    await acknowledge.tap();
+
+    await expect(tip.getByRole("status")).toHaveText("Noted.");
+    await expect(page.getByRole("dialog", { name: "From your recent answers" })).toHaveCount(0);
+
+    await expect(
+      prisma.memoryInsight.findUniqueOrThrow({ where: { id: insight.id } }),
+    ).resolves.toMatchObject({ status: "accepted" });
   } finally {
     await context.close();
   }
