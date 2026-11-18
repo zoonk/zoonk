@@ -760,7 +760,7 @@ test.describe("Live call server states", () => {
 
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(page.getByText("No more calls today")).toBeVisible();
-      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeHidden();
       await expect(page.getByRole("button", { name: "Call again" })).toBeHidden();
       await page.getByRole("button", { name: "End the call" }).click();
       await expect.poll(() => actions.complete.length).toBe(1);
