@@ -1,15 +1,15 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
-import { FlagIcon, MicIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
+import { PhaseCheckpointMark } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
 import {
   AXIS_CLASS,
@@ -54,7 +54,6 @@ function LaneMark({
 }
 
 export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhaseView }) {
-  const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
   const overrun = useRoadmapOverrun();
   const { checkpoint, mocks } = phase;
@@ -78,11 +77,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
 
       {typeof challengeShare === "number" && (
         <LaneMark beforeFlag={flag} end={challengeShare > PHASE_END_SHARE} share={challengeShare}>
-          {goal.kind === "language" ? (
-            <MicIcon className="size-4" />
-          ) : (
-            <Trickster className="size-4" view="face" />
-          )}
+          <PhaseCheckpointMark />
         </LaneMark>
       )}
 
@@ -99,7 +94,6 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
 
 function GoalDate() {
   const t = useExtracted();
-  const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
 
   if (!finish) {

@@ -69,6 +69,16 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   );
 }
 
+export function PhaseCheckpointMark() {
+  const { goal } = usePlanScreen();
+
+  return goal.kind === "language" ? (
+    <MicIcon aria-hidden="true" className="size-4" />
+  ) : (
+    <Trickster className="size-4" view="face" />
+  );
+}
+
 export function CheckpointRow({
   checkpoint,
   links,
@@ -86,11 +96,7 @@ export function CheckpointRow({
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-        {goal.kind === "language" ? (
-          <MicIcon className="size-4" />
-        ) : (
-          <Trickster className="size-4" view="face" />
-        )}
+        <PhaseCheckpointMark />
       </span>
       <PathRowBody
         value={

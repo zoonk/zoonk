@@ -2,15 +2,15 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
-import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon, MicIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { type JourneyPathLinks } from "./journey-links";
+import { PhaseCheckpointMark } from "./journey-phase-events";
 import { usePhaseLabel } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
 import { usePhaseEndSpoken } from "./phase-when";
@@ -141,11 +141,7 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          {goal.kind === "language" ? (
-            <MicIcon className="size-4" />
-          ) : (
-            <Trickster className="size-4" view="face" />
-          )}
+          <PhaseCheckpointMark />
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
       )}
