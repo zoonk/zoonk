@@ -365,18 +365,18 @@ private struct ChapterLessonsSection: View {
     } header: {
       SectionTitle(Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons"))
       {
-        Text(facts)
+        FactSegments(facts)
       }
     }
   }
 
-  private var facts: String {
+  private var facts: [String] {
     let lessonsText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",
       comment: "How many lessons a course or a chapter has")
     let minutes = catalogDurationText(minutes: lessons.reduce(0) { $0 + $1.estimatedMinutes })
 
-    return [lessonsText, minutes].joinedFacts()
+    return [lessonsText, minutes]
   }
 }
 

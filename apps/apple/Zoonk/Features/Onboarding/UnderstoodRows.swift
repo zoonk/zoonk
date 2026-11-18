@@ -32,8 +32,10 @@ struct UnderstoodRow: Identifiable, Equatable {
   let id: String
   let label: LocalizedStringResource
   let value: String
+  var valueFacts: [String] = []
   var badge: LocalizedStringResource?
   var note: String?
+  var noteFacts: [String] = []
   var source: UnderstoodSource?
   var field: UnderstoodField?
   var editValue: String?
@@ -236,6 +238,7 @@ enum UnderstoodRows {
       label: LocalizedStringResource(
         "When you study", table: "Onboarding", comment: "Row with when the learner studies"),
       value: parts.joinedFacts(),
+      valueFacts: parts,
       field: .studyTime,
       editValue: schedule.studyTime ?? "")
   }
@@ -383,7 +386,6 @@ enum UnderstoodRows {
       cutoff.edition, cutoff.quota,
     ]
     .compactMap { text($0) }
-    .joinedFacts()
 
     return UnderstoodRow(
       id: "cutoff",
@@ -393,7 +395,7 @@ enum UnderstoodRows {
         localized: LocalizedStringResource(
           "\(cutoff.score.formatted(number)) out of \(cutoff.maxScore.formatted(number))",
           table: "Onboarding", comment: "A score on its scale, such as 7 out of 10")),
-      note: detail.isEmpty ? nil : detail,
+      noteFacts: detail,
       // Named by its site: a search's page titles are often file names ("Notas-minimas.pdf").
       source: URL(string: cutoff.source.url).map { UnderstoodSource(title: nil, url: $0) })
   }

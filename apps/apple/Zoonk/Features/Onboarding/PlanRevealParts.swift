@@ -219,12 +219,11 @@ struct RevealToday: View {
         SectionTitle(
           Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
         ) {
-          Text(
+          FactSegments(
             [
               PlanDate.text(day.localDate, today: day.localDate, weekday: true),
               planDurationText(minutes: Double(minutes)),
-            ]
-            .joinedFacts())
+            ])
         }
       }
     }
@@ -275,13 +274,13 @@ struct RevealWeek: View {
             "Your first week", tableName: "Onboarding",
             comment: "Header over the plan's next seven days")
         ) {
-          Text(
+          FactSegments(
             [
               String(
                 localized: "\(week.days) study days", table: "Onboarding",
                 comment: "How many days of the plan's first week have lessons, today among them"),
               planDurationText(minutes: Double(week.minutes)),
-            ].joinedFacts())
+            ])
         }
       }
     }

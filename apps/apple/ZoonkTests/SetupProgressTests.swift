@@ -3,6 +3,20 @@ import XCTest
 @testable import Zoonk
 
 final class SetupProgressTests: XCTestCase {
+  func testNoCountWhileAnAnswerCanAddQuestions() {
+    XCTAssertNil(
+      SetupProgress(current: .purpose, history: [], steps: [.purpose, .level, .plan]))
+    XCTAssertNil(
+      SetupProgress(current: .level, history: [], steps: [.level, .purpose, .plan]))
+  }
+
+  func testSkipAllOnlyWithMoreThanOneProfileQuestionLeft() {
+    XCTAssertFalse(SetupProgress.showsSkipAll(current: .watch, steps: [.watch, .buddy, .plan]))
+    XCTAssertTrue(
+      SetupProgress.showsSkipAll(current: .watch, steps: [.watch, .listen, .buddy, .plan]))
+    XCTAssertFalse(SetupProgress.showsSkipAll(current: .buddy, steps: [.buddy, .plan]))
+  }
+
   func testCountsTheAnsweredQuestionsAndTheOnesLeft() {
     XCTAssertEqual(
       SetupProgress(

@@ -41,6 +41,9 @@
           imageLoader: .live(),
           subscriptionStore: .live(),
           buddyAPI: buddyStatus.map(UITestBuddyAPI.init),
+          certificatesAPI: try fixtures.decode(
+            [OwnedCertificate].self, "ZOONK_UI_TEST_CERTIFICATES"
+          ).map(UITestCertificatesAPI.init),
           learnerSummaryAPI: summary.map {
             UITestLearnerSummaryAPI(summary: makeLearnerSummary($0))
           },
@@ -84,6 +87,18 @@
         throw Failure(key: key, error: error)
       }
     }
+  }
+
+  private struct UITestCertificatesAPI: CertificatesAPIClient {
+    let certificates: [OwnedCertificate]
+
+    func list(token: String) async throws -> [OwnedCertificate] {
+      return certificates
+    }
+
+    func upNext(token: String) async throws -> [CertificateUpNext] { [] }
+    func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] { [] }
+    func markShown(token: String, code: String) async throws {}
   }
 
   private struct UITestProgressSnapshot: Decodable, Sendable {

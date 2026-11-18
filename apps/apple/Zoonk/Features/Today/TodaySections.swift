@@ -658,7 +658,7 @@ private struct WeekChallengeRow: View {
         challenge.kind == "mock"
           ? Text("Mock exam", tableName: "Today", comment: "The week's mock")
           : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
-        Text(facts)
+        FactSegments(facts)
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
@@ -667,7 +667,7 @@ private struct WeekChallengeRow: View {
     }
   }
 
-  private var facts: String {
+  private var facts: [String] {
     var parts = [day]
 
     if let questions = challenge.questions, questions > 0 {
@@ -681,7 +681,7 @@ private struct WeekChallengeRow: View {
       parts.append(studyDuration(minutes: minutes))
     }
 
-    return parts.joinedFacts()
+    return parts
   }
 }
 
@@ -719,7 +719,8 @@ private struct WeekDayMark: View {
     .accessibilityLabel(label(weekday: weekday))
     .popover(isPresented: $isShown, arrowEdge: .top) {
       TodayFactsPopover(
-        title: weekday.labelCased(), facts: time, factsStyle: Color(.foreground), note: note,
+        title: weekday.labelCased(), facts: time.map { [$0] }, factsStyle: Color(.foreground),
+        note: note,
         challenge: challengeLine)
     }
   }

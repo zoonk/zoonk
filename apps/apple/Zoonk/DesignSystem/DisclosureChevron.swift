@@ -35,7 +35,7 @@ extension View {
   /// A button row drawn like a `NavigationLink`: the content, then the chevron.
   func disclosureChevron() -> some View {
     HStack(spacing: 12) {
-      self
+      self.environment(\.rowHasChevron, true)
       DisclosureChevron()
     }
   }

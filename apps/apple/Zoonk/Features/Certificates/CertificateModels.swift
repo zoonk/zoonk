@@ -146,14 +146,14 @@ extension CertificateFacts {
 
   /// "Beginner · Nov 3, 2026", or only the date when the name holds the level. A wrapped line
   /// breaks before the date, never inside it.
-  var rowLine: String {
-    let date = completedOnDay.replacingOccurrences(of: " ", with: "\u{00A0}")
+  var rowLine: [String] {
+    let date = completedOnDay
 
     guard title != nil, let courseLevel else {
-      return date
+      return [date]
     }
 
-    return [String(localized: courseLevel.localizedTitle), date].joinedFacts()
+    return [String(localized: courseLevel.localizedTitle), date]
   }
 
   /// "Nov 3, 2026".

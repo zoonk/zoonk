@@ -6,6 +6,9 @@ import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.SyllabusTopic
 
+internal val List<SyllabusChapter>.doneChapters: List<SyllabusChapter>
+    get() = filter { it.state == SyllabusChapter.State.DONE }
+
 /** Language units and single-course paths keep the plan's path; exams and multi-module plans have subject pages. */
 val Syllabus.hasSubjectPages: Boolean
     get() = goal.kind != GoalContentGoal.Kind.LANGUAGE && (kind == Syllabus.Kind.NOTICE || subjects.size > 1)
