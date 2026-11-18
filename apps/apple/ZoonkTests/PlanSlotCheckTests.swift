@@ -149,6 +149,11 @@ final class PlanSlotCheckTests: XCTestCase {
       .zoonkStyles())
     window.frame = frame(from)
     try await waitForLayout(in: window)
+    // The coverage card works out its time as it opens, and its button waits for that.
+    let finding = String(localized: "Finding the time that covers everything…", table: "Plan")
+    try await waitForTestCondition("The card is still working") {
+      !self.spoken(in: window).contains { $0.contains(finding) }
+    }
 
     try await activate(String(localized: tap, table: "Plan"), in: window)
     try await api.waitForHeldCall()
