@@ -63,8 +63,9 @@ enum FocusTestCopy {
     comment: "Applies the focus the Focus test proposes to the plan")
 
   static let seeResult = LocalizedStringResource(
-    "End test and see result", table: "FocusTest",
-    comment: "Ends the Focus test with the answers given so far and shows its result")
+    "See my result", table: "FocusTest",
+    comment:
+      "Button that ends the Focus test with the answers given so far and shows its result.")
 
   static let takeTest = LocalizedStringResource(
     "Take the Focus test", table: "FocusTest",
