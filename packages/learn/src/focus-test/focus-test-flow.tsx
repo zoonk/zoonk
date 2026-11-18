@@ -13,7 +13,7 @@ import { type FocusTestPlanActions } from "./focus-test-proposal";
 import { FocusTestCheckpoint, type FocusTestHost } from "./focus-test-result";
 import { FocusTestEnded, FocusTestInvitation, FocusTestResume } from "./focus-test-screens";
 import { useFocusTest } from "./use-focus-test";
-import { getSubjectName, useSeeResultLabel } from "./use-focus-test-texts";
+import { useSeeResultLabel } from "./use-focus-test-texts";
 
 function useWaitSkip({ answered, host }: { answered: boolean; host: FocusTestHost }) {
   const t = useExtracted();
@@ -60,7 +60,7 @@ function FocusTestQuestion({
             )
           : undefined
       }
-      subject={sitting.subject ? getSubjectName(sitting.subject) : subject}
+      subject={sitting.subject?.name ?? subject}
       total={sitting.questions}
       trueFalseLabels={phase.trueFalseLabels}
     />

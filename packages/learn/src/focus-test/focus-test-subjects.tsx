@@ -23,7 +23,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
-import { getSubjectName, useSubjectStateText } from "./use-focus-test-texts";
+import { useSubjectStateText } from "./use-focus-test-texts";
 
 export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
   return (
@@ -33,9 +33,7 @@ export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
           <li key={row.subject.key}>
             <ListRow>
               <ListRowContent>
-                <ListRowNumberedTitle number={index + 1}>
-                  {getSubjectName(row.subject)}
-                </ListRowNumberedTitle>
+                <ListRowNumberedTitle number={index + 1}>{row.subject.name}</ListRowNumberedTitle>
               </ListRowContent>
             </ListRow>
           </li>
