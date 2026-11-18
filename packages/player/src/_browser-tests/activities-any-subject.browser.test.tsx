@@ -24,7 +24,7 @@ describe("any-subject activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("Real value: 14")).toBeVisible();
-    await expect.element(page.getByText("in times", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Unit: times", { exact: true })).toBeVisible();
 
     await expect
       .element(page.getByText(/The usual world map stretches land near the poles/u))
