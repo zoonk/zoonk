@@ -258,7 +258,6 @@ function WeekendMinutes({
   onCheckedChange: (checked: boolean) => void;
   planChange: PlanChange;
 }) {
-  const t = useExtracted();
   const shape = useWeekShape();
   const current = shape.weekend ?? shape.weekdays;
   const weekend = useTappedChoice(current);
@@ -285,10 +284,10 @@ function WeekendMinutes({
         }
       }}
     >
-      {(on) => (
+      {(on, label) => (
         <TimeSelect
           disabled={isPending || !on}
-          label={t("Weekend time")}
+          label={label}
           onChange={(minutes) => void setWeekend(minutes)}
           saves
           value={on ? weekend.shown : shape.weekdays}
