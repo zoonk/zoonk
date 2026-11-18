@@ -175,7 +175,7 @@ async function UserHeader({ userId }: { userId: string }) {
         name !== user.email && user.email,
         user.role === "admin" && "Admin",
         capitalize(subscriptions.active?.plan ?? "free"),
-        lastActive && `Active ${formatDate(lastActive)}`,
+        lastActive && `Last active ${formatDate(lastActive)}`,
         `Joined ${formatDate(user.createdAt)}`,
       ]}
       mark={<AdminUserAvatar size="default" user={user} />}

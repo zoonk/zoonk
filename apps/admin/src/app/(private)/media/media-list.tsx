@@ -87,7 +87,9 @@ function MediaCard({ asset }: { asset: ListedMediaAsset }) {
         <MediaPreview asset={asset} size="card" />
       </span>
       <span className="flex min-w-0 flex-col">
-        <span className="truncate text-sm font-medium">{asset.usedIn ?? "Not in a lesson"}</span>
+        <span className="line-clamp-2 text-sm font-medium">
+          {asset.usedIn ?? "Not in a lesson"}
+        </span>
         <span className="text-muted-foreground truncate text-xs">
           {[
             asset.language ? languageName(asset.language) : null,

@@ -172,6 +172,7 @@ export function WeekTiles({
         change={{ ...week.spend, format: formatUsd, rise: "watch" }}
         href="/ai"
         icon={<CpuIcon />}
+        plainValue
         title="AI spend"
         trend={trendOf(week.spend, "AI spend")}
         value={formatUsd(week.spend.current)}

@@ -1,7 +1,9 @@
 "use client";
 
 import { AdminConfirmDialog } from "@/components/admin-confirm-dialog";
+import { ROW_BUTTON_CLASS } from "@/lib/row-button-class";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { eraseMemoryFactAction } from "./_actions/erase-memory-fact";
 
 /** Erasing is final, unlike the learner's own delete, which keeps 30 days of undo. */
@@ -14,7 +16,7 @@ export function EraseMemoryFactButton({ factId, userId }: { factId: string; user
       destructive
       title="Erase this fact?"
       trigger={
-        <Button className="shrink-0" size="sm" variant="outline">
+        <Button className={cn("shrink-0", ROW_BUTTON_CLASS)} size="sm" variant="outline">
           Erase
         </Button>
       }

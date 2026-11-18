@@ -27,7 +27,7 @@ export function formatChartValue({
     return formatUsd(value, "detailed");
   }
 
-  return value.toLocaleString("en", { maximumFractionDigits: 1 });
+  return Math.round(value).toLocaleString("en");
 }
 
 export function formatChartTick({

@@ -15,7 +15,7 @@ export function AdminSection({
   action?: React.ReactNode;
   children: React.ReactNode;
   description?: React.ReactNode;
-  title: string;
+  title: React.ReactNode;
   titleClassName?: string;
 }) {
   return (

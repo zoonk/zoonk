@@ -114,20 +114,32 @@ function describeEffect({
   }
 }
 
+/** A change to what counts as right, which staff should look at before approving. */
+function isWarning(effect: ContentFixDetail["effects"][number]): boolean {
+  return effect.kind === "answerKeyChanged" || effect.kind === "itemReplaced";
+}
+
+/** One effect is a sentence; several are a list. */
 export function ContentFixEffects({
   fix,
 }: {
   fix: Pick<ContentFixDetail, "effects" | "rowLabels">;
 }) {
-  if (fix.effects.length === 0) {
+  const [only, ...others] = fix.effects;
+
+  if (!only) {
     return <AdminSectionEmpty>Nothing else changes.</AdminSectionEmpty>;
+  }
+
+  if (others.length === 0 && !isWarning(only)) {
+    return <p className="text-sm">{describeEffect({ effect: only, rowLabels: fix.rowLabels })}</p>;
   }
 
   return (
     <ul className="flex flex-col gap-2 text-sm">
       {fix.effects.map((effect) => (
         <li className="flex gap-2" key={JSON.stringify(effect)}>
-          {effect.kind === "answerKeyChanged" || effect.kind === "itemReplaced" ? (
+          {isWarning(effect) ? (
             <TriangleAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
           ) : (
             <span aria-hidden="true" className="text-muted-foreground w-4 shrink-0 text-center">
