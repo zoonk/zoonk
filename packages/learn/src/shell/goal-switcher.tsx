@@ -215,6 +215,7 @@ export function GoalSwitcher({
   const selected = followed.find((goal) => goal.id === selectedId);
 
   const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
+  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Start a goal");
 
   if (!hasGoalOptions && explanations.length === 0) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
@@ -244,13 +245,13 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected && (
+          {(selected || !hasGoalOptions) && (
             <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
-              <GoalMark goal={selected} />
+              {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
             </span>
           )}
           <span className="min-w-0 flex-1 truncate text-left">
-            {selected?.displayName ?? t("Your goals")}
+            {selected?.displayName ?? unselectedLabel}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
           {selected && <GoalCountryName goal={selected} />}
