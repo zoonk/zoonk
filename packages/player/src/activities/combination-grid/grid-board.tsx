@@ -88,7 +88,7 @@ function CellButton({
         "focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
         isCompact ? "min-h-11 rounded-lg" : "min-h-18",
         !value && !isActive && "border-dashed",
-        isActive && ACTIVITY_LINE_CLASS.active,
+        isActive && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft"),
       )}
       onClick={onSelect}
       type="button"
