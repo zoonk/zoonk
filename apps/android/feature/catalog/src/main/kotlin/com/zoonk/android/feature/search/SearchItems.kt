@@ -144,7 +144,7 @@ internal fun searchGroups(
                 stringResource(R.string.search_group_help),
                 if (showsAccount) {
                     listOf(
-                        SearchItem("blog", stringResource(R.string.search_blog), SearchAction.Open(AppRoute.Blog), R.drawable.ic_newsmode),
+                        SearchItem("blog", stringResource(R.string.search_blog), SearchAction.Open(AppRoute.Blog), R.drawable.ic_newspaper),
                         sendFeedback,
                         SearchItem(
                             "support",
