@@ -65,7 +65,7 @@ export function MessageActions({
           }
           size="bar"
         >
-          Reply<span className="max-sm:hidden"> by email</span>
+          Reply by email
         </Button>
       ) : null}
 

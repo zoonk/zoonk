@@ -1,5 +1,6 @@
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type Route } from "next";
 import Link from "next/link";
 import { DetailFieldsSkeleton } from "./detail-field";
@@ -9,17 +10,19 @@ export function AdminSection({
   children,
   description,
   title,
+  titleClassName,
 }: {
   action?: React.ReactNode;
   children: React.ReactNode;
   description?: React.ReactNode;
   title: string;
+  titleClassName?: string;
 }) {
   return (
-    <section className="flex min-w-0 flex-col gap-3">
+    <section className="flex min-w-0 flex-col gap-3 [&>dl>div:first-child]:pt-0">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className="text-sm leading-5 font-semibold">{title}</h2>
+          <h2 className={cn("text-sm leading-5 font-semibold", titleClassName)}>{title}</h2>
           {description ? (
             <p className="text-muted-foreground text-compact text-pretty">{description}</p>
           ) : null}

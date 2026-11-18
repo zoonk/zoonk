@@ -12,8 +12,11 @@ function getTrendExtremes(dataPoints: MetricTrendDataPoint[]) {
     return;
   }
 
+  const low = validPoints.reduce((lowest, point) => (point.value < lowest.value ? point : lowest));
+
   return {
-    low: validPoints.reduce((lowest, point) => (point.value < lowest.value ? point : lowest)),
+    hasUniqueLow: validPoints.filter((point) => point.value === low.value).length === 1,
+    low,
     observedPointCount: validPoints.length,
     peak: validPoints.reduce((highest, point) => (point.value > highest.value ? point : highest)),
   };
@@ -44,20 +47,22 @@ export function AdminMetricTrendChart({
 }) {
   const extremes = getTrendExtremes(dataPoints);
 
-  if (!extremes) {
+  if (
+    !extremes ||
+    (valueFormat === "number" && extremes.low.value === 0 && extremes.peak.value === 0)
+  ) {
     return (
       <figure
         aria-label={`${label} trend`}
         className="text-muted-foreground flex min-h-80 flex-1 items-center justify-center text-sm"
       >
-        No data in this period
+        There is no data in this period.
       </figure>
     );
   }
 
   const isFlatTrend = extremes.low.value === extremes.peak.value;
   const hasCompleteTrend = dataPoints.every((dataPoint) => dataPoint.value !== null);
-  const hasNothingToDraw = extremes.peak.value === 0;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5">
@@ -75,20 +80,22 @@ export function AdminMetricTrendChart({
         ) : (
           <>
             <TrendAnnotation format={valueFormat} label="Peak" point={extremes.peak} />
-            <TrendAnnotation format={valueFormat} label="Low" point={extremes.low} />
+            <TrendAnnotation
+              format={valueFormat}
+              label="Low"
+              point={extremes.low}
+              showDate={extremes.hasUniqueLow}
+            />
           </>
         )}
       </p>
 
-      {/* Every value is 0: the line above says so, and bars of no height would be an empty frame. */}
-      {hasNothingToDraw ? null : (
-        <AdminBarChart
-          className="h-88 w-full sm:h-120 lg:h-[min(54vh,34rem)]"
-          format={valueFormat}
-          label={`${label} trend`}
-          points={dataPoints}
-        />
-      )}
+      <AdminBarChart
+        className="h-88 w-full sm:h-120 lg:h-[min(54vh,34rem)]"
+        format={valueFormat}
+        label={`${label} trend`}
+        points={dataPoints}
+      />
     </div>
   );
 }

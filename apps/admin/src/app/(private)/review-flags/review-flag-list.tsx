@@ -90,7 +90,7 @@ export async function ReviewFlagList() {
                     <FlaggedContent flag={flag} />
                   </div>
                   {/* 3 px up, so the 30 px buttons' labels share the first line's baseline, as in a table row. */}
-                  <div className="-mt-0.75">
+                  <div className="-mt-0.75 max-sm:ml-auto">
                     <ReviewFlagActions flagId={flag.id} />
                   </div>
                 </li>

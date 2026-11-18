@@ -14,7 +14,7 @@ const COLUMNS: AdminTableColumn[] = [
   { align: "right", label: "Lessons" },
   { align: "right", label: "Days" },
   { align: "right", label: "Brain Power" },
-  { label: "Last completed" },
+  { align: "right", label: "Last completed" },
   { align: "right", label: "Joined" },
 ];
 
@@ -46,7 +46,7 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
       <TableCell numeric>{user.completedLessons.toLocaleString("en")}</TableCell>
       <TableCell numeric>{user.learningDays.toLocaleString("en")}</TableCell>
       <TableCell numeric>{user.totalBrainPower.toLocaleString("en")}</TableCell>
-      <TableCell>{formatLearnerDate(user.lastLearningDate)}</TableCell>
+      <TableCell className="text-right">{formatLearnerDate(user.lastLearningDate)}</TableCell>
       <TableCell>{formatDate(user.createdAt)}</TableCell>
     </AdminTableRow>
   );

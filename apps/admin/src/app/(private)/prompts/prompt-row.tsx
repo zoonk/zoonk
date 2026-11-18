@@ -30,8 +30,10 @@ function PromptReadingCell({ prompt }: { prompt: ListedPrompt }) {
         </span>
       ) : null}
       <span className="min-w-0 self-baseline">
-        <span className="text-foreground block truncate">{summary.text}</span>
-        <span className="block truncate text-xs">{summary.label}</span>
+        <span className="text-foreground block wrap-anywhere whitespace-normal">
+          {summary.text}
+        </span>
+        <span className="block text-xs wrap-anywhere whitespace-normal">{summary.label}</span>
       </span>
     </span>
   );

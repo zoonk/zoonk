@@ -24,7 +24,7 @@ export const listUserGoals = cacheAdminData(async (userId: string) => {
   const itemCounts = await prisma.planItem.groupBy({
     _count: { id: true },
     by: ["planId", "status"],
-    where: { planId: { in: planIds } },
+    where: { kind: "lesson", planId: { in: planIds }, status: { not: "testedOut" } },
   });
 
   const countItems = (planId: string, statuses?: readonly string[]) =>
@@ -34,8 +34,8 @@ export const listUserGoals = cacheAdminData(async (userId: string) => {
 
   return goals.map((goal) => ({
     ...goal,
-    doneItems: goal.plan ? countItems(goal.plan.id, ["done", "testedOut"]) : 0,
-    totalItems: goal.plan ? countItems(goal.plan.id) : 0,
+    lessonsDone: goal.plan ? countItems(goal.plan.id, ["done"]) : 0,
+    lessonsTotal: goal.plan ? countItems(goal.plan.id) : 0,
   }));
 });
 
