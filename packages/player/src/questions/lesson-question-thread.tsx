@@ -148,7 +148,7 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
     >
       <MessageScrollerContent role="presentation">
         <EarlierTurns />
-        {state.questions.map((question) => (
+        {state.questions.map((question, index) => (
           <MessageScrollerItem
             className="[content-visibility:visible]"
             key={question.id}
@@ -160,6 +160,7 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
                 question.planChange &&
                 renderPlanChange?.({ change: question.planChange, onAnswered: answerPlanChange })
               }
+              previous={state.questions[index - 1] ?? null}
               question={question}
               toolOffer={question.toolOffer && renderToolOffer?.(question.toolOffer)}
             />
