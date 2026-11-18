@@ -171,7 +171,8 @@ enum LessonGrading {
 
     var rounded = Decimal()
     NSDecimalRound(&rounded, &decimal, places, .plain)
-    return NSDecimalNumber(decimal: rounded).doubleValue
+    // `NSDecimalNumber.doubleValue` lands beside the nearest double (0.14 reads 0.13999999999999999).
+    return Double(rounded.description) ?? value
   }
 
   /// Core's `withinTolerance`: relative slack takes rounded boundaries without overwhelming a
