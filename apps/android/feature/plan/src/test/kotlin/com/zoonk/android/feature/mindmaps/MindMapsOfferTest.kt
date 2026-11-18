@@ -422,18 +422,24 @@ class MindMapsOfferTest {
         show()
 
         waitFor("Lenses")
-        compose.onNodeWithText("Without a map").performClick()
+        compose.onNodeWithText("Show fewer chapters").performClick()
         compose.waitForIdle()
         compose.onNodeWithText("Lenses").assertDoesNotExist()
     }
 
+    /** As main: the heading counts every chapter without a map, and the fold counts the ones it shows. */
     @Test
     fun otherChaptersStayFoldedWithNothingBeingMade() {
         api.mindMaps = { fresh }
         show()
 
         waitFor("Without a map")
+        compose.onNodeWithText("3 chapters").assertExists()
         compose.onNodeWithText("Optics").assertDoesNotExist()
+
+        compose.onNodeWithText("1 more chapter").performClick()
+        waitFor("Optics")
+        compose.onNodeWithText("Show fewer chapters").assertExists()
     }
 
     /** As main: with no chapter ready to make, the chapters that need their lessons first are listed, not folded. */
