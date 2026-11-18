@@ -2,7 +2,6 @@
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { measureDrawingLabel } from "../_utils/drawing-label";
-import { MAP_STREET_SAMPLE_STEP } from "./map-label-geometry";
 import { type MapBox, type MapPoint } from "./map-viewport";
 
 type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
@@ -33,21 +32,14 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
 
       const streets = Object.fromEntries(
         [...paths].map((street): [string, readonly MapPoint[]] => {
-          const bounds = street.getBBox();
-
-          const steps = Math.max(
-            1,
-            Math.ceil((bounds.width + bounds.height) / pixelSize / MAP_STREET_SAMPLE_STEP),
+          // The map generator emits M/L vertices. Arc-length samples can cut across a bend.
+          const vertices = (street.getAttribute("d") ?? "").matchAll(
+            /[ML](?<x>-?\d+(?:\.\d+)?),(?<y>-?\d+(?:\.\d+)?)/gu,
           );
-
-          const length = street.getTotalLength();
 
           return [
             street.dataset.street ?? "",
-            Array.from({ length: steps + 1 }, (_, step) => {
-              const point = street.getPointAtLength((length * step) / steps);
-              return { x: point.x, y: point.y };
-            }),
+            Array.from(vertices, ([, x, y]) => ({ x: Number(x), y: Number(y) })),
           ];
         }),
       );
