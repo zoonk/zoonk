@@ -116,6 +116,7 @@ internal class EndedCall(
 internal fun ConversationLive(
     conversation: LanguageConversation,
     call: LiveCallState,
+    continuing: Boolean,
     actions: LiveCallActions,
     ended: EndedCall? = null,
 ) {
@@ -125,8 +126,7 @@ internal fun ConversationLive(
     val goalsMeta = stringResource(R.string.conversation_goals_met, metCount, conversation.objectives.size)
     val character = conversation.character
 
-    // A dropped call ringing again has what was said to lose, as a live one does.
-    val asksFirst = ended == null && (call.phase == LiveCallPhase.Live || call.reconnecting)
+    val asksFirst = ended == null && !ringsFirst(call.phase, continuing)
     BackHandler(enabled = !asksFirst && ended == null, onBack = actions.onEnd)
     val endFirst =
         if (asksFirst) {

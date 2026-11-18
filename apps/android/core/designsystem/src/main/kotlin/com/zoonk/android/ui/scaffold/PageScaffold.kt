@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -74,7 +78,14 @@ fun PageScaffold(
                     // the fold, so what they opened stays open as the book folds.
                     val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
                     var span by remember { mutableStateOf<PageSpan?>(null) }
-                    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+                    // The bar lays out in the room the page's content has: clear of the side system bars the page still receives,
+                    // not of one the shell's rail already took. The content centers its column there, and the bar keeps to it.
+                    BoxWithConstraints(
+                        Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)).onPageSpan {
+                            span =
+                                it
+                        },
+                    ) {
                         // Across a fold the column is the page before it.
                         val columnInset =
                             if (columnWidth == Dp.Unspecified ||

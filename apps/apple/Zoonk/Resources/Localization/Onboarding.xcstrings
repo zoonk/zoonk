@@ -19451,7 +19451,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch zu bestätigen"
+            "value" : "Noch nicht bestätigt"
           }
         },
         "es" : {
@@ -19481,7 +19481,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미정"
+            "value" : "추후 확정"
           }
         },
         "pl" : {

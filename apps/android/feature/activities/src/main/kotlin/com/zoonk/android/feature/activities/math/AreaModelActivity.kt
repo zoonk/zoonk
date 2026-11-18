@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -122,12 +123,11 @@ private fun AreaGrid(
     val leftLabels = heights.maxOf { measurer.measure(format(it), edgeStyle).size.width }
     val gap = with(density) { EDGE_GAP.toPx() }
     val top = edgeHeight + gap + with(density) { PILL_LONG.toPx() / 2 }
-    val left = leftLabels + gap + with(density) { PILL_SHORT.toPx() }
+    // Fixed sides, as main's, so the figure keeps its proportions; the left grows only for row numbers wider than its room.
+    val side = with(density) { GRID_SIDE.toPx() }
+    val left = maxOf(side, leftLabels + gap + with(density) { PILL_SHORT.toPx() })
     val bottom = with(density) { GRID_BOTTOM.toPx() }
-    // The grid sits centered in its card, as far from the right as the row numbers take on the left.
-    val right = left
-    val cellStyles =
-        listOf(MaterialTheme.typography.headlineSmall, MaterialTheme.typography.bodyLarge, MaterialTheme.typography.labelMedium)
+    val right = side
 
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val drawnWidth = constraints.maxWidth - left - right
@@ -151,20 +151,11 @@ private fun AreaGrid(
                             Triple(Offset(columns[column] + cellGap / 2, rows[row] + cellGap / 2), size, format(columnPart * rowPart))
                         }
                     }
-                val measure = { text: String, style: TextStyle ->
-                    measurer.measure(text, style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink))
+                // Every number in the figure, the sides' lengths and the parts' areas, takes one size; a part too small for its
+                // number leaves it out.
+                val fits = { size: Size, label: TextLayoutResult ->
+                    label.size.width <= size.width - CELL_PADDING.toPx() * 2 && label.size.height <= size.height - CELL_PADDING.toPx() * 2
                 }
-                val fits = { size: Size, text: String, style: TextStyle ->
-                    measure(text, style).size.let {
-                        it.width <= size.width - CELL_PADDING.toPx() * 2 && it.height <= size.height - CELL_PADDING.toPx() * 2
-                    }
-                }
-                // Every part's number takes one size, the largest that fits the smallest part, so no part reads as weightier.
-                val shared =
-                    cellStyles
-                        .drop(cells.maxOf { (_, size) -> cellStyleIndex(minOf(size.width, size.height)) })
-                        .firstOrNull { style -> cells.all { (_, size, text) -> fits(size, text, style) } }
-                        ?: cellStyles.last()
                 cells.forEachIndexed { index, (corner, size, text) ->
                     drawRoundRect(
                         tones[(index / widths.size + index % widths.size) % tones.size],
@@ -172,9 +163,13 @@ private fun AreaGrid(
                         Size(maxOf(size.width, 1f), maxOf(size.height, 1f)),
                         CornerRadius(CELL_RADIUS.toPx()),
                     )
-                    if (fits(size, text, shared)) {
-                        val it = measure(text, shared)
-                        drawText(it, topLeft = corner + Offset((size.width - it.size.width) / 2, (size.height - it.size.height) / 2))
+                    val label = measurer.measure(text, edgeStyle.copy(color = ink))
+                    if (fits(size, label)) {
+                        drawText(
+                            label,
+                            topLeft =
+                                corner + Offset((size.width - label.size.width) / 2, (size.height - label.size.height) / 2),
+                        )
                     }
                 }
                 widths.forEachIndexed { index, part ->
@@ -325,14 +320,6 @@ private fun CutHandle(
     }
 }
 
-/** Main's cell text: big in big cells, small in small ones; a smaller one where a long product or large text wouldn't fit. */
-private fun DrawScope.cellStyleIndex(size: Float): Int =
-    when {
-        size >= BIG_CELL.toPx() -> 0
-        size >= MEDIUM_CELL.toPx() -> 1
-        else -> 2
-    }
-
 private fun DrawScope.centered(
     measurer: TextMeasurer,
     text: String,
@@ -350,13 +337,12 @@ private val EDGE_GAP = 10.dp
 private val PILL_LONG = 26.dp
 private val PILL_SHORT = 12.dp
 private val GRID_BOTTOM = 4.dp
+private val GRID_SIDE = 44.dp
 private val MIN_GRID = 140.dp
 private val MAX_GRID = 260.dp
 private val CELL_GAP = 2.dp
 private val CELL_RADIUS = 6.dp
 private val CELL_PADDING = 2.dp
-private val BIG_CELL = 64.dp
-private val MEDIUM_CELL = 36.dp
 private val BRACKET_GAP = 12.dp
 private val BRACKET_TICK = 6.dp
 private val BRACKET_WIDTH = 1.5.dp

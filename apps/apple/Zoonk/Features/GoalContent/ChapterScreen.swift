@@ -112,8 +112,8 @@ private struct ChapterContent: View {
   let map: Resource<ChapterMindMap>
 
   var body: some View {
-    // Beside the lessons, the map sits with what the chapter leaves for reference, as on the web's
-    // sidebar; on one pane it comes right under the header, where it's seen first.
+    // As on the web: beside the lessons the map leads "For reference"; on one pane it follows the
+    // summary.
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
@@ -122,15 +122,14 @@ private struct ChapterContent: View {
     } secondary: {
       ZoonkList {
         practiceSection
-        referenceSection(withMap: true)
+        referenceSection(mapFirst: true)
       }
     } single: {
       ZoonkList {
         header
-        mindMapSection
         lessonsSection
         practiceSection
-        referenceSection(withMap: false)
+        referenceSection(mapFirst: false)
       }
     }
     .bottomBar {
@@ -164,13 +163,6 @@ private struct ChapterContent: View {
         facts: facts
       )
     }
-  }
-
-  private var mindMapSection: some View {
-    MindMapRowSection(
-      goalId: goal.id, map: map, place: .chapter,
-      placeholder: Text(
-        "Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page"))
   }
 
   @ViewBuilder
@@ -245,11 +237,11 @@ private struct ChapterContent: View {
   }
 
   @ViewBuilder
-  private func referenceSection(withMap: Bool) -> some View {
-    let shownMap = withMap && map.value?.status != .unavailable ? map : nil
+  private func referenceSection(mapFirst: Bool) -> some View {
+    let shownMap = map.value?.status != .unavailable ? map : nil
 
     if shownMap != nil || !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
-      ChapterReferenceSection(goalId: goal.id, chapter: chapter, map: shownMap)
+      ChapterReferenceSection(goalId: goal.id, chapter: chapter, map: shownMap, mapFirst: mapFirst)
     }
   }
 
@@ -362,20 +354,22 @@ private struct ChapterReferenceSection: View {
 
   let goalId: String
   let chapter: GoalChapter
-  /// Set where the section holds the map too.
+  /// Nil when the chapter gets no map.
   let map: Resource<ChapterMindMap>?
+  let mapFirst: Bool
 
   var body: some View {
     Section {
-      if let map {
-        MindMapRowContent(
-          goalId: goalId, map: map, place: .chapter,
-          placeholder: Text(
-            "Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page"))
+      if mapFirst {
+        mapRow
       }
 
       if !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
         summary
+      }
+
+      if !mapFirst {
+        mapRow
       }
     } header: {
       SectionTitle(
@@ -385,6 +379,16 @@ private struct ChapterReferenceSection: View {
     }
     // The summary's label starts where the mind map's does, after its thumbnail.
     .environment(\.rowMarkWidth, map == nil ? nil : MindMapSlotMetrics.side)
+  }
+
+  @ViewBuilder
+  private var mapRow: some View {
+    if let map {
+      MindMapRowContent(
+        goalId: goalId, map: map, place: .chapter,
+        placeholder: Text(
+          "Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page"))
+    }
   }
 
   private var summary: some View {

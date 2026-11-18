@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -39,18 +37,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
@@ -177,7 +171,7 @@ fun TaskScaffold(
     var isConfirmingExit by rememberSaveable { mutableStateOf(false) }
     val leave = { if (exitConfirmation == null) onClose() else isConfirmingExit = true }
     val focus = rememberTitleFocus()
-    var noteHeight by remember { mutableIntStateOf(0) }
+    val noteRoom = rememberBarNoteRoom()
 
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
@@ -185,11 +179,11 @@ fun TaskScaffold(
         WithStatusAction(enabled = bottomBar == null) { retry ->
             Scaffold(
                 topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
-                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }) { noteHeight = it } } },
+                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }, noteRoom) } },
                 snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
                 content = { padding ->
-                    // The note draws over the content just above the bar, so the content's end scrolls clear of it.
-                    val clear = padding.withBottom(with(LocalDensity.current) { noteHeight.toDp() })
+                    // The note draws over the content just above the bar, so the content's end keeps its room clear.
+                    val clear = padding.plusBottom(noteRoom.height)
                     CompositionLocalProvider(LocalTitleFocus provides focus) { content(clear) }
                 },
             )
@@ -291,18 +285,7 @@ private val ASIDE_MARGIN = 24.dp
 private fun TaskBottomBar(
     content: @Composable () -> Unit,
     note: (@Composable () -> Unit)? = null,
-    onNoteHeight: ((Int) -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
 ) {
-    BottomBar(note = note, columnMargin = TASK_MARGIN, onNoteHeight = onNoteHeight) { content() }
-}
-
-@Composable
-private fun PaddingValues.withBottom(extra: Dp): PaddingValues {
-    val direction = LocalLayoutDirection.current
-    return PaddingValues(
-        start = calculateStartPadding(direction),
-        top = calculateTopPadding(),
-        end = calculateEndPadding(direction),
-        bottom = calculateBottomPadding() + extra,
-    )
+    BottomBar(note = note, columnMargin = TASK_MARGIN, noteRoom = noteRoom) { content() }
 }

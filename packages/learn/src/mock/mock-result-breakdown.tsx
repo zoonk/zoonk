@@ -9,9 +9,10 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ShowMore } from "../_components/show-more";
+import { useEffect, useId, useRef, useState } from "react";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatRange } from "../_utils/range";
+import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
 import { useMockNumber } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
@@ -37,43 +38,56 @@ export function useMockRange() {
 
 const TOPICS_SHOWN = 5;
 
-function TopicList({ topics }: { topics: readonly Topic[] }) {
-  const rightOf = useRightOf();
-
-  return (
-    <ul className="flex flex-col">
-      {topics.map((topic) => (
-        <li
-          className="border-border flex min-h-10 items-center justify-between gap-3 border-b py-2 text-sm last:border-b-0"
-          key={topic.skillId}
-        >
-          <span className="text-muted-foreground min-w-0">{topic.name}</span>
-          <span className="text-foreground shrink-0 font-mono text-xs tabular-nums">
-            {rightOf(topic)}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function TopicRows({ topics }: { topics: readonly Topic[] }) {
   const t = useExtracted();
+  const rightOf = useRightOf();
   const sorted = topics.toSorted(byShare);
-  const first = sorted.slice(0, TOPICS_SHOWN);
-  const rest = sorted.slice(TOPICS_SHOWN);
+  const hidden = sorted.length - TOPICS_SHOWN;
+  const [open, setOpen] = useState(false);
+  const listId = useId();
+  const listRef = useRef<HTMLUListElement>(null);
+  const focusOnOpen = useRef(false);
+
+  useEffect(() => {
+    if (open && focusOnOpen.current) {
+      focusRevealedRow(listRef.current?.children[TOPICS_SHOWN]);
+    }
+
+    focusOnOpen.current = false;
+  }, [open]);
+
+  const toggle = () => {
+    focusOnOpen.current = !open;
+    setOpen(!open);
+  };
 
   return (
     <>
-      <TopicList topics={first} />
-      {rest.length > 0 && (
-        <ShowMore
-          label={t("{count, plural, one {# more topic} other {# more topics}}", {
-            count: rest.length,
-          })}
-        >
-          <TopicList topics={rest} />
-        </ShowMore>
+      <ul className="flex flex-col" id={listId} ref={listRef}>
+        {(open ? sorted : sorted.slice(0, TOPICS_SHOWN)).map((topic) => (
+          <li
+            className="border-border focus-visible:ring-ring/50 flex min-h-10 items-center justify-between gap-3 border-b py-2 text-sm outline-none last:border-b-0 focus-visible:ring-[3px]"
+            key={topic.skillId}
+          >
+            <span className="text-muted-foreground min-w-0">{topic.name}</span>
+            <span className="text-foreground shrink-0 font-mono text-xs tabular-nums">
+              {rightOf(topic)}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {hidden > 0 && (
+        <FoldRow
+          controls={listId}
+          done={false}
+          label={
+            open
+              ? t("Show less")
+              : t("{count, plural, one {# more topic} other {# more topics}}", { count: hidden })
+          }
+          onToggle={toggle}
+          open={open}
+        />
       )}
     </>
   );

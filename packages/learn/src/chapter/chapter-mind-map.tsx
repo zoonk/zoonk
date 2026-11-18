@@ -14,10 +14,10 @@ type ChapterMap = { plus: boolean; request: MindMapRequest; view: ChapterMindMap
 
 /**
  * The page's sidebar sits beside it from this width (`PageWithAside`). Narrower, the sidebar falls
- * below the lessons, so the map moves up under the header, where it's seen first.
+ * below the lessons, so the map joins the "For reference" rows instead.
  */
 const NARROW_ONLY_CLASS = "min-[72rem]:hidden";
-export const WIDE_ONLY_CLASS = "hidden min-[72rem]:flex";
+const WIDE_ONLY_CLASS = "hidden min-[72rem]:flex";
 
 const ChapterMapContext = createContext<ChapterMap | null>(null);
 
@@ -58,7 +58,7 @@ export function useHasAsideMap(): boolean {
   return useShownMap() !== null;
 }
 
-/** Under the header on narrow screens. */
+/** In "For reference" on narrow screens, where the aside's picture isn't. */
 export function ChapterMapRow() {
   const map = useShownMap();
 

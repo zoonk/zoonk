@@ -141,11 +141,31 @@ struct MockClock: View {
 }
 
 extension MockRun {
-  /// The one line over a mock step's buttons: what didn't go through first, then what it waits on.
   var barNote: BarNote? {
+    Self.barNote(failed: failed, save: queue.status, slow: slow) { [queue] in queue.retryNow() }
+  }
+
+  /// The one line over a mock step's buttons: an answer that didn't get through, then a step that
+  /// didn't, then what it waits on. A step that timed out waiting on an answer that keeps failing
+  /// is that one failure, so the answer's own note and its "Try again" stay.
+  static func barNote(
+    failed: Bool, save: MockDraftQueue.Status, slow: Bool, retry: @escaping () -> Void
+  ) -> BarNote? {
+    switch save {
+    case .retrying, .resending:
+      return BarNote(
+        String(localized: "Try again before you move on", table: "Mock"),
+        tone: .waiting,
+        action: BarNote.Action(
+          label: Text("Try again", tableName: "Mock"), isEnabled: save == .retrying,
+          perform: retry))
+    case .saved, .saving, .refused:
+      break
+    }
+
     if failed {
       return BarNote(
-        queue.status == .saved
+        save == .saved
           ? String(
             localized: "That didn't go through. Your answers are saved. Try again in a moment.",
             table: "Mock", comment: "A mock step failed; the answers are saved")
@@ -154,20 +174,10 @@ extension MockRun {
             comment: "A mock step failed"))
     }
 
-    switch queue.status {
-    case .refused:
+    if save == .refused {
       return BarNote(
         LocalizedStringResource(
           "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
-    case .retrying:
-      return BarNote(
-        String(localized: "Try again before you move on", table: "Mock"),
-        tone: .waiting,
-        action: BarNote.Action(
-          label: Text("Try again", tableName: "Mock"),
-          perform: { [queue] in queue.retryNow() }))
-    case .saved, .saving:
-      break
     }
 
     return slow

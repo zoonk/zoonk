@@ -449,17 +449,19 @@ internal fun ColumnScope.PlacementQuestion(
 }
 
 /**
- * [start]'s width beside [end], which keeps [endMin]: its label's, or what's left, where the label wraps (main's
+ * [start]'s width beside [end], which keeps the larger of [endMin] and [endLongestWord], since main's action never
+ * shrinks below its longest word: its label's, or what's left, where the label wraps (main's
  * `TASK_WRAPPING_ACTION_CLASS`); null only when its [longestWord] wouldn't fit there.
  */
 internal fun besideStartWidth(
     label: Int,
     longestWord: Int,
+    endLongestWord: Int,
     width: Int,
     gap: Int,
     endMin: Int,
 ): Int? {
-    val room = width - gap - endMin
+    val room = width - gap - max(endMin, endLongestWord)
     return if (longestWord <= room) minOf(label, room) else null
 }
 
@@ -477,6 +479,7 @@ private fun BesideOrAbove(
             besideStartWidth(
                 label = start.maxIntrinsicWidth(constraints.maxHeight),
                 longestWord = start.minIntrinsicWidth(constraints.maxHeight),
+                endLongestWord = ends.first().minIntrinsicWidth(constraints.maxHeight),
                 width = width,
                 gap = gap,
                 endMin = END_MIN_WIDTH.roundToPx(),

@@ -29,7 +29,8 @@ import androidx.window.core.layout.WindowSizeClass
  * Main's `DetailLayout`: one column from the window's start margin, capped at a readable measure
  * (wider windows give it room, never wider margins), and [aside] beside it behind a hairline where
  * there's room, with [asideBar] pinned under it. Where there isn't, [content] is told so and shows
- * what the aside and its bar hold its own way, as main does under `lg`.
+ * what the aside and its bar hold its own way, as main does under `lg`. A [BottomBar] under both panes
+ * passes its [noteRoom], so each pane's scrolling content ends clear of the note drawn over them.
  */
 @Composable
 fun DetailPage(
@@ -38,9 +39,10 @@ fun DetailPage(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     asideBar: (@Composable () -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val padding = pagePadding()
+    val padding = pagePadding().plusBottom(noteRoom?.height ?: 0.dp)
 
     PageWithSupportingPane(
         modifier = modifier,

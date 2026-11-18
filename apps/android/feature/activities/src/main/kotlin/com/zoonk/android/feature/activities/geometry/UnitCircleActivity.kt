@@ -431,6 +431,7 @@ private fun UnitCircleWaves(
             yDomain = -1.0..1.0,
             yTicks = listOf(-1.0, 0.0, 1.0),
             xTicks = WAVE_TICKS,
+            xFallbackTicks = SPARSE_WAVE_TICKS,
             formatY = { formatNumber(it, locale) },
             formatX = formatAngle,
             area = WAVE_AREA,
@@ -575,7 +576,10 @@ private val WAVE_AREA = 76.dp
 private val WAVE_DOT = 5.dp
 private val WAVE_DASH = 2.dp
 private val WAVE_DASH_GAP = 5.dp
+
+// Turns, never round numbers: quarter turns, then half turns, then the whole turn as the labels grow.
 private val WAVE_TICKS = listOf(0.0, 90.0, 180.0, 270.0, 360.0)
+private val SPARSE_WAVE_TICKS = listOf(listOf(0.0, 180.0, 360.0), listOf(0.0, 360.0))
 private const val WAVE_SAMPLE = 5.0
 private const val WAVE_GUIDE_ALPHA = 0.4f
 private const val TANGENT_RAY_ALPHA = 0.6f

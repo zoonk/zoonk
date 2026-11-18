@@ -117,7 +117,7 @@ fun LessonWaitingScreen(
         }
 
     LessonFrame(
-        // A lesson that isn't there has no name to show, only the way out, as the player's bar does.
+        // A lesson that isn't there has no name or description to show, only its notice and the way out, as the player does.
         title = outline.title.takeUnless { refused == LessonRefusal.NotFound },
         onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else exits.close() },
         modifier = if (waits) Modifier.watchTouches(hold) else Modifier,
@@ -163,7 +163,7 @@ fun LessonWaitingScreen(
         LessonColumnBeforeFold {
             if (moment != null) {
                 WaitNote(moment, words)
-            } else {
+            } else if (refused != LessonRefusal.NotFound) {
                 Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             }
 

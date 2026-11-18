@@ -369,6 +369,7 @@ private fun Conversation(
             ConversationLive(
                 conversation = conversation,
                 call = callState,
+                continuing = call.continuing,
                 actions =
                     LiveCallActions(
                         onEnd = model::end,

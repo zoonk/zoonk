@@ -433,9 +433,8 @@ struct FinishedChapterSection: View {
   }
 }
 
-/// A chapter's map row read on its own, as on the chapter's page and where the chapter ends. Its
-/// title and slot hold its place while it loads, so nothing under it moves; a chapter that gets no
-/// map leaves no row.
+/// A chapter's map row read on its own, as where the chapter ends. Its title and slot hold its
+/// place while it loads, so nothing under it moves; a chapter that gets no map leaves no row.
 struct MindMapRowSection<Header: View>: View {
   let goalId: String
   let map: Resource<ChapterMindMap>
@@ -457,8 +456,7 @@ struct MindMapRowSection<Header: View>: View {
   }
 }
 
-/// The row inside a section of its own or one it shares, as the chapter page's "For reference"
-/// beside a wide page.
+/// The row inside a section of its own or one it shares, as the chapter page's "For reference".
 struct MindMapRowContent: View {
   let goalId: String
   let map: Resource<ChapterMindMap>
@@ -503,11 +501,5 @@ struct MindMapRowContent: View {
         }
       }
     }
-  }
-}
-
-extension MindMapRowSection where Header == EmptyView {
-  init(goalId: String, map: Resource<ChapterMindMap>, place: MindMapRow.Place, placeholder: Text) {
-    self.init(goalId: goalId, map: map, place: place, placeholder: placeholder) { EmptyView() }
   }
 }

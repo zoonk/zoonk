@@ -4779,6 +4779,7 @@ msgid "{count, plural, one {# more unit} other {# more units}}"
 msgstr "{count, plural, other {단원 #개 더}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "OGR3YM"
 msgid "Show fewer chapters"
 msgstr "챕터 접기"
@@ -5610,24 +5611,24 @@ msgid "Type instead"
 msgstr "글로 대화하기"
 
 #: src/language/conversation/call-intro-footer.tsx
-msgctxt "LonDf3"
-msgid "We can't use your microphone"
-msgstr "마이크를 사용할 수 없어요"
-
-#: src/language/conversation/call-intro-footer.tsx
-msgctxt "lLV_X_"
-msgid "Your microphone is off"
-msgstr "마이크가 꺼져 있어요"
-
-#: src/language/conversation/call-intro-footer.tsx
 msgctxt "aUNKrh"
 msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
 msgstr "마이크가 연결되어 있고 다른 앱에서 사용 중이지 않은지 확인해 보세요. 글을 입력해 대화할 수도 있어요."
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "마이크를 사용할 수 없어요"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"
 msgid "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing."
 msgstr "브라우저 설정에서 Zoonk의 마이크 사용을 허용해 {name}와(과) 말로 대화하거나, 글로 대화해 보세요."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "lLV_X_"
+msgid "Your microphone is off"
+msgstr "마이크가 꺼져 있어요"
 
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -7264,6 +7265,11 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, other {지금 마인드맵을 #개 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
+
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "uPTv7C"
 msgid "Without a map"
 msgstr "마인드맵 없음"
@@ -7273,11 +7279,6 @@ msgstr "마인드맵 없음"
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {챕터 #개}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "_tV21i"
-msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
-msgstr "이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -8275,6 +8276,13 @@ msgstr "답하지 않은 문제는 오답으로 처리돼요."
 msgctxt "3YnSzO"
 msgid "{correct} of {total}"
 msgstr "{correct} / {total}"
+
+#: src/mock/mock-result-breakdown.tsx
+#: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "접기"
 
 #: src/mock/mock-result-breakdown.tsx
 #: src/today/use-row-label.ts
@@ -11970,12 +11978,6 @@ msgstr "이 지문에 관한 {position, number}번째 문제(총 {count, number}
 msgctxt "737oWL"
 msgid "Shared text"
 msgstr "공통 지문"
-
-#: src/questions/item-set-stimulus.tsx
-#: src/today/today-session-card.tsx
-msgctxt "qyJtWy"
-msgid "Show less"
-msgstr "접기"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "SDhsqC"

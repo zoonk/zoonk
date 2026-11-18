@@ -100,6 +100,12 @@ private const val FUNCTION_GAP = "\u2006"
 /** The longest part a fraction sets small around its slash. */
 private const val SHORT_TERM = 4
 
+/** Marks a one-word `\text`, so a fraction can tell one word ("distance") from side-by-side symbols or words ("RT", "total time"). */
+private const val WORD = "math-word"
+
+/** One number, its digits grouped by any space ("12 000", "1,89"). */
+private val NUMBER = Regex("[0-9][0-9.,\u0020\u00A0\u2005\u2006\u2009\u202F]*")
+
 private class MathParser(
     private val source: String,
     private val words: MathWords,
@@ -281,7 +287,18 @@ private class MathParser(
 
         return when (name) {
             "text", "mathrm", "textrm", "operatorname", "mbox", "textnormal" -> {
-                run(textArgument(), style, italic = false)
+                val words = run(textArgument(), style, italic = false)
+                if (words.plain.any(Char::isWhitespace)) {
+                    words
+                } else {
+                    Piece(
+                        buildAnnotatedString {
+                            append(words.text)
+                            addStringAnnotation(WORD, "", 0, length)
+                        },
+                        words.spoken,
+                    )
+                }
             }
 
             "mathit", "textit", "emph" -> {
@@ -397,8 +414,25 @@ private class MathParser(
         plain.length <= SHORT_TERM && plain.none { it == OPERATOR_GAP.single() || it in "√/\u2044" } &&
             text.spanStyles.none { it.item.baselineShift != null }
 
+    /** A sum or a product takes brackets beside the slash; one number, one word or one symbol with its script needs none. */
     private fun Piece.grouped(style: Script): Piece =
-        if (plain.length <= 1) this else run("(", style, italic = false) + this + run(")", style, italic = false)
+        if (isSingleTerm()) this else run("(", style, italic = false) + this + run(")", style, italic = false)
+
+    /**
+     * Read from the marks the parser set, not the letters: "distance" is one `\text` word, while side-by-side symbols ("RT",
+     * "μ₀ε₀") are a product; a power or a subscript ("r²", "v₀") belongs to the symbol before it.
+     */
+    private fun Piece.isSingleTerm(): Boolean {
+        val scripted = text.spanStyles.filter { it.item.baselineShift != null }
+        val base = plain.indices.filterNot { at -> scripted.any { at >= it.start && at < it.end } || plain[at].isWhitespace() }
+        val baseText = base.map { plain[it] }.joinToString("")
+        val words = text.getStringAnnotations(WORD, 0, plain.length)
+        return when {
+            baseText.length <= 1 -> true
+            NUMBER.matches(baseText) -> true
+            else -> words.any { word -> base.all { at -> at >= word.start && at < word.end } }
+        }
+    }
 
     private fun scriptStyle(
         shift: BaselineShift,

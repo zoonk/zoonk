@@ -223,6 +223,23 @@ class ConversationFlowTest {
         compose.onNodeWithText("Reconnecting…").assertExists()
     }
 
+    /** A first call the server says continues one (its app closed mid-call) has said nothing here: Back goes to its intro. */
+    @Test
+    fun goingBackFromAFirstCallThatRingsAsAReconnectGoesBackToItsIntro() {
+        client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(continuesCall = true))))
+        show()
+        compose.onNodeWithText("Call Lucía").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+
+        compose.onNodeWithText("End the call?").assertDoesNotExist()
+        compose.onNodeWithText("Call Lucía").assertExists()
+        assertTrue(api.completions.isEmpty())
+    }
+
     @Test
     fun endingADroppedCallSavesWhatWasSaid() {
         show()

@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
-import { MicrophoneOff } from "./call-intro-footer";
+import { useMicrophoneOffWords } from "./call-intro-footer";
 import { CallLimitReason, useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
 import { ChallengeCallGate, useChallengeCallGateTitle } from "./challenge-call-gate";
@@ -52,13 +52,12 @@ function useDroppedTitle({
 
 function DroppedCallReason({
   limit,
-  microphoneProblem,
-  name,
+  microphoneText,
   reason,
 }: {
   limit: CallLimit;
-  microphoneProblem: MicrophoneProblem | null;
-  name: string;
+  /** What to do about the microphone, when it's what stopped the call; the screen's title names it. */
+  microphoneText: string | null;
   reason: DroppedCall["reason"];
 }) {
   const t = useExtracted();
@@ -68,8 +67,8 @@ function DroppedCallReason({
     return <CallLimitReason limit={limit} untitled />;
   }
 
-  if (reason === "microphone" && microphoneProblem) {
-    return <MicrophoneOff name={name} problem={microphoneProblem} />;
+  if (microphoneText) {
+    return <p className="text-muted-foreground text-pretty">{microphoneText}</p>;
   }
 
   if (reason === "plusRequired") {
@@ -160,6 +159,8 @@ export function DroppedCallScreen({
   const opened = limit !== null && liveLimit === null;
   const retry = dropped.reason === "limit" && opened ? "callAgain" : dropped.retry;
   const droppedTitle = useDroppedTitle({ limit: reached, opened, reason: dropped.reason });
+  const microphone = useMicrophoneOffWords({ name, problem: microphoneProblem ?? "blocked" });
+  const microphoneOff = dropped.reason === "microphone" && microphoneProblem !== null;
 
   return (
     <TaskFrame
@@ -167,11 +168,10 @@ export function DroppedCallScreen({
       footer={<DroppedCallActions {...actions} retry={retry} />}
       headerTitle={title}
     >
-      <CallOffMessage title={droppedTitle}>
+      <CallOffMessage title={microphoneOff ? microphone.title : droppedTitle}>
         <DroppedCallReason
           limit={reached}
-          microphoneProblem={microphoneProblem}
-          name={name}
+          microphoneText={microphoneOff ? microphone.text : null}
           reason={dropped.reason}
         />
       </CallOffMessage>

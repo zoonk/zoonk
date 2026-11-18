@@ -37,7 +37,7 @@ class GuessScaleTicksTest {
     @Test fun crowdedTicksGiveWayWithoutOverlappingTheEndLabels() {
         val scale = GuessScale(0.0, 2_000_000.0, false)
         val widthOf = { value: Double -> if (value == 0.0) 30 else 68 }
-        val shown = scale.fittedTicks(240, widthOf)
+        val shown = scale.fittedTicks(240, 4f, widthOf)
         assertEquals(listOf(0.0, 1_000_000.0, 2_000_000.0), shown)
         val boxes =
             shown.map { value ->

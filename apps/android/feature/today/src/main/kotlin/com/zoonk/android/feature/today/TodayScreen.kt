@@ -76,6 +76,7 @@ import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SuggestedGoal
@@ -565,6 +566,7 @@ internal fun TodayPage(
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val noteRoom = rememberBarNoteRoom()
     BeforeFold { beforeFold ->
         Column(beforeFold.fillMaxSize().padding(padding)) {
             Box(
@@ -572,13 +574,18 @@ internal fun TodayPage(
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Column(
-                    modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(pagePadding()),
+                    modifier =
+                        Modifier
+                            .widthIn(max = PAGE_WIDTH)
+                            .fillMaxWidth()
+                            .padding(pagePadding())
+                            .padding(bottom = noteRoom.height),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     content()
                 }
             }
-            if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, content = bottomBar)
+            if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, noteRoom = noteRoom, content = bottomBar)
         }
     }
 }

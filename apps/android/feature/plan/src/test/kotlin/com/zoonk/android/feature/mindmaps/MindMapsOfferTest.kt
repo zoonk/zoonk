@@ -422,18 +422,39 @@ class MindMapsOfferTest {
         show()
 
         waitFor("Lenses")
-        compose.onNodeWithText("Without a map").performClick()
+        compose.onNodeWithText("Show fewer chapters").performClick()
         compose.waitForIdle()
         compose.onNodeWithText("Lenses").assertDoesNotExist()
     }
 
+    /** As main: the heading counts every chapter without a map, and the fold counts the ones it shows. */
     @Test
     fun otherChaptersStayFoldedWithNothingBeingMade() {
         api.mindMaps = { fresh }
         show()
 
         waitFor("Without a map")
+        compose.onNodeWithText("3 chapters").assertExists()
         compose.onNodeWithText("Optics").assertDoesNotExist()
+
+        compose.onNodeWithText("1 more chapter").performClick()
+        waitFor("Optics")
+        compose.onNodeWithText("Show fewer chapters").assertExists()
+    }
+
+    /** As main: with no chapter ready to make, the chapters that need their lessons first are listed, not folded. */
+    @Test
+    fun chaptersNeedingLessonsShowWhenNoneIsReadyToMake() {
+        api.mindMaps = {
+            goalMindMaps(
+                listOf(mapJson(1, "Waves", "available", lessonsToWrite = 2), mapJson(2, "Optics", "available", lessonsToWrite = 3)),
+                offer = FRESH_OFFER,
+            )
+        }
+        show()
+
+        waitFor("Optics")
+        compose.onNodeWithText("Waves").assertExists()
     }
 
     /** The line counts every map on its way: a failed one has its own row with Try again, the one writing lessons is on its way. */

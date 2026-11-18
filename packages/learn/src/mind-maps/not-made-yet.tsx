@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -15,11 +15,11 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { ShowMore } from "../_components/show-more";
 import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
 import {
   type MindMapsPageChapter,
   countChapterMaps,
@@ -142,10 +142,12 @@ export function canMakeNow(chapter: MindMapsPageChapter): boolean {
 function NotMadeRows({
   chapters,
   library,
+  noteId,
   plus,
 }: {
   chapters: readonly MindMapsPageChapter[];
   library: MindMapsLibrary;
+  noteId?: string;
   plus: boolean;
 }) {
   return (
@@ -153,6 +155,7 @@ function NotMadeRows({
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
+            noteId={chapter.lessonsToWrite > 0 ? noteId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -185,6 +188,44 @@ export function NotMadeYet({
   const later = chapters.filter((chapter) => !canMakeNow(chapter));
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
+  const listId = useId();
+  const noteId = useId();
+  const showsNote = !plus && later.some((chapter) => chapter.lessonsToWrite > 0);
+  const folds = now.length > 0 && later.length > 0;
+  const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
+  const laterRef = useRef<HTMLDivElement>(null);
+  const focusOnOpen = useRef(false);
+
+  useEffect(() => {
+    if (open && focusOnOpen.current) {
+      focusRevealedRow(laterRef.current?.querySelector("li"));
+    }
+
+    focusOnOpen.current = false;
+  }, [open]);
+
+  const toggle = () => {
+    focusOnOpen.current = !open;
+    setOpen(!open);
+  };
+
+  const laterRows = (
+    <div className="flex flex-col gap-3" ref={laterRef}>
+      {showsNote && (
+        <p className={LINE_CLASS} id={noteId}>
+          {t(
+            "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+          )}
+        </p>
+      )}
+      <NotMadeRows
+        chapters={later}
+        library={library}
+        noteId={showsNote ? noteId : undefined}
+        plus={plus}
+      />
+    </div>
+  );
 
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
@@ -195,26 +236,25 @@ export function NotMadeYet({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
+      <div className="flex flex-col gap-3 empty:hidden" id={listId}>
+        {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
+        {later.length > 0 && (!folds || open) && laterRows}
+      </div>
 
-      {later.length > 0 && (
-        <ShowMore
-          defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
-          label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
-            count: later.length,
-          })}
-        >
-          <div className="flex flex-col gap-3">
-            {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
-              <p className={LINE_CLASS}>
-                {t(
-                  "Making one of these maps writes its lessons first, and they count toward your free lessons.",
-                )}
-              </p>
-            )}
-            <NotMadeRows chapters={later} library={library} plus={plus} />
-          </div>
-        </ShowMore>
+      {folds && (
+        <FoldRow
+          controls={listId}
+          done={false}
+          label={
+            open
+              ? t("Show fewer chapters")
+              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                  count: later.length,
+                })
+          }
+          onToggle={toggle}
+          open={open}
+        />
       )}
 
       <div
