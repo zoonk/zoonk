@@ -359,10 +359,22 @@ struct LineCrossingCanvas: View {
       : Text("Drag a line up or down by its handle.", tableName: "ActivitiesCharts")
   }
 
+  /// Main's `toSentence`: VoiceOver reads each change as its own sentence, ended with the app
+  /// language's full stop.
+  private func sentence(_ text: String) -> String {
+    if let last = text.last, ".!?…。！？".contains(last) {
+      return text
+    }
+
+    let language = Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en").language
+    return text + (language.languageCode == .japanese ? "。" : ".")
+  }
+
   private func changeText(yChange: LineCrossingModel.Change, xChange: LineCrossingModel.Change)
     -> String
   {
-    [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].joinedSentences()
+    [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].map(sentence)
+      .joinedSentences()
   }
 
   private func changeRow(_ label: String, change: LineCrossingModel.Change) -> some View {
