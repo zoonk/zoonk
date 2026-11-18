@@ -560,9 +560,7 @@ struct NumericItemView: View {
   private var rule: LocalizedStringResource? {
     switch entry?.kind {
     case .decimals:
-      LocalizedStringResource(
-        "Round to \(entry?.places ?? 0) decimal places.", table: "Practice",
-        comment: "Rule under a math answer field that takes a fixed number of decimal places.")
+      decimalEntryRule(entry?.places ?? 0)
     case .fraction:
       LocalizedStringResource(
         "A fraction, like 2/3, or a decimal.", table: "Practice",
@@ -594,6 +592,16 @@ struct NumericItemView: View {
         comment: "Hint after typing something a number answer field can't read.")
     }
   }
+}
+
+func decimalEntryRule(_ places: Int) -> LocalizedStringResource {
+  if places == 0 {
+    return LocalizedStringResource("Round to the nearest whole number.", table: "Practice")
+  }
+
+  return LocalizedStringResource(
+    "Round to \(places) decimal places.", table: "Practice",
+    comment: "Rule under a math answer field that takes a fixed number of decimal places.")
 }
 
 struct TypedItemView: View {

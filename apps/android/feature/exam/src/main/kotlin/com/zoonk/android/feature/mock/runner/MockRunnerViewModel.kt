@@ -85,10 +85,18 @@ data class MockRun(
     val busy: MockStep? = null,
     val error: Boolean = false,
     val slow: Boolean = false,
+    val storedDrafts: Map<String, MockDraft> = drafts,
+    val failedDrafts: Map<String, MockDraft> = emptyMap(),
 ) {
     val pending: Boolean get() = busy != null
     val question: MockQuestion? get() = questions.getOrNull(position)
-    val counts: SectionCounts get() = sectionCounts(questions, drafts)
+    val counts: SectionCounts get() = sectionCounts(questions, drafts, ::isCountedAsAnswered)
+
+    fun isCountedAsAnswered(itemId: String): Boolean {
+        val draft = drafts[itemId]
+        return draft.isAnswered && (draft?.answer != failedDrafts[itemId]?.answer || draft?.answer == storedDrafts[itemId]?.answer)
+    }
+
     val isLastSection: Boolean get() = view.sections.lastOrNull()?.status == MockExamSectionsInner.Status.CURRENT
     val currentSection: MockExamSectionsInner? get() = view.sections.firstOrNull { it.status == MockExamSectionsInner.Status.CURRENT }
 
@@ -447,11 +455,12 @@ class MockRunnerViewModel(
                 .orEmpty()
                 .map { it.toMockQuestion() }
         val resume = view.current?.resume?.toInt() ?: 0
-        val drafts =
+        val storedDrafts =
             view.current?.drafts.orEmpty().associate {
                 it.itemId.toString() to
                     MockDraft(it.itemId.toString(), it.answer?.toAnswer(), it.durationMs, it.flagged)
-            } + kept.associateBy(MockDraft::itemId)
+            }
+        val drafts = storedDrafts + kept.associateBy(MockDraft::itemId)
         val deadline = view.current?.deadline
         return MockRun(
             view = view,
@@ -459,6 +468,7 @@ class MockRunnerViewModel(
             position = resume,
             reached = resume,
             drafts = drafts,
+            storedDrafts = storedDrafts,
             moves = moves(view, questions, drafts, resume, resume),
             timeUp = (deadline != null && clock.now() >= deadline) || questionTimeUp,
         )
@@ -597,11 +607,21 @@ class MockRunnerViewModel(
 
     private suspend fun send(draft: MockDraft): SendResult {
         if (sessions.current != owner) return SendResult.Stop
-        return when (val result = store.save(blockId, draft)) {
-            is MutationResult.Done -> if (result.value == SaveOutcome.Stored) SendResult.Stored else SendResult.Refused
-            is MutationResult.Failed -> SendResult.Unreachable
-            MutationResult.Obsolete -> SendResult.Stop
+        run.update { it.copy(failedDrafts = it.failedDrafts - draft.itemId) }
+        val outcome =
+            when (val result = store.save(blockId, draft)) {
+                is MutationResult.Done -> if (result.value == SaveOutcome.Stored) SendResult.Stored else SendResult.Refused
+                is MutationResult.Failed -> SendResult.Unreachable
+                MutationResult.Obsolete -> SendResult.Stop
+            }
+        run.update { current ->
+            when (outcome) {
+                SendResult.Stored -> current.copy(storedDrafts = current.storedDrafts + (draft.itemId to draft))
+                SendResult.Unreachable, SendResult.Refused -> current.copy(failedDrafts = current.failedDrafts + (draft.itemId to draft))
+                SendResult.Stop -> current
+            }
         }
+        return outcome
     }
 
     private companion object {

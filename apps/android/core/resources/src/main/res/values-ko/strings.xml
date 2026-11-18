@@ -65,7 +65,7 @@
   "navigation_today": "394c9afd2080d1e22c9243cc06d2b54686494f03178b7df2c63f3782e7f8cb49",
   "navigation_user_menu": "0890331c80033fc75f70933760ad3841b8565014e674905a167f20d02e1e528f",
   "not_found_description": "8191ddd8f0b473232b5bd8b6fc8c6b573bb0f82c899b46561c343c59e59995e7",
-  "not_found_go_home": "d8c5aa16a565b1b56b210a5e8a2acf1b88dc33b3ad8b0ea608a181bc376ba879",
+  "not_found_go_home": "ddbe09e03c2b853b4e24f22b1fe8dedf77b5f6166e086b1257c5391e3c56460c",
   "not_found_title": "12326177841bbc90578b294f5e0784ea93661a9b3e09d3fefdc431cd05ce4c8b",
   "player_not_saved": "d66bc9b5d3048a476b8fa0a70340508de4847c91762ade0c9c1f925137275e0e",
   "player_not_saved_description": "376547f3d52ee0220c01d7d7ca993d5d6b6d5f7a25ebc1c1feb7d4a5dbd61b9a",
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">테스트를 보고 단원 건너뛰기</string>
     <string name="not_found_title">페이지를 찾을 수 없어요</string>
     <string name="not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
-    <string name="not_found_go_home">홈으로 가기</string>
+    <string name="not_found_go_home">오늘의 학습으로 이동하기</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

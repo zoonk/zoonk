@@ -13,6 +13,7 @@
   "profile_questions_conditions_description_settings": "d564817ec75b1071b6b9a934e4194e1e1ebefb7c89f17c5170e79f9cc71bf82d",
   "profile_questions_conditions_saved": "aab2c5c87dbcceadc28c28fb26535f0905f5a37d283e8cff168f332fb5c2ee37",
   "profile_questions_conditions_title": "ef93abd7458af85bb6ece2f06c99891f0ac6f1978bbaf78f068268f5536d0ac4",
+  "profile_questions_count": "11d8a6d4853513a2d0d49a50741b56ed64c0881be59c76f8ec595bde7af04851",
   "profile_questions_description": "95cd7e28d4db70e734b891dfbe1edc8545e2572a9e865856c55111d1fde15748",
   "profile_questions_earlier_answer": "a86197e622ef28ba27096f566be987bb4b56efd8334bee55631f22cf8bd660e2",
   "profile_questions_for_fun": "6f8248563a67e46dd041c7f63a828ae91fb42855b3a377e7f5f5c86194e9c5de",
@@ -33,7 +34,6 @@
   "profile_questions_play_placeholder": "35697f9704b77c090fda724c73993b5aace1040a243c4f75d5679c8ccfcc333f",
   "profile_questions_play_title": "e18febc0c5cffbc9b02fb435c5e52c088ffb91e358a9db5fb2c15b0f797f14c5",
   "profile_questions_prefer_not": "64a3fa5c8553dae6bd7821bc49590c9dd61b05c58025b9e56dd9be1da615024d",
-  "profile_questions_progress": "ce349e3dc8db1f076848ef67f2f647a177133c45daada74ce649d575b9bb5c77",
   "profile_questions_read_favorites": "505c579b927d2a9b0bd40387abe094303ba322427f87491e3639e52dd0a30668",
   "profile_questions_read_placeholder": "6b68d6668b98d02243e642d967b2b18633d296711db01ba915f1a48e50a68815",
   "profile_questions_read_title": "536cf81f3a6c80c483cb4d871d73308282177b1092ee9316efe56c6aff94aee1",
@@ -83,7 +83,7 @@
 <resources>
     <string name="profile_questions_title">Über dich</string>
     <string name="profile_questions_description">Mit deinen Angaben stimmen wir deine Beispiele und deinen Kumpel auf dich ab. Alle Angaben sind freiwillig.</string>
-    <string name="profile_questions_progress">Über dich · %1$d von %2$d</string>
+    <string name="profile_questions_count">%1$d von %2$d</string>
     <string name="profile_questions_skip_all">Alle überspringen</string>
     <string name="profile_questions_skip_all_label">Restliche Fragen zu dir überspringen</string>
     <string name="profile_questions_never_ask">Diese Fragen nicht noch einmal stellen</string>

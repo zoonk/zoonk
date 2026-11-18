@@ -61,11 +61,6 @@ internal class PlanControls(
     val questions: SessionQuestionsModel,
 )
 
-internal fun displayName(
-    name: String,
-    shortName: String?,
-) = shortName ?: name
-
 /** A proposal still waiting for the learner's answer, which then is the screen's question. */
 internal fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
     (plan?.repriced ?: proposal)?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
@@ -151,7 +146,7 @@ private fun FocusRows(rows: List<FocusTestFocusRow>) {
         rows.forEachIndexed { index, row ->
             if (index > 0) ListDivider()
             ListRow(
-                headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
+                headline = { Text(row.subject.name) },
                 leading = {
                     Text(
                         "${index + 1}",
@@ -349,7 +344,7 @@ internal fun SubjectsList(subjects: List<FocusTestSubject>) {
         subjects.forEachIndexed { index, subject ->
             if (index > 0) ListDivider()
             ListRow(
-                headline = { Text(displayName(subject.name, subject.shortName)) },
+                headline = { Text(subject.name) },
                 meta = subjectState(subject)?.let { state -> { Text(state, color = MaterialTheme.colorScheme.onSurfaceVariant) } },
             )
         }

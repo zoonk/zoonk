@@ -19,6 +19,7 @@
   "questions_entry_decimals": "832815d7e12ba6da3b2ce2a74000257d6a8c81a1bd3daeefa1538531e8eda3f6",
   "questions_entry_fraction": "be5aeb9f01e9add0839fac5c411bbe1a2b7fa9db3e61b8b9e25feb23f1d4ba41",
   "questions_entry_integer": "5b7c62dd116028e4939a85cf0ae5f5c3040fca4497543ca0dc8769b9b14af760",
+  "questions_entry_round_to_whole": "efca2b64dfcfb7b9d2044795393af70649ef68d40b8278aea94b1f67d3d25237",
   "questions_false": "903219b7bea6e96bf5ececf77ed939c48008ddb50f845e4182e5c9ef7e1a46b9",
   "questions_feedback_label": "d950a821df341a5733a090e90f4062822b74f601cb2e463e0d03edb0e73df253",
   "questions_invalid_fraction": "7d25b0de0708846058ba4afd77ce1fdc6d16957eb1e52b426a1d9f9d5143c7d3",
@@ -79,6 +80,7 @@
     <string name="questions_your_answer">選んだ答え</string>
     <string name="questions_mark_correct">正解</string>
     <string name="questions_mark_wrong">不正解</string>
+    <string name="questions_entry_round_to_whole">四捨五入して整数にしてください。</string>
     <plurals name="questions_entry_decimals">
         <item quantity="other">四捨五入して小数点以下%d桁にしてください。</item>
     </plurals>

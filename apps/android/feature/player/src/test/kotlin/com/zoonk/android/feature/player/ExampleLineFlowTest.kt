@@ -27,6 +27,7 @@ class ExampleLineFlowTest {
     private val api get() = harness.api
 
     private val discount = "At the pharmacy where you work, 25% off a \$40 kit saves \$10."
+    private val shownDiscount = "At the pharmacy where you work, 25% off a \$40\u00A0kit saves \$10."
 
     @Test
     fun writesTheLessonsExamplesFromTheLearnersFirstMoveNeverFromItsOpening() {
@@ -54,7 +55,7 @@ class ExampleLineFlowTest {
         rule.onNodeWithContentDescription("Your example").assertDoesNotExist()
 
         writing.complete(Unit)
-        rule.waitUntil { rule.onAllNodesWithText(discount).fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil { rule.onAllNodesWithText(shownDiscount).fetchSemanticsNodes().isNotEmpty() }
         assertEquals(listOf("discount"), api.lineReads)
         harness.tap("Next")
 
@@ -85,7 +86,7 @@ class ExampleLineFlowTest {
         rule.waitUntil { "interest" in api.lineReads }
         rule.onNodeWithContentDescription("Previous screen").performClick()
 
-        rule.waitUntil { rule.onAllNodesWithText(discount).fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil { rule.onAllNodesWithText(shownDiscount).fetchSemanticsNodes().isNotEmpty() }
         harness.tap("Next")
         rule.onNodeWithText("Idea interest").assertIsDisplayed()
         assertEquals(listOf("discount"), api.lineWrites)

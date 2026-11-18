@@ -36,7 +36,6 @@
     <string name="plan_about_exam">About the exam</string>
     <string name="plan_full_course">See the full course</string>
     <string name="plan_share">Share the plan</string>
-    <string name="plan_talk_to">Talk to %1$s</string>
     <string name="plan_rename_goal">Rename goal</string>
     <!-- The label of the field holding a goal's name, not a person's. -->
     <string name="plan_rename_label">Name</string>
@@ -105,8 +104,8 @@
     <string name="plan_skipped">Skipped</string>
     <string name="plan_done">Done</string>
     <plurals name="plan_skills_you_know">
-        <item quantity="one">%d skill you already know</item>
-        <item quantity="other">%d skills you already know</item>
+        <item quantity="one">%d chapter you already know</item>
+        <item quantity="other">%d chapters you already know</item>
     </plurals>
     <string name="plan_more_lessons">More lessons</string>
     <string name="plan_lessons_on_the_way">Lessons on the way</string>
@@ -263,7 +262,6 @@
     <string name="plan_day_rest">rest day</string>
     <string name="plan_day_today">today</string>
     <string name="plan_day_planned">planned</string>
-    <string name="plan_last_week_recap">Last week\'s recap</string>
 
     <string name="plan_preparation">Preparation</string>
     <string name="plan_progress">Progress</string>
@@ -551,7 +549,7 @@
     <string name="plan_tool_change_how">Change how you\'ll use %1$s</string>
     <string name="plan_tool_choose_how">Choose how you\'ll use %1$s</string>
     <string name="plan_tools_none">No tools? You can do it all with examples.</string>
-    <string name="plan_tools_without">You won\'t practice on your own computer. Lessons use examples and simulations instead.</string>
+    <string name="plan_tools_without">You won\'t practice on your own device. Lessons use examples and simulations instead.</string>
     <string name="plan_tools_later">More later: %1$s</string>
     <string name="plan_tool_how">How will you use it?</string>
     <string name="plan_tool_have">I have it</string>
@@ -559,7 +557,7 @@
     <string name="plan_tool_setup">I\'ll set it up</string>
     <string name="plan_tool_setup_description">A short lesson shows how, right before you need it.</string>
     <string name="plan_tool_none">No install</string>
-    <string name="plan_tool_none_description">Learn with examples. You won\'t practice on your own computer.</string>
+    <string name="plan_tool_none_description">Learn with examples. You won\'t practice on your own device.</string>
     <string name="plan_tool_updates_when_ready">Your plan updates as soon as it\'s ready.</string>
     <string name="plan_tool_writing_setup">Adding a setup lesson</string>
     <string name="plan_tool_writing_setup_phase">Writing the setup for your device</string>

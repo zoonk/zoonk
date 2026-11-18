@@ -109,7 +109,9 @@ extension SetupProgress {
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep]
   ) {
-    guard !([current] + steps).contains(.purpose) else { return nil }
+    guard current.profileQuestion == nil, !([current] + steps).contains(.purpose) else {
+      return nil
+    }
 
     self.init(current: current, history: history, steps: steps) { step in
       let counted = step.profileQuestion == nil ? step : .work
@@ -277,7 +279,19 @@ private struct GoalSteps: View {
         }
       }
 
-      if let progress {
+      if step.profileQuestion != nil {
+        var seen = Set<Components.Schemas.OnboardingStep>()
+        let questions = (history + [step] + view.steps).filter {
+          $0.profileQuestion != nil && seen.insert($0).inserted
+        }
+        if questions.count > 1, let index = questions.firstIndex(of: step) {
+          ToolbarItem(placement: .principal) {
+            Text("\(index + 1) of \(questions.count)", tableName: "AboutYou")
+              .typeStyle(.data)
+              .foregroundStyle(.secondary)
+          }
+        }
+      } else if let progress {
         ToolbarItem(placement: .principal) {
           Text(
             "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",

@@ -79,6 +79,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.feature.player.model.ActivityTolerance
 import com.zoonk.android.feature.player.model.ExploredActivity
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
@@ -86,6 +87,7 @@ import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.revealPart
+import com.zoonk.android.feature.questions.decimalEntryRule
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
@@ -103,6 +105,8 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ActivityExpectedFormulaTolerance
 import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.pow
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
@@ -171,6 +175,7 @@ internal fun ActivityView(
     val onAnswerChange = { next: ActivityAnswer? -> if (!locked) actions.select(next?.let(LessonAnswer::Activity)) }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
     val ownsAnswer = canvasOwnsAnswer(frame.template)
+    val places = (frame.check as? NumericCheckValue)?.value?.decimalPlaces(content.minTolerance)
     val numericQuestion =
         (frame.check as? NumericCheckValue)?.value?.question?.takeIf {
             frame.template == "guessReveal" ||
@@ -184,6 +189,7 @@ internal fun ActivityView(
                 phase,
                 locked,
                 onAnswerChange,
+                places,
                 numericQuestion != null,
             )
         }
@@ -231,7 +237,7 @@ internal fun ActivityView(
             check()
             if (!canvasOnScreen && checkFirst) canvas()
 
-            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect)
+            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect, places)
         }
     }
 }
@@ -243,6 +249,7 @@ private fun ActivityCheckArea(
     phase: ActivityPhase,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
+    places: Int?,
     questionAlreadyShown: Boolean = false,
 ) {
     if (check is ChoiceCheckValue) {
@@ -259,7 +266,7 @@ private fun ActivityCheckArea(
             )
         }
     } else if (check is NumericCheckValue) {
-        NumericCheckField(check.value, answer, locked, onAnswerChange, showQuestion = !questionAlreadyShown)
+        NumericCheckField(check.value, answer, locked, onAnswerChange, places, showQuestion = !questionAlreadyShown)
     }
 }
 
@@ -275,6 +282,7 @@ private fun NumericCheckField(
     answer: ActivityAnswer?,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
+    places: Int?,
     showQuestion: Boolean = true,
 ) {
     val locale = currentLocale()
@@ -316,6 +324,9 @@ private fun NumericCheckField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
         )
+        places?.let { places ->
+            Text(decimalEntryRule(places), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        }
     }
 }
 
@@ -325,6 +336,34 @@ internal val NumericCheck.allowed: Double
             ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
+
+internal fun NumericCheck.decimalPlaces(minTolerance: ActivityTolerance?): Int? {
+    val expected = answer.toBigDecimal().stripTrailingZeros()
+    val minimum =
+        minTolerance?.let { tolerance ->
+            if (tolerance.kind.value == "absolute") tolerance.`value` else tolerance.`value` * abs(answer)
+        } ?: 0.0
+    val acceptedDistance = maxOf(allowed, minimum)
+    if (expected.scale() <= 0) return null
+    return (0..expected.scale()).firstOrNull { places ->
+        val scale = 10.0.pow(places)
+        val rounded = floor(answer * scale + 0.5) / scale
+        val distance = abs(rounded - answer)
+        val slack = 1e-9 * maxOf(abs(answer), abs(rounded), acceptedDistance)
+        distance <= maxOf(acceptedDistance + slack, 1e-9 * maxOf(1.0, abs(answer))) ||
+            (rounded.toBigDecimal().stripTrailingZeros().precision() >= 2 && distance <= 0.5 / scale * (1 + 1e-9))
+    }
+}
+
+internal fun NumericCheck.answerDigits(
+    value: Double?,
+    places: Int? = null,
+): Int =
+    maxOf(
+        places ?: 0,
+        exactFractionDigitsFor(answer, allowed, value ?: answer),
+        value?.toBigDecimal()?.stripTrailingZeros()?.scale() ?: 0,
+    )
 
 @Composable
 internal fun ExploredActivityCanvas(
@@ -399,6 +438,7 @@ private fun ActivityFeedback(
     check: ActivityCheck,
     answer: ActivityAnswer?,
     isCorrect: Boolean,
+    places: Int?,
 ) {
     val reveal = LocalFeedbackReveal.current
 
@@ -427,7 +467,7 @@ private fun ActivityFeedback(
                 val numeric = check.value
                 val locale = currentLocale()
                 val value = answer.numericValue
-                val digits = exactFractionDigitsFor(numeric.answer, numeric.allowed, value ?: numeric.answer)
+                val digits = numeric.answerDigits(value, places)
 
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
                     value?.let {

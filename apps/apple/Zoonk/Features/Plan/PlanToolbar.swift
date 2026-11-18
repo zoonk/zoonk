@@ -56,8 +56,7 @@ struct PlanToolbar: ViewModifier {
     } label: {
       Label {
         Text(
-          "Talk to \(learner.buddyDisplayName)", tableName: "Plan",
-          comment: "Opens the buddy's conversation, where questions about the plan go")
+          "Ask \(learner.buddyDisplayName)", tableName: "Plan")
       } icon: {
         Image(systemName: "questionmark.bubble")
       }

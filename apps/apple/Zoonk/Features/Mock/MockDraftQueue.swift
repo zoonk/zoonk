@@ -21,6 +21,14 @@ final class MockDraftQueue {
   }
 
   private(set) var status: Status = .saved
+  private var failedDrafts: [String: MockDraft] = [:]
+  private var storedDrafts: [String: MockDraft] = [:]
+
+  func countsTowardsProgress(_ draft: MockDraft?, initiallyStored: MockDraft?) -> Bool {
+    guard let draft, draft.isAnswered else { return false }
+    let stored = storedDrafts[draft.itemId] ?? initiallyStored
+    return draft.answer != failedDrafts[draft.itemId]?.answer || draft.answer == stored?.answer
+  }
 
   @ObservationIgnored private let save: (MockDraft) async -> Outcome
   @ObservationIgnored private let retryDelay: (Int) -> Duration
@@ -94,6 +102,7 @@ final class MockDraftQueue {
     }
 
     let draft = waiting.removeFirst()
+    failedDrafts[draft.itemId] = nil
     sending = true
     settle()
 
@@ -105,6 +114,11 @@ final class MockDraftQueue {
       }
 
       sending = false
+      if outcome == .stored {
+        storedDrafts[draft.itemId] = draft
+      } else {
+        failedDrafts[draft.itemId] = draft
+      }
 
       switch outcome {
       case .unreachable:

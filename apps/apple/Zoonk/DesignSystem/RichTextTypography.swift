@@ -1,20 +1,41 @@
 import Foundation
 
 /// Main's `typesetNumbers`: long numbers grouped the learner's way, and a number kept on one line
-/// with its unit or money sign.
+/// with the word, unit or money sign beside it.
 enum RichTextTypography {
   /// Every run but inline code, as main typesets every segment but math and code.
   static func typesetNumbers(in text: AttributedString, locale: Locale = .courseLanguage)
     -> AttributedString
   {
-    text.runs.reduce(into: AttributedString()) { result, run in
+    let runs = Array(text.runs)
+    return runs.indices.reduce(into: AttributedString()) { result, index in
+      let run = runs[index]
       let piece = AttributedString(text[run.range])
+      guard run.inlinePresentationIntent?.contains(.code) != true else {
+        result += piece
+        return
+      }
 
-      result +=
-        run.inlinePresentationIntent?.contains(.code) == true
-        ? piece
-        : AttributedString(
-          typesetNumbers(String(piece.characters), locale: locale), attributes: run.attributes)
+      var value = typesetNumbers(String(piece.characters), locale: locale)
+      if index > 0 {
+        let before = runs[index - 1]
+        if before.inlinePresentationIntent?.contains(.code) != true,
+          text[before.range].characters.last?.isASCII == true,
+          text[before.range].characters.last?.isNumber == true,
+          value.trimmingCharacters(in: .whitespaces).prefixMatch(of: startsWithWord) != nil
+        {
+          value = value.replacing(/^([ \t])+/, with: "\u{00A0}")
+        }
+      }
+      if index + 1 < runs.count {
+        let after = runs[index + 1]
+        if after.inlinePresentationIntent?.contains(.code) != true,
+          String(text[after.range].characters).prefixMatch(of: startsWithWord) != nil
+        {
+          value = value.replacing(/([0-9])[ \t]+$/) { "\($0.output.1)\u{00A0}" }
+        }
+      }
+      result += AttributedString(value, attributes: run.attributes)
     }
   }
 
@@ -24,7 +45,7 @@ enum RichTextTypography {
     }
 
     return groupingLongNumbers(text, locale: locale)
-      .replacing(numberThenUnit) { "\($0.output.1)\u{00A0}" }
+      .replacing(numberThenWord) { "\($0.output.1)\u{00A0}" }
       .replacing(currencyThenNumber) { match in
         let sign = String(match.output.1)
         return sign + (ActivityNumberFormat.moneySignGap(sign, locale: locale) ?? "\u{00A0}")
@@ -61,18 +82,8 @@ enum RichTextTypography {
   /// Main's lookbehind before a long number, which Swift Regex lacks.
   nonisolated(unsafe) private static let partOfNumberOrWord = /[0-9.,\p{L}\/-]/
 
-  /// In their own case: "A" is amperes, "a" is a word.
-  private static let units = [
-    "%", "°C", "°F", "A", "B", "GB", "GHz", "Hz", "J", "K", "KB", "L", "MB", "MHz", "N", "Pa", "TB",
-    "V", "W", "cal", "cm", "cm²", "cm³", "g", "h", "ha", "kHz", "kJ", "kW", "kWh", "kcal", "kg",
-    "km", "km/h", "km²", "l", "m", "m/s", "mA", "mL", "mg", "min", "ml", "mm", "mol", "ms", "m²",
-    "m³", "nm", "rpm", "s", "t", "µm", "Ω", "kΩ",
-  ]
-
-  // The units above are plain text; a pattern that doesn't compile is a programming error.
-  nonisolated(unsafe) private static let numberThenUnit = try! Regex(
-    "([0-9]) (?=(?:\(units.joined(separator: "|")))(?![\\p{L}0-9]))",
-    as: (Substring, Substring).self)
+  nonisolated(unsafe) private static let numberThenWord = /([0-9])[ \t]+(?=[\p{L}%°])/
+  nonisolated(unsafe) private static let startsWithWord = /^[\p{L}%°]/
 
   nonisolated(unsafe) private static let currencyThenNumber = /(\p{Lu}{0,2}\p{Sc}) (?=[0-9])/
 }

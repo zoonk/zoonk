@@ -13,6 +13,7 @@
   "profile_questions_conditions_description_settings": "8922208c59406c12e480d7034a6d0b4c151e2cf9511d91a1103d54d2434702dc",
   "profile_questions_conditions_saved": "d02301ea727807ab8ab8bcdebe5f53d7a4664a334020b076280acde3e3310489",
   "profile_questions_conditions_title": "cadb145425011809388e2f2954eeae01a2623c2f822159185a52edce89777602",
+  "profile_questions_count": "954c70a62b971e700adf2b024e459ef13263b25aedaceb7ac35a52bff463f415",
   "profile_questions_description": "e4dd3264821529a6cf32dfbefe7576c1b99cbdde5c277f5127b5ba2738090cd4",
   "profile_questions_earlier_answer": "90b240362418afb2f966535b67754f0f46c9edcb53c90845a6308dc2481255d6",
   "profile_questions_for_fun": "269be49c952b69e4ab195380d92c2ba5f6822059022cd071344a98296f2772e9",
@@ -33,7 +34,6 @@
   "profile_questions_play_placeholder": "4c8ced0377e6733b89a84dc74eee4440b5d65304d02103761febda4ebc2cc474",
   "profile_questions_play_title": "16b7eeb2b3e58c1a805a65a3aa9655b7173a3a115e7513c94061c26057408995",
   "profile_questions_prefer_not": "96e5e413a4f71f623246809229cc37437af93cd458b9683e5221e4f5b6e1e588",
-  "profile_questions_progress": "7994f1ec89e529bf0b83167f2b69373f0aed3f3a1a4999ccc2f52291c279011b",
   "profile_questions_read_favorites": "a42531ce0f1758408e8e0c5b700e9044b819ee47cfc0fa4650f574c3972071d3",
   "profile_questions_read_placeholder": "65402e3ce374eb6debf3b8bd8514641bcd574c14c42993c0b81f8714df9727a7",
   "profile_questions_read_title": "eff5ffa1c87a4c2fb7c825cbeb52b1b5ec1f71d444e8538a5b1154254459350f",
@@ -83,7 +83,7 @@
 <resources>
     <string name="profile_questions_title">Seni tanıyalım</string>
     <string name="profile_questions_description">Burada anlattıkların, sana sunulan örnekleri ve arkadaşını şekillendirir. Her şey isteğe bağlı.</string>
-    <string name="profile_questions_progress">Seni tanıyalım · %1$d / %2$d</string>
+    <string name="profile_questions_count">%1$d / %2$d</string>
     <string name="profile_questions_skip_all">Tümünü atla</string>
     <string name="profile_questions_skip_all_label">Seninle ilgili kalan soruları atla</string>
     <string name="profile_questions_never_ask">Bu soruları bir daha sorma</string>

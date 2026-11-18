@@ -46,7 +46,6 @@ internal fun ColumnScope.ProfileStep(
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
-    val order = (vm.flow.history + step + view.steps).filter { it.profileQuestion != null }.distinct()
     val wait = LocalSetupWait.current
     var startingLesson by rememberSaveable(id) { mutableStateOf(false) }
     LaunchedEffect(vm.isSaving) { if (!vm.isSaving) startingLesson = false }
@@ -54,7 +53,7 @@ internal fun ColumnScope.ProfileStep(
     StepForm(
         title = profileQuestionTitle(id),
         description = profileQuestionDescription(id),
-        subject = stringResource(R.string.profile_questions_progress, order.indexOf(step) + 1, order.size),
+        subject = stringResource(R.string.profile_questions_title),
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },

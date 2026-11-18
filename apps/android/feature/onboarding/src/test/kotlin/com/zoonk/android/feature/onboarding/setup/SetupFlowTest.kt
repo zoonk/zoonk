@@ -80,15 +80,12 @@ class SetupFlowTest {
     }
 
     @Test
-    fun allProfileQuestionsShareOneProgressDot() {
-        val profile =
-            com.zoonk.api.models.OnboardingStep.entries.filter {
-                it.value in
-                    com.zoonk.api.models.ProfileQuestion.entries
-                        .map { question -> question.value }
-            }
-        val current = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.WATCH, listOf(PURPOSE) + profile.take(3))
-        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(current, profile.drop(3) + SCHEDULE + PLAN))
+    fun theAboutYouCountReplacesTheSetupDots() {
+        val work = com.zoonk.api.models.OnboardingStep.WORK
+        val watch = com.zoonk.api.models.OnboardingStep.WATCH
+        val current = SetupFlow(GOAL, work, listOf(PURPOSE))
+        assertNull(setupProgress(current, listOf(work, watch, SCHEDULE, PLAN)))
+        assertEquals(SetupProgress(answered = 2, total = 3), setupProgress(current.opening(SCHEDULE), listOf(SCHEDULE, PLAN)))
     }
 
     @Test

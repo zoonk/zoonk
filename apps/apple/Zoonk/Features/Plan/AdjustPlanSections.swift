@@ -501,8 +501,7 @@ private struct PlanToolChoiceSheet: View {
         option(
           Text("No install", tableName: "Plan", comment: "Tool choice"),
           Text(
-            "Learn with examples. You won't practice on your own computer.", tableName: "Plan",
-            comment: "Tool choice detail")
+            "Learn with examples. You won't practice on your own device.", tableName: "Plan")
         ).tag(ToolChoice.none)
       } label: {
         Text(tool.name)

@@ -192,7 +192,7 @@ struct PlanScheduleSheet: View {
 
       Section {
         PlanRouteLink(route: .logbook) {
-          Text("Last week's recap", tableName: "Plan", comment: "Opens last week's recap")
+          Text("Weekly summary", tableName: "Plan")
         }
       }
     }

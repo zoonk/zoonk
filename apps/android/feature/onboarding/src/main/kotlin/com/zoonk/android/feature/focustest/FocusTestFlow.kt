@@ -196,7 +196,7 @@ private fun ColumnScope.TestQuestion(
     onReportSaveFailure: () -> Unit,
 ) {
     val sitting = question.sitting
-    val name = sitting.subject?.let { displayName(it.name, it.shortName) } ?: subject
+    val name = sitting.subject?.name ?: subject
 
     SetupContent {
         key(question.item.itemId) {

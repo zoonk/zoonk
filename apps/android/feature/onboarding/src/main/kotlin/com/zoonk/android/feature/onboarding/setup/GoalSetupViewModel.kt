@@ -68,6 +68,7 @@ internal fun setupProgress(
     steps: List<OnboardingStep>,
 ): SetupProgress? {
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
+    if (current.profileQuestion != null) return null
     if ((steps + current).any { it in QUESTIONS_THAT_ADD_QUESTIONS }) return null
     val ahead = steps.filter(::countsAsQuestion)
     val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }

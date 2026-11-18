@@ -13,6 +13,7 @@
   "profile_questions_conditions_description_settings": "f6c745ff6b5c99b76f48183d359771ee59a72a9bd4e26cf84e2f1a04729fa1ca",
   "profile_questions_conditions_saved": "7189c180a7d0043230c6c034495d81a18d345a00112f52ce15b4e3a1087e7256",
   "profile_questions_conditions_title": "970e3bb29ab4c23004a4a0020f91ea6b78053afac270199a16df7ca9442489ff",
+  "profile_questions_count": "dfc892d2a7ffb2bca7d1a1b1667bd8a551d2f875795bd1bf5348aab96ebfefd9",
   "profile_questions_description": "44c5942860fad854a397121ef78580190164d40180c9d399c51217a6717795ce",
   "profile_questions_earlier_answer": "74b7bf7ab4054ab4eecc12fd13daaac606775a4fbacf5faf78b0df55b8d2c486",
   "profile_questions_for_fun": "1beec177cc6ef02374d152e2dccb60cf99a17fa0ab3383e8eeb2a4490d675d96",
@@ -33,7 +34,6 @@
   "profile_questions_play_placeholder": "1b99ae225edebe73cb280167d3f0ef0b364ddac1ffe5613397d36eb12e8e829f",
   "profile_questions_play_title": "b8c1c3af825138ab3a705100ff22623195ac512ab998bdda0e7a175e1a6fc53f",
   "profile_questions_prefer_not": "e33a194955bc4422cfc413f32ecc594632048cbbd9353cd321db0ea6df1d5cda",
-  "profile_questions_progress": "a6cafd6cdf6af5ac6aa549690989a2e048c395cac15a03d0409136ae824f5e14",
   "profile_questions_read_favorites": "9b8f0444d2bc47a6ac6e24adf2c487d082845863c403687b391f19bd294ba546",
   "profile_questions_read_placeholder": "1f04bb457839526a7c0ff1ffbb5503c74ed30f15b0f30b8c71ccf4985e6ab13d",
   "profile_questions_read_title": "bf6b834b1a87f6b59db397ec5d9830a9757da1e88aadbbdadd5ca0fa35a99d50",
@@ -83,7 +83,7 @@
 <resources>
     <string name="profile_questions_title">Sobre ti</string>
     <string name="profile_questions_description">Lo que nos cuentes aquí nos ayuda a personalizar tus ejemplos y a tu compañero. Todo es opcional.</string>
-    <string name="profile_questions_progress">Sobre ti · %1$d de %2$d</string>
+    <string name="profile_questions_count">%1$d de %2$d</string>
     <string name="profile_questions_skip_all">Saltar todo</string>
     <string name="profile_questions_skip_all_label">Saltar el resto de las preguntas sobre ti</string>
     <string name="profile_questions_never_ask">No volver a hacerme estas preguntas</string>

@@ -19,6 +19,7 @@
   "questions_entry_decimals": "ac03cdeb2deacd5a033d68b3d21d4d3a8db2a8e7f290737d8faa936c4c580676",
   "questions_entry_fraction": "f9660dabbaae1a52888acff9c6fc5795968fa20ea5c3920c744355034a9753fe",
   "questions_entry_integer": "d2ada4bb9c8d3efc6b028347542db6fc881f8e5fb72a6b293aabeabb3795a0aa",
+  "questions_entry_round_to_whole": "e48efb9eac2aba6ffb41a1c6cef2964cc883b98317009d8de3fbc5bc7688cef5",
   "questions_false": "d2ae9de4a971ca28ca6101cab7b76d84670a45f19494ddc9deb642967fef1b47",
   "questions_feedback_label": "878641a48eb3d86bf57a26cff92222b395e1049ad6ac30ca18056d9d2fd1fd01",
   "questions_invalid_fraction": "10e95056d7d8f5e90380fbe046be3e00d4ddee11507ca872198bcd50ef2362e6",
@@ -82,6 +83,7 @@
     <string name="questions_your_answer">Twoja odpowiedź</string>
     <string name="questions_mark_correct">Oznacz jako poprawną</string>
     <string name="questions_mark_wrong">Oznacz jako błędną</string>
+    <string name="questions_entry_round_to_whole">Zaokrąglij do najbliższej liczby całkowitej.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Zaokrąglij do %d miejsca po przecinku.</item>
         <item quantity="few">Zaokrąglij do %d miejsc po przecinku.</item>

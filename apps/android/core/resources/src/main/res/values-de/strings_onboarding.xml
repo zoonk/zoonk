@@ -233,7 +233,6 @@
   "onboarding_read_limit_guest": "cd8c64d6e706096b03331a7b2b14779fbd9d6e1c0c19073e8cc94e1da2ab5c7e",
   "onboarding_read_limit_plus": "4a2680293ade9c8c5c7be6c03422d0ee66db7223044d78bf116238c2dff0e983",
   "onboarding_reason_certificate": "17d6e8726741ca3f612befdb3ae17b95d281bd615269dcc5778f8315df340959",
-  "onboarding_reason_certificate_description": "0fb4bba58910c04c2ea9c28507cc3b561a892233e9ef674985c68166621f91c5",
   "onboarding_reason_choices": "a7583a982bbf58a03ed7d3a340f070c445299544aa6ef0f9b877796fc7cc08ea",
   "onboarding_reason_description": "c1a321708333a4116c3e9dd66335ebc9cd04e7ba42b27e5b87a73616502cb5d1",
   "onboarding_reason_exam_plan": "9cceec8e2e697adc176aa2ab92a63ce584e433b92b4d7e7801371f7fdf781568",
@@ -1046,7 +1045,6 @@
     <string name="onboarding_reason_fluent">Fließend sprechen</string>
     <string name="onboarding_reason_fluent_description">Mühelos über fast alles sprechen</string>
     <string name="onboarding_reason_certificate">Zertifikatsprüfung bestehen</string>
-    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI und andere</string>
     <string name="onboarding_reason_other_description">In deinen eigenen Worten</string>
     <string name="onboarding_reason_which_exam">Welche?</string>
     <string name="onboarding_reason_exam_plan">Dein Plan richtet sich nach den Prüfungsteilen und dem Score dieser Prüfung.</string>

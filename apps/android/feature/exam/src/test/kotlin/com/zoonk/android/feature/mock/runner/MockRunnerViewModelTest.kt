@@ -101,16 +101,19 @@ class MockRunnerViewModelTest {
 
             val viewModel = store.runner()
             viewModel.answer(Answer.Choice(1))
+            assertEquals(1, viewModel.state.value.counts.answered)
             viewModel.onStop()
             runCurrent()
 
             assertEquals(Answer.Choice(1), store.kept().single { it.itemId == ITEM_ONE }.answer)
             assertEquals(DraftSaveStatus.Retrying, viewModel.saveStatus.value)
+            assertEquals(0, viewModel.state.value.counts.answered)
 
             // Back online, the retry gets it through and the device lets it go.
             api.saveFailure = null
             advanceUntilIdle()
             assertEquals(Answer.Choice(1), api.saved.last { it.itemId == ITEM_ONE }.answer)
+            assertEquals(1, viewModel.state.value.counts.answered)
             assertTrue(store.kept().isEmpty())
         }
 

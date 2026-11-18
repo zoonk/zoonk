@@ -233,7 +233,6 @@
   "onboarding_read_limit_guest": "73391b71e2fbb9876a579f01864e25fd8324d5b48aaadacf9190e55eb9ba1c73",
   "onboarding_read_limit_plus": "b6ee871f2468115c69c8cd9b5ade0f8e3f40ad6c95afd50e3490870ce7805b6b",
   "onboarding_reason_certificate": "6b64bd63bf03cb8820711b5e4f9dcaa845bb29d68c780a727bd1bfcd92caaeda",
-  "onboarding_reason_certificate_description": "b7b4705b86a47e7a2838e44286ec7a074b40e3c4a360bcf23138eccfc9414cef",
   "onboarding_reason_choices": "0269456a1529b47b517f6588c3400da014cd73868589f31b2df098e2a523d30d",
   "onboarding_reason_description": "883081788963ff2227fabfa190138512f456431088187e15b928873550ae4cc8",
   "onboarding_reason_exam_plan": "cafe676456becc71a08cf863ec6280e12e4b491e86d6e0952e136494236ecf83",
@@ -1021,7 +1020,6 @@
     <string name="onboarding_reason_fluent">유창하게 말하기</string>
     <string name="onboarding_reason_fluent_description">거의 모든 주제로 편하게 대화하기</string>
     <string name="onboarding_reason_certificate">어학시험 합격하기</string>
-    <string name="onboarding_reason_certificate_description">토익, DELE, CELI 등</string>
     <string name="onboarding_reason_other_description">내 말로 설명하기</string>
     <string name="onboarding_reason_which_exam">어떤 시험인가요?</string>
     <string name="onboarding_reason_exam_plan">그 시험의 구성과 점수에 맞춰 계획을 세워요.</string>

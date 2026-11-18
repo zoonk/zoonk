@@ -56,6 +56,7 @@ import com.zoonk.android.feature.session.SessionDayProgress
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -157,7 +158,7 @@ fun LessonAccessScreen(
     }
 }
 
-/** The bottom bar's one way on from [LessonAccessScreen]; none while a slow-down counts down to opening the lesson. */
+/** The bottom bar's actions from [LessonAccessScreen]; none while a slow-down counts down to opening the lesson. */
 fun lessonAccessBar(
     refusal: LessonRefusal,
     onRetry: () -> Unit,
@@ -176,13 +177,33 @@ fun lessonAccessBar(
             is LessonRefusal.Limited -> {
                 val reached = refusal.reached() ?: return null
                 when (reached.tier) {
-                    LimitTier.Guest -> R.string.limit_create_account to { exits.open(AppRoute.Login) }
+                    LimitTier.Guest -> return { GuestLessonsBar { exits.open(AppRoute.Login) } }
                     LimitTier.Free -> return { FreeLessonsBar(reached, onRetry, exits) }
                     LimitTier.Plus -> R.string.player_back to exits::close
                 }
             }
         }
     return { TaskActionBar { TaskActions { main -> Button(onClick = onClick, modifier = main) { Text(stringResource(label)) } } } }
+}
+
+@Composable
+private fun GuestLessonsBar(onAccount: () -> Unit) {
+    TaskActionBar {
+        TaskActions { main ->
+            Column(
+                main.width(IntrinsicSize.Max),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(onClick = onAccount, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.limit_create_account))
+                }
+                TextButton(onClick = onAccount, size = ButtonSize.Small) {
+                    Text(stringResource(R.string.gate_log_in))
+                }
+            }
+        }
+    }
 }
 
 /**
