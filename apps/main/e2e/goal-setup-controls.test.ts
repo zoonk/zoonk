@@ -77,3 +77,13 @@ test("keeps the German goal box the same height when typing starts on a phone", 
     .poll(() => box.evaluate((element) => element.getBoundingClientRect().height))
     .toBe(emptyHeight);
 });
+
+test("names the goal example the same way on the home and onboarding pages", async ({ page }) => {
+  const goal = page.locator('[data-slot="goal-field"]').first().getByRole("textbox");
+
+  await page.goto("/de");
+  await expect(goal).toHaveAccessibleDescription(/^Zum Beispiel: /u);
+
+  await page.goto("/de/start");
+  await expect(goal).toHaveAccessibleDescription(/^Zum Beispiel: /u);
+});
