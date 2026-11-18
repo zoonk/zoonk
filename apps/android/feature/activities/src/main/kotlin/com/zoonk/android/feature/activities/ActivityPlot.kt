@@ -221,7 +221,7 @@ fun ActivityPlot(
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
         val xStyle = style.copy(color = muted)
-        // A caller's own ticks (an angle's quarter turns) show when they fit side by side; otherwise round ones that do.
+        // A caller's own ticks (an angle's quarter turns, then half turns) show as far as they fit; otherwise round ones that do.
         val given =
             xTicks?.let { choices ->
                 val labels = choices.flatten().distinct().associateWith { measurer.measure(formatX(it), xStyle) }
@@ -298,14 +298,7 @@ private fun LinearScale.labelSpan(
 internal fun LinearScale.fittedChoice(
     choices: List<List<Double>>,
     width: (Double) -> Int,
-): List<Double> =
-    choices.firstOrNull { ticks ->
-        ticks
-            .map { labelSpan(it, width(it)) }
-            .sortedBy { it.first }
-            .zipWithNext()
-            .all { (a, b) -> a.second < b.first }
-    } ?: emptyList()
+): List<Double> = fittingTicks(domain, frame = { labelSpan(it, width(it)) }, values = { choices[choices.size - it] }, count = choices.size)
 
 internal fun TextMeasurer.fittedPlotTicks(
     scale: LinearScale,
