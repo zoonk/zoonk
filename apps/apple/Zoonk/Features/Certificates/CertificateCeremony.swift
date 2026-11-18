@@ -339,7 +339,8 @@ private struct StagePicture: View {
     if facts.locked {
       LockedCertificateCard(facts: facts)
     } else {
-      CertificatePicture(url: store.certificate(code: facts.code)?.issued?.pictures.screen)
+      CertificatePicture(
+        url: store.certificate(code: facts.code)?.issued?.pictures.screen, facts: facts)
     }
   }
 }

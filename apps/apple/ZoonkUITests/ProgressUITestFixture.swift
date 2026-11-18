@@ -190,7 +190,7 @@ private let progressUITestActivityDaysJSON =
   + progressUITestDates.enumerated().map { index, date in
     let count = date == "2026-08-20" ? 9 : (index % 5 == 0 ? index % 7 : 0)
     return
-      #"{ "activitiesCompleted": \#(count), "date": "\#(date)", "timeSpentSeconds": \#(count * 180) }"#
+      #"{ "activitiesCompleted": \#(count), "date": "\#(date)", "lessonCompletions": \#(count / 3), "timeSpentSeconds": \#(count * 180) }"#
   }.joined(separator: ", ") + "]"
 
 private let progressUITestEnergyDaysJSON =
