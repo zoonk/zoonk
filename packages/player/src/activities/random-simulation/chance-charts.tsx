@@ -66,7 +66,10 @@ export function OutcomeHistogram({
   const binary = last - first === 1;
   const shown = outcomeCounts(shownOutcomes).filter((bar) => bar.count > 0);
   const hitTicks = all.filter((bar) => isHit(bar.outcome)).map((bar) => bar.outcome);
-  const ticks = [...new Set([first, last, ...(hitTicks.length === 1 ? hitTicks : [])])];
+  // In order, since the axis fits its labels left to right.
+  const ticks = [...new Set([first, last, ...(hitTicks.length === 1 ? hitTicks : [])])].toSorted(
+    (left, right) => left - right,
+  );
 
   return (
     <ActivityPlot

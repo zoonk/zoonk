@@ -4779,6 +4779,7 @@ msgid "{count, plural, one {# more unit} other {# more units}}"
 msgstr "{count, plural, one {# unidad más} other {# unidades más}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "OGR3YM"
 msgid "Show fewer chapters"
 msgstr "Mostrar menos capítulos"
@@ -5610,24 +5611,24 @@ msgid "Type instead"
 msgstr "Escribir en vez de hablar"
 
 #: src/language/conversation/call-intro-footer.tsx
-msgctxt "LonDf3"
-msgid "We can't use your microphone"
-msgstr "No podemos usar tu micrófono"
-
-#: src/language/conversation/call-intro-footer.tsx
-msgctxt "lLV_X_"
-msgid "Your microphone is off"
-msgstr "Tu micrófono está apagado"
-
-#: src/language/conversation/call-intro-footer.tsx
 msgctxt "aUNKrh"
 msgid "Check that a microphone is connected and no other app is using it, or do this call by typing."
 msgstr "Revisa que haya un micrófono conectado y que ninguna otra app lo esté usando, o participa en esta llamada por escrito."
 
 #: src/language/conversation/call-intro-footer.tsx
+msgctxt "LonDf3"
+msgid "We can't use your microphone"
+msgstr "No podemos usar tu micrófono"
+
+#: src/language/conversation/call-intro-footer.tsx
 msgctxt "doNUkv"
 msgid "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing."
 msgstr "En la configuración de tu navegador, permite que Zoonk use el micrófono para hablar con {name}, o participa en la llamada por escrito."
+
+#: src/language/conversation/call-intro-footer.tsx
+msgctxt "lLV_X_"
+msgid "Your microphone is off"
+msgstr "Tu micrófono está apagado"
 
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -7264,6 +7265,11 @@ msgid "{count, plural, one {You can create # more map right now.} other {You can
 msgstr "{count, plural, one {Puedes crear # mapa más ahora mismo.} other {Puedes crear # mapas más ahora mismo.}}"
 
 #: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "Para hacer uno de estos mapas, primero se preparan sus lecciones, y cuentan para tu límite de lecciones gratis."
+
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "uPTv7C"
 msgid "Without a map"
 msgstr "Sin mapa"
@@ -7273,11 +7279,6 @@ msgstr "Sin mapa"
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "_tV21i"
-msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
-msgstr "Para hacer uno de estos mapas, primero se preparan sus lecciones, y cuentan para tu límite de lecciones gratis."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -8275,6 +8276,13 @@ msgstr "Las respuestas en blanco cuentan como incorrectas."
 msgctxt "3YnSzO"
 msgid "{correct} of {total}"
 msgstr "{correct} de {total}"
+
+#: src/mock/mock-result-breakdown.tsx
+#: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "Mostrar menos"
 
 #: src/mock/mock-result-breakdown.tsx
 #: src/today/use-row-label.ts
@@ -11970,12 +11978,6 @@ msgstr "Pregunta {position, number} de {count, number} sobre este texto"
 msgctxt "737oWL"
 msgid "Shared text"
 msgstr "Texto compartido"
-
-#: src/questions/item-set-stimulus.tsx
-#: src/today/today-session-card.tsx
-msgctxt "qyJtWy"
-msgid "Show less"
-msgstr "Mostrar menos"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "SDhsqC"

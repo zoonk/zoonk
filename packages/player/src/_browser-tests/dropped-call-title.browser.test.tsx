@@ -15,13 +15,16 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
   routes: { buddy: "/buddy", journey: "/plan", signUp: "/login", today: "/", upgrade: "/plus" },
 };
 
-function renderDropped(dropped: React.ComponentProps<typeof DroppedCallScreen>["dropped"]) {
+function renderDropped(
+  dropped: React.ComponentProps<typeof DroppedCallScreen>["dropped"],
+  microphoneProblem: React.ComponentProps<typeof DroppedCallScreen>["microphoneProblem"] = null,
+) {
   render(
     <LearnProvider adapters={ADAPTERS}>
       <DroppedCallScreen
         dropped={dropped}
         limit={{ period: "day", tier: "plus" }}
-        microphoneProblem={null}
+        microphoneProblem={microphoneProblem}
         name="Linda"
         onEnd={vi.fn()}
         onRetry={vi.fn()}
@@ -52,6 +55,13 @@ describe("a call that stopped", () => {
     renderDropped(dropped);
 
     await expect.element(page.getByText(title, { exact: true })).toBeVisible();
+    await expect.element(page.getByText("The call dropped")).not.toBeInTheDocument();
+  });
+
+  it("is titled by the microphone when the browser blocks it", async () => {
+    renderDropped({ reason: "microphone", retry: "microphone" }, "blocked");
+
+    await expect.element(page.getByText("Your microphone is off", { exact: true })).toBeVisible();
     await expect.element(page.getByText("The call dropped")).not.toBeInTheDocument();
   });
 
