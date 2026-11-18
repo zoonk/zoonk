@@ -18,15 +18,19 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,20 +76,32 @@ fun BottomBar(
     var span by remember { mutableStateOf<PageSpan?>(null) }
     val margin = pageMargin()
     val density = LocalDensity.current
+    var barTop by remember { mutableFloatStateOf(Float.POSITIVE_INFINITY) }
+    // The note never reaches above the page's top bar: in a short window it keeps the room between them and scrolls in it.
+    val pageTop = WindowInsets.safeDrawing.getTop(density) + with(density) { TopAppBarDefaults.TopAppBarExpandedHeight.toPx() }
+    val noteRoomLeft = maxOf(barTop - pageTop, with(density) { NOTE_MIN_HEIGHT.toPx() })
 
     DisposableEffect(anchors) { onDispose { anchors.remove(key) } }
 
-    Box(modifier.onGloballyPositioned { anchors.set(key, it.boundsInRoot().top) }.onPageSpan { span = it }) {
+    Box(
+        modifier
+            .onGloballyPositioned {
+                barTop = it.boundsInRoot().top
+                anchors.set(key, barTop)
+            }.onPageSpan { span = it },
+    ) {
         // Placed before the bar, so Tab reaches the note's action before the buttons under it, as on the web.
         Box(
             Modifier
-                .aboveBar()
+                .aboveBar(noteRoomLeft)
                 .onSizeChanged { noteRoom?.height = with(density) { it.height.toDp() } }
                 .fillMaxWidth()
                 .semantics { liveRegion = LiveRegionMode.Polite },
         ) {
             note?.let {
-                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
+                Surface(Modifier.fillMaxWidth()) {
+                    Box(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = margin, vertical = 8.dp)) { it() }
+                }
             }
         }
         Surface {
@@ -141,12 +157,16 @@ fun PaddingValues.plusBottom(extra: Dp): PaddingValues {
     )
 }
 
-/** Laid out with no height of its own and drawn just above its parent's top, so what it holds never moves the bar. */
-private fun Modifier.aboveBar(): Modifier =
+/** Laid out with no height of its own and drawn just above its parent's top, so what it holds never moves the bar; at most [maxHeight] px tall. */
+private fun Modifier.aboveBar(maxHeight: Float): Modifier =
     layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints.copy(minHeight = 0))
+        val cap = if (maxHeight.isFinite()) minOf(constraints.maxHeight, maxHeight.toInt()) else constraints.maxHeight
+        val placeable = measurable.measure(constraints.copy(minHeight = 0, maxHeight = cap))
         layout(placeable.width, 0) { placeable.place(0, -placeable.height) }
     }
+
+/** The least a note keeps above the bar in the shortest window, a line and its padding. */
+private val NOTE_MIN_HEIGHT = 48.dp
 
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp

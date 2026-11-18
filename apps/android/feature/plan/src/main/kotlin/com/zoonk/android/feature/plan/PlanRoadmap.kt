@@ -54,7 +54,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
@@ -72,6 +71,7 @@ import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.Geist
+import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.layoutStart
 import com.zoonk.android.ui.theme.zoonkType
@@ -163,7 +163,7 @@ private fun RoadmapCompact(
                             listOf(position.name),
                         ),
                     modifier = Modifier.weight(1f),
-                    style = small.copy(lineBreak = LineBreak.Heading),
+                    style = small.balanced(),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -385,7 +385,10 @@ private const val WORD_JOINER = "\u2060"
 
 /** Names wrap and hyphenate rather than being cut. */
 @Composable
-private fun bandStyle() = MaterialTheme.typography.labelMedium.copy(hyphens = Hyphens.Auto, lineBreak = LineBreak.Heading)
+private fun bandStyle() =
+    MaterialTheme.typography.labelMedium
+        .copy(hyphens = Hyphens.Auto)
+        .balanced()
 
 private class BandLayout(
     val widths: List<Dp>,
@@ -595,7 +598,10 @@ private fun PhaseAxis(
     width: Dp,
 ) {
     // A date carries the data face (withData); a word on the axis, such as "Today", keeps the text face.
-    val style = MaterialTheme.zoonkType.data.copy(fontFamily = Geist, lineBreak = LineBreak.Heading)
+    val style =
+        MaterialTheme.zoonkType.data
+            .copy(fontFamily = Geist)
+            .balanced()
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val axisFinish = page.plan.axisFinish(page.goal.kind, page.today)

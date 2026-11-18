@@ -48,7 +48,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -84,6 +83,7 @@ import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
+import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
@@ -391,7 +391,7 @@ private fun ChoiceRow(
     stacked: Boolean,
     onClick: () -> Unit,
 ) {
-    val labelStyle = MaterialTheme.typography.bodyLarge.copy(lineBreak = LineBreak.Heading)
+    val labelStyle = MaterialTheme.typography.bodyLarge.balanced()
     // A one-line choice sits in the middle of its row's height; a longer one starts at the top.
     Box(
         Modifier
