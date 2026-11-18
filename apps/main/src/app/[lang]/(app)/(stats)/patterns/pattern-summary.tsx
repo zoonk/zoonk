@@ -7,16 +7,12 @@ import { getTimePeriodNames } from "./pattern-names";
 export async function getBestDayName(
   verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
-  const t = await getExtracted();
-  const locale = await getAppLocale();
-
-  if (verdict.kind === "even") {
-    return t("No best day yet");
+  if (verdict.kind !== "best") {
+    return null;
   }
 
-  return verdict.kind === "best"
-    ? getScoreWeekdayLabel({ dayOfWeek: verdict.best.dayOfWeek, locale })
-    : null;
+  const locale = await getAppLocale();
+  return getScoreWeekdayLabel({ dayOfWeek: verdict.best.dayOfWeek, locale });
 }
 
 export async function getBestTimeName(

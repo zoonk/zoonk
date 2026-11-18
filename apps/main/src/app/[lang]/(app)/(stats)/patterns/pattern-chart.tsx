@@ -44,12 +44,8 @@ export type PatternColumnView = {
   shortName?: string;
 };
 
-type PatternState = "best" | "counted" | "few" | "none";
+type PatternState = "best" | "counted" | "empty";
 
-/**
- * A group with too few answers to count is a hollow gray outline and one without answers has no bar,
- * so neither reads as a result.
- */
 const PATTERN_STATE = {
   best: {
     bar: "bg-success",
@@ -63,13 +59,7 @@ const PATTERN_STATE = {
     name: "text-muted-foreground",
     value: "text-foreground",
   },
-  few: {
-    bar: "border-foreground/30 contrast-more:border-foreground border border-b-0 border-dashed",
-    chip: "bg-surface-3 text-muted-foreground",
-    name: "text-muted-foreground",
-    value: "text-muted-foreground",
-  },
-  none: {
+  empty: {
     bar: "",
     chip: "bg-surface-3 text-muted-foreground",
     name: "text-muted-foreground",
@@ -78,12 +68,8 @@ const PATTERN_STATE = {
 } as const satisfies Record<PatternState, Record<"bar" | "chip" | "name" | "value", string>>;
 
 function getPatternState({ best, pattern }: Pick<PatternColumnView, "best" | "pattern">) {
-  if (pattern.totalAnswers === 0) {
-    return "none";
-  }
-
   if (pattern.totalAnswers < MIN_PATTERN_ANSWERS) {
-    return "few";
+    return "empty";
   }
 
   return best ? "best" : "counted";
@@ -167,10 +153,10 @@ function PatternColumn({
         )}
 
         <span className={cn("font-mono text-xs leading-4 tabular-nums", tone.value)}>
-          {state === "none" ? DASH : value}
+          {state === "empty" ? DASH : value}
         </span>
 
-        {state !== "none" && (
+        {state !== "empty" && (
           <span
             className={cn("min-h-0.5", BAR_CLASS, tone.bar)}
             style={{ height: getBarHeight(column.pattern.score) }}
@@ -211,6 +197,8 @@ export async function PatternChart({
   id: string;
   title: string;
 }) {
+  const t = await getExtracted();
+
   const points = await Promise.all(
     columns.map(async (column) => ({ column, ...(await getPatternTexts(column.pattern)) })),
   );
@@ -224,7 +212,7 @@ export async function PatternChart({
   const bestIndex = columns.findIndex((column) => getPatternState(column) === "best");
 
   return (
-    <PageSection aria-labelledby={id}>
+    <PageSection aria-labelledby={id} className="gap-1">
       <PageSectionHeader>
         <PageSectionTitle id={id}>{title}</PageSectionTitle>
       </PageSectionHeader>
@@ -247,6 +235,12 @@ export async function PatternChart({
 
         <ChartInspectorTooltip within={PROGRESS_CONTENT_SELECTOR} />
       </ChartInspector>
+
+      {columns.some((column) => getPatternState(column) === "empty") && (
+        <p className="text-muted-foreground text-xs">
+          {DASH} {t("Not enough answers yet")}
+        </p>
+      )}
     </PageSection>
   );
 }
@@ -274,7 +268,7 @@ export function PatternChartSkeleton({
   titleClassName: string;
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-1">
       <Skeleton className={cn("my-1 h-4", titleClassName)} />
 
       <div className={CHART_CLASS} style={getColumnsStyle(columns)}>
