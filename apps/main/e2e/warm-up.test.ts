@@ -145,6 +145,25 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(page.getByRole("button", { name: /^Planning the lesson/u })).toBeVisible();
 });
 
+test("closing the plan's progress returns to the quiz instead of leaving setup", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await page.getByRole("button", { name: /^Building your plan/u }).click();
+  await expect(page.getByText("Good guess!")).toBeHidden();
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByText("Good guess!")).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`/start/${goal.id}`, "u"));
+});
+
 test("blocked tab storage leaves the wait quiz playable", async ({
   noProgressUser,
   userWithoutProgress: page,
