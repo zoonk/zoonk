@@ -196,15 +196,7 @@ internal fun ConversationLive(
             if (call.usedHelp) Phrases(conversation)
         },
     ) { beside ->
-        item(key = "character") {
-            val detail =
-                if (examTask != null) {
-                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
-                } else {
-                    stringResource(R.string.conversation_character_detail, character.role, character.place)
-                }
-            CharacterRow(character.name, detail, Modifier.callItem())
-        }
+        // On one column the goals come first, so the character's row heads what they say, as it does beside the goals.
         if (!beside && examTask != null) {
             item(key = "card") { SpeakingCardView(examTask.card, conversation.targetLanguage, Modifier.callItem(), compact = true) }
         }
@@ -215,6 +207,15 @@ internal fun ConversationLive(
                     Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
                 }
             }
+        }
+        item(key = "character") {
+            val detail =
+                if (examTask != null) {
+                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
+                } else {
+                    stringResource(R.string.conversation_character_detail, character.role, character.place)
+                }
+            CharacterRow(character.name, detail, Modifier.callItem())
         }
         call.turns.forEachIndexed { index, turn ->
             // Turns only grow at the end, so their position identifies them.
@@ -417,14 +418,13 @@ private fun CallTurn(
                 Modifier.semantics { if (state == TurnState.Reconnecting) liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.titleSmall,
             )
-            detail?.let {
-                Text(
-                    it,
-                    Modifier.semantics { if (it == wrapUp) liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            // An empty line holds the detail's room, so the bar doesn't move as a hint comes and goes.
+            Text(
+                detail.orEmpty(),
+                Modifier.semantics { if (detail != null && detail == wrapUp) liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
