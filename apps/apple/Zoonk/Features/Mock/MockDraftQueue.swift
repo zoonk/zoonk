@@ -78,6 +78,12 @@ final class MockDraftQueue {
     }
   }
 
+  /// For a section handed in, whose refused answers can't be sent again.
+  func forgetRefusals() {
+    refused.removeAll()
+    settle()
+  }
+
   func retryNow() {
     guard let retryTask else {
       return
@@ -164,10 +170,11 @@ final class MockDraftQueue {
       status = .retrying
     } else if attempt > 0 && isBusy {
       status = .resending
-    } else if isBusy {
-      status = .saving
+    } else if !refused.isEmpty {
+      // Another question's save doesn't hide that an answer still isn't saved.
+      status = .refused
     } else {
-      status = refused.isEmpty ? .saved : .refused
+      status = isBusy ? .saving : .saved
     }
   }
 }
