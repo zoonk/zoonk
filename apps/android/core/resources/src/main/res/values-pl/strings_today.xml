@@ -14,8 +14,6 @@
   "today_coming_stalled": "90a3353e7c211de5f5faabc1fee1cccac4072aa96c163d4f0193f9e64ff9a1af",
   "today_coming_title": "4b85ad32e14b179ff8e21af16bfef336b81bb8c3f5f2f07d8529f3df32190da6",
   "today_coming_writing": "0cb41dfcc5b1a0cd008d2f4a6f9bd7636d278ee4da64e4a4e4497f0da5df95f0",
-  "today_connection_lost": "2ea15112203e79d03ac0f0e9550b16779a7c15b53240357afb930e6f6da94fee",
-  "today_connection_lost_detail": "07c15854b1b07214636185f5519bce3eee6fbc020e031e13ea5c8e7e9a981a1b",
   "today_continue_draft": "43adf5c979c09dfdfea91ea7979ac312a6e997f9c351be47eb8e8912e00240df",
   "today_continue_mock": "f9e1967605fc30916fe310803cad07a2d1966d71f2b4d3f50f4027374c069681",
   "today_continue_mock_detail": "8c91461462f3e29d8da41729c3991325a77aa3d5075756d3da65e3ec9caf953f",
@@ -81,7 +79,6 @@
   "today_progress_lessons_today": "e1084d1a35342dc4b92d76cd03b782e9087f83a40833b1d9b450541f96d77870",
   "today_progress_studied": "03c8a723ad59f6dcc298c25fc3cc388dc6d1e16aa51bd32115a3aa0dce12b313",
   "today_quick_explanation": "1b0c7639e5d108584fe559606cd0fceb3d6a2102f3c8a30d4266f29c78ad32af",
-  "today_reconnect": "f61d46ea73dd3c090aa3b8ec76fe704fccb5cc92b1256a0d63eabf7cc2e2b9bf",
   "today_rest": "8b1c127e35c4cab1698ac3a9a0c5d619a5422f627e0d6b5977efc00399ba553d",
   "today_rest_enjoy": "082c84ad293204a93509d307773095f5af97ced388d877ed4bf6d35e1359a6d7",
   "today_rest_next_lessons": "b8bd1aeb5b3c21dcbb1a027a65210b4af715cfa3066a93fb6859d71854355489",
@@ -345,9 +342,6 @@
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Zachowaj obecny czas nauki</string>
     <string name="today_behind_kept">Okej. Twój czas nauki się nie zmienia.</string>
-    <string name="today_connection_lost">Utracono połączenie</string>
-    <string name="today_connection_lost_detail">Nie otrzymujemy już informacji o postępie. Przygotowywanie może nadal trwać.</string>
-    <string name="today_reconnect">Połącz ponownie</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Postęp</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->

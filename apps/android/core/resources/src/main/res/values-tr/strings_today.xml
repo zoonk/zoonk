@@ -14,8 +14,6 @@
   "today_coming_stalled": "f0bada095eb1d97d2606e416e2c4a4c8f9a2a4499cb7dae5846a8b26045592db",
   "today_coming_title": "60ec15c7f3011287e4b022344833989dc6e0a63d21afd25f7bf66b682b67ca7a",
   "today_coming_writing": "2b768aa429451953100dd6d8bd16602ae381a52ee3ab6ad4da41ae7727d288ec",
-  "today_connection_lost": "c8558f034aaca56c92c8ebd15e3ccaaaff4ed0a25b90f8d1e36e209247fa47db",
-  "today_connection_lost_detail": "cad8ea09ffa7cc328aaa41aa2a11f8cc9d24a2a6bab53142ff9b6f02af088835",
   "today_continue_draft": "28f31bd2ff8a596dd62d2018a5a5e160a21d9669b2339e7cf71bb73497ce0f28",
   "today_continue_mock": "4c27bfaaf065c14019aace6ce73250d1084659119cd0a6c24eec0db21f2dfee1",
   "today_continue_mock_detail": "7e8a2b7ba945db45cf8bfe4eddf37f5ca970e9e4a37149d7d20129dd67465bd4",
@@ -81,7 +79,6 @@
   "today_progress_lessons_today": "7da1c745aa81da8d2f665e37416f001d0dd8473603df290a1c40fea536a781e4",
   "today_progress_studied": "3de93c8d02f384d73fa04a9a10b6967e600d47915b889fd6b5871ee443d40c5b",
   "today_quick_explanation": "5c18dbfe8f8e02910d8dcd4b65b9e89df64fd08f1dcda26aeeb68d4ea4a8d8bb",
-  "today_reconnect": "7061adf56e0fdd070916c88989f9a114c893e454856b551c7a3a9d263e75943a",
   "today_rest": "71b9ba28710fd7a9912a50bb432f3f26973e6c3e7ccb49cfb00c430fe892f58c",
   "today_rest_enjoy": "3d4467f0f838adede9ab1fceca4a2c968008d041b211d03aa8c4dd65e57393d2",
   "today_rest_next_lessons": "f250a8016b64b3316b1dc20f016599fb4ecef5875cbaf84efcbb3bdad843f3ca",
@@ -329,9 +326,6 @@
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Günlük süreni koru</string>
     <string name="today_behind_kept">Tamam. Çalışma süren aynı kalıyor.</string>
-    <string name="today_connection_lost">Bağlantı kesildi</string>
-    <string name="today_connection_lost_detail">Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir.</string>
-    <string name="today_reconnect">Yeniden bağlan</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">İlerleme</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
