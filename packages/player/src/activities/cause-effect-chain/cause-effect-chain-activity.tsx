@@ -164,8 +164,6 @@ export function CauseEffectChainActivity({
       state: isGuided && !isLessonChain ? ("correct" as const) : ("made" as const),
     }));
 
-  const gutter = arcs.length > 0 ? ARC_GUTTER : 0;
-
   return (
     <ActivityCanvas labelId={labelId}>
       {!isExploring && (!isChecked || notice) && (
@@ -182,7 +180,7 @@ export function CauseEffectChainActivity({
         </ActivityCanvasLabel>
       )}
 
-      <div className="relative" style={{ paddingLeft: gutter }}>
+      <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
         <CauseEffectArcs centers={centers} links={arcs} order={order} />
 
         <ol
@@ -212,7 +210,7 @@ export function CauseEffectChainActivity({
       </div>
 
       {/* The chain's rows share the cards' edge; the arrows keep the room before it. */}
-      <div className="flex flex-col gap-3 empty:hidden" style={{ paddingLeft: gutter }}>
+      <div className="flex flex-col gap-3 empty:hidden" style={{ paddingLeft: ARC_GUTTER }}>
         <CauseEffectLinkList
           isLessonChain={isLessonChain}
           canRemove={!isLocked && !isGuided}
