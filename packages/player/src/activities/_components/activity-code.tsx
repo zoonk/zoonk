@@ -152,11 +152,15 @@ export function ActivityCodeLineInput({
         <ActivityCodeTokens tokens={highlightCode(value, language)[0] ?? []} />
       </span>
 
+      {/* Reaches a 44 px tap target into the rows around it, so its own row keeps one line height. */}
       <textarea
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={cn(FIELD_RESET, "size-full min-h-lh wrap-anywhere whitespace-pre-wrap")}
+        className={cn(
+          FIELD_RESET,
+          "relative z-10 -my-(--target-pad) w-full py-(--target-pad) wrap-anywhere whitespace-pre-wrap [--target-pad:max(0px,calc((44px-1lh)/2))]",
+        )}
         onChange={(event) => onChange(event.target.value.replaceAll(/[\r\n]/gu, ""))}
         rows={1}
         spellCheck={false}
@@ -214,7 +218,7 @@ export function ActivityCodeEditor({
             autoCorrect="off"
             className={cn(
               FIELD_RESET,
-              "col-start-2 row-span-full min-h-lh w-full wrap-anywhere whitespace-pre-wrap [font:inherit]",
+              "relative col-start-2 row-span-full -my-3 min-h-lh w-full py-3 wrap-anywhere whitespace-pre-wrap [font:inherit]",
             )}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {
