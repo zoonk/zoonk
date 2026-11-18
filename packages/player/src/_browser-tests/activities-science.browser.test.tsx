@@ -154,7 +154,7 @@ describe("science activities", () => {
       .toContain("40.77");
   });
 
-  it("formula model simulation: the chart writes the right answer as the feedback does", async () => {
+  it("formula model simulation: feedback rounds the right answer to the requested places", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
@@ -165,7 +165,7 @@ describe("science activities", () => {
     await pressOnSlider("Launch angle", "ArrowRight", 14);
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775 m", { exact: true }).first()).toBeVisible();
+    await expect.element(page.getByText("41 m", { exact: true })).toBeVisible();
 
     await expect
       .poll(() =>

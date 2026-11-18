@@ -37,8 +37,10 @@ function ActivityCheckArea({
   isCorrect,
   onAnswerChange,
   phase,
+  places,
 }: Pick<ActivityStepProps, "answer" | "content" | "isCorrect" | "onAnswerChange" | "phase"> & {
   className?: string;
+  places: number | null;
 }) {
   const { check } = content;
   const locale = useAppLocale();
@@ -59,7 +61,6 @@ function ActivityCheckArea({
 
   if (check.kind === "numeric") {
     const value = answer?.kind === "numeric" ? answer.value : null;
-    const places = getActivityDecimalPlaces(content);
 
     const result = phase === "checked" ? numericResult(isCorrect) : null;
 
@@ -109,6 +110,7 @@ export function ActivityStep({
   const labelId = useId();
   const interactionState = usePlayerInteractionState();
   const { answersOnCanvas, badge } = activityRenderers[content.template];
+  const places = getActivityDecimalPlaces(content);
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const badgeKind = badge(content);
   const [canvasAsks, setCanvasAsks] = useState(false);
@@ -148,6 +150,7 @@ export function ActivityStep({
           content={content}
           onAnswerChange={onAnswerChange}
           phase={phase}
+          places={places}
         />
       )}
 
@@ -156,6 +159,7 @@ export function ActivityStep({
           answer={answer}
           content={content}
           isCorrect={isCorrect}
+          places={places}
           showsNumbers={!answersOnCanvas}
         />
       )}

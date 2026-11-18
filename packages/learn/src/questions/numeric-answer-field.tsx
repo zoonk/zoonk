@@ -12,7 +12,7 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
-import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
+import { type NumericEntry, getNumericEntryRule, parseEntryAnswer } from "./_utils/numeric-entry";
 import { ANSWER_GROUP_CLASS, focusAnswerOnPointer, putAwayOnScreenKeyboard } from "./answer-field";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
@@ -22,8 +22,6 @@ const DECIMAL_EXAMPLE = 2.5;
 function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   const t = useExtracted();
 
-  const kind = entry.kind === "decimals" && entry.places === 0 ? "integer" : entry.kind;
-
   const rule = {
     decimals: t(
       "{places, plural, one {Round to # decimal place.} other {Round to # decimal places.}}",
@@ -32,7 +30,8 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
     fraction: t("A fraction, like 2/3, or a decimal."),
     integer: t("A whole number."),
     number: null,
-  }[kind];
+    roundToWhole: t("Round to the nearest whole number."),
+  }[getNumericEntryRule(entry)];
 
   return rule ? (
     <p className="text-muted-foreground text-sm" id={id}>

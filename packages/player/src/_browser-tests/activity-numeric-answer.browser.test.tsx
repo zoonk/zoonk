@@ -16,9 +16,12 @@ function numericGroup() {
 }
 
 describe("activity numeric answers", () => {
-  it("the calculator uses whole-number wording for zero decimal places", async () => {
+  it("the calculator asks for rounding while accepting the precise answer", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
-    await expect.element(page.getByText("A whole number.", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByText("Round to the nearest whole number.", { exact: true }))
+      .toBeVisible();
 
     await expect
       .element(page.getByText("Round to 0 decimal places.", { exact: true }))
@@ -27,6 +30,15 @@ describe("activity numeric answers", () => {
     await valueInput().fill("251.54");
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("shows the rounded right answer after a miss", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    await valueInput().fill("12");
+    await checkActivity();
+    await expectVerdict("Not quite");
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("252", { exact: true })).toBeVisible();
   });
 
   it.each([
