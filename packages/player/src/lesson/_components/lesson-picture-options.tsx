@@ -1,9 +1,8 @@
 "use client";
 
 import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
-import { MediaPending } from "@zoonk/ui/components/media-pending";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ImageIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   PlayerChoiceSceneOptionText,
@@ -46,50 +45,41 @@ function PictureOptionContent({
   const { image, pending } = useOptionPicture(step, option.id);
   const pictureText = option.picture?.alt ?? <LessonRichText text={option.text} />;
 
-  function picture() {
-    if (image) {
-      return (
-        <LessonStepImage
-          className={OPTION_PICTURE_CLASS}
-          frame="question"
-          image={image}
-          kind="option"
-        />
-      );
-    }
-
-    if (pending) {
-      return (
-        <MediaPending
-          className={cn(
-            OPTION_PICTURE_BOX_CLASS,
-            "max-h-none min-h-[min(100cqw,var(--picture-max-h))]",
-          )}
-          icon={<ImageIcon aria-hidden="true" className="size-5 shrink-0" />}
-          style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
-        >
-          <p role="status">{t("Drawing the picture…")}</p>
-          <p className="leading-snug wrap-anywhere">{pictureText}</p>
-        </MediaPending>
-      );
-    }
-
-    return (
-      <p
-        className={cn(
-          "bg-muted/50 flex items-center justify-center p-3 text-center text-sm leading-snug",
-          OPTION_PICTURE_BOX_CLASS,
-        )}
-        style={OPTION_PICTURE_BOX_STYLE}
-      >
-        {pictureText}
-      </p>
-    );
-  }
-
   return (
     <div className="@container flex w-full flex-col gap-2">
-      {picture()}
+      <div className="grid grid-cols-1">
+        {/* Keep the description's room when its picture arrives, including on a narrow phone. */}
+        <div
+          className={cn(
+            OPTION_PICTURE_BOX_CLASS,
+            "bg-muted/50 relative col-start-1 row-start-1 grid max-h-none min-h-[min(100cqw,var(--picture-max-h))] place-items-center overflow-hidden p-2 text-center text-sm leading-snug wrap-anywhere",
+            pending && "text-muted-foreground",
+            image && "invisible",
+          )}
+          data-slot="picture-option-frame"
+          style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
+        >
+          {!image && pending && (
+            <>
+              <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0 rounded-none" />
+              <p className="sr-only" role="status">
+                {t("Drawing the picture…")}
+              </p>
+            </>
+          )}
+
+          <p className="relative">{pictureText}</p>
+        </div>
+
+        {image && (
+          <LessonStepImage
+            className={cn(OPTION_PICTURE_CLASS, "col-start-1 row-start-1 self-start")}
+            frame="question"
+            image={image}
+            kind="option"
+          />
+        )}
+      </div>
 
       {isChecked && (
         <PlayerChoiceSceneOptionText>

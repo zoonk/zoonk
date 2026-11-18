@@ -287,8 +287,8 @@ describe("a drawn lesson picture", () => {
         const option = page.getByRole("radio", { name: new RegExp(alt, "u") });
         await expect.element(option).toBeVisible();
         const before = boxOf(option.element());
-        const status = option.element().querySelector('[role="status"]');
-        const drawing = boxOf(status?.parentElement?.parentElement ?? document.body);
+        const frame = option.element().querySelector("[data-slot='picture-option-frame']")!;
+        const drawing = boxOf(frame);
 
         getLessonPictures.mockResolvedValue([
           {
