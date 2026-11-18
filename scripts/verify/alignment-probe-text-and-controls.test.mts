@@ -73,6 +73,21 @@ describe("alignment of text and controls", () => {
     assert.equal(hits("cut").length, 1);
   });
 
+  it("does not join separate table cells into a wrapped facts line", () => {
+    document.body.innerHTML = `
+      <table data-box="16,0,358,80"><tbody>
+        <tr><td><span data-box="16,0,75,16">Official</span></td><td><span data-box="104,0,16,16">—</span></td></tr>
+        <tr><td><span data-box="16,20,75,16">Office · English</span></td><td><span data-box="104,20,28,16">1 exam</span></td></tr>
+      </tbody></table>`;
+
+    assert.deepEqual(hits("line-end"), []);
+    const lines = read().elements.filter((element) => element.part === "text");
+
+    assert.deepEqual(lines.find((element) => element.text === "Office · English")?.lineTexts, [
+      "Office · English",
+    ]);
+  });
+
   it("compares row controls across a display-contents form", () => {
     document.body.innerHTML = `<div data-box="16,0,358,44"><form style="display:contents"><button data-box="16,4,120,36">Skip</button></form><button data-box="144,0,120,44">Continue</button></div>`;
     assert.equal(hits("one-height").length, 1);
