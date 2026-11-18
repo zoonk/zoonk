@@ -36,6 +36,12 @@ class GenerationWaitTest {
     }
 
     @Test
+    fun aStartedBarWithNoStepReportedFillsItsFirstPart() {
+        // A run that failed, or hasn't reported, before its first step still shows the started share it labels.
+        assertEquals(listOf(0.4f, 0f, 0f), phaseFills(share = 0.1f, weights = listOf(10, 20, 10), statuses = listOf(Pending, Pending, Pending)))
+    }
+
+    @Test
     fun aShareOutsideTheBarStaysOnIt() {
         assertEquals(listOf(0f, 0f), phaseFills(-0.1f, listOf(1, 1), listOf(Active, Pending)))
         assertEquals(listOf(1f, 1f), phaseFills(1.4f, listOf(1, 1), listOf(Completed, Active)))
