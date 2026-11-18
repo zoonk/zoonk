@@ -83,6 +83,23 @@ function lineMiss(capture: Capture) {
   return evaluateCapture(capture).find((finding) => finding.rule === "line")?.detail ?? "";
 }
 
+function appleLead(at: number, gap: number): Capture {
+  const capture = led(lineRow("mark", at, 1));
+
+  return {
+    ...capture,
+    elements: capture.elements.map((part) => {
+      if (part.id === "date") {
+        return { ...part, bounds: [22 - gap, 9, 20, 12], ink: [22 - gap, 9, 20, 12] };
+      }
+
+      return part.part === "label" ? { ...part, bounds: [42, 8, 100, 14] } : part;
+    }),
+    platform: "apple",
+    unit: "pt",
+  };
+}
+
 describe("one line of a row, as craft E5 places each part", () => {
   it("puts a mark beside one line on that line's middle", () => {
     assert.equal(lineMiss(oneLine(15)), "");
@@ -134,6 +151,13 @@ describe("one line of a row, as craft E5 places each part", () => {
       lineMiss(led(lineRow("value", 20, 1))),
       /the value 5 below the label's first line/u,
     );
+  });
+
+  it("checks a numbered Apple title's mark at the row center and a date-led row at the first line", () => {
+    assert.equal(lineMiss(appleLead(30, 6)), "");
+    assert.match(lineMiss(appleLead(15, 6)), /the mark 15 above the row's center/u);
+    assert.equal(lineMiss(appleLead(15, 12)), "");
+    assert.match(lineMiss(appleLead(30, 12)), /the mark 15 below the label's first line/u);
   });
 
   it("sets a label with no capitals (Japanese, Korean) on its ideographic face, and says so", () => {
