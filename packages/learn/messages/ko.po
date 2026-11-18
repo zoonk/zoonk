@@ -621,7 +621,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
 #: src/_components/practice-outcome-message.tsx
-#: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
@@ -804,6 +803,11 @@ msgstr "사이드바 펼치기"
 msgctxt "y7b8vA"
 msgid "Screen options"
 msgstr "화면 옵션"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "WE1eNa"
+msgid "The test didn't open. Try again."
+msgstr "테스트가 열리지 않았어요. 다시 시도해 보세요."
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1288,6 +1292,7 @@ msgid "Energy"
 msgstr "에너지"
 
 #: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
 #: src/missions/missions-card.tsx
 #: src/session/summary/summary-rewards.tsx
 msgctxt "IFviMa"
@@ -1448,11 +1453,6 @@ msgstr "오늘의 {buddy}"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {미션 #개 완료 / 전체 {total}개} other {완료한 미션 #개 / 전체 {total}개}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -7488,6 +7488,12 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr ", 오늘 레슨을 마친 뒤"
 
+#. Under the title Today's missions: how many of today's missions are done.
+#: src/missions/mission-list.tsx
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done}/{total}개 완료"
+
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
@@ -7507,12 +7513,6 @@ msgstr "{count, plural, other {미션 #개 더 하면 두뇌력 +{points}}}"
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "두뇌력 +{points} 보상을 받았어요."
-
-#. Under the title Today's missions: how many of today's missions are done.
-#: src/missions/missions-card.tsx
-msgctxt "deISVW"
-msgid "{done} of {total} done"
-msgstr "{done}/{total}개 완료"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
@@ -11482,6 +11482,9 @@ msgid "We couldn't find a date that covers everything."
 msgstr "모든 내용을 마칠 수 있는 날짜를 찾지 못했어요."
 
 #: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "OgCCUY"
 msgid "See what changes"
 msgstr "달라지는 내용 보기"
@@ -12761,15 +12764,15 @@ msgid "We couldn't start this goal. Try again."
 msgstr "이 목표를 시작하지 못했어요. 다시 시도해 보세요."
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr ", 현재 목표. 목표 바꾸기"
-
-#: src/shell/goal-switcher.tsx
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "내 목표"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", 현재 목표. 목표 바꾸기"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
@@ -13341,6 +13344,11 @@ msgstr "다시 만나서 반가워요. 오늘은 짧게 공부하면 되니 부�
 msgctxt "Viq1rs"
 msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}까지 {days, plural, other {#일}}"
+
+#: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "답하기"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"

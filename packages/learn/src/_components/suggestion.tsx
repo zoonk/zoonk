@@ -47,11 +47,6 @@ function useSuggestion(): SuggestionValue {
   return value;
 }
 
-const FRAME_CLASS = SURFACE_CLASS;
-
-const LINE_CLASS = "min-[72rem]:hidden";
-const PANEL_CLASS = "hidden min-[72rem]:flex";
-
 export function Suggestion({
   answered = false,
   children,
@@ -139,7 +134,11 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
   return (
     <PresentationContext value="line">
       <div
-        className={cn(FRAME_CLASS, "flex min-h-12 items-center gap-3 p-2", LINE_CLASS, className)}
+        className={cn(
+          SURFACE_CLASS,
+          "flex min-h-12 items-center gap-3 px-4 py-2 min-[72rem]:hidden",
+          className,
+        )}
         data-slot="suggestion-line"
         {...props}
       >
@@ -202,7 +201,7 @@ export function SuggestionContent({
     <>
       <PresentationContext value="panel">
         <div
-          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-4", PANEL_CLASS, className)}
+          className={cn(SURFACE_CLASS, "hidden flex-col gap-2.5 p-4 min-[72rem]:flex", className)}
           data-slot="suggestion-panel"
         >
           {children}

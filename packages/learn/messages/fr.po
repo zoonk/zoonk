@@ -621,7 +621,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Cela prend plus de temps que d’habitude. L’ouverture se fera toute seule, inutile d’appuyer à nouveau."
 
 #: src/_components/practice-outcome-message.tsx
-#: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "Ça n’a pas marché. Réessaie dans un instant."
@@ -804,6 +803,11 @@ msgstr "Développer la barre latérale"
 msgctxt "y7b8vA"
 msgid "Screen options"
 msgstr "Options de l’écran"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "WE1eNa"
+msgid "The test didn't open. Try again."
+msgstr "Le test ne s’est pas ouvert. Réessaie."
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1288,6 +1292,7 @@ msgid "Energy"
 msgstr "Énergie"
 
 #: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
 #: src/missions/missions-card.tsx
 #: src/session/summary/summary-rewards.tsx
 msgctxt "IFviMa"
@@ -1448,11 +1453,6 @@ msgstr "{buddy} aujourd’hui"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Pas encore"
-
-#: src/buddies/buddy-today.tsx
-msgctxt "xlYYsb"
-msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
-msgstr "{done, plural, =0 {# mission sur {total}} one {# mission accomplie sur {total}} other {# missions accomplies sur {total}}}"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -7488,6 +7488,12 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr ", après les leçons d’aujourd’hui"
 
+#. Under the title Today's missions: how many of today's missions are done.
+#: src/missions/mission-list.tsx
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done} sur {total} terminées"
+
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
@@ -7507,12 +7513,6 @@ msgstr "{count, plural, one {# mission de plus pour +{points} points de Puissanc
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Tu as gagné +{points} Puissance Mentale."
-
-#. Under the title Today's missions: how many of today's missions are done.
-#: src/missions/missions-card.tsx
-msgctxt "deISVW"
-msgid "{done} of {total} done"
-msgstr "{done} sur {total} terminées"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
@@ -11482,6 +11482,9 @@ msgid "We couldn't find a date that covers everything."
 msgstr "Nous n’avons pas pu trouver de date pour tout couvrir."
 
 #: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "OgCCUY"
 msgid "See what changes"
 msgstr "Voir ce qui change"
@@ -12761,15 +12764,15 @@ msgid "We couldn't start this goal. Try again."
 msgstr "Impossible de démarrer cet objectif. Réessaie."
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr ", objectif actuel. Changer d’objectif"
-
-#: src/shell/goal-switcher.tsx
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "Tes objectifs"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", objectif actuel. Changer d’objectif"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
@@ -13341,6 +13344,11 @@ msgstr "Ça fait plaisir de te revoir. Aujourd’hui, il y a peu à faire pour r
 msgctxt "Viq1rs"
 msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} dans {days, plural, one {# jour} other {# jours}}"
+
+#: src/today/today-insight.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "Répondre"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
