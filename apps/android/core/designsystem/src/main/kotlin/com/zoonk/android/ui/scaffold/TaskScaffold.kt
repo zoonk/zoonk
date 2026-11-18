@@ -171,6 +171,7 @@ fun TaskScaffold(
     var isConfirmingExit by rememberSaveable { mutableStateOf(false) }
     val leave = { if (exitConfirmation == null) onClose() else isConfirmingExit = true }
     val focus = rememberTitleFocus()
+    val noteRoom = rememberBarNoteRoom()
 
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
@@ -178,9 +179,13 @@ fun TaskScaffold(
         WithStatusAction(enabled = bottomBar == null) { retry ->
             Scaffold(
                 topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
-                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }) } },
+                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }, noteRoom) } },
                 snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
-                content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
+                content = { padding ->
+                    // The note draws over the content just above the bar, so the content's end keeps its room clear.
+                    val clear = padding.plusBottom(noteRoom.height)
+                    CompositionLocalProvider(LocalTitleFocus provides focus) { content(clear) }
+                },
             )
         }
     }
@@ -280,6 +285,7 @@ private val ASIDE_MARGIN = 24.dp
 private fun TaskBottomBar(
     content: @Composable () -> Unit,
     note: (@Composable () -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
 ) {
-    BottomBar(note = note, columnMargin = TASK_MARGIN) { content() }
+    BottomBar(note = note, columnMargin = TASK_MARGIN, noteRoom = noteRoom) { content() }
 }
