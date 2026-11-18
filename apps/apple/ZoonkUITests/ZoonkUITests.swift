@@ -121,14 +121,9 @@ final class ZoonkUITests: XCTestCase {
       let words = request.results?.compactMap { $0.topCandidates(1).first?.string } ?? []
       XCTAssertTrue(
         words.contains { $0.contains("Plant") }, "The goal name must have visible text: \(words)")
-      let more = app.buttons["More"].firstMatch
-      XCTAssertTrue(more.waitForExistence(timeout: 5), app.debugDescription)
-      more.tap()
-      let level = app.buttons["Level 12"].firstMatch
-      XCTAssertTrue(level.waitForExistence(timeout: 5), app.debugDescription)
-      level.tap()
+      openLevel(in: app)
       XCTAssertTrue(
-        app.staticTexts["Statistics"].firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+        app.navigationBars["Level"].firstMatch.waitForExistence(timeout: 5), app.debugDescription)
       app.terminate()
     }
   }
@@ -192,11 +187,10 @@ final class ZoonkUITests: XCTestCase {
       try performAccessibilityAudit(in: app, sizedBySystem: destination.sizedBySystem)
     }
 
-    app.primaryNavigationItem("Today").tap()
     openStatistics(in: app)
     XCTAssertTrue(
       statTile("Days studied", in: app).waitForExistence(timeout: 5),
-      "Expected the level button to push Statistics")
+      "Expected Search's Statistics row to open Statistics")
     // The calendar's title row swaps layouts as text grows (`ViewThatFits`), which the audit reads
     // as text that doesn't scale and is clipped; at the largest size the title and key show whole.
     try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
@@ -228,6 +222,9 @@ final class ZoonkUITests: XCTestCase {
   /// - Dynamic Type and clipping in system bars and the search field, which keep their size (a long
   ///   press shows the Large Content Viewer) and truncate to their width, and in the elements
   ///   labeled `sizedBySystem`, which another system view sizes.
+  /// - Dynamic Type in labels no element covers, when the window shows iPad's floating tab bar: its
+  ///   tab names are labels inside its buttons, which XCUITest can't find, and keep their size as
+  ///   the iPhone's tab bar does.
   /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
   private func performAccessibilityAudit(
@@ -241,9 +238,11 @@ final class ZoonkUITests: XCTestCase {
     // button at 61.99999999999997.
     let frames = systemSized.filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
 
+    let showsFloatingTabBar = app.buttons["ToggleSideBar"].exists
+
     try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
       guard let element = issue.element else {
-        return false
+        return showsFloatingTabBar && issue.auditType == .dynamicType
       }
 
       switch issue.auditType {
@@ -291,11 +290,27 @@ final class ZoonkUITests: XCTestCase {
 
   @MainActor
   private func openStatistics(in app: XCUIApplication) {
-    let levelButton = app.buttons.matching(
-      NSPredicate(format: "label ENDSWITH %@", "Statistics")
-    ).firstMatch
-    XCTAssertTrue(levelButton.waitForExistence(timeout: 5), "Expected the level button to exist")
-    levelButton.tap()
+    app.primaryNavigationItem("Search").tap()
+    let statistics = app.buttons["Statistics"].firstMatch
+    XCTAssertTrue(statistics.waitForExistence(timeout: 5), "Expected Search to list Statistics")
+    statistics.tap()
+  }
+
+  /// The level chip is in the bar, or in the bar's More menu where text is too large for both it
+  /// and the goal's name.
+  @MainActor
+  private func openLevel(in app: XCUIApplication) {
+    let level = app.buttons.matching(NSPredicate(format: "label ENDSWITH %@", "Level 12"))
+      .firstMatch
+
+    if !level.waitForExistence(timeout: 2) {
+      let more = app.buttons["More"].firstMatch
+      XCTAssertTrue(more.waitForExistence(timeout: 5), app.debugDescription)
+      more.tap()
+      XCTAssertTrue(level.waitForExistence(timeout: 5), app.debugDescription)
+    }
+
+    level.tap()
   }
 
   @MainActor

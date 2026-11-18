@@ -176,7 +176,6 @@ export function MatchColumnsStep({
 
         <MatchBoard
           alignRows
-          className="text-reading"
           left={leftItems}
           renderItem={renderItem}
           right={board.rightItems}

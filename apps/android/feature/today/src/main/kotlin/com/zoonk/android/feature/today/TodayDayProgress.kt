@@ -1,10 +1,17 @@
 package com.zoonk.android.feature.today
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
@@ -20,6 +27,8 @@ import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.dayParts
 import com.zoonk.android.feature.session.learnKind
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -39,11 +48,53 @@ internal fun TodayDayProgress(
     val next = day.steps.firstOrNull { it.position == day.nextPosition }
     val parts = dayParts(day.steps, isNext = { it.position == day.nextPosition }, nextShare = next?.share ?: 0f)
 
-    DayProgress(parts, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(day.sessionBar)) { index ->
-        val part = parts.getOrNull(index)
-        if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
+    val held = day.heldMinutes > 0
+
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        DayProgress(parts, held = held, contentDescription = stepsDone(day.sessionBar)) { index ->
+            val part = parts.getOrNull(index)
+            if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
+        }
+        DayProgressKey(parts.map { it.state }.toSet() + listOfNotNull(DayPart.State.Ahead.takeIf { held }))
     }
 }
+
+/** Main's `DayProgressKey`: what each kind of part the meter draws is, in the meter's order. */
+@Composable
+private fun DayProgressKey(states: Set<DayPart.State>) {
+    val locale = currentLocale()
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        DayPart.State.entries.filter { it in states }.forEach { state ->
+            val (fill, label) =
+                when (state) {
+                    DayPart.State.Done -> {
+                        MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary) to
+                            stringResource(R.string.today_step_done)
+                    }
+
+                    DayPart.State.Current -> {
+                        MeterPart.Fill.Place() to stringResource(R.string.today_segment_up_next)
+                    }
+
+                    DayPart.State.Ahead -> {
+                        MeterPart.Fill.Track to stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }
+                    }
+                }
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                MeterParts(listOf(MeterPart(fill)), Modifier.width(KEY_SWATCH))
+                Text(label, color = muted, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+/** Main's `w-3.5`. */
+private val KEY_SWATCH = 14.dp
 
 private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)

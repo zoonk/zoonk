@@ -36,7 +36,7 @@ struct TaskSegments: View {
     case .right: shape.fill(.success)
     case .wrong: shape.fill(.destructive)
     case .read: shape.fill(Color(.foreground).opacity(0.25))
-    case .current: shape.strokeBorder(.success, lineWidth: 1)
+    case .current: shape.fill(Color.success.opacity(0.4))
     case .ahead: shape.fill(Color.surface3)
     }
   }

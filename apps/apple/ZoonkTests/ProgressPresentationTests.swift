@@ -87,4 +87,18 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertEqual(CalendarSteps.index(from: 14, key: .rightArrow, count: 20), 14)
     XCTAssertEqual(CalendarSteps.index(from: 10, key: .rightArrow, count: 20), 17)
   }
+
+  func testActivityStepsShadeLongerStudyDaysDarker() {
+    XCTAssertEqual(CalendarSteps.activity(studied: false, seconds: 120, maximumSeconds: 600), 0)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 60, maximumSeconds: 600), 1)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 300, maximumSeconds: 600), 2)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 360, maximumSeconds: 600), 3)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 600, maximumSeconds: 600), 4)
+  }
+
+  /// Older imported days have lessons but no recorded time.
+  func testActivityStepsGiveAStudyDayWithoutTimeTheLightestShade() {
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 0, maximumSeconds: 600), 1)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 0, maximumSeconds: 0), 1)
+  }
 }

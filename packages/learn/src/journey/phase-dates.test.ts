@@ -304,6 +304,17 @@ describe(getPlanFinish, () => {
     const shaped = plan([phase(0)], { estimate: { endDate: "2026-12-12" } });
     expect(getPlanFinish({ goalKind: "exam", plan: shaped })).toBeNull();
   });
+
+  it("has no end from the learner's pace while the goal is paused", () => {
+    const shaped = plan([phase(0)], { estimate: { endDate: "2026-12-12" } });
+    expect(getPlanFinish({ goalKind: "learn", paused: true, plan: shaped })).toBeNull();
+  });
+
+  it("keeps the exam's likely date while the goal is paused", () => {
+    const shaped = plan([phase(0)], { schedule: EXAM_DAY });
+    const finish = getPlanFinish({ goalKind: "exam", paused: true, plan: shaped });
+    expect(finish).toStrictEqual({ estimate: true, isoDate: "2027-11-14", month: false });
+  });
 });
 
 describe(getRoadmapPhases, () => {

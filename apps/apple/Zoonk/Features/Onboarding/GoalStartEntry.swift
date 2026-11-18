@@ -169,8 +169,7 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
           .disabled(!GoalEntrySubmission.isEnabled(words: words, canSubmitEmpty: canSubmitEmpty))
         }
       }
-      .padding(.horizontal, 12)
-      .padding(.vertical, 8)
+      .padding(12)
       .inputPanel(isFocused: isFocused)
       .keepsOffFold()
       .listRowBackground(Color.clear)

@@ -1,9 +1,14 @@
 import Foundation
 
 struct PlanEndDateValue: Equatable {
+  struct Line: Equatable {
+    let shown: String
+    let spoken: String
+  }
+
   let shown: String
   let spoken: String
-  var detail: String?
+  var detail: Line?
   var isDate = false
 
   init(
@@ -20,12 +25,12 @@ struct PlanEndDateValue: Equatable {
     }
 
     if finish.estimate {
-      let value = PlanDate.estimate(finish.isoDate, today: today, month: finish.month)
       if targetDate == nil {
         shown = String(localized: "None set", table: "Plan")
         spoken = shown
-        detail = Self.estimatedFinish(value.text)
+        detail = Self.estimatedFinish(finish.isoDate, today: today, month: finish.month)
       } else {
+        let value = PlanDate.estimate(finish.isoDate, today: today, month: finish.month)
         shown = value.text
         spoken = value.spoken
         isDate = true
@@ -37,7 +42,12 @@ struct PlanEndDateValue: Equatable {
     }
   }
 
-  static func estimatedFinish(_ date: String) -> String {
+  static func estimatedFinish(_ isoDate: String, today: String, month: Bool) -> Line {
+    let date = PlanDate.estimate(isoDate, today: today, month: month)
+    return Line(shown: estimatedFinish(date.text), spoken: estimatedFinish(date.spoken))
+  }
+
+  private static func estimatedFinish(_ date: String) -> String {
     String(
       localized: "Estimated finish \(date)", table: "Plan",
       comment: "Estimated end of a plan that has no deadline")

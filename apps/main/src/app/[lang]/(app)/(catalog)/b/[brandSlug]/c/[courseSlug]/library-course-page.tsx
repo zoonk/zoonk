@@ -74,7 +74,12 @@ function CourseHero({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(PAGE_HEADER_CLASS, "max-w-column w-full gap-0 wrap-anywhere")}
+      className={cn(
+        PAGE_HEADER_CLASS,
+        "max-w-column w-full gap-0 wrap-anywhere",
+        // On a phone the route starts below the title block, which keeps the page's edge.
+        "max-sm:bg-background max-sm:relative max-sm:z-2 max-sm:-ms-(--route-inset) max-sm:w-[calc(100%+var(--route-inset))] max-sm:max-w-none",
+      )}
     >
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
@@ -85,7 +90,7 @@ function CourseHero({
       </div>
 
       <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>
-        <RouteMark down />
+        <RouteMark className="max-sm:hidden" down />
         {course.title}
       </h1>
 
@@ -225,7 +230,7 @@ export async function LibraryCoursePage({
       <div
         className={cn(
           ROUTE_CLASS,
-          "flex flex-col **:data-[slot=page-top-start]:ps-(--route-inset)",
+          "flex flex-col sm:**:data-[slot=page-top-start]:ps-(--route-inset)",
         )}
         data-subject={subject}
       >

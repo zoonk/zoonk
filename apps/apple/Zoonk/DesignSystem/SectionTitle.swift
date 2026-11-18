@@ -7,6 +7,8 @@ struct SectionTitle<Trailing: View>: View {
   var alignment: VerticalAlignment = .firstTextBaseline
   @ViewBuilder let trailing: Trailing
 
+  @Environment(\.stacksContent) private var isStacked
+
   init(
     _ title: Text, alignment: VerticalAlignment = .firstTextBaseline,
     @ViewBuilder trailing: () -> Trailing
@@ -25,6 +27,7 @@ struct SectionTitle<Trailing: View>: View {
       trailing
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
+        .multilineTextAlignment(isStacked ? .leading : .trailing)
     }
     .textCase(nil)
   }

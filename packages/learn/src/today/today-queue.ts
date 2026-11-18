@@ -37,3 +37,19 @@ export function splitTodayQueue<Block extends Pick<DayStep, "position" | "status
 }
 
 export const UPCOMING_ROWS = 4;
+
+/** The rows "Show more" hides: the blocks past the first few, then the lessons-coming row. */
+export function getFoldedRows({
+  after,
+  lessonsAhead,
+}: {
+  after: readonly Pick<DayStep, "kind">[];
+  lessonsAhead: boolean;
+}) {
+  const hidden = after.slice(UPCOMING_ROWS);
+
+  return {
+    count: after.length + Number(lessonsAhead) - UPCOMING_ROWS,
+    lessonsOnly: !lessonsAhead && hidden.every((block) => block.kind === "learn"),
+  };
+}

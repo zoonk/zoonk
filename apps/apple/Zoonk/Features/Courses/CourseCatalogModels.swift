@@ -52,6 +52,8 @@ struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   /// 0 while its lessons aren't written yet.
   let lessonCount: Int
   let organization: CourseOrganization
+  /// The line the course's page leads with; the server falls back to the description.
+  let promise: String?
   let slug: String
   let subject: CourseCategory?
   let targetLanguage: String?

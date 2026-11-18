@@ -10,11 +10,24 @@ final class SetupProgressTests: XCTestCase {
       SetupProgress(current: .level, history: [], steps: [.level, .purpose, .plan]))
   }
 
+  func testNoCountWhileTheLanguageReasonCanAddExamQuestions() {
+    XCTAssertNil(
+      SetupProgress(
+        current: .reason, history: [.level, .followUps, .targetDate, .schedule], steps: [.plan]))
+  }
+
   func testSkipAllOnlyWithMoreThanOneProfileQuestionLeft() {
     XCTAssertFalse(SetupProgress.showsSkipAll(current: .watch, steps: [.watch, .buddy, .plan]))
     XCTAssertTrue(
       SetupProgress.showsSkipAll(current: .watch, steps: [.watch, .listen, .buddy, .plan]))
     XCTAssertFalse(SetupProgress.showsSkipAll(current: .buddy, steps: [.buddy, .plan]))
+  }
+
+  /// Main's `getProfileProgress`: Skip all shows while another question about the learner is still
+  /// ahead, whether or not the one on screen was answered before.
+  func testSkipAllShowsOnARevisitedQuestionWhileAnotherIsAhead() {
+    XCTAssertTrue(SetupProgress.showsSkipAll(current: .watch, steps: [.listen, .buddy, .plan]))
+    XCTAssertFalse(SetupProgress.showsSkipAll(current: .listen, steps: [.buddy, .plan]))
   }
 
   func testCountsTheAnsweredQuestionsAndTheOnesLeft() {

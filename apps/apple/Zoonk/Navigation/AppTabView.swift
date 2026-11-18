@@ -129,10 +129,10 @@ struct AppTabView: View {
         }
         .font(.body)
         .labelReservedIconWidth(20)
-        .labelIconToTitleSpacing(16)
-        // The sidebar's rows start their icons 38pt in (iOS 27.2), where its bottom bar starts at
-        // its edge.
-        .padding(.leading, 36)
+        .labelIconToTitleSpacing(15)
+        // The sidebar's rows center their icons 50pt in and start their titles 75pt in (iOS 27.2),
+        // where its bottom bar starts at its edge.
+        .padding(.leading, 40)
         .frame(maxWidth: .infinity, alignment: .leading)
       }
     }

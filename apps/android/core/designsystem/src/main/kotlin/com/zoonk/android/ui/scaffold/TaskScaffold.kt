@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -100,12 +101,13 @@ private fun TaskTopBar(
                 if (fold == null) {
                     CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                 } else {
-                    Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
+                    // Material's bar starts its navigation slot [BAR_INSET] in, so the spacer is that much wider to center the title on the page.
+                    Row(Modifier.width(fold.start - BAR_INSET), verticalAlignment = Alignment.CenterVertically) {
                         CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             Box(Modifier.titleTarget(focus)) { ProvideTextStyle(TASK_TITLE) { title() } }
                         }
-                        Spacer(Modifier.width(CLOSE_WIDTH))
+                        Spacer(Modifier.width(CLOSE_WIDTH + BAR_INSET))
                     }
                 }
             },
@@ -123,6 +125,9 @@ private fun TaskTopBar(
 private val TASK_TITLE
     @Composable get() = MaterialTheme.typography.titleSmall
 
+/** Where Material's bar starts its navigation slot. */
+private val BAR_INSET = 4.dp
+
 /** Material's icon button, which the way out is: the space that keeps the title centered over its page. */
 private val CLOSE_WIDTH = 48.dp
 
@@ -130,7 +135,7 @@ private val CLOSE_WIDTH = 48.dp
  * The ✕ lines up by its ink with the task column's edge (main's `edge="start"`): Material's bar insets its
  * navigation icon 4dp, the button centers the 24dp glyph in its width, and `ic_close` leaves 5dp blank before its ink.
  */
-private val CLOSE_PULL = TASK_MARGIN - (4.dp + (CLOSE_WIDTH - 24.dp) / 2 + 5.dp)
+private val CLOSE_PULL = TASK_MARGIN - (BAR_INSET + (CLOSE_WIDTH - 24.dp) / 2 + 5.dp)
 
 /** In a [TaskScaffold]'s slots, whether its aside shows beside the task; where it doesn't, the screen shows that content its own way. */
 @Composable
@@ -179,20 +184,22 @@ fun TaskScaffold(
     }
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
-    Box(Modifier.pageFocus(focus).then(modifier)) {
-        PageWithSupportingPane(
-            supportingPane = aside?.let { { TaskAsideRail(it) } },
-            panesTouch = true,
-            halfWidth = aside?.half == true,
-        ) { beside ->
-            // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
-            CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
-                if (lonePage) {
-                    BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
-                        Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+    TextStartsOnLayoutStart {
+        Box(Modifier.pageFocus(focus).then(modifier)) {
+            PageWithSupportingPane(
+                supportingPane = aside?.let { { TaskAsideRail(it) } },
+                panesTouch = true,
+                halfWidth = aside?.half == true,
+            ) { beside ->
+                // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
+                CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
+                    if (lonePage) {
+                        BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
+                            Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+                        }
+                    } else {
+                        frame(!beside || aside?.footer == null)
                     }
-                } else {
-                    frame(!beside || aside?.footer == null)
                 }
             }
         }

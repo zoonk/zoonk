@@ -154,7 +154,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByLabel("Time a day", { exact: true }).selectOption("30");
     await page.getByRole("button", { exact: true, name: "Sat" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
-    await page.getByLabel("Time on weekends", { exact: true }).selectOption("60");
+    await page.getByLabel("Weekend time", { exact: true }).selectOption("60");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();

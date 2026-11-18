@@ -1,29 +1,43 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.takeOrElse
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /**
  * A page a tab or another page opened: its top bar with the way back, [title] and [actions]. A page
@@ -31,7 +45,8 @@ import com.zoonk.android.ui.components.WithLoadFailureBar
  * only once that heading scrolls under it. A page's main action goes in [bottomBar], pinned to the
  * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
  * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
- * bar stays under what it acts on. The page lays out its content in [pagePadding].
+ * bar stays under what it acts on. A page that centers its column says its width with [columnWidth] instead,
+ * and the way back and the actions keep to it too. The page lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,47 +57,67 @@ fun PageScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     barWidth: Dp = Dp.Unspecified,
+    columnWidth: Dp = Dp.Unspecified,
     /** Off while a request that moves the learner on is out: Back waits with it. */
     backEnabled: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
 
-    WithLoadFailureBar(enabled = bottomBar == null) { retry ->
-        Scaffold(
-            modifier = Modifier.pageFocus(focus).then(modifier),
-            topBar = {
-                // Across an unfolded book's fold the title ends at the fold. The actions keep their slot at the bar's end, past
-                // the fold, so what they opened stays open as the book folds.
-                val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
-                TopAppBar(
-                    title = {
-                        BeforeFold { beforeFold ->
-                            Box(
-                                // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
-                                Modifier
-                                    .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
-                                    .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
-                                    .then(beforeFold.titleTarget(focus.bar)),
-                            ) { title() }
-                        }
-                    },
-                    modifier = Modifier.pageBar(focus),
-                    navigationIcon = {
-                        BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START), enabled = backEnabled)
-                    },
-                    actions = { PageBarActions(actions) },
-                )
-            },
-            bottomBar = {
-                if (bottomBar != null) {
-                    BottomBar(columnWidth = barWidth, content = bottomBar)
-                } else if (retry != null) {
-                    BottomBar(columnWidth = barWidth) { retry() }
-                }
-            },
-            content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
-        )
+    TextStartsOnLayoutStart {
+        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+            Scaffold(
+                modifier = Modifier.pageFocus(focus).then(modifier),
+                topBar = {
+                    // Across an unfolded book's fold the title ends at the fold. The actions keep their slot at the bar's end, past
+                    // the fold, so what they opened stays open as the book folds.
+                    val inContent by remember(focus) { derivedStateOf { focus.headingInView() } }
+                    var span by remember { mutableStateOf<PageSpan?>(null) }
+                    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+                        // Across a fold the column is the page before it.
+                        val columnInset =
+                            if (columnWidth == Dp.Unspecified ||
+                                screenSplit(maxWidth, span) != null
+                            ) {
+                                0.dp
+                            } else {
+                                ((maxWidth - columnWidth) / 2).coerceAtLeast(0.dp)
+                            }
+                        TopAppBar(
+                            title = {
+                                BeforeFold { beforeFold ->
+                                    Box(
+                                        // Drawn by where the heading is in this frame, so the title doesn't flash in before the content lays out.
+                                        Modifier
+                                            .graphicsLayer { alpha = if (focus.headingInView()) 0f else 1f }
+                                            .then(if (inContent) Modifier.clearAndSetSemantics {} else Modifier)
+                                            .then(beforeFold.titleTarget(focus.bar)),
+                                    ) { title() }
+                                }
+                            },
+                            modifier = Modifier.pageBar(focus),
+                            navigationIcon = {
+                                BackButton(
+                                    onClick = onBack,
+                                    modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
+                                    enabled = backEnabled,
+                                )
+                            },
+                            actions = { PageBarActions(actions) },
+                            windowInsets = TopAppBarDefaults.windowInsets.add(WindowInsets(left = columnInset, right = columnInset)),
+                        )
+                    }
+                },
+                bottomBar = {
+                    if (bottomBar != null) {
+                        BottomBar(columnWidth = barWidth.takeOrElse { columnWidth }, content = bottomBar)
+                    } else if (retry != null) {
+                        BottomBar(columnWidth = barWidth.takeOrElse { columnWidth }) { retry() }
+                    }
+                },
+                content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
+            )
+        }
     }
 }
 
@@ -94,6 +129,10 @@ fun PageScaffold(
 fun PageBarActions(content: @Composable RowScope.() -> Unit) {
     Row(Modifier.offset(x = BAR_GLYPH_END - pageMargin()), verticalAlignment = Alignment.CenterVertically, content = content)
 }
+
+/** A page's column of at most [width], centered where the page is wider: the column a [PageScaffold]'s `columnWidth` names. */
+fun Modifier.centeredColumn(width: Dp): Modifier =
+    fillMaxSize().wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = width).fillMaxWidth()
 
 /**
  * The room around a page's content: Material's margins at the sides ([pageMargin]), a little over its
@@ -110,10 +149,16 @@ fun pagePadding(): PaddingValues {
 @Composable
 fun pageListMargin(): Dp = pageMargin() - LIST_ITEM_INSET
 
-/** Material's window margin: 16dp on a phone, 24dp from medium windows up. */
+/**
+ * Material's window margin: 16dp on a phone, 24dp from medium windows up. A book foldable's pages are each
+ * about a phone wide, so a window a fold splits keeps a phone's margin, the way back and the bars included.
+ */
 @Composable
-fun pageMargin(): Dp =
-    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) 24.dp else 16.dp
+fun pageMargin(): Dp {
+    val window = windowAdaptiveInfo()
+    val wide = window.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    return if (wide && window.windowPosture.allVerticalHingeBounds.isEmpty()) 24.dp else 16.dp
+}
 
 /**
  * Where the back arrow's ink starts unpulled: Material's bar insets its navigation icon 4dp, the button centers

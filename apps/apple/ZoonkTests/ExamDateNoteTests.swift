@@ -8,6 +8,42 @@ import XCTest
 @MainActor
 final class ExamDateNoteTests: XCTestCase {
   func testLastExamActionClearsTheTabBar() async throws {
+    let window = try await showExamDay()
+
+    let action = try speakingMockAction(in: window)
+    let tabBar = try XCTUnwrap(requestViews(UITabBar.self, in: window).first)
+    let tabBarFrame = tabBar.convert(tabBar.bounds, to: nil)
+    XCTAssertLessThanOrEqual(
+      action.accessibilityFrame.maxY, tabBarFrame.minY,
+      "The speaking mock action should be reachable when the exam opens")
+  }
+
+  func testAFailedSpeakingMockStartSaysSoAboveItsAction() async throws {
+    let window = try await showExamDay()
+
+    try await activate("IELTS speaking mock", in: window)
+
+    let failure = "The mock didn't start. Try again in a moment."
+    try await waitForTestCondition("The failure never showed: \(spoken(in: window))") {
+      accessibilityElements(in: window).contains { $0.accessibilityLabel == failure }
+    }
+    let line = try XCTUnwrap(
+      accessibilityElements(in: window).first { $0.accessibilityLabel == failure })
+    let action = try speakingMockAction(in: window)
+    XCTAssertLessThan(line.accessibilityFrame.midY, action.accessibilityFrame.midY)
+    XCTAssertLessThan(
+      action.accessibilityFrame.minY - line.accessibilityFrame.maxY, 44,
+      "The failure should sit just above the action that failed")
+  }
+
+  private func speakingMockAction(in window: UIWindow) throws -> NSObject {
+    try XCTUnwrap(
+      accessibilityElements(in: window).first {
+        $0.accessibilityLabel == "IELTS speaking mock" && $0.accessibilityTraits.contains(.button)
+      })
+  }
+
+  private func showExamDay() async throws -> UIWindow {
     var exam = try Self.exam()
     exam.stage = .examDay
     exam.daysEstimated = false
@@ -36,16 +72,7 @@ final class ExamDateNoteTests: XCTestCase {
       .environment(AppRouter())
       .zoonkStyles())
     try await waitForLayout(in: window)
-
-    let action = try XCTUnwrap(
-      accessibilityElements(in: window).first {
-        $0.accessibilityLabel == "Start" && $0.accessibilityTraits.contains(.button)
-      })
-    let tabBar = try XCTUnwrap(requestViews(UITabBar.self, in: window).first)
-    let tabBarFrame = tabBar.convert(tabBar.bounds, to: nil)
-    XCTAssertLessThanOrEqual(
-      action.accessibilityFrame.maxY, tabBarFrame.minY,
-      "The speaking mock action should be reachable when the exam opens")
+    return window
   }
 
   func testTheDateNoteStaysWhenTheMocksPaneGoes() async throws {

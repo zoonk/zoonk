@@ -3,7 +3,7 @@
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import { EnterLink } from "../_components/enter-button";
+import { DetailContinueLink } from "../_components/detail-page";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -45,7 +45,6 @@ export function ChapterHeader() {
 }
 
 export function ChapterBottomBar() {
-  const t = useExtracted();
   const { chapter, hrefs } = useChapterScreen();
   const { lessons } = chapter;
   const next = lessons.find((lesson) => lesson.state === "next");
@@ -57,13 +56,11 @@ export function ChapterBottomBar() {
   return (
     <BottomBar>
       <BottomBarActions>
-        <EnterLink
+        <DetailContinueLink
           href={`${hrefs.lessonBasePath}/${next.lessonId}`}
           lessonWritten={next.written}
-          prefetch={next.written ? true : "auto"}
-        >
-          {lessons.some((lesson) => lesson.state === "done") ? t("Continue") : t("Start")}
-        </EnterLink>
+          started={lessons.some((lesson) => lesson.state === "done")}
+        />
       </BottomBarActions>
     </BottomBar>
   );

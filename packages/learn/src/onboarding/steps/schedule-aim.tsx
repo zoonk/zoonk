@@ -60,7 +60,7 @@ export function ScheduleAim({
           detail: words.around(choice.aim === aim ? endDate : (ends[choice.aim] ?? null)),
           name: choice.aim === aim ? named : undefined,
         }))}
-        trigger={<Button className="shrink-0" size="sm" type="button" variant="outline" />}
+        trigger={<Button className="shrink-0" size="lg" type="button" variant="outline" />}
         value={named}
       >
         {t("Change")}

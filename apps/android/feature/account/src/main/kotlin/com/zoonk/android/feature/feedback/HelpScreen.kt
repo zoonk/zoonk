@@ -37,6 +37,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageMargin
 
 /** Main's help page: a message to the team, then where else to find Zoonk. */
 @Composable
@@ -53,7 +54,7 @@ fun HelpScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.account_menu_help)) },
-        barWidth = 640.dp,
+        columnWidth = 640.dp,
         bottomBar = { TaskActions { main -> SendButton(form, accountEmail, main) } },
     ) { padding ->
         Box(
@@ -71,7 +72,7 @@ fun HelpScreen(
                     Modifier
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(horizontal = pageMargin(), vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageHeader(stringResource(R.string.account_menu_help), stringResource(R.string.feedback_help_description))

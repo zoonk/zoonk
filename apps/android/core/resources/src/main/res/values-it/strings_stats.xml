@@ -6,7 +6,6 @@
   "stats_answer_count": "0479ac3e60973c465209d0972fb6ed0e947d63dcab426fe92f596abe4934a457",
   "stats_answer_more": "20aa5b2b77e367c44cf284c660738083fe77dc8583ff8fde604b79ca0b8be99b",
   "stats_answers_to_count": "652a3a346609c3939a198e0a00fd5a3074622990498dddbfba5bb20d31d834ac",
-  "stats_any_day": "40cbe3156060716d85bf27b0b06b4490d7ac251465c03bdb340118f21ac412f0",
   "stats_any_time": "ee6b43c94978f5da684994b7dbc4799e6952fa31fbca344910be35b9e9121568",
   "stats_belt_comes_after": "8a3874bfe0869e1b8ec314164f8a2cd1a90d3a396e98c992cde8d81caff5965b",
   "stats_belt_current": "aa0eaab3e40f7736af08fdc56d79184a6d8a04ba618921aee73c3dd6770e01b1",
@@ -167,7 +166,6 @@
     </plurals>
     <string name="stats_throughout_week">Durante la settimana</string>
     <string name="stats_throughout_day">Durante la giornata</string>
-    <string name="stats_any_day">Per ora nessun giorno spicca</string>
     <string name="stats_any_time">A qualsiasi ora</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Il tuo giorno migliore è %1$s.</string>

@@ -30,6 +30,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.Goal
 import kotlinx.datetime.toJavaLocalDate
@@ -66,7 +67,11 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
                 count = pluralStringResource(R.plurals.onboarding_days, days, days),
                 chip = true,
             )
-        } ?: PlanFact(dateLabel, stringResource(R.string.onboarding_no_date), chip = true).takeIf { details.answered("targetDate") }
+        } ?: PlanFact(
+            dateLabel,
+            stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_to_be_confirmed else R.string.plan_end_none_set),
+            chip = true,
+        ).takeIf { details.answered("targetDate") }
     val level = setupLevel(details)
     val resources = LocalResources.current
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
@@ -77,7 +82,12 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
         } +
         listOfNotNull(
-            level?.let { PlanFact(stringResource(R.string.onboarding_level_label), it) },
+            level?.let {
+                val label =
+                    goal.targetLanguage?.let { language -> stringResource(R.string.language_level, languageName(language, locale)) }
+                        ?: stringResource(R.string.onboarding_row_level)
+                PlanFact(label, it)
+            },
             if (details.answered("schedule")) {
                 PlanFact(
                     stringResource(R.string.onboarding_time_a_day),

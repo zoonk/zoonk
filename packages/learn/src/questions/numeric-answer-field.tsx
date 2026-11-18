@@ -61,6 +61,24 @@ function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) 
   );
 }
 
+function EntryNote({
+  entry,
+  hintId,
+  invalid,
+  ruleId,
+}: {
+  entry: NumericEntry | null;
+  hintId: string;
+  invalid: boolean;
+  ruleId: string;
+}) {
+  if (invalid) {
+    return <InvalidHint entry={entry} id={hintId} />;
+  }
+
+  return entry && <EntryRule entry={entry} id={ruleId} />;
+}
+
 function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): string | undefined {
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
@@ -212,8 +230,8 @@ export function NumericAnswerField({
         {t("Your answer")}
       </label>
 
-      {showsRule && <EntryRule entry={entry} id={ruleId} />}
-      {invalid && <InvalidHint entry={entry} id={hintId} />}
+      {/* A typing error takes the rule's line; with no rule it goes under the field, so the field stays put. */}
+      {hasRule && <EntryNote entry={entry} hintId={hintId} invalid={invalid} ruleId={ruleId} />}
 
       <InputGroup
         className={cn(
@@ -269,6 +287,8 @@ export function NumericAnswerField({
           )}
         </InputGroupAddon>
       </InputGroup>
+
+      {!hasRule && <EntryNote entry={entry} hintId={hintId} invalid={invalid} ruleId={ruleId} />}
     </form>
   );
 }

@@ -308,24 +308,18 @@ struct PlanOtherOptions<Items: View>: View {
   }
 }
 
-/// Main's coverage sheet: it names the time that covers everything itself. Opened from the line's
-/// "View", it asks at once; beside the page it asks when "See what changes" is pressed, since
-/// finding the time plans the goal many times.
+/// Main's coverage sheet: it names the time that covers everything itself. Only the line's "View"
+/// opens it, so it asks at once.
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
   let title: String
-  let asksAtOnce: Bool
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
     context.slotCheck(.coverage(title))
-  }
-
-  private var isAsked: Bool {
-    asksAtOnce || check.isAsked
   }
 
   enum Found: Equatable {
@@ -336,24 +330,20 @@ struct PlanCoverageSlot: View {
 
   var body: some View {
     card
-      .loads(isAsked ? [time] : [], refreshable: false)
+      .loads(time, refreshable: false)
   }
 
   private var time: Resource<TimeToCover> {
     store.timeToCover(goalId: context.goal.id)
   }
 
-  private var found: Found? {
-    Self.found(time, isAsked: isAsked)
+  private var found: Found {
+    Self.found(time)
   }
 
-  static func found(_ time: Resource<TimeToCover>, isAsked: Bool) -> Found? {
+  static func found(_ time: Resource<TimeToCover>) -> Found {
     if let value = time.freshValue {
       return .time(value)
-    }
-
-    guard isAsked else {
-      return nil
     }
 
     return if case .failed = time.freshState { .failed } else { .asking }
@@ -384,7 +374,7 @@ struct PlanCoverageSlot: View {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
           .mainActionUnlessBarHoldsOne()
-        } else if case .time? = found, offer == nil {
+        } else if case .time = found, offer == nil {
           if context.goal.kind == .exam, !context.plan.schedule.fullCourse {
             Button {
               context.adjust(.everything)
@@ -410,7 +400,7 @@ struct PlanCoverageSlot: View {
   }
 
   private var suggested: TimeToCover.Suggested? {
-    guard case .time(let time)? = found else {
+    guard case .time(let time) = found else {
       return nil
     }
 
@@ -446,15 +436,15 @@ struct PlanCoverageSlot: View {
 
   private var line: String? {
     switch found {
-    case .asking?:
+    case .asking:
       return String(
         localized: "Finding the time that covers everything…", table: "Plan",
         comment: "While the time a day that covers everything is worked out")
-    case .failed?:
+    case .failed:
       return String(
         localized: "We couldn't work out the time needed.", table: "Plan",
         comment: "The time a day that covers everything couldn't be worked out")
-    case .time(let time)?:
+    case .time(let time):
       if let suggested, offerMinutes != nil {
         return suggested.kind == .everything
           ? title
@@ -464,8 +454,6 @@ struct PlanCoverageSlot: View {
       }
 
       return nothingToOffer(time)
-    case nil:
-      return nil
     }
   }
 
@@ -554,11 +542,6 @@ struct PlanCoverageSlot: View {
 
   private func seeChanges() async {
     let check = check
-
-    if found == nil {
-      check.isAsked = true
-      await time.load()
-    }
 
     guard !Task.isCancelled, let minutes = offerMinutes else {
       return
@@ -767,7 +750,6 @@ final class PlanSlotCheck {
   var asked: PlanSlotAskedChange?
   /// The fit offer's numbers today, when they aren't the offer's.
   var repriced: PlanSlotRepriced?
-  var isAsked = false
   var isWorking = false
   var failed = false
   var noDate = false

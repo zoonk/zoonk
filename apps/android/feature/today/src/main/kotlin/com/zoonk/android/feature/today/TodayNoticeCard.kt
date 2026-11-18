@@ -30,6 +30,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionCard
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
@@ -93,7 +94,7 @@ internal fun TodayNotice(
         }
 
         Today.Notice.INSIGHT -> {
-            (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, layout, modifier) }
+            (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, modifier) }
         }
 
         Today.Notice.SUGGESTED_GOAL -> {
@@ -353,7 +354,6 @@ private fun FocusTestNotice(
 private fun InsightNotice(
     opened: MemoryInsight,
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -364,25 +364,57 @@ private fun InsightNotice(
     val label = stringResource(R.string.today_insight_label)
     val proposed = insight.planChange?.status == MemoryInsightPlanChange.Status.PROPOSED
 
-    Suggestion(
+    val tip = insight.kind == MemoryInsight.Kind.TIP
+    val failed = answer == InsightAnswer.Failed
+
+    SuggestionCard(
         label = label,
-        summary = result ?: insight.message,
-        layout = layout,
         modifier = modifier,
         mark = insight.mark(),
         answered = result != null,
-        lineAction = if (result != null) null else ({ SuggestionOpen() }),
-    ) {
-        SuggestionHeader(label)
-        SuggestionDescription(insight.message)
-        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
-        if (result != null) {
-            SuggestionResult(result)
-        } else {
-            InsightActions(insight, viewModel)
-        }
-        if (answer == InsightAnswer.Failed) SuggestionSaveError()
-    }
+        card = {
+            if (result != null) {
+                SuggestionResult(result)
+            } else {
+                SuggestionHeader(label)
+                SuggestionDescription(insight.message)
+                SuggestionActions {
+                    if (tip) {
+                        SuggestionAction(
+                            stringResource(R.string.today_insight_got_it),
+                            { viewModel.answerInsight(insight, accepted = true) },
+                            busy = viewModel.isAnsweringInsight,
+                            secondary = true,
+                        )
+                    } else {
+                        SuggestionOpen(stringResource(R.string.today_see_changes))
+                    }
+                    if (insight.kind == MemoryInsight.Kind.SCHEDULE_IDEA) {
+                        SuggestionAction(
+                            stringResource(R.string.today_not_now),
+                            { viewModel.answerInsight(insight, accepted = false) },
+                            enabled = !viewModel.isAnsweringInsight,
+                            secondary = true,
+                        )
+                    }
+                }
+            }
+            if (failed) SuggestionSaveError()
+        },
+        content =
+            if (tip) {
+                null
+            } else {
+                {
+                    SuggestionHeader(label)
+                    if (proposed) {
+                        PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
+                    }
+                    if (result != null) SuggestionResult(result) else InsightActions(insight, viewModel)
+                    if (failed) SuggestionSaveError()
+                }
+            },
+    )
 }
 
 private fun MemoryInsight.mark(): SuggestionMark =

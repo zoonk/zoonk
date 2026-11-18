@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -14,7 +15,9 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
@@ -57,7 +60,8 @@ private fun TextStyle.role(
         fontWeight = FontWeight(weight),
         lineHeight = lineHeight.sp,
         letterSpacing = tracking.em,
-        textDirection = TextDirection.Content,
+        // Text without letters ("+50", "−3", "<1%") reads left to right in every language, even in a mirrored screen.
+        textDirection = TextDirection.ContentOrLtr,
     )
 
 /** Main's titles balance their lines (`text-balance`), so a wrapped title never leaves one word alone. */
@@ -188,6 +192,61 @@ internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
             question = question.byPhrase(),
         )
     }
+
+/**
+ * Every paragraph starts on the screen's start side, as Android's `viewStart` does: an English
+ * sentence in a mirrored screen ends on its right like the titles and rows around it, its words still
+ * left to right. Compose's `TextAlign.Start` follows the text's own direction instead.
+ */
+internal fun Typography.startingOn(direction: LayoutDirection): Typography =
+    copy(
+        displayLarge = displayLarge.startingOn(direction),
+        displayMedium = displayMedium.startingOn(direction),
+        displaySmall = displaySmall.startingOn(direction),
+        headlineLarge = headlineLarge.startingOn(direction),
+        headlineMedium = headlineMedium.startingOn(direction),
+        headlineSmall = headlineSmall.startingOn(direction),
+        titleLarge = titleLarge.startingOn(direction),
+        titleMedium = titleMedium.startingOn(direction),
+        titleSmall = titleSmall.startingOn(direction),
+        bodyLarge = bodyLarge.startingOn(direction),
+        bodyMedium = bodyMedium.startingOn(direction),
+        bodySmall = bodySmall.startingOn(direction),
+        labelLarge = labelLarge.startingOn(direction),
+        labelMedium = labelMedium.startingOn(direction),
+        labelSmall = labelSmall.startingOn(direction),
+    )
+
+internal fun ZoonkTypography.startingOn(direction: LayoutDirection): ZoonkTypography =
+    copy(
+        sectionTitle = sectionTitle.startingOn(direction),
+        data = data.startingOn(direction),
+        eyebrow = eyebrow.startingOn(direction),
+        label = label.startingOn(direction),
+        lead = lead.startingOn(direction),
+        lessonText = lessonText.startingOn(direction),
+        question = question.startingOn(direction),
+        verdict = verdict.startingOn(direction),
+        tag = tag.startingOn(direction),
+        message = message.startingOn(direction),
+    )
+
+private fun TextStyle.startingOn(direction: LayoutDirection): TextStyle = copy(textAlign = startOf(direction))
+
+private fun startOf(direction: LayoutDirection): TextAlign = if (direction == LayoutDirection.Rtl) TextAlign.Right else TextAlign.Left
+
+/**
+ * The screen's start side whatever the text's direction, for text that sets its own alignment: Compose's
+ * `TextAlign.Start` follows the text, so a number, which reads left to right, would start on the left of a mirrored screen.
+ */
+@Composable
+@ReadOnlyComposable
+fun layoutStart(): TextAlign = startOf(LocalLayoutDirection.current)
+
+/** The screen's end side whatever the text's direction, as a list's number or a column of values ends. */
+@Composable
+@ReadOnlyComposable
+fun layoutEnd(): TextAlign = if (LocalLayoutDirection.current == LayoutDirection.Rtl) TextAlign.Left else TextAlign.Right
 
 private fun TextStyle.byPhrase(): TextStyle =
     copy(

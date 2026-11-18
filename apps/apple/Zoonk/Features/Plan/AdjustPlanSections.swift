@@ -550,9 +550,7 @@ private struct PlanToolChoiceSheet: View {
           localized: "You have \(names), so there's nothing to set up.", table: "Plan",
           comment: "Says the learner has the tool")
       case .none:
-        String(
-          localized: "No install for \(names): you'll learn with examples.", table: "Plan",
-          comment: "Says the tool is learned with examples")
+        String(localized: "You won't use \(names): you'll learn with examples.", table: "Plan")
       }
 
     await editor.apply(sentence: sentence) { api, token in

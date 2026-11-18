@@ -37,7 +37,8 @@ function useMissingDayReason() {
 /**
  * The weekend's time field is always there, off until the switch is on, so turning it on or off
  * moves nothing. Off, it shows the weekdays' time, which the weekend takes then. While the switch
- * can't turn on (`missing` names the days it needs), the field's room says why.
+ * can't turn on (`missing` names the days it needs), the field's room says why: both share one
+ * cell, so changing the days moves nothing either.
  */
 export function WeekendTime({
   checked,
@@ -83,16 +84,18 @@ export function WeekendTime({
         />
       </div>
 
-      {missing ? (
-        <p className="text-muted-foreground -mt-2 min-h-14 text-sm text-pretty" id={reasonId}>
-          {missingDayReason(missing)}
-        </p>
-      ) : (
-        <div className="flex flex-col gap-1">
+      <div className="grid *:col-start-1 *:row-start-1">
+        <div className={cn("flex flex-col gap-1", missing && "invisible")}>
           <span className="text-sm font-medium">{timeLabel}</span>
           {children(checked, timeLabel)}
         </div>
-      )}
+        <p
+          className={cn("text-muted-foreground text-sm text-pretty", !missing && "invisible")}
+          id={reasonId}
+        >
+          {missingDayReason(missing ?? "weekend")}
+        </p>
+      </div>
     </div>
   );
 }

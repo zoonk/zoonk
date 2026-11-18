@@ -19,6 +19,7 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
+import { usePlanScreen } from "../plan/plan-context";
 import {
   NUMBER_ITEM_CLASS,
   NUMBER_ROWS_CLASS,
@@ -81,12 +82,21 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   if (standing.kind === "preparation") {
     const lessons = standing.lessons ?? { done: 0, known: 0, total: 0 };
     const share = getLessonShare(lessons);
+    const studied = lessons.done - lessons.known;
 
     return {
-      detail: t("{studied, number} studied · {known, number} already known", {
-        known: lessons.known,
-        studied: lessons.done - lessons.known,
-      }),
+      detail:
+        lessons.known > 0
+          ? t("{studied, number} studied · {known, number} already known", {
+              known: lessons.known,
+              studied,
+            })
+          : t({
+              description: "A short line under the progress percent, in a small tile.",
+              message:
+                "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}",
+              values: { studied },
+            }),
       label: t("Progress"),
       numeric: true,
       share,
@@ -191,7 +201,6 @@ export function PlanNumbers({
   examHref,
   logbookHref,
   onAdjust,
-  paused = false,
   standing,
   status,
   variant,
@@ -200,21 +209,20 @@ export function PlanNumbers({
   examHref: string | null;
   logbookHref: string | null;
   onAdjust: () => void;
-  paused?: boolean;
   standing: JourneyStanding;
   status: PlanView["status"];
   variant: PlanNumberVariant;
 }) {
   const t = useExtracted();
+  const { paused = false } = usePlanScreen();
   const [open, setOpen] = useState<"schedule" | "standing" | null>(null);
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
-  // The side column's numbers sit above the plan's details, whose "Time a day" row says it.
-  const showSchedule = status !== null && !paused;
 
   const scheduleNumber = useScheduleNumber({
     paused,
     status: status ?? { kind: "onTrack" },
+    // The side column's numbers sit above the plan's details, whose "Daily study time" row says it.
     timeShownBeside: variant === "stats",
   });
 
@@ -235,20 +243,14 @@ export function PlanNumbers({
           )}
           data-slot="journey-standing"
         >
-          <li
-            className={cn(
-              NUMBER_ITEM_CLASS,
-              "min-w-0",
-              !showSchedule && "@2xl/standing:col-span-2",
-            )}
-          >
+          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "@2xl/standing:col-span-2")}>
             <NumberButton
               number={standingNumber}
               onOpen={() => setOpen("standing")}
               variant={variant}
             />
           </li>
-          {showSchedule && (
+          {status && (
             <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
               <NumberButton
                 number={scheduleNumber}

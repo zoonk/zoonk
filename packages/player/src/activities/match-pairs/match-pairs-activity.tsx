@@ -213,7 +213,6 @@ export function MatchPairsActivity({
       <MatchBoardCount matched={progress.matched.length} total={pairIds.length} traps={trapCount} />
 
       <MatchBoard
-        className="text-sm sm:text-base"
         label={t("Cards to match")}
         left={left}
         renderItem={cardButton}

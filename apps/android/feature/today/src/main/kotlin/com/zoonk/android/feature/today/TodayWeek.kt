@@ -79,6 +79,8 @@ internal fun TodayWeek(
             }
         }
 
+        if (challenge != null && inWeek) ChallengeRow(challenge, onOpen)
+
         if (week.days.any { it.isMissed(weekDate) }) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -93,8 +95,6 @@ internal fun TodayWeek(
                 )
             }
         }
-
-        if (challenge != null && inWeek) ChallengeRow(challenge, onOpen)
     }
 }
 

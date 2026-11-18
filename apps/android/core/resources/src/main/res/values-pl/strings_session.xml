@@ -84,7 +84,6 @@
   "session_summary_skills_rose": "811b52058c79e1459c26907e577dfe685d8cdb1fdcc142c4e62f87c75581b59c",
   "session_summary_so_far": "22656ed248110cfaedd2f8930d5050b4de7ed20c5918f1d4990548e4d4c97329",
   "session_summary_streak": "011c1c7f966134719a1fdeaabb73ae52dcc0328a3a77d1489936ef52b51d5d8e",
-  "session_summary_to_review": "705253c227578faa833fa371ae350cb88ad8fc0442f57bf918a16edf2b2523a1",
   "session_summary_tomorrow": "b752699625aa2c12b3eec620e42fe786e4661fdb21a6c96d4a29a1ca6aaa9111",
   "session_summary_up_from": "d4d255ac0275235ae5687fc753ee302b51d2da8a1d01de3c55c25d661b8fb58c",
   "session_topics_and_more": "153dbdd7f95010889661766877e3f9bc9739d52c8e5a9d61cc3a0ba35fcd4036"
@@ -175,9 +174,6 @@
     <string name="session_summary_net">bilans %1$s</string>
     <string name="session_summary_preparation">Przygotowanie</string>
     <string name="session_summary_progress">Postępy</string>
-    <!-- How many skills come back for review on later days. -->
-    <string name="session_summary_to_review">Do powtórki</string>
-    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
     <string name="session_summary_brain_power">Moc Umysłu</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

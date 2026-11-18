@@ -68,7 +68,7 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   return (
     <div className="flex flex-col" data-slot="estimated-score">
       <p className="flex min-w-0 flex-col gap-1">
-        <span className="text-muted-foreground text-sm font-medium">{t("Estimated score")}</span>
+        <span className="text-label">{t("Estimated score")}</span>
         <span className="text-readout text-2xl leading-tight">{scoreRange(score)}</span>
         <span className="text-muted-foreground text-xs">{source}</span>
       </p>
@@ -192,7 +192,7 @@ function StillNeeded({
 
   return (
     <section aria-labelledby="still-needed-title" className="flex flex-col gap-2">
-      <SectionLabel className="text-sm tracking-normal normal-case" id="still-needed-title">
+      <SectionLabel id="still-needed-title">
         {t({
           description:
             'A section heading over the next steps toward the learner\'s goal, such as "Take your first mock exam". Not a button.',

@@ -192,7 +192,7 @@ export function SuggestionContent({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
+  /** No sheet: the line says it all, or the panel shows at every width with its answers. */
   statement?: boolean;
 }) {
   return (

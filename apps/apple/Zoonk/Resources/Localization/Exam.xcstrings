@@ -2223,61 +2223,60 @@
         }
       }
     },
-    "Date not set" : {
-      "comment" : "An exam day with no date",
+    "Date to be confirmed" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termin nicht festgelegt"
+            "value" : "Datum noch offen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fecha sin definir"
+            "value" : "Fecha por confirmar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Date non définie"
+            "value" : "Date à confirmer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data non impostata"
+            "value" : "Data da confermare"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日付未設定"
+            "value" : "日程未定"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "날짜 미설정"
+            "value" : "날짜 미정"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie ustawiono daty"
+            "value" : "Termin do potwierdzenia"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data não definida"
+            "value" : "Data a confirmar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tarih belirlenmedi"
+            "value" : "Tarih henüz kesinleşmedi"
           }
         }
       }
@@ -5243,67 +5242,60 @@
         }
       }
     },
-    "The official %@ date is %@. Use it as your exam date?" : {
-      "comment" : "An official date and what adopting it changes",
+    "The official exam date is %@. Use it as your exam date?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der offizielle Termin für %1$@ ist %2$@. Diesen Termin für deine Prüfung übernehmen?"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The official %1$@ date is %2$@. Use it as your exam date?"
+            "value" : "Der offizielle Prüfungstermin ist am %@. Diesen Termin für deine Prüfung übernehmen?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha oficial de %1$@ es %2$@. ¿Quieres usarla como fecha de tu examen?"
+            "value" : "La fecha oficial del examen es %@. ¿Quieres usarla como tu fecha de examen?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date officielle de %1$@ est le %2$@. L’utiliser comme date d’examen ?"
+            "value" : "La date officielle de l’examen est le %@. Utiliser cette date pour ton examen ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La data ufficiale di %1$@ è %2$@. Vuoi usarla come data dell’esame?"
+            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla come data del tuo esame?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@の正式な日程は%2$@です。この日を試験日に設定しますか？"
+            "value" : "正式な試験日は%@です。この日を試験日に設定しますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "공식 일정에 따르면 %1$@ 시험은 %2$@에 열려요. 이 날짜를 시험일로 정할까요?"
+            "value" : "공식 시험일은 %@이에요. 이 날짜를 시험일로 설정할까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: oficjalny termin to %2$@. Ustawić go jako datę twojego egzaminu?"
+            "value" : "Oficjalny termin egzaminu to %@. Ustawić go jako termin twojego egzaminu?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ tem data oficial: %2$@. Usar como data da sua prova?"
+            "value" : "A data oficial da prova é %@. Quer usar essa data para sua prova?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için resmî tarih %2$@. Bunu sınav tarihin olarak kullanalım mı?"
+            "value" : "Resmî sınav tarihi %@. Bu tarihi sınav tarihin olarak kullanalım mı?"
           }
         }
       }

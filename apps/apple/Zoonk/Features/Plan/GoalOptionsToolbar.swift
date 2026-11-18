@@ -145,7 +145,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         resume()
       } label: {
         Label {
-          Text("Resume this goal", tableName: "Plan", comment: "Resumes the paused goal")
+          Text("Resume goal", tableName: "Plan")
         } icon: {
           Image(systemName: "play")
         }
@@ -331,7 +331,7 @@ extension View {
   }
 }
 
-/// The menu's "Resume this goal", for a page whose main action resumes its paused goal.
+/// The menu's "Resume goal", for a page whose main action resumes its paused goal.
 struct ResumeGoal {
   var isBusy = false
   var failure: GoalStatusOutcome?

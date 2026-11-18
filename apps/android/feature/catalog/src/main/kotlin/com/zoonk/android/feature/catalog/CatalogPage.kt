@@ -49,6 +49,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -88,6 +89,7 @@ internal fun <T : Any> CatalogPage(
         PageScaffold(
             onBack = { navigator.back() },
             title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+            columnWidth = PAGE_WIDTH,
             actions = {
                 SearchAction()
                 if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report)
@@ -107,7 +109,7 @@ internal fun <T : Any> CatalogPage(
                             val layout = CatalogPageLayout(beside = false, disclosures, twoPages = true)
                             val shown = blocks(state.value, layout).filter { it.trailing }
                             val listState = remember { reading.listState(shown) }
-                            BlockList(shown, listState, reading, PANE_MARGIN, Modifier.fillMaxSize())
+                            BlockList(shown, listState, reading, pageMargin(), Modifier.fillMaxSize())
                         }
                     },
                 ) { twoPages ->
@@ -130,7 +132,6 @@ internal fun <T : Any> CatalogPage(
 
                         is LoadState.Loaded -> {
                             val beside = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-                            val wide = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
                             val all = blocks(state.value, CatalogPageLayout(beside, disclosures, twoPages))
                             val shown = if (twoPages) all.filterNot { it.trailing } else all
                             val listState = remember(twoPages) { reading.listState(shown) }
@@ -140,7 +141,7 @@ internal fun <T : Any> CatalogPage(
                                     blocks = shown,
                                     state = listState,
                                     reading = reading,
-                                    margin = if (wide) 24.dp else PANE_MARGIN,
+                                    margin = pageMargin(),
                                     modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
                                 )
                             }
@@ -319,6 +320,3 @@ internal class Disclosures(
 
 /** Main's page column (`max-w-5xl`): the outline and plan read in one column however wide the window. */
 private val PAGE_WIDTH = 1040.dp
-
-/** A page of an open book, like a phone, keeps a phone's margins. */
-private val PANE_MARGIN = 16.dp

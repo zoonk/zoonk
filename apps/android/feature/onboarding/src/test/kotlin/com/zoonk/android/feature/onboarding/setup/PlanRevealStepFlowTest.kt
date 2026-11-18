@@ -61,6 +61,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -289,6 +290,18 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun aRestDayShowsNoTodaySection() {
+        val reveal = ApiJson.encodeToJsonElement(revealTodayOf()).jsonObject
+        val today = reveal.getValue("today").jsonObject
+        val rest = JsonObject(today + ("blocks" to JsonArray(emptyList())) + ("nextPosition" to JsonNull))
+        show(reveal = ApiJson.decodeFromJsonElement(JsonObject(reveal + ("today" to rest))))
+        navigator.open(SETUP)
+        rule.waitForIdle()
+
+        rule.onAllNodesWithText("Today").assertCountEquals(0)
     }
 
     private fun revealWithNextPosition(position: Long?): PlanRevealToday {

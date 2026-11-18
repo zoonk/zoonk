@@ -18,7 +18,7 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useTimeLeft } from "../_utils/use-time-left";
 import { TaskMainButton } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockFrame } from "./mock-frame";
 import { SheetSections, hasSeveralSections } from "./mock-sheet-sections";
 
 function NextSectionRow({ section }: { section: MockSectionView }) {
@@ -59,18 +59,15 @@ export function MockBreak({ until }: { until: string }) {
           : null
       }
       footer={
-        <>
-          <MockStepStatus />
-          <TaskActions>
-            <TaskMainButton
-              busy={runner.busy === "endBreak"}
-              disabled={runner.pending}
-              onClick={() => void runner.endBreak()}
-            >
-              {t("Start now")}
-            </TaskMainButton>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <TaskMainButton
+            busy={runner.busy === "endBreak"}
+            disabled={runner.pending}
+            onClick={() => void runner.endBreak()}
+          >
+            {t("Start now")}
+          </TaskMainButton>
+        </TaskActions>
       }
     >
       <StepCard>

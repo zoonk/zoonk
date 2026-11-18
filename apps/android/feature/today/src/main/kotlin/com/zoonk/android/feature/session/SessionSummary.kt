@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.ActReaction
@@ -87,6 +89,7 @@ import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionSummaryBelt
 import com.zoonk.api.models.StudySessionSummarySkillsMovedInner
 import com.zoonk.api.models.TodayGoal
+import kotlin.math.max
 
 /** What the summary needs beyond the session's own numbers. [bonus] is the day's missions bonus, from its session. */
 internal data class SummaryFacts(
@@ -278,7 +281,6 @@ private fun SessionNumbers(
     val locale = currentLocale()
     val goalNumber = goalNumber(summary, facts.goalKind)
     val right = stringResource(R.string.session_summary_right)
-    val reviewLabel = stringResource(R.string.session_summary_to_review)
     val brainLabel = stringResource(R.string.session_summary_brain_power)
     val answers =
         summary.takeIf { it.questions > 0 }?.let {
@@ -326,16 +328,6 @@ private fun SessionNumbers(
                             },
                         tone = if (goalNumber.dropped) StatTone.Neutral else StatTone.Success,
                         icon = summaryIcon(if (goalNumber.dropped) R.drawable.ic_trending_down else R.drawable.ic_trending_up),
-                    )
-                }
-            }
-            if (summary.mistakesSaved > 0) {
-                add { modifier ->
-                    StatTile(
-                        reviewLabel,
-                        formatNumber(summary.mistakesSaved.toDouble(), locale),
-                        modifier,
-                        icon = summaryIcon(R.drawable.ic_replay),
                     )
                 }
             }
@@ -578,6 +570,7 @@ private fun SummaryBar(
     val locale = currentLocale()
     val extraTime = summary.extraTime.takeIf { !facts.stopped && it.available && toRewards == null }
     val seesMistakes = fromRewards == null && summary.mistakesSaved > 0
+    val crowded = seesMistakes && facts.stopped
     val options: @Composable () -> Unit = {
         if (seesMistakes) {
             OutlinedButton(onClick = actions.seeMistakes, modifier = Modifier.taskOption()) {
@@ -598,7 +591,7 @@ private fun SummaryBar(
     TaskActionBar {
         if (failed == SessionAction.KeepGoing) SummaryError(stringResource(R.string.today_open_failed))
         TaskActions(back = fromRewards?.let { { StepBackButton(onClick = it) } }) { main ->
-            options()
+            if (crowded) SharedRow(Modifier.taskOption(), options) else options()
             if (toRewards != null) {
                 Button(onClick = toRewards, modifier = main) { Text(stringResource(R.string.steps_continue)) }
             } else {
@@ -640,6 +633,56 @@ private fun SummaryBar(
             }
         }
     }
+}
+
+/** Main's `SHARED_ROW_ACTION_CLASS`: a `FlowRow` weight would split the line evenly and wrap the longer label. */
+@Composable
+private fun SharedRow(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier) { measurables, constraints ->
+        val gap = 8.dp.roundToPx()
+        val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
+        val widths = sharedRowWidths(labels, gap, constraints.minWidth, constraints.maxWidth)
+
+        if (widths != null) {
+            val placeables = measurables.zip(widths) { measurable, width -> measurable.measure(Constraints.fixedWidth(width)) }
+            val height = placeables.maxOf { it.height }
+            layout(widths.sum() + gap * (widths.size - 1), height) {
+                var x = 0
+                placeables.forEach {
+                    it.placeRelative(x, (height - it.height) / 2)
+                    x += it.width + gap
+                }
+            }
+        } else {
+            val placeables = measurables.map { it.measure(Constraints.fixedWidth(constraints.maxWidth)) }
+            layout(constraints.maxWidth, placeables.sumOf { it.height } + gap * (placeables.size - 1)) {
+                var y = 0
+                placeables.forEach {
+                    it.placeRelative(0, y)
+                    y += it.height + gap
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Each button's width on one line, [gap] apart: its label's, each grown by an equal share of what [minWidth] leaves (main's
+ * `grow` on a phone's bar); null when the labels don't fit in [maxWidth] together and stack.
+ */
+internal fun sharedRowWidths(
+    labels: List<Int>,
+    gap: Int,
+    minWidth: Int,
+    maxWidth: Int,
+): List<Int>? {
+    val row = labels.sum() + gap * (labels.size - 1)
+    if (row > maxWidth) return null
+    val share = (max(row, minWidth) - row) / labels.size
+    return labels.map { it + share }
 }
 
 @Composable

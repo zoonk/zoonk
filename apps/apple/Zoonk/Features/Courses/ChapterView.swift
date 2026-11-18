@@ -100,16 +100,6 @@ private struct ChapterLandingList: View {
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
-        Label {
-          Text(
-            areas?[chapter.id].map { "\(chapter.courseTitle)\u{00A0}· \($0)" }
-              ?? chapter.courseTitle)
-        } icon: {
-          SubjectGlyph(subject: course?.course.subject)
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-
         Text(chapter.title)
           .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
@@ -178,8 +168,7 @@ private struct ChapterLandingList: View {
               comment: "A course page's last call")
           }
         }
-        .typeStyle(.section)
-        .accessibilityAddTraits(.isHeader)
+        .sectionTitleStyle()
 
         Group {
           if startsHere {
@@ -246,15 +235,6 @@ private struct ChapterStrip: View {
     let stretch = [here] + outline.dropFirst(index + 1).prefix(Self.next)
 
     Section {
-      Text(
-        "Part of \(course.title)", tableName: "Courses",
-        comment: "Header of where a chapter sits in its course; the argument is the course's name"
-      )
-      .typeStyle(.section)
-      .foregroundStyle(Color(.foreground))
-      .accessibilityAddTraits(.isHeader)
-      .listRowSeparator(.hidden)
-
       VStack(alignment: .leading, spacing: 10) {
         CourseMapBar(
           parts: groups.map { item in
@@ -299,6 +279,12 @@ private struct ChapterStrip: View {
         .listRowInsets(.vertical, 0)
         .listRowSeparator(.hidden)
       }
+    } header: {
+      SectionTitle(
+        Text(
+          "Part of \(course.title)", tableName: "Courses",
+          comment: "Header of where a chapter sits in its course; the argument is the course's name"
+        ))
     }
   }
 
@@ -348,17 +334,11 @@ private struct ChapterLessonsSection: View {
               chapter: chapter, chapterNumber: number, id: lesson.id, lessonCount: lessons.count,
               minutes: lesson.estimatedMinutes, number: offset + 1, title: lesson.displayTitle()))
         ) {
-          LabeledContent {
+          ListRow(Text(lesson.displayTitle())) {
+            Text(offset + 1, format: .number)
+              .typeStyle(.data)
+          } trailing: {
             Text(studyDuration(minutes: lesson.estimatedMinutes))
-              .monospacedDigit()
-          } label: {
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-              Text(offset + 1, format: .number)
-                .typeStyle(.data)
-                .foregroundStyle(.faint)
-              Text(lesson.displayTitle())
-                .foregroundStyle(.primary)
-            }
           }
         }
       }
@@ -473,7 +453,7 @@ private struct ChapterRouteStop: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       RouteStation(isHere: isHere, color: stop)
         .frame(width: isHere ? pageSize : stopSize, height: isHere ? pageSize : stopSize)
-        .frame(width: pageSize)
+        .markColumn()
         // On the middle of the first line rather than its baseline.
         .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 4 }
         .anchorPreference(key: StationAnchorKey.self, value: .center) { $0 }

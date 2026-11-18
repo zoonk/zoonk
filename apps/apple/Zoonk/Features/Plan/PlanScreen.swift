@@ -43,7 +43,7 @@ private struct GoalPlanView: View {
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .navigationSubtitle(
-      goal.isSettingUp || goal.status == .paused ? "" : daysLeft(plan.value?.plan) ?? ""
+      goal.isSettingUp ? "" : daysLeft(plan.value?.plan) ?? ""
     )
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
@@ -344,10 +344,8 @@ private struct PlanContent: View {
         PlanHeaderActions(context: context)
       }
       .listRowSeparator(.hidden)
-      if !context.plan.roadPhases.isEmpty {
-        PlanRoadmapContent(context: context, structure: structure)
-          .listRowSeparator(.hidden)
-      }
+      PlanRoadmapContent(context: context, structure: structure)
+        .listRowSeparator(.hidden)
     }
   }
 

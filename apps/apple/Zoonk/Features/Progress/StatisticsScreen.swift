@@ -325,7 +325,8 @@ private struct PatternsLinkRow: View {
 
   private var value: String {
     guard let day = patterns?.dayVerdict.best?.weekday.localizedTitle() else {
-      return String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+      return patterns?.bestDayName
+        ?? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
     }
 
     return String(

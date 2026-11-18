@@ -66,6 +66,16 @@ internal fun TodayPractice(
     TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, navigate)
 }
 
+/** A paused goal's ways to practice: mistakes and completed lessons, since a mock or a call starts only on an active goal. */
+@Composable
+internal fun PausedPractice(
+    store: TodayStore,
+    mocks: MockStore,
+    goalId: UUID,
+    completedLessons: Boolean,
+    navigate: (AppRoute) -> Unit,
+) = TodayPractice(store, mocks, goalId, isExam = false, isLanguage = false, completedLessons = completedLessons, navigate = navigate)
+
 @Composable
 fun TodayPracticeRows(
     mistakes: MistakeListAvailability?,

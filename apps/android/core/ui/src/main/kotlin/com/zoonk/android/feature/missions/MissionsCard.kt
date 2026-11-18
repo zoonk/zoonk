@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.missions
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,18 +26,21 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.expand
@@ -56,12 +62,12 @@ import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.busyClickable
+import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
@@ -119,7 +125,7 @@ fun MissionsCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (showBuddy) Buddy(buddy, Modifier.size(24.dp), crop = BuddyCrop.Face)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    MissionsTitle(progress.full, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
+                    MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         MissionsStatus(progress, Modifier.weight(1f))
                         BrainPowerReward(points, earned = won, onLevel)
@@ -144,11 +150,11 @@ fun MissionsCard(
 /** The card's title; where the rows fold, a press on it shows or hides them. */
 @Composable
 private fun MissionsTitle(
-    done: Boolean,
+    won: Boolean,
     fold: (() -> Unit)?,
     open: Boolean,
 ) {
-    val title = stringResource(if (done) R.string.missions_done else R.string.missions_title)
+    val title = stringResource(if (won) R.string.missions_done else R.string.missions_title)
     val modifier =
         if (fold == null) {
             Modifier.semantics { heading() }
@@ -216,24 +222,69 @@ private fun MissionsStatus(
 }
 
 internal class MissionProgress(
-    missions: List<DayMission>,
+    private val missions: List<DayMission>,
 ) {
     val done = missions.count(DayMission::done)
     val total = missions.size
     val left get() = total - done
     val full get() = total > 0 && left == 0
 
-    fun parts(color: Color): List<MeterPart> =
-        List(total) { index ->
-            MeterPart(if (index < done) MeterPart.Fill.Solid(color) else MeterPart.Fill.Track)
-        }
+    /**
+     * Each part's fill before and after: how far its mission got, furthest first, as main's `mission-track`. A mission in
+     * [justDone] fills from the step before it.
+     */
+    fun fills(justDone: Collection<DayMission> = emptyList()): List<Pair<Float, Float>> {
+        val after = missions.map { if (it.done) 1f else share(it.progress, it.total) }
+        val before = missions.zip(after) { mission, fill -> if (mission in justDone) share(mission.total - 1, mission.total) else fill }
+        return before.sortedDescending().zip(after.sortedDescending())
+    }
 }
 
+private fun share(
+    steps: Long,
+    total: Long,
+): Float = if (total > 0) (steps.coerceAtLeast(0).toFloat() / total).coerceAtMost(1f) else 0f
+
+/**
+ * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
+ * after [delayMillis], when the screen celebrates.
+ */
 @Composable
 internal fun MissionTrack(
     progress: MissionProgress,
     modifier: Modifier,
-) = MeterParts(progress.parts(MaterialTheme.zoonk.brain), modifier)
+    justDone: Collection<DayMission> = emptyList(),
+    delayMillis: Int = 0,
+) {
+    val fills = progress.fills(justDone)
+    val brain = MaterialTheme.zoonk.brain
+    val track = brain.copy(alpha = if (MaterialTheme.colorScheme.background.luminance() < HALF) DARK_TRACK_ALPHA else TRACK_ALPHA)
+    val animates = celebrates() && fills.any { (start, fill) -> start < fill }
+    val motion = remember { Animatable(if (animates) 0f else 1f) }
+    LaunchedEffect(animates) {
+        if (animates) motion.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
+    }
+
+    Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        fills.forEach { (start, fill) ->
+            Box(
+                Modifier
+                    .weight(1f)
+                    .height(TRACK_HEIGHT)
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .background(track),
+            ) {
+                Box(Modifier.fillMaxWidth(start + (fill - start) * motion.value).height(TRACK_HEIGHT).background(brain))
+            }
+        }
+    }
+}
+
+/** Main's `bg-brain/15 dark:bg-brain/30`. */
+private const val TRACK_ALPHA = 0.15f
+private const val DARK_TRACK_ALPHA = 0.3f
+private const val HALF = 0.5f
+private val TRACK_HEIGHT = 6.dp
 
 @Composable
 private fun MissionRow(

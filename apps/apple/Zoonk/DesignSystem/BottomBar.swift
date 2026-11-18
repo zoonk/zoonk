@@ -105,7 +105,7 @@ private struct BottomBar<Actions: View>: View {
           .padding(.horizontal, 16)
           .padding(.vertical, 8)
           .background(.background)
-          .alignmentGuide(.top) { $0[.bottom] }
+          .frame(height: 0, alignment: .bottom)
       }
     }
   }

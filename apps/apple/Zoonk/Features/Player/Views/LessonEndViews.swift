@@ -67,10 +67,10 @@ struct LessonCompletionView: View {
       VStack(alignment: .leading, spacing: 24) {
         content()
       }
-      .frame(maxWidth: 680, alignment: .leading)
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: .infinity, alignment: .leading)
       .scenePadding()
     }
+    .readableColumn(680)
   }
 
   @ViewBuilder
@@ -817,10 +817,10 @@ struct LessonWaitingView: View {
             page
             shownAlternative
           }
-          .frame(maxWidth: 680, alignment: .leading)
-          .frame(maxWidth: .infinity)
+          .frame(maxWidth: .infinity, alignment: .leading)
           .scenePadding()
         }
+        .readableColumn(680)
       }
     }
     .bottomBar {

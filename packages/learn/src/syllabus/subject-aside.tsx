@@ -150,9 +150,10 @@ function SubjectDetails({
           label={
             edition
               ? t({
-                  description: "In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).",
-                  id: "questionsFromExamEdition",
-                  message: "Questions from {exam}",
+                  description:
+                    "Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.",
+                  id: "questionsNamedExamEdition",
+                  message: "Questions · {exam}",
                   values: { exam: edition },
                 })
               : questionsLabel

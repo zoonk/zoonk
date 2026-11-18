@@ -275,7 +275,7 @@ export function useMockSheetAside({
     footer: <SheetHandIn onHandIn={onHandIn} />,
     label: t("Answer sheet"),
     meta: counts,
-    title: <span className="text-sm tracking-normal normal-case">{t("Answer sheet")}</span>,
+    title: t("Answer sheet"),
   };
 }
 

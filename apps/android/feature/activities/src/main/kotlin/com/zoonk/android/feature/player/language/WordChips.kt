@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -30,7 +29,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -47,6 +45,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
 import java.util.Locale
 
@@ -120,7 +119,7 @@ internal fun TargetDirection(
         } else {
             LayoutDirection.Ltr
         }
-    CompositionLocalProvider(LocalLayoutDirection provides direction, content = content)
+    ProvideLayoutDirection(direction, content)
 }
 
 /**

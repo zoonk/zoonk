@@ -218,8 +218,9 @@ function RevealColumn({
         <RevealNoticeDay />
       </header>
 
-      <RevealToday locked={starting} open={openStep} reveal={reveal} />
-      <RevealWeek reveal={reveal} />
+      <RevealWeek reveal={reveal}>
+        <RevealToday locked={starting} open={openStep} reveal={reveal} />
+      </RevealWeek>
 
       <div className="flex flex-col gap-2">
         <PlanPhasesBar />

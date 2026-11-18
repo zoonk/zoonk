@@ -98,6 +98,7 @@ struct EmailLoginView: View {
                 "Continue", tableName: "Account", comment: "Button that sends an email log in code")
             }
             .buttonStyle(.mainAction)
+            .disabled(normalizedEmail.isEmpty && !session.isWorking)
             .keyboardShortcut(.defaultAction)
           }
         }
@@ -145,7 +146,7 @@ struct EmailLoginView: View {
   }
 
   private func sendEmailCode() {
-    guard !session.isWorking, email.submit() else {
+    guard !session.isWorking, !normalizedEmail.isEmpty, email.submit() else {
       return
     }
 

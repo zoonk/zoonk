@@ -417,12 +417,14 @@ struct PlanSuggestionSection: View {
     )
   }
 
-  /// The page's bottom bar answers it, so its line says everything and opens nothing.
+  /// Finding the time that covers everything plans the goal many times, so beside the page too it
+  /// waits behind its line's "View".
   private func isCoverage(_ item: PlanSlotItem) -> Bool {
     if case .coverage = item { return true }
     return false
   }
 
+  /// The page's bottom bar answers it, so its line says everything and opens nothing.
   private func isStatement(_ item: PlanSlotItem) -> Bool {
     item == .paused || (item == .pastDate && context.goal.kind == .exam)
   }
@@ -493,7 +495,7 @@ struct PlanSuggestionSection: View {
         PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
       }
     case .coverage(let text):
-      PlanCoverageSlot(context: context, title: text, asksAtOnce: true, actions: offers)
+      PlanCoverageSlot(context: context, title: text, actions: offers)
     case .courseComplete:
       PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)

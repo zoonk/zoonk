@@ -14,7 +14,7 @@ import { MockBreak } from "./mock-break";
 import { useRefreshPastMockDeadline } from "./mock-clock";
 import { type MockActions, type MockHrefs, MockProvider, useMockScreen } from "./mock-context";
 import { MockExpired } from "./mock-expired";
-import { MockEyebrow, MockFrame, MockStepStatus } from "./mock-frame";
+import { MockEyebrow, MockFrame } from "./mock-frame";
 import { MockResultView } from "./mock-result-view";
 import { MockRunnerView } from "./mock-runner-view";
 import { MockSpeakingView } from "./mock-speaking";
@@ -34,18 +34,15 @@ function MockGrading() {
   return (
     <MockFrame
       footer={
-        <>
-          <MockStepStatus />
-          <TaskActions>
-            <TaskMainButton
-              busy={runner.busy === "finish"}
-              disabled={runner.pending}
-              onClick={() => void runner.finish()}
-            >
-              {t("See result")}
-            </TaskMainButton>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <TaskMainButton
+            busy={runner.busy === "finish"}
+            disabled={runner.pending}
+            onClick={() => void runner.finish()}
+          >
+            {t("See result")}
+          </TaskMainButton>
+        </TaskActions>
       }
     >
       <StepCard>
@@ -70,18 +67,15 @@ function MockTimeUp() {
   return (
     <MockFrame
       footer={
-        <>
-          <MockStepStatus />
-          <TaskActions>
-            <TaskMainButton
-              busy={handingIn}
-              disabled={runner.pending}
-              onClick={() => void runner.submitSection()}
-            >
-              {action}
-            </TaskMainButton>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <TaskMainButton
+            busy={handingIn}
+            disabled={runner.pending}
+            onClick={() => void runner.submitSection()}
+          >
+            {action}
+          </TaskMainButton>
+        </TaskActions>
       }
     >
       <StepCard>

@@ -6,7 +6,6 @@
   "stats_answer_count": "2e075bb3d6f8d8db33068ab76c1a7b6dabf3d61d9497ba826a4f05d3eeb1eaed",
   "stats_answer_more": "ba7f76ade87124bfc5a07fe6a1647955365181dd22802d6be55cfc015836be33",
   "stats_answers_to_count": "be770f036164ba676b27f879e1c8cb1f5e3b7188ffbb3e8806ae8d5fb567462f",
-  "stats_any_day": "5d7046d3a2f452bc5fad2f10955dcc71af53236fd3f610aabc7947ae8c79a8ba",
   "stats_any_time": "70985521a073d956e2d7cd8409866323eaae95cf65892593d1038e7f63a7c3ef",
   "stats_belt_comes_after": "fb6902f39728cb83f2651e9373b7f297b974dc93c400daf5c0d86252d77242e3",
   "stats_belt_current": "4645e6f2c4b1ce6d3b483b287c3800936e3613a810869e18ae33d749b96a5276",
@@ -160,7 +159,6 @@
     </plurals>
     <string name="stats_throughout_week">Im Laufe der Woche</string>
     <string name="stats_throughout_day">Im Laufe des Tages</string>
-    <string name="stats_any_day">Noch liegt kein Tag vorn</string>
     <string name="stats_any_time">Jede Tageszeit</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Dein bester Tag ist %1$s.</string>

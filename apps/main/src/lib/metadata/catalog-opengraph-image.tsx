@@ -236,7 +236,9 @@ function CatalogOpenGraphImage({
               display: "flex",
               fontSize: getTitleFontSize(safeTitle),
               fontWeight: FONT_WEIGHTS.brand,
+              letterSpacing: "-0.035em",
               lineHeight: 1.04,
+              textWrap: "balance",
             }}
           >
             {safeTitle}

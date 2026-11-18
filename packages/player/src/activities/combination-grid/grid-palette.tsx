@@ -9,6 +9,7 @@ import { useId } from "react";
 import { usePlayerInteractionState } from "../../player-context";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { ActivityCheckQuestion } from "../_components/activity-check-question";
+import { useCanvasNumberKeys } from "../_utils/canvas-question";
 import { CellValue, type GridTraits, Trait } from "./grid-parts";
 
 export function GridPalette({
@@ -28,6 +29,8 @@ export function GridPalette({
   const questionId = useId();
   const isDisabled = activeCell === null;
   const interaction = usePlayerInteractionState();
+
+  useCanvasNumberKeys(!isDisabled);
 
   useNumberKeys({
     count: options.length,

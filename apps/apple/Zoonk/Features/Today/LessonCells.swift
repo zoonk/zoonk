@@ -1,7 +1,7 @@
-/// Main's `getLessonCells`: up to 30 cells, each one whole state. A cell stands for several lessons
-/// once the plan is longer, and each state takes its share of the cells (studied, known, today's,
-/// then the rest), rounded so the shares add up exactly; a state the legend names gets one cell at
-/// least, taken from the state holding the most, so the bar never draws less than it says.
+/// Up to 30 cells, each one whole state. A cell stands for several lessons once the plan is longer,
+/// and each state takes its share of the cells (studied, known, today's, then the rest), rounded so
+/// the shares add up exactly; a state the legend names gets one cell at least, taken from the state
+/// holding the most, so the bar never draws less than it says.
 enum LessonCells {
   enum State: Int, CaseIterable {
     case studied

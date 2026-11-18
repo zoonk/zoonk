@@ -82,31 +82,7 @@ export function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) 
 }
 
 /** The topics in order as stations along the route; on a certificate all of it is done. */
-function CertificateRoute({
-  graph,
-  showLabels,
-  spec,
-}: {
-  graph: RouteGraph;
-  showLabels: boolean;
-  spec: RouteSpec;
-}) {
-  if (graph.label && showLabels) {
-    return (
-      <div style={{ alignItems: "center", display: "flex", gap: spec.labelGap }}>
-        <span
-          style={{
-            background: CERTIFICATE_COLORS.success,
-            borderRadius: spec.station,
-            height: spec.station * 2,
-            width: spec.station * 2,
-          }}
-        />
-        <RouteLabel label={graph.label} spec={{ ...spec, labelGap: 0 }} />
-      </div>
-    );
-  }
-
+function CertificateRoute({ graph, spec }: { graph: RouteGraph; spec: RouteSpec }) {
   const { end, middle, pad, station, stations } = getRouteGeometry({
     spec,
     stations: graph.stations,
@@ -268,20 +244,16 @@ export function CertificateGraph({
   ladder,
   route,
   scale,
-  showLabels,
   view,
 }: {
   ladder: LadderSpec;
   route: RouteSpec;
   scale: number;
-  showLabels: boolean;
   view: CertificateView;
 }) {
   if (view.graph.kind === "ladder") {
     return <CertificateLadder graph={view.graph} scale={scale} spec={ladder} />;
   }
 
-  return (
-    <CertificateRoute graph={view.graph} showLabels={showLabels} spec={scaleRoute(route, scale)} />
-  );
+  return <CertificateRoute graph={view.graph} spec={scaleRoute(route, scale)} />;
 }

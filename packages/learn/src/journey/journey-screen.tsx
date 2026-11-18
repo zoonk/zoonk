@@ -118,7 +118,6 @@ function JourneyBody({
         examHref={links.exam}
         logbookHref={links.logbook}
         onAdjust={() => editor.open()}
-        paused={paused}
         standing={standing}
         status={plan.status}
         variant={variant}

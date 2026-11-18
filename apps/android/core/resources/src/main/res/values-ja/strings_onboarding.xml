@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "d7f825f4a3a6415cf91d132ddc096d0885eba003012028dc6cc8c2e634e24ff6",
   "onboarding_musicianship_title": "0adde0dca5691a8b2103605f760cb3eb62e40d65751d823d6dc4045951874988",
   "onboarding_my_notes": "39cf9540acc66a031e0ae878b5d9360691a3330cbc61b5f9e4c93ef91f491976",
-  "onboarding_no_date": "d4451f448c431d3d91c40745c234f82a27bda8c85421edddf1f5fb198c063bac",
   "onboarding_paste_link": "0a1731269c36f190ee7bef3e3a0861d860d6aaf88b52350d3e6d2abf328e6990",
   "onboarding_paste_link_placeholder": "15cd6ff5739d7485fa22d8b55d9f10338aebd7e30c161068634957f19bffbaf7",
   "onboarding_paste_text": "8126a31b71d0320038e45f540a8b72297013965287668a8a458f8f19ad07d8ec",
@@ -284,7 +283,7 @@
   "onboarding_reveal_most_questions": "fd66edef6b8aaa9c90397fb638455067a6801360a56c184c23c05dd3e0b081c9",
   "onboarding_reveal_no_sitting": "78685708d962d460ca04327910f20dad18acbdf6596e619e495c5d7a7e59bd8a",
   "onboarding_reveal_notice_day_estimated": "23e61a99041cbea7248b537d2c20cb9f67058b405259fa6993c90ddd6d9e8c62",
-  "onboarding_reveal_notice_day_notice": "a68b27fc96553d7d333cf26d8f9e928bccf5a6e41e3464a2cf84701f6abfcf4b",
+  "onboarding_reveal_notice_day_notice": "b113b604a2de94c6648936c4d3e597eee9abfa398dac0441bb8e5e35311f7454",
   "onboarding_reveal_notice_subjects": "50d8e668a844888330f52ad96e621b497dc925504b776031596b195cf62c6b85",
   "onboarding_reveal_pace_covers": "24f8e014bc65bc2cada7d0656bb79fc9342795e14cc52be129f38bbf100c31aa",
   "onboarding_reveal_pace_time": "291073076db1257c30528b8695f6eb9e57e487cd5b146acccb5d468b17aa91e2",
@@ -355,7 +354,7 @@
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
-  "onboarding_row_notice_says": "347a6d87d441536c663d30cc1de37620d5bdf4ff21dca41ede32ba8b66298c72",
+  "onboarding_row_notice_says": "18d304f921f75c618f2cb00fa78917368b385ea973d3ae3e42e203d6c7ae31d3",
   "onboarding_row_pick_date": "da1f50d5810fd8fd525accfc09cec66512155010d9ff76e93715e9fc8b649d92",
   "onboarding_row_position": "e24afc7c38c844ba467578695f9403017d95389b6456fe6375f27677703bd769",
   "onboarding_row_reason": "1c65118b91f78cd9f4d12bf263b051104d32ebf7691e208789da097681175731",
@@ -557,7 +556,7 @@
     <string name="onboarding_row_dates_estimated">例年の日程から予想しています。正式な日程が発表されたらお知らせします。</string>
     <string name="onboarding_row_pick_date">受験日を選ぶ</string>
     <string name="onboarding_row_several_sittings">この試験は年に数回実施されます。受験日を選ぶまでは、最初の日程に合わせて学習計画を立てます。</string>
-    <string name="onboarding_row_notice_says">試験日は%1$sです。</string>
+    <string name="onboarding_row_notice_says">正式な試験日は%1$sです。この日を試験日に設定しますか？</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">5分ほどで読める短い解説を作成します。</string>
@@ -743,7 +742,7 @@
     <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">試験日は現在、%1$sの見込みです。</string>
-    <string name="onboarding_reveal_notice_day_notice">試験日は%1$sです。</string>
+    <string name="onboarding_reveal_notice_day_notice">正式な試験日は%1$sです。この日を試験日に設定しますか？</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$sに試験の予定はありません</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -888,8 +887,6 @@
     <string name="onboarding_date_continue_without">日付を設定せずに続ける</string>
     <string name="onboarding_date_remove">日付を削除する</string>
     <string name="onboarding_date_label">日付</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">日付なし</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">設定した%1$sは過ぎています。</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

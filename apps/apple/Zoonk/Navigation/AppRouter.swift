@@ -20,8 +20,14 @@ enum AppSheet: Hashable, Identifiable {
 final class AppRouter {
   var selectedTab = AppTab.today
   /// The places the window's sidebar lists, where opening one marks its own row (main's
-  /// `getActiveTab`); none where the window has no sidebar.
-  var sidebarTabs: Set<AppTab> = []
+  /// `getActiveTab`); none where the window has no sidebar. A place opened before the sidebar listed
+  /// it, such as by a link the app starts with, moves to its own row once it does, under whatever
+  /// task is open over it.
+  var sidebarTabs: Set<AppTab> = [] {
+    didSet {
+      moveListedPlaceToItsRow()
+    }
+  }
   var sheet: AppSheet?
   /// The speaking paper's open task in this window, as main's `/speaking?task=`.
   var speakingTask: String?
@@ -242,6 +248,25 @@ final class AppRouter {
   func popToRoots() {
     tasks = []
     paths = [:]
+  }
+
+  private func moveListedPlaceToItsRow() {
+    guard selectedTab.studyRoute == nil, let path = paths[selectedTab], path.count == 1 else {
+      return
+    }
+
+    let places = AppTab.sidebarPlaces.compactMap(\.studyRoute) + [.statistics()]
+    let place = places.first { route in
+      var only = NavigationPath()
+      only.append(route)
+      return only == path
+    }
+
+    if let tab = place?.sidebarTab, sidebarTabs.contains(tab) {
+      paths[selectedTab] = nil
+      paths[tab] = nil
+      selectedTab = tab
+    }
   }
 
   /// `keepingPlace` when the place still exists (the window became compact) rather than gone (a

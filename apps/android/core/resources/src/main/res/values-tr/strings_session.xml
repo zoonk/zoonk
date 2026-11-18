@@ -84,7 +84,6 @@
   "session_summary_skills_rose": "a8a2bfb3dfcf98fb93a6e6cce0f3cd061eb678b168b62a952cd6274896c2b351",
   "session_summary_so_far": "bf10c7c87ff26a3ff6e8f09a7d3481cdf9cc97ea81d71637fc8ab7998380d391",
   "session_summary_streak": "8d2eb01f755101782f06b856b76db43af618f5bd75358617dbd6ef7d795f0847",
-  "session_summary_to_review": "a8bd048d3cd1d9fb2270c9e24c027221aa30fff9fa4ae6b28c5afdc5fc80aa43",
   "session_summary_tomorrow": "9076007757c181efe94f1b57d6c5d221a14738817320dc4d3217bd9e49e7e0c2",
   "session_summary_up_from": "ec0beb23f5c676f4119f94715dce44370f93cb6c6c0a37d987b1fe6f7bcf40da",
   "session_topics_and_more": "e6fd058f6fd737dd9c3228eff9600f99405bb7db87d00081134c632ff32f53c0"
@@ -165,9 +164,6 @@
     <string name="session_summary_net">%1$s net</string>
     <string name="session_summary_preparation">Hazırlık</string>
     <string name="session_summary_progress">İlerleme</string>
-    <!-- How many skills come back for review on later days. -->
-    <string name="session_summary_to_review">Tekrar edilecek</string>
-    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
     <string name="session_summary_brain_power">Beyin Gücü</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +18,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +39,7 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.steps.GhostAction
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf30Value as KeyboardFretboardContent
@@ -244,7 +243,7 @@ private fun FretWindow(
     onMove: (Int) -> Unit,
 ) {
     // The frets run left to right in every language, so the arrows do too.
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    ProvideLayoutDirection(LayoutDirection.Ltr) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             val lower = stringResource(R.string.activities_music_lower_frets)
             val higher = stringResource(R.string.activities_music_higher_frets)

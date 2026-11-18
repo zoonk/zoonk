@@ -60,7 +60,7 @@ internal data class SetupProgress(
  * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots.
  * Each question counts once, where the learner meets it: an earlier one opened again from a later
  * screen keeps its place, and the screen it was opened from is still ahead. Until the count is known
- * there are no dots: a question whose answer can add one (main's `QUESTIONS_THAT_ADD_QUESTIONS`) is
+ * there are no dots: a question whose answer can add one (core's `QUESTIONS_THAT_ADD_QUESTIONS`) is
  * current or ahead, and dots would promise an end that moves.
  */
 internal fun setupProgress(
@@ -76,8 +76,11 @@ internal fun setupProgress(
     return SetupProgress(order.indexOf(if (current.profileQuestion != null) OnboardingStep.WORK else current), order.size)
 }
 
-/** A work or career-change purpose asks the role next. */
-private val QUESTIONS_THAT_ADD_QUESTIONS = setOf(OnboardingStep.PURPOSE)
+/**
+ * A work or career-change purpose asks the role next; a language reason that names a certificate asks
+ * the exam's questions.
+ */
+private val QUESTIONS_THAT_ADD_QUESTIONS = setOf(OnboardingStep.PURPOSE, OnboardingStep.REASON)
 
 private fun countsAsQuestion(step: OnboardingStep) =
     (step in QUESTION_SCREENS || step.profileQuestion != null) && step != OnboardingStep.PLACEMENT

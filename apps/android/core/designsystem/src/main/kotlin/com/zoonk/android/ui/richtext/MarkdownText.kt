@@ -35,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import org.commonmark.ext.gfm.strikethrough.Strikethrough
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
@@ -466,7 +466,7 @@ private fun MarkdownList(
                             .alignByBaseline()
                             .then(if (ordered) Modifier else Modifier.clearAndSetSemantics {}),
                     style = style.withTabularFigures(),
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                 )
 
                 Blocks(item, formulas, links, style, Modifier.weight(1f).alignByBaseline(), gap = ITEM_GAP)

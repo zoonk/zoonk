@@ -260,7 +260,6 @@ msgstr "{days, plural, one {Manca circa # giorno} other {Mancano circa # giorni}
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
@@ -271,6 +270,7 @@ msgstr "{days, plural, one {Manca circa # giorno} other {Mancano circa # giorni}
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
+#: src/onboarding/onboarding-skeletons.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/reveal-body.tsx
@@ -290,7 +290,6 @@ msgstr "Continua"
 #: src/_components/detail-page.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -3324,9 +3323,11 @@ msgid "Day {number, number}"
 msgstr "Giorno {number, number}"
 
 #: src/exam/exam-format-section.tsx
-msgctxt "0Wr2Rv"
-msgid "Date not set"
-msgstr "Data non impostata"
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "Data da confermare"
 
 #: src/exam/exam-labels.tsx
 msgctxt "_Dh3uU"
@@ -4694,9 +4695,9 @@ msgid "Pause goal"
 msgstr "Metti in pausa l’obiettivo"
 
 #: src/journey/goal-actions.tsx
-msgctxt "uUtHtO"
-msgid "Resume this goal"
-msgstr "Riprendi questo obiettivo"
+msgctxt "bvIZsF"
+msgid "Resume goal"
+msgstr "Riprendi l’obiettivo"
 
 #: src/journey/goal-actions.tsx
 #: src/plan/exam-over-actions.tsx
@@ -4815,6 +4816,13 @@ msgctxt "l25yqY"
 msgid "{studied, number} studied · {known, number} already known"
 msgstr "{studied, number} studiate · {known, number} già note"
 
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
+
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/session/summary/summary-parts.tsx
@@ -4824,6 +4832,7 @@ msgid "Progress"
 msgstr "Progressi"
 
 #: src/journey/journey-hero.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/today/today-preparation.tsx
 msgctxt "JdekDJ"
 msgid "{language} level"
@@ -4911,12 +4920,6 @@ msgstr ", completato"
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, one {# lezione non studiata} other {# lezioni non studiate}}"
-
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "Data da confermare"
 
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
@@ -7984,14 +7987,14 @@ msgid "Try again before you move on"
 msgstr "Riprova prima di continuare"
 
 #: src/mock/mock-frame.tsx
-msgctxt "gOsgur"
-msgid "Your last answer wasn't saved."
-msgstr "La tua ultima risposta non è stata salvata."
-
-#: src/mock/mock-frame.tsx
 msgctxt "hM4teD"
 msgid "That didn't go through. Your answers are saved. Try again in a moment."
 msgstr "L’operazione non è riuscita. Le tue risposte sono state salvate. Riprova tra poco."
+
+#: src/mock/mock-frame.tsx
+msgctxt "gOsgur"
+msgid "Your last answer wasn't saved."
+msgstr "La tua ultima risposta non è stata salvata."
 
 #: src/mock/mock-frame.tsx
 msgctxt "9UlLLH"
@@ -8568,11 +8571,11 @@ msgctxt "P0PLlQ"
 msgid "Points"
 msgstr "Punti"
 
-#. In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).
+#. Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it.
 #: src/mock/mock-result-view.tsx
-msgctxt "estimatedExamScore"
-msgid "Estimated {exam} score"
-msgstr "Punteggio stimato per {exam}"
+msgctxt "estimatedScoreNamedExam"
+msgid "Estimated score · {exam}"
+msgstr "Punteggio stimato · {exam}"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "bYZf2G"
@@ -9297,9 +9300,17 @@ msgid "Getting started"
 msgstr "Primi passi"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "065UXh"
-msgid "No date"
-msgstr "Nessuna data"
+#: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "bpAaId"
+msgid "To be confirmed"
+msgstr "Da confermare"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "LG_0wj"
+msgid "None set"
+msgstr "Non impostata"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10004,11 +10015,6 @@ msgctxt "RlSFBL"
 msgid "Study days"
 msgstr "Giorni di studio"
 
-#: src/onboarding/steps/study-week.tsx
-msgctxt "FYJyhw"
-msgid "Time on weekends"
-msgstr "Tempo nel fine settimana"
-
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
@@ -10040,12 +10046,6 @@ msgstr "La tua risposta, con parole tue"
 msgctxt "C9D4Tz"
 msgid "Edit {field}"
 msgstr "Modifica {field}"
-
-#: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-properties.tsx
-msgctxt "bpAaId"
-msgid "To be confirmed"
-msgstr "Da confermare"
 
 #: src/onboarding/understood/understood-date-row.ts
 msgctxt "H5ndh9"
@@ -10369,9 +10369,9 @@ msgid "The exam's likely date is now {date}."
 msgstr "La data più probabile per l’esame è ora {date}."
 
 #: src/plan/notice-day.tsx
-msgctxt "4Q_yNQ"
-msgid "The exam is on {date}."
-msgstr "L’esame è il {date}."
+msgctxt "cnlSzV"
+msgid "The official exam date is {date}. Use it as your exam date?"
+msgstr "La data ufficiale dell’esame è {date}. Vuoi usarla come data del tuo esame?"
 
 #: src/plan/notice-day.tsx
 msgctxt "78R32n"
@@ -10382,11 +10382,6 @@ msgstr "Nessuna data d’esame a {month}"
 msgctxt "wMxWx9"
 msgid "Use {date}"
 msgstr "Usa il {date}"
-
-#: src/plan/notice-day.tsx
-msgctxt "3L56jf"
-msgid "The official {exam} date is {date}. Use it as your exam date?"
-msgstr "La data ufficiale di {exam} è {date}. Vuoi usarla come data del tuo esame?"
 
 #: src/plan/plan-activities.tsx
 msgctxt "Np3v0G"
@@ -10686,11 +10681,6 @@ msgid "Next <date></date>"
 msgstr "Prossima: <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "LG_0wj"
-msgid "None set"
-msgstr "Non impostata"
-
-#: src/plan/plan-properties.tsx
 msgctxt "G6h29P"
 msgid "Estimated finish <date></date>"
 msgstr "Fine prevista <date></date>"
@@ -10801,6 +10791,15 @@ msgstr "La data di fine è passata"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "Suggerimento per il piano"
+
+#: src/plan/plan-suggestion-context.tsx
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "Vedi cosa cambia"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11548,14 +11547,6 @@ msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Non siamo riusciti a trovare una data entro cui studiare tutto."
 
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "Vedi cosa cambia"
-
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
 msgid "A lesson to set up {tools} on {device} comes before you need it."
@@ -11567,9 +11558,9 @@ msgid "You have {tools}, so there's nothing to set up."
 msgstr "Hai {tools}, quindi non c’è nulla da configurare."
 
 #: src/plan/use-tool-sentence.ts
-msgctxt "-8_nhW"
-msgid "No install for {tools}: you'll learn with examples."
-msgstr "Per {tools} non serve installare nulla: imparerai con gli esempi."
+msgctxt "YDyhWr"
+msgid "You won't use {tools}: you'll learn with examples."
+msgstr "Non userai {tools}: imparerai con degli esempi."
 
 #: src/plan/written-cadence.tsx
 msgctxt "8T3kjt"
@@ -12969,11 +12960,11 @@ msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "Tiene conto delle tue risposte nelle lezioni, negli esercizi e nei test."
 
-#. In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).
+#. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
-msgctxt "questionsFromExamEdition"
-msgid "Questions from {exam}"
-msgstr "Domande tratte da {exam}"
+msgctxt "questionsNamedExamEdition"
+msgid "Questions · {exam}"
+msgstr "Domande · {exam}"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
@@ -13464,12 +13455,6 @@ msgstr "Ne abbiamo preso nota."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Dalle tue ultime risposte"
-
-#. A short line under the progress percent, in a small tile.
-#: src/today/today-lessons-card.tsx
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
