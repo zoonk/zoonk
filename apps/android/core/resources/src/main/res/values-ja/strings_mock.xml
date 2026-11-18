@@ -45,7 +45,6 @@
   "mock_next": "01a02e5f1fd4ed9dda65c2b90cf65a4c6922bf2dac1866d8d958acbff1227cbf",
   "mock_next_named": "feda83fe7c18a7717b4281f20721c29cbfcce562c9e7af4ecb2f66a496236e1a",
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
-  "mock_not_saved_retrying": "f15eaac2c004dd987d936fac8e8a3528db817a9de23de4defe7c69b6e1813358",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
@@ -55,11 +54,11 @@
   "mock_questions": "efe9a4c3e6fd3dcdee2798114618f7dc4523d507d0d88900316e37e76c8d08e5",
   "mock_right_answers": "ffbe85c15885808a4d6c56a9f13661fdf95017038793d185b03c174ab79594d5",
   "mock_row_detail": "f858078fb34f24559e3bd91e07b51a792516bdb20a4e8847a98eb817df02c9ef",
-  "mock_section_answered": "1f76002d7dfd2512eb4394ec92281f01f6a4d87e3d5d5f722dd74c1c8f6fb855",
+  "mock_save_retry": "6fc08c1777468f09d104db4a9f01d0d20dc037a3e11e5e2cfad98895d8b82199",
+  "mock_section_answered_of": "2802cfbb3bb8c2f2d071ce3468bf8420de5ea96006283672fc05f5d9e5e34317",
   "mock_section_number": "9ff4b04f3bdd85b75b79bfaa5674757759df58ef7200e67ff92c0e14d7ed01f3",
   "mock_sections": "651386e3e0e213d324a519c0b3596a8671ceb26a2db5b9b0066c58f2fb8134f2",
   "mock_see_result": "eedc9cdbe0c52da130b812185dc38615b481563dbcf40ed352823ff9fd2b8c85",
-  "mock_sheet": "699cb04256f723c9e4a6170b7c5a9988518f343b16b3d127e84c35a58ddba298",
   "mock_speaking": "d9805eb4cbdcfd89bb3a578757f25d0c49bd6622ed70cb0d9808ac8930d8f453",
   "mock_speaking_all_done": "866e5ef015f6a5d5504159ceaad4eda04d67882eda5ce241eb910d79880a4d6f",
   "mock_speaking_done": "7d2cc9b967db370206452a3621caf88924868782e5ca24a7ac7d215b2f081d57",
@@ -165,7 +164,6 @@
     <string name="mock_hand_in_final">提出後は回答を変更できません。</string>
     <string name="mock_keep_answering">解答を続ける</string>
     <string name="mock_hand_in">提出する</string>
-    <string name="mock_sheet">解答用紙</string>
     <string name="mock_answer_sheet">解答用紙</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -184,9 +182,8 @@
     <string name="mock_section_number">セクション%1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">提出済み</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">まだ保存されていません · 再試行しています</string>
+    <string name="mock_section_answered_of">%1$s / %2$s</string>
+    <string name="mock_save_retry">次に進む前にもう一度試してください</string>
     <string name="mock_try_again">もう一度試す</string>
     <string name="mock_last_not_saved">直前の回答は保存されませんでした。</string>
     <string name="mock_step_failed_saved">うまくいきませんでした。回答は保存されています。少し待ってから、もう一度お試しください。</string>

@@ -45,7 +45,6 @@
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
-  "mock_not_saved_retrying": "16335e8d43882ac27ace6d79045baf63c4cb20c9460260087e431e0a50860159",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
@@ -55,11 +54,11 @@
   "mock_questions": "58152ae334dac014a72731286080db935f8ee90172674d7f76996941adbda551",
   "mock_right_answers": "ee9dee4f9cface0386987ad565686aac076b98d3ec40d27f619f6e68e928ddef",
   "mock_row_detail": "c0eccaca29d298486bc25432fc077bbf66348862f4ff30b2118c0232bc415229",
-  "mock_section_answered": "bae4eb5df6c0cdaee598393216e95ddde975a96194a8b50fce69cf6984071716",
+  "mock_save_retry": "989d0b53be32fc4dc406626912374cef56e3f6cd3dad3393d7adcd0b4f797002",
+  "mock_section_answered_of": "b02f3bcea9133402ce63544800d8d0f1130d74e1da591d3be1a809268a367602",
   "mock_section_number": "7816e14665d493211074bb22b95b27ecf837a02476b8c12d362151c5b8377b71",
   "mock_sections": "868877f99217fe164c757f37460e9675f65a3dd97212d7529726e599a136eccc",
   "mock_see_result": "454ed09506e7aefc56dbd2f03de48d5970a8240003c8f00ba0ac9b85c2adc0f6",
-  "mock_sheet": "eab2fbdaf070eb80a0039625f122967ff12c4ff09fba4c9d3e4e280a4900c2c9",
   "mock_speaking": "8c1738c8c97b9972f7815533ef89a0846097bdb77110f10fa437265e0b022996",
   "mock_speaking_all_done": "b3251461ba015bbfc80987eb0dffa65e375f95df9e2d99cfb9591b54ce924364",
   "mock_speaking_done": "901c9f622454d5febe8fcbd7a438ae301e19cf086e8be03441dbbd8820192670",
@@ -165,7 +164,6 @@
     <string name="mock_hand_in_final">제출하면 답안을 수정할 수 없어요.</string>
     <string name="mock_keep_answering">계속 풀기</string>
     <string name="mock_hand_in">제출하기</string>
-    <string name="mock_sheet">답안지</string>
     <string name="mock_answer_sheet">답안지</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -184,9 +182,8 @@
     <string name="mock_section_number">파트 %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">제출 완료</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">아직 저장되지 않았어요 · 다시 시도하고 있어요</string>
+    <string name="mock_section_answered_of">%1$s/%2$s</string>
+    <string name="mock_save_retry">계속하기 전에 다시 시도해 보세요</string>
     <string name="mock_try_again">다시 시도</string>
     <string name="mock_last_not_saved">마지막 답이 저장되지 않았어요.</string>
     <string name="mock_step_failed_saved">처리하지 못했어요. 답안은 저장되어 있어요. 잠시 후에 다시 시도해 보세요.</string>

@@ -45,7 +45,6 @@
   "mock_next": "9d53dd050edcc78dcf1c772c21d55604fe9c42fa77440bba6fc2183928d4d123",
   "mock_next_named": "c15b1674b8f710b38daf2828b016021dfce9f179bf849e23b24edd95f1bb5f43",
   "mock_next_section": "7dc00763fa180dd8859f3cc3ebed44c14e78e7d2ae440907926041a9eb879464",
-  "mock_not_saved_retrying": "6a7b509bd94322a90aa2e8648fe771ed88d836e91ca14cc8e9750d29aea5a6a7",
   "mock_place": "4b5b7e09a78303ddca94df9a847bf54afa007747d930b3e25c42a920982778fa",
   "mock_points_of": "a13acef34ba69cf00f2c398bba677991350a4153ca10805e4427785b3d3de4ff",
   "mock_progress_label": "f82abb3130af1c21a87114a645b19ac71208f9c6dacfdaa5cd25a3455b917ca2",
@@ -55,11 +54,11 @@
   "mock_questions": "b2fc7d1673ae20d7360eb7dc7bdbcd0213fe5141abd2ba8f66e5c120926ea2f7",
   "mock_right_answers": "beb1536f071007290dce9869ee0ef45e2783f0c4a3b62026da65294216b1e2aa",
   "mock_row_detail": "498be311213aaf44985009f5d21946fe1a739a90a26b9547cac3da5a930e23a9",
-  "mock_section_answered": "789184bf50b4a2ab8ab2f522bbbf5608015f08f7c70797ab405918c6bfa93a98",
+  "mock_save_retry": "b22a97d82f41eec1de047e8dae3e6ec8ffa70ceb75c2723aa7468e4cec6fec41",
+  "mock_section_answered_of": "6e890bbc2f029d6b6df9cbe0beab6f34b5b9e3e7a7d9202a641f1f92eea2e2e4",
   "mock_section_number": "4bb8fcc892eca11eb23439f3f80e3e279011d23dbdde2fab3eb23d7e8a2fbaf9",
   "mock_sections": "e01a574d49d9b4d429d3e567e959ccb204b3d6e4852ce082d2f525ee28878f58",
   "mock_see_result": "67cf4b5a63688cdaae5c4d5e7ef8fb598caf16021181568044c4f46c0a628c46",
-  "mock_sheet": "43fc674dedda7b412d6e824c5cf8bee5c7a0d58e9b8862c835c81d6f25987d1c",
   "mock_speaking": "19f7fc8cf42d7815d160570709c83cf7b2cb6b6d4a008dfb6edd8c59b19fcdd1",
   "mock_speaking_all_done": "8e39379888b4d47dd4cd82e186036f3e1850bc28d4a5d91dd34d193f623f5bd5",
   "mock_speaking_done": "61391241bb7ac10374343291816368f0bd976d064f4cb909039c3ab3811a1834",
@@ -181,7 +180,6 @@
     <string name="mock_hand_in_final">Depois disso, suas respostas não poderão ser alteradas.</string>
     <string name="mock_keep_answering">Continuar respondendo</string>
     <string name="mock_hand_in">Entregar</string>
-    <string name="mock_sheet">Folha</string>
     <string name="mock_answer_sheet">Folha de respostas</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -204,9 +202,8 @@
     <string name="mock_section_number">Seção %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Entregue</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Ainda não deu para salvar · tentando de novo</string>
+    <string name="mock_section_answered_of">%1$s de %2$s</string>
+    <string name="mock_save_retry">Tente de novo antes de continuar</string>
     <string name="mock_try_again">Tentar de novo</string>
     <string name="mock_last_not_saved">Sua última resposta não foi salva.</string>
     <string name="mock_step_failed_saved">Não deu certo. Suas respostas estão salvas. Tente de novo em instantes.</string>
