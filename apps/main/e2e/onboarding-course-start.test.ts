@@ -171,6 +171,22 @@ test.describe("Starting a course from its page", () => {
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
   });
 
+  test("only people without an account get a note above the course start action", async ({
+    page,
+    userWithoutProgress,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const href = `/start/course/${course.id}?minutes=15`;
+    const note = "Start free, no account needed.";
+
+    await page.goto(href);
+    await expect(page.getByText(note, { exact: true })).toBeVisible();
+
+    await userWithoutProgress.goto(href);
+    await expect(userWithoutProgress.getByText(note, { exact: true })).toBeHidden();
+    await expect(userWithoutProgress.locator("[data-slot=bottom-bar-note] > *")).toHaveCount(0);
+  });
+
   test("a free learner who started every new goal they can this month sees when more come back", async ({
     noProgressUser,
     userWithoutProgress: page,
