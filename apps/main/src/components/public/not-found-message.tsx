@@ -1,6 +1,6 @@
 import { StatusMessage } from "@/components/errors/status-message";
 import { MainDocumentLink } from "@/components/main-document-link";
-import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { Page } from "@zoonk/learn/page";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { type SupportedLocale } from "@zoonk/utils/locale";
@@ -16,6 +16,7 @@ export async function getNotFoundWords(locale?: SupportedLocale) {
     description: t("The link may be old or mistyped."),
     home: t("Go to the home page"),
     title: t("We couldn't find this page"),
+    today: t("Go to Today"),
   };
 }
 
@@ -45,25 +46,16 @@ export async function NotFoundMessage({
   );
 }
 
-/**
- * In the app's frame, under the page's bar: the page's title and its one line, with the home page
- * as the bottom bar's main action.
- */
 export async function PageNotFound() {
   const words = await getNotFoundWords();
 
   return (
-    <Page>
-      <PageHeader>
-        <PageHeaderContent>
-          <PageTitle>{words.title}</PageTitle>
-          <PageSubtitle>{words.description}</PageSubtitle>
-        </PageHeaderContent>
-      </PageHeader>
+    <Page className="flex-1">
+      <StatusMessage description={words.description} icon={NOT_FOUND_ICON} title={words.title} />
 
       <BottomBar>
         <BottomBarActions>
-          <MainDocumentLink href="/">{words.home}</MainDocumentLink>
+          <MainDocumentLink href="/today">{words.today}</MainDocumentLink>
         </BottomBarActions>
       </BottomBar>
     </Page>
