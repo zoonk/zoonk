@@ -38,7 +38,7 @@
   "mindmaps_open_lesson": "dbb9a10fca56dbf9a69e1d6fc310e3de4af2293ea0642a2ee875f18eda3100e9",
   "mindmaps_open_spoken": "651992bf79a2f10d689b081edcee9e79397bd6e80334012453d28d545f7cdd41",
   "mindmaps_options": "4eab07432b0d9a195080804f913efce210c55533cb6fef348d30be2ee40cafa3",
-  "mindmaps_other_chapters": "b885727b780f489816620be4fb785ac16d3f5736b3891b0e0e5cbc1f90bc1996",
+  "mindmaps_other_chapters": "54a632d2851f490bf78f8f27e2c50e3262bc5ec6ebb8ea3952fb35d689fc292c",
   "mindmaps_previous": "10efde32439cfe79f71f8a8d6ae160cf21ae20cfaa5121854969455d0edbc3f7",
   "mindmaps_ready": "a7e429accf13707bbd1ccf8d39642f19650d4afce0f34a1d93de0aac443fa844",
   "mindmaps_remove": "0a5921892f1fcac49e215084bdb054762fffeb9ad2bbf538c71ad8a0bcbdd991",
@@ -55,8 +55,8 @@
   "mindmaps_show_all": "e416d1939f873aae278a4c29cec042b3c7253429bca533b126069e0827cf2785",
   "mindmaps_shown_as_text": "edea9c39aba2bbfa8ef64c28f8289ee80fb020813b78181f0986c8cb1e327792",
   "mindmaps_start_from_first": "ab9e6f9dca2c5e8007295cc2d1fb928904762b29029e790b8455bf5170efbda9",
-  "mindmaps_study": "85df1675aed59693062a2c619c5a0d66cd9d80645f05e5a300022d3b6773c830",
-  "mindmaps_tab_chapters": "383c045b8c3e8d3d6ac90b07156eebc0a7c3e7d972808ee0fd8729956f51a3c0",
+  "mindmaps_study": "6c48b3147b9a718ed0a0940383cc4909af67a28dd00badeda3693469740a98c5",
+  "mindmaps_tab_chapters": "04612c78bd3873e71768dc79579ecb911b8d5bac503d9c0d015cd441f103aa7b",
   "mindmaps_tab_lessons": "f4190cde7fc74ea9dc0b1e924abb9ad766e1bddaaf79e51e6a66401d5113b0cc",
   "mindmaps_tab_saved": "518bea0b77688f5449178f16dc087c46649266801142f2d2792929ea6fadc8b3",
   "mindmaps_tab_spoken": "2074e7697e1a05d387609731d3ef080021a0e35a2e6e22555ef49f1a2ee2a8d1",
@@ -132,17 +132,14 @@
     <string name="mindmaps_zoom_out">縮小</string>
     <string name="mindmaps_fit">画面に合わせる</string>
     <string name="mindmaps_viewer_hint">ピンチ操作やスクロール、+と-で拡大・縮小できます。ドラッグや矢印キーで移動できます。</string>
-    <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
-    <string name="mindmaps_study">学習する</string>
+    <string name="mindmaps_study">マインドマップで学習する</string>
     <string name="mindmaps_create_all">すべて作成する</string>
-    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
-    <string name="mindmaps_other_chapters">ほかの章</string>
+    <string name="mindmaps_other_chapters">マップなし</string>
     <string name="mindmaps_free_lessons_note">これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。</string>
     <plurals name="mindmaps_lessons_to_write">
         <item quantity="other">%1$sレッスンを作成予定</item>
     </plurals>
-    <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
-    <string name="mindmaps_tab_chapters">章</string>
+    <string name="mindmaps_tab_chapters">マップあり</string>
     <string name="mindmaps_tab_lessons">レッスン</string>
     <string name="mindmaps_tab_saved">保存済み</string>
     <!-- What screen readers say for a tab: its name and how many maps it holds. -->

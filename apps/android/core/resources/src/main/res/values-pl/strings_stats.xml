@@ -6,7 +6,7 @@
   "stats_answer_count": "13ba6a88d27919904696c8779157f6a1703a9a1f5380c22b45496f7b0e7f29a7",
   "stats_answer_more": "579ecc20b0bbfe9adbc5f9fbb398b39c1b4924212989f3fff9af2f4630be989c",
   "stats_answers_to_count": "d5385d01d4d79b4df2f966b28174c27e24928db12881720bcef4191ceb2b4b1b",
-  "stats_any_day": "c64c92d65d0733ed67f3c7a7742d66c8f4368642c90b385c1db826f2e591ce42",
+  "stats_any_day": "6f8343d709e16daf7b223a478cb9f99d7af4429c653ae9a8b119b1bc962ca8ad",
   "stats_any_time": "e05b633da7d96ebe167af99dd1ef083319e1bc683e202dce249fc4a86022add4",
   "stats_belt_comes_after": "56133b40cdae95a9f2714c46bf75a2e1f4a9c77e00a8d304f1098b459ea8f559",
   "stats_belt_current": "9a9c9eae51f44a79da935b65589096cbf16a40defefb0c14d9f0120e965c3176",
@@ -174,7 +174,7 @@
     </plurals>
     <string name="stats_throughout_week">W ciągu tygodnia</string>
     <string name="stats_throughout_day">W ciągu dnia</string>
-    <string name="stats_any_day">Każdy dzień</string>
+    <string name="stats_any_day">Żaden dzień się jeszcze nie wyróżnia</string>
     <string name="stats_any_time">O dowolnej porze</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Twój najlepszy dzień to %1$s.</string>
