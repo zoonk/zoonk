@@ -12,7 +12,8 @@ const PAGE_GUTTER_CLASS =
 /**
  * The top of every Admin page, list or record, on the shared page top: a bar with the way back to
  * the page it belongs to and the page's own actions, then the title and what `children` says about
- * it. Where the sidebar is hidden, search and the menu sit before the record's actions.
+ * it. Where the sidebar is hidden, search and the menu end the bar, in the same place on every
+ * page. A phone has no room for the actions beside them, so there they sit under the title.
  */
 export function AdminHeader({
   actions,
@@ -35,9 +36,9 @@ export function AdminHeader({
       <PageTop
         actions={
           <>
+            {actions ? <div className="hidden items-center gap-2 sm:flex">{actions}</div> : null}
             <AdminBarSearchButton />
-            <AdminBarMenuButton last={!actions} />
-            {actions}
+            <AdminBarMenuButton />
           </>
         }
         back={
@@ -53,6 +54,9 @@ export function AdminHeader({
       >
         {title}
         {children}
+        {actions ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2 sm:hidden">{actions}</div>
+        ) : null}
       </PageTop>
     </div>
   );

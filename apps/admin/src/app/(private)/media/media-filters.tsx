@@ -38,7 +38,7 @@ export async function MediaFilters({ searchParams }: Pick<PageProps<"/media">, "
 export function MediaFiltersSkeleton() {
   return (
     <AdminToolbar>
-      <Skeleton className="h-7.5 w-56 rounded-md max-md:w-full" />
+      <Skeleton className="h-7.5 w-56 rounded-md max-md:h-11 max-md:w-full max-md:rounded-lg" />
     </AdminToolbar>
   );
 }
