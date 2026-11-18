@@ -32,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +51,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -934,7 +937,14 @@ private fun ReviewItem(
                 Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
             )
-            ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
+            val line =
+                with(LocalDensity.current) {
+                    MaterialTheme.typography.bodyLarge.lineHeight
+                        .toDp()
+                }
+            Box(Modifier.onQuestionLine(line)) {
+                ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
+            }
         }
         Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (question.format == QuestionFormat.MultipleChoice || question.format == QuestionFormat.TrueFalse) {
@@ -970,6 +980,20 @@ private fun ReviewItem(
         }
     }
 }
+
+/**
+ * Centers the 48 dp menu button on the question's first [line], taking only that line's height so the answer keeps its
+ * gap, and ends its dots, not its touch area, on the column's edge.
+ */
+private fun Modifier.onQuestionLine(line: Dp): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val height = line.roundToPx()
+        val inset = ICON_BUTTON_INSET.roundToPx()
+        layout(placeable.width - inset, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+    }
+
+private val ICON_BUTTON_INSET = 12.dp
 
 /** A statement's verdict reviews as main's two answer rows, without the statement's card under its own title. */
 @Composable
