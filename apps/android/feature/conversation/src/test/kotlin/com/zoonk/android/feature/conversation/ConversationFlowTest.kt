@@ -199,6 +199,30 @@ class ConversationFlowTest {
         )
     }
 
+    /** Back while a dropped call rings again asks first, as on a live call, and ends nothing until the learner confirms. */
+    @Test
+    fun goingBackFromARingingReconnectAsksBeforeEndingTheCall() {
+        client.reservations =
+            ArrayDeque(listOf(CallReservation.Ready(setup()), CallReservation.Ready(setup(continuesCall = true, connectionId = SECOND))))
+        show()
+        goLive()
+        transport.onEvent(learnerSays("Un café", 1000.0, 2000.0))
+        transport.onLost()
+        compose.waitForIdle()
+        compose.onNodeWithText("Call again").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+
+        compose.onNodeWithText("End the call?").assertExists()
+        assertTrue(api.completions.isEmpty())
+        compose.onNodeWithText("Keep talking").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+    }
+
     @Test
     fun endingADroppedCallSavesWhatWasSaid() {
         show()

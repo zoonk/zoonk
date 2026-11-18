@@ -216,7 +216,7 @@ private fun Turns(
                 liveProposal = liveProposal(thread.turns)?.id,
                 day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
                 inPanel = page == null,
-                newAbout = turn.about != thread.turns.getOrNull(index - 1)?.about,
+                newAbout = turn.topic != thread.turns.getOrNull(index - 1)?.topic,
             )
         }
         // The server's turn takes this one's place, laid out the same, so nothing moves when it arrives.
@@ -225,7 +225,7 @@ private fun Turns(
                 val day = newDay(today, days.lastOrNull())
                 TurnLayout(
                     sending.question,
-                    sending.about.takeIf { page == null && it != thread.turns.lastOrNull()?.about },
+                    sending.about.takeIf { page == null && sending.topic != thread.turns.lastOrNull()?.topic },
                     identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
                 ) { Thinking(answerWords(inPanel = page == null)) }
@@ -316,7 +316,7 @@ private fun TurnView(
     inPanel: Boolean = true,
     newAbout: Boolean = true,
 ) {
-    // What a question is about shows where it changes, not over every message about the same thing.
+    // What a question is about shows on the first one and where it changes: another part of the lesson, or its answer once checked.
     TurnLayout(turn.question, turn.about.takeIf { inPanel && newAbout }, identity.takeIf { inPanel }, day) {
         // A finished or failed answer is read out once; while it streams nothing is, word by word.
         val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed

@@ -108,8 +108,9 @@ internal class EndedCall(
 /**
  * Main's live call: who's talking and the goals over the transcript, which follows the newest words;
  * the bar under it says whose turn it is, takes typed replies and holds Help, Mute and End. Back and
- * the close action ask before ending a live call, which End does at once; while it connects, they go
- * back to the intro as End does. Once it ends the transcript stays, and the bar says how its save goes.
+ * the close action ask before ending a live call or a dropped one ringing again, which End does at once;
+ * while a first call rings, they go back to the intro as End does. Once it ends the transcript stays, and
+ * the bar says how its save goes.
  */
 @Composable
 internal fun ConversationLive(
@@ -124,10 +125,11 @@ internal fun ConversationLive(
     val goalsMeta = stringResource(R.string.conversation_goals_met, metCount, conversation.objectives.size)
     val character = conversation.character
 
-    val live = call.phase == LiveCallPhase.Live && ended == null
-    BackHandler(enabled = !live && ended == null, onBack = actions.onEnd)
+    // A dropped call ringing again has what was said to lose, as a live one does.
+    val asksFirst = ended == null && (call.phase == LiveCallPhase.Live || call.reconnecting)
+    BackHandler(enabled = !asksFirst && ended == null, onBack = actions.onEnd)
     val endFirst =
-        if (live) {
+        if (asksFirst) {
             TaskExitConfirmation(
                 title = stringResource(R.string.conversation_end_title),
                 description = stringResource(R.string.conversation_end_description),

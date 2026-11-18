@@ -133,12 +133,15 @@ internal fun CallLimitMessage(
     }
 }
 
-/** A language plan's challenge call a free learner tried, in place under its result. */
+/** A language plan's challenge call a free learner tried, in place under its result; [titled] is false under a title that says it. */
 @Composable
-internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
+internal fun ChallengeCallGate(
+    onSubscribe: () -> Unit,
+    titled: Boolean = true,
+) {
     TrackShown(AnalyticsEvent.SubscriptionGateShown)
     SubscribeGate(
-        stringResource(R.string.conversation_challenge_gate_title),
+        stringResource(R.string.conversation_challenge_gate_title).takeIf { titled },
         onSubscribe,
         line = stringResource(R.string.conversation_challenge_gate_line),
     )

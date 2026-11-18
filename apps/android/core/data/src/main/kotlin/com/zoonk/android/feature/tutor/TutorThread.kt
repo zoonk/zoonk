@@ -17,6 +17,8 @@ data class TutorTurn(
     val status: Status,
     val createdAt: Instant,
     val about: About,
+    /** What [about] names, told apart from the turn before: another part of the lesson, or its answer once checked. */
+    val topic: String = about.name,
     val planChange: PlanChange? = null,
     val toolOffer: TutorToolOffer? = null,
 ) {
