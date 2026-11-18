@@ -80,13 +80,11 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
     val between = percentBetween(distribution, Interval(low, high))
     val below = percentBetween(distribution, Interval(ends.from, low))
     val above = percentBetween(distribution, Interval(high, ends.to))
-    // The share between the handles reads to the answer's rounding, as the hint and the right answer do; the tails, which no
-    // check asks about, read the same on every step.
+    // Every share reads to the answer's rounding, as the hint and the right answer do, so the three add up to 100%.
     val shareDigits =
         props.roundedAnswer?.places?.toInt()
             ?: (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
     val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = shareDigits ?: PERCENT_DIGITS) }
-    val tail = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = TAIL_DIGITS) }
     val format = { value: Double -> formatAmount(value, locale) }
     val withUnit = { value: Double -> formatAmount(value, locale, fields.unit) }
     val change = { next: Pair<Double, Double> ->
@@ -123,8 +121,8 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
             percent(between),
             withUnit(low),
             withUnit(high),
-            tail(below),
-            tail(above),
+            percent(below),
+            percent(above),
         )
     val handleTexts =
         listOf(low, high).map {
@@ -151,12 +149,12 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
         }
         FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
-                "< " + format(low) + ": " + tail(below),
+                "< " + format(low) + ": " + percent(below),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                "> " + format(high) + ": " + tail(above),
+                "> " + format(high) + ": " + percent(above),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -378,7 +376,6 @@ private fun DistributionHandle(
 }
 
 private const val PERCENT_DIGITS = 1
-private const val TAIL_DIGITS = 2
 private const val HEADROOM = 1.08
 private const val SOFT = 0.18f
 private const val HALF = 0.5f
