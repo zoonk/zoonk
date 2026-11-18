@@ -309,6 +309,7 @@ export function useMockRunner({
     position,
     retrySaves: drafts.retry,
     saveStatus: drafts.saveStatus,
+    savedDrafts: drafts.savedDrafts,
     savesInFlight: drafts.inFlight,
     slow,
     speakingWriting: speaking.speakingWriting,

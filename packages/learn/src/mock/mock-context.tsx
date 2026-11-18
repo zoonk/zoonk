@@ -67,6 +67,7 @@ export type MockRunner = {
   position: number;
   retrySaves: () => void;
   saveStatus: DraftSaveStatus;
+  savedDrafts: Record<string, MockDraft>;
   savesInFlight: () => Promise<unknown> | null;
   slow: boolean;
   speakingWriting: ContentWriting | null;

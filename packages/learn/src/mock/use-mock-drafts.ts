@@ -35,6 +35,7 @@ export function useMockDrafts({
   view: MockView;
 }) {
   const [drafts, setDrafts] = useState<Drafts>(() => toDrafts(view));
+  const [savedDrafts, setSavedDrafts] = useState<Drafts>(drafts);
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<MockDraft | null>(null);
@@ -46,6 +47,7 @@ export function useMockDrafts({
       createDraftSaveQueue<MockDraft>({
         keyOf: (draft) => draft.itemId,
         onStatus: setSaveStatus,
+        onStored: (draft) => setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
         save,
       }),
     [save],
@@ -113,10 +115,13 @@ export function useMockDrafts({
     },
     reset: (next: MockView) => {
       shown.current = null;
-      setDrafts(toDrafts(next));
+      const nextDrafts = toDrafts(next);
+      setDrafts(nextDrafts);
+      setSavedDrafts(nextDrafts);
     },
     retry: () => queue.retryNow(),
     saveStatus,
+    savedDrafts,
     show: (itemId: string) => {
       shown.current = { at: Date.now(), itemId };
     },

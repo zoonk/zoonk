@@ -6,7 +6,7 @@ import { isDraftAnswered } from "./use-mock-drafts";
 export function useSectionCounts() {
   const { runner } = useMockScreen();
   const questions = runner.view.current?.questions ?? [];
-  const isBlank = (itemId: string) => !isDraftAnswered(runner.drafts[itemId]);
+  const isBlank = (itemId: string) => !isDraftAnswered(runner.savedDrafts[itemId]);
   const blank = questions.filter((question) => isBlank(question.itemId));
 
   return {

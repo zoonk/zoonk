@@ -14,10 +14,12 @@ function flushPromises() {
 function setup() {
   const requests: PendingSave[] = [];
   const statuses: DraftSaveStatus[] = [];
+  const stored: Draft[] = [];
 
   const queue = createDraftSaveQueue<Draft>({
     keyOf: (draft) => draft.itemId,
     onStatus: (status) => statuses.push(status),
+    onStored: (draft) => stored.push(draft),
     save: (draft) =>
       new Promise<boolean>((resolve, reject) => {
         requests.push({
@@ -29,7 +31,7 @@ function setup() {
       }),
   });
 
-  return { queue, requests, statuses };
+  return { queue, requests, statuses, stored };
 }
 
 describe(createDraftSaveQueue, () => {
@@ -88,6 +90,23 @@ describe(createDraftSaveQueue, () => {
 
     expect(requests.map((request) => request.draft.itemId)).toStrictEqual(["q1", "q1", "q2"]);
     expect(statuses.at(-1)).toBe("saved");
+  });
+
+  it("publishes an answer to the saved sheet only after the retry stores it", async () => {
+    const { queue, requests, stored } = setup();
+    const answer = { answer: "B", itemId: "q1" };
+
+    queue.add(answer);
+    expect(stored).toStrictEqual([]);
+
+    requests[0]?.fail();
+    await flushPromises();
+    expect(stored).toStrictEqual([]);
+
+    queue.retryNow();
+    requests[1]?.store();
+    await flushPromises();
+    expect(stored).toStrictEqual([answer]);
   });
 
   it("waits longer before each new try, and tries at once when asked", async () => {

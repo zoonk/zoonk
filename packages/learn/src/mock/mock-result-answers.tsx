@@ -24,7 +24,7 @@ function getAnswerCounts(result: MockResult): AnswerCounts | null {
   };
 }
 
-const ANSWER_TILES_CLASS = "flex flex-wrap [&>li]:min-w-max [&>li]:flex-1";
+const THREE_ANSWER_TILES_CLASS = "grid-cols-3 [&>li:last-child:nth-child(odd)]:col-span-1";
 
 export function hasAnswerCounts(result: MockResult): boolean {
   return getAnswerCounts(result) !== null || (!result.net && result.blank > 0);
@@ -42,7 +42,7 @@ export function MockResultAnswers({ result }: { result: MockResult }) {
   return (
     <div className="flex w-full flex-col gap-3">
       {counts && (
-        <StatTiles className={ANSWER_TILES_CLASS}>
+        <StatTiles className={counts.partial === 0 ? THREE_ANSWER_TILES_CLASS : undefined}>
           <StatTile
             icon={<CheckIcon />}
             label={t("Right")}

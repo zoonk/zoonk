@@ -16,10 +16,12 @@ function getRetryDelay(attempt: number): number {
 export function createDraftSaveQueue<TDraft>({
   keyOf,
   onStatus,
+  onStored,
   save,
 }: {
   keyOf: (draft: TDraft) => string;
   onStatus: (status: DraftSaveStatus) => void;
+  onStored: (draft: TDraft) => void;
   /** True once stored, false when refused; rejects when it didn't get through. */
   save: (draft: TDraft) => Promise<boolean>;
 }) {
@@ -103,6 +105,11 @@ export function createDraftSaveQueue<TDraft>({
 
     attempt = 0;
     refused = !stored;
+
+    if (stored) {
+      onStored(draft);
+    }
+
     await sendNext();
   }
 

@@ -7,6 +7,7 @@ import {
   CollapsibleTrigger,
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatRange } from "../_utils/range";
@@ -84,11 +85,16 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   const range = useMockRange();
   const score = area.score ? range(area.score) : rightOf(area);
 
+  const scoreClass = cn(
+    "shrink-0 tabular-nums",
+    area.score ? "text-readout text-sm" : "font-mono text-xs",
+  );
+
   if (topics.length === 0) {
     return (
       <StepRow className="justify-between">
         <span className="min-w-0 font-medium">{area.name}</span>
-        <span className="shrink-0 font-mono text-xs tabular-nums">{score}</span>
+        <span className={scoreClass}>{score}</span>
       </StepRow>
     );
   }
@@ -98,7 +104,7 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
       <Collapsible>
         <CollapsibleTrigger className="focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-3 rounded-lg py-3 text-left text-sm outline-none focus-visible:ring-[3px]">
           <span className="min-w-0 flex-1 font-medium">{area.name}</span>
-          <span className="shrink-0 font-mono text-xs tabular-nums">{score}</span>
+          <span className={scoreClass}>{score}</span>
           <FoldChevron />
         </CollapsibleTrigger>
         <CollapsibleContent>
