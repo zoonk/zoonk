@@ -9,29 +9,12 @@ import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
 import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
-import { FoldRow } from "./today-fold-row";
+import { FoldRow, focusRevealedRow } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
 import { UPCOMING_ROWS, getFoldedRows, splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
-
-/** Opened rows land above "Show less", so focus moves to the first of them. */
-function focusRow(row: Element | null | undefined) {
-  if (!(row instanceof HTMLElement)) {
-    return;
-  }
-
-  const target = row.querySelector<HTMLElement>("a[href], button:not(:disabled)");
-
-  if (target) {
-    target.focus();
-    return;
-  }
-
-  row.tabIndex = -1;
-  row.focus();
-}
 
 /** Skipped blocks fold in with the done ones, so the row says which is which. */
 function useDoneFoldLabel(done: readonly DayStep[]): string {
@@ -95,7 +78,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
     revealFrom.current = null;
 
     if (moreOpen && from !== null) {
-      focusRow(listRef.current?.children.item(from));
+      focusRevealedRow(listRef.current?.children.item(from));
     }
   }, [moreOpen]);
 

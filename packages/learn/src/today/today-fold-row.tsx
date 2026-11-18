@@ -3,6 +3,23 @@
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DoneMark } from "../_components/status-mark";
 
+/** Opened rows land above the fold row, so focus moves to the first of them. */
+export function focusRevealedRow(row: Element | null | undefined) {
+  if (!(row instanceof HTMLElement)) {
+    return;
+  }
+
+  const target = row.querySelector<HTMLElement>("a[href], button:not(:disabled)");
+
+  if (target) {
+    target.focus();
+    return;
+  }
+
+  row.tabIndex = -1;
+  row.focus();
+}
+
 export function FoldRow({
   controls,
   done,

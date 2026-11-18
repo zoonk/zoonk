@@ -14,7 +14,7 @@ type ChapterMap = { plus: boolean; request: MindMapRequest; view: ChapterMindMap
 
 /**
  * The page's sidebar sits beside it from this width (`PageWithAside`). Narrower, the sidebar falls
- * below the lessons, so the map moves up under the header, where it's seen first.
+ * below the lessons, so the map joins the "For reference" rows instead.
  */
 const NARROW_ONLY_CLASS = "min-[72rem]:hidden";
 const WIDE_ONLY_CLASS = "hidden min-[72rem]:flex";
