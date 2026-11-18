@@ -1,6 +1,6 @@
 "use client";
 
-import { getActivityNumericDisplay } from "@zoonk/core/library/activities/answers";
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
@@ -92,7 +92,7 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
-  const display = getActivityNumericDisplay(content);
+  const display = getActivityRoundedAnswer(content);
 
   const percent = (value: number) =>
     format(

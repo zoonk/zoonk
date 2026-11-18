@@ -7,7 +7,7 @@ import {
   type PlayableTeachingStepOf,
   type TeachingStepKind,
 } from "@zoonk/core/lesson-player/playable-lesson";
-import { getActivityTemplate } from "@zoonk/core/library/activities/templates";
+import { getActivityAnswerRules } from "@zoonk/core/library/activities/answers";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import {
   type ChartVisual,
@@ -110,14 +110,13 @@ export function activityStep({
   content,
   ...options
 }: StepOptions & { content: ActivityContent }): PlayableActivityStep {
-  return {
-    ...contentStep("activity", {
-      content,
-      ...options,
-      image: options.image === undefined ? diagramPicture(content) : options.image,
-    }),
-    minTolerance: getActivityTemplate(content.template)?.minTolerance ?? null,
-  };
+  const step = contentStep("activity", {
+    content,
+    ...options,
+    image: options.image === undefined ? diagramPicture(content) : options.image,
+  });
+
+  return { ...step, ...getActivityAnswerRules(step.content) };
 }
 
 export function explanationStep(

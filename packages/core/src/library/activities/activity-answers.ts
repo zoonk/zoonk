@@ -1,6 +1,7 @@
 import { formatLocalizedNumber, parseLocalizedNumber } from "@zoonk/utils/localized-number";
 import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { type ActivityAnswer } from "./activity-answer-schema";
+import { type ActivityTolerance } from "./activity-schemas";
 import { type ActivityStepContent, getActivityTemplate } from "./activity-templates";
 import { matchesExpectedAnswer } from "./templates/_utils/grade-interaction";
 import { withinTolerance } from "./templates/_utils/pattern-checks";
@@ -37,9 +38,27 @@ export function checkActivityAnswer(content: ActivityStepContent, answer: Activi
   return expected !== null && matchesExpectedAnswer(expected, answer);
 }
 
-export function getActivityNumericDisplay(
+/** A `numeric` answer as every app writes it; `places` is null for a whole-number answer, which needs no rounding. */
+export type ActivityRoundedAnswer = { places: number | null; value: number };
+
+/** Rounds half away from zero, as the apps' number formatting does. */
+function roundToPlaces(value: number, places: number): number {
+  const locale = "en";
+
+  const text = formatLocalizedNumber({
+    grouping: false,
+    locale,
+    maximumFractionDigits: places,
+    value,
+  });
+
+  return parseLocalizedNumber({ locale, text }) ?? value;
+}
+
+/** The coarsest rounding the check accepts: the places its hint names, used by every number written for the answer. */
+export function getActivityRoundedAnswer(
   content: ActivityStepContent,
-): { places: number | null; value: number } | null {
+): ActivityRoundedAnswer | null {
   const { check } = content;
 
   if (check.kind !== "numeric") {
@@ -51,22 +70,44 @@ export function getActivityNumericDisplay(
   }
 
   const exactPlaces = countDecimalPlaces(check.answer);
-  const locale = "en";
 
   for (let places = 0; places < exactPlaces; places += 1) {
-    const text = formatLocalizedNumber({
-      grouping: false,
-      locale,
-      maximumFractionDigits: places,
-      value: check.answer,
-    });
+    const value = roundToPlaces(check.answer, places);
 
-    const value = parseLocalizedNumber({ locale, text });
-
-    if (value !== null && checkActivityAnswer(content, { kind: "numeric", value })) {
+    if (checkActivityAnswer(content, { kind: "numeric", value })) {
       return { places, value };
     }
   }
 
   return { places: exactPlaces, value: check.answer };
+}
+
+/** What an app needs to grade and write a numeric answer as core does. */
+export function getActivityAnswerRules(content: ActivityStepContent): {
+  minTolerance: ActivityTolerance | null;
+  roundedAnswer: ActivityRoundedAnswer | null;
+} {
+  return {
+    minTolerance: getActivityTemplate(content.template)?.minTolerance ?? null,
+    roundedAnswer: getActivityRoundedAnswer(content),
+  };
+}
+
+/** The hint's places for a checked learner's number, or null when there's no hint or a wrong answer would then read as the right one. */
+export function getCheckedAnswerPlaces({
+  isCorrect,
+  rounded,
+  value,
+}: {
+  isCorrect: boolean;
+  rounded: ActivityRoundedAnswer | null;
+  value: number;
+}): number | null {
+  if (!rounded || rounded.places === null) {
+    return null;
+  }
+
+  return !isCorrect && roundToPlaces(value, rounded.places) === rounded.value
+    ? null
+    : rounded.places;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
-import { type getActivityNumericDisplay } from "@zoonk/core/library/activities/answers";
+import { type getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
@@ -20,7 +20,7 @@ import {
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
-type NumericDisplay = ReturnType<typeof getActivityNumericDisplay>;
+type NumericDisplay = ReturnType<typeof getActivityRoundedAnswer>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
 function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {

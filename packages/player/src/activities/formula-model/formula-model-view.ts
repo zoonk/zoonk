@@ -1,4 +1,4 @@
-import { getActivityNumericDisplay } from "@zoonk/core/library/activities/answers";
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { displayDigits, roundForDisplay, useFormatNumber } from "@zoonk/learn/format-number";
 import { type NumericDomain } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
@@ -21,7 +21,7 @@ export type Output = Fields["outputs"][number];
 
 export function modelOutputFormat({ charted, content }: { charted: Output; content: Content }) {
   const { check } = content;
-  const display = getActivityNumericDisplay(content);
+  const display = getActivityRoundedAnswer(content);
 
   return {
     maximumFractionDigits: display?.places ?? undefined,

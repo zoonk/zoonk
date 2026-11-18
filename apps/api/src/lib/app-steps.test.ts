@@ -50,6 +50,7 @@ const mapActivity = {
   id: "map",
   kind: "activity",
   minTolerance: null,
+  roundedAnswer: null,
 } satisfies PlayableLibraryStep;
 
 const explanation = {

@@ -1,5 +1,6 @@
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
+import { getActivityAnswerRules } from "../library/activities/activity-answers";
 import { parseStepContent } from "../library/steps/contract/step-contract";
 import { serializeExerciseSteps } from "../player/contracts/prepare-lesson-data";
 import { gradeStepAnswer } from "./grade-step-answer";
@@ -27,9 +28,9 @@ function teachingStep<TKind extends TeachingStepKind>(
   };
 }
 
-/** The fixture's `numberLine` template has no tolerance floor. */
 function activityStep(content: unknown): PlayableActivityStep {
-  return { ...teachingStep("activity", content), minTolerance: null };
+  const step = teachingStep("activity", content);
+  return { ...step, ...getActivityAnswerRules(step.content) };
 }
 
 function exerciseStep(kind: PlayableLanguageStep["kind"], content: object): PlayableLanguageStep {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ActivityAnswer } from "./activity-answer-schema";
-import { checkActivityAnswer, getActivityNumericDisplay } from "./activity-answers";
+import { checkActivityAnswer, getActivityRoundedAnswer } from "./activity-answers";
 import { activityContentSchema } from "./activity-templates";
 
 const interaction = { explanation: "Here is why.", kind: "interaction" };
@@ -483,7 +483,7 @@ describe(checkActivityAnswer, () => {
   });
 });
 
-describe(getActivityNumericDisplay, () => {
+describe(getActivityRoundedAnswer, () => {
   it.each([
     { answer: 0.1667, places: 1, tolerance: 0.05 },
     { answer: 0.1667, places: 2, tolerance: 0.005 },
@@ -506,7 +506,7 @@ describe(getActivityNumericDisplay, () => {
         },
       );
 
-      expect(getActivityNumericDisplay(activity)?.places).toBe(places);
+      expect(getActivityRoundedAnswer(activity)?.places).toBe(places);
     },
   );
 });
