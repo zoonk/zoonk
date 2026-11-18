@@ -14,20 +14,23 @@ class NumberUnitTransformation(
     private val prefix: Boolean,
     private val color: Color,
 ) : VisualTransformation {
+    // A sign ("°", "%", "$") closes up on its number, as the answer's feedback writes it; a word ("kg", "R$") keeps a space.
+    private val gap = if (unit.length == 1 && !unit.first().isLetterOrDigit()) "" else "\u00A0"
+
     override fun filter(text: AnnotatedString): TransformedText {
-        val start = if (prefix) unit.length + 1 else 0
+        val start = if (prefix) unit.length + gap.length else 0
         val shown =
             buildAnnotatedString {
                 if (prefix) {
                     withStyle(SpanStyle(color = color)) {
                         append(unit)
-                        append(' ')
+                        append(gap)
                     }
                 }
                 append(text)
                 if (!prefix) {
                     withStyle(SpanStyle(color = color)) {
-                        append(' ')
+                        append(gap)
                         append(unit)
                     }
                 }

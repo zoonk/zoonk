@@ -15,7 +15,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.components.WithStatusAction
 
 /**
  * The parts of a tab root's app bar that come from features above the tabs (the goal switcher,
@@ -51,7 +51,7 @@ fun TabRootScaffold(
         // The title starts 16dp into the bar and ends as far before the fold.
         val title = pageFold(maxWidth)?.let { Modifier.widthIn(max = it.start - 32.dp) } ?: Modifier
 
-        WithLoadFailureBar(enabled = true) { retry ->
+        WithStatusAction(enabled = true) { retry ->
             Scaffold(
                 modifier = searchScroll?.let { Modifier.nestedScroll(it.nestedScrollConnection) } ?: Modifier,
                 topBar = {

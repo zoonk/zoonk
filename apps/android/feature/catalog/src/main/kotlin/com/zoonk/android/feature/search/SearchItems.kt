@@ -150,7 +150,7 @@ internal fun searchGroups(
                             "support",
                             stringResource(R.string.search_help),
                             SearchAction.Open(AppRoute.Help),
-                            R.drawable.ic_support,
+                            R.drawable.ic_help,
                         ),
                     )
                 } else {

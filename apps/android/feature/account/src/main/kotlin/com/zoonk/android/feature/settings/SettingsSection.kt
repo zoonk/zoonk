@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.android.ui.scaffold.pagePadding
 
 /**
@@ -27,9 +28,17 @@ internal fun SettingsSection(
     }
 }
 
-/** A settings page's column, at most 640dp wide: the page's own top and bottom ([pagePadding]), its rows reaching its edges. */
+/**
+ * A settings page's column, [SETTINGS_COLUMN_WIDTH] at most, which its `PageScaffold` names as its `columnWidth`: the page's
+ * own top and bottom ([pagePadding]), and sides that put its rows' words on the page's margin, as its way back is.
+ */
 @Composable
 internal fun Modifier.settingsColumn(): Modifier {
     val page = pagePadding()
-    return widthIn(max = 640.dp).fillMaxWidth().padding(top = page.calculateTopPadding(), bottom = page.calculateBottomPadding())
+    return widthIn(max = SETTINGS_COLUMN_WIDTH)
+        .fillMaxWidth()
+        .padding(horizontal = pageListMargin(), vertical = 0.dp)
+        .padding(top = page.calculateTopPadding(), bottom = page.calculateBottomPadding())
 }
+
+internal val SETTINGS_COLUMN_WIDTH = 640.dp

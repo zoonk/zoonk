@@ -354,6 +354,7 @@ private fun PhaseIndicator(status: PhaseStatus) {
     val ink = MaterialTheme.colorScheme.onSurface
     val faint = MaterialTheme.colorScheme.onSurface.copy(alpha = FAINT_ALPHA)
 
+    // Every mark centers on one axis, the dots' and the icons' alike, so the list's marks line up down the column.
     Box(Modifier.size(box), contentAlignment = Alignment.CenterStart) {
         when (status) {
             PhaseStatus.Pending -> {
@@ -388,10 +389,7 @@ private fun PhaseIndicator(status: PhaseStatus) {
                 Icon(
                     painterResource(R.drawable.ic_check),
                     contentDescription = null,
-                    modifier =
-                        Modifier
-                            .glyphInk(R.drawable.ic_check)
-                            .size(box * ICON_SHARE),
+                    modifier = Modifier.size(box * ICON_SHARE),
                     tint = MaterialTheme.colorScheme.tertiary,
                 )
             }
@@ -400,10 +398,7 @@ private fun PhaseIndicator(status: PhaseStatus) {
                 Icon(
                     painterResource(R.drawable.ic_error),
                     contentDescription = null,
-                    modifier =
-                        Modifier
-                            .glyphInk(R.drawable.ic_error)
-                            .size(box * ICON_SHARE),
+                    modifier = Modifier.size(box * ICON_SHARE),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }

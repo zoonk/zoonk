@@ -97,6 +97,9 @@ private const val OPERATOR_GAP = "\u2005"
 
 private const val FUNCTION_GAP = "\u2006"
 
+/** The longest part a fraction sets small around its slash. */
+private const val SHORT_TERM = 4
+
 private class MathParser(
     private val source: String,
     private val words: MathWords,
@@ -299,13 +302,21 @@ private class MathParser(
             }
 
             "frac", "dfrac", "tfrac" -> {
-                val numerator = argument(Script.Superscript)
-                val denominator = argument(Script.Subscript)
-                val slash = run("\u2044", style, italic = false)
-                Piece(
-                    (numerator + slash + denominator).text,
-                    " ${words.fraction(numerator.spoken.trim(), denominator.spoken.trim())} ",
-                )
+                val start = index
+                val numerator = argument(style)
+                val denominator = argument(style)
+                val spoken = " ${words.fraction(numerator.spoken.trim(), denominator.spoken.trim())} "
+                if (numerator.isShortTerm() && denominator.isShortTerm()) {
+                    // A short fraction (1⁄4, GM⁄r) sets its parts small around a fraction slash; nothing in them needs to rise further.
+                    index = start
+                    val raised = argument(Script.Superscript)
+                    val lowered = argument(Script.Subscript)
+                    Piece((raised + run("\u2044", style, italic = false) + lowered).text, spoken)
+                } else {
+                    // A longer one stays at full size, its parts grouped, so its own exponents and roots read: (−b ± √b²−4ac)/(2a).
+                    val slash = run("/", style, italic = false)
+                    Piece((numerator.grouped(style) + slash + denominator.grouped(style)).text, spoken)
+                }
             }
 
             "sqrt" -> {
@@ -380,6 +391,14 @@ private class MathParser(
 
         return Piece(buildAnnotatedString { withStyle(span) { append(text) } }, SPOKEN_SYMBOLS[text] ?: text)
     }
+
+    /** A single number or name, such as 30, 1,89 or GM: no operator, no root, no script inside. */
+    private fun Piece.isShortTerm(): Boolean =
+        plain.length <= SHORT_TERM && plain.none { it == OPERATOR_GAP.single() || it in "√/\u2044" } &&
+            text.spanStyles.none { it.item.baselineShift != null }
+
+    private fun Piece.grouped(style: Script): Piece =
+        if (plain.length <= 1) this else run("(", style, italic = false) + this + run(")", style, italic = false)
 
     private fun scriptStyle(
         shift: BaselineShift,

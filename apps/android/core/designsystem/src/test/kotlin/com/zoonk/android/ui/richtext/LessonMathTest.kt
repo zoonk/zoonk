@@ -77,6 +77,17 @@ class LessonMathTest {
     }
 
     @Test
+    fun setsALongFractionAtFullSizeSoItsExponentsStayRaised() {
+        val formula = math("\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}")
+
+        assertEquals("(\u2212b$GAP±$GAP√b2$GAP\u2212${GAP}4ac)/(2a)", formula.text.text)
+
+        fun shifted(at: Int) = formula.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null }
+        val square = formula.text.text.indexOf("b2")
+        assertTrue("b sits on the line and its 2 above it", !shifted(square) && shifted(square + 1))
+    }
+
+    @Test
     fun readsRootsUnitsAndSymbolsFromTheSeededLessons() {
         assertEquals("v$GAP=$GAP√GM\u2044r", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
         assertEquals("v = square root of GM over r", math("v = \\sqrt{\\frac{GM}{r}}").spoken)

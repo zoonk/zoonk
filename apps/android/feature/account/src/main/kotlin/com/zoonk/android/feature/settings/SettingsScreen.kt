@@ -59,6 +59,7 @@ fun SettingsScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.account_menu_settings)) },
+        columnWidth = SETTINGS_COLUMN_WIDTH,
         actions = {
             when {
                 signedIn == null -> {

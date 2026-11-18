@@ -361,7 +361,7 @@ private fun ProfilePage(
     bar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    PageScaffold(onBack = { navigator.back() }, title = { Text(title) }) { padding ->
+    PageScaffold(onBack = { navigator.back() }, title = { Text(title) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         BeforeFold {
             Column(
                 it

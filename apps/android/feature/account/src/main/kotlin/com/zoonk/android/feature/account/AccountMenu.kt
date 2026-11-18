@@ -110,7 +110,7 @@ fun AccountMenu(
                 MenuItem(stringResource(R.string.account_menu_pricing), R.drawable.ic_sell) { go(AppRoute.Subscription) }
             }
 
-            MenuItem(stringResource(R.string.account_menu_help), R.drawable.ic_support) { go(AppRoute.Help) }
+            MenuItem(stringResource(R.string.account_menu_help), R.drawable.ic_help) { go(AppRoute.Help) }
             if (!drawerHasFeedback) {
                 MenuItem(stringResource(R.string.feedback_send_feedback), R.drawable.ic_feedback) {
                     isOpen = false

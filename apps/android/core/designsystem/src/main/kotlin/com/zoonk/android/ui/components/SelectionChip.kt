@@ -37,6 +37,8 @@ fun SelectionChip(
             FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.zoonk.selectedTint,
                 selectedLabelColor = colors.onSurface,
+                // While a save runs, the pick stays drawn, as a weekday's does.
+                disabledSelectedContainerColor = MaterialTheme.zoonk.selectedTint,
             ),
         border =
             FilterChipDefaults.filterChipBorder(
@@ -44,6 +46,7 @@ fun SelectionChip(
                 selected = selected,
                 borderColor = colors.outline,
                 selectedBorderColor = colors.primary,
+                disabledSelectedBorderColor = colors.primary,
                 selectedBorderWidth = 2.dp,
             ),
     )

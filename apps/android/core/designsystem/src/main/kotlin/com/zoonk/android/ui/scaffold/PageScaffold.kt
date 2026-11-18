@@ -28,18 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.WithLoadFailureBar
+import com.zoonk.android.ui.components.WithStatusAction
 import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /**
@@ -48,8 +45,9 @@ import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
  * only once that heading scrolls under it. A page's main action goes in [bottomBar], pinned to the
  * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
  * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
- * bar stays under what it acts on. A page that centers its column says its width with [columnWidth] instead,
- * and the way back and the actions keep to it too. The page lays out its content in [pagePadding].
+ * bar stays under what it acts on. A page that centers its column says its width, its margins included, with
+ * [columnWidth] instead, and the whole top bar keeps to it too: the way back, the title and the actions. The page
+ * lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +66,7 @@ fun PageScaffold(
     val focus = rememberTitleFocus()
 
     TextStartsOnLayoutStart {
-        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+        WithStatusAction(enabled = bottomBar == null) { retry ->
             Scaffold(
                 modifier = Modifier.pageFocus(focus).then(modifier),
                 topBar = {
@@ -100,17 +98,9 @@ fun PageScaffold(
                             },
                             modifier = Modifier.pageBar(focus),
                             navigationIcon = {
-                                // The way back starts on the column the page's title starts, measured, so it sits on every page's own
-                                // column however the page lays it out; a page without a marked title keeps it on the margin.
-                                val density = LocalDensity.current
-                                val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-                                val titleColumn =
-                                    focus.columnStart?.let { start ->
-                                        span?.let { bar -> with(density) { (if (rtl) bar.right - start else start - bar.left).toDp() } }
-                                    }
                                 BackButton(
                                     onClick = onBack,
-                                    modifier = Modifier.offset(x = (titleColumn?.minus(columnInset) ?: pageMargin()) - BACK_INK_START),
+                                    modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
                                     enabled = backEnabled,
                                 )
                             },
