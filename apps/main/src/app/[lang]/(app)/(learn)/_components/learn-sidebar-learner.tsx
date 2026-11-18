@@ -89,15 +89,17 @@ function SectionSkeleton({ label, rows }: { label: string; rows: string[] }) {
   );
 }
 
+/**
+ * Only the row every learner has: how many more Study rows come isn't known yet, so Statistics,
+ * which follows them, appears with them rather than moving down.
+ */
 function LearnerSectionsSkeleton() {
   const t = useExtracted();
-  const stats = useStatsPages();
 
   return (
     <PrivateShellPlaceholder>
-      <div aria-hidden="true" className="flex flex-col gap-4">
+      <div aria-hidden="true">
         <SectionSkeleton label={t("Study")} rows={["mistakes"]} />
-        <SectionSkeleton label={t("Statistics")} rows={stats.map((page) => page.menu)} />
       </div>
     </PrivateShellPlaceholder>
   );
