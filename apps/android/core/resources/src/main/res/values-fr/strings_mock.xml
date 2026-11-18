@@ -8,7 +8,7 @@
   "mock_break_detail": "1c2f3f869e85c4a746d8d13cfb535396bdc5ce24b60fa84796b6d71f61ffaae4",
   "mock_break_time_left": "d70678f380db1785ea5d06114df142d294b954482f360b6028fb824a6c6ec7bb",
   "mock_cell_answered": "852f5756e5ba7f72ae947e20be16ca933aa43f36c9239f6067f1b19adc5d06d6",
-  "mock_cell_flagged": "088d84a0bcf1a8fe8f1d6f2bf4f9c974d12bff9ea16a78f16e81e2c9bdfda18b",
+  "mock_cell_marked_for_review": "a128669d57c7543e8469a0a4c5677beb72470b245a727c76daa0df88359810fc",
   "mock_continue": "afd2a653cf236fe185a47b789409207807337863cd5bf34cfc1a3de556f309b4",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
   "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
@@ -63,6 +63,7 @@
   "mock_section_number": "23ad9a2147d82cfa7f660ec8513be7d00a7a82f25f4692ac276d79f5bffd8eb1",
   "mock_sections": "2d5ec46cb70d362c9095495248d94d14c7d016bc20dfeb44f8d84b11691daa37",
   "mock_see_result": "cd3edb73b5abd96134249f7a068cd46f68712a1996c0d9d589cf35d7bdfcdee6",
+  "mock_sheet": "bd9ba2f10084b31293cf8d901ebffd3e9dbce5d31374f39434a372520ed2af02",
   "mock_speaking": "31148dc8dce09410ce654d1e94617c6db8fce2c831585cf7dac3aef375b38ff1",
   "mock_speaking_all_done": "72cafb5e92f0d2ed512f0f376aa419cfbb907bbb265193866d40cbec54b4633d",
   "mock_speaking_done": "8fcd1f5a78ee8fee46ed4baf8c43d0bd3e36321871579f348ba7001d76eac6f0",
@@ -184,6 +185,8 @@
     <string name="mock_hand_in_final">Après cela, tu ne pourras plus modifier tes réponses.</string>
     <string name="mock_keep_answering">Continuer à répondre</string>
     <string name="mock_hand_in">Rendre</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">Réponses</string>
     <string name="mock_answer_sheet">Feuille de réponses</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -191,11 +194,20 @@
         <item quantity="many">%d réponses données</item>
         <item quantity="other">%d réponses données</item>
     </plurals>
+    <string name="mock_legend_unanswered">Sans réponse</string>
+    <string name="mock_legend_answered">Avec réponse</string>
+    <string name="mock_legend_current">Question en cours</string>
+    <string name="mock_legend_review">Marquée pour révision</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d marquée pour révision</item>
+        <item quantity="many">%d marquées pour révision</item>
+        <item quantity="other">%d marquées pour révision</item>
+    </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">réponse donnée</string>
-    <string name="mock_cell_flagged">marquée</string>
+    <string name="mock_cell_marked_for_review">%1$s, marquée pour révision</string>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
@@ -254,13 +266,4 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Toutes les tâches sont terminées. Une fois cet examen blanc rendu, tu ne pourras plus les refaire.</string>
     <string name="mock_keep_going">Continuer</string>
-    <string name="mock_legend_unanswered">Sans réponse</string>
-    <string name="mock_legend_answered">Avec réponse</string>
-    <string name="mock_legend_current">Question en cours</string>
-    <string name="mock_legend_review">Marquée pour révision</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d marquée pour révision</item>
-        <item quantity="many">%d marquées pour révision</item>
-        <item quantity="other">%d marquées pour révision</item>
-    </plurals>
 </resources>

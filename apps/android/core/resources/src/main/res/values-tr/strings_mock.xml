@@ -8,7 +8,7 @@
   "mock_break_detail": "2f59152a8edff312bed54bf9b19dc7cbfd6fed1fc0a53cd6a3f44d5362b33713",
   "mock_break_time_left": "b130f4f76d1787e1c0806bb41ccd5b4caa8f56786adf15d477d21b4aa2b03376",
   "mock_cell_answered": "23ae19049484d4a490bb35bdb4a4ef2493e46d8cdb82c4797a64681f633e634a",
-  "mock_cell_flagged": "3f7cbd6fcc21710430a13e86b30dcfb2c15714295fc8d1af2fb0167881a012c9",
+  "mock_cell_marked_for_review": "b4dea36983fb5a4ea8f45ef5f0f17ea6d1656f91ab03effef0191189e19e1093",
   "mock_continue": "f43f02679569823585b117b2026fa8c338a2f363d53ecceab174c1b01b0b79b8",
   "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
   "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
@@ -63,6 +63,7 @@
   "mock_section_number": "bd03f7c4178b727c613b8cc40a7c66bf74d91018dedc9875f568436f6eac46f1",
   "mock_sections": "07b60af3daf2eb8ba6e95fc55bb19403667704536a3d40e5a0055d11afbb725a",
   "mock_see_result": "1889da3fe6e02cfd3a517f3fc43dce82f4e9cafa6037b0891e3e4809d2a2f6e7",
+  "mock_sheet": "b20d2deb59ac5f914f5a67c2b47a7fbe9cbc47b7052912afdc144f69d575be42",
   "mock_speaking": "38e52dfa62c0f36fd950679fcc8119e8f823b5877088483d00ad950be55806e5",
   "mock_speaking_all_done": "6a6b14c348b5eea9dd7460863b9246e5eb7b82bb9e04cd17753c12f272cbc3b4",
   "mock_speaking_done": "3330f8b9de791e5b3eaf285b6d14a7e297a6b1a7cc3204b518de7fa36aa56bd7",
@@ -176,17 +177,27 @@
     <string name="mock_hand_in_final">Bundan sonra cevaplarını değiştiremezsin.</string>
     <string name="mock_keep_answering">Cevaplamaya devam et</string>
     <string name="mock_hand_in">Teslim et</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <string name="mock_sheet">Cevaplar</string>
     <string name="mock_answer_sheet">Cevap kağıdı</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
     </plurals>
+    <string name="mock_legend_unanswered">Cevaplanmadı</string>
+    <string name="mock_legend_answered">Cevaplandı</string>
+    <string name="mock_legend_current">Şu anki soru</string>
+    <string name="mock_legend_review">Tekrar bakmak için işaretlendi</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d soru tekrar bakmak için işaretlendi</item>
+        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
+    </plurals>
     <string name="mock_questions">Sorular</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d. soru</string>
     <string name="mock_cell_answered">cevaplandı</string>
-    <string name="mock_cell_flagged">işaretli</string>
+    <string name="mock_cell_marked_for_review">%1$s, tekrar bakmak için işaretlendi</string>
     <string name="mock_sections">Oturumlar</string>
     <string name="mock_section_number">%1$d. oturum</string>
     <!-- A section's status in the list of the mock's sections. -->
@@ -243,12 +254,4 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Tüm bölümleri tamamladın. Bundan sonra bu deneme sınavında onları tekrar yapamazsın.</string>
     <string name="mock_keep_going">Devam et</string>
-    <string name="mock_legend_unanswered">Cevaplanmadı</string>
-    <string name="mock_legend_answered">Cevaplandı</string>
-    <string name="mock_legend_current">Şu anki soru</string>
-    <string name="mock_legend_review">Tekrar bakmak için işaretlendi</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d soru tekrar bakmak için işaretlendi</item>
-        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
-    </plurals>
 </resources>
