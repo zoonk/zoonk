@@ -132,9 +132,7 @@ export function CategorizeGroupList({
           })}
         </p>
       ) : (
-        <ul className="bg-background ring-input mt-2.5 divide-y rounded-lg ring-1 ring-inset">
-          {children}
-        </ul>
+        <ul className="-mx-3 mt-2.5 divide-y rounded-lg">{children}</ul>
       )}
     </section>
   );
