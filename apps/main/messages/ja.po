@@ -448,6 +448,16 @@ msgctxt "subscriberPlanName"
 msgid "Plus"
 msgstr "Plus"
 
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/components/public/public-footer.tsx
+#: src/components/public/public-nav-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "コース"
+
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "t_2u2K"
@@ -625,15 +635,6 @@ msgstr "このコースに沿った学習計画"
 msgctxt "Sm_2tk"
 msgid "Course options"
 msgstr "コースのオプション"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/components/public/public-footer.tsx
-#: src/components/public/public-nav-links.tsx
-msgctxt "R85gsW"
-msgid "Courses"
-msgstr "コース"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -1585,6 +1586,7 @@ msgid "They show up after your first lesson."
 msgstr "最初のレッスンを終えると表示されます。"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "「今日」へ移動する"
@@ -2191,7 +2193,6 @@ msgstr "<line>{exam}。</line> <line>{language, select, spanish {スペイン語
 
 #. The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
-#: src/app/[lang]/opengraph-image.tsx
 msgctxt "lH-iPt"
 msgid "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know."
 msgstr "Zoonkに目標と達成したい日を教えてください。すでに知っていることをもとに、使える時間に合わせた毎日の学習計画を作ります。"
@@ -2678,6 +2679,12 @@ msgctxt "HGnX5e"
 msgid "Practice mistakes"
 msgstr "間違えたところの練習"
 
+#. The home share card's subhead, under a headline listing goals.
+#: src/app/[lang]/opengraph-image.tsx
+msgctxt "3v2HCV"
+msgid "Tell Zoonk your goal and when you want to be ready. It builds a plan for each day that fits your time and starts from what you already know."
+msgstr "目標と、いつまでに準備を整えたいかをZoonkに教えてください。今の知識をもとに、使える時間に合わせた毎日の学習計画を作成します。"
+
 #: src/app/[lang]/pattern/[patternId]/page.tsx
 msgctxt "KS_o38"
 msgid "Mistake pattern"
@@ -2752,6 +2759,11 @@ msgid "Email reminders"
 msgstr "メールでのリマインダー"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "MXXJ7_"
+msgid "Nothing was changed."
+msgstr "何も変更されませんでした。"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "22mt47"
 msgid "Email reminders are off"
 msgstr "メールでのリマインダーはオフです"
@@ -2770,6 +2782,11 @@ msgstr "リマインダーを管理する"
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "保存できませんでした。もう一度お試しください。"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "Ih9a17"
+msgid "They can be turned back on in Settings."
+msgstr "設定からオンに戻せます。"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "YvVUvF"
