@@ -5,7 +5,6 @@
   "buddy_page_choose": "4b127f99ac33b207aa816ec6754a41fc64a93878dfbdf59e41b4488aa3c1dd39",
   "buddy_page_count": "b9da057eedcc2b33efafe103cd6bf7e9ebea86df20e523b0724b3d459851acfb",
   "buddy_page_earlier_questions": "4d1d19a507c860f57aca645c9e2a16231355be397eb27df779fe1d0c2fe6129a",
-  "buddy_page_energy": "745dbe3482f94ec6490f2c4b42293878ae3b0aaf19760476627918217732bb31",
   "buddy_page_energy_named": "f105751a5de19889bc6b2a19fe39dfb28fed7e00201bdf66b37c14d62fe08bc7",
   "buddy_page_energy_napping": "e6cc71a49be6914f7384642d7c6a611b68af90d6c21f7436d0f94ba8eae13cf9",
   "buddy_page_energy_starts": "c0f5183fc34cb95e425c92921ebe906fd543c3a2f1fecc636779dbe87090b128",
@@ -73,7 +72,6 @@
     <string name="buddy_page_suggest_mistake">Son hatamı açıkla</string>
     <string name="buddy_page_suggest_focus">Önce neye odaklanmalıyım?</string>
     <string name="buddy_page_today">Bugün %1$s ile</string>
-    <string name="buddy_page_energy">Enerji</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s · Enerji</string>
     <string name="buddy_page_energy_starts">İlk dersinle başlar.</string>
