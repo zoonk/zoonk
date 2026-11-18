@@ -11652,7 +11652,6 @@
       }
     },
     "A short lesson shows how, right before you need it." : {
-      "comment" : "Tool choice detail",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11663,7 +11662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una lección breve te enseña a usarla justo antes de que la necesites."
+            "value" : "Una lección breve te muestra cómo hacerlo justo antes de que lo necesites."
           }
         },
         "fr" : {
@@ -11675,37 +11674,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve lezione ti mostra come fare, poco prima che ti serva."
+            "value" : "Una breve lezione ti mostra come configurarlo, poco prima che ti serva."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "必要になる直前に、短いレッスンで使い方を学べます。"
+            "value" : "必要になる直前に、短いレッスンで準備の手順を学べます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "필요해지기 바로 전에 짧은 레슨으로 방법을 배워요."
+            "value" : "사용할 때가 되면 짧은 레슨으로 설치 방법을 알려 드려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótka lekcja pokaże ci, jak to zrobić, tuż zanim będzie ci to potrzebne."
+            "value" : "Krótka lekcja pokaże ci, jak to zrobić, tuż zanim będzie to potrzebne."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma aula curta ensina como usar, pouco antes de você precisar."
+            "value" : "Uma aula rápida ensina como configurar, pouco antes de você precisar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa bir ders, ihtiyaç duymandan hemen önce nasıl kullanacağını gösterir."
+            "value" : "İhtiyaç duymadan hemen önce kısa bir dersle nasıl kuracağını öğrenirsin."
           }
         }
       }
@@ -11772,24 +11771,6 @@
     "About %lld days left" : {
       "comment" : "The Plan's \"~60 days left\" read aloud: about how many days are left",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "About %lld day left"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "About %lld days left"
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -11803,6 +11784,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Noch etwa %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld days left"
                 }
               }
             }
@@ -13492,7 +13491,6 @@
       }
     },
     "Archive goal" : {
-      "comment" : "Archives the goal, after asking",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16648,7 +16646,6 @@
       }
     },
     "Daily study time" : {
-      "comment" : "Setting: study time a day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16659,7 +16656,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo diario"
+            "value" : "Tiempo diario de estudio"
           }
         },
         "fr" : {
@@ -16671,7 +16668,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo giornaliero"
+            "value" : "Tempo di studio giornaliero"
           }
         },
         "ja" : {
@@ -16695,7 +16692,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo diário de estudo"
+            "value" : "Tempo diário"
           }
         },
         "tr" : {
@@ -16943,12 +16940,11 @@
       }
     },
     "Do you have it?" : {
-      "comment" : "Title of the tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hast du das?"
+            "value" : "Hast du es?"
           }
         },
         "es" : {
@@ -17898,7 +17894,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voraussichtlicher Abschluss %@"
+            "value" : "Voraussichtlicher Abschluss am %@"
           }
         },
         "es" : {
@@ -17922,7 +17918,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "完了予定日：%@"
+            "value" : "完了予定日 %@"
           }
         },
         "ko" : {
@@ -17934,7 +17930,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przewidywane zakończenie: %@"
+            "value" : "Przewidywany koniec: %@"
           }
         },
         "pt" : {
@@ -20489,7 +20485,6 @@
       }
     },
     "I have it" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -20500,13 +20495,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo tengo"
+            "value" : "Ya lo tengo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je l’ai"
+            "value" : "Je l’ai déjà"
           }
         },
         "it" : {
@@ -20518,19 +20513,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "持っている"
+            "value" : "準備済み"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 갖고 있어요"
+            "value" : "이미 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mam je"
+            "value" : "Już mam"
           }
         },
         "pt" : {
@@ -20548,12 +20543,11 @@
       }
     },
     "I won't use it" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht verwenden"
+            "value" : "Ich werde es nicht nutzen"
           }
         },
         "es" : {
@@ -20571,7 +20565,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne farò a meno"
+            "value" : "Non lo userò"
           }
         },
         "ja" : {
@@ -20583,7 +20577,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "안 쓸 거예요"
+            "value" : "사용하지 않을게요"
           }
         },
         "pl" : {
@@ -20607,7 +20601,6 @@
       }
     },
     "I'll set it up" : {
-      "comment" : "Tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -20618,7 +20611,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo voy a configurar"
+            "value" : "Lo configuraré"
           }
         },
         "fr" : {
@@ -20642,19 +20635,19 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "준비할게요"
+            "value" : "설치할게요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotuję je"
+            "value" : "Zainstaluję"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vou instalar e configurar"
+            "value" : "Vou configurar"
           }
         },
         "tr" : {
@@ -36897,7 +36890,6 @@
       }
     },
     "You'll practice on your own device." : {
-      "comment" : "Tool choice detail",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -36920,31 +36912,31 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ti eserciterai sul tuo dispositivo."
+            "value" : "Farai pratica sul tuo dispositivo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自分のデバイスで練習します。"
+            "value" : "自分の端末で練習します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가지고 있는 기기로 연습해요."
+            "value" : "사용하는 기기에서 직접 연습해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Będziesz ćwiczyć na własnym urządzeniu."
+            "value" : "Będziesz ćwiczyć na swoim urządzeniu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você vai praticar no seu próprio aparelho."
+            "value" : "Você vai praticar no seu próprio dispositivo."
           }
         },
         "tr" : {
