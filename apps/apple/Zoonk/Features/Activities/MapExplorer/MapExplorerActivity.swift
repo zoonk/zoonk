@@ -5,7 +5,25 @@ extension ActivityRenderer {
     context in
     if let fields = try? context.fields(as: MapExplorerFields.self) {
       if let map = context.baseMap {
-        MapExplorerCanvas(fields: fields, map: map)
+        MapExplorerCanvas(
+          fields: fields, map: map,
+          question: {
+            switch context.check {
+            case .choice(let question, _, _, _): return question
+            case .numeric(let question, _, _, _, _, _, _): return question
+            default: return ""
+            }
+          }(),
+          references: {
+            let checkReferences =
+              switch context.check {
+              case .choice(let question, let options, _, _):
+                ([question] + options.map(\.text)).joined(separator: " ")
+              case .numeric(let question, _, _, _, _, _, _): question
+              default: ""
+              }
+            return ([checkReferences] + fields.places.map(\.label)).joined(separator: " ")
+          }())
       } else {
         Text(
           "This map can't be shown. Continue to the next screen.", tableName: "Activities",
@@ -32,6 +50,8 @@ struct MapExplorerFields: Decodable, Hashable, Sendable {
 private struct MapExplorerCanvas: View {
   let fields: MapExplorerFields
   let map: ActivityBaseMap
+  let question: String
+  let references: String
 
   @ActivityState("selectedId") private var selectedId: String? = nil
   @ActivityState("visited") private var visited: [String] = []
@@ -125,7 +145,8 @@ private struct MapExplorerCanvas: View {
   private func crop(width: Double) -> CGRect {
     MapViewport.fit(
       map: CGSize(width: map.width, height: map.height), maxAspect: Self.maxHeight / width,
-      maxZoom: map.maxZoom, points: points)
+      maxZoom: map.maxZoom, points: points,
+      minAspect: map.streets.isEmpty ? nil : MapViewport.maxAspect)
   }
 
   @ViewBuilder
@@ -156,6 +177,12 @@ private struct MapExplorerCanvas: View {
         self.pin(pin.place, number: pin.index + 1)
           .position(shown[order])
       }
+      MapLabels(
+        map: map, crop: crop, scale: scale, question: question, references: references,
+        pins: zip(pins.map(\.spot), shown).map { (spot: $0, shown: $1) }
+      )
+      .allowsHitTesting(false)
+      .accessibilityHidden(true)
     }
     .frame(width: width, height: height)
     .background(map.sphere == nil ? ActivityBaseMap.Tone.water : .clear)
@@ -186,7 +213,7 @@ private struct MapExplorerCanvas: View {
       announcePolitely(LessonRichText.spoken(place.reveals))
     } label: {
       Text(number, format: .number)
-        .typeStyle(.body.weight(.semibold).monospaced())
+        .typeStyle(mapPinNumberStyle)
         .foregroundStyle(isSelected ? Color(.systemBackground) : ActivityBaseMap.Tone.pin)
         .frame(width: 32, height: 32)
         .background(
@@ -219,7 +246,7 @@ private struct MapShapes: View {
   let pins: [(spot: CGPoint, shown: CGPoint)]
 
   var body: some View {
-    Canvas { context, _ in
+    Canvas { context, size in
       let transform = CGAffineTransform(scaleX: scale, y: scale)
         .translatedBy(x: -crop.minX, y: -crop.minY)
 
@@ -253,15 +280,77 @@ private struct MapShapes: View {
           with: .color(Color.vizGrid), lineWidth: 1)
       }
 
-      for label in map.labels {
-        let point = CGPoint(x: label.x, y: label.y).applying(transform)
-        let text = MapWords.label(key: label.key, text: label.text)
-          .font(
-            (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold))
-              .font(in: context.environment))
+      for pin in pins {
+        if pin.spot != pin.shown {
+          var line = Path()
+          line.move(to: pin.spot)
+          line.addLine(to: pin.shown)
+          context.stroke(line, with: .color(ActivityBaseMap.Tone.pin), lineWidth: 1.5)
+        }
+
+        context.fill(
+          Path(ellipseIn: CGRect(x: pin.spot.x - 3.5, y: pin.spot.y - 3.5, width: 7, height: 7)),
+          with: .color(ActivityBaseMap.Tone.pin))
+      }
+    }
+  }
+}
+
+private struct MapLabels: View {
+  let map: ActivityBaseMap
+  let crop: CGRect
+  let scale: Double
+  let question: String
+  let references: String
+  let pins: [(spot: CGPoint, shown: CGPoint)]
+  var body: some View {
+    Canvas { context, size in
+      let transform = CGAffineTransform(scaleX: scale, y: scale).translatedBy(
+        x: -crop.minX, y: -crop.minY)
+      func path(_ data: String) -> Path { svg(data).applying(transform) }
+      let texts = map.labels.map { label in
+        MapWords.label(key: label.key, text: label.text).font(
+          (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold)).font(
+            in: context.environment))
+      }
+      let streetPaths = map.streets.map { streetPositions(path($0.path)) }
+      let labels = map.labels.enumerated().map { index, label in
+        let positions = map.streets.firstIndex { $0.name == label.text }.map { streetPaths[$0] }
+        return MapViewport.Label(
+          center: CGPoint(x: label.x, y: label.y).applying(transform),
+          size: context.resolve(texts[index]).measure(
+            in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)), angle: label.angle,
+          street: label.kind == .street,
+          priority: MapViewport.isNamed(
+            references: references, source: label.text,
+            text: String(
+              localized: String.LocalizationValue(label.text), table: "Activities",
+              locale: context.environment.locale)),
+          positions: positions,
+          question: MapViewport.isNamed(
+            references: question, source: label.text,
+            text: String(
+              localized: String.LocalizationValue(label.text), table: "Activities",
+              locale: context.environment.locale))
+        )
+      }
+      let pinFont = mapPinNumberStyle.uiFont(
+        context.environment.dynamicTypeSize, legibility: context.environment.legibilityWeight)
+      let pinNumbers = pins.enumerated().map { index, pin in
+        let size = (String(index + 1) as NSString).size(withAttributes: [.font: pinFont])
+        return CGRect(
+          x: pin.shown.x - size.width / 2, y: pin.shown.y - size.height / 2, width: size.width,
+          height: size.height)
+      }
+      let spots = MapViewport.placeLabels(
+        labels, pins: pins.map(\.shown), frame: size, streets: streetPaths, pinNumbers: pinNumbers)
+      for (index, label) in map.labels.enumerated() {
+        guard let point = spots[index] else { continue }
+        let text = texts[index]
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))
+        labelContext.scaleBy(x: point.scale, y: point.scale)
 
         for offset in [
           CGSize(width: 1, height: 0), CGSize(width: -1, height: 0), CGSize(width: 0, height: 1),
@@ -278,18 +367,6 @@ private struct MapShapes: View {
           at: .zero)
       }
 
-      for pin in pins {
-        if pin.spot != pin.shown {
-          var line = Path()
-          line.move(to: pin.spot)
-          line.addLine(to: pin.shown)
-          context.stroke(line, with: .color(ActivityBaseMap.Tone.pin), lineWidth: 1.5)
-        }
-
-        context.fill(
-          Path(ellipseIn: CGRect(x: pin.spot.x - 3.5, y: pin.spot.y - 3.5, width: 7, height: 7)),
-          with: .color(ActivityBaseMap.Tone.pin))
-      }
     }
   }
 }
@@ -312,6 +389,20 @@ extension ActivityBaseMap.Tone {
 }
 
 /// Mirrors main's `use-base-map-words`.
+private func streetPositions(_ path: Path) -> [CGPoint] {
+  var start: CGPoint?
+  path.cgPath.applyWithBlock { pointer in
+    let element = pointer.pointee
+    if start == nil, element.type == .moveToPoint { start = element.points.pointee }
+  }
+  let bounds = path.boundingRect
+  let steps = max(1, Int(ceil((bounds.width + bounds.height) / MapViewport.streetSampleStep)))
+  let rest = (1...steps).compactMap {
+    path.trimmedPath(from: 0, to: CGFloat($0) / CGFloat(steps)).currentPoint
+  }
+  return [start].compactMap { $0 } + rest
+}
+
 private enum MapWords {
   static func name(_ id: String) -> Text {
     switch id {
@@ -376,3 +467,5 @@ private enum MapWords {
     }
   }
 }
+
+private let mapPinNumberStyle = TypeStyle.body.weight(.semibold).monospaced()

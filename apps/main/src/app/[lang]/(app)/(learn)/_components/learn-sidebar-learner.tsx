@@ -21,21 +21,21 @@ import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 
-function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
     <>
       <LearnSidebarLink
-        count={places?.readyMistakes}
+        count={places.readyMistakes}
         label={t("Mistakes notebook")}
         menu="mistakes"
       />
-      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
-      {places?.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
-      {places?.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
-      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
-      {places?.completedLessons && (
+      {places.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
+      {places.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
+      {places.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
+      {places.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
+      {places.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
     </>
@@ -56,7 +56,7 @@ function StatsLinks() {
   );
 }
 
-function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
+function StudySectionView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
@@ -69,32 +69,16 @@ function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
   );
 }
 
-function PendingStudySection() {
-  return (
-    <div className="signed-in:contents hidden">
-      <StudySectionView places={null} />
-    </div>
-  );
-}
-
 /** Every link here opens a learner's own page, so someone without a session gets none of them. */
 function FrameStudySection() {
   const learner = useFrameLearner();
 
-  if (learner.status === "visitor") {
-    return null;
-  }
-
-  if (learner.status !== "ready") {
-    return <PendingStudySection />;
-  }
-
-  return <StudySectionView places={learner.summary.places} />;
+  return learner.status === "ready" ? <StudySectionView places={learner.summary.places} /> : null;
 }
 
 export function LearnerSections() {
   return (
-    <Suspense fallback={<PendingStudySection />}>
+    <Suspense>
       <FrameStudySection />
     </Suspense>
   );

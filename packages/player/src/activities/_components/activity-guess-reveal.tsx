@@ -1,11 +1,11 @@
 "use client";
 
-import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { type GuessScale } from "../_utils/guess-scale";
 import { ActivityCanvas, ActivityTextAlternative } from "./activity-canvas";
 import { ActivityGuessComparison } from "./activity-guess-comparison";
 import { ActivityGuessScale } from "./activity-guess-scale";
+import { useGuessFormat } from "./guess-format";
 
 export function ActivityGuessReveal({
   actual,
@@ -29,8 +29,7 @@ export function ActivityGuessReveal({
   unit: string;
 }) {
   const t = useExtracted();
-  const format = useFormatNumber();
-  const formatValue = (value: number) => format(value, { unit });
+  const { label, value: formatValue } = useGuessFormat(unit);
   const revealed = isChecked ? actual : null;
 
   return (
@@ -69,6 +68,7 @@ export function ActivityGuessReveal({
               max: formatValue(scale.max),
               min: formatValue(scale.min),
             })}
+        {label && ` ${label}`}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

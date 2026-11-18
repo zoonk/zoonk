@@ -1,5 +1,8 @@
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -9,6 +12,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep } from "../preview/preview-steps";
@@ -91,6 +95,87 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
+  });
+
+  it("money ticks in millions shorten without giving adjacent ticks the same number", async () => {
+    const content = engineModeFixtures.guessReveal.moneyMillions;
+    openActivity({ content, template: "guessReveal" });
+    await expect.element(page.getByText("R$1.5M", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("R$2M", { exact: true })).toBeVisible();
+  });
+
+  it.each([
+    { ticks: ["R$0", "R$1M", "R$2M"], width: 320 },
+    { ticks: ["R$0", "R$2M"], width: 288 },
+  ])(
+    "money guesses at $width pixels and 200 percent use fitting round ticks without overlaps",
+    async ({ width, ticks }) => {
+      document.documentElement.style.fontSize = "200%";
+
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
+      });
+
+      await atViewport({ height: 1000, width }, async () => {
+        openActivity({
+          content: engineModeFixtures.guessReveal.moneyMillions,
+          template: "guessReveal",
+        });
+
+        await expect.element(page.getByRole("slider")).toBeVisible();
+
+        await expect
+          .poll(() =>
+            [...document.querySelectorAll('[data-slot="guess-ticks"] span')].map(
+              (node) => node.textContent,
+            ),
+          )
+          .toStrictEqual(ticks);
+
+        const nodes = [...document.querySelectorAll('[data-slot="guess-ticks"] span')];
+        const bounds = nodes.map((node) => node.getBoundingClientRect());
+
+        for (let index = 1; index < bounds.length; index += 1) {
+          expect(bounds[index]!.left).toBeGreaterThanOrEqual(bounds[index - 1]!.right + 4);
+        }
+      });
+    },
+  );
+
+  it("money guess retains currency in readouts, ticks, the difference and the accessible scale", async () => {
+    const content = engineModeFixtures.guessReveal.money;
+    openActivity({ content, template: "guessReveal" });
+    await guessOnScale(content.fields, 900);
+    await checkActivity();
+    await expect.element(page.getByText(/Real value: R\$1,200/u)).toBeVisible();
+    await expect.element(page.getByText(/Your guess is off by R\$300/u)).toBeVisible();
+    await expect.element(page.getByText("R$0", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("R$2,000", { exact: true })).toBeVisible();
+
+    expect(
+      document.querySelector('[data-slot="activity-text-alternative"]')?.textContent,
+    ).toContain("R$1,200");
+
+    await expect
+      .element(page.getByRole("slider", { name: "Your guess" }))
+      .toHaveAttribute("aria-valuetext", "R$900");
+  });
+
+  it("guess readouts do not attach a free-text plural unit to one", async () => {
+    const source = activityContentFixtures.guessReveal;
+
+    openActivity({
+      content: { ...source, fields: { ...source.fields, unit: "days" } },
+      template: "guessReveal",
+    });
+
+    await guessOnScale(source.fields, 1);
+    await expect.element(page.getByText("Your guess: 1", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("in days", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Your guess" }))
+      .toHaveAttribute("aria-valuetext", "1. in days");
   });
 
   it("guess then reveal: the computed value shows next to the guess, with its workings", async () => {

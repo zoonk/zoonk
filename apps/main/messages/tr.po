@@ -972,14 +972,16 @@ msgid "Welcome back"
 msgstr "Tekrar hoş geldin"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "N2AOpV"
-msgid "Your quick explanation"
-msgstr "Kısa açıklaman"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
 msgid "Quick explanation"
 msgstr "Kısa açıklama"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Devam et"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
@@ -1020,12 +1022,6 @@ msgstr "Planını gör"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "{goal} planın hazır."
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Devam et"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"

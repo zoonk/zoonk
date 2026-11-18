@@ -2,10 +2,14 @@
 
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
-import { type LineSlide, type Point, type ShiftAxis } from "./line-crossing-model";
+import {
+  HANDLE_RADIUS,
+  HANDLE_STROKE,
+  type LineSlide,
+  type Point,
+  type ShiftAxis,
+} from "./line-crossing-model";
 
-export const HANDLE_RADIUS = 14;
-export const HANDLE_STROKE = 2.5;
 const CHEVRON = 4;
 
 function chevrons({ axis, cx, cy }: { axis: ShiftAxis; cx: number; cy: number }): string {

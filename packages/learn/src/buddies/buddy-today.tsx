@@ -17,6 +17,7 @@ import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
+import { MissionsDoneCount } from "../missions/mission-list";
 import { MissionsCard } from "../missions/missions-card";
 import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
 import { type BuddyStatusView } from "./buddy-status-view";
@@ -132,13 +133,7 @@ export function BuddyToday({
   const today = status.today;
   const done = today ? countDoneMissions(today.missions) : 0;
 
-  const dayLabel =
-    today && today.missions.length > 0
-      ? t(
-          "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}",
-          { done, total: String(today.missions.length) },
-        )
-      : t("{buddy} today", { buddy: name });
+  const total = today?.missions.length ?? 0;
 
   return (
     <>
@@ -163,15 +158,22 @@ export function BuddyToday({
           }}
           type="button"
         >
-          {today && today.missions.length > 0 ? (
-            <MissionsRing
-              className="size-3.5"
-              missions={{ done, total: today.missions.length }}
-              moment={false}
-              strokeWidth={6}
-            />
-          ) : null}
-          <span>{dayLabel}</span>
+          {total > 0 ? (
+            <>
+              <MissionsRing
+                className="size-3.5"
+                missions={{ done, total }}
+                moment={false}
+                strokeWidth={6}
+              />
+              <span>
+                <MissionsDoneCount done={done} total={total} />
+              </span>
+              <span className="sr-only">{t("Today's missions")}</span>
+            </>
+          ) : (
+            <span>{t("{buddy} today", { buddy: name })}</span>
+          )}
         </button>
       </div>
 

@@ -13,23 +13,6 @@ struct GuessScale: Hashable, Sendable {
   let max: Double
   let kind: Kind
 
-  var ticks: [Double] {
-    if kind == .linear {
-      let room = (max - min) * 0.08
-      return [min]
-        + ChartsAxis.ticks(min...max).filter {
-          $0 - min > room && max - $0 > room
-        } + [max]
-    }
-
-    let first = ceil(log10(min))
-    let last = floor(log10(max))
-    let powers = (0..<Swift.max(Int(last - first + 1), 0)).map { pow(10, first + Double($0)) }
-    guard powers.count >= 2 else { return [min, max] }
-    let every = Int(ceil(Double(powers.count) / 6))
-    return powers.enumerated().compactMap { $0.offset % every == 0 ? $0.element : nil }
-  }
-
   func value(atPosition position: Double) -> Double {
     let share = Swift.min(Swift.max(position, 0), Self.positions) / Self.positions
 
@@ -49,14 +32,31 @@ struct GuessScale: Hashable, Sendable {
     return Swift.min(Swift.max(share, 0), 1)
   }
 
-  func tickLabel(_ tick: Double, unit: String?, locale: Locale = .courseLanguage) -> String {
-    let isMoney = unit.map(ActivityNumberFormat.isMoney) ?? false
-    let isShort = ChartsAxis.isShort(ticks) { value, compact in
-      ActivityNumberFormat.format(
-        value, unit: isMoney ? unit : nil, compact: compact, locale: locale)
+  func ticks(count: Int = 4) -> [Double] {
+    if kind == .linear {
+      let room = (max - min) * 0.08
+      return [min]
+        + ChartsAxis.ticks(min...max, count: count).filter { $0 - min > room && max - $0 > room }
+        + [max]
     }
-    return ActivityNumberFormat.format(
-      tick, unit: isMoney || tick == ticks.last ? unit : nil, compact: isShort, locale: locale)
+    let from = Int(ceil(log10(min)))
+    let to = Int(floor(log10(max)))
+    let powers = from <= to ? (from...to).map { pow(10, Double($0)) } : []
+    let every = Int(ceil(Double(powers.count) / Double(count == 4 ? 6 : count)))
+    return powers.count < 2
+      ? [min, max] : powers.enumerated().filter { $0.offset % every == 0 }.map(\.element)
+  }
+
+  func tickFormatter(unit: String?, locale: Locale = .courseLanguage) -> (Double) -> String {
+    let currency = ActivityNumberFormat.currencyUnit(unit)
+    let compact = ChartsAxis.isShort([min, max]) { value, compact in
+      ActivityNumberFormat.format(value, unit: currency, compact: compact, locale: locale)
+    }
+    return { value in
+      ActivityNumberFormat.format(
+        value, unit: currency, digits: compact && currency != nil ? 1 : nil, compact: compact,
+        locale: locale)
+    }
   }
 
   static func roundGuess(_ value: Double) -> Double {
@@ -89,6 +89,15 @@ struct GuessScale: Hashable, Sendable {
   }
 }
 
+func guessUnitLabel(_ unit: String?) -> Text? {
+  guard let unit, !unit.isEmpty, ActivityNumberFormat.currencyUnit(unit) == nil else { return nil }
+  return Text(
+    "in \(unit)", tableName: "Activities",
+    comment:
+      "Labels a group of numbers with the unit the activity measures in; {unit} is the activity's own unit text, such as days or km/h"
+  )
+}
+
 struct ActivityGuessScaleView: View {
   let scale: GuessScale
   let unit: String?
@@ -109,31 +118,33 @@ struct ActivityGuessScaleView: View {
             comment: "Before the learner guesses on a scale")
         }
       }
-      .typeStyle(.body.weight(.medium).monospacedDigit())
-      .foregroundStyle(.mutedForeground)
+      .typeStyle(.readout)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
+
+      if let label = guessUnitLabel(unit) { ActivityCaption(label) }
 
       if let actual {
         revealed(actual: actual)
       } else {
-        // Positions snap here rather than with a step, which would draw a row of ticks under the
-        // track.
         Slider(
           value: Binding(
             get: { (guess.map(scale.share(of:)) ?? 0.5) * GuessScale.positions },
-            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0.rounded()))) }),
-          in: 0...GuessScale.positions
+            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0))) }),
+          in: 0...GuessScale.positions, step: 1
         ) {
           Text(
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
         }
         .accessibilityValue(
-          guess.map { Text(verbatim: format($0)) }
+          guess.map {
+            Text(verbatim: format($0))
+              + (guessUnitLabel(unit).map { Text(verbatim: ". ") + $0 } ?? Text(verbatim: ""))
+          }
             ?? Text(
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
-
-        tickLabels
+        GuessScaleAxis(scale: scale, unit: unit)
       }
     }
   }
@@ -145,7 +156,7 @@ struct ActivityGuessScaleView: View {
       )
       .accessibilityHidden(true)
 
-      tickLabels
+      GuessScaleAxis(scale: scale, unit: unit)
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
@@ -153,11 +164,40 @@ struct ActivityGuessScaleView: View {
       )
       .typeStyle(.body.weight(.semibold).monospaced())
       .foregroundStyle(Color.successText)
+      .accessibilityValue(guessUnitLabel(unit) ?? Text(verbatim: ""))
     }
   }
 
-  private var tickLabels: some View {
-    let ticks = scale.ticks
+  private func format(_ value: Double) -> String {
+    ActivityNumberFormat.guess(value, unit: unit)
+  }
+}
+
+private struct GuessScaleAxis: View {
+  let scale: GuessScale
+  let unit: String?
+  @Environment(\.dynamicTypeSize) private var textSize
+  @Environment(\.legibilityWeight) private var legibility
+  var body: some View {
+    let font = TypeStyle.data.uiFont(textSize, legibility: legibility)
+    return GeometryReader { geometry in
+      axis(width: geometry.size.width, font: font)
+    }.frame(height: font.lineHeight + 8).accessibilityHidden(true)
+  }
+  private func axis(width: Double, font: UIFont) -> some View {
+    let format = scale.tickFormatter(unit: unit)
+    func left(_ value: Double) -> Double {
+      let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
+      return Swift.max(
+        0, Swift.min(scale.share(of: value) * width - textWidth / 2, width - textWidth))
+    }
+    let ticks = ChartsAxis.fittingTicks(
+      scale.min...scale.max,
+      frame: { value in
+        let start = left(value)
+        let textWidth = (format(value) as NSString).size(withAttributes: [.font: font]).width
+        return (left: start, right: start + textWidth)
+      }, values: { scale.ticks(count: $0) })
     return VStack(spacing: 4) {
       Canvas { context, size in
         for tick in ticks {
@@ -167,39 +207,13 @@ struct ActivityGuessScaleView: View {
       }
       .frame(height: 4)
 
-      GuessTickLayout(positions: ticks.map(scale.share(of:))) {
-        ForEach(ticks, id: \.self) { tick in
-          Text(verbatim: scale.tickLabel(tick, unit: unit))
-            .typeStyle(.meta.monospacedDigit())
-            .foregroundStyle(.mutedForeground)
+      ZStack(alignment: .topLeading) {
+        ForEach(ticks, id: \.self) { value in
+          Text(verbatim: format(value)).typeStyle(.data).foregroundStyle(.mutedForeground)
+            .fixedSize().offset(x: left(value))
         }
       }
-    }
-  }
-
-  private func format(_ value: Double) -> String {
-    ActivityNumberFormat.format(value, unit: unit)
-  }
-}
-
-private struct GuessTickLayout: Layout {
-  let positions: [Double]
-
-  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-    CGSize(
-      width: proposal.width ?? 0,
-      height: subviews.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0)
-  }
-
-  func placeSubviews(
-    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
-  ) {
-    for (view, share) in zip(subviews, positions) {
-      let width = view.sizeThatFits(.unspecified).width
-      let x = share * bounds.width
-      let anchor = ChartsAxis.anchor(at: x, plotWidth: bounds.width, labelWidth: width)
-      view.place(
-        at: CGPoint(x: bounds.minX + x, y: bounds.minY), anchor: anchor, proposal: .unspecified)
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 }

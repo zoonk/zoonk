@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import {
   ListRow,
   ListRowBody,
@@ -19,6 +20,16 @@ import { type useMissionOpen } from "./mission-links";
 export function ProgressCount({ done, total }: { done: number; total: number }) {
   const countOf = useCountOf();
   return countOf(done, total);
+}
+
+export function MissionsDoneCount({ done, total }: { done: number; total: number }) {
+  const t = useExtracted();
+
+  return t({
+    description: "Under the title Today's missions: how many of today's missions are done.",
+    message: "{done} of {total} done",
+    values: { done: String(done), total: String(total) },
+  });
 }
 
 /**

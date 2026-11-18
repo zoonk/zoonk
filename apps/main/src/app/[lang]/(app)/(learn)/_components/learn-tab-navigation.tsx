@@ -16,12 +16,14 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 import { VisitorSideLinks } from "./learn-sidebar-learner";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
 const TAB_ROOTS = new Set<string>(["buddy", "plan", "today"]);
 
@@ -59,8 +61,23 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
 
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
+function renderBuddyPlaceholder(className: string) {
+  return (
+    <PrivateShellPlaceholder>
+      <Skeleton aria-hidden="true" className={className} />
+    </PrivateShellPlaceholder>
+  );
+}
+
 function CurrentSideTabs({ buddy, missions }: TabsProps) {
-  return <LearnSideNavigation activeTab={useActiveTab()} buddy={buddy} missions={missions} />;
+  return (
+    <LearnSideNavigation
+      activeTab={useActiveTab()}
+      buddy={buddy}
+      missions={missions}
+      renderBuddyPlaceholder={renderBuddyPlaceholder}
+    />
+  );
 }
 
 /** Onboarding has no tab bar: until the plan exists the tabs would only lead to a half-made one. */
@@ -77,6 +94,7 @@ function CurrentBottomTabs({ buddy, missions }: TabsProps) {
       buddy={buddy}
       missions={missions}
       onSearch={openCommandPalette}
+      renderBuddyPlaceholder={renderBuddyPlaceholder}
     />
   );
 }
@@ -90,7 +108,16 @@ function LearnerSideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
 
   return (
-    <Suspense fallback={<LearnSideNavigation activeTab={null} buddy={buddy} missions={missions} />}>
+    <Suspense
+      fallback={
+        <LearnSideNavigation
+          activeTab={null}
+          buddy={buddy}
+          missions={missions}
+          renderBuddyPlaceholder={renderBuddyPlaceholder}
+        />
+      }
+    >
       <CurrentSideTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
@@ -146,6 +173,7 @@ function LearnerBottomTabs({ learner }: { learner: LearnerSummaryState }) {
             buddy={buddy}
             missions={missions}
             onSearch={openCommandPalette}
+            renderBuddyPlaceholder={renderBuddyPlaceholder}
           />
         </div>
       }

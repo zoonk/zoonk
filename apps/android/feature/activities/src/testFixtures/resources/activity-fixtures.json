@@ -2372,6 +2372,68 @@
     "picture": null,
     "value": 14
   },
+  "guessReveal.money": {
+    "baseMap": null,
+    "content": {
+      "check": {
+        "answer": 1200,
+        "explanation": "Cost",
+        "kind": "numeric",
+        "question": "Your guess",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "R$"
+      },
+      "fields": {
+        "max": 2000,
+        "min": 0,
+        "scale": "linear",
+        "takeaway": "Cost",
+        "truth": {
+          "expression": "1200",
+          "kind": "computed",
+          "workings": [{ "expression": "1200", "label": "Cost" }]
+        },
+        "unit": "R$"
+      },
+      "prompt": "Drag to guess",
+      "template": "guessReveal"
+    },
+    "expected": { "kind": "numeric", "value": 1200 },
+    "explore": null,
+    "picture": null,
+    "value": 1200
+  },
+  "guessReveal.moneyMillions": {
+    "baseMap": null,
+    "content": {
+      "check": {
+        "answer": 1200000,
+        "explanation": "Cost",
+        "kind": "numeric",
+        "question": "Your guess",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "R$"
+      },
+      "fields": {
+        "max": 2000000,
+        "min": 0,
+        "scale": "linear",
+        "takeaway": "Cost",
+        "truth": {
+          "expression": "1200000",
+          "kind": "computed",
+          "workings": [{ "expression": "1200000", "label": "Cost" }]
+        },
+        "unit": "R$"
+      },
+      "prompt": "Drag to guess",
+      "template": "guessReveal"
+    },
+    "expected": { "kind": "numeric", "value": 1200000 },
+    "explore": null,
+    "picture": null,
+    "value": 1200000
+  },
   "keyboardFretboard.byEar": {
     "baseMap": null,
     "content": {
