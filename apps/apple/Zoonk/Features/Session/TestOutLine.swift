@@ -17,12 +17,11 @@ struct TestOutLine: View {
 
   private var line: AttributedString {
     let question = String(localized: "Already know this chapter?", table: "Today")
-    var link = AttributedString(localized: "Take the test", table: "Tutor")
+    var link = AttributedString(localized: "Take the test", table: "Today")
     link.foregroundColor = Color(.foreground)
     link.underlineStyle = .single
 
     // The words and the link sit as two sentences do, with no space after a full-width ？.
-    let space = [question, ""].joinedSentences().dropFirst(question.count)
-    return AttributedString(question + space) + link
+    return AttributedString([question, ""].joinedSentences()) + link
   }
 }
