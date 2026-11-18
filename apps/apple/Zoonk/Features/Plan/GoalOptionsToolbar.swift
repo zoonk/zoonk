@@ -135,7 +135,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         set(.paused)
       } label: {
         Label {
-          Text("Pause goal", tableName: "Plan", comment: "Pauses the goal")
+          Text("Pause goal", tableName: "Plan")
         } icon: {
           Image(systemName: "pause")
         }
