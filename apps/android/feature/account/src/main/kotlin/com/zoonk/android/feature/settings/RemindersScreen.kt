@@ -153,7 +153,9 @@ fun RemindersScreen(
     ActOn(viewModel.saveFailed) { app.snackbars.show(R.string.reminders_save_failed) }
     val scope = rememberCoroutineScope()
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.reminders_title)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.reminders_title)) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier

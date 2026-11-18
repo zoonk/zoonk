@@ -97,7 +97,9 @@ fun PrivacyScreen(
     ActOn(privacy.saveFailed) { app.snackbars.show(R.string.settings_preferences_save_failed) }
     val scope = rememberCoroutineScope()
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_privacy)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.settings_privacy)) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier

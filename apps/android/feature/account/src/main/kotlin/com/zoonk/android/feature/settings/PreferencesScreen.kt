@@ -165,7 +165,9 @@ fun PreferencesScreen(
     ActOn(preferences.saveFailed) { app.snackbars.show(R.string.settings_preferences_save_failed) }
     val scope = rememberCoroutineScope()
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_preferences)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.settings_preferences)) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier

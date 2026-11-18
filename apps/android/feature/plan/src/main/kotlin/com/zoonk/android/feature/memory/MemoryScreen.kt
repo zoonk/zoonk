@@ -68,6 +68,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.api.models.Memory
 import com.zoonk.api.models.MemoryCategory
 import com.zoonk.api.models.MemoryFact
@@ -97,7 +98,9 @@ fun MemoryScreen(
     val scope = rememberCoroutineScope()
     VisitOf(screen.visit)
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_memory)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.settings_memory)) }, columnWidth = COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier
@@ -109,9 +112,9 @@ fun MemoryScreen(
             Column(
                 modifier =
                     Modifier
-                        .widthIn(max = 640.dp)
+                        .widthIn(max = COLUMN_WIDTH)
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(horizontal = pageListMargin(), vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageHeader(
@@ -366,3 +369,6 @@ private val ICON = 16.dp
 /** Core's `MAX_MEMORY_STATEMENT_LENGTH`. */
 private const val MAX_STATEMENT_LENGTH = 300
 private const val EXPORT_FILE_NAME = "zoonk-memory.json"
+
+/** Memory's column, its margins included; its rows' words sit on the page's margin, as its way back does. */
+private val COLUMN_WIDTH = 640.dp
