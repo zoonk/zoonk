@@ -146,20 +146,6 @@ function FormulaModelBoard({
       />
 
       <div className="flex flex-col gap-1">
-        {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
-        {view.compared && (
-          <ActivityCanvasLabel
-            aria-hidden="true"
-            className={cn("tabular-nums", view.compared.x === view.x && "invisible")}
-          >
-            {t("{output} at {input}: {value}", {
-              input: formatX(view.compared.x),
-              output: charted.label,
-              value: formatOutput(charted, view.compared.y),
-            })}
-          </ActivityCanvasLabel>
-        )}
-
         <ActivityFormulaChart
           baseline={
             view.baselineCurve ? { points: view.baselineCurve, y: view.chartedBefore } : null
@@ -187,6 +173,20 @@ function FormulaModelBoard({
           yDomain={view.yDomain}
           yLabel={charted.label}
         />
+
+        {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
+        {view.compared && (
+          <ActivityCanvasLabel
+            aria-hidden="true"
+            className={cn("tabular-nums", view.compared.x === view.x && "invisible")}
+          >
+            {t("{output} at {input}: {value}", {
+              input: formatX(view.compared.x),
+              output: charted.label,
+              value: formatOutput(charted, view.compared.y),
+            })}
+          </ActivityCanvasLabel>
+        )}
       </div>
 
       {view.baseline && (
