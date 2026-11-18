@@ -15,7 +15,7 @@ export function WeekdayToggle({
   const formatWeekday = useFormatWeekday();
 
   return (
-    <Toggle className="h-11 min-w-9 flex-1 px-1.5 capitalize" variant="outline" {...props}>
+    <Toggle className="h-11 min-w-max flex-1 px-1.5 capitalize" variant="outline" {...props}>
       {formatWeekday(weekday, "short")}
     </Toggle>
   );
