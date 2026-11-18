@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.mindmaps
 
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -35,6 +37,12 @@ class MindMapTabsTest {
         show()
 
         compose.onNodeWithContentDescription("With a map, 2 maps").assertExists()
+    }
+
+    @Test fun withoutAMapIsAHeadingForScreenReaders() {
+        show()
+
+        compose.onNode(hasText("Without a map") and isHeading()).assertExists()
     }
 
     @Test fun theSavedTabCountsEverySavedMapItLists() {
