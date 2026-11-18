@@ -52,7 +52,7 @@ function SubjectRow({ subject }: { subject: FocusTestSubject }) {
     <ListRow>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle className="font-normal">{getSubjectName(subject)}</ListRowTitle>
+          <ListRowTitle className="font-normal">{subject.name}</ListRowTitle>
         </ListRowContent>
         {state && <ListRowTrailing>{state}</ListRowTrailing>}
       </ListRowBody>
