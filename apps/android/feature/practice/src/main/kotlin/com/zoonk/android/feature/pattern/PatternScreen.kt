@@ -84,6 +84,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternContrastInner
 import com.zoonk.api.models.MistakePatternDrillInner
@@ -390,7 +391,7 @@ private fun ContrastRows(contrast: List<MistakePatternContrastInner>) {
                     row.example,
                     Modifier.weight(1f).alignByBaseline(),
                     color = quiet,
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

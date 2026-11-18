@@ -31,6 +31,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.GoalContentGoal
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusCourseWeights
@@ -156,7 +157,7 @@ private fun SubjectRow(
                             modifier = Modifier.width(QUESTIONS_WIDTH),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = factsStyle(),
-                            textAlign = TextAlign.End,
+                            textAlign = layoutEnd(),
                             maxLines = 1,
                         )
                     }
@@ -172,7 +173,7 @@ private fun SubjectRow(
                 modifier = Modifier.widthIn(min = SHARE_WIDTH),
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = factsStyle(),
-                textAlign = TextAlign.End,
+                textAlign = layoutEnd(),
             )
         },
     )

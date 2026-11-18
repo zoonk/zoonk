@@ -124,6 +124,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.CheckpointPhase
@@ -679,7 +680,7 @@ private fun DetailRow(
                 Text(
                     it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }

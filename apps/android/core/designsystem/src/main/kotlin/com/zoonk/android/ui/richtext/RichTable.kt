@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.layoutEnd
+import com.zoonk.android.ui.theme.layoutStart
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -148,9 +150,9 @@ private fun TableCell(
     val numeric = align == TableAlign.End || align == TableAlign.Center
     val textAlign =
         when (align) {
-            TableAlign.End -> TextAlign.End
+            TableAlign.End -> layoutEnd()
             TableAlign.Center -> TextAlign.Center
-            else -> TextAlign.Start
+            else -> layoutStart()
         }
 
     RichTextLine(

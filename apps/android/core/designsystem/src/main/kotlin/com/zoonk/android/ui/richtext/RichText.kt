@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.em
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
@@ -471,7 +472,7 @@ private fun RichList(
                             .alignByBaseline()
                             .then(if (block.ordered) Modifier else Modifier.clearAndSetSemantics {}),
                     style = style.withTabularFigures(),
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                 )
 
                 RichTextLine(richText(item, marksTerms), Modifier.weight(1f).alignByBaseline(), style)
