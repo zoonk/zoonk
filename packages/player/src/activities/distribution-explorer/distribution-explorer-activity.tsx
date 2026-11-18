@@ -2,7 +2,6 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -18,6 +17,7 @@ import {
   type Interval,
   densityCurve,
   distributionDomain,
+  distributionPercentFormat,
   distributionTicks,
   handleStep,
   snapDomain,
@@ -36,7 +36,6 @@ type Content = DistributionExplorerProps["content"];
 const PLOT_HEIGHT = 196;
 const PLOT_PADDING = { bottom: 46, left: 12, right: 12, top: 22 };
 const HEADROOM = 1.08;
-const PERCENT_DIGITS = 1;
 const FAR_SDS = 40;
 
 function percentBetween(content: Content, range: Interval): number {
@@ -92,14 +91,8 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
-  // A share is written with the digits the question's answer needs, the same in every place.
-  const percentDigits =
-    check.kind === "numeric"
-      ? exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance })
-      : PERCENT_DIGITS;
-
-  const percent = (value: number) =>
-    format(value, { maximumFractionDigits: percentDigits, unit: "%" });
+  const percent = (value: number) => format(value, distributionPercentFormat({ check }));
+  const tail = (value: number) => format(value, distributionPercentFormat({ check, isTail: true }));
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
   const space = useSentenceSpace();
@@ -166,8 +159,8 @@ export function DistributionExplorerActivity({
         )}
 
         <DistributionTails
-          above={percent(above)}
-          below={percent(below)}
+          above={tail(above)}
+          below={tail(below)}
           handles={[handles.from, handles.to]}
         />
 
@@ -209,8 +202,8 @@ export function DistributionExplorerActivity({
             })}
         {space}
         {t("{between} of values fall between {from} and {to}, {below} below and {above} above.", {
-          above: percent(above),
-          below: percent(below),
+          above: tail(above),
+          below: tail(below),
           between: percent(between),
           from: formatValue(handles.from),
           to: formatValue(handles.to),
