@@ -142,6 +142,12 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   const isLast = index === sections.length - 1;
   const writing = runner.speakingWriting;
 
+  const startable = canStartSpeaking({
+    error: runner.error,
+    pending: runner.pending,
+    writing: writing !== null,
+  });
+
   const footer = speaking ? (
     <SpeakingHandIn
       isLast={isLast}
@@ -151,13 +157,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
     <TaskActions>
       <TaskMainButton
         busy={runner.busy === "startSpeaking"}
-        disabled={
-          !canStartSpeaking({
-            error: runner.error,
-            pending: runner.pending,
-            writing: writing !== null,
-          })
-        }
+        disabled={!startable}
         onClick={() => void runner.startSpeaking()}
       >
         {t("Start")}
@@ -174,7 +174,8 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
 
         {!speaking && writing && (
           <WritingWait
-            barHasMainAction
+            // A disabled Start is no choice yet, so the wait's own retry stays the filled one.
+            barHasMainAction={startable}
             // Once opening the written paper failed, it opens only from Start.
             hint={runner.error ? undefined : t("Your speaking paper opens as soon as it's ready.")}
             kind="speakingPaper"

@@ -139,6 +139,34 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect.element(rowCreate("Atoms")).toBeVisible();
   });
 
+  it("says how many chapters wait under the rows it shows, and opens them there", async () => {
+    const served = view(null);
+
+    render(
+      <Screen
+        actions={actionsWith({})}
+        served={{
+          ...served,
+          chapters: served.chapters.map((row, index) =>
+            index === 2 ? { ...row, lessonsToWrite: 1 } : row,
+          ),
+        }}
+      />,
+    );
+
+    await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
+
+    await expect
+      .element(notMade().getByRole("button", { name: "Without a map" }))
+      .not.toBeInTheDocument();
+
+    await expect.element(rowCreate("Atoms")).toBeVisible();
+    await expect.element(notMade().getByText("Reactions")).not.toBeInTheDocument();
+
+    await notMade().getByRole("button", { name: "1 more chapter" }).click();
+    await expect.element(notMade().getByText("Reactions")).toBeVisible();
+  });
+
   it.each([
     ["the newer read answers first", ["newer", "older"]],
     ["the older read answers first", ["older", "newer"]],
@@ -287,7 +315,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
       render(<Screen actions={actionsWith({})} served={writingView(stop)} />);
 
       await expect
-        .element(notMade().getByRole("button", { name: "Without a map" }))
+        .element(notMade().getByRole("button", { name: "1 more chapter" }))
         .toHaveAttribute("aria-expanded", "true");
 
       await expect.element(writingRow()).toBeVisible();

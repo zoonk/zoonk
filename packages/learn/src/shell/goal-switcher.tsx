@@ -215,7 +215,7 @@ export function GoalSwitcher({
   const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
   const selected = followed.find((goal) => goal.id === selectedId);
   const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
-  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Start a goal");
+  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Quick explanations");
 
   if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
@@ -245,9 +245,9 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {(selected || !hasGoalOptions) && (
+          {selected && (
             <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
-              {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
+              <GoalMark goal={selected} />
             </span>
           )}
           <span className="line-clamp-2 min-w-0 flex-1 text-left wrap-anywhere">

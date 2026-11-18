@@ -3,12 +3,6 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-  FoldChevron,
-} from "@zoonk/ui/components/collapsible";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -21,6 +15,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { ShowMore } from "../_components/show-more";
 import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
@@ -35,9 +30,6 @@ import { MindMapRowView } from "./mind-map-row";
 import { type MindMapsLibrary } from "./use-mind-maps-library";
 
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
-
-const FOLD_TITLE_CLASS =
-  "hover:text-muted-foreground focus-visible:ring-ring/50 hit-area relative -mx-1 flex items-center gap-1 rounded-md px-1 text-start outline-none focus-visible:ring-[3px]";
 
 /** What stops a new map on this page: a refusal while the list is read again, then the list's offer. */
 export function useShownStop({ page, refusal }: MindMapsLibrary) {
@@ -194,24 +186,10 @@ export function NotMadeYet({
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
 
-  const title = t("Without a map");
-
   return (
-    <Collapsible
-      defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
-      render={<PageSection aria-labelledby={titleId} data-slot="maps-not-made" />}
-    >
+    <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>
-          {later.length > 0 ? (
-            <CollapsibleTrigger className={FOLD_TITLE_CLASS}>
-              {title}
-              <FoldChevron inline />
-            </CollapsibleTrigger>
-          ) : (
-            title
-          )}
-        </PageSectionTitle>
+        <PageSectionTitle id={titleId}>{t("Without a map")}</PageSectionTitle>
         <PageSectionDetail>
           {t("{count, plural, one {# chapter} other {# chapters}}", { count: chapters.length })}
         </PageSectionDetail>
@@ -220,16 +198,23 @@ export function NotMadeYet({
       {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
       {later.length > 0 && (
-        <CollapsibleContent className="flex flex-col gap-3">
-          {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
-            <p className={LINE_CLASS}>
-              {t(
-                "Making one of these maps writes its lessons first, and they count toward your free lessons.",
-              )}
-            </p>
-          )}
-          <NotMadeRows chapters={later} library={library} plus={plus} />
-        </CollapsibleContent>
+        <ShowMore
+          defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
+          label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
+            count: later.length,
+          })}
+        >
+          <div className="flex flex-col gap-3">
+            {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
+              <p className={LINE_CLASS}>
+                {t(
+                  "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+                )}
+              </p>
+            )}
+            <NotMadeRows chapters={later} library={library} plus={plus} />
+          </div>
+        </ShowMore>
       )}
 
       <div
@@ -253,6 +238,6 @@ export function NotMadeYet({
           <NotMadeLine chapters={later} library={library} tier={tier} />
         </StatusRegion>
       </div>
-    </Collapsible>
+    </PageSection>
   );
 }
