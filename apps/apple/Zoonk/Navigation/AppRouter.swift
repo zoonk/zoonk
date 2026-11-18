@@ -170,17 +170,48 @@ final class AppRouter {
     hiddenTasks.contains(depth)
   }
 
-  /// Changes whenever the window goes somewhere: another tab, task, pushed screen or sheet.
+  /// Changes whenever the window goes somewhere: another tab, task, pushed screen or sheet. A
+  /// sidebar place is one page on its own row and pushed on the tab it was opened from, so a resize
+  /// that moves it between them goes nowhere.
   var shown: Shown {
-    Shown(
-      tab: selectedTab, tasks: tasks, path: paths[selectedTab] ?? NavigationPath(), sheet: sheet)
+    let path = paths[selectedTab] ?? NavigationPath()
+    let page: Shown.Page =
+      if let place = Self.listedPlace(of: selectedTab, path: path) {
+        .place(place)
+      } else {
+        .stack(selectedTab, path)
+      }
+
+    return Shown(page: page, tasks: tasks, sheet: sheet)
   }
 
   struct Shown: Equatable {
-    let tab: AppTab
+    enum Page: Equatable {
+      case place(AppTab)
+      case stack(AppTab, NavigationPath)
+    }
+
+    let page: Page
     let tasks: [AppRoute]
-    let path: NavigationPath
     let sheet: AppSheet?
+  }
+
+  /// The sidebar place a tab shows: its own root, or the one place pushed on it.
+  private static func listedPlace(of tab: AppTab, path: NavigationPath) -> AppTab? {
+    if path.isEmpty {
+      return tab.studyRoute == nil ? nil : tab
+    }
+
+    guard path.count == 1 else {
+      return nil
+    }
+
+    let places = AppTab.sidebarPlaces.compactMap(\.studyRoute) + [.statistics()]
+    return places.first { route in
+      var only = NavigationPath()
+      only.append(route)
+      return only == path
+    }?.sidebarTab
   }
 
   @discardableResult
@@ -251,18 +282,11 @@ final class AppRouter {
   }
 
   private func moveListedPlaceToItsRow() {
-    guard selectedTab.studyRoute == nil, let path = paths[selectedTab], path.count == 1 else {
+    guard selectedTab.studyRoute == nil, let path = paths[selectedTab] else {
       return
     }
 
-    let places = AppTab.sidebarPlaces.compactMap(\.studyRoute) + [.statistics()]
-    let place = places.first { route in
-      var only = NavigationPath()
-      only.append(route)
-      return only == path
-    }
-
-    if let tab = place?.sidebarTab, sidebarTabs.contains(tab) {
+    if let tab = Self.listedPlace(of: selectedTab, path: path), sidebarTabs.contains(tab) {
       paths[selectedTab] = nil
       paths[tab] = nil
       selectedTab = tab

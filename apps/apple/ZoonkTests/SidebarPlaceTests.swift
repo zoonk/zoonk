@@ -60,6 +60,26 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertEqual(router.tasks, [.mistakePractice()])
   }
 
+  /// What closes a sheet on navigation sees a resize as staying on the same page.
+  func testAResizeShowsTheSamePage() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.mistakes)
+    router.open(.mistakePractice())
+    router.present(.feedback(screen: "practice"))
+    let shown = router.shown
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    XCTAssertEqual(router.shown, shown)
+
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    XCTAssertEqual(router.shown, shown)
+
+    router.select(.plan)
+    XCTAssertNotEqual(router.shown, shown)
+  }
+
   func testWithoutASidebarAPageOpensOnTheTabItCameFrom() {
     let router = AppRouter()
 

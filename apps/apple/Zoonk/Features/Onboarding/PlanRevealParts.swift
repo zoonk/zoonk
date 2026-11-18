@@ -260,9 +260,15 @@ extension StudyBlock {
   }
 }
 
+/// The loaded week's shape, Today's heading a row under the week's, so nothing moves as it comes.
 struct RevealTodayPlaceholder: View {
   var body: some View {
     Section {
+      SectionTitle(
+        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+      )
+      .listRowSeparator(.hidden)
+
       ForEach(0..<3, id: \.self) { _ in
         Text(verbatim: "A lesson of the first day")
           .typeStyle(.rowTitle)
@@ -270,7 +276,9 @@ struct RevealTodayPlaceholder: View {
       }
     } header: {
       SectionTitle(
-        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today"))
+        Text(
+          "Your first week", tableName: "Onboarding",
+          comment: "Header over the plan's next seven days"))
     }
     .accessibilityHidden(true)
   }

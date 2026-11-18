@@ -213,7 +213,7 @@ extension View {
 }
 
 /// Acting on one goal (pause, archive) lives on the Plan.
-private struct GoalSwitcher: View {
+struct GoalSwitcher: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
@@ -224,6 +224,12 @@ private struct GoalSwitcher: View {
   let summary: LearnerSummary
   let isCompact: Bool
   let maxTitleWidth: CGFloat
+
+  /// The plain "Start a goal" row, with nothing in a menu to switch to: one quick explanation
+  /// doesn't need a menu, two or more are listed in it.
+  static func startsPlainly(followed: Int, waiting: Int, explanations: Int) -> Bool {
+    followed == 0 && waiting == 0 && explanations <= 1
+  }
 
   /// Said in an alert, since the menu the learner chose from has closed.
   private enum Failure {
@@ -241,7 +247,10 @@ private struct GoalSwitcher: View {
     let followed = summary.followedGoals
     let explanations = summary.openExplanations
 
-    if followed.isEmpty && explanations.isEmpty {
+    if GoalSwitcher.startsPlainly(
+      followed: followed.count, waiting: summary.waitingGoals.count,
+      explanations: explanations.count)
+    {
       Button {
         router.open(.startGoal())
       } label: {

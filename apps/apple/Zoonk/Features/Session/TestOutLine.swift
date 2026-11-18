@@ -17,7 +17,7 @@ struct TestOutLine: View {
 
   private var line: AttributedString {
     let line = AttributedString(
-      localized: "Already know this? **Take the test**", table: "Today",
+      localized: "Already know this chapter? **Take the test**", table: "Today",
       comment: "Skips the next lesson's chapter with its test")
 
     return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
