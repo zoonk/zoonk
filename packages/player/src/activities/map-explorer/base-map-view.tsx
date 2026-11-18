@@ -130,6 +130,7 @@ function MapLabels({
             strokeLinejoin="round"
             strokeWidth={LABEL_HALO * pixelSize}
             textAnchor="middle"
+            textRendering="geometricPrecision"
             transform={`translate(${at.x} ${at.y}) rotate(${label.angle}) scale(${spot?.scale ?? 1}) translate(${-offsetX} ${-offsetY})`}
           >
             {labelText(label.key, label.text)}
