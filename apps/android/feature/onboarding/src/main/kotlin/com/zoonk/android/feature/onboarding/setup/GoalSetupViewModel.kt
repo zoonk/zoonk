@@ -76,8 +76,11 @@ internal fun setupProgress(
     return SetupProgress(order.indexOf(if (current.profileQuestion != null) OnboardingStep.WORK else current), order.size)
 }
 
-/** A work or career-change purpose asks the role next. */
-private val QUESTIONS_THAT_ADD_QUESTIONS = setOf(OnboardingStep.PURPOSE)
+/**
+ * A work or career-change purpose asks the role next; a language reason that names a certificate asks
+ * the exam's questions.
+ */
+private val QUESTIONS_THAT_ADD_QUESTIONS = setOf(OnboardingStep.PURPOSE, OnboardingStep.REASON)
 
 private fun countsAsQuestion(step: OnboardingStep) =
     (step in QUESTION_SCREENS || step.profileQuestion != null) && step != OnboardingStep.PLACEMENT
