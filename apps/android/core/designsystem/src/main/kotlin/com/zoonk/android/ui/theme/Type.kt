@@ -155,11 +155,13 @@ val MaterialTheme.zoonkType: ZoonkTypography
 fun TextStyle.withTabularFigures(): TextStyle = copy(fontFeatureSettings = "tnum")
 
 /**
- * Compose breaks Korean and Japanese inside words, where Android's own text views (word style AUTO) and
- * their readers wrap between them: Korean at the spaces, Japanese between phrases.
+ * Compose breaks Korean and Japanese inside words. Korean wraps between words, at the spaces, everywhere, as the web's
+ * `keep-all` does. Japanese wraps between phrases only in short text (labels, titles), so a button never splits a word;
+ * a paragraph still wraps between characters, as on the web and in Android's own text past a few lines.
  */
 internal fun Typography.wrappedFor(language: String): Typography {
     val phrase = phraseLocale(language) ?: return this
+    val paragraph = paragraphWrap(language, phrase)
     return copy(
         displayLarge = displayLarge.byPhrase(phrase),
         displayMedium = displayMedium.byPhrase(phrase),
@@ -170,9 +172,9 @@ internal fun Typography.wrappedFor(language: String): Typography {
         titleLarge = titleLarge.byPhrase(phrase),
         titleMedium = titleMedium.byPhrase(phrase),
         titleSmall = titleSmall.byPhrase(phrase),
-        bodyLarge = bodyLarge.byPhrase(phrase),
-        bodyMedium = bodyMedium.byPhrase(phrase),
-        bodySmall = bodySmall.byPhrase(phrase),
+        bodyLarge = paragraph(bodyLarge),
+        bodyMedium = paragraph(bodyMedium),
+        bodySmall = paragraph(bodySmall),
         labelLarge = labelLarge.byPhrase(phrase),
         labelMedium = labelMedium.byPhrase(phrase),
         labelSmall = labelSmall.byPhrase(phrase),
@@ -181,11 +183,12 @@ internal fun Typography.wrappedFor(language: String): Typography {
 
 internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography {
     val phrase = phraseLocale(language) ?: return this
+    val paragraph = paragraphWrap(language, phrase)
     return copy(
         sectionTitle = sectionTitle.byPhrase(phrase),
-        lead = lead.byPhrase(phrase),
-        lessonText = lessonText.byPhrase(phrase),
-        question = question.byPhrase(phrase),
+        lead = paragraph(lead),
+        lessonText = paragraph(lessonText),
+        question = paragraph(question),
     )
 }
 
@@ -194,6 +197,11 @@ private fun phraseLocale(language: String): LocaleList? =
         "ko", "ja" -> LocaleList("$language-u-lw-phrase")
         else -> null
     }
+
+private fun paragraphWrap(
+    language: String,
+    phrase: LocaleList,
+): (TextStyle) -> TextStyle = if (language == "ja") { style -> style } else { style -> style.byPhrase(phrase) }
 
 /**
  * Every paragraph starts on the screen's start side, as Android's `viewStart` does: an English

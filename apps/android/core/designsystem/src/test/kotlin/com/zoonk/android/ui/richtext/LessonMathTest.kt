@@ -102,11 +102,13 @@ class LessonMathTest {
     }
 
     @Test
-    fun keepsTheBracketsOfAProductOfGreekSymbols() {
+    fun keepsTheBracketsOfSymbolsOrWordsSideBySide() {
         assertEquals("1/(μ0ε0)", math("\\frac{1}{\\mu_0 \\varepsilon_0}").text.text)
         assertEquals("12000/(Δx)", math("\\frac{12000}{\\Delta x}").text.text)
         assertEquals("12000/μ0", math("\\frac{12000}{\\mu_0}").text.text)
         assertEquals("(mass volume)/12000", math("\\frac{\\text{mass}\\,\\text{volume}}{12000}").text.text)
+        assertEquals("(mass volume)/12000", math("\\frac{\\text{mass volume}}{12000}").text.text)
+        assertEquals("(total distance)/(total time)", math("\\frac{\\text{total distance}}{\\text{total time}}").text.text)
     }
 
     @Test
