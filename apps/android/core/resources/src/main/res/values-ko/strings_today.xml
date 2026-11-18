@@ -75,9 +75,7 @@
   "today_practice_with_buddy": "ad5094b3a3f3dfd48a3d922566070c6f6512595f80df80cf795959f13d90c204",
   "today_preparation": "bf5f0b7013dc04e15d46292c0fd93e6addc94cf12c6d3450bf623fa24ad430d8",
   "today_progress": "f4725cc39c66627dec6428f20c538d25e92da4d7b1c0a17892a964fcc9a88081",
-  "today_progress_known": "f7e3e0cbf04ddd25efa5230d139bc4cf2199344f55b66f9e2b9d759624c43e39",
   "today_progress_lessons_today": "82ec4ee177663cd75e3d8f6239aa45fe99b7f88f4fc12c6709f5f70a89e07d98",
-  "today_progress_studied": "fbe6044e2fd0f0a64dc2f12b80c6827e2cba7f613fdaf046f493d92b4b450e44",
   "today_quick_explanation": "a85e7002b6629d1a6be3e94a40ffdc753d3220f853c136016e7db550b4f75c7e",
   "today_rest": "e8e68c8826f857001a1dc6048f368870531db2c7117163d09a0f090e0fc46a30",
   "today_rest_enjoy": "a5127d2cddfb294bbb9ecdffed46f72ddbd44029f5f207af46fdfb43f1ef3527",
@@ -332,10 +330,6 @@
     <plurals name="today_progress_lessons_today">
         <item quantity="other">오늘: 레슨 %s개</item>
     </plurals>
-    <!-- A legend label in the progress card: lessons the learner studied. -->
-    <string name="today_progress_studied">학습한 것</string>
-    <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">이미 알던 것</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">다음 레슨</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->

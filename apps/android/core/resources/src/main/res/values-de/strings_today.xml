@@ -75,9 +75,7 @@
   "today_practice_with_buddy": "48d26e11f4db649f7a23e6608ebd4967c126d59adba2a182c36a34ae265b61d6",
   "today_preparation": "c52f8af5a11b897ae8b0aa730090aa7d5c7b10155050bae3d49ae02886a2ca6d",
   "today_progress": "6a14528b0d57579828682db8a621938a43c69afc7d2f58c5dc4521ae5cfdc877",
-  "today_progress_known": "02a8fa7a6864dfb1b9d5cbc489faf958909d5def23fc1a395eb72066fd83ec19",
   "today_progress_lessons_today": "701a287ffeadbc4c4246b3c73616a35a6ff4bbb9d09a7a28ce6c180c426efe41",
-  "today_progress_studied": "81395979b5a0b67460df8d679baf37c03557552e2e1750a797397e4d467c7ec7",
   "today_quick_explanation": "03bafe9c0e49323f09819e5b7df0de68bef2e0f434081d82efc9fde1098e78aa",
   "today_rest": "45d4003b4df1b461c99332e9d8c4270d94189fc08dd8bb97a63335c5fec3e695",
   "today_rest_enjoy": "e45a33b47fc0e92954d0762ef1609011d1bab7fa0fbe7a085bf981c4e914ee6b",
@@ -341,10 +339,6 @@
         <item quantity="one">Heute: %s Lektion</item>
         <item quantity="other">Heute: %s Lektionen</item>
     </plurals>
-    <!-- A legend label in the progress card: lessons the learner studied. -->
-    <string name="today_progress_studied">Gelernt</string>
-    <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Schon gewusst</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Deine nächsten Lektionen</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
