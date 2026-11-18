@@ -3376,11 +3376,6 @@ msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "Quero"
 
-#: src/components/public/goal-form.tsx
-msgctxt "0u-6yz"
-msgid "For example: <example></example>"
-msgstr "Por exemplo: <example></example>"
-
 #: src/components/public/not-found-message.tsx
 msgctxt "EdX_cR"
 msgid "The link may be old or mistyped."

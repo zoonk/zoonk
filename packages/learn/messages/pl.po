@@ -8911,6 +8911,11 @@ msgctxt "_g7xra"
 msgid "How does inflation work?"
 msgstr "Jak działa inflacja?"
 
+#: src/onboarding/entry/goal-field.tsx
+msgctxt "goalField.0u-6yz"
+msgid "For example: <example></example>"
+msgstr "Na przykład: <example></example>"
+
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
