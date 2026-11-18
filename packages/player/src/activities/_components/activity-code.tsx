@@ -136,12 +136,11 @@ const FIELD_RESET =
   "col-start-1 row-start-1 m-0 min-w-0 resize-none overflow-hidden border-0 bg-transparent p-0 whitespace-pre text-transparent caret-foreground outline-none selection:bg-viz-accent-soft placeholder:text-muted-foreground";
 
 export function ActivityCodeLineInput({
-  className,
   language,
   onChange,
   value,
   ...props
-}: Omit<React.ComponentProps<"input">, "onChange" | "value"> & {
+}: Omit<React.ComponentProps<"textarea">, "onChange" | "value"> & {
   language: CodeLanguage;
   onChange: (value: string) => void;
   value: string;
@@ -149,19 +148,22 @@ export function ActivityCodeLineInput({
   const kept = useKeptTyping({ value });
 
   return (
-    <span className={cn("grid min-w-0 flex-1", className)} data-slot="activity-code-line-input">
-      <span aria-hidden="true" className="col-start-1 row-start-1 self-center whitespace-pre">
+    <span className="grid min-w-0 flex-1" data-slot="activity-code-line-input">
+      <span
+        aria-hidden="true"
+        className="col-start-1 row-start-1 wrap-anywhere whitespace-pre-wrap"
+      >
         <ActivityCodeTokens tokens={highlightCode(value, language)[0] ?? []} />
       </span>
 
-      <input
+      <textarea
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={cn(FIELD_RESET, "h-lh w-full [font:inherit]")}
-        onChange={(event) => onChange(event.target.value)}
+        className={cn(FIELD_RESET, "size-full min-h-lh wrap-anywhere whitespace-pre-wrap")}
+        onChange={(event) => onChange(event.target.value.replaceAll(/[\r\n]/gu, ""))}
+        rows={1}
         spellCheck={false}
-        type="text"
         value={value}
         {...props}
         {...kept}
