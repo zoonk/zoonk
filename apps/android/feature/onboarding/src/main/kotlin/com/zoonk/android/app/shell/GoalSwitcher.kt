@@ -114,7 +114,7 @@ fun GoalSwitcher(
         }
     }
 
-    if (selected == null && explanations.isEmpty()) {
+    if (showsStartRow(followed = followed.size, waiting = learner.waitingGoals.size, explanations = explanations.size)) {
         TextButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
             Text(text = stringResource(R.string.goal_switcher_start_goal), modifier = Modifier.padding(start = 8.dp))
@@ -154,6 +154,13 @@ fun GoalSwitcher(
         }
     }
 }
+
+/** With nothing to switch to, the switcher is the plain "Start a goal" row. */
+internal fun showsStartRow(
+    followed: Int,
+    waiting: Int,
+    explanations: Int,
+): Boolean = followed == 0 && explanations == 0
 
 @Composable
 private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
