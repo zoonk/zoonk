@@ -27,8 +27,6 @@ const READING_MS = 240_000;
 
 const PLAN_BUILT_PROGRESS = 40;
 
-const PHASE_WEIGHTS = [PLAN_BUILT_PROGRESS, 100 - PLAN_BUILT_PROGRESS];
-
 function ReadingDetail({ document }: { document: ExamDocument }) {
   const t = useExtracted();
   const tick = useTickCount({ resetKey: "notice" });
@@ -144,12 +142,7 @@ export function NoticeReading({
             retry={stop.retry}
           />
         ) : (
-          <GenerationTimelineProgress
-            aria-label={title}
-            locale={locale}
-            value={value}
-            weights={PHASE_WEIGHTS}
-          />
+          <GenerationTimelineProgress aria-label={title} locale={locale} value={value} />
         )}
       </GenerationTimelineHeader>
 
