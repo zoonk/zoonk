@@ -26,9 +26,21 @@
     <string name="mindmaps_shown_as_text">Shown as text</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="one">Writes %1$s lesson first, from your free lessons</item>
-        <item quantity="other">Writes %1$s lessons first, from your free lessons</item>
+        <item quantity="one">%1$s lesson gets written first and counts toward your free lessons.</item>
+        <item quantity="other">%1$s lessons get written first and count toward your free lessons.</item>
     </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">%1$s lesson gets written first, so it takes a few minutes.</item>
+        <item quantity="other">%1$s lessons get written first, so it takes a few minutes.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s lesson to write</item>
+        <item quantity="other">%1$s lessons to write</item>
+    </plurals>
+    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
+    <string name="mindmaps_lessons_count_free">Writing lessons counts toward your free lessons.</string>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
     <string name="mindmaps_drawing">Drawing the mind map…</string>
@@ -65,11 +77,6 @@
     <string name="mindmaps_create_all">Create all</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">No map yet</string>
-    <string name="mindmaps_free_lessons_note">Making a map writes its chapter\'s lessons first, from your free lessons.</string>
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">Writes %1$s lesson first</item>
-        <item quantity="other">Writes %1$s lessons first</item>
-    </plurals>
     <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
     <string name="mindmaps_tab_chapters">Chapter maps</string>
     <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->

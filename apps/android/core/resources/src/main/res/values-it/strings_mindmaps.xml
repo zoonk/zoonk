@@ -23,13 +23,14 @@
   "mindmaps_empty_stopped": "ed0b933946a78b34aaefb950e6580dd5025ce0f9f435e7fa154202fb539a8e14",
   "mindmaps_failed": "7b8d3537e2d76d5f37db2fcc59fd9c1ad79493d8591286948c0b3de3d12d8ad5",
   "mindmaps_fit": "c9f362993334ea37da5246d5c3bdf0f5db13ed6036f24e52f0de7a46bf97f2a2",
-  "mindmaps_free_lessons_note": "3280ea7d839fbcbd7fd5b9c145dcb50612a524ecf9ef69067f0d9517ed2c9224",
   "mindmaps_in_short": "ef5356431fe00fecf84f69a7ce1a424825423aa08d56fa22c758c67e15ea7fea",
   "mindmaps_lesson_map": "88620630a4d8ceba570e2730b580733a9297afbaffd32069de2ac2255b45e635",
   "mindmaps_lesson_maps": "0710dd9208960ee90f74d8125ad64ffdfa6a86f993d7e01fde6a1c6455c2a621",
+  "mindmaps_lessons_count_free": "b1050dc9500753894dfafbbb8ac00b3d0f3e193a3ad14313d174af2da4a1a2f6",
   "mindmaps_lessons_empty": "a775c073ea2b57a8597681e1f5d34180b7a58e9c37040b719cb80c15693cd6ae",
-  "mindmaps_lessons_first_free": "4ebf35ea2bcc2050995c0fc44add300b66a03a7178183696c774dc67f5c3bcce",
-  "mindmaps_lessons_to_write": "5271c5d20c52dfc9aa69a59b644e6a0f397b80dd61738970430b117d39e06b87",
+  "mindmaps_lessons_first_free": "f196f32ebbee946c325f983260604a724ef66c7dbfe7e03bd3b642c3fd419af1",
+  "mindmaps_lessons_first_plus": "d658881b46e8b1fc4348f99b880d438137ea9bf17d3fe17047e3da3063b3271e",
+  "mindmaps_lessons_to_write": "23c4a3ae2e9cd78d502425ad65fe01b7649db927a7da51a0c9034303835d7e3d",
   "mindmaps_map_gone": "2186eb2a8754fe7ac3c3bb18a4e6add9a1eb48a89ad2cfa23e3dd3ce87745199",
   "mindmaps_next": "e55ed37e8d5df70359e6dfebdfac50ceb41cb1b3b04b178b990f6c54ec326818",
   "mindmaps_no_longer_available": "184bd1839584148077ded5a4de0f4a92c1911428ca48ef946ba4ea267574429a",
@@ -100,10 +101,24 @@
     <string name="mindmaps_shown_as_text">In formato testo</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
-        <item quantity="one">Prepara prima %1$s lezione tra quelle gratuite</item>
-        <item quantity="many">Prepara prima %1$s lezioni tra quelle gratuite</item>
-        <item quantity="other">Prepara prima %1$s lezioni tra quelle gratuite</item>
+        <item quantity="one">Prima prepariamo %1$s lezione e la conteggiamo tra le tue lezioni gratuite.</item>
+        <item quantity="many">Prima prepariamo %1$s lezioni e le conteggiamo tra le tue lezioni gratuite.</item>
+        <item quantity="other">Prima prepariamo %1$s lezioni e le conteggiamo tra le tue lezioni gratuite.</item>
     </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">Prima prepariamo %1$s lezione, quindi ci vogliono alcuni minuti.</item>
+        <item quantity="many">Prima prepariamo %1$s lezioni, quindi ci vogliono alcuni minuti.</item>
+        <item quantity="other">Prima prepariamo %1$s lezioni, quindi ci vogliono alcuni minuti.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s lezione da preparare</item>
+        <item quantity="many">%1$s lezioni da preparare</item>
+        <item quantity="other">%1$s lezioni da preparare</item>
+    </plurals>
+    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
+    <string name="mindmaps_lessons_count_free">Le lezioni preparate vengono conteggiate nel tuo limite di lezioni gratuite.</string>
     <string name="mindmaps_writing_lessons">Stiamo preparando le lezioni, poi la mappa mentale…</string>
     <string name="mindmaps_writing_lessons_wait">Ci vuole qualche minuto. Puoi uscire: la ritroverai qui.</string>
     <string name="mindmaps_drawing">Stiamo disegnando la mappa mentale…</string>
@@ -140,12 +155,6 @@
     <string name="mindmaps_create_all">Creale tutte</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Nessuna mappa per ora</string>
-    <string name="mindmaps_free_lessons_note">Creare una mappa prepara prima le lezioni del capitolo, usando le tue lezioni gratuite.</string>
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">Prepara prima %1$s lezione</item>
-        <item quantity="many">Prepara prima %1$s lezioni</item>
-        <item quantity="other">Prepara prima %1$s lezioni</item>
-    </plurals>
     <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
     <string name="mindmaps_tab_chapters">Mappe dei capitoli</string>
     <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->
