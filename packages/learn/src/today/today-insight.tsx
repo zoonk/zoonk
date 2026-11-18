@@ -57,8 +57,7 @@ function useInsightChoices(insight: MemoryInsightView) {
     return { accept: t("Move it"), dismiss: t("Not now"), open: answer };
   }
 
-  const gotIt = t("Got it");
-  return { accept: gotIt, dismiss: null, open: gotIt };
+  return { accept: t("Got it"), dismiss: null, open: null };
 }
 
 function useAnsweredText(insight: MemoryInsightView) {
@@ -171,6 +170,8 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
   const choices = useInsightChoices(insight);
+  const answersOnLine = choices.open === null;
+  const failed = state !== null && "failed" in state;
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
   return (
@@ -185,12 +186,23 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
         ) : (
           <>
             <SuggestionSummary>{insight.message}</SuggestionSummary>
-            <SuggestionOpen>{choices.open}</SuggestionOpen>
+            {answersOnLine ? (
+              <SuggestionAction
+                action={() => answer("accepted")}
+                busy={isPending}
+                variant="outline"
+              >
+                {choices.accept}
+              </SuggestionAction>
+            ) : (
+              <SuggestionOpen>{choices.open}</SuggestionOpen>
+            )}
           </>
         )}
+        {answersOnLine && failed && !isPending && <SuggestionSaveError className="basis-full" />}
       </SuggestionLine>
 
-      <SuggestionContent>
+      <SuggestionContent statement={answersOnLine}>
         <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
         {insight.planChange?.status === "proposed" && (
@@ -212,7 +224,7 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
           />
         )}
 
-        {state && "failed" in state && <SuggestionSaveError />}
+        {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </Suggestion>
   );
