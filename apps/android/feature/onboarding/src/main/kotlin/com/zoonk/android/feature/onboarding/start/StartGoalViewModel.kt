@@ -476,7 +476,7 @@ class StartGoalViewModel(
         if (isCreating || draftId?.let { store.drafts[it].freshState.value !is LoadState.Loaded } == true) return
         isCreating = true
         creationFailure.clear()
-        waitlist = null
+        if (waitlist != WaitlistOutcome.Joined) waitlist = null
         val asked = visit.number
         viewModelScope.launch {
             when (val outcome = store.createGoals(input, planId, draftId)) {
