@@ -28,12 +28,8 @@ export async function ScoreTile({ performance }: { performance: ScorePerformance
 export function ScoreTileSkeleton() {
   return (
     <Stat aria-hidden="true" className="self-start">
-      <StatValue>
-        <Skeleton className="w-14 rounded-sm">{"\u00A0"}</Skeleton>
-      </StatValue>
-      <StatDetail>
-        <Skeleton className="block w-36 rounded-sm">{"\u00A0"}</Skeleton>
-      </StatDetail>
+      <Skeleton className="h-5 w-14 rounded-sm" />
+      <Skeleton className="h-3.5 w-36 rounded-sm" />
     </Stat>
   );
 }

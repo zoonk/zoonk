@@ -22,7 +22,7 @@ export function ScoreChartFigure({
   return (
     <ProgressChartFigure label={t("Weekly score trend")}>
       <figcaption className="text-muted-foreground text-sm">
-        {t("Weekly score trend")}
+        <span aria-hidden="true">{t("Weekly score trend")}</span>
         <div className="sr-only">
           {t("{score} across {count, plural, one {# answer} other {# answers}}", {
             count: performance.totalAnswers,
