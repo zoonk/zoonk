@@ -230,11 +230,16 @@ describe("computing activities", () => {
       .toMatchTextContent("3 of 3 pass");
 
     const examples = page.getByRole("region", { name: "Should not match" });
-    const top = examples.element().getBoundingClientRect().top;
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      examples.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    const top = boardTop();
 
     await checkActivity();
     await expectVerdict("Correct!");
-    expect(examples.element().getBoundingClientRect().top).toBe(top);
+    expect(boardTop()).toBe(top);
     await expect.element(page.getByText("A pattern that works")).not.toBeInTheDocument();
   });
 

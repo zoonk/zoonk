@@ -264,11 +264,16 @@ describe("money and society activities", () => {
     await chainNode("1934 Dust storms").click();
     await expect.element(page.getByText("2 of 2 links")).toBeVisible();
     const chain = page.getByRole("list", { name: "Causes and effects" });
-    const top = chain.element().getBoundingClientRect().top;
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    const top = boardTop();
 
     await checkActivity();
     await expectVerdict("Correct!");
-    expect(chain.element().getBoundingClientRect().top).toBe(top);
+    expect(boardTop()).toBe(top);
 
     await expect
       .element(page.getByText("Linked: Years of drought led to Dust storms."))
