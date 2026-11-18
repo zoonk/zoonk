@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,7 @@ import androidx.core.view.WindowCompat
 import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
+import com.zoonk.android.ui.theme.balanced
 import java.time.LocalTime
 import kotlin.math.roundToInt
 
@@ -65,7 +65,7 @@ fun AlertDialog(
 /** A title's lines are balanced, so none ends on a word alone. */
 @Composable
 private fun BalancedTitle(title: @Composable () -> Unit) {
-    ProvideTextStyle(LocalTextStyle.current.copy(lineBreak = LineBreak.Heading), title)
+    ProvideTextStyle(LocalTextStyle.current.balanced(), title)
 }
 
 /** Material's date picker dialog, off a foldable's fold as [AlertDialog] is. */
