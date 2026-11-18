@@ -4,10 +4,10 @@ import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Lightbulb } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { ActivityGuessReveal } from "../_components/activity-guess-reveal";
+import { ActivityTip } from "../_components/activity-tip";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
 
@@ -75,10 +75,7 @@ export function GuessRevealActivity({
         </p>
       )}
 
-      <p className="flex items-start gap-2 text-sm leading-snug">
-        <Lightbulb aria-hidden="true" className="text-viz-highlight mt-0.5 size-4 shrink-0" />
-        <LessonRichText text={fields.takeaway} />
-      </p>
+      <ActivityTip text={fields.takeaway} />
     </ActivityGuessReveal>
   );
 }
