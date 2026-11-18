@@ -101,14 +101,14 @@ describe("turning lesson screens with a finger", () => {
     const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL), teachingStep("check")]);
     renderLessonPlayer({ lesson });
 
-    const next = page.getByRole("button", { name: /^Next/u });
+    const next = page.getByRole("button", { name: /^Continue/u });
     await expect.element(next).toBeVisible();
     next.element().focus();
 
     await swipeFrom(page.getByText("It plans what you do next."), { x: -SWIPE_PX });
 
     await expect.element(heading(OCCIPITAL.title)).toBeVisible();
-    await expect.element(page.getByRole("button", { name: /^Next/u })).not.toHaveFocus();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).not.toHaveFocus();
   });
 
   it("turns on a quick flick the page reads late, as a busy phone does", async () => {

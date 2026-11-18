@@ -113,9 +113,8 @@ export function LessonPlayerHeader() {
 
         <TaskHeaderTitle title={lesson.title} />
 
-        <TaskHeaderSide align="end">
+        <TaskHeaderSide afterToggle={<LessonScreenMenu />} align="end">
           <UnsavedAnswers />
-          <LessonScreenMenu />
         </TaskHeaderSide>
       </TaskHeaderBar>
 

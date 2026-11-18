@@ -1,5 +1,6 @@
 "use client";
 
+import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -12,9 +13,10 @@ import { useStrugglePause } from "./use-struggle-pause";
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   const t = useExtracted();
   const buddy = useTutorBuddy();
+  const asideShown = useTaskAsideShown();
   const [dismissed, setDismissed] = useState(false);
 
-  if (!buddy || buddy.consulted || dismissed) {
+  if (!buddy || buddy.consulted || asideShown || dismissed) {
     return null;
   }
 

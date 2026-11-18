@@ -38,7 +38,7 @@ async function missTwiceOnTheBank() {
 
   stubTutorApi({ lesson });
   renderLessonPlayer({ lesson, tutor: buildTutor() });
-  await page.getByRole("button", { name: /^Next/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
   await page.getByRole("radio", { name: "The electron's exact path" }).click();
   await page.getByRole("button", { name: /^Check/u }).click();
   await page.getByRole("button", { name: /^Continue/u }).click();

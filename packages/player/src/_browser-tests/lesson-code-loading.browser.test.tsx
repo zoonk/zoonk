@@ -114,7 +114,7 @@ describe("a lesson's code", () => {
     await expect.element(explanation).toBeVisible();
     expect(drawnCanvas("activity-explore")).not.toBeNull();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: /^At 7 am/u })).toBeVisible();
     expect(drawnCanvas("activity-step")).not.toBeNull();
     expect(skeletonShown()).toBe(false);

@@ -251,7 +251,7 @@ describe("language lesson screens", () => {
       ),
     });
 
-    const next = page.getByRole("button", { name: /^Next/u });
+    const next = page.getByRole("button", { name: /^Continue/u });
     const firstCard = page.getByRole("region", { name: "Alphabet: あ" });
 
     await expect.element(firstCard.getByText("a", { exact: true })).toBeVisible();

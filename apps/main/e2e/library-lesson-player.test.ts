@@ -36,7 +36,7 @@ async function answerHook(page: Page) {
 
 async function readExplanation(page: Page) {
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  const next = primary(page, /^Next/u);
+  const next = primary(page, /^Continue/u);
   await expectHydrated(next);
   await next.click();
 }
@@ -339,7 +339,7 @@ test.describe("Library lesson player", () => {
     await primary(page, /^Continue/u).click();
 
     await expect(page.getByText("Reading it")).toBeVisible();
-    await primary(page, /^Next/u).click();
+    await primary(page, /^Continue/u).click();
     await rightOption.click();
     await primary(page, /^Check/u).click();
     await expectVerdict(page, "Correct!");

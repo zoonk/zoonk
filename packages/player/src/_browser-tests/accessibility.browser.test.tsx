@@ -92,7 +92,7 @@ async function scanLayer({ button, layer }: { button: string; layer: Locator }) 
   await expectAccessibleScreen(button);
   await press("Escape");
   await expect.element(layer).not.toBeInTheDocument();
-  await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+  await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
 }
 
 function openHostedLesson() {

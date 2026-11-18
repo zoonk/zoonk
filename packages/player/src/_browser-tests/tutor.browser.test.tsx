@@ -177,7 +177,7 @@ describe("asking the tutor", () => {
     playLesson({ lesson });
 
     await expect.poll(() => api.requests.thread).toBe(1);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     const sheet = await openTutor();
     await expect.element(sheet.getByText(second.question)).toBeVisible();
 
@@ -1615,7 +1615,7 @@ describe("the learner's buddy", () => {
     });
 
     playLesson({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     const tricky = page.getByText("This one is tricky. Pip can explain it another way.");
 
@@ -1633,6 +1633,31 @@ describe("the learner's buddy", () => {
     const sheet = page.getByRole("dialog");
     await expect.element(composer(sheet)).toHaveValue("Explain it more simply");
     await expect.element(sheet.getByText("Ask about your answer")).toBeVisible();
+    await expect.element(tricky).not.toBeInTheDocument();
+  });
+
+  it("keeps the help offer in the open buddy panel after two misses", async () => {
+    await atViewport({ height: 900, width: 1440 }, async () => {
+      const { lesson } = lessonWithTutor({
+        steps: [teachingStep("explanation"), teachingStep("check"), teachingStep("check")],
+      });
+
+      playLesson({ lesson });
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+
+      await expect
+        .element(lessonAside().getByRole("list", { name: "Suggested questions" }))
+        .toBeVisible();
+
+      expect(
+        page.getByText("This one is tricky. Pip can explain it another way.").query(),
+      ).toBeNull();
+    });
   });
 
   it("keeps the bar's buddy button the same size after a miss on a phone", async () => {
@@ -1661,7 +1686,7 @@ describe("the learner's buddy", () => {
       });
 
       playLesson({ lesson });
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
 
       const namedAsks = page.getByText("Ask Pip", { exact: true });
 
@@ -1759,7 +1784,7 @@ describe("docked beside the lesson", () => {
     const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
     await expect.element(intro).toBeVisible();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(lessonAside().getByText("From the lesson")).toBeVisible();
     await expect.element(intro).not.toBeVisible();
   });
@@ -1800,7 +1825,7 @@ describe("docked beside the lesson", () => {
     await expect.element(simpler).toBeVisible();
     await expect.element(didntGetIt).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(didntGetIt).toBeVisible();
     await expect.element(simpler).not.toBeInTheDocument();
 
@@ -1926,7 +1951,7 @@ describe("docked beside the lesson", () => {
     await press("Enter");
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(dockedConversation()).not.toBeInTheDocument();
     await page.getByRole("button", { name: "Previous screen" }).click();
 
@@ -1962,14 +1987,14 @@ describe("docked beside the lesson", () => {
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(lessonAside().getByRole("button", { name: "1 question" })).toBeVisible();
 
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();
   });
