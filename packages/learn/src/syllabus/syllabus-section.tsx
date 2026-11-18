@@ -99,10 +99,12 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
 const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function SubjectRow({
+  fromPastExams,
   href,
   sharedExams,
   subject,
 }: {
+  fromPastExams: boolean;
   href: string;
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSectionSubject;
@@ -125,8 +127,10 @@ function SubjectRow({
           {alsoIn && <ListRowDescription className="text-pretty">{alsoIn}</ListRowDescription>}
         </span>
 
-        <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
-          {subject.questions !== null && subject.questions > 0 && questionCount(subject.questions)}
+        <span className="text-muted-foreground hidden text-right font-mono text-xs tabular-nums @2xl/subjects:block">
+          {subject.questions !== null &&
+            subject.questions > 0 &&
+            questionCount(subject.questions, fromPastExams)}
         </span>
 
         {progress.bar ? (
@@ -203,6 +207,7 @@ export function SyllabusSection({
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
                   <SubjectRow
+                    fromPastExams={syllabus.questionsSource !== null}
                     href={subjectHref(subject.key)}
                     sharedExams={syllabus.sharedExams}
                     subject={subject}

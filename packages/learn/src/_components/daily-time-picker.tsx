@@ -203,7 +203,7 @@ export function DailyTimeField({ defaultMinutes, name }: { defaultMinutes: numbe
 
   return (
     <>
-      <DailyTimePicker label={t("Time a day")} minutes={minutes} onChange={setMinutes} />
+      <DailyTimePicker label={t("Daily study time")} minutes={minutes} onChange={setMinutes} />
       <input name={name} type="hidden" value={minutes} />
     </>
   );

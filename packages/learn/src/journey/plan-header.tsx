@@ -13,10 +13,10 @@ import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
  * width, so the line doesn't; a goal without a date to come has none.
  */
 export function usePlanDaysLeft(): React.ReactNode {
-  const { plan, today } = usePlanScreen();
+  const { paused, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
-  if (!targetDate || targetDate < today) {
+  if (paused || !targetDate || targetDate < today) {
     return null;
   }
 

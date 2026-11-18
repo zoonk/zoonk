@@ -135,7 +135,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
       {control.status === "active" && (
         <DropdownMenuItem onClick={() => menu.onSetStatus("paused")}>
           <PauseIcon aria-hidden="true" />
-          {t("Pause this goal")}
+          {t("Pause goal")}
         </DropdownMenuItem>
       )}
 
@@ -148,7 +148,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
 
       <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setArchiving(true)}>
         <ArchiveIcon aria-hidden="true" />
-        {t("Archive this goal")}
+        {t("Archive goal")}
       </DropdownMenuItem>
     </DropdownMenuGroup>
   );

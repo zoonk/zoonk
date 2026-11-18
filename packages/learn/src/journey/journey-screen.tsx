@@ -102,14 +102,13 @@ function JourneyBody({
   syllabus: SyllabusSectionView | null;
 }) {
   const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
+  const { goal, paused, plan } = usePlanScreen();
   const editor = usePlanEditor(openAdjust);
   const [phasesOpen, setPhasesOpen] = useState(false);
   const goalMenu = useGoalMenu(goalStatus);
   const course = getPlanLibraryCourse(plan);
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
-  const paused = goalStatus?.status === "paused";
   const focusTest = <PlanFocusTest />;
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
@@ -149,7 +148,7 @@ function JourneyBody({
               <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             </PageHasMainAction>
             {/* Without subjects the path is in the column beside it, already saying what's next. */}
-            {structure && <NextOnPath links={links} />}
+            {structure && !paused && <NextOnPath links={links} />}
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
@@ -166,12 +165,16 @@ function JourneyBody({
 
           <PlanRebuildNotice />
 
-          <PlanRoadmap
-            className="sm:hidden"
-            density="compact"
-            onOpen={structure ? () => setPhasesOpen(true) : null}
-          />
-          <PlanRoadmap className="hidden sm:flex" density="full" links={links} />
+          {!paused && (
+            <>
+              <PlanRoadmap
+                className="sm:hidden"
+                density="compact"
+                onOpen={structure ? () => setPhasesOpen(true) : null}
+              />
+              <PlanRoadmap className="hidden sm:flex" density="full" links={links} />
+            </>
+          )}
 
           <div className="flex flex-col gap-4 empty:hidden min-[72rem]:hidden">
             {numbers("tiles", "")}
@@ -204,7 +207,9 @@ function JourneyBody({
           open={editor.editor.open}
           section={editor.editor.section}
         />
-        {structure && <PhasesSheet links={links} onOpenChange={setPhasesOpen} open={phasesOpen} />}
+        {structure && !paused && (
+          <PhasesSheet links={links} onOpenChange={setPhasesOpen} open={phasesOpen} />
+        )}
         <GoalMenuDialogs goalTitle={goal.displayName} menu={goalMenu} />
       </PageWithAside>
     </PlanSuggestionProvider>
@@ -253,7 +258,16 @@ export function JourneyScreen({
 
   return (
     <PlanScreenProvider
-      value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
+      value={{
+        actions,
+        focusTestHref: links.focusTest,
+        goal,
+        openFocus,
+        paused: goalStatus?.status === "paused",
+        plan,
+        shareHref,
+        tutor,
+      }}
     >
       <PlanSheetHosts openFullCourse={openFullCourse}>
         <JourneyBody

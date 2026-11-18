@@ -4,6 +4,7 @@ import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { ListRowChevronSpace } from "../_components/list-group";
@@ -85,7 +86,11 @@ export function CheckpointRow({
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-        <Trickster className="size-4" view="face" />
+        {goal.kind === "language" ? (
+          <MicIcon className="size-4" />
+        ) : (
+          <Trickster className="size-4" view="face" />
+        )}
       </span>
       <PathRowBody
         value={

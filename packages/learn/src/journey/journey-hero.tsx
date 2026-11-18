@@ -83,11 +83,9 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     const share = getLessonShare(lessons);
 
     return {
-      detail: t({
-        description: "A short line under the progress percent, in a small tile.",
-        message:
-          "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}",
-        values: { studied: lessons.done - lessons.known },
+      detail: t("{studied, number} studied · {known, number} already known", {
+        known: lessons.known,
+        studied: lessons.done - lessons.known,
       }),
       label: t("Progress"),
       numeric: true,
@@ -212,6 +210,8 @@ export function PlanNumbers({
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
   // The side column's numbers sit above the plan's details, whose "Time a day" row says it.
+  const showSchedule = status !== null && !paused;
+
   const scheduleNumber = useScheduleNumber({
     paused,
     status: status ?? { kind: "onTrack" },
@@ -235,14 +235,20 @@ export function PlanNumbers({
           )}
           data-slot="journey-standing"
         >
-          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "@2xl/standing:col-span-2")}>
+          <li
+            className={cn(
+              NUMBER_ITEM_CLASS,
+              "min-w-0",
+              !showSchedule && "@2xl/standing:col-span-2",
+            )}
+          >
             <NumberButton
               number={standingNumber}
               onOpen={() => setOpen("standing")}
               variant={variant}
             />
           </li>
-          {status && (
+          {showSchedule && (
             <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
               <NumberButton
                 number={scheduleNumber}

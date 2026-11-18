@@ -16,7 +16,7 @@ import { PathRowBody } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
-import { PhaseAxis } from "./roadmap-lane";
+import { PhaseAxis, TodayTick } from "./roadmap-lane";
 import {
   BAND_CLASS,
   BAND_COLUMN_CLASS,
@@ -187,7 +187,7 @@ function RoadmapReveal() {
   return (
     <div className="flex flex-col gap-1.5 max-sm:hidden" data-slot="plan-roadmap">
       <ol
-        className={cn(BAND_ROWS_CLASS, "grid-rows-[repeat(2,auto)] gap-y-1.5")}
+        className={cn(BAND_ROWS_CLASS, "grid-rows-[repeat(3,auto)] gap-y-1.5")}
         style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
       >
         {phases.map((phase, position) => {
@@ -195,6 +195,11 @@ function RoadmapReveal() {
 
           return (
             <li className={BAND_COLUMN_CLASS} key={phase.index}>
+              <TodayTick
+                share={
+                  dated && isCurrent ? getShareInPhase({ at: "start", date: today, phase }) : null
+                }
+              />
               <span
                 aria-current={phase.state === "current" ? "step" : undefined}
                 className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
@@ -208,9 +213,6 @@ function RoadmapReveal() {
                     isLast={position === phases.length - 1}
                     labelled={axisDated.has(phase.index)}
                     phase={phase}
-                    todayShare={
-                      isCurrent ? getShareInPhase({ at: "start", date: today, phase }) : null
-                    }
                   />
                   <span className="sr-only">
                     <PhaseWhen phase={phase} />

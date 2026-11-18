@@ -182,7 +182,7 @@ function DailyMinutes({
       <DailyTimePicker
         disabled={isPending}
         full={marked.full}
-        label={t("Time a day")}
+        label={t("Daily study time")}
         minutes={time.shown}
         onChange={setMinutes}
         saves
@@ -288,7 +288,7 @@ function WeekendMinutes({
       {(on) => (
         <TimeSelect
           disabled={isPending || !on}
-          label={t("Time on weekends")}
+          label={t("Weekend time")}
           onChange={(minutes) => void setWeekend(minutes)}
           saves
           value={on ? weekend.shown : shape.weekdays}

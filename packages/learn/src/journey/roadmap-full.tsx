@@ -4,7 +4,7 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
+import { FlagIcon, MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
@@ -15,7 +15,7 @@ import { usePhaseLabel } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
 import { usePhaseEndSpoken } from "./phase-when";
 import { BandFace } from "./roadmap-band";
-import { PhaseAxis, PhaseLane } from "./roadmap-lane";
+import { PhaseAxis, PhaseLane, TodayTick } from "./roadmap-lane";
 import {
   BAND_CLASS,
   BAND_COLUMN_CLASS,
@@ -30,43 +30,20 @@ import {
   useRoadmapPosition,
 } from "./use-roadmap";
 
-const PERCENT = 100;
-
 const ROADMAP_TITLE_ID = "plan-roadmap-title";
 
 const moveBetweenBands = moveFocusWithArrows("roadmap-band");
-
-function TodayTicks({ share }: { share: number }) {
-  const style = { left: `${share * PERCENT}%` };
-
-  return (
-    <>
-      <span
-        aria-hidden="true"
-        className="bg-foreground absolute -top-1.5 h-1.5 w-[1.5px]"
-        style={style}
-      />
-      <span
-        aria-hidden="true"
-        className="bg-foreground absolute top-full h-1.5 w-[1.5px]"
-        style={style}
-      />
-    </>
-  );
-}
 
 function PhaseBand({
   focusable,
   isLast,
   links,
   phase,
-  todayShare,
 }: {
   focusable: boolean;
   isLast: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
-  todayShare: number | null;
 }) {
   const label = usePhaseLabel();
   const endSpoken = usePhaseEndSpoken();
@@ -90,7 +67,6 @@ function PhaseBand({
         }
       >
         <BandFace isLast={isLast} phase={phase} />
-        {todayShare !== null && <TodayTicks share={todayShare} />}
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -117,16 +93,11 @@ function PhaseColumn({
 }) {
   return (
     <li className={BAND_COLUMN_CLASS}>
-      <PhaseBand
-        focusable={focusable}
-        isLast={isLast}
-        links={links}
-        phase={phase}
-        todayShare={todayShare}
-      />
+      <TodayTick share={todayShare} />
+      <PhaseBand focusable={focusable} isLast={isLast} links={links} phase={phase} />
 
       <PhaseLane isLast={isLast} phase={phase} />
-      <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />
+      <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} />
     </li>
   );
 }
@@ -170,7 +141,11 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          <Trickster className="size-4" view="face" />
+          {goal.kind === "language" ? (
+            <MicIcon className="size-4" />
+          ) : (
+            <Trickster className="size-4" view="face" />
+          )}
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
       )}
@@ -219,7 +194,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
       <ol
         className={cn(
           BAND_ROWS_CLASS,
-          "grid-rows-[repeat(3,auto)] transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
+          "grid-rows-[repeat(4,auto)] transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
         )}
         onKeyDown={moveBetweenBands}
         style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}

@@ -11,10 +11,10 @@ import { getPhaseEnd } from "./phase-dates";
 /** A phase's end from the shared rule (`getPhaseEnd`), a short plan's days already said. */
 export function usePhaseEnd() {
   const shortDays = useShortDays();
-  const { plan } = usePlanScreen();
+  const { paused, plan } = usePlanScreen();
 
   return function phaseEnd(phase: PlanPhaseView) {
-    const end = getPhaseEnd({ phase, plan });
+    const end = paused ? null : getPhaseEnd({ phase, plan });
 
     if (end && "short" in end) {
       const days = shortDays(end.short);

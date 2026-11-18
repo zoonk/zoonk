@@ -90,12 +90,12 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
 }
 
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { plan } = usePlanScreen();
+  const { paused, plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks, state } = phase;
   const forNextSitting = phase.kind === "afterExam";
   const isCurrent = state === "current";
-  const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
+  const hasEvents = !paused && isCurrent && (checkpoint !== null || mocks.nextDate !== null);
 
   return (
     <li aria-current={isCurrent ? "step" : undefined} className="relative pb-3" data-state={state}>
@@ -106,7 +106,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
           <PathMarker state={state} />
           <PhaseTitle
             note={
-              state === "upcoming" && mocks.count > 0
+              !paused && state === "upcoming" && mocks.count > 0
                 ? mocksLine({
                     count: mocks.count,
                     forNextSitting,

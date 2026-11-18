@@ -114,7 +114,12 @@ export function StudyNextSuggestion({
     <Suggestion label={title} mark={<DoneMark />}>
       <SuggestionLine>
         <SuggestionSummary>{title}</SuggestionSummary>
-        <SuggestionOpen />
+        {certificates ? (
+          <CertificateAction certificates={certificates} primary={false} />
+        ) : (
+          <SuggestionOpen />
+        )}
+        {certificates && (next.nextLevel || next.related.length > 0) && <SuggestionOpen />}
       </SuggestionLine>
 
       <SlotContent>

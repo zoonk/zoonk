@@ -32,8 +32,9 @@ export function useRoadmapPhases() {
 }
 
 export function useRoadmapFinish(): PlanDate | null {
-  const { goal, plan } = usePlanScreen();
-  return getPlanFinish({ goalKind: goal.kind, plan });
+  const { goal, paused, plan } = usePlanScreen();
+  const finish = getPlanFinish({ goalKind: goal.kind, plan });
+  return paused && finish?.estimate ? null : finish;
 }
 
 /** The goal's date under the timeline's axis (`getAxisFinish`). */

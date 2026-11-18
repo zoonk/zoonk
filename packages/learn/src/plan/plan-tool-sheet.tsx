@@ -33,7 +33,7 @@ function useToolChoices(): Choice<ToolChoice>[] {
     },
     {
       description: t("You'll practice with examples instead."),
-      label: t("No install"),
+      label: t("I won't use it"),
       value: "none",
     },
   ];
@@ -111,7 +111,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
         >
           <ChoiceList
             choices={choices}
-            label={t("How will you use it?")}
+            label={t("Do you have it?")}
             onChange={setChoice}
             value={choice}
           />
@@ -153,7 +153,7 @@ export function PlanToolSheet({
       <DrawerPopup>
         <SheetHeader>
           <DrawerTitle>{tool?.name}</DrawerTitle>
-          <DrawerDescription>{t("How will you use it?")}</DrawerDescription>
+          <DrawerDescription>{t("Do you have it?")}</DrawerDescription>
         </SheetHeader>
 
         {tool && <ToolChoiceForm key={tool.name} onClose={onClose} tool={tool} />}

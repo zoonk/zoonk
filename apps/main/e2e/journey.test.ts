@@ -86,7 +86,7 @@ test.describe("Journey", () => {
       await openJourney(page);
       await page.getByRole("button", { name: "Adjust plan" }).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const minutes = editor.getByLabel("Time a day", { exact: true });
+      const minutes = editor.getByLabel("Daily study time", { exact: true });
       const before = await loadPlanItems();
 
       await minutes.selectOption(String(otherTime));
@@ -182,7 +182,7 @@ test.describe("Journey", () => {
     const options = page.getByRole("button", { name: "Plan options" });
     await expectHydrated(options);
     await options.click();
-    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+    await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
     await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
     await expect(page.getByRole("button", { name: /^Astronomy.*Switch goal$/u })).toBeVisible();
