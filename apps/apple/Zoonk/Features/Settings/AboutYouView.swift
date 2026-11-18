@@ -164,17 +164,40 @@ struct AboutYouQuestionView: View {
 }
 
 extension ProfileDraft {
-  /// About you's Save: an answer that can be saved and differs from the one saved, so one opened
-  /// and left as it was never saves again. Picks put back in another order are the same answer,
-  /// except studies, whose order is their fields' order.
+  /// About you's Save: an answer that can be saved and saves something other than what's saved,
+  /// so one opened and put back as it was never saves again. It compares what saving sends (hidden
+  /// fields dropped, text trimmed), with picks in any order except studies, whose order is their
+  /// fields' order.
   func savesAChange(_ view: ProfileQuestionView, memoryEnabled: Bool = true) -> Bool {
     let saved = ProfileDraft(view, memoryEnabled: memoryEnabled)
-    let samePicks =
-      question == .studies ? picks == saved.picks : Set(picks) == Set(saved.picks)
+    let keepsOrder = question == .studies
 
     return canSave(view)
-      && !(samePicks && decline == saved.decline && text == saved.text
-        && subjects == saved.subjects)
+      && Self.canonical(answer, keepsOrder: keepsOrder)
+        != Self.canonical(saved.answer, keepsOrder: keepsOrder)
+  }
+
+  /// An answer as sorted-key JSON, its lists sorted unless their order is part of the answer.
+  private static func canonical(_ answer: [String: Any], keepsOrder: Bool) -> Data? {
+    func sorted(_ value: Any) -> Any {
+      switch value {
+      case let list as [Any]:
+        let items = list.map(sorted)
+        return keepsOrder ? items : items.sorted { json($0) < json($1) }
+      case let object as [String: Any]:
+        return object.mapValues(sorted)
+      default:
+        return value
+      }
+    }
+
+    func json(_ value: Any) -> String {
+      (try? JSONSerialization.data(
+        withJSONObject: value, options: [.sortedKeys, .fragmentsAllowed]))
+        .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+    }
+
+    return try? JSONSerialization.data(withJSONObject: sorted(answer), options: .sortedKeys)
   }
 }
 

@@ -280,7 +280,7 @@
       }
     },
     "About you" : {
-      "comment" : "Title of the About you page",
+      "comment" : "Over an About you question in onboarding\nTitle of the About you page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2462,7 +2462,7 @@
       }
     },
     "Pick up to 3." : {
-      "comment" : "Said when a fourth choice is tapped on a screen that takes three",
+      "comment" : "Under the questions whose chips take up to three picks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2934,7 +2934,7 @@
       }
     },
     "Start lesson 1" : {
-      "comment" : "Opens the goal's first lesson from an About you question",
+      "comment" : "Opens the goal's first lesson from an About you question, saving its answer first",
       "localizations" : {
         "de" : {
           "stringUnit" : {
