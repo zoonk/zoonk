@@ -588,7 +588,7 @@ private struct MockAnswerSheet: View {
                 .foregroundStyle(.muted)
             }
             Label {
-              MockAnswerMark.review
+              Text(MockLabels.markedForReview(MockSectionCounts(run: run).flagged))
             } icon: {
               Image(systemName: "flag.fill")
             }
@@ -691,7 +691,4 @@ private struct MockAnswerSheet: View {
 private enum MockAnswerMark {
   static var answered: Text { Text("Answered", tableName: "Mock") }
   static var blank: Text { Text("Unanswered", tableName: "Mock") }
-  static var review: Text {
-    Text("Marked for review", tableName: "Mock", comment: "A flagged question")
-  }
 }

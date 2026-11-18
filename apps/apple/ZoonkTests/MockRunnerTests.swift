@@ -241,6 +241,19 @@ final class MockBarNoteTests: XCTestCase {
 }
 
 @MainActor
+final class MockAnswerSheetTests: XCTestCase {
+  func testTheKeySaysHowManyQuestionsAreMarkedForReview() {
+    XCTAssertEqual(String(localized: MockLabels.markedForReview(0)), "Marked for review")
+    XCTAssertEqual(String(localized: MockLabels.markedForReview(1)), "1 marked for review")
+    XCTAssertEqual(String(localized: MockLabels.markedForReview(2)), "2 marked for review")
+
+    var japanese = MockLabels.markedForReview(2)
+    japanese.locale = Locale(identifier: "ja")
+    XCTAssertEqual(String(localized: japanese), "2問が見直し対象", "The web's words")
+  }
+}
+
+@MainActor
 private final class Recorder {
   var items: [MockDraft] = []
 }
