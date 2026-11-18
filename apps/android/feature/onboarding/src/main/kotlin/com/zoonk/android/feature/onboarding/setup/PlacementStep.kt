@@ -448,7 +448,6 @@ internal fun ColumnScope.PlacementQuestion(
     }
 }
 
-/** [start] then [end] on one line, as main keeps them; under each other, [end] still last, only when a word wouldn't fit. */
 /**
  * [start]'s width beside [end], which keeps [endMin]: its label's, or what's left, where the label wraps (main's
  * `TASK_WRAPPING_ACTION_CLASS`); null only when its [longestWord] wouldn't fit there.
@@ -464,6 +463,7 @@ internal fun besideStartWidth(
     return if (longestWord <= room) minOf(label, room) else null
 }
 
+/** [start] then [end] on one line, as main keeps them; under each other, [end] still last, only when a word wouldn't fit. */
 @Composable
 private fun BesideOrAbove(
     start: @Composable () -> Unit,
