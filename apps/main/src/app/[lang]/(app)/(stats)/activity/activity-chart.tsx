@@ -81,7 +81,12 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
           description: "The light end of a heatmap's legend: less activity.",
           message: "Less",
         }),
-        title: t("Study time"),
+        title: t({
+          description:
+            "Names the legend of a calendar of study days: a darker square means more minutes studied that day.",
+          id: "activityLegendStudyTime",
+          message: "Study time",
+        }),
       }}
       titleId={ACTIVITY_CHART_TITLE_ID}
     />
