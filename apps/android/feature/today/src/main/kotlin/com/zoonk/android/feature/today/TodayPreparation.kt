@@ -1,44 +1,28 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
 import com.zoonk.android.feature.goalcontent.LegendDot
 import com.zoonk.android.feature.goalcontent.LegendItem
 import com.zoonk.android.feature.goalcontent.bar
-import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.feature.plan.studiedLessonsLine
 import com.zoonk.android.ui.components.ButtonEdge
@@ -53,8 +37,6 @@ import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.TodayProgress
 import com.zoonk.api.models.TodayProgressOneOf
 import com.zoonk.api.models.TodayProgressOneOf1
-import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -109,7 +91,7 @@ private fun LessonsCard(
         modifier = modifier,
     ) {
         if (counts.total > 0) {
-            LessonCells(counts)
+            LessonsBar(counts)
             CoverageLegend(counts)
         }
     }
@@ -183,124 +165,28 @@ internal data class LessonCounts(
     }
 }
 
-/** What one cell of the bar stands for, in the bar's order. */
-internal enum class LessonCell { Studied, Known, Today, Rest }
-
-/**
- * At most [MAX_CELLS] cells, each one whole state. A cell stands for as many lessons as it takes once the plan is
- * longer, and each state takes its share of the cells.
- */
-internal fun lessonCells(counts: LessonCounts): List<LessonCell> {
-    val (known, studied, today, total) = counts
-    if (total <= 0) return emptyList()
-    val size = max(1, ceil(total.toDouble() / MAX_CELLS).toLong())
-    val count = ceil(total.toDouble() / size).toInt()
-    // Lessons done past the plan's total fill it and no more.
-    val lessons =
-        listOf(studied, known, today, total).runningFold(0L) { taken, value -> taken + value }.zipWithNext { taken, upTo ->
-            min(upTo, total) - min(taken, total)
-        }
-    val cells = giveEveryStateACell(shareCells(count, lessons, total), lessons)
-
-    return LessonCell.entries.flatMap { state -> List(cells[state.ordinal]) { state } }
-}
-
-/** Each state's share of [count] cells by largest remainder, so the shares add up to [count] exactly. */
-private fun shareCells(
-    count: Int,
-    lessons: List<Long>,
-    total: Long,
-): List<Int> {
-    val exact = lessons.map { it.toDouble() * count / total }
-    val cells = exact.map { floor(it).toInt() }.toMutableList()
-    val left = count - cells.sum()
-    exact.indices
-        .sortedByDescending { exact[it] - floor(exact[it]) }
-        .take(left)
-        .forEach { cells[it]++ }
-    return cells
-}
-
-/** A state the legend names gets one cell at least, taken from the state holding the most, so the bar never draws less than it says. */
-private fun giveEveryStateACell(
-    shares: List<Int>,
-    lessons: List<Long>,
-): List<Int> {
-    val cells = shares.toMutableList()
-    lessons.forEachIndexed { state, value ->
-        if (value == 0L || cells[state] > 0) return@forEachIndexed
-        val largest = cells.indexOf(cells.max())
-        cells[largest]--
-        cells[state] = 1
-    }
-    return cells
-}
-
-/** Hidden from TalkBack but for today's lessons, which only the cells show. */
+/** Main's `CoverageBar` with today's lessons said to TalkBack, which only main's screen-reader summary says. */
 @Composable
-private fun LessonCells(counts: LessonCounts) {
-    val cells = lessonCells(counts)
-    val track = MaterialTheme.colorScheme.surfaceContainerHighest
-    val studiedColor = MaterialTheme.colorScheme.tertiary
-    val knownColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = KNOWN_ALPHA)
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+private fun LessonsBar(counts: LessonCounts) {
     val summary =
         counts.today.takeIf { it > 0 }?.let {
             pluralStringResource(R.plurals.today_progress_lessons_today, it.toInt(), formatNumber(it.toDouble(), currentLocale()))
         }
 
-    Canvas(
-        Modifier
-            .fillMaxWidth()
-            .height(CELL_HEIGHT)
-            .clearAndSetSemantics { summary?.let { contentDescription = it } },
-    ) {
-        val gap = CELL_GAP.toPx()
-        val width = (size.width - gap * (cells.size - 1)) / cells.size
-        val radius = CornerRadius(CELL_CORNER.toPx())
-        val ring = 1.dp.toPx()
-
-        cells.forEachIndexed { index, cell ->
-            val start = index * (width + gap)
-            val left = if (rtl) size.width - start - width else start
-            when (cell) {
-                LessonCell.Today -> {
-                    drawRoundRect(
-                        studiedColor,
-                        Offset(left + ring / 2, ring / 2),
-                        Size(width - ring, size.height - ring),
-                        radius,
-                        style = Stroke(ring),
-                    )
-                }
-
-                LessonCell.Studied -> {
-                    drawRoundRect(studiedColor, Offset(left, 0f), Size(width, size.height), radius)
-                }
-
-                LessonCell.Known -> {
-                    drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
-                    drawRoundRect(knownColor, Offset(left, 0f), Size(width, size.height), radius)
-                }
-
-                LessonCell.Rest -> {
-                    drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
-                }
-            }
-        }
+    Box(Modifier.semantics { summary?.let { contentDescription = it } }) {
+        CoverageBar(studied = counts.studied.toDouble() / counts.total, known = counts.known.toDouble() / counts.total)
     }
 }
 
-/** Main shows it only when the cells hold more than lessons studied; the words beside it say the same, so TalkBack skips it. */
+/** Main's `CoverageLegend`: what the bar's parts are, "Already knew" only when some are; the words beside it say the counts, so TalkBack skips it. */
 @Composable
 private fun CoverageLegend(counts: LessonCounts) {
     val dots =
         listOfNotNull(
             LegendDot.Studied to stringResource(R.string.today_progress_studied),
             (LegendDot.Known to stringResource(R.string.today_progress_known)).takeIf { counts.known > 0 },
-            (LegendDot.Today to stringResource(R.string.today_progress_today)).takeIf { counts.today > 0 },
+            LegendDot.New to stringResource(R.string.goalcontent_new),
         )
-    if (dots.size < 2) return
 
     FlowRow(
         Modifier.clearAndSetSemantics {},
@@ -312,9 +198,3 @@ private fun CoverageLegend(counts: LessonCounts) {
 }
 
 private const val PERCENT = 100
-private const val MAX_CELLS = 30
-private const val SHOWN_SUBJECTS = 5
-private const val KNOWN_ALPHA = 0.7f
-private val CELL_HEIGHT = 8.dp
-private val CELL_GAP = 3.dp
-private val CELL_CORNER = 2.dp
