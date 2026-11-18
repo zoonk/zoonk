@@ -27,12 +27,42 @@ function DayRowsSkeleton() {
   );
 }
 
+function TodayAsideSkeleton() {
+  return (
+    <div aria-hidden="true" className="contents">
+      <div className="flex min-h-16 items-center gap-3 px-4">
+        <Skeleton className="size-6 shrink-0 rounded-full" />
+        <div className="flex flex-1 flex-col gap-1.5">
+          <Skeleton className="h-3.5 w-28 rounded-sm" />
+          <Skeleton className="h-3 w-3/4 rounded-sm" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <Skeleton className="my-1 h-4 w-20 rounded-sm" />
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: 7 }, (_, day) => (
+            <Skeleton className="h-11 rounded-lg" key={day} />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <Skeleton className="my-1 h-4 w-24 rounded-sm" />
+        <Skeleton className="h-1.5 w-full rounded-full" />
+      </div>
+      <div className="flex flex-col gap-3 min-[72rem]:hidden">
+        <Skeleton className="my-1 h-4 w-28 rounded-sm" />
+        <Skeleton className="h-11 w-full rounded-lg" />
+      </div>
+    </div>
+  );
+}
+
 export function TodayShell() {
   const t = useExtracted();
 
   return (
     <PageWithAside
-      aside={<div aria-hidden="true" />}
+      aside={<TodayAsideSkeleton />}
       asideClassName={TODAY_ASIDE_CLASS}
       asideLabel={t("Your week")}
       bottomBar={

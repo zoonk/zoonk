@@ -338,3 +338,29 @@ describe(changeDirection, () => {
     expect(changeDirection(4, 4 + 1e-12)).toBe("same");
   });
 });
+
+describe("line-crossing numbered axes", () => {
+  it("keeps readable round ticks over the fixed break-even domain", () => {
+    const fields = lineCrossingTemplate.fields.parse(
+      engineModeFixtures.lineCrossing.breakEven.fields,
+    );
+
+    const [first, second] = fields.lines;
+    expect(first).toBeDefined();
+    expect(second).toBeDefined();
+
+    if (!first || !second) {
+      return;
+    }
+
+    const chart = chartSlides({
+      amount: fields.shift.amount,
+      axis: shiftAxis(fields.shift.direction),
+      lines: [first, second],
+      real: { [fields.shift.line]: fields.shift.amount },
+    });
+
+    expect(chart.xTicks).toStrictEqual([0, 100, 200, 300]);
+    expect(chart.yTicks).toStrictEqual([0, 2000, 4000]);
+  });
+});

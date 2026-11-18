@@ -1,4 +1,5 @@
 import { crossing, shiftLine } from "@zoonk/core/library/activities/line-crossing";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 import { type SnapRange, clamp, snapToStep } from "../_utils/snap-value";
 
 export type Line = { intercept: number; slope: number };
@@ -23,11 +24,11 @@ const RELATIVE_SLACK = 1e-9;
 const HANDLE_SHARE = 0.82;
 const HANDLE_SHARE_STEPS = 20;
 
-// Shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest
-// plot (192px), so a slide never depends on the window's size.
-const HANDLE_MARGIN = 0.08;
+export const HANDLE_RADIUS = 14;
+export const HANDLE_STROKE = 2.5;
+const NOMINAL_PLOT_SIZE = { x: 192, y: 192 };
 const CROSSING_GAP = 0.135;
-const KEPT_MARGIN = HANDLE_MARGIN * 2;
+const KEPT_MARGIN = 0.16;
 const HANDLES_APART = 0.2;
 
 const HANDLE_SHARES = Array.from(
@@ -87,7 +88,7 @@ function lowerBound(lowest: number, upper: number): number {
  * zero only as far as it takes for the resting and the right crossings to sit inside the handles'
  * margin, with room to spare.
  */
-function chartDomain({
+export function chartDomain({
   amount,
   axis,
   lines,
@@ -193,6 +194,7 @@ function handleOptions({
   amount,
   axis,
   crossing: restingCrossing,
+  plot,
   domain,
   line,
   other,
@@ -200,12 +202,14 @@ function handleOptions({
   amount: number;
   axis: ShiftAxis;
   crossing: Point;
+  plot: Point;
   domain: ChartDomain;
   line: Line;
   other: Line;
 }): HandleOption[] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
-  const margin = { x: size.x * HANDLE_MARGIN, y: size.y * HANDLE_MARGIN };
+  const radius = Math.ceil(HANDLE_RADIUS + HANDLE_STROKE / 2);
+  const margin = { x: (size.x * radius) / plot.x, y: (size.y * radius) / plot.y };
   const low = { x: domain.min.x + margin.x, y: domain.min.y + margin.y };
   const high = { x: domain.max.x - margin.x, y: domain.max.y - margin.y };
   const full = shiftRange(amount);
@@ -233,7 +237,7 @@ function handleOptions({
       const preferred = axis === "horizontal" ? homeX + offset : homeX;
       const span = spanInside(moved, low, high);
       const x = span ? clamp(preferred, span.from, span.to) : preferred;
-      return { x, y: yAt(moved, x) };
+      return { x: clamp(x, low.x, high.x), y: clamp(yAt(moved, x), low.y, high.y) };
     };
 
     return {
@@ -333,18 +337,25 @@ export function chartSlides<TLine extends NamedLine>({
   axis,
   lines,
   real,
+  plot = NOMINAL_PLOT_SIZE,
 }: {
   amount: number;
   axis: ShiftAxis;
   lines: readonly [TLine, TLine];
   real: LineOffsets;
-}): { domain: ChartDomain; slides: { line: TLine; slide: LineSlide }[] } {
+  plot?: Point;
+}): {
+  domain: ChartDomain;
+  slides: { line: TLine; slide: LineSlide }[];
+  xTicks: number[];
+  yTicks: number[];
+} {
   const domain = chartDomain({ amount, axis, lines, real });
   const [first, second] = lines;
   const rest = crossingPoint(first, second);
 
   const options = (line: Line, other: Line) =>
-    handleOptions({ amount, axis, crossing: rest, domain, line, other });
+    handleOptions({ amount, axis, crossing: rest, domain, line, other, plot });
 
   const realOffsets: [number, number] = [real[first.id] ?? 0, real[second.id] ?? 0];
 
@@ -367,5 +378,7 @@ export function chartSlides<TLine extends NamedLine>({
       { line: first, slide: chosen.first.slide },
       { line: second, slide: chosen.second.slide },
     ],
+    xTicks: niceTicks([domain.min.x, domain.max.x]),
+    yTicks: niceTicks([domain.min.y, domain.max.y]),
   };
 }

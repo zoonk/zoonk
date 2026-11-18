@@ -971,14 +971,16 @@ msgid "Welcome back"
 msgstr "Che bello rivederti"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "N2AOpV"
-msgid "Your quick explanation"
-msgstr "La tua spiegazione rapida"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "Iqgfb9"
 msgid "Quick explanation"
 msgstr "Spiegazione rapida"
+
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continua"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
@@ -1019,12 +1021,6 @@ msgstr "Vedi il tuo piano"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "Il tuo piano per {goal} è pronto."
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continua"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"

@@ -1,2 +1,8 @@
 @import "@zoonk/ui/globals.css";
 @import "../questions/styles.css";
+@import "./fonts/fonts.css";
+
+:root {
+  --font-geist-sans: "Geist";
+  --font-geist-mono: "Geist Mono";
+}

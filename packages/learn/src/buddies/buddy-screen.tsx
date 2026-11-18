@@ -158,9 +158,7 @@ function BuddyMenu({
         <DropdownMenuItem onClick={onGlasses}>
           <GlassesIcon aria-hidden="true" />
           <span className="flex-1">{t("Glasses")}</span>
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {glassesCount}
-          </span>
+          <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

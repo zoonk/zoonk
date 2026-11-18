@@ -19,14 +19,17 @@ import { useStepLabel } from "./use-row-label";
 import { useLessonGettingReady } from "./use-today-copy";
 
 /** A row's mark and minutes center on a row of one or two lines and sit on the first of three. */
-const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items-start";
+const THREE_LINES_CLASS =
+  "has-[[data-slot=today-row-lines]>:nth-child(3),[data-slot=test-out-start-status]:not(:empty)]:items-start";
 
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
-    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
+    "before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
-    isNext && "before:bg-muted has-[[data-slot=today-row-open]:hover]:before:bg-muted border-b-0",
+    isNext
+      ? "before:bg-muted border-b-0"
+      : "[@media(hover:hover)]:has-[[data-slot=today-row-open]:hover]:before:bg-muted/70",
     THREE_LINES_CLASS,
   );
 }
@@ -100,24 +103,28 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
-function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
+function RowLines({
+  block,
+  isNext,
+  showSubject,
+}: {
+  block: DayStep;
+  isNext: boolean;
+  showSubject: boolean;
+}) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const isGettingReady = useLessonGettingReady();
-  const stepLabel = useStepLabel();
+  const stepLabel = useStepLabel({ includeSubject: false });
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (
     <>
-      {line && <span className={ROW_LINE_CLASS}>{line}</span>}
+      {showSubject && block.subject && <span className={ROW_LINE_CLASS}>{block.subject}</span>}
+      {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
-        <div className="relative">
-          <TestOutStartLink
-            className="text-xs leading-4"
-            onStart={() => actions.startTestOut(block.chapterId ?? "")}
-          />
-        </div>
+        <TestOutStartLink compact onStart={() => actions.startTestOut(block.chapterId ?? "")} />
       )}
     </>
   );
@@ -163,10 +170,12 @@ export function BlockRow({
   block,
   isNext,
   opens = true,
+  showSubject,
 }: {
   block: DayStep;
   isNext: boolean;
   opens?: boolean;
+  showSubject: boolean;
 }) {
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
@@ -177,7 +186,7 @@ export function BlockRow({
       aria-current={isNext ? "step" : undefined}
       className={cn(
         getRowClass({ finished, isNext }),
-        lessonAgainId && "has-[a:hover]:before:bg-muted/70",
+        lessonAgainId && "[@media(hover:hover)]:has-[a:hover]:before:bg-muted/70",
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
@@ -189,7 +198,7 @@ export function BlockRow({
         <div className="flex flex-col gap-px" data-slot="today-row-lines">
           <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
-          {!finished && <RowLines block={block} isNext={isNext} />}
+          <RowLines block={block} isNext={isNext} showSubject={showSubject} />
         </div>
 
         {!finished && (

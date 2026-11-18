@@ -6,49 +6,37 @@ import { TaskClose } from "../_components/task-close";
 import {
   TaskHeader,
   TaskHeaderBar,
-  TaskHeaderSegments,
   TaskHeaderSide,
   TaskHeaderTitle,
-  type TaskSegment,
 } from "../_components/task-header";
+import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { DayMeter, type DayMeterPart } from "../today/day-segments";
 import { WaitTopBarBack } from "../wait/wait-screen";
+import { getDayMeterParts } from "./day-meter-parts";
 import { type SessionQueueRow } from "./session-queue-rows";
-
-const PERCENT = 100;
 
 const NO_BAR = { completed: 0, total: 0 } as const;
 
-const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], TaskSegment> = {
-  ahead: "ahead",
-  done: "done",
-  next: "current",
-};
-
-function getSessionSegments({
+function getSessionMeterParts({
   queue,
   sessionBar,
 }: {
   queue?: readonly SessionQueueRow[];
   sessionBar: { completed: number; total: number };
-}): { segments: TaskSegment[]; weights?: number[] } {
+}): DayMeterPart[] {
   if (queue && queue.length > 0) {
-    return {
-      segments: queue.map((row) => SEGMENT_BY_STATE[row.state]),
-      weights: queue.map((row) => row.block.estimatedMinutes),
-    };
+    return getDayMeterParts({ rows: queue });
   }
 
   const { completed, total } = sessionBar;
 
-  return {
-    segments: Array.from({ length: total }, (_, index): TaskSegment => {
-      if (index < completed) {
-        return "done";
-      }
+  return Array.from({ length: total }, (_, index) => {
+    if (index < completed) {
+      return { id: index, state: "done" };
+    }
 
-      return index === completed ? "current" : "ahead";
-    }),
-  };
+    return { id: index, state: index === completed ? "current" : "ahead" };
+  });
 }
 
 function useSessionProgressLabel({
@@ -87,7 +75,7 @@ export function SessionHeader({
 }) {
   const t = useExtracted();
   const label = useSessionProgressLabel({ lessonsComing, sessionBar });
-  const { segments, weights } = getSessionSegments({ queue, sessionBar });
+  const parts = getSessionMeterParts({ queue, sessionBar });
 
   return (
     <TaskHeader className="bg-background sticky top-0" data-slot="session-header">
@@ -103,14 +91,9 @@ export function SessionHeader({
         <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>
 
-      {segments.length > 0 && (
-        <TaskHeaderSegments
-          label={label}
-          segments={segments}
-          value={sessionBar.total === 0 ? 0 : (sessionBar.completed / sessionBar.total) * PERCENT}
-          weights={weights}
-        />
-      )}
+      <div className={TASK_COLUMN_CLASS}>
+        <DayMeter held={lessonsComing} label={label} parts={parts} />
+      </div>
     </TaskHeader>
   );
 }

@@ -2,8 +2,9 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
-import { usePlotScales } from "../_components/activity-plot";
-import { DRAWING_LABEL_HALO, estimatedLabelWidth } from "../_utils/drawing-label";
+import { ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
+import { DRAWING_LABEL_HALO, measureDrawingLabel } from "../_utils/drawing-label";
 import {
   ARROW_HEAD,
   ARROW_STROKE,
@@ -14,8 +15,6 @@ import {
 import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
-const Y_LABEL_RISE = 12;
-const X_LABEL_DROP = 20;
 
 export function LineMark({
   className,
@@ -60,21 +59,51 @@ export function LineLabel({
 }) {
   const ref = useRef<SVGTextElement>(null);
   const measured = useEffectEvent(onMeasure);
+  const last = useRef<LineLabelMetrics>(undefined);
 
   useLayoutEffect(() => {
     const node = ref.current;
 
-    if (node) {
-      const { height, width, x, y } = node.getBBox();
-
-      measured({
-        height,
-        left: x - Number(node.getAttribute("x")),
-        top: y - Number(node.getAttribute("y")),
-        width,
-      });
+    if (!node) {
+      return;
     }
-  }, []);
+
+    const measure = () => {
+      const size = measureDrawingLabel({ element: node });
+
+      const next = {
+        height: size.height,
+        left: size.offsetX - size.width / 2,
+        top: size.offsetY - size.height / 2,
+        width: size.width,
+      };
+
+      const previous = last.current;
+
+      if (
+        previous?.height === next.height &&
+        previous.width === next.width &&
+        previous.left === next.left &&
+        previous.top === next.top
+      ) {
+        return;
+      }
+
+      last.current = next;
+      measured(next);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    document.fonts.addEventListener("loadingdone", measure);
+
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", measure);
+    };
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Same-size translations can change ink bearings without resizing the observed box.
+  }, [label]);
 
   return (
     <text
@@ -180,52 +209,28 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
   );
 }
 
-const LABEL_ASCENT = 10;
-const LABEL_DESCENT = 3;
-
-/** Where the value axis's title sits over the chart, for the lines' names to keep clear of. */
-export function yTitleBox({
-  left,
-  title,
-  top,
+export function Axes({
+  format,
+  xTicks,
+  yTicks,
 }: {
-  left: number;
-  title: string;
-  top: number;
-}): LabelBox {
-  const baseline = top - Y_LABEL_RISE;
-
-  return {
-    bottom: baseline + LABEL_DESCENT,
-    left,
-    right: left + estimatedLabelWidth(title),
-    top: baseline - LABEL_ASCENT,
-  };
-}
-
-export function Axes({ xLabel, yLabel }: { xLabel: string; yLabel: string }) {
+  format: (value: number) => string;
+  xTicks: readonly number[];
+  yTicks: readonly number[];
+}) {
   const { x, y } = usePlotScales();
   const [left, right] = x.range;
   const [bottom, top] = y.range;
 
   return (
     <g aria-hidden="true">
+      <ActivityPlotGridY format={format} ticks={yTicks} />
+      <ActivityPlotAxisX format={format} ticks={xTicks} />
       <path
         className="stroke-foreground/40 fill-none"
         d={`M${left} ${top} V${bottom} H${right}`}
         strokeWidth={1.5}
       />
-      <text className="fill-muted-foreground text-xs" x={left} y={top - Y_LABEL_RISE}>
-        {yLabel}
-      </text>
-      <text
-        className="fill-muted-foreground text-xs"
-        textAnchor="end"
-        x={right}
-        y={bottom + X_LABEL_DROP}
-      >
-        {xLabel}
-      </text>
     </g>
   );
 }

@@ -13,6 +13,51 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
 class LineCrossingModelTest {
+    @Test fun crowdedAxesUseFewerRoundSteps() {
+        val ticks =
+            com.zoonk.android.ui.components.fittingTicks(0.0..375.0, frame = { value ->
+                val x = (value / 375 * 140).toFloat()
+                x to x + if (value == 0.0) 14f else 43f
+            })
+        assertEquals(listOf(0.0, 200.0), ticks)
+    }
+
+    @Test
+    fun breakEvenAxesHaveReadableRoundTicks() {
+        val chart =
+            LineCrossingModel.slides(
+                500.0,
+                PlaceOrientation.Vertical,
+                listOf(Line(2000.0, 5.0), Line(0.0, 15.0)),
+                listOf(500.0, 0.0),
+            )
+        assertEquals(listOf(0.0, 100.0, 200.0, 300.0), chart.xTicks)
+        assertEquals(listOf(0.0, 2000.0, 4000.0), chart.yTicks)
+    }
+
+    @Test
+    fun paintedHandlesFitTheMeasuredPlotAtEveryStop() {
+        for (plot in listOf(Vec(168.0, 172.0), Vec(128.0, 130.0), Vec(500.0, 220.0))) {
+            val chart =
+                LineCrossingModel.slides(
+                    2.0,
+                    PlaceOrientation.Horizontal,
+                    listOf(Line(1.0, 0.5), Line(10.0, -1.0)),
+                    listOf(-2.0, 0.0),
+                    plot,
+                )
+            for (slide in chart.slides) {
+                for (offset in slide.offsets) {
+                    val point = slide.at(offset)
+                    val x = (point.x - chart.domain.min.x) / (chart.domain.max.x - chart.domain.min.x) * plot.x
+                    val y = (point.y - chart.domain.min.y) / (chart.domain.max.y - chart.domain.min.y) * plot.y
+                    assertTrue(x >= 15.25 && x <= plot.x - 15.25)
+                    assertTrue(y >= 15.25 && y <= plot.y - 15.25)
+                }
+            }
+        }
+    }
+
     private val supply = Line(intercept = 1.0, slope = 0.5)
     private val demand = Line(intercept = 10.0, slope = -1.0)
     private val cost = Line(intercept = 2000.0, slope = 5.0)

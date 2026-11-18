@@ -482,24 +482,23 @@ final class ActivityRenderersTests: XCTestCase {
       ActivityRendererRegistry.app.renderer(for: "chartReader")?.answersOnCanvas, false)
   }
 
-  /// The scale says what it counts once, at its end, as main's does, so its start never reads
-  /// "1 days".
-  func testAGuessScaleNamesItsUnitOnceAtItsLastTick() {
+  func testAGuessScaleKeepsFreeTextUnitsOffEveryTick() {
     let english = Locale(identifier: "en_US")
     let scale = GuessScale(min: 1, max: 3650, kind: .log)
 
-    XCTAssertEqual(scale.tickLabel(1, unit: "days", locale: english), "1")
-    XCTAssertEqual(scale.tickLabel(1000, unit: "days", locale: english), "1,000\u{00A0}days")
-    XCTAssertEqual(scale.tickLabel(1, unit: "$", locale: english), "$1")
+    let days = scale.tickFormatter(unit: "days", locale: english)
+    let dollars = scale.tickFormatter(unit: "$", locale: english)
+    XCTAssertEqual(scale.ticks().map(days), ["1", "10", "100", "1,000"])
+    XCTAssertEqual(dollars(1), "$1")
   }
 
   func testGuessScaleTicksMatchMainsCases() {
-    XCTAssertEqual(GuessScale(min: 1, max: 3650, kind: .log).ticks, [1, 10, 100, 1000])
-    XCTAssertEqual(GuessScale(min: 0, max: 100, kind: .linear).ticks, [0, 25, 50, 75, 100])
-    XCTAssertEqual(GuessScale(min: 1, max: 30, kind: .linear).ticks, [1, 10, 20, 30])
-    XCTAssertEqual(GuessScale(min: 1, max: 21, kind: .linear).ticks, [1, 5, 10, 15, 21])
-    XCTAssertEqual(GuessScale(min: 2, max: 8, kind: .log).ticks, [2, 8])
-    XCTAssertEqual(GuessScale(min: 1, max: 1e12, kind: .log).ticks, [1, 1000, 1e6, 1e9, 1e12])
+    XCTAssertEqual(GuessScale(min: 1, max: 3650, kind: .log).ticks(), [1, 10, 100, 1000])
+    XCTAssertEqual(GuessScale(min: 0, max: 100, kind: .linear).ticks(), [0, 25, 50, 75, 100])
+    XCTAssertEqual(GuessScale(min: 1, max: 30, kind: .linear).ticks(), [1, 10, 20, 30])
+    XCTAssertEqual(GuessScale(min: 1, max: 21, kind: .linear).ticks(), [1, 5, 10, 15, 21])
+    XCTAssertEqual(GuessScale(min: 2, max: 8, kind: .log).ticks(), [2, 8])
+    XCTAssertEqual(GuessScale(min: 1, max: 1e12, kind: .log).ticks(), [1, 1000, 1e6, 1e9, 1e12])
   }
 
   func testDescribesChangesAndGuessesLikeMain() {
