@@ -21,13 +21,21 @@ type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
-export function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
+export function exactAnswerFormat({
+  check,
+  places,
+  value,
+}: {
+  check: NumericCheck;
+  places?: number | null;
+  value?: number;
+}) {
   return {
-    maximumFractionDigits: exactFractionDigitsFor({
-      expected: check.answer,
-      tolerance: check.tolerance,
-      value,
-    }),
+    maximumFractionDigits: Math.max(
+      places ?? 0,
+      exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
+      countDecimalPlaces(value ?? 0),
+    ),
     unit: check.unit,
   };
 }
@@ -78,16 +86,7 @@ function NumericFeedback({
   const format = useFormatNumber();
 
   const value = answer?.kind === "numeric" ? answer.value : undefined;
-  const written = exactAnswerFormat({ check, value });
-
-  const rightAnswer = format(check.answer, {
-    ...written,
-    maximumFractionDigits: Math.max(
-      places ?? 0,
-      written.maximumFractionDigits,
-      countDecimalPlaces(value ?? 0),
-    ),
-  });
+  const rightAnswer = format(check.answer, exactAnswerFormat({ check, places, value }));
 
   return (
     <>
