@@ -492,6 +492,11 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(dollars(1), "$1")
   }
 
+  func testGuessDifferenceUsesTheDisplayedValues() {
+    XCTAssertEqual(
+      GuessScale.compare(guess: 10, actual: 11.57, isCorrect: false), .off(10 - 11.6))
+  }
+
   func testGuessScaleTicksMatchMainsCases() {
     XCTAssertEqual(GuessScale(min: 1, max: 3650, kind: .log).ticks(), [1, 10, 100, 1000])
     XCTAssertEqual(GuessScale(min: 0, max: 100, kind: .linear).ticks(), [0, 25, 50, 75, 100])

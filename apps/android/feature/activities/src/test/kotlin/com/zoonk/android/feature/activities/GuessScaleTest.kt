@@ -42,8 +42,13 @@ class GuessScaleTest {
         assertEquals(GuessComparison.Close, compareGuess(actual = 11.57, guess = 11.6, isCorrect = true))
         assertEquals(GuessComparison.TooBig(3.5), compareGuess(actual = 11.57, guess = 40.0, isCorrect = false))
         assertEquals(GuessComparison.TooSmall(5.8), compareGuess(actual = 11.57, guess = 2.0, isCorrect = false))
-        assertEquals(GuessComparison.Off(1.4299999999999997), compareGuess(actual = 11.57, guess = 13.0, isCorrect = false))
+        assertEquals(GuessComparison.Off(13.0 - 11.6), compareGuess(actual = 11.57, guess = 13.0, isCorrect = false))
         assertEquals(GuessComparison.Off(5.0), compareGuess(actual = -3.0, guess = 2.0, isCorrect = false))
+    }
+
+    @Test
+    fun theGuessDifferenceUsesTheDisplayedValues() {
+        assertEquals(GuessComparison.Off(10.0 - 11.6), compareGuess(actual = 11.57, guess = 10.0, isCorrect = false))
     }
 
     @Test
