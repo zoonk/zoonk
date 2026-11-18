@@ -183,6 +183,17 @@ describe(createDraftSaveQueue, () => {
     expect(statuses.at(-1)).toBe("saved");
   });
 
+  it("forgets refusals once the section is handed in", async () => {
+    const { queue, requests, statuses } = setup();
+
+    queue.add({ answer: "B", itemId: "q1" });
+    requests[0]?.refuse();
+    await flushPromises();
+    queue.forgetRefusals();
+
+    expect(statuses.at(-1)).toBe("saved");
+  });
+
   it("still says an answer was refused after another question's answer is stored", async () => {
     const { queue, requests, statuses } = setup();
 

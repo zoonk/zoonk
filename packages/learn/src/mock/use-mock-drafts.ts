@@ -123,6 +123,7 @@ export function useMockDrafts({
       setDrafts(nextDrafts);
       setFailedDrafts({});
       setSavedDrafts(nextDrafts);
+      queue.forgetRefusals();
     },
     retry: () => queue.retryNow(),
     saveStatus,

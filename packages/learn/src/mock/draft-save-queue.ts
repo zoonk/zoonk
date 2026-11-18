@@ -135,6 +135,11 @@ export function createDraftSaveQueue<TDraft>({
 
       void sendNext();
     },
+    /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
+    forgetRefusals() {
+      refused.clear();
+      settle();
+    },
     /** Resolves once every answer given so far is stored or refused. */
     idle(): Promise<void> {
       if (!isBusy()) {
