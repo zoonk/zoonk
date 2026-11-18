@@ -87,8 +87,8 @@ const WITH_BAR_COLUMN_CLASS =
   "max-[72rem]:contents [&>[data-slot=bottom-bar]]:mt-auto max-[72rem]:[&>[data-slot=bottom-bar]]:order-last";
 
 /**
- * At desktop widths the aside starts at the title, below either the frame bar or a detail page's
- * own bar. `bottomBar` is the page's `BottomBar`.
+ * At desktop widths the aside starts at the title, below either the frame bar or the page's own
+ * bar, wherever in its column the page draws it. `bottomBar` is the page's `BottomBar`.
  */
 export function PageWithAside({
   aside,
@@ -128,7 +128,7 @@ export function PageWithAside({
           aria-label={asideLabel}
           className={cn(
             "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
-            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-[calc(var(--frame-bar,0px)+0.25rem)] min-[72rem]:pb-8 min-[72rem]:group-has-[>div>article>[data-slot=page-top-bar]]/page-aside:pt-[calc(4.25rem+1px)] xl:w-80",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-[calc(var(--frame-bar,0px)+0.25rem)] min-[72rem]:pb-8 min-[72rem]:group-has-[>div_[data-slot=page-top-bar]]/page-aside:pt-[calc(4.25rem+1px)] xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"
