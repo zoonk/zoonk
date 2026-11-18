@@ -94,7 +94,7 @@ struct MindMapsScreen: View {
           Button {
             router.open(.mindMapStudy(goalId: goal.id, tab: shown))
           } label: {
-            Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
+            Text("Study mind maps", tableName: "MindMaps")
           }
           .buttonStyle(.mainAction)
           .keyboardShortcut(.defaultAction)
@@ -129,9 +129,7 @@ struct MindMapsScreen: View {
 
     return switch tab {
     case .chapters:
-      Text(
-        "Chapters \(count)", tableName: "MindMaps",
-        comment: "Tab of chapter mind maps, with how many open")
+      Text(verbatim: "\(String(localized: "With a map", table: "MindMaps")) \(count.formatted())")
     case .lessons:
       Text(
         "Lessons \(count)", tableName: "MindMaps", comment: "Tab of lesson maps, with how many open"
@@ -286,12 +284,9 @@ private struct MindMapCreateSection: View {
         FoldRow(isUnfolded: $showsChapters) {
           // Centered, not on one baseline: a small count's capitals sit low on the label's.
           HStack(spacing: 8) {
-            Text(
-              "Other chapters", tableName: "MindMaps",
-              comment: "Unfolds the chapters whose maps can't be made right now"
-            )
-            .typeStyle(.body)
-            .layoutPart(.label)
+            Text("Without a map", tableName: "MindMaps")
+              .typeStyle(.body)
+              .layoutPart(.label)
 
             Spacer(minLength: 8)
 
