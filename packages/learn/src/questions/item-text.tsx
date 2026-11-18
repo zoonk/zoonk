@@ -6,7 +6,7 @@ import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
 import { speakSegments } from "../rich-text/rich-text-speech";
-import { typesetMoney, typesetProse } from "../rich-text/rich-text-typography";
+import { typesetNumbers, typesetProse } from "../rich-text/rich-text-typography";
 import { SpokenMath } from "../rich-text/spoken-math";
 import { useMathWords } from "../rich-text/use-spoken-text";
 import { LessonVisual } from "../visuals/lesson-visual";
@@ -15,16 +15,20 @@ import { ItemPicture, type ItemPictureData } from "./item-picture";
 
 type ItemTable = Extract<ItemTextBlock, { kind: "table" }>;
 
-/** A question's money as its answer writes it ("R$80" in English); its other digits stay as written. */
-function useMoneyTypesetting() {
+/** Keep a question's own digits as written, including codes and IDs. */
+function useQuestionTypesetting() {
   const locale = useAppLocale();
 
   return (segments: RichInlineSegment[]) =>
-    typesetProse({ locale, segments, typeset: (text) => typesetMoney({ locale, text }) });
+    typesetProse({
+      locale,
+      segments,
+      typeset: (text) => typesetNumbers({ group: false, locale, text }),
+    });
 }
 
 function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
-  const money = useMoneyTypesetting();
+  const typeset = useQuestionTypesetting();
 
   return (
     <p>
@@ -34,7 +38,7 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
         return (
           <Fragment key={key}>
             {index > 0 && <br />}
-            <RichInlineSegments segments={money(line)} />
+            <RichInlineSegments segments={typeset(line)} />
           </Fragment>
         );
       })}
@@ -44,14 +48,14 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
 
 function ItemTableView({ table }: { table: ItemTable }) {
   const words = useMathWords();
-  const money = useMoneyTypesetting();
+  const typeset = useQuestionTypesetting();
 
   return (
     <RichTable
       align={table.align}
       header={table.header}
       label={table.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
-      renderCell={(cell) => <RichInlineSegments segments={money(cell)} />}
+      renderCell={(cell) => <RichInlineSegments segments={typeset(cell)} />}
       rows={table.rows}
     />
   );
@@ -79,11 +83,11 @@ export function ItemText({ className, text }: { className?: string; text: string
  * read in words.
  */
 export function ItemLine({ text }: { text: string }) {
-  const money = useMoneyTypesetting();
+  const typeset = useQuestionTypesetting();
 
   return (
     <SpokenMath>
-      <RichInlineSegments segments={money(parseItemLine(text))} />
+      <RichInlineSegments segments={typeset(parseItemLine(text))} />
     </SpokenMath>
   );
 }

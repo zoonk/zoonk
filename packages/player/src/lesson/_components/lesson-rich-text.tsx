@@ -1,7 +1,7 @@
 import { useAppLocale } from "@zoonk/learn/locale";
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { markRichInline, parseRichInline } from "@zoonk/learn/rich-text/parser";
-import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
+import { typesetNumbers, typesetProse } from "@zoonk/learn/rich-text/typography";
 import { toOneLine } from "@zoonk/utils/math-spans";
 
 function typeset({
@@ -11,11 +11,7 @@ function typeset({
   locale: string;
   segments: RichInlineSegment[];
 }): RichInlineSegment[] {
-  return segments.map((segment) =>
-    segment.kind === "math" || segment.kind === "displayMath" || segment.kind === "code"
-      ? segment
-      : { ...segment, text: typesetNumbers({ locale, text: segment.text }) },
-  );
+  return typesetProse({ locale, segments, typeset: (text) => typesetNumbers({ locale, text }) });
 }
 
 export function LessonRichText({
