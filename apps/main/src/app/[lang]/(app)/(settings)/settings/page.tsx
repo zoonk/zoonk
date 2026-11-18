@@ -95,7 +95,13 @@ export default async function SettingsPage() {
 
       {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
       <div className="hidden md:contents">
-        <Suspense fallback={<SettingsHubSkeleton />}>
+        <Suspense
+          fallback={
+            <Page measure="form">
+              <SettingsHubSkeleton />
+            </Page>
+          }
+        >
           <FirstSettingsPage />
         </Suspense>
       </div>
