@@ -134,11 +134,11 @@ final class RowTrailingLayoutTests: XCTestCase {
 
   func testAControlDoesNotMoveTheChevronValueColumn() async throws {
     let probes = Probes()
-    let window = try show(ControlFixture(probes: probes, showsToggle: false))
+    let toggle = ToggleShown()
+    let window = try show(ControlFixture(probes: probes, toggle: toggle))
     try await settle(window)
     let expected = try edge("custom", probes: probes, window: window)
-    let host = try XCTUnwrap(window.rootViewController as? UIHostingController<ControlFixture>)
-    host.rootView = ControlFixture(probes: probes, showsToggle: true)
+    toggle.isShown = true
     try await settle(window)
     XCTAssertEqual(try edge("custom", probes: probes, window: window), expected, accuracy: 0.5)
     XCTAssertEqual(try edge("plain", probes: probes, window: window), expected, accuracy: 0.5)
@@ -216,9 +216,13 @@ private struct Probe: UIViewRepresentable {
   }
 }
 
+@Observable private final class ToggleShown {
+  var isShown = false
+}
+
 private struct ControlFixture: View {
   let probes: Probes
-  let showsToggle: Bool
+  let toggle: ToggleShown
 
   var body: some View {
     ZoonkList {
@@ -231,7 +235,7 @@ private struct ControlFixture: View {
         } trailing: {
           Text(verbatim: "16 Feb").background(Probe(id: "custom", probes: probes))
         }.disclosureChevron()
-        if showsToggle {
+        if toggle.isShown {
           SettingToggle(isOn: .constant(true), title: Text(verbatim: "Sounds"))
         }
       }
