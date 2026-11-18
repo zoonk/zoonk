@@ -270,7 +270,6 @@ fun WaitContent(
                     lessonLine,
                     lessonReady,
                     Modifier.focusMoveTarget(stripFocus),
-                    showChevron = kind != GenerationKind.Placement,
                 ) {
                     quiz.showProgress(hold)
                 }
@@ -310,7 +309,6 @@ private fun WaitStrip(
     lessonLine: String?,
     lessonReady: Boolean,
     modifier: Modifier,
-    showChevron: Boolean,
     onClick: () -> Unit,
 ) {
     val percent = formatPercent(if (ready) 1.0 else share.toDouble(), currentLocale())
@@ -338,7 +336,7 @@ private fun WaitStrip(
                 }
             }
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-            if (!ready && showChevron) {
+            if (!ready) {
                 com.zoonk.android.ui.components
                     .ListRowChevron()
             }
