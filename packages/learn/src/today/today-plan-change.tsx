@@ -12,14 +12,12 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
-  SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSaveError,
-  SuggestionSummary,
+  SuggestionSheet,
   useMainActionVariant,
 } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -32,6 +30,7 @@ import {
 } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
+import { TodaySuggestionCard } from "./today-suggestion-card";
 import { useShownChange } from "./use-shown-change";
 
 type Change = NonNullable<TodayView["planChange"]>;
@@ -223,18 +222,34 @@ function PlanChangeNotice({
       label={t("Plan suggestion")}
       mark={getChangeMark(change)}
     >
-      <SuggestionLine>
+      <TodaySuggestionCard>
         {result ? (
-          <SuggestionResult>{result}</SuggestionResult>
+          <>
+            <SuggestionResult>{result}</SuggestionResult>
+            {after && <SuggestionActions>{after}</SuggestionActions>}
+          </>
         ) : (
-          <SuggestionSummary>{words.title}</SuggestionSummary>
+          <>
+            <SuggestionHeader>{words.title}</SuggestionHeader>
+            {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
+            <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>}>
+              {change.source !== NOTICE_SOURCE && change.source !== PHASE_DATES_SOURCE && (
+                <SuggestionAction
+                  action={() => answer("declined")}
+                  disabled={isPending}
+                  variant="outline"
+                >
+                  {t("Not now")}
+                </SuggestionAction>
+              )}
+            </SuggestionActions>
+          </>
         )}
-        {result ? after : <SuggestionOpen>{t("See what changes")}</SuggestionOpen>}
-      </SuggestionLine>
+        {failed && <SuggestionSaveError />}
+      </TodaySuggestionCard>
 
-      <SuggestionContent>
+      <SuggestionSheet>
         <SuggestionHeader>{words.title}</SuggestionHeader>
-        {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
         <PlanEffectDiff
           byDate={byDate}
           dateKind={dateKind}
@@ -253,7 +268,7 @@ function PlanChangeNotice({
         )}
 
         {failed && <SuggestionSaveError />}
-      </SuggestionContent>
+      </SuggestionSheet>
     </Suggestion>
   );
 }

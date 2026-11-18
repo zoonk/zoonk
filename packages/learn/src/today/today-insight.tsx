@@ -10,14 +10,12 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
-  SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSaveError,
-  SuggestionSummary,
+  SuggestionSheet,
   useMainActionVariant,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
@@ -25,6 +23,7 @@ import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine } from "../plan/use-change-sentence";
 import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
+import { TodaySuggestionCard } from "./today-suggestion-card";
 
 type InsightAnswer = "accepted" | "dismissed";
 
@@ -45,16 +44,16 @@ function insightMark(insight: MemoryInsightView): React.ReactNode {
 function useInsightChoices(insight: MemoryInsightView) {
   const t = useExtracted();
 
-  const answer = t("Answer");
+  const open = t("See what changes");
 
   if (insight.kind === "planChange") {
     return insight.planChange?.status === "proposed"
-      ? { accept: t("Add it"), dismiss: t("No thanks"), open: t("See what changes") }
-      : { accept: t("Keep it"), dismiss: t("Undo"), open: answer };
+      ? { accept: t("Add it"), dismiss: t("No thanks"), open }
+      : { accept: t("Keep it"), dismiss: t("Undo"), open };
   }
 
   if (insight.kind === "scheduleIdea") {
-    return { accept: t("Move it"), dismiss: t("Not now"), open: answer };
+    return { accept: t("Move it"), dismiss: t("Not now"), open };
   }
 
   return { accept: t("Got it"), dismiss: null, open: null };
@@ -180,52 +179,68 @@ function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
       label={t("From your recent answers")}
       mark={insightMark(insight)}
     >
-      <SuggestionLine>
+      <TodaySuggestionCard>
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>{insight.message}</SuggestionSummary>
-            {answersOnLine ? (
-              <SuggestionAction
-                action={() => answer("accepted")}
-                busy={isPending}
-                variant="outline"
-              >
-                {choices.accept}
-              </SuggestionAction>
-            ) : (
-              <SuggestionOpen>{choices.open}</SuggestionOpen>
-            )}
+            <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
+            <SuggestionDescription>{insight.message}</SuggestionDescription>
+            <SuggestionActions
+              main={
+                answersOnLine ? (
+                  <SuggestionAction
+                    action={() => answer("accepted")}
+                    busy={isPending}
+                    variant="outline"
+                  >
+                    {choices.accept}
+                  </SuggestionAction>
+                ) : (
+                  <SuggestionOpen>{choices.open}</SuggestionOpen>
+                )
+              }
+            >
+              {insight.kind === "scheduleIdea" && (
+                <SuggestionAction
+                  action={() => answer("dismissed")}
+                  disabled={isPending}
+                  variant="outline"
+                >
+                  {t("Not now")}
+                </SuggestionAction>
+              )}
+            </SuggestionActions>
           </>
         )}
-        {answersOnLine && failed && !isPending && <SuggestionSaveError className="basis-full" />}
-      </SuggestionLine>
-
-      <SuggestionContent statement={answersOnLine}>
-        <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
-        <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
-        {insight.planChange?.status === "proposed" && (
-          <PlanEffectDiff
-            dateKind={dateKind}
-            effect={insight.planChange.effect}
-            repriced={repriced}
-          />
-        )}
-
-        {result ? (
-          <SuggestionResult>{result}</SuggestionResult>
-        ) : (
-          <InsightActions
-            choices={choices}
-            insight={insight}
-            isPending={isPending}
-            onAnswer={answer}
-          />
-        )}
-
         {failed && <SuggestionSaveError />}
-      </SuggestionContent>
+      </TodaySuggestionCard>
+
+      {!answersOnLine && (
+        <SuggestionSheet>
+          <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
+          {insight.planChange?.status === "proposed" && (
+            <PlanEffectDiff
+              dateKind={dateKind}
+              effect={insight.planChange.effect}
+              repriced={repriced}
+            />
+          )}
+
+          {result ? (
+            <SuggestionResult>{result}</SuggestionResult>
+          ) : (
+            <InsightActions
+              choices={choices}
+              insight={insight}
+              isPending={isPending}
+              onAnswer={answer}
+            />
+          )}
+
+          {failed && <SuggestionSaveError />}
+        </SuggestionSheet>
+      )}
     </Suggestion>
   );
 }

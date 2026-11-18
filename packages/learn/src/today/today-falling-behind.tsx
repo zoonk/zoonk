@@ -11,15 +11,13 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
-  SuggestionLine,
   SuggestionLinkAction,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSaveError,
-  SuggestionSummary,
+  SuggestionSheet,
   useMainActionVariant,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
@@ -28,6 +26,7 @@ import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useTodayScreen } from "./today-context";
+import { TodaySuggestionCard } from "./today-suggestion-card";
 import { isWelcomeBackDay } from "./use-today-copy";
 
 type Change = NonNullable<TodayView["planChange"]>;
@@ -204,20 +203,20 @@ export function FallingBehindNotice({
       label={t("Plan change")}
       mark={<CalendarClockIcon />}
     >
-      <SuggestionLine>
+      <TodaySuggestionCard>
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>{title}</SuggestionSummary>
-            <SuggestionOpen>{t("See what changes")}</SuggestionOpen>
+            <SuggestionHeader>{title}</SuggestionHeader>
+            <SuggestionDescription>{sentence(behind)}</SuggestionDescription>
+            <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>} />
           </>
         )}
-      </SuggestionLine>
+      </TodaySuggestionCard>
 
-      <SuggestionContent>
+      <SuggestionSheet>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>{sentence(behind)}</SuggestionDescription>
         <PlanEffectDiff effect={change.effect} summary={false} />
 
         {answered ? (
@@ -232,7 +231,7 @@ export function FallingBehindNotice({
         )}
 
         {answer && "failed" in answer && <SuggestionSaveError />}
-      </SuggestionContent>
+      </SuggestionSheet>
     </Suggestion>
   );
 }
