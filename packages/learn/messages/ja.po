@@ -1607,6 +1607,7 @@ msgid "Copy"
 msgstr "コピーする"
 
 #: src/certificates/certificate-details.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
@@ -4365,6 +4366,7 @@ msgid "Deciding how deep to go…"
 msgstr "どこまで詳しく学ぶかを決めています…"
 
 #: src/generation/use-generation-copy.ts
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "b_5kn-"
 msgid "Reading your material"
 msgstr "資料を読んでいます"
@@ -4839,6 +4841,7 @@ msgstr "{name}と話す"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
@@ -8955,10 +8958,9 @@ msgid "Write my goal again"
 msgstr "目標を書き直す"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "E10uH8"
-msgid "Tell us a bit more"
-msgstr "もう少し教えてください"
+msgctxt "UfGKGv"
+msgid "Write your goal again"
+msgstr "目標をもう一度書く"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Rt585I"
@@ -9131,9 +9133,9 @@ msgid "Understanding your goal"
 msgstr "目標の内容を読み取っています"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "5o4Fqb"
-msgid "Next, you check what we understood."
-msgstr "次に、目標が正しく伝わっているか確認します。"
+msgctxt "Du-NAs"
+msgid "We're reading your goal"
+msgstr "目標を読んでいます"
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9247,9 +9249,15 @@ msgid "How it works"
 msgstr "使い方"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "OSlFuT"
-msgid "A course on this is ready now"
-msgstr "この内容のコースを今すぐ始められます"
+msgctxt "J7LA3k"
+msgid "Or start this ready course now"
+msgstr "または、すぐに学べるこのコースを始める"
+
+#: src/onboarding/onboarding-bar.tsx
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}/{total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9272,12 +9280,6 @@ msgstr "日付なし"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "目標"
-
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "レベル"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -9473,6 +9475,11 @@ msgctxt "P05JFf"
 msgid "Not sure, give me a short test"
 msgstr "わからないので、短いテストを受ける"
 
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "レベル"
+
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "qcCnqJ"
 msgid "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}"
@@ -9489,14 +9496,19 @@ msgid "Fitting them into your plan…"
 msgstr "学習計画に組み込んでいます…"
 
 #: src/onboarding/steps/notice-reading.tsx
+msgctxt "5cCtX9"
+msgid "Reading the exam's official documents"
+msgstr "試験の公式資料を読み込んでいます"
+
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "WX6JMT"
 msgid "Reading the last edition's official documents"
 msgstr "前回の試験の公式資料を読み込んでいます"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "5cCtX9"
-msgid "Reading the exam's official documents"
-msgstr "試験の公式資料を読み込んでいます"
+msgctxt "_Bb7oM"
+msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {試験の科目とトピック、日程に沿って学習計画を立てます。} other {公式ガイドのパートとトピック、日程に沿って学習計画を立てます。}}通常は数分かかります。"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "KYgf4_"
@@ -9504,9 +9516,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "次回の試験の公式資料がまだ公開されていないため、前回の科目とトピックをもとに学習計画を立てます。新しい資料が公開されたらお知らせします。資料の読み込みには通常、数分かかります。"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {試験の科目とトピック、日程に沿って学習計画を立てます。} other {公式ガイドのパートとトピック、日程に沿って学習計画を立てます。}}通常は数分かかります。"
+msgctxt "yCtkE2"
+msgid "Your plan will follow it"
+msgstr "この資料に沿って学習計画を立てます"
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -9627,12 +9639,6 @@ msgid "Lesson 1 is ready."
 msgstr "レッスン1の準備ができました。"
 
 #: src/onboarding/steps/profile-step.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}"
-
-#: src/onboarding/steps/profile-step.tsx
 msgctxt "c2z6MR"
 msgid "About you"
 msgstr "自分について"
@@ -9746,6 +9752,11 @@ msgctxt "Y7fjZb"
 msgid "What score do you need?"
 msgstr "必要なスコアはいくつですか？"
 
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "E10uH8"
+msgid "Tell us a bit more"
+msgstr "もう少し教えてください"
+
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "P5KfyI"
 msgid "Which certificate?"
@@ -9765,12 +9776,6 @@ msgstr "学ぶ理由"
 msgctxt "v9nycX"
 msgid "Plan created"
 msgstr "学習計画を作成しました"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "調整する"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "7T47RX"
@@ -10752,6 +10757,11 @@ msgstr "学習計画を更新しました"
 msgctxt "xGiUnw"
 msgid "More lessons than days left"
 msgstr "残りの日数よりレッスン数が多い"
+
+#: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "調整する"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "bgDfbl"

@@ -1607,6 +1607,7 @@ msgid "Copy"
 msgstr "Skopiuj"
 
 #: src/certificates/certificate-details.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
@@ -4365,6 +4366,7 @@ msgid "Deciding how deep to go…"
 msgstr "Ustalamy, jak głęboko wejść w temat…"
 
 #: src/generation/use-generation-copy.ts
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "b_5kn-"
 msgid "Reading your material"
 msgstr "Czytamy twoje materiały"
@@ -4839,6 +4841,7 @@ msgstr "Porozmawiaj z: {name}"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
@@ -8955,10 +8958,9 @@ msgid "Write my goal again"
 msgstr "Napisz cel jeszcze raz"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "E10uH8"
-msgid "Tell us a bit more"
-msgstr "Opowiedz nam trochę więcej"
+msgctxt "UfGKGv"
+msgid "Write your goal again"
+msgstr "Napisz swój cel jeszcze raz"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Rt585I"
@@ -9131,9 +9133,9 @@ msgid "Understanding your goal"
 msgstr "Analizujemy twój cel"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "5o4Fqb"
-msgid "Next, you check what we understood."
-msgstr "Potem sprawdzisz, jak rozumiemy twój cel."
+msgctxt "Du-NAs"
+msgid "We're reading your goal"
+msgstr "Czytamy, co chcesz osiągnąć"
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9247,9 +9249,15 @@ msgid "How it works"
 msgstr "Jak to działa"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "OSlFuT"
-msgid "A course on this is ready now"
-msgstr "Kurs na ten temat jest już gotowy"
+msgctxt "J7LA3k"
+msgid "Or start this ready course now"
+msgstr "Albo zacznij ten gotowy kurs już teraz"
+
+#: src/onboarding/onboarding-bar.tsx
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} z {total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9272,12 +9280,6 @@ msgstr "Brak daty"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Cel"
-
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "Twój poziom"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -9473,6 +9475,11 @@ msgctxt "P05JFf"
 msgid "Not sure, give me a short test"
 msgstr "Nie wiem, poproszę krótki test"
 
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "Twój poziom"
+
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "qcCnqJ"
 msgid "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}"
@@ -9489,14 +9496,19 @@ msgid "Fitting them into your plan…"
 msgstr "Dopasowujemy je do twojego planu…"
 
 #: src/onboarding/steps/notice-reading.tsx
+msgctxt "5cCtX9"
+msgid "Reading the exam's official documents"
+msgstr "Czytamy oficjalne dokumenty egzaminu"
+
+#: src/onboarding/steps/notice-reading.tsx
 msgctxt "WX6JMT"
 msgid "Reading the last edition's official documents"
 msgstr "Czytamy oficjalne dokumenty z poprzedniej edycji egzaminu"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "5cCtX9"
-msgid "Reading the exam's official documents"
-msgstr "Czytamy oficjalne dokumenty egzaminu"
+msgctxt "_Bb7oM"
+msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {Twój plan uwzględni przedmioty, tematy i terminy egzaminu.} other {Twój plan uwzględni części, tematy i terminy z informatora.}} Zwykle zajmuje to kilka minut."
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "KYgf4_"
@@ -9504,9 +9516,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "Dokumenty kolejnej edycji egzaminu nie są jeszcze dostępne, więc twój plan opiera się na przedmiotach i tematach z poprzedniej edycji. Damy ci znać, gdy pojawią się nowe dokumenty. Przeczytanie dokumentów zwykle zajmuje kilka minut."
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {Twój plan uwzględni przedmioty, tematy i terminy egzaminu.} other {Twój plan uwzględni części, tematy i terminy z informatora.}} Zwykle zajmuje to kilka minut."
+msgctxt "yCtkE2"
+msgid "Your plan will follow it"
+msgstr "Twój plan będzie oparty na tych materiałach"
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -9627,12 +9639,6 @@ msgid "Lesson 1 is ready."
 msgstr "Lekcja 1 jest gotowa."
 
 #: src/onboarding/steps/profile-step.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} z {total, number}"
-
-#: src/onboarding/steps/profile-step.tsx
 msgctxt "c2z6MR"
 msgid "About you"
 msgstr "O tobie"
@@ -9746,6 +9752,11 @@ msgctxt "Y7fjZb"
 msgid "What score do you need?"
 msgstr "Jakiego wyniku potrzebujesz?"
 
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "E10uH8"
+msgid "Tell us a bit more"
+msgstr "Opowiedz nam trochę więcej"
+
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "P5KfyI"
 msgid "Which certificate?"
@@ -9765,12 +9776,6 @@ msgstr "Dlaczego uczysz się tego języka"
 msgctxt "v9nycX"
 msgid "Plan created"
 msgstr "Utworzono plan"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "Dostosuj"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "7T47RX"
@@ -10752,6 +10757,11 @@ msgstr "Plan zaktualizowany"
 msgctxt "xGiUnw"
 msgid "More lessons than days left"
 msgstr "Więcej lekcji niż dni do końca"
+
+#: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "Dostosuj"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "bgDfbl"
