@@ -460,7 +460,7 @@ private fun CourseCell(
 ) {
     val locale = currentLocale()
     val subject = Subject.of(course.subject?.value)
-    val description = course.description?.let { firstSentence(it, course.language) }
+    val promise = course.promise?.let { firstSentence(it, course.language) }
 
     Column {
         Row(
@@ -480,10 +480,10 @@ private fun CourseCell(
                     if (subject.key != category) SubjectLabel(subject)
                 }
 
-                if (!description.isNullOrEmpty()) {
+                if (!promise.isNullOrEmpty()) {
                     Spacer(Modifier.size(4.dp))
                     Text(
-                        description,
+                        promise,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 2,
