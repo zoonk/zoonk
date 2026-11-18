@@ -2,13 +2,24 @@ package com.zoonk.android.feature.mindmaps
 
 import android.content.Context
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import coil3.ImageLoader
@@ -440,6 +451,41 @@ class MindMapsOfferTest {
         compose.onNodeWithText("1 more chapter").performClick()
         waitFor("Optics")
         compose.onNodeWithText("Show fewer chapters").assertExists()
+    }
+
+    /** As main's fold: TalkBack hears whether it's open and can open or close it. */
+    @Test
+    fun theFoldTellsTalkBackWhetherItsOpen() {
+        api.mindMaps = { fresh }
+        show()
+
+        waitFor("1 more chapter")
+        compose
+            .onNodeWithText("1 more chapter")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsActions.Expand))
+            .performSemanticsAction(SemanticsActions.Expand)
+
+        waitFor("Optics")
+        compose
+            .onNodeWithText("Show fewer chapters")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Expanded"))
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsActions.Collapse))
+    }
+
+    /** A keyboard learner who opens the fold reaches the chapter it showed next, not Create all past it. */
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun tabAfterOpeningTheFoldReachesTheChapterItShowed() {
+        api.mindMaps = { fresh }
+        show()
+
+        waitFor("1 more chapter")
+        compose.onNodeWithText("1 more chapter").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        waitFor("Optics")
+        compose.onNodeWithText("Show fewer chapters").performKeyInput { pressKey(Key.Tab) }
+
+        compose.onAllNodesWithText("Create")[2].assertIsFocused()
     }
 
     /** As main: with no chapter ready to make, the chapters that need their lessons first are listed, not folded. */
