@@ -8,8 +8,9 @@ import { useDaysLeftText } from "../_components/days-left";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { FactSegments } from "../_components/task-meta";
-import { useFormatIsoDate, useFormatIsoRange } from "../_utils/iso-date";
+import { useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
+import { useAppLocale } from "../_utils/locale";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { SpeakingPaperSection } from "../language/exam-speaking/speaking-paper-section";
@@ -23,6 +24,7 @@ import {
   ExamScreenProvider,
   useExamScreen,
 } from "./exam-context";
+import { formatExamDayList } from "./exam-day-list";
 import { ExamFormatSection } from "./exam-format-section";
 import { useExamDayDate } from "./exam-labels";
 import { ExamMapSection } from "./exam-map-section";
@@ -39,7 +41,8 @@ function useExamDays(): string[] {
   const format = useFormatter();
   const { exam } = useExamScreen();
   const formatDate = useFormatIsoDate();
-  const formatRange = useFormatIsoRange();
+  const locale = useAppLocale();
+  const today = useIsoToday();
   const formatPlanDate = useFormatPlanDate();
   const dayDate = useExamDayDate();
   const formatTimeOfDay = useFormatTimeOfDay();
@@ -57,12 +60,12 @@ function useExamDays(): string[] {
   const [first, last] = exam.days;
 
   if (exam.days.length === 2 && first && last && !timePerDay) {
-    const date = formatRange({ end: last.date, start: first.date });
-    const range = estimated ? t("~{date}", { date }) : date;
+    const date = formatExamDayList({ dates: [first.date, last.date], locale, today });
+    const dates = estimated ? t("~{date}", { date }) : date;
 
     return sharedTime
-      ? [range, t("Starts at {time}", { time: formatTimeOfDay(sharedTime) })]
-      : [range];
+      ? [dates, t("Starts at {time}", { time: formatTimeOfDay(sharedTime) })]
+      : [dates];
   }
 
   const dayText = (isoDate: string): string => {
