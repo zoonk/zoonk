@@ -6,6 +6,28 @@ import { type MapBox, type MapPoint } from "./map-viewport";
 
 type MapLabelSize = { height: number; offsetX: number; offsetY: number; width: number };
 
+function measureMapLabel(element: SVGTextElement, pixelSize: number): MapLabelSize {
+  const size = measureDrawingLabel({ element, pixelSize });
+  const matrix = element.getScreenCTM();
+
+  if (!matrix) {
+    return size;
+  }
+
+  const bounds = element.getBoundingClientRect();
+
+  const center = new DOMPoint(
+    (bounds.left + bounds.right) / 2,
+    (bounds.top + bounds.bottom) / 2,
+  ).matrixTransform(matrix.inverse());
+
+  return {
+    ...size,
+    offsetX: Number((center.x / pixelSize).toFixed(3)),
+    offsetY: Number((center.y / pixelSize).toFixed(3)),
+  };
+}
+
 export function useMapLabelSizes(labelKey: string, pixelSize: number) {
   const elements = useRef(new Map<number, SVGTextElement>());
 
@@ -47,7 +69,7 @@ export function useMapLabelSizes(labelKey: string, pixelSize: number) {
       const sizes = Object.fromEntries(
         [...elements.current].map(([index, element]): [number, MapLabelSize] => [
           index,
-          measureDrawingLabel({ element, pixelSize }),
+          measureMapLabel(element, pixelSize),
         ]),
       );
 

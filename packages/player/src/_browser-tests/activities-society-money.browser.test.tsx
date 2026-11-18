@@ -293,7 +293,7 @@ describe("money and society activities", () => {
 
       expect(
         own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther,
-        `Broad Street distance: ${own.distance}px. Nearest other street: ${nearestOther}px. Label line height: ${lineHeight}px. Inline: ${text.dataset.pinCircleOverlap ?? false}.`,
+        `Broad Street distance: ${own.distance}px. Nearest other street: ${nearestOther}px. Label line height: ${lineHeight}px. Inline: ${text.dataset.pinCircleOverlap ?? false}. Center: ${JSON.stringify(center)}. Map: ${map.x},${map.y} ${map.width}×${map.height}. Transform: ${text.getAttribute("transform")}.`,
       ).toBe(true);
 
       expect(label.left).toBeGreaterThanOrEqual(map.left);
