@@ -329,8 +329,9 @@ private fun NumericCheckField(
             modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
             readOnly = locked,
             label = stringResource(R.string.player_your_answer),
+            // A unit after the number waits for one, so an empty field doesn't hold a stray sign; one before it shows from the start.
             visualTransformation =
-                unit?.let {
+                unit?.takeIf { unitFirst || shown.isNotEmpty() }?.let {
                     com.zoonk.android.ui.components.NumberUnitTransformation(
                         it,
                         unitFirst,

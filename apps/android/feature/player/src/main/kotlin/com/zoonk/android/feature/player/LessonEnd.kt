@@ -166,7 +166,12 @@ fun lessonAccessBar(
 ): (@Composable () -> Unit)? {
     val (label, onClick) =
         when (refusal) {
-            LessonRefusal.NotFound, LessonRefusal.NotInApp -> {
+            // ✕ already leaves, so a lesson that isn't there offers the way on.
+            LessonRefusal.NotFound -> {
+                R.string.not_found_go_home to { exits.replace(AppRoute.Today) }
+            }
+
+            LessonRefusal.NotInApp -> {
                 R.string.player_back to exits::close
             }
 
