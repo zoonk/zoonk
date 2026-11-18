@@ -637,29 +637,26 @@ final class PlanReadsOnScreenTests: XCTestCase {
   func testTheTimeSectionAsksAgainOnAVisitAfterAFailedRead() async throws {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
-    try show(screen.view { $0.timeSection })
-    try await waitForTestCondition("Time-to-cover did not finish") {
-      screen.store.timeToCover(goalId: "goal").freshState != .loading
-        && screen.store.timeToCover(goalId: "goal").value != nil
-    }
+    let timeToCover = screen.store.timeToCover(goalId: "goal")
+    await timeToCover.load()
+    XCTAssertNotNil(timeToCover.freshValue)
 
-    screen.isOpen = false
     await screen.editor.change([.dailyMinutes(45)], sentence: "")
     await api.setTimeToCoverFails(true)
-    try await screen.reopen()
+    try show(screen.view { $0.timeSection })
     try await waitForTestCondition("Time-to-cover did not fail") {
-      if case .failed = screen.store.timeToCover(goalId: "goal").freshState { return true }
+      if case .failed = timeToCover.freshState { return true }
       return false
     }
     await api.setTimeToCoverFails(false)
     try await screen.reopen()
 
     try await waitForTestCondition("Time-to-cover did not reload") {
-      await api.calls.timeToCover == 3 && screen.store.timeToCover(goalId: "goal").freshValue != nil
+      timeToCover.freshValue != nil
     }
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 3, "the visit after a failed read asks again")
-    XCTAssertEqual(screen.store.timeToCover(goalId: "goal").freshValue?.recommendedMinutes, 45)
+    XCTAssertEqual(timeToCover.freshValue?.recommendedMinutes, 45)
   }
 
   func testReopeningThePrerequisitesSheetWhileItAsksAsksNothingMore() async throws {
@@ -734,24 +731,22 @@ final class PlanReadsOnScreenTests: XCTestCase {
   func testThePrerequisitesSheetAsksAgainOnAVisitAfterAFailedRead() async throws {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
-    try show(screen.view { $0.basesSheet })
-    try await waitForTestCondition("Advice did not finish") {
-      screen.store.basesAdvice(goalId: "goal").value != nil
-    }
+    let advice = screen.store.basesAdvice(goalId: "goal")
+    await advice.load()
+    XCTAssertNotNil(advice.freshValue)
 
-    screen.isOpen = false
     await screen.editor.change([.dailyMinutes(45)], sentence: "")
     await api.setAdviceFails(true)
-    try await screen.reopen()
+    try show(screen.view { $0.basesSheet })
     try await waitForTestCondition("Advice did not fail") {
-      if case .failed = screen.store.basesAdvice(goalId: "goal").freshState { return true }
+      if case .failed = advice.freshState { return true }
       return false
     }
     await api.setAdviceFails(false)
     try await screen.reopen()
 
     try await waitForTestCondition("Advice did not reload") {
-      await api.calls.advice == 3 && screen.store.basesAdvice(goalId: "goal").freshValue != nil
+      advice.freshValue != nil
     }
     let calls = await api.calls
     XCTAssertEqual(calls.advice, 3, "the visit after a failed read asks again")
