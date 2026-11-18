@@ -619,8 +619,8 @@ test.describe("Live call server states", () => {
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(dropped).toBeVisible();
 
-      // The learner cancels the second while its reservation is still on its way, calls again and
-      // ends the call before it answers: only that reservation is held.
+      // The learner ends the call while the second still rings, its reservation still on its way:
+      // End ends the call, on what was said, not only the redial.
       const held = { reservation: false };
 
       await page.route(`**/conversation/${call.id}`, async (route) => {
@@ -634,9 +634,6 @@ test.describe("Live call server states", () => {
 
       await page.getByRole("button", { name: "Call again" }).click();
       await page.getByRole("button", { exact: true, name: "End" }).click();
-      await expect(dropped).toBeVisible();
-      await page.getByRole("button", { name: "Call again" }).click();
-      await page.getByRole("button", { name: "End the call" }).click();
 
       await expect
         .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
