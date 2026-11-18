@@ -299,7 +299,7 @@ describe("a rule a ::after draws where a box clips it away", () => {
   });
 });
 
-/** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
+/** A tab list with a 120 px item whose `::before` reaches 10 px past the column's start. */
 function tabFill(tag: string, attributes: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
     <div data-slot="page" data-box="16,0,358,400"><div data-tabs data-box="16,40,358,60">

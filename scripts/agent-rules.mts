@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node
 import { createRequire } from "node:module";
 import { join, relative, resolve } from "node:path";
 import { z } from "zod";
+import { committedSourceProblems } from "./verify/committed-source.mts";
 
 const ROOT = resolve(import.meta.dirname, "..");
 
@@ -75,6 +76,12 @@ function findStaleAgentRules(): string[] {
 }
 
 if (process.argv.includes("--check")) {
+  const problems = committedSourceProblems(ROOT);
+
+  if (problems.length > 0) {
+    throw new Error(`Committed source checks failed:\n${problems.join("\n")}`);
+  }
+
   const stale = findStaleAgentRules();
 
   if (stale.length > 0) {

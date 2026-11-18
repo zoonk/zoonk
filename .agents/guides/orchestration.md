@@ -66,6 +66,8 @@ A debate decides what each screen is for, what the learner decides there and wha
 
 Agents working in parallel share the machine's memory, disk and devices.
 
+Keep task notes, status files, reports, briefs, and handoffs outside the repository and never commit them.
+
 - Heavy jobs take turns through `pnpm dev:queue`; the [development guide](development.md#commands) says which commands queue on their own and how to queue the rest. The [Apple](../../apps/apple/AGENTS.md#simulators) and [Android](../../apps/android/AGENTS.md#emulators-and-builds) guidance caps how many simulators, emulators and native builds run at once.
 - On macOS, a lead whose subagents use simulators or emulators runs `pnpm dev:close-device-crash-alerts` each time it checks on them, so crash alerts don't pile up on screen until a subagent ends.
 - Every worktree fills the disk with its own dependencies, builds and database copies. Before an agent hands back, it commits its work (its branch keeps the commits) and stops the servers it started. The agent that owns the task's PR pushes and keeps its worktree, since review fixes and the user's follow-up changes happen there; the harness removes it once the PR merges. A subagent removes the worktree made for its slice: it reports first, since a session running inside the worktree loses its turn when the worktree goes, then, as its last command, runs `git worktree remove <path>` from outside it, which refuses while uncommitted work is left. The next `pnpm worktree:setup` drops a removed worktree's database copies.
