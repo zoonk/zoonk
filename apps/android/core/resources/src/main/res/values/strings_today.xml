@@ -174,9 +174,6 @@
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Keep my time</string>
     <string name="today_behind_kept">Okay. Your time stays the same.</string>
-    <string name="today_connection_lost">Connection lost</string>
-    <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
-    <string name="today_reconnect">Reconnect</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Progress</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->

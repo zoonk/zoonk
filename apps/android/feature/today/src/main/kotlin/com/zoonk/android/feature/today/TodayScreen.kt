@@ -36,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
@@ -54,6 +55,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -465,25 +467,7 @@ private fun Preparing(
 /** Polling gave up: it may still be building, so Reconnect starts reading again. */
 @Composable
 private fun PlanWaitStalled(onReconnect: () -> Unit) {
-    Column(
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            stringResource(R.string.today_connection_lost),
-            modifier =
-                Modifier.semantics {
-                    heading()
-                },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            text = stringResource(R.string.today_connection_lost_detail),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = onReconnect) { Text(stringResource(R.string.today_reconnect)) }
-    }
+    GenerationFailureNotice(GenerationFailure.Connection, onReconnect)
 }
 
 @Composable
