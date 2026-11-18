@@ -354,4 +354,24 @@ final class GenerationWaitTests: XCTestCase {
       wait.firstLesson(read: read, readGenerationID: "new", generationID: "new")?.isStopped, true)
   }
 
+  /// A lesson's mark (10) and drawing (45) run side by side, and the drawing finished first.
+  func testAStepThatFinishesBeforeTheOneBesideItFillsItsOwnPart() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(
+        share: 135.0 / 145.0, weights: [40, 50, 10, 45], states: [.done, .done, .working, .done]),
+      [1, 1, 0, 1])
+  }
+
+  func testARunningStepFillsWhatTheBarDriftedPastTheDoneSteps() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(
+        share: 0.5, weights: [10, 20, 10], states: [.done, .working, .waiting]),
+      [1, 0.5, 0])
+  }
+
+  func testAWaitingStepStaysEmptyWhateverTheBarReached() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(share: 0.9, weights: [10, 10], states: [.working, .waiting]),
+      [1, 0])
+  }
 }
