@@ -23,7 +23,7 @@ data class MockDraft(
     val flagged: Boolean = false,
 )
 
-/** `Refused` holds until a later answer is stored. */
+/** `Refused` holds until every refused question's answer is stored. */
 enum class DraftSaveStatus { Saved, Saving, Retrying, Refused }
 
 /** What sending one answer came to; [Stop] when the session it belongs to ended. */
@@ -45,7 +45,7 @@ class MockSaveQueue(
     private val waiting = mutableListOf<MockDraft>()
     private var sending: MockDraft? = null
     private var attempt = 0
-    private var refused = false
+    private val refused = mutableSetOf<String>()
     private var retry: Job? = null
     private var stopped = false
     private val state = MutableStateFlow(DraftSaveStatus.Saved)
@@ -103,7 +103,7 @@ class MockSaveQueue(
 
                 SendResult.Stored, SendResult.Refused -> {
                     attempt = 0
-                    refused = result == SendResult.Refused
+                    if (result == SendResult.Refused) refused += draft.itemId else refused -= draft.itemId
                     onPendingChange()
                     sendNext()
                 }
@@ -127,7 +127,7 @@ class MockSaveQueue(
             when {
                 retry != null -> DraftSaveStatus.Retrying
                 isBusy -> DraftSaveStatus.Saving
-                refused -> DraftSaveStatus.Refused
+                refused.isNotEmpty() -> DraftSaveStatus.Refused
                 else -> DraftSaveStatus.Saved
             }
     }

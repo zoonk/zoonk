@@ -103,7 +103,7 @@ class MockSaveQueueTest {
         }
 
     @Test
-    fun aRefusedAnswerIsSaidUntilALaterOneIsStored() =
+    fun aRefusedAnswerIsSaidUntilItsQuestionsAnswerIsStored() =
         runTest {
             results += SendResult.Refused
             val queue = queue()
@@ -111,9 +111,23 @@ class MockSaveQueueTest {
             advanceUntilIdle()
             assertEquals(DraftSaveStatus.Refused, queue.status.value)
 
-            queue.add(draft("b", 1))
+            queue.add(draft("a", 1))
             advanceUntilIdle()
             assertEquals(DraftSaveStatus.Saved, queue.status.value)
+        }
+
+    /** Another device moved a forward-only section on, so the first question's change is refused while the next one is stored. */
+    @Test
+    fun anotherAnswerStoredAfterARefusalDoesntSayEveryAnswerIsSaved() =
+        runTest {
+            results += SendResult.Refused
+            val queue = queue()
+            queue.add(draft("a", 0))
+            queue.add(draft("b", 1))
+            advanceUntilIdle()
+
+            assertEquals(listOf("a", "b"), sent.map { it.itemId })
+            assertEquals(DraftSaveStatus.Refused, queue.status.value)
         }
 
     @Test

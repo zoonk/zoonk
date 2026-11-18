@@ -104,7 +104,7 @@
     <string name="mock_section_answered_of">%1$s of %2$s</string>
     <string name="mock_save_retry">Try again before you move on</string>
     <string name="mock_try_again">Try again</string>
-    <string name="mock_last_not_saved">Your last answer wasn\'t saved.</string>
+    <string name="mock_answer_not_saved">An answer wasn\'t saved.</string>
     <string name="mock_step_failed_saved">That didn\'t go through. Your answers are saved. Try again in a moment.</string>
     <string name="mock_step_failed">That didn\'t go through. Try again in a moment.</string>
     <string name="mock_step_slow">Still handing it in. This is taking longer than usual.</string>

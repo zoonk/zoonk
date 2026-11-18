@@ -263,7 +263,7 @@ private fun MockStepStatus(
 
         DraftSaveStatus.Refused -> {
             Text(
-                stringResource(R.string.mock_last_not_saved),
+                stringResource(R.string.mock_answer_not_saved),
                 Modifier.semantics {
                     liveRegion = LiveRegionMode.Assertive
                 },

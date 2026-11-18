@@ -607,7 +607,6 @@ class MockRunnerViewModel(
 
     private suspend fun send(draft: MockDraft): SendResult {
         if (sessions.current != owner) return SendResult.Stop
-        run.update { it.copy(failedDrafts = it.failedDrafts - draft.itemId) }
         val outcome =
             when (val result = store.save(blockId, draft)) {
                 is MutationResult.Done -> if (result.value == SaveOutcome.Stored) SendResult.Stored else SendResult.Refused
@@ -616,7 +615,11 @@ class MockRunnerViewModel(
             }
         run.update { current ->
             when (outcome) {
-                SendResult.Stored -> current.copy(storedDrafts = current.storedDrafts + (draft.itemId to draft))
+                SendResult.Stored ->
+                    current.copy(
+                        storedDrafts = current.storedDrafts + (draft.itemId to draft),
+                        failedDrafts = current.failedDrafts - draft.itemId,
+                    )
                 SendResult.Unreachable, SendResult.Refused -> current.copy(failedDrafts = current.failedDrafts + (draft.itemId to draft))
                 SendResult.Stop -> current
             }

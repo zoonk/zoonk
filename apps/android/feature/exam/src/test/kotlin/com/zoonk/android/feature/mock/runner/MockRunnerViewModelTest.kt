@@ -109,8 +109,14 @@ class MockRunnerViewModelTest {
             assertEquals(DraftSaveStatus.Retrying, viewModel.saveStatus.value)
             assertEquals(0, viewModel.state.value.counts.answered)
 
-            // Back online, the retry gets it through and the device lets it go.
+            // Back online, the answer counts only once the server keeps it, not while it's on its way.
             api.saveFailure = null
+            api.saveGate = CompletableDeferred()
+            viewModel.retrySaves()
+            runCurrent()
+            assertEquals(0, viewModel.state.value.counts.answered)
+
+            api.saveGate?.complete(Unit)
             advanceUntilIdle()
             assertEquals(Answer.Choice(1), api.saved.last { it.itemId == ITEM_ONE }.answer)
             assertEquals(1, viewModel.state.value.counts.answered)
