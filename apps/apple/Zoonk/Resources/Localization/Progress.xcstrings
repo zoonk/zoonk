@@ -387,7 +387,7 @@
       }
     },
     "%@ Brain Power to %@" : {
-      "comment" : "What the belt's next number takes, as in 96 Brain Power to White belt 3\nWhat the next belt takes, at a belt's tenth number, as in 96 Brain Power to Yellow belt",
+      "comment" : "What the next belt takes, at a belt's tenth number, as in 96 Brain Power to Yellow belt",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1497,173 +1497,6 @@
         }
       }
     },
-    "%lld study days in the past 12 months" : {
-      "comment" : "Summary of the study days calendar: how many days had study",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Lerntag in den letzten 12 Monaten"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Lerntage in den letzten 12 Monaten"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld study day in the past 12 months"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld study days in the past 12 months"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld día de estudio en los últimos 12 meses"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld días de estudio en los últimos 12 meses"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld jour d’étude au cours des 12 derniers mois"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld jours d’étude au cours des 12 derniers mois"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld giorno di studio negli ultimi 12 mesi"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld giorni di studio negli ultimi 12 mesi"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "過去12か月で%lld日学習"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "지난 12개월간 학습한 날 %lld일"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dzień nauki w ciągu ostatnich 12 miesięcy"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dni nauki w ciągu ostatnich 12 miesięcy"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dia de estudo nos últimos 12 meses"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dias de estudo nos últimos 12 meses"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Son 12 ayda %lld çalışma günü"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "Activity" : {
       "comment" : "Title of the stat with the learner's study days, lessons and time",
       "localizations" : {
@@ -1724,6 +1557,7 @@
       }
     },
     "Activity by day" : {
+      "comment" : "Spoken name of the study days calendar",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3017,6 +2851,7 @@
       }
     },
     "Energy by day" : {
+      "comment" : "Spoken name of the Energy calendar",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4481,65 +4316,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son %lld ayda çalışmadın"
-          }
-        }
-      }
-    },
-    "No study in the past 12 months" : {
-      "comment" : "Summary of a study days calendar without a study day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In den letzten 12 Monaten nicht gelernt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin estudio en los últimos 12 meses"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune étude au cours des 12 derniers mois"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna attività di studio negli ultimi 12 mesi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "過去12か月の学習はありません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지난 12개월간 학습 기록 없음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brak dni nauki w ostatnich 12 miesiącach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhum estudo nos últimos 12 meses"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son 12 ayda çalışma yok"
           }
         }
       }
