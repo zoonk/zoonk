@@ -117,6 +117,31 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertEqual(queue.status, .saved)
   }
 
+  /// Its "not saved yet" note stays up while each retry is on its way, so it isn't drawn and read
+  /// out again on every attempt.
+  func testAnAnswerBeingSentAgainStaysRetryingUntilItGetsThrough() async {
+    var statuses: [MockDraftQueue.Status] = []
+    var failures = 3
+    var queue: MockDraftQueue?
+    queue = MockDraftQueue(
+      retryDelay: { _ in .milliseconds(10) },
+      save: { _ in
+        statuses.append(queue?.status ?? .saved)
+        if failures > 0 {
+          failures -= 1
+          return .unreachable
+        }
+
+        return .stored
+      })
+
+    queue?.add(draft("a", .choice(0)))
+    await queue?.idle()
+
+    XCTAssertEqual(statuses, [.saving, .retrying, .retrying, .retrying])
+    XCTAssertEqual(queue?.status, .saved)
+  }
+
   func testAFailedSaveHidesOnlyAnUnsavedAnswerFromProgress() async {
     let newAnswer = draft("new", .choice(1))
     let storedAnswer = draft("stored", .choice(2))
