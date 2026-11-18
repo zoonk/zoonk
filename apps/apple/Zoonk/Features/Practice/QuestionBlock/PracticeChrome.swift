@@ -14,6 +14,8 @@ private enum PracticeTaskKind {
 
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
+  @Environment(\.stacksContent) private var isStacked
+  @State private var barWidth: CGFloat = 0
   private let kind: PracticeTaskKind
   private let segments: [TaskSegment]?
   private let index: Int
@@ -99,6 +101,10 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       VStack(spacing: 10) {
         actions()
       }
+      // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
+      .environment(\.practiceBarIsWide, barWidth >= WideBar.width && !isStacked)
+      .frame(maxWidth: .infinity)
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
       .frame(maxWidth: PracticeLayout.readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
@@ -211,6 +217,9 @@ extension View {
 /// screen to screen. While busy it ignores `isDisabled`: the button that sent the request keeps its
 /// look and its focus.
 struct PracticeMainButton: View {
+  @Environment(\.practiceBarIsWide) private var isWide
+  @Environment(\.practiceActionsSideBySide) private var sideBySide
+
   let title: LocalizedStringResource
   let icon: ActionIcon
   var isBusy = false
@@ -223,13 +232,16 @@ struct PracticeMainButton: View {
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .buttonSizing(.flexible)
+    .buttonSizing(isWide ? .automatic : .flexible)
+    .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
     .disabled(isDisabled && !isBusy)
     .keyboardShortcut(.defaultAction)
+    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
   }
 }
 
 struct PracticeActionRow<Content: View>: View {
+  @Environment(\.practiceBarIsWide) private var isWide
   @ViewBuilder let content: Content
 
   var body: some View {
@@ -243,11 +255,13 @@ struct PracticeActionRow<Content: View>: View {
         content
       }
     }
+    .frame(maxWidth: isWide ? .infinity : nil, alignment: .trailing)
   }
 }
 
 extension EnvironmentValues {
   @Entry var practiceActionsSideBySide = false
+  @Entry var practiceBarIsWide = false
 }
 
 enum PracticeFocus: Hashable {
@@ -300,6 +314,7 @@ private struct PracticeFocusTag: ViewModifier {
 
 struct PracticeSecondaryButton: View {
   @Environment(\.practiceActionsSideBySide) private var sideBySide
+  @Environment(\.practiceBarIsWide) private var isWide
 
   let title: LocalizedStringResource
   let icon: ActionIcon
@@ -316,8 +331,9 @@ struct PracticeSecondaryButton: View {
     .fixedSize(horizontal: sideBySide, vertical: false)
     .buttonStyle(.outline)
     .controlSize(.large)
-    .buttonSizing(sideBySide ? .fitted : .flexible)
+    .buttonSizing(sideBySide || isWide ? .fitted : .flexible)
     .disabled(isDisabled && !isBusy)
+    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
   }
 }
 
