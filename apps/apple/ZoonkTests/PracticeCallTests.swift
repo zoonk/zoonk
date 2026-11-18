@@ -12,14 +12,28 @@ final class PracticeCallTests: XCTestCase {
     let action = { (limit: HelpLimit?, isLocked: Bool) in
       PracticeCallAction(limit: limit, isLocked: isLocked, isWriting: false)
     }
+    let freeUsedUp = HelpLimit.usedUp(tier: .free, availableAt: later)
+    let guest = HelpLimit.limitReached(period: .total, tier: .guest)
 
-    XCTAssertEqual(action(.usedUp(tier: .free, availableAt: later), false), .subscribe)
-    XCTAssertEqual(action(.limitReached(period: .total, tier: .guest), false), .signUp)
+    XCTAssertEqual(action(freeUsedUp, false), .wayOn(freeUsedUp))
+    XCTAssertEqual(action(guest, false), .wayOn(guest))
+    XCTAssertEqual(action(guest, true), .wayOn(guest))
     XCTAssertEqual(
       action(.usedUp(tier: .plus, availableAt: later), false), .start(isEnabled: false))
-    XCTAssertEqual(action(.usedUp(tier: .free, availableAt: later), true), .subscribe)
+    XCTAssertEqual(action(freeUsedUp, true), .wayOn(freeUsedUp))
     XCTAssertEqual(action(nil, true), .subscribe)
     XCTAssertEqual(action(nil, false), .start(isEnabled: true))
+  }
+
+  /// A short break has no way on of its own, so a length only subscribers get still offers one.
+  func testALockedLengthOffersASubscriptionDuringAShortBreak() {
+    let slowDown = HelpLimit.slowDown(retryAfterSeconds: 30)
+
+    XCTAssertEqual(
+      PracticeCallAction(limit: slowDown, isLocked: true, isWriting: false), .subscribe)
+    XCTAssertEqual(
+      PracticeCallAction(limit: slowDown, isLocked: false, isWriting: false),
+      .start(isEnabled: false))
   }
 
   /// A subscriber's Start turns on at the instant, in the place it held, with the line's room kept.
