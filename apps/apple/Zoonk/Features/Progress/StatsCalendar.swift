@@ -157,12 +157,31 @@ struct StatsCalendar: View {
     }
   }
 
+  /// The key's title beside its scale, or over it when both don't fit one line.
   private var legend: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 8) {
+        legendTitle
+          .foregroundStyle(.foreground)
+          .fixedSize()
+        scale
+      }
+
+      VStack(alignment: .leading, spacing: 4) {
+        legendTitle
+          .foregroundStyle(.foreground)
+          .fixedSize(horizontal: false, vertical: true)
+        scale
+      }
+    }
+    .typeStyle(.small)
+    .foregroundStyle(.mutedForeground)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(legendLabel)
+  }
+
+  private var scale: some View {
     HStack(spacing: 4) {
-      legendTitle
-        .foregroundStyle(.foreground)
-        .fixedSize()
-        .padding(.trailing, 4)
       low.fixedSize()
 
       ForEach(shades.indices, id: \.self) { index in
@@ -179,10 +198,6 @@ struct StatsCalendar: View {
 
       high.fixedSize()
     }
-    .typeStyle(.small)
-    .foregroundStyle(.mutedForeground)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(legendLabel)
   }
 
   private var grid: some View {
