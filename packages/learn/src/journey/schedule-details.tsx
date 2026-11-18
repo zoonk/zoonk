@@ -19,6 +19,7 @@ import { usePlanStateLine } from "../plan/plan-notice";
 import { DailyTimeValue } from "../plan/plan-properties";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
 import { useStudyDaysText } from "../plan/use-study-days-text";
+import { showsResumeSchedule } from "./schedule-state";
 
 type PlanDay = PlanView["week"]["days"][number];
 
@@ -142,7 +143,7 @@ export function useScheduleNumber({
   const { dailyMinutes } = usePlanScreen().plan.schedule;
   const label = t("Schedule");
 
-  if (paused) {
+  if (showsResumeSchedule({ paused, status })) {
     return { detail: scheduleDays, label, value: <DailyTimeValue /> };
   }
 
@@ -187,15 +188,16 @@ export function ScheduleDetails({
   const stateLine = usePlanStateLine();
 
   const scheduleDays = useResumeScheduleDays();
-  const line = paused ? null : stateLine;
+  const resume = showsResumeSchedule({ paused, status });
+  const line = resume ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{paused ? <DailyTimeValue /> : statusText(status)}</p>
-        {paused && <p className="text-muted-foreground text-sm">{scheduleDays}</p>}
+        <p className="font-medium">{resume ? <DailyTimeValue /> : statusText(status)}</p>
+        {resume && <p className="text-muted-foreground text-sm">{scheduleDays}</p>}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
-        {line?.adjust && (
+        {(line?.adjust || status.kind === "pastDate") && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">
             {t("Adjust plan")}
           </Button>
