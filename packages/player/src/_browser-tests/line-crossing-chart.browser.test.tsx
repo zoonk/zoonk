@@ -228,6 +228,10 @@ async function handlesOutsideAtEachEnd(
   return outside;
 }
 
+function boxCenter(box: DOMRect) {
+  return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+}
+
 function crossingDot(): SVGCircleElement {
   const dot = document.querySelector<SVGCircleElement>("figure svg circle.fill-foreground");
 
@@ -477,13 +481,23 @@ describe("line crossing chart", () => {
   });
 
   it("draws the new crossing over a handle resting on it, and a drag there still moves the handle", async () => {
-    await atViewport(PHONE, async () => {
+    await atViewport(NARROW, async () => {
       openActivity({ content: flatCostDown, template: "lineCrossing" });
-      await pressOnSlider("Move the line Cost", "ArrowUp", 5);
       const revenue = page.getByRole("slider", { name: "Move the line Revenue" });
+      const start = boxCenter(revenue.element().getBoundingClientRect());
+
+      await pressOnSlider("Move the line Revenue", "ArrowUp", 1);
+      const next = boxCenter(revenue.element().getBoundingClientRect());
+
+      await pressOnSlider("Move the line Revenue", "ArrowDown", 1);
+      await pressOnSlider("Move the line Cost", "ArrowUp", 5);
       const handle = revenue.element().getBoundingClientRect();
-      const dot = crossingDot().getBoundingClientRect();
+      const dot = boxCenter(crossingDot().getBoundingClientRect());
       const body = document.body.getBoundingClientRect();
+
+      expect(Math.hypot(dot.x - boxCenter(handle).x, dot.y - boxCenter(handle).y)).toBeLessThan(
+        handle.width / 4,
+      );
 
       expect(revenue.element().compareDocumentPosition(crossingDot())).toBe(
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -491,12 +505,12 @@ describe("line crossing chart", () => {
 
       await userEvent.dragAndDrop(revenue, page.elementLocator(document.body), {
         force: true,
-        sourcePosition: {
-          x: dot.left + dot.width / 2 - handle.left,
-          y: dot.top + dot.height / 2 - handle.top,
-        },
+        sourcePosition: { x: dot.x - handle.left, y: dot.y - handle.top },
         steps: 6,
-        targetPosition: { x: dot.left - 60 - body.left, y: dot.top + dot.height / 2 - body.top },
+        targetPosition: {
+          x: dot.x + (next.x - start.x) * 3 - body.left,
+          y: dot.y + (next.y - start.y) * 3 - body.top,
+        },
       });
 
       await expect.element(revenue).not.toHaveAttribute("aria-valuenow", "0");
