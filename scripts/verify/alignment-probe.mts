@@ -489,15 +489,24 @@ export function readAlignment({
       );
 
       return found.map((element, index): CaptureElement => {
-        const ink = inkOf(element);
+        const control = part === "end" ? element.closest("button, [data-slot=button]") : null;
+
+        const framed =
+          control &&
+          control !== row &&
+          row.contains(control) &&
+          globalThis.zoonkPage.paints(control);
+
+        const visible = framed ? control : element;
+        const ink = inkOf(visible);
         const isText = part !== "mark" && part !== "end";
 
         return {
-          bounds: bounds(boxOf(element)),
+          bounds: bounds(boxOf(visible)),
           group: read.groupId,
           id: `${rowId}.${part}${index}`,
           ink: ink ? bounds(ink) : null,
-          name: name(element),
+          name: name(visible),
           part,
           piece: read.pieceName,
           row: rowId,
