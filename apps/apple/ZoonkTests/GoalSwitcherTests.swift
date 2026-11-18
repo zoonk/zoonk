@@ -11,8 +11,19 @@ final class GoalSwitcherTests: XCTestCase {
     XCTAssertTrue(GoalSwitcher.startsPlainly(followed: 0, waiting: 0, explanations: 1))
   }
 
-  func testTwoExplanationsAreListedInTheMenu() {
+  /// Two or more are listed in the menu, which says so on its button.
+  func testTwoExplanationsOpenAMenuNamedForThem() {
     XCTAssertFalse(GoalSwitcher.startsPlainly(followed: 0, waiting: 0, explanations: 2))
+    XCTAssertEqual(
+      GoalSwitcher.trigger(hasShownGoal: false, followed: 0, waiting: 0, explanations: 2),
+      .explanations)
+    XCTAssertEqual(
+      GoalSwitcher.trigger(hasShownGoal: true, followed: 1, waiting: 0, explanations: 2), .goal)
+  }
+
+  func testWaitingGoalsAreListedWithoutAFollowedOne() {
+    XCTAssertTrue(GoalSwitcher.listsGoals(followed: 0, waiting: 1))
+    XCTAssertFalse(GoalSwitcher.listsGoals(followed: 0, waiting: 0))
   }
 
   func testAGoalToFollowOrStartOpensTheMenu() {
