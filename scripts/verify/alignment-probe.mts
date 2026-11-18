@@ -1456,7 +1456,7 @@ export function readAlignment({
 
   function textRoot(parent: Element): Element {
     const semantic = parent.closest(
-      "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+      "h1,h2,h3,h4,h5,h6,p,label,td,th,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
     );
 
     let root = parent;
