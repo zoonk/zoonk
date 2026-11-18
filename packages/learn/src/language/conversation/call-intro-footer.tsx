@@ -155,25 +155,38 @@ export function CallIntroFooter({
   );
 }
 
-export function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
+/** What stopped the microphone and what to do, for a call's footer or a dropped call's screen. */
+export function useMicrophoneOffWords({
+  name,
+  problem,
+}: {
+  name: string;
+  problem: MicrophoneProblem;
+}): { text: string; title: string } {
   const t = useExtracted();
-  const unavailable = problem === "unavailable";
+
+  return problem === "unavailable"
+    ? {
+        text: t(
+          "Check that a microphone is connected and no other app is using it, or do this call by typing.",
+        ),
+        title: t("We can't use your microphone"),
+      }
+    : {
+        text: t(
+          "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing.",
+          { name },
+        ),
+        title: t("Your microphone is off"),
+      };
+}
+
+export function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
+  const words = useMicrophoneOffWords({ name, problem });
 
   return (
-    <CallReason
-      className="pb-1"
-      title={unavailable ? t("We can't use your microphone") : t("Your microphone is off")}
-    >
-      <p className="text-muted-foreground text-sm text-pretty">
-        {unavailable
-          ? t(
-              "Check that a microphone is connected and no other app is using it, or do this call by typing.",
-            )
-          : t(
-              "Allow the microphone for Zoonk in your browser settings to talk with {name}, or do this call by typing.",
-              { name },
-            )}
-      </p>
+    <CallReason className="pb-1" title={words.title}>
+      <p className="text-muted-foreground text-sm text-pretty">{words.text}</p>
     </CallReason>
   );
 }
