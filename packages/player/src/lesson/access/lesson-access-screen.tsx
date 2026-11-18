@@ -155,14 +155,26 @@ function Unavailable({
 }) {
   const t = useExtracted();
   const { actions } = useLessonPlayer();
-  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+  const { routes } = useLessonPlayerConfig();
 
   if (refusal.reason === "failed") {
     return (
       <AccessLayout
         actions={<EnterButton onClick={actions.retryStart}>{t("Try again")}</EnterButton>}
+        description={t("Nothing was lost. Try again in a moment.")}
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
+      />
+    );
+  }
+
+  if (refusal.reason === "notFound") {
+    return (
+      <AccessLayout
+        description={t("The link may be old or mistyped.")}
+        heading="h1"
+        icon={<CircleAlertIcon aria-hidden="true" />}
+        title={t("This lesson isn't available")}
       />
     );
   }
@@ -170,25 +182,12 @@ function Unavailable({
   return (
     <AccessLayout
       actions={
-        refusal.reason === "unauthorized" ? (
-          <EnterLink href={routes.signUp} link={PageLink}>
-            {t("Log in")}
-          </EnterLink>
-        ) : (
-          <EnterLink href={routes.exit} link={LinkComponent}>
-            {t("Back")}
-          </EnterLink>
-        )
-      }
-      description={
-        refusal.reason === "unauthorized" ? undefined : t("The link may be old or mistyped.")
+        <EnterLink href={routes.signUp} link={PageLink}>
+          {t("Log in")}
+        </EnterLink>
       }
       icon={<CircleAlertIcon aria-hidden="true" />}
-      title={
-        refusal.reason === "unauthorized"
-          ? t("You've been logged out")
-          : t("This lesson isn't available")
-      }
+      title={t("You've been logged out")}
     />
   );
 }

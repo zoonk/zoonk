@@ -89,8 +89,20 @@ function useLessonProgress(): number {
 export function LessonPlayerHeader() {
   const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
-  const { screen } = useLessonPlayer();
+  const { screen, state } = useLessonPlayer();
   const progress = useLessonProgress();
+
+  if (state.run.status === "refused" && state.run.refusal.reason === "notFound") {
+    return (
+      <TaskHeader>
+        <TaskHeaderBar>
+          <TaskHeaderSide align="start">
+            <LessonClose />
+          </TaskHeaderSide>
+        </TaskHeaderBar>
+      </TaskHeader>
+    );
+  }
 
   return (
     <TaskHeader data-slot="lesson-player-header">
