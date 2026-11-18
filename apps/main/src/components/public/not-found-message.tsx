@@ -55,7 +55,7 @@ export async function PageNotFound() {
   const words = await getNotFoundWords();
 
   return (
-    <Page className="flex-1">
+    <Page className="flex-1" measure="list">
       <StatusMessage description={words.description} icon={NOT_FOUND_ICON} title={words.title} />
 
       <BottomBar>

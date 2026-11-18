@@ -14,7 +14,7 @@ export function StatsPage({
   title: string;
 }) {
   return (
-    <Page data-slot="stats-page">
+    <Page data-slot="stats-page" measure="list">
       <SectionPageHeader description={description} note={sectionNote} title={title} />
       {children}
     </Page>

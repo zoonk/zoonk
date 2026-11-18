@@ -15,6 +15,7 @@ export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) 
     <>
       <SectionPage
         hub={{ href: getMenu("stats").url, title: t("Statistics") }}
+        measure="list"
         nav={<StatsNav />}
         note={t("Across all your goals")}
       >
