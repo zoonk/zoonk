@@ -4,9 +4,15 @@ import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
+/** With enough answers and no day ahead, it says so in the Patterns page's words. */
 export async function getBestDayName(
   verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
+  if (verdict.kind === "even") {
+    const t = await getExtracted();
+    return t("You answer about the same every day.");
+  }
+
   if (verdict.kind !== "best") {
     return null;
   }
