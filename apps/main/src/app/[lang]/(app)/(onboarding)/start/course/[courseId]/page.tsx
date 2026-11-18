@@ -1,7 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
-import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
 import { getGoalLimit } from "@/lib/goals/goal-limit-reason";
@@ -172,11 +171,9 @@ async function CourseStartContent({ params, searchParams }: Props) {
     dailyMinutes: readDailyMinutes(query[MINUTES_PARAM]),
     initialFailure: toLimitFailure(limit) ?? toFailure(readParam(query[COURSE_START_ERROR_PARAM])),
     note: (
-      <NoAccountNote>
-        <p className="text-muted-foreground text-sm lg:text-right">
-          {t("Start free, no account needed.")}
-        </p>
-      </NoAccountNote>
+      <p className="text-muted-foreground text-sm lg:text-right">
+        {t("Start free, no account needed.")}
+      </p>
     ),
   };
 

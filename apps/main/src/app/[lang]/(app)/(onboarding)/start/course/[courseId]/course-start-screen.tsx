@@ -6,7 +6,9 @@ import {
   CourseStartFailureNote,
 } from "@/components/public/course-start-failure";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
+import { hasAccount } from "@/components/public/no-account-note";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import { type LimitWords, useLiveLimit } from "@zoonk/learn/help-limit";
 import {
@@ -158,6 +160,7 @@ function CourseStartForm({
   const t = useExtracted();
   const formId = useId();
   const isMounted = useIsMounted();
+  const accountNote = hasAccount(useLearnerSummary()) ? null : note;
 
   const { failure, pending, start, startWithLevel } = useCourseStart({
     chapterId: chapter?.id,
@@ -187,7 +190,7 @@ function CourseStartForm({
   return (
     <OnboardingColumn
       bar={
-        <OnboardingBottomBar note={failure ? barNote : note}>
+        <OnboardingBottomBar note={failure ? barNote : accountNote}>
           {blocked && failure ? (
             <CourseStartBlockedAction failure={failure} />
           ) : (
