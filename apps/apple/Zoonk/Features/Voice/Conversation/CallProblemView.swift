@@ -45,10 +45,8 @@ struct CallProblemView: View {
 
   private var symbol: String {
     switch problem {
-    case .call(.limit, _): "clock"
-    case .call(.callsPaused, _): "pause.circle"
-    case .call(.callInProgress, _): "phone.connection"
-    default: "phone.down"
+    case .call(let failure, _): CallRefusal.symbol(failure)
+    case .saveEnded: CallRefusal.symbol(.ended)
     }
   }
 
@@ -115,11 +113,7 @@ struct DroppedCallView: View {
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
       // A limit's words change when its day comes, in the room they had.
-      GateScreen(
-        title: Text(
-          "The call dropped", tableName: "Voice", comment: "A live call lost its connection"),
-        symbol: "phone.down", held: limit?.isOpen(at: now) == false
-      ) {
+      GateScreen(title: title(now), symbol: symbol, held: limit?.isOpen(at: now) == false) {
         reason(now)
       } actions: {
         actions(now)
@@ -128,25 +122,57 @@ struct DroppedCallView: View {
     .lonePage()
   }
 
-  @ViewBuilder
-  private func reason(_ now: Date) -> some View {
+  /// What stopped the call, one title: only a lost connection is a call that dropped. Once the
+  /// cap's day has come nothing ran out, so it has none.
+  private func title(_ now: Date) -> Text? {
+    switch dropped.reason {
+    case nil:
+      Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
+    case .microphone:
+      CallMicrophoneOff.title
+    case .plusRequired:
+      CallStartFooter.lockedTitle
+    case .callInProgress:
+      CallRefusal.title(.callInProgress, limit: nil)
+    case .callsPaused:
+      CallRefusal.title(.callsPaused, limit: nil)
+    case .ended:
+      CallRefusal.title(.ended, limit: nil)
+    case .limit:
+      CallRefusal.title(.limit, limit: limit, now: now)
+    }
+  }
+
+  private var symbol: String {
+    switch dropped.reason {
+    case nil: CallRefusal.symbol(.dropped)
+    case .microphone: "mic.slash"
+    case .plusRequired: CallRefusal.symbol(.plusRequired)
+    case .callInProgress: CallRefusal.symbol(.callInProgress)
+    case .callsPaused: CallRefusal.symbol(.callsPaused)
+    case .ended: CallRefusal.symbol(.ended)
+    case .limit: CallRefusal.symbol(.limit)
+    }
+  }
+
+  private func reason(_ now: Date) -> Text? {
     switch dropped.reason {
     case nil:
       Text(
         "Call again, or end the call to get feedback on what you said.", tableName: "Voice",
         comment: "What to do after a call dropped")
     case .microphone:
-      why(CallMicrophoneOff.title, CallMicrophoneOff.text(name: name))
+      CallMicrophoneOff.text(name: name)
     case .plusRequired:
-      why(CallStartFooter.lockedTitle, CallStartFooter.lockedLine)
+      CallStartFooter.lockedLine
     case .callInProgress:
-      refused(.callInProgress)
+      CallRefusal.text(.callInProgress, limit: nil)
     case .callsPaused:
-      refused(.callsPaused)
+      CallRefusal.text(.callsPaused, limit: nil)
     case .ended:
-      refused(.ended)
+      CallRefusal.text(.ended, limit: nil)
     case .limit:
-      refused(.limit, now: now)
+      CallRefusal.text(.limit, limit: limit, now: now)
     }
   }
 
@@ -228,23 +254,6 @@ struct DroppedCallView: View {
   private var endLabel: Text {
     Text("End the call", tableName: "Voice", comment: "Ends a dropped call and saves it")
   }
-
-  private func refused(_ failure: LiveCall.Failure, now: Date = .now) -> some View {
-    why(
-      CallRefusal.title(failure, limit: limit, now: now),
-      CallRefusal.text(failure, limit: limit, now: now))
-  }
-
-  /// Under the screen's own title.
-  private func why(_ title: Text?, _ text: Text?) -> some View {
-    VStack(spacing: 4) {
-      title?
-        .typeStyle(.reading.weight(.semibold))
-        .foregroundStyle(Color(.foreground))
-
-      text
-    }
-  }
 }
 
 /// Each refusal's words, on its own screen or as why a dropped call can't go on.
@@ -284,6 +293,15 @@ private enum CallRefusal {
       Text(
         "This happens sometimes. Try again in a moment.", tableName: "Voice",
         comment: "A call that didn't connect")
+    }
+  }
+
+  static func symbol(_ failure: LiveCall.Failure) -> String {
+    switch failure {
+    case .limit: "clock"
+    case .callsPaused: "pause.circle"
+    case .callInProgress: "phone.connection"
+    case .connect, .dropped, .ended, .plusRequired: "phone.down"
     }
   }
 
