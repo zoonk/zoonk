@@ -103,6 +103,8 @@ struct TodaySessionSection: View {
     if upcomingCount > StudyDay.upcomingRows {
       FoldRow(
         isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - StudyDay.upcomingRows,
+        more: StudyDay.moreLabel(
+          hidden: Array(upcoming.dropFirst(StudyDay.upcomingRows)), lessonsAhead: coming != nil),
         minutes: timedRows > StudyDay.upcomingRows
           ? session.foldedMinutes(
             showing: before + [next].compactMap { $0 } + upcoming.prefix(StudyDay.upcomingRows))
@@ -581,10 +583,24 @@ private struct ComingLessonsRow: View {
   }
 }
 
+extension StudyDay {
+  /// Main's `getFoldedRows`: the later rows a fold hides, named lessons only when every one is.
+  static func moreLabel(hidden: [StudyBlock], lessonsAhead: Bool) -> String {
+    let count = hidden.count + (lessonsAhead ? 1 : 0)
+
+    return !lessonsAhead && hidden.allSatisfy({ $0.kind == .learn })
+      ? String(
+        localized: "\(count) more lessons", table: "Today",
+        comment: "Folded later rows of Today, every one a lesson")
+      : String(localized: "\(count) more", table: "Plan")
+  }
+}
+
 private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int
+  var more: String?
   var skipped = 0
   let minutes: Double?
 
@@ -612,8 +628,8 @@ private struct FoldRow: View {
               Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
             } else if isOpen {
               Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
-            } else {
-              Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+            } else if let more {
+              Text(more)
             }
           }
           .typeStyle(.rowTitle)
