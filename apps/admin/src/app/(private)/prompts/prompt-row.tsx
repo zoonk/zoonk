@@ -31,7 +31,7 @@ function PromptReadingCell({ prompt }: { prompt: ListedPrompt }) {
         {summary.kind ? <GoalKindIcon kind={summary.kind} /> : null}
       </span>
       <span className="min-w-0 self-baseline">
-        <span className="text-foreground block wrap-anywhere whitespace-normal">
+        <span className="text-foreground block text-balance wrap-anywhere whitespace-normal">
           {summary.text}
         </span>
         <span className="block text-xs wrap-anywhere whitespace-normal">{summary.label}</span>

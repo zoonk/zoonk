@@ -28,11 +28,11 @@ export function AdminNameCell<Href extends string>({
           </span>
         ) : null}
         <span className="min-w-0 self-baseline">
-          <span className="text-foreground line-clamp-2 font-medium whitespace-normal">
+          <span className="text-foreground line-clamp-2 font-medium text-balance whitespace-normal">
             {title}
           </span>
           {note ? (
-            <span className="text-muted-foreground line-clamp-2 text-xs wrap-break-word whitespace-normal">
+            <span className="text-muted-foreground line-clamp-2 text-xs text-balance wrap-break-word whitespace-normal">
               {note}
             </span>
           ) : null}

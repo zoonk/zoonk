@@ -50,9 +50,13 @@ export default function FeedbackMessagePage({ params }: PageProps<"/feedback/mes
   );
 }
 
-function getMessageTitle({ email, user }: FeedbackMessage): string {
-  const sender = user ? getFeedbackLearnerLabel(user) : email;
-  return sender ? `Message from ${sender}` : "Message";
+/**
+ * Named by who sent it. An address is one long word a title can't wrap well, so a sender known
+ * only by it is named in the From row under the message instead.
+ */
+function getMessageTitle({ user }: FeedbackMessage): string {
+  const sender = user ? getFeedbackLearnerLabel(user) : null;
+  return sender && !sender.includes("@") ? `Message from ${sender}` : "Message";
 }
 
 async function MessageDetailContent({
