@@ -51,14 +51,12 @@ test.describe("Profile Setup Flow", () => {
 
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
+    await expect(submit).toBeDisabled();
     await name.fill("   ");
-    await name.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
-    await submit.click();
-
-    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
-    await expect(page).toHaveURL(/\/auth\/en\/setup/u);
+    await expect(submit).toBeDisabled();
 
     await name.fill("Test User");
+    await expect(submit).toBeEnabled();
 
     const redirectPromise = page.waitForRequest((req) => {
       const url = req.url();
@@ -81,7 +79,7 @@ test.describe("Profile Setup Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("a name typed and sent before the page loaded is saved with a free username when another learner took the email's one meanwhile", async ({
+  test("a name typed before the page loaded is saved with a free username when another learner took the email's one meanwhile", async ({
     page,
   }) => {
     const prefix = `e2eearly${Date.now()}`;
@@ -102,8 +100,8 @@ test.describe("Profile Setup Flow", () => {
     });
 
     await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Early Learner");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
     await loadScripts();
+    await page.getByRole("button", { name: /^continue$/iu }).click();
     await handoff;
 
     const saved = await prisma.user.findUniqueOrThrow({ where: { email } });

@@ -56,7 +56,7 @@ export function SetupProfileForm({
         {tellsNameTooLong ? t("Use 150 characters or fewer.") : failure}
       </AuthStatus>
 
-      <AuthSubmit disabled={isNameTooLong}>{t("Continue")}</AuthSubmit>
+      <AuthSubmit disabled={!name.trim() || isNameTooLong}>{t("Continue")}</AuthSubmit>
     </AuthForm>
   );
 }
