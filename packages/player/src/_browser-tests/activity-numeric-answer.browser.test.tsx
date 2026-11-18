@@ -51,6 +51,23 @@ describe("activity numeric answers", () => {
     );
   });
 
+  it("keeps a field with no rounding rule in place when a typing error shows", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+
+    openActivity({
+      content: { ...calculator, check: { ...calculator.check, answer: 252 } },
+      template: "formulaModel",
+    });
+
+    await expect.element(valueInput()).toBeVisible();
+    const top = numericGroup().getBoundingClientRect().top;
+    await valueInput().fill("12,,5");
+    await userEvent.keyboard("{Enter}");
+    await expect.element(page.getByRole("alert")).toBeVisible();
+
+    expect(numericGroup().getBoundingClientRect().top).toBe(top);
+  });
+
   it("shows the value named by the hint after a calculator miss", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
     await valueInput().fill("251.6");
