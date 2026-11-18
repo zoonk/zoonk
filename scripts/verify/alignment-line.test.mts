@@ -94,6 +94,27 @@ describe("one line of a row, as craft E5 places each part", () => {
     assert.match(lineMiss(lineRow("mark", 15, 1)), /the mark 15 above the row's center/u);
   });
 
+  it("centers an Apple row within its content frame when its cell also holds other content", () => {
+    const capture = lineRow("end", 30, 1);
+
+    const apple: Capture = {
+      ...capture,
+      elements: capture.elements.map((item) =>
+        item.part === "row" ? { ...item, bounds: [0, -70, 358, 130], ink: [0, 0, 358, 60] } : item,
+      ),
+      platform: "apple",
+      unit: "pt",
+    };
+
+    assert.equal(lineMiss(apple), "");
+
+    apple.elements = apple.elements.map((item) =>
+      item.part === "end" ? { ...item, ink: [0, 30, 10, 10] } : item,
+    );
+
+    assert.match(lineMiss(apple), /the end 5 below the row's center/u);
+  });
+
   it("puts a mark beside a title and two descriptions on the first line", () => {
     assert.equal(lineMiss(lineRow("mark", 15, 2)), "");
     assert.match(lineMiss(lineRow("mark", 30, 2)), /the mark 15 below the label's first line/u);
