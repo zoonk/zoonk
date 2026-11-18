@@ -5,6 +5,18 @@ import { useState } from "react";
 import { type ContentWriting } from "../generation/writing-wait";
 import { type MockActions, type MockStep } from "./mock-context";
 
+/** Whether the speaking part's Start can be pressed. */
+export function canStartSpeaking({
+  pending,
+  writing,
+}: {
+  error: boolean;
+  pending: boolean;
+  writing: boolean;
+}): boolean {
+  return !pending && !writing;
+}
+
 /** A paper still unwritten after its run ended would loop, so asking again then fails. */
 export function useSpeakingStart({
   start,
