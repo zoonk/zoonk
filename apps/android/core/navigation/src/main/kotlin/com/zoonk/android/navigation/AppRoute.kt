@@ -437,7 +437,7 @@ val AppRoute.section: AppSection?
     get() = (presentation as? Presentation.Section)?.section
 
 /**
- * The tab a page belongs to (main's `TAB_PATHS`), where a link from outside the app opens it: the
+ * The tab a page belongs to (main's `getActiveTab`), where a link from outside the app opens it: the
  * Plan's pages on the Plan, the buddy's on the buddy, everything else on Today.
  */
 val AppRoute.homeTab: AppTab

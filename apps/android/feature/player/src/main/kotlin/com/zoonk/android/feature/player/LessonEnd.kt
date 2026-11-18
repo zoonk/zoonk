@@ -565,7 +565,7 @@ private fun LessonSessionEnd(
     )
 }
 
-/** Where a guest's lesson sits: its course and its place in its chapter (main's `GuestLessonNext`). */
+/** Where a guest's lesson sits: its course and its place in its chapter (main's `GuestLessonFit`). */
 @Composable
 private fun WhereItFits(fit: LessonFit) {
     val chapter = fit.chapter

@@ -280,7 +280,7 @@ private fun CheckQuestion(text: String) {
     RichText(text = text, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
 }
 
-/** Main's `ActivityNumericCheck`: the learner's own typing stays as typed; money keeps its sign where the language writes it. */
+/** Main's `NumericAnswerField`: the learner's own typing stays as typed; money keeps its sign where the language writes it. */
 @Composable
 private fun NumericCheckField(
     check: NumericCheck,

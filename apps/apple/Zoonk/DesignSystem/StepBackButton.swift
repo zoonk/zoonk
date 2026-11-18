@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Main's `StepsBackButton`: back one step, at the start of a task's bar.
+/// Main's `QuestionBack`: back one step.
 struct StepBackButton: View {
   let label: Text
   let action: () -> Void
