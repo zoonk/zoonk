@@ -24,45 +24,42 @@ enum LineCrossingLabelLayout {
     guard !answerLines.isEmpty else { return before }
 
     let lines = visibleLines + answerLines
-    func needsPlacement(_ box: CGRect, named: Segment) -> Bool {
-      answerLines.contains { touches(padded(box), $0) }
-        || !belongsWith(box, named: named, lines: answerLines)
-    }
-
-    var placed = zip(before, shown).map { box, label in
-      box.flatMap { needsPlacement($0, named: label.segment) ? nil : $0 }
+    var placed = before.map { box in
+      box.flatMap { name in
+        answerLines.contains { touches(padded(name), $0) } ? nil : name
+      }
     }
 
     for (index, label) in shown.enumerated() {
       guard let origin = before[index], placed[index] == nil else { continue }
       placed[index] = placeLabel(
-        label, in: area, lines: lines, obstacles: obstacles + placed.compactMap { $0 },
+        label, in: area, lines: lines, obstacles: obstacles, placed: placed.compactMap { $0 },
         origin: origin, guides: guides, requiredLines: answerLines)
     }
 
     return placed
       + place(
-        revealed, in: area, lines: lines, obstacles: obstacles + placed.compactMap { $0 },
-        guides: guides, requiredLines: answerLines)
+        revealed, in: area, lines: lines, obstacles: obstacles,
+        guides: guides, requiredLines: answerLines, placed: placed.compactMap { $0 })
   }
 
   static func place(
     _ labels: [Label], in area: CGRect, lines: [Segment], obstacles: [CGRect],
-    guides: [Segment] = [], requiredLines: [Segment] = []
+    guides: [Segment] = [], requiredLines: [Segment] = [], placed: [CGRect] = []
   ) -> [CGRect?] {
-    var placed: [CGRect] = []
+    var occupied = placed
     return labels.map { label in
       let box = placeLabel(
-        label, in: area, lines: lines, obstacles: obstacles + placed, guides: guides,
+        label, in: area, lines: lines, obstacles: obstacles, placed: occupied, guides: guides,
         requiredLines: requiredLines)
-      if let box { placed.append(box) }
+      if let box { occupied.append(box) }
       return box
     }
   }
 
   private static func placeLabel(
     _ label: Label, in area: CGRect, lines: [Segment], obstacles: [CGRect],
-    origin: CGRect? = nil, guides: [Segment], requiredLines: [Segment]
+    placed: [CGRect], origin: CGRect? = nil, guides: [Segment], requiredLines: [Segment]
   ) -> CGRect? {
     let end = label.segment.from.y < label.segment.to.y ? label.segment.from : label.segment.to
     let start =
@@ -121,7 +118,9 @@ enum LineCrossingLabelLayout {
     }
 
     func avoidsMarks(_ box: CGRect) -> Bool {
-      obstacles.allSatisfy { !padded(box).intersects($0) }
+      let halo = padded(box)
+      return obstacles.allSatisfy { !halo.intersects($0) }
+        && placed.allSatisfy { !halo.intersects($0) }
     }
 
     let strokes = [label.segment] + lines + guides
@@ -129,13 +128,29 @@ enum LineCrossingLabelLayout {
       strokes.allSatisfy { !touches(padded(box), $0) }
     }
 
+    func avoidsNames(_ box: CGRect) -> Bool {
+      placed.allSatisfy { box.intersection($0).isEmpty }
+    }
+
+    func safe(_ box: CGRect) -> Bool {
+      clearsRequired(box) && avoidsNames(box)
+    }
+
+    func nearerThanGuides(_ box: CGRect) -> Bool {
+      let own = gapSquared(box, label.segment)
+      return guides.allSatisfy { own < gapSquared(box, $0) }
+    }
+
+    func named(_ box: CGRect) -> Bool {
+      safe(box) && belongsToLine(box)
+    }
+
     func fits(_ box: CGRect) -> Bool {
-      clearsRequired(box) && belongsToLine(box)
+      named(box) && belongsWith(box, named: label.segment, lines: guides)
     }
 
     if let clear = search({ box in
       clearsStrokes(box) && avoidsMarks(box) && fits(box)
-        && guides.allSatisfy { gapSquared(box, label.segment) < gapSquared(box, $0) }
     }) {
       return clear
     }
@@ -144,34 +159,50 @@ enum LineCrossingLabelLayout {
     }) {
       return close
     }
-    if let offLine = search(
-      spacing: 1,
-      {
-        avoidsMarks($0) && !touches($0, label.segment) && fits($0)
-      })
-    {
-      return offLine
+    func offLine(_ box: CGRect) -> Bool {
+      avoidsMarks(box) && !touches(box, label.segment)
     }
-    if label.isOptional && origin == nil { return nil }
 
-    if let owned = search(spacing: 1, { !touches(padded($0), label.segment) && fits($0) })
-      ?? search(spacing: 1, { avoidsMarks($0) && fits($0) })
+    let preferred =
+      search(spacing: 1) { clearsStrokes($0) && avoidsMarks($0) && fits($0) }
+      ?? search(spacing: 1) { offLine($0) && fits($0) }
+      ?? search(spacing: 1) { avoidsMarks($0) && fits($0) }
+    if label.isOptional && origin == nil {
+      return preferred
+        ?? search(spacing: 0.25, edgesOnly: true) { avoidsMarks($0) && fits($0) }
+        ?? search(spacing: 1) { offLine($0) && named($0) && nearerThanGuides($0) }
+        ?? search(spacing: 1) { offLine($0) && named($0) }
+    }
+
+    if let owned = preferred
+      ?? search(
+        spacing: 1,
+        { box in
+          let halo = padded(box)
+          return !touches(halo, label.segment) && obstacles.allSatisfy { !halo.intersects($0) }
+            && fits(box)
+        })
       ?? search(spacing: 1, fits)
       ?? search(spacing: 0.25, edgesOnly: true, fits)
+      ?? search(spacing: 1, { named($0) && nearerThanGuides($0) })
+      ?? search(spacing: 1, { avoidsMarks($0) && named($0) })
+      ?? search(spacing: 1, named)
     {
       return owned
     }
-    guard !requiredLines.isEmpty else { return belongsToLine(start) ? start : nil }
 
     func onNamedSide(_ box: CGRect) -> Bool {
-      clearsRequired(box)
-        && requiredLines.allSatisfy { isOnNamedSide(box, named: label.segment, of: $0) }
+      requiredLines.allSatisfy { isOnNamedSide(box, named: label.segment, of: $0) }
     }
 
-    return search(spacing: 1, preferOwnLine: true) { onNamedSide($0) && avoidsMarks($0) }
-      ?? search(spacing: 1, preferOwnLine: true, onNamedSide)
-      ?? search(spacing: 1) { clearsRequired($0) && clearsStrokes($0) && avoidsMarks($0) }
-      ?? search(spacing: 1, clearsRequired)
+    func fallback(_ accepts: (CGRect) -> Bool) -> CGRect? {
+      search(spacing: 1, preferOwnLine: true) { accepts($0) && onNamedSide($0) && avoidsMarks($0) }
+        ?? search(spacing: 1, preferOwnLine: true) { accepts($0) && onNamedSide($0) }
+        ?? search(spacing: 1, accepts)
+    }
+
+    return fallback { safe($0) && nearerThanGuides($0) } ?? fallback(safe)
+      ?? (requiredLines.isEmpty && belongsToLine(start) && avoidsNames(start) ? start : nil)
   }
 
   private static func padded(_ box: CGRect) -> CGRect {
