@@ -17,8 +17,16 @@ import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
+import { renderPlanDate } from "./plan-date";
 
-export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
+/** `paidUntil` is the formatted last day Plus is paid for; without it the dialog says it in words. */
+export function CancelPlusButton({
+  endsNow = false,
+  paidUntil,
+}: {
+  endsNow?: boolean;
+  paidUntil?: string;
+}) {
   const t = useExtracted();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -55,13 +63,18 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
         <AlertDialogHeader>
           <AlertDialogTitle>{t("Cancel Plus?")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {endsNow
-              ? t("Plus ends right away, and you won't be charged again.")
-              : t("You keep Plus until the end of the period you already paid for.")}
+            {endsNow && t("Plus ends right away, and you won't be charged again.")}
+            {!endsNow &&
+              (paidUntil
+                ? t.rich("You have Plus until <mono>{date}</mono>.", {
+                    date: paidUntil,
+                    mono: renderPlanDate,
+                  })
+                : t("You keep Plus until the end of the period you already paid for."))}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>{t("Cancel")}</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>{t("Keep Plus")}</AlertDialogCancel>
           <AlertDialogAction busy={pending} onClick={cancel}>
             {t("Cancel Plus")}
           </AlertDialogAction>
