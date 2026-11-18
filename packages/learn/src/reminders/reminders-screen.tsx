@@ -78,7 +78,10 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 
   return (
-    <SettingRow description={t("Create an account to get email reminders")} label={t("Email")}>
+    <SettingRow
+      description={t("Create an account to get email reminders")}
+      label={t("Email reminders")}
+    >
       <PendingLink
         className={buttonVariants({ size: "lg", variant: "outline" })}
         data-account-ask
@@ -117,20 +120,11 @@ export function RemindersScreen({
     <div className="flex flex-col gap-7" data-slot="reminders-screen">
       <div className="flex flex-col gap-3">
         <ListGroup>
-          <TimeSetting
-            disabled={isOff}
-            // Nothing is sent to a guest without the phone app, so no clock needs naming.
-            namesZone={Boolean(view.email.address ?? view.push.phone)}
-            onChange={(time) => change({ time })}
-            time={view.time}
-            timeZone={view.timeZone}
-          />
-
           {view.email.address ? (
             <SwitchSettingRow
               checked={view.email.on}
               description={view.email.address}
-              label={t("Email")}
+              label={t("Email reminders")}
               onCheckedChange={(emailOn) => change({ emailOn })}
             />
           ) : (
@@ -145,6 +139,15 @@ export function RemindersScreen({
               onCheckedChange={(pushOn) => change({ pushOn })}
             />
           )}
+
+          <TimeSetting
+            disabled={isOff}
+            // Nothing is sent to a guest without the phone app, so no clock needs naming.
+            namesZone={Boolean(view.email.address ?? view.push.phone)}
+            onChange={(time) => change({ time })}
+            time={view.time}
+            timeZone={view.timeZone}
+          />
         </ListGroup>
 
         {!view.push.phone && (
