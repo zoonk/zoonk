@@ -807,8 +807,6 @@ test.describe("Mind maps", () => {
       await expect(notMade.getByText("No more new mind maps today")).toBeVisible();
       await expect(notMade.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
-      await notMade.getByRole("button", { name: /^\d+ more chapters?$/u }).click();
-
       const row = notMade.getByRole("listitem").filter({ hasText: second.chapter.title });
       await expect(row).toBeVisible();
       await expect(row.getByRole("button", { name: "Create" })).toBeHidden();

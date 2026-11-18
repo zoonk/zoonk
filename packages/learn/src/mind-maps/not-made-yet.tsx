@@ -186,6 +186,19 @@ export function NotMadeYet({
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
 
+  const laterRows = (
+    <div className="flex flex-col gap-3">
+      {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
+        <p className={LINE_CLASS}>
+          {t(
+            "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+          )}
+        </p>
+      )}
+      <NotMadeRows chapters={later} library={library} plus={plus} />
+    </div>
+  );
+
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
@@ -197,23 +210,16 @@ export function NotMadeYet({
 
       {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
-      {later.length > 0 && (
+      {later.length > 0 && now.length === 0 && laterRows}
+
+      {later.length > 0 && now.length > 0 && (
         <ShowMore
           defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
           label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
             count: later.length,
           })}
         >
-          <div className="flex flex-col gap-3">
-            {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
-              <p className={LINE_CLASS}>
-                {t(
-                  "Making one of these maps writes its lessons first, and they count toward your free lessons.",
-                )}
-              </p>
-            )}
-            <NotMadeRows chapters={later} library={library} plus={plus} />
-          </div>
+          {laterRows}
         </ShowMore>
       )}
 
