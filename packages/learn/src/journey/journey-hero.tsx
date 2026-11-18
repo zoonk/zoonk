@@ -19,6 +19,7 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
+import { usePlanScreen } from "../plan/plan-context";
 import {
   NUMBER_ITEM_CLASS,
   NUMBER_ROWS_CLASS,
@@ -191,7 +192,6 @@ export function PlanNumbers({
   examHref,
   logbookHref,
   onAdjust,
-  paused = false,
   standing,
   status,
   variant,
@@ -200,21 +200,20 @@ export function PlanNumbers({
   examHref: string | null;
   logbookHref: string | null;
   onAdjust: () => void;
-  paused?: boolean;
   standing: JourneyStanding;
   status: PlanView["status"];
   variant: PlanNumberVariant;
 }) {
   const t = useExtracted();
+  const { paused = false } = usePlanScreen();
   const [open, setOpen] = useState<"schedule" | "standing" | null>(null);
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
-  // The side column's numbers sit above the plan's details, whose "Time a day" row says it.
-  const showSchedule = status !== null && !paused;
 
   const scheduleNumber = useScheduleNumber({
     paused,
     status: status ?? { kind: "onTrack" },
+    // The side column's numbers sit above the plan's details, whose "Daily study time" row says it.
     timeShownBeside: variant === "stats",
   });
 
@@ -239,7 +238,7 @@ export function PlanNumbers({
             className={cn(
               NUMBER_ITEM_CLASS,
               "min-w-0",
-              !showSchedule && "@2xl/standing:col-span-2",
+              !status && "@2xl/standing:col-span-2",
             )}
           >
             <NumberButton
@@ -248,7 +247,7 @@ export function PlanNumbers({
               variant={variant}
             />
           </li>
-          {showSchedule && (
+          {status && (
             <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
               <NumberButton
                 number={scheduleNumber}
