@@ -184,7 +184,6 @@
     <string name="plan_practice">Practice</string>
     <string name="plan_everything">Everything</string>
     <string name="plan_to_be_confirmed">To be confirmed</string>
-    <string name="plan_no_date">No date</string>
     <string name="plan_time_weekends">%1$s · %2$s weekends</string>
     <string name="plan_every_day">Every day</string>
     <string name="plan_day_range">%1$s – %2$s</string>
@@ -876,6 +875,8 @@
     <string name="plan_ask_phase_dates_off_rest">Move your phase dates off rest days?</string>
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
+    <string name="plan_end_none_set">None set</string>
+    <string name="plan_end_none_set_estimate">None set · %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <string name="plan_outside_time">Not in your plan · your time doesn\'t cover it</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->

@@ -277,14 +277,19 @@ private struct BalanceScale: View {
           .foregroundStyle(.vizHighlight)
       }
 
-      FlowLayout(spacing: 3) {
+      FlowLayout(spacing: 3, alignment: .bottom) {
         ForEach(0..<max(Int(pan.x), 0), id: \.self) { _ in
           Text(verbatim: unknown)
             .typeStyle(.body.bold().italic())
-            .foregroundStyle(.white)
-            .padding(.horizontal, 6)
-            .frame(minWidth: 30, minHeight: 38)
-            .background(Color.vizSecondary, in: .rect(cornerRadius: Radius.md, style: .continuous))
+            .foregroundStyle(Color(.background))
+            .offset(y: 4)
+            .frame(width: 34, height: 45)
+            .background {
+              svg(
+                "M13 2 H21 L19.5 8 C26 10 33 16 33 26 C33 37 26 43 17 43 C8 43 1 37 1 26 C1 16 8 10 14.5 8 Z"
+              )
+              .fill(.vizAccent)
+            }
         }
 
         if pan.units.rounded() == pan.units && pan.units <= 12 {

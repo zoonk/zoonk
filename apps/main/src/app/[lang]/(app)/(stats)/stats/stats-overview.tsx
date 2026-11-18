@@ -19,7 +19,7 @@ import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
-import { CalendarCheckIcon, TargetIcon, ZapIcon } from "lucide-react";
+import { CalendarCheckIcon, ChartNoAxesCombinedIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatsCalendarSkeleton } from "../_components/stats-calendar";
@@ -138,7 +138,7 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
     <StatTile
       className={TILE_CLASS}
       opens
-      icon={<TargetIcon />}
+      icon={<ChartNoAxesCombinedIcon />}
       label={label}
       tone="success"
       value={<TileLink href={getMenu("score").url} label={label} value={value} />}

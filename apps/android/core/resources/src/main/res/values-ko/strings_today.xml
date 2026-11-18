@@ -52,7 +52,6 @@
   "today_mistakes_tomorrow": "b1f7a0a0de78c2cbc4d95b5285e29b794e88c7626f68f367e61d0dba94aeaeda",
   "today_more_count": "ce79e3bbcb691357328934344a48294742d3dfd25d0252f5f6ea40512457581d",
   "today_more_time_a_day": "0fdbd00b8f2f6a6005c3f9eb717d9bb7b761a0e5a738cc149ce5edc4742cbd10",
-  "today_new_goal": "0bbbec9b35f20c017c1a211294ca50e14352f036090e89ae6d8cca1b1329e3d4",
   "today_next_suggestion": "b74e08864d91ab1d84de4f3abb43dc9799df949556711bb32bb401dd66502c3a",
   "today_not_enough_time": "53397debc684312070fa373953bf41a3635a39288040ee0aa7da53a337f71965",
   "today_not_now": "d60f3cd2d143c86612730720fbbf746012457742cc8d4d54a9b1ed9f982306a6",
@@ -233,7 +232,6 @@
     <string name="today_paused_this_goal">이 목표는 일시 중지되었어요.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">다시 시작할 때까지는 학습 일정이 잡히지 않아요.</string>
-    <string name="today_new_goal">새 목표</string>
     <string name="today_resume_effect">오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요.</string>
     <string name="today_setting_up_goal">%1$s 계획을 세우려면 몇 가지 답변이 더 필요해요.</string>
     <string name="today_building_plan_goal">%1$s 계획을 만들고 있어요</string>

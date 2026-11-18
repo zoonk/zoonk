@@ -19,6 +19,8 @@ extension ShapeStyle where Self == Color {
 
   static var mutedForeground: Color { Color(.mutedForeground) }
   static var faint: Color { Color(.faint) }
+  /// Main's `bg-background` for boxes and fields matches the native page.
+  static var boxBackground: Color { Color(.systemBackground) }
   static var card: Color { Color(.card) }
   static var popover: Color { Color(.popover) }
   static var muted: Color { Color(.muted) }

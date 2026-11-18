@@ -20,7 +20,6 @@
   "search_group_goals": "1523888886bceb336ff6a47eb5ac870c276558bceb2262b6131fb0cc5b31f9cf",
   "search_group_help": "61bfa25584f5dfbfc5ba0f71dd4fb32ebc56d355b3c905f0088828a1bb29d3e8",
   "search_group_mocks": "e42950ccc48b3f137489a0c2f96dae35ca3c7dbf300ff787f6a109bc0b312a96",
-  "search_group_new_goal": "a55787b69b7d284ab548d5d3b34a65f8bb9ebaef283de6d7241d3c59b87c100f",
   "search_group_plan": "4ce20824c54c3e161d4a7a47c52fda2280a9bda3422e4132a2d982fd13890e03",
   "search_help": "ec8be23769c7935922ddfd8677832f5b072135cee14f95d7606b57a6cb783f1f",
   "search_home": "4f25169147a25a77d19b3560de6779af5906a3998fc182d710060e913f8751b6",
@@ -65,7 +64,6 @@
     <string name="search_group_account">Hesabım</string>
     <string name="search_group_help">Yardım</string>
     <string name="search_group_ask">Sor</string>
-    <string name="search_group_new_goal">Yeni bir hedefe başla</string>
     <string name="search_continue">Bugünkü çalışmana devam et</string>
     <string name="search_take_mock">Deneme sınavına gir</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->

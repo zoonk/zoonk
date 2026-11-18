@@ -210,12 +210,14 @@ private struct BuddyContent: View {
   }
 
   private func thread(opensDay: Bool) -> some View {
-    conversation
+    conversation(showsFace: !opensDay)
       .safeAreaBar(edge: .top) {
         VStack(alignment: .leading, spacing: 0) {
           PageHeader(Text(name))
 
-          dayLine(opensDay: opensDay)
+          if opensDay {
+            dayLine
+          }
         }
         .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
@@ -226,7 +228,7 @@ private struct BuddyContent: View {
   }
 
   @ViewBuilder
-  private var conversation: some View {
+  private func conversation(showsFace: Bool) -> some View {
     if let goalId {
       let mistakes = practice.mistakes(goalId: goalId, fixed: false)
 
@@ -238,7 +240,12 @@ private struct BuddyContent: View {
           comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
         isPage: true
       ) {
-        greeting
+        HStack(alignment: .top, spacing: 12) {
+          if showsFace {
+            face
+          }
+          greeting
+        }
       }
       .loads(mistakes, refreshable: false)
     } else {
@@ -331,35 +338,24 @@ private struct BuddyContent: View {
     ]
   }
 
-  @ViewBuilder
-  private func dayLine(opensDay: Bool) -> some View {
-    if opensDay {
-      dayLineLabel
-        .buttonStyle(.plain)
-    } else {
-      // The day's pane beside the conversation shows its numbers: only the face stays here.
-      face
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityHidden(true)
-    }
-  }
-
   private var face: some View {
     BuddyCharacter(look: look, crop: .face, cue: faceCue)
       .frame(width: 32, height: 32)
   }
 
-  private var dayLineLabel: some View {
+  private var dayLine: some View {
     HStack(spacing: 16) {
       Button {
         isDayShown = true
       } label: {
         face
-      }.accessibilityLabel(Text(name))
-        .accessibilityHint(
-          Text(
-            "Shows \(name)'s day", tableName: "Buddy",
-            comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name"))
+      }
+      .accessibilityLabel(Text(name))
+      .accessibilityHint(
+        Text(
+          "Shows \(name)'s day", tableName: "Buddy",
+          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+      )
 
       AccessibilityStack(spacing: 16, stackedSpacing: 4) {
         Button {
@@ -389,7 +385,7 @@ private struct BuddyContent: View {
                 "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
                 tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
             } icon: {
-              Image(systemName: "target")
+              Image(systemName: "checklist")
             }
           }
         }
@@ -400,6 +396,7 @@ private struct BuddyContent: View {
 
       DisclosureChevron()
     }
+    .buttonStyle(.plain)
     .labelStyle(.titleAndIcon)
     .typeStyle(.note)
     .monospacedDigit()

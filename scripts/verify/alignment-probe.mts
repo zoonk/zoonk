@@ -255,8 +255,7 @@ export function readAlignment({
    * A script with no capitals is centered by its ideographic face, the box its glyphs are drawn
    * in, not by a string's ink, which differs between "一" and "書". The face is read from a
    * full-frame glyph through the same fonts, so it is the fallback face's: on Chromium it sits
-   * within 0.4 px of the line box's middle at 12 to 24 px, in Japanese and Korean
-   * (`evidence-ideographic` in the alignment build notes).
+   * within 0.4 px of the line box's middle at 12 to 24 px, in Japanese and Korean.
    */
   function ideographicFace(text: string, style: CSSStyleDeclaration) {
     const glyph = HAN_KANA.test(text) ? "国" : HANGUL.test(text) && "국";

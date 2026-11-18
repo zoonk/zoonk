@@ -5,7 +5,6 @@
     <string name="goal_switcher_current_goal">%1$s, current goal. Switch goal</string>
     <string name="goal_switcher_your_goals">Your goals</string>
     <string name="goal_switcher_quick_explanations">Quick explanations</string>
-    <string name="goal_switcher_new_goal">New goal</string>
     <string name="goal_switcher_explore_courses">Explore courses</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="goal_switcher_daily">%1$s a day</string>

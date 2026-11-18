@@ -292,7 +292,7 @@ private fun SubjectDetails(
             )
         }
         if (subject.chapters.isNotEmpty()) {
-            val done = subject.chapters.count { it.state == SyllabusChapter.State.DONE }
+            val done = subject.chapters.doneChapters.size
             PropertyRow(
                 stringResource(R.string.goalcontent_chapters),
                 stringResource(R.string.goalcontent_chapters_progress, number(done), number(subject.chapters.size)),
@@ -326,8 +326,7 @@ internal fun LazyListScope.subjectChapters(
     val chapters = subject.chapters
     if (chapters.isEmpty()) return
 
-    val done = chapters.filter { it.state == SyllabusChapter.State.DONE }
-    val studied = done.count { !it.known }
+    val done = chapters.doneChapters
     val ahead = chapters.filter { it.state != SyllabusChapter.State.DONE }
 
     sectionTitle(
@@ -337,7 +336,7 @@ internal fun LazyListScope.subjectChapters(
             val locale = currentLocale()
             stringResource(
                 R.string.goalcontent_chapters_progress,
-                formatNumber(studied.toDouble(), locale),
+                formatNumber(done.size.toDouble(), locale),
                 formatNumber(chapters.size.toDouble(), locale),
             )
         },

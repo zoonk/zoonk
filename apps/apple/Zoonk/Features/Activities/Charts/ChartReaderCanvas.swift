@@ -160,30 +160,30 @@ struct ChartReaderCanvas: View {
         }
       }
     }
-    .chartXScale(domain: (fields.points.first?.x ?? 0)...(fields.points.last?.x ?? 1))
-    .chartYScale(domain: .automatic(includesZero: false))
-    .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(x, grouping: !fields.hasPlainX))
-          }
-        }
+    .chartXScale(domain: xDomain)
+    .chartYScale(domain: yDomain)
+    .chartsXAxis {
+      ChartsAxis.bottom(
+        ticks: ChartsAxis.ticks(xDomain, count: 3),
+      ) {
+        ActivityNumberFormat.format($0, grouping: !fields.hasPlainX)
       }
     }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
-          }
-        }
+      ChartsAxis.values(ticks: ChartsAxis.ticks(yDomain, count: 3)) {
+        ActivityNumberFormat.format($0, compact: true)
       }
     }
     .chartsPlotText()
     .frame(minHeight: 184)
+  }
+
+  private var xDomain: ClosedRange<Double> {
+    (fields.points.first?.x ?? 0)...(fields.points.last?.x ?? 1)
+  }
+
+  private var yDomain: ClosedRange<Double> {
+    ChartsMath.niceDomain(fields.points.map(\.y), includesZero: false)
   }
 
   private func state(of span: ChartReaderFields.Span) -> ChartsChoiceStyle.State {

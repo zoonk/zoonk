@@ -698,7 +698,7 @@ extension PlanContext {
   /// What `item`'s card asks for (its offer's check, its certificate claim, the next level), kept
   /// for the opening shown now.
   func slotCheck(_ item: PlanSlotItem, request: PlanSlotChecks.Request = .offer) -> PlanSlotCheck {
-    slotChecks.check(item, request: request, goalId: goal.id)
+    slotChecks.check(item, request: request, goalId: goal.id, opening: slotOpening?())
   }
 }
 
@@ -718,44 +718,38 @@ final class PlanSlotChecks {
   }
 
   private struct Key: Hashable {
+    let visit: Int
     let goalId: String
     let item: PlanSlotItem
     let request: Request
   }
 
   private struct Kept {
-    let opening: Int
+    let opening: SuggestionOpening?
     let check: PlanSlotCheck
   }
 
-  /// The opening shown now.
-  private(set) var opening = 0
+  private var visit = 0
   @ObservationIgnored private var checks: [Key: Kept] = [:]
 
-  func check(_ item: PlanSlotItem, request: Request, goalId: String) -> PlanSlotCheck {
-    let key = Key(goalId: goalId, item: item, request: request)
-
-    if let kept = checks[key], kept.opening == opening {
-      return kept.check
-    }
-
+  func check(
+    _ item: PlanSlotItem, request: Request, goalId: String, opening: SuggestionOpening? = nil
+  ) -> PlanSlotCheck {
+    let key = Key(visit: visit, goalId: goalId, item: item, request: request)
+    if let kept = checks[key], kept.opening == opening { return kept.check }
     checks[key]?.check.leave()
-    let opening = opening
-    let check = PlanSlotCheck { [weak self] in self?.opening == opening }
+    let check = PlanSlotCheck()
     checks[key] = Kept(opening: opening, check: check)
     return check
   }
 
-  /// Ends the opening shown: what it asked for lands nowhere, and what it found or failed at shows
-  /// nothing afterward.
-  func leave() {
-    opening += 1
-
-    for kept in checks.values {
+  /// A newly drawn suggestion can act before the old opening's onChange runs.
+  func leave(except opening: SuggestionOpening? = nil) {
+    if opening == nil { visit += 1 }
+    for (key, kept) in checks where opening == nil || kept.opening != opening {
       kept.check.leave()
+      checks[key] = nil
     }
-
-    checks = [:]
   }
 }
 
@@ -778,11 +772,9 @@ final class PlanSlotCheck {
   var failed = false
   var noDate = false
   @ObservationIgnored private let tasks = ScreenTasks()
-  @ObservationIgnored private let isShown: () -> Bool
+  @ObservationIgnored private var isShown = true
 
-  fileprivate init(isShown: @escaping () -> Bool) {
-    self.isShown = isShown
-  }
+  fileprivate init() {}
 
   func run(_ work: @escaping @MainActor () async -> Void) {
     tasks.run(work)
@@ -791,12 +783,13 @@ final class PlanSlotCheck {
   /// What an answer does outside its card (adding lessons, opening what a claim earned), only while
   /// the opening that asked is still the one shown.
   func land(_ effect: () -> Void) {
-    if isShown() {
+    if isShown {
       effect()
     }
   }
 
   fileprivate func leave() {
+    isShown = false
     tasks.cancel()
     isWorking = false
   }

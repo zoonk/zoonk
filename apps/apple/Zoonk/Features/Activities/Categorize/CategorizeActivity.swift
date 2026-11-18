@@ -132,11 +132,7 @@ private struct CategorizeCanvas: View {
     }
     .multilineTextAlignment(.leading)
     .padding()
-    .background(Color(.background), in: .rect(cornerRadius: Radius.xl))
-    .overlay {
-      RoundedRectangle(cornerRadius: Radius.xl)
-        .strokeBorder(.border)
-    }
+    .activityBox()
     .draggable(ActivityDragItem(id: card.id))
   }
 
@@ -279,17 +275,13 @@ private struct CategorizeCanvas: View {
             row(item)
           }
         }
-        .background(Color(.background))
+        .activityBox(cornerRadius: Radius.option)
         .clipShape(.rect(cornerRadius: Radius.option))
-        .overlay {
-          RoundedRectangle(cornerRadius: Radius.option)
-            .strokeBorder(.border)
-        }
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .panel()
+    .activityBox()
   }
 
   private func movableRow(_ item: CategorizeFields.Item, from group: CategorizeFields.Group)
@@ -453,10 +445,6 @@ extension View {
   fileprivate func previewChip() -> some View {
     padding(.horizontal, 8)
       .padding(.vertical, 3)
-      .background(Color(.background), in: .rect(cornerRadius: Radius.sm))
-      .overlay {
-        RoundedRectangle(cornerRadius: Radius.sm)
-          .strokeBorder(.border)
-      }
+      .activityBox(cornerRadius: Radius.sm)
   }
 }

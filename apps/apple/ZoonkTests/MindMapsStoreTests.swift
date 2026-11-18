@@ -520,7 +520,7 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(store.shownStop(goalId: "goal"), "an allowed offer lifts the stop")
   }
 
-  /// Main's b09-16: a row refused for the maps cap stops the page's other Creates too, since each
+  /// A row refused for the maps cap stops the page's other Creates too, since each
   /// would be refused; a later read of the list replaces it.
   func testARowRefusedForTheCapBecomesThePagesStop() async {
     let opens = Date.now.addingTimeInterval(3600)
@@ -952,7 +952,7 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(map(.available).opensItsGroupOnArrival)
   }
 
-  /// RV81: a list with no chapters keeps its stop, so the page itself reads it again at the stop's
+  /// A list with no chapters keeps its stop, so the page itself reads it again at the stop's
   /// day, whichever tab is shown, as main's `useReadWhenOfferOpens` does.
   func testAnEmptyStoppedListReadsAgainAtItsStop() async throws {
     let stop = MindMapAllowanceStop(

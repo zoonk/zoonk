@@ -8,8 +8,8 @@ import { evaluateCapture } from "./alignment.mts";
 setUpProbeDom();
 
 /**
- * A guess's worked numbers (#15), each row a number then its label. `starts` are the labels' left
- * edges: one column in lane E's table, wherever each number ended before it.
+ * A guess's worked numbers, each row a number then its label. `starts` are the labels' left
+ * edges: one column in the table, wherever each number ended before it.
  */
 function workings(starts: [number, number, number]) {
   const rows = [

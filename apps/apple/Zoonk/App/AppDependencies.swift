@@ -49,6 +49,7 @@ struct AppDependencies {
     imageLoader: ImageLoader,
     subscriptionStore: AppStoreSubscriptionStore,
     buddyAPI: (any BuddyAPIClient)? = nil,
+    certificatesAPI: (any CertificatesAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
     tutorAPI: (any TutorAPIClient)? = nil
@@ -56,7 +57,8 @@ struct AppDependencies {
     let cache = AppCache(session: session)
     self.cache = cache
     buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
-    certificatesStore = CertificatesStore(api: CertificatesAPI(clients: clients), cache: cache)
+    certificatesStore = CertificatesStore(
+      api: certificatesAPI ?? CertificatesAPI(clients: clients), cache: cache)
     completedLessonsStore = CompletedLessonsStore(
       api: CompletedLessonsAPI(clients: clients), cache: cache)
     countryCatalogStore = CountryCatalogStore(clients: clients, cache: cache)

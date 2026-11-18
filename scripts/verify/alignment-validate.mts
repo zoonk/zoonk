@@ -7,7 +7,7 @@ import {
 } from "./alignment-capture.mts";
 
 /**
- * What a capture must hold before the evaluator reads it (`REPORT-SHAPE.md`): a file from another
+ * What a capture must hold before the evaluator reads it: a file from another
  * platform or an older capture run that doesn't match is refused, never judged as a clean screen.
  */
 const NOT_MEASURED = z.literal("not measured");

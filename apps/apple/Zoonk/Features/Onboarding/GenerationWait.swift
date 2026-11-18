@@ -1056,6 +1056,7 @@ struct GenerationFailureNotice: View {
       Image(
         systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.circle"
       )
+      .markColumn()
       .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
 

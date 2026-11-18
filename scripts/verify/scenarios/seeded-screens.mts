@@ -37,7 +37,7 @@ function seeded({
   };
 }
 
-export const SWEEP_SCENARIOS: Scenario[] = [
+export const SEEDED_SCREEN_SCENARIOS: Scenario[] = [
   seeded({
     evidence: ["input"],
     fixture: "understood",

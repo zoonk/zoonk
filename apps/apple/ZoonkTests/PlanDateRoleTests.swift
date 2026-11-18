@@ -8,6 +8,17 @@ import XCTest
 final class PlanDateRoleTests: XCTestCase {
   private let today = "2026-11-16"
 
+  func testAMonthInADataRowUsesTheRowMonth() {
+    XCTAssertEqual(PlanDate.text("2027-07-01", today: today, month: true), "Jul 2027")
+  }
+
+  func testEstimatedPhaseEndsKeepTheirEstimateInTheSharedRowValue() {
+    XCTAssertEqual(
+      PhaseEnd("2027-07-01", estimate: true, month: true, today: today).shown, "~Jul 2027")
+    XCTAssertEqual(
+      PhaseEnd("2026-12-18", estimate: true, month: false, today: today).shown, "~Dec 18")
+  }
+
   func testEachRoleWritesItsDateOneWay() {
     XCTAssertEqual(PlanDate.format("2026-11-20", .row, today: today), "Nov 20")
     XCTAssertEqual(PlanDate.format("2026-11-20", .sentence, today: today), "November 20")

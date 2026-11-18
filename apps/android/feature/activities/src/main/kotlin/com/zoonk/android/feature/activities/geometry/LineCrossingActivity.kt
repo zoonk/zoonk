@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
@@ -266,27 +267,38 @@ private fun LineCrossingChart(
         val knob = with(density) { (KNOB_RADIUS + KNOB_STROKE / 2).toPx() }
         val handles =
             fields.lines.zip(chart.slides) { line, slide -> PlacedHandle(line, slide, pixel(slide.at(offsetOf(line)))) }
-        val names =
+        val shownNames =
             fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
-                listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
                 movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false, isOptional = true) }
-        val texts = names.map { measurer.measure(it.text, lineStyle) }
+        val revealedNames = listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) })
+        val names = shownNames + revealedNames
+        val texts =
+            shownNames.map { measurer.measure(it.text, lineStyle) } +
+                revealedNames.map {
+                    measurer.measure(
+                        it.text,
+                        lineStyle,
+                        constraints = Constraints(maxWidth = ((right - left) / 2).toInt().coerceAtLeast(1)),
+                    )
+                }
+        val labels =
+            names.zip(texts) { name, text ->
+                LineLabel(
+                    name.isUpper,
+                    segment(name.line),
+                    Size(text.size.width.toFloat(), text.size.height.toFloat()),
+                    name.isOptional,
+                )
+            }
         val unit = density.density
         val arrows = if (movedLines.isEmpty()) emptyList() else changeArrowSegments(pixel(before), pixel(after), left, bottom, unit)
         val arrowReach = (ARROW_HEAD.value * ARROW_SPREAD + ARROW_STROKE.value / 2) * unit
         val dots = listOfNotNull(pixel(after), pixel(before).takeIf { movedLines.isNotEmpty() })
         val boxes =
-            placeLineLabels(
+            placeChartLabels(
                 area = Rect(left, top, right, bottom),
-                labels =
-                    names.mapIndexed { index, name ->
-                        LineLabel(
-                            name.isUpper,
-                            segment(name.line),
-                            Size(texts[index].size.width.toFloat(), texts[index].size.height.toFloat()),
-                            name.isOptional,
-                        )
-                    },
+                shown = labels.take(shownNames.size),
+                revealed = labels.drop(shownNames.size),
                 marks =
                     LabelMarks(
                         arrows =
@@ -296,7 +308,7 @@ private fun LineCrossingChart(
                         circles =
                             handles.map { LabelCircle(it.center, knob) } +
                                 dots.map { LabelCircle(it, (DOT_RADIUS + DOT_STROKE / 2).value * unit) },
-                        lines = names.map { segment(it.line) },
+                        lines = dots.flatMap { crossingGuides(it, left, bottom) },
                     ),
                 unit = unit,
             )
@@ -487,6 +499,12 @@ private fun DrawScope.drawSegment(
     )
 }
 
+private fun crossingGuides(
+    at: Offset,
+    left: Float,
+    bottom: Float,
+) = listOf(LabelSegment(Offset(left, at.y), at), LabelSegment(at, Offset(at.x, bottom)))
+
 private fun DrawScope.crossingGuide(
     at: Offset,
     left: Float,
@@ -497,9 +515,10 @@ private fun DrawScope.crossingGuide(
     val guide = if (isBefore) colors.muted.copy(alpha = BEFORE_GUIDE_ALPHA) else colors.ink.copy(alpha = AFTER_GUIDE_ALPHA)
     val path =
         Path().apply {
-            moveTo(left, at.y)
-            lineTo(at.x, at.y)
-            lineTo(at.x, bottom)
+            val (horizontal, vertical) = crossingGuides(at, left, bottom)
+            moveTo(horizontal.from.x, horizontal.from.y)
+            lineTo(horizontal.to.x, horizontal.to.y)
+            lineTo(vertical.to.x, vertical.to.y)
         }
     val dash = GUIDE_DASH.toPx()
     drawPath(path, guide, style = Stroke(1.5.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash))))

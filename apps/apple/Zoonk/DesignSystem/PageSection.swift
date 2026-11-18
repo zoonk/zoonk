@@ -30,6 +30,10 @@ struct PageSection<Content: View, Header: View, Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
+    section.modifier(ListRowTrailingScope())
+  }
+
+  @ViewBuilder private var section: some View {
     if isGridBlock {
       block
     } else if isPanel {
