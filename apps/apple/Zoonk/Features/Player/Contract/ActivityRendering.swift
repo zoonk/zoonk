@@ -19,6 +19,8 @@ struct ActivityCanvasContext {
   let answer: ActivityAnswer?
   let setAnswer: @MainActor (ActivityAnswer?) -> Void
   var baseMap: ActivityBaseMap?
+  /// A numeric check's answer as the verdict writes it.
+  var roundedAnswer: ActivityRoundedAnswer? = nil
 
   func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)

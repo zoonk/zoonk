@@ -78,7 +78,7 @@ struct ActivityStepView: View {
         if !context.isLocked {
           context.select(value.map(LessonAnswer.activity))
         }
-      }, baseMap: content.baseMap)
+      }, baseMap: content.baseMap, roundedAnswer: content.roundedAnswer)
 
     // As on main, nothing on the canvas answers (taps, menus, number keys) until a required
     // picture is drawn.
@@ -126,9 +126,7 @@ struct ActivityStepView: View {
       ) { number in
         context.select(number.map { .activity(.numeric($0)) })
       }
-      if let places = LessonGrading.activityDecimalPlaces(
-        expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
-      {
+      if let places = content.roundedAnswer?.places {
         Text(decimalEntryRule(places))
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)

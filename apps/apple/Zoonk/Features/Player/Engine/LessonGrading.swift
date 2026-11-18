@@ -97,18 +97,17 @@ enum LessonGrading {
 
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
-
-      let places = activityDecimalPlaces(
-        expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
-      let digits = activityAnswerDigits(
-        expected: expected, tolerance: tolerance, value: value, places: places)
+      let rounded = content.roundedAnswer
+      let exactDigits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
+      let write = { (number: Double, places: Int?) in
+        ActivityNumberFormat.format(number, unit: unit, digits: places ?? exactDigits)
+      }
 
       return LocalGrade(
         isCorrect: isCorrect,
-        answerText: ActivityNumberFormat.format(value, unit: unit, digits: digits),
-        correctAnswer: isCorrect
-          ? nil
-          : ActivityNumberFormat.format(expected, unit: unit, digits: digits),
+        answerText: write(
+          value, checkedAnswerPlaces(isCorrect: isCorrect, rounded: rounded, value: value)),
+        correctAnswer: isCorrect ? nil : write(rounded?.value ?? expected, rounded?.places),
         feedback: explanation)
     case .interaction(let explanation):
       guard let gradeInteraction else {
@@ -134,25 +133,21 @@ enum LessonGrading {
       || isRoundedAnswer(value, expected: expected)
   }
 
-  static func activityAnswerDigits(
-    expected: Double, tolerance: ActivityCheck.Tolerance, value: Double?, places: Int? = nil
-  ) -> Int {
-    max(
-      places ?? 0,
-      exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value),
-      countDecimalPlaces(value ?? 0))
-  }
-
-  static func activityDecimalPlaces(
-    expected: Double, tolerance: ActivityCheck.Tolerance, minTolerance: ActivityCheck.Tolerance?
+  /// Core's `getCheckedAnswerPlaces`: a checked answer is written at the hint's places, unless it's
+  /// wrong and would then read as the right one.
+  static func checkedAnswerPlaces(
+    isCorrect: Bool, rounded: ActivityRoundedAnswer?, value: Double
   ) -> Int? {
-    guard expected.isFinite, expected.rounded() != expected else { return nil }
-    return (0...countDecimalPlaces(expected)).first { places in
-      let scale = pow(10, Double(places))
-      let value = floor(expected * scale + 0.5) / scale
-      return isNumericAnswerRight(
-        value, expected: expected, tolerance: tolerance, minTolerance: minTolerance)
+    guard let rounded, let places = rounded.places else {
+      return nil
     }
+
+    let scale = pow(10, Double(places))
+    let readsAsRight =
+      (value * scale).rounded(.toNearestOrAwayFromZero)
+      == (rounded.value * scale).rounded(.toNearestOrAwayFromZero)
+
+    return !isCorrect && readsAsRight ? nil : places
   }
 
   /// Core's `withinTolerance`: relative slack takes rounded boundaries without overwhelming a

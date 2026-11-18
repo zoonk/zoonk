@@ -238,9 +238,14 @@ struct FormulaModelCanvas: View {
     }
 
     let x = fields.start(at: inputs ?? []).sliders[view.axis.name] ?? view.axis.initial
-    let digits = LessonGrading.activityAnswerDigits(
-      expected: answer, tolerance: tolerance, value: context.answer?.number)
-    return (x, answer, ActivityNumberFormat.format(answer, unit: unit, digits: digits))
+    let rounded = context.roundedAnswer
+    let digits =
+      rounded?.places
+      ?? exactFractionDigitsFor(expected: answer, tolerance: tolerance, value: context.answer?.number)
+    return (
+      x, answer,
+      ActivityNumberFormat.format(rounded?.value ?? answer, unit: unit, digits: digits)
+    )
   }
 
   private func legend(_ kind: FormulaModelView.BaselineKind) -> some View {
