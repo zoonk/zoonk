@@ -162,7 +162,6 @@ export function ChartReaderActivity({
       <ActivitySelectGrid label={t("Spans to measure")}>
         {fields.spans.map((span) => (
           <ActivitySelectGridItem
-            className="[&>span]:items-center"
             disabled={isChecked}
             isSelected={selected.includes(span.id)}
             key={span.id}

@@ -64,7 +64,7 @@ export function ActivitySelectGridItem({
       onClick={onToggle}
       type="button"
     >
-      <span className="flex items-start gap-1.5">
+      <span className="flex items-center gap-1.5">
         {resultState && (
           <LineMarker>
             {resultState === "correct" ? (
