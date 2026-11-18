@@ -1922,6 +1922,65 @@
         }
       }
     },
+    "Based on past exams, the likely date is %@. Use it as your exam date?" : {
+      "comment" : "An estimated date and what adopting it changes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Termine früherer Prüfungen deuten auf %@ hin. Diesen Termin für deine Prüfung übernehmen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según los exámenes anteriores, la fecha probable es %@. ¿Quieres usarla como fecha de tu examen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D’après les examens précédents, la date probable est le %@. L’utiliser comme date d’examen ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In base agli esami precedenti, la data più probabile è %@. Vuoi usarla come data dell’esame?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "過去の試験日程から、試験日は%@と予想されます。この日を試験日に設定しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지난 시험 일정을 보면 %@에 열릴 가능성이 높아요. 이 날짜를 시험일로 정할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sądząc po poprzednich egzaminach, prawdopodobny termin to %@. Ustawić go jako datę twojego egzaminu?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com base nas provas anteriores, a data provável é %@. Usar como data da sua prova?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçmiş sınavlara göre tahmini tarih %@. Bunu sınav tarihin olarak kullanalım mı?"
+          }
+        }
+      }
+    },
     "Better in %@." : {
       "comment" : "Mock trends",
       "localizations" : {
@@ -2160,6 +2219,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavına devam et"
+          }
+        }
+      }
+    },
+    "Date not set" : {
+      "comment" : "An exam day with no date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termin nicht festgelegt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha sin definir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date non définie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data non impostata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付未設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 미설정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ustawiono daty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data não definida"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih belirlenmedi"
           }
         }
       }
@@ -5121,6 +5239,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavı başlamadı. Biraz sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "The official %@ date is %@. Use it as your exam date?" : {
+      "comment" : "An official date and what adopting it changes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der offizielle Termin für %1$@ ist %2$@. Diesen Termin für deine Prüfung übernehmen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The official %1$@ date is %2$@. Use it as your exam date?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha oficial de %1$@ es %2$@. ¿Quieres usarla como fecha de tu examen?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date officielle de %1$@ est le %2$@. L’utiliser comme date d’examen ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La data ufficiale di %1$@ è %2$@. Vuoi usarla come data dell’esame?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@の正式な日程は%2$@です。この日を試験日に設定しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 일정에 따르면 %1$@ 시험은 %2$@에 열려요. 이 날짜를 시험일로 정할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: oficjalny termin to %2$@. Ustawić go jako datę twojego egzaminu?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ tem data oficial: %2$@. Usar como data da sua prova?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ için resmî tarih %2$@. Bunu sınav tarihin olarak kullanalım mı?"
           }
         }
       }

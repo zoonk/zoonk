@@ -10047,6 +10047,64 @@
         }
       }
     },
+    "Score after wrong answers cancel right ones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score nach Punktabzug für falsche Antworten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntaje tras restar los errores a los aciertos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score après déduction des mauvaises réponses"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio dopo aver sottratto le risposte sbagliate da quelle corrette"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた分を正解の得点から差し引いたスコア"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정답 수에서 오답 수를 뺀 점수"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wynik po odjęciu błędnych odpowiedzi od poprawnych"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontuação após descontar os erros dos acertos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlışlar doğruları götürdükten sonra kalan puan"
+          }
+        }
+      }
+    },
     "See how it went" : {
       "comment" : "Finishes a checkpoint to see its result.\nOpens a finished checkpoint's result.",
       "localizations" : {
