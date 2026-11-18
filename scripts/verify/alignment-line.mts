@@ -58,7 +58,7 @@ function readByInk(element: CaptureElement) {
  * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
  * A value stacked under its label has no line to share.
  */
-function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
+function misses(context: Context, row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const label = own
     .filter((element) => element.part === "label" && drawn(element))
     .toSorted((one, other) => one.bounds[1] - other.bounds[1])[0];
@@ -89,7 +89,11 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   }
 
   const labelMiddle = capMiddle(label);
-  const rowMiddle = measured(row.middle, row.bounds[1] + row.bounds[3] / 2);
+  // Apple records the containing list cell as bounds and the declared row inside it as ink.
+  const [, top, , height] =
+    context.capture.platform === "apple" && Array.isArray(row.ink) ? row.ink : row.bounds;
+
+  const rowMiddle = measured(row.middle, top + height / 2);
   const middles = others.map((element) => ({ element, middle: middleOf(element) }));
 
   if (labelMiddle === null || rowMiddle === null || middles.some(({ middle }) => middle === null)) {
@@ -141,7 +145,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
 
   return rows.flatMap((row) => {
     const own = parts.filter((element) => element.row === row.id);
-    const found = misses(row, own);
+    const found = misses(context, row, own);
 
     if (found === null) {
       return [
