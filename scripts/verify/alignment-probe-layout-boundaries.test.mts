@@ -111,6 +111,19 @@ describe("alignment across layout boundaries", () => {
     assert.deepEqual(hits("cut"), []);
   });
 
+  it("measures the command field as a single control with an embedded Escape keycap", () => {
+    document.body.innerHTML = `
+      <div data-box="448,108,592,52">
+        <div data-slot="command-search-field" data-box="448,108,592,52">
+          <input placeholder="Search or ask…" data-box="448,108,531.58,52">
+          <button aria-keyshortcuts="Escape" data-box="991.58,124,28.42,20">Cancel Esc</button>
+        </div>
+      </div>`;
+
+    assert.deepEqual(hits("one-height"), []);
+    assert.equal(read().elements.filter((element) => element.part === "control").length, 1);
+  });
+
   it("counts a drawer sheet as its own surface over a page with a filled action", () => {
     document.body.innerHTML = `<button style="--button-variant:default" data-box="16,20,120,44">Next</button><div data-slot="drawer-popup" aria-label="Ask" data-box="0,400,390,444"><button style="--button-variant:default" data-box="16,700,358,44">Create a free account</button></div>`;
     setHit(document.querySelector("[data-slot=drawer-popup] button"));

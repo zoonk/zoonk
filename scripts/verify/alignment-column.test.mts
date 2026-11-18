@@ -115,6 +115,15 @@ describe("the page's column (craft E7)", () => {
     ]);
   });
 
+  it("does not require an inline bottom bar's action to span its column", () => {
+    const [group] = groups([16, 0, 175]).elements;
+    assert.ok(group);
+    const inlineBar = { ...group, piece: "bottom-bar", pinnedIn: "pinned.0" };
+
+    assert.deepEqual(columnMisses(fixtureCapture([inlineBar])), []);
+    assert.equal(columnMisses(fixtureCapture([inlineBar, { ...group, id: "list" }])).length, 1);
+  });
+
   it("passes a list set in from the start that reaches the end, beside a rail or a grid's cell", () => {
     assert.deepEqual(columnMisses(groups([44, 0, 330])), []);
   });
