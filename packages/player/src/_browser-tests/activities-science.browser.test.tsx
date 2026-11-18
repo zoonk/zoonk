@@ -154,7 +154,7 @@ describe("science activities", () => {
       .toContain("40.77");
   });
 
-  it("formula model simulation: the right answer in feedback agrees with the chart", async () => {
+  it("formula model simulation: feedback keeps the precision needed to distinguish a miss", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
@@ -166,7 +166,7 @@ describe("science activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("40.775 m", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("40.7747 m", { exact: true })).toBeVisible();
 
     await expect
       .poll(() =>

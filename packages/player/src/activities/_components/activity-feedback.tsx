@@ -7,6 +7,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import { useExtracted } from "next-intl";
 import { use } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -76,14 +77,16 @@ function NumericFeedback({
 }) {
   const format = useFormatNumber();
 
-  const written = exactAnswerFormat({
-    check,
-    value: answer?.kind === "numeric" ? answer.value : undefined,
-  });
+  const value = answer?.kind === "numeric" ? answer.value : undefined;
+  const written = exactAnswerFormat({ check, value });
 
   const rightAnswer = format(check.answer, {
     ...written,
-    maximumFractionDigits: places ?? written.maximumFractionDigits,
+    maximumFractionDigits: Math.max(
+      places ?? 0,
+      written.maximumFractionDigits,
+      countDecimalPlaces(value ?? 0),
+    ),
   });
 
   return (

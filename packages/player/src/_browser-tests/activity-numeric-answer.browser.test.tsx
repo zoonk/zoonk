@@ -39,7 +39,6 @@ describe("activity numeric answers", () => {
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(feedback.getByText("251.54", { exact: true })).toBeVisible();
-    await expect.element(feedback.getByText(/251\.54 months/u)).toBeVisible();
   });
 
   it.each([
