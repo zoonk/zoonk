@@ -282,8 +282,21 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     week.days.first { $0.state == .today }?.date ?? week.startDate
   }
 
+  /// Whether the plan lays a lesson on today or the six days after it, the days its reveal lists
+  /// (core's `buildNextDaysView`). Its week ends on Sunday, so a day of it already gone stands for
+  /// the same weekday next week: a study day while the plan still runs.
   var hasLessonsInNextSevenDays: Bool {
-    week.days.contains { [.today, .upcoming].contains($0.state) && !$0.items.isEmpty }
+    let today = today
+
+    return week.days.contains { day in
+      guard day.date < today else {
+        return !day.items.isEmpty
+      }
+
+      let runs =
+        end == nil && estimate.endDate.map { PlanDate.days(from: day.date, to: $0) >= 7 } ?? true
+      return runs && PlanDate.weekday(day.date).map { schedule.weekdayMinutes[$0] > 0 } ?? false
+    }
   }
 
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
@@ -761,6 +774,11 @@ enum PlanDate {
     }
 
     return calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2]))
+  }
+
+  /// Sunday counted 0, as a schedule's `weekdayMinutes`.
+  static func weekday(_ isoDate: String) -> Int? {
+    date(isoDate).map { calendar.component(.weekday, from: $0) - 1 }
   }
 
   static func days(from start: String, to end: String) -> Int {
