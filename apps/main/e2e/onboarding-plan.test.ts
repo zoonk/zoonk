@@ -218,7 +218,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
   expect(saved.dailyMinutes).toBe(45);
 });
 
-test("an exam's plan waits on the reveal while its notice is read, then shows on its own", async ({
+test("a plan waits on the reveal while its material is read, then shows on its own", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -248,7 +248,7 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   await page.clock.runFor(1);
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Reading the exam's official documents" }),
+    page.getByRole("heading", { level: 1, name: "Reading your material" }),
   ).toBeVisible();
 
   await expect(page.getByRole("button", { exact: true, name: "Start" })).toHaveCount(0);
@@ -262,9 +262,7 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   await afterLongWait;
   await page.clock.runFor(1);
 
-  await expect(
-    page.getByRole("heading", { name: "Reading the exam's official documents" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Reading your material" })).toBeVisible();
 
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
 

@@ -259,7 +259,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await page.context().close();
 });
 
-test("a learner who guessed while the exam's notice is read stays once it's read", async ({
+test("a learner who guessed while their material is read stays once it's read", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -290,9 +290,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
 
   await page.goto(`/start/${goal.id}`);
 
-  await expect(
-    page.getByRole("heading", { name: "Reading the exam's official documents" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Reading your material" })).toBeVisible();
 
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
