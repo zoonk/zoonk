@@ -99,7 +99,7 @@ describe("computing activities", () => {
         .element(page.getByText("You changed the code. Run it again to see the new output."))
         .toBeVisible();
 
-      await expect.element(page.getByRole("button", { name: "Check" })).not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
       await page.getByRole("button", { name: "Run" }).click();
       await expectCount(page.getByText("5050", { exact: true }), 2);
       await checkActivity();
@@ -183,16 +183,17 @@ describe("computing activities", () => {
   it("SQL playground: OR instead of AND shows the expected rows", async () => {
     openActivity({ template: "sqlPlayground" });
 
-    await page
-      .getByRole("textbox", { name: "Query" })
-      .fill(
-        "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' OR pop_millions > 200 ORDER BY pop_millions DESC;",
-      );
+    const query =
+      "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' OR pop_millions > 200 ORDER BY pop_millions DESC;";
+
+    const editor = page.getByRole("textbox", { name: "Query" });
+    await editor.fill(query);
 
     await page.getByRole("button", { name: "Run" }).click();
     await expect.element(page.getByText("Your result: 4 rows")).toBeVisible();
     await checkActivity();
     await expectVerdict("Not quite");
+    await expect.element(editor).toHaveValue(query);
     await expect.element(page.getByText("Expected result, in this order")).toBeVisible();
     await expect.element(page.getByText("OR keeps rows that pass either test.")).toBeVisible();
   });
@@ -210,7 +211,7 @@ describe("computing activities", () => {
       .element(page.getByText("The query returned too many rows. Is a join missing its condition?"))
       .toBeVisible();
 
-    await expect.element(page.getByRole("button", { name: "Check" })).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
   });
 
   it("pattern tester: examples pass as the pattern grows", async () => {

@@ -75,9 +75,7 @@ describe("output belongs to the editor revision that ran", () => {
       await expect.element(run).toHaveAttribute("aria-busy", "true");
       await expect.element(run).toBeDisabled();
 
-      await expect
-        .element(page.getByRole("button", { exact: true, name: "Check" }))
-        .not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
       await act(async () => {
         vi.mocked(runInSandbox).mock.calls[1]?.[0].onMessage({
@@ -186,9 +184,7 @@ describe("output belongs to the editor revision that ran", () => {
       .element(page.getByText("You changed the code. Run it again to see the new output."))
       .toBeVisible();
 
-    await expect
-      .element(page.getByRole("button", { exact: true, name: "Check" }))
-      .not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
     await page.getByRole("button", { exact: true, name: "Run" }).click();
     await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();
@@ -224,9 +220,7 @@ describe("output belongs to the editor revision that ran", () => {
         .element(page.getByText("You changed the query. Run it again to see the new result."))
         .toBeVisible();
 
-      await expect
-        .element(page.getByRole("button", { exact: true, name: "Check" }))
-        .not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
 
       await page.getByRole("button", { exact: true, name: "Run" }).click();
       await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();
