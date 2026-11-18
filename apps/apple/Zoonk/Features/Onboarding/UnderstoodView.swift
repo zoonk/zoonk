@@ -258,7 +258,7 @@ private struct UnderstoodCard: View {
         stepButtons(now)
       }
     }
-    .scrollEdgeEffectStyle(.hard, for: [.top, .bottom])
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
     .sheet(item: $choosingCountry) { choice in
       countryPicker(goal: choice.goal)
     }
