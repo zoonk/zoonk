@@ -17,7 +17,7 @@ import {
   ShieldAlertIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   type CliLoginFailure,
@@ -28,10 +28,7 @@ import {
 
 const LOGIN_COMMAND = "pnpm zoonk login";
 
-type FormState =
-  | { outcome: CliLoginOutcome }
-  | { failure: CliLoginFailure; userCode: string }
-  | null;
+type FormState = { outcome: CliLoginOutcome } | { failure: CliLoginFailure } | null;
 
 function CodeReadout({ userCode }: { userCode: string }) {
   const t = useExtracted();
@@ -53,12 +50,14 @@ function CodeReadout({ userCode }: { userCode: string }) {
  */
 function CodeField({
   approveId,
-  defaultValue,
   errorId,
+  onChange,
+  value,
 }: {
   approveId: string;
-  defaultValue?: string;
   errorId?: string;
+  onChange: (value: string) => void;
+  value: string;
 }) {
   const t = useExtracted();
   const id = useId();
@@ -87,12 +86,14 @@ function CodeField({
         autoCapitalize="characters"
         autoComplete="off"
         className="font-mono uppercase"
-        defaultValue={defaultValue}
         id={id}
         name="userCode"
+        onChange={(event) => onChange(event.target.value)}
         onKeyDown={approveOnEnter}
+        placeholder="ABCD2345"
         required
         spellCheck={false}
+        value={value}
       />
     </Field>
   );
@@ -143,7 +144,7 @@ function Grant({ email }: { email: string }) {
 }
 
 /** Deny, then Approve as the bar's main action. Enter alone never approves a login: the learner presses it. */
-function DecisionButtons({ approveId }: { approveId: string }) {
+function DecisionButtons({ approveId, hasCode }: { approveId: string; hasCode: boolean }) {
   const t = useExtracted();
   const { data, pending } = useFormStatus();
   const deciding = pending ? data?.get("decision") : null;
@@ -152,7 +153,7 @@ function DecisionButtons({ approveId }: { approveId: string }) {
     <BottomBarActions>
       <Button
         busy={deciding === "deny"}
-        disabled={deciding === "approve"}
+        disabled={!hasCode || deciding === "approve"}
         name="decision"
         size="xl"
         type="submit"
@@ -164,7 +165,7 @@ function DecisionButtons({ approveId }: { approveId: string }) {
 
       <EnterButton
         busy={deciding === "approve"}
-        disabled={deciding === "deny"}
+        disabled={!hasCode || deciding === "deny"}
         enter="off"
         id={approveId}
         name="decision"
@@ -245,6 +246,7 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
 
   const errorId = useId();
   const approveId = useId();
+  const [code, setCode] = useState(userCode ?? "");
 
   const [state, formAction] = useActionState(
     async (_previous: FormState, formData: FormData): Promise<FormState> => {
@@ -252,11 +254,9 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
       const submittedCode = formData.get("userCode");
       const typedCode = typeof submittedCode === "string" ? submittedCode.trim() : "";
 
-      const result = await decideCliLogin({ decision, userCode: typedCode }).catch(
-        (): CliLoginState => ({ failure: "failed" }),
-      );
-
-      return result && "failure" in result ? { ...result, userCode: typedCode } : result;
+      return decideCliLogin({ decision, userCode: typedCode }).catch((): CliLoginState => ({
+        failure: "failed",
+      }));
     },
     null,
   );
@@ -275,8 +275,9 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
         ) : (
           <CodeField
             approveId={approveId}
-            defaultValue={failed?.userCode}
             errorId={failed ? errorId : undefined}
+            onChange={setCode}
+            value={code}
           />
         )}
 
@@ -289,7 +290,7 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
       </div>
 
       <BottomBar note={failed && <FailureNote failure={failed.failure} id={errorId} />}>
-        <DecisionButtons approveId={approveId} />
+        <DecisionButtons approveId={approveId} hasCode={Boolean(code.trim())} />
       </BottomBar>
     </form>
   );

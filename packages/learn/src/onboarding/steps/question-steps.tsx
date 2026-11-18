@@ -183,6 +183,7 @@ export function FollowUpsStep({
 
   return (
     <StepForm
+      canContinue={answers.some((answer) => answer.trim().length > 0)}
       onContinue={() =>
         onAnswer({ answers: answers.map((answer) => answer.trim() || null), question: "followUps" })
       }
