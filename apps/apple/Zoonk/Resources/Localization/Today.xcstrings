@@ -3817,6 +3817,65 @@
         }
       }
     },
+    "Already know this chapter? **Take the test**" : {
+      "comment" : "Skips the next lesson's chapter with its test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kennst du dieses Kapitel schon? **Mach den Test**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Ya conoces este capítulo? **Hacer la prueba**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu connais déjà ce chapitre ? **Passe le test**"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conosci già questo capitolo? **Fai il test**"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章の内容はもう知っていますか？**テストを受ける**"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챕터 내용을 이미 알고 있나요? **테스트 보기**"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znasz już ten rozdział? **Rozwiąż test**"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já sabe o conteúdo deste capítulo? **Faça o teste**"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üniteyi zaten biliyor musun? **Testi çöz**"
+          }
+        }
+      }
+    },
     "Already know this? **Take the test**" : {
       "comment" : "Skips the next lesson's chapter with its test",
       "localizations" : {
