@@ -210,16 +210,23 @@ private struct MindMapChaptersTab: View {
 private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
-  @State private var showsChapters = false
-  /// The fold opens once, on arrival, while one of its chapters is being made, so that chapter's
-  /// progress is in view; a learner who closes it keeps it closed.
-  @State private var arrived = false
+  /// As main, decided once on arrival: open while one of its chapters is being made or didn't
+  /// finish, so that row is in view; a learner who closes it keeps it closed.
+  @State private var showsChapters: Bool
   /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
   @State private var showedStop = false
 
   let goalId: String
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
+
+  init(goalId: String, maps: GoalMindMaps, notMade: [ChapterMindMap]) {
+    self.goalId = goalId
+    self.maps = maps
+    self.notMade = notMade
+    _showsChapters = State(
+      initialValue: notMade.contains { !$0.canMakeNow && $0.opensItsGroupOnArrival })
+  }
 
   /// The offer's stop takes the rows' Create until a read lifts it.
   var body: some View {
@@ -289,17 +296,6 @@ private struct MindMapCreateSection: View {
         if folds {
           FoldRow(isUnfolded: $showsChapters) {
             othersLabel(count: others.count)
-          }
-          .onAppear {
-            guard !arrived else {
-              return
-            }
-
-            arrived = true
-
-            if others.contains(where: \.opensItsGroupOnArrival) {
-              showsChapters = true
-            }
           }
         } else {
           othersLabel(count: others.count)
