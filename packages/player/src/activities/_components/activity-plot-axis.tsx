@@ -7,15 +7,17 @@ import { useAxisLabels } from "./use-axis-labels";
 const X_LABEL_OFFSET = 18;
 
 export function ActivityPlotAxisX({
+  allowTickLabelOverhang,
   fallbackTicks,
   format,
   ticks,
 }: {
+  allowTickLabelOverhang?: boolean;
   fallbackTicks?: readonly number[][];
   format: (value: number) => string;
   ticks: readonly number[];
 }) {
-  const { x, y } = usePlotScales();
+  const { width, x, y } = usePlotScales();
   const [bottom] = y.range;
 
   const { ref, shown, starts } = useAxisLabels({
@@ -29,7 +31,7 @@ export function ActivityPlotAxisX({
     domain: x.domain,
     format,
     position: x.toPixel,
-    range: x.range,
+    range: allowTickLabelOverhang ? [0, width] : x.range,
   });
 
   return (
