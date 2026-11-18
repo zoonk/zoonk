@@ -283,7 +283,8 @@ private func limited(_ text: Binding<String>, to limit: Int) -> Binding<String> 
   }
 }
 
-/// A text chip, its check and ink ring on its tint once picked.
+/// A text chip, its check and ink ring on its tint once picked. The check's room is kept from the
+/// start, so picking a chip never widens it or pushes its neighbors.
 private struct ProfileChip: View {
   let label: Text
   let isOn: Bool
@@ -292,11 +293,10 @@ private struct ProfileChip: View {
   var body: some View {
     Button(action: action) {
       HStack(spacing: 4) {
-        if isOn {
-          Image(systemName: "checkmark")
-            .fontWeight(.semibold)
-            .accessibilityHidden(true)
-        }
+        Image(systemName: "checkmark")
+          .fontWeight(.semibold)
+          .opacity(isOn ? 1 : 0)
+          .accessibilityHidden(true)
 
         label
           .multilineTextAlignment(.leading)
