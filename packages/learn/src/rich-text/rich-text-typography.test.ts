@@ -88,6 +88,17 @@ describe(typesetProse, () => {
     ).toStrictEqual([`Use 8${NBSP}`, "degrees"]);
   });
 
+  it("keeps the space after an emphasized number unbreakable", () => {
+    const segments = [
+      { kind: "bold", text: "8" },
+      { kind: "text", text: " degrees" },
+    ];
+
+    expect(
+      typesetProse({ locale: "en", segments, typeset: (text) => text }).map(({ text }) => text),
+    ).toStrictEqual(["8", `${NBSP}degrees`]);
+  });
+
   it("keeps a money sign with an amount the next segment starts with, and leaves math alone", () => {
     const segments = [
       { kind: "text", text: "It costs R$ " },

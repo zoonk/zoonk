@@ -21,6 +21,8 @@ function isPostalCode(before: string): boolean {
 
 const NUMBER_THEN_WORD = /(?<=\d)[ \t]+(?=[\p{L}%°])/gu;
 const NUMBER_AT_END = /(?<=\d)[ \t]+$/u;
+const LEADING_SPACE = /^[ \t]+/u;
+const ENDS_WITH_DIGIT = /\d$/u;
 const STARTS_WITH_WORD = /^[\p{L}%°]/u;
 
 /** A sign and its amount, apart by a space or by the no-break space a question's text keeps them with. */
@@ -66,14 +68,25 @@ export function typesetProse<T extends Segment>({
       return segment;
     }
 
+    const previous = segments[index - 1];
     const next = segments[index + 1];
     const text = typeset(segment.text);
 
+    const joinsPrevious =
+      previous &&
+      isProse(previous) &&
+      ENDS_WITH_DIGIT.test(previous.text) &&
+      STARTS_WITH_WORD.test(text.trimStart());
+
+    const joined = joinsPrevious ? text.replace(LEADING_SPACE, NBSP) : text;
+
     if (!next || !isProse(next)) {
-      return { ...segment, text };
+      return { ...segment, text: joined };
     }
 
-    const withNumber = STARTS_WITH_WORD.test(next.text) ? text.replace(NUMBER_AT_END, NBSP) : text;
+    const withNumber = STARTS_WITH_WORD.test(next.text)
+      ? joined.replace(NUMBER_AT_END, NBSP)
+      : joined;
 
     return {
       ...segment,
