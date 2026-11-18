@@ -491,7 +491,7 @@ private fun driftedShare(
         if (since != null) drift.startedAt = since
         drift.since = since
     }
-    val ceiling = minOf(target, DRIFT_CAP)
+    val ceiling = driftCeiling(share, target)
     val constant = (activeMillis?.takeIf { it > 0 } ?: DEFAULT_ESTIMATE_MILLIS) / 2.0
     val drifted =
         when {
@@ -501,6 +501,12 @@ private fun driftedShare(
         }
     return (if (following) maxOf(drifted, share, drift.shown) else share).also { drift.shown = it }
 }
+
+/** How far the bar drifts while a step runs from [share] toward its end at [target]. */
+internal fun driftCeiling(
+    share: Float,
+    target: Float,
+): Float = minOf(target, DRIFT_CAP)
 
 /** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
 internal fun segmentFills(
