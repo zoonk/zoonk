@@ -142,7 +142,12 @@ export function NoticeReading({
             retry={stop.retry}
           />
         ) : (
-          <GenerationTimelineProgress aria-label={title} locale={locale} value={value} />
+          <GenerationTimelineProgress
+            aria-label={title}
+            locale={locale}
+            value={value}
+            weights={[100]}
+          />
         )}
       </GenerationTimelineHeader>
 
