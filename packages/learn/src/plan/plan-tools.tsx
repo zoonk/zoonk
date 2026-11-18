@@ -121,7 +121,7 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
           tabIndex={-1}
         >
           {t(
-            "You won't practice on your own computer. Lessons use examples and simulations instead.",
+            "You won't practice on your own device. Lessons use examples and simulations instead.",
           )}
         </p>
       ) : (

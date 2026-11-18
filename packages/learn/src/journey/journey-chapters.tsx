@@ -41,7 +41,7 @@ export function useChapterTitle() {
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
       return t(
-        "{count, plural, one {# topic you already know} other {# topics you already know}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: chapter.skills.length },
       );
     }

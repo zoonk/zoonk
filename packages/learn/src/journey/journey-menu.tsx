@@ -26,7 +26,7 @@ import { type GoalMenu, GoalMenuItems } from "./goal-actions";
 function TalkToBuddy({ buddy }: { buddy: PlanTutor["buddy"] }) {
   const t = useExtracted();
   const name = useBuddyName(buddy);
-  return t("Talk to {name}", { name });
+  return t("Ask {name}", { name });
 }
 
 function AskTutorItem({ tutor }: { tutor: PlanTutor }) {

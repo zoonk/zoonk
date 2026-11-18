@@ -216,7 +216,7 @@ export function ScheduleDetails({
         <ListGroup>
           <ListRowLink href={logbookHref}>
             <ListRowContent>
-              <ListRowTitle>{t("Last week's recap")}</ListRowTitle>
+              <ListRowTitle>{t("Weekly summary")}</ListRowTitle>
             </ListRowContent>
           </ListRowLink>
         </ListGroup>
