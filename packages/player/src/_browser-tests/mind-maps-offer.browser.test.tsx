@@ -130,6 +130,15 @@ const rowCreate = (title: string) =>
     .getByRole("button", { name: "Create" });
 
 describe("the Mind maps page's gate is the list's offer", () => {
+  it("names every chapter without a map under one heading, with their count", async () => {
+    render(<Screen actions={actionsWith({})} served={writingView(null)} />);
+
+    await expect.element(notMade().getByRole("heading", { name: "Without a map" })).toBeVisible();
+
+    await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
+    await expect.element(rowCreate("Atoms")).toBeVisible();
+  });
+
   it.each([
     ["the newer read answers first", ["newer", "older"]],
     ["the older read answers first", ["older", "newer"]],
