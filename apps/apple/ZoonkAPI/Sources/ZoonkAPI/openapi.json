@@ -79328,12 +79328,19 @@
                       "minimum": 0,
                       "maximum": 9007199254740991,
                       "description": "Lessons finished for the first time that day"
+                    },
+                    "timeSpentSeconds": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "Seconds studied that day; zero on a day that isn't a learning day"
                     }
                   },
                   "required": [
                     "activitiesCompleted",
                     "date",
-                    "lessonCompletions"
+                    "lessonCompletions",
+                    "timeSpentSeconds"
                   ],
                   "additionalProperties": false
                 }
