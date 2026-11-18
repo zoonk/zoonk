@@ -107,7 +107,7 @@ class MindMapsOfferTest {
 
         waitFor("You've used your mind maps")
         compose.onNodeWithText("Create all").assertDoesNotExist()
-        val below = compose.onNodeWithText("Other chapters").getBoundsInRoot().top
+        val below = compose.onNodeWithText("Without a map").getBoundsInRoot().top
 
         clock.passOpening()
         waitFor("Create all")
@@ -117,7 +117,7 @@ class MindMapsOfferTest {
         assertEquals(emptyList<Any>(), api.created)
         assertEquals(0, api.createdAll)
         // The gate's slot holds its height for this visit, so nothing below it moves without a tap.
-        assertEquals(below, compose.onNodeWithText("Other chapters").getBoundsInRoot().top)
+        assertEquals(below, compose.onNodeWithText("Without a map").getBoundsInRoot().top)
     }
 
     /**
@@ -422,7 +422,7 @@ class MindMapsOfferTest {
         show()
 
         waitFor("Lenses")
-        compose.onNodeWithText("Other chapters").performClick()
+        compose.onNodeWithText("Without a map").performClick()
         compose.waitForIdle()
         compose.onNodeWithText("Lenses").assertDoesNotExist()
     }
@@ -432,7 +432,7 @@ class MindMapsOfferTest {
         api.mindMaps = { fresh }
         show()
 
-        waitFor("Other chapters")
+        waitFor("Without a map")
         compose.onNodeWithText("Optics").assertDoesNotExist()
     }
 
