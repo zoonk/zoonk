@@ -42,15 +42,15 @@ export function useMockDrafts({
     () =>
       createDraftSaveQueue<MockDraft>({
         keyOf: (draft) => draft.itemId,
-        onAttempt: (draft, state) => {
-          const failed = state === "failed" ? draft : undefined;
+        onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
+        onStatus: setSaveStatus,
+        onStored: (draft) => {
+          setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
 
           setFailedDrafts((current) =>
-            current[draft.itemId] === failed ? current : { ...current, [draft.itemId]: failed },
+            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
           );
         },
-        onStatus: setSaveStatus,
-        onStored: (draft) => setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
         save,
       }),
     [save],
