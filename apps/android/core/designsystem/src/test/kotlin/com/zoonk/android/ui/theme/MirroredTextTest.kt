@@ -5,14 +5,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.richtext.MarkdownText
+import com.zoonk.android.ui.richtext.RichText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -56,6 +61,36 @@ class MirroredTextTest {
             val digit = layout.getBoundingBox(at + 1)
             assertTrue("$sign: sign at ${signBox.left}, digit at ${digit.left}", signBox.left < digit.left)
         }
+    }
+
+    @Test
+    fun aListNumberSitsBesideItsWordsInRichText() {
+        mirroredContent { RichText("1. Apples\n2. Pears", Modifier.fillMaxWidth()) }
+        assertMarkerBesideWords()
+    }
+
+    @Test
+    fun aListNumberSitsBesideItsWordsInMarkdown() {
+        mirroredContent { MarkdownText("1. Apples\n2. Pears", Modifier.fillMaxWidth()) }
+        assertMarkerBesideWords()
+    }
+
+    /** Mirrored, the number's box sits after the words on their left, so the number ends that box's left side. */
+    private fun assertMarkerBesideWords() {
+        val node = compose.onNodeWithText("1.", useUnmergedTree = true).fetchSemanticsNode()
+        val layouts = mutableListOf<TextLayoutResult>()
+        node.config[SemanticsActions.GetTextLayoutResult].action?.invoke(layouts)
+        val layout = layouts.single()
+        assertEquals("the number's left in its box", 0f, layout.getBoundingBox(0).left, 1f)
+    }
+
+    private fun mirroredContent(content: @Composable () -> Unit) {
+        compose.setContent {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                ZoonkTheme { Box(Modifier.width(WIDTH)) { content() } }
+            }
+        }
+        compose.waitForIdle()
     }
 
     private fun mirrored(
