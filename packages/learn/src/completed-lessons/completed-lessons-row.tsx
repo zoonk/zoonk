@@ -1,9 +1,10 @@
 "use client";
 
+import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindDot } from "../_components/kind-tile";
 import {
   ListRowContent,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -15,7 +16,9 @@ export function CompletedLessonsRow({ href }: { href: string }) {
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindDot kind="lesson" />
+        <ListRowIcon>
+          <HistoryIcon />
+        </ListRowIcon>
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("Completed lessons")}</ListRowTitle>
