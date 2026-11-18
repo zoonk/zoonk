@@ -64,7 +64,7 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
 
   return (
     <section aria-labelledby={EXPLANATION_TITLE_ID} className="flex flex-col gap-1">
-      <PageSectionTitle id={EXPLANATION_TITLE_ID}>{t("Try a quick explanation")}</PageSectionTitle>
+      <PageSectionTitle id={EXPLANATION_TITLE_ID}>{t("Quick explanation")}</PageSectionTitle>
       <LessonPlayerPreload />
       <ListGroup>
         <ListRowLink className={CURRENT_ROW_CLASS} href={`/explain/${explanation.id}`} prefetch>
@@ -75,7 +75,7 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
           </ListRowLeading>
           <ListRowContent>
             <ListRowTitle>{explanation.title}</ListRowTitle>
-            <ListRowDescription>{t("Quick explanation")}</ListRowDescription>
+            <ListRowDescription>{t("Continue")}</ListRowDescription>
           </ListRowContent>
         </ListRowLink>
       </ListGroup>
