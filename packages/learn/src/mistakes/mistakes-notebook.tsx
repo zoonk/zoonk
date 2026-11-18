@@ -241,17 +241,12 @@ function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
   );
 }
 
-export function MistakesNotebookBar({ listed = true }: { listed?: boolean }) {
+export function MistakesNotebookBar() {
   const t = useExtracted();
   const { today } = useLearnRoutes();
 
   return (
-    <LearnPageBar
-      back={{ href: today }}
-      listed={listed ? "learner" : undefined}
-      root
-      title={t("Mistakes notebook")}
-    />
+    <LearnPageBar back={{ href: today }} listed="learner" root title={t("Mistakes notebook")} />
   );
 }
 

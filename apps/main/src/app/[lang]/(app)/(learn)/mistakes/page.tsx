@@ -46,7 +46,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
 
     return (
       <LearnNoGoal
-        bar={<MistakesNotebookBar listed={false} />}
+        bar={<MistakesNotebookBar />}
         description={t("The questions you got wrong, why, and practice until you get them right.")}
         next="/mistakes"
         title={t("Mistakes notebook")}
