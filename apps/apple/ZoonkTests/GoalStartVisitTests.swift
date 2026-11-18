@@ -36,7 +36,7 @@ final class GoalStartVisitTests: XCTestCase {
     link.becomeFirstResponder()
     link.insertText("https://zoonk.invalid/syllabus")
     try await activate(String(localized: "Add link", table: "Onboarding"), in: window)
-    try await waitForTestCondition("Expected state did not arrive") {
+    try await waitForTestCondition("The failure never showed: \(spoken(in: window))") {
       shows(Self.failure, in: window)
     }
     XCTAssertTrue(shows(Self.failure, in: window), "The failure shows: \(spoken(in: window))")
@@ -47,7 +47,7 @@ final class GoalStartVisitTests: XCTestCase {
     try await activate(String(localized: "Build my plan", table: "Onboarding"), in: window)
     try await server.waitForHeldRequest()
     try await server.release()
-    try await waitForTestCondition("Expected state did not arrive") {
+    try await waitForTestCondition("The entry never came back: \(spoken(in: window))") {
       shows(String(localized: "Build my plan", table: "Onboarding"), in: window)
     }
     XCTAssertTrue(
