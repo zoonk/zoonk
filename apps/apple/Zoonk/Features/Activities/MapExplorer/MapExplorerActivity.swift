@@ -159,16 +159,16 @@ private struct MapExplorerCanvas: View {
 
     ZStack(alignment: .topLeading) {
       MapShapes(naming: naming)
-      .accessibilityElement()
-      .accessibilityLabel(textAlternative)
+        .accessibilityElement()
+        .accessibilityLabel(textAlternative)
 
       ForEach(Array(pins.enumerated()), id: \.element.place.id) { order, pin in
         self.pin(pin.place, number: pin.index + 1)
           .position(shown[order])
       }
       MapLabels(naming: naming)
-      .allowsHitTesting(false)
-      .accessibilityHidden(true)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
     .frame(width: width, height: height)
     .background(map.sphere == nil ? ActivityBaseMap.Tone.water : .clear)
