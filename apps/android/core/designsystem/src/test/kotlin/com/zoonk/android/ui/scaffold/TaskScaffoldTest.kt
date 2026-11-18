@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -128,5 +130,28 @@ class TaskScaffoldTest {
         rule.unfoldBook(folds)
 
         rule.onNodeWithText("Report open").assertIsDisplayed()
+    }
+
+    /** A status over the bar draws over the content, so the content's end keeps clear of it as well as of the bar. */
+    @Test
+    fun theContentsEndClearsAStatusAboveTheBar() {
+        var withNote by mutableStateOf(false)
+        var bottom = 0.dp
+        rule.setContent {
+            ZoonkTheme {
+                TaskScaffold(
+                    onClose = {},
+                    bottomBar = { Button(onClick = {}) { Text("Next") } },
+                    note = if (withNote) ({ Text("Your last answer wasn't saved", Modifier.height(64.dp)) }) else null,
+                ) { padding -> bottom = padding.calculateBottomPadding() }
+            }
+        }
+        rule.waitForIdle()
+        val barOnly = bottom
+
+        withNote = true
+        rule.waitForIdle()
+
+        assertEquals("the bar's ${barOnly.value} plus the note's 64 and its 16 of padding", (barOnly + 80.dp).value, bottom.value, 1f)
     }
 }
