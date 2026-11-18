@@ -211,7 +211,7 @@ describe("science activities", () => {
     await valueInput().fill("40.7849");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(valueInput()).toHaveValue("40.7849");
+    await expect.element(valueInput()).toHaveValue("40.785");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
 
