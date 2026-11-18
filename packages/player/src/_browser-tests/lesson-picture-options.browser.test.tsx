@@ -120,7 +120,7 @@ describe("picture options", () => {
       const description = option(alt).getByText(alt, { exact: true });
       await expect.element(description).toBeVisible();
       const paragraph = description.element();
-      const placeholder = paragraph.closest("[data-slot='picture-option-frame']")!;
+      const placeholder = paragraph.closest("[data-slot='media-pending']")!;
       expect(paragraph.scrollHeight).toBe(paragraph.clientHeight);
 
       expect(paragraph.getBoundingClientRect().bottom).toBeLessThanOrEqual(

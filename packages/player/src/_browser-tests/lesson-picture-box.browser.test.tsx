@@ -299,7 +299,7 @@ describe("a drawn lesson picture", () => {
         const option = page.getByRole("radio", { exact: true, name: alt });
         await expect.element(option).toBeVisible();
         const before = boxOf(option.element());
-        const frame = option.element().querySelector("[data-slot='picture-option-frame']")!;
+        const frame = option.element().querySelector("[data-slot='media-pending']")!;
         const drawing = boxOf(frame);
         const alreadyDrawn = imageOf(drawnAlt);
         const drawnFrame = alreadyDrawn.parentElement!;

@@ -1,16 +1,14 @@
 "use client";
 
 import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
 } from "../../components/player-choice-scene";
 import { type PlayableLibraryStep } from "../lesson-player-types";
-import { useOptionPicture } from "./lesson-pictures";
+import { LessonPicturePending, useOptionPicture } from "./lesson-pictures";
 import { LessonRichText } from "./lesson-rich-text";
 import { LessonStepImage, PICTURE_FRAME_CLASS } from "./lesson-step-image";
 
@@ -24,14 +22,17 @@ type PictureOption = {
 /** A picture 8px inside a 12px option, in every state: drawn, being drawn and described. */
 const OPTION_PICTURE_CLASS = "mx-auto rounded-sm";
 
-/** The room a drawn option takes, held by the two states that have no file. */
-const OPTION_PICTURE_BOX_CLASS = cn(
+const OPTION_DESCRIPTION_CLASS = cn(
   OPTION_PICTURE_CLASS,
   PICTURE_BOX_CLASS,
   PICTURE_FRAME_CLASS.question,
+  "col-start-1 row-start-1 max-h-none min-h-[min(100cqw,var(--picture-max-h))]",
 );
 
-const OPTION_PICTURE_BOX_STYLE = pictureBoxStyle(DRAWN_PICTURE_SIZE.option);
+const OPTION_DESCRIPTION_STYLE = {
+  ...pictureBoxStyle(DRAWN_PICTURE_SIZE.option),
+  aspectRatio: "auto",
+};
 
 function PictureOptionContent({
   isChecked,
@@ -42,7 +43,6 @@ function PictureOptionContent({
   option: PictureOption;
   step: PlayableLibraryStep;
 }) {
-  const t = useExtracted();
   const { image, pending } = useOptionPicture(step, option.id);
   // oxlint-disable-next-line react/hook-use-state -- The initial drawing state sizes this option until the screen closes.
   const [startedPending] = useState(pending);
@@ -51,32 +51,26 @@ function PictureOptionContent({
   return (
     <div className="@container flex w-full flex-col gap-2">
       <div className="grid grid-cols-1">
-        {/* Keep the description's room when its picture arrives, including on a narrow phone. */}
-        {(!image || startedPending) && (
-          <div
-            className={cn(
-              OPTION_PICTURE_BOX_CLASS,
-              "bg-muted/50 relative col-start-1 row-start-1 grid max-h-none min-h-[min(100cqw,var(--picture-max-h))] place-items-center overflow-hidden p-2 text-center text-sm leading-snug wrap-anywhere",
-              pending && "text-muted-foreground",
-              image && "invisible",
-            )}
-            data-slot="picture-option-frame"
-            style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
+        {(startedPending || pending) && (
+          <LessonPicturePending
+            aria-hidden={!pending || undefined}
+            className={cn(OPTION_DESCRIPTION_CLASS, !pending && "invisible")}
+            style={OPTION_DESCRIPTION_STYLE}
           >
-            {!image && pending && (
-              <>
-                <Skeleton
-                  aria-hidden="true"
-                  className="bg-muted/60 absolute inset-0 rounded-none"
-                />
-                <p className="sr-only" role="status">
-                  {t("Drawing the picture…")}
-                </p>
-              </>
-            )}
+            <p className="leading-snug wrap-anywhere">{pictureText}</p>
+          </LessonPicturePending>
+        )}
 
-            <p className="relative">{pictureText}</p>
-          </div>
+        {!image && !pending && (
+          <p
+            className={cn(
+              OPTION_DESCRIPTION_CLASS,
+              "bg-muted/50 grid place-items-center p-2 text-center text-sm leading-snug wrap-anywhere",
+            )}
+            style={OPTION_DESCRIPTION_STYLE}
+          >
+            {pictureText}
+          </p>
         )}
 
         {image && (
