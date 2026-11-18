@@ -190,7 +190,7 @@ export function PlanChangeSuggestion({
         ) : (
           <>
             <SuggestionSummary>{summary ?? title}</SuggestionSummary>
-            <SuggestionOpen />
+            <SuggestionOpen>{t("See what changes")}</SuggestionOpen>
           </>
         )}
       </SuggestionLine>

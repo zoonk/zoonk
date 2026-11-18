@@ -16,26 +16,29 @@ export type LearnBuddy = {
   studiedToday?: boolean;
 };
 
-export function useBuddyName(buddy: Pick<LearnBuddy, "kind" | "name"> | null): string {
+export function useDefaultBuddyName(): (kind: BuddyKind) => string {
   const t = useExtracted("buddyNames");
+
+  return (kind) => {
+    switch (kind) {
+      case "beep":
+        return t("Beep");
+      case "noodle":
+        return t("Noodle");
+      case "otto":
+        return t("Otto");
+      case "zu":
+        return t("Zu");
+      default:
+        return t("Zu");
+    }
+  };
+}
+
+export function useBuddyName(buddy: Pick<LearnBuddy, "kind" | "name"> | null): string {
+  const defaultName = useDefaultBuddyName();
   const { kind, name } = buddy ?? DEFAULT_BUDDY;
-
-  if (name) {
-    return name;
-  }
-
-  switch (kind) {
-    case "beep":
-      return t("Beep");
-    case "noodle":
-      return t("Noodle");
-    case "otto":
-      return t("Otto");
-    case "zu":
-      return t("Zu");
-    default:
-      return t("Zu");
-  }
+  return name || defaultName(kind);
 }
 
 export function resolveLearnBuddy(buddy: LearnBuddy | null): LearnBuddy {

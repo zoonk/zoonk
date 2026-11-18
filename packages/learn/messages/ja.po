@@ -47,6 +47,7 @@ msgstr "脳力"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -76,6 +77,7 @@ msgstr "スキップ"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -759,7 +761,6 @@ msgstr "このステップを開けませんでした。もう一度お試しく
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
-#: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "戻る"
@@ -807,6 +808,11 @@ msgstr "画面のオプション"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "テストを開けませんでした。もう一度お試しください。"
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "M-RtUs"
+msgid "Already know this chapter?"
+msgstr "この章の内容はもう知っていますか？"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1201,10 +1207,8 @@ msgid "Language"
 msgstr "言語"
 
 #: src/appearance/buddy-settings.tsx
-#: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-glasses-picker.tsx
 #: src/buddies/buddy-glasses-sheet.tsx
-#: src/buddies/buddy-screen.tsx
 msgctxt "T9w4Km"
 msgid "Glasses"
 msgstr "メガネ"
@@ -1269,6 +1273,7 @@ msgid "Study today to keep it up."
 msgstr "今日も学習して、エネルギーを保ちましょう。"
 
 #: src/buddies/buddy-day-parts.tsx
+#: src/buddies/buddy-today.tsx
 msgctxt "RquZa1"
 msgid "{buddy}'s Energy"
 msgstr "{buddy}のエネルギー"
@@ -1285,13 +1290,18 @@ msgstr "{buddy}が覚えていること"
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "{buddy}のメガネ"
+
+#: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-screen.tsx
 #: src/journey/schedule-details.tsx
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "週間まとめ"
 
 #: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "エネルギー"
@@ -1427,6 +1437,7 @@ msgid "Comes with your buddy"
 msgstr "相棒が最初から持っています"
 
 #: src/buddies/buddy-picker.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 msgctxt "1L2nnA"
 msgid "Buddy"
@@ -5272,6 +5283,7 @@ msgid "today"
 msgstr "今日"
 
 #: src/journey/schedule-details.tsx
+#: src/today/today-day-progress.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
@@ -13411,12 +13423,6 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}まであと{days, plural, other {#日}}"
 
 #: src/today/today-insight.tsx
-#: src/today/today-suggested-goal.tsx
-msgctxt "DwjT1H"
-msgid "Answer"
-msgstr "答える"
-
-#: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
 msgstr "追加する"
@@ -13562,11 +13568,10 @@ msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {#件完了}} · {skipped, plural, other {#件スキップ}}"
 
-#. Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.
 #: src/today/today-session-card.tsx
-msgctxt "zdB-3c"
-msgid "{count, plural, one {+# more} other {+# more}}"
-msgstr "{count, plural, other {+#件}}"
+msgctxt "AHBKOX"
+msgid "{count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "{count, plural, other {ほか#レッスン}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"
@@ -13577,6 +13582,11 @@ msgstr "{course}を続けますか？"
 msgctxt "Vr1VPb"
 msgid "Suggested goal"
 msgstr "おすすめの目標"
+
+#: src/today/today-suggested-goal.tsx
+msgctxt "DwjT1H"
+msgid "Answer"
+msgstr "答える"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "Ie2Ije"
@@ -13657,6 +13667,11 @@ msgstr "{studied}学習済み（予定：{planned}）"
 msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time}の学習を予定"
+
+#: src/today/today-week.tsx
+msgctxt "-FZPmK"
+msgid "Not studied"
+msgstr "学習なし"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

@@ -137,7 +137,7 @@ export function BlockSegment({ focusable, part }: { focusable: boolean; part: Da
   return (
     <Popover>
       <SegmentPopover focusable={focusable} label={`${title}: ${factsLabel(facts)}`}>
-        <DaySegment kind={part.kind} share={part.share} state={part.state} />
+        <DaySegment share={part.share} state={part.state} />
       </SegmentPopover>
       <SegmentContent facts={facts} kind={part.kind} note={kindNote(part.kind)} title={title} />
     </Popover>

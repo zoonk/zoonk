@@ -1,5 +1,4 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { type LessonCounts, getLessonCells } from "./lesson-cells";
 
 const PERCENT = 100;
 
@@ -30,17 +29,6 @@ export function ProgressCell({
       {known > 0 && (
         <span className="bg-muted-foreground/70 h-full" style={{ width: `${known * PERCENT}%` }} />
       )}
-    </span>
-  );
-}
-
-export function LessonCells({ className, ...counts }: LessonCounts & { className?: string }) {
-  return (
-    <span aria-hidden="true" className={cn("flex gap-[3px]", className)} data-slot="lesson-cells">
-      {getLessonCells(counts).map((cell, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- Cells are positions, not items.
-        <ProgressCell {...cell} key={index} />
-      ))}
     </span>
   );
 }

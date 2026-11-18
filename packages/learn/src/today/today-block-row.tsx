@@ -18,32 +18,22 @@ import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useStepLabel } from "./use-row-label";
 import { useLessonGettingReady } from "./use-today-copy";
 
-/** A row's mark and minutes center on a row of one or two lines and sit on the first of three. */
-const THREE_LINES_CLASS =
-  "has-[[data-slot=today-row-lines]>:nth-child(3),[data-slot=test-out-start-status]:not(:empty)]:items-start";
-
-export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
+export function getRowClass({ isNext }: { isNext: boolean }): string {
   return cn(
-    "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
+    "group/row relative isolate flex min-h-11 items-center gap-3 border-b py-2.75 last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
-    finished ? "py-[9px]" : "py-2.75",
     isNext
       ? "before:bg-muted border-b-0"
       : "[@media(hover:hover)]:has-[[data-slot=today-row-open]:hover]:before:bg-muted/70",
-    THREE_LINES_CLASS,
   );
 }
 
-/**
- * While the row's own open runs, its time turns into the spinner in place. The row is its own
- * group: the next row also holds "Take the test", a busy button of its own. It takes the room the
- * list gives its longest time (`--row-time`), so a mission's mark before it keeps one place.
- */
+/** The row's own open replaces its time with a spinner, leaving the test offer independent. */
 function RowTime({ minutes }: { minutes: number }) {
   const formatDuration = useFormatDuration();
 
   return (
-    <span className="relative min-w-(--row-time) text-end">
+    <span className="relative text-end">
       <span className="group-has-[[data-slot=today-row-open][aria-busy=true]]/row:invisible">
         {formatDuration(minutes)}
       </span>
@@ -185,7 +175,7 @@ export function BlockRow({
     <li
       aria-current={isNext ? "step" : undefined}
       className={cn(
-        getRowClass({ finished, isNext }),
+        getRowClass({ isNext }),
         lessonAgainId && "[@media(hover:hover)]:has-[a:hover]:before:bg-muted/70",
       )}
       data-slot={isNext ? "today-next" : undefined}
@@ -194,7 +184,7 @@ export function BlockRow({
         <BlockMark block={block} />
       </span>
 
-      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", THREE_LINES_CLASS)}>
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1")}>
         <div className="flex flex-col gap-px" data-slot="today-row-lines">
           <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
@@ -202,7 +192,7 @@ export function BlockRow({
         </div>
 
         {!finished && (
-          <span className="text-muted-foreground flex h-5 items-center gap-1.5 font-mono text-xs tabular-nums">
+          <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
             {countsTowardMission && (
               <ListChecksIcon
                 aria-hidden="true"
@@ -240,10 +230,7 @@ export function PlanLessonRow({
   return (
     <li
       aria-current={isNext ? "step" : undefined}
-      className={cn(
-        getRowClass({ finished: false, isNext }),
-        isNext && disabled && !busy && "opacity-50",
-      )}
+      className={cn(getRowClass({ isNext }), isNext && disabled && !busy && "opacity-50")}
     >
       <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />

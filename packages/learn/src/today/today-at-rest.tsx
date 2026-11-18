@@ -1,6 +1,8 @@
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 
+export { TodayPractice } from "./today-practice";
+
 export function TodayPageHeader({ title }: { title: string }) {
   return (
     <PageHeader>

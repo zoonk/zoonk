@@ -14,8 +14,23 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { expect, test } from "./fixtures";
 import { carryLessons, createStudyDay, openAs } from "./study-day";
+import { createUnstartedDay } from "./unstarted-day-fixtures";
 
 const DAYS_PER_WEEK = 7;
+
+test("shows practice links on Today while the goal is paused", async ({ browser }) => {
+  const { goal, user } = await createUnstartedDay();
+  await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+
+  const page = await openAs(browser, user);
+  await page.setViewportSize({ height: 844, width: 390 });
+  await page.goto("/today");
+
+  await expect(page.getByText("This goal is paused.", { exact: true })).toBeVisible();
+  const practice = page.getByRole("region", { name: "Practice anytime" });
+  await expect(practice.getByRole("link", { name: /Mistakes notebook/u })).toBeVisible();
+  await page.context().close();
+});
 
 test.describe("Today without a session to start", () => {
   test("follows a different device zone through the action and shows its day", async ({
@@ -174,7 +189,7 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
   try {
     const page = await context.newPage();
     await page.goto("/today");
-    const expand = page.getByRole("button", { name: /^\+\d+ more$/u });
+    const expand = page.getByRole("button", { name: /^\d+ more lessons?$/u });
     await expectHydrated(expand);
     await expand.tap();
 

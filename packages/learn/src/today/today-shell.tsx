@@ -4,7 +4,9 @@ import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { METER_PARTS_CLASS } from "@zoonk/ui/components/meter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
+import { GOAL_RING_SIZE_CLASS } from "../_components/goal-ring";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
+import { WEEK_DAY_CLASS, WEEK_ROW_CLASS, WeekDayLetterSkeleton } from "../_components/week-row";
 import { PageWithAside } from "../shell/learn-shell";
 import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 
@@ -39,9 +41,12 @@ function TodayAsideSkeleton() {
       </div>
       <div className="flex flex-col gap-3">
         <Skeleton className="my-1 h-4 w-20 rounded-sm" />
-        <div className="grid grid-cols-7 gap-1">
+        <div className={WEEK_ROW_CLASS}>
           {Array.from({ length: 7 }, (_, day) => (
-            <Skeleton className="h-11 rounded-lg" key={day} />
+            <div className={WEEK_DAY_CLASS} key={day}>
+              <Skeleton className={`${GOAL_RING_SIZE_CLASS} rounded-full`} />
+              <WeekDayLetterSkeleton />
+            </div>
           ))}
         </div>
       </div>

@@ -5,10 +5,6 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
-import {
-  type LearnerSummaryGoal,
-  type LearnerSummaryWaitingGoal,
-} from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -18,65 +14,14 @@ import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding
 import { useOnboardingNavigation } from "../../(onboarding)/start/use-onboarding-navigation";
 import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 import { switchGoal } from "./switch-goal";
+import { toSwitcherGoals, toSwitcherWaitingGoals } from "./switcher-goals";
 
 type Placement = "bar" | "sidebar";
 
-function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
-  return goals.flatMap(
-    ({
-      dailyMinutes,
-      displayName,
-      id,
-      kind,
-      languageFlag,
-      status,
-      targetDate,
-      targetDateEstimated,
-      targetLanguage,
-      targetRegion,
-    }) =>
-      status === "archived" || (kind === "explain" && status === "completed")
-        ? []
-        : [
-            {
-              dailyMinutes,
-              displayName,
-              id,
-              kind,
-              languageFlag,
-              status,
-              targetDate,
-              targetDateEstimated,
-              targetLanguage,
-              targetRegion,
-            },
-          ],
-  );
-}
-
-function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, languageFlag, locked, displayName }) => {
-    const [goal] = input.goals;
-
-    return goal
-      ? [
-          {
-            displayName,
-            id,
-            languageFlag,
-            locked,
-            targetLanguage: goal.targetLanguage ?? null,
-            targetRegion: goal.targetRegion ?? null,
-          },
-        ]
-      : [];
-  });
-}
-
-/** In the sidebar the 24px logo centers on the items' icons, like the account's picture. */
+/** In the sidebar the logo starts on the items' icon edge. */
 function SidebarHomeLink() {
   return (
-    <span className="flex px-1">
+    <span className="flex px-2">
       <PublicHomeLink />
     </span>
   );

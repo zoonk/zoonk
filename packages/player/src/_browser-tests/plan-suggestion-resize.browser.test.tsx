@@ -210,7 +210,7 @@ function isTextShown(text: string): boolean {
 
 /**
  * Crosses the breakpoint and shows the suggestion as the learner then sees it: from 72rem the
- * panel (a sheet left open from the phone width is closed), below it the sheet "View" opens.
+ * panel (a sheet left open from the phone width is closed), below it the sheet "See what changes" opens.
  */
 async function cross(to: { height: number; width: number }, { sheet = true } = {}) {
   await page.viewport(to.width, to.height);
@@ -228,7 +228,7 @@ async function cross(to: { height: number; width: number }, { sheet = true } = {
   }
 
   if (sheet) {
-    await press("View");
+    await press("See what changes");
   }
 }
 
@@ -282,7 +282,7 @@ describe.each([
       const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
 
       if (from === PHONE) {
-        await press("View");
+        await press("See what changes");
       }
 
       await press("Add to my plan");
@@ -338,7 +338,7 @@ describe.each([
       });
 
       if (from === PHONE) {
-        await press("View");
+        await press("See what changes");
       }
 
       await press("Find a date");

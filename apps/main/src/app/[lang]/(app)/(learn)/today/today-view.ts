@@ -92,6 +92,15 @@ async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
 }
 
+export async function loadTodayPractice(goalId: string) {
+  const [completedLessons, mistakes] = await Promise.all([
+    hasCompletedLessons(goalId),
+    countOpenMistakes(goalId),
+  ]);
+
+  return { completedLessons, mistakes };
+}
+
 /** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */
 export async function loadTodayScreen(): Promise<TodayScreenResult> {
   const result = await getTodayView({});
@@ -102,18 +111,18 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, knownLessons, belt] =
-    await Promise.all([
+  const [buddy, planEnd, readAt, mocks, practice, language, knownLessons, belt] = await Promise.all(
+    [
       getLearnerBuddy(),
       loadPlanEnd(today),
       getReadAt(),
       loadTodayMocks(today.goal),
-      countOpenMistakes(today.goal.id),
-      hasCompletedLessons(today.goal.id),
+      loadTodayPractice(today.goal.id),
       loadLanguageToday(today.goal),
       loadKnownLessons(today.goal.id),
       getBeltLevel(),
-    ]);
+    ],
+  );
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -124,10 +133,9 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
     data: {
       brainPower: belt?.totalBrainPower ?? 0,
       buddy,
-      completedLessons,
+      ...practice,
       knownLessons,
       language,
-      mistakes,
       mocks,
       planEnd,
       steps,

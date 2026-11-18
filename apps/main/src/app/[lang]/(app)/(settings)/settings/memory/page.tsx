@@ -45,11 +45,10 @@ export default async function MemoryPage() {
 
   return (
     <Page measure="form">
-      <SectionPageHeader title={t("Memory")} />
-
-      <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
-        {t("What Zoonk remembers to give you examples and plans that fit your life.")}
-      </p>
+      <SectionPageHeader
+        description={t("What Zoonk remembers to give you examples and plans that fit your life.")}
+        title={t("Memory")}
+      />
 
       <Suspense fallback={<MemorySkeleton />}>
         <MemoryContent />

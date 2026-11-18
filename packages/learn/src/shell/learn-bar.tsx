@@ -81,6 +81,10 @@ function useTabName(href: string): string | undefined {
     return t("Plan");
   }
 
+  if (href === routes.buddy) {
+    return t("Buddy");
+  }
+
   return undefined;
 }
 
@@ -120,7 +124,11 @@ function LearnBackLink({
   const ref = useEscapeClick<HTMLAnchorElement>();
   const appName = useAppBackName();
   const tabName = useTabName(href);
-  const name = backLinkName({ appBack: appName, own: label || tabName, toApp });
+  const routes = useLearnRoutes();
+  const ownName = label || tabName;
+  const historyName = toApp && appName ? appName : null;
+  const name = backLinkName({ appBack: historyName, own: ownName, toApp }) ?? t("Today");
+  const destination = ownName ? href : routes.today;
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
@@ -130,7 +138,9 @@ function LearnBackLink({
       return;
     }
 
-    const wentBack = toApp ? goBackToApp() : goBackTo(event.currentTarget.href, { skipSection });
+    const wentBack = historyName
+      ? goBackToApp()
+      : goBackTo(event.currentTarget.href, { skipSection });
 
     if (wentBack) {
       event.preventDefault();
@@ -139,10 +149,10 @@ function LearnBackLink({
 
   return (
     <BackLink
-      aria-label={name ? t("Back to {page}", { page: name }) : t("Back")}
-      render={<LearnLink className={className} href={href} onClick={onClick} ref={ref} />}
+      aria-label={t("Back to {page}", { page: name })}
+      render={<LearnLink className={className} href={destination} onClick={onClick} ref={ref} />}
     >
-      {name ?? t("Back")}
+      {name}
     </BackLink>
   );
 }

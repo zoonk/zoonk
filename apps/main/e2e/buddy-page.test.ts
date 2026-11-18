@@ -7,7 +7,7 @@ import {
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
@@ -71,6 +71,32 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
 }
 
 test.describe("Buddy tab", () => {
+  test("enables saving only after the buddy name changes", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      await prisma.userLearningProfile.update({
+        data: { buddyKind: "zu", buddyName: null },
+        where: { userId: user.id },
+      });
+
+      await page.goto("/buddy");
+      const menu = page.getByRole("button", { name: "More about Zu" });
+      await expectHydrated(menu);
+      await menu.click();
+      await page.getByRole("menuitem", { name: "Change Zu" }).click();
+
+      const dialog = page.getByRole("dialog", { name: "Your buddy" });
+      const field = dialog.getByRole("textbox", { name: "Name" });
+      const save = dialog.getByRole("button", { name: "Save" });
+      await expect(save).toBeDisabled();
+      await expect(field).toHaveValue("Zu");
+
+      await field.fill("Nova");
+      await expect(save).toBeEnabled();
+      await field.fill("Zu");
+      await expect(save).toBeDisabled();
+    });
+  });
+
   test("the buddy proposes a plan change that applies only on the learner's tap, and Undo takes it back", async ({
     browser,
   }) => {

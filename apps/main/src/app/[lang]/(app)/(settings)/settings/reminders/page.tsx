@@ -69,11 +69,6 @@ export default async function RemindersPage() {
         title={t("Reminders")}
       />
 
-      {/* A computer hides the line under a settings title, and this page reads wrong without it. */}
-      <p className="text-muted-foreground hidden text-sm text-pretty md:block">
-        <RemindersLine />
-      </p>
-
       <Suspense fallback={<RemindersSkeleton />}>
         <RemindersContent />
       </Suspense>

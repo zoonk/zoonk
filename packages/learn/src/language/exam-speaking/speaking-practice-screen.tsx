@@ -3,13 +3,14 @@
 import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../../_components/detail-page";
-import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowBody,
   ListRowContent,
   ListRowDescription,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -31,7 +32,9 @@ export function SpeakingPracticeRow({
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindDot kind="conversation" />
+        <ListRowIcon>
+          <MicIcon />
+        </ListRowIcon>
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>

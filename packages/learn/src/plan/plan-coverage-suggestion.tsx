@@ -268,16 +268,23 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   };
 
   return (
-    // On a phone the tap on "View" asks for the time, so the sheet names it. A computer shows the
-    // panel with no tap, and finding the time plans the goal many times: there the button asks.
+    // On a phone the tap on "See what changes" asks for the time, so the sheet names it. A computer
+    // shows the panel with no tap, and finding the time plans the goal many times: there the button
+    // asks.
     <PlanChangeSuggestion
       item={item}
       onOpen={() => void finder.find()}
       summary={covered}
       title={title}
     >
+      {/* The sheet opens from the line that already says the coverage. */}
       {lines.description.map((line) => (
-        <SuggestionDescription key={line}>{line}</SuggestionDescription>
+        <SuggestionDescription
+          className={line === covered ? "in-data-[slot=suggestion-sheet]:hidden" : undefined}
+          key={line}
+        >
+          {line}
+        </SuggestionDescription>
       ))}
 
       {/* Seen here, heard from the live line under it: said once. */}

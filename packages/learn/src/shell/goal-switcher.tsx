@@ -152,9 +152,9 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
 /** The bar's trigger hangs 10px into the gutter like a highlighted row, so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
   // The end's padding plus the chevron's blank side match the start's padding, so the fill is even by ink.
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-1 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex min-h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-1 rounded-lg ps-2.5 pe-1.5 py-1 text-reading leading-tight font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex min-h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 py-1 text-compact leading-tight font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
@@ -176,6 +176,17 @@ function NoGoalLink({
       <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
+}
+
+/** With nothing to switch to, the switcher is the plain "Start a goal" link. */
+export function hasNothingToSwitch({
+  goals,
+  waitingGoals,
+}: {
+  goals: readonly unknown[];
+  waitingGoals: readonly unknown[];
+}): boolean {
+  return goals.length === 0 && waitingGoals.length === 0;
 }
 
 export function GoalSwitcher({
@@ -215,9 +226,9 @@ export function GoalSwitcher({
   const selected = followed.find((goal) => goal.id === selectedId);
 
   const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
-  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Start a goal");
+  const unselectedLabel = t("Your goals");
 
-  if (!hasGoalOptions && explanations.length === 0) {
+  if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
   }
 
@@ -250,7 +261,7 @@ export function GoalSwitcher({
               {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
             </span>
           )}
-          <span className="min-w-0 flex-1 truncate text-left">
+          <span className="line-clamp-2 min-w-0 flex-1 text-left wrap-anywhere">
             {selected?.displayName ?? unselectedLabel}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}

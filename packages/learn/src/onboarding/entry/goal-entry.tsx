@@ -14,7 +14,7 @@ import {
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
-import { useOnboardingSection } from "../onboarding-host";
+import { useOnboardingHost } from "../onboarding-host";
 import { GoalBox } from "./goal-box";
 import { GoalEntrySubmit } from "./goal-entry-submit";
 import { GoalExamples } from "./goal-examples";
@@ -47,7 +47,8 @@ export function GoalEntry({
   signUpHref: string;
 }) {
   const t = useExtracted();
-  const section = useOnboardingSection();
+  const host = useOnboardingHost();
+  const section = host?.kind === "section";
   const formId = useId();
 
   const goal = useGoalFieldAction({
@@ -62,7 +63,7 @@ export function GoalEntry({
       className={cn(section && "gap-4")}
     >
       {section ? (
-        <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
+        host.title && <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
           <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>

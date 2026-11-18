@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
   ListGroup,
-  ListRow,
   ListRowBody,
   ListRowButton,
   ListRowContent,
@@ -50,13 +49,9 @@ function BuddyRows({
     <section aria-labelledby={titleId} className="flex flex-col gap-1">
       <PageSectionTitle id={titleId}>{name}</PageSectionTitle>
 
-      <ListGroup>
-        <ListRow>
-          <ListRowContent>
-            <ListRowTitle>{growth}</ListRowTitle>
-          </ListRowContent>
-        </ListRow>
+      <p className="text-muted-foreground text-xs text-pretty">{growth}</p>
 
+      <ListGroup>
         <ListRowLink href={hrefs.memory}>
           <ListRowBody>
             <ListRowContent>
@@ -69,7 +64,7 @@ function BuddyRows({
         <ListRowButton aria-haspopup="dialog" onClick={onGlasses}>
           <ListRowBody>
             <ListRowContent>
-              <ListRowTitle>{t("Glasses")}</ListRowTitle>
+              <ListRowTitle>{t("{buddy}'s glasses", { buddy: name })}</ListRowTitle>
             </ListRowContent>
             <ListRowTrailing>
               <GlassesCount status={status} />

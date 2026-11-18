@@ -113,14 +113,14 @@ export function Suggestion({
   );
 }
 
-function SuggestionMark() {
+export function SuggestionMark() {
   const { mark } = useSuggestion();
 
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "flex shrink-0 items-center justify-center [&>svg]:size-4",
+        "flex size-4 shrink-0 items-center justify-center [&>svg]:size-4",
         mark ? "text-muted-foreground" : "text-warning",
       )}
       data-slot="suggestion-mark"
@@ -195,8 +195,6 @@ export function SuggestionContent({
   /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
   statement?: boolean;
 }) {
-  const { answered, label, section } = useSuggestion();
-
   return (
     <>
       <PresentationContext value="panel">
@@ -208,21 +206,25 @@ export function SuggestionContent({
         </div>
       </PresentationContext>
 
-      {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by
-          then. */}
-      {!statement && (
-        <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
-          <PresentationContext value="sheet">
-            <DrawerContent
-              className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-              data-slot="suggestion-sheet"
-            >
-              {children}
-            </DrawerContent>
-          </PresentationContext>
-        </DrawerPopup>
-      )}
+      {!statement && <SuggestionSheet>{children}</SuggestionSheet>}
     </>
+  );
+}
+
+export function SuggestionSheet({ children }: { children: React.ReactNode }) {
+  const { answered, label, section } = useSuggestion();
+
+  return (
+    <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
+      <PresentationContext value="sheet">
+        <DrawerContent
+          className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+          data-slot="suggestion-sheet"
+        >
+          {children}
+        </DrawerContent>
+      </PresentationContext>
+    </DrawerPopup>
   );
 }
 

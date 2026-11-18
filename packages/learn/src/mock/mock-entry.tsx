@@ -1,12 +1,14 @@
 "use client";
 
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
+import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
-import { KindDot } from "../_components/kind-tile";
 import {
   ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -15,7 +17,6 @@ import { type MockEntryHrefs, getMockEntryTarget } from "./mock-entry-target";
 
 export { getMockEntryTarget } from "./mock-entry-target";
 
-/** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
   const t = useExtracted();
 
@@ -28,6 +29,10 @@ export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: Moc
   const t = useExtracted();
   const target = getMockEntryTarget({ hrefs, view });
 
+  const description = useMockEntryDescription({
+    bySubject: view.options.some((option) => option.kind === "area"),
+  });
+
   if (!target) {
     return null;
   }
@@ -35,7 +40,9 @@ export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: Moc
   return (
     <ListRowLink href={target.href}>
       <ListRowLeading>
-        <KindDot kind="mock" />
+        <ListRowIcon>
+          <TimerIcon />
+        </ListRowIcon>
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
@@ -47,6 +54,7 @@ export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: Moc
               })
             : t("Take a mock exam")}
         </ListRowTitle>
+        {!target.resume && <ListRowDescription>{description}</ListRowDescription>}
       </ListRowContent>
     </ListRowLink>
   );

@@ -3,6 +3,7 @@ import { MainDocumentLink } from "@/components/main-document-link";
 import { Page } from "@zoonk/learn/page";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { SearchXIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
@@ -32,15 +33,19 @@ export async function NotFoundMessage({
   underHeader?: boolean;
 }) {
   const words = await getNotFoundWords(locale);
+  const button = buttonVariants({ size: "lg", variant: underHeader ? "outline" : "default" });
 
+  // A full load also resets whatever broke the route. The signed-in look is set before the first
+  // paint, so a learner is offered Today and a visitor the home page.
   return (
     <StatusMessage description={words.description} icon={NOT_FOUND_ICON} title={words.title}>
-      {/* oxlint-disable-next-line next/no-html-link-for-pages -- A full load of the home page also resets whatever broke the route. */}
-      <a
-        className={buttonVariants({ size: "lg", variant: underHeader ? "outline" : "default" })}
-        href="/"
-      >
+      {/* oxlint-disable-next-line next/no-html-link-for-pages -- See above. */}
+      <a className={cn(button, "signed-in:hidden")} href="/">
         {words.home}
+      </a>
+      {/* oxlint-disable-next-line next/no-html-link-for-pages -- See above. */}
+      <a className={cn(button, "signed-in:inline-flex hidden")} href="/today">
+        {words.today}
       </a>
     </StatusMessage>
   );
@@ -50,7 +55,7 @@ export async function PageNotFound({ action }: { action?: React.ReactNode } = {}
   const words = await getNotFoundWords();
 
   return (
-    <Page className="flex-1">
+    <Page className="flex-1" measure="list">
       <StatusMessage description={words.description} icon={NOT_FOUND_ICON} title={words.title} />
 
       <BottomBar>

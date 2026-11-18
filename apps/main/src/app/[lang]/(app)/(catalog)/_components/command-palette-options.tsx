@@ -133,7 +133,11 @@ function SimpleOptionContent({
         )}
       </span>
 
-      {meta && <span className="text-muted-foreground max-w-[45%] truncate text-xs">{meta}</span>}
+      {meta && (
+        <span className="text-muted-foreground max-w-[45%] text-right text-xs text-pretty">
+          {meta}
+        </span>
+      )}
 
       {item.kind === "shortcuts" && <ShortcutKbd shortcut="shortcuts" />}
 
@@ -144,7 +148,6 @@ function SimpleOptionContent({
   );
 }
 
-/** A chapter's parent course stays available to assistive technology when visually truncated. */
 function CatalogOptionContent({
   courseName,
   icon: Icon,
@@ -159,7 +162,9 @@ function CatalogOptionContent({
       <Icon aria-hidden="true" className="size-4" />
       <span className="min-w-0 flex-1 truncate">{title}</span>
       {courseName && (
-        <span className="text-muted-foreground max-w-[45%] truncate text-xs">{courseName}</span>
+        <span className="text-muted-foreground max-w-[45%] text-right text-xs text-pretty">
+          {courseName}
+        </span>
       )}
     </>
   );

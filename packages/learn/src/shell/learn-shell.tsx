@@ -87,9 +87,8 @@ const WITH_BAR_COLUMN_CLASS =
   "max-[72rem]:contents [&>[data-slot=bottom-bar]]:mt-auto max-[72rem]:[&>[data-slot=bottom-bar]]:order-last";
 
 /**
- * From 72rem the aside runs from the frame's top, beside a tab's bar too (`--frame-bar`), and its
- * first line of words centers on the bar's row (24px over a 20px line: y 34). `bottomBar` is the
- * page's `BottomBar`.
+ * At desktop widths the aside starts at the title, below either the frame bar or a detail page's
+ * own bar. `bottomBar` is the page's `BottomBar`.
  */
 export function PageWithAside({
   aside,
@@ -110,7 +109,7 @@ export function PageWithAside({
 }) {
   return (
     <div
-      className="flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
       <div
@@ -129,7 +128,7 @@ export function PageWithAside({
           aria-label={asideLabel}
           className={cn(
             "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
-            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-6 min-[72rem]:pb-8 xl:w-80",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-[calc(var(--frame-bar,0px)+0.25rem)] min-[72rem]:pb-8 min-[72rem]:group-has-[>div>article>[data-slot=page-top-bar]]/page-aside:pt-[calc(4.25rem+1px)] xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"
