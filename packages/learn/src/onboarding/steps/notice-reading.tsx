@@ -20,7 +20,7 @@ import { getDetailLine } from "../../generation/_utils/detail-line";
 import { GenerationFailureNotice } from "../../generation/generation-wait";
 import { type PlanNext, PlanReadyHeading } from "./plan-building";
 import { WaitHeading } from "./wait-parts";
-import { type WaitStop, getNoticeSource } from "./wait-run";
+import { type WaitStop } from "./wait-run";
 
 /** Reading a notice and fitting it into the plan usually takes about four minutes. */
 const READING_MS = 240_000;
@@ -75,22 +75,17 @@ export function useNoticeProgress({
   });
 }
 
-export function useNoticeTitle(input: Parameters<typeof getNoticeSource>[0]): string {
+export function useNoticeTitle(lastNotice: boolean): string {
   const t = useExtracted();
 
-  const titles = {
-    exam: t("Reading the exam's official documents"),
-    lastExam: t("Reading the last edition's official documents"),
-    material: t("Reading your material"),
-  };
-
-  return titles[getNoticeSource(input)];
+  return lastNotice
+    ? t("Reading the last edition's official documents")
+    : t("Reading the exam's official documents");
 }
 
 export function NoticeReading({
   barHasMainAction,
   document,
-  goalKind,
   holding,
   lastNotice,
   next,
@@ -99,7 +94,6 @@ export function NoticeReading({
 }: {
   barHasMainAction: boolean;
   document: ExamDocument;
-  goalKind: Parameters<typeof getNoticeSource>[0]["goalKind"];
   holding: boolean;
   lastNotice: boolean;
   next: PlanNext;
@@ -110,20 +104,7 @@ export function NoticeReading({
   const locale = useAppLocale();
   const stop = holding ? null : stopped;
   const reading = !holding && !stop;
-  const title = useNoticeTitle({ goalKind, lastNotice });
-  const source = getNoticeSource({ goalKind, lastNotice });
-
-  const descriptions = {
-    exam: t(
-      "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes.",
-      { document },
-    ),
-    lastExam: t(
-      "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
-    ),
-    material: t("Your plan will follow it"),
-  };
-
+  const title = useNoticeTitle(lastNotice);
   const value = useNoticeProgress({ holding, since, stopped: stop });
 
   return (
@@ -132,7 +113,19 @@ export function NoticeReading({
         {holding ? (
           <PlanReadyHeading next={next} />
         ) : (
-          <WaitHeading description={descriptions[source]} title={title} />
+          <WaitHeading
+            description={
+              lastNotice
+                ? t(
+                    "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
+                  )
+                : t(
+                    "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes.",
+                    { document },
+                  )
+            }
+            title={title}
+          />
         )}
 
         {stop ? (
@@ -164,9 +157,9 @@ export function NoticeReading({
         <GenerationTimelineStep status={getReadingStatus({ holding, stop })}>
           <GenerationTimelineStepIndicator />
           <GenerationTimelineStepLabel>
-            {source === "material" ? title : t("Reading the official documents")}
+            {t("Reading the official documents")}
           </GenerationTimelineStepLabel>
-          {reading && source !== "material" && <ReadingDetail document={document} />}
+          {reading && <ReadingDetail document={document} />}
         </GenerationTimelineStep>
       </GenerationTimelineSteps>
     </GenerationTimeline>

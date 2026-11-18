@@ -1,14 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import {
-  WAITING_RUN,
-  getFirstLesson,
-  getNoticeSource,
-  getNoticeStop,
-  getPlanWait,
-  getRevealWait,
-} from "./wait-run";
+import { WAITING_RUN, getFirstLesson, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
 
 function restart() {
   return null;
@@ -163,17 +156,5 @@ describe(getFirstLesson, () => {
     expect(
       getFirstLesson({ read, readGenerationId: "new", run: { ...old, id: "new" } })?.status,
     ).toBe("stopped");
-  });
-});
-
-describe(getNoticeSource, () => {
-  it("uses material copy when a learn goal is waiting for its sources", () => {
-    expect(getNoticeSource({ goalKind: "learn", lastNotice: false })).toBe("material");
-    expect(getNoticeSource({ goalKind: "learn", lastNotice: true })).toBe("material");
-  });
-
-  it("distinguishes a current exam notice from the previous edition", () => {
-    expect(getNoticeSource({ goalKind: "exam", lastNotice: false })).toBe("exam");
-    expect(getNoticeSource({ goalKind: "exam", lastNotice: true })).toBe("lastExam");
   });
 });

@@ -13,6 +13,7 @@ import {
   skillFixture,
   skillPrerequisiteFixture,
 } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 
 const PHASES = [
   {
@@ -37,10 +38,13 @@ export const ANSWERED = [
   ...PROFILE_QUESTIONS,
 ];
 
-export async function createMappedGoal(userId: string) {
+export async function createMappedGoal(userId: string, { exam = false } = {}) {
+  const blueprint = exam ? await examBlueprintFixture() : null;
+
   const goal = await goalFixture({
     dailyMinutes: 30,
     details: { answered: ANSWERED, subject: "algebra" },
+    ...(blueprint && { examBlueprintId: blueprint.id, kind: "exam" }),
     planRevealedAt: null,
     prompt: "learn algebra",
     title: "Learn algebra",

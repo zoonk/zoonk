@@ -1,7 +1,6 @@
 "use client";
 
 import { type ExamDocument } from "@zoonk/core/exams/document";
-import { type GoalView } from "@zoonk/core/goals/contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
@@ -34,12 +33,7 @@ import { PlanStartNoticeProvider } from "./plan-start-notice";
 import { WaitBackToQuiz, WaitBar, WaitLinkAction } from "./wait-parts";
 import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 
-type Notice = {
-  document: ExamDocument;
-  goalKind: GoalView["kind"];
-  lastNotice: boolean;
-  stopped: WaitStop | null;
-};
+type Notice = { document: ExamDocument; lastNotice: boolean; stopped: WaitStop | null };
 
 export type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
 
@@ -113,7 +107,7 @@ function NoticeStatus({
   since: number;
 }) {
   const t = useExtracted();
-  const title = useNoticeTitle(notice);
+  const title = useNoticeTitle(notice.lastNotice);
   const value = useNoticeProgress({ holding, since, stopped: null });
 
   return (

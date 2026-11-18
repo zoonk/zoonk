@@ -1,4 +1,3 @@
-import { type GoalView } from "@zoonk/core/goals/contract";
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingFirstLesson } from "@zoonk/core/view-models/onboarding/contract";
@@ -132,18 +131,4 @@ export function getRevealWait(
   }
 
   return plan.notice === "reading" ? "notice" : null;
-}
-
-export function getNoticeSource({
-  goalKind,
-  lastNotice,
-}: {
-  goalKind: GoalView["kind"];
-  lastNotice: boolean;
-}): "exam" | "lastExam" | "material" {
-  if (goalKind !== "exam") {
-    return "material";
-  }
-
-  return lastNotice ? "lastExam" : "exam";
 }

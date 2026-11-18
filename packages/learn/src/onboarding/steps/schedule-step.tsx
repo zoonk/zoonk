@@ -207,7 +207,6 @@ export function ScheduleStep({
       next="timeQuestion"
       notice={{
         document: getExamDocument(goal),
-        goalKind: goal.kind,
         lastNotice: false,
         stopped: getNoticeStop({ poll: schedule.gate, run }),
       }}
