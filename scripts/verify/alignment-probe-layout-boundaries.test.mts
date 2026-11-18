@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-/* oxlint-disable no-magic-numbers -- Fixtures reproduce the review's browser measurements. */
+/* oxlint-disable no-magic-numbers -- Fixtures reproduce browser measurements. */
 import assert from "node:assert/strict";
 import { describe, it, vi } from "vitest";
 import { read, setHit, setUpProbeDom } from "./alignment-probe-dom.mts";
@@ -11,8 +11,8 @@ function hits(rule: string) {
   return evaluateCapture(read()).filter((finding) => finding.rule === rule);
 }
 
-describe("third alignment review", () => {
-  it("keeps smaller text before a large title on the same line, in reading order (n01, n10)", () => {
+describe("alignment across layout boundaries", () => {
+  it("keeps smaller text before a large title on the same line, in reading order", () => {
     document.body.innerHTML =
       '<h1 data-box="16,0,358,40"><span data-box="16,23,24,14">New</span> Learn words</h1>';
 
@@ -36,12 +36,15 @@ describe("third alignment review", () => {
   });
 
   it.each([
-    ['<span data-box="16,0,220,20">Go <img data-box="36,0,200,20"></span>', "n08"],
+    [
+      '<span data-box="16,0,220,20">Go <img data-box="36,0,200,20"></span>',
+      "image wider than its clip",
+    ],
     [
       '<p style="margin:0;border:1px solid black" data-box="16,0,120,60"><span data-box="20,4,30,20">Tag</span></p>',
-      "n09",
+      "bordered box taller than its clip",
     ],
-  ])("measures clipped pictures and painted boxes: %s (%s)", (content) => {
+  ])("measures clipped content: %s (%s)", (content) => {
     document.body.innerHTML = `<div style="overflow-x:hidden;overflow-y:hidden" data-box="16,0,120,30">${content}</div>`;
 
     vi.spyOn(Range.prototype, "getClientRects").mockImplementation(() => {
@@ -58,7 +61,7 @@ describe("third alignment review", () => {
     assert.equal(hits("cut").length, 1);
   });
 
-  it("does not fold an escaping fixed subtree back into its parent's ink (n06)", () => {
+  it("does not fold an escaping fixed subtree back into its parent's ink", () => {
     document.body.innerHTML = `<div style="overflow-y:hidden" data-box="16,0,200,100"><p data-box="16,0,200,20">Short page<span style="position:fixed" data-box="16,700,100,44"><button data-box="16,700,100,44">Continue</button></span></p></div>`;
     assert.deepEqual(hits("cut"), []);
     const clip = document.querySelector("div");
@@ -67,7 +70,7 @@ describe("third alignment review", () => {
     assert.equal(hits("cut").length, 1);
   });
 
-  it("ignores an absolute descendant with a viewport containing block, but not a local one (n07, n11)", () => {
+  it("ignores an absolute descendant with a viewport containing block, but not a local one", () => {
     document.body.innerHTML = `<div style="overflow-y:hidden" data-box="16,0,200,100"><span style="position:absolute" data-box="16,700,100,44"><button data-box="16,700,100,44">Continue</button></span></div>`;
     assert.deepEqual(hits("cut"), []);
     const clip = document.querySelector("div");
@@ -76,7 +79,7 @@ describe("third alignment review", () => {
     assert.equal(hits("cut").length, 1);
   });
 
-  it("requires a kit scroller slot even when a plain scroller has a mask (n03)", () => {
+  it("requires a kit scroller slot even when a plain scroller has a mask", () => {
     document.body.innerHTML =
       '<div style="overflow-x:auto;mask-image:linear-gradient(to right, transparent, black 16px)" data-box="16,0,200,100"><div data-box="16,0,600,100">Calendar</div></div>';
 
@@ -89,7 +92,7 @@ describe("third alignment review", () => {
     assert.deepEqual(hits("cut"), []);
   });
 
-  it("counts a drawer sheet as its own surface over a page with a filled action (FS-D14)", () => {
+  it("counts a drawer sheet as its own surface over a page with a filled action", () => {
     document.body.innerHTML = `<button style="--button-variant:default" data-box="16,20,120,44">Next</button><div data-slot="drawer-popup" aria-label="Ask" data-box="0,400,390,444"><button style="--button-variant:default" data-box="16,700,358,44">Create a free account</button></div>`;
     setHit(document.querySelector("[data-slot=drawer-popup] button"));
     assert.notEqual(read().activeSurface, "page");

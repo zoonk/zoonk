@@ -3,7 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// RV90: a practice call the buddy offered beside a lesson, set up while the window crosses the
+/// A practice call the buddy offered beside a lesson, set up while the window crosses the
 /// width where the lesson's Ask is a pane. The offer's pane can go; the call's sheet, and a start
 /// under way in it, stay.
 @MainActor
