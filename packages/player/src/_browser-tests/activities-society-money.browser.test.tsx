@@ -102,6 +102,18 @@ function openWithWrongPassage() {
 }
 
 describe("money and society activities", () => {
+  it("keeps the extra payment slider in place when the comparison appears", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).toBeVisible();
+
+    const top = slider.element().getBoundingClientRect().top;
+    await pressOnSlider("Extra per month", "ArrowRight", 4);
+    await expect.element(valueInput()).toHaveValue("251.54");
+
+    expect(slider.element().getBoundingClientRect().top).toBeCloseTo(top, 0);
+  });
+
   it("formula model calculator: moving the extra payment gives the months to check", async () => {
     openActivity({ content: calculator, template: "formulaModel" });
     await pressOnSlider("Extra per month", "ArrowRight", 4);
