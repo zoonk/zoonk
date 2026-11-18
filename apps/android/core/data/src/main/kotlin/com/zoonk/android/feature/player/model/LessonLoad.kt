@@ -123,7 +123,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                 teaching(
                     id = id.toString(),
                     skillId = skillId?.toString(),
-                    content = StepContent.Activity(content, activityFrame(content), minTolerance, baseMap),
+                    content = StepContent.Activity(content, activityFrame(content), minTolerance, baseMap, roundedAnswer),
                     image = image,
                     imagePending = imagePending,
                     pictureWaitStartedAt = pictureWaitStartedAt,

@@ -1,4 +1,5 @@
 import { getScreenPicture } from "@zoonk/core/lesson-player/picture-policy";
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { getActivityExpected, getExploreExpected } from "@zoonk/core/library/activities/expected";
 import {
   activityContentSchema,
@@ -17,7 +18,7 @@ export const ACTIVITY_FIXTURES_FILE = new URL(
   import.meta.url,
 );
 
-/** Main's activity fixtures, as the API sends them: with core's expected end state, value and screen picture, a map activity's base map, and, for a template an explanation can explore, its explore's end state and picture. */
+/** Main's activity fixtures, as the API sends them: with core's expected end state, rounded answer, value and screen picture, a map activity's base map, and, for a template an explanation can explore, its explore's end state and picture. */
 export async function activityFixtures() {
   const modes = Object.entries(engineModeFixtures).flatMap(([template, byMode]) =>
     Object.entries(byMode).map(([mode, fixture]) => [`${template}.${mode}`, fixture] as const),
@@ -56,6 +57,7 @@ export async function activityFixtures() {
             picture: getScreenPicture({ content: { explore, text: name }, kind: "explanation" }),
           },
           picture: getScreenPicture({ content, kind: "activity" }),
+          roundedAnswer: getActivityRoundedAnswer(content),
           value,
         },
       ] as const;

@@ -53,6 +53,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 322
   },
   "balance": {
@@ -106,6 +107,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 3 },
     "value": 3
   },
   "formulaModel": {
@@ -178,6 +180,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 0, "value": 3870 },
     "value": 2653.2977051444223
   },
   "guessReveal": {
@@ -212,6 +215,7 @@
     "expected": { "kind": "numeric", "value": 12 },
     "explore": null,
     "picture": null,
+    "roundedAnswer": { "places": 0, "value": 12 },
     "value": 11.574074074074074
   },
   "numberLine": {
@@ -255,6 +259,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 5 },
     "value": 5
   },
   "stepSolver": {
@@ -322,6 +327,7 @@
     },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": 3.6
   },
   "chartReader": {
@@ -401,6 +407,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 9
   },
   "distributionExplorer": {
@@ -442,6 +449,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 0, "value": 95 },
     "value": 95.44998742254873
   },
   "geometryBoard": {
@@ -485,6 +493,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 180 },
     "value": 180
   },
   "randomSimulation": {
@@ -560,6 +569,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 0.24609375000000025
   },
   "unitCircle": {
@@ -598,6 +608,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 1, "value": 0.5 },
     "value": 0
   },
   "combinationGrid": {
@@ -656,6 +667,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 0.5
   },
   "labeledDiagram": {
@@ -747,6 +759,7 @@
       "alt": "A human heart cut open from the front, with five numbered spots",
       "required": true
     },
+    "roundedAnswer": null,
     "value": null
   },
   "lineCrossing": {
@@ -803,6 +816,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 4.666666666666666
   },
   "moleculeBuilder": {
@@ -829,6 +843,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 4
   },
   "processOrder": {
@@ -914,6 +929,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "codeRunner": {
@@ -951,6 +967,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "codeTracer": {
@@ -1072,6 +1089,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "dialogueSimulator": {
@@ -1121,6 +1139,7 @@
     "expected": { "answer": { "ids": ["polite"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "patternTable": {
@@ -1190,6 +1209,7 @@
     },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "patternTester": {
@@ -1241,6 +1261,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "sqlPlayground": {
@@ -1368,6 +1389,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "argumentBuilder": {
@@ -1416,6 +1438,7 @@
     "expected": { "answer": { "ids": ["e1", "r1"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "categorize": {
@@ -1448,6 +1471,7 @@
     },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "causeEffectChain": {
@@ -1500,6 +1524,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "findError": {
@@ -1536,6 +1561,7 @@
     "expected": { "answer": { "ids": ["s2"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "mapExplorer": {
@@ -1740,6 +1766,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "matchPairs": {
@@ -1777,6 +1804,7 @@
     },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "sourceComparison": {
@@ -1819,6 +1847,7 @@
     "expected": { "answer": { "ids": ["p1", "p2"], "kind": "selection" }, "kind": "interaction" },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "timeline": {
@@ -1858,6 +1887,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "beforeAfter": {
@@ -1911,6 +1941,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 2, "value": 0.12 },
     "value": 0.12
   },
   "keyboardFretboard": {
@@ -1945,6 +1976,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "notationPlayer": {
@@ -1990,6 +2022,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "rhythmTapper": {
@@ -2022,6 +2055,7 @@
     },
     "explore": null,
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "combinationGrid.dice": {
@@ -2059,6 +2093,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 2, "value": 0.17 },
     "value": null
   },
   "combinationGrid.timesTable": {
@@ -2095,6 +2130,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "formulaModel.calculator": {
@@ -2162,6 +2198,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 0, "value": 252 },
     "value": 360.08488878299187
   },
   "formulaModel.scenario": {
@@ -2239,6 +2276,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 1000 },
     "value": 1000
   },
   "formulaModel.simulation": {
@@ -2343,6 +2381,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": 0, "value": 41 },
     "value": 35.311943069701876
   },
   "guessReveal.cited": {
@@ -2370,6 +2409,7 @@
     "expected": { "kind": "numeric", "value": 14 },
     "explore": null,
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 14 },
     "value": 14
   },
   "guessReveal.money": {
@@ -2401,6 +2441,7 @@
     "expected": { "kind": "numeric", "value": 1200 },
     "explore": null,
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 1200 },
     "value": 1200
   },
   "guessReveal.moneyMillions": {
@@ -2432,6 +2473,7 @@
     "expected": { "kind": "numeric", "value": 1200000 },
     "explore": null,
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 1200000 },
     "value": 1200000
   },
   "keyboardFretboard.byEar": {
@@ -2463,6 +2505,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "keyboardFretboard.byEarChoice": {
@@ -2508,6 +2551,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": null
   },
   "lineCrossing.breakEven": {
@@ -2563,6 +2607,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": { "places": null, "value": 250 },
     "value": 3750
   },
   "randomSimulation.sampling": {
@@ -2625,6 +2670,7 @@
       "picture": null
     },
     "picture": null,
+    "roundedAnswer": null,
     "value": 0.5
   }
 }

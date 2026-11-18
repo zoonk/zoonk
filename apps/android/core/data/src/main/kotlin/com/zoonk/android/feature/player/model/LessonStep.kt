@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.ActivityRoundedAnswer
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
@@ -117,6 +118,7 @@ sealed interface StepContent {
         val frame: ActivityFrame,
         val minTolerance: ActivityTolerance?,
         val baseMap: ActivityBaseMap? = null,
+        val roundedAnswer: ActivityRoundedAnswer? = null,
     ) : StepContent {
         override val kind get() = StepKind.Activity
     }
