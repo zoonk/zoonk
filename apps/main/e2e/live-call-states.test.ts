@@ -633,7 +633,7 @@ test.describe("Live call server states", () => {
       });
 
       await page.getByRole("button", { name: "Call again" }).click();
-      await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+      await page.getByRole("button", { exact: true, name: "End" }).click();
       await expect(dropped).toBeVisible();
       await page.getByRole("button", { name: "Call again" }).click();
       await page.getByRole("button", { name: "End the call" }).click();
