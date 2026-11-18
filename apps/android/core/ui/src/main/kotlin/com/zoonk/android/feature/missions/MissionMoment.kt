@@ -60,8 +60,9 @@ data class MissionMomentFacts(
 ) {
     val justDone: List<DayMission> get() = missions.filter { it.done && it.kind in completed }
     val shows: Boolean get() = justDone.isNotEmpty() || bonusPaid
-    val payoff: Boolean get() = bonusPaid && missions.all { it.done }
-    internal val announcesCompletion: Boolean get() = missions.all { it.done } || justDone.isNotEmpty()
+    internal val progress = MissionProgress(missions)
+    val payoff: Boolean get() = bonusPaid && progress.full
+    internal val announcesCompletion: Boolean get() = progress.full
 }
 
 /** How long what follows waits, so the day's moment plays one thing at a time. */
@@ -83,7 +84,7 @@ fun MissionMoment(
     if (!facts.shows) return
 
     val justDone = facts.justDone
-    val left = facts.missions.count { !it.done }
+    val left = facts.progress.left
     val payoff = facts.payoff
     val celebrate = celebrates()
     val points = formatNumber(facts.bonus.toDouble(), currentLocale())
@@ -91,9 +92,9 @@ fun MissionMoment(
     val title =
         when {
             !facts.announcesCompletion -> stringResource(R.string.missions_title)
-            left == 0 -> stringResource(R.string.missions_moment_all_done)
-            justDone.size == 1 -> stringResource(R.string.missions_moment_one_done)
-            else -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
+            facts.progress.total == 1 -> stringResource(R.string.missions_moment_one_done)
+            justDone.size == facts.progress.total -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
+            else -> stringResource(R.string.missions_moment_all_done)
         }
     val status =
         if (left > 0) {
@@ -157,10 +158,8 @@ fun MissionMoment(
             }
 
             MissionTrack(
-                missions = facts.missions,
+                progress = facts.progress,
                 modifier = Modifier.padding(top = 16.dp),
-                from = justDone.map { it.kind }.toSet(),
-                delayMillis = ZoonkMotion.BEAT_MILLIS,
             )
 
             Column(Modifier.padding(top = 6.dp)) {

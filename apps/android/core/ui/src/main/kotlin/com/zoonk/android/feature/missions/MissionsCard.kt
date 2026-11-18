@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.missions
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,21 +23,18 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.expand
@@ -62,17 +56,16 @@ import com.zoonk.android.ui.components.BusyContent
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.busyClickable
-import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
-import kotlinx.coroutines.launch
 
 /**
  * The day's missions (main's `MissionsCard`), one look wherever they show: the buddy, the title, how many
@@ -101,8 +94,8 @@ fun MissionsCard(
 
     val locale = currentLocale()
     val points = formatNumber(bonus.toDouble(), locale)
-    val allDone = missions.all(DayMission::done)
-    val won = allDone && bonusEarned
+    val progress = MissionProgress(missions)
+    val won = progress.full && bonusEarned
     var unfolded by rememberSaveable { mutableStateOf(false) }
     val open = !foldRows || unfolded
 
@@ -126,15 +119,15 @@ fun MissionsCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (showBuddy) Buddy(buddy, Modifier.size(24.dp), crop = BuddyCrop.Face)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
+                    MissionsTitle(progress.full, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        MissionsStatus(missions, Modifier.weight(1f))
+                        MissionsStatus(progress, Modifier.weight(1f))
                         BrainPowerReward(points, earned = won, onLevel)
                     }
                 }
             }
 
-            MissionTrack(missions, Modifier.padding(top = 14.dp))
+            MissionTrack(progress, Modifier.padding(top = 14.dp))
 
             if (open) {
                 Column(Modifier.padding(top = 6.dp)) {
@@ -151,11 +144,11 @@ fun MissionsCard(
 /** The card's title; where the rows fold, a press on it shows or hides them. */
 @Composable
 private fun MissionsTitle(
-    won: Boolean,
+    done: Boolean,
     fold: (() -> Unit)?,
     open: Boolean,
 ) {
-    val title = stringResource(if (won) R.string.missions_done else R.string.missions_title)
+    val title = stringResource(if (done) R.string.missions_done else R.string.missions_title)
     val modifier =
         if (fold == null) {
             Modifier.semantics { heading() }
@@ -200,21 +193,20 @@ private fun MissionsLine(
 /** How many are done; nothing once they all are, where the reward says it. */
 @Composable
 private fun MissionsStatus(
-    missions: List<DayMission>,
+    progress: MissionProgress,
     modifier: Modifier,
 ) {
     val locale = currentLocale()
-    val done = missions.count(DayMission::done)
 
     Text(
         text =
-            if (done == missions.size) {
+            if (progress.full) {
                 ""
             } else {
                 stringResource(
                     R.string.missions_progress,
-                    formatNumber(done.toDouble(), locale),
-                    formatNumber(missions.size.toDouble(), locale),
+                    formatNumber(progress.done.toDouble(), locale),
+                    formatNumber(progress.total.toDouble(), locale),
                 )
             },
         modifier = modifier,
@@ -223,52 +215,25 @@ private fun MissionsStatus(
     )
 }
 
-/**
- * One part per mission, furthest first, filling in Brain Power's violet. [from] names missions whose
- * part fills from the step before it, after [delayMillis], when the screen celebrates.
- */
+internal class MissionProgress(
+    missions: List<DayMission>,
+) {
+    val done = missions.count(DayMission::done)
+    val total = missions.size
+    val left get() = total - done
+    val full get() = total > 0 && left == 0
+
+    fun parts(color: Color): List<MeterPart> =
+        List(total) { index ->
+            MeterPart(if (index < done) MeterPart.Fill.Solid(color) else MeterPart.Fill.Track)
+        }
+}
+
 @Composable
 internal fun MissionTrack(
-    missions: List<DayMission>,
+    progress: MissionProgress,
     modifier: Modifier,
-    from: Set<StudyMission.Kind> = emptySet(),
-    delayMillis: Int = 0,
-) {
-    val parts =
-        missions
-            .map { mission ->
-                val fill = missionTrackFill(mission.done, mission.progress, mission.total)
-                val start =
-                    if (mission.kind in from &&
-                        mission.total > 0
-                    ) {
-                        ((mission.total - 1f) / mission.total).coerceAtLeast(0f)
-                    } else {
-                        fill
-                    }
-                start to fill
-            }.sortedByDescending { it.second }
-    val brain = MaterialTheme.zoonk.brain
-    val animates = celebrates() && from.isNotEmpty()
-    val progress = remember { Animatable(if (animates) 0f else 1f) }
-    LaunchedEffect(animates) {
-        if (animates) progress.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
-    }
-
-    Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        parts.forEach { (start, fill) ->
-            Box(
-                Modifier
-                    .weight(1f)
-                    .height(6.dp)
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .background(brain.copy(alpha = TRACK_ALPHA)),
-            ) {
-                Box(Modifier.fillMaxWidth(start + (fill - start) * progress.value).height(6.dp).background(brain))
-            }
-        }
-    }
-}
+) = MeterParts(progress.parts(MaterialTheme.zoonk.brain), modifier)
 
 @Composable
 private fun MissionRow(
@@ -423,11 +388,3 @@ fun BrainPowerReward(
         )
     }
 }
-
-private const val TRACK_ALPHA = 0.2f
-
-internal fun missionTrackFill(
-    done: Boolean,
-    progress: Long,
-    total: Long,
-): Float = if (done) 1f else 0f
