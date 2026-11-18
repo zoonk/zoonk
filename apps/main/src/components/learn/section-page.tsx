@@ -20,6 +20,7 @@ export function SectionPage({
   nav,
   note,
   parents,
+  tabbedHub,
 }: {
   children: React.ReactNode;
   end?: React.ReactNode;
@@ -31,6 +32,8 @@ export function SectionPage({
   note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
+  /** The hub becomes the first tab from a tablet up. */
+  tabbedHub?: boolean;
 }) {
   return (
     <div
@@ -44,7 +47,7 @@ export function SectionPage({
       )}
       data-slot="section-page"
     >
-      <SectionBarFrame end={end} hub={hub} parents={parents} />
+      <SectionBarFrame end={end} hub={hub} parents={parents} tabbedHub={tabbedHub} />
 
       <div
         className={cn(

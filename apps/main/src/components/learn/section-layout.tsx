@@ -10,22 +10,26 @@ export function SectionBarFrame({
   end,
   hub,
   parents,
+  tabbedHub = false,
 }: {
   end?: React.ReactNode;
   hub: SectionLink;
   parents?: SectionLink[];
+  tabbedHub?: boolean;
 }) {
   const t = useExtracted();
   const pathname = usePathname();
   const isHub = pathname === hub.href;
   const parent = parents?.find((place) => pathname.startsWith(`${place.href}/`));
-  const destination = isHub ? { href: "/today", title: t("Today") } : (parent ?? hub);
+  const today = { href: "/today", label: t("Today") };
+  const list = parent ?? hub;
 
   return (
     <LearnSectionBar
-      back={{ href: destination.href, label: destination.title }}
+      back={isHub ? today : { href: list.href, label: list.title }}
       end={end}
       history={isHub ? "destination" : "section-entry"}
+      tabletBack={tabbedHub && !isHub && !parent ? today : undefined}
       title={isHub ? hub.title : undefined}
     />
   );

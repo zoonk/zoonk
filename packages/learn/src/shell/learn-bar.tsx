@@ -107,11 +107,13 @@ function LearnBackLink({
   className,
   href,
   label,
+  skipSection = false,
   toApp = false,
 }: {
   className?: string;
   href: string;
   label?: string;
+  skipSection?: boolean;
   toApp?: boolean;
 }) {
   const t = useExtracted();
@@ -128,7 +130,7 @@ function LearnBackLink({
       return;
     }
 
-    const wentBack = toApp ? goBackToApp() : goBackTo(event.currentTarget.href);
+    const wentBack = toApp ? goBackToApp() : goBackTo(event.currentTarget.href, { skipSection });
 
     if (wentBack) {
       event.preventDefault();
@@ -219,6 +221,7 @@ export function LearnSectionBar({
   end,
   history = "origin",
   listed,
+  tabletBack,
   title,
 }: {
   back: { href: string; label?: string };
@@ -226,10 +229,14 @@ export function LearnSectionBar({
   /** A section entry returns to the page outside the section that opened it. */
   history?: "destination" | "origin" | "section-entry";
   listed?: ListedBy;
+  tabletBack?: { href: string; label?: string };
   title?: string;
 }) {
   const fromApp = useCameFromApp();
   const toApp = history === "origin" || (history === "section-entry" && fromApp);
+
+  const alternate = toApp ? undefined : tabletBack;
+  const className = listed && LISTED_IN_SIDEBAR_CLASS[listed];
 
   useNameAppEntry(title);
 
@@ -237,12 +244,23 @@ export function LearnSectionBar({
     <PageTopBar
       actions={end}
       back={
-        <LearnBackLink
-          className={listed && LISTED_IN_SIDEBAR_CLASS[listed]}
-          href={back.href}
-          label={back.label}
-          toApp={toApp}
-        />
+        <>
+          <LearnBackLink
+            className={cn(className, alternate && "md:hidden")}
+            href={back.href}
+            label={back.label}
+            toApp={toApp}
+          />
+
+          {alternate && (
+            <LearnBackLink
+              className={cn(className, "max-md:hidden")}
+              href={alternate.href}
+              label={alternate.label}
+              skipSection
+            />
+          )}
+        </>
       }
     />
   );
