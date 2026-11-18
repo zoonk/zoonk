@@ -323,17 +323,21 @@ private class MathParser(
                 val numerator = argument(style)
                 val denominator = argument(style)
                 val spoken = " ${words.fraction(numerator.spoken.trim(), denominator.spoken.trim())} "
-                if (numerator.isShortTerm() && denominator.isShortTerm()) {
-                    // A short fraction (1⁄4, GM⁄r) sets its parts small around a fraction slash; nothing in them needs to rise further.
-                    index = start
-                    val raised = argument(Script.Superscript)
-                    val lowered = argument(Script.Subscript)
-                    Piece((raised + run("\u2044", style, italic = false) + lowered).text, spoken)
-                } else {
-                    // A longer one stays at full size, its parts grouped, so its own exponents and roots read: (−b ± √b²−4ac)/(2a).
-                    val slash = run("/", style, italic = false)
-                    Piece((numerator.grouped(style) + slash + denominator.grouped(style)).text, spoken)
-                }
+                val fraction =
+                    if (numerator.isShortTerm() && denominator.isShortTerm()) {
+                        // A short fraction (1⁄4, GM⁄r) sets its parts small around a fraction slash; nothing in them needs to rise further.
+                        index = start
+                        val raised = argument(Script.Superscript)
+                        val lowered = argument(Script.Subscript)
+                        Piece((raised + run("\u2044", style, italic = false) + lowered).text, spoken)
+                    } else {
+                        // A longer one stays at full size, its parts grouped, so its own exponents and roots read: (−b ± √b²−4ac)/(2a).
+                        val slash = run("/", style, italic = false)
+                        Piece((numerator.grouped(style) + slash + denominator.grouped(style)).text, spoken)
+                    }
+                // A script after a fraction applies to the whole quotient, as KaTeX sets it: ((x + 1)/2)².
+                val next = source.drop(index).trimStart().firstOrNull()
+                if (next != null && next in SCRIPT_MARKS) Piece(fraction.bracketed(style).text, spoken) else fraction
             }
 
             "sqrt" -> {
@@ -415,15 +419,18 @@ private class MathParser(
             text.spanStyles.none { it.item.baselineShift != null }
 
     /** A sum or a product takes brackets beside the slash; one number, one word or one symbol with its script needs none. */
-    private fun Piece.grouped(style: Script): Piece =
-        if (isSingleTerm()) this else run("(", style, italic = false) + this + run(")", style, italic = false)
+    private fun Piece.grouped(style: Script): Piece = if (isSingleTerm(style)) this else bracketed(style)
+
+    private fun Piece.bracketed(style: Script): Piece = run("(", style, italic = false) + this + run(")", style, italic = false)
 
     /**
      * Read from the marks the parser set, not the letters: "distance" is one `\text` word, while side-by-side symbols ("RT",
-     * "μ₀ε₀") are a product; a power or a subscript ("r²", "v₀") belongs to the symbol before it.
+     * "μ₀ε₀") are a product; a power or a subscript ("r²", "v₀") belongs to the symbol before it. Inside an exponent, the
+     * exponent's own line is the base, so its "x+1" is still a sum.
      */
-    private fun Piece.isSingleTerm(): Boolean {
-        val scripted = text.spanStyles.filter { it.item.baselineShift != null }
+    private fun Piece.isSingleTerm(style: Script): Boolean {
+        val line = SHIFTS[style]
+        val scripted = text.spanStyles.filter { it.item.baselineShift.let { shift -> shift != null && shift != line } }
         val base = plain.indices.filterNot { at -> scripted.any { at >= it.start && at < it.end } || plain[at].isWhitespace() }
         val baseText = base.map { plain[it] }.joinToString("")
         val words = text.getStringAnnotations(WORD, 0, plain.length)
@@ -466,6 +473,10 @@ private class MathParser(
 
     companion object {
         const val SCRIPT_SIZE = 0.7f
+
+        const val SCRIPT_MARKS = "^_"
+
+        val SHIFTS = mapOf(Script.Superscript to BaselineShift.Superscript, Script.Subscript to BaselineShift.Subscript)
 
         val RELATIONS =
             setOf(

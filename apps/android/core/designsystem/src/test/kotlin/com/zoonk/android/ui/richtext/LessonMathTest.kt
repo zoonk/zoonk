@@ -87,6 +87,26 @@ class LessonMathTest {
         assertTrue("b sits on the line and its 2 above it", !shifted(square) && shifted(square + 1))
     }
 
+    /** As KaTeX sets the fraction as the script's base, a power after it raises the whole quotient. */
+    @Test
+    fun aScriptAfterAFractionRaisesTheWholeQuotient() {
+        val formula = math("\\frac{x+1}{2}^2")
+
+        assertEquals("((x$GAP+${GAP}1)/2)2", formula.text.text)
+
+        fun shifted(at: Int) = formula.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null }
+        val last = formula.text.text.lastIndex
+        assertTrue("the bracket closes on the line and the 2 sits above it", !shifted(last - 1) && shifted(last))
+        assertEquals("(1\u2044" + "4)2", math("\\frac{1}{4}^2").text.text)
+    }
+
+    /** In an exponent the fraction is grouped against the exponent's own line, so its sum keeps its brackets. */
+    @Test
+    fun aSumInAFractionInsideAnExponentKeepsItsBrackets() {
+        assertEquals("e(x+1)/2", math("e^{\\frac{x+1}{2}}").text.text)
+        assertEquals("e2/(n+1)", math("e^{\\frac{2}{n+1}}").text.text)
+    }
+
     @Test
     fun groupsOnlyTheSumsAndProductsOfALongFraction() {
         assertEquals("distance/time", math("\\frac{\\text{distance}}{\\text{time}}").text.text)
