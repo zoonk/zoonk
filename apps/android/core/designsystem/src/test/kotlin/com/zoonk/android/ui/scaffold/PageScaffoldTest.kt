@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -104,5 +105,22 @@ class PageScaffoldTest {
         val back = rule.onNodeWithContentDescription(rule.activity.getString(R.string.navigation_back)).getUnclippedBoundsInRoot()
         // The arrow's ink starts 12dp into the button; the column's words start (900 − 448) / 2 + 24 = 250dp in.
         assertEquals(250f, (back.left + 12.dp).value, 1f)
+    }
+
+    /** A missing page's way on is the page's main action, in its bottom bar, as main's `PageNotFound` puts "Go to Today". */
+    @Test
+    @Config(qualifiers = "w400dp-h800dp")
+    fun aMissingPageOffersTodayInItsBottomBar() {
+        rule.setContent {
+            ZoonkTheme {
+                PageScaffold(
+                    onBack = {},
+                ) { padding -> NotFoundMessage(onGoHome = {}, Modifier.padding(padding)) }
+            }
+        }
+        rule.waitForIdle()
+
+        val goHome = rule.onNodeWithText(rule.activity.getString(R.string.not_found_go_home)).getUnclippedBoundsInRoot()
+        assertTrue("in the bar at the window's foot: $goHome", goHome.bottom.value > 700f)
     }
 }
