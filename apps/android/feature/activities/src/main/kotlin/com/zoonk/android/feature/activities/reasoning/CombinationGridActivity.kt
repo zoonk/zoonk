@@ -515,7 +515,10 @@ private fun CellValue(
                 }
             }
         }
-    val underline = decoration?.let { line -> Modifier.drawBehind { drawRect(line, Offset(0f, size.height - UNDERLINE.toPx()), Size(size.width, UNDERLINE.toPx())) } }
+    val underline =
+        decoration?.let { line ->
+            Modifier.drawBehind { drawRect(line, Offset(0f, size.height - UNDERLINE.toPx()), Size(size.width, UNDERLINE.toPx())) }
+        }
     Text(
         text,
         modifier = underline ?: Modifier,
