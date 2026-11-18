@@ -24,7 +24,7 @@ describe("compound scenario evidence", () => {
 
   it("recognizes the lifted mind-map offer only when its stop notice is gone", async () => {
     const lifted = SCENARIOS.find((scenario) => scenario.id === "mind-maps.offer.lifted");
-    expect(lifted?.proof).toBe("Without a map");
+    expect(lifted?.proof).toBe("No map yet");
 
     const noStop = "[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))";
     await expect(hasEvidence(pageWith([noStop]), lifted?.evidence ?? [])).resolves.toBe(true);

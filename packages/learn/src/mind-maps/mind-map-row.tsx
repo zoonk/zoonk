@@ -66,6 +66,7 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
 }
 
 function RowAction({
+  createDescribedBy,
   isPending,
   onCreate,
   onRetry,
@@ -73,6 +74,7 @@ function RowAction({
   slowDown,
   titleId,
 }: {
+  createDescribedBy?: string;
   isPending: boolean;
   onCreate?: () => void;
   onRetry: () => void;
@@ -99,7 +101,7 @@ function RowAction({
   if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
-        aria-describedby={titleId}
+        aria-describedby={createDescribedBy ? `${titleId} ${createDescribedBy}` : titleId}
         busy={isPending}
         onClick={onCreate}
         size="sm"
@@ -123,12 +125,14 @@ export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "re
 /** The row for a map whose request someone else follows, like a page that shows it twice. */
 export function MindMapRowView({
   className,
+  createDescribedBy,
   place,
   plus,
   request,
   view,
 }: {
   className?: string;
+  createDescribedBy?: string;
   place: MindMapRowPlace;
   plus: boolean;
   request: MindMapRowRequest;
@@ -189,6 +193,7 @@ export function MindMapRowView({
           {body}
           <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>
             <RowAction
+              createDescribedBy={createDescribedBy}
               isPending={isPending}
               onCreate={create}
               onRetry={retry}

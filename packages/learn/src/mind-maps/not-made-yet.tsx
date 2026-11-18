@@ -142,10 +142,12 @@ export function canMakeNow(chapter: MindMapsPageChapter): boolean {
 function NotMadeRows({
   chapters,
   library,
+  lessonsWarningId,
   plus,
 }: {
   chapters: readonly MindMapsPageChapter[];
   library: MindMapsLibrary;
+  lessonsWarningId?: string;
   plus: boolean;
 }) {
   return (
@@ -153,6 +155,7 @@ function NotMadeRows({
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
+            createDescribedBy={chapter.lessonsToWrite > 0 ? lessonsWarningId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -186,6 +189,8 @@ export function NotMadeYet({
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
   const listId = useId();
+  const lessonsWarningId = useId();
+  const warnsLessons = !plus && needLessons > 0 && stop === null;
   const folds = now.length > 0 && later.length > 0;
   const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
   const laterRef = useRef<HTMLDivElement>(null);
@@ -206,10 +211,17 @@ export function NotMadeYet({
 
   const laterRows = (
     <div className="flex flex-col gap-3" ref={laterRef}>
-      {!plus && needLessons > 0 && stop === null && (
-        <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
+      {warnsLessons && (
+        <p className={LINE_CLASS} id={lessonsWarningId}>
+          {t("Writing lessons counts toward your free lessons.")}
+        </p>
       )}
-      <NotMadeRows chapters={later} library={library} plus={plus} />
+      <NotMadeRows
+        chapters={later}
+        lessonsWarningId={warnsLessons ? lessonsWarningId : undefined}
+        library={library}
+        plus={plus}
+      />
     </div>
   );
 
