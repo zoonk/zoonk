@@ -231,7 +231,7 @@ export function QuestionComposer({
         </div>
       )}
 
-      {variant === "page" && <EnterHint action="send" className="mt-2 px-1" />}
+      {variant === "page" && <EnterHint action="send" className="mt-2" />}
     </div>
   );
 }

@@ -34,7 +34,7 @@ export function TutorSuggestions({
       {suggestions.map((suggestion) => (
         <li className="min-w-0" key={suggestion.question}>
           <Button
-            className="bg-background h-auto min-h-9 max-w-full py-1.5 text-left whitespace-normal"
+            className="bg-background h-auto min-h-11 max-w-full py-1.5 text-left whitespace-normal"
             onClick={() => onSelect(suggestion)}
             type="button"
             variant="outline"
