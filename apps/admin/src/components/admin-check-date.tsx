@@ -25,9 +25,9 @@ export function AdminCheckDate({
 
   return (
     <span className="inline-flex flex-wrap gap-x-2 gap-y-1 in-[td]:justify-end">
-      <span className="whitespace-nowrap">
+      <span>
         {prefix}
-        {label}
+        <span className="whitespace-nowrap">{label}</span>
       </span>
       {isPast(date) && (
         <StateMark state={expires ? "out_of_date" : "past_due"}>
