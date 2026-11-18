@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "d7f825f4a3a6415cf91d132ddc096d0885eba003012028dc6cc8c2e634e24ff6",
   "onboarding_musicianship_title": "0adde0dca5691a8b2103605f760cb3eb62e40d65751d823d6dc4045951874988",
   "onboarding_my_notes": "39cf9540acc66a031e0ae878b5d9360691a3330cbc61b5f9e4c93ef91f491976",
-  "onboarding_no_date": "d4451f448c431d3d91c40745c234f82a27bda8c85421edddf1f5fb198c063bac",
   "onboarding_paste_link": "0a1731269c36f190ee7bef3e3a0861d860d6aaf88b52350d3e6d2abf328e6990",
   "onboarding_paste_link_placeholder": "15cd6ff5739d7485fa22d8b55d9f10338aebd7e30c161068634957f19bffbaf7",
   "onboarding_paste_text": "8126a31b71d0320038e45f540a8b72297013965287668a8a458f8f19ad07d8ec",
@@ -888,8 +887,6 @@
     <string name="onboarding_date_continue_without">日付を設定せずに続ける</string>
     <string name="onboarding_date_remove">日付を削除する</string>
     <string name="onboarding_date_label">日付</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">日付なし</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">設定した%1$sは過ぎています。</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -221,44 +222,57 @@ private fun MissionsStatus(
 }
 
 internal class MissionProgress(
-    missions: List<DayMission>,
+    private val missions: List<DayMission>,
 ) {
     val done = missions.count(DayMission::done)
     val total = missions.size
     val left get() = total - done
     val full get() = total > 0 && left == 0
 
-    /** Each part's fill before and after, finished ones first: the [from] first were already full, the rest up to [done] fill now. */
-    fun fills(from: Int = done): List<Pair<Float, Float>> =
-        List(total) { index -> (if (index < from) 1f else 0f) to (if (index < done) 1f else 0f) }
+    /**
+     * Each part's fill before and after: how far its mission got, furthest first, as main's `mission-track`. A mission in
+     * [justDone] fills from the step before it.
+     */
+    fun fills(justDone: Collection<DayMission> = emptyList()): List<Pair<Float, Float>> {
+        val after = missions.map { if (it.done) 1f else share(it.progress, it.total) }
+        val before = missions.zip(after) { mission, fill -> if (mission in justDone) share(mission.total - 1, mission.total) else fill }
+        return before.sortedDescending().zip(after.sortedDescending())
+    }
 }
 
+private fun share(
+    steps: Long,
+    total: Long,
+): Float = if (total > 0) (steps.coerceAtLeast(0).toFloat() / total).coerceAtMost(1f) else 0f
+
 /**
- * One part per mission, finished ones first, filling in Brain Power's violet. Parts past [from] fill from empty,
+ * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
  * after [delayMillis], when the screen celebrates.
  */
 @Composable
 internal fun MissionTrack(
     progress: MissionProgress,
     modifier: Modifier,
-    from: Int = progress.done,
+    justDone: Collection<DayMission> = emptyList(),
     delayMillis: Int = 0,
 ) {
+    val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
-    val animates = celebrates() && from < progress.done
+    val track = brain.copy(alpha = if (MaterialTheme.colorScheme.background.luminance() < HALF) DARK_TRACK_ALPHA else TRACK_ALPHA)
+    val animates = celebrates() && fills.any { (start, fill) -> start < fill }
     val motion = remember { Animatable(if (animates) 0f else 1f) }
     LaunchedEffect(animates) {
         if (animates) motion.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
     }
 
     Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        progress.fills(from).forEach { (start, fill) ->
+        fills.forEach { (start, fill) ->
             Box(
                 Modifier
                     .weight(1f)
                     .height(TRACK_HEIGHT)
                     .clip(MaterialTheme.shapes.extraSmall)
-                    .background(brain.copy(alpha = TRACK_ALPHA)),
+                    .background(track),
             ) {
                 Box(Modifier.fillMaxWidth(start + (fill - start) * motion.value).height(TRACK_HEIGHT).background(brain))
             }
@@ -266,7 +280,10 @@ internal fun MissionTrack(
     }
 }
 
-private const val TRACK_ALPHA = 0.2f
+/** Main's `bg-brain/15 dark:bg-brain/30`. */
+private const val TRACK_ALPHA = 0.15f
+private const val DARK_TRACK_ALPHA = 0.3f
+private const val HALF = 0.5f
 private val TRACK_HEIGHT = 6.dp
 
 @Composable

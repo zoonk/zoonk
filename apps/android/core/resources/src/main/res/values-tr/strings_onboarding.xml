@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "e8d9e0067be725df54f0ce978ff9992bc63f102b8b5ce6610cd85515d10d303e",
   "onboarding_musicianship_title": "af40183226a94d6b613d3c8c63d20b9c35005518b2243c3edc8bd124fb779f41",
   "onboarding_my_notes": "a5abc8f031e851552bb8edc62bc0ff50f4c9f4f433694632e8fc7e7b0f4b6f0b",
-  "onboarding_no_date": "bbf4b15a569cf9e453b4e69cba373c9cf57ce9853823752bbfc2e49b085ae7af",
   "onboarding_paste_link": "e6269bcd4d90d073e6abfccae26d389c3b263b01ebc120528d3bf194b60dcca7",
   "onboarding_paste_link_placeholder": "2b1ad6832d108a7ca4ad7ce4d6dd37a2a7ed7bce49aa47ecfb6989952615ce6c",
   "onboarding_paste_text": "dc3ffffee02fec20158d8f51e4e1ccbaaffcd64072e18d0efd642c9665673358",
@@ -905,8 +904,6 @@
     <string name="onboarding_date_continue_without">Tarih belirlemeden devam et</string>
     <string name="onboarding_date_remove">Tarihi kaldır</string>
     <string name="onboarding_date_label">Tarih</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">Tarih yok</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">Seçtiğin %1$s tarihi geçti.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

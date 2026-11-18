@@ -32,10 +32,14 @@ fun GateWords(
     }
 }
 
-/** The one action that leads to paying, small, in place of what the learner tried. */
+/** The one action that leads to paying: small in place of what the learner tried, [ButtonSize.Large] as a sheet's own action. */
 @Composable
-fun SubscribeButton(onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick, size = ButtonSize.Small) { Text(stringResource(R.string.subscription_subscribe)) }
+fun SubscribeButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: ButtonSize = ButtonSize.Small,
+) {
+    OutlinedButton(onClick = onClick, modifier = modifier, size = size) { Text(stringResource(R.string.subscription_subscribe)) }
 }
 
 /** A guest's way on, where a subscriber's would be [SubscribeButton]. */

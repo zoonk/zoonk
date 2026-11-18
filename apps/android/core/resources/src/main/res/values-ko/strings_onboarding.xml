@@ -163,7 +163,6 @@
   "onboarding_musicianship_subject": "66e5f141b1f5ba58fb8e5b7b3763c52f7c551b150c2c231cc17198ef62c18bea",
   "onboarding_musicianship_title": "787c7e9821e2d96b9d5d52cacbfcb0cdd25922e915163344e1ca71dc97855cc4",
   "onboarding_my_notes": "c1bd37b1b595fee7d5b0d5d7f5ecd49f8756d912a1d6a3bc838d3d2145a2cb28",
-  "onboarding_no_date": "ccb1243dc877aff6081205e3406750adeb0c22076aa95d21e502684c50af3fc5",
   "onboarding_paste_link": "a82a6c177b3a19828cbbfccdc876e7ffada69db28a97eb5768ee7f8402e077bc",
   "onboarding_paste_link_placeholder": "a1ed384fdf20c3d2ba7386da4022352e1dd3d45076d279fa453304bccab395e3",
   "onboarding_paste_text": "063721472f8721a770e1dcb119ea7a1f66768ec7ca9a47ed889589818017e031",
@@ -888,8 +887,6 @@
     <string name="onboarding_date_continue_without">날짜 없이 계속하기</string>
     <string name="onboarding_date_remove">날짜 지우기</string>
     <string name="onboarding_date_label">날짜</string>
-    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
-    <string name="onboarding_no_date">날짜 없음</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">정해 둔 날짜인 %1$s이 지났어요.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

@@ -25,17 +25,22 @@ class MissionTrackTest {
     }
 
     @Test
-    fun theMeterFillsOnlyFinishedMissions() {
-        val complete = lesson.copy(progress = 0, total = 0)
+    fun eachPartFillsAsFarAsItsMissionGotFurthestFirst() {
+        val started = review.copy(progress = 1, total = 3)
+        val untouched = mission(StudyMission.Kind.ESSAY, done = false).copy(progress = 0)
 
-        assertEquals(listOf(1f to 1f, 0f to 0f), MissionProgress(listOf(review, complete)).fills())
+        assertEquals(
+            listOf(1f to 1f, 1f / 3 to 1f / 3, 0f to 0f),
+            MissionProgress(listOf(untouched, started, lesson)).fills(),
+        )
     }
 
     @Test
-    fun aMissionJustFinishedFillsFromEmpty() {
-        val facts = MissionMomentFacts(listOf(lesson, review), completed = listOf(lesson.kind), bonus = 20, bonusPaid = false)
+    fun aMissionJustFinishedFillsFromTheStepBeforeIt() {
+        val finished = review.copy(done = true, progress = 3, total = 3)
+        val facts = MissionMomentFacts(listOf(finished), completed = listOf(finished.kind), bonus = 20, bonusPaid = false)
 
-        assertEquals(listOf(0f to 1f, 0f to 0f), facts.progress.fills(from = facts.progress.done - facts.justDone.size))
+        assertEquals(listOf(2f / 3 to 1f), facts.progress.fills(facts.justDone))
     }
 
     private fun mission(
