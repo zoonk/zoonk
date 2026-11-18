@@ -415,7 +415,9 @@ struct PlanNumbersSection: View {
         studied > 0
           ? String(
             localized: "\(studied) studied", table: "Plan",
-            comment: "Under the plan's progress percent, beside the lessons already known: the lessons studied")
+            comment:
+              "Under the plan's progress percent, beside the lessons already known: the lessons studied"
+          )
           : nil,
         String(
           localized: "\(known) already known", table: "Plan",

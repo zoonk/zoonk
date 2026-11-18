@@ -392,7 +392,6 @@ final class PlanStoreTests: XCTestCase {
     }
   }
 
-
   func testAChangedPlanFromTheServerHidesItsEarlierAnswersWithoutAsking() async {
     let api = PlanAPIStub()
     let store = makeStore(api: api)
