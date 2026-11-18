@@ -12901,6 +12901,64 @@
         }
       }
     },
+    "Try again before you move on" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch es noch einmal, bevor du weitermachst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a intentarlo antes de continuar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessaie avant de continuer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riprova prima di continuare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次に進む前にもう一度試してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속하기 전에 다시 시도해 보세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spróbuj ponownie, zanim przejdziesz dalej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente de novo antes de continuar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam etmeden önce tekrar dene"
+          }
+        }
+      }
+    },
     "Up from %@" : {
       "comment" : "Preparation went up from this percent",
       "localizations" : {
@@ -14090,64 +14148,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün için kompozisyon değerlendirme hakkın kalmadı. Yarın tekrar dene."
-          }
-        }
-      }
-    },
-    "Your answer isn't saved yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Antwort ist noch nicht gespeichert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu respuesta aún no se guardó"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta réponse n’est pas encore enregistrée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua risposta non è ancora stata salvata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "回答はまだ保存されていません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답이 아직 저장되지 않았어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoja odpowiedź nie jest jeszcze zapisana"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua resposta ainda não foi salva"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevabın henüz kaydedilmedi"
           }
         }
       }
