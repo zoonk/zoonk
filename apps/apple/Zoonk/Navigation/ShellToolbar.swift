@@ -238,6 +238,7 @@ struct GoalSwitcher: View {
 
   enum Trigger: Equatable {
     case goal
+    case yourGoals
     case startGoal
     case explanations
   }
@@ -408,7 +409,7 @@ struct GoalSwitcher: View {
 
     return switch trigger {
     case .goal: Text(shownGoal?.displayName ?? "")
-    case .startGoal: startGoalTitle
+    case .startGoal, .yourGoals: startGoalTitle
     case .explanations:
       Text(
         "Quick explanations", tableName: "Navigation",
