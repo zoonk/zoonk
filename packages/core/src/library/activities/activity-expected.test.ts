@@ -38,6 +38,7 @@ describe(getActivityExpected, () => {
   it.each([
     { answer: 251.54, displayed: 252, tolerance: 0.05 },
     { answer: 0.1667, displayed: 0.17, tolerance: 0.005 },
+    { answer: -25.5, displayed: -26, tolerance: 0.05 },
   ])("shows $displayed as the right answer for $answer", ({ answer, displayed, tolerance }) => {
     const content = activityContentSchema.parse({
       ...numberLine,
