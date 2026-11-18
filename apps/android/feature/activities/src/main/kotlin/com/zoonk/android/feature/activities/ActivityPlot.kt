@@ -30,7 +30,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
+import com.zoonk.android.ui.components.TICK_LABEL_GAP
 import com.zoonk.android.ui.components.fittingTicks
+import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.max
@@ -194,7 +196,8 @@ fun ActivityPlot(
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
-    xTicks: List<List<Double>>? = null,
+    xTicks: List<Double>? = null,
+    xFallbackTicks: List<List<Double>>? = null,
     area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
@@ -221,13 +224,13 @@ fun ActivityPlot(
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
         val xStyle = style.copy(color = muted)
-        // A caller's own ticks (an angle's quarter turns, then half turns) show as far as they fit; otherwise round ones that do.
-        val given =
-            xTicks?.let { choices ->
-                val labels = choices.flatten().distinct().associateWith { measurer.measure(formatX(it), xStyle) }
-                x.fittedChoice(choices) { labels.getValue(it).size.width }.map { it to labels.getValue(it) }
-            }
-        drawPlotAxes(x, y, given ?: measurer.fittedPlotTicks(x, xStyle, formatX), yTicks.zip(yLabels), gridColor)
+        val xLabels =
+            xTicks?.let { ticks ->
+                val labels = mutableMapOf<Double, TextLayoutResult>()
+                val label = { tick: Double -> labels.getOrPut(tick) { measurer.measure(formatX(tick), xStyle) } }
+                x.fittedTicks(ticks, xFallbackTicks, TICK_LABEL_GAP.toPx()) { label(it).size.width }.map { it to label(it) }
+            } ?: measurer.fittedPlotTicks(x, xStyle, TICK_LABEL_GAP.toPx(), formatX)
+        drawPlotAxes(x, y, xLabels, yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
@@ -258,6 +261,7 @@ private val GUIDE_DASH = 3.dp
 private val GUIDE_WIDTH = 1.5.dp
 private val MAX_BAR_RADIUS = 3.dp
 private const val BAR_ROUNDING = 0.25f
+private const val ROUND_FALLBACK_TICKS = 3
 
 internal fun DrawScope.drawPlotAxes(
     x: LinearScale,
@@ -294,22 +298,37 @@ private fun LinearScale.labelSpan(
     return start to start + width
 }
 
-/** Of a caller's tick [choices], densest first, the first whose labels ([width] each) fit where the axis draws them. */
-internal fun LinearScale.fittedChoice(
-    choices: List<List<Double>>,
+/**
+ * A chart's own [ticks] when their labels ([width] each) fit where the axis draws them, otherwise the first of [fallback]
+ * (sparser ones, densest first) that fits, round ticks unless the chart names its own, as main's `ActivityPlotAxisX`.
+ */
+internal fun LinearScale.fittedTicks(
+    ticks: List<Double>,
+    fallback: List<List<Double>>?,
+    gap: Float,
     width: (Double) -> Int,
-): List<Double> = fittingTicks(domain, frame = { labelSpan(it, width(it)) }, values = { choices[choices.size - it] }, count = choices.size)
+): List<Double> {
+    val choices = listOf(ticks) + (fallback ?: (ROUND_FALLBACK_TICKS downTo 1).map { niceTicks(domain, it) })
+    return fittingTicks(
+        domain,
+        frame = { labelSpan(it, width(it)) },
+        values = { choices[choices.size - it].distinct().sorted() },
+        count = choices.size,
+        gap = gap,
+    )
+}
 
 internal fun TextMeasurer.fittedPlotTicks(
     scale: LinearScale,
     style: TextStyle,
+    gap: Float,
     format: (Double) -> String,
 ): List<Pair<Double, TextLayoutResult>> {
     val measured = mutableMapOf<Double, TextLayoutResult>()
     val selected =
         fittingTicks(scale.domain, frame = { value ->
             scale.labelSpan(value, measured.getOrPut(value) { measure(format(value), style) }.size.width)
-        })
+        }, gap = gap)
     return selected.map { it to measured.getValue(it) }
 }
 
