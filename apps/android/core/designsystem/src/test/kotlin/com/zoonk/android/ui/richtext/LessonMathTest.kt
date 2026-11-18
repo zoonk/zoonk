@@ -100,6 +100,20 @@ class LessonMathTest {
         assertEquals("(1\u2044" + "4)2", math("\\frac{1}{4}^2").text.text)
     }
 
+    /** Braces around the fraction don't change its base: KaTeX squares the whole quotient either way. */
+    @Test
+    fun aBracedFractionKeepsTheWholeQuotientAsItsScriptsBase() {
+        assertEquals("((x$GAP+${GAP}1)/2)2", math("{\\frac{x+1}{2}}^2").text.text)
+        assertEquals("x2", math("{x}^2").text.text)
+    }
+
+    /** A power inside an exponent can't rise a second level here, so it's written out, its base and exponent kept apart. */
+    @Test
+    fun aPowerInsideAnExponentIsWrittenOut() {
+        assertEquals("e(x^2+1)/2", math("e^{\\frac{x^2+1}{2}}").text.text)
+        assertEquals("ex^(n+1)", math("e^{x^{n+1}}").text.text)
+    }
+
     /** In an exponent the fraction is grouped against the exponent's own line, so its sum keeps its brackets. */
     @Test
     fun aSumInAFractionInsideAnExponentKeepsItsBrackets() {
