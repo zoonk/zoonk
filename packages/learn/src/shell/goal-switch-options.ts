@@ -1,10 +1,13 @@
-/** With nothing to switch to, the switcher is the plain "Start a goal" link. */
+/**
+ * With no goal to follow or start, the switcher is the plain "Start a goal" link; a quick
+ * explanation isn't a goal to switch to.
+ */
 export function hasNothingToSwitch({
   goals,
   waitingGoals,
 }: {
-  goals: readonly unknown[];
+  goals: readonly { kind: string }[];
   waitingGoals: readonly unknown[];
 }): boolean {
-  return goals.length === 0 && waitingGoals.length === 0;
+  return goals.every((goal) => goal.kind === "explain") && waitingGoals.length === 0;
 }

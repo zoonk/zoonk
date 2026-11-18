@@ -215,9 +215,6 @@ export function GoalSwitcher({
   const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
   const selected = followed.find((goal) => goal.id === selectedId);
 
-  const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
-  const unselectedLabel = t("Your goals");
-
   if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
   }
@@ -246,13 +243,13 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {(selected || !hasGoalOptions) && (
+          {selected && (
             <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
-              {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
+              <GoalMark goal={selected} />
             </span>
           )}
           <span className="line-clamp-2 min-w-0 flex-1 text-left wrap-anywhere">
-            {selected?.displayName ?? unselectedLabel}
+            {selected?.displayName ?? t("Your goals")}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
           {selected && <GoalCountryName goal={selected} />}
@@ -261,41 +258,39 @@ export function GoalSwitcher({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)] p-1.5">
-          {hasGoalOptions && (
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
 
-              <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
-                {followed.map((goal) => (
-                  <GoalOption goal={goal} key={goal.id} />
-                ))}
-              </DropdownMenuRadioGroup>
-
-              {waitingGoals.map((goal) => (
-                <WaitingOption
-                  goal={goal}
-                  isStarting={isPending}
-                  key={goal.id}
-                  onMakeRoom={hasAccount ? () => room.open(goal) : null}
-                  onStart={(waitingGoalId) =>
-                    startTransition(async () => {
-                      const { data: started } = await safeAsync(() =>
-                        onStartWaiting({ waitingGoalId }),
-                      );
-
-                      if (!started) {
-                        showErrorToast(startFailed);
-                      }
-                    })
-                  }
-                />
+            <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
+              {followed.map((goal) => (
+                <GoalOption goal={goal} key={goal.id} />
               ))}
-            </DropdownMenuGroup>
-          )}
+            </DropdownMenuRadioGroup>
+
+            {waitingGoals.map((goal) => (
+              <WaitingOption
+                goal={goal}
+                isStarting={isPending}
+                key={goal.id}
+                onMakeRoom={hasAccount ? () => room.open(goal) : null}
+                onStart={(waitingGoalId) =>
+                  startTransition(async () => {
+                    const { data: started } = await safeAsync(() =>
+                      onStartWaiting({ waitingGoalId }),
+                    );
+
+                    if (!started) {
+                      showErrorToast(startFailed);
+                    }
+                  })
+                }
+              />
+            ))}
+          </DropdownMenuGroup>
 
           {explanations.length > 0 && (
             <DropdownMenuGroup>
-              {hasGoalOptions && <DropdownMenuSeparator className="-mx-1.5" />}
+              <DropdownMenuSeparator className="-mx-1.5" />
               <DropdownMenuLabel className={MENU_LABEL_CLASS}>
                 {t("Quick explanations")}
               </DropdownMenuLabel>
