@@ -168,9 +168,9 @@ export function ActivityFormulaChart({
   formatX: (value: number) => string;
   x: number;
   xDomain: NumericDomain;
-  xLabel: string;
+  xLabel?: string;
   yDomain: NumericDomain;
-  yLabel: string;
+  yLabel?: string;
 }) {
   const ticks = niceTicks(yDomain, 3);
   const labels = tickLabels({ format: formatTick, ticks });

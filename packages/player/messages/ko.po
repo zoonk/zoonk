@@ -22,9 +22,9 @@ msgid "Ear training"
 msgstr "청음 훈련"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "먼저 어림하기"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "예상도 중요해요"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -783,14 +783,9 @@ msgid "Error"
 msgstr "오류"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "DhXJyL"
-msgid "Step forward to run the next line. We'll stop for you to predict a value."
-msgstr "한 단계 진행해 다음 줄을 실행하세요. 값을 예상할 차례가 되면 멈출게요."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "다음 단계로 넘어가 다음 줄을 실행하세요."
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "값을 예상해 볼 수 있도록 잠시 멈출게요."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1156,6 +1151,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "좌표: {x}, {y}. {summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "드래그하거나 방향키로 한 칸씩 움직이세요."
@@ -1393,7 +1389,6 @@ msgid "Names"
 msgstr "이름"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "결과"
@@ -1680,16 +1675,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "존 스노의 1854년 지도를 바탕으로 간략하게 그린 거리 지도예요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {짝이 없는 카드 #장}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Z7Xcs6"
 msgid "Those two don't go together."
 msgstr "두 카드는 짝이 아니에요."
@@ -1823,11 +1808,6 @@ msgstr "{count, plural, other {결합 #개}}"
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "{atom} 삭제하기"
-
-#: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "선택한 원자 삭제하기"
 
 #. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
@@ -2301,14 +2281,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "예상값을 고른 뒤 확인을 눌러 시뮬레이션을 실행하세요."
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit}: 전체 실험 중 {share}에서 나왔어요."
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit}: 전체 실험 중 {share}에서 나왔어요. 정확한 확률은 {exact}예요."
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "정확한 확률은 {exact}예요."
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2417,9 +2392,9 @@ msgid "All set."
 msgstr "준비됐어요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Q4pNZZ"
-msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
-msgstr "스피커나 헤드폰에서 소리가 조금 늦게 나올 수 있어요. 타이밍을 정확히 맞출 수 있도록 클릭 소리에 맞춰 {count}번 두드려 보세요."
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "‘박자 시작하기’를 누른 다음 박자에 맞춰 두드리세요"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2681,6 +2656,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "{start}부터 {end}까지의 연대표예요."
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "사건 {count}/{total}개 배치 완료"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "실제 연도 보기"
@@ -2722,19 +2702,14 @@ msgid "to"
 msgstr "부터"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, other {배치할 사건 #개}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "연대표에 끌어다 놓으세요."
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "연표에 {event} 배치하기"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "VvAPB9"
-msgid "Drag onto the timeline."
-msgstr "연대표에 끌어다 놓으세요."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2898,6 +2873,16 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "번역하기"
 
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {짝이 없는 카드 #장}}"
+
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3050,6 +3035,12 @@ msgstr "사라진 내용은 없어요. 잠시 후 다시 시도해 보세요."
 msgctxt "ObBVZr"
 msgid "We couldn't open this lesson"
 msgstr "이 레슨을 열지 못했어요"
+
+#: src/lesson/access/lesson-access-screen.tsx
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "오늘의 학습으로 이동하기"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3415,6 +3406,11 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "다시 들어 보세요"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "아직 정답은 아니에요. 다시 살펴보고 직접 고친 뒤 확인해 보세요."
@@ -3455,9 +3451,9 @@ msgid "What you practiced"
 msgstr "연습한 내용"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "2thi6d"
-msgid "Try it yourself"
-msgstr "직접 해 보기"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "다음에는 이렇게 해 보세요…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3503,6 +3499,21 @@ msgstr "조금 높아짐"
 msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "현재 상황"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "최대 100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "높을수록 좋아요"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "낮을수록 좋아요"
 
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
@@ -3556,6 +3567,11 @@ msgstr "이제 말할 수 있어요"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "대신 말로 답하기"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "말할 내용을 입력하세요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"
@@ -3814,6 +3830,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "질문 창 닫기"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "lyjQP7"
+msgid "Ask Zu with a free account"
+msgstr "무료 계정으로 Zu에게 물어보기"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -3989,6 +4010,11 @@ msgstr "{count, plural, other {{name}에게 한 질문 #개}}"
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {질문 #개}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "질문하기"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"

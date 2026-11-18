@@ -99,7 +99,7 @@ export function TaskFrame({
       ref={frame}
     >
       <TaskHeader className="bg-background sticky top-0">
-        <TaskHeaderBar>
+        <TaskHeaderBar className="max-w-column mx-auto lg:px-[16px]">
           <TaskHeaderSide align="start">
             <TaskClose
               beforeExit={beforeExit}

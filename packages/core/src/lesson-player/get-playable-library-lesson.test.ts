@@ -353,6 +353,22 @@ describe(getPlayableLibraryLesson, () => {
     ).toStrictEqual([{ kind: "relative", value: 0.1 }, null]);
   });
 
+  it("sends each numeric activity's answer rounded to the places its hint names, so every app writes it alike", async () => {
+    const { lesson } = await playableLessonFixture({
+      steps: [{ content: activityContentFixtures.guessReveal, kind: "activity" }, "activity"],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(
+      steps.map((step) => (step.kind === "activity" ? step.roundedAnswer : undefined)),
+    ).toStrictEqual([
+      { places: 0, value: 12 },
+      { places: null, value: 5 },
+    ]);
+  });
+
   it("sends an explanation's explore with its solved end state only when its template checks the end state", async () => {
     const { formulaModel, processOrder } = activityContentFixtures;
 

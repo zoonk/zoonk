@@ -2,7 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Minus } from "lucide-react";
+import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvasLabel, ActivityTextAlternative } from "../_components/activity-canvas";
@@ -14,7 +14,6 @@ type FieldLine = Fields["lines"][number];
 type Change = "down" | "same" | "up";
 
 const Y_ARROWS = { down: ArrowDown, same: Minus, up: ArrowUp } as const;
-const X_ARROWS = { down: ArrowLeft, same: Minus, up: ArrowRight } as const;
 
 export function useChangeWords() {
   const t = useExtracted();
@@ -88,7 +87,7 @@ export function LineCrossingChanges({
   yChange: Change;
 }) {
   const changeWords = useChangeWords();
-  const [YArrow, XArrow] = [Y_ARROWS[yChange], X_ARROWS[xChange]];
+  const [YArrow, XArrow] = [Y_ARROWS[yChange], Y_ARROWS[xChange]];
 
   if (!moved && isChecked) {
     return null;

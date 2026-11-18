@@ -141,6 +141,24 @@ const activityStepSchema = teachingStepSchema("activity").extend({
       description:
         "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
     }),
+  roundedAnswer: z
+    .object({
+      places: z
+        .int()
+        .nonnegative()
+        .nullable()
+        .meta({
+          description:
+            "The decimal places the answer is rounded to, the coarsest rounding the check accepts. Null when the answer is a whole number, so it needs no rounding",
+        }),
+      value: z.number().meta({ description: "The answer rounded to `places`" }),
+    })
+    .nullable()
+    .meta({
+      description:
+        "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's numbers in a check result: `expected`, `correctAnswer` and the learner's `answerText`, which keeps its own digits when a wrong answer would otherwise read as the right one. Null on other checks",
+      id: "ActivityRoundedAnswer",
+    }),
 });
 
 // A ref to the named union needs an allOf wrapper to be optional, which strict clients can't decode; its options stay refs.

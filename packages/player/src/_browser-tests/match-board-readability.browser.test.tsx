@@ -175,7 +175,8 @@ describe("match boards at large text", () => {
 
   it.each([
     { columns: 1, fontSize: "100%", width: 320 },
-    { columns: 2, fontSize: "100%", width: 360 },
+    { columns: 1, fontSize: "100%", width: 360 },
+    { columns: 2, fontSize: "100%", width: 375 },
     { columns: 1, fontSize: "125%", width: 414 },
     { columns: 1, fontSize: "150%", width: 480 },
     { columns: 1, fontSize: "200%", width: 640 },

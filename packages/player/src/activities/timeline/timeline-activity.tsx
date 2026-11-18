@@ -6,7 +6,11 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ActivityCanvas,
+  ActivityCanvasLabel,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type TrackEvent, hasShownGuess } from "./timeline-event-card";
 import { TimelineGaps } from "./timeline-gaps";
@@ -248,6 +252,12 @@ function TimelineQuestion({
 
   return (
     <ActivityCanvas labelId={labelId}>
+      <ActivityCanvasLabel className="tabular-nums">
+        {t("{count} of {total} events placed", {
+          count: String(trackEvents.length),
+          total: String(fields.events.length),
+        })}
+      </ActivityCanvasLabel>
       <div ref={ref}>
         <TimelineTrack
           anchors={fields.anchors}
@@ -283,7 +293,6 @@ function TimelineQuestion({
             place(trayEvent.id, snapYear((fields.start + fields.end) / 2, fields));
             setFocusId(trayEvent.id);
           }}
-          remaining={unplaced.length}
         />
       )}
 

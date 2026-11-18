@@ -3,7 +3,7 @@ import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { describe, expect, it } from "vitest";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ModelValues } from "../_utils/formula-model";
-import { modelView, startingModel } from "./formula-model-view";
+import { modelOutputFormat, modelView, startingModel } from "./formula-model-view";
 
 const content = { ...engineModeFixtures.formulaModel.scenario, template: "formulaModel" as const };
 
@@ -73,6 +73,21 @@ describe(startingModel, () => {
 });
 
 describe(modelView, () => {
+  it("keeps the readout precision after checking a more precise entry", () => {
+    const calculator = {
+      ...engineModeFixtures.formulaModel.calculator,
+      template: "formulaModel" as const,
+    };
+
+    const [charted] = calculator.fields.outputs;
+    const options = modelOutputFormat({ charted: charted!, content: calculator });
+    const readout = formatLocalizedNumber({ locale: "en", value: 251.54, ...options });
+    const checked = formatLocalizedNumber({ locale: "en", value: 252, ...options });
+
+    expect(readout).toBe("252");
+    expect(checked).toBe(readout);
+  });
+
   it("has no change for a readout that rounds to its starting value", () => {
     expect(changes(viewAt(simulation, { sliders: { angle: 60, speed: 20 } }))).toStrictEqual({
       distance: null,

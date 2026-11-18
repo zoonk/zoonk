@@ -11,7 +11,7 @@ import {
   useVoiceRecorder,
 } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MicIcon } from "lucide-react";
+import { MicIcon, MicOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import {
@@ -226,7 +226,11 @@ function ModeSwitch({
     const alternative = canListen ? t("Listen") : t("Type instead");
 
     return (
-      <StepWayOut label={`${label}. ${alternative}`} onClick={() => switchTo({ cantTalk: true })}>
+      <StepWayOut
+        icon={<MicOffIcon aria-hidden="true" />}
+        label={`${label}. ${alternative}`}
+        onClick={() => switchTo({ cantTalk: true })}
+      >
         {label}
       </StepWayOut>
     );
@@ -262,7 +266,11 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
   return (
     <InteractiveStepLayout>
-      <LessonQuestion>{step.content.prompt}</LessonQuestion>
+      <div className="font-normal [&_h2]:font-normal">
+        <LessonQuestion>
+          {answerMode.micProblem === "blocked" ? t("Type what you'd say") : step.content.prompt}
+        </LessonQuestion>
+      </div>
       <TargetText step={step} />
 
       {answerMode.mode === "type" ? (

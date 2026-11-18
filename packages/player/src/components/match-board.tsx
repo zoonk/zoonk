@@ -1,6 +1,8 @@
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { Fragment, type ReactNode } from "react";
+import { ActivityCanvasLabel } from "../activities/_components/activity-canvas";
 
 type Side = "left" | "right";
 type RenderItem<Item> = (side: Side, item: Item, index: number) => ReactNode;
@@ -107,5 +109,35 @@ export function MatchBoard<Item extends { id: string }>({
     >
       <BoardLayout {...board} />
     </div>
+  );
+}
+
+export function MatchBoardCount({
+  matched,
+  total,
+  traps = 0,
+}: {
+  matched: number;
+  total: number;
+  traps?: number;
+}) {
+  const t = useExtracted();
+
+  return (
+    <ActivityCanvasLabel className="tabular-nums">
+      {t("{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}", {
+        matched,
+        total: String(total),
+      })}
+
+      {traps > 0 && (
+        <>
+          {" · "}
+          {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
+            count: traps,
+          })}
+        </>
+      )}
+    </ActivityCanvasLabel>
   );
 }

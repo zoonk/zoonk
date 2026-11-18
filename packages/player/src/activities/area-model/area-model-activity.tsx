@@ -21,7 +21,7 @@ type Fields = AreaModelProps["content"]["fields"];
 type Side = { parts: number[]; total: number };
 
 // The rows' numbers start on the card's text edge, with room for three digits before the split handle.
-const GRID_PADDING = { bottom: 4, left: 44, right: 8, top: 33 };
+const GRID_PADDING = { bottom: 4, left: 44, right: 44, top: 33 };
 const BAR_PADDING = { bottom: 8, left: 8, right: 8, top: 32 };
 const BAR_HEIGHT = 88;
 const MIN_GRID_HEIGHT = 140;

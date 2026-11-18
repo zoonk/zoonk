@@ -30,15 +30,35 @@ describe("activity numeric answers", () => {
     await valueInput().fill("251.54");
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(valueInput()).toHaveValue("252");
   });
 
-  it("shows the value from the explanation after a calculator miss", async () => {
+  it("says how to round above the field it explains, where a typing error then shows", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    const rule = page.getByText("Round to the nearest whole number.", { exact: true });
+    await expect.element(rule).toBeVisible();
+    const ruleBottom = rule.element().getBoundingClientRect().bottom;
+
+    expect(ruleBottom).toBeLessThanOrEqual(numericGroup().getBoundingClientRect().top);
+
+    await valueInput().fill("12,,5");
+    await userEvent.keyboard("{Enter}");
+    const error = page.getByRole("alert");
+    await expect.element(error).toBeVisible();
+
+    expect(error.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      numericGroup().getBoundingClientRect().top,
+    );
+  });
+
+  it("shows the value named by the hint after a calculator miss", async () => {
     openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
     await valueInput().fill("251.6");
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("251.54", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("251.6");
+    await expect.element(feedback.getByText("252", { exact: true })).toBeVisible();
   });
 
   it.each([

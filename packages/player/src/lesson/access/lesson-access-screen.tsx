@@ -160,7 +160,7 @@ function Unavailable({
 }) {
   const t = useExtracted();
   const { actions } = useLessonPlayer();
-  const { routes } = useLessonPlayerConfig();
+  const { linkComponent, routes } = useLessonPlayerConfig();
 
   if (refusal.reason === "failed") {
     return (
@@ -176,6 +176,11 @@ function Unavailable({
   if (refusal.reason === "notFound") {
     return (
       <AccessLayout
+        actions={
+          <EnterLink href="/today" link={linkComponent}>
+            {t("Go to Today")}
+          </EnterLink>
+        }
         description={t("The link may be old or mistyped.")}
         heading="h1"
         icon={<CircleAlertIcon aria-hidden="true" />}

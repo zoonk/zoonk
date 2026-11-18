@@ -24,6 +24,16 @@ import { activityStep } from "../preview/preview-steps";
 
 const SWIPE_PX = 200;
 
+describe("matching on touch", () => {
+  it("leaves number keys off the matching board", async () => {
+    openActivity({ template: "matchPairs" });
+
+    const tile = page.getByRole("figure").getByRole("button").first();
+    await expect.element(tile).toBeVisible();
+    expect(tile.element().querySelector("kbd")?.checkVisibility() ?? false).toBe(false);
+  });
+});
+
 /** A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe. */
 async function flick(swipe: () => Promise<void>) {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });

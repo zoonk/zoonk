@@ -1,5 +1,6 @@
 "use client";
 
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
@@ -91,7 +92,16 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
-  const percent = (value: number) => format(value, distributionPercentFormat({ check }));
+  const display = getActivityRoundedAnswer(content);
+
+  const percent = (value: number) =>
+    format(
+      value,
+      !display || display.places === null
+        ? distributionPercentFormat({ check })
+        : { maximumFractionDigits: display.places, unit: "%" },
+    );
+
   const tail = (value: number) => format(value, distributionPercentFormat({ check, isTail: true }));
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
@@ -124,7 +134,7 @@ export function DistributionExplorerActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-baseline justify-between gap-3">
         <ActivityCanvasLabel className="text-sm">{rangeLabel}</ActivityCanvasLabel>
         <ActivityReadout aria-hidden="true" className="text-viz-accent">
           {percent(between)}
@@ -137,9 +147,7 @@ export function DistributionExplorerActivity({
         xDomain={domain}
         yDomain={[0, peak * HEADROOM]}
       >
-        <ActivityPlotArea
-          points={curve.filter((point) => point.x >= handles.from && point.x <= handles.to)}
-        />
+        <ActivityPlotArea points={densityCurve(distribution, [handles.from, handles.to])} />
         {distribution.kind === "normal" && (
           <DistributionMean label={format(distribution.mean)} value={distribution.mean} />
         )}

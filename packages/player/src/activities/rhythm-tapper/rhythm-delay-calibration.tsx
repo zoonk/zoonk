@@ -31,10 +31,7 @@ function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
     return t("All set.");
   }
 
-  return t(
-    "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right.",
-    { count: String(CALIBRATION_CLICKS) },
-  );
+  return t("Tap Start the beat, then tap along");
 }
 
 export function RhythmDelayCalibration({

@@ -49,13 +49,11 @@ function FactRow({
   change,
   fact,
   isAfter,
-  isHighlighted,
   other,
 }: {
   change: FactChange | null;
   fact: Fact;
   isAfter: boolean;
-  isHighlighted: boolean;
   other: Fact | undefined;
 }) {
   const format = useFormatNumber();
@@ -93,7 +91,7 @@ function FactRow({
         <span
           className={cn(
             "w-fit rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums",
-            isHighlighted ? "bg-success/10 text-success-text" : "bg-background text-foreground",
+            isAfter ? "bg-viz-accent/10 text-viz-accent" : "bg-background text-foreground",
           )}
         >
           {changeLabel(change)}
@@ -104,14 +102,12 @@ function FactRow({
 }
 
 export function BeforeAfterState({
-  highlightId,
   isAfter,
   other,
   ratios,
   ref,
   state,
 }: {
-  highlightId: string | null;
   isAfter: boolean;
   other: State;
   ratios: Record<string, number | null> | null;
@@ -147,7 +143,6 @@ export function BeforeAfterState({
             change={ratio === null ? null : describeChange(ratio)}
             fact={fact}
             isAfter={isAfter}
-            isHighlighted={fact.id === highlightId}
             key={fact.id}
             other={other.facts.find((item) => item.id === fact.id)}
           />

@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { useCanvasQuestion } from "../_utils/canvas-question";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BeforeAfterState } from "./before-after-state";
@@ -38,13 +39,15 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
   const isChecked = phase === "checked";
   const showsAfter = isRevealed || isChecked;
 
-  const highlightId =
-    check.kind === "numeric" ? (check.output ?? fields.before.facts[0]?.id ?? null) : null;
+  useCanvasQuestion(check.kind === "numeric" && !showsAfter);
 
   useEffect(() => {
-    if (isRevealed) {
-      afterRef.current?.focus();
+    if (!isRevealed) {
+      return;
     }
+
+    const frame = requestAnimationFrame(() => afterRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
   }, [isRevealed]);
 
   const ratios = isChecked
@@ -58,13 +61,7 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <BeforeAfterState
-        highlightId={highlightId}
-        isAfter={false}
-        other={fields.after}
-        ratios={null}
-        state={fields.before}
-      />
+      <BeforeAfterState isAfter={false} other={fields.after} ratios={null} state={fields.before} />
 
       <div className="flex items-start gap-2 px-4">
         <ArrowDown aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
@@ -75,7 +72,6 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
 
       {showsAfter ? (
         <BeforeAfterState
-          highlightId={highlightId}
           isAfter
           other={fields.before}
           ratios={ratios}

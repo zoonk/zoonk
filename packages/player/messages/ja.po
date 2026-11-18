@@ -22,9 +22,9 @@ msgid "Ear training"
 msgstr "耳を鍛える"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "まず予想する"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "予想も大切です"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -783,14 +783,9 @@ msgid "Error"
 msgstr "エラー"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "DhXJyL"
-msgid "Step forward to run the next line. We'll stop for you to predict a value."
-msgstr "次に進むと、次の行が実行されます。値を予想するところで一時停止します。"
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "次のステップに進むと、次の行が実行されます。"
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "値を予想するところで一時停止します。"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1156,6 +1151,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "座標は{x}、{y}です。{summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "ドラッグするか、矢印キーで1マスずつ動かせます。"
@@ -1393,7 +1389,6 @@ msgid "Names"
 msgstr "名前"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "結果"
@@ -1680,16 +1675,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "ジョン・スノウの1854年の地図をもとに簡略化した街路図です。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Z7Xcs6"
 msgid "Those two don't go together."
 msgstr "この2枚はペアではありません。"
@@ -1823,11 +1808,6 @@ msgstr "{count, plural, other {#本の結合}}"
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "{atom}を取り除く"
-
-#: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "選択中の原子を取り除く"
 
 #. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
@@ -2301,14 +2281,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "予想を選んでから答え合わせをすると、シミュレーションが始まります。"
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "「{hit}」となった割合は{share}でした。"
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "「{hit}」となった割合は{share}でした。正確な確率は{exact}です。"
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "正確な確率は{exact}です。"
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2417,9 +2392,9 @@ msgid "All set."
 msgstr "準備ができました。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Q4pNZZ"
-msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
-msgstr "スピーカーやヘッドホンでは、音が少し遅れて聞こえることがあります。タップのタイミングを調整するため、{count}回のクリック音に合わせてタップしてください。"
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "「リズムを始める」をタップして、リズムに合わせてタップしてください"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2681,6 +2656,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "{start}から{end}までの年表です。"
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "出来事を{count}/{total}件配置済み"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "実際の年代を表示する"
@@ -2722,19 +2702,14 @@ msgid "to"
 msgstr "から"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, other {並べる出来事はあと#件}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "タイムラインにドラッグしてください。"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "{event}を年表に配置する"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "VvAPB9"
-msgid "Drag onto the timeline."
-msgstr "タイムラインにドラッグしてください。"
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2898,6 +2873,16 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "訳してください"
 
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
+
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
@@ -3050,6 +3035,12 @@ msgstr "内容はすべて残っています。少し待ってから、もう一
 msgctxt "ObBVZr"
 msgid "We couldn't open this lesson"
 msgstr "このレッスンを開けませんでした"
+
+#: src/lesson/access/lesson-access-screen.tsx
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "「今日」へ移動する"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3415,6 +3406,11 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "答え合わせを続けています。いつもより時間がかかっています。"
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "もう一度聞いてください"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
 msgstr "惜しいです。もう一度見直して、自分で直してから答え合わせをしてください。"
@@ -3455,9 +3451,9 @@ msgid "What you practiced"
 msgstr "練習した内容"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "2thi6d"
-msgid "Try it yourself"
-msgstr "自分でやってみよう"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "次に試してみること…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3503,6 +3499,21 @@ msgstr "少し上昇"
 msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "現在の状況"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "／100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "高いほど良いです"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "低いほど良いです"
 
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
@@ -3556,6 +3567,11 @@ msgstr "今は話せる"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "声に出して答える"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "話す内容を入力してください"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"
@@ -3814,6 +3830,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "質問パネルを閉じる"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "lyjQP7"
+msgid "Ask Zu with a free account"
+msgstr "無料アカウントでズーに質問する"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -3989,6 +4010,11 @@ msgstr "{count, plural, other {{name}への質問#件}}"
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {#件の質問}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "質問する"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"

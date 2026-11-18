@@ -40,7 +40,7 @@ import {
 type ChartLine = Line & { id: string; label: string };
 
 const PLOT_HEIGHT = 280;
-const PADDING = { bottom: 50, left: PLOT_TICK_ROOM, right: 0, top: 26 };
+const PADDING = { bottom: 36, left: PLOT_TICK_ROOM, right: 12, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
@@ -205,6 +205,7 @@ function LineCrossingPlot({
   offsets,
   onMove,
   real,
+  units,
 }: {
   amount: number;
   answerLine: Line | null;
@@ -216,10 +217,10 @@ function LineCrossingPlot({
   onMove: (id: string, offset: number) => void;
   real: LineOffsets;
   xLabel: string;
+  units: { x?: string; y?: string };
   yLabel: string;
 }) {
   const clipId = useId();
-  const format = useFormatNumber();
   const scales = usePlotScales();
 
   const { domain, slides, xTicks, yTicks } = chartSlides({
@@ -240,7 +241,7 @@ function LineCrossingPlot({
   return (
     <>
       <ClipArea id={clipId} />
-      <Axes format={format} xTicks={xTicks} yTicks={yTicks} />
+      <Axes units={units} xTicks={xTicks} yTicks={yTicks} />
 
       <g clipPath={`url(#${clipId})`}>
         {moved.map((line) => (
@@ -320,7 +321,9 @@ export function LineCrossingChart(props: Parameters<typeof LineCrossingPlot>[0])
         ...PADDING,
         left: Math.max(
           PLOT_TICK_ROOM,
-          ...yTicks.map((tick) => estimatedLabelWidth(format(tick)) + TICK_GAP),
+          ...yTicks.map(
+            (tick) => estimatedLabelWidth(format(tick, { unit: props.units.y })) + TICK_GAP,
+          ),
         ),
       }}
       xDomain={[domain.min.x, domain.max.x]}

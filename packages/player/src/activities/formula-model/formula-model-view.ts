@@ -1,3 +1,4 @@
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { displayDigits, roundForDisplay, useFormatNumber } from "@zoonk/learn/format-number";
 import { type NumericDomain } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
@@ -17,6 +18,16 @@ type Content = FormulaModelProps["content"];
 type Fields = Content["fields"];
 type Variable = Fields["variables"][number];
 export type Output = Fields["outputs"][number];
+
+export function modelOutputFormat({ charted, content }: { charted: Output; content: Content }) {
+  const { check } = content;
+  const display = getActivityRoundedAnswer(content);
+
+  return {
+    maximumFractionDigits: display?.places ?? undefined,
+    unit: charted.unit ?? (check.kind === "numeric" ? check.unit : undefined),
+  };
+}
 
 type Baseline = { kind: "start" | "whatIf"; values: ModelValues };
 

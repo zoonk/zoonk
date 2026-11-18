@@ -95,7 +95,7 @@ export const lessonStepCheckResultSchema = z
       .nullable()
       .meta({
         description:
-          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
       }),
     corrections: z
       .array(
@@ -112,7 +112,7 @@ export const lessonStepCheckResultSchema = z
       .nullable()
       .meta({
         description:
-          "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+          "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number (rounded to its step's `roundedAnswer`) or the canvas's end state. Null for other screens, and for an activity whose template computes none",
       }),
     feedback: z
       .string()

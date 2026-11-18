@@ -51,6 +51,14 @@ function baseProgram({
   return phase === "explore" || reopenedRight ? fields.solution : fields.starterCode;
 }
 
+function runnerLineTone({ canEdit, hasError }: { canEdit: boolean; hasError: boolean }) {
+  if (hasError) {
+    return "error";
+  }
+
+  return canEdit ? "editable" : "plain";
+}
+
 export function CodeRunnerActivity({
   answer,
   content,
@@ -147,37 +155,31 @@ export function CodeRunnerActivity({
           {lines.map((line, index) => {
             const number = index + 1;
 
-            if (!editable.has(number)) {
-              return (
-                <ActivityCodeLine
-                  key={number}
-                  number={number}
-                  tone={run?.error?.line === number && !isStale ? "error" : "plain"}
-                >
-                  <ActivityCodeTokens tokens={highlighted[index] ?? []} />
-                </ActivityCodeLine>
-              );
-            }
+            const canEdit = editable.has(number) && !isChecked;
+            const hasError = run?.error?.line === number && !isStale;
 
             return (
               <ActivityCodeLine
                 key={number}
                 number={number}
-                tone={run?.error?.line === number && !isStale ? "error" : "editable"}
+                tone={runnerLineTone({ canEdit, hasError })}
               >
-                <ActivityCodeLineInput
-                  aria-label={t("Line {number}, yours to edit", { number: String(number) })}
-                  language={fields.language}
-                  onChange={(value) => edit(number, value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      void handleRun();
-                    }
-                  }}
-                  readOnly={isChecked}
-                  value={line}
-                />
+                {canEdit ? (
+                  <ActivityCodeLineInput
+                    aria-label={t("Line {number}, yours to edit", { number: String(number) })}
+                    language={fields.language}
+                    onChange={(value) => edit(number, value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void handleRun();
+                      }
+                    }}
+                    value={line}
+                  />
+                ) : (
+                  <ActivityCodeTokens tokens={highlighted[index] ?? []} />
+                )}
               </ActivityCodeLine>
             );
           })}

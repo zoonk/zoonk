@@ -68,14 +68,18 @@ function LessonQuestionPanelHeader({
       className={cn(THREAD_SIDE_CLASS, "border-border items-center border-b")}
       closeLabel={t("Close questions")}
     >
-      <BuddyIdentityRow
-        face={identity.avatar}
-        title={<DrawerTitle className={BUDDY_NAME_CLASS}>{identity.name}</DrawerTitle>}
-      >
-        <DrawerDescription className="text-xs">
-          <LessonQuestionPanelDescription context={controller.state.context} />
-        </DrawerDescription>
-      </BuddyIdentityRow>
+      {controller.canAskQuestions ? (
+        <BuddyIdentityRow
+          face={identity.avatar}
+          title={<DrawerTitle className={BUDDY_NAME_CLASS}>{identity.name}</DrawerTitle>}
+        >
+          <DrawerDescription className="text-xs">
+            <LessonQuestionPanelDescription context={controller.state.context} />
+          </DrawerDescription>
+        </BuddyIdentityRow>
+      ) : (
+        <DrawerTitle className={BUDDY_NAME_CLASS}>{t("Ask Zu with a free account")}</DrawerTitle>
+      )}
     </DrawerHeader>
   );
 }

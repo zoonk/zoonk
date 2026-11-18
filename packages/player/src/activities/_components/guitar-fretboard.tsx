@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { Circle, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { GUITAR_TUNING, type GuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
@@ -229,11 +229,11 @@ export function GuitarFretboard(props: FretboardProps) {
       )}
       <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
-          <Circle aria-hidden="true" className="size-3.5 shrink-0" />
+          <OpenOrMuted fret={0} />
           {t("Play without pressing a fret")}
         </span>
         <span className="flex items-center gap-1.5">
-          <X aria-hidden="true" className="size-3.5 shrink-0" />
+          <OpenOrMuted fret={null} />
           {t("Don't play this string")}
         </span>
       </div>

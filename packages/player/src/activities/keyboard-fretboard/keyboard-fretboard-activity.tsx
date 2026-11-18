@@ -47,6 +47,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const piano = useInstrument("piano");
   const [pressed, setPressed] = useState(() => initialPitches(props));
   const isChecked = phase === "checked";
+  const showKeyboard = phase === "explore" || !fields.byEar || check.kind !== "choice";
   const start = targetPitches(fields.start);
   const target = targetPitches(fields.target);
   const spell = pitchSpelling([fields.target, fields.start]);
@@ -88,33 +89,38 @@ function PianoBoard(props: KeyboardFretboardProps) {
           checked={isChecked}
           heading={keyboardHeading({ content, phase, shown })}
           notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
-          onHear={() =>
-            void piano.play(
-              together(
-                (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
-                { gap: CHORD_GAP },
-              ),
-            )
+          onHear={
+            showKeyboard
+              ? () =>
+                  void piano.play(
+                    together(
+                      (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
+                      { gap: CHORD_GAP },
+                    ),
+                  )
+              : undefined
           }
           start={fields.start}
           target={fields.target}
         />
 
-        <PianoKeyboard
-          disabled={isChecked}
-          from={KEYBOARD_FROM}
-          label={t("Piano keys")}
-          marks={marks}
-          nameOf={(midi) => display(spell(midi))}
-          onPress={isChecked ? undefined : handlePress}
-          pressed={(midi) => pressed.includes(midi % OCTAVE)}
-          spokenNameOf={(midi) => spoken(spell(midi))}
-          to={KEYBOARD_TO}
-        />
+        {showKeyboard && (
+          <PianoKeyboard
+            disabled={isChecked}
+            from={KEYBOARD_FROM}
+            label={t("Piano keys")}
+            marks={marks}
+            nameOf={(midi) => display(spell(midi))}
+            onPress={isChecked ? undefined : handlePress}
+            pressed={(midi) => pressed.includes(midi % OCTAVE)}
+            spokenNameOf={(midi) => spoken(spell(midi))}
+            to={KEYBOARD_TO}
+          />
+        )}
 
         {listening.showText && <SoundAsText notes={targetSpelling(fields.target)} />}
 
-        {fields.instruments.includes("guitar") && (
+        {showKeyboard && fields.instruments.includes("guitar") && (
           <GuitarMirror
             kindOf={(pitch) => marks.get(KEYBOARD_FROM + pitch) ?? "new"}
             pitches={shown}
@@ -126,11 +132,13 @@ function PianoBoard(props: KeyboardFretboardProps) {
         <KeyboardHalfStepHint start={start} target={target} />
         <ActivitySoundNote status={piano.status} />
 
-        <ActivityTextAlternative>
-          {t("A piano keyboard from C to B. Pressed: {notes}.", {
-            notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
-          })}
-        </ActivityTextAlternative>
+        {showKeyboard && (
+          <ActivityTextAlternative>
+            {t("A piano keyboard from C to B. Pressed: {notes}.", {
+              notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
+            })}
+          </ActivityTextAlternative>
+        )}
       </ActivityCanvas>
 
       {listening.offersWayOut && (

@@ -573,8 +573,12 @@ describe("money and society activities", () => {
 describe("money and society activities by dragging", () => {
   it("timeline: dragging an event onto the axis places it where it's dropped", async () => {
     openActivity({ template: "timeline" });
-    const track = page.getByRole("figure");
-    await expect.element(track).toBeVisible();
+    const figure = page.getByRole("figure");
+    await expect.element(figure).toBeVisible();
+
+    const track = page.elementLocator(
+      figure.element().querySelector('[data-slot="timeline-track"]')!,
+    );
 
     await dragOnto(
       page.getByRole("button", { name: "Place Moon landing on the timeline" }),
