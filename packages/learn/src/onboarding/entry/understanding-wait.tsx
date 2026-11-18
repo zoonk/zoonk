@@ -6,8 +6,10 @@ import {
   GenerationTimelineHeader,
   GenerationTimelineProgress,
 } from "@zoonk/ui/components/generation-timeline";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { FollowedRun } from "../../generation/generation-follower";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationFailureNotice, useGenerationProgress } from "../../generation/generation-wait";
@@ -38,6 +40,7 @@ function UnderstandingWaitScreen({
   since?: number;
 }) {
   const t = useExtracted();
+  const locale = useAppLocale();
   const { track } = useLearnAnalytics();
   const progress = useGenerationProgress({ kind: "understanding", run, since });
 
@@ -63,6 +66,7 @@ function UnderstandingWaitScreen({
           </OnboardingHeading>
           <GenerationTimelineProgress
             aria-label={t("Understanding your goal")}
+            locale={getFormattingLocale(locale)}
             value={progress}
             weights={[1]}
           />

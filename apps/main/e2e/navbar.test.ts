@@ -21,7 +21,7 @@ test("a guest can create an account after leaving and returning to the app", asy
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Follow your study plan all the way to your date.",
+      name: "Follow your study plan all the way to your exam, move or deadline.",
     }),
   ).toBeVisible();
 

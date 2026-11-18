@@ -115,13 +115,20 @@ test("requires a selected subject to continue and lets beginners skip", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
+  const citation = { passage: "Algebra and Geometry", sourceId: "notice" };
+
   const exam = await examBlueprintFixture({
     structure: {
-      formats: ["multipleChoice"],
-      subjects: [
-        { name: "Algebra", weight: 0.5 },
-        { name: "Geometry", weight: 0.5 },
-      ],
+      formats: [{ citation, description: "Five options", kind: "multipleChoice", options: 5 }],
+      mock: null,
+      rules: [],
+      subjects: ["Algebra", "Geometry"].map((name) => ({
+        citation,
+        name,
+        questions: 10,
+        topics: [name],
+        weight: null,
+      })),
     },
   });
 
@@ -135,7 +142,8 @@ test("requires a selected subject to continue and lets beginners skip", async ({
 
   await page.goto(`/start/${goal.id}`);
 
-  const algebra = page.getByRole("checkbox", { name: "Algebra" });
+  const subjects = page.getByRole("group", { name: "Subjects you know well" });
+  const algebra = subjects.getByRole("checkbox", { name: "Algebra" });
   const next = page.getByRole("button", { exact: true, name: "Continue" });
   await expectHydrated(algebra);
   await expect(next).toBeDisabled();

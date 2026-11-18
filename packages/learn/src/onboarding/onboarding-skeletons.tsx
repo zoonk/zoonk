@@ -72,7 +72,7 @@ export function StartEntrySkeleton() {
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <Skeleton className="@container w-full p-1.5 pl-4">
+          <Skeleton className="@container w-full px-3 py-2">
             <div className="h-24 @xl:h-11" />
           </Skeleton>
 

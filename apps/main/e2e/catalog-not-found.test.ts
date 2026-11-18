@@ -9,10 +9,9 @@ test("offers the course catalog as the main action when a visitor opens a missin
 
   await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
 
-  await expect(page.getByRole("link", { name: "Explore courses" }).last()).toHaveAttribute(
-    "href",
-    "/courses",
-  );
+  await expect(
+    page.locator('[data-slot="bottom-bar"]').getByRole("link", { name: "Explore courses" }),
+  ).toHaveAttribute("href", "/courses");
 
   await expect(page.getByRole("link", { name: "Go to Today" })).toHaveCount(0);
 });
