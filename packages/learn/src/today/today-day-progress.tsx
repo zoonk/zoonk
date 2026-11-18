@@ -14,11 +14,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { drawsDayMeter } from "./day-segments";
+import { DaySegment, type DaySegmentState, drawsDayMeter } from "./day-segments";
 import { useTodayScreen } from "./today-context";
 import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
@@ -32,6 +33,26 @@ function getBlockShare(block: DayStep): number {
 }
 
 const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
+
+function DayProgressKey({ states }: { states: ReadonlySet<DaySegmentState> }) {
+  const t = useExtracted();
+  const labels = { ahead: toLabelCase(t("planned")), current: t("Up next"), done: t("Done") };
+
+  return (
+    <ul className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-xs">
+      {(["done", "current", "ahead"] as const)
+        .filter((state) => states.has(state))
+        .map((state) => (
+          <li className="flex items-center gap-1.5" key={state}>
+            <span aria-hidden="true" className={cn(METER_PARTS_CLASS, "w-3.5 shrink-0")}>
+              <DaySegment state={state} />
+            </span>
+            {labels[state]}
+          </li>
+        ))}
+    </ul>
+  );
+}
 
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
@@ -51,22 +72,35 @@ export function DayProgress({ className }: { className?: string }) {
     return null;
   }
 
+  const states = new Set(parts.map((part) => part.state));
+
+  if (held > 0) {
+    states.add("ahead");
+  }
+
   return (
-    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
-    <div
-      aria-label={t(
-        "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-        { done: sessionBar.completed, total: sessionBar.total },
-      )}
-      className={cn(METER_PARTS_CLASS, className)}
-      data-slot="today-day-progress"
-      onKeyDown={moveBetweenSegments}
-      role="group"
-    >
-      {parts.map((part) => (
-        <BlockSegment focusable={part.block.position === focusPosition} key={part.id} part={part} />
-      ))}
-      {held > 0 && <HeldSegment minutes={held} />}
+    <div className={cn("flex flex-col gap-2", className)}>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside. */}
+      <div
+        aria-label={t(
+          "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
+          { done: sessionBar.completed, total: sessionBar.total },
+        )}
+        className={METER_PARTS_CLASS}
+        data-slot="today-day-progress"
+        onKeyDown={moveBetweenSegments}
+        role="group"
+      >
+        {parts.map((part) => (
+          <BlockSegment
+            focusable={part.block.position === focusPosition}
+            key={part.id}
+            part={part}
+          />
+        ))}
+        {held > 0 && <HeldSegment minutes={held} />}
+      </div>
+      <DayProgressKey states={states} />
     </div>
   );
 }
