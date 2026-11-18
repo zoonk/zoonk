@@ -1,6 +1,7 @@
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { expect, test } from "./fixtures";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { type Page, expect, test } from "./fixtures";
 
 test("requires a code before a learner can approve or deny a device login", async ({
   userWithoutProgress: page,
@@ -86,4 +87,62 @@ test("names the goal example the same way on the home and onboarding pages", asy
 
   await page.goto("/de/start");
   await expect(goal).toHaveAccessibleDescription(/^Zum Beispiel: /u);
+});
+
+async function expectGoalRequired(page: Page) {
+  const field = page.getByRole("textbox", { name: "I want to" }).first();
+  const send = page.getByRole("button", { exact: true, name: "Build my plan" }).first();
+
+  await expectHydrated(field);
+  await expect(send).toBeDisabled();
+  await field.fill("Learn algebra");
+  await expect(send).toBeEnabled();
+  await field.fill(" ");
+  await expect(send).toBeDisabled();
+}
+
+test("requires a goal before building a plan on the landing page", async ({ page }) => {
+  await page.goto("/");
+  await expectGoalRequired(page);
+});
+
+test("requires a goal before building a plan in setup", async ({ page }) => {
+  await page.goto("/start");
+  await expectGoalRequired(page);
+});
+
+test("requires a selected subject to continue and lets beginners skip", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const exam = await examBlueprintFixture({
+    structure: {
+      formats: ["multipleChoice"],
+      subjects: [
+        { name: "Algebra", weight: 0.5 },
+        { name: "Geometry", weight: 0.5 },
+      ],
+    },
+  });
+
+  const goal = await goalFixture({
+    details: { answered: ["purpose", "target", "targetDate"] },
+    examBlueprintId: exam.id,
+    kind: "exam",
+    planRevealedAt: null,
+    userId: noProgressUser.id,
+  });
+
+  await page.goto(`/start/${goal.id}`);
+
+  const algebra = page.getByRole("checkbox", { name: "Algebra" });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
+  await expectHydrated(algebra);
+  await expect(next).toBeDisabled();
+  await expect(page.getByRole("button", { name: "I'm new to all of them" })).toBeEnabled();
+
+  await algebra.click();
+  await expect(next).toBeEnabled();
+  await algebra.click();
+  await expect(next).toBeDisabled();
 });
