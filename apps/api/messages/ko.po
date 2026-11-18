@@ -183,6 +183,11 @@ msgid "That link didn't work"
 msgstr "링크를 열 수 없어요"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "4Wp5HU"
+msgid "The link may have expired. Go to Zoonk and log in again for a new one."
+msgstr "링크가 만료되었을 수 있어요. Zoonk에서 다시 로그인해 새 링크를 받아 보세요."
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "15PZTm"
 msgid "Go to Zoonk"
 msgstr "Zoonk로 이동하기"

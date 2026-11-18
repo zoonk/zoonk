@@ -183,6 +183,11 @@ msgid "That link didn't work"
 msgstr "このリンクは使えません"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
+msgctxt "4Wp5HU"
+msgid "The link may have expired. Go to Zoonk and log in again for a new one."
+msgstr "リンクの有効期限が切れている可能性があります。新しいリンクを取得するには、Zoonkにアクセスしてもう一度ログインしてください。"
+
+#: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "15PZTm"
 msgid "Go to Zoonk"
 msgstr "Zoonkへ移動する"
