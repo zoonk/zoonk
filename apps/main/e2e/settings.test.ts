@@ -39,6 +39,32 @@ test("on a phone settings pages go back to the settings list", async ({
   await expect(page).toHaveURL(/\/settings$/u);
 });
 
+test("a Settings tab on a tablet returns to Today in one step", async ({
+  userWithoutProgress: page,
+}) => {
+  await page.setViewportSize({ height: 900, width: 1024 });
+  await page.goto("/today");
+
+  const accountMenu = page.getByRole("button", { name: /User menu/u });
+  await expectHydrated(accountMenu);
+  const todayEntry = () => page.evaluate(() => globalThis.navigation.currentEntry?.key);
+  const original = await todayEntry();
+  expect(original).toBeTruthy();
+
+  await accountMenu.click();
+  await page.getByRole("menuitem", { exact: true, name: "Settings" }).click();
+  await expect(page).toHaveURL(/\/settings$/u);
+
+  const tabs = page.getByRole("navigation", { name: "Settings" });
+  await tabs.getByRole("link", { exact: true, name: "Reminders" }).click();
+  await expect(page).toHaveURL(/\/settings\/reminders$/u);
+  await expect(page.getByRole("link", { exact: true, name: "Back to Settings" })).toBeHidden();
+
+  await page.getByRole("link", { exact: true, name: "Back to Today" }).click();
+  await expect(page).toHaveURL(/\/today$/u);
+  await expect.poll(todayEntry).toBe(original);
+});
+
 test("on a phone statistics pages go back to the overview", async ({
   userWithoutProgress: page,
 }) => {
