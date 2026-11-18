@@ -72,7 +72,9 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -115,10 +117,7 @@ internal fun MockRunnerView(
         },
         actions = {
             if (!taskAsideBeside()) {
-                val label = stringResource(R.string.mock_answer_sheet)
-                TextButton(onClick = { sheetOpen = true }, Modifier.semantics { contentDescription = label }) {
-                    Text(stringResource(R.string.mock_sheet))
-                }
+                TextButton(onClick = { sheetOpen = true }) { Text(stringResource(R.string.mock_answer_sheet)) }
             }
         },
         bottomBar = { RunnerActions(viewModel, run, handIn) },
@@ -363,7 +362,7 @@ private fun RunnerActions(
         TaskActions { width ->
             OutlinedButton(
                 onClick = viewModel::toggleFlag,
-                modifier = Modifier.heightIn(min = 48.dp).semantics { toggleableState = ToggleableState(flagged) },
+                modifier = Modifier.semantics { toggleableState = ToggleableState(flagged) },
                 border =
                     if (flagged) {
                         BorderStroke(
@@ -578,6 +577,7 @@ internal fun SheetSections(
     titled: Boolean = true,
 ) {
     val counts = run.counts
+    val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (titled) Text(stringResource(R.string.mock_sections), style = MaterialTheme.typography.titleSmall)
         run.view.sections.forEachIndexed { index, section ->
@@ -612,9 +612,9 @@ internal fun SheetSections(
                         stringResource(R.string.mock_handed_in)
                     } else {
                         stringResource(
-                            R.string.mock_section_answered,
-                            if (section.status == MockExamSectionsInner.Status.CURRENT) counts.answered else 0,
-                            (section.questions + section.essays).toInt(),
+                            R.string.mock_section_answered_of,
+                            formatNumber((if (section.status == MockExamSectionsInner.Status.CURRENT) counts.answered else 0).toDouble(), locale),
+                            formatNumber((section.questions + section.essays).toDouble(), locale),
                         )
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

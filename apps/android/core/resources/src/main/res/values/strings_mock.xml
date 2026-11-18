@@ -76,7 +76,6 @@
     <string name="mock_hand_in_final">After this, your answers can\'t change.</string>
     <string name="mock_keep_answering">Keep answering</string>
     <string name="mock_hand_in">Hand in</string>
-    <string name="mock_sheet">Sheet</string>
     <string name="mock_answer_sheet">Answer sheet</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -97,9 +96,8 @@
     <string name="mock_section_number">Section %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Handed in</string>
-    <!-- A section's answered questions of all of them: "12/45". -->
-    <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Not saved yet · retrying</string>
+    <string name="mock_section_answered_of">%1$s of %2$s</string>
+    <string name="mock_save_retry">Try again before you move on</string>
     <string name="mock_try_again">Try again</string>
     <string name="mock_last_not_saved">Your last answer wasn\'t saved.</string>
     <string name="mock_step_failed_saved">That didn\'t go through. Your answers are saved. Try again in a moment.</string>

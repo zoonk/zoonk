@@ -245,9 +245,9 @@ internal fun MockStepStatus(
         DraftSaveStatus.Retrying -> {
             Row(live, verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.mock_not_saved_retrying),
+                    stringResource(R.string.mock_save_retry),
                     Modifier.weight(1f, fill = false),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_try_again)) }
@@ -299,7 +299,7 @@ internal fun MockMainButton(
 ) = Button(
     busy = busy,
     onClick = onClick,
-    modifier = modifier.heightIn(min = 48.dp),
+    modifier = modifier,
     enabled = enabled,
 ) { Text(text) }
 
@@ -388,8 +388,7 @@ private fun MockHandedIn(
             }
         },
     ) {
-        StepHeader(R.drawable.ic_timer_off) {
-            MockEyebrow(run.view)
+        StepHeader {
             StepTitle(stringResource(R.string.mock_handed_in_title))
             StepDetail(stringResource(R.string.mock_answers_saved))
         }
@@ -498,7 +497,7 @@ private fun MockExpired(
                             run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser,
                         )
                     },
-                    modifier = main.heightIn(min = 48.dp),
+                    modifier = main,
                 ) { Text(stringResource(R.string.mock_take_another)) }
             }
         },
