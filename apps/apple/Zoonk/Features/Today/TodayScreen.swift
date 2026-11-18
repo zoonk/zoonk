@@ -137,7 +137,7 @@ private struct TodayStartGoal: View {
             Image(systemName: "play")
           }
         }
-        .buttonStyle(.plain)
+        .tint(.primary)
         .currentRow()
       } header: {
         Text("Quick explanation", tableName: "Today")

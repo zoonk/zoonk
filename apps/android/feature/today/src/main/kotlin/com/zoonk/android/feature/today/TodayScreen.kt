@@ -297,7 +297,7 @@ private fun ExplanationContinue(
     explanation: LearnerSummaryGoal,
     navigator: AppNavigator,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(title = stringResource(R.string.today_quick_explanation))
         ListRow(
             headline = { Text(explanation.displayName) },

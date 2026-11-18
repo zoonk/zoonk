@@ -238,7 +238,7 @@ struct FormulaModelCanvas: View {
     }
 
     let x = fields.start(at: inputs ?? []).sliders[view.axis.name] ?? view.axis.initial
-    let digits = exactFractionDigitsFor(
+    let digits = LessonGrading.activityAnswerDigits(
       expected: answer, tolerance: tolerance, value: context.answer?.number)
     return (x, answer, ActivityNumberFormat.format(answer, unit: unit, digits: digits))
   }

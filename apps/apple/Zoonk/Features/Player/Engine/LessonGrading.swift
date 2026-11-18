@@ -98,17 +98,17 @@ enum LessonGrading {
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
 
-      let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
       let places = activityDecimalPlaces(
         expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
+      let digits = activityAnswerDigits(
+        expected: expected, tolerance: tolerance, value: value, places: places)
 
       return LocalGrade(
         isCorrect: isCorrect,
         answerText: ActivityNumberFormat.format(value, unit: unit, digits: digits),
         correctAnswer: isCorrect
           ? nil
-          : ActivityNumberFormat.format(
-            expected, unit: unit, digits: places ?? digits),
+          : ActivityNumberFormat.format(expected, unit: unit, digits: digits),
         feedback: explanation)
     case .interaction(let explanation):
       guard let gradeInteraction else {
@@ -132,6 +132,15 @@ enum LessonGrading {
 
     return tolerances.contains { isWithin(value, of: expected, tolerance: $0) }
       || isRoundedAnswer(value, expected: expected)
+  }
+
+  static func activityAnswerDigits(
+    expected: Double, tolerance: ActivityCheck.Tolerance, value: Double?, places: Int? = nil
+  ) -> Int {
+    max(
+      places ?? 0,
+      exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value),
+      countDecimalPlaces(value ?? 0))
   }
 
   static func activityDecimalPlaces(

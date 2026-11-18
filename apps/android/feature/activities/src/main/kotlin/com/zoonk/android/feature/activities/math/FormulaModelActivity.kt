@@ -45,6 +45,7 @@ import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.steps.allowed
+import com.zoonk.android.feature.player.steps.answerDigits
 import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
@@ -151,7 +152,7 @@ private fun FormulaModelBoard(
             expected =
                 numeric?.let { check ->
                     props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
-                        val digits = exactFractionDigitsFor(check.answer, check.allowed, props.answer.numericValue ?: check.answer)
+                        val digits = check.answerDigits(props.answer.numericValue)
                         AnswerPoint(
                             x = answerX(check.inputs, axis),
                             y = y,

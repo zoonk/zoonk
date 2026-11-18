@@ -461,7 +461,15 @@ private struct LessonUnavailableBody: View {
       .bottomBar {
         VStack(spacing: 8) {
           action.buttonStyle(.mainAction)
-          if case .limitReached(tier: .free, _) = refusal {
+          if case .limitReached(tier: .guest, _) = refusal, !isReady {
+            Button {
+              routes.signIn()
+            } label: {
+              Text("Log in", tableName: "Player")
+            }
+            .buttonStyle(.ghost)
+            .controlSize(.small)
+          } else if case .limitReached(tier: .free, _) = refusal {
             Button {
               router.open(.mistakes)
             } label: {
@@ -514,7 +522,9 @@ private struct LessonUnavailableBody: View {
       Button {
         routes.signIn()
       } label: {
-        Text("Log in", tableName: "Player")
+        Text(
+          "Create a free account", tableName: "Player",
+          comment: "Opens account creation for a guest")
       }
     case .limitReached(tier: .plus, _), .notFound:
       if !isNotice {

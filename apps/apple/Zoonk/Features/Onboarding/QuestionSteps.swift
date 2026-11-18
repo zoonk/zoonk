@@ -476,13 +476,10 @@ private struct PurposeQuestion: View {
   }
 }
 
-/// Main's `ReasonStep`: each reason with the level it aims for. One with a level moves on when it's
-/// picked; a certificate and Something else ask for words first, in a box under the list, so no row
-/// moves.
 func certificateExample(language: String?, region: String?) -> String? {
-  let tag = language?.split(separator: "-", maxSplits: 1) ?? []
-  let country = region ?? tag.dropFirst().first.map(String.init)
-  switch tag.first {
+  guard let language else { return nil }
+  let tag = Locale.Components(identifier: language).languageComponents
+  switch tag.languageCode?.identifier {
   case "de": return "Goethe-Zertifikat"
   case "en": return "IELTS"
   case "es": return "DELE"
@@ -491,7 +488,10 @@ func certificateExample(language: String?, region: String?) -> String? {
   case "ja": return "JLPT"
   case "ko": return "TOPIK"
   case "pt":
-    switch country {
+    let tagRegion =
+      tag.script == nil || tag.script?.identifier == "Latn"
+      ? tag.region?.identifier : nil
+    switch region ?? tagRegion {
     case "BR": return "Celpe-Bras"
     case "PT": return "CAPLE"
     default: return "ACTFL OPI"
@@ -501,6 +501,9 @@ func certificateExample(language: String?, region: String?) -> String? {
   }
 }
 
+/// Main's `ReasonStep`: each reason with the level it aims for. One with a level moves on when it's
+/// picked; a certificate and Something else ask for words first, in a box under the list, so no row
+/// moves.
 private struct ReasonQuestion: View {
   let subject: String
   let reasons: [LanguageAimView.Reason]

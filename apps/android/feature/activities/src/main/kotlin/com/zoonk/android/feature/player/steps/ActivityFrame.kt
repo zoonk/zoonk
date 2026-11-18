@@ -355,6 +355,16 @@ internal fun NumericCheck.decimalPlaces(minTolerance: ActivityTolerance?): Int? 
     }
 }
 
+internal fun NumericCheck.answerDigits(
+    value: Double?,
+    places: Int? = null,
+): Int =
+    maxOf(
+        places ?: 0,
+        exactFractionDigitsFor(answer, allowed, value ?: answer),
+        value?.toBigDecimal()?.stripTrailingZeros()?.scale() ?: 0,
+    )
+
 @Composable
 internal fun ExploredActivityCanvas(
     explore: ExploredActivity,
@@ -457,7 +467,7 @@ private fun ActivityFeedback(
                 val numeric = check.value
                 val locale = currentLocale()
                 val value = answer.numericValue
-                val digits = exactFractionDigitsFor(numeric.answer, numeric.allowed, value ?: numeric.answer)
+                val digits = numeric.answerDigits(value, places)
 
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
                     value?.let {
@@ -469,16 +479,7 @@ private fun ActivityFeedback(
                     }
                     if (!isCorrect) {
                         if (value != null) Text("·", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        RightAnswerLine(
-                            formatAmount(
-                                numeric.answer,
-                                locale,
-                                numeric.unit,
-                                maximumFractionDigits =
-                                    places ?: digits,
-                            ),
-                            tabular = true,
-                        )
+                        RightAnswerLine(formatAmount(numeric.answer, locale, numeric.unit, maximumFractionDigits = digits), tabular = true)
                     }
                 }
                 FeedbackText(numeric.explanation)

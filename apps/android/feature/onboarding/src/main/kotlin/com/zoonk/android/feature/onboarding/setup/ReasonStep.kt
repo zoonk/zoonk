@@ -21,6 +21,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingLanguageAim
+import java.util.Locale
 
 @Composable
 internal fun ColumnScope.ReasonStep(
@@ -114,8 +115,9 @@ internal fun ColumnScope.ReasonStep(
 internal fun certificateExample(
     language: String?,
     region: String?,
-): String? =
-    when (language?.substringBefore('-')) {
+): String? {
+    val tag = language?.let(Locale::forLanguageTag) ?: return null
+    return when (tag.language) {
         "de" -> {
             "Goethe-Zertifikat"
         }
@@ -145,7 +147,8 @@ internal fun certificateExample(
         }
 
         "pt" -> {
-            when (region ?: language.substringAfter('-', "")) {
+            val tagRegion = tag.country.takeIf { tag.script.isEmpty() || tag.script == "Latn" }
+            when (region ?: tagRegion) {
                 "BR" -> "Celpe-Bras"
                 "PT" -> "CAPLE"
                 else -> "ACTFL OPI"
@@ -160,3 +163,4 @@ internal fun certificateExample(
             null
         }
     }
+}
