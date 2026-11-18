@@ -21,8 +21,16 @@ describe("any-subject activities", () => {
     openActivity({ content: cited, template: "guessReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await guessOnScale(cited.fields, 14);
+    const slider = page.getByRole("slider", { name: "Your guess" });
+    const figure = page.getByRole("figure");
+
+    const sliderTop = () =>
+      slider.element().getBoundingClientRect().top - figure.element().getBoundingClientRect().top;
+
+    const beforeCheck = sliderTop();
     await checkActivity();
     await expectVerdict("Correct!");
+    expect(sliderTop()).toBe(beforeCheck);
     await expect.element(page.getByText("Real value: 14")).toBeVisible();
     await expect.element(page.getByText("Unit: times", { exact: true })).toBeVisible();
 
