@@ -11,6 +11,7 @@
   "belt_gray": "a55ba233a6619f7376c2d2ab7f92939b372103bc608f9e2976f087e204d5dd95",
   "belt_green": "7f5b15bbe9990a921c849bc8e91a1013e59a4340c10a46d47dbb69ac5ccaccc5",
   "belt_level": "6e6baa7f451a2739ab4c14eb946989e16a763cdc9251e8f7da11879a1275d231",
+  "belt_level_description": "5a60bd0ab86fc0646001728cf5574f18fd1bd5565dc57eecf33404c4bf37b55e",
   "belt_level_words": "3bda5ec1ef5201124a23c4fbd412d51a9e0c2c0caf53dd5e54e0cf4eb7c32eca",
   "belt_orange": "6c8f300f6b5d24ca82f8aa702b208a8fd2f94a115d0623ecceae1393125540c8",
   "belt_purple": "e19807ec6616efacb0a6c11340c21b58ace30dc68e7fc5aca899dbb3fb06cbc9",
@@ -122,6 +123,8 @@
     <string name="belt_black">Faixa preta</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <!-- Accessible name of the chip that opens Level. %1$s is the translated belt name; %2$s is the learner’s level number. Each locale controls their order and punctuation. -->
+    <string name="belt_level_description">%1$s, Nível %2$s</string>
     <string name="belt_level_words">Nível %1$s</string>
     <string name="answer_tag_correct">Correta</string>
     <string name="answer_tag_your_answer">Sua resposta</string>

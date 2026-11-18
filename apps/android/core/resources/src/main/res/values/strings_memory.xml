@@ -2,7 +2,6 @@
 <resources>
     <string name="memory_description">What Zoonk remembers to give you examples and plans that fit your life.</string>
     <string name="memory_use">Use memory</string>
-    <string name="memory_use_off">Nothing is remembered or used while this is off.</string>
     <string name="memory_empty">Nothing yet. Notes show up here as you study and chat.</string>
     <string name="memory_save_failed">That didn\'t save. Try again.</string>
     <string name="memory_category_goals">Goals</string>
@@ -40,4 +39,6 @@
     <string name="memory_change_undone">Change undone</string>
     <string name="memory_undo_failed">Couldn\'t undo. It changed since.</string>
     <string name="memory_undo_retry">Couldn\'t undo. Try again.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Personal examples, plans that fit your week and calls with %1$s that remember your news</string>
 </resources>

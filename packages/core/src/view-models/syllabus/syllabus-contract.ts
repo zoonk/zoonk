@@ -12,12 +12,13 @@ const countSchema = z.int().min(0);
 const shareSchema = z.number().min(0).max(1);
 const isoDateSchema = z.iso.date();
 
-const notPlannedReasonSchema = z
-  .enum(["skipped", "pastBasics", "skippedBase", "time", "missing"])
+export const notPlannedReasonSchema = z
+  .enum(["skipped", "pastBasics", "skippedBase", "known", "time", "missing"])
   .nullable()
   .meta({
     description:
-      "Why it isn't in the plan: `skipped` (the learner took the subject out; `restoreAreas` with its `areas` brings it back), `pastBasics` (a subject's basics the plan starts past: the learner said they know them, or does well in the subject with harder lessons), `skippedBase` (a base the learner chose to skip; `setBaseChoices` with `learn` brings it back), `time` (it doesn't fit before the deadline at the current pace), `missing` (no skill of the plan teaches it yet). Null when it's in the plan",
+      "Why it isn't in the plan: `skipped` (the learner took the subject out; `restoreAreas` with its `areas` brings it back), `pastBasics` (a subject's basics the plan starts past: the learner said they know them, or does well in the subject with harder lessons), `skippedBase` (a base the learner chose to skip; `setBaseChoices` with `learn` brings it back), `known` (the learner showed they know every skill of a phase), `time` (it doesn't fit before the deadline at the current pace), `missing` (no skill of the plan teaches it yet). Null when it's in the plan",
+    id: "NotPlannedReason",
   });
 
 const syllabusChapterSchema = z

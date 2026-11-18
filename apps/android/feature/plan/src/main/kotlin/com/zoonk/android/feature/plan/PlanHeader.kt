@@ -340,7 +340,7 @@ private fun MenuItem(
 private fun sharePlanUrl(
     page: PlanPageState,
     language: String,
-): String = AppLink.pageUrl("/plan-link/${page.plan.planId}", language)
+): String = AppLink.webUrl("/plan-link/${page.plan.planId}", language)
 
 /**
  * The days left to a goal's date, as the Plan and the goal menu write them: "~364 days left" for an

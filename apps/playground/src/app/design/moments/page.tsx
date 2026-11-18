@@ -19,7 +19,6 @@ import {
 export const metadata: Metadata = { title: "Special moments" };
 
 const REWARD_POINTS = 50;
-const BRAIN_POWER = 1240;
 const MISSIONS_TOTAL = 3;
 
 function BuddyInRing({ done }: { done: number }) {
@@ -56,12 +55,12 @@ function MissionsChips() {
     <div className="flex flex-wrap items-center gap-10">
       <div className="flex items-center gap-4">
         <BuddyInRing done={1} />
-        <BrainPowerReward brainPower={BRAIN_POWER} earned={false} points={REWARD_POINTS} />
+        <BrainPowerReward earned={false} points={REWARD_POINTS} />
         <span className="text-muted-foreground text-xs">Still to do</span>
       </div>
       <div className="flex items-center gap-4">
         <BuddyInRing done={MISSIONS_TOTAL} />
-        <BrainPowerReward brainPower={BRAIN_POWER} earned points={REWARD_POINTS} />
+        <BrainPowerReward earned points={REWARD_POINTS} />
         <span className="text-muted-foreground text-xs">Every mission done</span>
       </div>
     </div>

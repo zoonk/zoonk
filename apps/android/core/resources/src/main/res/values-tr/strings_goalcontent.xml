@@ -84,13 +84,6 @@
   "goalcontent_topic_count": "b6fb659c24ecf82b635f725b954f903c26d5f304d52546da78f34a5bc58b6fe4",
   "goalcontent_topic_in_progress": "557e9f9903691af0336a30728f99be8ad3d1740061080bdbee24c9f285556582",
   "goalcontent_topic_known": "a560c347e01f60132b992252bb7adf30dfcbde4a8e90980525869918dd8f7ef3",
-  "goalcontent_topic_known_practice": "7660a30fa4485ce34ab2f64bf1e4d1042850c4f4591fa66b873b74f57b222bf5",
-  "goalcontent_topic_known_reviews": "50bcc24f0d6f30ffe2d1403906861bddbdfde1f67a8996effd11a21a86d02dc0",
-  "goalcontent_topic_missing": "f81f73b4dcad3a4362b97899815d5071dc1d80bb4c996b9b3d080317a44144a1",
-  "goalcontent_topic_past_basics": "669d546f5be1b86cd0e01311f230038ab7e470a161b23a441443c99e59161275",
-  "goalcontent_topic_skipped": "9c9876f305e1f06fd6b3ad7dc78570289a285a4cddf6aa352674699a7c491497",
-  "goalcontent_topic_skipped_base": "2e05d52b624ea80f70183607e532cee71029da2040c35bfcec5b017aea3142b5",
-  "goalcontent_topic_time": "7de88ba1708f76e5171ef4f699676da3e7b6e7d252474ea3692b1a7f95fd1af2",
   "goalcontent_topic_to_study": "594ae4f73a4c816aed5570eac05673c77805f6f36653af97a3c9bc5e0a38a445",
   "goalcontent_topics": "bdc95d2b67a278160123ad024fef2ea2182b21a66ffb348804ae10f10fa6d65e",
   "goalcontent_topics_in_guide": "870035af437beca0bf99113f87adf181e8440bc73972bc7bfce856fecf5624fb",
@@ -261,13 +254,6 @@
     <string name="goalcontent_topic_known">Bunu zaten biliyorsun</string>
     <string name="goalcontent_topic_in_progress">Devam ediyor</string>
     <string name="goalcontent_topic_to_study">Çalışılacak</string>
-    <string name="goalcontent_topic_known_reviews">Bunu biliyorsun · tekrarlarında karşına çıkar</string>
-    <string name="goalcontent_topic_known_practice">Bunu biliyorsun · alıştırmalarda karşına çıkar</string>
-    <string name="goalcontent_topic_skipped">Bu branşı planından çıkardın</string>
-    <string name="goalcontent_topic_past_basics">Temel konuları geçerek başlıyorsun</string>
-    <string name="goalcontent_topic_skipped_base">Bu ön bilgiyi atlamayı seçtin</string>
-    <string name="goalcontent_topic_time">Ayırdığın süreye sığmıyor</string>
-    <string name="goalcontent_topic_missing">Bu konuda henüz ders yok</string>
     <!-- Marks a topic that comes up often in the exam. -->
     <string name="goalcontent_asked_a_lot">Sık sorulan</string>
     <!-- %1$s is the "Asked a lot" mark. -->

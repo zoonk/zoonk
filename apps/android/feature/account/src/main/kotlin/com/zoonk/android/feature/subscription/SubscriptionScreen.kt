@@ -65,6 +65,7 @@ import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.OnVisitEnd
@@ -75,6 +76,7 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
@@ -119,7 +121,7 @@ fun SubscriptionScreen(
         ) {
             when (val state = session) {
                 is SessionState.SignedIn -> {
-                    if (state.isGuest) Offer(app, navigator, PlanViewer.Guest) else Account(app, navigator, state.session.localId)
+                    if (state.isGuest) Offer(app, navigator, PlanViewer.Guest) else Account(app, navigator)
                 }
 
                 is SessionState.SignedOut -> {
@@ -145,23 +147,11 @@ internal enum class PlanViewer { Visitor, Guest, Free }
 private fun Account(
     app: AppContainer,
     navigator: AppNavigator,
-    sessionKey: String,
 ) {
     val account by app.subscriptions.account.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
     val website by app.subscriptions.websiteSubscription.collectShown()
     val scope = rememberCoroutineScope()
-    val cancellation =
-        viewModel(key = "web-plus-cancellation:$sessionKey") {
-            WebPlusCancellationViewModel(
-                app.subscriptions::cancelWebPlus,
-                app.subscriptions::keepWebPlus,
-            )
-        }
-
-    VisitOf(cancellation.visit)
-    WebPlusCancellationDialog(cancellation)
-
     when (val state = account) {
         is LoadState.Loaded -> {
             AccountPlans(
@@ -169,7 +159,6 @@ private fun Account(
                 alreadyPlus = purchase == PurchaseState.AlreadyPlus,
                 website = website,
                 navigator = navigator,
-                cancellation = cancellation,
                 onRetryWebsite = { scope.launch { app.subscriptions.websiteSubscription.refresh() } },
                 offer = { Offer(app, navigator, PlanViewer.Free) },
             )
@@ -190,7 +179,6 @@ internal fun AccountPlans(
     subscription: MeSubscription?,
     website: LoadState<StripeSubscriptionCancellation>,
     navigator: AppNavigator,
-    cancellation: WebPlusCancellationViewModel,
     onRetryWebsite: () -> Unit,
     offer: @Composable () -> Unit,
     alreadyPlus: Boolean = false,
@@ -202,7 +190,7 @@ internal fun AccountPlans(
             CurrentPlan(storePlan, navigator)
             when (website) {
                 is LoadState.Loaded -> {
-                    WebPlusPlan(website.value, cancellation, standalone = false)
+                    WebPlusPlan(website.value, standalone = false)
                 }
 
                 is LoadState.Failed -> {
@@ -222,7 +210,7 @@ internal fun AccountPlans(
         is LoadState.Loaded -> {
             PageColumn {
                 if (alreadyPlus) AlreadyPlusMessage(STRIPE)
-                WebPlusPlan(website.value, cancellation)
+                WebPlusPlan(website.value)
             }
         }
 
@@ -243,13 +231,12 @@ internal fun AccountPlans(
 @Composable
 internal fun WebPlusPlan(
     subscription: StripeSubscriptionCancellation,
-    cancellation: WebPlusCancellationViewModel,
     standalone: Boolean = true,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
+                stringResource(R.string.subscription_through_website),
                 Modifier.semantics { heading() },
                 style = MaterialTheme.zoonkType.sectionTitle,
             )
@@ -260,10 +247,7 @@ internal fun WebPlusPlan(
         }
         val dateLine =
             if (subscription.state == State.UNPAID) {
-                joinSentences(
-                    stringResource(R.string.subscription_renewal_failed),
-                    stringResource(R.string.subscription_renewal_failed_website),
-                )
+                stringResource(R.string.subscription_renewal_failed)
             } else {
                 subscription.periodEnd?.let {
                     stringResource(
@@ -275,7 +259,21 @@ internal fun WebPlusPlan(
         dateLine?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
     if (standalone && subscription.state != State.UNPAID) PlusBenefits()
-    if (subscription.state == State.ENDING) KeepWebPlusButton(cancellation) else WebPlusCancelButton(subscription.state, cancellation)
+    val context = LocalContext.current
+    val language = currentLocale().language
+    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }) {
+        Text(
+            stringResource(
+                if (subscription.state ==
+                    State.UNPAID
+                ) {
+                    R.string.subscription_renewal_failed_website
+                } else {
+                    R.string.subscription_manage_website
+                },
+            ),
+        )
+    }
 }
 
 @Composable
@@ -301,7 +299,19 @@ internal fun CurrentPlan(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.subscription_plus),
+                stringResource(
+                    if (provider ==
+                        GOOGLE
+                    ) {
+                        R.string.subscription_through_google
+                    } else if (provider ==
+                        APPLE
+                    ) {
+                        R.string.subscription_through_apple
+                    } else {
+                        R.string.subscription_plus
+                    },
+                ),
                 Modifier.semantics { heading() },
                 style = MaterialTheme.zoonkType.sectionTitle,
             )
@@ -315,18 +325,13 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text =
-                stringResource(
-                    when (provider) {
-                        GOOGLE -> R.string.subscription_managed_google
-                        APPLE -> R.string.subscription_managed_apple
-                        else -> R.string.subscription_managed_zoonk
-                    },
-                ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (provider != GOOGLE && provider != APPLE) {
+            Text(
+                stringResource(R.string.subscription_managed_zoonk),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (provider == GOOGLE) {
                 Button(
@@ -337,6 +342,10 @@ internal fun CurrentPlan(
                         )
                     },
                 ) { Text(stringResource(R.string.subscription_manage_google)) }
+            } else if (provider == APPLE) {
+                OutlinedButton(onClick = { openWebPage(context, "https://apps.apple.com/account/subscriptions") }) {
+                    Text(stringResource(R.string.subscription_manage_apple))
+                }
             }
             OutlinedButton(
                 onClick = { navigator.open(AppRoute.Help) },

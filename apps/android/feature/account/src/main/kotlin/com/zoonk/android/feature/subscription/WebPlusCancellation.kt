@@ -1,130 +1,14 @@
 package com.zoonk.android.feature.subscription
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.zoonk.android.R
-import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
-import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.ui.components.AlertDialog
-import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.StripeSubscriptionCancellation
-import com.zoonk.api.models.StripeSubscriptionCancellation.State
-import com.zoonk.api.models.StripeSubscriptionCancellationReceipt
-import kotlinx.coroutines.launch
 
-class WebPlusCancellationViewModel(
-    private val send: suspend () -> MutationResult<StripeSubscriptionCancellationReceipt>,
-    private val keepPlus: suspend () -> MutationResult<Unit>,
-) : ViewModel() {
-    /** The Subscription page's visit: Keep Plus that didn't save says so only on it. */
-    val visit = Visit()
-
-    var confirmation by mutableStateOf<State?>(null)
-        private set
-    var isSending by mutableStateOf(false)
-        private set
-    var failed by mutableStateOf(false)
-        private set
-    var isKeeping by mutableStateOf(false)
-        private set
-    private val keepFailure = visit.outcome<Unit>()
-
-    /** Keep Plus didn't save, on this visit. */
-    val keepFailed get() = keepFailure.value != null
-
-    fun open(state: State) {
-        if (isSending || state == State.ENDING) return
-        confirmation = state
-        failed = false
-    }
-
-    fun cancel() {
-        if (confirmation == null || isSending) return
-        isSending = true
-        failed = false
-        viewModelScope.launch {
-            when (val result = send()) {
-                is MutationResult.Done, MutationResult.Obsolete -> {
-                    confirmation = null
-                }
-
-                is MutationResult.Failed -> {
-                    if (result.status == HTTP_CONFLICT) confirmation = null else failed = true
-                }
-            }
-            isSending = false
-        }
-    }
-
-    fun close() {
-        if (!isSending) confirmation = null
-    }
-
-    fun keep() {
-        if (isKeeping) return
-        isKeeping = true
-        keepFailure.clear()
-        val started = visit.number
-        viewModelScope.launch {
-            val result = keepPlus()
-            if (result is MutationResult.Failed && result.status != HTTP_CONFLICT) keepFailure.send(started, Unit)
-            isKeeping = false
-        }
-    }
-}
-
-@Composable
-internal fun WebPlusCancelButton(
-    state: State,
-    cancellation: WebPlusCancellationViewModel,
-) {
-    OutlinedButton(onClick = { cancellation.open(state) }) {
-        Text(stringResource(R.string.subscription_cancel))
-    }
-}
-
-@Composable
-internal fun KeepWebPlusButton(cancellation: WebPlusCancellationViewModel) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            stringResource(R.string.subscription_keep_plus_description),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(
-            busy = cancellation.isKeeping,
-            onClick = cancellation::keep,
-            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
-        ) { Text(stringResource(R.string.subscription_keep_plus)) }
-        if (cancellation.keepFailed) Failure(stringResource(R.string.subscription_keep_failed))
-    }
-}
-
-/**
- * What deleting the account does to Plus: the website's ends with it; a store's ([provider], the
- * account's subscription's) keeps charging until it's canceled there.
- */
 @Composable
 internal fun deletionPlusNotices(
     website: Resource<StripeSubscriptionCancellation>,
@@ -135,42 +19,5 @@ internal fun deletionPlusNotices(
         stringResource(R.string.subscription_deletion_notice).takeIf { web.value != null },
         stringResource(R.string.subscription_deletion_app_store).takeIf { provider == "apple" },
         stringResource(R.string.subscription_deletion_google_play).takeIf { provider == "google" },
-    )
-}
-
-@Composable
-internal fun WebPlusCancellationDialog(cancellation: WebPlusCancellationViewModel) {
-    val status = cancellation.confirmation ?: return
-    AlertDialog(
-        onDismissRequest = cancellation::close,
-        title = { Text(stringResource(R.string.subscription_cancel_title)) },
-        text = {
-            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    stringResource(
-                        if (status == State.UNPAID) R.string.subscription_cancel_unpaid else R.string.subscription_cancel_at_period_end,
-                    ),
-                )
-                if (cancellation.failed) Failure(stringResource(R.string.subscription_cancel_failed))
-            }
-        },
-        confirmButton = {
-            TextButton(busy = cancellation.isSending, onClick = cancellation::cancel) { Text(stringResource(R.string.subscription_cancel)) }
-        },
-        dismissButton = {
-            TextButton(onClick = cancellation::close, enabled = !cancellation.isSending) {
-                Text(stringResource(R.string.subscription_cancel_back))
-            }
-        },
-    )
-}
-
-@Composable
-private fun Failure(text: String) {
-    Text(
-        text,
-        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
     )
 }

@@ -6,11 +6,11 @@ struct BrainPowerReward: View {
   let points: Int
   let earned: Bool
 
-  @State private var explains = false
+  @Environment(AppRouter.self) private var router
 
   var body: some View {
     Button {
-      explains = true
+      router.open(.statistics(section: .level))
     } label: {
       VStack(alignment: .trailing, spacing: 2) {
         Label {
@@ -45,23 +45,7 @@ struct BrainPowerReward: View {
           "\(points) Brain Power for finishing them", tableName: "Today",
           comment: "The missions' reward")
     )
-    .popover(isPresented: $explains) {
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Brain Power", tableName: "Today", comment: "Title of what Brain Power is")
-          .typeStyle(.body.weight(.semibold))
 
-        Text(
-          "Points for what you learn. They raise your belt and grow your buddy.",
-          tableName: "Today", comment: "What Brain Power is"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-      }
-      .padding()
-      .frame(idealWidth: 280)
-      .presentationCompactAdaptation(.popover)
-      .zoonkStyles()
-    }
   }
 }
 

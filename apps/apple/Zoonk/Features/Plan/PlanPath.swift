@@ -244,8 +244,7 @@ private struct PlanPhaseRow: View {
   private var meta: Text? {
     switch phase.leftOut {
     case .notInPlan:
-      return Text(
-        "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
+      return planOutsideReason(phase.notPlannedReason)
     case .lessons(let count):
       return Text(
         "\(count) lessons not studied", tableName: "Plan",
@@ -667,7 +666,7 @@ struct SyllabusSubjectRow: View {
         }
 
         if subject.notPlannedReason != nil {
-          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+          planOutsideReason(subject.notPlannedReason)
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
         } else {
@@ -775,5 +774,32 @@ struct PlanChallengeLabel: View {
       : Text(
         "Questions on this phase, with no hints", tableName: "Plan",
         comment: "What the Trickster is, under its row")
+  }
+}
+
+func planOutsideReason(_ reason: String?) -> Text {
+  switch reason {
+  case "skipped":
+    Text(
+      "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out."
+    )
+  case "known":
+    Text("Skipped\u{00A0}· you already know it", tableName: "Plan")
+  case "pastBasics":
+    Text("Skipped\u{00A0}· you already know the basics", tableName: "Plan")
+  case "skippedBase":
+    Text("Skipped\u{00A0}· your choice", tableName: "Plan")
+  case "missing":
+    Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
+  case "time":
+    Text(
+      "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it."
+    )
+  default:
+    Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
   }
 }

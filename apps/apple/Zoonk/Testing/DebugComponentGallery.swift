@@ -685,7 +685,7 @@
 
     private static func phase(_ index: Int) -> PlanPhase {
       let json = """
-        { "challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
+        { "notPlannedReason":null,"challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
           "index": \(index), "kind": "learn", "lessonsDone": 0, "lessonsTotal": 10,
           "mocks": { "count": 0, "nextDate": null }, "name": "\(index == 0 ? "Foundations" : "Fill the gaps")",
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }

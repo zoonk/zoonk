@@ -130,11 +130,6 @@ export function useMissionStateLabel(buddy: LearnBuddy | null) {
   };
 }
 
-/** Messages mark it `<mono>`, but a number in a sentence keeps the sentence's face. */
-export function renderSentenceNumber(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
-}
-
 /** Only a challenge waits, for the lessons before it in the day. */
 function useWaitLine() {
   const t = useExtracted();

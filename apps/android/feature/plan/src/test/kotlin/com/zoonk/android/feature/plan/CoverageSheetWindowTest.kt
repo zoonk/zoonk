@@ -7,12 +7,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.shell.GoalSwitch
@@ -168,7 +170,11 @@ class CoverageSheetTestActivity : ComponentActivity() {
                                 clearPreview = viewModel::clearSlotPreview,
                             ),
                             viewModel.slotState,
-                            if (LocalConfiguration.current.screenWidthDp > 900) {
+                            if (with(LocalDensity.current) {
+                                    LocalWindowInfo.current.containerSize.width
+                                        .toDp()
+                                } > 900.dp
+                            ) {
                                 SuggestionLayout.Panel
                             } else {
                                 SuggestionLayout.Line

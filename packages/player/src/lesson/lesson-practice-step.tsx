@@ -172,6 +172,7 @@ export function LessonPracticeStep(props: Props) {
         routes: {
           exit: "/mistakes",
           exitTo: null,
+          mistakes: "/mistakes",
           nextLesson: null,
           seePlan: () => "/plan",
           signUp: "/login",

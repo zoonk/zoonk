@@ -186,8 +186,8 @@ class AppLinkTest {
 
     @Test
     fun anyPageOfMainHasItsUrlInTheAppsLanguage() {
-        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "en"))
-        assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "pt"))
-        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "ar"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.webUrl("/plan-link/abc", "en"))
+        assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.webUrl("/plan-link/abc", "pt"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.webUrl("/plan-link/abc", "ar"))
     }
 }

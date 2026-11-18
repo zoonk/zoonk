@@ -69,6 +69,46 @@ class FreeLessonGateTest {
         assertEquals(1, starts)
     }
 
+    @Test
+    fun usedUpLessonsOfferTheMistakesNotebook() {
+        var opened: AppRoute? = null
+        val exits =
+            object : LessonPlayerExits {
+                override fun close() = Unit
+
+                override fun open(route: AppRoute) {
+                    opened = route
+                }
+
+                override fun replace(route: AppRoute) = Unit
+            }
+        val refusal = LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, clock.opening))
+        rule.setContent {
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme {
+                    LessonFrame(title = "Lesson", onClose = {}, bottomBar = lessonAccessBar(refusal, {}, exits)) {
+                        LessonAccessScreen(refusal, onRetry = {})
+                    }
+                }
+            }
+        }
+        rule.onNodeWithText("Practice your mistakes").performClick()
+        assertEquals(AppRoute.Mistakes, opened)
+    }
+
+    @Test
+    fun theMissionBonusOpensLevel() {
+        var opened: AppRoute? = null
+        rule.setContent {
+            ZoonkTheme {
+                com.zoonk.android.feature.missions
+                    .BrainPowerReward("50", false) { opened = AppRoute.StatsLevel }
+            }
+        }
+        rule.onNodeWithText("Brain Power").performClick()
+        assertEquals(AppRoute.StatsLevel, opened)
+    }
+
     private val clock by lazy { TestClock(rule.mainClock) }
 
     private fun showNoticeInPlace(onRetry: () -> Unit = {}) {

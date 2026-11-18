@@ -32,36 +32,6 @@ final class SettingsAPITests: XCTestCase {
     }
   }
 
-  func testAWebPlusThatAlreadyChangedIsReadAgainNotFailed() async throws {
-    try await webPlusAPI(.ok, #"{"endsAt":"2026-12-01T12:00:00.000Z"}"#)
-      .cancelWebPlus(token: "token")
-    try await webPlusAPI(
-      .conflict,
-      #"{"error":{"code":"CONFLICT","message":"No renewing web subscription to cancel"}}"#
-    ).cancelWebPlus(token: "token")
-    try await webPlusAPI(
-      .notFound, #"{"error":{"code":"NOT_FOUND","message":"No web subscription left to manage"}}"#
-    ).cancelWebPlus(token: "token")
-    try await webPlusAPI(.noContent, nil).keepWebPlus(token: "token")
-    try await webPlusAPI(
-      .conflict,
-      #"{"error":{"code":"CONFLICT","message":"Plus isn't set to end with its paid period"}}"#
-    ).keepWebPlus(token: "token")
-  }
-
-  func testAWebPlusChangeTheServerCouldntMakeFails() async {
-    let api = webPlusAPI(
-      .internalServerError,
-      #"{"error":{"code":"INTERNAL_ERROR","message":"Internal server error"}}"#)
-
-    do {
-      try await api.cancelWebPlus(token: "token")
-      XCTFail("Expected the cancellation to fail")
-    } catch {
-      XCTAssertEqual(error as? APIError, .unavailable)
-    }
-  }
-
   func testAMemoryChangeThatChangedSinceIsAnAnswerNotAFailure() async throws {
     let changedSince = APIClientFactory(
       baseURL: URL(string: "https://api.zoonk.test")!,

@@ -4,8 +4,6 @@
   "missions_after_lessons": "62c71482ab6ff7df5a372c06faf42aea79178c51fb3c224d6311df95ceb1a345",
   "missions_ask_buddy": "00fb162bd616725801cc01c351444d5816715252abe44bffcfd7a7ce8a69f4c1",
   "missions_brain_power": "853cad5c7d2338220469f05582646cb68c5ed56dfc69fb0d63ea49a16b7bff7d",
-  "missions_brain_power_about": "8f35b89ca4681cbc899f898e2978b81eca750ffa8016fd31faf2d1ae0357b5fc",
-  "missions_brain_power_total": "cac0945bd2a215cc00a7ffb439054426181cc9b13ec5207e1e1c2a4fcdfafd69",
   "missions_call": "7917956b2ca744657be90a56fede8ededbff33e17444e5ca96a32232d4c0c217",
   "missions_challenge": "5f920e89c58d5b185f7a479a18a7df5e609f437d527839df7673f18eb0a33b3a",
   "missions_done": "f9832ad2206afa69675c744dedfb1ed895c48ac04b57d3d6c649cf17cd0c115d",
@@ -70,8 +68,6 @@
     <string name="missions_brain_power">Potenza Mentale</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">Punti per quello che impari. Ti fanno salire di cintura e fanno crescere il tuo compagno.</string>
-    <string name="missions_brain_power_total">Hai %1$s</string>
     <string name="missions_review">Ripassa</string>
     <string name="missions_something_new">Fai una nuova lezione</string>
     <!-- %1$s is a chapter's title. -->
