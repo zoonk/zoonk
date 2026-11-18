@@ -71,8 +71,8 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
@@ -613,7 +613,18 @@ internal fun SheetSections(
                     } else {
                         stringResource(
                             R.string.mock_section_answered_of,
-                            formatNumber((if (section.status == MockExamSectionsInner.Status.CURRENT) counts.answered else 0).toDouble(), locale),
+                            formatNumber(
+                                (
+                                    if (section.status ==
+                                        MockExamSectionsInner.Status.CURRENT
+                                    ) {
+                                        counts.answered
+                                    } else {
+                                        0
+                                    }
+                                ).toDouble(),
+                                locale,
+                            ),
                             formatNumber((section.questions + section.essays).toDouble(), locale),
                         )
                     },

@@ -140,32 +140,32 @@ class CoverageCardTestActivity : ComponentActivity() {
                 Column {
                     if (CoverageCardTest.shown.value) {
                         CoverageSuggestion(
-                        Slot(
-                            page,
-                            PlanEdits(
-                                timeToCover = timeToCover,
-                                findTimeToCover = viewModel::findTimeToCover,
-                                outcomes = viewModel.outcomes,
+                            Slot(
+                                page,
+                                PlanEdits(
+                                    timeToCover = timeToCover,
+                                    findTimeToCover = viewModel::findTimeToCover,
+                                    outcomes = viewModel.outcomes,
+                                ),
+                                PlanLinks(navigator, page),
+                                SlotHost(
+                                    preview = preview,
+                                    requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
+                                    clearPreview = viewModel::clearSlotPreview,
+                                ),
+                                viewModel.slotState,
+                                if (with(LocalDensity.current) {
+                                        LocalWindowInfo.current.containerSize.width
+                                            .toDp()
+                                    } > 900.dp
+                                ) {
+                                    SuggestionLayout.Panel
+                                } else {
+                                    SuggestionLayout.Line
+                                },
+                                SlotFocus(),
                             ),
-                            PlanLinks(navigator, page),
-                            SlotHost(
-                                preview = preview,
-                                requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
-                                clearPreview = viewModel::clearSlotPreview,
-                            ),
-                            viewModel.slotState,
-                            if (with(LocalDensity.current) {
-                                    LocalWindowInfo.current.containerSize.width
-                                        .toDp()
-                                } > 900.dp
-                            ) {
-                                SuggestionLayout.Panel
-                            } else {
-                                SuggestionLayout.Line
-                            },
-                            SlotFocus(),
-                        ),
-                    )
+                        )
                     }
                 }
             }
