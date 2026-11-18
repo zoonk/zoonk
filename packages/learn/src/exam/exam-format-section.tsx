@@ -91,7 +91,11 @@ function useDayTitle() {
       </span>
     );
 
-    return numbered ? <FactSegments facts={[date]} lead={number} /> : date;
+    return numbered ? (
+      <FactSegments facts={[{ content: date, key: day.date }]} lead={number} />
+    ) : (
+      date
+    );
   };
 }
 
