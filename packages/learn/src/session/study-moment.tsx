@@ -21,13 +21,26 @@ import { MomentToday } from "./moment-today";
 import { pickDayMoment } from "./pick-day-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import { BlockRow, SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
+import {
+  BlockRow,
+  SessionQueue,
+  SessionQueueAsideContent,
+  useSessionQueueAside,
+} from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
+function NextBlock({
+  block,
+  rows,
+  subject,
+}: {
+  block: StudyBlock;
+  rows: ReturnType<typeof getSessionQueue>;
+  subject: boolean;
+}) {
   const t = useExtracted();
 
   return (
@@ -36,9 +49,12 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
       data-slot="study-moment-next"
     >
       <PageSectionTitle>{t("Up next")}</PageSectionTitle>
-      <ListGroup role="list">
-        <BlockRow block={block} state="next" />
-      </ListGroup>
+      <SessionQueue className="with-aside:hidden" rows={rows} />
+      {subject && (
+        <ListGroup className="without-aside:hidden" role="list">
+          <BlockRow block={block} state="next" />
+        </ListGroup>
+      )}
     </section>
   );
 }
@@ -184,7 +200,11 @@ export function StudyMoment({
         <DayMoment buddy={buddy} {...dayMoment} />
 
         {nextBlock && (
-          <NextBlock block={nextBlock} subject={Boolean(testChapterId && onStartTestOut)} />
+          <NextBlock
+            block={nextBlock}
+            rows={queue.rows}
+            subject={Boolean(testChapterId && onStartTestOut)}
+          />
         )}
 
         {testChapterId && onStartTestOut && (

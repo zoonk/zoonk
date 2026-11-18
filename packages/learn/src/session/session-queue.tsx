@@ -46,9 +46,15 @@ export function BlockRow({ block, state }: SessionQueueRow) {
   );
 }
 
-function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
+export function SessionQueue({
+  className,
+  rows,
+}: {
+  className?: string;
+  rows: readonly SessionQueueRow[];
+}) {
   return (
-    <ListGroup role="list">
+    <ListGroup className={className} role="list">
       {rows.map((row) => (
         <BlockRow key={row.block.position} {...row} />
       ))}
