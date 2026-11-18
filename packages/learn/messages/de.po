@@ -3322,10 +3322,11 @@ msgid "Day {number, number}"
 msgstr "Tag {number, number}"
 
 #: src/exam/exam-format-section.tsx
-#: src/exam/exam-screen.tsx
-msgctxt "1L3MIn"
-msgid "Day not set yet"
-msgstr "Tag steht noch nicht fest"
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "Datum noch offen"
 
 #: src/exam/exam-labels.tsx
 msgctxt "_Dh3uU"
@@ -3689,6 +3690,11 @@ msgstr "{date} um {time}"
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "Prüfungsoptionen"
+
+#: src/exam/exam-screen.tsx
+msgctxt "1L3MIn"
+msgid "Day not set yet"
+msgstr "Tag steht noch nicht fest"
 
 #: src/exam/exam-screen.tsx
 msgctxt "pV2uIU"
@@ -4912,12 +4918,6 @@ msgstr ", abgeschlossen"
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
 msgstr "{count, plural, one {# Lektion nicht bearbeitet} other {# Lektionen nicht bearbeitet}}"
-
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "Datum noch offen"
 
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
@@ -8569,11 +8569,11 @@ msgctxt "P0PLlQ"
 msgid "Points"
 msgstr "Punkte"
 
-#. In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).
+#. Over a score range on a mock exam's result. The exam's name goes last, after the separator, with no article before it.
 #: src/mock/mock-result-view.tsx
-msgctxt "estimatedExamScore"
-msgid "Estimated {exam} score"
-msgstr "Geschätzter Score für {exam}"
+msgctxt "estimatedScoreNamedExam"
+msgid "Estimated score · {exam}"
+msgstr "Geschätzter Score · {exam}"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "bYZf2G"
@@ -10365,9 +10365,9 @@ msgid "The exam's likely date is now {date}."
 msgstr "Die Prüfung findet jetzt voraussichtlich am {date} statt."
 
 #: src/plan/notice-day.tsx
-msgctxt "4Q_yNQ"
-msgid "The exam is on {date}."
-msgstr "Die Prüfung ist am {date}."
+msgctxt "cnlSzV"
+msgid "The official exam date is {date}. Use it as your exam date?"
+msgstr "Der offizielle Prüfungstermin ist am {date}. Diesen Termin für deine Prüfung übernehmen?"
 
 #: src/plan/notice-day.tsx
 msgctxt "78R32n"
@@ -10378,11 +10378,6 @@ msgstr "Kein Prüfungstermin im {month}"
 msgctxt "wMxWx9"
 msgid "Use {date}"
 msgstr "{date} übernehmen"
-
-#: src/plan/notice-day.tsx
-msgctxt "3L56jf"
-msgid "The official {exam} date is {date}. Use it as your exam date?"
-msgstr "Der offizielle Termin für {exam} ist am {date}. Als deinen Prüfungstermin übernehmen?"
 
 #: src/plan/plan-activities.tsx
 msgctxt "Np3v0G"
@@ -10797,6 +10792,15 @@ msgstr "Dein Zieldatum liegt zurück"
 msgctxt "O6zpGA"
 msgid "Plan suggestion"
 msgstr "Planvorschlag"
+
+#: src/plan/plan-suggestion-context.tsx
+#: src/plan/use-time-to-cover.ts
+#: src/today/today-falling-behind.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "Änderungen ansehen"
 
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "cTvbeT"
@@ -11543,14 +11547,6 @@ msgstr "Wir berechnen, wie viel Lernzeit du für alles brauchst…"
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Wir konnten kein Datum finden, bis zu dem du alles durchgehen kannst."
-
-#: src/plan/use-time-to-cover.ts
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "Änderungen ansehen"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
@@ -12965,11 +12961,11 @@ msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "Berücksichtigt deine Antworten aus Lektionen, Übungen und Tests."
 
-#. In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).
+#. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
-msgctxt "questionsFromExamEdition"
-msgid "Questions from {exam}"
-msgstr "Fragen aus der Prüfung {exam}"
+msgctxt "questionsNamedExamEdition"
+msgid "Questions · {exam}"
+msgstr "Fragen · {exam}"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
