@@ -3,7 +3,7 @@ import { AiTaskName } from "@/components/ai-task-name";
 import { BarList } from "@/components/bar-list";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { getUserAiSpend } from "@/data/ai/get-user-ai-spend";
-import { formatDollars, formatUsd } from "@/lib/ai-format";
+import { formatUsd } from "@/lib/ai-format";
 import { sumOf } from "@zoonk/utils/number";
 import { CpuIcon, HashIcon } from "lucide-react";
 
@@ -24,7 +24,7 @@ export async function UserAiSpend({ userId }: { userId: string }) {
             <StatTile
               icon={<CpuIcon />}
               title="Spend"
-              value={formatDollars(sumOf(tasks.map((row) => row.costUsd)))}
+              value={formatUsd(sumOf(tasks.map((row) => row.costUsd)))}
             />
             <StatTile icon={<HashIcon />} title="Calls" value={calls.toLocaleString("en")} />
           </div>

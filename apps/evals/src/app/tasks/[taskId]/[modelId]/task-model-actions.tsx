@@ -56,6 +56,7 @@ export function TaskModelFileActions({
           icon={<DownloadIcon />}
           onClick={exportAll}
           size="bar"
+          className="lg:h-11"
           variant="outline"
         >
           Export outputs
@@ -64,6 +65,7 @@ export function TaskModelFileActions({
           disabled={disabled}
           onClick={() => setReviewOpen(true)}
           size="bar"
+          className="lg:h-11"
           variant="outline"
           icon={<FileTextIcon />}
         >
@@ -73,6 +75,7 @@ export function TaskModelFileActions({
           disabled={disabled}
           onClick={() => setDeleteOpen(true)}
           size="bar"
+          className="lg:h-11"
           variant="outline"
           icon={<Trash2Icon />}
         >

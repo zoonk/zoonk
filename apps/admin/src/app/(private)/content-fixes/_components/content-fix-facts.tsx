@@ -5,15 +5,28 @@ import { getEnvironment } from "@zoonk/utils/environment";
 import { MAIN_URL } from "@zoonk/utils/url";
 
 /** Who proposed a fix, when and from where: a batch says it from its first fix. */
-export function proposedFact(fix: {
+export function proposalFacts(fix: {
   createdAt: Date;
   proposer: { name: string } | null;
   proposerClientId: string | null;
-}): string {
+}) {
   const proposedIn = fix.proposerClientId === "admin" ? "Admin" : "the CLI";
   const proposer = fix.proposer?.name ?? "a deleted account";
 
-  return `Proposed ${formatDateTime(fix.createdAt)} by ${proposer} in ${proposedIn}`;
+  return [
+    {
+      content: <span className="whitespace-nowrap">Proposed {formatDateTime(fix.createdAt)}</span>,
+      key: "proposed-date",
+    },
+    {
+      content: (
+        <>
+          By {proposer} <span className="whitespace-nowrap">in {proposedIn}</span>
+        </>
+      ),
+      key: "proposer",
+    },
+  ];
 }
 
 /** The ids a developer needs, closed, under the environment they belong to. */

@@ -44,11 +44,6 @@ export function formatDayRange({ end, start }: { end: Date; start: Date }): stri
   });
 }
 
-/** An instant's day in the server's zone, with no year: "Nov 15". */
-export function formatShortDate(date: Date): string {
-  return date.toLocaleDateString("en", { day: "numeric", month: "short" });
-}
-
 export function formatDate(date: Date | string | null | undefined): string {
   return date ? new Date(date).toLocaleDateString("en", { dateStyle: "medium" }) : "—";
 }
@@ -68,10 +63,8 @@ export function formatTimeOfDay(time: string): string {
   });
 }
 
-const PERCENT_DIGITS = 1;
-
 export function formatPercent(value: number | null): string {
-  return value === null ? "—" : `${value.toFixed(PERCENT_DIGITS)}%`;
+  return value === null ? "—" : `${Math.round(value)}%`;
 }
 
 export function formatCount(count: number, one: string, many = `${one}s`): string {

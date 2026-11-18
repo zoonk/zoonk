@@ -25,7 +25,7 @@ const columns: AdminTableColumn[] = [
 
 function LessonState({ lesson }: { lesson: ListedLibraryLesson }) {
   if (lesson.setAsideAt) {
-    return <StateMark state="quarantined">Set aside</StateMark>;
+    return <StateMark state="quarantined">{libraryLessonStatusLabels.setAside}</StateMark>;
   }
 
   return (

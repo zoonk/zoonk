@@ -1,13 +1,12 @@
 import "server-only";
 import { STUCK_RUNNING_MINUTES, countGenerationFailures } from "@/data/ai/get-generation-failures";
 import { listDailyAiSpendBetween } from "@/data/ai/list-daily-ai-spend";
-import { type InboxQueue, getInbox } from "@/data/inbox/get-inbox";
+import { getInbox } from "@/data/inbox/get-inbox";
 import { countMissingAudio } from "@/data/media/list-missing-audio";
 import { countActiveLearners } from "@/data/stats/count-active-learners";
 import { getActiveLearnerTrend } from "@/data/stats/get-active-learner-trend";
 import { getDailySignups } from "@/data/stats/get-daily-signups";
 import { getLearningTimeTrend } from "@/data/stats/get-learning-time-trend";
-import { formatDate } from "@/lib/format";
 import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { sumOf } from "@zoonk/utils/number";
@@ -19,14 +18,11 @@ export type AttentionItem = {
   /** Something broke, where the other rows are work waiting its turn. */
   failed?: boolean;
   href: Route;
+  oldest?: Date | null;
   title: string;
 };
 
 const MINUTES_PER_HOUR = 60;
-
-function since({ oldest }: InboxQueue): string {
-  return oldest ? `, the oldest from ${formatDate(oldest)}` : "";
-}
 
 /** Only what has something waiting: an empty queue isn't shown. */
 export async function loadAttention(): Promise<AttentionItem[]> {
@@ -49,26 +45,30 @@ export async function loadAttention(): Promise<AttentionItem[]> {
     },
     {
       count: inbox.feedback.count,
-      detail: `New messages${since(inbox.feedback)}`,
+      detail: "New messages",
       href: "/feedback/messages",
+      oldest: inbox.feedback.oldest,
       title: "Feedback",
     },
     {
       count: inbox.contentFixes.count,
-      detail: `Waiting for approval${since(inbox.contentFixes)}`,
+      detail: "Waiting for approval",
       href: "/content-fixes",
+      oldest: inbox.contentFixes.oldest,
       title: "Content fixes",
     },
     {
       count: inbox.sourceChanges.count,
-      detail: `Lessons and questions that cite a changed source${since(inbox.sourceChanges)}`,
+      detail: "Lessons and questions that cite a changed source",
       href: "/review-flags",
+      oldest: inbox.sourceChanges.oldest,
       title: "Source changes",
     },
     {
       count: inbox.accountDeletions.count,
-      detail: `Analytics to delete by hand${since(inbox.accountDeletions)}`,
+      detail: "Analytics to delete by hand",
       href: "/account-deletions",
+      oldest: inbox.accountDeletions.oldest,
       title: "Account deletions",
     },
     {

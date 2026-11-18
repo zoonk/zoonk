@@ -1,4 +1,5 @@
 import { BackLink, PageTop } from "@zoonk/ui/components/page-top";
+import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 import { AdminBarMenuButton, AdminBarSearchButton } from "./admin-bar-buttons";
 
@@ -11,8 +12,7 @@ const PAGE_GUTTER_CLASS =
 /**
  * The top of every Admin page, list or record, on the shared page top: a bar with the way back to
  * the page it belongs to and the page's own actions, then the title and what `children` says about
- * it. Where the sidebar is hidden the bar's end also opens search and the menu, so the way back
- * starts on the title's edge.
+ * it. Where the sidebar is hidden, search and the menu sit before the record's actions.
  */
 export function AdminHeader({
   actions,
@@ -28,13 +28,16 @@ export function AdminHeader({
   title: React.ReactNode;
 }) {
   return (
-    <div className={PAGE_GUTTER_CLASS} data-slot="admin-header">
+    <div
+      className={cn(PAGE_GUTTER_CLASS, parent && "[--bar-start-min:5.5rem]")}
+      data-slot="admin-header"
+    >
       <PageTop
         actions={
           <>
-            {actions}
             <AdminBarSearchButton />
-            <AdminBarMenuButton />
+            <AdminBarMenuButton last={!actions} />
+            {actions}
           </>
         }
         back={

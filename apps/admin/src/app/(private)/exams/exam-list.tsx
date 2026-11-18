@@ -11,9 +11,9 @@ import { ExamRow } from "./exam-row";
 const columns: AdminTableColumn[] = [
   { label: "Exam", twoLines: true },
   { label: "Country", size: "wide" },
-  { label: "Exam date" },
+  { align: "right", label: "Exam date" },
   { align: "right", label: "Goals" },
-  { label: "Next check", size: "wide" },
+  { align: "right", label: "Next check", size: "wide" },
 ];
 
 export async function ExamList({ searchParams }: Pick<PageProps<"/exams">, "searchParams">) {
