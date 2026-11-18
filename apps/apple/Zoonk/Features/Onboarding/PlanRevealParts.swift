@@ -49,12 +49,14 @@ struct RevealReadouts: View {
       readout(label: timeLabel) {
         BigQuantity(planDurationText(minutes: Double(plan.schedule.shape.weekdays)))
       }
+      .padding(.trailing, 12)
 
       if let finish {
         Divider()
         readout(label: finish.label) {
           finish.value
         }
+        .padding(.leading, 12)
       }
     }
     .fixedSize(horizontal: false, vertical: true)
@@ -74,7 +76,6 @@ struct RevealReadouts: View {
         .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 12)
     .accessibilityElement(children: .combine)
   }
 
