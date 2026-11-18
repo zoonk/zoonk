@@ -93,6 +93,7 @@ function QuestionStepScreen({
           reasons={view.languageAim?.reasons ?? []}
           subject={subject}
           targetLanguage={view.goal.targetLanguage}
+          targetRegion={view.goal.targetRegion}
         />
       );
     case "target":

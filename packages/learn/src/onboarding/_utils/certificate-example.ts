@@ -1,3 +1,4 @@
+import { splitTargetLanguage } from "@zoonk/utils/language-regions";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 
 const CERTIFICATE_EXAMPLES: Readonly<Record<string, string>> = {
@@ -8,11 +9,31 @@ const CERTIFICATE_EXAMPLES: Readonly<Record<string, string>> = {
   it: "CELI",
   ja: "JLPT",
   ko: "TOPIK",
-  pt: "Celpe-Bras",
+  pt: "ACTFL OPI",
   zh: "HSK",
 };
 
-export function getCertificateExample(language: string | null): string | undefined {
-  const base = language ? getBaseLanguage(language) : "";
-  return Object.hasOwn(CERTIFICATE_EXAMPLES, base) ? CERTIFICATE_EXAMPLES[base] : undefined;
+const COUNTRY_EXAMPLES = new Map([
+  ["pt-BR", "Celpe-Bras"],
+  ["pt-PT", "CAPLE"],
+]);
+
+export function getCertificateExample({
+  language,
+  region,
+}: {
+  language: string | null;
+  region?: string | null;
+}): string | undefined {
+  if (!language) {
+    return undefined;
+  }
+
+  const base = getBaseLanguage(language);
+  const country = region ?? splitTargetLanguage(language).targetRegion;
+  const example = country && COUNTRY_EXAMPLES.get(`${base}-${country}`);
+
+  return (
+    example || (Object.hasOwn(CERTIFICATE_EXAMPLES, base) ? CERTIFICATE_EXAMPLES[base] : undefined)
+  );
 }

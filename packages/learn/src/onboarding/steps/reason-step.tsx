@@ -42,12 +42,14 @@ export function ReasonStep({
   reasons,
   subject,
   targetLanguage,
+  targetRegion,
 }: {
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   reasons: readonly LanguageReasonView[];
   subject: string;
   targetLanguage: string | null;
+  targetRegion: string | null;
 }) {
   const t = useExtracted();
   const copyFor = useReasonCopy();
@@ -64,7 +66,7 @@ export function ReasonStep({
     pending,
   });
 
-  const example = getCertificateExample(targetLanguage);
+  const example = getCertificateExample({ language: targetLanguage, region: targetRegion });
 
   const choices: Choice<LanguageReason>[] = reasons.map((view) => ({
     ...copyFor(view),
