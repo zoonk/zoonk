@@ -1,5 +1,6 @@
 "use client";
 
+import { buildAdminHref } from "@/lib/admin-href";
 import { logout } from "@zoonk/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
 import {
@@ -13,13 +14,20 @@ import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { LogOutIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CLI_LOGINS_PAGE } from "./admin-navigation";
 
 export type AdminAccount = { email: string; image: string | null; name: string };
 
 export function AdminAccountMenu({ account }: { account: AdminAccount }) {
+  const pathname = usePathname();
   const name = account.name || account.email;
   const CliLoginsIcon = CLI_LOGINS_PAGE.icon;
+
+  const cliLoginsHref = buildAdminHref({
+    params: { from: pathname === CLI_LOGINS_PAGE.url ? undefined : pathname },
+    path: CLI_LOGINS_PAGE.url,
+  });
 
   return (
     <DropdownMenu>
@@ -41,7 +49,7 @@ export function AdminAccountMenu({ account }: { account: AdminAccount }) {
       >
         <p className="text-muted-foreground px-3 py-2.5 text-xs wrap-anywhere">{account.email}</p>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href={CLI_LOGINS_PAGE.url} prefetch />}>
+        <DropdownMenuItem render={<Link href={cliLoginsHref} prefetch />}>
           <CliLoginsIcon aria-hidden="true" />
           {CLI_LOGINS_PAGE.label}
         </DropdownMenuItem>
