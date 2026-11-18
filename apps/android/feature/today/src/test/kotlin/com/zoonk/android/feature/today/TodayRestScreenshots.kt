@@ -61,6 +61,7 @@ class TodayRestScreenshots {
                 icon = R.drawable.ic_pause,
                 sentence = stringResource(R.string.today_paused_goal, GOAL),
                 clause = stringResource(R.string.today_paused_detail),
+                statusAsCard = true,
                 failure = stringResource(R.string.plan_goal_limit_reached),
                 other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.gate_start_goal)) } },
             ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.today_resume)) } }
@@ -75,6 +76,7 @@ class TodayRestScreenshots {
                 icon = R.drawable.ic_pause,
                 sentence = stringResource(R.string.today_paused_goal, GOAL),
                 clause = stringResource(R.string.today_paused_detail),
+                statusAsCard = true,
                 other = { OutlinedButton(onClick = {}) { Text(stringResource(R.string.gate_start_goal)) } },
             ) { main -> Button(onClick = {}, modifier = main) { Text(stringResource(R.string.today_resume)) } }
         }

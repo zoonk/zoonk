@@ -89,7 +89,7 @@ internal fun TodayNotice(
         }
 
         Today.Notice.PLAN_CHANGE -> {
-            PlanChangeNotice(state, layout, modifier)
+            PlanChangeNotice(state, modifier)
         }
 
         Today.Notice.INSIGHT -> {

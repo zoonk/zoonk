@@ -18,7 +18,6 @@ import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,22 +44,12 @@ class TodayMockReadsTest {
         val cache = AppCache(FakeSession(AuthenticatedSession(ANA, "token-a", "local-a")), scope)
         val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
         val mocks = MockStore(LiveMockApi(api.clients), cache)
-        val goal =
-            TodayGoal(
-                dateEstimated = false,
-                daysLeft = null,
-                id = GOAL,
-                kind = TodayGoal.Kind.EXAM,
-                targetDate = null,
-                title = "ENEM 2026",
-                displayName = "ENEM",
-            )
         var examPage by mutableStateOf(false)
 
         rule.setContent {
             ZoonkTheme {
                 Column {
-                    TodayPractice(today, mocks, goal, completedLessons = false) {}
+                    TodayPractice(today, mocks, GOAL, isExam = true, isLanguage = false, completedLessons = false) {}
                     if (examPage) mocks.options[GOAL].collectShown()
                 }
             }

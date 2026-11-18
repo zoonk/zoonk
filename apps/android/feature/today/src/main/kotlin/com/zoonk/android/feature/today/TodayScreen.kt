@@ -61,6 +61,9 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.Suggestion
+import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
@@ -182,7 +185,9 @@ private fun TodayRead(
                             TodayPractice(
                                 app.today,
                                 app.mocks,
-                                read.today.goal,
+                                read.today.goal.id,
+                                isExam = read.today.goal.kind == TodayGoal.Kind.EXAM,
+                                isLanguage = read.today.goal.kind == TodayGoal.Kind.LANGUAGE,
                                 completedLessons = summary.value?.places?.completedLessons == true,
                                 navigate = navigator::open,
                             )
@@ -362,7 +367,21 @@ private fun GoalAtRest(
         sentence =
             goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
         clause = stringResource(R.string.today_paused_detail),
-        detail = { if (goal?.status == LearnerSummaryGoal.Status.PAUSED) ResumeEffect(app, goal) },
+        statusAsCard = true,
+        detail = {
+            if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
+                ResumeEffect(app, goal)
+                TodayPractice(
+                    app.today,
+                    app.mocks,
+                    goal.id,
+                    isExam = goal.kind == LearnerSummaryGoal.Kind.EXAM,
+                    isLanguage = goal.kind == LearnerSummaryGoal.Kind.LANGUAGE,
+                    completedLessons = summary.places.completedLessons,
+                    navigate = navigator::open,
+                )
+            }
+        },
         failure =
             when (viewModel.resumeFailure) {
                 ResumeFailure.GoalLimit -> stringResource(R.string.plan_goal_limit_reached)
@@ -498,6 +517,7 @@ internal fun TodayAtRest(
     @DrawableRes icon: Int,
     sentence: String,
     clause: String? = null,
+    statusAsCard: Boolean = false,
     banner: @Composable () -> Unit = {},
     detail: @Composable () -> Unit = {},
     failure: String? = null,
@@ -511,7 +531,18 @@ internal fun TodayAtRest(
     ) {
         banner()
         TodayPageHeader(stringResource(R.string.today_title))
-        TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
+        if (statusAsCard) {
+            Suggestion(
+                label = sentence,
+                summary = sentence,
+                layout = SuggestionLayout.Line,
+                mark = SuggestionMark.Symbol(icon),
+                lineAction = null,
+                lineDescription = clause,
+            ) {}
+        } else {
+            TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
+        }
         detail()
     }
 }
