@@ -344,10 +344,8 @@ private struct PlanContent: View {
         PlanHeaderActions(context: context)
       }
       .listRowSeparator(.hidden)
-      if !context.plan.roadPhases.isEmpty {
-        PlanRoadmapContent(context: context, structure: structure)
-          .listRowSeparator(.hidden)
-      }
+      PlanRoadmapContent(context: context, structure: structure)
+        .listRowSeparator(.hidden)
     }
   }
 

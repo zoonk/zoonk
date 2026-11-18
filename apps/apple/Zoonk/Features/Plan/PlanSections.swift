@@ -328,7 +328,7 @@ struct PlanNumbersSection: View {
     let schedule = scheduleNumber
 
     if standing != nil || schedule != nil {
-      Section {
+      PageSection {
         StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
           if let standing {
             tile(standing) { context.show(.standing) }
@@ -339,7 +339,8 @@ struct PlanNumbersSection: View {
           }
         }
         .buttonStyle(.plain)
-        .listRowSeparator(.hidden)
+      } header: {
+        EmptyView()
       }
     }
   }
