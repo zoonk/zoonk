@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -293,11 +292,9 @@ private fun ChooserPage(
             asideLabel = stringResource(R.string.mock_chooser_picked),
             modifier = Modifier.weight(1f),
             listState = listState,
-        ) { asideBeside ->
-            content(asideBeside)
-            // The note draws over the list's end just above the bar, so the list keeps that room clear.
-            item(key = "note-room", contentType = "note-room") { Spacer(Modifier.height(noteRoom.height)) }
-        }
+            noteRoom = noteRoom,
+            content = content,
+        )
         BottomBar(note = note, noteRoom = noteRoom, content = bar)
     }
 }
