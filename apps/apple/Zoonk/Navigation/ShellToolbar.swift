@@ -252,7 +252,11 @@ struct GoalSwitcher: View {
       return .goal
     }
 
-    return followed == 0 && waiting == 0 && explanations > 1 ? .explanations : .startGoal
+    if followed == 0 && waiting > 0 {
+      return .yourGoals
+    }
+
+    return followed == 0 && explanations > 1 ? .explanations : .startGoal
   }
 
   /// Said in an alert, since the menu the learner chose from has closed.
@@ -395,10 +399,13 @@ struct GoalSwitcher: View {
         }
       }
       .accessibilityLabel(triggerTitle)
+      // Main's says "current goal" only after a goal's name.
       .accessibilityHint(
-        Text(
-          "Current goal. Switch goal", tableName: "Navigation",
-          comment: "Spoken hint of the goal switcher, after the current goal's title"))
+        shownGoal == nil
+          ? Text(verbatim: "")
+          : Text(
+            "Current goal. Switch goal", tableName: "Navigation",
+            comment: "Spoken hint of the goal switcher, after the current goal's title"))
     }
   }
 
@@ -409,7 +416,11 @@ struct GoalSwitcher: View {
 
     return switch trigger {
     case .goal: Text(shownGoal?.displayName ?? "")
-    case .startGoal, .yourGoals: startGoalTitle
+    case .startGoal: startGoalTitle
+    case .yourGoals:
+      Text(
+        "Your goals", tableName: "Navigation",
+        comment: "Heading over the learner's goals in the goal switcher")
     case .explanations:
       Text(
         "Quick explanations", tableName: "Navigation",
