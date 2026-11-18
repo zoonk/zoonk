@@ -249,11 +249,17 @@ private fun share(
  * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
  * after [delayMillis], when the screen celebrates.
  */
-/** When each part that moved starts filling, in milliseconds; null for a part that didn't move. */
+/**
+ * When each part that moved starts filling, in milliseconds, one [ZoonkMotion.STAGGER_MILLIS] after the one before, as
+ * main's `getFillMotion`; null for a part that didn't move.
+ */
 internal fun fillDelays(
     fills: List<Pair<Float, Float>>,
     delayMillis: Int,
-): List<Int?> = fills.map { (start, fill) -> delayMillis.takeIf { start < fill } }
+): List<Int?> {
+    var order = 0
+    return fills.map { (start, fill) -> if (start < fill) delayMillis + ZoonkMotion.STAGGER_MILLIS * order++ else null }
+}
 
 @Composable
 internal fun MissionTrack(
@@ -265,14 +271,17 @@ internal fun MissionTrack(
     val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
     val track = brain.copy(alpha = if (MaterialTheme.colorScheme.background.luminance() < HALF) DARK_TRACK_ALPHA else TRACK_ALPHA)
-    val animates = celebrates() && fills.any { (start, fill) -> start < fill }
-    val motion = remember { Animatable(if (animates) 0f else 1f) }
-    LaunchedEffect(animates) {
-        if (animates) motion.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
-    }
+    val celebrate = celebrates()
+    val delays = fillDelays(fills, delayMillis)
 
     Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        fills.forEach { (start, fill) ->
+        fills.zip(delays).forEach { (part, delay) ->
+            val (start, fill) = part
+            val animates = celebrate && delay != null
+            val motion = remember { Animatable(if (animates) 0f else 1f) }
+            LaunchedEffect(animates) {
+                if (animates) motion.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delay, ZoonkMotion.EaseOut))
+            }
             Box(
                 Modifier
                     .weight(1f)
