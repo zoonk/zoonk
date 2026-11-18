@@ -12845,14 +12845,14 @@ msgid "Your goals"
 msgstr "내 목표"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr ", 현재 목표. 목표 바꾸기"
-
-#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
 msgid "Quick explanations"
 msgstr "간단한 설명"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", 현재 목표. 목표 바꾸기"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"

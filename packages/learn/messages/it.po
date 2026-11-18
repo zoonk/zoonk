@@ -12845,14 +12845,14 @@ msgid "Your goals"
 msgstr "I tuoi obiettivi"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GuLJJS"
-msgid ", current goal. Switch goal"
-msgstr ", obiettivo attuale. Cambia obiettivo"
-
-#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.eclXxO"
 msgid "Quick explanations"
 msgstr "Spiegazioni rapide"
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", obiettivo attuale. Cambia obiettivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
