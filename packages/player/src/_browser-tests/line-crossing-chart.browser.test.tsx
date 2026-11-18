@@ -480,6 +480,15 @@ describe("line crossing chart", () => {
     });
   });
 
+  it("reads each change on a moved line's handle as its own sentence", async () => {
+    openActivity({ content: flatCostDown, template: "lineCrossing" });
+    await pressOnSlider("Move the line Cost", "ArrowUp", 1);
+
+    await expect
+      .element(page.getByRole("slider", { name: "Move the line Cost" }))
+      .toHaveAttribute("aria-valuetext", "Cost moved up. Dollars per month: up. Lamps sold: up.");
+  });
+
   it("draws the new crossing over a handle resting on it, and a drag there still moves the handle", async () => {
     await atViewport(NARROW, async () => {
       openActivity({ content: flatCostDown, template: "lineCrossing" });
