@@ -63,7 +63,6 @@
   "subscription_questions_title": "7f8507377991fafd90814d6863b66252069ee3976e5d8d398374c6f966c7a90b",
   "subscription_questions_unsure": "0d528bd25547c80966eac6ae16a05125db1111a7266e8c897440f96f0d55596e",
   "subscription_renewal_failed": "7ed61076b4e054785f412081cde72b75d6ccf38d843ba54eac1eddb3063064c5",
-  "subscription_renewal_failed_website": "02bcfcc40dc1d93de995ec5d01ff973da9525ecb8a67ab4cd52dd5d610e2d745",
   "subscription_renews_on": "71c7539f70d699d6cf92bd88ea0528e5571a7872fb5bb2409d7ecc3a4b3fb1c4",
   "subscription_save": "7d35ea90aadf14fc82fabf44372cc069fbcfd12815063318a5d4bc38bda0c48f",
   "subscription_show_answer": "e7a5f0c2e6887f3ec0d9825589ad1bdfed3215094ed552a12029fa1e8a6dd9c2",
@@ -92,8 +91,6 @@
     <string name="subscription_contact_support">도움 받기</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_renewal_failed">최근 갱신 결제에 실패했어요.</string>
-    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
-    <string name="subscription_renewal_failed_website">구독한 웹사이트에서 결제 정보를 업데이트하세요.</string>
     <string name="subscription_deletion_notice">계정을 삭제하면 Plus 이용이 바로 종료돼요.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">App Store에서 구독한 Plus는 해당 스토어에서 해지할 때까지 요금이 계속 청구돼요.</string>

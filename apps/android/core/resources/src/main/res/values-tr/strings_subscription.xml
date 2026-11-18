@@ -63,7 +63,6 @@
   "subscription_questions_title": "2ac5538e35ed480e438cfb0ade735f4beff58c38ef675e7da3b49c96d1bedb3c",
   "subscription_questions_unsure": "398e13714c928f43e5145a16f5692000f6a39d0617808a890b94e5d757c75a72",
   "subscription_renewal_failed": "28a85690dec902f3cfff8f61b41dac297319317c08639d452e10e720e264ed42",
-  "subscription_renewal_failed_website": "e7c6412e29228144bd44091fb3092baa5384be6f7170d1ce75c29195f9b83479",
   "subscription_renews_on": "ffde2c34ea489a41307fdfd526ee50e0792bacf327ad3e3a4cdf29138694348d",
   "subscription_save": "b1f7d7d5259bcfc193c405ac873555f2d3069708b763f08b1200f913f17fc81d",
   "subscription_show_answer": "c36735a5eda68ff750f3e54f11d11ba8f430f6e490c3742cd7ad894c2adbe58b",
@@ -92,8 +91,6 @@
     <string name="subscription_contact_support">Yardım al</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
-    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
-    <string name="subscription_renewal_failed_website">Ödemeni, abone olduğun web sitesinden güncelle.</string>
     <string name="subscription_deletion_notice">Hesabını sildiğinde Plus hemen sona erer.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder.</string>

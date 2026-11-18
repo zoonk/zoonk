@@ -149,7 +149,8 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Through Google Play").assertExists()
         rule.onNodeWithText("Manage in Google Play").assertExists()
         rule.onNodeWithText("Through the website").assertExists()
-        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
+        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
+        rule.onNodeWithText("Manage on the website").assertExists()
         rule.onNodeWithText("Cancel Plus").assertDoesNotExist()
     }
 
@@ -160,7 +161,7 @@ class WebPlusCancellationTest {
     fun anEndingWebsiteSubscriptionOpensManagement() = websiteAction(State.ENDING, "Manage on the website")
 
     @Test
-    fun aFailedWebsiteRenewalOpensPayment() = websiteAction(State.UNPAID, "Update your payment on the website, where you subscribed.")
+    fun aFailedWebsiteRenewalOpensManagement() = websiteAction(State.UNPAID, "Manage on the website")
 
     private fun websiteAction(
         state: State,
@@ -187,7 +188,7 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Free offer").assertDoesNotExist()
         response = { web(State.UNPAID) }
         rule.onNodeWithText("Try again").performClick()
-        rule.onNodeWithText("Update your payment on the website, where you subscribed.").assertExists()
+        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         assertEquals(2, reads)
     }
 

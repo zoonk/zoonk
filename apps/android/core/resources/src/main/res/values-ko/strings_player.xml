@@ -154,6 +154,7 @@
   "player_spelled": "bc696ab62574789ab97287c5654832ae704c4ee245c5ed5ecfe45df963e8a210",
   "player_start_failed_description": "cababaf28fec77c9ededda5499f8e5fb3e728e4b8c516f9371d8436d7dade0ce",
   "player_start_failed_title": "76b959c5abe6409ebec1037e310665845449fc12b3bc49825149b9abbbe7aed4",
+  "player_start_note": "00105564d5a0990363d333ba205a92dca04a9197324adec91debf9722b7cc684",
   "player_start_the_lesson": "cb996068be45b1c58f6b1f0dc87ab8ac76c78729a4cc95797cbb0d9739ebadfd",
   "player_start_this_challenge": "2ce75b1de9103e0e32776e86e85fc6be61ee7c4906af770f4575195899e5a8c2",
   "player_start_this_lesson": "2737d9c93b6777255b92d403f7ab9b5405a23cd8ee50423c7f20de5a744aae93",
@@ -327,6 +328,8 @@
     <string name="player_challenge_phase_fix">검토 중 발견한 문제를 고치고 있어요</string>
     <string name="player_challenge_phase_fix_line_1">앞뒤가 맞지 않는 부분을 다시 만들고 있어요…</string>
     <string name="player_writing_note">준비하는 데 몇 분 정도 걸리고, 화면을 나가도 계속 진행돼요.</string>
+    <!-- Under the title of a lesson that isn't written yet, before the learner taps to get it ready. -->
+    <string name="player_start_note">준비하는 데 몇 분 정도 걸려요.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">지금 시작할 수 있어요</string>
     <plurals name="player_review_ideas">

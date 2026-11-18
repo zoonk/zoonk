@@ -287,17 +287,7 @@ internal fun WebPlusPlan(
     val context = LocalContext.current
     val language = currentLocale().language
     TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }, forward = true, edge = ButtonEdge.Start) {
-        Text(
-            stringResource(
-                if (subscription.state ==
-                    State.UNPAID
-                ) {
-                    R.string.subscription_renewal_failed_website
-                } else {
-                    R.string.subscription_manage_website
-                },
-            ),
-        )
+        Text(stringResource(R.string.subscription_manage_website))
     }
 }
 

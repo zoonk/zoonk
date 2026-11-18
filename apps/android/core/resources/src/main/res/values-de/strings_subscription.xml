@@ -63,7 +63,6 @@
   "subscription_questions_title": "885e8f1fba6555280d0d460702b3e7b85d8c0961c694820be89065db6e39513a",
   "subscription_questions_unsure": "7ed150f55f5d62a8ac2a691aba4912edf431fc05cbc98c229fac0ae573373be3",
   "subscription_renewal_failed": "82cbda2f52f5eefa887c36076a23ef96a43fb31028ccefc8b4b082d84cbc772c",
-  "subscription_renewal_failed_website": "d135902badcb6c96e4f84d1478b861fe88985b7d3a01c9b6c3e69c788971b601",
   "subscription_renews_on": "a27ca67eed27ca7271e5b253b1d2673161be5c8fbb9284ca7d7c8fc78155ecee",
   "subscription_save": "9bdf89aa0c6e000bade7736c4d671804af96580aa87e0c6d0978dffe036dcbd6",
   "subscription_show_answer": "570c4c77482c0ab7d68d379b01c3a7c97d89eaaca67042aebd3345f32c887b7d",
@@ -92,8 +91,6 @@
     <string name="subscription_contact_support">Hilfe erhalten</string>
     <!-- Polish button: use the imperative "Zrezygnuj z pakietu Plus" to match the other apps. -->
     <string name="subscription_renewal_failed">Deine letzte Zahlung für die Verlängerung ist fehlgeschlagen.</string>
-    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
-    <string name="subscription_renewal_failed_website">Aktualisiere deine Zahlung auf der Website, wo du abonniert hast.</string>
     <string name="subscription_deletion_notice">Wenn du dein Konto löschst, endet Plus sofort.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
     <string name="subscription_deletion_app_store">Für Plus aus dem App Store zahlst du weiter, bis du es dort kündigst.</string>

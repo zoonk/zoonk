@@ -514,28 +514,31 @@ internal fun driftCeiling(
 /**
  * How much of each step's part [share] (0 to 1) of the whole bar fills, each step by its [statuses], so steps
  * running side by side fill in the order they finish: a done step's part is full, a pending one's empty, and
- * the running ones share what [share] reaches past the done ones.
+ * the running ones share what [share] reaches past the done ones. Before any step reports, the first one
+ * holds the started share, so a run that fails there shows the fill its percent says.
  */
 internal fun phaseFills(
     share: Float,
     weights: List<Int>,
     statuses: List<PhaseStatus>,
 ): List<Float> {
+    val reported = statuses.any { it != PhaseStatus.Pending }
+    val started = statuses.mapIndexed { index, status -> if (index == 0 && !reported) PhaseStatus.Active else status }
     val sizes = weights.map { it.coerceAtLeast(0).toFloat() }
     val done =
         sizes
-            .zip(statuses)
+            .zip(started)
             .filter { (_, status) -> status == PhaseStatus.Completed }
             .sumOf { it.first.toDouble() }
             .toFloat()
     val running =
         sizes
-            .zip(statuses)
+            .zip(started)
             .filter { (_, status) -> status.isRunning() }
             .sumOf { it.first.toDouble() }
             .toFloat()
     val runningFill = if (running == 0f) 0f else ((share.coerceIn(0f, 1f) * sizes.sum() - done) / running).coerceIn(0f, 1f)
-    return statuses.map { status ->
+    return started.map { status ->
         when {
             status == PhaseStatus.Completed -> 1f
             status.isRunning() -> runningFill

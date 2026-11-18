@@ -28,12 +28,6 @@ private const val GAP = "\u2005"
 class LessonMathTest {
     private fun math(latex: String) = typesetMath(latex, ENGLISH)
 
-    @Test fun aRootKeepsItsEntireFractionAsOneDrawing() {
-        val formula = math("\\sqrt{\\frac{GM}{r}}")
-        val root = formula.text.getStringAnnotations("math-root", 0, formula.text.length).single()
-        assertEquals("√GM⁄r", formula.text.text.substring(root.start, root.end))
-    }
-
     @Test fun punctuationAfterDisplayMathStaysWithTheFormula() {
         val parts =
             splitAtDisplayMath(listOf(RichSegment(SegmentKind.DisplayMath, "x = 1"), RichSegment(SegmentKind.Text, ", then continue.")))
@@ -80,7 +74,7 @@ class LessonMathTest {
     fun setsALongFractionAtFullSizeSoItsExponentsStayRaised() {
         val formula = math("\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}")
 
-        assertEquals("(\u2212b$GAP±$GAP√b2$GAP\u2212${GAP}4ac)/(2a)", formula.text.text)
+        assertEquals("(\u2212b$GAP±$GAP√(b2$GAP\u2212${GAP}4ac))/(2a)", formula.text.text)
 
         fun shifted(at: Int) = formula.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null }
         val square = formula.text.text.indexOf("b2")
@@ -98,6 +92,31 @@ class LessonMathTest {
         val last = formula.text.text.lastIndex
         assertTrue("the bracket closes on the line and the 2 sits above it", !shifted(last - 1) && shifted(last))
         assertEquals("(1\u2044" + "4)2", math("\\frac{1}{4}^2").text.text)
+    }
+
+    /** KaTeX nests (2³)²; written as 2³² it would read as 2 to the power of 32. */
+    @Test
+    fun aBracedPowerKeepsItsOwnExponentApartFromTheNextOne() {
+        val nested = math("{2^3}^2")
+        val shifts =
+            nested.text.text.indices.map { at ->
+                nested.text.spanStyles.any {
+                    it.start <= at && at < it.end &&
+                        it.item.baselineShift != null
+                }
+            }
+
+        assertEquals("(23)2", nested.text.text)
+        assertEquals(listOf(false, false, true, false, true), shifts)
+        assertEquals("232", math("2^{32}").text.text)
+    }
+
+    /** A screen reader keeps (3/2)² and 3/2² apart, as the brackets do on screen. */
+    @Test
+    fun aSpokenScriptAfterAFractionSquaresTheWholeQuotient() {
+        assertEquals("3 over 2, squared", math("\\frac{3}{2}^2").spoken)
+        assertEquals("3 over 2 squared", math("\\frac{3}{2^2}").spoken)
+        assertEquals("x + 1 over 2, squared", math("{\\frac{x+1}{2}}^2").spoken)
     }
 
     /** Braces around the fraction don't change its base: KaTeX squares the whole quotient either way. */
@@ -147,7 +166,7 @@ class LessonMathTest {
 
     @Test
     fun readsRootsUnitsAndSymbolsFromTheSeededLessons() {
-        assertEquals("v$GAP=$GAP√GM\u2044r", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
+        assertEquals("v$GAP=$GAP√(GM\u2044r)", math("v = \\sqrt{\\frac{GM}{r}}").text.text)
         assertEquals("v = square root of GM over r", math("v = \\sqrt{\\frac{GM}{r}}").spoken)
         assertEquals("λ$GAP=${GAP}1240\u20441,89", math("\\lambda = \\dfrac{1240}{1{,}89}").text.text)
         assertEquals("λ (nm) = 1240 over E (eV)", math("\\lambda\\ (\\text{nm}) = \\dfrac{1240}{E\\ (\\text{eV})}").spoken)

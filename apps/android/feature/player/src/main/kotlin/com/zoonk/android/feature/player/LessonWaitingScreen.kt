@@ -254,9 +254,15 @@ private fun WaitNote(
         }
     Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(title), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-        if (moment == WaitMoment.NotReady || moment == WaitMoment.GettingReady) {
+        val note =
+            when (moment) {
+                WaitMoment.NotReady -> R.string.player_start_note
+                WaitMoment.GettingReady -> R.string.player_writing_note
+                WaitMoment.Ready, WaitMoment.Stopped -> null
+            }
+        if (note != null) {
             Text(
-                stringResource(R.string.player_writing_note),
+                stringResource(note),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
             )

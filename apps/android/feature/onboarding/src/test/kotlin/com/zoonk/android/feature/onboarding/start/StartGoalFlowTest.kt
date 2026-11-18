@@ -365,6 +365,23 @@ class StartGoalFlowTest {
         rule.onNodeWithText("That's all the goals you can study at once").assertDoesNotExist()
     }
 
+    /** Joining is done once it worked: a refused goal after it clears only the goal's own feedback. */
+    @Test
+    fun aJoinedWaitlistSurvivesARefusedMusicianshipGoal() {
+        api.draft = understoodDraft(understanding = """{"status":"instrument","instrument":"guitar"}""", activeGoalsLeft = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Join the waitlist").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Join the waitlist").assertIsNotEnabled()
+
+        api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
+        rule.onNodeWithText("Start musicianship").performClick()
+        rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
+
+        rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Join the waitlist").assertIsNotEnabled()
+    }
+
     @Test
     fun aFullCardOpensEveryGoalOnceTheLearnerSubscribes() {
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = 0)

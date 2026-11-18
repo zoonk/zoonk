@@ -154,6 +154,7 @@
   "player_spelled": "36ac9717dd4e16d8eb8447fed3a4b86d5f895970ee2b5963b7eb3b222ce3b6c2",
   "player_start_failed_description": "e53a76b4a4dcc001a913241d8a9e77d781cc159f4bb14c70f58e402509b0e277",
   "player_start_failed_title": "ee9100adec2e2d0dd407ab0b6b5d0ffc7af06e4b5401d082970c88951beef496",
+  "player_start_note": "373f0e5e0126b9060958232ded3078c7719e3eb6f812b46055bac52323da943b",
   "player_start_the_lesson": "5d7595d1c2e8ce9ad395816bd89093767ed985ab1fa7fc2b55ec8fde9bf6db3a",
   "player_start_this_challenge": "71cadc3893049c544fb6b736da87fb750250c13fb947514b6fb08fdf359151c2",
   "player_start_this_lesson": "390cf859f433d3fd22db0d701f1c33cff598d1cacdfb27909156c23460d1da52",
@@ -329,6 +330,8 @@
     <string name="player_challenge_phase_fix">Kontrolde bulunan sorunu düzeltme</string>
     <string name="player_challenge_phase_fix_line_1">Tutarsız kısımları yeniden hazırlıyoruz…</string>
     <string name="player_writing_note">Birkaç dakika sürer, buradan ayrılsan da devam ederiz.</string>
+    <!-- Under the title of a lesson that isn't written yet, before the learner taps to get it ready. -->
+    <string name="player_start_note">Hazırlamamız birkaç dakika sürüyor.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Hemen başlayabilirsin</string>
     <plurals name="player_review_ideas">
