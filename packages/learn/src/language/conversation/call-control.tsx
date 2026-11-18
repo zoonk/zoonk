@@ -278,7 +278,7 @@ export function CallControls({
         variant="outline"
       >
         <PhoneOffIcon aria-hidden="true" />
-        {call.phase === "live" ? t("End") : t("Cancel")}
+        {t("End")}
       </Button>
     </div>
   );

@@ -427,6 +427,21 @@ describe("the Plan's offer to fit more lessons", () => {
     });
   });
 
+  it("changes nothing when the learner says Not now before the check answers", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromCard(held);
+
+      await expect.element(page.getByText("Checking what changes…")).toBeVisible();
+      await page.getByRole("button", { name: "Not now" }).click();
+      held.release();
+      await settle();
+
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+
   it("changes nothing when the learner leaves the Plan before the check answers", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();

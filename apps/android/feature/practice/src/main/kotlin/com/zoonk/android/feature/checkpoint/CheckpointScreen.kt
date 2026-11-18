@@ -257,7 +257,7 @@ private fun CheckpointRead(
 private fun eyebrow(checkpoint: Checkpoint): String =
     checkpointName(checkpoint.kind == Checkpoint.Kind.WEEKLY, checkpoint.kind == Checkpoint.Kind.FINAL_BOSS, checkpoint.phase)
 
-/** A challenge's name, as its intro and its duel say it (main's `useCheckpointEyebrow`). */
+/** A challenge's name, as its intro and its duel say it (main's `useChallengeName`). */
 @Composable
 internal fun checkpointName(
     weekly: Boolean,

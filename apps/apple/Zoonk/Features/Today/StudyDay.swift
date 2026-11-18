@@ -129,7 +129,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   /// Rows the queue shows after its next block before "+N more".
   static let upcomingRows = 4
 
-  /// Mirrors main's `getFoldedBlocks`: the blocks "+N more" holds while the queue is folded.
+  /// Mirrors main's `getFoldedRows`: the blocks "N more" holds while the queue is folded.
   var foldedBlocks: [StudyBlock] {
     Array(queue(next: nextBlock).after.dropFirst(Self.upcomingRows))
   }

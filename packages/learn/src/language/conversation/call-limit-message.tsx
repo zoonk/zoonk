@@ -30,15 +30,17 @@ export function CallLimitWords({ limit }: { limit: CallLimit }) {
   return <GateWords title={useCallLimitTitle(limit)} {...useCallLimitLine(limit)} />;
 }
 
-/** Never says how much call time a plan has. */
+/** Never says how much call time a plan has. `untitled`: the screen's own title already says it. */
 export function CallLimitReason({
   className,
   limit,
   role,
+  untitled = false,
 }: {
   className?: string;
   limit: CallLimit;
   role?: "alert";
+  untitled?: boolean;
 }) {
   const routes = useLearnRoutes();
   const title = useCallLimitTitle(limit);
@@ -47,7 +49,7 @@ export function CallLimitReason({
   // Once its day has come nothing ran out, so no title says it did. The notice stays the same one,
   // so it isn't read out again as a new refusal.
   return (
-    <CallReason className={className} role={role} title={opened ? undefined : title}>
+    <CallReason className={className} role={role} title={opened || untitled ? undefined : title}>
       <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallReason>
   );

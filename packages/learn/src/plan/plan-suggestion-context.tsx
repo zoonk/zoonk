@@ -107,14 +107,17 @@ export function SlotPager({ className }: { className?: string }) {
 
 export function SlotContent({
   children,
+  everyWidth,
   statement,
 }: {
   children: React.ReactNode;
+  everyWidth?: boolean;
   statement?: boolean;
 }) {
   return (
     <SuggestionContent
       className="min-[72rem]:bg-transparent min-[72rem]:ring-0"
+      everyWidth={everyWidth}
       statement={statement}
     >
       {children}
@@ -164,7 +167,7 @@ export function PlanChangeSuggestion({
 
   return (
     <Suggestion answered={answer !== null} label={t("Plan suggestion")}>
-      <SuggestionContent className="flex min-[72rem]:bg-transparent min-[72rem]:ring-0" statement>
+      <SlotContent everyWidth>
         <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
 
         {answer ? (
@@ -175,7 +178,7 @@ export function PlanChangeSuggestion({
         ) : (
           children
         )}
-      </SuggestionContent>
+      </SlotContent>
     </Suggestion>
   );
 }

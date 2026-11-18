@@ -139,7 +139,7 @@ private fun firstStepName(
         Kind.CHALLENGE -> stringResource(R.string.buddy_page_first_challenge)
     }
 
-/** Main's `FirstStepDetailLine`: what it waits for, that it's one of today's, anytime, or when it comes. */
+/** Main's `MissionStepLine`: what it waits for, that it's one of today's, anytime, or when it comes. */
 @Composable
 private fun firstStepLine(step: BuddyFirstStepsStepsInner): String? {
     val wait = step.waitReason

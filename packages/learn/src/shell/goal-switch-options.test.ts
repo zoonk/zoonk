@@ -6,8 +6,14 @@ describe(hasNothingToSwitch, () => {
     expect(hasNothingToSwitch({ goals: [], waitingGoals: [] })).toBe(true);
   });
 
-  it("is the plain start row when the only goals are quick explanations", () => {
+  it("is the plain start row when the only goal is one quick explanation", () => {
     expect(hasNothingToSwitch({ goals: [{ kind: "explain" }], waitingGoals: [] })).toBe(true);
+  });
+
+  it("opens the menu to list two or more quick explanations", () => {
+    expect(
+      hasNothingToSwitch({ goals: [{ kind: "explain" }, { kind: "explain" }], waitingGoals: [] }),
+    ).toBe(false);
   });
 
   it("opens the menu for a followed goal", () => {

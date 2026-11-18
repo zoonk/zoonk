@@ -125,7 +125,7 @@ private fun Options(
 ) {
     val words = run.view.trueFalseWords
     val labels = question.question.options.orEmpty()
-    // Main's `getOptionMarks`: where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
+    // Where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
     val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
 
     AnswerOptionGroup {

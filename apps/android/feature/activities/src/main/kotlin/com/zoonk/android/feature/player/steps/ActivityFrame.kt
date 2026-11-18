@@ -286,8 +286,8 @@ private fun CheckQuestion(text: String) {
 }
 
 /**
- * Main's `ActivityNumericCheck`: the learner's own typing stays as typed until Check, which writes it to the
- * rounding hint's places, as every number for the answer is; money keeps its sign where the language writes it.
+ * Main's `NumericAnswerField`: the learner's own typing stays as typed until Check, which writes it with the fewest
+ * digits that keep its grade, as core decides; money keeps its sign where the language writes it.
  */
 @Composable
 private fun NumericCheckField(
