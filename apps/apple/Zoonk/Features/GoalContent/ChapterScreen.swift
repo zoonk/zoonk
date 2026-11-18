@@ -367,15 +367,15 @@ private struct ChapterReferenceSection: View {
 
   var body: some View {
     Section {
+      if !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
+        summary
+      }
+
       if let map {
         MindMapRowContent(
           goalId: goalId, map: map, place: .chapter,
           placeholder: Text(
             "Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page"))
-      }
-
-      if !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
-        summary
       }
     } header: {
       SectionTitle(

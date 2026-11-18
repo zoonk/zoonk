@@ -266,7 +266,7 @@ internal fun ChapterPage(
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
-            ChapterReference(chapter, shownMap)
+            ChapterReference(chapter, shownMap, mapFirst = true)
         },
     ) { asideBeside ->
         if (lessons.isNotEmpty()) {
@@ -406,12 +406,16 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
         is PracticeOutcome.Opened, null -> null
     }
 
-/** What the chapter leaves to look back at: its map, and its skills and their summaries. */
+/**
+ * What the chapter leaves to look back at: its skills and their summaries, and its map. As main, the map leads only
+ * beside the page ([mapFirst]), where it stands in for main's picture.
+ */
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
     mindMap: ChapterMapSlot?,
     modifier: Modifier = Modifier,
+    mapFirst: Boolean = false,
 ) {
     val hasSummary = chapter.skills.isNotEmpty() || chapter.summaries.isNotEmpty()
     if (mindMap == null && !hasSummary) return
@@ -423,24 +427,39 @@ private fun ChapterReference(
             stringResource(R.string.goalcontent_for_reference),
             Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp),
         )
-        mindMap?.row?.invoke(Modifier)
-        if (!hasSummary) return@Column
-        if (mindMap != null) Spacer(Modifier.height(12.dp))
-        DisclosureRow(
-            stringResource(R.string.goalcontent_chapter_summary),
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            leading = { MarkIcon(R.drawable.ic_checklist) },
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                if (chapter.skills.isNotEmpty()) {
-                    Column {
-                        SectionLabel(stringResource(R.string.goalcontent_skills), Modifier.padding(bottom = 4.dp))
-                        chapter.skills.forEach { SkillRow(it) }
-                    }
+        val map = mindMap?.row
+        if (mapFirst && map != null) map(Modifier)
+        if (hasSummary) {
+            if (mapFirst && map != null) Spacer(Modifier.height(12.dp))
+            ChapterSummary(chapter, expanded) { expanded = it }
+        }
+        if (!mapFirst && map != null) {
+            if (hasSummary) Spacer(Modifier.height(12.dp))
+            map(Modifier)
+        }
+    }
+}
+
+@Composable
+private fun ChapterSummary(
+    chapter: GoalChapter,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+) {
+    DisclosureRow(
+        stringResource(R.string.goalcontent_chapter_summary),
+        expanded = expanded,
+        onExpandedChange = onExpandedChange,
+        leading = { MarkIcon(R.drawable.ic_checklist) },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (chapter.skills.isNotEmpty()) {
+                Column {
+                    SectionLabel(stringResource(R.string.goalcontent_skills), Modifier.padding(bottom = 4.dp))
+                    chapter.skills.forEach { SkillRow(it) }
                 }
-                LessonSummaries(chapter.summaries.map { LessonSummary(it.title, it.ideas) })
             }
+            LessonSummaries(chapter.summaries.map { LessonSummary(it.title, it.ideas) })
         }
     }
 }

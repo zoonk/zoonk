@@ -165,6 +165,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
 
     await notMade().getByRole("button", { name: "1 more chapter" }).click();
     await expect.element(notMade().getByText("Reactions")).toBeVisible();
+    await expect.element(rowCreate("Reactions")).toHaveFocus();
 
     await expect
       .element(notMade().getByRole("button", { name: "Show fewer chapters" }))

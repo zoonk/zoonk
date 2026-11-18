@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -19,7 +19,7 @@ import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { FoldRow } from "../today/today-fold-row";
+import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
 import {
   type MindMapsPageChapter,
   countChapterMaps,
@@ -188,9 +188,24 @@ export function NotMadeYet({
   const listId = useId();
   const folds = now.length > 0 && later.length > 0;
   const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
+  const laterRef = useRef<HTMLDivElement>(null);
+  const focusOnOpen = useRef(false);
+
+  useEffect(() => {
+    if (open && focusOnOpen.current) {
+      focusRevealedRow(laterRef.current?.querySelector("li"));
+    }
+
+    focusOnOpen.current = false;
+  }, [open]);
+
+  const toggle = () => {
+    focusOnOpen.current = !open;
+    setOpen(!open);
+  };
 
   const laterRows = (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" ref={laterRef}>
       {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
         <p className={LINE_CLASS}>
           {t(
@@ -227,7 +242,7 @@ export function NotMadeYet({
                   count: later.length,
                 })
           }
-          onToggle={() => setOpen((shown) => !shown)}
+          onToggle={toggle}
           open={open}
         />
       )}
