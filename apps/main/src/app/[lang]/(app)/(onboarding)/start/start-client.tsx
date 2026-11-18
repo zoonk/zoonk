@@ -8,6 +8,7 @@ import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
 import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { OnboardingEmbedded } from "@zoonk/learn/onboarding/frame";
+import { useMenuStartsGoal } from "../../(learn)/_components/switcher-goals";
 import {
   WEB_ONBOARDING_ACTIONS,
   getPlanLinkOnboardingActions,
@@ -50,6 +51,7 @@ export function StartClient({
   // An unknown summary leaves answers without a buddy identity until the actual one arrives.
   const learner = useLearnerSummary();
   const buddy = learner.status === "ready" ? learner.summary.buddy : undefined;
+  const menuStartsGoal = useMenuStartsGoal();
 
   const flow = (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
@@ -80,5 +82,11 @@ export function StartClient({
     </GenerationFollowerProvider>
   );
 
-  return embedded ? <OnboardingEmbedded header={header}>{flow}</OnboardingEmbedded> : flow;
+  return embedded ? (
+    <OnboardingEmbedded header={header} title={!menuStartsGoal}>
+      {flow}
+    </OnboardingEmbedded>
+  ) : (
+    flow
+  );
 }
