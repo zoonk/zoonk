@@ -124,6 +124,21 @@ describe("alignment across layout boundaries", () => {
     assert.equal(read().elements.filter((element) => element.part === "control").length, 1);
   });
 
+  it("uses an outlined row control's box for its end edge", () => {
+    document.body.innerHTML = `
+      <div data-slot="list-group" data-box="16,0,358,60">
+        <div data-slot="list-row" data-box="16,0,358,60">
+          <span data-slot="list-row-title" data-box="16,20,94,20">Where you live</span>
+          <button style="border:1px solid rgb(80, 80, 80)" data-box="265,8,109,44">
+            <span data-box="280,22,40,16">Not set</span>
+            <span data-slot="fold-chevron" style="background-color:rgb(20, 20, 20)" data-box="346,27,6,9"></span>
+          </button>
+        </div>
+      </div>`;
+
+    assert.deepEqual(hits("end-edge"), []);
+  });
+
   it("counts a drawer sheet as its own surface over a page with a filled action", () => {
     document.body.innerHTML = `<button style="--button-variant:default" data-box="16,20,120,44">Next</button><div data-slot="drawer-popup" aria-label="Ask" data-box="0,400,390,444"><button style="--button-variant:default" data-box="16,700,358,44">Create a free account</button></div>`;
     setHit(document.querySelector("[data-slot=drawer-popup] button"));
