@@ -84,7 +84,6 @@
   "session_summary_skills_rose": "7557d963ae27986cfd07750c706baddd6406424ea1cb7de70be3173e8131ed8b",
   "session_summary_so_far": "8599d602f917b1b76442431d775485d4e4f8ac0cfc4ca449f69232e8cc136c0a",
   "session_summary_streak": "8bea2177058aa03cdb6f6454b16477c49ca3a68c720ae27c6d6d219608e1ae31",
-  "session_summary_to_review": "c554c3397f1a66731ecb5fadb7d0939e4ac9ccb3f513a4df048ca34a31716f98",
   "session_summary_tomorrow": "5845b56f33287f1a6d377cbf843784306ecf5b646d544d6e6cc69a203c040956",
   "session_summary_up_from": "67e35b1a324a9ff3903ddb5ff01b71f2abb91f0cd932bbc3d264a18178282507",
   "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f"
@@ -160,9 +159,6 @@
     <string name="session_summary_net">감점 후 %1$s</string>
     <string name="session_summary_preparation">준비도</string>
     <string name="session_summary_progress">진도</string>
-    <!-- How many skills come back for review on later days. -->
-    <string name="session_summary_to_review">복습 예정</string>
-    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
     <string name="session_summary_brain_power">두뇌력</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

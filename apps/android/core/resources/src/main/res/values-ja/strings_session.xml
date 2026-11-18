@@ -84,7 +84,6 @@
   "session_summary_skills_rose": "ff7e06e70ac96b4c5e36aa3bff90220ea86a4a6a7a6b018fc4a8e17ac330e4b4",
   "session_summary_so_far": "f46e4db7fbd07825e327222b5464bb57ab1ee423ef1fad4e3d300efb13867351",
   "session_summary_streak": "192e1b67ead74c700256aa463c86ace5c7c1e5175b1d92ff4ee64b040d7e9171",
-  "session_summary_to_review": "5cb84e221cba334838e17dbe71c7d58b086813b86eb7cb1899aac0eac802759a",
   "session_summary_tomorrow": "cb3e610d0b67c4244b1a74a93e41808a7dc61b56011c65f2605996d46f77dbba",
   "session_summary_up_from": "d09c800dd1e37d1ae15b4868e166935442018f841a11ce790359e912f8d59bf1",
   "session_topics_and_more": "5e327e54fbfea5e59ea95f817db652d11f41be979ecfdaaa85ccb0c5665b1660"
@@ -160,9 +159,6 @@
     <string name="session_summary_net">差し引き%1$s</string>
     <string name="session_summary_preparation">準備状況</string>
     <string name="session_summary_progress">進み具合</string>
-    <!-- How many skills come back for review on later days. -->
-    <string name="session_summary_to_review">復習予定</string>
-    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
     <string name="session_summary_brain_power">脳力</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
