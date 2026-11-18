@@ -67,21 +67,29 @@ struct MarkedRow<Mark: View, Content: View, End: View>: View {
 }
 
 /// Buttons side by side. Stacked, each is a regular-size rounded rectangle as wide as the row, like
-/// an alert's.
+/// an alert's. `wraps` puts the ones that don't fit on the next line, as main's suggestion panel
+/// does, instead of squeezing their labels.
 struct ButtonRow<Content: View>: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.controlSize) private var controlSize
 
   var spacing: CGFloat?
+  var wraps = false
   @ViewBuilder let content: Content
 
   var body: some View {
-    AccessibilityStack(spacing: spacing) { content }
-      .buttonSizing(isStacked ? .flexible : .automatic)
-      .buttonBorderShape(isStacked ? .roundedRectangle : .automatic)
-      .controlSize(isStacked && controlSize < .regular ? .regular : controlSize)
-      // In a list row a stacked button otherwise gets one line's height and truncates its label.
-      .fixedSize(horizontal: false, vertical: isStacked)
+    Group {
+      if wraps && !isStacked {
+        FlowLayout(spacing: spacing ?? 8) { content }
+      } else {
+        AccessibilityStack(spacing: spacing) { content }
+      }
+    }
+    .buttonSizing(isStacked ? .flexible : .automatic)
+    .buttonBorderShape(isStacked ? .roundedRectangle : .automatic)
+    .controlSize(isStacked && controlSize < .regular ? .regular : controlSize)
+    // In a list row a stacked button otherwise gets one line's height and truncates its label.
+    .fixedSize(horizontal: false, vertical: isStacked)
   }
 }
 

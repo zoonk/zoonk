@@ -394,7 +394,7 @@ struct TodayPlanChangeSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      ButtonRow {
+      ButtonRow(wraps: true) {
         // On a return after a break, nothing that asks for more hours leads.
         if view.session.freshStart == .welcomeBack {
           keepTimeButton
@@ -439,7 +439,6 @@ struct TodayPlanChangeSection: View {
       }
     } label: {
       Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
-        .typeStyle(.note.weight(.medium))
     }
     .buttonStyle(.outline)
   }
