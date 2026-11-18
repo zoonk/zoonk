@@ -238,7 +238,11 @@ private fun DistributionPlot(
         val (from, to) = handles
 
         Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            val inside = curve.filter { it.first in from..to }
+            // The shading starts and ends on the handles, not on the nearest drawn point inside them.
+            val inside =
+                listOf(from to densityAt(distribution, from)) +
+                    curve.filter { it.first > from && it.first < to } +
+                    (to to densityAt(distribution, to))
             if (inside.isNotEmpty()) {
                 val shaded =
                     Path().apply {
