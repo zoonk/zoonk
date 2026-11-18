@@ -272,6 +272,7 @@
         <item quantity="one">%1$s lesson studied</item>
         <item quantity="other">%1$s lessons studied</item>
     </plurals>
+    <string name="plan_studied_and_known">%1$s studied · %2$s already known</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d this week</item>
         <item quantity="other">+%d this week</item>
