@@ -53,6 +53,39 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(cleared.savesAChange(answered))
   }
 
+  /// Nothing saved isn't a decline: declining a question never answered saves one.
+  func testAboutYouSavesADeclineOfAQuestionNeverAnswered() {
+    for id in [ProfileQuestion.work, .addressForm] {
+      let unanswered = ProfileQuestionView(
+        id: id, options: [], saved: .init(picks: [], studies: [], text: ""), status: nil,
+        version: 1)
+      var draft = ProfileDraft(unanswered)
+      draft.toggle(.ratherNotSay)
+
+      XCTAssertTrue(draft.savesAChange(unanswered), "\(id)")
+    }
+  }
+
+  /// An answer whose facts were deleted in Memory isn't declined, so declining it saves.
+  func testAboutYouSavesADeclineOfAnAnswerWhoseFactsWereDeleted() {
+    let emptied = ProfileQuestionView(
+      id: .work, options: [], saved: .init(picks: [], studies: [], text: ""),
+      status: .answered, version: 1)
+    var draft = ProfileDraft(emptied)
+    draft.toggle(.ratherNotSay)
+
+    XCTAssertTrue(draft.savesAChange(emptied))
+  }
+
+  /// A declined question opens on its decline, so putting it back saves nothing.
+  func testAboutYouSaveStaysOffForADeclineAlreadySaved() {
+    let declined = ProfileQuestionView(
+      id: .work, options: [], saved: .init(picks: [], studies: [], text: ""),
+      status: .declined, version: 1)
+
+    XCTAssertFalse(ProfileDraft(declined).savesAChange(declined))
+  }
+
   /// Unticking a pick and ticking it again puts it last, but the answer is the one saved.
   func testAboutYouSaveStaysOffAfterPuttingBackTheSamePicks() {
     let answered = ProfileQuestionView(

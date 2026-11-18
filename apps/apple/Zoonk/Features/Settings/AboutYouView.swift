@@ -167,14 +167,22 @@ extension ProfileDraft {
   /// About you's Save: an answer that can be saved and saves something other than what's saved,
   /// so one opened and put back as it was never saves again. It compares what saving sends (hidden
   /// fields dropped, text trimmed), with picks in any order except studies, whose order is their
-  /// fields' order.
+  /// fields' order. Nothing saved (never answered, or its facts deleted in Memory) isn't a
+  /// decline, so anything picked, typed or declined changes it.
   func savesAChange(_ view: ProfileQuestionView, memoryEnabled: Bool = true) -> Bool {
     let saved = ProfileDraft(view, memoryEnabled: memoryEnabled)
     let keepsOrder = question == .studies
 
-    return canSave(view)
-      && Self.canonical(answer, keepsOrder: keepsOrder)
-        != Self.canonical(saved.answer, keepsOrder: keepsOrder)
+    guard canSave(view) else {
+      return false
+    }
+
+    if saved.isEmpty && view.status != .declined {
+      return !isEmpty
+    }
+
+    return Self.canonical(answer, keepsOrder: keepsOrder)
+      != Self.canonical(saved.answer, keepsOrder: keepsOrder)
   }
 
   /// An answer as sorted-key JSON, its lists sorted unless their order is part of the answer.
