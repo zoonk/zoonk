@@ -149,12 +149,12 @@ function SubjectChoice({
 
   return (
     <SettingRow
-      className="max-sm:flex-col max-sm:items-stretch max-sm:gap-y-0 max-sm:pb-3"
       description={
         <FactSegments facts={minutes > 0 ? [names, formatDuration(minutes)] : [names]} />
       }
       descriptionId={descriptionId}
       label={<label htmlFor={selectId}>{area}</label>}
+      stacked
     >
       <NativeSelect
         aria-describedby={descriptionId}

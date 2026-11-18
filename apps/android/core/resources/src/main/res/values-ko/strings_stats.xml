@@ -6,7 +6,6 @@
   "stats_answer_count": "6c535de89d2fbb19be3181b5459f1a3f7a9ae89a751a3418939526bc478f9295",
   "stats_answer_more": "71e9e2a69a5d5df9cacb1eb6cfb844f9d011063329ac336d8f24021ff6fc1310",
   "stats_answers_to_count": "2cba2f2fdcace6685ea0808cd1522d49bede1df05570b11fab55ea3f3de0e09e",
-  "stats_any_day": "2c6b0bd5c24178cfa777a9bf18bb04d3bffc081c1f33c45f5d427f7496edc9c8",
   "stats_any_time": "0eaf6fbb0457242d71ed8f47763e9cf8530d3a9bbb0d0de067059dc6679908b7",
   "stats_belt_comes_after": "d835bfa896e91e7e459fa823e2c8b54df8011ebb51d6e228e54c0015bec01115",
   "stats_belt_current": "5d7e0335808f5749a38b2897e3a8811ce247f4d02b3075f784aa837b4fb1f67c",
@@ -153,7 +152,6 @@
     </plurals>
     <string name="stats_throughout_week">요일별</string>
     <string name="stats_throughout_day">시간대별</string>
-    <string name="stats_any_day">아직 두드러지는 요일 없음</string>
     <string name="stats_any_time">언제든지</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">%1$s에 가장 잘해요.</string>

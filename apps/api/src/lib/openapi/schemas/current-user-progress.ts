@@ -109,6 +109,13 @@ export const currentUserActivityResponseSchema = z
             .int()
             .min(0)
             .meta({ description: "Lessons finished for the first time that day" }),
+          timeSpentSeconds: z
+            .number()
+            .int()
+            .min(0)
+            .meta({
+              description: "Seconds studied that day; zero on a day that isn't a learning day",
+            }),
         }),
       ),
     }),

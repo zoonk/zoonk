@@ -4,7 +4,7 @@
   "reminders_cancel": "68f40434d64866054cd727f5510b8be84d0feb23aba6ec1d18c6d66336a22ab3",
   "reminders_channel_description": "0a5fa73a775a8762f7ca7ed61ec45f27e99154f1bb5c661869498aa239af7de7",
   "reminders_channel_name": "567f42641ff97c650c32a19337147da28ef2057f5a36197ad8ee1c8c61b13c87",
-  "reminders_email": "5d9485aae9c818e258fc1fb90944b1134bf1b239914740c14b4d190836bb6785",
+  "reminders_email": "e80751a0f7d2ce50a79a70d431866711641ddc0d5630ccedc7312a37742259a3",
   "reminders_email_instead": "da5bf077fb888ca7dd5ab1660519f487bb267c6f311203096c94d7531c0e0caf",
   "reminders_email_needs_account": "fd40b8e8e0a10988ffb8f0c924205d56c3b9f63044a0808a045c956c0d73d44a",
   "reminders_email_on": "45d4a9318a5510beb9036df056bdeec8917971d00aca19cf737255b77c7122b2",
@@ -71,7 +71,7 @@
     <string name="reminders_title">알림</string>
     <!-- The time of day a reminder goes out, not an amount of time. -->
     <string name="reminders_time">시간</string>
-    <string name="reminders_email">이메일</string>
+    <string name="reminders_email">이메일 학습 알림</string>
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">계정을 만들고 이메일 알림 받기</string>
     <string name="reminders_push">푸시 알림</string>

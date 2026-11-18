@@ -6,7 +6,6 @@
   "stats_answer_count": "cca17fb4e1d86d738b9fe71c15ee56896335ba4960e8b7d50204ab0f59be2081",
   "stats_answer_more": "26c6302cf044c476ad983385b134fb6519a1f65c55d0e09a622a7557ff01f92c",
   "stats_answers_to_count": "06928d0233c3392d1a400fe05669805e9537ba525b79f32c9d417e087d3e7ba6",
-  "stats_any_day": "dac364d4bf519039004f48b56289d0236be48144ca551548190fac78ef3f69c5",
   "stats_any_time": "a78487a50cdf4e5a7a56ba57def479d831803c3021210f5e7d6a88318a3174a4",
   "stats_belt_comes_after": "19f4a2f750b23c10674eb70d280b28b319b558e15b2303613147b740a67653d6",
   "stats_belt_current": "cb430d032ca1780171a3d64a94120e3fe5baf052aa1152b734395217606cd746",
@@ -167,7 +166,6 @@
     </plurals>
     <string name="stats_throughout_week">Ao longo da semana</string>
     <string name="stats_throughout_day">Ao longo do dia</string>
-    <string name="stats_any_day">Nenhum dia se destacou ainda</string>
     <string name="stats_any_time">Qualquer horário</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Seu melhor dia é %1$s.</string>

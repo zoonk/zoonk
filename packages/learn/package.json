@@ -72,6 +72,7 @@
     "./help-limit": "./src/_components/help-limit-notice.tsx",
     "./item-text": "./src/questions/item-text.tsx",
     "./journey": "./src/journey/journey-screen.tsx",
+    "./label-case": "./src/_utils/label-case.ts",
     "./journey/planless": "./src/journey/journey-planless.tsx",
     "./journey/plan-topics": "./src/journey/preparation/study-counts.ts",
     "./journey/resume-effect": "./src/journey/resume-effect.tsx",

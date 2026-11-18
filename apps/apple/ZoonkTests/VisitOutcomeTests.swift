@@ -283,7 +283,7 @@ final class VisitOutcomeTests: XCTestCase {
   private static let sounds = String(localized: "Sounds", table: "Settings")
   private static let shareUsage = String(localized: "Share usage data", table: "Settings")
   private static let useMemory = String(localized: "Use memory", table: "Settings")
-  private static let email = String(localized: "Email", table: "Reminders")
+  private static let email = String(localized: "Email reminders", table: "Reminders")
   private static let star = String(localized: "Star", table: "Buddy")
 
   private func host(

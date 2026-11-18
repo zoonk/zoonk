@@ -77,7 +77,7 @@ final class ProgressAPITests: XCTestCase {
               "learningDays": 1,
               "totalLearningSeconds": 300,
               "totalLessonCompletions": 1,
-              "days": [{ "activitiesCompleted": 1, "date": "2026-02-30", "lessonCompletions": 1 }]
+              "days": [{ "activitiesCompleted": 1, "date": "2026-02-30", "lessonCompletions": 1, "timeSpentSeconds": 300 }]
             }
           }
           """#))
