@@ -125,9 +125,14 @@ function GuestLimitReached({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.signUp} link={PageLink}>
-          {t("Create a free account")}
-        </EnterLink>
+        <div className="flex w-full flex-col items-center gap-2 *:first:w-full lg:w-auto">
+          <EnterLink href={routes.signUp} link={PageLink}>
+            {t("Create a free account")}
+          </EnterLink>
+          <PageLink className={buttonVariants({ variant: "ghost" })} href={routes.signUp}>
+            {t("Log in")}
+          </PageLink>
+        </div>
       }
       description={t("Everything you learned comes with you.")}
       icon={<UserRoundPlusIcon aria-hidden="true" />}

@@ -78,12 +78,26 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-export function TutorIntro({ identity }: { identity: TutorIdentity }) {
+export function TutorIntro({
+  guest = false,
+  identity,
+}: {
+  guest?: boolean;
+  identity: TutorIdentity;
+}) {
   const t = useExtracted();
 
   return (
     <EmptyHeader>
       <EmptyMedia aria-hidden="true">{identity.figure}</EmptyMedia>
+      {guest && (
+        <>
+          <EmptyTitle>{t("Ask {name}", { name: identity.name })}</EmptyTitle>
+          <EmptyDescription>
+            {t("Ask {name} about any screen with a free account", { name: identity.name })}
+          </EmptyDescription>
+        </>
+      )}
       <EmptyDescription>
         {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
       </EmptyDescription>
@@ -112,22 +126,6 @@ function EmptyThread({
       <EmptyContent>
         <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
       </EmptyContent>
-    </Empty>
-  );
-}
-
-/** The sign-up gate's words; its one action is where the composer goes (`LessonQuestionDrawer`). */
-function GuestThread() {
-  const t = useExtracted();
-
-  return (
-    <Empty className="min-h-full">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <MessageSquareTextIcon />
-        </EmptyMedia>
-        <EmptyTitle className="text-base">{t("Questions need a free account")}</EmptyTitle>
-      </EmptyHeader>
     </Empty>
   );
 }
@@ -181,7 +179,9 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
   if (!controller.canAskQuestions) {
     return (
       <ThreadPanel>
-        <GuestThread />
+        <Empty className="min-h-full">
+          <TutorIntro guest identity={identity} />
+        </Empty>
       </ThreadPanel>
     );
   }
