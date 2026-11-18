@@ -17,6 +17,10 @@ final class SetupProgressTests: XCTestCase {
     XCTAssertFalse(SetupProgress.showsSkipAll(current: .buddy, steps: [.buddy, .plan]))
   }
 
+  func testRevisitingAnAnsweredQuestionDoesNotCountItAsLeftToSkip() {
+    XCTAssertFalse(SetupProgress.showsSkipAll(current: .watch, steps: [.listen, .buddy, .plan]))
+  }
+
   func testCountsTheAnsweredQuestionsAndTheOnesLeft() {
     XCTAssertEqual(
       SetupProgress(
