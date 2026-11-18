@@ -135,9 +135,9 @@ struct BeltRack: View {
     let currentIndex = ProgressBelt.allCases.firstIndex(of: current) ?? 0
 
     VStack(alignment: .leading, spacing: 8) {
-      HStack(alignment: .top, spacing: 0) {
-        ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-          VStack(spacing: 6) {
+      VStack(spacing: 6) {
+        HStack(spacing: 0) {
+          ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
             RackBelt(belt: belt, isTied: index <= currentIndex)
               .frame(
                 width: sizeClass == .regular ? 52 : 32, height: sizeClass == .regular ? 38 : 26
@@ -148,29 +148,31 @@ struct BeltRack: View {
                     .strokeBorder(.primary, lineWidth: 1.5)
                 }
               }
+              .frame(maxWidth: .infinity)
+              .accessibilityElement(children: .ignore)
+              .accessibilityLabel(Text(belt.localizedTitle))
+              .accessibilityValue(
+                index <= currentIndex
+                  ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
+              )
+              .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
+          }
+        }
 
-            // On a phone only the learner's belt is named; the key says which are earned.
-            if sizeClass == .regular || index == currentIndex {
-              Text(belt.shortTitle)
-                .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
-                .foregroundStyle(
-                  index == currentIndex
-                    ? AnyShapeStyle(.primary)
-                    : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
-                )
-                .lineLimit(1)
-                .fixedSize()
+        // Every belt is named only when no name would crowd its neighbor's column; otherwise only
+        // the learner's, kept inside the row. The key says which are earned.
+        ViewThatFits(in: .horizontal) {
+          BeltColumns(count: ProgressBelt.allCases.count) {
+            ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
+              name(belt, index: index, currentIndex: currentIndex)
             }
           }
-          .frame(maxWidth: .infinity)
-          .accessibilityElement(children: .ignore)
-          .accessibilityLabel(Text(belt.localizedTitle))
-          .accessibilityValue(
-            index <= currentIndex
-              ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
-          )
-          .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
+
+          BeltColumns(count: ProgressBelt.allCases.count, only: currentIndex) {
+            name(current, index: currentIndex, currentIndex: currentIndex)
+          }
         }
+        .accessibilityHidden(true)
       }
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
@@ -192,11 +194,56 @@ struct BeltRack: View {
     }
   }
 
+  private func name(_ belt: ProgressBelt, index: Int, currentIndex: Int) -> some View {
+    Text(belt.shortTitle)
+      .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
+      .foregroundStyle(
+        index == currentIndex
+          ? AnyShapeStyle(.primary)
+          : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
+      )
+      .lineLimit(1)
+  }
+
   private func keyItem(isTied: Bool, @ViewBuilder label: () -> Text) -> some View {
     HStack(spacing: 4) {
       RackBelt(belt: .gray, isTied: isTied)
         .frame(width: 20, height: 20)
       label()
+    }
+  }
+}
+
+/// Names under the rack's equal columns, each centered under its belt. With every name, its ideal
+/// width is the columns at the widest name, so `ViewThatFits` drops to the learner's name alone when
+/// one would crowd its neighbor. `only` places that one name under its column, moved in from the
+/// row's ends so it never starts or ends outside the row.
+private struct BeltColumns: Layout {
+  let count: Int
+  var only: Int?
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+    let widest = sizes.map(\.width).max() ?? 0
+    // Every name keeps a few points from the next one.
+    let ideal = only == nil ? (widest + 4) * Double(count) : widest
+
+    return CGSize(width: proposal.width ?? ideal, height: sizes.map(\.height).max() ?? 0)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    let column = bounds.width / Double(max(count, 1))
+
+    for (index, subview) in subviews.enumerated() {
+      let width = min(subview.sizeThatFits(.unspecified).width, bounds.width)
+      let center = bounds.minX + column * (Double(only ?? index) + 0.5)
+      let x = min(max(center - width / 2, bounds.minX), bounds.maxX - width)
+
+      subview.place(
+        at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading,
+        proposal: ProposedViewSize(width: width, height: nil))
     }
   }
 }
