@@ -62,9 +62,11 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
@@ -415,11 +417,12 @@ internal fun PlanContent(
     val list = rememberLazyListState()
     val main =
         @Composable { asideBeside: Boolean ->
+            val noteRoom = rememberBarNoteRoom()
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = list,
-                    contentPadding = PaddingValues(start = margin, end = margin, top = 8.dp, bottom = 32.dp),
+                    contentPadding = PaddingValues(start = margin, end = margin, top = 8.dp, bottom = 32.dp + noteRoom.height),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     item(key = "header", contentType = "header") {
@@ -488,7 +491,7 @@ internal fun PlanContent(
                     }
                 }
                 if (page.isPaused) {
-                    ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure) {
+                    ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure, noteRoom = noteRoom) {
                         onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
                     }
                 } else if (examOver) {
@@ -644,9 +647,11 @@ private fun ResumeGoalBar(
     enabled: Boolean,
     busy: Boolean,
     failure: ResumeFailure?,
+    noteRoom: BarNoteRoom,
     onResume: () -> Unit,
 ) {
     BottomBar(
+        noteRoom = noteRoom,
         note =
             failure?.let {
                 {

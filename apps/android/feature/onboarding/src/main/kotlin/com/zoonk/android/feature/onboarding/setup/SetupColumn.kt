@@ -40,10 +40,12 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 
 internal data class SetupLayout(
     val fold: PageFold?,
@@ -113,6 +115,7 @@ private fun SetupColumnBody(
         val scroll = rememberScrollState()
         val spread = fold?.takeIf { aside == null }
         val barSlot = remember { mutableStateOf<PageBar?>(null) }
+        val noteRoom = rememberBarNoteRoom()
         val bar = barSlot.value
 
         Column(
@@ -153,6 +156,7 @@ private fun SetupColumnBody(
                                         .fillMaxWidth()
                                         .heightIn(min = height)
                                         .padding(horizontal = pageMargin(), vertical = EDGE)
+                                        .padding(bottom = noteRoom.height)
                                 } else {
                                     Modifier.fillMaxSize()
                                 },
@@ -163,7 +167,7 @@ private fun SetupColumnBody(
                 }
             }
 
-            bar?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { SetupActionBar(it) }
+            bar?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { SetupActionBar(it, noteRoom) }
         }
 
         if (fold != null && aside != null) {
@@ -230,8 +234,11 @@ internal fun PageActions(
 }
 
 @Composable
-private fun SetupActionBar(bar: PageBar) {
-    BottomBar(columnWidth = COLUMN_WIDTH, note = bar.note?.value) {
+private fun SetupActionBar(
+    bar: PageBar,
+    noteRoom: BarNoteRoom,
+) {
+    BottomBar(columnWidth = COLUMN_WIDTH, note = bar.note?.value, noteRoom = noteRoom) {
         if (bar.actions != null) {
             bar.actions.value()
         } else {
