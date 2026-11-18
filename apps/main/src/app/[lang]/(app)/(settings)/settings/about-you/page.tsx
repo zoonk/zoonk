@@ -47,11 +47,10 @@ export default async function AboutYouPage() {
 
   return (
     <Page measure="form">
-      <SectionPageHeader title={t("About you")} />
-
-      <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
-        {t("Your answers shape your examples and your buddy. Everything is optional.")}
-      </p>
+      <SectionPageHeader
+        description={t("Your answers shape your examples and your buddy. Everything is optional.")}
+        title={t("About you")}
+      />
 
       <Suspense fallback={<AboutYouSkeleton />}>
         <AboutYouContent />

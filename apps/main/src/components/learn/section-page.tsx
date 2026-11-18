@@ -60,7 +60,7 @@ export function SectionPage({
             <p className="text-title" data-slot="section-title">
               {hub.title}
             </p>
-            {note && <p className="text-muted-foreground min-h-5 text-sm">{note}</p>}
+            {note && <PageSubtitle className="min-h-5">{note}</PageSubtitle>}
           </div>
           {nav}
         </div>
@@ -74,17 +74,27 @@ export function SectionPage({
 /** From a tablet up the tab marks the page, so the title stays only for screen readers. */
 export function SectionPageHeader({
   description,
+  note,
   title,
 }: {
+  /** The page's own line, at every width. */
   description?: React.ReactNode;
+  /** The section's line, which its header shows from a tablet up. */
+  note?: React.ReactNode;
   title: string;
 }) {
+  const line = description ?? note;
+
   return (
     <PageHeader className="md:contents">
       <PageHeaderContent className="md:contents">
         <AppEntryName name={title} />
         <PageTitle className="md:sr-only">{title}</PageTitle>
-        {description && <PageSubtitle className="md:hidden">{description}</PageSubtitle>}
+        {line && (
+          <PageSubtitle className={cn("text-pretty md:pt-0", !description && "md:hidden")}>
+            {line}
+          </PageSubtitle>
+        )}
       </PageHeaderContent>
     </PageHeader>
   );

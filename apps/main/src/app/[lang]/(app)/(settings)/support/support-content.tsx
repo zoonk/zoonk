@@ -63,11 +63,10 @@ export async function SupportContent() {
 
   return (
     <Page measure="form">
-      <SectionPageHeader title={t("Help")} />
-
-      <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
-        {t("Ask a question, report a problem or share an idea. We answer by email.")}
-      </p>
+      <SectionPageHeader
+        description={t("Ask a question, report a problem or share an idea. We answer by email.")}
+        title={t("Help")}
+      />
 
       <Suspense
         fallback={
