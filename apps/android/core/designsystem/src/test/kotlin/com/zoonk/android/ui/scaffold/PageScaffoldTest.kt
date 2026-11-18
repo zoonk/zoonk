@@ -28,6 +28,7 @@ import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -63,15 +64,15 @@ class PageScaffoldTest {
         rule.onNodeWithText("Report open").assertIsDisplayed()
     }
 
-    /** A page that centers its column, whatever its own margins, has its way back on that column, as its title is. */
+    /** A page's way back stays before its bar's title, so the bar never draws the arrow over the page's name. */
     @Test
     @Config(qualifiers = "w900dp-h900dp")
-    fun theWayBackStartsWhereACenteredPagesTitleStarts() {
+    fun theWayBackStaysBeforeTheBarsTitle() {
         rule.setContent {
             ZoonkTheme {
-                PageScaffold(onBack = {}) { padding ->
+                PageScaffold(onBack = {}, title = { Text("Open source licenses") }) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-                        Column(Modifier.widthIn(max = 400.dp).fillMaxWidth().padding(horizontal = 16.dp)) { PageTitleRow("Settings") }
+                        Column(Modifier.widthIn(max = 400.dp).fillMaxWidth().padding(horizontal = 16.dp)) { PageTitleRow("Licenses") }
                     }
                 }
             }
@@ -79,7 +80,29 @@ class PageScaffoldTest {
         rule.waitForIdle()
 
         val back = rule.onNodeWithContentDescription(rule.activity.getString(R.string.navigation_back)).getUnclippedBoundsInRoot()
-        // The arrow's ink starts 12dp into the button; the title's column starts (900 − 400) / 2 + 16 = 266dp in.
-        assertEquals(266f, (back.left + 12.dp).value, 1f)
+        val title = rule.onNodeWithText("Open source licenses", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        assertTrue("the title at ${title.left} starts after the way back at ${back.right}", title.left >= back.right)
+    }
+
+    /** A page that names its centered column has its way back and its bar's title on that column. */
+    @Test
+    @Config(qualifiers = "w900dp-h900dp")
+    fun theWayBackStartsOnTheColumnAPageNames() {
+        rule.setContent {
+            ZoonkTheme {
+                PageScaffold(onBack = {}, title = { Text("Settings") }, columnWidth = 448.dp) { padding ->
+                    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+                        Column(
+                            Modifier.widthIn(max = 448.dp).fillMaxWidth().padding(horizontal = pageMargin()),
+                        ) { PageTitleRow("Settings") }
+                    }
+                }
+            }
+        }
+        rule.waitForIdle()
+
+        val back = rule.onNodeWithContentDescription(rule.activity.getString(R.string.navigation_back)).getUnclippedBoundsInRoot()
+        // The arrow's ink starts 12dp into the button; the column's words start (900 − 448) / 2 + 24 = 250dp in.
+        assertEquals(250f, (back.left + 12.dp).value, 1f)
     }
 }
