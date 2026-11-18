@@ -371,8 +371,7 @@ private fun Conversation(
                 call = callState,
                 actions =
                     LiveCallActions(
-                        // A reconnect's End ends the call, on what was said; a first call's goes back to its intro.
-                        onEnd = { if (callState.phase == LiveCallPhase.Connecting && !call.continuing) model.cancel() else call.hangUp() },
+                        onEnd = model::end,
                         onHelp = call::help,
                         onMute = call::toggleMute,
                         onSend = call::sendText,

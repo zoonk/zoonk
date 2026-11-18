@@ -97,9 +97,7 @@ class ConversationViewModel(
             call = next
             next.start(microphone, takeover)
             // The notification's Hang up does what End does.
-            ongoing.keep(next, conversation.character.name) {
-                if (next.state.value.phase == LiveCallPhase.Connecting) cancel() else next.hangUp()
-            }
+            ongoing.keep(next, conversation.character.name) { end(next) }
             // A dropped call the learner then ends is saved too.
             next.state.first { it.phase == LiveCallPhase.Ended }
             if (call === next) scope.launch { save(next) }
@@ -116,6 +114,15 @@ class ConversationViewModel(
         if (startedOnOpen) return
         startedOnOpen = true
         start(conversation, microphone)
+    }
+
+    /** End: a first call still ringing goes back to its intro; any other call ends, on what was said. */
+    fun end() {
+        call?.let(::end)
+    }
+
+    private fun end(current: LiveCall) {
+        if (current.state.value.phase == LiveCallPhase.Connecting && !current.continuing) cancel() else current.hangUp()
     }
 
     /**
