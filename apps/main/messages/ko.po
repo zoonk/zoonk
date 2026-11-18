@@ -2999,11 +2999,6 @@ msgctxt "iFsDVR"
 msgid "Loading"
 msgstr "불러오는 중"
 
-#: src/components/learn/section-layout.tsx
-msgctxt "KeiV4d"
-msgid "Back to {page}"
-msgstr "{page} 화면으로 돌아가기"
-
 #: src/components/learn/upload-request-client.tsx
 msgctxt "Hv1OVQ"
 msgid "Your plan needs a document"

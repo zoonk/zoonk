@@ -2999,11 +2999,6 @@ msgctxt "iFsDVR"
 msgid "Loading"
 msgstr "Wczytujemy"
 
-#: src/components/learn/section-layout.tsx
-msgctxt "KeiV4d"
-msgid "Back to {page}"
-msgstr "Wróć do: {page}"
-
 #: src/components/learn/upload-request-client.tsx
 msgctxt "Hv1OVQ"
 msgid "Your plan needs a document"
