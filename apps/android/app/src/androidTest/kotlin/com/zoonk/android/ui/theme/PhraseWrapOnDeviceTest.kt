@@ -6,44 +6,78 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Locale
 
 /**
- * Japanese, like Korean, wraps between phrases, so a label's narrowest width is its longest phrase, never one character.
- * Phrase breaks come from the device's ICU data, which the JVM tests don't have.
+ * A Japanese label wraps between phrases, so its narrowest width is its longest phrase, never one character; a paragraph
+ * still wraps between characters. Phrase breaks come from the device's ICU data, which the JVM tests don't have.
  */
 @RunWith(AndroidJUnit4::class)
 class PhraseWrapOnDeviceTest {
     @get:Rule
     val compose = createComposeRule()
 
+    private val deviceLocale = Locale.getDefault()
+
+    /** A Japanese phone's own language, which text without a locale of its own is broken by. */
+    @Before
+    fun speakJapanese() = Locale.setDefault(Locale.JAPANESE)
+
+    @After
+    fun restoreLocale() = Locale.setDefault(deviceLocale)
+
     @Test
     fun aJapaneseLabelAtItsNarrowestBreaksOnlyBetweenPhrases() {
-        val label = "まだわからない"
+        val ends = narrowestLineEnds { MaterialTheme.typography.labelLarge }
+        assertTrue("breaks only after まだ: $ends", ends.all { it == 2 || it == LABEL.length })
+    }
+
+    /** A paragraph wraps between characters, as Japanese body text does on the web and in Android's own text past a few lines. */
+    @Test
+    fun aJapaneseParagraphStillBreaksBetweenCharacters() {
+        val ends = narrowestLineEnds { MaterialTheme.typography.bodyLarge }
+        assertEquals("a line per character", (1..LABEL.length).toList(), ends)
+    }
+
+    /** A question is a paragraph too, though its lines are balanced like a title's. */
+    @Test
+    fun aJapaneseQuestionStillBreaksBetweenCharacters() {
+        val ends = narrowestLineEnds { MaterialTheme.zoonkType.question }
+        assertEquals("a line per character", (1..LABEL.length).toList(), ends)
+    }
+
+    private fun narrowestLineEnds(style: @Composable () -> TextStyle): List<Int> {
         lateinit var layout: TextLayoutResult
         compose.setContent {
             val japanese = Configuration(LocalConfiguration.current).apply { setLocale(Locale.JAPANESE) }
             CompositionLocalProvider(LocalConfiguration provides japanese) {
                 ZoonkTheme {
                     Box(Modifier.width(IntrinsicSize.Min)) {
-                        Text(label, style = MaterialTheme.typography.labelLarge, onTextLayout = { layout = it })
+                        Text(LABEL, style = style(), onTextLayout = { layout = it })
                     }
                 }
             }
         }
         compose.waitForIdle()
+        return (0 until layout.lineCount).map { layout.getLineEnd(it) }
+    }
 
-        val ends = (0 until layout.lineCount).map { layout.getLineEnd(it) }
-        assertTrue("breaks only after まだ: $ends", ends.all { it == 2 || it == label.length })
+    private companion object {
+        const val LABEL = "まだわからない"
     }
 }
