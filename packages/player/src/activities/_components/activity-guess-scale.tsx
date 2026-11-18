@@ -163,7 +163,7 @@ export function ActivityGuessScale({
           value={Math.round(share * SCALE_POSITIONS)}
         >
           <SliderControl className="data-disabled:opacity-100">
-            <SliderTrack className="bg-muted-foreground/35">
+            <SliderTrack className="bg-neutral-500">
               {guess !== null && <SliderIndicator />}
               {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
 
