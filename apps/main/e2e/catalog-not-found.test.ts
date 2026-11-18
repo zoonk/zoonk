@@ -1,3 +1,4 @@
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
 const MISSING_COURSE = "/b/zoonk/c/no-course-with-this-slug";
@@ -27,8 +28,8 @@ test("offers Today as the main action when a learner opens a missing course", as
 test("offers a learner Today on the missing course's first paint, before its scripts load", async ({
   userWithoutProgress: page,
 }) => {
-  await page.route("**/_next/static/chunks/**", (route) => route.abort());
-  await page.goto(MISSING_COURSE);
+  await holdScripts(page);
+  await page.goto(MISSING_COURSE, { waitUntil: "domcontentloaded" });
 
   const bar = page.locator('[data-slot="bottom-bar"]');
 
