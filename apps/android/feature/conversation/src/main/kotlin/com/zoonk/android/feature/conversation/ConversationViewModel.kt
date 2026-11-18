@@ -122,7 +122,7 @@ class ConversationViewModel(
     }
 
     private fun end(current: LiveCall) {
-        if (current.state.value.phase == LiveCallPhase.Connecting && !current.continuing) cancel() else current.hangUp()
+        if (ringsFirst(current.state.value.phase, current.continuing)) cancel() else current.hangUp()
     }
 
     /**
@@ -280,3 +280,12 @@ class DraftPrepTimes(
 
     private fun handle(card: UUID) = sessions.current?.let { drafts.open(it, "conversation.prep.$card", Long.serializer()) }
 }
+
+/**
+ * A first call still ringing has nothing said to lose: End and Back go back to its intro, without
+ * asking. A call the server continues counts as a first one when this app holds nothing from it.
+ */
+internal fun ringsFirst(
+    phase: LiveCallPhase,
+    continuing: Boolean,
+) = phase == LiveCallPhase.Connecting && !continuing
