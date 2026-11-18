@@ -273,6 +273,7 @@ function placeLineLabel({
   );
 }
 
+/** @internal */
 export function placeLineLabels({
   area,
   labels,
