@@ -249,6 +249,12 @@ private fun share(
  * One part per mission, furthest first, filling in Brain Power's violet. The [justDone] fill from the step before,
  * after [delayMillis], when the screen celebrates.
  */
+/** When each part that moved starts filling, in milliseconds; null for a part that didn't move. */
+internal fun fillDelays(
+    fills: List<Pair<Float, Float>>,
+    delayMillis: Int,
+): List<Int?> = fills.map { (start, fill) -> delayMillis.takeIf { start < fill } }
+
 @Composable
 internal fun MissionTrack(
     progress: MissionProgress,
