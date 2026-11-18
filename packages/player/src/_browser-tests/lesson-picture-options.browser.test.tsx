@@ -85,6 +85,21 @@ describe("picture options", () => {
     await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
   });
 
+  it("shows the drawing status and icon on a pending option", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([
+        pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true }),
+      ]),
+    });
+
+    const status = option(BAROQUE?.picture.alt ?? "").getByRole("status");
+    await expect.element(status).toHaveTextContent("Drawing the picture…");
+    const message = status.element();
+    expect(message.getBoundingClientRect().width).toBeGreaterThan(1);
+    const icon = message.closest("[data-slot='media-pending']")?.querySelector("svg");
+    expect(icon?.getBoundingClientRect().width).toBeGreaterThan(0);
+  });
+
   it("shows the full description of an option while its picture is drawing on a phone", async () => {
     const alt = "A red apple beside a sliced green pear and a bowl of plums on a wooden table";
 
