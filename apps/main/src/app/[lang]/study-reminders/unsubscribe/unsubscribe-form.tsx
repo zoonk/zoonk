@@ -15,10 +15,18 @@ import { turnOffStudyReminderEmailAction } from "./actions";
 type Result = Awaited<ReturnType<typeof turnOffStudyReminderEmailAction>>;
 
 /** The page's one message, at the top of its column; its action is the bottom bar's. */
-function Message({ icon, title }: { icon: React.ReactNode; title: string }) {
+function Message({
+  description,
+  icon,
+  title,
+}: {
+  description?: string;
+  icon: React.ReactNode;
+  title: string;
+}) {
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <TaskStopMessage heading="h1" icon={icon} title={title} />
+      <TaskStopMessage description={description} heading="h1" icon={icon} title={title} />
     </div>
   );
 }
@@ -30,6 +38,7 @@ function UnsubscribeResult({ result }: { result: Result }) {
   return (
     <>
       <Message
+        description={off ? undefined : t("Nothing was changed.")}
         icon={off ? <MailCheckIcon aria-hidden="true" /> : <MailXIcon aria-hidden="true" />}
         title={off ? t("Email reminders are off") : t("This link is no longer active")}
       />
@@ -67,7 +76,11 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
 
   return (
     <>
-      <Message icon={<BellOffIcon aria-hidden="true" />} title={t("Turn off email reminders")} />
+      <Message
+        description={t("They can be turned back on in Settings.")}
+        icon={<BellOffIcon aria-hidden="true" />}
+        title={t("Turn off email reminders")}
+      />
 
       <form action={() => turnOff()} className="contents">
         <BottomBar>
