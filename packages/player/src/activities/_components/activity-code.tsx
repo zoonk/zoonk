@@ -52,7 +52,7 @@ export function ActivityCodeBlock({
     <ActivityHorizontalScroll box={{ label }} className={cn(CODE_SCROLL_SIGN, "-mx-2", className)}>
       <div
         className={cn(
-          "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1",
+          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
           CODE_TEXT,
         )}
       >
@@ -78,7 +78,7 @@ export function ActivityCodeLine({
   return (
     <div
       className={cn(
-        "col-span-full -mx-1.5 grid grid-cols-subgrid items-center rounded-lg px-1.5 whitespace-pre",
+        "col-span-full -mx-1.5 grid grid-cols-subgrid items-start rounded-lg px-1.5 wrap-anywhere whitespace-pre-wrap sm:whitespace-pre",
         tone === "current" &&
           "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
@@ -158,7 +158,7 @@ export function ActivityCodeLineInput({
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={cn(FIELD_RESET, "min-h-11 w-full [font:inherit]")}
+        className={cn(FIELD_RESET, "h-lh w-full [font:inherit]")}
         onChange={(event) => onChange(event.target.value)}
         spellCheck={false}
         type="text"
@@ -194,10 +194,7 @@ export function ActivityCodeEditor({
     <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
       <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
         <div
-          className={cn(
-            "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-4 py-3",
-            CODE_TEXT,
-          )}
+          className={cn("grid w-full grid-cols-[max-content_minmax(0,1fr)] px-3 py-3", CODE_TEXT)}
         >
           <div
             aria-hidden="true"
@@ -208,7 +205,10 @@ export function ActivityCodeEditor({
             ))}
           </div>
 
-          <div aria-hidden="true" className="col-start-2 row-start-1 whitespace-pre">
+          <div
+            aria-hidden="true"
+            className="col-start-2 row-start-1 wrap-anywhere whitespace-pre-wrap"
+          >
             {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
               <div key={key}>
                 <ActivityCodeTokens tokens={item} />
@@ -220,7 +220,10 @@ export function ActivityCodeEditor({
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className={cn(FIELD_RESET, "col-start-2 min-h-11 w-full [font:inherit]")}
+            className={cn(
+              FIELD_RESET,
+              "col-start-2 min-h-lh w-full wrap-anywhere whitespace-pre-wrap [font:inherit]",
+            )}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {
               if (onSubmit && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -232,7 +235,7 @@ export function ActivityCodeEditor({
             rows={lines.length}
             spellCheck={false}
             value={value}
-            wrap="off"
+            wrap="soft"
             {...props}
             {...kept}
           />
@@ -301,7 +304,10 @@ export function ActivitySnippetBar({
   snippets: readonly (CodeSnippet & { label: string; name: string })[];
 }) {
   return (
-    <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
+    <ActivityHorizontalScroll
+      box={{ label }}
+      className={cn(CODE_SCROLL_SIGN, "has-[>button]:px-12 [&>button]:size-11")}
+    >
       <div className="flex w-max min-w-full gap-2" data-slot="activity-snippet-bar">
         {snippets.map((snippet) => (
           <button
