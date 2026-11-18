@@ -26,7 +26,7 @@ describe("the images a PR body shows", () => {
     assert.deepEqual(bodyMedia(body).unsupported, []);
   });
 
-  it("finds one nested anywhere: emphasis, a list, a quote, a folded block (RV78)", () => {
+  it("finds one nested anywhere: emphasis, a list, a quote, a folded block", () => {
     const body = [
       "**![](bold.png)**",
       "",

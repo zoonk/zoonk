@@ -7,8 +7,8 @@
   /// `ZOONK_LAYOUT_CAPTURE=1` (also a launch argument, `-ZOONK_LAYOUT_CAPTURE 1`) has the shared
   /// pieces report what they laid out, and writes a capture of the screen whenever
   /// `scripts/layout-capture.mts` asks: each part's frame in points, a text's first baseline, its
-  /// capitals and type role, each action's look, and the build the app came from. The web lane's
-  /// checker reads it as it reads the web's (`REPORT-SHAPE.md` in the alignment notes). Without it,
+  /// capitals and type role, each action's look, and the build the app came from. The web
+  /// checker reads it as it reads the web's. Without it,
   /// every report is a no-op.
   enum LayoutCapture {
     static let isOn = debugLaunchValue("ZOONK_LAYOUT_CAPTURE") != nil

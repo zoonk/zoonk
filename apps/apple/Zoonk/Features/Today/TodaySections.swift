@@ -191,7 +191,7 @@ struct TodayChallengeRow: View {
 }
 
 /// Main answers a proposal right on Today, where the Plan never shows it, and missed days that put
-/// the goal's date at risk with their choices (C-42, C-43).
+/// the goal's date at risk with their choices.
 struct TodayPlanChangeSection: View {
   @AccessibilityFocusState private var isResultFocused: Bool
 
@@ -283,7 +283,7 @@ struct TodayPlanChangeSection: View {
       dateKind: GoalDateKind(isExam: isExam))
   }
 
-  /// The question; a focus the Focus test proposes keeps the test's own words (lane A's).
+  /// The question; a focus the Focus test proposes keeps the test's own words.
   private var title: String {
     if change.source == "focusTest", let areas = change.operations.first?.areas, !areas.isEmpty {
       return String(
@@ -380,7 +380,7 @@ struct TodayPlanChangeSection: View {
       : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
   }
 
-  // MARK: Missed days (C-43)
+  // MARK: Missed days
 
   @ViewBuilder
   private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {

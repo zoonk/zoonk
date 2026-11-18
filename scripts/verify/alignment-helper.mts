@@ -37,7 +37,7 @@ function sizes(one: CaptureElement, other: CaptureElement): [number, number] | n
   return null;
 }
 
-/** A helper's text is smaller than its title in the same group (C-A06, C-N10). */
+/** A helper's text is smaller than its title in the same group. */
 export function helperLeads(context: Context, read: Group): AlignmentFinding[] {
   return read.rows.flatMap((row) => {
     const own = read.parts.filter((part) => part.row === row.id && drawn(part));

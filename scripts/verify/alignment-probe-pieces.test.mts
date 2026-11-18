@@ -98,7 +98,7 @@ const LONE_SECTION = `<div data-slot="page-aside" data-box="58,0,704,300">
       <div data-slot="list-group" data-box="58,40,332,60">${row("Completed lessons", 40)}${row("Mind maps", 70)}</div></section>
   </div></div>`;
 
-/** RV71's page: a column 16 to 374, a grid of 164 and `side` px with a gap of 20, a panel filling the side. */
+/** A column 16 to 374, a grid of 164 and `side` px with a gap of 20, a panel filling the side. */
 function sideGrid(side: number) {
   return `<div data-slot="page" data-box="16,0,358,400">
     <div style="display: grid; grid-template-columns: 164px ${side}px" data-box="16,0,358,150">
@@ -114,7 +114,7 @@ function sideGridMisses(side: number) {
 }
 
 describe("a box in a side column (a grid's cell beside the hero or a category list)", () => {
-  it("is still held to the page's column when its cell overflows it (RV71)", () => {
+  it("is still held to the page's column when its cell overflows it", () => {
     assert.deepEqual(sideGridMisses(174), []);
     assert.equal(sideGridMisses(250).length, 1);
   });
@@ -273,7 +273,7 @@ describe("a row's line a lone last tile carries on with its ::after", () => {
 });
 
 /**
- * RV77's page: a 40 px tall box that clips its overflow, 10 past the column each side, holding a
+ * A 40 px tall box that clips its overflow, 10 past the column each side, holding a
  * positioned element whose `::after` rule sits 80 px down, wholly clipped away.
  */
 function clippedRule(after: string) {
@@ -293,13 +293,13 @@ function clippedRuleMisses(top: number) {
 }
 
 describe("a rule a ::after draws where a box clips it away", () => {
-  it("isn't read, though its column would fail it if it showed (RV77)", () => {
+  it("isn't read, though its column would fail it if it showed", () => {
     assert.deepEqual(clippedRuleMisses(80), []);
     assert.equal(clippedRuleMisses(20).length, 1);
   });
 });
 
-/** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
+/** A tab list with a 120 px item whose `::before` reaches 10 px past the column's start. */
 function tabFill(tag: string, attributes: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
     <div data-slot="page" data-box="16,0,358,400"><div data-tabs data-box="16,40,358,60">
@@ -312,7 +312,7 @@ function tabFillMisses(tag: string, attributes = "") {
 }
 
 describe("the current tab's fill", () => {
-  it("is allowed its 10 on the side it reaches, and nothing else in the tab list is (RV71, RV74)", () => {
+  it("is allowed its 10 on the side it reaches, and nothing else in the tab list is", () => {
     assert.deepEqual(tabFillMisses("a", 'href="/chapters" aria-current="page"'), []);
     assert.deepEqual(tabFillMisses("button", 'role="tab" aria-selected="true"'), []);
     assert.equal(tabFillMisses("div").length, 1);
@@ -357,7 +357,7 @@ function glyphLine(glyphTop: number) {
 }
 
 describe("a glyph and the words it goes with (addition 2)", () => {
-  it("are one row of their control, held to one line: centered passes, 8 px down fails (RV97)", () => {
+  it("are one row of their control, held to one line: centered passes, 8 px down fails", () => {
     document.body.innerHTML = glyphButton(12);
 
     const parts = read()

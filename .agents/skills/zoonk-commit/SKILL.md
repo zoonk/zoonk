@@ -13,7 +13,7 @@ Commit each change's own files as it lands. Stage only that change's paths; neve
 
 Before each commit, run the change's relevant checks: format and lint the touched files, typecheck their packages, and run the affected tests, where applicable. Report the checks and results, and include the final ones in the PR's verification section; CI runs the full suites on the PR ([root PR verification gate](../../../AGENTS.md#pr-verification-gate)).
 
-Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period. Commit and merge messages describe the change for someone who never saw how it was made, never the process that produced it (agent or lane names, review rounds, task codes).
+Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period. Commit and merge messages describe the change for someone who never saw how it was made, never the process that produced it (agent names or task codes).
 
 | Type       | Use                                                  |
 | ---------- | ---------------------------------------------------- |
@@ -88,7 +88,7 @@ A reviewer sees what the change did without running it, from evidence of both si
 
 A reviewer looks at every picture, and a long page of them hides the one that matters.
 
-- **Show the few screens that make the change clear,** usually one to three: the screen the change is about, plus another size, scheme or state only where the change looks different there. A change that reaches many screens, such as a redesign, shows a representative few, and the verification section says what else you checked: the [sweep](../verify/SKILL.md#7-sweep-every-screen-the-branch-touches) pictures and reads every screen the branch touches, so the few shown here aren't the only ones read.
+- **Show the few screens that make the change clear,** usually one to three: the screen the change is about, plus another size, scheme or state only where the change looks different there. A change that reaches many screens, such as a redesign, shows a representative few, and the verification section says what else you checked: the [screen coverage](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures and reads every screen the branch touches, so the few shown here aren't the only ones read.
 - **Each screen gets a collapsed panel,** and its summary says what changed there, so a reviewer can scan the summaries without opening any: `<summary>Today: the time readout sits at the title's end</summary>`. Put the screen that shows the change best first; its panel starts open. `media.md` is laid out this way; lay out hand-made media (the native apps, a sheet of several screens) the same way.
 - **Compare each pair before you attach it.** `pr:capture` prints how much of each shot changed and the box around it, and leaves out pairs where nothing changed. When you can't spot the difference at a glance, a reviewer can't either: say in the summary where to look, and when it's a small part of the screen, lead with a shot of just that part (`shot(name, { clip })`). Drop a pair whose change doesn't show.
 

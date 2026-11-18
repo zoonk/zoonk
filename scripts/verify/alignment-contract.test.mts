@@ -21,7 +21,7 @@ function unmeasured(capture: Capture) {
 
 describe("a declared relationship is measured and holds, or the run fails", () => {
   it("fails a row whose value sits 5 off its label's line, with nothing left pending", () => {
-    const { findings, summary } = evaluateFile({ captures: [real("round 2 pending-line")] });
+    const { findings, summary } = evaluateFile({ captures: [real("pending-line")] });
 
     assert.equal(findings.find((finding) => finding.rule === "line")?.level, "fail");
     assert.equal(summary.failed, true);
@@ -29,7 +29,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   });
 
   it("writes a failing record for an end edge, a type token or a gap the read couldn't give", () => {
-    assert.deepEqual(unmeasured(real("round 2 missing-end")), [
+    assert.deepEqual(unmeasured(real("missing-end")), [
       "cut",
       "line-end",
       "lone-word",
@@ -37,7 +37,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
       "end-edge",
     ]);
 
-    assert.deepEqual(unmeasured(real("round 2 explicit-missing-type")), [
+    assert.deepEqual(unmeasured(real("explicit-missing-type")), [
       "cut",
       "line-end",
       "lone-word",
@@ -45,7 +45,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
       "type",
     ]);
 
-    const untyped = real("round 2 explicit-missing-type");
+    const untyped = real("explicit-missing-type");
 
     assert.deepEqual(
       unmeasured({
@@ -55,7 +55,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
       ["cut", "line-end", "lone-word", "one-height", "type"],
     );
 
-    assert.deepEqual(unmeasured(real("round 2 missing-gap")), [
+    assert.deepEqual(unmeasured(real("missing-gap")), [
       "cut",
       "line-end",
       "lone-word",
@@ -64,7 +64,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
     ]);
 
     // A word in a value's place ("Off") isn't compared with figures, but its type is still read.
-    assert.deepEqual(unmeasured(real("round 3 missing-word-value-type")), [
+    assert.deepEqual(unmeasured(real("missing-word-value-type")), [
       "cut",
       "line-end",
       "lone-word",
@@ -83,7 +83,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   });
 
   it("writes a failing record for a row middle the capture says wasn't measured, never a pass", () => {
-    assert.deepEqual(unmeasured(real("round 3 line-unknown-middle")), [
+    assert.deepEqual(unmeasured(real("line-unknown-middle")), [
       "cut",
       "line-end",
       "lone-word",
@@ -91,21 +91,18 @@ describe("a declared relationship is measured and holds, or the run fails", () =
       "line",
     ]);
 
-    assert.equal(
-      evaluateFile({ captures: [real("round 3 line-unknown-middle")] }).summary.failed,
-      true,
-    );
+    assert.equal(evaluateFile({ captures: [real("line-unknown-middle")] }).summary.failed, true);
 
     // The same row with its middle measured: its value is 20 above the row's center.
     assert.match(
-      evaluateCapture(real("round 3 known-middle")).find((finding) => finding.rule === "line")
-        ?.detail ?? "",
+      evaluateCapture(real("known-middle")).find((finding) => finding.rule === "line")?.detail ??
+        "",
       /the value 20 above the row's center/u,
     );
   });
 
   it("checks each neighbor pair's gap: a row's own gap doesn't stand in for the group's", () => {
-    assert.deepEqual(unmeasured(real("round 2 partial-gap")), [
+    assert.deepEqual(unmeasured(real("partial-gap")), [
       "cut",
       "line-end",
       "lone-word",
@@ -113,7 +110,7 @@ describe("a declared relationship is measured and holds, or the run fails", () =
       "gap",
     ]);
 
-    assert.equal(evaluateFile({ captures: [real("round 2 partial-gap")] }).summary.failed, true);
+    assert.equal(evaluateFile({ captures: [real("partial-gap")] }).summary.failed, true);
   });
 });
 
@@ -137,7 +134,7 @@ describe("what the command accepts", () => {
 
     assert.equal(kindOf({ elements: [], version: 99 }), "invalid");
     assert.equal(kindOf(unnamed), "invalid");
-    assert.equal(kindOf(real("round 2 invalid-unit")), "invalid");
+    assert.equal(kindOf(real("invalid-unit")), "invalid");
     assert.equal(kindOf({ ...valid, platform: "web" }), "invalid");
 
     assert.equal(
@@ -161,9 +158,9 @@ describe("what the command accepts", () => {
   });
 
   it("refuses an optional field the evaluator reads when it has another type", () => {
-    assert.equal(kindOf(real("round 3 bad-specimen")), "invalid");
+    assert.equal(kindOf(real("bad-specimen")), "invalid");
 
-    const row = real("round 3 known-middle");
+    const row = real("known-middle");
 
     for (const [field, value] of [
       ["middle", "30"],
@@ -248,7 +245,7 @@ describe("a folder holding more than one capture file (AP1's run1/)", () => {
   });
 });
 
-describe("capture files named by path (RV97)", () => {
+describe("capture files named by path", () => {
   it("names each by its path from the folder they share, so old/ and new/ never merge", () => {
     const folder = mkdtempSync(join(tmpdir(), "alignment-paths-"));
     const capture = fixtureCapture(filledActions("page", 2));

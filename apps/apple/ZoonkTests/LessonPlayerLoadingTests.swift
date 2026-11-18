@@ -801,7 +801,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
   }
 
-  /// RV93: an offer is dropped once the learner leaves its screen; coming back asks nothing, and
+  /// An offer is dropped once the learner leaves its screen; coming back asks nothing, and
   /// the learner taps Ask again if they still want it.
   func testAnOfferLeftWithItsScreenStaysDroppedWhenTheLearnerComesBack() async throws {
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))

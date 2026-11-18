@@ -1,4 +1,4 @@
-/* oxlint-disable no-magic-numbers -- The tolerance `ROW-LINE.md` settles, in logical units. */
+/* oxlint-disable no-magic-numbers -- Row alignment tolerance in logical units. */
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import { isStacked } from "./alignment-edges.mts";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./alignment-geometry.mts";
 
 /**
- * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
+ * One line of a row (craft E6): every part sits on the middle of the label's
  * capitals, whatever its face or size, within half a logical unit at text ×1. The offset a reader
  * sees is against the size of the text, so at text ×N that's N halves. A part read by its ink is
  * drawn in whole device pixels, so its middle is known only to half a device pixel: it's allowed

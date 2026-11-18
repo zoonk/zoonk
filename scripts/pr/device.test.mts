@@ -110,7 +110,7 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
     );
   });
 
-  it("records what an emulator reports, never the checkout's commit (RV74 androidOlderInstalledNow)", async () => {
+  it("records what an emulator reports, never the checkout's commit", async () => {
     const { changedAt, repository } = checkFixture();
     const installedAt = new Date(changedAt.getTime() + 1000);
 
@@ -165,7 +165,7 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
     );
   });
 
-  it("refuses what GitHub links in the build the device reports, too (RV82)", async () => {
+  it("refuses what GitHub links in the build the device reports, too", async () => {
     const { changedAt, repository } = checkFixture();
 
     const versions = await Promise.all(

@@ -404,7 +404,7 @@ class LayoutCaptureTest {
         assertEquals(0, label.getInt("texts"))
     }
 
-    /** RV39 A1: the negative control. Visible words keep their ink, ellipsized or aligned. */
+    /** Visible words keep their ink, ellipsized or aligned. */
     @Test
     fun ordinaryVisibleTextKeepsItsInk() {
         val parts =
@@ -429,7 +429,7 @@ class LayoutCaptureTest {
         }
     }
 
-    /** RV39 A1: a text box cut only where it has no words still shows every line. */
+    /** A text box cut only where it has no words still shows every line. */
     @Test
     fun textWhoseBoxIsCutOnlyPastItsWordsKeepsItsInk() {
         val label =
@@ -446,7 +446,7 @@ class LayoutCaptureTest {
         assertTrue(label.get("ink") is JSONArray)
     }
 
-    /** RV39 A2: what covers the words, varied or partial, is never their ink. */
+    /** What covers the words, varied or partial, is never their ink. */
     @Test
     fun wordsUnderAGradientOrHalfCoveredHaveNoInk() {
         val labels =
@@ -468,7 +468,7 @@ class LayoutCaptureTest {
         }
     }
 
-    /** RV39 A3: a blank description is no description, and the count is the row's own. */
+    /** A blank description is no description, and the count is the row's own. */
     @Test
     fun aBlankDescriptionMakesNoLineAndTheCountIsTheRowsOwn() {
         val rows =
@@ -493,7 +493,7 @@ class LayoutCaptureTest {
         assertEquals(listOf(1, 1, 2), notes.map { it.getInt("texts") })
     }
 
-    /** RV39 A4: a text whose layout semantics hide is an unknown count, never zero. */
+    /** A text whose layout semantics hide is an unknown count, never zero. */
     @Test
     fun wordsWhoseLayoutIsHiddenAreAnUnknownCount() {
         val parts =
@@ -507,7 +507,7 @@ class LayoutCaptureTest {
         assertEquals(1, parts.part("note").getInt("texts"))
     }
 
-    /** RV39: a dimmed control whose edge the picture can't show has no edge, rather than the letters' edge. */
+    /** A dimmed control whose edge the picture can't show has no edge, rather than the letters' edge. */
     @Test
     fun aDimmedPartWhoseEdgeCantBeSeenHasNoInk() {
         val (dimmed, shown) =

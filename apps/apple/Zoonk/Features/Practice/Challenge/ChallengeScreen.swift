@@ -559,7 +559,7 @@ struct ChallengeScreen: View {
     return facts
   }
 
-  /// The gate's words, shown once the learner opened the challenge (lane E's 13.1 and 13.2).
+  /// The gate's words, shown once the learner opened the challenge.
   @ViewBuilder
   private func gateWords(_ challenge: Components.Schemas.Challenge) -> some View {
     VStack(alignment: .leading, spacing: 4) {

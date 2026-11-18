@@ -444,9 +444,9 @@ The craft read takes one screen. The role read takes one role on every screen, b
 2. A reader that built none of them gets the sheets and this file, and nothing else. Per sheet it answers: which instances differ from the rest, in what (place, size, gap, glyph, words, what a key or a tap does), and by how much.
 3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`). A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
 
-### The sweep read
+### Independent picture review
 
-The read of [the sweep](../../verify/SKILL.md#7-sweep-every-screen-the-branch-touches): many screens, read by someone who sees only the pictures and this file. You design and fix nothing, and you read no code, spec or plan.
+The independent review of [screen captures](../../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches): many screens, read by someone who sees only the pictures and this file. You design and fix nothing, and you read no code, spec or plan.
 
 1. **Read in number order.** Pictures that share a number are one screen at other sizes, schemes or languages; a number is a moment in a learner's path, not a hint about what the screen should show. If you can't tell what a screen is for, that is a finding.
 2. **See every pixel.** Look at the whole screen, then its parts, at a size where its smallest text reads. Crop and enlarge a tall or wide picture instead of guessing; at 3× a 1 px offset is 3 image pixels.
@@ -501,7 +501,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 
 ### Exceptions the user granted
 
-Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here follows the rule: ask in your handoff (in a task with lanes, in [its exceptions file](../../../guides/orchestration.md#exceptions)), and add it here only once the user has accepted it.
+Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here follows the rule: ask in your handoff (in a task split among subagents, in [its exceptions file](../../../guides/orchestration.md#exceptions)), and add it here only once the user has accepted it.
 
 - The landing page's hero headline and a blog post's title keep their own weight and line height (T1, T3).
 - A lesson question's picture is centered in the column (E9).

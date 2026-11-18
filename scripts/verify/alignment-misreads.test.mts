@@ -82,7 +82,7 @@ test("code ids may wrap at hyphens, while a title leaving one word still fails",
   assert.equal(faults("lone-word").length, 1);
 });
 
-test("a title's whitespace survives three single-word lines without a fixable orphan (FS-D35)", () => {
+test("a title's whitespace survives three single-word lines without a fixable orphan", () => {
   document.body.innerHTML = '<h2 data-box="16,0,120,60">Review self-study</h2>';
 
   vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {

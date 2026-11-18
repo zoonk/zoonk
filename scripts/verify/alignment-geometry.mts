@@ -1,4 +1,4 @@
-/* oxlint-disable no-magic-numbers -- Tolerances in logical units, as `REPORT-SHAPE.md` states them. */
+/* oxlint-disable no-magic-numbers -- Tolerances in logical units shared by all capture formats. */
 import {
   type AlignmentFinding,
   type Bounds,
@@ -175,7 +175,7 @@ export function notMeasured(
   what: string,
   detail: string,
 ) {
-  // One reason is one line however many groups show it (a sweep can show it on a hundred rows):
+  // One reason is one line however many groups show it:
   // the group goes in the detail, under the reason.
   return finding(context, {
     detail: `${groupName(read)}: ${detail}`,
