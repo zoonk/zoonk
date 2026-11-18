@@ -1,11 +1,14 @@
 package com.zoonk.android.feature.mock.runner
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,8 +37,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
@@ -424,20 +430,39 @@ private fun QuestionMap(
 /** How many questions are flagged, under the map: nothing until one is. */
 @Composable
 internal fun SheetLegend(flagged: Int) {
-    if (flagged == 0) return
-    val style = MaterialTheme.typography.bodySmall
-    val density = LocalDensity.current
-    val glyph = with(density) { style.fontSize.toDp() }
-    val line = with(density) { style.lineHeight.toDp() }
+    val colors = MaterialTheme.colorScheme
+    val review =
+        if (flagged == 0) {
+            stringResource(R.string.mock_legend_review)
+        } else {
+            pluralStringResource(R.plurals.mock_legend_review_count, flagged, flagged)
+        }
 
-    // The mark sits on the first line and grows with the words.
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Top) {
-        FlagGlyph(Modifier.padding(top = (line - glyph) / 2).size(glyph))
-        Text(
-            pluralStringResource(R.plurals.mock_flagged_count, flagged, flagged),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = style,
+    // Says what each cell's look means, drawn as the cells draw it.
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        LegendEntry(stringResource(R.string.mock_legend_unanswered), border = BorderStroke(1.dp, colors.outlineVariant))
+        LegendEntry(stringResource(R.string.mock_legend_answered), fill = colors.surfaceContainerHighest)
+        LegendEntry(stringResource(R.string.mock_legend_current), border = BorderStroke(2.dp, colors.onSurface))
+        LegendEntry(review, border = BorderStroke(2.dp, MaterialTheme.zoonk.warning))
+    }
+}
+
+@Composable
+private fun LegendEntry(
+    text: String,
+    fill: Color = Color.Transparent,
+    border: BorderStroke? = null,
+) {
+    val shape = RoundedCornerShape(4.dp)
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            Modifier
+                .size(14.dp)
+                .clip(shape)
+                .background(fill)
+                .then(if (border != null) Modifier.border(border, shape) else Modifier),
         )
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
