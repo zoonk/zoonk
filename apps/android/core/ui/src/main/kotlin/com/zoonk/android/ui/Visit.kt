@@ -50,6 +50,5 @@ fun OnVisitEnd(
     onEnd: () -> Unit,
 ) {
     val activity = LocalActivity.current
-    val current by rememberUpdatedState(onEnd)
-    DisposableEffect(*keys) { onDispose { if (activity?.isChangingConfigurations != true) current() } }
+    DisposableEffect(*keys) { onDispose { if (activity?.isChangingConfigurations != true) onEnd() } }
 }
