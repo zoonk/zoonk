@@ -18,4 +18,10 @@ class PlotTicksTest {
         assertEquals(turns[1], axis.fittedChoice(turns) { 48 })
         assertEquals(turns[2], axis.fittedChoice(turns) { 110 })
     }
+
+    @Test
+    fun aChartsOwnTicksShowInOrderWhateverOrderTheyComeIn() {
+        val dice = LinearScale(1.5..12.5, 44f to 284f)
+        assertEquals(listOf(2.0, 7.0, 12.0), dice.fittedChoice(listOf(listOf(2.0, 12.0, 7.0))) { 12 })
+    }
 }
