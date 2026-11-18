@@ -65,17 +65,14 @@ struct LineCrossingCanvas: View {
 
       if isMoved {
         VStack(alignment: .leading, spacing: 4) {
-          changeRow(fields.yLabel, change: yChange, isVertical: true)
-          changeRow(fields.xLabel, change: xChange, isVertical: false)
+          changeRow(fields.yLabel, change: yChange)
+          changeRow(fields.xLabel, change: xChange)
         }
         .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
       } else {
-        Text(
-          "Drag a line by its handle.", tableName: "ActivitiesCharts",
-          comment: "How to move a line on a two-line chart"
-        )
-        .typeStyle(.note)
+        dragHint
+          .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
@@ -83,7 +80,7 @@ struct LineCrossingCanvas: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(verbatim: movedText(shifted, offset: realOffset))
             .typeStyle(.body.weight(.semibold))
-            .foregroundStyle(.vizHighlight)
+            .foregroundStyle(Color.successText)
 
           if case .interaction = context.check, let feedback = wrongMoveFeedback {
             LessonRichText(feedback)
@@ -111,13 +108,13 @@ struct LineCrossingCanvas: View {
         segmentMarks(
           line(shifted, [shifted.id: realOffset]), domain: domain, series: "answer"
         )
-        .foregroundStyle(.vizHighlight)
+        .foregroundStyle(Color.success)
         .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
       }
 
       ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
         segmentMarks(line(field, offsets), domain: domain, series: field.id)
-          .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
+          .foregroundStyle(index == 0 ? Color.vizHighlight : Color.vizSecondary)
           .lineStyle(StrokeStyle(lineWidth: 2.5))
 
       }
@@ -164,7 +161,7 @@ struct LineCrossingCanvas: View {
             LineCrossingLabels.Item(
               id: field.id, text: Text(verbatim: field.label),
               segment: segment(line(field, offsets)),
-              color: index == 0 ? .vizAccent : .vizSecondary)
+              color: index == 0 ? .vizHighlight : .vizSecondary)
           }
           let beforeNames = fields.lines.filter { offsets[$0.id, default: 0] != 0 }.map { field in
             LineCrossingLabels.Item(
@@ -177,7 +174,7 @@ struct LineCrossingCanvas: View {
               guard showsAnswer else { return nil }
               return .init(
                 id: "answer", text: Text("What happened", tableName: "ActivitiesCharts"),
-                segment: segment(line(field, [field.id: realOffset])), color: .vizHighlight,
+                segment: segment(line(field, [field.id: realOffset])), color: .successText,
                 isUpper: false)
             }.map { [$0] } ?? []
           let handles = fields.lines.enumerated().map { index, field in
@@ -244,7 +241,7 @@ struct LineCrossingCanvas: View {
     let range = LineCrossingModel.range(fields.shift.amount)
     let offset = offsets[field.id] ?? 0
 
-    return ChartsHandle(tint: index == 0 ? .vizAccent : .vizSecondary, isEnabled: !isChecked)
+    return ChartsHandle(tint: index == 0 ? .vizHighlight : .vizSecondary, isEnabled: !isChecked)
       .chartsAdjustable(
         label: Text(
           "Move the line \(field.label)", tableName: "ActivitiesCharts",
@@ -347,21 +344,19 @@ struct LineCrossingCanvas: View {
     }
   }
 
+  /// An axis's label is a name, not a sentence's subject, so each change is its label and a value.
   private func changeWords(_ axisLabel: String, _ change: LineCrossingModel.Change) -> String {
     switch change {
-    case .up:
-      String(
-        localized: "\(axisLabel) goes up.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price goes up")
-    case .down:
-      String(
-        localized: "\(axisLabel) goes down.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price goes down")
-    case .same:
-      String(
-        localized: "\(axisLabel) stays the same.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price stays the same")
+    case .up: String(localized: "\(axisLabel): up", table: "ActivitiesCharts")
+    case .down: String(localized: "\(axisLabel): down", table: "ActivitiesCharts")
+    case .same: String(localized: "\(axisLabel): no change", table: "ActivitiesCharts")
     }
+  }
+
+  private var dragHint: Text {
+    axis == .horizontal
+      ? Text("Drag a line left or right by its handle.", tableName: "ActivitiesCharts")
+      : Text("Drag a line up or down by its handle.", tableName: "ActivitiesCharts")
   }
 
   private func changeText(yChange: LineCrossingModel.Change, xChange: LineCrossingModel.Change)
@@ -370,14 +365,12 @@ struct LineCrossingCanvas: View {
     [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].joinedSentences()
   }
 
-  private func changeRow(_ label: String, change: LineCrossingModel.Change, isVertical: Bool)
-    -> some View
-  {
+  private func changeRow(_ label: String, change: LineCrossingModel.Change) -> some View {
     let symbol =
       switch change {
       case .same: "minus"
-      case .up: isVertical ? "arrow.up" : "arrow.right"
-      case .down: isVertical ? "arrow.down" : "arrow.left"
+      case .up: "arrow.up"
+      case .down: "arrow.down"
       }
 
     return Label(changeWords(label, change), systemImage: symbol)
