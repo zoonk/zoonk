@@ -101,6 +101,10 @@ object ActivityFixtures {
         return sentStep(id, "activity", if (check == null) written else JsonObject(written + ("check" to check))) {
             put("picture", entry(name)["picture"] ?: JsonNull)
             put("baseMap", entry(name)["baseMap"] ?: JsonNull)
+            if (check == null) {
+                put("roundedAnswer", entry(name)["roundedAnswer"] ?: JsonNull)
+                put("minTolerance", entry(name)["minTolerance"] ?: JsonNull)
+            }
         }
     }
 
@@ -158,6 +162,7 @@ object ActivityFixtures {
                 put("picture", JsonNull)
                 put("baseMap", JsonNull)
                 put("minTolerance", JsonNull)
+                put("roundedAnswer", JsonNull)
                 put("content", content)
                 fields()
             }

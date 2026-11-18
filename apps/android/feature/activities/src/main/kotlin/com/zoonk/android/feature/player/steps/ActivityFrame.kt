@@ -2,8 +2,6 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
@@ -95,7 +92,6 @@ import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
-import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
@@ -105,10 +101,8 @@ import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ActivityExpectedFormulaTolerance
+import com.zoonk.api.models.ActivityRoundedAnswer
 import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.math.pow
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf5Value as GuessRevealContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
@@ -177,7 +171,7 @@ internal fun ActivityView(
     val onAnswerChange = { next: ActivityAnswer? -> if (!locked) actions.select(next?.let(LessonAnswer::Activity)) }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
     val ownsAnswer = canvasOwnsAnswer(frame.template)
-    val places = (frame.check as? NumericCheckValue)?.value?.decimalPlaces(content.minTolerance)
+    val rounded = content.roundedAnswer
     val numericQuestion =
         (frame.check as? NumericCheckValue)?.value?.question?.takeIf {
             frame.template == "guessReveal" ||
@@ -191,7 +185,9 @@ internal fun ActivityView(
                 phase,
                 locked,
                 onAnswerChange,
-                places,
+                rounded,
+                content.minTolerance,
+                result?.isCorrect,
                 numericQuestion != null,
             )
         }
@@ -209,6 +205,7 @@ internal fun ActivityView(
             actions::setCantListen,
             content.baseMap,
             actions::takeNumberKeys,
+            rounded,
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
@@ -239,10 +236,7 @@ internal fun ActivityView(
             check()
             if (!canvasOnScreen && checkFirst) canvas()
 
-            if (result != null) {
-                val guessUnit = (content.content as? GuessRevealContent)?.value?.fields?.unit
-                ActivityFeedback(frame.check, activityAnswer, result.isCorrect, places, guessUnit)
-            }
+            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect, rounded, showsNumbers = !ownsAnswer)
         }
     }
 }
@@ -254,7 +248,9 @@ private fun ActivityCheckArea(
     phase: ActivityPhase,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
-    places: Int?,
+    rounded: ActivityRoundedAnswer?,
+    minTolerance: ActivityTolerance?,
+    isCorrect: Boolean?,
     questionAlreadyShown: Boolean = false,
 ) {
     if (check is ChoiceCheckValue) {
@@ -271,7 +267,16 @@ private fun ActivityCheckArea(
             )
         }
     } else if (check is NumericCheckValue) {
-        NumericCheckField(check.value, answer, locked, onAnswerChange, places, showQuestion = !questionAlreadyShown)
+        NumericCheckField(
+            check.value,
+            answer,
+            locked,
+            onAnswerChange,
+            rounded,
+            minTolerance,
+            isCorrect,
+            showQuestion = !questionAlreadyShown,
+        )
     }
 }
 
@@ -280,22 +285,40 @@ private fun CheckQuestion(text: String) {
     RichText(text = text, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
 }
 
-/** Main's `ActivityNumericCheck`: the learner's own typing stays as typed; money keeps its sign where the language writes it. */
+/**
+ * Main's `ActivityNumericCheck`: the learner's own typing stays as typed until Check, which writes it to the
+ * rounding hint's places, as every number for the answer is; money keeps its sign where the language writes it.
+ */
 @Composable
 private fun NumericCheckField(
     check: NumericCheck,
     answer: ActivityAnswer?,
     locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
-    places: Int?,
+    rounded: ActivityRoundedAnswer?,
+    minTolerance: ActivityTolerance?,
+    isCorrect: Boolean?,
     showQuestion: Boolean = true,
 ) {
     val locale = currentLocale()
     var typed by rememberSaveable { mutableStateOf<String?>(null) }
     val value = answer.numericValue
+    val places = rounded?.places?.toInt()
     val shown =
-        typed?.takeIf { parseLocalizedNumber(it, locale) == value }
-            ?: value?.let { formatNumber(it, locale, exactFractionDigitsFor(check.answer, check.allowed, it), grouping = false) }
+        when {
+            value != null && isCorrect != null -> {
+                formatNumber(
+                    value,
+                    locale,
+                    check.checkedAnswerDigits(value, isCorrect, rounded, minTolerance),
+                    grouping = false,
+                )
+            }
+
+            else -> {
+                typed?.takeIf { parseLocalizedNumber(it, locale) == value }
+            }
+        } ?: value?.let { formatNumber(it, locale, check.answerDigits(it, places), grouping = false) }
             ?: typed.orEmpty()
     val unit = check.unit
     val currency = currencyFor(unit)
@@ -303,6 +326,9 @@ private fun NumericCheckField(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (showQuestion) CheckQuestion(check.question)
+        places?.let { places ->
+            Text(decimalEntryRule(places), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        }
         OutlinedTextField(
             value = shown,
             onValueChange = { text ->
@@ -316,8 +342,9 @@ private fun NumericCheckField(
             modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
             readOnly = locked,
             label = stringResource(R.string.player_your_answer),
+            // A unit after the number waits for one, so an empty field doesn't hold a stray sign; one before it shows from the start.
             visualTransformation =
-                unit?.let {
+                unit?.takeIf { unitFirst || shown.isNotEmpty() }?.let {
                     com.zoonk.android.ui.components.NumberUnitTransformation(
                         it,
                         unitFirst,
@@ -329,9 +356,6 @@ private fun NumericCheckField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
         )
-        places?.let { places ->
-            Text(decimalEntryRule(places), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-        }
     }
 }
 
@@ -341,24 +365,6 @@ internal val NumericCheck.allowed: Double
             ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
-
-internal fun NumericCheck.decimalPlaces(minTolerance: ActivityTolerance?): Int? {
-    val expected = answer.toBigDecimal().stripTrailingZeros()
-    val minimum =
-        minTolerance?.let { tolerance ->
-            if (tolerance.kind.value == "absolute") tolerance.`value` else tolerance.`value` * abs(answer)
-        } ?: 0.0
-    val acceptedDistance = maxOf(allowed, minimum)
-    if (expected.scale() <= 0) return null
-    return (0..expected.scale()).firstOrNull { places ->
-        val scale = 10.0.pow(places)
-        val rounded = floor(answer * scale + 0.5) / scale
-        val distance = abs(rounded - answer)
-        val slack = 1e-9 * maxOf(abs(answer), abs(rounded), acceptedDistance)
-        distance <= maxOf(acceptedDistance + slack, 1e-9 * maxOf(1.0, abs(answer))) ||
-            (rounded.toBigDecimal().stripTrailingZeros().precision() >= 2 && distance <= 0.5 / scale * (1 + 1e-9))
-    }
-}
 
 internal fun NumericCheck.answerDigits(
     value: Double?,
@@ -443,8 +449,8 @@ private fun ActivityFeedback(
     check: ActivityCheck,
     answer: ActivityAnswer?,
     isCorrect: Boolean,
-    places: Int?,
-    guessUnit: String?,
+    rounded: ActivityRoundedAnswer?,
+    showsNumbers: Boolean,
 ) {
     val reveal = LocalFeedbackReveal.current
 
@@ -471,23 +477,13 @@ private fun ActivityFeedback(
 
             is NumericCheckValue -> {
                 val numeric = check.value
-                val locale = currentLocale()
-                val value = answer.numericValue
-                val unit = if (guessUnit == null) numeric.unit else currencyUnit(guessUnit)
-                val digits = if (guessUnit == null) numeric.answerDigits(value, places) else null
-
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                    value?.let {
-                        LabeledLine(
-                            stringResource(R.string.player_activity_your_answer),
-                            formatAmount(it, locale, unit, maximumFractionDigits = digits),
-                            tabular = true,
-                        )
-                    }
-                    if (!isCorrect) {
-                        if (value != null) Text("·", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        RightAnswerLine(formatAmount(numeric.answer, locale, unit, maximumFractionDigits = digits), tabular = true)
-                    }
+                // The learner's number is in its field right above, so only the right one is added.
+                if (showsNumbers && !isCorrect) {
+                    val right = numeric.rightAnswer(rounded, answer.numericValue)
+                    RightAnswerLine(
+                        formatAmount(right.value, currentLocale(), numeric.unit, maximumFractionDigits = right.digits),
+                        tabular = true,
+                    )
                 }
                 FeedbackText(numeric.explanation)
             }
@@ -504,21 +500,4 @@ private fun ActivityFeedback(
 @Composable
 private fun FeedbackText(text: String) {
     RichText(text = text, style = MaterialTheme.typography.bodyMedium)
-}
-
-@Composable
-private fun LabeledLine(
-    label: String,
-    answer: String,
-    tabular: Boolean = false,
-) {
-    val style = MaterialTheme.typography.bodyMedium
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
-        Text(
-            answer,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = (if (tabular) style.withTabularFigures() else style).copy(fontWeight = FontWeight.Medium),
-        )
-    }
 }

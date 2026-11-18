@@ -125,14 +125,19 @@ internal fun highlighted(tokens: List<CodeToken>): AnnotatedString = codePalette
 internal fun CodeBlock(
     label: String,
     modifier: Modifier = Modifier,
+    wraps: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxWidth().semantics { contentDescription = label }) {
         Column(
-            Modifier
-                .fadingHorizontalScroll(rememberScrollState())
-                .widthIn(min = maxWidth)
-                .width(IntrinsicSize.Max),
+            if (wraps) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier
+                    .fadingHorizontalScroll(rememberScrollState())
+                    .widthIn(min = maxWidth)
+                    .width(IntrinsicSize.Max)
+            },
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             content()
@@ -140,7 +145,10 @@ internal fun CodeBlock(
     }
 }
 
-/** A line of code after its number, which TalkBack skips; the number keeps its width across a listing. */
+/**
+ * A line of code after its number, which TalkBack skips; the number keeps its width across a listing and stays
+ * clear of the line's mark, which starts after it.
+ */
 @Composable
 internal fun CodeLine(
     number: Int,
@@ -184,21 +192,27 @@ internal fun CodeLine(
     Row(
         modifier
             .fillMaxWidth()
-            .clip(shape)
-            .then(toned)
-            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state })
-            .padding(end = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state }),
     ) {
         Text(
             number.toString().padStart(digits),
             Modifier
-                .padding(end = 12.dp)
+                .alignByBaseline()
+                .padding(end = NUMBER_GAP)
                 .clearAndSetSemantics {},
             color = colors.onSurfaceVariant,
             style = codeTextStyle(),
         )
-        content()
+        Row(
+            Modifier
+                .alignByBaseline()
+                .weight(1f)
+                .clip(shape)
+                .then(toned)
+                .padding(start = NUMBER_GAP, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
     }
 }
 
@@ -213,11 +227,12 @@ internal fun CodeListing(
     val lines = highlightCode(code, language)
     val digits = lines.size.toString().length
     val current = stringResource(R.string.activities_code_current_line)
-    CodeBlock(label) {
+    // A listing wraps, so the part of a line a question asks about is never off the card.
+    CodeBlock(label, wraps = true) {
         lines.forEachIndexed { index, tokens ->
             val isCurrent = index + 1 == currentLine
             CodeLine(index + 1, digits, if (isCurrent) CodeLineTone.Current else CodeLineTone.Plain, state = current.takeIf { isCurrent }) {
-                Text(highlighted(tokens), softWrap = false, style = codeTextStyle())
+                Text(highlighted(tokens), style = codeTextStyle())
             }
         }
     }
@@ -462,6 +477,7 @@ internal fun SandboxRunBar(
 }
 
 private val CURRENT_MARK = 3.dp
+private val NUMBER_GAP = 6.dp
 internal const val SOFT_ALPHA = 0.12f
 internal const val STALE_ALPHA = 0.6f
 private val EDITOR_PADDING = 16.dp

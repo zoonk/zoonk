@@ -376,6 +376,7 @@ fun LessonPlayer(
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
+    val missing = (state?.run as? LessonRun.Refused)?.refusal == LessonRefusal.NotFound
 
     SpreadScreen(
         result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused,
@@ -402,10 +403,11 @@ fun LessonPlayer(
                                 }
                             }
                     },
-            title = { LessonTitle(lesson.title) },
+            // A lesson that isn't there has no name or options to show, only the way out.
+            title = { if (!missing) LessonTitle(lesson.title) },
             actions = {
                 if (viewModel.hasUnsent) UnsavedAnswers()
-                ScreenMenu(state, screen, viewModel)
+                if (!missing) ScreenMenu(state, screen, viewModel)
             },
             exitConfirmation =
                 if (unsent) {

@@ -7,6 +7,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.ActivityRoundedAnswer
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck
 
 /** [Explore] draws the canvas on an explanation screen: nothing to answer, and [ActivityProps.expected] is the solved end state when the template checks only that. */
@@ -39,6 +40,7 @@ data class ActivityProps(
     val onCantListenChange: (Boolean) -> Unit = {},
     val baseMap: ActivityBaseMap? = null,
     val takeNumberKeys: (((Int) -> Boolean)?) -> Unit = {},
+    val roundedAnswer: ActivityRoundedAnswer? = null,
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
     val isExploring: Boolean get() = phase == ActivityPhase.Explore

@@ -101,7 +101,7 @@ internal fun spacedTicks(
     return outward(anchor - 1 downTo 0).reversed() + anchor + outward(anchor + 1 until centers.size)
 }
 
-private fun densityAt(
+internal fun densityAt(
     distribution: Distribution,
     value: Double,
 ): Double =

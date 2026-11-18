@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -94,17 +95,17 @@ fun ActivityGuessScale(
     val guessValue = listOfNotNull(guess?.let(format) ?: stringResource(R.string.activities_guess_none), unitLabel).joinToString(". ")
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (actual != null && actualShare != null) {
-            AtShare(actualShare) {
-                ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
-                    Text(
-                        stringResource(R.string.activities_guess_real_value, format(actual)),
-                        style =
-                            MaterialTheme.typography.labelLarge
-                                .withTabularFigures()
-                                .copy(fontWeight = FontWeight.SemiBold),
-                    )
-                }
+        // The real value's row holds its room from the start, so the slider the learner just dragged stays put at Check.
+        val shown = actual != null && actualShare != null
+        AtShare(actualShare ?: HALF, if (shown) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}) {
+            ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
+                Text(
+                    stringResource(R.string.activities_guess_real_value, format(actual ?: scale.max)),
+                    style =
+                        MaterialTheme.typography.labelLarge
+                            .withTabularFigures()
+                            .copy(fontWeight = FontWeight.SemiBold),
+                )
             }
         }
         AtShare(share) {
@@ -219,9 +220,10 @@ private fun ScaleChip(
 @Composable
 private fun AtShare(
     share: Double,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Layout(content, Modifier.fillMaxWidth()) { measurables, constraints ->
+    Layout(content, modifier.fillMaxWidth()) { measurables, constraints ->
         val placeable = measurables.single().measure(constraints.copy(minWidth = 0))
         val width = constraints.maxWidth
         val x = (share * width - placeable.width / 2).roundToInt().coerceIn(0, max(0, width - placeable.width))

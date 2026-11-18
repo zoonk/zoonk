@@ -11,7 +11,6 @@
   "player_action_start": "8495c3d527f196ac1a748b6845650bd9af39a334edbd360c7f56fef2fd54fa3d",
   "player_activity_example_data": "4a1551cb79238578b39dd6b09986edb6065e876677d5539c5e7f1fdd44de5334",
   "player_activity_source": "b5c57a4759eeac95789e36df1137bde0b75b317d641ce22687bc49e818abe7e1",
-  "player_activity_your_answer": "2696ccf189b48bbe04ac5be78ef10d27a6eacfdddefedd87a9abb7a338bbba3f",
   "player_ai_note": "cd01ff87751678570bc62ad6bc4a493b08863c63bd74a399a9b53129f150ccc7",
   "player_already_knew": "13b16b7ca1c0e932323b68af29575037d01907cbfdcbdd4568bc02bce9aef8a1",
   "player_also_correct_label": "9c65f3791bb98adc1228590db01310e6b66e75ef06e652aa2dbdc58ea5c75264",
@@ -361,7 +360,6 @@
     <string name="player_activity_example_data">Örnek sayılar, gerçek veri değil</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">Kaynak: %1$s</string>
-    <string name="player_activity_your_answer">Cevabın:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">Meydan okuma · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->
