@@ -231,12 +231,10 @@ msgid "{time} (suggested)"
 msgstr "{time} (önerilen)"
 
 #: src/_components/daily-time-picker.tsx
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-schedule.tsx
-msgctxt "8W4rYY"
-msgid "Time a day"
+msgctxt "_BQlil"
+msgid "Daily study time"
 msgstr "Günlük çalışma süresi"
 
 #: src/_components/days-left.tsx
@@ -260,6 +258,7 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment.tsx
 #: src/challenge/challenge-footer.tsx
+#: src/chapter/chapter-header.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
@@ -289,6 +288,7 @@ msgstr "Devam et"
 #: src/_components/detail-page.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
+#: src/chapter/chapter-header.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -1026,6 +1026,11 @@ msgctxt "dQytAa"
 msgid "Add a weekday to your study days."
 msgstr "Çalışma günlerine hafta içinden bir gün ekle."
 
+#: src/_components/weekend-time.tsx
+msgctxt "ZmtzBe"
+msgid "Weekend time"
+msgstr "Hafta sonu çalışma süresi"
+
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
 msgctxt "f4Zmb7"
@@ -1329,6 +1334,7 @@ msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Ne öğrenme
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
+#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Önceki sorular"
@@ -3306,6 +3312,11 @@ msgctxt "Yym2vP"
 msgid "Day {number, number}"
 msgstr "{number, number}. gün"
 
+#: src/exam/exam-format-section.tsx
+msgctxt "0Wr2Rv"
+msgid "Date not set"
+msgstr "Tarih belirlenmedi"
+
 #: src/exam/exam-labels.tsx
 msgctxt "_Dh3uU"
 msgid "Photo ID and your registration card"
@@ -3438,11 +3449,6 @@ msgid "{days, plural, =0 {# days} one {# day} other {# days}} of study done."
 msgstr "{days, plural, =0 {# gün} other {# gün}} çalıştın."
 
 #: src/exam/exam-moment-card.tsx
-msgctxt "S-SzlM"
-msgid "You've prepared for this."
-msgstr "Buna hazırlandın."
-
-#: src/exam/exam-moment-card.tsx
 msgctxt "p_KXX2"
 msgid "From now on, review and mock exams."
 msgstr "Bundan sonra tekrar ve deneme sınavları var."
@@ -3456,6 +3462,11 @@ msgstr "Son düzlük"
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam} yarın"
+
+#: src/exam/exam-moment-card.tsx
+msgctxt "S-SzlM"
+msgid "You've prepared for this."
+msgstr "Bunun için hazırlandın."
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "7OX7b1"
@@ -3722,6 +3733,11 @@ msgstr "Son taban puanı: {score}"
 msgctxt "gemtGt"
 msgid "Your goal: {target}"
 msgstr "Hedefin: {target}"
+
+#: src/exam/use-exam-question-count.ts
+msgctxt "vZpDIe"
+msgid "{count, plural, one {# question from past exams} other {# questions from past exams}}"
+msgstr "{count, plural, other {Geçmiş sınavlardan # soru}}"
 
 #. The number of questions in an exam or a mock exam.
 #: src/exam/use-exam-question-count.ts
@@ -4662,9 +4678,9 @@ msgid "Rename goal"
 msgstr "Hedefin adını değiştir"
 
 #: src/journey/goal-actions.tsx
-msgctxt "iTK9B7"
-msgid "Pause this goal"
-msgstr "Bu hedefi duraklat"
+msgctxt "qO0E3a"
+msgid "Pause goal"
+msgstr "Hedefi duraklat"
 
 #: src/journey/goal-actions.tsx
 msgctxt "uUtHtO"
@@ -4672,9 +4688,10 @@ msgid "Resume this goal"
 msgstr "Bu hedefe devam et"
 
 #: src/journey/goal-actions.tsx
-msgctxt "G24tgI"
-msgid "Archive this goal"
-msgstr "Bu hedefi arşivle"
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Hedefi arşivle"
 
 #: src/journey/goal-actions.tsx
 msgctxt "tzm8m7"
@@ -4782,12 +4799,10 @@ msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "Hazırlık"
 
-#. A short line under the progress percent, in a small tile.
 #: src/journey/journey-hero.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "{studied, number} ders çalışıldı · {known, number} ders zaten biliniyordu"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -5145,11 +5160,6 @@ msgctxt "z8bUxd"
 msgid "{reviews, plural, one {# done} other {# done}}"
 msgstr "{reviews, plural, other {# tamamlandı}}"
 
-#: src/journey/preparation/use-preparation-parts.ts
-msgctxt "9_WhRd"
-msgid "{count, plural, one {# taken} other {# taken}}"
-msgstr "{count, plural, other {# deneme sınavı tamamladın}}"
-
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "_jCIXm"
 msgid "Study the topics that count most"
@@ -5296,10 +5306,9 @@ msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {# ders kaldı}}"
 
 #: src/journey/schedule-details.tsx
-#: src/onboarding/understood/use-schedule-row.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "Günde {time}"
+msgctxt "dVA-0b"
+msgid "About {time} a day"
+msgstr "Günde yaklaşık {time}"
 
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
@@ -7769,9 +7778,34 @@ msgid "Question {number}"
 msgstr "Soru {number}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "TV9YpL"
-msgid "{flagged, plural, one {# flagged} other {# flagged}}"
-msgstr "{flagged, plural, other {# soru işaretli}}"
+msgctxt "HmJ6DK"
+msgid "{question}, marked for review"
+msgstr "{question}, tekrar bakmak için işaretlendi"
+
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "7SPhv2"
+msgid "Later questions"
+msgstr "Sonraki sorulara git"
+
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "6go3bd"
+msgid "Unanswered"
+msgstr "Cevaplanmadı"
+
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "Xq1XH-"
+msgid "Answered"
+msgstr "Cevaplandı"
+
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "m8vPdI"
+msgid "Current question"
+msgstr "Şu anki soru"
+
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "_Isgzp"
+msgid "{flagged, plural, =0 {Marked for review} one {# marked for review} other {# marked for review}}"
+msgstr "{flagged, plural, =0 {Tekrar bakmak için işaretlendi} other {# soru tekrar bakmak için işaretlendi}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -7932,9 +7966,9 @@ msgid "This one doesn't count."
 msgstr "Bu sınav sayılmaz."
 
 #: src/mock/mock-frame.tsx
-msgctxt "g2F3WK"
-msgid "Your answer isn't saved yet"
-msgstr "Cevabın henüz kaydedilmedi"
+msgctxt "EWTtfJ"
+msgid "Try again before you move on"
+msgstr "Devam etmeden önce tekrar dene"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -7953,9 +7987,9 @@ msgstr "Teslim işlemini henüz tamamlayamadık. Normalden uzun sürüyor."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, other {# soru boş}} ve {flagged, plural, other {# soru işaretli}}."
+msgctxt "2_2n3w"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
+msgstr "{blank, plural, other {# soru boş}} ve {flagged, plural, other {# soru tekrar bakmak için işaretlendi}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7965,9 +7999,9 @@ msgstr "{count, plural, other {# soru boş.}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, other {# soru işaretli.}}"
+msgctxt "gaB5_0"
+msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
+msgstr "{count, plural, other {# soru tekrar bakmak için işaretlendi.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8228,6 +8262,11 @@ msgstr "{count, plural, other {# konu daha}}"
 msgctxt "AIeIsk"
 msgid "By topic"
 msgstr "Konulara göre"
+
+#: src/mock/mock-result-details.tsx
+msgctxt "xVvJB7"
+msgid "See answers"
+msgstr "Cevapları gör"
 
 #: src/mock/mock-result-details.tsx
 msgctxt "RQfEXO"
@@ -8516,8 +8555,9 @@ msgctxt "P0PLlQ"
 msgid "Points"
 msgstr "Puan"
 
+#. In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).
 #: src/mock/mock-result-view.tsx
-msgctxt "lJdQ8R"
+msgctxt "estimatedExamScore"
 msgid "Estimated {exam} score"
 msgstr "Tahmini {exam} puanı"
 
@@ -8570,11 +8610,6 @@ msgstr "Kısmen doğru: bu sorudan kısmi puan aldın."
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Gözden geçirilecek sorular"
-
-#: src/mock/mock-review.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Cevapları gör"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
@@ -9258,6 +9293,12 @@ msgstr "Tarih yok"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Hedef"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "8W4rYY"
+msgid "Time a day"
+msgstr "Günlük çalışma süresi"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -9946,7 +9987,6 @@ msgid "Study days"
 msgstr "Çalıştığın günler"
 
 #: src/onboarding/steps/study-week.tsx
-#: src/plan/plan-schedule.tsx
 msgctxt "FYJyhw"
 msgid "Time on weekends"
 msgstr "Hafta sonu çalışma süresi"
@@ -10106,6 +10146,11 @@ msgstr "söylediğine göre"
 msgctxt "lbfh2z"
 msgid "Exam country"
 msgstr "Sınav ülkesi"
+
+#: src/onboarding/understood/use-schedule-row.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "Günde {time}"
 
 #: src/onboarding/understood/use-schedule-row.ts
 msgctxt "0l2vvH"
@@ -10295,11 +10340,6 @@ msgid "{group}: which one will you take?"
 msgstr "{group}: hangisine gireceksin?"
 
 #: src/plan/exam-over-actions.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Hedefi arşivle"
-
-#: src/plan/exam-over-actions.tsx
 #: src/plan/study-everything.tsx
 msgctxt "t9hafN"
 msgid "Keep studying"
@@ -10324,6 +10364,11 @@ msgstr "{month} ayında sınav tarihi yok"
 msgctxt "wMxWx9"
 msgid "Use {date}"
 msgstr "{date} tarihini kullan"
+
+#: src/plan/notice-day.tsx
+msgctxt "3L56jf"
+msgid "The official {exam} date is {date}. Use it as your exam date?"
+msgstr "Resmî {exam} tarihi {date}. Sınav tarihin olarak kullanalım mı?"
 
 #: src/plan/plan-activities.tsx
 msgctxt "Np3v0G"
@@ -10506,10 +10551,11 @@ msgctxt "2cb_Ay"
 msgid "Nothing changed. To fit more of {areas}, add time a day."
 msgstr "Hiçbir şey değişmedi. {areas} için daha fazla derse yer açmak istiyorsan günlük çalışma süreni artır."
 
+#. Use a gender-neutral invitation to pick exam subjects manually.
 #: src/plan/plan-focus.tsx
-msgctxt "hVJsz4"
+msgctxt "chooseFocusSubjectsManually"
 msgid "Or choose them yourself"
-msgstr "Ya da kendin seç"
+msgstr "Ya da branşları kendin seç"
 
 #: src/plan/plan-focus.tsx
 msgctxt "JLgN5q"
@@ -10625,6 +10671,11 @@ msgstr "Sıradaki: <date></date>"
 msgctxt "LG_0wj"
 msgid "None set"
 msgstr "Belirlenmedi"
+
+#: src/plan/plan-properties.tsx
+msgctxt "G6h29P"
+msgid "Estimated finish <date></date>"
+msgstr "Tahmini bitiş: <date></date>"
 
 #: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
@@ -10779,9 +10830,9 @@ msgid "You'll practice with examples instead."
 msgstr "Bunun yerine örneklerle pratik yapacaksın."
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "nvvnr8"
-msgid "No install"
-msgstr "Kurulum yapmadan"
+msgctxt "-UdTEa"
+msgid "I won't use it"
+msgstr "Kullanmayacağım"
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "o7eSa4"
@@ -10794,9 +10845,9 @@ msgid "Your plan updates as soon as it's ready."
 msgstr "Planın hazır olur olmaz güncellenir."
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "nrLaaR"
-msgid "How will you use it?"
-msgstr "Nasıl kullanacaksın?"
+msgctxt "g1qapO"
+msgid "Do you have it?"
+msgstr "Sende var mı?"
 
 #: src/plan/plan-tools.tsx
 msgctxt "CFLl9U"
@@ -12900,16 +12951,11 @@ msgctxt "wGdj4O"
 msgid "Counts your answers in lessons, practice and tests."
 msgstr "Derslerde, alıştırmalarda ve testlerde verdiğin cevapları hesaba katar."
 
+#. In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).
 #: src/syllabus/subject-aside.tsx
-msgctxt "nIwm4S"
+msgctxt "questionsFromExamEdition"
 msgid "Questions from {exam}"
 msgstr "{exam} soruları"
-
-#: src/syllabus/subject-aside.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "tDrkTA"
-msgid "{done, number} of {total, number} chapters"
-msgstr "{done, number} / {total, number} ünite"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
@@ -12921,11 +12967,6 @@ msgctxt "jSqwdW"
 msgid "Coverage"
 msgstr "Kapsam"
 
-#: src/syllabus/subject-aside.tsx
-msgctxt "AGSt8i"
-msgid "Also"
-msgstr "Ayrıca"
-
 #: src/syllabus/subject-chapters.tsx
 msgctxt "JeoRv8"
 msgid "{count, plural, one {# chapter done} other {# chapters done}}"
@@ -12935,6 +12976,11 @@ msgstr "{count, plural, other {# ünite tamamlandı}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, other {# ünite tamamlandı}}, {known, plural, other {# üniteyi zaten biliyordun}}"
+
+#: src/syllabus/subject-chapters.tsx
+msgctxt "tDrkTA"
+msgid "{done, number} of {total, number} chapters"
+msgstr "{done, number} / {total, number} ünite"
 
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
@@ -13406,6 +13452,12 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
+
+#. A short line under the progress percent, in a small tile.
+#: src/today/today-lessons-card.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

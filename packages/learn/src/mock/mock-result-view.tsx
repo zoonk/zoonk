@@ -36,7 +36,6 @@ import {
 import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
-import { MockReviewDrawer, MockReviewSection } from "./mock-review";
 
 type Area = MockResult["areas"][number];
 
@@ -60,7 +59,14 @@ function useScore(result: MockResult): { caption: string; value: string } {
 
   if (result.irt) {
     return {
-      caption: examName ? t("Estimated {exam} score", { exam: examName }) : t("Estimated score"),
+      caption: examName
+        ? t({
+            description: "In Portuguese, include the article for the exam (e.g. ‘para o ENEM’).",
+            id: "estimatedExamScore",
+            message: "Estimated {exam} score",
+            values: { exam: examName },
+          })
+        : t("Estimated score"),
       value: range(result.irt),
     };
   }
@@ -172,16 +178,7 @@ function ScoreStep({ result }: { result: MockResult }) {
 
       {hasBreakdown(result) && <MockResultBreakdown result={result} />}
 
-      <div className="flex flex-wrap items-center gap-2 empty:hidden">
-        <MockResultDetails result={result} />
-        <div className="contents lg:hidden">
-          <MockReviewDrawer />
-        </div>
-      </div>
-
-      <div className="contents max-lg:hidden">
-        <MockReviewSection />
-      </div>
+      <MockResultDetails result={result} />
     </StepCard>
   );
 }
@@ -290,11 +287,18 @@ function MockResultSteps({ result }: { result: MockResult }) {
   return (
     <Steps
       aside={aside}
-      ask={ask}
       exitHref={hrefs.exit}
       finalAction={<MockResultActions />}
       finalSecondAction={<MockResultContinue />}
-      items={items}
+      items={items.map((item) => ({
+        ...item,
+        action: (
+          <>
+            {item.action}
+            {ask}
+          </>
+        ),
+      }))}
     />
   );
 }

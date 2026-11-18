@@ -23,7 +23,7 @@ function useQuestionsLeftOpen(): string {
     return t({
       description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
       message:
-        "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}.",
+        "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}.",
       values: { blank, flagged },
     });
   }
@@ -39,7 +39,8 @@ function useQuestionsLeftOpen(): string {
   if (flagged > 0) {
     return t({
       description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
-      message: "{count, plural, one {# question is flagged.} other {# questions are flagged.}}",
+      message:
+        "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}",
       values: { count: flagged },
     });
   }

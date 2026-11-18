@@ -81,18 +81,16 @@ function useDayTitle() {
   }): React.ReactNode {
     const number = t("Day {number, number}", { number: day.day });
 
-    if (!day.date) {
-      return number;
-    }
-
-    const date = (
+    const date = day.date ? (
       <span className="whitespace-nowrap">
         {dayDate(day.date, { estimated: exam.daysEstimated })}
       </span>
+    ) : (
+      t("Date not set")
     );
 
     return numbered ? (
-      <FactSegments facts={[{ content: date, key: day.date }]} lead={number} />
+      <FactSegments facts={[{ content: date, key: day.day.toString() }]} lead={number} />
     ) : (
       date
     );

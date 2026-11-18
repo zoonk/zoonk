@@ -94,7 +94,12 @@ function DailyCoverage({
         </p>
       )}
 
-      <div className={cn("col-start-1 row-start-1 flex flex-col gap-2", pending && "invisible")}>
+      <div
+        className={cn(
+          "col-start-1 row-start-1 flex flex-col gap-2 *:min-h-0 [&_button]:min-h-11",
+          pending && "invisible",
+        )}
+      >
         {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it
             says so. */}
         {plan.fitOffer?.fits ? (
@@ -177,7 +182,7 @@ function DailyMinutes({
       <DailyTimePicker
         disabled={isPending}
         full={marked.full}
-        label={t("Time a day")}
+        label={t("Daily study time")}
         minutes={time.shown}
         onChange={setMinutes}
         saves
@@ -253,7 +258,6 @@ function WeekendMinutes({
   onCheckedChange: (checked: boolean) => void;
   planChange: PlanChange;
 }) {
-  const t = useExtracted();
   const shape = useWeekShape();
   const current = shape.weekend ?? shape.weekdays;
   const weekend = useTappedChoice(current);
@@ -280,10 +284,10 @@ function WeekendMinutes({
         }
       }}
     >
-      {(on) => (
+      {(on, label) => (
         <TimeSelect
           disabled={isPending || !on}
-          label={t("Time on weekends")}
+          label={label}
           onChange={(minutes) => void setWeekend(minutes)}
           saves
           value={on ? weekend.shown : shape.weekdays}

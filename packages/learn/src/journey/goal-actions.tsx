@@ -135,7 +135,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
       {control.status === "active" && (
         <DropdownMenuItem onClick={() => menu.onSetStatus("paused")}>
           <PauseIcon aria-hidden="true" />
-          {t("Pause this goal")}
+          {t("Pause goal")}
         </DropdownMenuItem>
       )}
 
@@ -148,7 +148,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
 
       <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setArchiving(true)}>
         <ArchiveIcon aria-hidden="true" />
-        {t("Archive this goal")}
+        {t("Archive goal")}
       </DropdownMenuItem>
     </DropdownMenuGroup>
   );
@@ -256,7 +256,7 @@ export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }
 
   return (
     <Suggestion label={title} mark={<PauseIcon />}>
-      <SuggestionLine className="items-start *:data-[slot=suggestion-mark]:mt-0.5">
+      <SuggestionLine className="items-start px-3 *:data-[slot=suggestion-mark]:mt-0.5">
         <div>
           <SuggestionSummary>{title}</SuggestionSummary>
           <SuggestionDescription>{description}</SuggestionDescription>

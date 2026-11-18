@@ -4,6 +4,7 @@ import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { ListRowChevronSpace } from "../_components/list-group";
@@ -68,6 +69,16 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   );
 }
 
+export function PhaseCheckpointMark() {
+  const { goal } = usePlanScreen();
+
+  return goal.kind === "language" ? (
+    <MicIcon aria-hidden="true" className="size-4" />
+  ) : (
+    <Trickster className="size-4" view="face" />
+  );
+}
+
 export function CheckpointRow({
   checkpoint,
   links,
@@ -85,7 +96,7 @@ export function CheckpointRow({
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-        <Trickster className="size-4" view="face" />
+        <PhaseCheckpointMark />
       </span>
       <PathRowBody
         value={

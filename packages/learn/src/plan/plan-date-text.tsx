@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 /** Kept whole on its line, unless it's wider than the whole line. */
-const PLAN_DATE_CLASS = "inline-block font-mono tabular-nums";
+const PLAN_DATE_CLASS = "inline-block font-mono whitespace-nowrap tabular-nums";
 
 /** A date on the plan: a row's day, or its month when the plan only knows the month. */
 export function useFormatPlanDate() {

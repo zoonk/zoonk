@@ -15,6 +15,7 @@ import { useId, useState } from "react";
 import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { KindDot } from "../../_components/kind-tile";
 import {
+  ListRow,
   ListRowButton,
   ListRowContent,
   ListRowDescription,
@@ -271,6 +272,20 @@ export function PracticeConversation({
   const [open, setOpen] = useState(false);
   const { character } = conversation;
 
+  if (conversation.paused) {
+    return (
+      <ListRow>
+        <ListRowLeading>
+          <KindDot kind="conversation" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
+          <ListRowDescription>{t("Calls are paused")}</ListRowDescription>
+        </ListRowContent>
+      </ListRow>
+    );
+  }
+
   // A submit, so a tap before the page hydrates opens the call's setup once it does.
   return (
     <>
@@ -281,14 +296,10 @@ export function PracticeConversation({
           </ListRowLeading>
           <ListRowContent>
             <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
-            {conversation.paused ? (
-              <ListRowDescription>{t("Calls are paused")}</ListRowDescription>
-            ) : (
-              character && (
-                <ListRowDescription>
-                  {t("with {name} · {role}", { name: character.name, role: character.role })}
-                </ListRowDescription>
-              )
+            {character && (
+              <ListRowDescription>
+                {t("with {name} · {role}", { name: character.name, role: character.role })}
+              </ListRowDescription>
             )}
           </ListRowContent>
         </ListRowButton>

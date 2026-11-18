@@ -10,6 +10,7 @@ import { MockResultAnswers, hasAnswerCounts } from "./mock-result-answers";
 import { MockResultInsights, useHasInsights } from "./mock-result-insights";
 import { MockResultPoints, hasTestRows } from "./mock-result-points";
 import { ResultSection } from "./mock-result-section";
+import { MockReviewSection } from "./mock-review";
 
 function PassMarks() {
   const t = useExtracted();
@@ -44,21 +45,27 @@ export function MockResultDetails({ result }: { result: MockResult }) {
   const { runner } = useMockScreen();
   const about = useMockAbout(runner.view);
   const hasInsights = useHasInsights();
+  const hasReview = runner.view.review.length > 0;
   const hasAnswers = hasAnswerCounts(result);
   const hasPoints = hasTestRows(result.points);
 
-  if (!hasAnswers && !hasPoints && !runner.view.passMarks && !hasInsights && !about) {
+  if (!hasReview && !hasAnswers && !hasPoints && !runner.view.passMarks && !hasInsights && !about) {
     return null;
   }
 
   return (
-    <DetailsDrawer label={t("See details")} title={t("Details")} trigger="small">
+    <DetailsDrawer
+      label={hasReview ? t("See answers") : t("See details")}
+      title={t("Details")}
+      trigger="small"
+    >
       <div className="flex flex-col gap-8 pb-2">
         {hasAnswers && (
           <ResultSection title={t("Answers")}>
             <MockResultAnswers result={result} />
           </ResultSection>
         )}
+        <MockReviewSection />
         {hasPoints && result.points && <MockResultPoints points={result.points} />}
         <PassMarks />
         {hasInsights && <MockResultInsights />}

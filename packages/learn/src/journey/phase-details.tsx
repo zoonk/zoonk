@@ -65,9 +65,10 @@ function usePhaseLessons() {
 
 function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const mocksLine = usePhaseMocksLine();
+  const { paused } = usePlanScreen();
   const { checkpoint, mocks } = phase;
 
-  if (!mocks.nextDate && mocks.count === 0 && !checkpoint) {
+  if (paused || (!mocks.nextDate && mocks.count === 0 && !checkpoint)) {
     return null;
   }
 

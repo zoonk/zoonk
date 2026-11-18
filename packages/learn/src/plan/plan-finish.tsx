@@ -7,12 +7,12 @@ import { usePlanScreen } from "./plan-context";
 export function PlanFinish({ pending }: { pending: boolean }) {
   const t = useExtracted();
   const finishSentence = useFinishSentence();
-  const { plan, today } = usePlanScreen();
+  const { paused, plan, today } = usePlanScreen();
   const { endDate } = plan.estimate;
 
   // The end is the saved schedule's last day, laid out again only by a change: once it has
   // passed, it no longer says when the learner finishes.
-  if (!endDate || endDate < today || plan.end) {
+  if (paused || !endDate || endDate < today || plan.end) {
     return null;
   }
 

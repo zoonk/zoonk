@@ -17,6 +17,8 @@ import { useMockOptionName } from "./mock-option-labels";
 
 export type MockChooserHrefs = { mock: (id: string) => string };
 
+const ESTIMATE_STEP_MINUTES = 5;
+
 const NO_WRITTEN_PARTS: readonly string[] = [];
 
 type PickedSize = { estimatedMinutes: number; minutes: number; questions: number };
@@ -34,6 +36,11 @@ function ChooserPicked({
   const duration = useFormatDuration();
   const questionsLabel = useExamQuestionsLabel();
 
+  const estimatedMinutes = Math.max(
+    ESTIMATE_STEP_MINUTES,
+    Math.round(size.estimatedMinutes / ESTIMATE_STEP_MINUTES) * ESTIMATE_STEP_MINUTES,
+  );
+
   return (
     <div className="flex flex-col gap-8" data-slot="mock-chooser-picked">
       <DetailProperties>
@@ -44,9 +51,9 @@ function ChooserPicked({
           {duration(size.minutes)}
         </DetailProperty>
         {/* Core gives the limit when no estimate covers the whole mock (an essay, too few answers). */}
-        {size.estimatedMinutes < size.minutes && (
+        {size.estimatedMinutes < size.minutes && estimatedMinutes < size.minutes && (
           <DetailProperty label={t("Usually takes")} mono>
-            {t("About {time}", { time: duration(size.estimatedMinutes) })}
+            {t("About {time}", { time: duration(estimatedMinutes) })}
           </DetailProperty>
         )}
       </DetailProperties>

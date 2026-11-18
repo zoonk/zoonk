@@ -178,7 +178,13 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
             <legend
               className={testHref ? "text-muted-foreground pb-1 text-sm font-medium" : "sr-only"}
             >
-              {testHref ? t("Or choose them yourself") : t("Subjects to focus on")}
+              {testHref
+                ? t({
+                    description: "Use a gender-neutral invitation to pick exam subjects manually.",
+                    id: "chooseFocusSubjectsManually",
+                    message: "Or choose them yourself",
+                  })
+                : t("Subjects to focus on")}
             </legend>
             {areas.map((area) => (
               <AreaChoice

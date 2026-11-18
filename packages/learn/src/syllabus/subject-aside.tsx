@@ -6,7 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
-import { ListGroup } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
@@ -148,7 +147,16 @@ function SubjectDetails({
     <DetailProperties>
       {subject.questions ? (
         <DetailProperty
-          label={edition ? t("Questions from {exam}", { exam: edition }) : questionsLabel}
+          label={
+            edition
+              ? t({
+                  description: "In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).",
+                  id: "questionsFromExamEdition",
+                  message: "Questions from {exam}",
+                  values: { exam: edition },
+                })
+              : questionsLabel
+          }
           mono
         >
           {format.number(subject.questions)}
@@ -166,7 +174,7 @@ function SubjectDetails({
 
       {subject.chapters.length > 0 && (
         <DetailProperty label={t("Chapters")} mono>
-          {t("{done, number} of {total, number} chapters", {
+          {t("{done, number} of {total, number}", {
             done: chaptersDone,
             total: subject.chapters.length,
           })}
@@ -189,11 +197,9 @@ function SubjectDetails({
 }
 
 export function SubjectAside({
-  ask,
   questionsSource,
   subject,
 }: {
-  ask?: React.ReactNode;
   questionsSource: SyllabusView["questionsSource"];
   subject: SyllabusSubject;
 }) {
@@ -218,16 +224,6 @@ export function SubjectAside({
       >
         <SubjectDetails questionsSource={questionsSource} subject={subject} />
       </DetailAsideSection>
-
-      {ask && (
-        <DetailAsideSection
-          className="hidden min-[72rem]:flex"
-          title={t("Also")}
-          titleId="subject-also-title"
-        >
-          <ListGroup>{ask}</ListGroup>
-        </DetailAsideSection>
-      )}
     </>
   );
 }

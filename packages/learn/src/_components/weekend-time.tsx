@@ -48,7 +48,7 @@ export function WeekendTime({
   readOnly,
 }: {
   checked: boolean;
-  children: (on: boolean) => React.ReactNode;
+  children: (on: boolean, label: string) => React.ReactNode;
   className?: string;
   missing?: MissingDays | null;
   onCheckedChange: (checked: boolean) => void;
@@ -59,6 +59,7 @@ export function WeekendTime({
   const reasonId = useId();
   const missingDayReason = useMissingDayReason();
   const disabled = missing !== null;
+  const timeLabel = t("Weekend time");
 
   return (
     <div className="flex flex-col gap-2" data-slot="weekend-time">
@@ -87,7 +88,10 @@ export function WeekendTime({
           {missingDayReason(missing)}
         </p>
       ) : (
-        children(checked)
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium">{timeLabel}</span>
+          {children(checked, timeLabel)}
+        </div>
       )}
     </div>
   );

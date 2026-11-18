@@ -1,7 +1,7 @@
 "use client";
 
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
-import { ListChecksIcon } from "lucide-react";
+import { NotebookTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
@@ -67,7 +67,7 @@ function ChapterSummary({
           <Disclosure
             icon={
               <ListRowIcon>
-                <ListChecksIcon />
+                <NotebookTextIcon />
               </ListRowIcon>
             }
             title={t("Chapter summary")}

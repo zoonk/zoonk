@@ -94,7 +94,9 @@ function PlanWeek() {
   return (
     <section aria-labelledby={WEEK_TITLE_ID} className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
-        <SectionLabel id={WEEK_TITLE_ID}>{t("This week")}</SectionLabel>
+        <SectionLabel className="text-sm tracking-normal normal-case" id={WEEK_TITLE_ID}>
+          {t("This week")}
+        </SectionLabel>
         {time && (
           <span className="text-muted-foreground font-mono text-xs tabular-nums">{time}</span>
         )}
@@ -144,7 +146,7 @@ export function useScheduleNumber({
   const label = t("Schedule");
 
   if (showsResumeSchedule({ paused, status })) {
-    return { detail: scheduleDays, label, value: <DailyTimeValue /> };
+    return { detail: scheduleDays, label, value: <DailyTimeValue readout /> };
   }
 
   if (status.kind === "pastDate") {
@@ -165,7 +167,7 @@ export function useScheduleNumber({
     detail:
       status.kind === "needsAdjusting" || timeShownBeside
         ? null
-        : t("{time} a day", { time: formatDuration(dailyMinutes) }),
+        : t("About {time} a day", { time: formatDuration(dailyMinutes) }),
     label,
     value: statusText(status),
   };
@@ -188,14 +190,21 @@ export function ScheduleDetails({
   const stateLine = usePlanStateLine();
 
   const scheduleDays = useResumeScheduleDays();
+  const formatDuration = useFormatDuration();
+  const { dailyMinutes } = usePlanScreen().plan.schedule;
   const resume = showsResumeSchedule({ paused, status });
   const line = resume ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{resume ? <DailyTimeValue /> : statusText(status)}</p>
+        <p className="font-medium">{resume ? <DailyTimeValue readout /> : statusText(status)}</p>
         {resume && <p className="text-muted-foreground text-sm">{scheduleDays}</p>}
+        {!resume && status.kind === "onTrack" && (
+          <p className="text-muted-foreground text-sm">
+            {t("About {time} a day", { time: formatDuration(dailyMinutes) })}
+          </p>
+        )}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
         {(line?.adjust || status.kind === "pastDate") && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">

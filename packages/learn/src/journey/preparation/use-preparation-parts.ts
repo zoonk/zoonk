@@ -2,7 +2,7 @@
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useFormatShare } from "../../_utils/percent";
 import { type StudyCount, type getPlanTopics, getStudyCounts } from "./study-counts";
 
@@ -37,6 +37,7 @@ export function usePreparationParts({
   topics: PlanTopics | null;
 }): PreparationPart[] {
   const t = useExtracted();
+  const format = useFormatter();
   const formatShare = useFormatShare();
   const countLabel = useCountLabel();
   const { coverage, mastery, mocks, retention } = preparation.components;
@@ -88,7 +89,7 @@ export function usePreparationParts({
                     message: "{reviews, plural, one {# done} other {# done}}",
                     values: { reviews: mocks.taken },
                   })
-                : t("{count, plural, one {# taken} other {# taken}}", { count: mocks.taken }),
+                : format.number(mocks.taken),
           },
         ]),
   ];

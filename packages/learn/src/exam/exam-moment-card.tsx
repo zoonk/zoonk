@@ -45,7 +45,6 @@ type MomentCopy = { body: string; lead: string | null; title: string };
 export function useExamMomentCopy(moment: Moment): MomentCopy | null {
   const t = useExtracted();
   const work = useWorkLine(moment);
-  const lead = moment.prepared ? t("You've prepared for this.") : null;
 
   switch (moment.stage) {
     case "finalStretch":
@@ -55,9 +54,13 @@ export function useExamMomentCopy(moment: Moment): MomentCopy | null {
         title: t("The final stretch"),
       };
     case "dayBefore":
-      return { body: work, lead, title: t("{exam} is tomorrow", { exam: moment.examName }) };
+      return { body: work, lead: null, title: t("{exam} is tomorrow", { exam: moment.examName }) };
     case "examDay":
-      return { body: work, lead, title: t("{exam} is today", { exam: moment.examName }) };
+      return {
+        body: work,
+        lead: moment.prepared ? t("You've prepared for this.") : null,
+        title: t("{exam} is today", { exam: moment.examName }),
+      };
     case "afterExam":
       return moment.resultReported
         ? null

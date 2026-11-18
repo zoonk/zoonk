@@ -15,7 +15,7 @@ test("keys move through the daily times without saving, and Enter applies one", 
     await page.goto("/plan");
     await page.getByRole("button", { name: "Adjust plan" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-    const time = editor.getByLabel("Time a day", { exact: true });
+    const time = editor.getByLabel("Daily study time", { exact: true });
     await expect(time).toHaveValue("45");
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
     const saves: string[] = [];

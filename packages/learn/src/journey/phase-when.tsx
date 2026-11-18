@@ -11,10 +11,10 @@ import { getPhaseEnd } from "./phase-dates";
 /** A phase's end from the shared rule (`getPhaseEnd`), a short plan's days already said. */
 export function usePhaseEnd() {
   const shortDays = useShortDays();
-  const { plan } = usePlanScreen();
+  const { paused, plan } = usePlanScreen();
 
   return function phaseEnd(phase: PlanPhaseView) {
-    const end = getPhaseEnd({ phase, plan });
+    const end = paused ? null : getPhaseEnd({ phase, plan });
 
     if (end && "short" in end) {
       const days = shortDays(end.short);
@@ -85,7 +85,10 @@ export function PhaseWhen({ className, phase }: { className?: string; phase: Pla
   const date = formatPlanDate(end.isoDate, { month: end.month });
 
   return (
-    <span className={cn("font-mono tabular-nums", className)} data-slot="phase-when">
+    <span
+      className={cn("font-mono whitespace-nowrap tabular-nums", className)}
+      data-slot="phase-when"
+    >
       <span aria-hidden="true">{end.estimate ? t("~{date}", { date }) : date}</span>
       <span className="sr-only">{phaseEndSpoken(phase)}</span>
     </span>

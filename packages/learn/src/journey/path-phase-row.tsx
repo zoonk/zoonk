@@ -34,13 +34,14 @@ function PhaseResume({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
   const today = useIsoToday();
+  const { paused } = usePlanScreen();
 
   const resumes = phase.chapters
     .filter((chapter) => chapter.state !== "done")
     .flatMap((chapter) => chapter.nextDate ?? [])
     .toSorted()[0];
 
-  if (!resumes) {
+  if (paused || !resumes) {
     return null;
   }
 

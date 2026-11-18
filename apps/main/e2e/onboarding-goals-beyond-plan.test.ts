@@ -155,7 +155,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await page.getByRole("link", { name: "Go to your Plan" }).click();
     await page.getByRole("button", { name: "Plan options" }).click();
-    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+    await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
     await expect(
       page.getByText("Nothing is planned until you resume it.").filter({ visible: true }),
@@ -189,7 +189,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await page.getByRole("link", { name: "Go to your Plan" }).click();
     await page.getByRole("button", { name: "Plan options" }).click();
-    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+    await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
     await expect(
       page.getByText("Nothing is planned until you resume it.").filter({ visible: true }),

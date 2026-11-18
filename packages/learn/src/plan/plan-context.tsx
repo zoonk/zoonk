@@ -91,6 +91,7 @@ type PlanScreenValue = {
   goal: PlanGoal;
   tutor?: PlanTutor;
   plan: PlanView;
+  paused?: boolean;
   focusTestHref?: string;
   openFocus?: boolean;
   /** A path on the host; sharing adds the origin. */

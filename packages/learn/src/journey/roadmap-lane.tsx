@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { FlagIcon } from "lucide-react";
@@ -10,6 +9,7 @@ import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
+import { PhaseCheckpointMark } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
 import {
   AXIS_CLASS,
@@ -77,7 +77,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
 
       {typeof challengeShare === "number" && (
         <LaneMark beforeFlag={flag} end={challengeShare > PHASE_END_SHARE} share={challengeShare}>
-          <Trickster className="size-4" view="face" />
+          <PhaseCheckpointMark />
         </LaneMark>
       )}
 
@@ -169,47 +169,58 @@ function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
   );
 }
 
+export function TodayTick({ share }: { share: number | null }) {
+  const t = useExtracted();
+
+  return (
+    <span aria-hidden="true" className="relative flex items-end">
+      {share !== null && (
+        <>
+          <AxisLabel share={share}>
+            <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
+          </AxisLabel>
+          <span
+            className="bg-foreground absolute bottom-0 h-1 w-px"
+            style={{ left: `${share * PERCENT}%` }}
+          />
+        </>
+      )}
+    </span>
+  );
+}
+
 export function PhaseAxis({
   isLast,
   labelled,
   phase,
-  todayShare,
 }: {
   isLast: boolean;
   labelled: boolean;
   phase: PlanPhaseView;
-  todayShare: number | null;
 }) {
-  const t = useExtracted();
   const overrun = useRoadmapOverrun();
   const axisFinish = useAxisFinish();
   const goalShare = overrun?.phaseIndex === phase.index && axisFinish ? overrun.share : null;
   const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
-  const todayLabelled = todayShare !== null;
   const endLabelled = labelled && goalSide !== "right";
   const finishLabelled = isLast && goalSide !== "right";
 
   return (
     <span aria-hidden="true" className={AXIS_CLASS}>
-      {todayLabelled && (
-        <AxisLabel share={todayShare}>
-          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{t("Today")}</span>
-        </AxisLabel>
-      )}
       {goalShare !== null && (
-        <AxisLabel after={todayLabelled} share={goalShare}>
+        <AxisLabel share={goalShare}>
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>
             <GoalDate />
           </span>
         </AxisLabel>
       )}
       {endLabelled && (
-        <AxisLabel after={todayLabelled || goalShare !== null} share={1}>
+        <AxisLabel after={goalShare !== null} share={1}>
           <PhaseWhen className={AXIS_TEXT_CLASS} phase={phase} />
         </AxisLabel>
       )}
-      {finishLabelled && <EndLabel after={todayLabelled || goalShare !== null} phase={phase} />}
+      {finishLabelled && <EndLabel after={goalShare !== null} phase={phase} />}
     </span>
   );
 }

@@ -134,10 +134,10 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 
   return (
     <>
-      <MockStepStatus />
+      <MockStepStatus reserve />
       {/* In the bar, so the numbers stay in one place whatever a question's length. */}
       <MockQuestionMap className="with-aside:hidden w-full" />
-      <QuestionActions>
+      <QuestionActions className="w-full lg:w-auto">
         <FlagButton />
         {isLastQuestion ? (
           <QuestionMainAction

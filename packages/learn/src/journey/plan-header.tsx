@@ -13,10 +13,10 @@ import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
  * width, so the line doesn't; a goal without a date to come has none.
  */
 export function usePlanDaysLeft(): React.ReactNode {
-  const { plan, today } = usePlanScreen();
+  const { paused, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
-  if (!targetDate || targetDate < today) {
+  if (paused || !targetDate || targetDate < today) {
     return null;
   }
 
@@ -35,7 +35,7 @@ export function PlanHeader({
   return (
     <PageHeader>
       <PageHeaderContent className="w-full">
-        <div className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
+        <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-2")}>
           <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
             {t("Plan")}
           </PageTitle>

@@ -25,18 +25,21 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-export function DailyTimeValue() {
+export function DailyTimeValue({ readout = false }: { readout?: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const { shape } = plan.schedule;
 
+  const time = (value: React.ReactNode) =>
+    readout ? <span className="tabular-nums">{value}</span> : mono(value);
+
   if (shape.weekend === null) {
-    return mono(formatDuration(shape.weekdays));
+    return time(formatDuration(shape.weekdays));
   }
 
   return t.rich("<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends", {
-    mono,
+    mono: time,
     weekdays: formatDuration(shape.weekdays),
     weekend: formatDuration(shape.weekend),
   });
@@ -49,7 +52,7 @@ function PropertyRowParts({ children, label }: { children: React.ReactNode; labe
   return (
     <>
       <span className="text-muted-foreground max-w-[60%] shrink-0 truncate">{label}</span>
-      <span className="line-clamp-2 min-w-0 py-1 text-right text-balance">{children}</span>
+      <span className="min-w-0 py-1 text-right text-balance">{children}</span>
     </>
   );
 }
@@ -202,8 +205,9 @@ function GoalDateValue() {
     return (
       <>
         {t("None set")}
-        {FACT_SEPARATOR}
-        {date}
+        <span className="text-muted-foreground block text-xs">
+          {t.rich("Estimated finish <date></date>", { date: () => date })}
+        </span>
       </>
     );
   }
@@ -224,7 +228,7 @@ export function PlanProperties({
   const activityName = useActivityName();
   const studyDaysText = useStudyDaysText();
   const varietyName = useVarietyName();
-  const { goal, plan } = usePlanScreen();
+  const { goal, paused, plan } = usePlanScreen();
   const skipped = new Set(plan.steering.skippedActivities);
   const practiced = LANGUAGE_ACTIVITY_TYPES.filter((activity) => !skipped.has(activity));
 
@@ -242,7 +246,7 @@ export function PlanProperties({
           <GoalDateValue />
         </PropertyRow>
 
-        <PropertyRow label={t("Time a day")} onOpen={() => onOpen("time")}>
+        <PropertyRow label={t("Daily study time")} onOpen={() => onOpen("time")}>
           <DailyTimeValue />
         </PropertyRow>
 
@@ -250,7 +254,9 @@ export function PlanProperties({
           {studyDaysText(plan.schedule.weekdayMinutes)}
         </PropertyRow>
 
-        {plan.schedule.mocks && <MockExamsRow examHref={examHref} mocks={plan.schedule.mocks} />}
+        {!paused && plan.schedule.mocks && (
+          <MockExamsRow examHref={examHref} mocks={plan.schedule.mocks} />
+        )}
 
         {plan.examChoices.map((choice) => (
           <ExamChoiceRow choice={choice} key={choice.group} onOpen={() => onOpen("choices")} />

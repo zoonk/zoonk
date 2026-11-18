@@ -66,13 +66,19 @@ function useOriginFact({
   return kind === "notice" ? t("Also in your plan") : null;
 }
 
-function useWeightFact(subject: SyllabusSubject): string | null {
+function useWeightFact({
+  fromPastExams,
+  subject,
+}: {
+  fromPastExams: boolean;
+  subject: SyllabusSubject;
+}): string | null {
   const t = useExtracted();
   const format = useFormatter();
   const questionCount = useExamQuestionCount();
 
   if (subject.questions) {
-    return questionCount(subject.questions);
+    return questionCount(subject.questions, fromPastExams);
   }
 
   if (subject.share === null) {
@@ -86,11 +92,13 @@ function useWeightFact(subject: SyllabusSubject): string | null {
 
 function SubjectFacts({
   fromMaterial,
+  fromPastExams,
   kind,
   sharedExams,
   subject,
 }: {
   fromMaterial: boolean;
+  fromPastExams: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
@@ -98,7 +106,7 @@ function SubjectFacts({
   const t = useExtracted();
   const doneShare = useDoneShare();
   const origin = useOriginFact({ fromMaterial, kind, subject });
-  const weight = useWeightFact(subject);
+  const weight = useWeightFact({ fromPastExams, subject });
   const known = useKnownLine()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
@@ -152,11 +160,13 @@ function SubjectBottomBar({
 
 function SubjectHeader({
   fromMaterial,
+  fromPastExams,
   kind,
   sharedExams,
   subject,
 }: {
   fromMaterial: boolean;
+  fromPastExams: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
@@ -164,9 +174,10 @@ function SubjectHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailTitle>{subject.name}</DetailTitle>
+        <DetailTitle>{subject.shortName ?? subject.name}</DetailTitle>
         <SubjectFacts
           fromMaterial={fromMaterial}
+          fromPastExams={fromPastExams}
           kind={kind}
           sharedExams={sharedExams}
           subject={subject}
@@ -234,13 +245,14 @@ export function SubjectScreen({
 
   return (
     <DetailLayout
-      aside={
-        <SubjectAside ask={ask?.row} questionsSource={syllabus.questionsSource} subject={subject} />
-      }
+      aside={<SubjectAside questionsSource={syllabus.questionsSource} subject={subject} />}
       asideLabel={t("About this subject")}
       bar={
-        <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
-          {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
+        <LearnPageBar
+          back={{ href: hrefs.back, label: t("Plan") }}
+          title={subject.shortName ?? subject.name}
+        >
+          {ask?.bar}
           <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
@@ -250,6 +262,7 @@ export function SubjectScreen({
       <DetailAside>
         <SubjectHeader
           fromMaterial={syllabus.fromMaterial}
+          fromPastExams={syllabus.questionsSource !== null}
           kind={syllabus.kind}
           sharedExams={syllabus.sharedExams}
           subject={subject}
