@@ -32,6 +32,9 @@ export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
       sourceLocale: "en",
       ...options.messages,
     },
+    // On 20 main-app strings in pt, es and ja (18 Nov 2026), two blind readers each ranked 6.1 Sol
+    // at xhigh first or tied for first: GPT-6.2 Sol at xhigh and high lost meaning or wrote fragments
+    // on 2 to 5 strings, and 6.2 Sol at medium on 6 or 7.
     model: codexCli("gpt-6.1-sol", { codexPath: getCodexPath(), reasoningEffort: "xhigh" }),
     srcPath: getSrcPath(options.srcPath),
     styleguides: fileURLToPath(new URL("../.eloqnt", import.meta.url)),

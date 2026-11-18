@@ -15,7 +15,8 @@ import { runSearchTask } from "./run-search-task";
 /**
  * With Parallel on 15 cases (8 Nov 2026), Flash scored 10.00 at $18.94/1k; Flash Lite (9.87,
  * $9.46/1k) missed the IELTS Speaking page, even at high reasoning. Haiku 5.5 (9.80) is an outage
- * route only: it missed a downloadable notice copy.
+ * route only: it missed a downloadable notice copy. On 18 Nov 2026 Gemini 4 Hydrogen scored 9.50 at
+ * $147/1k against Flash's 9.88 at $16.47/1k; GPT-6.2 Sol scored 10.00 at $124/1k.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;

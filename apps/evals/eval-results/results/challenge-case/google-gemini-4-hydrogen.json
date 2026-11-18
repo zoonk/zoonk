@@ -1,0 +1,567 @@
+{
+  "modelId": "google/gemini-4-hydrogen",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "PorchBasket has a credible checkout experiment, realistic visitor and order counts, a concrete Friday deadline, and pressure from a marketing colleague. Statistical judgment is directly relevant to the learner's work, and the case is not merely a quiz framed as a job.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different conversations, follow-up decisions, meter changes, and endings. Strong choices vary in position, and several middle options reflect realistic deadline trade-offs. However, many choices are heavily signposted, the sample-size choice lacks advance decision support, and the accuracy meter measures educational correctness rather than a job-specific outcome.",
+          "score": 7,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The marketing lead, senior analyst, and AI have distinct roles, use placeholders rather than personal names, and contribute to the decision. Asking the AI is a consequential, rewarded option. However, the analyst and AI repeatedly give misleading probability interpretations, reducing the reliability of the help they provide despite their approximately correct calculations.",
+          "score": 7,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, kind, and focused on strategies rather than intelligence. Improvement notes usually provide actionable alternative wording, and the practice tasks are short and relevant. However, some praised reasoning overstates what the evidence establishes, particularly the claim that the final gap is noise rather than a real improvement. The first practice line could also be made immediately actionable instead of deferring it to the next comparison encountered.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The conversion rates and approximate two-sided test values of 38%, 60%, and 43% match the counts. Nevertheless, the case repeatedly teaches that these values are probabilities that the result is luck, and explicitly praises concluding that a nonsignificant difference is not real. These are central factual errors taught as correct, triggering the maximum score of 5. Their repetition throughout dialogue, feedback, and endings warrants a score below that cap.",
+          "score": 4,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The learner-facing content is consistently in English with appropriate number formats, and hypothesis testing receives a plain-language introduction. There are no promises of a job or grade. However, the beginner explanation substitutes misleading “luck odds” for the necessary conditional meaning, and sample-size targets are introduced without explaining how they were chosen or that detecting an improvement is not guaranteed.",
+          "score": 7,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10594,
+          "outputTokens": 1401,
+          "reasoningTokens": 431
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The case repeatedly misinterprets a p-value as the probability that an observed difference is luck, including “a 43% chance that's pure luck.” The approximate test values themselves are correct, but their interpretation is not: they describe how often a gap at least this large would occur assuming no true difference. More seriously, strong-choice feedback says the gap is “normal noise, not a real improvement.” An inconclusive test does not establish that there is no improvement. These errors teach misconceptions central to this chapter.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sample-size decision asks beginners to choose among 300, 1,000, and 14,700 visitors without first providing an explanation or a useful sample-size estimate from the analyst or AI. The learner receives the justification only after choosing. “Decision accuracy” is also a generic instructional meter rather than a workplace measure. The traffic timeline needs clarification: starting with 100 visitors per version and adding two days at 500 per version would yield approximately 1,100, whereas Friday is repeatedly presented as exactly 1,000.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Have the analyst explain before the sample-size decision that roughly 1,000 visitors per version is a planning estimate for detecting a four-percentage-point improvement, not a guarantee. Replace “luck rate” with a short conditional explanation, and consistently describe the final result as insufficient evidence rather than proof of no improvement. Let an unjustified rollout remain an unjustified decision even if its eventual business outcome happens to be favorable, instead of always making B's apparent benefit disappear.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A marketing or e-commerce analyst judging an A/B test before a meeting, where a colleague wants to ship now. The strong path checks whether the gap could be chance and how many visitors each version had, uses the AI or a data colleague to test significance, and explains the result in plain words. Numbers must be consistent (a small gap on a small sample shouldn't be called significant). Must not teach that a single day of data proves a winner.",
+        "id": "en-ab-test-work-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. nodes.3.choices.1.effects.1.change: Too small: expected number to be >=-50",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. nodes.3.choices.1.effects.1.change: Too small: expected number to be >=-50",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. nodes.3.choices.1.effects.1.change: Too small: expected number to be >=-50",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "A marketing or e-commerce analyst judging an A/B test before a meeting, where a colleague wants to ship now. The strong path checks whether the gap could be chance and how many visitors each version had, uses the AI or a data colleague to test significance, and explains the result in plain words. Numbers must be consistent (a small gap on a small sample shouldn't be called significant). Must not teach that a single day of data proves a winner.",
+        "id": "en-ab-test-work-2",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The dark-room experiment is playful, and light packets directly determine the bell's response and the accumulated pattern. It is an interactive experiment rather than merely a quiz. However, its central observations depend on unexplained equipment capabilities, weakening the scenario's internal credibility.",
+          "score": 7,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Every path contains two decisions, choices produce different replies and endings, and strong choices occupy different positions. Asking for help is available. However, widening slits to avoid scraping is a contrived distractor, and the preference for testing interference over resolving the bell mystery in the red-light branch is not clearly justified.",
+          "score": 8,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "One unnamed friend is represented through the correct placeholder, contributes hypotheses, and provides useful observations when asked. However, 'curious friend' and enjoying experiments do not establish substantive expertise, and the interaction offers little beyond a single companion supplying explanations.",
+          "score": 7,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Notes are decision-specific, kind, and focused on strategies rather than intelligence. Improvement notes give concrete next actions and sample wording. Both practice activities are feasible within five minutes, and the summary sentences each express a practiced idea. However, some feedback overstates what an observation establishes—for example, treating the blue-light bell response as sufficient to establish packet delivery.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The color-versus-brightness distinction is broadly correct for the intended threshold detector. However, the case teaches that individual light arrivals can be directly observed on an ordinary wall and that the described flashlight setup reliably yields interference without establishing the necessary conditions. The single-slit explanation also incorrectly denies the relevant wave overlap and overlooks diffraction. These are wrong physical claims presented as correct, triggering the maximum score of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The result uses natural Brazilian Portuguese, remains playful, has exactly two decisions per path, contains no formulas, and explains quantum through packets. However, the learner-facing skill title 'Dualidade onda-partícula' introduces unexplained technical terminology beyond the requested vocabulary. A plain-language title would better fit the overview level.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5743,
+          "outputTokens": 1319,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The experiment presents individual light packets as visible dots on an ordinary wall and assumes a flashlight plus two narrow slits will reliably produce interference. Those observations require suitable detection and illumination conditions that the scenario never establishes. It also incorrectly explains the single-slit result by saying that waves do not cross, overlooking single-slit diffraction as evidence of wave behavior.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The friend's stated expertise is curiosity rather than relevant practical knowledge. Some endings say the packet explanation remained hidden even though the preceding dialogue explicitly supplied it. Widening the slits to prevent light from scraping the edges is also a less plausible choice than the other experimental alternatives.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Introduce a special screen that records individual arrivals and a light source prepared for the slit experiment, using everyday language. Give the friend a practical role, make the alternative tests comparably reasonable, and distinguish what learners actually observed from explanations they were merely told.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A light \"E se?\" scenario in Brazilian Portuguese about energy coming in packets (quanta), for example \"E se a luz não viesse em pacotes?\" or a curious situation with a lamp, a solar panel or a camera. Two decisions per path, playful, no formulas, no jargon beyond \"quantum\" explained simply. Must be scientifically correct at an overview level (no claims that quantum effects are magic or that observation needs a conscious observer).",
+        "id": "pt-quantum-what-if-1",
+        "userInput": {
+          "chapterDescription": "A energia da luz e da matéria vem em pacotes chamados quanta.",
+          "chapterTitle": "O que é um quantum",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "skills": [
+            {
+              "description": "A energia vem em pacotes mínimos, não em qualquer quantidade.",
+              "name": "Explicar que a energia vem em pacotes"
+            },
+            {
+              "description": "A luz se comporta como onda e como partícula.",
+              "name": "Reconhecer a dualidade onda-partícula"
+            }
+          ],
+          "variant": "whatIf"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The visible-packet premise creates a suitable playful household 'what if'. Learners manipulate the lamp, filter, openings, and sensor, and the chapter's central idea determines the outcomes. This is an interactive imagined experiment rather than merely a multiple-choice knowledge quiz.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, clarity, branches, and endings, and strong choices occupy different positions. Waiting, seeking help, maintaining comfortable lighting, and using a sensor are plausible alternatives. However, the bright-light branch explicitly suggests the winning action before the decision, and the lower reward for consulting the friend is not well justified. The best answer is not unambiguously obvious at every decision, so the stated cap is not triggered.",
+          "score": 7,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "Two unnamed roles use placeholders correctly, have distinguishable functions, and respond usefully when consulted. The friend expresses preferences and challenges ideas. However, her expertise is thin, and asking for help is consistently treated as only a fair choice rather than receiving a clearly justified strong outcome when useful.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is decision-specific, kind, and focused on actions rather than intelligence. Improvement notes provide concrete next actions and example wording. Both practice activities are comfortably achievable within five minutes, and the summaries each express a practiced idea. Scientific problems in that content are assessed under accuracy.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The wrong-fact cap of 5 applies: feedback and endings explicitly teach that which-path sensing makes wave behavior disappear and leaves exactly two bands. Loss of interference does not eliminate diffraction or all wave behavior, and two bands are not a universal consequence. The unconditional claim that dimming preserves packet energy also needs a fixed-color assumption. The fantasy premise reasonably permits visible packets, but does not justify these general physical claims.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Every path contains exactly two decisions, the text uses Brazilian Portuguese, quantum is explained through packets, and there are no formulas or outcome promises. The presentation is mostly appropriate for an overview. The learner-facing label 'Dualidade onda-partícula' nevertheless introduces technical terminology beyond the requested quantum-only vocabulary.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6682,
+          "outputTokens": 1360,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The sensor branches teach that detecting which opening the light passes through eliminates its wave behavior and necessarily produces exactly two bands. Which-path detection removes interference between the paths; it does not eliminate all wave behavior, and diffraction can remain. This misconception is reinforced in feedback and endings. The summary also treats dimming as necessarily preserving each packet's energy, which needs a fixed-color qualification, especially with a household lamp.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Asking the friend provides useful evidence but is automatically ranked below direct observation, without a convincing reason that consulting her was a poorer strategy. The second decision on the bright-light branch also strongly signals the preferred answer immediately beforehand. The technical skill label 'Dualidade onda-partícula' exceeds the otherwise plain-language presentation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly establish that the simulator supplies fixed-color light one packet at a time and preserves visible marks. Describe the sensor outcome as the disappearance of alternating interference stripes rather than the disappearance of wave behavior. Give the friend a more distinctive contribution and make consulting her a genuinely strong option where appropriate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A light \"E se?\" scenario in Brazilian Portuguese about energy coming in packets (quanta), for example \"E se a luz não viesse em pacotes?\" or a curious situation with a lamp, a solar panel or a camera. Two decisions per path, playful, no formulas, no jargon beyond \"quantum\" explained simply. Must be scientifically correct at an overview level (no claims that quantum effects are magic or that observation needs a conscious observer).",
+        "id": "pt-quantum-what-if-2",
+        "userInput": {
+          "chapterDescription": "A energia da luz e da matéria vem em pacotes chamados quanta.",
+          "chapterTitle": "O que é um quantum",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "skills": [
+            {
+              "description": "A energia vem em pacotes mínimos, não em qualquer quantidade.",
+              "name": "Explicar que a energia vem em pacotes"
+            },
+            {
+              "description": "A luz se comporta como onda e como partícula.",
+              "name": "Reconhecer a dualidade onda-partícula"
+            }
+          ],
+          "variant": "whatIf"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional Loja Vila Nova faces a credible retail pricing decision involving signage, Pix, loyalty coupons, supplier cost, and an opening deadline. Colleagues exert recognizable commercial and operational pressure. The mathematics is integral to the job rather than a disguised quiz.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change prices, replies, meters, subsequent branches, and endings. Strong choices occupy different positions, and moderate discounts often outperform both aggressive and overly cautious alternatives. However, merged final branches lose the selected numerical state, and the AI rescue resolves the problem without making the corrective pricing decision explicit.",
+          "score": 8,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The manager and buyer have distinct priorities and disagree naturally. The AI is available through a consequential choice and correctly identifies the minimum selling price. Placeholders are used appropriately and the learner is unnamed. The requested finance perspective is absent, and the AI's answer stops short of showing the full calculation and concrete correction.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Notes are generally kind, decision-specific, and focused on strategies rather than intelligence. They provide actionable alternatives, useful sample wording, short practice activities, and focused summary statements. A smaller weakness is feedback such as 'desperdiçou vendas', which treats an unmeasured commercial consequence as established rather than explaining a possible trade-off.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The individual discount calculations and rounded margin percentages are correct. However, authoritative replies and the protected-campaign ending incorrectly label the minimum as margin on cost, triggering the explicit maximum score of 5 for a wrong fact taught as right. Additionally, endings claiming prices are above R$ 180,00 contradict the valid path priced exactly at that floor. Correct explanations elsewhere do not erase these errors.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The case is accessible to beginners, explains margin in conversational replies, and uses Brazilian currency and percentage formats consistently. The practical depth fits the work variant. Minor improvements remain: replace the learner-facing English 'OFF' and make the rescue calculation explicit rather than merely announcing its conclusion.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 12061,
+          "outputTokens": 1165,
+          "reasoningTokens": 300
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The successful ending and two replies in 'cupom-ok' incorrectly describe the target as '20% de margem sobre o custo'. At R$ 180,00 with a cost of R$ 144,00, the margin on sales is 20%, while the gain on cost is 25%. Presenting this wording as correct reinforces exactly the confusion the case should resolve; the accuracy cap of 5 applies.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Shared endings say prices stayed above R$ 180,00 even when the learner selected exactly R$ 180,00. The AI rescue never specifies the corrected selling price or remaining discount rules, and weekend outcomes omit the actual final prices after stacking discounts. There is no finance colleague, although one is mentioned in the task expectations. Some feedback asserts that a smaller discount wasted sales without evidence of customer demand.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Carry the selected prices into the final replies and endings, show the AI's calculation and exact correction, and use 'no mínimo R$ 180,00' where equality is possible. Distinguish verified margin effects from possible sales effects. A finance colleague could provide a separate checking perspective, and replacing 'OFF' with 'de desconto' would keep the learner-facing language fully Portuguese.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case in Brazilian Portuguese for a learner who works in retail: a store (a fictional name) deciding a promotion or a price change, where successive percentages and the margin decide what's right (for example \"aumentar 20% e dar 20% de desconto\" doesn't return to the original price, and a discount on the sale price eats the margin faster than it seems). Colleagues a store works with (the store manager, the buyer, the finance person) and an AI assistant that checks calculations when asked. Every number in reais is right and consistent across panels, messages and endings, written the Brazilian way (R$ 1.234,56). General to the field, with no real company.",
+        "id": "pt-porcentagem-field-retail-1",
+        "userInput": {
+          "chapterDescription": "Aumentos, descontos e margens aplicados em sequência no comércio.",
+          "chapterTitle": "Porcentagem no dia a dia",
+          "courseTitle": "Matemática financeira",
+          "field": "retail",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "name": "Aumentos e descontos sucessivos"
+            },
+            {
+              "description": "Calcular a margem de lucro sobre o preço de venda.",
+              "name": "Calcular a margem"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "Loja Brisa presents a credible retail problem with a specific product, purchase cost, competing commercial priorities and a 14h deadline. The manager's pressure to print promotional material and the buyer's concern about margin make this a workplace case rather than a detached quiz.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, meters and branches, and conservative alternatives have commercial trade-offs. However, the correct choice is repeatedly telegraphed through AI-check options that already include the ideal action; the final announcement decision even supplies the correct answer beforehand. The obvious-answer cap of 6 applies. Margin-health increases after discounts are also poorly aligned with the financial quantities, and shared endings flatten some distinct outcomes.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The manager and buyer have distinct priorities, disagree naturally, and are referenced with placeholders rather than personal names. AI consultation is available and produces useful, accurate calculations. However, the finance person requested in the case expectations is absent, with financial oversight folded into the buyer's role.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback refers to the actual chosen prices and percentages, praises checking strategies rather than intelligence, and gives actionable alternatives with example wording. Both skills have short practice activities, and each summary sentence expresses one practiced principle. No generic or judgmental feedback cap applies.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The monetary calculations and rounded margins are correct: R$ 152,00 represents a 24% discount and approximately 21.1% margin; R$ 153,00 gives approximately 21.6%; and R$ 150,00 is the exact 20% margin floor. Incorrect claims made by the manager are explicitly corrected rather than taught as right. Monetary figures remain consistent across branches and endings. No wrong-fact cap applies.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The learner-facing material is in Brazilian Portuguese, uses Brazilian currency and decimal formatting, and explains successive percentage bases and the distinction between margin on sales and gain on cost at an appropriate beginner level. It makes no promises about learner results, employment or grades.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 9318,
+          "outputTokens": 1248,
+          "reasoningTokens": 409
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The decisions are too strongly signposted: asking the AI always comes bundled with the correct pricing decision, and colleagues frequently state the decisive answer before the learner chooses. This triggers the decisions cap of 6 for obvious right answers. The margin meter also moves inconsistently with pricing: reducing the price from R$ 200,00 to R$ 160,00 raises 'Saúde da margem', and adding a Pix discount raises it again despite reducing the actual margin.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The requested finance colleague is missing; the buyer handles both purchasing and financial oversight. Several materially different strategies share the same generic ending, including Pix prices of R$ 150,00, R$ 153,00 and R$ 161,50, which weakens the specificity of the consequences.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Separate requesting a calculation from approving a discount, so the learner can use the answer to make a subsequent decision. Give each ending the chosen final price and margin. Clarify that the calculated margin is above purchase cost, rather than necessarily net profit after all store expenses.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case in Brazilian Portuguese for a learner who works in retail: a store (a fictional name) deciding a promotion or a price change, where successive percentages and the margin decide what's right (for example \"aumentar 20% e dar 20% de desconto\" doesn't return to the original price, and a discount on the sale price eats the margin faster than it seems). Colleagues a store works with (the store manager, the buyer, the finance person) and an AI assistant that checks calculations when asked. Every number in reais is right and consistent across panels, messages and endings, written the Brazilian way (R$ 1.234,56). General to the field, with no real company.",
+        "id": "pt-porcentagem-field-retail-2",
+        "userInput": {
+          "chapterDescription": "Aumentos, descontos e margens aplicados em sequência no comércio.",
+          "chapterTitle": "Porcentagem no dia a dia",
+          "courseTitle": "Matemática financeira",
+          "field": "retail",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "name": "Aumentos e descontos sucessivos"
+            },
+            {
+              "description": "Calcular a margem de lucro sobre o preço de venda.",
+              "name": "Calcular a margem"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    }
+  ],
+  "taskId": "challenge-case"
+}

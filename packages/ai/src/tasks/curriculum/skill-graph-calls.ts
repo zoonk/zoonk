@@ -19,7 +19,8 @@ import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-sy
 /**
  * On 37 cases (8 Nov 2026), Terra scored 8.73 (EN 8.94, PT 8.69) at $56.40/1k against Luna's 8.49
  * at $6.06/1k, and 8.70 to 8.30 on the ten huge goals, keeping foundations Luna dropped. Haiku 5.5
- * scored 8.46 on a 15-case sample.
+ * scored 8.46 on a 15-case sample. Gemini 4 Hydrogen scored 8.74 to Terra's 8.87 (18 Nov 2026) at
+ * $198/1k against $52/1k.
  */
 export const skillGraphModel = "openai/gpt-6.1-terra";
 export const skillGraphFallbackModels = [

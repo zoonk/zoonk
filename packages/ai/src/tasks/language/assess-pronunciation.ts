@@ -17,7 +17,8 @@ const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * No fallback: other providers' audio models on AI Gateway take only MP3 or WAV, not the WebM and
- * MP4 learners record.
+ * MP4 learners record. Gemini 4 Hydrogen was right on 83.3% of 90 runs to Flash's 95.6% (18 Nov
+ * 2026) and wrongly rejected 14 of 48 good clips (Flash 2), at $10.09/1k against $3.54/1k.
  */
 const defaultModel = "google/gemini-3.8-flash";
 
