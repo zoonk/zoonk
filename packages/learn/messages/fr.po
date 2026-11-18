@@ -7847,7 +7847,7 @@ msgstr "Feuille de réponses"
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "OWfUXC"
 msgid "Sheet"
-msgstr "Réponses"
+msgstr "Feuille"
 
 #: src/mock/mock-break.tsx
 msgctxt "zMR5Za"

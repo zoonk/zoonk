@@ -7847,7 +7847,7 @@ msgstr "Antwortbogen"
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "OWfUXC"
 msgid "Sheet"
-msgstr "Antwortbogen"
+msgstr "Bogen"
 
 #: src/mock/mock-break.tsx
 msgctxt "zMR5Za"
