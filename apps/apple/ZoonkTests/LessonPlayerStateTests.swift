@@ -1160,6 +1160,18 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertEqual(
       try written(0.1183, 0.005, #"{"places": 2, "value": 0.12}"#, 0.125), "0.13",
       "a tie rounds away from zero, so a wrong 0.125 doesn't read as the right 0.12")
+    // Two places that a binary double can't hold exactly (0.14, 0.57, 0.44, 0.22, 0.88): each
+    // expected text is what core's `getCheckedAnswerDigits` writes for the same check.
+    let hundredthsOf = { (value: Double) in #"{"places": 2, "value": \#(value)}"# }
+    XCTAssertEqual(
+      try written(0.1412, 0.0005, hundredthsOf(0.14), 0.144), "0.144",
+      "a near miss doesn't read as the right 0.14")
+    XCTAssertEqual(try written(0.5683, 0.0005, hundredthsOf(0.57), 0.565), "0.565")
+    XCTAssertEqual(
+      try written(0.4412, 0.0005, hundredthsOf(0.44), 0.4415), "0.44",
+      "a right answer is written at the hint's places")
+    XCTAssertEqual(try written(0.2187, 0.0005, hundredthsOf(0.22), 0.2163), "0.2163")
+    XCTAssertEqual(try written(0.8762, 0.0005, hundredthsOf(0.88), 0.8791), "0.8791")
   }
 
   func testAnActivityIsGradedWithTheToleranceFloorItsScreenCarries() throws {

@@ -42,6 +42,30 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(height(nil), height(11.57))
   }
 
+  /// At the largest text sizes the real value's row wraps, and it still holds the room it takes.
+  @MainActor func testAGuessScaleKeepsItsHeightAtLargeText() {
+    let scales: [(GuessScale, String, Double, Double)] = [
+      (GuessScale(min: 1, max: 1000, kind: .log), "days", 11.2, 11.57),
+      (GuessScale(min: 0, max: 2_000_000, kind: .linear), "R$", 900_000, 1_234_567),
+      (GuessScale(min: 0, max: 100, kind: .linear), "km/h", 40, 7.25),
+    ]
+
+    for size in [DynamicTypeSize.accessibility3, .accessibility5] {
+      for (scale, unit, guess, actual) in scales {
+        let height = { (actual: Double?) in
+          UIHostingController(
+            rootView: ActivityGuessScaleView(
+              scale: scale, unit: unit, guess: guess, actual: actual, onGuess: { _ in }
+            )
+            .environment(\.dynamicTypeSize, size)
+          ).sizeThatFits(in: CGSize(width: 320, height: 4000)).height
+        }
+
+        XCTAssertEqual(height(nil), height(actual), "\(unit) at \(size)")
+      }
+    }
+  }
+
   @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
     let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
     let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
