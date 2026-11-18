@@ -134,7 +134,7 @@ final class ProgressPresentationTests: XCTestCase {
     let thursday = WeekdayScorePattern(performance: performance, weekday: .thursday)
 
     XCTAssertEqual(
-      patterns(dayVerdict: .even(points: 2)).bestDayName, "You answer about the same every day.")
+      patterns(dayVerdict: .even(points: 2)).bestDayName, "Any day")
     XCTAssertEqual(patterns(dayVerdict: .best(thursday)).bestDayName, "Thursday")
     XCTAssertNil(patterns(dayVerdict: .notEnough).bestDayName)
   }

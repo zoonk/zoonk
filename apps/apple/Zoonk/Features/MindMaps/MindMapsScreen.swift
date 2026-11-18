@@ -130,12 +130,12 @@ struct MindMapsScreen: View {
     return switch tab {
     case .chapters:
       Text(
-        "With a map \(count)", tableName: "MindMaps",
+        "Chapter maps \(count)", tableName: "MindMaps",
         comment: "Tab of chapter mind maps, with how many open")
     case .lessons:
       Text(
-        "Lessons \(count)", tableName: "MindMaps", comment: "Tab of lesson maps, with how many open"
-      )
+        "Lesson maps \(count)", tableName: "MindMaps",
+        comment: "Tab of lesson maps, with how many open")
     case .saved:
       Text(
         "Saved \(count)", tableName: "MindMaps",
@@ -327,9 +327,12 @@ private struct MindMapCreateSection: View {
   /// Centered, not on one baseline: a small count's capitals sit low on the label's.
   private func othersLabel(count: Int) -> some View {
     HStack(spacing: 8) {
-      Text("Without a map", tableName: "MindMaps")
-        .typeStyle(.body)
-        .layoutPart(.label)
+      Text(
+        "No map yet", tableName: "MindMaps",
+        comment: "Heading over the chapters whose mind map hasn't been made yet."
+      )
+      .typeStyle(.body)
+      .layoutPart(.label)
 
       Spacer(minLength: 8)
 
@@ -747,7 +750,7 @@ enum MindMapsCreateLine: Equatable {
     tier: LearnerTier
   ) {
     let offer = maps.createOffer
-    // As main's, only the chapters under "Without a map": the others' rows say where they stand.
+    // As main's, only the chapters under "No map yet": the others' rows say where they stand.
     let others = maps.chapters.filter { !$0.canMakeNow }
     let onTheWay = others.count { $0.status.isOnItsWay }
 

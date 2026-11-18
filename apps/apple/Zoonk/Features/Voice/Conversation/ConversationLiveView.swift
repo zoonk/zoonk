@@ -485,8 +485,14 @@ private struct CallPhrases: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
-        .typeStyle(.body.weight(.semibold))
+      Group {
+        if conversation.hints.count == 1 {
+          Text("A phrase you can use", tableName: "Voice", comment: "Help's phrase during a call")
+        } else {
+          Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
+        }
+      }
+      .typeStyle(.body.weight(.semibold))
 
       ForEach(conversation.hints, id: \.self) { hint in
         Text(hint)

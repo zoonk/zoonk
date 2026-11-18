@@ -45,7 +45,9 @@ struct MockRunnerView: View {
         } label: {
           Text(
             "Sheet", tableName: "Mock",
-            comment: "Short label of a small button that opens the mock exam's answer sheet.")
+            comment:
+              "Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button \"Answer sheet\", so the label must be a word copied letter for letter from your translation of \"Answer sheet\", such as its first word."
+          )
         }
         .accessibilityLabel(Text("Answer sheet", tableName: "Mock"))
       }
@@ -693,7 +695,11 @@ struct MockSheetRow: View {
     }
     .accessibilityLabel(
       flagged
-        ? Text("\(name), marked for review", tableName: "Mock")
+        ? Text(
+          "\(name), marked for review", tableName: "Mock",
+          comment:
+            "A cell of the mock exam's answer sheet the learner marked to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
+        )
         : Text(name)
     )
     .accessibilityValue(answered ? MockAnswerMark.answered : MockAnswerMark.blank)

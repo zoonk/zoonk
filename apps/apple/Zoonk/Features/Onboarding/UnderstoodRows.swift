@@ -161,7 +161,10 @@ enum UnderstoodRows {
         UnderstoodRow(
           id: "level",
           label: LocalizedStringResource(
-            "Level", table: "Onboarding", comment: "Row with the level the learner described"),
+            "What you know", table: "Onboarding",
+            comment:
+              "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\"."
+          ),
           value: levelNote,
           badge: LocalizedStringResource(
             "you said", table: "Onboarding",

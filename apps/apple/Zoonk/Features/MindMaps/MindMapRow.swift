@@ -193,7 +193,7 @@ struct MindMapRow: View {
         switch shown {
         case .create where map.lessonsToWrite > 0 && !isPlus:
           String(
-            localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
+            localized: "Writes \(map.lessonsToWrite) lessons first", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
         case .ready where map.image == nil:
           String(
@@ -220,8 +220,7 @@ struct MindMapRow: View {
       // Only a learner with a limit on lessons hears what writing them spends.
       if map.lessonsToWrite > 0, !isPlus {
         return String(
-          localized:
-            "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
+          localized: "Writes \(map.lessonsToWrite) lessons first, from your free lessons",
           table: "MindMaps",
           comment: "A free learner's map of a chapter whose lessons aren't written yet")
       }

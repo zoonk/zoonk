@@ -553,7 +553,7 @@ struct GenerationWait: Equatable, Sendable {
         Phase(
           id: "bank",
           label: LocalizedStringResource(
-            "Writing the level test questions", table: "Onboarding",
+            "Getting the questions ready", table: "Onboarding",
             comment: "The step of the wait while a language's level test questions are written"),
           isOptional: false, seconds: 60,
           lines: [

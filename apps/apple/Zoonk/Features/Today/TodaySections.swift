@@ -1118,11 +1118,14 @@ struct TodayPracticeSection: View {
 
       if places?.completedLessons == true {
         PageLink(route: .completedLessons) {
-          Label {
+          ListRow(
             Text(
               "Completed lessons", tableName: "Today",
-              comment: "Opens the page of the lessons the learner finished")
-          } icon: {
+              comment: "Opens the page of the lessons the learner finished"),
+            description: Text(
+              "Do a lesson again", tableName: "Today",
+              comment: "The line under Completed lessons in Practice anytime.")
+          ) {
             KindMark(kind: .lesson)
           }
         }

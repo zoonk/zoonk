@@ -931,6 +931,7 @@
       }
     },
     "%@, marked for review" : {
+      "comment" : "A cell of the mock exam's answer sheet the learner marked to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -971,7 +972,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, oznaczone do sprawdzenia"
+            "value" : "%@, do ponownego sprawdzenia"
           }
         },
         "pt" : {
@@ -1342,6 +1343,18 @@
     },
     "%lld marked for review" : {
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zur Überprüfung markiert"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -1355,18 +1368,6 @@
                 "stringUnit" : {
                   "state" : "new",
                   "value" : "%lld marked for review"
-                }
-              }
-            }
-          }
-        },
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld zur Überprüfung markiert"
                 }
               }
             }
@@ -1453,16 +1454,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pytanie oznaczono do sprawdzenia"
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld pytań oznaczono do sprawdzenia"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pytanie oznaczono do sprawdzenia"
                 }
               },
               "other" : {
@@ -10239,12 +10240,12 @@
       }
     },
     "Sheet" : {
-      "comment" : "Short label of a small button that opens the mock exam's answer sheet.",
+      "comment" : "Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button \"Answer sheet\", so the label must be a word copied letter for letter from your translation of \"Answer sheet\", such as its first word.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Antwortbogen"
+            "value" : "Bogen"
           }
         },
         "es" : {
@@ -10256,7 +10257,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponses"
+            "value" : "Feuille"
           }
         },
         "it" : {
@@ -10286,13 +10287,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respostas"
+            "value" : "Folha"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cevaplar"
+            "value" : "Cevap"
           }
         }
       }
