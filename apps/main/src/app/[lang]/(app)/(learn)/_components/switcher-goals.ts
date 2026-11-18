@@ -3,7 +3,7 @@ import {
   type LearnerSummaryGoal,
   type LearnerSummaryWaitingGoal,
 } from "@zoonk/core/learner/summary/contract";
-import { hasNothingToSwitch } from "@zoonk/learn/goal-switcher";
+import { hasNothingToSwitch } from "@zoonk/learn/goal-switch-options";
 
 export function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   return goals.flatMap(

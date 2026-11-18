@@ -32,6 +32,7 @@ import {
   type WaitingGoal,
   WaitingOption,
 } from "./goal-menu-row";
+import { hasNothingToSwitch } from "./goal-switch-options";
 import { MakeRoomSheet, type WaitingStart, useMakeRoom } from "./make-room-sheet";
 
 type SwitcherGoal = {
@@ -176,17 +177,6 @@ function NoGoalLink({
       <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
-}
-
-/** With nothing to switch to, the switcher is the plain "Start a goal" link. */
-export function hasNothingToSwitch({
-  goals,
-  waitingGoals,
-}: {
-  goals: readonly unknown[];
-  waitingGoals: readonly unknown[];
-}): boolean {
-  return goals.length === 0 && waitingGoals.length === 0;
 }
 
 export function GoalSwitcher({
