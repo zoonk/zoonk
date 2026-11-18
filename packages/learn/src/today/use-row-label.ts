@@ -33,6 +33,6 @@ export function useStepLabel() {
       return t("Every topic");
     }
 
-    return block.subject;
+    return null;
   };
 }

@@ -101,7 +101,15 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
-function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
+function RowLines({
+  block,
+  isNext,
+  showSubject,
+}: {
+  block: DayStep;
+  isNext: boolean;
+  showSubject: boolean;
+}) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const isGettingReady = useLessonGettingReady();
@@ -110,7 +118,8 @@ function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
   return (
     <>
-      {line && <span className={ROW_LINE_CLASS}>{line}</span>}
+      {showSubject && block.subject && <span className={ROW_LINE_CLASS}>{block.subject}</span>}
+      {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
         <TestOutStartLink compact onStart={() => actions.startTestOut(block.chapterId ?? "")} />
@@ -159,10 +168,12 @@ export function BlockRow({
   block,
   isNext,
   opens = true,
+  showSubject,
 }: {
   block: DayStep;
   isNext: boolean;
   opens?: boolean;
+  showSubject: boolean;
 }) {
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
@@ -185,7 +196,7 @@ export function BlockRow({
         <div className="flex flex-col gap-px" data-slot="today-row-lines">
           <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
-          {!finished && <RowLines block={block} isNext={isNext} />}
+          <RowLines block={block} isNext={isNext} showSubject={showSubject} />
         </div>
 
         {!finished && (

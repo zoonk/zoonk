@@ -17,7 +17,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "@zoonk/learn/list";
-import { Page } from "@zoonk/learn/page";
+import { Page, PageSectionTitle } from "@zoonk/learn/page";
 import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -53,6 +53,8 @@ async function WelcomeBack({ suggestion }: { suggestion: SuggestedGoalView }) {
 
 type Explanation = { id: string; title: string };
 
+const EXPLANATION_TITLE_ID = "today-quick-explanation-title";
+
 /**
  * One row the learner taps to pick the explanation up, highlighted like Today's next row: the goal
  * box under it keeps the page's one filled button.
@@ -61,7 +63,8 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
   const t = await getExtracted();
 
   return (
-    <section aria-label={t("Your quick explanation")}>
+    <section aria-labelledby={EXPLANATION_TITLE_ID} className="flex flex-col gap-1">
+      <PageSectionTitle id={EXPLANATION_TITLE_ID}>{t("Try a quick explanation")}</PageSectionTitle>
       <LessonPlayerPreload />
       <ListGroup>
         <ListRowLink className={CURRENT_ROW_CLASS} href={`/explain/${explanation.id}`} prefetch>
