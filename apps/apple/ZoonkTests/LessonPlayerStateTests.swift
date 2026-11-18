@@ -1022,6 +1022,15 @@ final class LessonGradingTests: XCTestCase {
       "an answer that doesn't fit the check isn't graded")
   }
 
+  func testNumericActivityShowsTheRequestedRoundingOnAMiss() throws {
+    let source = numericActivity.replacingOccurrences(
+      of: "\"answer\": 10", with: "\"answer\": 251.54")
+    let missed = LessonGrading.grade(.activity(.numeric(240)), step: try step(source))
+
+    XCTAssertEqual(missed?.isCorrect, false)
+    XCTAssertEqual(missed?.correctAnswer, "252")
+  }
+
   // Mirrors core's `activity-answers.test.ts` and `@zoonk/utils` `rounded-answer.test.ts`.
   func testANumberRoundedToThePlacesTypedIsRightWithTwoSignificantDigits() {
     let rise = { (typed: Double) in

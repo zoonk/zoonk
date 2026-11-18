@@ -20,6 +20,19 @@ final class RichTextTypographyTests: XCTestCase {
       "602,214,076,000,000,000,000,000 molecules")
   }
 
+  func testKeepsNumbersWithTheirFollowingWordAcrossEmphasis() throws {
+    let source = "Use **2** standard deviations and 8 **degrees**."
+    let text = try AttributedString(
+      markdown: source, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+    let result = RichTextTypography.typesetNumbers(in: text, locale: english)
+
+    XCTAssertEqual(
+      String(result.characters), "Use 2\u{00A0}standard deviations and 8\u{00A0}degrees.")
+    XCTAssertEqual(
+      result.runs.filter { $0.inlinePresentationIntent?.contains(.stronglyEmphasized) == true }
+        .map { String(result[$0.range].characters) }, ["2", "degrees"])
+  }
+
   func testKeepsANumberWithItsUnitOrCurrencyOnOneLine() {
     XCTAssertEqual(
       RichTextTypography.typesetNumbers("uma marcada 3 Ω e outra 6 Ω", locale: portuguese),

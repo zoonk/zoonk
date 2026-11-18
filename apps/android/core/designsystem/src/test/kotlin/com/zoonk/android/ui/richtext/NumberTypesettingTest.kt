@@ -29,6 +29,14 @@ class NumberTypesettingTest {
     }
 
     @Test
+    fun keepsNumbersWithFollowingWords() {
+        assertEquals(
+            "Use 2${NBSP}standard deviations and 8${NBSP}degrees.",
+            typesetNumbers(english, "Use 2 standard deviations and 8 degrees."),
+        )
+    }
+
+    @Test
     fun keepsANumberWithItsUnitOrCurrencyOnOneLine() {
         assertEquals("uma marcada 3${NBSP}Ω e outra 6${NBSP}Ω", typesetNumbers(portuguese, "uma marcada 3 Ω e outra 6 Ω"))
         assertEquals("custa R$${NBSP}80 e pesa 2${NBSP}kg", typesetNumbers(portuguese, "custa R$ 80 e pesa 2 kg"))
