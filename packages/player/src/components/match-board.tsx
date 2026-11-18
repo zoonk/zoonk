@@ -1,5 +1,4 @@
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, type ReactNode } from "react";
 import { ActivityCanvasLabel } from "../activities/_components/activity-canvas";
@@ -92,19 +91,18 @@ function BoardLayout<Item extends { id: string }>({
 }
 
 /**
- * `className` sets the cards' text size. The board stays side by side while it's 20.5em of that text
- * wide, about ten letters beside each card's mark, so larger text stacks the right column under the
- * left and each card gets the board's width, as Apple's board does at accessibility sizes.
+ * The board stays side by side while it's 20.5em of its text wide, about ten letters beside each
+ * card's mark, so larger text stacks the right column under the left and each card gets the board's
+ * width, as Apple's board does at accessibility sizes.
  */
 export function MatchBoard<Item extends { id: string }>({
-  className,
   label,
   ...board
-}: BoardProps<Item> & { className: string; label?: string }) {
+}: BoardProps<Item> & { label?: string }) {
   return (
     <div
       aria-label={label}
-      className={cn("@container", className)}
+      className="@container text-sm sm:text-base"
       role={label ? "group" : undefined}
     >
       <BoardLayout {...board} />
