@@ -206,14 +206,13 @@ function renderHeldOffer(plan: PlanView = PLAN) {
   return { ...held, release: held.releasePreview };
 }
 
-async function addFromSheet(held: ReturnType<typeof renderHeldOffer>) {
-  await page.getByRole("button", { name: "See what changes" }).click();
+async function addFromCard(held: ReturnType<typeof renderHeldOffer>) {
   await page.getByRole("button", { name: "Add to my plan" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
 }
 
 async function tryAgain() {
-  const button = page.getByRole("dialog").getByRole("button", { name: "Try again" });
+  const button = page.getByRole("button", { name: "Try again" });
   await expect.element(button).toBeVisible();
   await button.click();
 }
@@ -305,7 +304,6 @@ async function checkCoverage() {
   );
 
   await page.getByRole("button", { name: "See what changes" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "See what changes" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
   return held;
 }
@@ -316,12 +314,10 @@ describe("the Plan's coverage preview", () => {
       const held = await checkCoverage();
       held.showPlan(withWritingLesson(COVERAGE_PLAN, false));
 
-      await expect
-        .element(page.getByRole("dialog").getByText("Checking what changes…"))
-        .toBeVisible();
+      await expect.element(page.getByText("Checking what changes…")).toBeVisible();
 
       held.releasePreview();
-      const apply = page.getByRole("dialog").getByRole("button", { name: "Change my plan" });
+      const apply = page.getByRole("button", { name: "Change my plan" });
       await expect.element(apply).toBeEnabled();
       held.showPlan(COVERAGE_PLAN);
       await expect.element(apply).toBeEnabled();
@@ -353,13 +349,9 @@ describe("the Plan's coverage preview", () => {
       held.releasePreview();
       await settle();
 
-      await expect
-        .element(page.getByRole("dialog").getByRole("button", { name: "See what changes" }))
-        .toBeEnabled();
+      await expect.element(page.getByRole("button", { name: "See what changes" })).toBeEnabled();
 
-      expect(
-        page.getByRole("dialog").getByRole("button", { name: "Change my plan" }).query(),
-      ).toBeNull();
+      expect(page.getByRole("button", { name: "Change my plan" }).query()).toBeNull();
 
       expect(held.change).not.toHaveBeenCalled();
       held.screen.unmount();
@@ -371,7 +363,7 @@ describe("the Plan's offer to fit more lessons", () => {
   it("adds them once today's check matches the card", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
 
       held.release();
 
@@ -385,10 +377,10 @@ describe("the Plan's offer to fit more lessons", () => {
   it("drops a fit check on a changed plan and checks the new plan on the next tap", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
 
       held.showPlan({ ...PLAN, schedule: { ...PLAN.schedule, dailyMinutes: 45 } });
-      const add = page.getByRole("dialog").getByRole("button", { name: "Add to my plan" });
+      const add = page.getByRole("button", { name: "Add to my plan" });
       await expect.element(add).toBeEnabled();
       held.release();
       await settle();
@@ -398,7 +390,7 @@ describe("the Plan's offer to fit more lessons", () => {
       await add.click();
       await expect.poll(() => held.preview).toHaveBeenCalledTimes(2);
       held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
-      await expect.element(page.getByRole("dialog").getByText(REPRICED)).toBeVisible();
+      await expect.element(page.getByText(REPRICED)).toBeVisible();
       expect(held.change).not.toHaveBeenCalled();
       held.screen.unmount();
     });
@@ -408,15 +400,13 @@ describe("the Plan's offer to fit more lessons", () => {
     await atViewport(PHONE, async () => {
       const plan = withWritingLesson(PLAN, true);
       const held = renderHeldOffer(plan);
-      await addFromSheet(held);
+      await addFromCard(held);
       held.showPlan(withWritingLesson(plan, false));
       held.release();
       await settle();
       expect(held.change).not.toHaveBeenCalled();
 
-      await expect
-        .element(page.getByRole("dialog").getByRole("button", { name: "Add to my plan" }))
-        .toBeEnabled();
+      await expect.element(page.getByRole("button", { name: "Add to my plan" })).toBeEnabled();
 
       held.screen.unmount();
     });
@@ -425,7 +415,7 @@ describe("the Plan's offer to fit more lessons", () => {
   it("keeps a fit check through an unchanged plan refresh", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
 
       held.showPlan(structuredClone(PLAN));
       held.release();
@@ -437,24 +427,10 @@ describe("the Plan's offer to fit more lessons", () => {
     });
   });
 
-  it("changes nothing when the learner closes the sheet before the check answers", async () => {
-    await atViewport(PHONE, async () => {
-      const held = renderHeldOffer();
-      await addFromSheet(held);
-
-      await page.getByRole("button", { name: "Close" }).click();
-      held.release();
-      await settle();
-
-      expect(held.change).not.toHaveBeenCalled();
-      held.screen.unmount();
-    });
-  });
-
   it("changes nothing when the learner leaves the Plan before the check answers", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
 
       held.screen.unmount();
       held.release();
@@ -469,7 +445,7 @@ describe("the fit offer's Try again after a failed check", () => {
   it("adds the lessons when today's numbers match the card", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
       held.releasePreview(null);
 
       await tryAgain();
@@ -489,16 +465,15 @@ describe("the fit offer's Try again after a failed check", () => {
   it("shows today's numbers to confirm when they differ from the card", async () => {
     await atViewport(PHONE, async () => {
       const held = renderHeldOffer();
-      await addFromSheet(held);
+      await addFromCard(held);
       held.releasePreview(null);
 
       await tryAgain();
       await expect.poll(() => held.preview).toHaveBeenCalledTimes(2);
       held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
 
-      const sheet = page.getByRole("dialog");
-      await expect.element(sheet.getByText(REPRICED)).toBeVisible();
-      await expect.element(sheet.getByRole("button", { name: "Change my plan" })).toBeVisible();
+      await expect.element(page.getByText(REPRICED)).toBeVisible();
+      await expect.element(page.getByRole("button", { name: "Change my plan" })).toBeVisible();
       expect(held.change).not.toHaveBeenCalled();
       held.screen.unmount();
     });
