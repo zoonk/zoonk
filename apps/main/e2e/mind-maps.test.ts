@@ -513,6 +513,24 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("a chapter's map sits under For reference on a phone, beside its summary", async ({
+    browser,
+  }) => {
+    const { first, user } = await createLearner();
+    const page = await openAs(browser, user);
+
+    try {
+      await page.setViewportSize({ height: 844, width: 390 });
+      await page.goto(`/content/chapters/${first.chapter.id}`);
+
+      const reference = page.getByRole("region", { name: "For reference" });
+      await expect(reference.getByRole("button", { name: "Create" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Create" })).toHaveCount(1);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a lesson's Close brings back the chapter page with the map the learner started still on its way", async ({
     browser,
   }) => {
