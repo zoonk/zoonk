@@ -18,7 +18,7 @@
   "generation_goal_line_1": "947edab6d8aba9dc43e1181a733c46389c4a74c14b2fc99fde192f31dac5c35f",
   "generation_goal_line_2": "70ca24a5fcc4b5e1fface6307cc98c4f7b4629e98a8b6e72c306df287ef434b0",
   "generation_level_test": "99639ea4fc95877cb22dfcabd12cc3f39dc32fedc609025e2938b9994407235b",
-  "generation_level_test_bank": "983fb8171ec0c03a245c32bb3d5904128b22ac609e06425e3d1211dc58625792",
+  "generation_level_test_bank": "d2cc5c7389a98df6f9a6ecb6cfbb171fe4d86dac21b3589818b422265ee2234b",
   "generation_level_test_bank_line_1": "4b1f796aa45aae5169a29863d1cfbf9e8341095b117127940aaa5749c3db1dec",
   "generation_level_test_bank_line_2": "88b250a34584a84cb1386c467097fd18a933c9eb456f8258d3939551ae5ad00e",
   "generation_level_test_bank_line_3": "9b9cbb04153889b12bad3b54e663a72b553065fdabd3f666ddf9a9ef04a6fabb",
@@ -108,7 +108,7 @@
     <string name="generation_first_lesson_day_line_2">어디부터 시작할지 정하고 있어요…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">레벨 테스트를 준비하고 있어요</string>
-    <string name="generation_level_test_bank">레벨 테스트 문제를 만들고 있어요</string>
+    <string name="generation_level_test_bank">문제를 준비하고 있어요</string>
     <string name="generation_level_test_bank_line_1">초급부터 고급까지 수준별 지문을 고르고 있어요…</string>
     <string name="generation_level_test_bank_line_2">읽기 문제를 만들고 있어요…</string>
     <string name="generation_level_test_bank_line_3">듣기 문제를 만들고 있어요…</string>

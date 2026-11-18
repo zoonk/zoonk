@@ -166,6 +166,7 @@ describe("a limit whose day has come", () => {
     expect(page.getByText("You can try again now.").element()).toBe(line);
     await expect.element(page.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
     await expect.element(page.getByText("You've used your call time")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Your call time is back")).toBeVisible();
   });
 
   it("keeps a lesson's notice for a refusal this device received already past its day", async () => {

@@ -251,7 +251,7 @@ test.describe("Mind maps", () => {
 
       await expect.poll(savedCount).toBe(0);
 
-      await tab("With a map").click();
+      await tab("Chapter maps").click();
 
       // Checked on every frame: an older copy shows "Saved" only until the next read, which a
       // retrying assertion would miss.
@@ -348,10 +348,10 @@ test.describe("Mind maps", () => {
 
       await expect(drawing(second.chapter.title)).toBeVisible();
 
-      await tab("Lessons").click();
-      await expect(tab("Lessons")).toHaveAttribute("aria-current", "page");
+      await tab("Lesson maps").click();
+      await expect(tab("Lesson maps")).toHaveAttribute("aria-current", "page");
       await page.goBack();
-      await expect(tab("With a map")).toHaveAttribute("aria-current", "page");
+      await expect(tab("Chapter maps")).toHaveAttribute("aria-current", "page");
       await expect(drawing(second.chapter.title)).toBeVisible();
 
       await page
@@ -362,10 +362,10 @@ test.describe("Mind maps", () => {
 
       await expect(drawing(first.chapter.title)).toBeVisible();
 
-      await tab("Lessons").click();
-      await expect(tab("Lessons")).toHaveAttribute("aria-current", "page");
-      await tab("With a map").click();
-      await expect(tab("With a map")).toHaveAttribute("aria-current", "page");
+      await tab("Lesson maps").click();
+      await expect(tab("Lesson maps")).toHaveAttribute("aria-current", "page");
+      await tab("Chapter maps").click();
+      await expect(tab("Chapter maps")).toHaveAttribute("aria-current", "page");
       await expect(drawing(first.chapter.title)).toBeVisible();
       await expect(drawing(second.chapter.title)).toBeVisible();
 
@@ -498,7 +498,7 @@ test.describe("Mind maps", () => {
       release.resolve(null);
       await delivered.promise;
 
-      await tab("With a map").click();
+      await tab("Chapter maps").click();
       await expect(secondRow.getByText("Drawing the mind map…")).toBeVisible();
 
       await drawMap(second.chapter.id);
@@ -678,7 +678,7 @@ test.describe("Mind maps", () => {
   }) => {
     const { first, user } = await createLearner({ chapters: 3 });
     const page = await openAs(browser, user);
-    const notMade = page.getByRole("region", { name: "Without a map" });
+    const notMade = page.getByRole("region", { name: "No map yet" });
     const held = Promise.withResolvers<null>();
 
     try {
@@ -751,7 +751,7 @@ test.describe("Mind maps", () => {
   }) => {
     const { first, user } = await createLearner({ chapters: 3 });
     const page = await openAs(browser, user);
-    const notMade = page.getByRole("region", { name: "Without a map" });
+    const notMade = page.getByRole("region", { name: "No map yet" });
 
     try {
       await page.goto("/mind-maps");
@@ -818,7 +818,7 @@ test.describe("Mind maps", () => {
     ]);
 
     const page = await openAs(browser, user);
-    const notMade = page.getByRole("region", { name: "Without a map" });
+    const notMade = page.getByRole("region", { name: "No map yet" });
 
     try {
       await page.goto("/mind-maps");

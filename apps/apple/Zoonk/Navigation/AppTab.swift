@@ -73,7 +73,8 @@ enum AppTab: Hashable {
         comment: "Study place listing the learner's certificates")
     case .exam:
       LocalizedStringResource(
-        "Exam", table: "Navigation", comment: "Study place for the learner's exam and mock exams")
+        "Your exam", table: "Navigation",
+        comment: "Study place for the learner's exam and mock exams")
     case .speaking:
       LocalizedStringResource(
         "Speaking", table: "Navigation",

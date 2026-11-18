@@ -98,6 +98,7 @@
   "conversation_opens_when_ready": "6502c56b57cda9553bb1cc25d97eb92b8475599a099f086295dcacdcbf7cd3b1",
   "conversation_paused": "ae3733e95a5c295be59820d04b7de1504bb49a73b8117b685cf65905a5ef6202",
   "conversation_paused_title": "4a5a5081bb0d18f093d55bd8905bf84b8f1fb8c9faf1d5cceeec005809d91408",
+  "conversation_phrase": "b921ff21fb8a27c914aea5c836aaa6b08c8a0cd443a1a2513fa4fa99b7366273",
   "conversation_phrases": "ddbf9b6f097d6ee3c3bda3b66f7c1ab17e3935434257a94fc4133f7be8b1d74f",
   "conversation_practice": "8a40f9cefaceadde1d65eb6a1cec8895c92bf0b405973b38ca96a4357bd84e41",
   "conversation_practice_call": "4dfac4e2c4e9b5a64018f5500b1db3abe36d5c6f940354fa7265366df1bdd40b",
@@ -197,6 +198,8 @@
     <string name="conversation_type_reply">답변 입력</string>
     <string name="conversation_type_reply_hint">또는 답변을 입력하세요</string>
     <string name="conversation_send">보내기</string>
+    <!-- Over a call's one suggested phrase; conversation_phrases is the title over several. -->
+    <string name="conversation_phrase">쓸 수 있는 표현</string>
     <string name="conversation_phrases">쓸 수 있는 표현</string>
     <!-- A hint for the call's next goal. -->
     <string name="conversation_tip">힌트: %1$s</string>

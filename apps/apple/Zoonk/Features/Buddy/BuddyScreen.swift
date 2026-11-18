@@ -430,7 +430,11 @@ private struct BuddyContent: View {
       isWearing = true
     } label: {
       Label {
-        Text("\(name)'s glasses", tableName: "Buddy")
+        Text(
+          "\(name)'s glasses", tableName: "Buddy",
+          comment:
+            "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; %@ is the buddy's name. A name, not an action."
+        )
       } icon: {
         Image(systemName: "eyeglasses")
       }

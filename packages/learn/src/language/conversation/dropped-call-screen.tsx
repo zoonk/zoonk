@@ -17,26 +17,21 @@ import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
 
 const REACHED: CallLimit = { period: "day", tier: "plus" };
 
-/**
- * Titled by what stopped the call: only a lost connection "dropped". Once call time comes back
- * nothing ran out, so the notice's own line says it under no title.
- */
+/** Titled by what stopped the call: only a lost connection "dropped". */
 function useDroppedTitle({
-  opened,
   limit,
   reason,
 }: {
   limit: CallLimit;
-  opened: boolean;
   reason: DroppedCall["reason"];
-}): string | undefined {
+}): string {
   const t = useExtracted();
   const copy = useRefusalCopy();
   const limitTitle = useCallLimitTitle(limit);
   const gateTitle = useChallengeCallGateTitle();
 
   if (reason === "limit") {
-    return opened ? undefined : limitTitle;
+    return limitTitle;
   }
 
   if (reason === "plusRequired") {
@@ -158,7 +153,7 @@ export function DroppedCallScreen({
   const liveLimit = useLiveLimit(limit);
   const opened = limit !== null && liveLimit === null;
   const retry = dropped.reason === "limit" && opened ? "callAgain" : dropped.retry;
-  const droppedTitle = useDroppedTitle({ limit: reached, opened, reason: dropped.reason });
+  const droppedTitle = useDroppedTitle({ limit: reached, reason: dropped.reason });
   const microphone = useMicrophoneOffWords({ name, problem: microphoneProblem ?? "blocked" });
   const microphoneOff = dropped.reason === "microphone" && microphoneProblem !== null;
 

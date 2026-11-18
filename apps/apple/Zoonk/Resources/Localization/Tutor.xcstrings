@@ -1006,16 +1006,22 @@
         }
       }
     },
-    "and %lld more" : {
+    "and %lld more changes" : {
       "comment" : "More memory changes after the first one",
       "localizations" : {
         "de" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "und %lld weitere Änderung"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "und %lld weitere"
+                  "value" : "und %lld weitere Änderungen"
                 }
               }
             }
@@ -1027,13 +1033,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "and %lld more"
+                  "value" : "and %lld more change"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "and %lld more"
+                  "value" : "and %lld more changes"
                 }
               }
             }
@@ -1042,10 +1048,16 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "y %lld cambio más"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "y %lld más"
+                  "value" : "y %lld cambios más"
                 }
               }
             }
@@ -1057,13 +1069,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "et %lld autre"
+                  "value" : "et %lld modification supplémentaire"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "et %lld autres"
+                  "value" : "et %lld modifications supplémentaires"
                 }
               }
             }
@@ -1075,13 +1087,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "e %lld altra"
+                  "value" : "e %lld modifica in più"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "e %lld altre"
+                  "value" : "e %lld modifiche in più"
                 }
               }
             }
@@ -1093,7 +1105,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "ほか%lld"
+                  "value" : "さらに%lld件の変更"
                 }
               }
             }
@@ -1105,7 +1117,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "그 외 %lld개"
+                  "value" : "변경 사항 %lld개 더"
                 }
               }
             }
@@ -1114,10 +1126,28 @@
         "pl" : {
           "variations" : {
             "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "i jeszcze %lld zmiany"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "i jeszcze %lld zmian"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "i jeszcze %lld zmiana"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "i jeszcze %lld"
+                  "value" : "oraz %lld zmiany"
                 }
               }
             }
@@ -1126,10 +1156,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "e mais %lld alteração"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "e mais %lld"
+                  "value" : "e mais %lld alterações"
                 }
               }
             }
@@ -5679,7 +5715,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teste gir"
+            "value" : "Testi çöz"
           }
         }
       }

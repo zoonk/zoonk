@@ -16,13 +16,13 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
   }
 
   /// Main's `canMakeNow`: its lessons are written, so its map is made, or being made, without
-  /// writing any. Its row sits above "Without a map", whose rows alone the page's line counts.
+  /// writing any. Its row sits above "No map yet", whose rows alone the page's line counts.
   var canMakeNow: Bool {
     lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
   }
 
   /// Main's `isOpenOnArrival`: a map on its way, or one that didn't finish with its Try again. Its
-  /// row says where it stands, so "Without a map" opens on arrival to show it.
+  /// row says where it stands, so "No map yet" opens on arrival to show it.
   var opensItsGroupOnArrival: Bool {
     status.isOnItsWay || status == .failed
   }

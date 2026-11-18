@@ -6,6 +6,7 @@
   "stats_answer_count": "6c535de89d2fbb19be3181b5459f1a3f7a9ae89a751a3418939526bc478f9295",
   "stats_answer_more": "71e9e2a69a5d5df9cacb1eb6cfb844f9d011063329ac336d8f24021ff6fc1310",
   "stats_answers_to_count": "2cba2f2fdcace6685ea0808cd1522d49bede1df05570b11fab55ea3f3de0e09e",
+  "stats_any_day": "2ee96da0346b29d2173ca67a2ac6fab56385e7000be95364d57f7f7cee4958d2",
   "stats_any_time": "0eaf6fbb0457242d71ed8f47763e9cf8530d3a9bbb0d0de067059dc6679908b7",
   "stats_belt_black": "97f8131281bff8b71a6e951df2e46b9f2fa591668d4927072f0175a0fb7fb72d",
   "stats_belt_blue": "f31dab86824293f575ec2e4b92aad68cf05f67dad85af35740389176c55a8e14",
@@ -113,7 +114,11 @@
     <string name="stats_belt_comes_after">%1$s는 %2$s %3$s 다음 띠로, 두뇌력이 %4$s에 도달하면 받아요</string>
     <string name="stats_belt_earned">획득</string>
     <string name="stats_belt_current">현재</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">2주 동안 학습하면 점수 변화를 볼 수 있어요</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
     <string name="stats_belt_coming">획득 예정</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">흰띠</string>
     <string name="stats_belt_yellow">노란띠</string>
     <string name="stats_belt_orange">주황띠</string>
@@ -124,7 +129,6 @@
     <string name="stats_belt_red">빨간띠</string>
     <string name="stats_belt_gray">회색띠</string>
     <string name="stats_belt_black">검은띠</string>
-    <string name="stats_trend_after_two_weeks">2주 동안 학습하면 점수 변화를 볼 수 있어요</string>
     <string name="stats_today">오늘</string>
     <string name="stats_days_at_full">100%인 날</string>
     <string name="stats_energy_line">레슨을 할 때마다 에너지가 올라가고, 쉬는 날에는 조금 줄어들어요.</string>
@@ -177,6 +181,8 @@
     <string name="stats_throughout_week">요일별</string>
     <string name="stats_throughout_day">시간대별</string>
     <string name="stats_any_time">언제든지</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">모든 요일</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">%1$s에 가장 잘해요.</string>
     <string name="stats_days_same">요일마다 정답률이 비슷해요.</string>

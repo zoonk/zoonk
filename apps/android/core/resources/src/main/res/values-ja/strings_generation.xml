@@ -18,7 +18,7 @@
   "generation_goal_line_1": "5f4ce78912d91eac351de64f5016e4a07b13138d4d16750ea0c2ce3627c9069e",
   "generation_goal_line_2": "44f9090008e85b412c0ff1648644536a7c89050f93186347166d1f9f62535b09",
   "generation_level_test": "b8498f709cd6138c795c97dcf16191d8dd23299625c6ed12055d46799cd35d5c",
-  "generation_level_test_bank": "79d1f9420a5ccb8edb3508f3e81a3855511e188802f495dcf0c6ba23ccca47de",
+  "generation_level_test_bank": "13f0ca4b1ea47ad04905fa285e3979aff51268d8d66e818f9f8202c905a73883",
   "generation_level_test_bank_line_1": "23adfc43a7cacceb715fb9749285e45f615a3dbcefaa6d7fc48637813cfc37ea",
   "generation_level_test_bank_line_2": "6cc81fc64e7fe9e929e4eeaa5761df88be80c94cb2cf229f94242cd957e3b1bb",
   "generation_level_test_bank_line_3": "0c75b29e2da30b0881a3a5a35f9ca05b7d30abd33e0c7abe03ddaa3ac56925a3",
@@ -108,7 +108,7 @@
     <string name="generation_first_lesson_day_line_2">どこから始めるか選んでいます…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">レベルテストを準備しています</string>
-    <string name="generation_level_test_bank">レベル診断テストの問題を作成しています</string>
+    <string name="generation_level_test_bank">問題を準備しています…</string>
     <string name="generation_level_test_bank_line_1">初級から上級までの文章を選んでいます…</string>
     <string name="generation_level_test_bank_line_2">リーディングの問題を作成しています…</string>
     <string name="generation_level_test_bank_line_3">リスニングの問題を作成しています…</string>

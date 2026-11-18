@@ -21,10 +21,11 @@ msgctxt "EXpTKi"
 msgid "Ear training"
 msgstr "Kulak eğitimi"
 
+#. A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count.
 #: src/activities/_components/activity-badge.tsx
 msgctxt "rI0jil"
 msgid "Your guess counts"
-msgstr "Tahminin önemli"
+msgstr "Tahminin puan kazandırır"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "s80KEd"
@@ -898,10 +899,11 @@ msgctxt "Sb4hnT"
 msgid "Square {number}, {row} and {column}:"
 msgstr "{number}. kare, {row} ve {column}:"
 
+#. How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". {what} is that result.
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "nyV23o"
-msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what}: {count} / {total, plural, =0 {# kare} other {# kare}}"
+msgctxt "gws3gs"
+msgid "Squares showing {what}: {count} of {total}"
+msgstr "{what} değerini gösteren kareler: {count} / {total}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -1816,9 +1818,9 @@ msgid "Remove"
 msgstr "Kaldır"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "GyuZyo"
-msgid "Pick an element to add its first atom."
-msgstr "İlk atomu eklemek için bir element seç."
+msgctxt "0ktP9z"
+msgid "Pick an element to start your molecule."
+msgstr "Molekülünü oluşturmaya başlamak için bir element seç."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -3572,6 +3574,11 @@ msgstr "Yazmak yerine sesli söyle"
 msgctxt "pjy2sy"
 msgid "Type what you'd say"
 msgstr "Söyleyeceklerini yaz"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "eUqe2x"
+msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
+msgstr "Yazmak yerine konuşmak için tarayıcı ayarlarından Zoonk’un mikrofonu kullanmasına izin ver."
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "uTDJ3g"

@@ -293,7 +293,11 @@ describe("spoken answers", () => {
     await page.getByRole("button", { name: "Record" }).click();
 
     await expect
-      .element(page.getByText("We can't use your microphone, so type what you'd say."))
+      .element(
+        page.getByText(
+          "To speak instead, allow the microphone for Zoonk in your browser settings.",
+        ),
+      )
       .toBeVisible();
 
     const field = page.getByRole("textbox", { name: "Pergunte quanto é o aluguel." });

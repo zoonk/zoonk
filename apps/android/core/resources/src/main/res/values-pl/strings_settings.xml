@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "country_home_tag": "48251a3fadabf1717f6a96915685a2dd7d390504b5ffc2ca25828eb6d8be92f7",
   "settings_account_deleted": "a1ff0c796ac90b34645771d53242ba5dcb108a53e7acb4a0eeb51484b693176f",
   "settings_account_deleted_title": "8ceaf3d68719c591cfb6c4bd8cb0b1c64ff37c11625e5a312b14685be431b2b6",
   "settings_apple_not_revoked": "44e5b63eecea77892508687355688a1c685d0e6cc6ab64be2b07665d16c577af",
@@ -100,6 +101,8 @@
     <string name="settings_preferences_share_usage_data_description">Pokazuje nam, jak korzystasz z Zoonka, żebyśmy mogli go ulepszać</string>
     <!-- A setting in Preferences: the country the learner lives in. -->
     <string name="settings_home_country">Kraj zamieszkania</string>
+    <!-- Tag beside the country the learner said they live in, in a list of countries -->
+    <string name="country_home_tag">Mieszkasz tutaj</string>
     <!-- Under that setting. -->
     <string name="settings_home_country_why">Żeby dopasować przykłady i egzaminy do twojego kraju.</string>
     <!-- The tutor's offer to save where the learner lives: what it changes. -->

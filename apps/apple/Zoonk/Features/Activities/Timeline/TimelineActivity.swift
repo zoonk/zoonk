@@ -48,8 +48,8 @@ private struct TimelineCanvas: View {
           VStack(alignment: .leading, spacing: 8) {
             ActivityCaption(
               Text(
-                "\(unplaced.count) events to place", tableName: "Activities",
-                comment: "How many events of a timeline are left to place"))
+                "\(fields.events.count - unplaced.count) of \(fields.events.count) events placed",
+                tableName: "Activities"))
 
             Button {
               placements.append(

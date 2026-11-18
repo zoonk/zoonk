@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "629c42d265d97c8b409b1432b2264c920bc2d5572a338dd9ab1b189ec93470ea",
-  "activities_badge_estimate_first": "d367a6ca10c38e0dd738458e771c06b2cabbc5e4ad9e9349e4e81c3b793fe75d",
+  "activities_badge_estimate_first": "7ae1585522d385e6e92ce5d12c9c1ca68457b0182d6820e688b2c88eec8264b7",
   "activities_badge_find_error": "54a2fd12c08e4340657679e171fb74fd6a88a4e92b9f21c1f65ca16ddafe3a57",
   "activities_badge_read_chart": "963ec87b3b9330ee1e832bc48d4b4b80a121480c3e2dffac03661f4963f186a3",
   "activities_badge_reply": "22b41ad534300f513e365e73eb5e8518ae605e30183544906d6d1dcfaeca4420",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Önce tahmin et</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Tahminin puan kazandırır</string>
     <string name="activities_badge_read_chart">Grafiği oku</string>
     <string name="activities_badge_before_after">Öncesi ve sonrası</string>
     <string name="activities_badge_find_error">Hatayı bul</string>

@@ -30,7 +30,7 @@
   "memory_undo_failed": "ac922ed930e8a08154d95dc0f9d3e544ecb0e8b68476a0b658cc6c4d7019a8fa",
   "memory_undo_retry": "631c6054121112a8e6974bb3a1f45a080bcb50c2dc75fcd21ee7abcf9d608f11",
   "memory_updated": "4a142d4a8877ed27695f5df9ae6c71375c12f184ed27451f3ba8d031849e63a2",
-  "memory_updated_more": "5def2e4f944c2a00696253739021ef1548ba9c1e6562b158cca077dde68bac1f",
+  "memory_updated_more": "79fddad795cb2644fe0ebbe9f34c23e3c6890a3e3e070ca14e25837e6c352552",
   "memory_use": "3a4de16106f2a8433d5a89624c8108789115571668e08e41fa237a749f4353dc",
   "memory_use_description": "cd70216c00222e067661578435fd05359d6c304aa2d00cb41d1025cbb179db8f"
 }
@@ -68,8 +68,8 @@
     <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Daten, es sei denn, du bittest darum.</string>
     <string name="memory_updated">Erinnerungen aktualisiert:</string>
     <plurals name="memory_updated_more">
-        <item quantity="one">und %d weitere</item>
-        <item quantity="other">und %d weitere</item>
+        <item quantity="one">und zusätzlich %d Änderung</item>
+        <item quantity="other">und zusätzlich %d Änderungen</item>
     </plurals>
     <string name="memory_undo">Rückgängig machen</string>
     <string name="memory_change_undone">Änderung rückgängig gemacht</string>

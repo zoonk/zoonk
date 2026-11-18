@@ -130,12 +130,12 @@ struct MindMapsScreen: View {
     return switch tab {
     case .chapters:
       Text(
-        "With a map \(count)", tableName: "MindMaps",
+        "Chapter maps \(count)", tableName: "MindMaps",
         comment: "Tab of chapter mind maps, with how many open")
     case .lessons:
       Text(
-        "Lessons \(count)", tableName: "MindMaps", comment: "Tab of lesson maps, with how many open"
-      )
+        "Lesson maps \(count)", tableName: "MindMaps",
+        comment: "Tab of lesson maps, with how many open")
     case .saved:
       Text(
         "Saved \(count)", tableName: "MindMaps",
@@ -274,7 +274,7 @@ private struct MindMapCreateSection: View {
         // A row's Create spends lessons from a free learner's allowance, so the list says so once.
         if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 }) {
           Text(
-            "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+            "Making a map writes its chapter's lessons first, from your free lessons.",
             tableName: "MindMaps"
           )
           .typeStyle(.note)
@@ -287,7 +287,11 @@ private struct MindMapCreateSection: View {
         }
       }
     } header: {
-      SectionTitle(Text("Without a map", tableName: "MindMaps")) {
+      SectionTitle(
+        Text(
+          "No map yet", tableName: "MindMaps",
+          comment: "Heading over the chapters whose mind map hasn't been made yet.")
+      ) {
         Text(verbatim: notMade.count.formatted())
       }
     }
@@ -735,7 +739,7 @@ enum MindMapsCreateLine: Equatable {
     tier: LearnerTier
   ) {
     let offer = maps.createOffer
-    // As main's, only the chapters under "Without a map": the others' rows say where they stand.
+    // As main's, only the chapters under "No map yet": the others' rows say where they stand.
     let others = maps.chapters.filter { !$0.canMakeNow }
     let onTheWay = others.count { $0.status.isOnItsWay }
 

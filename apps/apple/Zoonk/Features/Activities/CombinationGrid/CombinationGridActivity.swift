@@ -209,9 +209,10 @@ private struct CombinationGridCanvas: View {
         } ?? output
 
       return String(
-        localized: "\(counted.count) of \(total) squares: \(what)", table: "Activities",
+        localized: "Squares showing \(what): \(counted.count) of \(total)", table: "Activities",
         comment:
-          "After the check: how many squares of a grid the question counts, and what it counts")
+          "How many squares of the grid show one result, such as \"Squares showing 7: 6 of 36\". The first value is that result."
+      )
     }
 
     if isReadOnly {

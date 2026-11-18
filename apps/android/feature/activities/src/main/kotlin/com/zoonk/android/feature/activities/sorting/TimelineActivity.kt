@@ -218,7 +218,8 @@ private fun TimelineQuestion(props: ActivityProps) {
         if (!props.isChecked && trayEvent != null) {
             TimelineTray(
                 label = trayEvent.label,
-                remaining = unplaced.size,
+                placed = fields.events.size - unplaced.size,
+                total = fields.events.size,
                 enabled = !props.isLocked,
                 onPlace = {
                     place(trayEvent.id, snapYear((fields.start + fields.end) / 2.0, fields.start, fields.end))
@@ -653,7 +654,8 @@ private fun TrackIcon(
 @Composable
 private fun TimelineTray(
     label: String,
-    remaining: Int,
+    placed: Int,
+    total: Int,
     enabled: Boolean,
     onPlace: () -> Unit,
     onDrag: (LayoutCoordinates, Offset, Float) -> Unit,
@@ -671,7 +673,7 @@ private fun TimelineTray(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            pluralStringResource(R.plurals.activities_sorting_events_to_place, remaining, remaining),
+            pluralStringResource(R.plurals.activities_sorting_events_placed, total, placed, total),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )

@@ -11,7 +11,7 @@
   "activities_reasoning_evidence_chosen": "c11d1e45806aac253c10c43f8015a3e18bd7c460266f7823132e770b7aca31b5",
   "activities_reasoning_evidence_hint": "7e6ad02952a766abd25052945d3080b3960c08d5e82b7b26e71b92ab94aaae96",
   "activities_reasoning_grid_all_filled": "23f34d24a794b94cfeaafbed6d1e68d195051a4ad4c042c51089343f6b50804f",
-  "activities_reasoning_grid_counted": "8e218b64cef7b490cb3a906def63e49211576ac2ad379c6b58dc14dbc5b89443",
+  "activities_reasoning_grid_counted": "14b78a2de0c4c8fb8abd699016307f33b515d26e343e25a46af03a8d9b7d408a",
   "activities_reasoning_grid_filled": "fecf590aba0cb05b406f6238789609ca8bda7c45825d4085ca5ebd33cec73b9f",
   "activities_reasoning_grid_products": "5c3f96f3419937a314ee3e3eb9219e56270d6b3ad5da3402fcdcc1675d7003ce",
   "activities_reasoning_grid_punnett": "889bc3505018a0b76a8697980710e1a959f0a10c0e8df84499d0daa14ad39d3b",
@@ -105,12 +105,8 @@
     <string name="activities_reasoning_grid_value_trait">%1$s, %2$s</string>
     <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
     <string name="activities_reasoning_grid_your_answer">%1$s. Sua resposta: %2$s</string>
-    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
-    <plurals name="activities_reasoning_grid_counted">
-        <item quantity="one">%1$d de %2$d quadrado: %3$s</item>
-        <item quantity="many">%1$d de %2$d quadrados: %3$s</item>
-        <item quantity="other">%1$d de %2$d quadrados: %3$s</item>
-    </plurals>
+    <!-- How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". %3$s is that result. -->
+    <string name="activities_reasoning_grid_counted">Quadrados que mostram %3$s: %1$d de %2$d</string>
     <!-- After the check, like "3 of 4 squares right". -->
     <plurals name="activities_reasoning_grid_right">
         <item quantity="one">%1$d de %2$d quadrado correto</item>

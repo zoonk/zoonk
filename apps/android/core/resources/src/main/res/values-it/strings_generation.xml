@@ -18,7 +18,7 @@
   "generation_goal_line_1": "a7294898a398412992449e02912e390afc5d0c9defb3a6e5525c8e4bf17db392",
   "generation_goal_line_2": "f19dce565814e900b99f5a4be21c1ad2dac9ca6e9553dcadfba457519898574f",
   "generation_level_test": "bce6513f1a5603f31cd92f8af613e01be8b7600143501a5c2f52ea76b57389f9",
-  "generation_level_test_bank": "45650e07f87d4901b02b56ab2cab4bdc01302c82fbfdb6702fcbf8adb0fff23f",
+  "generation_level_test_bank": "030d0f3b0f61a8feaf3827f38464d72a43dc11998f98e1553c191d6e9d55898b",
   "generation_level_test_bank_line_1": "2e9077378b5464beebe3a244e339a7bf4d08f372a16eb51b787ff75fc9e82595",
   "generation_level_test_bank_line_2": "63d73f03548da3c8150b733362338f164a267c7b9a748ba1f9b11148a5494936",
   "generation_level_test_bank_line_3": "639c7c1d1f070b676885c4642ed9b0c88e766b2500911af61f1f03ea1a9364f7",
@@ -108,7 +108,7 @@
     <string name="generation_first_lesson_day_line_2">Stiamo scegliendo da dove iniziare…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Stiamo preparando il tuo test di livello</string>
-    <string name="generation_level_test_bank">Stiamo preparando le domande del test di livello</string>
+    <string name="generation_level_test_bank">Stiamo preparando le domande</string>
     <string name="generation_level_test_bank_line_1">Stiamo scegliendo testi dal livello principiante a quello avanzato…</string>
     <string name="generation_level_test_bank_line_2">Stiamo preparando le domande di lettura…</string>
     <string name="generation_level_test_bank_line_3">Stiamo preparando le domande di ascolto…</string>

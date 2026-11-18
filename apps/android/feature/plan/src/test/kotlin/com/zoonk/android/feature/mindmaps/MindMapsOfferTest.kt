@@ -118,7 +118,7 @@ class MindMapsOfferTest {
 
         waitFor("You've used your mind maps")
         compose.onNodeWithText("Create all").assertDoesNotExist()
-        val below = compose.onNodeWithText("Without a map").getBoundsInRoot().top
+        val below = compose.onNodeWithText("No map yet").getBoundsInRoot().top
 
         clock.passOpening()
         waitFor("Create all")
@@ -128,7 +128,7 @@ class MindMapsOfferTest {
         assertEquals(emptyList<Any>(), api.created)
         assertEquals(0, api.createdAll)
         // The gate's slot holds its height for this visit, so nothing below it moves without a tap.
-        assertEquals(below, compose.onNodeWithText("Without a map").getBoundsInRoot().top)
+        assertEquals(below, compose.onNodeWithText("No map yet").getBoundsInRoot().top)
     }
 
     /**
@@ -386,7 +386,7 @@ class MindMapsOfferTest {
     }
 
     /**
-     * Main's rows for maps that didn't finish: one with its lessons written and one under Without a map each show their own Try
+     * Main's rows for maps that didn't finish: one with its lessons written and one under No map yet each show their own Try
      * again on arrival, so the group opens for the second; no line counts them.
      */
     @Test
@@ -404,7 +404,7 @@ class MindMapsOfferTest {
         compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
-    /** With a stop, the page line is the stop's notice, and a map under Without a map that didn't finish is still in view. */
+    /** With a stop, the page line is the stop's notice, and a map under No map yet that didn't finish is still in view. */
     @Test
     fun aStopIsThePageLineWhileAMapDidntFinish() {
         api.mindMaps = {
@@ -426,7 +426,7 @@ class MindMapsOfferTest {
         compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
-    /** A chapter under Without a map being made opens the group on arrival, so its progress is in view; a learner's close holds. */
+    /** A chapter under No map yet being made opens the group on arrival, so its progress is in view; a learner's close holds. */
     @Test
     fun otherChaptersOpenOnArrivalWhileOneIsBeingMade() {
         api.mindMaps = { goalMindMaps(chapters + mapJson(4, "Lenses", "writingLessons", lessonsToWrite = 3), offer = FRESH_OFFER) }
@@ -444,7 +444,7 @@ class MindMapsOfferTest {
         api.mindMaps = { fresh }
         show()
 
-        waitFor("Without a map")
+        waitFor("No map yet")
         compose.onNodeWithText("3 chapters").assertExists()
         compose.onNodeWithText("Optics").assertDoesNotExist()
 

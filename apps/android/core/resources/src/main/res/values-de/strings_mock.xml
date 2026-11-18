@@ -63,7 +63,7 @@
   "mock_section_number": "7c3633c60daf84654f01c89a46ec7459a200bcdc770cc799a7b63e535285734f",
   "mock_sections": "f36acda51d0064f05a85b878b3e3ac8cae92c00a19e8963d0134361fdb880e61",
   "mock_see_result": "89116ae93da453e0286f3f32cbf2491d6f5381c9c9bffab0f657c3297779e6b3",
-  "mock_sheet": "7ad5ea53232c9457b31a20b90efdb745a684fcb2b48ac97fc8cfbe9fc4c96cf0",
+  "mock_sheet": "2034ef946895df3c534729feae650fa1fa66944cf6a7a27fee14f8a7e0b1f347",
   "mock_speaking": "02e57a882a42119be68bb7e25f8fe050649e9ee10434faf00680a55efa91c54c",
   "mock_speaking_all_done": "7121a9badf6c1a3b8fb3db00bc680996040a40c8b49cd76abf8915217a38d9bf",
   "mock_speaking_done": "55f5b6a74dd5b55ef74a3d3ae431951933a0129ab994b2d7976cd5dd21c16b0d",
@@ -177,8 +177,8 @@
     <string name="mock_hand_in_final">Danach kannst du deine Antworten nicht mehr ändern.</string>
     <string name="mock_keep_answering">Weiter beantworten</string>
     <string name="mock_hand_in">Abgeben</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
-    <string name="mock_sheet">Antwortbogen</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
+    <string name="mock_sheet">Bogen</string>
     <string name="mock_answer_sheet">Antwortbogen</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -197,6 +197,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Frage %1$d</string>
     <string name="mock_cell_answered">beantwortet</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, zur Überprüfung markiert</string>
     <string name="mock_sections">Abschnitte</string>
     <string name="mock_section_number">Abschnitt %1$d</string>

@@ -63,7 +63,7 @@
   "mock_section_number": "23ad9a2147d82cfa7f660ec8513be7d00a7a82f25f4692ac276d79f5bffd8eb1",
   "mock_sections": "2d5ec46cb70d362c9095495248d94d14c7d016bc20dfeb44f8d84b11691daa37",
   "mock_see_result": "cd3edb73b5abd96134249f7a068cd46f68712a1996c0d9d589cf35d7bdfcdee6",
-  "mock_sheet": "bd9ba2f10084b31293cf8d901ebffd3e9dbce5d31374f39434a372520ed2af02",
+  "mock_sheet": "15a98d29514e186207e27f977666b16f75bbe203e854d84481880cbae7e5ca86",
   "mock_speaking": "31148dc8dce09410ce654d1e94617c6db8fce2c831585cf7dac3aef375b38ff1",
   "mock_speaking_all_done": "72cafb5e92f0d2ed512f0f376aa419cfbb907bbb265193866d40cbec54b4633d",
   "mock_speaking_done": "8fcd1f5a78ee8fee46ed4baf8c43d0bd3e36321871579f348ba7001d76eac6f0",
@@ -185,8 +185,8 @@
     <string name="mock_hand_in_final">Après cela, tu ne pourras plus modifier tes réponses.</string>
     <string name="mock_keep_answering">Continuer à répondre</string>
     <string name="mock_hand_in">Rendre</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
-    <string name="mock_sheet">Réponses</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
+    <string name="mock_sheet">Feuille</string>
     <string name="mock_answer_sheet">Feuille de réponses</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -207,6 +207,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">réponse donnée</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, marquée pour révision</string>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>

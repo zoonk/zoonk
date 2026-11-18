@@ -63,7 +63,7 @@
   "mock_section_number": "4bb8fcc892eca11eb23439f3f80e3e279011d23dbdde2fab3eb23d7e8a2fbaf9",
   "mock_sections": "e01a574d49d9b4d429d3e567e959ccb204b3d6e4852ce082d2f525ee28878f58",
   "mock_see_result": "67cf4b5a63688cdaae5c4d5e7ef8fb598caf16021181568044c4f46c0a628c46",
-  "mock_sheet": "d1f9f2305b4efcd53403aac15f51374164633bb3c315f015005386698b6996b6",
+  "mock_sheet": "43fc674dedda7b412d6e824c5cf8bee5c7a0d58e9b8862c835c81d6f25987d1c",
   "mock_speaking": "19f7fc8cf42d7815d160570709c83cf7b2cb6b6d4a008dfb6edd8c59b19fcdd1",
   "mock_speaking_all_done": "8e39379888b4d47dd4cd82e186036f3e1850bc28d4a5d91dd34d193f623f5bd5",
   "mock_speaking_done": "61391241bb7ac10374343291816368f0bd976d064f4cb909039c3ab3811a1834",
@@ -185,8 +185,8 @@
     <string name="mock_hand_in_final">Depois disso, suas respostas não poderão ser alteradas.</string>
     <string name="mock_keep_answering">Continuar respondendo</string>
     <string name="mock_hand_in">Entregar</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
-    <string name="mock_sheet">Respostas</string>
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
+    <string name="mock_sheet">Folha</string>
     <string name="mock_answer_sheet">Folha de respostas</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
@@ -207,6 +207,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Questão %1$d</string>
     <string name="mock_cell_answered">respondida</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, marcada para revisão</string>
     <string name="mock_sections">Seções</string>
     <string name="mock_section_number">Seção %1$d</string>

@@ -75,7 +75,7 @@ struct LevelTestStep: View {
         "Preparing your level test", table: "Onboarding",
         comment: "Title while a language's level test questions are written"),
       description: LocalizedStringResource(
-        "The \(Locale.current.languageName(targetLanguage)) test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
+        "We're writing the questions for the \(Locale.current.languageName(targetLanguage)) test now. It takes a minute or two, and only this once.",
         table: "Onboarding", comment: "Why the level test waits: the language's name"),
       generationID: generationID,
       kind: .levelTestBank,

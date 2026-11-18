@@ -72,7 +72,7 @@ class ConversationFlowTest {
         )
 
         compose.onNodeWithContentDescription("Help").performClick()
-        compose.onNodeWithText("Phrases you can use").assertExists()
+        compose.onNodeWithText("A phrase you can use").assertExists()
 
         compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()

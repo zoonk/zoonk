@@ -185,7 +185,7 @@
     <string name="mock_hand_in_final">Dopo la consegna non potrai più modificare le risposte.</string>
     <string name="mock_keep_answering">Continua a rispondere</string>
     <string name="mock_hand_in">Consegna</string>
-    <!-- Short label of a small button that opens the mock exam's answer sheet. -->
+    <!-- Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word. -->
     <string name="mock_sheet">Foglio</string>
     <string name="mock_answer_sheet">Foglio delle risposte</string>
     <!-- How many of the section's questions are answered: "12 answered". -->
@@ -207,6 +207,7 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Domanda %1$d</string>
     <string name="mock_cell_answered">con risposta</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
     <string name="mock_cell_marked_for_review">%1$s, contrassegnata per la revisione</string>
     <string name="mock_sections">Sezioni</string>
     <string name="mock_section_number">Sezione %1$d</string>

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "9d235ee0417c7abb12967cecd1ffacd543798f633c81414445759eeff5cb4b99",
-  "activities_badge_estimate_first": "58524dcdfaa3a4e20477ae76f0983aa2c78c0b95bd3aab0e7a4067ae3b743055",
+  "activities_badge_estimate_first": "e8d007aadd941f5870e73a745868b711a8ca6fbd9799d1a14ddc08bcbcf6a7b1",
   "activities_badge_find_error": "eaae67c226da686a63eb227fa73ac2efa8d32c0ddb20db33bfe88e9eed56d9f6",
   "activities_badge_read_chart": "df663c7f9850f88c2304fdce4f423023f3e699fae450fb81f4b152532c2b3482",
   "activities_badge_reply": "f7388df6931244165abf985a6a71e7adcfdd8071404f637ac4f80d2b63384731",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Fai prima una stima</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">La tua ipotesi conta</string>
     <string name="activities_badge_read_chart">Leggi il grafico</string>
     <string name="activities_badge_before_after">Prima e dopo</string>
     <string name="activities_badge_find_error">Trova l’errore</string>

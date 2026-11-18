@@ -11,7 +11,7 @@
   "activities_reasoning_evidence_chosen": "d7f402394a318d6ab1c25abd6542db6d9ef1e4d868e440bc29dcaea5f4af63c7",
   "activities_reasoning_evidence_hint": "66ea8dfc232189bf052e41de129d30049378efea2ab421532f6676a836e59b00",
   "activities_reasoning_grid_all_filled": "9c8213c1df8b1927404ecd37095a1276cb836c685a167fc601f4f58cbd7d9c77",
-  "activities_reasoning_grid_counted": "de07848309f105fd6535bbc342eb6810415104a1d8bf4eff15d3927365188346",
+  "activities_reasoning_grid_counted": "b5efc5c9563d511ff289eaa171550126bb6e498f361de6e6954897f61d4ec713",
   "activities_reasoning_grid_filled": "b7936b621cfdd133ab8b43ac5243be6cc114bd3c1410984a445e74b2c81faf4a",
   "activities_reasoning_grid_products": "0366b30ecdfa334c3b8b55a17667306b087d3d7a2c371893b100a7ece6caf5d2",
   "activities_reasoning_grid_punnett": "61ed5f8fcf0b17f034f01163e607f049bc98544a6c663a13a8bf674158daeaf5",
@@ -105,13 +105,8 @@
     <string name="activities_reasoning_grid_value_trait">%1$s, %2$s</string>
     <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
     <string name="activities_reasoning_grid_your_answer">%1$s. Twoja odpowiedź: %2$s</string>
-    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
-    <plurals name="activities_reasoning_grid_counted">
-        <item quantity="one">%1$d z %2$d pola: %3$s</item>
-        <item quantity="few">%1$d z %2$d pól: %3$s</item>
-        <item quantity="many">%1$d z %2$d pól: %3$s</item>
-        <item quantity="other">%1$d z %2$d pól: %3$s</item>
-    </plurals>
+    <!-- How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". %3$s is that result. -->
+    <string name="activities_reasoning_grid_counted">Kwadraty z wynikiem %3$s: %1$d z %2$d</string>
     <!-- After the check, like "3 of 4 squares right". -->
     <plurals name="activities_reasoning_grid_right">
         <item quantity="one">Poprawnie wypełniono %1$d z %2$d pola</item>

@@ -8018,6 +8018,65 @@
         }
       }
     },
+    "Getting the questions ready" : {
+      "comment" : "The step of the wait while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando las preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des questions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparazione delle domande"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を準備しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제를 준비하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy pytania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando as perguntas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorular hazırlanıyor"
+          }
+        }
+      }
+    },
     "Getting your test ready" : {
       "comment" : "Title while placement questions are written",
       "localizations" : {
@@ -9666,65 +9725,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ çalma dersleri yakında"
-          }
-        }
-      }
-    },
-    "Level" : {
-      "comment" : "Row with the level the learner described",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Level"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niveau"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Livello"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベル"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "수준"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poziom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviye"
           }
         }
       }
@@ -18195,65 +18195,6 @@
         }
       }
     },
-    "The %@ test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once." : {
-      "comment" : "Why the level test waits: the language's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der %@-Test ist neu in deiner Sprache, deshalb erstellen wir gerade die Fragen. Das dauert normalerweise ein bis zwei Minuten und ist nur einmal nötig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La prueba de %@ es nueva en tu idioma, así que estamos preparando las preguntas. Suele tardar uno o dos minutos y solo tendrás que esperar esta vez."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le test de %@ est nouveau dans ta langue, alors ses questions sont en cours de préparation. Cela prend généralement une ou deux minutes, et seulement cette fois."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il test di %@ è nuovo nella tua lingua, quindi stiamo preparando le domande. Dovrai aspettare solo questa volta: di solito bastano uno o due minuti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "利用中の言語で%@のテストを初めて用意するため、問題を作成しています。通常1〜2分ほどかかりますが、お待ちいただくのは初回だけです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 쓰는 언어로 %@ 테스트를 처음 제공해서 문제를 만들고 있어요. 보통 1~2분 정도 걸리고, 이번 한 번만 기다리면 돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test „%@” jest nowy w twojej wersji językowej, więc właśnie przygotowujemy pytania. Zwykle zajmuje to minutę lub dwie i jest potrzebne tylko raz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O teste de %@ é novo no seu idioma, então as perguntas estão sendo criadas agora. Isso costuma levar um ou dois minutos e só acontece uma vez."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kullandığın dilde %@ testi yeni olduğu için sorularını şimdi hazırlıyoruz. Bu yalnızca ilk seferde olur ve genellikle bir iki dakika sürer."
-          }
-        }
-      }
-    },
     "The audio didn't play." : {
       "comment" : "A level test listening question's message failed to play",
       "localizations" : {
@@ -21752,6 +21693,65 @@
         }
       }
     },
+    "We're writing the questions for the %@ test now. It takes a minute or two, and only this once." : {
+      "comment" : "Why the level test waits: the language's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen jetzt die Fragen für den %@-Test. Das dauert ein bis zwei Minuten und ist nur dieses eine Mal nötig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora estamos preparando las preguntas para la prueba de %@. Tardaremos uno o dos minutos y solo lo haremos esta vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous préparons les questions du test %@ en ce moment. Ça prend une ou deux minutes, et ça n’arrive qu’une fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando ora le domande per il test di livello di %@. Ci vorranno un paio di minuti, solo questa volta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のレベル診断テストの問題を作成しています。1〜2分ほどかかりますが、作成するのは今回だけです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 %@ 레벨 테스트 문제를 만들고 있어요. 1~2분 정도 걸리며, 처음 한 번만 진행돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy teraz pytania do testu %@. Zajmie to minutę lub dwie i zdarzy się tylko raz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos criando agora as perguntas para o teste de %@. Isso leva um ou dois minutos e só acontece desta vez."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu anda %@ için seviye tespit testi sorularını hazırlıyoruz. Bu yalnızca bir kez olur ve bir iki dakika sürer."
+          }
+        }
+      }
+    },
     "Weekend time" : {
       "localizations" : {
         "de" : {
@@ -22278,6 +22278,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şu anki işin"
+          }
+        }
+      }
+    },
+    "What you know" : {
+      "comment" : "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du schon weißt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que sabes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu sais"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa sai"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知っていること"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 아는 것"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co już wiesz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você sabe"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildiklerin"
           }
         }
       }
@@ -23812,65 +23871,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld. ekranı hazırlıyoruz…"
-          }
-        }
-      }
-    },
-    "Writing the level test questions" : {
-      "comment" : "The step of the wait while a language's level test questions are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen die Fragen für den Einstufungstest"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando las preguntas de la prueba de nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation des questions du test de niveau"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo preparando le domande del test di livello"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベルテストの問題を作成しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨 테스트 문제를 만들고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy pytania do testu poziomującego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando as perguntas do teste de nível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviye tespit testi sorularını hazırlıyoruz"
           }
         }
       }

@@ -6,6 +6,7 @@
   "stats_answer_count": "0479ac3e60973c465209d0972fb6ed0e947d63dcab426fe92f596abe4934a457",
   "stats_answer_more": "20aa5b2b77e367c44cf284c660738083fe77dc8583ff8fde604b79ca0b8be99b",
   "stats_answers_to_count": "652a3a346609c3939a198e0a00fd5a3074622990498dddbfba5bb20d31d834ac",
+  "stats_any_day": "ac259ad30553d1fc43c663e6fe5d3aa151fd3005eb131678b41b57120a468d67",
   "stats_any_time": "ee6b43c94978f5da684994b7dbc4799e6952fa31fbca344910be35b9e9121568",
   "stats_belt_black": "fd20d28ed220dd0005e7ce54258b263f2e30ff38de309859b54eca31080cb227",
   "stats_belt_blue": "cf0b0aa78981951b8e9df55c157a3882c291238880f4c6fbd0ee4162f6cf9195",
@@ -113,7 +114,11 @@
     <string name="stats_belt_comes_after">La %1$s viene dopo la %2$s %3$s, a %4$s punti di Potenza Mentale</string>
     <string name="stats_belt_earned">Ottenuta</string>
     <string name="stats_belt_current">Attuale</string>
+    <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
+    <string name="stats_trend_after_two_weeks">Vedrai il tuo andamento dopo due settimane di studio</string>
+    <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
     <string name="stats_belt_coming">Da conquistare</string>
+    <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">Bianca</string>
     <string name="stats_belt_yellow">Gialla</string>
     <string name="stats_belt_orange">Arancione</string>
@@ -124,7 +129,6 @@
     <string name="stats_belt_red">Rossa</string>
     <string name="stats_belt_gray">Grigia</string>
     <string name="stats_belt_black">Nera</string>
-    <string name="stats_trend_after_two_weeks">Vedrai il tuo andamento dopo due settimane di studio</string>
     <string name="stats_today">Oggi</string>
     <string name="stats_days_at_full">Giorni al 100%</string>
     <string name="stats_energy_line">L’Energia aumenta con ogni lezione e cala un po’ nei giorni di pausa.</string>
@@ -191,6 +195,8 @@
     <string name="stats_throughout_week">Durante la settimana</string>
     <string name="stats_throughout_day">Durante la giornata</string>
     <string name="stats_any_time">A qualsiasi ora</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">Tutti i giorni</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Il tuo giorno migliore è %1$s.</string>
     <string name="stats_days_same">Ottieni risultati simili ogni giorno.</string>

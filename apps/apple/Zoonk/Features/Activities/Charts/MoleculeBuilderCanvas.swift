@@ -188,7 +188,7 @@ struct MoleculeBuilderCanvas: View {
     return VStack(alignment: .leading, spacing: 4) {
       if build.atoms.isEmpty {
         Text(
-          "Tap an element to add its first atom.", tableName: "ActivitiesCharts",
+          "Tap an element to start your molecule.", tableName: "ActivitiesCharts",
           comment: "An empty molecule build"
         )
         .foregroundStyle(.mutedForeground)

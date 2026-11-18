@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "388c42add11e6fd8d8c438988cc619715a50927ab4f345149362c10e63322472",
   "activities_sorting_drag_onto_timeline": "f7055706598e1b682f07986032e027f740f482d44b2f7e5c619160e22961bba8",
   "activities_sorting_drag_steps": "8dde466326d4e7b2c8c48e1eb34bd89895d1f23adeb5802633577d4c63b0b9e3",
-  "activities_sorting_events_to_place": "0878413fc2cc691ba2013ef28577d04f532c6d3a36089bec7a6755314b09ad95",
+  "activities_sorting_events_placed": "cf5244c0490e6d625565d457a046f92faf37dc24fd9d75e3800f276ae3857aba",
   "activities_sorting_every_spot_named": "286eda9ba6016c4314ec75461ce31f7aa0270c593215489aad71d4747900f9ff",
   "activities_sorting_gap_between": "47bf86cfeee97e8cebeb5febb3883e18ac995144ed210e15df64ef7876e42bdb",
   "activities_sorting_goes_with": "14bb4dc3fdfb232f31ba65f2f21c18ca6260076988c4e8f1831b5e58a4a35a99",
@@ -201,11 +201,12 @@
     <string name="activities_sorting_year_and_guess">%1$s, twój strzał: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Twój strzał: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">%d wydarzenie do umieszczenia</item>
-        <item quantity="few">%d wydarzenia do umieszczenia</item>
-        <item quantity="many">%d wydarzeń do umieszczenia</item>
-        <item quantity="other">%d wydarzenia do umieszczenia</item>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="one">Umieszczono %1$d wydarzenie z %2$d</item>
+        <item quantity="few">Umieszczono %1$d wydarzenia z %2$d</item>
+        <item quantity="many">Umieszczono %1$d wydarzeń z %2$d</item>
+        <item quantity="other">Umieszczono %1$d wydarzenia spośród %2$d</item>
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Umieść na osi czasu: %1$s</string>

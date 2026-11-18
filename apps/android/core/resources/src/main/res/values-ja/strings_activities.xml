@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "258a9c8bbb4c5112d2346f84f9e2b0ff39b109cd4834a0f3dbf33597349915f9",
-  "activities_badge_estimate_first": "58296d1d4f89c2e0858774c3cd02e789650ce2efdade4171b1e4a80ce5a64a00",
+  "activities_badge_estimate_first": "edf045a469f2afc9330e2f1e183a015142ef291c1772982afeda5e167855e8f3",
   "activities_badge_find_error": "91f9423c36cf8020a710ef9126cea8367cfdc41a5a0322465d0a7157ffdbba93",
   "activities_badge_read_chart": "1b336a25808e0bea8fd027f7452bfdf5753df83b737c30f83129451505dc0170",
   "activities_badge_reply": "5cbdeb88cfb02474b430feda5a9ffa5e602e9c30bee91cdfafe529731e8e5897",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">まず予想する</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">予想も採点対象</string>
     <string name="activities_badge_read_chart">グラフを読み取る</string>
     <string name="activities_badge_before_after">変化の前後</string>
     <string name="activities_badge_find_error">間違いを見つける</string>

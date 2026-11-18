@@ -11,7 +11,7 @@
   "activities_reasoning_evidence_chosen": "5ef2a399cff54a57b03470545c60dc9b96e464a921f07e37d5f0bbd0490345ff",
   "activities_reasoning_evidence_hint": "92c25144adc019ca1e9b115392a07094f07c4099ebac13a4ebf71e911741d3e1",
   "activities_reasoning_grid_all_filled": "d9e64314673fc151c779af9fa33ddf41b56ea3b5a9ecfa9e8292c776a2461273",
-  "activities_reasoning_grid_counted": "1e7b5c174568136d7f4c1c847e1fc8b067d400edaff88489695da75fad46b867",
+  "activities_reasoning_grid_counted": "6a65aa0e462e2580a572454a2d582c8d899498832b033c9e8a611a100f17df75",
   "activities_reasoning_grid_filled": "003fdbc28fa953e047db0eb01ee37ac74c4fd92f03a30c857b9b5cce0fbaa9dc",
   "activities_reasoning_grid_products": "fa7a6c77f3b5993be05cb4074b3d2c43121081be431b57c6c5b9bcce10988d75",
   "activities_reasoning_grid_punnett": "0f688cadf82ce07fa8002af6b8de33aeae7917c73b3bac3c337bc64abea8215e",
@@ -105,10 +105,8 @@
     <string name="activities_reasoning_grid_value_trait">%1$s, %2$s</string>
     <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
     <string name="activities_reasoning_grid_your_answer">%1$s. 내 답: %2$s</string>
-    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
-    <plurals name="activities_reasoning_grid_counted">
-        <item quantity="other">%1$d/%2$d칸: %3$s</item>
-    </plurals>
+    <!-- How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". %3$s is that result. -->
+    <string name="activities_reasoning_grid_counted">%3$s이(가) 표시된 칸: %2$d개 중 %1$d개</string>
     <!-- After the check, like "3 of 4 squares right". -->
     <plurals name="activities_reasoning_grid_right">
         <item quantity="other">%1$d/%2$d칸 정답</item>

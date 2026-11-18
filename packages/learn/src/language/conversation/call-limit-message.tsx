@@ -13,8 +13,10 @@ import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
 import { CallReason } from "./conversation-parts";
 
+/** What ran out, or once its day has come, that the call time is back. */
 export function useCallLimitTitle(limit: CallLimit): string {
   const t = useExtracted();
+  const opened = useLiveLimit(limit) === null;
 
   const titles = {
     day: t("No more calls today"),
@@ -22,7 +24,13 @@ export function useCallLimitTitle(limit: CallLimit): string {
     total: t("Calls need a free account"),
   };
 
-  return titles[limit.period];
+  return opened
+    ? t({
+        description:
+          'The title over "You can try again now." once a call the learner\'s call time stopped can be made again.',
+        message: "Your call time is back",
+      })
+    : titles[limit.period];
 }
 
 /** The call cap's words alone, for a place that draws its way on where its action was. */
@@ -44,12 +52,9 @@ export function CallLimitReason({
 }) {
   const routes = useLearnRoutes();
   const title = useCallLimitTitle(limit);
-  const opened = useLiveLimit(limit) === null;
 
-  // Once its day has come nothing ran out, so no title says it did. The notice stays the same one,
-  // so it isn't read out again as a new refusal.
   return (
-    <CallReason className={className} role={role} title={opened || untitled ? undefined : title}>
+    <CallReason className={className} role={role} title={untitled ? undefined : title}>
       <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallReason>
   );

@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "bc0fef1359f8d9bb21db0c31fc4fa8a40e4e5d5c2a6df6b5591197b37721fa15",
   "activities_geometry_molecule_selected_hint": "29d5a97fad0641c226de12dd5a55e01a32badd46ba197d1265afe55021e69239",
   "activities_geometry_molecule_single_bond": "b69b76a23a14e508d0afc7354760ae599e42037bdfddece5253e4da51d70a8af",
-  "activities_geometry_molecule_start": "a0914477ca9eacacfd4d41b2b85337767a8948da21698764d0bc1b18e30a429d",
+  "activities_geometry_molecule_start": "7fb8a2debee73d8962ce7acad84ddd3ff52935762fb7aac4985511204348711e",
   "activities_geometry_molecule_target": "f67aef082a9dfafb0cb8f42519c275b64c571b3b6954e689ea490a537f74136b",
   "activities_geometry_molecule_triple_bond": "b329de7239b06840b970748cff682b23a93e01191dd3a55050495a98b0398de9",
   "activities_geometry_molecule_undo": "624187b2cdfd45e00fe2ac7c804cee02e37492390b363a6be1c2bdfe32ad13b8",
@@ -196,7 +196,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">Remover %1$s</string>
     <string name="activities_geometry_molecule_remove_selected">Remover o átomo selecionado</string>
-    <string name="activities_geometry_molecule_start">Toque em um elemento para adicionar o primeiro átomo.</string>
+    <string name="activities_geometry_molecule_start">Toque em um elemento para começar sua molécula.</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$s tem mais ligações do que pode fazer.</string>
     <plurals name="activities_geometry_molecule_open">

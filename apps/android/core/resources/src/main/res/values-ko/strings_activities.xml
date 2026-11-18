@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "277f387b07f32ba78b2d2f35f7adcf70f4eb93dff98b3c108f392e61f932b499",
-  "activities_badge_estimate_first": "96428613179db39539390caaed205b8e78f465ed278286bd7587c7559a8f321e",
+  "activities_badge_estimate_first": "62c09062d79ceedf839d558898956604684c26fda839bc738ab732e425d58690",
   "activities_badge_find_error": "f3358b0149ff4c750ea1646b2eb418e18d0d8d705d36aa636e31f8881e604f59",
   "activities_badge_read_chart": "0a2e4bcb5cec9819352d898dffc79a9157622d52a3b597889c86ea167d7e0c33",
   "activities_badge_reply": "56bff0481244c980555d9118ea22a85aaf02a738d164ad384a991f94332ce4cd",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">먼저 예상하기</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">예상도 점수에 반영</string>
     <string name="activities_badge_read_chart">차트 읽기</string>
     <string name="activities_badge_before_after">전후 비교</string>
     <string name="activities_badge_find_error">오류 찾기</string>

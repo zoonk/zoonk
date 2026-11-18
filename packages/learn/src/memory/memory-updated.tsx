@@ -40,7 +40,12 @@ function ChangeText({ change, extra }: { change: MemoryChangeSummary; extra: num
       {change.fact && <span>{change.fact.statement}</span>}{" "}
       {change.previous && <del>{change.previous.statement}</del>}
       {extra > 0 && (
-        <span> {t("{count, plural, one {and # more} other {and # more}}", { count: extra })}</span>
+        <span>
+          {" "}
+          {t("{count, plural, one {and # more change} other {and # more changes}}", {
+            count: extra,
+          })}
+        </span>
       )}
     </>
   );

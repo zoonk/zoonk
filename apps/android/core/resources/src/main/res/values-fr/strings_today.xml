@@ -3,7 +3,7 @@
 {
   "today_add_to_today": "c9d7caee3f8fca1baff6ad2b850305a1bab8981effdf60d19aec4252566b6bea",
   "today_adjust_your_plan": "7427ea395266e702cc220ed45af02de16690f9a9824fd9f022e0e8abbdab81d1",
-  "today_already_know_this": "b16747b3553b98e5cb5eb3dba6f94be09f4bc9f9d8a655158c8e2f5b99ff518f",
+  "today_already_know_chapter": "702d6f001e9da0a91cfce6f2b45f5e81dd42a3055ef2d0c660a8fb58ddaa1691",
   "today_behind_exam": "c2bfbb8a49ee1bbf5810091dfed1990826002ae909272dcd15eaa74ff7025fdc",
   "today_behind_goal": "52dd99b3845920eb3e338659de7ad87b2d9abd51d3bf25f3a2ae84f5980b8a10",
   "today_behind_kept": "0235f205e4b0f98393a8a6800f097b09737683def710dd55c672e1cbaca1cf68",
@@ -14,6 +14,7 @@
   "today_coming_stalled": "dd69f59ae2b061a641b0bc9e52db86560b85a8fc54e529b32f391a138f5a3979",
   "today_coming_title": "980878d5649b82d3861c10cf3ed61ec6629e7d6732aa554aa04374c9643c941b",
   "today_coming_writing": "86af6bfeb38d88a4483d7e379affb81831a3c65893b2ad140ea78ac93f9d1db4",
+  "today_completed_lessons_line": "6869d240e69adcdd2ffa94a80fca2fcac4f49731ac1c5b999ce9f599d9ef4ae0",
   "today_continue_draft": "3f13748f6ce2849e5082d5509921d23cae8d8eec772f0f2b1b841616888b1c44",
   "today_continue_mock": "ed9621f1360b6a0973ac43bff0dcb10d1ad635b7e1f5331bc8d19589e8028fe7",
   "today_continue_mock_detail": "d86b25a836f481e37e7e7b96f6caeebfe7e62e423520984715dab9e59f1fe0ea",
@@ -48,7 +49,8 @@
   "today_mistakes_redo": "ab8eeb40c61820e40a7879ab83e642477dd3b5ad2c9707be51187526f7d7eb90",
   "today_mistakes_return_tomorrow": "4a1ad925c13b79a28245c362b01145c1e2f88906939a727b53da1b5b83ea2b92",
   "today_mistakes_tomorrow": "6b5dc9616722ee020aca3985c2aa755d759ad75fe0dd6910db454690301f4452",
-  "today_more_count": "ff6e17ea75ca50c5b938af2cd2a5acc2b69992badc0c91800715fb0211c2b649",
+  "today_more_count": "9b213a80ea7ab1e9fb3e367c52797d638dc793dcab549be999cd52869eee8a4b",
+  "today_more_lessons": "24cd9ca7d350bd71d1a920ff0a76e8881d71055e6466f10fbbc06f0f8114a923",
   "today_more_time_a_day": "9c2858f004725a356a938b5721ea39be6788605b0cb1de4934e877423e6ec25d",
   "today_next_suggestion": "f534662308128bf50fc67f205c88bfc808b0fb1b75dfe3577232900c0ae245bf",
   "today_not_enough_time": "404ad6994966a0148ec2c3a32652bdfd6f873b142b910d8f926da7a1f7da8edd",
@@ -190,9 +192,14 @@
         <item quantity="other">%d sautées</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d autre</item>
-        <item quantity="many">+%d autres</item>
-        <item quantity="other">+%d autres</item>
+        <item quantity="one">%d de plus</item>
+        <item quantity="many">%d de plus</item>
+        <item quantity="other">%d de plus</item>
+    </plurals>
+    <plurals name="today_more_lessons">
+        <item quantity="one">%d leçon de plus</item>
+        <item quantity="many">%d leçons de plus</item>
+        <item quantity="other">%d leçons de plus</item>
     </plurals>
     <!-- Folds the session's later steps back under today_more_count. -->
     <string name="today_show_less">Afficher moins</string>
@@ -268,10 +275,12 @@
     <string name="today_see_day_mock">Voir l’examen blanc de %1$s</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="today_practice_with_buddy">S’entraîner avec %1$s</string>
-    <string name="today_already_know_this">Tu connais déjà ça ?</string>
+    <string name="today_already_know_chapter">Tu connais déjà ce chapitre ?</string>
     <string name="today_practice_anytime">S’entraîner à tout moment</string>
     <string name="today_mistakes_notebook">Carnet d’erreurs</string>
     <string name="today_mistakes_redo">Refais les questions où tu t’es trompé</string>
+    <!-- The line under Completed lessons in Practice anytime. -->
+    <string name="today_completed_lessons_line">Refaire une leçon</string>
     <string name="today_mistakes_return_tomorrow">Les erreurs d’aujourd’hui reviennent demain</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d erreur à réviser</item>

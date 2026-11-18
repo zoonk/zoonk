@@ -100,7 +100,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">Remove %1$s</string>
     <string name="activities_geometry_molecule_remove_selected">Remove the selected atom</string>
-    <string name="activities_geometry_molecule_start">Tap an element to add its first atom.</string>
+    <string name="activities_geometry_molecule_start">Tap an element to start your molecule.</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$s has more bonds than it can make.</string>
     <plurals name="activities_geometry_molecule_open">

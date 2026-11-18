@@ -55,7 +55,7 @@
   "navigation_back": "c02e1a4b63537b730230a6df58f72e2c94150d17355aaf40b8e4e41c08c3f32d",
   "navigation_buddy": "bafb8302c5a0bb79326082ada060e349328d4214ac784f98403cfe638bc90410",
   "navigation_completed_lessons": "2d9c89557b921f5fddad5194283815be07bce7c0243863d111f03bcf25dd847a",
-  "navigation_exam": "2d4e78a0ffd483b4f20ee4ee1f666422a23170924ef1314ce24a55736f2f84fe",
+  "navigation_exam": "1c754dd1949b08123c04219d29f9d094b3c84fe9fc31113b3ea4dd43713ef1d9",
   "navigation_mind_maps": "e3fc60eb0f5aa0c2f275739d5e952f5edd41e72b28fa47a2a5ecdda3960e6032",
   "navigation_mistakes": "4d3a9cd60e3379b9256b0d3d10ae617225507ab8c979281d53cfd13cf3ee4a5a",
   "navigation_plan": "5abde38945ea168df761a18bd87ca423414f343de0d381b100ce6290d9dc5259",
@@ -91,7 +91,7 @@
     <string name="navigation_mistakes">Carnet d’erreurs</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Leçons terminées</string>
-    <string name="navigation_exam">Examen</string>
+    <string name="navigation_exam">Ton examen</string>
     <string name="navigation_speaking">Expression orale</string>
     <string name="navigation_mind_maps">Cartes mentales</string>
     <string name="navigation_statistics">Statistiques</string>

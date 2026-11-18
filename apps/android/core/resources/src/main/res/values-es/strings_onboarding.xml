@@ -121,7 +121,7 @@
   "onboarding_language_test_new_alphabet": "785943f7bdc64e7329aacea4c5680ca17125e27aa8b55c5744e7273f7b50d168",
   "onboarding_language_test_play": "7f92e5e588318e4d9b59a35b025937b2dd5cd217b5e053e8adf4df815987d7f0",
   "onboarding_language_test_play_again": "2956ebf6497ba5c34038b23410ad4e1b7fe7b46b9903bc8e7808718d36989b3f",
-  "onboarding_language_test_preparing_description": "1d53c116cd42aeb448e18830deef2ff9534e9ae5a1831e892786968a57b6a8f4",
+  "onboarding_language_test_preparing_description": "78c8dd645863568b04ab46956e645dfcc8c8633b66de37d0aeca9a6f383d8a48",
   "onboarding_language_test_preparing_title": "d73502168f871e9b7cc601c48d0952a37dd494c36d317734722ba0266c494c8f",
   "onboarding_language_test_reading": "781c74433391cf62b52e71799b280255dd6cb12a448ba8519866d64dcb989377",
   "onboarding_language_test_say_it": "e3444a941e776c9c22ce14db685dd52cdc66eba048c102c77b957b9785584867",
@@ -350,7 +350,7 @@
   "onboarding_row_goal": "5904b7f58a4385a54f8c19cd07a05c7c12b6e4c55bd595faf4f4980d454c22a8",
   "onboarding_row_language": "2ac73803cdd7aed0a3d92c73e0dbe9336ed263dd8055df2262cc2853d3de2453",
   "onboarding_row_last_cutoff": "d7021d3aed7941ccecf4b493b61a67b7f4b259d855e7e84c85e7f2d9bd4a703b",
-  "onboarding_row_level": "3b8b088d39c8230063f66afce66cc51820faacc5e0a710968062bd43d8bb354a",
+  "onboarding_row_level": "e83be55798b91c464377ffcd881744713b7e6deeef8460383d6740ea12f1c2c9",
   "onboarding_row_material": "38474ab3da55d97bc2131dd6f72fb62d8fa0fa60773ffb40d7373760efd59428",
   "onboarding_row_material_note": "32cea155ee07bd562f82a807e38ee196566f5837c9a6bb600e9db624a90080aa",
   "onboarding_row_minutes_a_day": "21ba9a25bf2b5ee64cb097c506d2aebadd35e03a9ed5d24155bb0e7eb0f43ec1",
@@ -516,7 +516,8 @@
     <!-- A link to where a fact came from. %1$s is a site or document name. -->
     <string name="onboarding_source">Fuente: %1$s</string>
     <string name="onboarding_row_goal">Objetivo</string>
-    <string name="onboarding_row_level">Nivel</string>
+    <!-- Row with what the learner said they already know about their goal's subject, such as "I know a few things". -->
+    <string name="onboarding_row_level">Lo que sabes</string>
     <!-- A small mark beside a fact the learner stated themselves. -->
     <string name="onboarding_row_you_said">lo dijiste tú</string>
     <string name="onboarding_row_language">Idioma</string>
@@ -676,7 +677,7 @@
     <string name="onboarding_language_test_use_app_in">Usar la app en %1$s</string>
     <string name="onboarding_language_test_preparing_title">Preparando tu prueba de nivel</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">Estamos preparando por primera vez las preguntas de la prueba de %1$s en tu idioma. Suele tomar uno o dos minutos y solo hace falta esta vez.</string>
+    <string name="onboarding_language_test_preparing_description">Estamos preparando las preguntas para la prueba de %1$s. Esto tarda uno o dos minutos y solo ocurre esta vez.</string>
     <string name="onboarding_language_test_skip_note">Tu plan parte del nivel que indicaste y se ajusta con tus primeras sesiones.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">No entendí el audio</string>

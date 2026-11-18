@@ -51,7 +51,11 @@ enum ActivityBadge: Sendable {
         "Ear training", table: "Player",
         comment: "What the learner does in an activity, named above its prompt")
     case .estimateFirst:
-      LocalizedStringResource("Your guess counts", table: "Player")
+      LocalizedStringResource(
+        "Your guess counts", table: "Player",
+        comment:
+          "A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count."
+      )
     case .moveLine:
       LocalizedStringResource(
         "Move a line", table: "Player",

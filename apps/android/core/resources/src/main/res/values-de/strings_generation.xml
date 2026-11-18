@@ -18,7 +18,7 @@
   "generation_goal_line_1": "9895df9fe82d7b6fc7201fdd021bcefe95756a6fcf93424f28248be0f4f69f15",
   "generation_goal_line_2": "a27a09907d03defde3a08e8a09d5dfe00f2960bff94cca89337918eedfe01564",
   "generation_level_test": "811272581c61e27e85002a3b3c51349b984a2ddc89f2d7f414cdd04e11c89024",
-  "generation_level_test_bank": "90e72e52598997c6fb856ed4b60aa79ef6d47a299a3805de6fb5e47d31c145b0",
+  "generation_level_test_bank": "cc62818760965d4325a1722db2a6743ba7cb339ef93ec352cbbccb19654a4160",
   "generation_level_test_bank_line_1": "bac84e90de721c7c1091ead62d1d4344f8aad2827bd9774ed05e29bbc6bf8518",
   "generation_level_test_bank_line_2": "142188104f27acc220b8046a63dc6ca541a3aa587920158bc8120546829ac903",
   "generation_level_test_bank_line_3": "cab4c58ce096389a06ed060f5985e97eff42baf5c763dd07cc9f8e35146fbddc",
@@ -108,7 +108,7 @@
     <string name="generation_first_lesson_day_line_2">Wir wählen aus, womit du anfängst…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Wir bereiten deinen Einstufungstest vor</string>
-    <string name="generation_level_test_bank">Wir erstellen die Fragen für den Einstufungstest</string>
+    <string name="generation_level_test_bank">Wir bereiten die Fragen vor</string>
     <string name="generation_level_test_bank_line_1">Wir wählen Texte für Anfänger und Fortgeschrittene aus…</string>
     <string name="generation_level_test_bank_line_2">Wir erstellen Fragen zum Leseverständnis…</string>
     <string name="generation_level_test_bank_line_3">Wir erstellen die Fragen zum Hören…</string>

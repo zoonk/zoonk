@@ -13,7 +13,9 @@ extension ScorePatterns {
     case .best(let day):
       day.weekday.localizedTitle()
     case .even:
-      String(localized: "You answer about the same every day.", table: "Progress")
+      String(
+        localized: "Any day", table: "Progress",
+        comment: "Best day when every day of the week scores about the same")
     case .notEnough:
       nil
     }

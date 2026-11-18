@@ -111,6 +111,8 @@
     <string name="stats_throughout_week">Throughout the week</string>
     <string name="stats_throughout_day">Throughout the day</string>
     <string name="stats_any_time">Any time</string>
+    <!-- Best day when every day of the week scores about the same -->
+    <string name="stats_any_day">Any day</string>
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Your best day is %1$s.</string>
     <string name="stats_days_same">You answer about the same every day.</string>

@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "56498441cd747a0f2cbeffbd9bfaa6fc7f4c66ee9149b874eed9801ff01986ce",
   "activities_sorting_drag_onto_timeline": "df283dd09a6f7c0dd3a0d0896151ccc210bcbe656d9f6a91d1fa0349d599439b",
   "activities_sorting_drag_steps": "24f45b9e75c4ce83c5b940ab3d77ccd6db5c5409118b37c4160bdd64100fe8d1",
-  "activities_sorting_events_to_place": "b0b445d4b32f840d317822c03883bd07e077ef343342861ceedf6c97b1042fec",
+  "activities_sorting_events_placed": "6522577394b3dcc53d2007b2d2504bc5953bce41ad41a07a92ff1d134912dabb",
   "activities_sorting_every_spot_named": "6b569476f51b8646a7351baeeeecdf56ca28cadc18c42f63464982a13b6af4ea",
   "activities_sorting_gap_between": "4806db0506b278c385b922af2c410cde33a08d9ef10eb30372e8980f4ddb27db",
   "activities_sorting_goes_with": "8cfbc9697971aeef0d64ce8a6cae880ec22ce637f536fcfc2c3f654f710a350d",
@@ -189,8 +189,9 @@
     <string name="activities_sorting_year_and_guess">%1$s。予想：%2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">予想：%1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="other">配置する出来事は%d件です</item>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="other">%2$d件中%1$d件のイベントを配置しました</item>
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">%1$sを年表に置く</string>
