@@ -13,15 +13,17 @@ export function CatalogPageBar({
   title?: string;
 }) {
   return (
-    <LearnPageBar back={back} section title={title}>
-      {/* On a phone the way back names the course or the chapter, so it gets the room: only "Log in" stays, at every scroll, since a visitor has no other way in. The "…" ends the bar, so "Log in" doesn't take its edge. */}
-      <NoAccountNote>
-        <VisitorBarLinks
-          className={cn("max-sm:*:not-last:hidden lg:hidden", options && "*:last:me-0")}
-        />
-      </NoAccountNote>
+    <div className="max-sm:**:data-[slot=back-link]:text-foreground contents">
+      <LearnPageBar back={back} section title={title}>
+        {/* On a phone the way back names the course or the chapter, so it gets the room: only "Log in" stays, at every scroll, since a visitor has no other way in. The "…" ends the bar, so "Log in" doesn't take its edge. */}
+        <NoAccountNote>
+          <VisitorBarLinks
+            className={cn("max-sm:*:not-last:hidden lg:hidden", options && "*:last:me-0")}
+          />
+        </NoAccountNote>
 
-      {options}
-    </LearnPageBar>
+        {options}
+      </LearnPageBar>
+    </div>
   );
 }

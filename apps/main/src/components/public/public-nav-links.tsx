@@ -5,7 +5,7 @@ import { getExtracted } from "next-intl/server";
 
 const NAV_LINK_CLASS = cn(
   buttonVariants({ size: "bar", variant: "ghost" }),
-  "text-muted-foreground hover:text-foreground aria-[current=page]:text-foreground px-3",
+  "text-muted-foreground hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground px-3",
 );
 
 export async function PricingBarLink({
@@ -51,13 +51,13 @@ export async function CoursesBarLink({
 /**
  * So visitors and crawlers reach both from every public page. From 360 px wide both fit beside the
  * logo and "Log in" in every language; narrower than that, "Courses" gives way to the footer's. On a
- * phone a learner's goal takes the logo's place, so "Courses" gives way to it too.
+ * phone a learner's goal takes the logo's place, so both links go in the account menu.
  */
 export function PublicNavLinks({ pathname }: { pathname?: string }) {
   return (
     <>
       <CoursesBarLink className="max-sm:signed-in:hidden hidden min-[22.5rem]:inline-flex" />
-      <PricingBarLink current={pathname === "/pricing"} />
+      <PricingBarLink className="max-sm:signed-in:hidden" current={pathname === "/pricing"} />
     </>
   );
 }
