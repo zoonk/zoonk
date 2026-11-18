@@ -32,7 +32,7 @@ const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ](?=\d)/gu;
  * Only money, written the way the learner's money format writes it: a question's own text keeps its
  * other digits (a code in a table, an ID, a count it asks about) as written.
  */
-export function typesetMoney({ locale, text }: { locale: string; text: string }): string {
+function typesetMoney({ locale, text }: { locale: string; text: string }): string {
   return text.replaceAll(
     CURRENCY_THEN_NUMBER,
     (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,

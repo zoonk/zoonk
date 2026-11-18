@@ -1,6 +1,6 @@
 import { formatMoney } from "@zoonk/utils/math-answer";
 import { describe, expect, it } from "vitest";
-import { typesetMoney, typesetNumbers, typesetProse } from "./rich-text-typography";
+import { typesetNumbers, typesetProse } from "./rich-text-typography";
 
 const NBSP = "\u00A0";
 
@@ -119,25 +119,28 @@ describe(typesetProse, () => {
       typesetProse({
         locale: "en",
         segments,
-        typeset: (text) => typesetMoney({ locale: "en", text }),
+        typeset: (text) => typesetNumbers({ group: false, locale: "en", text }),
       }),
     ).toStrictEqual([{ kind: "italic", text: "custa R$80" }]);
   });
 });
 
-describe(typesetMoney, () => {
+describe("typesetting numbers without grouping", () => {
   it("writes a question's money as its answer does, the no-break space it keeps included", () => {
-    expect(typesetMoney({ locale: "en", text: `15% of R$${NBSP}80 is R$ 12.` })).toBe(
-      "15% of R$80 is R$12.",
-    );
+    expect(
+      typesetNumbers({ group: false, locale: "en", text: `15% of R$${NBSP}80 is R$ 12.` }),
+    ).toBe(`15% of R$80${NBSP}is R$12.`);
 
-    expect(typesetMoney({ locale: "pt", text: `custa R$${NBSP}80` })).toBe(
+    expect(typesetNumbers({ group: false, locale: "pt", text: `custa R$${NBSP}80` })).toBe(
       `custa ${formatMoney({ currency: "BRL", locale: "pt", value: 80 })}`,
     );
   });
 
   it("leaves a question's other digits as written", () => {
     const text = "ZIP 94103, ID 120045 and 12000 people";
-    expect(typesetMoney({ locale: "en", text })).toBe(text);
+
+    expect(typesetNumbers({ group: false, locale: "en", text })).toBe(
+      `ZIP 94103, ID 120045${NBSP}and 12000${NBSP}people`,
+    );
   });
 });
