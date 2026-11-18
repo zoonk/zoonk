@@ -1103,6 +1103,33 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertEqual(try grade("%")?.correctAnswer, ActivityNumberFormat.format(52, unit: "%"))
   }
 
+  func testANumericVerdictWritesTheRightAnswerAtTheRoundingItsHintNames() throws {
+    let numeric = { (answer: Double, tolerance: Double, rounded: String) in
+      try step(
+        teaching(
+          "rounded", kind: "activity", roundedAnswer: rounded,
+          content: #"""
+            {"template": "formulaModel", "prompt": "Slide", "fields": {},
+             "check": {"kind": "numeric", "question": "How much?", "answer": \#(answer),
+               "explanation": "Why.", "tolerance": {"kind": "absolute", "value": \#(tolerance)}}}
+            """#))
+    }
+    let whole = try numeric(251.54, 0.5, #"{"places": 0, "value": 252}"#)
+    let hundredths = try numeric(0.1667, 0.005, #"{"places": 2, "value": 0.17}"#)
+
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(240)), step: whole)?.correctAnswer, "252",
+      "a whole-number hint writes the right answer as a whole number")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.2)), step: hundredths)?.correctAnswer, "0.17")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.168)), step: hundredths)?.answerText, "0.17",
+      "a right answer is written at the hint's places too")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.174)), step: hundredths)?.answerText, "0.174",
+      "a wrong answer keeps the digits that tell it from the right one")
+  }
+
   func testAnActivityIsGradedWithTheToleranceFloorItsScreenCarries() throws {
     let guess = { (floor: String) in
       try step(
@@ -1188,12 +1215,14 @@ private func step(_ json: String) throws -> LessonStep {
 }
 
 private func teaching(
-  _ id: String, kind: String, minTolerance: String? = nil, content: String
+  _ id: String, kind: String, minTolerance: String? = nil, roundedAnswer: String? = nil,
+  content: String
 ) -> String {
   let floor = minTolerance.map { #""minTolerance": \#($0), "# } ?? ""
+  let rounded = roundedAnswer.map { #""roundedAnswer": \#($0), "# } ?? ""
   return """
     {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
-     "imagePending": false, "kind": "\(kind)", \(floor)"content": \(content)}
+     "imagePending": false, "kind": "\(kind)", \(floor)\(rounded)"content": \(content)}
     """
 }
 
