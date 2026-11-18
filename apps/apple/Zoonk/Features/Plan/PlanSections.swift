@@ -410,9 +410,16 @@ struct PlanNumbersSection: View {
 
   private func studiedText(_ studied: Int, known: Int) -> String {
     if known > 0 {
-      return String(
-        localized: "\(studied) studied · \(known) already known", table: "Plan",
-        comment: "Under the plan's progress percent: lessons studied and already known")
+      return [
+        studied > 0
+          ? String(
+            localized: "\(studied) studied", table: "Plan",
+            comment: "Under the plan's progress percent, beside the lessons already known: the lessons studied")
+          : nil,
+        String(
+          localized: "\(known) already known", table: "Plan",
+          comment: "Under the plan's progress percent: lessons the learner already knew"),
+      ].compactMap(\.self).joinedFacts()
     }
 
     return studied == 0
