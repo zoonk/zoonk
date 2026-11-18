@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-10-31T12:52:27.051Z",
+  "generatedAt": "2026-11-18T10:23:08.257Z",
   "modelId": "microsoft/mai-image-2.6",
   "outputs": [
     {
       "images": 1,
       "inputTokens": 200,
       "outputTokens": 1024,
-      "duration": 23158.610584000002,
+      "calls": [],
+      "duration": 23639.301292,
       "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-immunology.webp\",\n  \"subject\": \"The icon of the course \\\"Immunology\\\": Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-immunology-1",
@@ -14,9 +15,32 @@
     },
     {
       "images": 1,
+      "inputTokens": 200,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22141.698375,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-immunology.webp\",\n  \"subject\": \"The icon of the course \\\"Immunology\\\": Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-immunology-2",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Immunology\nCONTEXT: Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\n"
+    },
+    {
+      "images": 1,
+      "inputTokens": 200,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22467.828584,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-immunology.webp\",\n  \"subject\": \"The icon of the course \\\"Immunology\\\": Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-immunology-3",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Immunology\nCONTEXT: Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.\n"
+    },
+    {
+      "images": 1,
       "inputTokens": 199,
       "outputTokens": 1024,
-      "duration": 22180.142084000006,
+      "calls": [],
+      "duration": 22270.093791,
       "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/pt-economia.webp\",\n  \"subject\": \"The icon of the course \\\"Economia\\\": Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-economia-1",
@@ -24,12 +48,57 @@
     },
     {
       "images": 1,
+      "inputTokens": 199,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22124.797292000003,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/pt-economia.webp\",\n  \"subject\": \"The icon of the course \\\"Economia\\\": Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-economia-2",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Economia\nCONTEXT: Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\n"
+    },
+    {
+      "images": 1,
+      "inputTokens": 199,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22556.564249999996,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/pt-economia.webp\",\n  \"subject\": \"The icon of the course \\\"Economia\\\": Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-economia-3",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Economia\nCONTEXT: Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.\n"
+    },
+    {
+      "images": 1,
       "inputTokens": 195,
       "outputTokens": 1024,
-      "duration": 22816.167917000006,
+      "calls": [],
+      "duration": 23181.187292000002,
       "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-data-analysis.webp\",\n  \"subject\": \"The icon of the course \\\"Data analysis\\\": Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\"\n}",
       "systemPrompt": "",
       "testCaseId": "en-data-analysis-1",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Data analysis\nCONTEXT: Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\n"
+    },
+    {
+      "images": 1,
+      "inputTokens": 195,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22685.33475,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-data-analysis.webp\",\n  \"subject\": \"The icon of the course \\\"Data analysis\\\": Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-data-analysis-2",
+      "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Data analysis\nCONTEXT: Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\n"
+    },
+    {
+      "images": 1,
+      "inputTokens": 195,
+      "outputTokens": 1024,
+      "calls": [],
+      "duration": 22336.058208000002,
+      "output": "{\n  \"imagePath\": \"course-icon/microsoft-mai-image-2.6/en-data-analysis.webp\",\n  \"subject\": \"The icon of the course \\\"Data analysis\\\": Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-data-analysis-3",
       "userPrompt": "Create a minimalist 3D app-style icon representing a topic.\n\nIMPORTANT:\n\n- Use exactly ONE single object only.\n- Do NOT combine multiple objects.\n- Do NOT create a scene.\n- Do NOT add supporting elements.\n- Do NOT repeat symbols.\n- No stacked objects.\n- No background props.\n\nThe icon must:\n\n- Be centered\n- Have a strong, clean silhouette\n- Be instantly recognizable\n- Feel like a standalone app icon\n- Use smooth matte 3D material\n- Use 2–4 colors maximum\n- Have soft realistic lighting\n- Have a subtle shadow underneath\n- Be isolated on a white background\n- Square format (1:1)\n\nChoose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.\n\nCONTENT TO REPRESENT:\nTOPIC: Data analysis\nCONTEXT: Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.\n"
     }
   ],
