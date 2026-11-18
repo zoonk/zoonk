@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -41,6 +42,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailureRetry
+import com.zoonk.android.ui.components.OnFirstLine
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -88,9 +90,15 @@ private fun whole(
     locale: Locale,
 ) = formatNumber(value.toDouble(), locale, maximumFractionDigits = 0)
 
+/** Every tile's mark keeps the box its tile gives it, its ink from the box's start, so each tile's label starts at one edge. */
 @Composable
 private fun icon(id: Int): @Composable (Modifier) -> Unit =
-    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = Modifier.glyphInk(id).then(modifier)) }
+    { modifier ->
+        Box(
+            modifier,
+            contentAlignment = Alignment.CenterStart,
+        ) { Icon(painterResource(id), contentDescription = null, Modifier.glyphInk(id)) }
+    }
 
 private fun beltOf(color: String) = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 
@@ -244,7 +252,7 @@ private fun BeltTile(
         label = stringResource(R.string.stats_level),
         value = whole(level.level, currentLocale()),
         detail = stringResource(belt.label),
-        icon = { BeltDot(belt, it) },
+        icon = { box -> Box(box, contentAlignment = Alignment.CenterStart) { BeltDot(belt, Modifier.fillMaxSize(TILE_DOT_SHARE)) } },
         onClick = onClick,
         modifier = modifier,
     )
@@ -253,16 +261,9 @@ private fun BeltTile(
 @Composable
 private fun ScoreTrend(score: CurrentUserScoreResponseScore?) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // As tall as the patterns' "See all" beside it, so the two headers line up.
-        Box(Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current), contentAlignment = Alignment.CenterStart) {
-            SectionHeader(
-                stringResource(R.string.stats_score_90),
-                Modifier.heightIn(min = 32.dp),
-                detail =
-                    score?.let {
-                        metricPercent(it.score, currentLocale())
-                    },
-            )
+        // As tall as the patterns' "See all" beside it and centered the same way, so the two headings line up.
+        Row(Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current), verticalAlignment = Alignment.CenterVertically) {
+            SectionHeader(stringResource(R.string.stats_score_90), detail = score?.let { metricPercent(it.score, currentLocale()) })
         }
 
         if (score == null) StatsLine(stringResource(R.string.stats_score_after_answers)) else ScoreChart(score)
@@ -277,7 +278,12 @@ private fun PatternsOverview(
     val summary = patterns?.let { patternsSummary(it) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(stringResource(R.string.stats_patterns_90)) {
+        // Centered on "See all" the way the score's heading beside it is, so the two headings line up.
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = LocalMinimumInteractiveComponentSize.current),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SectionHeader(stringResource(R.string.stats_patterns_90), Modifier.weight(1f))
             TextButton(onClick = { context.open(StatsPage.Patterns) }, edge = ButtonEdge.End) {
                 Text(stringResource(R.string.stats_see_all))
             }
@@ -296,10 +302,11 @@ private fun PatternRow(
     label: String,
     value: String?,
 ) {
-    ListRow(headline = { Text(label) }, trailing = { PatternValue(value ?: stringResource(R.string.stats_not_yet)) })
+    // A long answer ("You answer about the same every day.") moves under its label rather than crushing it.
+    ListRow(headline = { Text(label) }, meta = { PatternValue(value ?: stringResource(R.string.stats_not_yet)) })
 }
 
-/** The answer reads at the label's weight, not as a list item's quiet trailing text. */
+/** The answer reads at the label's weight, not as a list item's quiet value. */
 @Composable
 private fun PatternValue(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
@@ -375,7 +382,7 @@ private fun BeltProgression(
         val next = level.nextBelt
         if (nextBelt != null && next != null && level.level < LEVELS_PER_BELT) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-                BeltDot(nextBelt)
+                OnFirstLine(MaterialTheme.typography.bodyMedium) { BeltDot(nextBelt) }
                 StatsLine(
                     stringResource(
                         R.string.stats_belt_comes_after,
@@ -585,7 +592,7 @@ internal fun ScorePage(context: StatsContext) {
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
         StatTile(
-            label = stringResource(R.string.session_summary_right),
+            label = stringResource(R.string.stats_score),
             value = metricPercent(score.score, locale),
             modifier = Modifier.fillMaxWidth(),
             detail =
@@ -856,3 +863,6 @@ private const val DASH = "–"
 private const val LEVELS_PER_BELT = 10L
 private const val SCORE_WINDOW_DAYS = 90
 private const val PANEL_TINT = 0.1f
+
+/** The belt's dot as wide as the other tiles' symbols draw, not their whole box. */
+private const val TILE_DOT_SHARE = 0.75f
