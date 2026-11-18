@@ -21,7 +21,7 @@ fun Facts(facts: List<String>) {
     ) {
         facts.forEachIndexed { index, fact ->
             Text(
-                text = if (index < facts.lastIndex) fact + FACT_SEPARATOR.trimEnd() else fact,
+                text = if (index < facts.lastIndex) "$fact ${FACT_SEPARATOR.trim()}" else fact,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data,
             )
