@@ -23,6 +23,9 @@ struct ProfileQuestionSections: View {
   @Binding var draft: ProfileDraft
 
   @State private var opensNote = false
+  /// The note was just opened by its button, so its box takes focus as it appears, as main's does.
+  @State private var asksNote = false
+  @FocusState private var noteFocused: Bool
   /// Something else was just picked, so its words, now required, take focus as its field appears.
   @State private var asksOther = false
   @FocusState private var otherFocused: Bool
@@ -206,10 +209,18 @@ struct ProfileQuestionSections: View {
             prompt: Text(
               "E.g., I understand diagrams better than text", tableName: "AboutYou",
               comment: "Example of what helps someone learn"),
-            text: limited($draft.text, to: 300))
+            text: limited($draft.text, to: 300), focus: $noteFocused
+          )
+          .onAppear {
+            if asksNote {
+              noteFocused = true
+              asksNote = false
+            }
+          }
         } else {
           Button {
             opensNote = true
+            asksNote = true
           } label: {
             Label {
               Text(
