@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -5,6 +6,62 @@ import XCTest
 /// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
 /// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
+  func testCrowdedAxisUsesFewerRoundSteps() {
+    XCTAssertEqual(ChartsAxis.ticks(0...375), [0, 100, 200, 300])
+    XCTAssertEqual(ChartsAxis.ticks(0...5625), [0, 2000, 4000])
+    let ticks = ChartsAxis.fittingTicks(
+      0...375,
+      frame: { value in
+        let x = value / 375 * 140
+        return (left: x, right: x + (value == 0 ? 14 : 43))
+      })
+    XCTAssertEqual(ticks, [0, 200])
+  }
+  @MainActor func testAxisTitleWrapsWithinItsFrameAtLargeText() {
+    let normal = TypeStyle.small.uiFont(.large, legibility: nil).pointSize
+    let large = TypeStyle.small.uiFont(.accessibility2, legibility: nil)
+    XCTAssertGreaterThanOrEqual(large.pointSize, normal * 2)
+    let host = UIHostingController(
+      rootView: ChartsAxis.title("Dollars per month", alignment: .leading).frame(width: 96)
+        .environment(\.dynamicTypeSize, .accessibility2))
+    let size = host.sizeThatFits(in: CGSize(width: 96, height: 1000))
+    XCTAssertLessThanOrEqual(size.width, 96)
+    XCTAssertGreaterThan(size.height, large.lineHeight)
+  }
+  @MainActor func testCrowdedGuessMoneyUsesRoundStepsAndKeepsCurrency() {
+    let scale = GuessScale(min: 0, max: 2_000_000, kind: .linear)
+    let font = TypeStyle.data.uiFont(.accessibility2, legibility: nil)
+    let format = scale.tickFormatter(unit: "R$", locale: Locale(identifier: "en_US"))
+    let ticks = ChartsAxis.fittingTicks(
+      0...2_000_000,
+      frame: { value in
+        let width = (format(value) as NSString).size(withAttributes: [.font: font]).width
+        let left = max(0, min(scale.share(of: value) * 180 - width / 2, 180 - width))
+        return (left: left, right: left + width)
+      }, values: { scale.ticks(count: $0) })
+    XCTAssertEqual(ticks, [0, 2_000_000])
+    XCTAssertEqual(ticks.map(format), ["R$0", "R$2M"])
+  }
+  func testGuessMoneyTicksInMillionsShortenAndKeepCurrency() {
+    let english = Locale(identifier: "en_US")
+    let millions = GuessScale(min: 1_500_000, max: 2_000_000, kind: .linear)
+    XCTAssertEqual(
+      [millions.min, millions.max].map(millions.tickFormatter(unit: "R$", locale: english)),
+      ["R$1.5M", "R$2M"])
+    let hundreds = GuessScale(min: 0, max: 100, kind: .linear)
+    XCTAssertEqual(
+      [hundreds.min, hundreds.max].map(hundreds.tickFormatter(unit: "R$", locale: english)),
+      ["R$0", "R$100"])
+  }
+
+  func testGuessMoneyRetainsItsCurrencyWhileWordCountsStayBare() {
+    XCTAssertEqual(ActivityNumberFormat.currencyUnit("R$"), "R$")
+    XCTAssertNil(ActivityNumberFormat.currencyUnit("days"))
+    XCTAssertEqual(
+      ActivityNumberFormat.guess(1200, unit: "R$", locale: Locale(identifier: "pt_BR")),
+      "R$\u{00A0}1.200")
+  }
+
   func testSeedsLikeMain() {
     var random = ChartsRandom(seed: 42)
     XCTAssertEqual(random.next(), 0.0009665507832230542, accuracy: 1e-15)
@@ -159,6 +216,22 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(fields.landing, 5)
     XCTAssertEqual(fields.ticks.count, 12)
     XCTAssertTrue(fields.ticks.allSatisfy(\.isLabelled))
+  }
+
+  func testLineCrossingHandleFitsMeasuredPlotIncludingFlatLines() {
+    for plot in [LineCrossingModel.Point(x: 128, y: 130), .init(x: 300, y: 172)] {
+      for line in [
+        LineCrossingModel.Line(intercept: 100, slope: 0), .init(intercept: 10, slope: -1),
+        .init(intercept: -100, slope: 0),
+      ] {
+        let point = LineCrossingModel.handlePoint(
+          line, domain: .init(x: 100, y: 100), share: 0.8, plot: plot, radius: 11)
+        XCTAssertGreaterThanOrEqual(point.x / 100 * plot.x, 11)
+        XCTAssertLessThanOrEqual(point.x / 100 * plot.x, plot.x - 11)
+        XCTAssertGreaterThanOrEqual(point.y / 100 * plot.y, 11)
+        XCTAssertLessThanOrEqual(point.y / 100 * plot.y, plot.y - 11)
+      }
+    }
   }
 
   func testLineCrossingMovesGradesAndPutsASavedMoveBack() throws {

@@ -5,14 +5,15 @@ import { useId } from "react";
 import { PageSectionTitle } from "./page";
 
 /** A column inside a task's body, such as a lesson step in mistake practice, is already in its gutter. */
-export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4 in-data-[slot=task-body]:px-0";
+export const TASK_COLUMN_CLASS =
+  "max-w-column mx-auto w-full px-[16px] in-data-[slot=task-body]:px-0";
 
 /**
  * A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. Named as the
  * row's `--page-gutter`, so the bar's note above it takes the sides alone.
  */
 const TASK_BAR_ROW_CLASS =
-  "max-w-column mx-auto w-full [--page-gutter:--spacing(4)] lg:max-w-none lg:[--page-gutter:--spacing(6)]";
+  "max-w-column mx-auto w-full [--page-gutter:16px] lg:max-w-none lg:[--page-gutter:24px]";
 
 export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -24,7 +25,8 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
+export const TASK_HEADER_BAR_CLASS =
+  "flex w-full items-center gap-2 px-[16px] py-2 lg:px-[24px] xl:py-3";
 
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close

@@ -36,11 +36,11 @@ export function roundGuess(value: number): number {
   return value === 0 ? 0 : Number(value.toPrecision(GUESS_DIGITS));
 }
 
-export function scaleTicks({ max, min, scale }: GuessScale): number[] {
+export function scaleTicks({ max, min, scale }: GuessScale, count = LINEAR_TICKS): number[] {
   if (scale === "linear") {
     const room = (max - min) * END_ROOM;
 
-    const inside = niceTicks([min, max], LINEAR_TICKS).filter(
+    const inside = niceTicks([min, max], count).filter(
       (tick) => tick - min > room && max - tick > room,
     );
 
@@ -54,7 +54,7 @@ export function scaleTicks({ max, min, scale }: GuessScale): number[] {
     (_, index) => 10 ** (from + index),
   );
 
-  const every = Math.ceil(powers.length / MAX_LOG_TICKS);
+  const every = Math.ceil(powers.length / (count === LINEAR_TICKS ? MAX_LOG_TICKS : count));
 
   return powers.length < 2 ? [min, max] : powers.filter((_, index) => index % every === 0);
 }

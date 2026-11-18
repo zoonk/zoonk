@@ -12,13 +12,13 @@ import {
 } from "../_components/activity-canvas";
 import {
   ActivityPlot,
-  ActivityPlotAxisX,
   ActivityPlotBand,
   ActivityPlotDot,
   ActivityPlotGridY,
   ActivityPlotLabel,
   ActivityPlotLine,
 } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";

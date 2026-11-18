@@ -5,12 +5,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
   ActivityPlot,
-  ActivityPlotAxisX,
   ActivityPlotGridY,
   ActivityPlotLabel,
   ActivityPlotLine,
   usePlotScales,
 } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { outcomeCounts, runningShare } from "./chance";
 
 const CHART_HEIGHT = 148;

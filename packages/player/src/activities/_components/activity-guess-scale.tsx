@@ -4,7 +4,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
-import { splitMoneyUnit } from "@zoonk/utils/math-answer";
+import { tickCounts } from "@zoonk/utils/plot-scale";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
@@ -17,18 +17,12 @@ import {
   valueAtPosition,
 } from "../_utils/guess-scale";
 import { tickLabels } from "../_utils/plot-ticks";
+import { ActivityCanvasLabel } from "./activity-canvas";
+import { useGuessFormat } from "./guess-format";
+import { useAxisLabels } from "./use-axis-labels";
 
-const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
 const PERCENT = 100;
-
-function edgeAlign(share: number): string {
-  if (share < TICK_EDGE_SHARE) {
-    return "translate-x-0";
-  }
-
-  return share > 1 - TICK_EDGE_SHARE ? "-translate-x-full" : "-translate-x-1/2";
-}
 
 function ScaleChip({
   children,
@@ -92,15 +86,31 @@ export function ActivityGuessScale({
   const format = useFormatNumber();
   const share = guess === null ? HALF : shareOfValue(scale, guess);
   const actualShare = actual === null ? null : shareOfValue(scale, actual);
-  const formatValue = (value: number) => format(value, { unit });
+  const { accessible, label, money, value: formatValue } = useGuessFormat(unit);
   const { ref: trackRef, width: trackWidth } = useMeasuredWidth<HTMLDivElement>(0);
 
   const ticks = scaleTicks(scale);
-  const isMoney = splitMoneyUnit(unit) !== null;
 
-  const { isShort } = tickLabels({
-    format: (value, compact) => format(value, { compact, unit: isMoney ? unit : undefined }),
+  const { format: formatTick } = tickLabels({
+    format: (value, compact) =>
+      format(value, {
+        compact,
+        maximumFractionDigits: money && compact ? 1 : undefined,
+        unit: money ? unit : undefined,
+      }),
     ticks,
+  });
+
+  const {
+    ref: tickRef,
+    shown: visibleTicks,
+    starts,
+  } = useAxisLabels<HTMLDivElement>({
+    choices: tickCounts().map((count) => scaleTicks(scale, count)),
+    domain: [scale.min, scale.max],
+    format: formatTick,
+    position: (value) => shareOfValue(scale, value) * trackWidth,
+    range: [0, trackWidth],
   });
 
   function handleChange(position: number) {
@@ -108,79 +118,88 @@ export function ActivityGuessScale({
   }
 
   return (
-    <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
-      {actual !== null && actualShare !== null && (
+    <div className="flex flex-col gap-2">
+      <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
+        {actual !== null && actualShare !== null && (
+          <ScaleChip
+            className={cn(
+              ACTIVITY_COLOR.right.soft,
+              ACTIVITY_COLOR.right.text,
+              "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold",
+            )}
+            share={actualShare}
+            trackWidth={trackWidth}
+          >
+            {t("Real value: {value}", { value: formatValue(actual) })}
+          </ScaleChip>
+        )}
+
         <ScaleChip
-          className={cn(
-            ACTIVITY_COLOR.right.soft,
-            ACTIVITY_COLOR.right.text,
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold",
-          )}
-          share={actualShare}
+          className="bg-background text-muted-foreground"
+          isLower={actualShare !== null}
+          share={share}
           trackWidth={trackWidth}
         >
-          {t("Real value: {value}", { value: formatValue(actual) })}
+          {disabled && guess !== null && <Lock aria-hidden="true" className="size-3" />}
+          {guess === null
+            ? t("Drag to guess")
+            : t("Your guess: {value}", { value: formatValue(guess) })}
         </ScaleChip>
-      )}
 
-      <ScaleChip
-        className="bg-background text-muted-foreground"
-        isLower={actualShare !== null}
-        share={share}
-        trackWidth={trackWidth}
-      >
-        {disabled && guess !== null && <Lock aria-hidden="true" className="size-3" />}
-        {guess === null
-          ? t("Drag to guess")
-          : t("Your guess: {value}", { value: formatValue(guess) })}
-      </ScaleChip>
+        {label && <ActivityCanvasLabel>{label}</ActivityCanvasLabel>}
+        <Slider
+          disabled={disabled}
+          max={SCALE_POSITIONS}
+          min={0}
+          onValueChange={(next) => handleChange(typeof next === "number" ? next : (next[0] ?? 0))}
+          step={1}
+          thumbAlignment="center"
+          value={Math.round(share * SCALE_POSITIONS)}
+        >
+          <SliderControl className="data-disabled:opacity-100">
+            <SliderTrack>
+              {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
 
-      <Slider
-        disabled={disabled}
-        max={SCALE_POSITIONS}
-        min={0}
-        onValueChange={(next) => handleChange(typeof next === "number" ? next : (next[0] ?? 0))}
-        step={1}
-        thumbAlignment="center"
-        value={Math.round(share * SCALE_POSITIONS)}
-      >
-        <SliderControl className="data-disabled:opacity-100">
-          <SliderTrack>
-            {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}
+              {actualShare !== null && (
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    ACTIVITY_COLOR.right.solid,
+                    "ring-success/20 absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4",
+                  )}
+                  style={{ left: `${actualShare * PERCENT}%` }}
+                />
+              )}
 
-            {actualShare !== null && (
-              <span
-                aria-hidden="true"
-                className={cn(
-                  ACTIVITY_COLOR.right.solid,
-                  "ring-success/20 absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4",
-                )}
-                style={{ left: `${actualShare * PERCENT}%` }}
+              <SliderThumb
+                aria-label={t("Your guess")}
+                aria-valuetext={
+                  guess === null
+                    ? [t("No guess yet"), label].filter(Boolean).join(". ")
+                    : accessible(guess)
+                }
               />
-            )}
+            </SliderTrack>
+          </SliderControl>
+        </Slider>
 
-            <SliderThumb
-              aria-label={t("Your guess")}
-              aria-valuetext={guess === null ? t("No guess yet") : formatValue(guess)}
-            />
-          </SliderTrack>
-        </SliderControl>
-      </Slider>
-
-      <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
-        {ticks.map((tick, index) => (
-          <span
-            className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
-            key={tick}
-            style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
-          >
-            {/* The scale says what it counts before any guess: money on every tick, a word once, at its end. */}
-            {format(tick, {
-              compact: isShort,
-              unit: isMoney || index === ticks.length - 1 ? unit : undefined,
-            })}
-          </span>
-        ))}
+        <div
+          aria-hidden="true"
+          data-slot="guess-ticks"
+          ref={tickRef}
+          style={{ visibility: trackWidth > 0 ? "visible" : "hidden" }}
+          className="text-muted-foreground relative h-5 text-xs tabular-nums"
+        >
+          {visibleTicks.map((tick) => (
+            <span
+              className="absolute top-0 whitespace-nowrap"
+              key={tick}
+              style={{ left: starts[tick] ?? shareOfValue(scale, tick) * trackWidth }}
+            >
+              {formatTick(tick)}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

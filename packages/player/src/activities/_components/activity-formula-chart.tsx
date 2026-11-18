@@ -7,7 +7,6 @@ import { type PlotPoint } from "../_utils/sample-formula";
 import {
   ActivityPlot,
   ActivityPlotArea,
-  ActivityPlotAxisX,
   ActivityPlotDot,
   ActivityPlotGridY,
   ActivityPlotGuide,
@@ -15,6 +14,7 @@ import {
   PLOT_LINE_WIDTH,
   usePlotScales,
 } from "./activity-plot";
+import { ActivityPlotAxisX } from "./activity-plot-axis";
 
 const PLOT_HEIGHT = 168;
 const MARK_RADIUS = 4.5;
