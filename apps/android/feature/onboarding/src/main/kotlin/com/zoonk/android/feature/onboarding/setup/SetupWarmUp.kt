@@ -16,10 +16,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -78,7 +75,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             .rememberGenerationProgress(kind, run)
     val shownProgress: @Composable () -> Unit = {
         progress(share)
-        first?.let { FirstLessonRow(it, run) }
+        first?.let { FirstLessonRow(it) }
     }
     val layout = LocalSetupLayout.current
     val aside: (@Composable () -> Unit)? =
@@ -175,22 +172,8 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
 }
 
 @Composable
-internal fun FirstLessonRow(
-    lesson: GenerationFirstLesson,
-    run: GenerationRun,
-) {
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val started = run.stepTimes["writeFirstLesson"]?.started
-    val finished = run.stepTimes["firstLessonReady"]?.completed
+private fun FirstLessonRow(lesson: GenerationFirstLesson) {
     val settled = lesson.ready || lesson.done
-    LaunchedEffect(settled, lesson.stopped, started) {
-        if (started != null && !settled && !lesson.stopped) {
-            while (true) {
-                kotlinx.coroutines.delay(1_000)
-                now = System.currentTimeMillis()
-            }
-        }
-    }
     com.zoonk.android.ui.components.ListRow(
         headline = { Text(stringResource(R.string.warm_up_first_lesson)) },
         leading = {
@@ -217,18 +200,6 @@ internal fun FirstLessonRow(
                     },
                 ),
             )
-        },
-        meta = {
-            val elapsed =
-                started?.let { start ->
-                    finished?.minus(start) ?: run.clockOffsetMillis?.let { offset -> now - offset - start }
-                }
-            elapsed?.let {
-                Text(
-                    com.zoonk.android.ui.format
-                        .formatClock(it.coerceAtLeast(0)),
-                )
-            }
         },
     )
 }

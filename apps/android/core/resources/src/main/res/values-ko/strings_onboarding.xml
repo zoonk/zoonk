@@ -393,9 +393,8 @@
   "onboarding_study_days": "bb962da4eb90c1b0004491cc3d95c64249f3f7af1e0700a2a2a792ea63210a4c",
   "onboarding_study_material": "eb3295262c00852ba35340e530d4ac683bcf23fda26e8c7df17516c9491798d8",
   "onboarding_subjects_description": "4d7dee7ebe9da7dfc71b5c2c9556378e4a38fb778f4830fe459d2af8c7b61464",
-  "onboarding_subjects_from_scratch": "861cc08e67dad0915b8a67f921832d96efc912c4d766b6284c1b3c6710bad12a",
+  "onboarding_subjects_from_scratch": "428f6d09023e8b588ce7d3eb5c5c951bbf6abea672750edfab16572349f434cc",
   "onboarding_subjects_label": "648c31ee2e6e42f77a38d949ba7555bdd8ef40bf275d296cdded0b2fbaf79f98",
-  "onboarding_subjects_none": "9d792ef1ea7fe65ce39577d4353c8d15c7aef5b73ad9b59adc4c1b9b908ee652",
   "onboarding_subjects_title": "aa87d7116ac91ad8fe4be8afcdf13d1c55426653118bb54242aca8cebb9f39a6",
   "onboarding_target_label": "a315606475a97e740383a983027a9a1c109e3ed9d733f20cd6f849be46638e96",
   "onboarding_test_level_a1": "2a68261a3849944268e1a95afe084acb9893584fde9fbf37d4cb6d691d733ed1",
@@ -854,8 +853,7 @@
     <string name="onboarding_subjects_title">이미 잘 아는 과목은 무엇인가요?</string>
     <string name="onboarding_subjects_description">잘 아는 과목은 기초를 건너뛰어요. 나머지 과목은 간단한 테스트로 어디서 시작할지 정해요.</string>
     <string name="onboarding_subjects_label">잘 아는 과목</string>
-    <string name="onboarding_subjects_none">아직 없어요</string>
-    <string name="onboarding_subjects_from_scratch">처음부터 시작할게요</string>
+    <string name="onboarding_subjects_from_scratch">모두 처음 배워요</string>
     <string name="onboarding_admission_title">목표 학과와 점수는 어떻게 되나요?</string>
     <string name="onboarding_target_label">내 목표</string>
     <string name="onboarding_admission_placeholder">예: 의예과, 750점</string>

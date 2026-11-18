@@ -255,6 +255,7 @@ private fun LazyListScope.upNext(
             leading = { KindMark(LearnKind.Lesson) },
             supporting = if (first && failed) ({ StepOpenFailed() }) else null,
             meta = { DayMinutes(lesson.minutes) },
+            divider = index != lessons.lastIndex,
         ) {
             Text(text = lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }

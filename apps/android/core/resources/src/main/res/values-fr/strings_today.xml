@@ -89,6 +89,7 @@
   "today_resume": "95e76e8b143182dc464fd7d764725585a3521836972295dee0503cb404ccaa5b",
   "today_resume_effect": "05aef9964c6ae48f51af66c44073a1097569307c244ace52b20a98f4b28f87de",
   "today_save_failed": "5ad9213e7f58485c60d91ab901ffa5abc8b40c6fbfd2141730ff68d1ff093a0d",
+  "today_see_changes": "4be556c12412bc5667eaa0de1cb9869ef2ccaa76c8960e02ad1bdf325a2e8ecc",
   "today_see_day_challenge": "683107ca0e41f535d221198954012d8cc0461f6a47b153d705313e36a0915700",
   "today_see_day_mock": "4cb7beaa9f26cc127486d200ca09f18439b18f4657ece5a22e996fc16ea06a05",
   "today_see_summary": "4c6379005d72c5b88466e46ec80090577139dd54c84a033325659a643eb72b85",
@@ -316,6 +317,7 @@
     <string name="today_notice_exam_choice">Choix de l’examen</string>
     <string name="today_exam_choice_choose">Choisir</string>
     <string name="today_notice_plan_change">Changement suggéré</string>
+    <string name="today_see_changes">Voir ce qui change</string>
     <string name="today_plan_use_my_date">Utiliser ma date</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Garder mon plan</string>

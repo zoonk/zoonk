@@ -393,9 +393,8 @@
   "onboarding_study_days": "05407950d9c8390e6598ef67c58d6ffb6e61d44e898f9942cd6670630f554cae",
   "onboarding_study_material": "a431b480b0dd9b74f485b9bf6f7d9b8259701b44e07a24d8a7879b101265e808",
   "onboarding_subjects_description": "ecad18a628e205f6d443856191fee37b093d74f14ebe95e17b202d8eba0655a4",
-  "onboarding_subjects_from_scratch": "b4d537ac2b8fb8a82c28abcad2db24ee227034b84b13497006fc28fed94abfc2",
+  "onboarding_subjects_from_scratch": "db92504d32ce323e01ae252ee482e3a26c89a304c6334a5ca720f1c6f6d0d86e",
   "onboarding_subjects_label": "6ff3c49a7bdeeb52938e6ef38fe36e154e43cc276a402726e22c58008fa94dce",
-  "onboarding_subjects_none": "d80ef8dfa9840aefad4756ddbd003d4a28d22f030a90f959764db2b6ef437046",
   "onboarding_subjects_title": "d537620e5ed0dc0b589560440eaa4c2c78ab788d8f86922331568577cfe68dd2",
   "onboarding_target_label": "af6eee1ad4d31df0dde87601bd20bdf084bcff1453b4197950941f8a0fe38364",
   "onboarding_test_level_a1": "a728af02066ead173b0f856effc58a76e4d0e5f622d14b8f98ee0799194a6f31",
@@ -871,8 +870,7 @@
     <string name="onboarding_subjects_title">Hangi branşları iyi biliyorsun?</string>
     <string name="onboarding_subjects_description">Planın bu branşların temel konularını atlar. Kısa bir testle diğer branşlardaki seviyeni belirleriz.</string>
     <string name="onboarding_subjects_label">İyi bildiğin branşlar</string>
-    <string name="onboarding_subjects_none">Henüz hiçbiri</string>
-    <string name="onboarding_subjects_from_scratch">Sıfırdan başlıyorum</string>
+    <string name="onboarding_subjects_from_scratch">Hepsine sıfırdan başlıyorum</string>
     <string name="onboarding_admission_title">Hangi bölümü ve puanı hedefliyorsun?</string>
     <string name="onboarding_target_label">Hedefin</string>
     <string name="onboarding_admission_placeholder">Örn. tıp, 500 puan</string>

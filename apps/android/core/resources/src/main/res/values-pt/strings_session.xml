@@ -85,7 +85,6 @@
   "session_summary_so_far": "3f9f949864705352dce6c2245fcf91093e4d08c805245ffebdf02570a7a0538b",
   "session_summary_streak": "321d9e9adb6b4482d3e3d319db56679ddd00d95255613393f4fe842345809156",
   "session_summary_to_review": "d71839ebf045c372496fe0316356291bb6a7121c36a3e54039af66c716aa6897",
-  "session_summary_to_review_detail": "f06054b8db7a303d869d00e8144fd815939f5b4ec463037d30a543f7e64380c0",
   "session_summary_tomorrow": "ecdeff9f17e43294a456525db20a60c9478157672c4eb2f45574284f0cf048fe",
   "session_summary_up_from": "eb4c874f32b401414c919bdbc2cbdd4d700d3e75fcf161bcd55cbf8f42350e00",
   "session_topics_and_more": "0ebea96b8412bcf52bc00a9b0eac9b5a619e70091a1b2592aaa81447e6e6d06c"
@@ -268,5 +267,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Nenhuma aula para colocar em dia.</string>
-    <string name="session_summary_to_review_detail">Para revisar</string>
 </resources>

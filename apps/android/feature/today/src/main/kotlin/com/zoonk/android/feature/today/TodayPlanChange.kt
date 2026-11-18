@@ -44,7 +44,6 @@ import kotlinx.datetime.toJavaLocalDate
 @Composable
 internal fun PlanChangeNotice(
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -54,9 +53,9 @@ internal fun PlanChangeNotice(
     val behind = change.behind
 
     if (change.kind == MISSED_DAYS && behind != null) {
-        FallingBehindNotice(change, behind, state, layout, modifier)
+        FallingBehindNotice(change, behind, state, modifier)
     } else {
-        ChangeNotice(change, answer, repriced != null, state, layout, modifier)
+        ChangeNotice(change, answer, repriced != null, state, modifier)
     }
 }
 
@@ -66,7 +65,6 @@ private fun ChangeNotice(
     answer: PlanChangeAnswer?,
     repriced: Boolean,
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -113,17 +111,16 @@ private fun ChangeNotice(
     Suggestion(
         label = stringResource(R.string.today_notice_plan_change),
         summary = result ?: words.title,
-        layout = layout,
+        layout = SuggestionLayout.Line,
         modifier = modifier,
         mark = if (change.source == NOTICE_SOURCE) SuggestionMark.Symbol(R.drawable.ic_pending_actions) else SuggestionMark.New,
         answered = result != null,
         failed = result != null && failedHere,
-        lineAction = if (result != null) after else ({ SuggestionOpen() }),
-        lineDescription = words.why.takeIf { result == null && words.general },
+        lineAction = if (result != null) after else ({ SuggestionOpen(stringResource(R.string.today_see_changes)) }),
+        lineDescription = words.why.takeIf { result == null },
         failure = stringResource(R.string.plan_undo_failed),
     ) {
         SuggestionHeader(words.title)
-        words.why?.let { SuggestionDescription(it) }
         PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
         officialDate?.let { SuggestionDescription(it) }
 
@@ -200,7 +197,6 @@ private fun FallingBehindNotice(
     change: PlanChange,
     behind: PlanChangeBehind,
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -230,14 +226,14 @@ private fun FallingBehindNotice(
     Suggestion(
         label = stringResource(R.string.today_notice_falling_behind),
         summary = result ?: title,
-        layout = layout,
+        layout = SuggestionLayout.Line,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
         answered = kept,
-        lineAction = if (kept) null else ({ SuggestionOpen() }),
+        lineAction = if (kept) null else ({ SuggestionOpen(stringResource(R.string.today_see_changes)) }),
+        lineDescription = sentence.takeUnless { kept },
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(sentence)
         PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)
 
         if (result != null) {

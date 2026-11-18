@@ -49,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
+import com.zoonk.api.models.OnboardingExamSubjectsInner
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -143,6 +144,30 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
 
         assertEquals(listOf(GOAL_ID, EXAM_GOAL_ID), api.answers.map { it.first })
+    }
+
+    @Test
+    fun continuingFromTheSubjectsQuestionRequiresASelection() {
+        api.setup = {
+            setupView(listOf("level", "plan"), kind = "exam")
+                .copy(
+                    examSubjects =
+                        listOf(
+                            OnboardingExamSubjectsInner(name = "Statistics", shortName = null),
+                            OnboardingExamSubjectsInner(name = "Algebra", shortName = null),
+                        ),
+                )
+        }
+        show()
+
+        rule.onNodeWithText("Which subjects do you already know well?").assertIsDisplayed()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
+
+        rule.onNodeWithText("Algebra").performClick()
+        rule.onNodeWithText("Continue").performClick()
+        rule.waitForIdle()
+
+        assertEquals(1, api.answers.size)
     }
 
     @Test

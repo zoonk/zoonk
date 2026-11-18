@@ -142,8 +142,8 @@ private fun SubLine(text: String) {
 }
 
 /**
- * A row of the day on main's `ListRow`: the next block on `muted` with its words at the top (main's
- * `items-start`), the others over a hairline, except right above the next block.
+ * A row of the day on main's `ListRow`: the next block on `muted`, the others over a hairline,
+ * except right above the next block.
  */
 @Composable
 fun DayQueueRow(
@@ -171,7 +171,6 @@ fun DayQueueRow(
             leading = leading,
             supporting = supporting,
             meta = meta,
-            leadOnFirstLine = isNext,
             chevron = false,
         )
         if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))

@@ -27,7 +27,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudyBlock
 
 /**
- * Main's `DayProgress`: one equal part per counted block, the ones ahead in their kind's color.
+ * Main's `DayProgress`: one equal part per counted block with an empty track for the ones ahead.
  * Tapping a block opens what it is and where the learner stands in it.
  */
 @Composable

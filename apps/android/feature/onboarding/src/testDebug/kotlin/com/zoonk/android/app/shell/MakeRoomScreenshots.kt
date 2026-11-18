@@ -105,6 +105,7 @@ class MakeRoomScreenshots {
                                     failed = failed,
                                     onPause = {},
                                     onSubscribe = {},
+                                    onDismiss = {},
                                 )
                             }
                         }

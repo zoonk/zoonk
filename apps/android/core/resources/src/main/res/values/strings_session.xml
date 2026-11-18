@@ -163,5 +163,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">No lessons left to catch up.</string>
-    <string name="session_summary_to_review_detail">To review</string>
 </resources>

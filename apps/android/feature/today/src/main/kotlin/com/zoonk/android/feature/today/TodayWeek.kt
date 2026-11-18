@@ -70,11 +70,27 @@ internal fun TodayWeek(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         WeekHeader()
 
-        val names = weekdayNames(currentLocale())
+        val locale = currentLocale()
+        val names = weekdayNames(locale)
         WeekDaysRow {
             week.days.forEach { weekDay ->
                 val challengeDay = challenge?.takeIf { it.date == weekDay.date }
                 DayCell(weekDay, weekDate, challengeDay, names, exam)
+            }
+        }
+
+        if (week.days.any { it.isMissed(weekDate) }) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                GoalRing(share = 0f, track = GoalRingTrack.Missed, size = 12.dp)
+                val label = stringResource(R.string.today_week_not_studied)
+                Text(
+                    label.replaceFirstChar { it.titlecase(locale) },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
 
