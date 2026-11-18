@@ -2,7 +2,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// Main's `lesson-cells.test.ts`, its property run on a seeded generator.
+/// The cells' rules, and their property run on a seeded generator.
 final class LessonCellsTests: XCTestCase {
   private typealias State = LessonCells.State
 

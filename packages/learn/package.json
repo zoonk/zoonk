@@ -67,6 +67,7 @@
     "./onboarding/attempt-clock": "./src/onboarding/entry/attempt-clock.ts",
     "./generation/run": "./src/generation/generation-run.ts",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
+    "./goal-switch-options": "./src/shell/goal-switch-options.ts",
     "./goal-switcher": "./src/shell/goal-switcher.tsx",
     "./goal-mark": "./src/shell/goal-mark.tsx",
     "./help-limit": "./src/_components/help-limit-notice.tsx",

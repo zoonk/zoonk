@@ -11,7 +11,7 @@ import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
 import { FoldRow } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
-import { UPCOMING_ROWS, splitTodayQueue } from "./today-queue";
+import { UPCOMING_ROWS, getFoldedRows, splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
@@ -59,6 +59,14 @@ function useDoneFoldLabel(done: readonly DayStep[]): string {
   });
 }
 
+function useMoreLabel({ count, lessonsOnly }: ReturnType<typeof getFoldedRows>): string {
+  const t = useExtracted();
+
+  return lessonsOnly
+    ? t("{count, plural, one {# more lesson} other {# more lessons}}", { count })
+    : t("{count, plural, one {# more} other {# more}}", { count });
+}
+
 function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -92,8 +100,8 @@ function SessionQueue({ next }: { next: DayStep | null }) {
   }, [moreOpen]);
 
   const lessonsAhead = opens && (lessonsComing || lessonsToPrepare);
-  const coming = Number(lessonsAhead);
-  const more = after.length + coming - UPCOMING_ROWS;
+  const folded = getFoldedRows({ after, lessonsAhead });
+  const moreLabel = useMoreLabel(folded);
 
   const toggleMore = () => {
     revealFrom.current = moreOpen ? null : (listRef.current?.children.length ?? null);
@@ -141,15 +149,11 @@ function SessionQueue({ next }: { next: DayStep | null }) {
         {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}
       </ol>
 
-      {more > 0 && (
+      {folded.count > 0 && (
         <FoldRow
           controls={SESSION_LIST_ID}
           done={false}
-          label={
-            moreOpen
-              ? t("Show less")
-              : t("{count, plural, one {# more lesson} other {# more lessons}}", { count: more })
-          }
+          label={moreOpen ? t("Show less") : moreLabel}
           onToggle={toggleMore}
           open={moreOpen}
         />

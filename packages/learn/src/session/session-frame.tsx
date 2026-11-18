@@ -15,10 +15,7 @@ export function SessionFrame({
 
   return (
     <div
-      className={cn(
-        "flex flex-1 flex-col [&_[data-slot=task-aside-header]>h2]:normal-case",
-        root.className,
-      )}
+      className={cn("flex flex-1 flex-col", root.className)}
       data-aside={root["data-aside"]}
       data-slot="session-frame"
     >

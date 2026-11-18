@@ -208,11 +208,8 @@ function isTextShown(text: string): boolean {
     .some((element) => element.checkVisibility());
 }
 
-/**
- * Crosses the breakpoint and shows the suggestion as the learner then sees it: from 72rem the
- * panel (a sheet left open from the phone width is closed), below it the sheet "See what changes" opens.
- */
-async function cross(to: { height: number; width: number }, { sheet = true } = {}) {
+/** Crosses the breakpoint; from 72rem a sheet left open from the phone width closes. */
+async function cross(to: { height: number; width: number }) {
   await page.viewport(to.width, to.height);
 
   if (to.width >= LAPTOP.width) {
@@ -223,12 +220,6 @@ async function cross(to: { height: number; width: number }, { sheet = true } = {
         throw new Error("The sheet opened at the phone width is still open.");
       }
     });
-
-    return;
-  }
-
-  if (sheet) {
-    await press("See what changes");
   }
 }
 
@@ -281,10 +272,6 @@ describe.each([
     await atViewport(from, async () => {
       const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
 
-      if (from === PHONE) {
-        await press("See what changes");
-      }
-
       await press("Add to my plan");
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
 
@@ -315,7 +302,7 @@ describe.each([
       await press("Get your certificate");
       await expect.poll(() => onClaim).toHaveBeenCalledOnce();
 
-      await cross(to, { sheet: false });
+      await cross(to);
       await expect.poll(() => isBusy("Get your certificate")).toBe(true);
 
       claim.resolve(false);
@@ -336,10 +323,6 @@ describe.each([
         host: { ...HOST_BASE, certificates: null },
         plan: { ...PLAN, fitOffer: null, status: { kind: "pastDate", lessons: 3 } },
       });
-
-      if (from === PHONE) {
-        await press("See what changes");
-      }
 
       await press("Find a date");
       await expect.poll(() => findTimeToCover).toHaveBeenCalledOnce();
