@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A shield bearing an antibody and a virus clearly signals the body's defenses and immunology at a glance. It is not a generic medical cross or pill.",
+          "reasoning": "A shield bearing a Y-shaped antibody reads at a glance as immunity and the body's defenses. This is exactly the suggested motif and avoids a generic medical cross or pill.",
           "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a single, centered shield emblem in smooth matte 3D with soft lighting and a subtle shadow. It uses three colors (blue, white, purple) on a plain white background, much like an app icon. Two small drawbacks: the virus is a small second element placed slightly awkwardly, and the framing is tight.",
+          "reasoning": "It is a single centered object in smooth matte 3D with soft lighting and a subtle shadow, on a plain white background. Its two colors are within the 2 to 4 allowed. However, the white shield on white lowers silhouette contrast, which weakens the app-icon read.",
           "score": 8,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The antibody's forked Y shape is a recognized biological symbol, though at a glance it could faintly evoke a letter.",
+          "reasoning": "There are no letters, numbers or captions. The antibody shape is a recognizable molecular glyph with distinct arm segments, not the letter Y.",
           "score": 9,
           "label": "No text",
           "weight": 20
@@ -31,19 +31,23 @@
           "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
           "inputTokens": 3006,
-          "outputTokens": 793,
-          "reasoningTokens": 251
+          "outputTokens": 642,
+          "reasoningTokens": 139
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The purple virus sits near the antibody's stem and overlaps the shield's inner rim, not at the binding tips of the arms. This weakens the antibody-meets-germ idea and slightly crowds the lower right of the emblem. The shield also fills most of the frame, leaving little breathing room around it.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The shield is white on a white background, so its silhouette depends only on faint shading and a soft shadow. At small app-icon sizes, the outline may fade and leave the blue antibody looking like it floats.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Shrink the shield slightly so there is more white space around it. Move the virus toward one of the antibody's arm tips, or drop it, so the emblem reads as one clean, balanced mark. Keep the antibody arms clearly forked so the shape never reads as the letter Y.",
+          "conclusion": "Give the shield a soft tint, such as pale blue or light teal, so it separates clearly from the background. A slightly stronger contact shadow under the base would also anchor it. The antibody's arms could be made a little more distinct from its stem so the Y glyph never reads as a letter.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -63,21 +67,145 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A rising bar chart loosely suggests economic growth but is a generic business or statistics symbol. It has no money, price or market element, so the economics meaning is not unmistakable.",
-          "score": 5,
+          "reasoning": "A shield bearing a Y-shaped antibody with distinct heavy and light chains reads at a glance as immune defense. This is exactly the kind of object the rubric suggests.",
+          "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "The rendering is smooth matte 3D with soft lighting and a subtle shadow, in two colors (mustard and navy) on a plain white background. The detached arrow and slightly off-center placement weaken the single clean-silhouette app-icon feel.",
+          "reasoning": "The image shows one centered object in smooth matte 3D with soft lighting and a subtle shadow, uses two colors, and sits on a plain white background. However, the white shield has low contrast against the white background, which weakens the silhouette.",
           "score": 8,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
+          "reasoning": "There are no letters, numbers or captions. The Y shape is the standard antibody symbol, not text.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3006,
+          "outputTokens": 579,
+          "reasoningTokens": 141
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The white shield sits on a nearly white background, so its silhouette relies mostly on faint edge shading and a soft shadow. This weakens the clean, strong outline expected of an app icon.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give the shield a soft tint, such as pale blue or light lavender, to separate it from the white background. A slightly stronger contact shadow would also help the icon read clearly at small sizes.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-immunology-2",
+        "userInput": {
+          "caseId": "en-immunology",
+          "description": "Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.",
+          "language": "en",
+          "title": "Immunology"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A shield bearing an antibody is the requested idea and reads at a glance as the body's defenses and immunology, not generic medicine.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "It shows exactly one centered object in smooth matte 3D with soft lighting, a subtle shadow, two colors and a plain white background. However, the white shield on the white background makes the silhouette low-contrast and weaker than an app icon needs.",
+          "score": 8,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "The image has no letters, numbers or captions. The antibody glyph is a standard molecule symbol, though its close resemblance to a 'Y' is a slight risk of being read as a letter.",
+          "score": 9,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3006,
+          "outputTokens": 718,
+          "reasoningTokens": 199
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The white shield sits on a plain white background. Its silhouette depends almost entirely on faint edge shading and a light shadow, so the outline is weak and could blur at small app-icon sizes. The blue antibody glyph is also very close to a letter 'Y' and could briefly read as a letter.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give the shield a soft tinted body, such as pale blue or mint, or a slightly darker rim so its outline stands out from the white background. Exaggerate the antibody's paired light-chain arms or round their tips so the glyph reads more clearly as a molecule than as a letter.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-immunology-3",
+        "userInput": {
+          "caseId": "en-immunology",
+          "description": "Immunology is how the body tells friend from foe. The course covers germs, antibodies, memory cells and how vaccines train the immune system.",
+          "language": "en",
+          "title": "Immunology"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A rising bar chart with an arrow is associated with economics and growth, but it is a generic business or statistics symbol. It has no money or price element, so it does not clearly signal economics.",
+          "score": 7,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image shows one centered, unified object in smooth matte 3D with soft lighting and a subtle floor shadow. It uses two colors (green and gold) on a plain white background, with a clean silhouette that works as an app icon.",
+          "score": 9,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "The image contains no letters, numbers or captions.",
           "score": 10,
           "label": "No text",
           "weight": 20
@@ -89,23 +217,23 @@
           "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
           "inputTokens": 3013,
-          "outputTokens": 829,
-          "reasoningTokens": 329
+          "outputTokens": 425,
+          "reasoningTokens": 0
         }
       },
       "steps": [
         {
-          "conclusion": "The icon is a generic growth bar chart with a rising arrow. It carries no money, price or market cue such as a coin or currency, so it reads as business growth or statistics rather than clearly as economics.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "The arrow floats separately above the bars, which weakens the single-silhouette read. The group also sits slightly off-center, toward the right and bottom of the frame.",
+          "conclusion": "A bar chart with a rising arrow reads as growth or business performance more than economics specifically. It lacks a money or price cue such as a coin, so it is somewhat generic and could also stand for statistics or sales.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Add a clear economic marker, for example by making the bars stacked coins or adding a coin at the arrow's base, so the subject reads as money and prices at a glance. Join the arrow to the chart to form one compact, centered silhouette.",
+          "conclusion": "Add a clear economic cue, such as a coin integrated into the base of the bars or the arrow rising from a coin, so the icon signals money and prices at a glance while staying one unified object.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -125,21 +253,145 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "The bar chart and rising line chart on a dashboard card clearly read as data analysis at a glance. It is not a generic computer.",
-          "score": 9,
+          "reasoning": "A rising bar chart suggests economic growth and inflation, but it is a generic business or statistics symbol with no coin, price or market element. It is recognizable but not specific to economics.",
+          "score": 7,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "It is a single centered object in smooth matte 3D with soft lighting and a subtle floating shadow. It uses four colors (off-white, gray, blue, green) on a plain white background. The pale tile has weak contrast against the background, and the mix of placeholder rows and two charts makes it busier than an ideal app icon.",
-          "score": 8,
+          "reasoning": "There is one centered object with a clean silhouette in smooth matte 3D with soft lighting. It uses two colors (green and gold) on a plain white background with a subtle shadow, much like an app icon. The arrow is slightly glossy.",
+          "score": 9,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no actual letters, numbers or captions. The gray dot-and-bar rows imitate text lines, which slightly suggests text.",
+          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3013,
+          "outputTokens": 675,
+          "reasoningTokens": 230
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The bar chart with a rising arrow is a fairly generic growth or business symbol. It does not directly show money, prices or markets, so it reads as statistics or business almost as easily as economics. Only the green and gold palette hints at money.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add an explicit money cue to tie the icon to economics, such as a coin forming the arrow's base or a coin stack instead of the bars. Ground the floating shadow slightly closer to the object.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "pt-economia-2",
+        "userInput": {
+          "caseId": "pt-economia",
+          "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.",
+          "language": "pt",
+          "title": "Economia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A bar chart with a rising arrow is associated with economic growth, but it is generic and shows no money, prices or markets. It could just as easily stand for business or statistics.",
+          "score": 7,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "A single unified icon is centered on plain white with a clean silhouette, smooth 3D, soft lighting, a subtle floor shadow and two colors. The arrow is slightly glossy rather than fully matte.",
+          "score": 9,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "The image contains no letters, numbers or captions.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3013,
+          "outputTokens": 615,
+          "reasoningTokens": 194
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The rising bar chart reads more as generic business growth or statistics than economics specifically; nothing ties it to money, prices or markets. The gold arrow also has a slightly glossy sheen rather than a fully matte finish.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a clear money cue, such as a coin forming the arrowhead or a coin stack replacing a bar, so the icon reads as economics at a glance rather than as a general growth chart.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "pt-economia-3",
+        "userInput": {
+          "caseId": "pt-economia",
+          "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.",
+          "language": "pt",
+          "title": "Economia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "The bar chart and trend line clearly signal data analysis, not a generic computer. The mix of a table, bars and a line on a card reads somewhat like a generic report or dashboard icon.",
+          "score": 8,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "It is a single centered object in smooth matte 3D with soft lighting, a subtle shadow and a plain white background. It uses four colors (white, gray, blue, green). The silhouette is just a plain rounded tile, and the multiple elements printed on it make the icon busier than ideal.",
+          "score": 7,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions. The gray placeholder bars only suggest text lines without containing any characters.",
           "score": 9,
           "label": "No text",
           "weight": 20
@@ -151,19 +403,23 @@
           "cacheReadTokens": 1114,
           "cacheWriteTokens": 0,
           "inputTokens": 2996,
-          "outputTokens": 798,
-          "reasoningTokens": 275
+          "outputTokens": 826,
+          "reasoningTokens": 301
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The off-white tile almost blends into the white background, which weakens the silhouette. The card also feels a bit busy: it combines gray placeholder lines that read like a document with two separate charts. The green line chart floats beside the bars without its own axis, so the chart composition is slightly unclear.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The tile packs three elements: gray table-like lines, a blue bar chart and a green line chart. This makes it read like a small dashboard or report card rather than one bold symbol. Its outline is a plain rounded square, so the overall silhouette is generic. The gray placeholder bars also hint at text lines.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Drop the text-like placeholder rows and merge the visuals into one chart, such as bars with a trend line overlaid inside the same axes, or add a magnifying glass over it. Give the tile a slightly tinted color or a stronger edge shadow so it stands out from the white background.",
+          "conclusion": "Simplify to a single sculpted object, such as a standalone 3D bar chart or a magnifying glass over a chart. Drop the gray placeholder lines and the second chart type. This gives a distinctive, instantly readable silhouette with fewer competing details.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -171,6 +427,130 @@
       "testCase": {
         "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
         "id": "en-data-analysis-1",
+        "userInput": {
+          "caseId": "en-data-analysis",
+          "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
+          "language": "en",
+          "title": "Data analysis"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "The bar chart, the trend line and the table-like rows clearly stand for data analysis at a glance, and nothing suggests a generic computer.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The rendering is smooth matte 3D with soft lighting and a subtle shadow, on a plain white background, in about four colors, with one centered object. However, the white tile blends into the background, giving a weak silhouette. Its contents are also busy and dashboard-like rather than one bold app-icon shape.",
+          "score": 7,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters, numbers or captions. The gray rows are abstract placeholder bars, though they slightly evoke lines of text.",
+          "score": 9,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2996,
+          "outputTokens": 753,
+          "reasoningTokens": 249
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The off-white tile sits on a white background with low contrast, so the silhouette is a weak, generic rounded square. The tile also holds three elements: placeholder table lines, a bar chart and a line chart. This makes it read like a mini dashboard instead of one bold focal object.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep a single motif, such as the rising bar chart or a magnifying glass over bars, rendered as the object itself rather than printed on a tile. Remove the gray table lines, and give the tile or object a soft color so it separates from the white background.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-data-analysis-2",
+        "userInput": {
+          "caseId": "en-data-analysis",
+          "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
+          "language": "en",
+          "title": "Data analysis"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "The bar chart and trending line chart read immediately as data analysis. This is a fitting, non-generic choice.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "There is one centered rounded tile in matte 3D with soft lighting and a subtle shadow on plain white, using four colors (white, grey, blue, green). However, the tile face is crowded with three separate elements, which weakens the clean app-icon silhouette and edges toward a mini-infographic.",
+          "score": 7,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no actual letters or numbers. The grey bars only mimic text lines, which slightly suggests text but is not readable text.",
+          "score": 9,
+          "label": "No text",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 1114,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2996,
+          "outputTokens": 807,
+          "reasoningTokens": 295
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The tile combines three motifs (grey table-like lines, a bar chart and a line chart), so it reads more like a busy dashboard or report card than a single bold icon. The grey placeholder bars also suggest lines of text. The bar chart sits close to the lower-left edge, which leaves the inner layout unbalanced.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Simplify to one strong motif, such as a bold bar chart alone or a magnifying glass over a few bars, and drop the grey text-like lines. Give the main shape more thickness and depth so the silhouette is chunkier and more recognisable at small sizes.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+        "id": "en-data-analysis-3",
         "userInput": {
           "caseId": "en-data-analysis",
           "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
