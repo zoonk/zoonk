@@ -55,7 +55,7 @@ fun ProfileScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.settings_profile)) },
-        barWidth = 640.dp,
+        columnWidth = 640.dp,
         bottomBar =
             form?.let {
                 {

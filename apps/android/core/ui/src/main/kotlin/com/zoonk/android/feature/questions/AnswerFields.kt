@@ -34,6 +34,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
 
 /** A typed or numeric answer once checked; the field shows only whether it was right. */
@@ -191,7 +192,10 @@ private fun markColors(mark: AnswerMark?): TextFieldColors {
     val line =
         when (mark) {
             AnswerMark.Correct -> MaterialTheme.colorScheme.tertiary
-            AnswerMark.Wrong -> MaterialTheme.colorScheme.error
+
+            // The wrong row's red, as main's field takes `border-destructive`; the deeper `error` is for words.
+            AnswerMark.Wrong -> MaterialTheme.zoonk.destructive
+
             null -> return OutlinedTextFieldDefaults.colors()
         }
     return OutlinedTextFieldDefaults.colors(focusedBorderColor = line, unfocusedBorderColor = line)

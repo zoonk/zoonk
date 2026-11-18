@@ -63,6 +63,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.centeredColumn
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -88,7 +89,7 @@ fun CertificatesScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        barWidth = DETAIL_PAGE_WIDTH,
+        columnWidth = DETAIL_PAGE_WIDTH,
         bottomBar =
             if (empty) {
                 {
@@ -106,7 +107,7 @@ fun CertificatesScreen(
             when (state) {
                 is LoadState.Loaded, LoadState.Empty -> {
                     BeforeFold { beforeFold ->
-                        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), contentPadding = pagePadding()) {
+                        LazyColumn(beforeFold.centeredColumn(DETAIL_PAGE_WIDTH), contentPadding = pagePadding()) {
                             certificates(app, navigator, state.value.orEmpty())
                         }
                     }

@@ -161,7 +161,10 @@ fun LanguageStepView(
 
         StepKind.Reading -> {
             exercise.sentence?.let { sentence ->
-                QuestionWithTurn(part, { ReadingPrompt(sentence.translation, exercise.readingPromptWords) }) { question ->
+                QuestionWithTurn(
+                    part,
+                    { ReadingPrompt(sentence.translation, exercise.readingPromptWords, languages.learner) },
+                ) { question ->
                     ArrangeWordsView(
                         answerText = sentence.sentence,
                         kind = ArrangeKind.Reading,

@@ -102,6 +102,7 @@ fun GenerationWait(
                                 progress.activeSince ?: since,
                             ),
                     weights = progress.phases.map { it.phase.seconds },
+                    statuses = progress.phases.map { it.status },
                 )
             }
         if (header == null) {
@@ -262,6 +263,7 @@ private fun WaitProgress(
     name: String,
     share: Float,
     weights: List<Int>,
+    statuses: List<PhaseStatus>,
     modifier: Modifier = Modifier,
 ) {
     val shown by animateFloatAsState(share, label = "generation progress")
@@ -279,9 +281,10 @@ private fun WaitProgress(
     ) {
         MeterParts(
             parts =
-                segmentFills(
+                phaseFills(
                     shown,
                     weights,
+                    statuses,
                 ).zip(weights) { part, weight -> MeterPart(MeterPart.Fill.Solid(fill, part), weight.toFloat()) },
             modifier = Modifier.weight(1f),
         )
@@ -513,20 +516,41 @@ internal fun driftCeiling(
     target: Float,
 ): Float = minOf(share + (target - share) * RUNNING_PART_CAP, DRIFT_CAP)
 
-/** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
-internal fun segmentFills(
+/**
+ * How much of each step's part [share] (0 to 1) of the whole bar fills, each step by its [statuses], so steps
+ * running side by side fill in the order they finish: a done step's part is full, a pending one's empty, and
+ * the running ones share what [share] reaches past the done ones.
+ */
+internal fun phaseFills(
     share: Float,
     weights: List<Int>,
+    statuses: List<PhaseStatus>,
 ): List<Float> {
     val sizes = weights.map { it.coerceAtLeast(0).toFloat() }
-    val reached = share.coerceIn(0f, 1f) * sizes.sum()
-    var start = 0f
-    return sizes.map { size ->
-        val fill = if (size == 0f) 0f else ((reached - start) / size).coerceIn(0f, 1f)
-        start += size
-        fill
+    val done =
+        sizes
+            .zip(statuses)
+            .filter { (_, status) -> status == PhaseStatus.Completed }
+            .sumOf { it.first.toDouble() }
+            .toFloat()
+    val running =
+        sizes
+            .zip(statuses)
+            .filter { (_, status) -> status.isRunning() }
+            .sumOf { it.first.toDouble() }
+            .toFloat()
+    val runningFill = if (running == 0f) 0f else ((share.coerceIn(0f, 1f) * sizes.sum() - done) / running).coerceIn(0f, 1f)
+    return statuses.map { status ->
+        when {
+            status == PhaseStatus.Completed -> 1f
+            status.isRunning() -> runningFill
+            else -> 0f
+        }
     }
 }
+
+/** A failed step keeps what it reached, as a running one shows it. */
+private fun PhaseStatus.isRunning() = this == PhaseStatus.Active || this == PhaseStatus.Failed
 
 /** Not state: only the composition that reads it writes it. */
 private class Drift(

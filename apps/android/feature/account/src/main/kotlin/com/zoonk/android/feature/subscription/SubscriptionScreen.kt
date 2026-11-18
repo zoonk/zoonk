@@ -71,12 +71,16 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OnFirstLine
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.glyphInk
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
@@ -261,7 +265,7 @@ internal fun WebPlusPlan(
     if (standalone && subscription.state != State.UNPAID) PlusBenefits()
     val context = LocalContext.current
     val language = currentLocale().language
-    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }) {
+    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }, forward = true, edge = ButtonEdge.Start) {
         Text(
             stringResource(
                 if (subscription.state ==
@@ -669,17 +673,21 @@ internal fun PlanIncludes(
     items: List<String>,
     modifier: Modifier = Modifier,
 ) {
+    val style = MaterialTheme.typography.bodyMedium
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(summary, style = MaterialTheme.typography.bodyMedium)
+        Text(summary, style = style)
         items.forEach { item ->
+            // The check's ink starts on the column's edge and sits on its line's middle at every text size.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-                Icon(
-                    painterResource(R.drawable.ic_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(item, style = MaterialTheme.typography.bodyMedium)
+                OnFirstLine(style) {
+                    Icon(
+                        painterResource(R.drawable.ic_check),
+                        contentDescription = null,
+                        modifier = Modifier.glyphInk(R.drawable.ic_check).size(20.dp * glyphScale()),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(item, style = style)
             }
         }
     }
