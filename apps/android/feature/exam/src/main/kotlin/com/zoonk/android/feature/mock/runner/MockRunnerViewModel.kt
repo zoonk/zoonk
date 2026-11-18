@@ -615,13 +615,20 @@ class MockRunnerViewModel(
             }
         run.update { current ->
             when (outcome) {
-                SendResult.Stored ->
+                SendResult.Stored -> {
                     current.copy(
                         storedDrafts = current.storedDrafts + (draft.itemId to draft),
                         failedDrafts = current.failedDrafts - draft.itemId,
                     )
-                SendResult.Unreachable, SendResult.Refused -> current.copy(failedDrafts = current.failedDrafts + (draft.itemId to draft))
-                SendResult.Stop -> current
+                }
+
+                SendResult.Unreachable, SendResult.Refused -> {
+                    current.copy(failedDrafts = current.failedDrafts + (draft.itemId to draft))
+                }
+
+                SendResult.Stop -> {
+                    current
+                }
             }
         }
         return outcome
