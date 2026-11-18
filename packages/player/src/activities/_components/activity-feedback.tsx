@@ -23,18 +23,9 @@ type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 type NumericDisplay = ReturnType<typeof getActivityNumericDisplay>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
-export function exactAnswerFormat({
-  check,
-  places,
-  value,
-}: {
-  check: NumericCheck;
-  places?: number | null;
-  value?: number;
-}) {
+function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
   return {
     maximumFractionDigits: Math.max(
-      places ?? 0,
       exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
       countDecimalPlaces(value ?? 0),
     ),

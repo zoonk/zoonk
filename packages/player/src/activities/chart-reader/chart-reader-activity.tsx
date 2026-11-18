@@ -105,11 +105,13 @@ export function ChartReaderActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <ActivityCanvasLabel className="text-foreground text-sm font-medium">
-        {fields.yLabel}
-      </ActivityCanvasLabel>
-
-      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} xLabel={fields.xLabel} yDomain={yDomain}>
+      <ActivityPlot
+        height={PLOT_HEIGHT}
+        xDomain={xDomain}
+        xLabel={fields.xLabel}
+        yDomain={yDomain}
+        yLabel={fields.yLabel}
+      >
         <ActivityPlotGridY
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}

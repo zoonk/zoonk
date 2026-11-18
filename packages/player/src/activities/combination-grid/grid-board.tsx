@@ -138,7 +138,7 @@ export function GridBoard({
       className="grid gap-2"
       style={{ gridTemplateColumns: `repeat(${columns.length + 1}, minmax(0, 1fr))` }}
     >
-      <p className="text-muted-foreground self-end text-center text-xs leading-tight">{rowLabel}</p>
+      <span aria-hidden="true" />
       <p
         className="text-muted-foreground self-end text-center text-xs"
         style={{ gridColumn: `span ${columns.length}` }}
@@ -146,7 +146,9 @@ export function GridBoard({
         {columnLabel}
       </p>
 
-      <span aria-hidden="true" />
+      <p className="text-muted-foreground self-center text-center text-xs leading-tight text-balance">
+        {rowLabel}
+      </p>
 
       {columns.map((cell) => (
         <GridHeader

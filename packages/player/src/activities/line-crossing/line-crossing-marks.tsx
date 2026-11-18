@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
 import { ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
@@ -210,22 +211,23 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
 }
 
 export function Axes({
-  format,
+  units,
   xTicks,
   yTicks,
 }: {
-  format: (value: number) => string;
+  units: { x?: string; y?: string };
   xTicks: readonly number[];
   yTicks: readonly number[];
 }) {
+  const format = useFormatNumber();
   const { x, y } = usePlotScales();
   const [left, right] = x.range;
   const [bottom, top] = y.range;
 
   return (
     <g aria-hidden="true">
-      <ActivityPlotGridY format={format} ticks={yTicks} />
-      <ActivityPlotAxisX format={format} ticks={xTicks} />
+      <ActivityPlotGridY format={(value) => format(value, { unit: units.y })} ticks={yTicks} />
+      <ActivityPlotAxisX format={(value) => format(value, { unit: units.x })} ticks={xTicks} />
       <path
         className="stroke-foreground/40 fill-none"
         d={`M${left} ${top} V${bottom} H${right}`}
