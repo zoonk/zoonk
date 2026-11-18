@@ -42,7 +42,7 @@ export function ScheduleAim({
   const named = languageAim.label ?? aim;
 
   return (
-    <div className="flex items-center gap-3 border-y py-3">
+    <div className="flex items-center gap-3">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-muted-foreground text-compact">
           {words.title(languageAim.targetLanguage)}
