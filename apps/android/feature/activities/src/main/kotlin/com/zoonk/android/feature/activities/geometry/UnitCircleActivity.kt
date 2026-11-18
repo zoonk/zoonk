@@ -430,7 +430,7 @@ private fun UnitCircleWaves(
             xDomain = 0.0..FULL_TURN,
             yDomain = -1.0..1.0,
             yTicks = listOf(-1.0, 0.0, 1.0),
-            xTicks = WAVE_TICKS,
+            xTicks = listOf(WAVE_TICKS),
             formatY = { formatNumber(it, locale) },
             formatX = formatAngle,
             area = WAVE_AREA,
