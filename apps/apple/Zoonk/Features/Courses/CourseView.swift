@@ -144,7 +144,7 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if let subject = detail.course.subject {
-          Chip(Text(subject.localizedTitle))
+          CourseSubjectLabel(subject: subject)
         }
 
         Text(detail.course.title)

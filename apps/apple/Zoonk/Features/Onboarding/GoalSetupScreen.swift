@@ -91,11 +91,12 @@ struct SetupProgress: Equatable {
   let step: Int
   let total: Int
 
+  /// Main's `getProfileProgress`: while another question about the learner is still ahead.
   static func showsSkipAll(
     current: Components.Schemas.OnboardingStep, steps: [Components.Schemas.OnboardingStep]
   ) -> Bool {
     current.profileQuestion != nil
-      && Set(steps.filter { $0.profileQuestion != nil }).count > 1
+      && steps.contains { $0.profileQuestion != nil && $0 != current }
   }
 }
 

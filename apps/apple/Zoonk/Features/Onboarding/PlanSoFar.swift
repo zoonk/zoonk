@@ -71,7 +71,9 @@ struct PlanFact: Identifiable, Equatable {
       + (understood ?? []).map {
         PlanFact(id: $0.id, label: $0.label, value: $0.value, note: $0.note)
       }
-      + [level(details), time(of: goal, answered: details?.answered ?? [])].compactMap { $0 }
+      + [level(details, of: goal), time(of: goal, answered: details?.answered ?? [])].compactMap {
+        $0
+      }
   }
 
   private struct Details: Decodable {
@@ -105,9 +107,11 @@ struct PlanFact: Identifiable, Equatable {
       return answered.contains("targetDate")
         ? PlanFact(
           id: "date", label: label,
-          value: String(
-            localized: "No date", table: "Onboarding",
-            comment: "A goal the learner chose to study without a date"))
+          value: goal.kind == .exam
+            ? String(
+              localized: "To be confirmed", table: "Onboarding",
+              comment: "An exam date that isn't out yet")
+            : String(localized: "None set", table: "Plan"))
         : nil
     }
 
@@ -124,7 +128,7 @@ struct PlanFact: Identifiable, Equatable {
 
   /// Main's `readSetupLevel`: a level test's result, then the level the learner picked, then the
   /// level their words gave.
-  private static func level(_ details: Details?) -> PlanFact? {
+  private static func level(_ details: Details?, of goal: Components.Schemas.Goal) -> PlanFact? {
     guard let details else {
       return nil
     }
@@ -149,8 +153,11 @@ struct PlanFact: Identifiable, Equatable {
     return value.map {
       PlanFact(
         id: "level",
-        label: LocalizedStringResource(
-          "Your level", table: "Onboarding", comment: "Row with the learner's level in a subject"),
+        label: goal.targetLanguage.map {
+          LocalizedStringResource("\(Locale.current.languageName($0)) level", table: "Plan")
+        }
+          ?? LocalizedStringResource(
+            "Level", table: "Onboarding", comment: "Row with the level the learner described"),
         value: $0)
     }
   }

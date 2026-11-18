@@ -163,7 +163,7 @@ private struct CourseCell: View {
           }
         }
 
-        if let lead = firstSentence(course.description) {
+        if let lead = firstSentence(course.promise) {
           Text(lead)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)

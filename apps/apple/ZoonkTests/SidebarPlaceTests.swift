@@ -45,6 +45,21 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 
+  /// Narrowing the window and widening it again keeps what the learner started open.
+  func testAResizeKeepsAPracticeStartedFromASidebarPlace() {
+    let router = AppRouter()
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+    router.open(.mistakes)
+    router.open(.mistakePractice())
+
+    router.leaveStudyTab(keepingPlace: true)
+    router.sidebarTabs = []
+    router.sidebarTabs = Set(AppTab.sidebarPlaces)
+
+    XCTAssertEqual(router.selectedTab, .mistakes)
+    XCTAssertEqual(router.tasks, [.mistakePractice()])
+  }
+
   func testWithoutASidebarAPageOpensOnTheTabItCameFrom() {
     let router = AppRouter()
 

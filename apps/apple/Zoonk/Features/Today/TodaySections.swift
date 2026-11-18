@@ -127,7 +127,7 @@ struct TodayMoreSection: View {
                   comment: "Adds the lessons earlier days left to today")
               }
               .buttonStyle(.outline)
-              .controlSize(.large)
+              .controlSize(.small)
               .disabled(busy != nil && busy != .catchUp)
 
               if failed == .catchUp {
@@ -240,7 +240,7 @@ struct TodayPlanChangeSection: View {
             }
           }
           .buttonStyle(.outline)
-          .controlSize(.large)
+          .controlSize(.small)
         }
         .listRowSeparator(.hidden)
       } else if isBehind, let behind = change.behind {
@@ -394,7 +394,7 @@ struct TodayPlanChangeSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      FlowLayout(spacing: 8) {
+      ButtonRow {
         // On a return after a break, nothing that asks for more hours leads.
         if view.session.freshStart == .welcomeBack {
           keepTimeButton
@@ -406,7 +406,8 @@ struct TodayPlanChangeSection: View {
 
         missedDaysMenu(behind)
       }
-      .controlSize(.large)
+      // A notice's answers beside its words, as main's suggestion panel draws them.
+      .controlSize(.small)
       .disabled(isSaving)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -438,6 +439,7 @@ struct TodayPlanChangeSection: View {
       }
     } label: {
       Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+        .typeStyle(.note.weight(.medium))
     }
     .buttonStyle(.outline)
   }
@@ -1191,7 +1193,7 @@ struct TodayLanguagePracticeSection: View {
           action
         }
         .buttonStyle(.outline)
-        .controlSize(.large)
+        .controlSize(.small)
       }
       .listRowSeparator(.hidden)
     }

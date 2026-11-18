@@ -23,8 +23,11 @@ final class SetupProgressTests: XCTestCase {
     XCTAssertFalse(SetupProgress.showsSkipAll(current: .buddy, steps: [.buddy, .plan]))
   }
 
-  func testRevisitingAnAnsweredQuestionDoesNotCountItAsLeftToSkip() {
-    XCTAssertFalse(SetupProgress.showsSkipAll(current: .watch, steps: [.listen, .buddy, .plan]))
+  /// Main's `getProfileProgress`: Skip all shows while another question about the learner is still
+  /// ahead, whether or not the one on screen was answered before.
+  func testSkipAllShowsOnARevisitedQuestionWhileAnotherIsAhead() {
+    XCTAssertTrue(SetupProgress.showsSkipAll(current: .watch, steps: [.listen, .buddy, .plan]))
+    XCTAssertFalse(SetupProgress.showsSkipAll(current: .listen, steps: [.buddy, .plan]))
   }
 
   func testCountsTheAnsweredQuestionsAndTheOnesLeft() {
