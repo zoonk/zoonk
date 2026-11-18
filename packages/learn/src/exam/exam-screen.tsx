@@ -8,7 +8,7 @@ import { useDaysLeftText } from "../_components/days-left";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { FactSegments } from "../_components/task-meta";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate, useFormatIsoRange } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
@@ -39,6 +39,7 @@ function useExamDays(): string[] {
   const format = useFormatter();
   const { exam } = useExamScreen();
   const formatDate = useFormatIsoDate();
+  const formatRange = useFormatIsoRange();
   const formatPlanDate = useFormatPlanDate();
   const dayDate = useExamDayDate();
   const formatTimeOfDay = useFormatTimeOfDay();
@@ -51,6 +52,17 @@ function useExamDays(): string[] {
     return exam.days.map((day) =>
       toLabelCase(formatDate(day.date, "sentenceMonth", { year: "always" })),
     );
+  }
+
+  const [first, last] = exam.days;
+
+  if (exam.days.length === 2 && first && last && !timePerDay) {
+    const date = formatRange({ end: last.date, start: first.date });
+    const range = estimated ? t("~{date}", { date }) : date;
+
+    return sharedTime
+      ? [range, t("Starts at {time}", { time: formatTimeOfDay(sharedTime) })]
+      : [range];
   }
 
   const dayText = (isoDate: string): string => {
@@ -152,7 +164,11 @@ function useDaysLeft(): string | null {
 }
 
 function ExamFacts() {
-  const dates = useExamDays();
+  const dates = useExamDays().map((date) => ({
+    content: <span className="whitespace-nowrap">{date}</span>,
+    key: date,
+  }));
+
   const daysLeft = useDaysLeft();
   const days = daysLeft ? [...dates, daysLeft] : dates;
 

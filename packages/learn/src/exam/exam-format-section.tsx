@@ -85,7 +85,12 @@ function useDayTitle() {
       return number;
     }
 
-    const date = dayDate(day.date, { estimated: exam.daysEstimated });
+    const date = (
+      <span className="whitespace-nowrap">
+        {dayDate(day.date, { estimated: exam.daysEstimated })}
+      </span>
+    );
+
     return numbered ? <FactSegments facts={[date]} lead={number} /> : date;
   };
 }
