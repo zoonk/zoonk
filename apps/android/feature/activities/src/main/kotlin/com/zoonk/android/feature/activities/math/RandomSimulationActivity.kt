@@ -285,7 +285,7 @@ private fun OutcomeHistogram(
         xDomain = first - HALF..last + HALF,
         yDomain = 0.0..maxOf(counts.maxOfOrNull { it.second } ?: 1, 1).toDouble(),
         yTicks = emptyList(),
-        xTicks = ticks.map { it.toDouble() },
+        xTicks = listOf(ticks.map { it.toDouble() }),
         formatY = { "" },
         formatX = { value ->
             when {
@@ -316,7 +316,7 @@ private fun RunningShareChart(
         xDomain = 0.0..runs.toDouble(),
         yDomain = 0.0..1.0,
         yTicks = listOf(0.0, HALF, 1.0),
-        xTicks = listOf(0.0, runs.toDouble()),
+        xTicks = listOf(listOf(0.0, runs.toDouble())),
         formatY = { formatAmount(it * PERCENT, locale, "%", maximumFractionDigits = 0) },
         formatX = { formatAmount(it, locale) },
         area = CHART_AREA,

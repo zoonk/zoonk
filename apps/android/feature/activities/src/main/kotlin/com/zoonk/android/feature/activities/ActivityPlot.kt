@@ -194,7 +194,7 @@ fun ActivityPlot(
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
-    xTicks: List<Double>? = null,
+    xTicks: List<List<Double>>? = null,
     area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
@@ -221,10 +221,11 @@ fun ActivityPlot(
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
         val xStyle = style.copy(color = muted)
-        // A caller's own ticks (an angle's quarter turns) show when they fit side by side; otherwise round ones that do.
+        // A caller's own ticks (an angle's quarter turns, then half turns) show as far as they fit; otherwise round ones that do.
         val given =
-            xTicks?.map { it to measurer.measure(formatX(it), xStyle) }?.takeIf { labels ->
-                x.fitsSideBySide(labels.map { (tick, label) -> tick to label.size.width })
+            xTicks?.let { choices ->
+                val labels = choices.flatten().distinct().associateWith { measurer.measure(formatX(it), xStyle) }
+                x.fittedChoice(choices) { labels.getValue(it).size.width }.map { it to labels.getValue(it) }
             }
         drawPlotAxes(x, y, given ?: measurer.fittedPlotTicks(x, xStyle, formatX), yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
@@ -293,13 +294,11 @@ private fun LinearScale.labelSpan(
     return start to start + width
 }
 
-/** Whether labels [widths] wide, one per tick, sit side by side where the axis draws them. */
-internal fun LinearScale.fitsSideBySide(widths: List<Pair<Double, Int>>): Boolean =
-    widths
-        .map { (tick, width) -> labelSpan(tick, width) }
-        .sortedBy { it.first }
-        .zipWithNext()
-        .all { (a, b) -> a.second < b.first }
+/** Of a caller's tick [choices], densest first, the first whose labels ([width] each) fit where the axis draws them. */
+internal fun LinearScale.fittedChoice(
+    choices: List<List<Double>>,
+    width: (Double) -> Int,
+): List<Double> = fittingTicks(domain, frame = { labelSpan(it, width(it)) }, values = { choices[choices.size - it] }, count = choices.size)
 
 internal fun TextMeasurer.fittedPlotTicks(
     scale: LinearScale,
