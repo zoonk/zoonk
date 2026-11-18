@@ -2,14 +2,15 @@
 
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DoneMark } from "../_components/status-mark";
-import { SESSION_LIST_ID } from "./today-ids";
 
 export function FoldRow({
+  controls,
   done,
   label,
   onToggle,
   open,
 }: {
+  controls: string;
   done: boolean;
   label: string;
   onToggle: () => void;
@@ -17,7 +18,7 @@ export function FoldRow({
 }) {
   return (
     <button
-      aria-controls={SESSION_LIST_ID}
+      aria-controls={controls}
       aria-expanded={open}
       className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg px-2.5 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
       onClick={onToggle}

@@ -123,6 +123,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
     <div className="flex flex-col" data-slot="today-session-list">
       {foldsDone && (
         <FoldRow
+          controls={SESSION_LIST_ID}
           done
           label={doneLabel}
           onToggle={() => setDoneOpen((open) => !open)}
@@ -157,6 +158,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
 
       {more > 0 && (
         <FoldRow
+          controls={SESSION_LIST_ID}
           done={false}
           label={
             moreOpen
