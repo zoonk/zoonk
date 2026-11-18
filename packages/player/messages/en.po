@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value} per {unit}"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "Tap a span to measure it"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "Pick a span to measure it"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -1090,11 +1090,6 @@ msgid "What-if events"
 msgstr "What-if events"
 
 #: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "With the what-ifs"
-
-#: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
 msgid "Now"
 msgstr "Now"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "Piano keys"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "A half step is the distance to the next key, counting black keys."
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "A piano keyboard from C to B. Pressed: {notes}."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "Play the sound, then pick."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "A half step is the distance to the next key, counting black keys."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "Play the sound"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "Hear your notes"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "Hear it"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1399,6 +1394,11 @@ msgid "What happened"
 msgstr "What happened"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "FZSgzg"
+msgid "{axis}: fewer"
+msgstr "{axis}: fewer"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}: down"
@@ -1407,6 +1407,11 @@ msgstr "{axis}: down"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}: no change"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "ZTcdGM"
+msgid "{axis}: more"
+msgstr "{axis}: more"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"
@@ -1477,11 +1482,6 @@ msgstr "Neither line has moved yet."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "The new crossing is at {value}."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "Tap a numbered place to see what's there."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"

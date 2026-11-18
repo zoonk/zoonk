@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value}（{unit}あたり）"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "測定する区間をタップしてください"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "測りたい区間を選んでください"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -1090,11 +1090,6 @@ msgid "What-if events"
 msgstr "条件を変えて試す"
 
 #: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "条件を加えた場合"
-
-#: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
 msgid "Now"
 msgstr "現在"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "ピアノの鍵盤"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "半音とは、黒鍵も含めて隣り合う鍵盤の音の間隔です。"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "CからBまでのピアノの鍵盤です。押している鍵盤：{notes}。"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "音を再生してから選んでください。"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "半音とは、黒鍵も含めて隣り合う鍵盤の音の間隔です。"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "音を再生する"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "選んだ音を聴く"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "音を聞く"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1399,6 +1394,11 @@ msgid "What happened"
 msgstr "結果"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "FZSgzg"
+msgid "{axis}: fewer"
+msgstr "{axis}：減らす"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}：下がる"
@@ -1407,6 +1407,11 @@ msgstr "{axis}：下がる"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}：変化なし"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "ZTcdGM"
+msgid "{axis}: more"
+msgstr "{axis}：増やす"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"
@@ -1477,11 +1482,6 @@ msgstr "どちらの線もまだ動いていません。"
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "新しい交点は{value}です。"
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "番号の付いた場所をタップすると、何があるか見られます。"
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"

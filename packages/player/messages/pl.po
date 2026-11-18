@@ -687,9 +687,9 @@ msgid "{value} per {unit}"
 msgstr "{value} na {unit}"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "Dotknij przedziału, aby go zmierzyć"
+msgctxt "BvV4Lw"
+msgid "Pick a span to measure it"
+msgstr "Wybierz odcinek, aby go zmierzyć"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "OmKD_i"
@@ -1090,11 +1090,6 @@ msgid "What-if events"
 msgstr "Scenariusze „co by było, gdyby”"
 
 #: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "Z włączonymi scenariuszami"
-
-#: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
 msgid "Now"
 msgstr "Teraz"
@@ -1262,14 +1257,19 @@ msgid "Piano keys"
 msgstr "Klawisze fortepianu"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
-msgctxt "r2N9bw"
-msgid "A half step is the distance to the next key, counting black keys."
-msgstr "Półton to odległość do następnego klawisza, licząc też czarne."
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Klawiatura fortepianu od C do H. Naciśnięte klawisze: {notes}."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "Odtwórz dźwięk, a potem wybierz."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Półton to odległość do następnego klawisza, licząc też czarne."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
@@ -1300,11 +1300,6 @@ msgstr "Odtwórz dźwięk"
 msgctxt "X9t3Pl"
 msgid "Hear your notes"
 msgstr "Posłuchaj wybranych dźwięków"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "Posłuchaj"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1399,6 +1394,11 @@ msgid "What happened"
 msgstr "Co się stało"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "FZSgzg"
+msgid "{axis}: fewer"
+msgstr "{axis}: mniej"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "IHxN7y"
 msgid "{axis}: down"
 msgstr "{axis}: w dół"
@@ -1407,6 +1407,11 @@ msgstr "{axis}: w dół"
 msgctxt "wEr5qf"
 msgid "{axis}: no change"
 msgstr "{axis}: bez zmian"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "ZTcdGM"
+msgid "{axis}: more"
+msgstr "{axis}: więcej"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "cwnIuM"
@@ -1477,11 +1482,6 @@ msgstr "Żadna linia nie została jeszcze przesunięta."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "Nowy punkt przecięcia: {value}."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "Dotknij miejsca z numerem, by zobaczyć, co tam jest."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"
