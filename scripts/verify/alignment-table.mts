@@ -1,8 +1,7 @@
 /**
  * The shared pieces whose parts must line up, and how. Each piece names its parts by the
- * `data-slot`s the pieces carry; Android and Apple name the same parts and relationships
- * (`REPORT-SHAPE.md` in the alignment build notes). Failures come only from these declarations; an
- * inferred group is a discovery lead.
+ * `data-slot`s the pieces carry; Android and Apple name the same parts and relationships.
+ * Failures come only from these declarations; an inferred group is a discovery lead.
  */
 export const PART_NAMES = ["end", "label", "lead", "mark", "note", "value"] as const;
 

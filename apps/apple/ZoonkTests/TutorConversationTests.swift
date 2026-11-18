@@ -651,7 +651,7 @@ final class TutorConversationTests: XCTestCase {
   }
 }
 
-/// RV90: a lesson's Ask in a sheet keeps its view as the lesson moves to its next step, so an
+/// A lesson's Ask in a sheet keeps its view as the lesson moves to its next step, so an
 /// offer still waiting for its step's thread is dropped, never sent for the step the learner left.
 @MainActor
 final class TutorOfferStepTests: XCTestCase {

@@ -133,7 +133,7 @@ struct DayProgressLead: View {
 
   var body: some View {
     // The bold number in the line's own face: a strong run otherwise takes the font's bold face,
-    // which draws other figures than the rest of the line (read b13-6).
+    // which draws other figures than the rest of the line.
     Text(lead, legibility: legibility)
       .typeStyle(.body.monospacedDigit())
   }
