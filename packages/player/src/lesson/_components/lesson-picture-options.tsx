@@ -66,7 +66,7 @@ function PictureOptionContent({
           style={OPTION_PICTURE_BOX_STYLE}
         >
           <p role="status">{t("Drawing the picture…")}</p>
-          <p className="leading-snug">{pictureText}</p>
+          <p className="line-clamp-3 leading-snug wrap-anywhere">{pictureText}</p>
         </MediaPending>
       );
     }

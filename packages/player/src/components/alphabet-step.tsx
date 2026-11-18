@@ -29,9 +29,14 @@ function AlphabetReading({
   pronunciation: string;
   readingAid: string;
 }) {
+  const t = useExtracted();
+
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-foreground text-xl font-medium">{readingAid}</p>
+      <dl>
+        <dt className="text-muted-foreground text-xs font-medium">{t("Latin spelling")}</dt>
+        <dd className="text-foreground text-xl font-medium">{readingAid}</dd>
+      </dl>
       <p className="text-muted-foreground text-sm">{pronunciation}</p>
     </div>
   );
@@ -56,10 +61,17 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
   );
 }
 
+const HIRAGANA = /^\p{Script=Hiragana}+$/u;
+const KATAKANA = /^\p{Script=Katakana}+$/u;
+
 export function AlphabetStep({ step }: { step: SerializedStep }) {
   const t = useExtracted();
   const audio = usePromptAudio();
   const content = getAlphabetContent(step);
+
+  const script =
+    (HIRAGANA.test(content.symbol) && t("Hiragana")) ||
+    (KATAKANA.test(content.symbol) && t("Katakana"));
 
   return (
     <PlayerReadScene className="w-full">
@@ -69,6 +81,7 @@ export function AlphabetStep({ step }: { step: SerializedStep }) {
         role="region"
       >
         <PlayerReadSceneStack className="gap-3">
+          {script && <p className="text-muted-foreground text-xs font-medium">{script}</p>}
           <div className="flex items-center gap-2">
             <AlphabetSymbol>{content.symbol}</AlphabetSymbol>
             {audio && <PromptAudioButton audio={audio} variant="inline" />}

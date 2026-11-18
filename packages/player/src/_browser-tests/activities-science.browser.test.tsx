@@ -204,7 +204,7 @@ describe("science activities", () => {
     await labelSpots(HEART_SPOTS);
 
     await expect
-      .element(page.getByText("Every spot has a name. Tap a spot to change it."))
+      .element(page.getByText("Every spot has a name. Pick a spot to change it."))
       .toBeVisible();
 
     await checkActivity();

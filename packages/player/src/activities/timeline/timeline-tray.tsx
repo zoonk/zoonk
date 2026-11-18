@@ -32,9 +32,11 @@ export function TimelineTray({
   return (
     <div className="flex flex-col gap-2" data-slot="timeline-tray">
       <p className="text-muted-foreground text-xs">
-        {t("{count, plural, one {# event to place} other {# events to place}}", {
-          count: remaining,
-        })}
+        {remaining > 1
+          ? t("1 of {count} events here, the next comes after", { count: String(remaining) })
+          : t("{count, plural, one {# event to place} other {# events to place}}", {
+              count: remaining,
+            })}
       </p>
 
       <button

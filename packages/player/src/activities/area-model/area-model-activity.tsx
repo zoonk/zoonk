@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
   ActivityCanvas,
+  ActivityCanvasLabel,
   ActivityReadout,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
@@ -88,6 +89,7 @@ export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
 
   return (
     <ActivityCanvas labelId={labelId}>
+      {!isChecked && <ActivityCanvasLabel>{t("Drag to split")}</ActivityCanvasLabel>}
       <ActivityPlot
         height={gridHeight(fields)}
         padding={fields.model === "area" ? GRID_PADDING : BAR_PADDING}

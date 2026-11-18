@@ -41,7 +41,6 @@ export function StepSolverActivity({
 
   const isChecked = phase === "checked";
   const current = isChecked ? fields.steps.length : currentStepIndex(fields.steps, picks);
-  const maxValue = Math.max(...fields.steps.map((step) => Math.abs(step.value)));
 
   function handlePick(stepId: string, choiceId: string) {
     const next = addPick(picks, stepId, choiceId);
@@ -72,7 +71,6 @@ export function StepSolverActivity({
             index={index}
             isChecked={isChecked}
             key={step.id}
-            maxValue={maxValue}
             onPick={(choiceId) => handlePick(step.id, choiceId)}
             picks={picks[step.id] ?? []}
             status={statusOf(index, current)}

@@ -322,6 +322,7 @@ describe("music activities", () => {
 
     const firstVisit = renderLessonPlayer({ lesson });
     await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
+
     await page.getByRole("button", { name: "Skip for now" }).click();
     await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
 
@@ -333,7 +334,10 @@ describe("music activities", () => {
 
     await page.getByRole("button", { name: "Check the sound delay again" }).click();
     await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
-    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Start the beat" }))
+      .toBeVisible();
   });
 
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {

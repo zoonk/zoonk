@@ -12,7 +12,7 @@ function useBuildState(build: Build) {
   const open = build.atoms.filter((atom) => atomFill(build, atom) === "open").length;
 
   if (build.atoms.length === 0) {
-    return { text: t("Tap an element to add its first atom."), tone: "muted" as const };
+    return { text: t("Pick an element to add its first atom."), tone: "muted" as const };
   }
 
   if (over) {
@@ -63,10 +63,10 @@ export function MoleculeStatus({
         <p className="text-muted-foreground text-xs">
           {selectedName
             ? t(
-                "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it.",
+                "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it.",
                 { atom: selectedName },
               )
-            : t("Tap an atom to select it.")}
+            : t("Pick an atom to select it.")}
         </p>
       )}
     </div>

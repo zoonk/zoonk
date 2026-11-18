@@ -309,7 +309,7 @@ describe("going back to reread", () => {
     const stop = vi.spyOn(AudioScheduledSourceNode.prototype, "stop");
     playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
     await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the beat" }).click();
 
     await expect
       .element(page.getByRole("button", { name: "Skip for now" }))
@@ -368,7 +368,7 @@ describe("going back to reread", () => {
     audioStart.hold = sound.promise;
     playLesson([reading, activity(activityContentFixtures.rhythmTapper)]);
     await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the beat" }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
     const createOscillator = vi.spyOn(AudioContext.prototype, "createOscillator");
@@ -377,7 +377,10 @@ describe("going back to reread", () => {
     expect(createOscillator).not.toHaveBeenCalled();
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Start the beat" }))
+      .toBeVisible();
+
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
   });
 
