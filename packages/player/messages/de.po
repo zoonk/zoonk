@@ -3831,9 +3831,9 @@ msgid "Close questions"
 msgstr "Fragen schließen"
 
 #: src/questions/lesson-question-panel.tsx
-msgctxt "lyjQP7"
-msgid "Ask Zu with a free account"
-msgstr "Frag Zu mit einem kostenlosen Konto"
+msgctxt "dmlJ5t"
+msgid "Ask {name} with a free account"
+msgstr "Frag {name} mit einem kostenlosen Konto"
 
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
