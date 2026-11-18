@@ -1,6 +1,6 @@
 "use client";
 
-import { getActivityDecimalPlaces } from "@zoonk/core/library/activities/answers";
+import { getActivityNumericDisplay } from "@zoonk/core/library/activities/answers";
 import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { NumericAnswerField } from "@zoonk/learn/numeric-answer-field";
@@ -125,6 +125,26 @@ function displayedAnswer(
   return { ...answer, value: parseLocalizedNumber({ locale, text }) ?? answer.value };
 }
 
+function checkedDigits({
+  display,
+  isCorrect,
+  value,
+}: {
+  display: ReturnType<typeof getActivityNumericDisplay>;
+  isCorrect: boolean | null;
+  value: number | undefined;
+}) {
+  if (!display || display.places === null || value === undefined) {
+    return null;
+  }
+
+  const { places, value: expected } = display;
+  const shown = displayedAnswer({ kind: "numeric", value }, places);
+
+  // Keep the submitted digits if rounding would make a wrong value look right.
+  return isCorrect === false && numericValue(shown) === expected ? null : places;
+}
+
 export function ActivityStep({
   answer,
   content,
@@ -137,7 +157,8 @@ export function ActivityStep({
   const labelId = useId();
   const interactionState = usePlayerInteractionState();
   const { answersOnCanvas, badge } = activityRenderers[content.template];
-  const places = getActivityDecimalPlaces(content);
+  const display = getActivityNumericDisplay(content);
+  const places = display?.places ?? null;
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const badgeKind = badge(content);
   const [canvasAsks, setCanvasAsks] = useState(false);
@@ -148,11 +169,12 @@ export function ActivityStep({
 
   const maximumFractionDigits =
     check.kind === "numeric"
-      ? Math.max(
+      ? ((phase === "checked" ? checkedDigits({ display, isCorrect, value }) : undefined) ??
+        Math.max(
           exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
           places ?? 0,
           typedPlaces,
-        )
+        ))
       : undefined;
 
   const shownAnswer = phase === "checked" ? displayedAnswer(answer, maximumFractionDigits) : answer;
@@ -214,8 +236,8 @@ export function ActivityStep({
         <ActivityFeedback
           answer={shownAnswer}
           content={content}
+          display={display}
           isCorrect={isCorrect}
-          places={places}
           showsNumbers={!answersOnCanvas}
         />
       )}

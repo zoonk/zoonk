@@ -58,11 +58,7 @@ function expectedPoint({
 
   const input = check.inputs?.findLast((item) => item.name === axis.name);
 
-  return {
-    label: formatOutput(expected.value),
-    x: input?.value ?? axis.initial,
-    y: expected.value,
-  };
+  return { label: formatOutput(expected.value), x: input?.value ?? axis.initial, y: check.answer };
 }
 
 export function FormulaModelActivity(props: FormulaModelProps) {

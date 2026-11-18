@@ -151,11 +151,15 @@ describe("science activities", () => {
     await expectVerdict("Not quite");
 
     await expect
-      .poll(() => document.querySelector("[data-slot='activity-plot']")?.textContent)
-      .toContain("40.77");
+      .poll(() =>
+        document
+          .querySelector("[data-slot='activity-plot']")
+          ?.textContent.replaceAll("\u00A0", " "),
+      )
+      .toContain("41 m");
   });
 
-  it("formula model simulation: feedback agrees with the chart and explanation after a slider miss", async () => {
+  it("formula model simulation: the chart and feedback follow the hint after a slider miss", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
@@ -175,7 +179,7 @@ describe("science activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("40.775 m", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
 
     expect(feedback.getByText(/farther than at any other angle/u).element().textContent).toContain(
       "40.775",
@@ -187,10 +191,10 @@ describe("science activities", () => {
           text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775 m");
+      .toContain("41 m");
   });
 
-  it("formula model simulation: the chart writes the right answer with the digits a typed answer needs", async () => {
+  it("formula model simulation: a near miss stays distinct from the chart's right answer", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
@@ -210,7 +214,7 @@ describe("science activities", () => {
     await expectVerdict("Not quite");
     await expect.element(valueInput()).toHaveValue("40.7849");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("40.7747 m", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
 
     await expect
       .poll(() =>
@@ -218,7 +222,7 @@ describe("science activities", () => {
           text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.7747 m");
+      .toContain("41 m");
   });
 
   it("labeled diagram: every name on its part is right", async () => {
