@@ -137,7 +137,7 @@ describe("language challenges are Plus only", () => {
       const view = await getGoalPlan(goal.id);
 
       expect(view.status === "ready" && view.plan.end).toStrictEqual(
-        final ? { kind: "finished" } : null,
+        final ? { finishedOn: null, kind: "finished" } : null,
       );
 
       expect(view.status === "ready" && view.plan.currentPhase).toBe(1);
