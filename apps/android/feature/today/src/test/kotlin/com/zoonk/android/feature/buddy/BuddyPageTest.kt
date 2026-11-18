@@ -77,7 +77,7 @@ class BuddyPageTest {
                 )
             }
         }
-        compose.onNodeWithText("Energy").performClick()
+        compose.onNodeWithText("Zu's Energy").performClick()
         assertEquals(AppRoute.StatsEnergy, navigator.currentRoute)
         assertEquals(false, dayOpened)
     }
