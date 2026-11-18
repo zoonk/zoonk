@@ -2722,9 +2722,9 @@ msgid "to"
 msgstr "a"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "HF2MOq"
-msgid "{count, plural, one {# event to place} other {# events to place, one at a time}}"
-msgstr "{count, plural, one {# evento da posizionare} other {# eventi da posizionare, uno alla volta}}"
+msgctxt "WeCA4I"
+msgid "{count, plural, one {# event to place} other {# events to place}}"
+msgstr "{count, plural, one {# evento da posizionare} other {# eventi da posizionare}}"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"

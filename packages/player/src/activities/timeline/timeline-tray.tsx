@@ -32,7 +32,7 @@ export function TimelineTray({
   return (
     <div className="flex flex-col gap-2" data-slot="timeline-tray">
       <p className="text-muted-foreground text-xs">
-        {t("{count, plural, one {# event to place} other {# events to place, one at a time}}", {
+        {t("{count, plural, one {# event to place} other {# events to place}}", {
           count: remaining,
         })}
       </p>
