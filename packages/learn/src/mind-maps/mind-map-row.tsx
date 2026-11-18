@@ -66,26 +66,26 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
 }
 
 function RowAction({
+  describedBy,
   isPending,
   onCreate,
   onRetry,
   shown,
   slowDown,
-  titleId,
 }: {
+  describedBy: string;
   isPending: boolean;
   onCreate?: () => void;
   onRetry: () => void;
   shown: MindMapShown;
   slowDown: boolean;
-  titleId: string;
 }) {
   const t = useExtracted();
 
   if (shown === "failed" || shown === "unreachable") {
     return (
       <Button
-        aria-describedby={titleId}
+        aria-describedby={describedBy}
         busy={isPending}
         onClick={onRetry}
         size="sm"
@@ -99,7 +99,7 @@ function RowAction({
   if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
-        aria-describedby={titleId}
+        aria-describedby={describedBy}
         busy={isPending}
         onClick={onCreate}
         size="sm"
@@ -120,15 +120,20 @@ function RowAction({
 export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "retry" | "shown"> &
   Partial<Pick<MindMapRequest, "create" | "save">>;
 
-/** The row for a map whose request someone else follows, like a page that shows it twice. */
+/**
+ * The row for a map whose request someone else follows, like a page that shows it twice. `noteId`
+ * names a line outside the row that its action also reads out, like what making the map costs.
+ */
 export function MindMapRowView({
   className,
+  noteId,
   place,
   plus,
   request,
   view,
 }: {
   className?: string;
+  noteId?: string;
   place: MindMapRowPlace;
   plus: boolean;
   request: MindMapRowRequest;
@@ -189,12 +194,12 @@ export function MindMapRowView({
           {body}
           <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>
             <RowAction
+              describedBy={noteId ? `${titleId} ${noteId}` : titleId}
               isPending={isPending}
               onCreate={create}
               onRetry={retry}
               shown={shown}
               slowDown={limit?.status === "slowDown"}
-              titleId={titleId}
             />
           </span>
         </div>
