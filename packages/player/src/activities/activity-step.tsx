@@ -165,7 +165,7 @@ export function ActivityStep({
   const maximumFractionDigits =
     check.kind === "numeric"
       ? ((phase === "checked" && value !== undefined
-          ? getCheckedAnswerPlaces({ isCorrect: isCorrect !== false, rounded: display, value })
+          ? getCheckedAnswerPlaces({ content, isCorrect: isCorrect !== false, value })
           : null) ??
         Math.max(
           exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),

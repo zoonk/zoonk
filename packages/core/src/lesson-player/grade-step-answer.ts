@@ -1,5 +1,6 @@
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
+import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import {
   checkActivityAnswer,
   getActivityRoundedAnswer,
@@ -128,7 +129,11 @@ function gradeActivity({
     });
 
   return {
-    answerText: write(value, getCheckedAnswerPlaces({ isCorrect, rounded, value })),
+    answerText: write(
+      value,
+      getCheckedAnswerPlaces({ content: step.content, isCorrect, value }) ??
+        Math.max(exactDigits, countDecimalPlaces(value)),
+    ),
     correctAnswer: isCorrect ? null : write(rounded?.value ?? check.answer, rounded?.places),
     expected: getActivityExpected(step.content),
     feedback: check.explanation,
