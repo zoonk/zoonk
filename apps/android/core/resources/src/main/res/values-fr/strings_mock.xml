@@ -17,7 +17,6 @@
   "mock_expired_detail": "6be650add720bb8b911942976ba0857f6879490a9dd7436f371c0f99641f2460",
   "mock_expired_title": "3e807c7e777ce3eb985a4329f6670f191812af1626c7f65794a32d0875aa1765",
   "mock_flag": "cab2f3d8956e7ca0f1dab75bbfd0428845444b5eea4ecc1831543a01242b730c",
-  "mock_flagged_count": "b9b260b8917541db6aeda2f3276f62219336691d7e5160cb715b5414bd4f9a9c",
   "mock_hand_in": "670022846164c809624907b511352771dd1ecff3fc75eb2783b06f89837f66df",
   "mock_hand_in_final": "50af731f0df511dbb990514730cc97c2291e2694bf151c7cfcbef59d31dacd27",
   "mock_hand_in_mock_title": "8530ae90fa14116245cea1e244260bbaa8d551bfddf88c0f475e80ca6fe7b826",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "8cce4729aaf592fc82f0c0bfa098c0dc29b2e1373a73d87688446f4cdb90b0d1",
   "mock_left_flagged": "4a9dee675ead616f7cfdd1d602a5662b2c809437fae8e406cf3690fb648a39fa",
   "mock_left_flagged_only": "31815d2d3dc4b518a8809bdb318486214d1de9d28e383a07bdd2709913481360",
+  "mock_legend_answered": "f7bd4e16909cf72883f2caa978d41c5b4559c291e377909f8c6da1aa9c6e3d80",
+  "mock_legend_current": "60730085ebd30389160123f915b3c09fc1aff9d428e8f7388e6b0960e399d554",
+  "mock_legend_review": "7beb39e87e858de3353d287e61d2c3257ac40e725c6a5a1ec96a3459f88ca590",
+  "mock_legend_review_count": "338c1c0a155a5c6d01260f600483fa53ed150c41bcb2e3522d331658a9d89e3a",
+  "mock_legend_unanswered": "83aef8de9dc05d5ff8ff0fbfbd634a101b3e9667792b05f2086949cb6e715396",
   "mock_moves_forward": "f2ee8c32e084f26e3979d6806bfbf7d0902a47669c17b5e1dfffa28ae1c1a8af",
   "mock_moves_forward_must": "9d75f80209b554e5fb16fc276043ea153d3c7f4a750fc366dfdfe6d19d34451d",
   "mock_moves_must": "31a19be81dc0a9973fe1b8e4dfa88fbf17db4d643a92b3ac2ca27552dec7c20e",
@@ -187,12 +191,6 @@
         <item quantity="many">%d réponses données</item>
         <item quantity="other">%d réponses données</item>
     </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d marquée</item>
-        <item quantity="many">%d marquées</item>
-        <item quantity="other">%d marquées</item>
-    </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
@@ -256,4 +254,13 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Toutes les tâches sont terminées. Une fois cet examen blanc rendu, tu ne pourras plus les refaire.</string>
     <string name="mock_keep_going">Continuer</string>
+    <string name="mock_legend_unanswered">Sans réponse</string>
+    <string name="mock_legend_answered">Avec réponse</string>
+    <string name="mock_legend_current">Question en cours</string>
+    <string name="mock_legend_review">Marquée pour révision</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d marquée pour révision</item>
+        <item quantity="many">%d marquées pour révision</item>
+        <item quantity="other">%d marquées pour révision</item>
+    </plurals>
 </resources>

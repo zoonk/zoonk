@@ -17,7 +17,6 @@
   "mock_expired_detail": "fe6b6dee87f2ed9fe26fdb5a010c7d06b539c92f734bcc343bbad0b4838209fd",
   "mock_expired_title": "8c51ab7393289707b9a8555e0b22ce01785ceb7e89e487c3703bac3c6cf0ebb7",
   "mock_flag": "f83cfa764a0b6558cdb60fd0ac6735249632d9aca1d510118a4526da8e98e639",
-  "mock_flagged_count": "5168990bf6b4f77e13d018619ef20502ef5e1cbbb670597aafd2b25baa85781e",
   "mock_hand_in": "8145bdbc976ec3e905d92b8eea715c5e84838fb15de94653d165c8cc11821220",
   "mock_hand_in_final": "87548a95dc881c780707bb7894fe3ff28ec6e815141ac459f1ae51daf95e79f9",
   "mock_hand_in_mock_title": "6883a7b237661578a38a57c6dda8c9a315da43bc49f09f817bd3e00257a01bd0",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "e3240d1e333341f3b84d924b598ce8e5ff423b1d36a3f709c46abe4ed2ff4680",
   "mock_left_flagged": "ee04972faba415fbfc53f4fa8d29b8ab9ca3addb411c2c7ac3d2e0fb8d1bc160",
   "mock_left_flagged_only": "cd97c34c61d32d0ab5296b3e5d0055a00fb55283d55f921d88c0a2fbaca0361a",
+  "mock_legend_answered": "75348bc06f9d30b3a62b4b8a1dc986f6ab9837f1d9f1b51103d0b16ce0a8e566",
+  "mock_legend_current": "6c9df36511589d99adc78e7a9bb0f3013eb30d84855c33155d21bf38ac285117",
+  "mock_legend_review": "469089f88ec4843ec854c098dc5f9102cd27a06e43c558559b72b76913b562b2",
+  "mock_legend_review_count": "de04ccdbbd0d3bcf0156d874fbcc6662bcb93e4706b9f662d9c323301a638bb8",
+  "mock_legend_unanswered": "f857fa69f54614e386e1ba7c1091a112d7df1e91670b6416bb5589d51ec62d81",
   "mock_moves_forward": "228d40cdf798ce4ab7eb122c943bc11e07bcf30f7a5e58929fb791bde23ef6b2",
   "mock_moves_forward_must": "1fddb15a6974484ee502f72e6d10eefdd7fc3f338528c652d1b464b59a04dc42",
   "mock_moves_must": "3199eecea202ff9d33e6e9435a2a0937496880b3602e8b4c08267e86a978dbcc",
@@ -187,12 +191,6 @@
         <item quantity="many">%d respondidas</item>
         <item quantity="other">%d respondidas</item>
     </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="one">%d marcada</item>
-        <item quantity="many">%d marcadas</item>
-        <item quantity="other">%d marcadas</item>
-    </plurals>
     <string name="mock_questions">Preguntas</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Pregunta %1$d</string>
@@ -256,4 +254,13 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Completaste todas las tareas. Después de esto, no podrás repetirlas en este simulacro.</string>
     <string name="mock_keep_going">Seguir</string>
+    <string name="mock_legend_unanswered">Sin responder</string>
+    <string name="mock_legend_answered">Respondida</string>
+    <string name="mock_legend_current">Pregunta actual</string>
+    <string name="mock_legend_review">Marcadas para revisar</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="one">%d marcada para revisar</item>
+        <item quantity="many">%d marcadas para revisar</item>
+        <item quantity="other">%d marcadas para revisar</item>
+    </plurals>
 </resources>

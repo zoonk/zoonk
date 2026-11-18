@@ -17,7 +17,6 @@
   "mock_expired_detail": "619e04071a4f48d40ff60c588bd5fcd01daa52f6cec1098d516c0e393c561097",
   "mock_expired_title": "fe96d54a878245903edf5242fbcb9bf20536f9fc3ac3c5956a8528c1e831d3b8",
   "mock_flag": "20cdefc022c95a34eb7aa008f468dfa257707cec0e31525514b000337782e7a6",
-  "mock_flagged_count": "7e5537a26542320e4f6368011f85ca9848251a0904ae5e3ae9f557df9871109c",
   "mock_hand_in": "d575d9bcc15433fa77420f48975d339edb88907eb4639147a720d18adfe9b340",
   "mock_hand_in_final": "3c0b92b4635e337993f3a6c3d44e73cc2995ad3ca03d09ccae7d1f440527d1b2",
   "mock_hand_in_mock_title": "234c8553f6382e20682115284e83efbedc8e85a9c6d5aa1895210fb37d361ee4",
@@ -35,6 +34,11 @@
   "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
   "mock_left_flagged": "496c80f1fd75aaf5b2da4deee471a8397abe0d9e808868b74a1a459d903ce983",
   "mock_left_flagged_only": "9fc0b153b96fd9417219c47e66e2df436d2ba2cbe4c0124dcff748110bf02fbc",
+  "mock_legend_answered": "1756ab93d3731eb750a1c336f9bd08c667afb1947173d083aac4a247ff6286ea",
+  "mock_legend_current": "2e1a20ec0fb58ea14a8baa6338d904660d2d9d8cb05101e56f4274b03174e400",
+  "mock_legend_review": "d48d87694f6dcf4ca91ab34b4ccbd5938086dc58d90c09c2dd8443558dfdff20",
+  "mock_legend_review_count": "3bf005f727d2d71776f6bdfce061bd4570f731a95f56b14ff70b237e11755d51",
+  "mock_legend_unanswered": "37dcfd1734c10d4b4748f32e70ad9890fe12fe2d1be7e4cad3336d7acf012262",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
@@ -169,10 +173,6 @@
     <plurals name="mock_answered_count">
         <item quantity="other">%d개 풀었어요</item>
     </plurals>
-    <!-- How many questions the learner flagged, under the question numbers: "2 flagged". -->
-    <plurals name="mock_flagged_count">
-        <item quantity="other">%d문제 표시됨</item>
-    </plurals>
     <string name="mock_questions">문제</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
@@ -232,4 +232,11 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">모든 과제를 마쳤어요. 제출하면 이 모의고사에서는 과제를 다시 할 수 없어요.</string>
     <string name="mock_keep_going">계속하기</string>
+    <string name="mock_legend_unanswered">안 푼 문제</string>
+    <string name="mock_legend_answered">푼 문제</string>
+    <string name="mock_legend_current">현재 문제</string>
+    <string name="mock_legend_review">다시 볼 문제</string>
+    <plurals name="mock_legend_review_count">
+        <item quantity="other">다시 볼 문제 %d개</item>
+    </plurals>
 </resources>
