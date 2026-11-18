@@ -28,42 +28,55 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertLessThanOrEqual(size.width, 96)
     XCTAssertGreaterThan(size.height, large.lineHeight)
   }
-  /// The guess's scale holds still on Check: revealing the real value changes no height above or
-  /// on the track.
-  @MainActor func testAGuessScaleKeepsItsHeightWhenTheRealValueShows() {
-    let scale = GuessScale(min: 1, max: 1000, kind: .log)
-    let height = { (isRevealed: Bool) in
-      UIHostingController(
-        rootView: ActivityGuessScaleView(
-          scale: scale, unit: "days", guess: 11.2, actual: 11.57, isRevealed: isRevealed,
-          onGuess: { _ in })
-      ).sizeThatFits(in: CGSize(width: 340, height: 2000)).height
-    }
+  /// The guess's scale holds still on Check, at every text size: the guess activity sizes the real
+  /// value's row and the revealed bar before they show, so its slider, which stays in the layout
+  /// once hidden, sits where it sat.
+  @MainActor func testAGuessScaleHoldsStillOnCheck() async throws {
+    let guesses:
+      [(min: Double, max: Double, scale: String, unit: String, guess: Double, real: Double)] = [
+        (1, 1000, "log", "days", 11.2, 11.57),
+        (0, 2_000_000, "linear", "R$", 900_000, 1_234_567),
+        (0, 100, "linear", "km/h", 40, 7.25),
+      ]
 
-    XCTAssertEqual(height(false), height(true))
-  }
-
-  /// At the largest text sizes the real value's row wraps, and it still holds the room it takes.
-  @MainActor func testAGuessScaleKeepsItsHeightAtLargeText() {
-    let scales: [(GuessScale, String, Double, Double)] = [
-      (GuessScale(min: 1, max: 1000, kind: .log), "days", 11.2, 11.57),
-      (GuessScale(min: 0, max: 2_000_000, kind: .linear), "R$", 900_000, 1_234_567),
-      (GuessScale(min: 0, max: 100, kind: .linear), "km/h", 40, 7.25),
-    ]
-
-    for size in [DynamicTypeSize.accessibility3, .accessibility5] {
-      for (scale, unit, guess, actual) in scales {
-        let height = { (isRevealed: Bool) in
-          UIHostingController(
-            rootView: ActivityGuessScaleView(
-              scale: scale, unit: unit, guess: guess, actual: actual, isRevealed: isRevealed,
-              onGuess: { _ in }
-            )
-            .environment(\.dynamicTypeSize, size)
-          ).sizeThatFits(in: CGSize(width: 320, height: 4000)).height
+    for size in [DynamicTypeSize.large, .accessibility3, .accessibility5] {
+      for item in guesses {
+        let payload = try JSONDecoder().decode(
+          JSONValue.self,
+          from: Data(
+            #"""
+            {"fields": {"comparison": null, "max": \#(item.max), "min": \#(item.min),
+              "scale": "\#(item.scale)", "takeaway": "Less than you think.",
+              "truth": {"kind": "cited", "value": \#(item.real)}, "unit": "\#(item.unit)"}}
+            """#.utf8))
+        let check = try JSONDecoder().decode(
+          ActivityCheck.self,
+          from: Data(
+            #"""
+            {"kind": "numeric", "question": "How much?", "answer": \#(item.real),
+             "explanation": "Why.", "tolerance": {"kind": "relative", "value": 0.1}}
+            """#.utf8))
+        let sliderTop = { (phase: ActivityPhase) in
+          let window = try self.show(
+            ScrollView {
+              ActivityRenderer.guessReveal.canvas(
+                ActivityCanvasContext(
+                  template: "guessReveal", payload: payload, check: check, phase: phase,
+                  answer: .numeric(item.guess), setAnswer: { _ in })
+              )
+              .padding(16)
+            }
+            .environment(ActivityWork())
+            .environment(\.dynamicTypeSize, size))
+          window.frame = CGRect(x: 0, y: 0, width: 375, height: 2000)
+          try await self.waitForLayout(in: window)
+          let slider = try XCTUnwrap(self.requestViews(UISlider.self, in: window).first)
+          return slider.convert(slider.bounds, to: window).minY
         }
 
-        XCTAssertEqual(height(false), height(true), "\(unit) at \(size)")
+        let before = try await sliderTop(.answering)
+        let after = try await sliderTop(.checked(isCorrect: false))
+        XCTAssertEqual(before, after, "\(item.unit) at \(size)")
       }
     }
   }
