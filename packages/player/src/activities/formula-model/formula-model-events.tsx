@@ -61,7 +61,13 @@ export function FormulaModelEvents({
   );
 }
 
-export function FormulaModelLegend({ kind }: { kind: "start" | "whatIf" }) {
+export function FormulaModelLegend({
+  activeLabels,
+  kind,
+}: {
+  activeLabels: readonly string[];
+  kind: "start" | "whatIf";
+}) {
   const t = useExtracted();
 
   return (
@@ -71,7 +77,7 @@ export function FormulaModelLegend({ kind }: { kind: "start" | "whatIf" }) {
     >
       <span className="flex items-center gap-1.5">
         <span className="bg-viz-accent h-0.5 w-4 rounded-full" />
-        {kind === "whatIf" ? t("With the what-ifs") : t("Now")}
+        {kind === "whatIf" ? activeLabels.join(", ") : t("Now")}
       </span>
       <span className="flex items-center gap-1.5">
         <span className="border-muted-foreground w-4 border-t-2 border-dashed" />
