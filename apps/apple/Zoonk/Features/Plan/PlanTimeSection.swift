@@ -37,8 +37,9 @@ struct PlanTimeSection: View {
             .tag(minutes)
         }
       } label: {
-        Text("Time a day", tableName: "Plan", comment: "Setting: study time a day")
+        Text("Daily study time", tableName: "Plan", comment: "Setting: study time a day")
       }
+      .font(.body)
       .loads(
         plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
       )

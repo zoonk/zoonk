@@ -347,7 +347,7 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
 
-    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await previewCoverage(in: window)
     try await waitForTestCondition("Expected state did not arrive") {
       shows(Self.changePlan, in: window)
     }
@@ -355,7 +355,9 @@ final class PlanSlotOpeningTests: XCTestCase {
 
     try await readAgain(
       api, plan: goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short, studyDays: 5))
-    XCTAssertFalse(shows(Self.changePlan, in: window), "Gone: \(spoken(in: window))")
+    try await waitForTestCondition("The old coverage preview disappears") {
+      !shows(Self.changePlan, in: window)
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes, [])
   }
@@ -365,7 +367,7 @@ final class PlanSlotOpeningTests: XCTestCase {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
 
-    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await previewCoverage(in: window)
     try await waitForTestCondition("The preview did not finish before the unrelated change") {
       shows(Self.changePlan, in: window)
     }
@@ -417,7 +419,7 @@ final class PlanSlotOpeningTests: XCTestCase {
   {
     let api = try await coverage()
     let window = try await showPlan(api: api, width: .wide)
-    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await previewCoverage(in: window)
     try await waitForTestCondition("Expected state did not arrive") {
       shows(Self.changePlan, in: window)
     }
@@ -428,10 +430,20 @@ final class PlanSlotOpeningTests: XCTestCase {
       plan: goalPlanFixture(
         targetDate: "2027-06-01", feasibility: Self.short, today: today,
         lessonsStudied: lessonsStudied))
-    XCTAssertFalse(shows(Self.changePlan, in: window), "The old preview cannot be applied")
-    XCTAssertTrue(shows(String(localized: "See what changes", table: "Plan"), in: window))
+    try await waitForTestCondition("The old coverage preview disappears") {
+      !shows(Self.changePlan, in: window)
+    }
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await waitForTestCondition("The updated coverage opens") {
+      shows(String(localized: "See what changes", table: "Plan"), in: window)
+    }
     let changes = await api.calls.changes
     XCTAssertEqual(changes, [])
+  }
+
+  private func previewCoverage(in window: UIWindow) async throws {
+    try await activate(String(localized: "View", table: "Plan"), in: window)
+    try await activate(String(localized: "See what changes", table: "Plan"), in: window)
   }
 
   private static let changePlan = String(localized: "Change my plan", table: "Plan")

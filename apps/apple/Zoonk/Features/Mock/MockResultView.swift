@@ -235,23 +235,11 @@ struct MockResultView: View {
     view.review.filter { $0.outcome != .blank }.count
   }
 
-  @ViewBuilder
   private var mainAction: some View {
-    Group {
-      // Onboarding is under a placement mock: its plan starts from these answers.
-      if view.purpose == .placement || mistakes == 0 {
-        Button {
-          dismiss()
-        } label: {
-          Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
-        }
-      } else {
-        Button {
-          router.open(.mistakes)
-        } label: {
-          Text("Review mistakes", tableName: "Mock", comment: "Opens the notebook")
-        }
-      }
+    Button {
+      dismiss()
+    } label: {
+      Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
     }
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
@@ -261,9 +249,9 @@ struct MockResultView: View {
   private var secondaryAction: some View {
     if mistakes > 0, view.purpose != .placement {
       Button {
-        dismiss()
+        router.open(.mistakes)
       } label: {
-        Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
+        Text("Review mistakes", tableName: "Mock", comment: "Opens the notebook")
       }
       .buttonStyle(.outline)
     }

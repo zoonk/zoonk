@@ -31,6 +31,7 @@ struct PlanDateSection: View {
         ) {
           label
         }
+        .font(.body)
       } else {
         Button {
           isPicking = true
@@ -39,9 +40,9 @@ struct PlanDateSection: View {
             if namedMonth, let date = schedule.targetDate {
               Text(PlanDate.text(date, today: plan.today, month: true))
             } else if isExam {
-              Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
+              Text("Date not set", tableName: "Plan", comment: "An exam date that is not set")
             } else {
-              Text("No date", tableName: "Plan", comment: "A goal without a date")
+              Text("None set", tableName: "Plan")
             }
           } label: {
             label.foregroundStyle(.primary)

@@ -112,6 +112,10 @@ struct ExamList: View {
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
+      } else if pinsSpeakingAction {
+        ExamSpeakingMockAction(goalId: exam.goalId, start: callStart)
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
       }
     }
     .onDisappear {
@@ -157,6 +161,11 @@ struct ExamList: View {
     }
   }
 
+  private var pinsSpeakingAction: Bool {
+    exam.speakingMock != nil && !exam.speakingMockPaused
+      && (exam.isLastDays || options?.offersMock == false)
+  }
+
   /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
   @ViewBuilder
   private var about: some View {
@@ -164,7 +173,7 @@ struct ExamList: View {
       ExamMapSection(map: map)
     }
 
-    ExamSpeakingSection(exam: exam, callStart: callStart)
+    ExamSpeakingSection(exam: exam, callStart: callStart, pinsAction: pinsSpeakingAction)
 
     if !exam.format.isEmpty {
       ExamFormatSection(exam: exam)
@@ -175,6 +184,7 @@ struct ExamList: View {
 }
 
 private struct ExamHero: View {
+  @Environment(\.stacksContent) private var isStacked
   @Environment(PlanStore.self) private var plan
   let exam: ExamView
   let change: VisitRequest<Bool>
@@ -186,9 +196,19 @@ private struct ExamHero: View {
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
-          FactSegments(facts: facts)
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
+          Group {
+            if isStacked {
+              VStack(alignment: .leading, spacing: 4) {
+                ForEach(Array(facts.enumerated()), id: \.offset) { _, fact in
+                  Text(verbatim: fact.text)
+                }
+              }
+            } else {
+              FactSegments(facts: facts)
+            }
+          }
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
         }
 
         ExamDateTag(exam: exam)
@@ -197,14 +217,18 @@ private struct ExamHero: View {
 
     }
 
-    if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
+    if !exam.isLastDays, let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
-            Text("The exam's likely date is now \(day).", tableName: "Exam")
+            Text(
+              "Based on past exams, the likely date is \(day). Use it as your exam date?",
+              tableName: "Exam", comment: "An estimated date and what adopting it changes")
           } else {
-            Text("The exam is on \(day).", tableName: "Exam")
+            Text(
+              "The official \(exam.examName) date is \(day). Use it as your exam date?",
+              tableName: "Exam", comment: "An official date and what adopting it changes")
           }
           if change.outcome == false {
             FailureLine(
@@ -228,7 +252,7 @@ private struct ExamHero: View {
 
   @ViewBuilder
   private var noSittingSection: some View {
-    if exam.noticeDay == nil, let noSitting = exam.noSitting {
+    if !exam.isLastDays, exam.noticeDay == nil, let noSitting = exam.noSitting {
       let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
@@ -470,6 +494,7 @@ private struct ExamResultSection: View {
       } label: {
         Text("Did you pass?", tableName: "Exam", comment: "Asks whether the learner passed")
       }
+      .font(.body)
 
       if saving.outcome == false {
         FailureLine(
@@ -478,9 +503,10 @@ private struct ExamResultSection: View {
             comment: "Saving the result failed"))
       }
 
-      BusyButton(isBusy: saving.isRunning, isRow: true, action: save) {
+      BusyButton(isBusy: saving.isRunning, action: save) {
         Text("Save my result", tableName: "Exam", comment: "Saves the official result")
       }
+      .buttonStyle(.outline)
       .disabled(!saving.isRunning && parsedScore == nil && form.passed == .unknown)
     } header: {
       SectionTitle(
@@ -597,8 +623,7 @@ private struct ExamMocksSection: View {
                 isNext: exam.runningMocks.isEmpty),
               description: Text(
                 "\(next.questions) questions", tableName: "Exam",
-                comment: "The number of questions in an exam or a mock exam."),
-              alignment: .firstTextBaseline
+                comment: "The number of questions in an exam or a mock exam.")
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
@@ -783,18 +808,12 @@ private struct ExamFormatSection: View {
   var body: some View {
     Section {
       ForEach(exam.format, id: \.day) { day in
-        VStack(alignment: .leading, spacing: 4) {
-          LabeledContent {
-            if let minutes = day.minutes, minutes > 0 {
-              Text(MockLabels.duration(minutes: minutes)).monospacedDigit()
-            }
-          } label: {
-            title(day)
-          }
-
-          parts(day)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+        ListRow(
+          Text("Day \(day.day)", tableName: "Exam", comment: "An exam day"),
+          description: parts(day),
+          descriptionFacts: dayFacts(day)
+        ) {
+          EmptyView()
         }
       }
     } header: {
@@ -810,20 +829,13 @@ private struct ExamFormatSection: View {
     }
   }
 
-  @ViewBuilder
-  private func title(_ day: ExamView.FormatDay) -> some View {
-    HStack(alignment: .firstTextBaseline) {
-      Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
-        .foregroundStyle(.mutedForeground)
-
-      Spacer(minLength: 12)
-
-      if let date = day.date {
-        Text(PlanDate.text(date, today: PlanDate.today(), weekday: !exam.daysEstimated))
-          .typeStyle(.data)
-          .capitalsLevel(.data, with: .body)
-      }
-    }
+  private func dayFacts(_ day: ExamView.FormatDay) -> [String] {
+    let date =
+      day.date.map {
+        PlanDate.text($0, today: PlanDate.today(), weekday: !exam.daysEstimated)
+      } ?? String(localized: "Date not set", table: "Exam", comment: "An exam day with no date")
+    guard let minutes = day.minutes, minutes > 0 else { return [date] }
+    return [date, MockLabels.duration(minutes: minutes)]
   }
 
   private func parts(_ day: ExamView.FormatDay) -> Text {
@@ -893,11 +905,13 @@ private struct ExamSpeakingSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   let exam: ExamView
   let callStart: CallStart
+  let pinsAction: Bool
 
   var body: some View {
     if let mock = exam.speakingMock {
       SpeakingMockSection(
-        goalId: exam.goalId, mock: mock, paused: exam.speakingMockPaused, start: callStart)
+        goalId: exam.goalId, mock: mock, paused: exam.speakingMockPaused, start: callStart,
+        pinsAction: pinsAction)
     } else if learner.summary.value?.places.speaking == true {
       Section {
         NavigationLink(value: AppRoute.speaking) {
@@ -914,12 +928,11 @@ private struct ExamSpeakingSection: View {
 
 /// Start opens its call; a learner's tap writes it if it isn't written yet.
 private struct SpeakingMockSection: View {
-  @Environment(VoiceServices.self) private var voice
-  @Environment(AppRouter.self) private var router
   let goalId: String
   let mock: ExamView.SpeakingMock
   let paused: Bool
   let start: CallStart
+  let pinsAction: Bool
 
   var body: some View {
     Section {
@@ -949,7 +962,8 @@ private struct SpeakingMockSection: View {
           .foregroundStyle(.mutedForeground)
         }
       } icon: {
-        KindDot(kind: .conversation)
+        Image(systemName: "mic")
+          .accessibilityHidden(true)
       }
 
       if paused {
@@ -973,12 +987,9 @@ private struct SpeakingMockSection: View {
             "Your mock opens as soon as it's ready.", tableName: "Exam",
             comment: "A speaking mock opens by itself once it's written"))
       } else {
-        BusyButton(isBusy: start.isStarting, isRow: true) {
-          start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {
-            router.open(.conversation(conversationId: $0))
-          }
-        } label: {
-          Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
+        if !pinsAction {
+          ExamSpeakingMockAction(goalId: goalId, start: start)
+            .buttonStyle(.outline)
         }
 
         switch start.refusal {
@@ -994,6 +1005,24 @@ private struct SpeakingMockSection: View {
               comment: "Starting the speaking mock failed"))
         }
       }
+    }
+  }
+}
+
+private struct ExamSpeakingMockAction: View {
+  @Environment(VoiceServices.self) private var voice
+  @Environment(AppRouter.self) private var router
+
+  let goalId: String
+  let start: CallStart
+
+  var body: some View {
+    BusyButton(isBusy: start.isStarting || start.isWriting) {
+      start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {
+        router.open(.conversation(conversationId: $0))
+      }
+    } label: {
+      Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
     }
   }
 }

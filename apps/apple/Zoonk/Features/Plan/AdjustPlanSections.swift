@@ -451,7 +451,7 @@ private struct PlanToolChoiceSheet: View {
         }
       }
       .navigationTitle(
-        Text("How will you use it?", tableName: "Plan", comment: "Title of the tool choice")
+        Text("Do you have it?", tableName: "Plan", comment: "Title of the tool choice")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -499,7 +499,7 @@ private struct PlanToolChoiceSheet: View {
             comment: "Tool choice detail")
         ).tag(ToolChoice.setup)
         option(
-          Text("No install", tableName: "Plan", comment: "Tool choice"),
+          Text("I won't use it", tableName: "Plan", comment: "Tool choice"),
           Text("You'll practice with examples instead.", tableName: "Plan")
         ).tag(ToolChoice.none)
       } label: {

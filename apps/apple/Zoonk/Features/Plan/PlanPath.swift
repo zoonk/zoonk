@@ -199,7 +199,7 @@ private struct PlanPhaseRow: View {
       .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
-    return ListRow(title, description: meta, alignment: .firstTextBaseline) {
+    return ListRow(title, description: meta) {
       StatusMark(status: next ? .next : phase.mark)
     } trailing: {
       if let end {
@@ -214,7 +214,7 @@ private struct PlanPhaseRow: View {
   }
 
   private var end: PhaseEnd? {
-    context.plan.phaseEnd(phase)
+    context.isPaused ? nil : context.plan.phaseEnd(phase)
   }
 
   /// "You are here" on the current phase, then its end.
@@ -253,7 +253,7 @@ private struct PlanPhaseRow: View {
 
   /// When its lessons continue; nothing while they're being written, which the learner can't act on.
   private var resumes: Text? {
-    guard phase.lessonsDone < phase.lessonsTotal,
+    guard !context.isPaused, phase.lessonsDone < phase.lessonsTotal,
       let next = phase.chapters.filter({ $0.state != .done }).compactMap(\.nextDate).min()
     else {
       return nil
@@ -618,12 +618,10 @@ struct PlanPathLink: View {
   @ViewBuilder let title: Text
 
   var body: some View {
-    Label {
-      title
-    } icon: {
+    ListRow(title.foregroundStyle(.mutedForeground)) {
       Image(systemName: systemImage)
+        .imageScale(.small)
     }
-    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -729,7 +727,7 @@ struct PlanChallengeLabel: View {
 
   var body: some View {
     ListRow(name, description: explains ? explanation : nil) {
-      KindMark(kind: .challenge)
+      KindMark(kind: isLanguage ? .conversation : .challenge)
     } trailing: {
       when
     }

@@ -133,7 +133,6 @@ private struct ChapterContent: View {
         referenceSection(withMap: false)
       }
     }
-    .environment(\.rowMarkWidth, MindMapSlotMetrics.side)
     .bottomBar {
       if let next = lessons.first(where: { $0.state == .next }) {
         Button {
@@ -201,23 +200,17 @@ private struct ChapterContent: View {
           Button {
             router.open(.testOut(chapterId: chapter.chapter.chapterId))
           } label: {
-            VStack(alignment: .leading, spacing: 2) {
+            ListRow(
               Text(
                 "Already know this?", tableName: "Plan",
-                comment: "Offers the chapter's test-out"
-              )
-              .foregroundStyle(.primary)
-              .layoutPart(.label)
-
-              Text(
+                comment: "Offers the chapter's test-out"),
+              description: Text(
                 "Take the test and skip the chapter", tableName: "Plan",
-                comment: "What the chapter's test-out does"
-              )
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-              .layoutPart(.note)
+                comment: "What the chapter's test-out does")
+            ) {
+              Image(systemName: "checkmark.seal")
+                .accessibilityHidden(true)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
           }
         }
@@ -226,17 +219,14 @@ private struct ChapterContent: View {
           Button {
             practice()
           } label: {
-            Label {
+            ListRow(
               Text(
                 "Practice this chapter", tableName: "Plan",
-                comment: "Adds practice on the chapter"
-              )
-              .foregroundStyle(.primary)
-              .layoutPart(.label)
-            } icon: {
+                comment: "Adds practice on the chapter")
+            ) {
               KindMark(kind: .practice)
-                .layoutPart(.mark)
             }
+            .disclosureChevron()
           }
           .disabled(practicing.isRunning)
           .announcesStatus(practiceNote)
@@ -368,6 +358,8 @@ struct LessonRow: View {
 }
 
 private struct ChapterReferenceSection: View {
+  @ScaledMetric(relativeTo: .body) private var markSize = 14.0
+
   let goalId: String
   let chapter: GoalChapter
   /// Set where the section holds the map too.
@@ -410,7 +402,11 @@ private struct ChapterReferenceSection: View {
           "Chapter summary", tableName: "Plan",
           comment: "Folds a chapter's topics and summaries")
       ) {
-        Image(systemName: "list.bullet.clipboard")
+        Image(systemName: "checklist")
+          .resizable()
+          .scaledToFit()
+          .frame(width: markSize, height: markSize)
+          .accessibilityHidden(true)
       }
     }
   }

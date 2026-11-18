@@ -42,7 +42,9 @@ private struct GoalPlanView: View {
       }
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(goal.isSettingUp ? "" : daysLeft(plan.value?.plan) ?? "")
+    .navigationSubtitle(
+      goal.isSettingUp || goal.status == .paused ? "" : daysLeft(plan.value?.plan) ?? ""
+    )
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
     }
@@ -216,7 +218,9 @@ private struct PlanContent: View {
               PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
                 PlanHeaderActions(context: context)
               }
+              .rowSeparatorHiddenBelow()
               PlanRoadmapContent(context: context, structure: structure)
+                .rowSeparatorHiddenBelow()
               if structure != nil, let focusTest = context.plan.focusTest {
                 PlanFocusTestRow(goalId: goal.id, summary: focusTest)
               }
@@ -256,18 +260,16 @@ private struct PlanContent: View {
               if structure != nil {
                 NextOnPathSection(context: context)
               }
-
-              PlanMoreSection(goal: goal)
+              PlanSettingsSection(context: context)
             }
           } else {
             if structure != nil {
               NextOnPathSection(context: context)
             }
-
-            PlanMoreSection(goal: goal)
+            PlanSettingsSection(context: context)
           }
 
-          PlanSettingsSection(context: context)
+          PlanMoreSection(goal: goal)
         }
       }
     }
@@ -341,8 +343,11 @@ private struct PlanContent: View {
       PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
         PlanHeaderActions(context: context)
       }
-      PlanRoadmapContent(context: context, structure: structure)
-        .listRowSeparator(.hidden)
+      .listRowSeparator(.hidden)
+      if !context.plan.roadPhases.isEmpty {
+        PlanRoadmapContent(context: context, structure: structure)
+          .listRowSeparator(.hidden)
+      }
     }
   }
 
