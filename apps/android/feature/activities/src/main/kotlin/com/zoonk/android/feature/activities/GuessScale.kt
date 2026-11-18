@@ -41,7 +41,7 @@ data class GuessScale(
         val to = floor(log10(max)).toInt()
         val powers = (from..to).map { 10.0.pow(it) }
         val every = ceil(powers.size.toDouble() / (if (count == LINEAR_TICKS) MAX_LOG_TICKS else count)).toInt()
-        return if (powers.size < 2) listOf(min, max) else powers.filterIndexed { index, _ -> index % every == 0 }
+        return listOf(min) + powers.filterIndexed { index, tick -> tick > min && tick < max && index % every == 0 } + max
     }
 
     fun tickLabels(

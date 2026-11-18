@@ -20,7 +20,7 @@ class NumberUnitTransformation(
     locale: Locale,
     private val color: Color,
 ) : VisualTransformation {
-    private val prefix = currencyFor(unit)?.let { formatMoney(1.0, it, locale).indexOfFirst(Char::isDigit) > 0 } == true
+    private val prefix = unitBeforeNumber(unit, locale)
 
     // The gap the answer's feedback writes: money's from the learner's language ("R$80", "R$ 80"), any other unit's
     // from the app's unit rule ("180°", "3 kg").
@@ -56,3 +56,9 @@ class NumberUnitTransformation(
 }
 
 private const val NO_BREAK_SPACE = "\u00A0"
+
+/** Whether the learner's [locale] writes [unit] before the number, as money's sign in "R$80"; any other unit follows it. */
+fun unitBeforeNumber(
+    unit: String,
+    locale: Locale,
+): Boolean = currencyFor(unit)?.let { formatMoney(1.0, it, locale).indexOfFirst(Char::isDigit) > 0 } == true

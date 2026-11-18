@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.activities.reasoning
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -326,6 +325,7 @@ private fun gridDescription(grid: CombinationGrid): String {
     }
 }
 
+/** Main's `GridHeader`: a label, not a box, so only the asked square is highlighted and answer tiles never read as table heads. */
 @Composable
 private fun GridHeader(
     value: String,
@@ -335,25 +335,23 @@ private fun GridHeader(
     modifier: Modifier = Modifier,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
-    val shape = RoundedCornerShape(CORNER)
     Box(
         modifier
             .fillMaxHeight()
-            .heightIn(min = 48.dp)
-            .clip(shape)
-            .background(if (lit) accent.copy(alpha = SOFT) else MaterialTheme.colorScheme.surface)
-            .border(if (lit) BorderStroke(2.dp, accent) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape),
+            .heightIn(min = 48.dp),
         contentAlignment = Alignment.Center,
     ) {
         if (isAllele) {
-            CellValue(value, isAllele = true, MaterialTheme.typography.titleLarge)
+            CellValue(value, isAllele = true, MaterialTheme.typography.titleLarge, decoration = accent.takeIf { lit })
         } else {
+            // A sum or product grid's cells are the answer, so its headers stay quieter than them.
             CellValue(
                 value,
                 isAllele = false,
                 cellStyle(compact),
                 weight = FontWeight.Normal,
                 color = if (lit) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+                decoration = accent.takeIf { lit },
             )
         }
     }
@@ -506,6 +504,7 @@ private fun CellValue(
     style: TextStyle,
     weight: FontWeight = FontWeight.SemiBold,
     color: Color = Color.Unspecified,
+    decoration: Color? = null,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
     val text =
@@ -516,8 +515,13 @@ private fun CellValue(
                 }
             }
         }
+    val underline =
+        decoration?.let { line ->
+            Modifier.drawBehind { drawRect(line, Offset(0f, size.height - UNDERLINE.toPx()), Size(size.width, UNDERLINE.toPx())) }
+        }
     Text(
         text,
+        modifier = underline ?: Modifier,
         color = color,
         style = style.copy(fontWeight = weight).withTabularFigures(),
         textAlign = TextAlign.Center,
@@ -633,6 +637,7 @@ private val GAP = 8.dp
 private val CORNER = ZoonkRadius.option
 private val RING = 4.dp
 private val DASH = 4.dp
+private val UNDERLINE = 2.dp
 private const val RING_ALPHA = 0.25f
 private const val MARK_ALPHA = 0.6f
 private const val WRONG_ALPHA = 0.4f

@@ -227,4 +227,32 @@ final class MapViewportTests: XCTestCase {
       XCTAssertTrue((20...280).contains(pin.x) && (20...280).contains(pin.y), "\(pin)")
     }
   }
+
+  /// Main's "keeps a region's tint when the legend says what it means".
+  func testAStrayRegionIsOneWhoseNameWasLeftOutAndWhoseTintNoLegendExplains() throws {
+    let regions = try JSONDecoder().decode(
+      [ActivityBaseMap.Region].self,
+      from: Data(
+        #"""
+        [{"id": "italy", "name": "Italy", "path": "M0,0", "tone": "groupB"},
+         {"id": "golden", "name": "Golden Square", "path": "M0,0", "tone": "groupC"},
+         {"id": "soho", "name": "Soho Square", "path": "M0,0", "tone": "groupC"},
+         {"id": "spain", "name": "Spain", "path": "M0,0", "tone": "focus"}]
+        """#.utf8))
+    let labels = try JSONDecoder().decode(
+      [ActivityBaseMap.Label].self,
+      from: Data(
+        #"""
+        [{"angle": 0, "key": null, "kind": "region", "text": "Italy", "x": 0, "y": 0},
+         {"angle": 0, "key": null, "kind": "region", "text": "Golden Square", "x": 0, "y": 0},
+         {"angle": 0, "key": null, "kind": "region", "text": "Soho Square", "x": 0, "y": 0},
+         {"angle": 0, "key": null, "kind": "region", "text": "Spain", "x": 0, "y": 0}]
+        """#.utf8))
+    let placed = MapViewport.Placement(center: .zero)
+
+    XCTAssertEqual(
+      MapViewport.strayRegions(
+        regions, labels: labels, legendTones: [.groupB], spots: [nil, nil, placed, nil]),
+      ["golden"])
+  }
 }

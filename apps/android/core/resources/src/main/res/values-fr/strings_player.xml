@@ -11,7 +11,6 @@
   "player_action_start": "0064b61042693f9b668b0eb07222aea4cae9a514b2572b4a7986b7bc9f0df2dd",
   "player_activity_example_data": "726fbb53c405dd61927179fed5b1b64358730efac7c563cd6af55969232e4e88",
   "player_activity_source": "a275d08971fa4fdbcb7bde64ddf61c714c47d7bf7a54f0671647027534cb212e",
-  "player_activity_your_answer": "edd5c041dbb677ffb282f70d6466dfbea3b71c2237e4ca8f5cce8c8811d83ab6",
   "player_ai_note": "4b78fdeba5f176a73c2bcfa2753fbfae6f2641998bf65c5fb39b51ba9a709660",
   "player_already_knew": "cc358ba1285aaf0a82635bf9135f21f87f80775aa87ddaf4ed9da78d95b6da88",
   "player_also_correct_label": "b37a2def4eaa9995420f44e215793c452020dbb63ba87bb8f935bb57084be04b",
@@ -364,7 +363,6 @@
     <string name="player_activity_example_data">Chiffres donnés en exemple, pas des données réelles</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">Source : %1$s</string>
-    <string name="player_activity_your_answer">Ta réponse :</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">Défi · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->

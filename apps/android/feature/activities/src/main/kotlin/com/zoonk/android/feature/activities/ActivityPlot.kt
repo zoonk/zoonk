@@ -191,10 +191,10 @@ fun ActivityPlot(
     xDomain: ClosedFloatingPointRange<Double>,
     yDomain: ClosedFloatingPointRange<Double>,
     yTicks: List<Double>,
-    xTicks: List<Double>,
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
+    xTicks: List<Double>? = null,
     area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
@@ -213,15 +213,20 @@ fun ActivityPlot(
 
     Canvas(modifier.fillMaxWidth().height(height).clearAndSetSemantics {}) {
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
-        val xLabels = xTicks.map { measurer.measure(formatX(it), style.copy(color = muted)) }
         val gap = LABEL_GAP.toPx()
         val left = if (yLabels.isEmpty()) RIGHT.toPx() else max(MIN_LEFT.toPx(), yLabels.maxOf { it.size.width } + gap)
         val right = size.width - RIGHT.toPx()
         val top = TOP.toPx()
-        val bottom = size.height - max(MIN_BOTTOM.toPx(), (xLabels.maxOfOrNull { it.size.height } ?: 0) + gap)
+        val bottom = size.height - max(MIN_BOTTOM.toPx(), labelHeight.toPx() + gap)
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
-        drawPlotAxes(x, y, measurer.fittedPlotTicks(x, style.copy(color = muted), formatX), yTicks.zip(yLabels), gridColor)
+        val xStyle = style.copy(color = muted)
+        // A caller's own ticks (an angle's quarter turns) show when they fit side by side; otherwise round ones that do.
+        val given =
+            xTicks?.map { it to measurer.measure(formatX(it), xStyle) }?.takeIf { labels ->
+                x.fitsSideBySide(labels.map { (tick, label) -> tick to label.size.width })
+            }
+        drawPlotAxes(x, y, given ?: measurer.fittedPlotTicks(x, xStyle, formatX), yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
@@ -273,11 +278,28 @@ internal fun DrawScope.drawPlotAxes(
         drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
     }
     xLabels.forEach { (tick, label) ->
-        val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(left, max(left, right - label.size.width))
+        val start = x.labelSpan(tick, label.size.width).first
         drawLine(gridColor, Offset(x.toPixel(tick), bottom), Offset(x.toPixel(tick), bottom + 4.dp.toPx()), 1.dp.toPx())
         drawText(label, topLeft = Offset(start, bottom + gap))
     }
 }
+
+/** Where the axis draws a label [width] wide for [tick]: centered on it, pulled inside the plot at its ends. */
+private fun LinearScale.labelSpan(
+    tick: Double,
+    width: Int,
+): Pair<Float, Float> {
+    val start = (toPixel(tick) - width / 2f).coerceIn(range.first, max(range.first, range.second - width))
+    return start to start + width
+}
+
+/** Whether labels [widths] wide, one per tick, sit side by side where the axis draws them. */
+internal fun LinearScale.fitsSideBySide(widths: List<Pair<Double, Int>>): Boolean =
+    widths
+        .map { (tick, width) -> labelSpan(tick, width) }
+        .sortedBy { it.first }
+        .zipWithNext()
+        .all { (a, b) -> a.second < b.first }
 
 internal fun TextMeasurer.fittedPlotTicks(
     scale: LinearScale,
@@ -287,16 +309,7 @@ internal fun TextMeasurer.fittedPlotTicks(
     val measured = mutableMapOf<Double, TextLayoutResult>()
     val selected =
         fittingTicks(scale.domain, frame = { value ->
-            val text = measured.getOrPut(value) { measure(format(value), style) }
-            val left =
-                (scale.toPixel(value) - text.size.width / 2).coerceIn(
-                    scale.range.first,
-                    max(
-                        scale.range.first,
-                        scale.range.second - text.size.width,
-                    ),
-                )
-            left to left + text.size.width
+            scale.labelSpan(value, measured.getOrPut(value) { measure(format(value), style) }.size.width)
         })
     return selected.map { it to measured.getValue(it) }
 }

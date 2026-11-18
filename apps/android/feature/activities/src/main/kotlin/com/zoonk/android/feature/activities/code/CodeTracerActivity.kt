@@ -241,8 +241,8 @@ private fun TracerPanel(
             .clip(shape)
             .background(colors.surface)
             .border(1.dp, colors.outlineVariant, shape)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             Modifier,

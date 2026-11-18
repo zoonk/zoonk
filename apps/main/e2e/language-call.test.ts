@@ -341,7 +341,7 @@ test.describe("Language calls", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByText("Calling Linda…")).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+    await page.getByRole("button", { exact: true, name: "End" }).click();
     await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
 
     await expect(

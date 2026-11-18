@@ -1174,6 +1174,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(requests.last, "check held")
   }
 
+  func testAnAnswerSavedWhileAHeldAnswerIsSendingSendsItAgainWhenThatSendFails() async throws {
+    let defaults = try temporaryDefaults()
+    HeldLessonAnswers(learnerId: "lesson-loading-test-user", lessonId: "lesson", defaults: defaults)
+      .keep(heldAnswer("one", attemptId: "held", isCorrect: true))
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    await transport.failChecks(numbered: [1, 2])
+    await transport.holdCheck(2)
+    let store = try checksPlayer(
+      steps: ["one", "spoken"], spoken: ["spoken"], defaults: defaults, transport: transport)
+    await store.load()
+    _ = try await waitForTestCondition("The held answer wasn't sent again") {
+      await transport.isHoldingCheck
+    }
+
+    store.resolveSpoken(
+      SpokenAnswerVerdict(
+        isCorrect: true, score: 1, transcript: "Bonjour", feedback: nil,
+        heard: SpokenHeard(words: [], wordsToPractice: [])),
+      stepId: "spoken")
+    await transport.releaseHeldCheck()
+    await waitUntil { store.held.isEmpty }
+
+    let requests = await transport.requests
+    XCTAssertEqual(requests.filter { $0 == "check held" }.count, 3)
+  }
+
   /// Opened from Today with the learner's tap: the start goes out as the lesson opens.
   private func openingPlayer(_ lesson: PlayableLesson, transport: OpeningStartTransport)
     -> LessonPlayerStore
@@ -1418,7 +1444,12 @@ private actor HeldAnswersTransport: ClientTransport {
   private var holdsChecks = false
   private var gates: [String: TestContinuation<Void>] = [:]
   private var released: Set<String> = []
+  private var checks = 0
+  private var failingChecks: Set<Int> = []
+  private var heldCheck: Int?
+  private var heldCheckGate: TestContinuation<Void>?
   private(set) var requests: [String] = []
+  private(set) var isHoldingCheck = false
 
   init(runAnswers: String) {
     self.runAnswers = runAnswers
@@ -1431,6 +1462,23 @@ private actor HeldAnswersTransport: ClientTransport {
   /// Each check then waits for `release(_:)` before the server answers it.
   func holdChecks() {
     holdsChecks = true
+  }
+
+  /// The checks with these numbers, counted from 1 in the order they arrive, fail.
+  func failChecks(numbered numbers: Set<Int>) {
+    failingChecks = numbers
+  }
+
+  /// The check with this number waits for `releaseHeldCheck()` before the server answers it.
+  func holdCheck(_ number: Int) {
+    heldCheck = number
+  }
+
+  func releaseHeldCheck() {
+    heldCheck = nil
+    isHoldingCheck = false
+    heldCheckGate?.resume()
+    heldCheckGate = nil
   }
 
   func release(_ attemptId: String) {
@@ -1454,6 +1502,14 @@ private actor HeldAnswersTransport: ClientTransport {
         )
       )
     case "createStepCheck":
+      checks += 1
+      let number = checks
+
+      if number == heldCheck {
+        isHoldingCheck = true
+        await withTestVoidContinuation { heldCheckGate = $0 }
+      }
+
       let input = try JSONDecoder().decode(
         CheckInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
       let stepId = try XCTUnwrap(request.path?.split(separator: "/").dropLast().last)
@@ -1467,7 +1523,7 @@ private actor HeldAnswersTransport: ClientTransport {
         requests.append("answered \(input.attemptId)")
       }
 
-      if failingSteps.contains(String(stepId)) {
+      if failingSteps.contains(String(stepId)) || failingChecks.contains(number) {
         throw APIError.network
       }
 

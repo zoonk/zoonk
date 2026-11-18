@@ -97,18 +97,17 @@ enum LessonGrading {
 
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
-
-      let places = activityDecimalPlaces(
-        expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
-      let digits = activityAnswerDigits(
-        expected: expected, tolerance: tolerance, value: value, places: places)
+      let checked = checkedNumber(value, in: content, isCorrect: isCorrect)
+      let right = content.roundedAnswer ?? ActivityRoundedAnswer(places: nil, value: expected)
+      let rightDigits =
+        right.places
+        ?? exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
 
       return LocalGrade(
         isCorrect: isCorrect,
-        answerText: ActivityNumberFormat.format(value, unit: unit, digits: digits),
+        answerText: ActivityNumberFormat.format(checked.value, unit: unit, digits: checked.digits),
         correctAnswer: isCorrect
-          ? nil
-          : ActivityNumberFormat.format(expected, unit: unit, digits: digits),
+          ? nil : ActivityNumberFormat.format(right.value, unit: unit, digits: rightDigits),
         feedback: explanation)
     case .interaction(let explanation):
       guard let gradeInteraction else {
@@ -134,25 +133,45 @@ enum LessonGrading {
       || isRoundedAnswer(value, expected: expected)
   }
 
-  static func activityAnswerDigits(
-    expected: Double, tolerance: ActivityCheck.Tolerance, value: Double?, places: Int? = nil
-  ) -> Int {
-    max(
-      places ?? 0,
-      exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value),
-      countDecimalPlaces(value ?? 0))
+  /// Core's `getCheckedAnswerDigits`: a checked number is written at the hint's places while the
+  /// rounded number keeps its grade, else at the fewest digits that do, so it never reads as the
+  /// other verdict. Returns the number rounded to those digits.
+  static func checkedNumber(
+    _ value: Double, in content: ActivityStepContent, isCorrect: Bool
+  ) -> (value: Double, digits: Int) {
+    let ownDigits = countDecimalPlaces(value)
+
+    guard case .numeric(_, let expected, let tolerance, _, _, _, _) = content.check else {
+      return (value, ownDigits)
+    }
+
+    let keepsGrade = { (places: Int) in
+      isNumericAnswerRight(
+        roundToPlaces(value, places), expected: expected, tolerance: tolerance,
+        minTolerance: content.minTolerance) == isCorrect
+    }
+
+    if let hint = content.roundedAnswer?.places, keepsGrade(hint) {
+      return (roundToPlaces(value, hint), hint)
+    }
+
+    let from = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
+    let digits = (from..<max(from, ownDigits)).first(where: keepsGrade) ?? max(from, ownDigits)
+    return (roundToPlaces(value, digits), digits)
   }
 
-  static func activityDecimalPlaces(
-    expected: Double, tolerance: ActivityCheck.Tolerance, minTolerance: ActivityCheck.Tolerance?
-  ) -> Int? {
-    guard expected.isFinite, expected.rounded() != expected else { return nil }
-    return (0...countDecimalPlaces(expected)).first { places in
-      let scale = pow(10, Double(places))
-      let value = floor(expected * scale + 0.5) / scale
-      return isNumericAnswerRight(
-        value, expected: expected, tolerance: tolerance, minTolerance: minTolerance)
+  /// Core's `roundToPlaces`: half away from zero on the number as written, as the web's formatter
+  /// rounds it (251.495 is 251.5, though the double sits just below it).
+  static func roundToPlaces(_ value: Double, _ places: Int) -> Double {
+    guard
+      var decimal = Decimal(string: numberText(value), locale: Locale(identifier: "en_US_POSIX"))
+    else {
+      return value
     }
+
+    var rounded = Decimal()
+    NSDecimalRound(&rounded, &decimal, places, .plain)
+    return NSDecimalNumber(decimal: rounded).doubleValue
   }
 
   /// Core's `withinTolerance`: relative slack takes rounded boundaries without overwhelming a

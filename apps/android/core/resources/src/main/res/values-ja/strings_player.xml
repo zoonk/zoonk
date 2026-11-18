@@ -11,7 +11,6 @@
   "player_action_start": "1649d6a9ba65d883b9e2f2dd0afadd74846ad3f7ee19a5b3f4535986967d842a",
   "player_activity_example_data": "45cbbfc72222a02fa6cc59e0f2f8c0ff7865ff7b303bd9d2b6789fd53cd27ffa",
   "player_activity_source": "c8c37cef0f2841eda6a34b9e745285f1e356e1e3332b91a017680af8de1f52f2",
-  "player_activity_your_answer": "18fe7582508bc0af69f9b42742db633b98eaf0b5fbd8af202330ae4937f98fd0",
   "player_ai_note": "1b427d9de684bf3b3ee6b31f980af6da1c0e072bc973f305dfe32e001822e4d2",
   "player_already_knew": "9e0ebc0f29ee9d507ac776c046adbdd8cccd21e9d32a8f742c428a7763b271bd",
   "player_also_correct_label": "689f540528983d09072a7dbd27e56470d207fae5cf9b5830db4fb9f884d163d0",
@@ -358,7 +357,6 @@
     <string name="player_activity_example_data">例として示した数値で、実際のデータではありません</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">出典：%1$s</string>
-    <string name="player_activity_your_answer">回答：</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">チャレンジ · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->

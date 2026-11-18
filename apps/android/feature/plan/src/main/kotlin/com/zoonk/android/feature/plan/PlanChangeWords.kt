@@ -669,7 +669,7 @@ private fun phaseDatesQuestion(effect: PlanEffect?): ChangeWords {
 }
 
 /**
- * Main's `useLessonsEffectText`: lessons added and left out. Without a date the plan keeps every
+ * Main's `countLessons` and `useNames`: lessons added and left out. Without a date the plan keeps every
  * lesson, so it has fewer or more of them, never "left out". When names aren't one per lesson, a
  * few are examples ("such as A, B and C"). Beside a diff ([named]), which counts them first, only a
  * sentence naming the lessons left out says more.

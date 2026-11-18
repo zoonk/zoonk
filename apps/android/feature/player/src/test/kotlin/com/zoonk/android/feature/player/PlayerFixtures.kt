@@ -204,7 +204,7 @@ fun activityStep(
         )
     val frame =
         ActivityFrame(RENDERERLESS_TEMPLATE, "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
-    return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
+    return LessonStep(id, null, StepContent.Activity(content, frame))
 }
 
 private const val CHALLENGE =

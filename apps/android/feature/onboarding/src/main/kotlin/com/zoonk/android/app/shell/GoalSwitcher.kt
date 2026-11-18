@@ -114,7 +114,7 @@ fun GoalSwitcher(
         }
     }
 
-    if (selected == null && explanations.isEmpty()) {
+    if (showsStartRow(followed = followed.size, waiting = learner.waitingGoals.size, explanations = explanations.size)) {
         TextButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
             Text(text = stringResource(R.string.goal_switcher_start_goal), modifier = Modifier.padding(start = 8.dp))
@@ -125,7 +125,7 @@ fun GoalSwitcher(
     val description =
         selected?.let {
             stringResource(R.string.goal_switcher_current_goal, goalSpokenName(it.displayName, it.targetLanguage, it.targetRegion))
-        } ?: stringResource(R.string.goal_switcher_start_goal)
+        } ?: stringResource(if (learner.waitingGoals.isNotEmpty()) R.string.goal_switcher_your_goals else R.string.goal_switcher_start_goal)
 
     Box {
         // The button keeps its role and click action; only the words it reads are replaced.
@@ -135,7 +135,7 @@ fun GoalSwitcher(
             modifier = Modifier.semantics { contentDescription = description },
         ) {
             Row(Modifier.clearAndSetSemantics {}, verticalAlignment = Alignment.CenterVertically) {
-                SwitcherTitle(selected)
+                SwitcherTitle(selected, waiting = learner.waitingGoals.isNotEmpty())
             }
         }
 
@@ -155,15 +155,32 @@ fun GoalSwitcher(
     }
 }
 
+/**
+ * With no goal to follow or start, the switcher is the plain "Start a goal" row. One quick explanation is on Today
+ * already; two or more keep the menu, so the older ones stay in reach.
+ */
+internal fun showsStartRow(
+    followed: Int,
+    waiting: Int,
+    explanations: Int,
+): Boolean = followed == 0 && waiting == 0 && explanations <= 1
+
 @Composable
-private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
-    if (selected != null) {
-        GoalMark(selected.displayName, selected.languageFlag)
-    } else {
-        Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
+private fun SwitcherTitle(
+    selected: LearnerSummaryGoal?,
+    waiting: Boolean,
+) {
+    when {
+        selected != null -> GoalMark(selected.displayName, selected.languageFlag)
+        !waiting -> Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
     }
     Text(
-        text = selected?.displayName ?: stringResource(R.string.goal_switcher_start_goal),
+        text =
+            when {
+                selected != null -> selected.displayName
+                waiting -> stringResource(R.string.goal_switcher_your_goals)
+                else -> stringResource(R.string.goal_switcher_start_goal)
+            },
         modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = TITLE_WIDTH),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -190,10 +207,11 @@ private fun MenuItems(
     navigator: AppNavigator,
     viewModel: GoalSwitcherViewModel,
 ) {
-    if (selected != null) {
+    val hasGoals = followed.isNotEmpty() || waiting.isNotEmpty()
+    if (hasGoals) {
         MenuLabel(stringResource(R.string.goal_switcher_your_goals))
         followed.forEach { goal ->
-            val isSelected = goal.id == selected.id
+            val isSelected = goal.id == selected?.id
             DropdownMenuItem(
                 text = {
                     Column {
@@ -247,7 +265,7 @@ private fun MenuItems(
     }
 
     if (explanations.isNotEmpty()) {
-        if (selected != null) HorizontalDivider()
+        if (hasGoals) HorizontalDivider()
         MenuLabel(stringResource(R.string.goal_switcher_quick_explanations))
         explanations.forEach { goal ->
             DropdownMenuItem(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -47,7 +48,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
@@ -66,6 +66,7 @@ import com.zoonk.android.ui.format.fractionDigitsFor
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.ActivityExpectedRows
@@ -230,14 +231,17 @@ private fun SqlTableViewer(table: SqlTable) {
         ) {
             Icon(painterResource(R.drawable.ic_table), null, Modifier.size(16.dp), tint = colors.onSurfaceVariant)
             Text(table.name, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = mono, fontWeight = FontWeight.SemiBold))
-            Text(
-                table.columns.joinToString(", ") { it.name },
-                Modifier.weight(1f),
-                color = colors.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelSmall.copy(fontFamily = mono),
-            )
+            // An open table names its columns in its own header, so the list shows, whole, only while it's closed.
+            if (open) {
+                Spacer(Modifier.weight(1f))
+            } else {
+                Text(
+                    table.columns.joinToString(", ") { it.name },
+                    Modifier.weight(1f),
+                    color = colors.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall.copy(fontFamily = mono),
+                )
+            }
             Text(
                 pluralStringResource(R.plurals.activities_code_table_rows, table.rows.size, table.rows.size),
                 color = colors.onSurfaceVariant,
@@ -282,7 +286,8 @@ private fun SqlRowsTable(
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val body = MaterialTheme.typography.bodyMedium
+    // Digits share one width, so a column of numbers lines up by place.
+    val body = MaterialTheme.typography.bodyMedium.withTabularFigures()
     val header = MaterialTheme.typography.labelSmall.copy(fontFamily = GeistMono)
     val texts = rows.map { row -> row.map { cellText(it) } }
     val measurer = rememberTextMeasurer()

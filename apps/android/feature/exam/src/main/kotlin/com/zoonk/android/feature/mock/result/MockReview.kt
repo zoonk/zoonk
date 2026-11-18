@@ -193,7 +193,7 @@ internal fun ReviewSection(
     ) { ResultSection(stringResource(R.string.mock_result_review)) { ReviewList(view, app, place) } }
 }
 
-/** Main's `MockReviewDrawer`: the same questions in a sheet, where the score step stays short on a phone. */
+/** Main's `MockResultDetails`: the same questions in a sheet, where the score step stays short on a phone. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ReviewSheet(

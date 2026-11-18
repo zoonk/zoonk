@@ -1,6 +1,6 @@
 /**
- * With no goal to follow or start, the switcher is the plain "Start a goal" link; a quick
- * explanation isn't a goal to switch to.
+ * With no goal to follow or start, the switcher is the plain "Start a goal" link. One quick
+ * explanation Today already shows needs no menu; two or more keep it, which lists them.
  */
 export function hasNothingToSwitch({
   goals,
@@ -9,5 +9,7 @@ export function hasNothingToSwitch({
   goals: readonly { kind: string }[];
   waitingGoals: readonly unknown[];
 }): boolean {
-  return goals.every((goal) => goal.kind === "explain") && waitingGoals.length === 0;
+  return (
+    goals.length <= 1 && goals.every((goal) => goal.kind === "explain") && waitingGoals.length === 0
+  );
 }

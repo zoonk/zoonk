@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import java.time.LocalDate
 import java.util.Locale
 
-/** Main's `plan-date-style.test.ts`: a date in another calendar year names its year, and only then. */
+/** Main's `date-format.test.ts`: a date in another calendar year names its year, and only then. */
 @RunWith(AndroidJUnit4::class)
 class PlanDateTest {
     private val today = LocalDate.of(2026, 11, 14)

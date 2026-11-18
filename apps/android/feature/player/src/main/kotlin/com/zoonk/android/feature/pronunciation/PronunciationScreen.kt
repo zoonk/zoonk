@@ -303,7 +303,6 @@ private fun WordStep(
                 Modifier.fillMaxSize().padding(padding),
                 meter = { RoundMeter(round) },
                 word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
-                feedback = step.grade != null,
             ) {
                 val grade = step.grade
                 val issue = round.issue
@@ -337,14 +336,14 @@ private fun WordStep(
 
 /**
  * A word as a spread, as a practice question: the [meter] and the [word] on the page before the split, the learner's
- * [turn] on the page after it, above the docked actions. The turn's page is the one column's place.
+ * [turn] on the page after it, above the docked actions, whether it says what to do or how it sounded. The turn's page is
+ * the one column's place.
  */
 @Composable
 private fun WordPages(
     modifier: Modifier,
     meter: @Composable () -> Unit,
     word: @Composable () -> Unit,
-    feedback: Boolean,
     turn: @Composable ColumnScope.() -> Unit,
 ) {
     // The one column and the word's page share their scroll, so the reading place keeps as the book opens or closes.
@@ -370,7 +369,7 @@ private fun WordPages(
                     if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                 ) {
                     if (fold == null) word()
-                    if (fold == null || feedback) turn()
+                    turn()
                 }
                 if (fold != null) {
                     WordPage(
@@ -379,7 +378,6 @@ private fun WordPages(
                         Alignment.End,
                     ) {
                         word()
-                        if (!feedback) turn()
                     }
                 }
             }

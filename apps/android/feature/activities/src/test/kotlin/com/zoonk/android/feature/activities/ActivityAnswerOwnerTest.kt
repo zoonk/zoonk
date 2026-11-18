@@ -14,14 +14,14 @@ class ActivityAnswerOwnerTest {
     @Test
     fun aModelsReadoutKeepsTheSamePrecisionAsItsSettingsChange() {
         org.junit.Assert.assertEquals(
-            "35.31 m",
+            "35 m",
             com.zoonk.android.feature.activities.math
-                .formatModelOutput(35.31, java.util.Locale.ENGLISH, "m", 40.77, 0.01),
+                .formatModelOutput(35.31, java.util.Locale.ENGLISH, "m", 0),
         )
         org.junit.Assert.assertEquals(
-            "40.77 m",
+            "41 m",
             com.zoonk.android.feature.activities.math
-                .formatModelOutput(40.77, java.util.Locale.ENGLISH, "m", 40.77, 0.01),
+                .formatModelOutput(40.77, java.util.Locale.ENGLISH, "m", 0),
         )
     }
 

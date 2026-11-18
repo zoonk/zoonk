@@ -45,6 +45,8 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -66,6 +68,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
@@ -125,14 +128,19 @@ internal fun highlighted(tokens: List<CodeToken>): AnnotatedString = codePalette
 internal fun CodeBlock(
     label: String,
     modifier: Modifier = Modifier,
+    wraps: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxWidth().semantics { contentDescription = label }) {
         Column(
-            Modifier
-                .fadingHorizontalScroll(rememberScrollState())
-                .widthIn(min = maxWidth)
-                .width(IntrinsicSize.Max),
+            if (wraps) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier
+                    .fadingHorizontalScroll(rememberScrollState())
+                    .widthIn(min = maxWidth)
+                    .width(IntrinsicSize.Max)
+            },
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             content()
@@ -140,7 +148,10 @@ internal fun CodeBlock(
     }
 }
 
-/** A line of code after its number, which TalkBack skips; the number keeps its width across a listing. */
+/**
+ * A line of code after its number, which TalkBack skips; the number keeps its width across a listing and stays
+ * clear of the line's mark, which starts after it.
+ */
 @Composable
 internal fun CodeLine(
     number: Int,
@@ -184,21 +195,26 @@ internal fun CodeLine(
     Row(
         modifier
             .fillMaxWidth()
-            .clip(shape)
-            .then(toned)
-            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state })
-            .padding(end = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state }),
     ) {
         Text(
             number.toString().padStart(digits),
             Modifier
-                .padding(end = 12.dp)
+                .alignByBaseline()
+                .padding(end = NUMBER_GAP)
                 .clearAndSetSemantics {},
             color = colors.onSurfaceVariant,
             style = codeTextStyle(),
         )
-        content()
+        Row(
+            Modifier
+                .alignByBaseline()
+                .weight(1f)
+                .then(toned)
+                .padding(start = NUMBER_GAP, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
     }
 }
 
@@ -213,11 +229,12 @@ internal fun CodeListing(
     val lines = highlightCode(code, language)
     val digits = lines.size.toString().length
     val current = stringResource(R.string.activities_code_current_line)
-    CodeBlock(label) {
+    // A listing wraps, so the part of a line a question asks about is never off the card.
+    CodeBlock(label, wraps = true) {
         lines.forEachIndexed { index, tokens ->
             val isCurrent = index + 1 == currentLine
             CodeLine(index + 1, digits, if (isCurrent) CodeLineTone.Current else CodeLineTone.Plain, state = current.takeIf { isCurrent }) {
-                Text(highlighted(tokens), softWrap = false, style = codeTextStyle())
+                Text(highlighted(tokens), style = codeTextStyle())
             }
         }
     }
@@ -244,6 +261,20 @@ internal val codeKeyboard =
 
 private fun KeyEvent.isEnter() = key == Key.Enter || key == Key.NumPadEnter
 
+/**
+ * Measures a field at a 48 dp touch height but takes only one code [line]'s room, reaching into the lines around it,
+ * so an editable line keeps the listing's rhythm.
+ */
+private fun Modifier.reachingNeighbors(line: Dp): Modifier =
+    layout { measurable, constraints ->
+        val touch = maxOf(constraints.minHeight, TOUCH_HEIGHT.roundToPx())
+        val placeable = measurable.measure(constraints.copy(minHeight = touch, maxHeight = maxOf(constraints.maxHeight, touch)))
+        val height = line.roundToPx()
+        layout(placeable.width, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+    }
+
+private val TOUCH_HEIGHT = 48.dp
+
 /** Main's `ActivityCodeLineInput`: one line of code to edit in place; Enter runs the program. */
 @Composable
 internal fun CodeLineField(
@@ -260,7 +291,7 @@ internal fun CodeLineField(
         onValueChange = onValueChange,
         modifier =
             modifier
-                .heightIn(min = 48.dp)
+                .reachingNeighbors(with(LocalDensity.current) { codeTextStyle().lineHeight.toDp() })
                 .semantics { contentDescription = label }
                 .onPreviewKeyEvent { event ->
                     if (event.isEnter() && event.type == KeyEventType.KeyDown) onSubmit()
@@ -462,6 +493,7 @@ internal fun SandboxRunBar(
 }
 
 private val CURRENT_MARK = 3.dp
+private val NUMBER_GAP = 6.dp
 internal const val SOFT_ALPHA = 0.12f
 internal const val STALE_ALPHA = 0.6f
 private val EDITOR_PADDING = 16.dp

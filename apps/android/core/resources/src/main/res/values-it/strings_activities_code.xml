@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "9959f0f3d740a4b0c7357c28632a66b6ebaf698ddc69b2f78fcb97e2be9ee505",
   "activities_code_you_said_wrong": "4ccdeeb628c45fbae7bc6b1e3868ff8da6576884373a3a0bec47c6229892d299",
   "activities_code_your_formula": "2fba29731d6fcc4c76bf68f46eee65c15a43adef2d8951020b931848e0da70f5",
-  "activities_code_your_output": "4115958acbd3c763f62846c5725d3d4c1b9e9ed2f958addff2a12b0978623031",
   "activities_code_your_pattern": "47166ebb0274a7681a0727a3ece9dd79be204b4a9c85af45237a09aa19e962e1",
   "activities_code_your_predictions": "e774fe54d244e8eeb98c623dfae1f29c6ea435bc285b55806cd21acdca2ccd74",
   "activities_code_your_query": "df55f1ccc1f16743320e2a106a34259abd5f9aea2fec5ab2e1be4c78026cf161",
@@ -114,7 +113,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Riga %1$d, puoi modificarla</string>
-    <string name="activities_code_your_output">Il tuo risultato</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Risultato</string>
     <!-- The output the program should print. -->

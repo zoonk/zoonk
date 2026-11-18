@@ -101,7 +101,7 @@ class ActivityKitFlowTest {
     }
 
     @Test
-    fun aWrongDecimalAnswerKeepsTheDigitsOfTheCorrection() {
+    fun aWrongDecimalAnswerKeepsItsDigitsBesideARightAnswerAtTheHintsPlaces() {
         val calculator = "formulaModel.calculator"
         harness.play(listOf(ActivityFixtures.step(calculator))) {
             grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected(calculator)) }
@@ -111,9 +111,9 @@ class ActivityKitFlowTest {
         rule.onNode(hasSetTextAction()).performTextReplacement("251.6")
         harness.tap("Check")
 
-        rule.onNodeWithText("Right answer:").assertExists()
+        rule.onNodeWithText("251.6").assertExists()
         rule
-            .onNode(hasText("251.54") and hasAnySibling(hasText("Right answer:")), useUnmergedTree = true)
+            .onNode(hasText("252") and hasAnySibling(hasText("Right answer:")), useUnmergedTree = true)
             .assertExists()
     }
 

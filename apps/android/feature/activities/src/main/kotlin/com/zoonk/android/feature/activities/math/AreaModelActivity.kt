@@ -124,7 +124,8 @@ private fun AreaGrid(
     val top = edgeHeight + gap + with(density) { PILL_LONG.toPx() / 2 }
     val left = leftLabels + gap + with(density) { PILL_SHORT.toPx() }
     val bottom = with(density) { GRID_BOTTOM.toPx() }
-    val right = with(density) { GRID_RIGHT.toPx() }
+    // The grid sits centered in its card, as far from the right as the row numbers take on the left.
+    val right = left
     val cellStyles =
         listOf(MaterialTheme.typography.headlineSmall, MaterialTheme.typography.bodyLarge, MaterialTheme.typography.labelMedium)
 
@@ -143,32 +144,37 @@ private fun AreaGrid(
                 val columns = (listOf(0.0) + width.cuts + width.total).map { x.toPixel(it) }
                 val rows = (listOf(0.0) + height.cuts + height.total).map { y.toPixel(it) }
                 val cellGap = CELL_GAP.toPx()
-                heights.forEachIndexed { row, rowPart ->
-                    widths.forEachIndexed { column, columnPart ->
-                        val cell = Size(columns[column + 1] - columns[column] - cellGap, rows[row + 1] - rows[row] - cellGap)
-                        val corner = Offset(columns[column] + cellGap / 2, rows[row] + cellGap / 2)
-                        drawRoundRect(
-                            tones[(row + column) % tones.size],
-                            corner,
-                            Size(maxOf(cell.width, 1f), maxOf(cell.height, 1f)),
-                            CornerRadius(CELL_RADIUS.toPx()),
-                        )
-                        val room = Size(cell.width - CELL_PADDING.toPx() * 2, cell.height - CELL_PADDING.toPx() * 2)
-                        cellStyles
-                            .drop(cellStyleIndex(minOf(cell.width, cell.height)))
-                            .map {
-                                measurer.measure(
-                                    format(columnPart * rowPart),
-                                    it.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink),
-                                )
-                            }.firstOrNull { it.size.width <= room.width && it.size.height <= room.height }
-                            ?.let {
-                                drawText(
-                                    it,
-                                    topLeft =
-                                        corner + Offset((cell.width - it.size.width) / 2, (cell.height - it.size.height) / 2),
-                                )
-                            }
+                val cells =
+                    heights.flatMapIndexed { row, rowPart ->
+                        widths.mapIndexed { column, columnPart ->
+                            val size = Size(columns[column + 1] - columns[column] - cellGap, rows[row + 1] - rows[row] - cellGap)
+                            Triple(Offset(columns[column] + cellGap / 2, rows[row] + cellGap / 2), size, format(columnPart * rowPart))
+                        }
+                    }
+                val measure = { text: String, style: TextStyle ->
+                    measurer.measure(text, style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink))
+                }
+                val fits = { size: Size, text: String, style: TextStyle ->
+                    measure(text, style).size.let {
+                        it.width <= size.width - CELL_PADDING.toPx() * 2 && it.height <= size.height - CELL_PADDING.toPx() * 2
+                    }
+                }
+                // Every part's number takes one size, the largest that fits the smallest part, so no part reads as weightier.
+                val shared =
+                    cellStyles
+                        .drop(cells.maxOf { (_, size) -> cellStyleIndex(minOf(size.width, size.height)) })
+                        .firstOrNull { style -> cells.all { (_, size, text) -> fits(size, text, style) } }
+                        ?: cellStyles.last()
+                cells.forEachIndexed { index, (corner, size, text) ->
+                    drawRoundRect(
+                        tones[(index / widths.size + index % widths.size) % tones.size],
+                        corner,
+                        Size(maxOf(size.width, 1f), maxOf(size.height, 1f)),
+                        CornerRadius(CELL_RADIUS.toPx()),
+                    )
+                    if (fits(size, text, shared)) {
+                        val it = measure(text, shared)
+                        drawText(it, topLeft = corner + Offset((size.width - it.size.width) / 2, (size.height - it.size.height) / 2))
                     }
                 }
                 widths.forEachIndexed { index, part ->
@@ -344,7 +350,6 @@ private val EDGE_GAP = 10.dp
 private val PILL_LONG = 26.dp
 private val PILL_SHORT = 12.dp
 private val GRID_BOTTOM = 4.dp
-private val GRID_RIGHT = 8.dp
 private val MIN_GRID = 140.dp
 private val MAX_GRID = 260.dp
 private val CELL_GAP = 2.dp

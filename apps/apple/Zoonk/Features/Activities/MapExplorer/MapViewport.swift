@@ -138,6 +138,24 @@ enum MapViewport {
     }
     return xs.flatMap { x in ys.map { y in CGPoint(x: x, y: y) } }
   }
+  /// Main's `strayRegions`: the tinted regions to leave off the map. One whose name was left out
+  /// and whose tint the legend doesn't explain would read as a stray shape.
+  static func strayRegions(
+    _ regions: [ActivityBaseMap.Region], labels: [ActivityBaseMap.Label],
+    legendTones: Set<ActivityBaseMap.Tone>, spots: [Placement?]
+  ) -> Set<String> {
+    let unnamed = Set(
+      zip(labels, spots).compactMap { label, spot in
+        label.kind == .region && spot == nil ? label.text : nil
+      })
+
+    return Set(
+      regions.filter {
+        ![.context, .focus].contains($0.tone) && !legendTones.contains($0.tone)
+          && unnamed.contains($0.name)
+      }.map(\.id))
+  }
+
   static func isNamed(references: String, source: String, text: String) -> Bool {
     let named = references.lowercased()
     return [source, text].contains { !$0.isEmpty && named.contains($0.lowercased()) }
