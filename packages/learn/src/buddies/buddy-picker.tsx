@@ -12,7 +12,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
-import { useBuddyName } from "./use-buddy-name";
+import { useBuddyName, useDefaultBuddyName } from "./use-buddy-name";
 
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 
@@ -59,15 +59,18 @@ export function BuddyPicker({
   choice,
   look,
   onChange,
+  showDefaultName = false,
 }: {
   choice: BuddyChoice;
   look: BuddyLook;
   onChange: (choice: BuddyChoice) => void;
+  showDefaultName?: boolean;
 }) {
   const t = useExtracted();
   const nameId = useId();
 
-  const defaultName = useBuddyName({ kind: choice.kind, name: null });
+  const getDefaultName = useDefaultBuddyName();
+  const defaultName = getDefaultName(choice.kind);
 
   return (
     <div className="flex flex-col gap-5" data-slot="buddy-picker">
@@ -78,7 +81,10 @@ export function BuddyPicker({
           const kind = BUDDY_KINDS.find((item) => item === value);
 
           if (kind) {
-            onChange({ ...choice, kind });
+            const name =
+              showDefaultName && choice.name === defaultName ? getDefaultName(kind) : choice.name;
+
+            onChange({ ...choice, kind, name });
           }
         }}
         value={choice.kind}

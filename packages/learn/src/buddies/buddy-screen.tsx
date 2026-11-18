@@ -13,14 +13,7 @@ import {
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  CalendarDaysIcon,
-  EllipsisIcon,
-  GlassesIcon,
-  HistoryIcon,
-  PencilIcon,
-  SmileIcon,
-} from "lucide-react";
+import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, HistoryIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   createContext,
@@ -150,14 +143,14 @@ function BuddyMenu({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuItem onClick={onEdit}>
-          {buddy.picked ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
+        <DropdownMenuItem className="min-h-11" onClick={onEdit}>
+          {buddy.picked && <PencilIcon aria-hidden="true" />}
           {buddy.picked ? t("Change {buddy}", { buddy: name }) : t("Choose your buddy")}
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={onGlasses}>
           <GlassesIcon aria-hidden="true" />
-          <span className="flex-1">{t("Glasses")}</span>
+          <span className="flex-1">{t("{buddy}'s glasses", { buddy: name })}</span>
           <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
         </DropdownMenuItem>
 
@@ -183,8 +176,7 @@ function PickBuddyButton({ onPick }: { onPick: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button aria-haspopup="dialog" onClick={onPick} size="sm" variant="outline">
-      <SmileIcon aria-hidden="true" />
+    <Button aria-haspopup="dialog" onClick={onPick} size="lg" variant="outline">
       {t("Choose your buddy")}
     </Button>
   );
@@ -323,6 +315,7 @@ export function BuddyScreen({
           initial={{ glasses: current.glasses, kind: current.kind, name: current.name ?? "" }}
           look={buddy}
           onClose={() => setEditing(false)}
+          picked={current.picked}
           onSave={(choice) => {
             setEditing(false);
 

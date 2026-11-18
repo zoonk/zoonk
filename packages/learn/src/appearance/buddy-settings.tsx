@@ -24,7 +24,7 @@ import { SheetHeader } from "../_components/sheet-header";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
-import { useBuddyName } from "../buddies/use-buddy-name";
+import { useBuddyName, useDefaultBuddyName } from "../buddies/use-buddy-name";
 
 export type AppearanceBuddy = { glasses: BuddyGlasses; kind: BuddyKind; name: string | null };
 
@@ -38,15 +38,31 @@ export function BuddyEditor({
   look,
   onClose,
   onSave,
+  picked,
 }: {
   glasses?: BuddyGlassesOption[];
   initial: BuddyChoice;
   look: BuddyLook;
   onClose: () => void;
   onSave: (choice: BuddyChoice) => void;
+  picked: boolean;
 }) {
   const t = useExtracted();
-  const [choice, setChoice] = useState(initial);
+  const defaultName = useDefaultBuddyName();
+
+  const [choice, setChoice] = useState(() => ({
+    ...initial,
+    name: initial.name || defaultName(initial.kind),
+  }));
+
+  const trimmedName = choice.name.trim();
+  const name = initial.name || trimmedName !== defaultName(choice.kind) ? trimmedName : "";
+
+  const changed =
+    !picked ||
+    choice.kind !== initial.kind ||
+    choice.glasses !== initial.glasses ||
+    name !== initial.name;
 
   return (
     <Drawer
@@ -64,7 +80,12 @@ export function BuddyEditor({
 
         {/* One gap between the cards, the name and the glasses, the picker's own. */}
         <DrawerContent className="flex flex-col gap-5 pt-2">
-          <BuddyPicker choice={choice} look={look} onChange={setChoice} />
+          <BuddyPicker
+            choice={choice}
+            look={look}
+            onChange={setChoice}
+            showDefaultName={!initial.name}
+          />
 
           {glasses && (
             <div className="flex flex-col gap-2">
@@ -81,7 +102,7 @@ export function BuddyEditor({
         </DrawerContent>
 
         <DrawerFooter>
-          <Button onClick={() => onSave(choice)} size="lg">
+          <Button disabled={!changed} onClick={() => onSave({ ...choice, name })} size="lg">
             {t("Save")}
           </Button>
         </DrawerFooter>
@@ -149,6 +170,7 @@ export function BuddySettings({
           initial={{ glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" }}
           look={look}
           onClose={() => setIsEditing(false)}
+          picked={buddy.picked}
           onSave={(choice) => {
             setIsEditing(false);
 

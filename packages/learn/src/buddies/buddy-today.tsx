@@ -13,11 +13,11 @@ import { ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { useCountOf } from "../_utils/count-of";
 import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
-import { MissionsDoneCount } from "../missions/mission-list";
 import { MissionsCard } from "../missions/missions-card";
 import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
 import { type BuddyStatusView } from "./buddy-status-view";
@@ -127,6 +127,7 @@ export function BuddyToday({
 }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
+  const countOf = useCountOf();
   const [open, setOpen] = useState(false);
   const [asked, setAsked] = useState(false);
   const { current } = status.energy;
@@ -146,7 +147,7 @@ export function BuddyToday({
           className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
         >
           <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
-          <span>{t("Energy")}</span>
+          <span>{t("{buddy}'s Energy", { buddy: name })}</span>
           {current === null ? <NotYet /> : formatShare(current / PERCENT)}
         </LearnLink>
         <button
@@ -166,10 +167,8 @@ export function BuddyToday({
                 moment={false}
                 strokeWidth={6}
               />
-              <span>
-                <MissionsDoneCount done={done} total={total} />
-              </span>
-              <span className="sr-only">{t("Today's missions")}</span>
+              <span>{t("Today's missions")}</span>
+              <span>{countOf(done, total)}</span>
             </>
           ) : (
             <span>{t("{buddy} today", { buddy: name })}</span>
