@@ -4,6 +4,7 @@ import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/l
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
@@ -43,33 +44,40 @@ function PictureOptionContent({
 }) {
   const t = useExtracted();
   const { image, pending } = useOptionPicture(step, option.id);
+  // oxlint-disable-next-line react/hook-use-state -- The initial drawing state sizes this option until the screen closes.
+  const [startedPending] = useState(pending);
   const pictureText = option.picture?.alt ?? <LessonRichText text={option.text} />;
 
   return (
     <div className="@container flex w-full flex-col gap-2">
       <div className="grid grid-cols-1">
         {/* Keep the description's room when its picture arrives, including on a narrow phone. */}
-        <div
-          className={cn(
-            OPTION_PICTURE_BOX_CLASS,
-            "bg-muted/50 relative col-start-1 row-start-1 grid max-h-none min-h-[min(100cqw,var(--picture-max-h))] place-items-center overflow-hidden p-2 text-center text-sm leading-snug wrap-anywhere",
-            pending && "text-muted-foreground",
-            image && "invisible",
-          )}
-          data-slot="picture-option-frame"
-          style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
-        >
-          {!image && pending && (
-            <>
-              <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0 rounded-none" />
-              <p className="sr-only" role="status">
-                {t("Drawing the picture…")}
-              </p>
-            </>
-          )}
+        {(!image || startedPending) && (
+          <div
+            className={cn(
+              OPTION_PICTURE_BOX_CLASS,
+              "bg-muted/50 relative col-start-1 row-start-1 grid max-h-none min-h-[min(100cqw,var(--picture-max-h))] place-items-center overflow-hidden p-2 text-center text-sm leading-snug wrap-anywhere",
+              pending && "text-muted-foreground",
+              image && "invisible",
+            )}
+            data-slot="picture-option-frame"
+            style={{ ...OPTION_PICTURE_BOX_STYLE, aspectRatio: "auto" }}
+          >
+            {!image && pending && (
+              <>
+                <Skeleton
+                  aria-hidden="true"
+                  className="bg-muted/60 absolute inset-0 rounded-none"
+                />
+                <p className="sr-only" role="status">
+                  {t("Drawing the picture…")}
+                </p>
+              </>
+            )}
 
-          <p className="relative">{pictureText}</p>
-        </div>
+            <p className="relative">{pictureText}</p>
+          </div>
+        )}
 
         {image && (
           <LessonStepImage
