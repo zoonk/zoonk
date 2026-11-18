@@ -121,13 +121,6 @@ function MissionsHeading({
   );
 }
 
-/**
- * The buddy and the rows' marks share one 24px column, so the title starts where the rows' names
- * do. The header's slot is as tall as the title's line and the line under it, so the buddy centers
- * on those two lines however many more a long title takes.
- */
-const MARK_COLUMN_CLASS = "[&_[data-slot=list-row-leading]]:w-6";
-
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
@@ -195,19 +188,15 @@ export function MissionsCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(
-        SURFACE_CLASS,
-        "flex flex-col px-4 pt-4",
-        open ? "pb-1.25" : "pb-4",
-        showBuddy && MARK_COLUMN_CLASS,
-        className,
-      )}
+      className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-4", open ? "pb-1.25" : "pb-4", className)}
       data-slot="missions-card"
     >
       <div className="flex items-start gap-3">
+        {/* As tall as the title's line and the line under it, so the buddy centers on those two
+            lines however many more a long title takes. */}
         {showBuddy && (
-          <span className="flex h-10 w-6 shrink-0 items-center justify-center">
-            <BuddyArt buddy={buddy} className="size-6" view="face" />
+          <span className="flex h-10 w-4 shrink-0 items-center justify-center">
+            <BuddyArt buddy={buddy} className="size-4" view="face" />
           </span>
         )}
         <MissionsHeading
