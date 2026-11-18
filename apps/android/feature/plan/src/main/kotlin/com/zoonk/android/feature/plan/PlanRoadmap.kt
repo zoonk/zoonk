@@ -74,6 +74,7 @@ import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.layoutStart
+import com.zoonk.android.ui.theme.wrappedAs
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
@@ -383,6 +384,13 @@ private const val ONE_LINE_NAME_LENGTH = 16
 private const val NO_BREAK_SPACE = '\u00A0'
 private const val WORD_JOINER = "\u2060"
 
+/** A date carries the data face (withData); a word on the axis, such as "Today", keeps the text face. */
+@Composable
+internal fun axisStyle() =
+    MaterialTheme.zoonkType.data
+        .copy(fontFamily = Geist)
+        .wrappedAs(MaterialTheme.typography.labelMedium)
+
 /** Names wrap and hyphenate rather than being cut. */
 @Composable
 private fun bandStyle() =
@@ -597,11 +605,7 @@ private fun PhaseAxis(
     hasOverrun: Boolean,
     width: Dp,
 ) {
-    // A date carries the data face (withData); a word on the axis, such as "Today", keeps the text face.
-    val style =
-        MaterialTheme.zoonkType.data
-            .copy(fontFamily = Geist)
-            .balanced()
+    val style = axisStyle()
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val axisFinish = page.plan.axisFinish(page.goal.kind, page.today)

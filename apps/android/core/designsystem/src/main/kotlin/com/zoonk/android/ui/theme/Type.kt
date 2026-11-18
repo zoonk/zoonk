@@ -72,6 +72,9 @@ private fun TextStyle.role(
 fun TextStyle.balanced(): TextStyle =
     copy(lineBreak = lineBreak.copy(strategy = LineBreak.Strategy.Balanced, strictness = LineBreak.Strictness.Normal))
 
+/** This look on a short label or control, which wraps as the theme's [label] does: balanced, and between phrases in Japanese and Korean. */
+fun TextStyle.wrappedAs(label: TextStyle): TextStyle = copy(lineBreak = label.lineBreak, localeList = label.localeList)
+
 private val material = Typography()
 
 /** Material's slots, so its components (bars, buttons, navigation, dialogs, fields) take main's roles. */
