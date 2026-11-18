@@ -14,34 +14,28 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import {
-  SIDEBAR_ACCOUNT_CLASS,
-  SIDEBAR_ITEM_CLASS,
-  SidebarSection,
-} from "@zoonk/ui/components/sidebar";
+import { SIDEBAR_ACCOUNT_CLASS, SidebarSection } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
-import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
-function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
     <>
       <LearnSidebarLink
-        count={places?.readyMistakes}
+        count={places.readyMistakes}
         label={t("Mistakes notebook")}
         menu="mistakes"
       />
-      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
-      {places?.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
-      {places?.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
-      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
-      {places?.completedLessons && (
+      {places.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
+      {places.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
+      {places.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
+      {places.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
+      {places.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
     </>
@@ -62,7 +56,7 @@ function StatsLinks() {
   );
 }
 
-function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
+function StudySectionView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
@@ -75,57 +69,16 @@ function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
   );
 }
 
-function SidebarRowSkeleton() {
-  return (
-    <div className={SIDEBAR_ITEM_CLASS}>
-      <Skeleton className="size-4 shrink-0 rounded-sm" />
-      <Skeleton className="h-3 w-3/5 rounded-sm" />
-    </div>
-  );
-}
-
-function PendingStudySection() {
-  const t = useExtracted();
-  const pages = useStatsPages();
-
-  return (
-    <div className="signed-in:contents hidden">
-      <PrivateShellPlaceholder fallback={<StudySectionView places={null} />}>
-        <div aria-hidden="true" className="contents">
-          <SidebarSection label={t("Study")}>
-            <SidebarRowSkeleton />
-            <SidebarRowSkeleton />
-            <SidebarRowSkeleton />
-          </SidebarSection>
-          <SidebarSection label={t("Statistics")}>
-            {pages.map(({ menu }) => (
-              <SidebarRowSkeleton key={menu} />
-            ))}
-          </SidebarSection>
-        </div>
-      </PrivateShellPlaceholder>
-    </div>
-  );
-}
-
 /** Every link here opens a learner's own page, so someone without a session gets none of them. */
 function FrameStudySection() {
   const learner = useFrameLearner();
 
-  if (learner.status === "visitor") {
-    return null;
-  }
-
-  if (learner.status !== "ready") {
-    return <PendingStudySection />;
-  }
-
-  return <StudySectionView places={learner.summary.places} />;
+  return learner.status === "ready" ? <StudySectionView places={learner.summary.places} /> : null;
 }
 
 export function LearnerSections() {
   return (
-    <Suspense fallback={<PendingStudySection />}>
+    <Suspense>
       <FrameStudySection />
     </Suspense>
   );
