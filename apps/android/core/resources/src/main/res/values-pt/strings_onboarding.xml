@@ -393,9 +393,8 @@
   "onboarding_study_days": "75014fcea13bf0ad8e3c135eff36e2d99b76c50ec2eef0db64bee68e686e6fb0",
   "onboarding_study_material": "b150107ef993454c49438a1c649a37df38658681d0efb4efafb221135ba754da",
   "onboarding_subjects_description": "db25bc4a18f66d6349bb80906c56df0bc73db38d560808ae4b25a8b4aa3a26db",
-  "onboarding_subjects_from_scratch": "2bd61b53aa5df24c412d8ddd8bbaa815267255ff6b445a1327bc0e7ea532e29d",
+  "onboarding_subjects_from_scratch": "db8b2ad5925983f96183fcf6225b9d0bead71e8f1c4fdfa7d62e5fc2105a541e",
   "onboarding_subjects_label": "de282a0bdfa17d5d636e7701f152a6f0804484bff36f55e606d917e9316bf9f5",
-  "onboarding_subjects_none": "5d2628b3b85d29061c2602f0921098e35cf27d2b30fb2524de7eb17134687420",
   "onboarding_subjects_title": "2f94e6baf6d8627a9b4a0846d388e91396a8aef928c7e591f393ba10c56f8c64",
   "onboarding_target_label": "b4719d97b03a91c89709308054dcf1b8a6a9d57a681dd8b3fbf8d7792f0bbc4b",
   "onboarding_test_level_a1": "52e625fc5f94ae3ddfc1dc326ccd55845d5c26195336eebec2da0b8d6aa63e7f",
@@ -888,8 +887,7 @@
     <string name="onboarding_subjects_title">Quais matérias você já conhece bem?</string>
     <string name="onboarding_subjects_description">Seu plano começa depois do básico dessas matérias. Um teste rápido define por onde você começa nas outras.</string>
     <string name="onboarding_subjects_label">Matérias que você conhece bem</string>
-    <string name="onboarding_subjects_none">Nenhuma ainda</string>
-    <string name="onboarding_subjects_from_scratch">Estou começando do zero</string>
+    <string name="onboarding_subjects_from_scratch">Estou começando do zero em todas</string>
     <string name="onboarding_admission_title">Qual curso e pontuação você busca?</string>
     <string name="onboarding_target_label">Seu objetivo</string>
     <string name="onboarding_admission_placeholder">Ex.: medicina, 750 pontos</string>

@@ -89,6 +89,7 @@
   "today_resume": "e6ad0adc1fac0f358706f7d82cb9857a32c0f90d0ca2e53d17d14a8225eca706",
   "today_resume_effect": "4ba754c486a3d6078dd525b60ff9ed144b67ea5038dbcdaf73dbc215a9c93b21",
   "today_save_failed": "95a8110c4ec020641aa939263acefff396f190cb565a63f21df6cfa498c891ca",
+  "today_see_changes": "e11a246a826be71e0402b1188d63b9a33c79ae95c086eda84dba3138f2fe01ee",
   "today_see_day_challenge": "ca6aa2a829ddc9f567279d64cc0919d123b5e3df52d64721fa814f54d287123c",
   "today_see_day_mock": "4e965831c20b2a60123b4e46fa5ddd8039fede0194d6a3a58d73d419b70ecc44",
   "today_see_summary": "d321692bb3dc962dc65c7ffc8fed55d3ea56dad8d34760d35017389b0545599f",
@@ -309,6 +310,7 @@
     <string name="today_notice_exam_choice">Sınav seçimi</string>
     <string name="today_exam_choice_choose">Seç</string>
     <string name="today_notice_plan_change">Önerilen değişiklik</string>
+    <string name="today_see_changes">Nelerin değişeceğini gör</string>
     <string name="today_plan_use_my_date">Tarihimi kullan</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Kendi planımı koru</string>

@@ -85,7 +85,6 @@
   "session_summary_so_far": "f46e4db7fbd07825e327222b5464bb57ab1ee423ef1fad4e3d300efb13867351",
   "session_summary_streak": "192e1b67ead74c700256aa463c86ace5c7c1e5175b1d92ff4ee64b040d7e9171",
   "session_summary_to_review": "5cb84e221cba334838e17dbe71c7d58b086813b86eb7cb1899aac0eac802759a",
-  "session_summary_to_review_detail": "617c684ed28735a613bb8d0f41d7a3db7ab02306fdbe8e01df80f90d6e785a98",
   "session_summary_tomorrow": "cb3e610d0b67c4244b1a74a93e41808a7dc61b56011c65f2605996d46f77dbba",
   "session_summary_up_from": "d09c800dd1e37d1ae15b4868e166935442018f841a11ce790359e912f8d59bf1",
   "session_topics_and_more": "5e327e54fbfea5e59ea95f817db652d11f41be979ecfdaaa85ccb0c5665b1660"
@@ -242,5 +241,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">持ち越していたレッスンはすべて終わりました。</string>
-    <string name="session_summary_to_review_detail">要復習</string>
 </resources>

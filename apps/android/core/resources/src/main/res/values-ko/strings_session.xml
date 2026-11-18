@@ -85,7 +85,6 @@
   "session_summary_so_far": "8599d602f917b1b76442431d775485d4e4f8ac0cfc4ca449f69232e8cc136c0a",
   "session_summary_streak": "8bea2177058aa03cdb6f6454b16477c49ca3a68c720ae27c6d6d219608e1ae31",
   "session_summary_to_review": "c554c3397f1a66731ecb5fadb7d0939e4ac9ccb3f513a4df048ca34a31716f98",
-  "session_summary_to_review_detail": "a61e29ccbd40a15a68d0f4716c5ca0513f39634010becfedb4c3f95f6ff134ae",
   "session_summary_tomorrow": "5845b56f33287f1a6d377cbf843784306ecf5b646d544d6e6cc69a203c040956",
   "session_summary_up_from": "67e35b1a324a9ff3903ddb5ff01b71f2abb91f0cd932bbc3d264a18178282507",
   "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f"
@@ -242,5 +241,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">밀린 레슨을 모두 마쳤어요.</string>
-    <string name="session_summary_to_review_detail">복습 필요</string>
 </resources>

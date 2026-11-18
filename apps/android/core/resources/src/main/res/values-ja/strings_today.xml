@@ -89,6 +89,7 @@
   "today_resume": "2978c8efa3ea9a28c95ac8b052432bc937b54fa4458611decaf15a6b22d55f27",
   "today_resume_effect": "8d04268c73ddd7daf1bcf31c9d7f70cadaafcd51eeedd42e006576e96555b224",
   "today_save_failed": "62afa501eeb9717c3f297c31bd8f498206e5352af6ff171b6fdccef8faaee2bc",
+  "today_see_changes": "4b7d23d362269e8750ac37c6639175980d78ab24a8334589f3a2f3ab69b8bcf1",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
   "today_see_summary": "00f4d50d9702dc15e08d746fc8ce04bb441f451e806a9a1ffe1587dac1ed2d58",
@@ -302,6 +303,7 @@
     <string name="today_notice_exam_choice">試験の選択</string>
     <string name="today_exam_choice_choose">選ぶ</string>
     <string name="today_notice_plan_change">変更の提案</string>
+    <string name="today_see_changes">変更内容を見る</string>
     <string name="today_plan_use_my_date">指定した日付を使う</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">今の計画を続ける</string>

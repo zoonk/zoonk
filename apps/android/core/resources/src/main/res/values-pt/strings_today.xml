@@ -89,6 +89,7 @@
   "today_resume": "cbb1f1e0d5df999e74d1c4c2c711c2ed436d462ddb1514a7d4e86e14313e7736",
   "today_resume_effect": "0a9e3154cdc83c4ad57aa1aa51ff96f1e073bade975fe6c501a72c416308bcda",
   "today_save_failed": "c1ea8538034879b8bae005fcb0132c4e2c246ba2059fdd7efd341b00a99e2ce2",
+  "today_see_changes": "cb52971f182b8b9e69f6f13fef9b2d152c5bf2505f3ff3a229eb0cf489869645",
   "today_see_day_challenge": "c1239e96f8d7ec61fd6cf274ea4dde3a16d2a1a1e720d705ce9936ff602e79b2",
   "today_see_day_mock": "51adef24effd4e26b32c8d6f97b9e12523b72c2cf248d5f9453fdfb48b2f8855",
   "today_see_summary": "f35e60e05a07978c67a8368d0168c3479e7f7881aee166d0850bd893fe478089",
@@ -316,6 +317,7 @@
     <string name="today_notice_exam_choice">Escolha da prova</string>
     <string name="today_exam_choice_choose">Escolher</string>
     <string name="today_notice_plan_change">Mudança sugerida</string>
+    <string name="today_see_changes">Ver o que muda</string>
     <string name="today_plan_use_my_date">Usar minha data</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Manter meu plano</string>

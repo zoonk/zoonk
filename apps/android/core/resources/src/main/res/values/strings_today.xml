@@ -154,6 +154,7 @@
     <string name="today_notice_exam_choice">Exam choice</string>
     <string name="today_exam_choice_choose">Choose</string>
     <string name="today_notice_plan_change">Suggested change</string>
+    <string name="today_see_changes">See what changes</string>
     <string name="today_plan_use_my_date">Use my date</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Keep mine</string>

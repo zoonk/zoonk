@@ -85,7 +85,6 @@
   "session_summary_so_far": "bf10c7c87ff26a3ff6e8f09a7d3481cdf9cc97ea81d71637fc8ab7998380d391",
   "session_summary_streak": "8d2eb01f755101782f06b856b76db43af618f5bd75358617dbd6ef7d795f0847",
   "session_summary_to_review": "a8bd048d3cd1d9fb2270c9e24c027221aa30fff9fa4ae6b28c5afdc5fc80aa43",
-  "session_summary_to_review_detail": "5f544e7ecdecaa981972577923538306307ca83223eab4a11a61e8cb3740a5fc",
   "session_summary_tomorrow": "9076007757c181efe94f1b57d6c5d221a14738817320dc4d3217bd9e49e7e0c2",
   "session_summary_up_from": "ec0beb23f5c676f4119f94715dce44370f93cb6c6c0a37d987b1fe6f7bcf40da",
   "session_topics_and_more": "e6fd058f6fd737dd9c3228eff9600f99405bb7db87d00081134c632ff32f53c0"
@@ -255,5 +254,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Telafi edilecek ders kalmadı.</string>
-    <string name="session_summary_to_review_detail">Tekrar edilecek</string>
 </resources>

@@ -89,6 +89,7 @@
   "today_resume": "8953c78feeeebcdcf1cca975e9b9b909249a520dfbc6f4587d217541a76b664f",
   "today_resume_effect": "8727388af898a5097e96dadb7c3da21456b282bdf66a026f44f7f1c0e22643b2",
   "today_save_failed": "740763a2ae8e5f163a5da691446d97c86c21152714d7d38484a0e64738d04a31",
+  "today_see_changes": "eeb5d9ef13b06986e93d382b78fc40382b07a9dd8f32b9350246acfce5e46a16",
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
   "today_see_summary": "54fc12280fb64f52dfb3b9531c81e67f69e15b295405c6c0f8000141abe4aa7b",
@@ -302,6 +303,7 @@
     <string name="today_notice_exam_choice">시험 선택</string>
     <string name="today_exam_choice_choose">선택</string>
     <string name="today_notice_plan_change">변경 제안</string>
+    <string name="today_see_changes">달라지는 내용 보기</string>
     <string name="today_plan_use_my_date">내가 정한 날짜 사용하기</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">내 계획 유지하기</string>
