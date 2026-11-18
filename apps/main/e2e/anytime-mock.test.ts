@@ -144,6 +144,47 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
   });
 
+  test("keeps the mock action bar in place when an answer fails to save", async ({ browser }) => {
+    const { user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+
+    try {
+      await page.setViewportSize({ height: 844, width: 390 });
+      await page.goto("/mock/new");
+
+      await page
+        .getByRole("radiogroup", { name: "The exam" })
+        .getByText("The full exam", { exact: true })
+        .click();
+
+      await page.getByRole("button", { name: "Start" }).click();
+      await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+
+      const bar = page.locator('[data-slot="bottom-bar"]');
+      const height = () => bar.evaluate((element) => element.getBoundingClientRect().height);
+      await expect(bar).toBeVisible();
+      const before = await height();
+
+      await page.route(page.url(), (route) => {
+        const request = route.request();
+
+        const saving =
+          request.method() === "POST" && request.postData()?.includes('"selectedIndex"');
+
+        return saving ? route.abort() : route.fallback();
+      });
+
+      const answer = page.getByRole("radio").first();
+      await answer.click();
+
+      await expect(bar.getByRole("button", { name: "Try again" })).toBeVisible();
+      await expect(answer).toBeChecked();
+      expect(await height()).toBe(before);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a free learner picks a mock exam like anyone and meets the gate at Start", async ({
     browser,
   }) => {
