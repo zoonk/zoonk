@@ -37,6 +37,11 @@ describe("a call that stopped", () => {
   it.each([
     ["its call time ran out", { reason: "limit", retry: null }, "No more calls today"],
     ["calls are paused", { reason: "callsPaused", retry: null }, "Calls are paused"],
+    [
+      "it needs a subscription",
+      { reason: "plusRequired", retry: null },
+      "This call needs a subscription",
+    ],
     ["it ended", { reason: "ended", retry: null }, "This call has ended"],
     [
       "another call took over",
