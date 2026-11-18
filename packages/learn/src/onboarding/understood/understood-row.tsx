@@ -100,14 +100,14 @@ function RowEditor({
       )}
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
-        <Button busy={isSaving} size="sm" type="submit">
+        <Button busy={isSaving} size="lg" type="submit">
           {t("Save")}
         </Button>
         <Button
           disabled={isSaving}
           focusableWhenDisabled
           onClick={onCancel}
-          size="sm"
+          size="lg"
           type="button"
           variant="ghost"
         >
