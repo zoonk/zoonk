@@ -63,7 +63,7 @@ function ActivityWeek({ longest, week }: { longest: number; week: ActivityDay[] 
   );
 }
 
-const TITLE = "Study time by day, the last 12 months";
+const TITLE_ID = "user-activity-title";
 
 /** A phone shows the last 26 weeks, fitted to its column, as the learner's own Activity page does. */
 const PHONE_WEEKS = 26;
@@ -116,14 +116,14 @@ export async function UserActivity({ userId }: { userId: string }) {
         </>
       }
       title={
-        <>
+        <span id={TITLE_ID}>
           <span className="max-sm:hidden">The last 12 months</span>
           <span className="sm:hidden">The last 6 months</span>
-        </>
+        </span>
       }
     >
       <ContributionCalendar
-        aria-label={TITLE}
+        aria-labelledby={TITLE_ID}
         recentOnPhone
         defaultIndex={Math.max(
           0,
@@ -134,7 +134,7 @@ export async function UserActivity({ userId }: { userId: string }) {
       >
         <ContributionCalendarViewport className="max-lg:scrollbar-thin">
           <ContributionCalendarContent>
-            <ContributionCalendarGrid aria-label={TITLE}>
+            <ContributionCalendarGrid aria-label="Study time by day">
               {weeks.map((week) => (
                 <ActivityWeek
                   key={getContributionCalendarWeekKey(week)}
