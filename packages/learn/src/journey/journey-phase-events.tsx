@@ -5,9 +5,8 @@ import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { KindMark } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import { ListRowChevronSpace } from "../_components/list-group";
-import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -20,17 +19,6 @@ export const PATH_ROW_CLASS =
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 
-const PATH_ROW_BODY_CLASS = cn(
-  TITLE_ROW_CLASS,
-  "min-w-0 flex-1 @max-2xs:*:first:max-w-none @max-2xs:*:first:basis-full",
-);
-
-/**
- * A path row's words, in one column however many lines they take, then its value. Centered beside
- * the column, the value sits on the row's center, level with the chevron after it (craft E6). In a
- * row too narrow for a long date beside a title, such as the sidebar's, every row's value sits under
- * its words, so a list's dates share one place whatever their length.
- */
 export function PathRowBody({
   children,
   value,
@@ -39,15 +27,18 @@ export function PathRowBody({
   value?: React.ReactNode;
 }) {
   return (
-    <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
+    <span
+      className="flex min-w-0 flex-1 items-center justify-between gap-3"
+      data-slot="path-row-body"
+    >
       <span
-        className="flex min-w-0 flex-col text-pretty *:first:text-balance"
+        className="flex min-w-0 flex-1 flex-col text-pretty wrap-break-word *:first:text-balance"
         data-slot="path-row-words"
       >
         {children}
       </span>
       {value && (
-        <span className="flex" data-slot="path-row-value">
+        <span className="max-w-[50%] shrink-0 text-right" data-slot="path-row-value">
           {value}
         </span>
       )}
@@ -170,7 +161,7 @@ export function MockRow({
   return (
     <EventRow href={href}>
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-        <KindMark kind="mock" />
+        <KindDot kind="mock" />
       </span>
       <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>
         <span className="font-medium text-pretty">{t("Mock exam")}</span>

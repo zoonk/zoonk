@@ -177,7 +177,7 @@ function PhaseItem({
 }
 
 function FinishItem() {
-  const { goal } = usePlanScreen();
+  const { goal, plan } = usePlanScreen();
   const finish = useRoadmapFinish();
 
   return (
@@ -188,6 +188,7 @@ function FinishItem() {
         </span>
         <PathRowBody
           value={
+            !plan.end &&
             finish && (
               <PlanDateText
                 className="text-muted-foreground text-xs"
