@@ -258,7 +258,6 @@ msgstr "{days, plural, one {Manca circa # giorno} other {Mancano circa # giorni}
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
@@ -288,7 +287,6 @@ msgstr "Continua"
 #: src/_components/detail-page.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -3313,9 +3311,10 @@ msgid "Day {number, number}"
 msgstr "Giorno {number, number}"
 
 #: src/exam/exam-format-section.tsx
-msgctxt "0Wr2Rv"
-msgid "Date not set"
-msgstr "Data non impostata"
+#: src/exam/exam-screen.tsx
+msgctxt "1L3MIn"
+msgid "Day not set yet"
+msgstr "Giorno ancora da definire"
 
 #: src/exam/exam-labels.tsx
 msgctxt "_Dh3uU"
@@ -3679,11 +3678,6 @@ msgstr "{date} alle {time}"
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "Opzioni dell’esame"
-
-#: src/exam/exam-screen.tsx
-msgctxt "1L3MIn"
-msgid "Day not set yet"
-msgstr "Giorno ancora da definire"
 
 #: src/exam/exam-screen.tsx
 msgctxt "pV2uIU"
@@ -4683,9 +4677,9 @@ msgid "Pause goal"
 msgstr "Metti in pausa l’obiettivo"
 
 #: src/journey/goal-actions.tsx
-msgctxt "uUtHtO"
-msgid "Resume this goal"
-msgstr "Riprendi questo obiettivo"
+msgctxt "bvIZsF"
+msgid "Resume goal"
+msgstr "Riprendi l’obiettivo"
 
 #: src/journey/goal-actions.tsx
 #: src/plan/exam-over-actions.tsx
@@ -4803,6 +4797,13 @@ msgstr "Preparazione"
 msgctxt "l25yqY"
 msgid "{studied, number} studied · {known, number} already known"
 msgstr "{studied, number} studiate · {known, number} già note"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -7971,14 +7972,14 @@ msgid "Try again before you move on"
 msgstr "Riprova prima di continuare"
 
 #: src/mock/mock-frame.tsx
-msgctxt "gOsgur"
-msgid "Your last answer wasn't saved."
-msgstr "La tua ultima risposta non è stata salvata."
-
-#: src/mock/mock-frame.tsx
 msgctxt "hM4teD"
 msgid "That didn't go through. Your answers are saved. Try again in a moment."
 msgstr "L’operazione non è riuscita. Le tue risposte sono state salvate. Riprova tra poco."
+
+#: src/mock/mock-frame.tsx
+msgctxt "gOsgur"
+msgid "Your last answer wasn't saved."
+msgstr "La tua ultima risposta non è stata salvata."
 
 #: src/mock/mock-frame.tsx
 msgctxt "9UlLLH"
@@ -9986,11 +9987,6 @@ msgctxt "RlSFBL"
 msgid "Study days"
 msgstr "Giorni di studio"
 
-#: src/onboarding/steps/study-week.tsx
-msgctxt "FYJyhw"
-msgid "Time on weekends"
-msgstr "Tempo nel fine settimana"
-
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
@@ -11549,9 +11545,9 @@ msgid "You have {tools}, so there's nothing to set up."
 msgstr "Hai {tools}, quindi non c’è nulla da configurare."
 
 #: src/plan/use-tool-sentence.ts
-msgctxt "-8_nhW"
-msgid "No install for {tools}: you'll learn with examples."
-msgstr "Per {tools} non serve installare nulla: imparerai con gli esempi."
+msgctxt "YDyhWr"
+msgid "You won't use {tools}: you'll learn with examples."
+msgstr "Non userai {tools}: imparerai con degli esempi."
 
 #: src/plan/written-cadence.tsx
 msgctxt "8T3kjt"
@@ -13452,12 +13448,6 @@ msgstr "Ne abbiamo preso nota."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Dalle tue ultime risposte"
-
-#. A short line under the progress percent, in a small tile.
-#: src/today/today-lessons-card.tsx
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

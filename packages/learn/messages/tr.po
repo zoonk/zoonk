@@ -258,7 +258,6 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
@@ -288,7 +287,6 @@ msgstr "Devam et"
 #: src/_components/detail-page.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
-#: src/chapter/chapter-header.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
@@ -3313,9 +3311,10 @@ msgid "Day {number, number}"
 msgstr "{number, number}. gün"
 
 #: src/exam/exam-format-section.tsx
-msgctxt "0Wr2Rv"
-msgid "Date not set"
-msgstr "Tarih belirlenmedi"
+#: src/exam/exam-screen.tsx
+msgctxt "1L3MIn"
+msgid "Day not set yet"
+msgstr "Gün henüz belli değil"
 
 #: src/exam/exam-labels.tsx
 msgctxt "_Dh3uU"
@@ -3679,11 +3678,6 @@ msgstr "{date} saat {time}"
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "Sınav seçenekleri"
-
-#: src/exam/exam-screen.tsx
-msgctxt "1L3MIn"
-msgid "Day not set yet"
-msgstr "Gün henüz belli değil"
 
 #: src/exam/exam-screen.tsx
 msgctxt "pV2uIU"
@@ -4683,9 +4677,9 @@ msgid "Pause goal"
 msgstr "Hedefi duraklat"
 
 #: src/journey/goal-actions.tsx
-msgctxt "uUtHtO"
-msgid "Resume this goal"
-msgstr "Bu hedefe devam et"
+msgctxt "bvIZsF"
+msgid "Resume goal"
+msgstr "Hedefe devam et"
 
 #: src/journey/goal-actions.tsx
 #: src/plan/exam-over-actions.tsx
@@ -4803,6 +4797,13 @@ msgstr "Hazırlık"
 msgctxt "l25yqY"
 msgid "{studied, number} studied · {known, number} already known"
 msgstr "{studied, number} ders çalışıldı · {known, number} ders zaten biliniyordu"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+#: src/today/today-lessons-card.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -7971,14 +7972,14 @@ msgid "Try again before you move on"
 msgstr "Devam etmeden önce tekrar dene"
 
 #: src/mock/mock-frame.tsx
-msgctxt "gOsgur"
-msgid "Your last answer wasn't saved."
-msgstr "Son cevabın kaydedilemedi."
-
-#: src/mock/mock-frame.tsx
 msgctxt "hM4teD"
 msgid "That didn't go through. Your answers are saved. Try again in a moment."
 msgstr "İşlem tamamlanamadı. Cevapların kayıtlı. Birazdan tekrar dene."
+
+#: src/mock/mock-frame.tsx
+msgctxt "gOsgur"
+msgid "Your last answer wasn't saved."
+msgstr "Son cevabın kaydedilemedi."
 
 #: src/mock/mock-frame.tsx
 msgctxt "9UlLLH"
@@ -9986,11 +9987,6 @@ msgctxt "RlSFBL"
 msgid "Study days"
 msgstr "Çalıştığın günler"
 
-#: src/onboarding/steps/study-week.tsx
-msgctxt "FYJyhw"
-msgid "Time on weekends"
-msgstr "Hafta sonu çalışma süresi"
-
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
@@ -11549,9 +11545,9 @@ msgid "You have {tools}, so there's nothing to set up."
 msgstr "{tools} zaten sende var, kurulum yapmana gerek yok."
 
 #: src/plan/use-tool-sentence.ts
-msgctxt "-8_nhW"
-msgid "No install for {tools}: you'll learn with examples."
-msgstr "{tools} için kurulum gerekmiyor: örneklerle öğreneceksin."
+msgctxt "YDyhWr"
+msgid "You won't use {tools}: you'll learn with examples."
+msgstr "{tools} kullanmayacaksın: örneklerle öğreneceksin."
 
 #: src/plan/written-cadence.tsx
 msgctxt "8T3kjt"
@@ -13452,12 +13448,6 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
-
-#. A short line under the progress percent, in a small tile.
-#: src/today/today-lessons-card.tsx
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
