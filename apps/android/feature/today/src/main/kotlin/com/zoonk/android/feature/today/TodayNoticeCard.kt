@@ -364,9 +364,9 @@ private fun InsightNotice(
     val label = stringResource(R.string.today_insight_label)
     val proposed = insight.planChange?.status == MemoryInsightPlanChange.Status.PROPOSED
 
-    val tip = insight.kind == MemoryInsight.Kind.TIP
     val failed = answer == InsightAnswer.Failed
 
+    // Only a proposed plan change opens a sheet, to show what changes; the card answers the rest.
     SuggestionCard(
         label = label,
         modifier = modifier,
@@ -378,41 +378,28 @@ private fun InsightNotice(
             } else {
                 SuggestionHeader(label)
                 SuggestionDescription(insight.message)
-                SuggestionActions {
-                    if (tip) {
-                        SuggestionAction(
-                            stringResource(R.string.today_insight_got_it),
-                            { viewModel.answerInsight(insight, accepted = true) },
-                            busy = viewModel.isAnsweringInsight,
-                            secondary = true,
-                        )
-                    } else {
-                        SuggestionOpen(stringResource(R.string.today_see_changes))
-                    }
-                    if (insight.kind == MemoryInsight.Kind.SCHEDULE_IDEA) {
-                        SuggestionAction(
-                            stringResource(R.string.today_not_now),
-                            { viewModel.answerInsight(insight, accepted = false) },
-                            enabled = !viewModel.isAnsweringInsight,
-                            secondary = true,
+                if (proposed) {
+                    SuggestionActions {
+                        SuggestionOpen(
+                            stringResource(R.string.today_see_changes),
                         )
                     }
+                } else {
+                    InsightActions(insight, viewModel)
                 }
             }
             if (failed) SuggestionSaveError()
         },
         content =
-            if (tip) {
-                null
-            } else {
+            if (proposed) {
                 {
                     SuggestionHeader(label)
-                    if (proposed) {
-                        PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
-                    }
+                    PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
                     if (result != null) SuggestionResult(result) else InsightActions(insight, viewModel)
                     if (failed) SuggestionSaveError()
                 }
+            } else {
+                null
             },
     )
 }
