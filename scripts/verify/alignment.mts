@@ -110,14 +110,15 @@ function wordsOf(action: CaptureElement) {
     .join(" ");
 }
 
-/** Apple gallery captures name a Debug component section, such as `fields`, as `gallery-fields`. */
+/** Older native gallery captures identify specimens by their Debug section or test class. */
 function specimen(capture: Capture) {
-  return (
-    capture.specimen ??
-    (capture.platform === "apple" &&
-      /^[a-z]+$/iu.test(capture.screen) &&
-      capture.scenario === `gallery-${capture.screen}`)
-  );
+  const { platform, scenario, screen } = capture;
+
+  const appleGallery =
+    platform === "apple" && /^[a-z]+$/iu.test(screen) && scenario === `gallery-${screen}`;
+
+  const androidGallery = platform === "android" && screen.startsWith("GalleryScreenshots.");
+  return capture.specimen ?? (appleGallery || androidGallery);
 }
 
 /**
