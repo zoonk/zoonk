@@ -48,7 +48,7 @@ export function DownloadRow({
           aria-label={actionLabel}
           busy={isPending}
           icon={<DownloadIcon aria-hidden="true" />}
-          size="sm"
+          size="lg"
           type="submit"
           variant="outline"
         >
