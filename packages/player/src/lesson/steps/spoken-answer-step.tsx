@@ -11,7 +11,7 @@ import {
   useVoiceRecorder,
 } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HeadphonesIcon, KeyboardIcon, MicIcon } from "lucide-react";
+import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import {
@@ -222,14 +222,12 @@ function ModeSwitch({
   }
 
   if (mode === "speak") {
+    const label = t("I can't talk now");
+    const alternative = canListen ? t("Listen") : t("Type instead");
+
     return (
-      <StepWayOut
-        icon={
-          canListen ? <HeadphonesIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />
-        }
-        onClick={() => switchTo({ cantTalk: true })}
-      >
-        {t("I can't talk now")}
+      <StepWayOut label={`${label}. ${alternative}`} onClick={() => switchTo({ cantTalk: true })}>
+        {label}
       </StepWayOut>
     );
   }
@@ -272,9 +270,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
           {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
             <p className="text-muted-foreground text-sm text-pretty" role="status">
-              {answerMode.micProblem === "blocked"
-                ? t("The microphone is blocked.")
-                : t("We can't use your microphone.")}
+              {t("We can't use your microphone, so type what you'd say.")}
             </p>
           )}
 
