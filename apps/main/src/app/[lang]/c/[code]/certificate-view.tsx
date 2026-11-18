@@ -46,7 +46,7 @@ export function CertificateView({
             </div>
           )}
 
-          <div className="mt-8 grid items-start gap-7 min-[72rem]:grid-cols-[minmax(0,1fr)_320px] min-[72rem]:gap-12">
+          <div className="mt-8 grid grid-cols-1 items-start gap-7 min-[72rem]:grid-cols-[minmax(0,1fr)_320px] min-[72rem]:gap-12">
             <CertificatePaper facts={facts} links={links} />
             <CertificateDetails facts={facts} links={links} owner={ownerActions} />
           </div>

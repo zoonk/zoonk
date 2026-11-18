@@ -14,11 +14,13 @@ import { type CertificateOwner } from "./certificate-page";
 
 function DetailRow({
   children,
+  className,
   label,
   layout = "inline",
   mono,
 }: {
   children: React.ReactNode;
+  className?: string;
   label: string;
   layout?: "inline" | "stacked";
   mono?: boolean;
@@ -30,6 +32,7 @@ function DetailRow({
         layout === "stacked"
           ? "flex-col gap-1.5 text-xs"
           : "border-border text-compact min-h-11 items-baseline justify-between gap-4 border-t py-3",
+        className,
       )}
     >
       <dt className="text-muted-foreground shrink-0">{label}</dt>
@@ -114,7 +117,12 @@ export function CertificateLinkRow({
   const t = useExtracted();
 
   return (
-    <DetailRow label={t("Link")} layout={layout}>
+    <DetailRow
+      // Centers its taller Copy button, so the row stays as tall as the others.
+      className={layout === "stacked" ? undefined : "items-center py-1.5"}
+      label={t("Link")}
+      layout={layout}
+    >
       <CertificateLinkCopy url={url} />
     </DetailRow>
   );
