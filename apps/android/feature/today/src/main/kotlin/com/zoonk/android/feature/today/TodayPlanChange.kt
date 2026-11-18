@@ -15,12 +15,11 @@ import com.zoonk.android.feature.plan.planNoticeActions
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionCard
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
-import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionMenu
@@ -108,17 +107,34 @@ private fun ChangeNotice(
             }
         }
 
-    Suggestion(
+    val failure = stringResource(if (result != null) R.string.plan_undo_failed else R.string.suggestion_save_failed)
+
+    SuggestionCard(
         label = stringResource(R.string.today_notice_plan_change),
-        summary = result ?: words.title,
-        layout = SuggestionLayout.Line,
         modifier = modifier,
         mark = if (change.source == NOTICE_SOURCE) SuggestionMark.Symbol(R.drawable.ic_pending_actions) else SuggestionMark.New,
         answered = result != null,
-        failed = result != null && failedHere,
-        lineAction = if (result != null) after else ({ SuggestionOpen(stringResource(R.string.today_see_changes)) }),
-        lineDescription = words.why.takeIf { result == null },
-        failure = stringResource(R.string.plan_undo_failed),
+        card = {
+            if (result != null) {
+                SuggestionResult(result)
+                after?.let { SuggestionActions { it() } }
+            } else {
+                SuggestionHeader(words.title)
+                words.why?.let { SuggestionDescription(it) }
+                SuggestionActions {
+                    SuggestionOpen(stringResource(R.string.today_see_changes))
+                    if (change.source != NOTICE_SOURCE && change.source != PHASE_DATES_SOURCE) {
+                        SuggestionAction(
+                            stringResource(R.string.today_not_now),
+                            { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.DECLINED) },
+                            enabled = !saving,
+                            secondary = true,
+                        )
+                    }
+                }
+            }
+            if (failedHere) SuggestionSaveError(failure)
+        },
     ) {
         SuggestionHeader(words.title)
         PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
@@ -131,19 +147,7 @@ private fun ChangeNotice(
             ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
         }
 
-        if (failedHere) {
-            SuggestionSaveError(
-                stringResource(
-                    if (result !=
-                        null
-                    ) {
-                        R.string.plan_undo_failed
-                    } else {
-                        R.string.suggestion_save_failed
-                    },
-                ),
-            )
-        }
+        if (failedHere) SuggestionSaveError(failure)
     }
 }
 
@@ -223,15 +227,20 @@ private fun FallingBehindNotice(
     val result = if (kept) stringResource(R.string.today_behind_kept) else null
     val title = stringResource(R.string.today_missed_days_title)
 
-    Suggestion(
+    SuggestionCard(
         label = stringResource(R.string.today_notice_falling_behind),
-        summary = result ?: title,
-        layout = SuggestionLayout.Line,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
         answered = kept,
-        lineAction = if (kept) null else ({ SuggestionOpen(stringResource(R.string.today_see_changes)) }),
-        lineDescription = sentence.takeUnless { kept },
+        card = {
+            if (result != null) {
+                SuggestionResult(result)
+            } else {
+                SuggestionHeader(title)
+                SuggestionDescription(sentence)
+                SuggestionActions { SuggestionOpen(stringResource(R.string.today_see_changes)) }
+            }
+        },
     ) {
         SuggestionHeader(title)
         PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)

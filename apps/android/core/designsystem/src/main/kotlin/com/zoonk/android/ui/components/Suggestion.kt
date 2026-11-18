@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,24 +97,15 @@ fun Suggestion(
     failure: String = stringResource(R.string.suggestion_save_failed),
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    var settled by remember { mutableStateOf(answered) }
-    val focus = remember { FocusRequester() }
-    val sheetFocus = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    val frame = remember(mark) { Frame(mark, focus, sheetFocus) { open = true } }
-
-    LaunchedEffect(answered) {
-        if (answered) open = false
-        if (answered && !settled) moveFocus(focus)
-        settled = answered
-    }
+    val held = rememberHeld(mark, answered)
+    val frame = held.frame
+    val moveFocus = held.moveFocus
 
     CompositionLocalProvider(LocalFrame provides frame) {
         when (layout) {
             SuggestionLayout.Line -> {
                 SuggestionLine(summary, answered, failure.takeIf { failed }, modifier, lineAction, lineDescription)
-                if (open) SuggestionSheet(label, onClose = { open = false }, onFocus = { moveFocus(sheetFocus) }, content)
+                if (held.open) SuggestionSheet(label, onClose = held::close, onFocus = { moveFocus(frame.sheetFocus) }, content)
             }
 
             SuggestionLayout.Panel -> {
@@ -125,7 +118,7 @@ fun Suggestion(
                                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = top),
                                 verticalArrangement = Arrangement.spacedBy(10.dp),
                             ) {
-                                SuggestionContentScope(this, close = { open = false }, focus = { moveFocus(focus) }).content()
+                                SuggestionContentScope(this, close = held::close, focus = { moveFocus(frame.focus) }).content()
                             }
                         }
                     }
@@ -135,6 +128,43 @@ fun Suggestion(
                     Box(modifier.fillMaxWidth()) { panel() }
                 }
             }
+        }
+    }
+}
+
+/**
+ * Main's `TodaySuggestionCard`: [card], a [SuggestionHeader] over its reason and the actions, beside the mark in one frame
+ * at every width. Its [SuggestionOpen] opens [content] in a bottom sheet titled [label]; with no [content], [card]
+ * answers on its own. Once [answered], an open sheet closes and focus moves to the card's [SuggestionResult].
+ */
+@Composable
+fun SuggestionCard(
+    label: String,
+    modifier: Modifier = Modifier,
+    mark: SuggestionMark = SuggestionMark.New,
+    answered: Boolean = false,
+    card: @Composable SuggestionContentScope.() -> Unit,
+    content: (@Composable SuggestionContentScope.() -> Unit)? = null,
+) {
+    val held = rememberHeld(mark, answered)
+    val frame = held.frame
+    val focus = { held.moveFocus(frame.focus) }
+
+    CompositionLocalProvider(LocalFrame provides frame) {
+        Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
+            CompositionLocalProvider(LocalPresentation provides Presentation.Card) {
+                Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Box(Modifier.height(lineHeight(MaterialTheme.typography.titleSmall)), contentAlignment = Alignment.Center) {
+                        Mark(PANEL_MARK)
+                    }
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        SuggestionContentScope(this, close = held::close, focus = focus).card()
+                    }
+                }
+            }
+        }
+        if (held.open && content != null) {
+            SuggestionSheet(label, onClose = held::close, onFocus = { held.moveFocus(frame.sheetFocus) }, content)
         }
     }
 }
@@ -195,11 +225,16 @@ fun SuggestionDescription(text: AnnotatedString) {
     Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
+/** On a [SuggestionCard], what focus moves to once the answer replaces the controls. */
 @Composable
 fun SuggestionResult(text: String) {
+    val card = LocalPresentation.current == Presentation.Card
     Text(
         text = text,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        modifier =
+            Modifier
+                .then(if (card) Modifier.focusRequester(LocalFrame.current.focus).focusable() else Modifier)
+                .semantics { liveRegion = LiveRegionMode.Polite },
         style = bodyStyle(),
         fontWeight = FontWeight.Medium,
     )
@@ -457,7 +492,42 @@ private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outline
 private fun bodyStyle() =
     if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
 
-private enum class Presentation { Line, Panel, Sheet }
+private enum class Presentation { Line, Panel, Card, Sheet }
+
+/** Whether a suggestion's sheet is open, closed once it's [answered], when focus moves to [Frame.focus] as the control used is gone. */
+@Stable
+private class Held(
+    val frame: Frame,
+    private val opened: MutableState<Boolean>,
+    val moveFocus: (FocusRequester) -> Unit,
+) {
+    val open get() = opened.value
+
+    fun close() {
+        opened.value = false
+    }
+}
+
+@Composable
+private fun rememberHeld(
+    mark: SuggestionMark,
+    answered: Boolean,
+): Held {
+    val opened = rememberSaveable { mutableStateOf(false) }
+    var settled by remember { mutableStateOf(answered) }
+    val moveFocus = rememberMoveFocus()
+    val focus = remember { FocusRequester() }
+    val sheetFocus = remember { FocusRequester() }
+    val frame = remember(mark) { Frame(mark, focus, sheetFocus) { opened.value = true } }
+
+    LaunchedEffect(answered) {
+        if (answered) opened.value = false
+        if (answered && !settled) moveFocus(focus)
+        settled = answered
+    }
+
+    return remember(frame, moveFocus) { Held(frame, opened, moveFocus) }
+}
 
 /** Who draws a panel's frame: the suggestion, or a [SuggestionFrame] around it, with or without a head. */
 private enum class Framing { Own, Shared, Headed }
