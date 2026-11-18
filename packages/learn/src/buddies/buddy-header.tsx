@@ -7,10 +7,10 @@ import { BUDDY_NAME_CLASS, BuddyIdentityRow } from "./buddy-identity-row";
 import { type LearnBuddy } from "./use-buddy-name";
 
 /**
- * Starts on the page's edge like every other page in the app, so the buddy's pages share one edge.
  * `-mb-12` takes back the page's bottom padding, since the composer has its own.
  */
-export const BUDDY_COLUMN_CLASS = "-mb-12 flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
+export const BUDDY_COLUMN_CLASS =
+  "max-w-column mx-auto -mb-12 flex w-full flex-1 flex-col gap-5 lg:-mb-16";
 
 /** `children` is the day's line. The name's line is 32px, so the title starts where every page's does. */
 export function BuddyHeader({
