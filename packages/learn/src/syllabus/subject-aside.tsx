@@ -147,7 +147,16 @@ function SubjectDetails({
     <DetailProperties>
       {subject.questions ? (
         <DetailProperty
-          label={edition ? t("Questions from {exam}", { exam: edition }) : questionsLabel}
+          label={
+            edition
+              ? t({
+                  description: "In Portuguese, include the exam's article (e.g. ‘do ENEM 2025’).",
+                  id: "questionsFromExamEdition",
+                  message: "Questions from {exam}",
+                  values: { exam: edition },
+                })
+              : questionsLabel
+          }
           mono
         >
           {format.number(subject.questions)}

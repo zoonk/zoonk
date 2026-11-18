@@ -24,7 +24,7 @@ function getAnswerCounts(result: MockResult): AnswerCounts | null {
   };
 }
 
-const THREE_ANSWER_TILES_CLASS = "grid-cols-3 [&>li:last-child:nth-child(odd)]:col-span-1";
+const THREE_ANSWER_TILES_CLASS = "sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1";
 
 export function hasAnswerCounts(result: MockResult): boolean {
   return getAnswerCounts(result) !== null || (!result.net && result.blank > 0);

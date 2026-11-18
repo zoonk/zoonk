@@ -121,7 +121,7 @@ function SubjectRow({
       <span className={ROW_GRID_CLASS}>
         <span className="flex min-w-0 flex-col gap-0.5">
           <ListRowTitle className={cn("wrap-anywhere", notPlanned && "text-muted-foreground")}>
-            {subject.name}
+            {subject.shortName ?? subject.name}
           </ListRowTitle>
 
           {alsoIn && <ListRowDescription className="text-pretty">{alsoIn}</ListRowDescription>}

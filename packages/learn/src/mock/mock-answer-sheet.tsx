@@ -11,10 +11,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
+import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { countsTowardMockProgress } from "./mock-answer-progress";
@@ -34,6 +35,8 @@ function useSheetCountLine(): string {
 const CELL_FILLED_CLASS =
   "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent";
 
+const CELL_CURRENT_CLASS = "ring-foreground ring-2";
+
 const CELL_FLAGGED_CLASS = "text-warning-text ring-warning ring-2";
 
 function QuestionCell({
@@ -51,23 +54,31 @@ function QuestionCell({
   const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
 
+  const label = isEssay
+    ? t("Written part")
+    : t("Question {number}", { number: String(question.number) });
+
   return (
     <button
       aria-current={isCurrent ? "true" : undefined}
-      aria-label={
-        isEssay ? t("Written part") : t("Question {number}", { number: String(question.number) })
-      }
+      aria-label={draft?.flagged ? t("{question}, marked for review", { question: label }) : label}
       className={cn(
         "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
         draft?.flagged && CELL_FLAGGED_CLASS,
-        isCurrent && cn("ring-foreground ring-2", !draft?.flagged && "text-foreground"),
+        isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
       type="button"
     >
       {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
+      {draft?.flagged && (
+        <span
+          aria-hidden="true"
+          className="bg-warning absolute inset-e-1 top-1 size-1 rounded-full"
+        />
+      )}
     </button>
   );
 }
@@ -91,66 +102,98 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   );
 }
 
-/** Seven 44 px numbers fit a phone's width with room between them, so no two press areas overlap. */
-const MAP_ROW = 7;
+const SCROLL_FADE_PX = 64;
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const questions = runner.view.current?.questions ?? [];
+  const row = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const scroll = row.current?.parentElement;
+    const current = row.current?.children[runner.position];
+
+    if (!scroll || !current) {
+      return;
+    }
+
+    function keepCurrentInView() {
+      if (!scroll?.clientWidth || !current) {
+        return;
+      }
+
+      const viewport = scroll.getBoundingClientRect();
+      const cell = current.getBoundingClientRect();
+      const inset = Math.min(SCROLL_FADE_PX, cell.width);
+      const left = cell.left - viewport.left - inset;
+      const right = cell.right - viewport.right + inset;
+
+      if (left < 0 || right > 0) {
+        scroll.scrollBy({ left: left < 0 ? left : right });
+      }
+    }
+
+    keepCurrentInView();
+    const resized = new ResizeObserver(keepCurrentInView);
+    resized.observe(scroll);
+    return () => resized.disconnect();
+  }, [runner.position]);
 
   if (questions.length <= 1) {
     return null;
   }
 
-  // The last stretch still shows a full row, so the current question is never a lone cell.
-  const start = Math.max(
-    0,
-    Math.min(Math.floor(runner.position / MAP_ROW) * MAP_ROW, questions.length - MAP_ROW),
-  );
-
   return (
-    <ol
-      aria-label={t("Questions")}
-      className={cn("grid grid-cols-7 gap-2", className)}
-      data-slot="mock-question-map"
+    <HorizontalScroll
+      className={className}
+      labels={{ left: t("Earlier questions"), right: t("Later questions") }}
     >
-      {questions.slice(start, start + MAP_ROW).map((question, offset) => (
-        <li key={question.itemId}>
-          <QuestionCell index={start + offset} onPick={runner.go} question={question} />
-        </li>
-      ))}
-    </ol>
+      <ol
+        aria-label={t("Questions")}
+        className="flex w-max min-w-full gap-2 p-0.5"
+        data-slot="mock-question-map"
+        ref={row}
+      >
+        {questions.map((question, index) => (
+          <li className="w-11 shrink-0 grow" key={question.itemId}>
+            <QuestionCell index={index} onPick={runner.go} question={question} />
+          </li>
+        ))}
+      </ol>
+    </HorizontalScroll>
   );
 }
 
-function SheetLegend({ className }: { className?: string }) {
+function SheetLegend() {
   const t = useExtracted();
   const { flagged } = useSectionCounts();
-  const { runner } = useMockScreen();
 
-  const marked = runner.view.current?.questions.find(
-    (question) => runner.drafts[question.itemId]?.flagged,
-  );
-
-  if (!marked) {
-    return null;
-  }
+  const states = [
+    { label: t("Unanswered"), style: "ring-border" },
+    { label: t("Answered"), style: CELL_FILLED_CLASS },
+    { label: t("Current question"), style: CELL_CURRENT_CLASS },
+    {
+      label: t(
+        "{flagged, plural, =0 {Marked for review} one {# marked for review} other {# marked for review}}",
+        { flagged },
+      ),
+      style: CELL_FLAGGED_CLASS,
+    },
+  ];
 
   return (
-    <p className={cn("text-muted-foreground flex items-center gap-1.5 text-xs", className)}>
-      <span
-        aria-hidden="true"
-        className={cn(
-          "flex size-6 shrink-0 items-center justify-center rounded-md font-mono font-medium tabular-nums ring-inset",
-          countsTowardMockProgress(runner, marked.itemId) && CELL_FILLED_CLASS,
-          CELL_FLAGGED_CLASS,
-        )}
-      >
-        {marked.format === "essay" ? <PenLineIcon className="size-3" /> : marked.number}
-      </span>
-      {t("{flagged, plural, one {# flagged} other {# flagged}}", { flagged })}
-    </p>
+    <ul className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1.5 text-xs">
+      {states.map((state) => (
+        <li className="flex items-center gap-1.5" key={state.label}>
+          <span
+            aria-hidden="true"
+            className={cn("size-3.5 shrink-0 rounded-sm ring-1 ring-inset", state.style)}
+          />
+          {state.label}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -232,7 +275,7 @@ export function useMockSheetAside({
     footer: <SheetHandIn onHandIn={onHandIn} />,
     label: t("Answer sheet"),
     meta: counts,
-    title: t("Answer sheet"),
+    title: <span className="text-sm tracking-normal normal-case">{t("Answer sheet")}</span>,
   };
 }
 

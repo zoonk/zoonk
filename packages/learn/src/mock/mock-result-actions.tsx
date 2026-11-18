@@ -18,22 +18,12 @@ function useMistakeCount(): number {
 
 export function MockResultActions() {
   const t = useExtracted();
-  const { hrefs, runner } = useMockScreen();
-  const mistakes = useMistakeCount();
+  const { hrefs } = useMockScreen();
 
-  if (runner.view.purpose === "placement" || mistakes === 0) {
-    return <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>;
-  }
-
-  return <TaskMainLink href={hrefs.mistakes}>{t("Review mistakes")}</TaskMainLink>;
+  return <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>;
 }
 
-/**
- * The way on without reviewing, named as every result's way on is: the bar's second action,
- * outlined beside the main one. On a phone it takes the line above, since a translated pair
- * doesn't fit one row with the way back.
- */
-export function MockResultContinue() {
+export function MockResultMistakes() {
   const t = useExtracted();
   const { hrefs, runner } = useMockScreen();
   const mistakes = useMistakeCount();
@@ -45,9 +35,9 @@ export function MockResultContinue() {
   return (
     <LearnLink
       className={cn(buttonVariants({ size: "xl", variant: "outline" }), BAR_SECOND_ACTION_CLASS)}
-      href={hrefs.continue}
+      href={hrefs.mistakes}
     >
-      {t("Continue")}
+      {t("Review mistakes")}
     </LearnLink>
   );
 }

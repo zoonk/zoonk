@@ -4,7 +4,6 @@ import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
-import { DetailsDrawer } from "../_components/details-drawer";
 import { Eyebrow } from "../_components/eyebrow";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -117,21 +116,5 @@ export function MockReviewSection() {
     <ResultSection rows title={t("Questions to review")}>
       <MockReviewList />
     </ResultSection>
-  );
-}
-
-export function MockReviewDrawer() {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const { review } = runner.view;
-
-  if (review.length === 0) {
-    return null;
-  }
-
-  return (
-    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="small">
-      <MockReviewList />
-    </DetailsDrawer>
   );
 }

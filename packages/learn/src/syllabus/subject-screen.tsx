@@ -174,7 +174,7 @@ function SubjectHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailTitle>{subject.name}</DetailTitle>
+        <DetailTitle>{subject.shortName ?? subject.name}</DetailTitle>
         <SubjectFacts
           fromMaterial={fromMaterial}
           fromPastExams={fromPastExams}
@@ -248,7 +248,10 @@ export function SubjectScreen({
       aside={<SubjectAside questionsSource={syllabus.questionsSource} subject={subject} />}
       asideLabel={t("About this subject")}
       bar={
-        <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
+        <LearnPageBar
+          back={{ href: hrefs.back, label: t("Plan") }}
+          title={subject.shortName ?? subject.name}
+        >
           {ask?.bar}
           <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>

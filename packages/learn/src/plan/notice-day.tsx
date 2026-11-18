@@ -67,12 +67,10 @@ export function UseDateButton({
   busy = false,
   disabled = false,
   onUse,
-  variant = "outline",
 }: {
   busy?: boolean;
   disabled?: boolean;
   onUse: () => void;
-  variant?: "outline" | "secondary";
 }) {
   const t = useExtracted();
 
@@ -85,7 +83,7 @@ export function UseDateButton({
         icon={<CalendarCheckIcon aria-hidden="true" />}
         size="sm"
         type="submit"
-        variant={variant}
+        variant="outline"
       >
         {t("Use this date")}
       </Button>
@@ -103,7 +101,17 @@ function CalendarTile() {
   );
 }
 
-function NoticeDayCard({ day, onUse }: { day: NoticeDay; onUse: () => Promise<boolean> }) {
+function NoticeDayCard({
+  day,
+  examName,
+  onUse,
+}: {
+  day: NoticeDay;
+  examName: string;
+  onUse: () => Promise<boolean>;
+}) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
   const text = useNoticeDayText();
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
@@ -122,9 +130,16 @@ function NoticeDayCard({ day, onUse }: { day: NoticeDay; onUse: () => Promise<bo
       <CalendarTile />
 
       <NoticeCardContent>
-        <NoticeCardTitle>{text(day)}</NoticeCardTitle>
+        <NoticeCardTitle>
+          {day.estimated
+            ? text(day)
+            : t("The official {exam} date is {date}. Use it as your exam date?", {
+                date: formatDate(day.date, "sentence", { year: "always" }),
+                exam: examName,
+              })}
+        </NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton busy={isPending} onUse={use} variant="secondary" />
+          <UseDateButton busy={isPending} onUse={use} />
         </NoticeCardActions>
       </NoticeCardContent>
     </NoticeCard>
@@ -173,7 +188,7 @@ function NoSittingCard({
                 key={date}
                 size="sm"
                 type="submit"
-                variant="secondary"
+                variant="outline"
               >
                 {t("Use {date}", { date: formatDate(date, "sentence") })}
               </Button>
@@ -186,17 +201,21 @@ function NoSittingCard({
 }
 
 export function NoticeDatesCard({
+  examName,
   noSitting,
   noticeDay,
   onUse,
 }: {
+  examName: string;
   noSitting: NoSitting | null;
   noticeDay: NoticeDay | null;
   /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   if (noticeDay) {
-    return <NoticeDayCard day={noticeDay} onUse={() => onUse(noticeDay.date)} />;
+    return (
+      <NoticeDayCard day={noticeDay} examName={examName} onUse={() => onUse(noticeDay.date)} />
+    );
   }
 
   return noSitting ? <NoSittingCard noSitting={noSitting} onUse={onUse} /> : null;
