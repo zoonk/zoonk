@@ -125,6 +125,7 @@ async function TodayFirstGoal({ draftId }: { draftId: string | null }) {
         </>
       }
       initialDraft={draft}
+      keepsTitle={explanation !== null}
       needsAccount={needsAccount}
       planId={null}
     />
