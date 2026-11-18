@@ -13,13 +13,14 @@ import { LearnPageBar } from "../../shell/learn-bar";
 function useUnitPlace(unit: LanguageUnitView["unit"]): string {
   const t = useExtracted();
 
-  const levels = unit.levelRange.replaceAll("-", "–");
-
   if (unit.position === null) {
-    return levels;
+    return unit.levelRange;
   }
 
-  return t("Unit {position, number} · {levels}", { levels, position: unit.position });
+  return t("Unit {position, number} · {levels}", {
+    levels: unit.levelRange,
+    position: unit.position,
+  });
 }
 
 function UnitFacts({ view }: { view: LanguageUnitView }) {

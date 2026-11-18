@@ -113,12 +113,18 @@ export function getPhaseStart({
   };
 }
 
-/** The day the plan reaches its goal: the goal's date, or the plan's own end when it has none. */
+/**
+ * The day the plan reaches its goal: the goal's date, or the plan's own end when it has none. That
+ * end comes from the learner's pace, so a paused goal has none; the goal's date, an exam's likely
+ * one included, stays.
+ */
 export function getPlanFinish({
   goalKind,
+  paused = false,
   plan,
 }: {
   goalKind: GoalKind;
+  paused?: boolean;
   plan: DatedPlan;
 }): PlanDate | null {
   if (goalKind !== "exam" && plan.end) {
@@ -134,7 +140,7 @@ export function getPlanFinish({
 
   const { endDate } = plan.estimate;
 
-  if (goalKind === "exam" || !endDate) {
+  if (goalKind === "exam" || paused || !endDate) {
     return null;
   }
 

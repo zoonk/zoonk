@@ -28,6 +28,6 @@ export function useToolSentence() {
 
     return first?.choice === "have"
       ? t("You have {tools}, so there's nothing to set up.", { tools: names })
-      : t("No install for {tools}: you'll learn with examples.", { tools: names });
+      : t("You won't use {tools}: you'll learn with examples.", { tools: names });
   };
 }

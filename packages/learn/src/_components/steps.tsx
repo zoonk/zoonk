@@ -82,7 +82,6 @@ function useStepMoment(item: StepsItem | undefined) {
 
 export function Steps({
   aside,
-  ask,
   exitHref,
   finalAction,
   finalOptions,
@@ -90,7 +89,6 @@ export function Steps({
   items,
 }: {
   aside?: TaskFrameAside | null;
-  ask?: React.ReactNode;
   exitHref: string;
   finalAction: React.ReactNode;
   finalOptions?: React.ReactNode;
@@ -187,7 +185,6 @@ export function Steps({
                 </TaskMainButton>
               )}
               {isLastWide && <WideOnly when={!isLastHere}>{final.main}</WideOnly>}
-              {ask}
             </TaskActions>
             {item.option}
             {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}

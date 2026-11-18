@@ -16,7 +16,7 @@ import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
@@ -134,7 +134,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 
   return (
     <>
-      <MockStepStatus reserve />
       {/* In the bar, so the numbers stay in one place whatever a question's length. */}
       <MockQuestionMap className="with-aside:hidden w-full" />
       <QuestionActions className="w-full lg:w-auto">

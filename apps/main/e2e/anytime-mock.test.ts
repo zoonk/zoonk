@@ -144,7 +144,9 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
   });
 
-  test("keeps the mock action bar in place when an answer fails to save", async ({ browser }) => {
+  test("keeps the mock action bar in place, with no empty row, when an answer fails to save", async ({
+    browser,
+  }) => {
     const { user } = await createAnytimeMockLearner({ plus: true });
     const page = await openAs(browser, user);
 
@@ -165,6 +167,20 @@ test.describe("Mocks whenever the learner wants", () => {
       const height = () => bar.evaluate((element) => element.getBoundingClientRect().height);
       await expect(bar).toBeVisible();
       const before = await height();
+
+      const emptyRows = await bar
+        .locator('[data-slot="bottom-bar-row"]')
+        .evaluate(
+          (row) =>
+            [...row.children].filter(
+              (child) =>
+                child instanceof HTMLElement &&
+                child.getBoundingClientRect().height > 0 &&
+                child.innerText.trim() === "",
+            ).length,
+        );
+
+      expect(emptyRows).toBe(0);
 
       await page.route(page.url(), (route) => {
         const request = route.request();

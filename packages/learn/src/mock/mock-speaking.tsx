@@ -25,7 +25,7 @@ import { LearnLink } from "../learn-link";
 import { TaskMainButton } from "../shell/task-frame";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockFrame } from "./mock-frame";
 
 type SpeakingTask = SpeakingSectionView["tasks"][number];
 
@@ -90,7 +90,6 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
 
   return (
     <>
-      <MockStepStatus />
       <TaskActions>
         <TaskMainButton
           aria-haspopup="dialog"
@@ -148,20 +147,17 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
       left={speaking.tasks.filter((task) => task.status !== "completed").length}
     />
   ) : (
-    <>
-      <MockStepStatus />
-      {!writing && (
-        <TaskActions>
-          <TaskMainButton
-            busy={runner.busy === "startSpeaking"}
-            disabled={runner.pending}
-            onClick={() => void runner.startSpeaking()}
-          >
-            {t("Start")}
-          </TaskMainButton>
-        </TaskActions>
-      )}
-    </>
+    !writing && (
+      <TaskActions>
+        <TaskMainButton
+          busy={runner.busy === "startSpeaking"}
+          disabled={runner.pending}
+          onClick={() => void runner.startSpeaking()}
+        >
+          {t("Start")}
+        </TaskMainButton>
+      </TaskActions>
+    )
   );
 
   return (
