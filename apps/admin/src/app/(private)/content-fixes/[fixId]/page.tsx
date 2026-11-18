@@ -22,7 +22,7 @@ import { Suspense } from "react";
 import { ContentFixChanges } from "../_components/content-fix-changes";
 import { RevertForm, ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
-import { ContentFixTechnicalDetails, proposedFact } from "../_components/content-fix-facts";
+import { ContentFixTechnicalDetails, proposalFacts } from "../_components/content-fix-facts";
 import { ContentFixVoice } from "../_components/content-fix-voice";
 import {
   contentFixState,
@@ -256,7 +256,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
         alert={fix.status === "stale" ? contentFixStatusLabels.stale : null}
         facts={[
           fix.status !== "stale" && contentFixStatusLabels[contentFixState(fix)],
-          proposedFact(fix),
+          ...proposalFacts(fix),
         ]}
         parents={FIX_PARENTS}
         title={getTitle(fix)}
