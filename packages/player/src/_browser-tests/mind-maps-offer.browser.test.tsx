@@ -165,6 +165,10 @@ describe("the Mind maps page's gate is the list's offer", () => {
 
     await notMade().getByRole("button", { name: "1 more chapter" }).click();
     await expect.element(notMade().getByText("Reactions")).toBeVisible();
+
+    await expect
+      .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
+      .toHaveAttribute("aria-expanded", "true");
   });
 
   it("shows the chapters that need their lessons first when no other chapter is listed", async () => {
@@ -335,7 +339,7 @@ describe("the Mind maps page's gate is the list's offer", () => {
       render(<Screen actions={actionsWith({})} served={writingView(stop)} />);
 
       await expect
-        .element(notMade().getByRole("button", { name: "1 more chapter" }))
+        .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
         .toHaveAttribute("aria-expanded", "true");
 
       await expect.element(writingRow()).toBeVisible();
