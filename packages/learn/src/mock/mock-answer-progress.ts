@@ -1,35 +1,24 @@
 import { isMockAnswerPresent } from "@zoonk/core/exams/mocks/answer-presence";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockRunner } from "./mock-context";
 
 export function isDraftAnswered(draft: MockDraft | undefined): boolean {
   return isMockAnswerPresent(draft?.answer);
 }
 
-export function isCountedMockAnswer({
-  draft,
-  failed,
-  saved,
-}: {
-  draft?: MockDraft;
-  failed?: MockDraft;
-  saved?: MockDraft;
-}): boolean {
+export function countsTowardMockProgress(
+  {
+    drafts,
+    failedDrafts,
+    savedDrafts,
+  }: Pick<MockRunner, "drafts" | "failedDrafts" | "savedDrafts">,
+  itemId: string,
+): boolean {
+  const draft = drafts[itemId];
+  const failed = failedDrafts[itemId];
+  const saved = savedDrafts[itemId];
+
   return (
     isDraftAnswered(draft) && (draft?.answer !== failed?.answer || draft?.answer === saved?.answer)
   );
-}
-
-export function countsTowardMockProgress(
-  runner: {
-    drafts: Readonly<Partial<Record<string, MockDraft>>>;
-    failedDrafts: Readonly<Partial<Record<string, MockDraft>>>;
-    savedDrafts: Readonly<Partial<Record<string, MockDraft>>>;
-  },
-  itemId: string,
-): boolean {
-  return isCountedMockAnswer({
-    draft: runner.drafts[itemId],
-    failed: runner.failedDrafts[itemId],
-    saved: runner.savedDrafts[itemId],
-  });
 }
