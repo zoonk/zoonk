@@ -72,6 +72,18 @@ const guitarChord = {
   template: "keyboardFretboard",
 };
 
+function keysTop() {
+  const board = document.querySelector('[data-slot="piano-keyboard"]');
+
+  if (!board) {
+    throw new Error("The piano keys are missing");
+  }
+
+  return (
+    board.getBoundingClientRect().top - (board.closest("figure")?.getBoundingClientRect().top ?? 0)
+  );
+}
+
 function pianoKey(name: string) {
   return page.getByRole("group", { name: "Piano keys" }).getByRole("button", { exact: true, name });
 }
@@ -237,6 +249,21 @@ describe("music activities", () => {
     });
   });
 
+  it("keeps the piano keys in place when checking a sound on a phone", async () => {
+    await atViewport(PHONE, async () => {
+      openActivity({ content: byEar, template: "keyboardFretboard" });
+      await focusOn(pianoKey("C"));
+      await press("Space");
+      await focusOn(pianoKey("G"));
+      await press("Space");
+
+      const top = keysTop();
+      await checkActivity();
+      await expectVerdict("Correct!");
+      expect(keysTop()).toBeCloseTo(top, 0);
+    });
+  });
+
   it("keyboard by ear: the sound isn't named until the notes heard are found", async () => {
     openActivity({ content: byEar, template: "keyboardFretboard" });
     await expect.element(page.getByText("Your notes", { exact: true })).toBeVisible();
@@ -322,6 +349,7 @@ describe("music activities", () => {
 
     const firstVisit = renderLessonPlayer({ lesson });
     await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
+
     await page.getByRole("button", { name: "Skip for now" }).click();
     await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
 
@@ -333,7 +361,10 @@ describe("music activities", () => {
 
     await page.getByRole("button", { name: "Check the sound delay again" }).click();
     await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
-    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Start the beat" }))
+      .toBeVisible();
   });
 
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {

@@ -5,9 +5,30 @@ import { useExtracted } from "next-intl";
 import { StepWayOut } from "../../components/step-way-out";
 import { CANT_LISTEN_TODAY, useTodayChoice } from "../../lesson/use-today-choice";
 import { useNoteNames } from "../_utils/use-music-labels";
+import { type ActivityPhase } from "../activity-renderer";
 
-export function useCantListen() {
-  return useTodayChoice(CANT_LISTEN_TODAY);
+export function useKeyboardListening({
+  byEar,
+  onPlay,
+  phase,
+  unavailable,
+}: {
+  byEar?: boolean;
+  onPlay: () => void;
+  phase: ActivityPhase;
+  unavailable: boolean;
+}) {
+  const [cantListen, setCantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+  const isAnsweringByEar = byEar && phase === "answering";
+
+  return {
+    cantListen,
+    earControls: byEar && phase !== "explore" ? { onPlay: cantListen ? null : onPlay } : null,
+    offersWayOut: isAnsweringByEar && (cantListen || !unavailable),
+    setCantListen,
+    showInstruction: isAnsweringByEar && !cantListen && !unavailable,
+    showText: isAnsweringByEar && (cantListen || unavailable),
+  };
 }
 
 /** The notes a by-ear sound plays, as text for a learner who can't listen, and at once when the sound can't load. */

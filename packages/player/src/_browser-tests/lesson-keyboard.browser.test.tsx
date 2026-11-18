@@ -156,7 +156,7 @@ describe("lesson by keyboard", () => {
       await expect.element(page.getByRole("menu")).toBeVisible();
       await press("Escape");
       await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
-      await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
       await press("ArrowRight");
@@ -363,7 +363,7 @@ describe("lesson by keyboard", () => {
         ],
       });
 
-      const next = page.getByRole("button", { name: /^Next/u }).element();
+      const next = page.getByRole("button", { name: /^Continue/u }).element();
 
       // Checked within the click's task: a frame would let the browser drop the focus itself.
       next.focus();
@@ -388,7 +388,7 @@ describe("lesson by keyboard", () => {
         ],
       });
 
-      await tabTo(page.getByRole("button", { name: /^Next/u }));
+      await tabTo(page.getByRole("button", { name: /^Continue/u }));
       await press("Enter");
 
       await expect.element(page.getByRole("radiogroup")).toBeVisible();

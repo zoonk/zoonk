@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEntryAnswer } from "./numeric-entry";
+import { getNumericEntryRule, parseEntryAnswer } from "./numeric-entry";
 
 const FRACTION = { kind: "fraction", places: null } as const;
 const INTEGER = { kind: "integer", places: null } as const;
@@ -28,5 +28,12 @@ describe(parseEntryAnswer, () => {
     expect(
       parseEntryAnswer({ entry: { kind: "decimals", places: 2 }, locale: "en", text: "3.14" }),
     ).toBe(3.14);
+  });
+});
+
+describe(getNumericEntryRule, () => {
+  it("distinguishes rounding to a whole number from entering a whole number", () => {
+    expect(getNumericEntryRule({ kind: "decimals", places: 0 })).toBe("roundToWhole");
+    expect(getNumericEntryRule(INTEGER)).toBe("integer");
   });
 });

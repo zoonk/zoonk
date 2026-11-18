@@ -11,6 +11,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useRef } from "react";
+import { PlanLinkStartBar } from "./plan-link-start-bar";
 import { type StartPlanState } from "./start-plan-action";
 
 const DEFAULT_MINUTES = 30;
@@ -72,13 +73,15 @@ export function StartPlanForm({
             {t("How much time a day?")}
           </p>
           <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
-          <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
-            {t({
-              description:
-                "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
-              message: "Start my own plan",
-            })}
-          </EnterButton>
+          <PlanLinkStartBar>
+            <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
+              {t({
+                description:
+                  "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+                message: "Start my own plan",
+              })}
+            </EnterButton>
+          </PlanLinkStartBar>
         </>
       )}
       {failure?.status === "limitReached" && (

@@ -4,6 +4,7 @@ import { AuthField, AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-f
 import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useExtracted } from "next-intl";
 import { unstable_rethrow } from "next/navigation";
 import { useActionState, useId, useState } from "react";
@@ -18,6 +19,7 @@ export function SetupProfileForm({
 }) {
   const t = useExtracted();
   const statusId = useId();
+  const isMounted = useIsMounted();
   const [name, setName] = useState(defaultName);
 
   const [state, formAction] = useActionState<SetupState, FormData>(
@@ -56,7 +58,9 @@ export function SetupProfileForm({
         {tellsNameTooLong ? t("Use 150 characters or fewer.") : failure}
       </AuthStatus>
 
-      <AuthSubmit disabled={isNameTooLong}>{t("Continue")}</AuthSubmit>
+      <AuthSubmit disabled={isNameTooLong || (isMounted && !name.trim())}>
+        {t("Continue")}
+      </AuthSubmit>
     </AuthForm>
   );
 }

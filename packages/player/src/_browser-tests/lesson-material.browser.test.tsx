@@ -30,7 +30,7 @@ describe("a lesson built from the learner's material", () => {
       .toBeVisible();
 
     await expect.element(page.getByText(NOT_IN_MATERIAL)).not.toBeInTheDocument();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByText(NOT_IN_MATERIAL)).toBeVisible();
 

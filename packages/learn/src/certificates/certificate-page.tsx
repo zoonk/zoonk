@@ -99,7 +99,7 @@ export function CertificateIntro({
       </PageTitle>
       <p className="text-lead mt-1.5">
         {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
-          date: date.long(facts.completedOn),
+          date: date.short(facts.completedOn),
           whole: keepWhole,
         })}
       </p>

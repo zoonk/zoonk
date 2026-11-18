@@ -2,7 +2,6 @@ import { CatalogAsideBlock } from "@/components/catalog/catalog-aside";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { HERO_CLASS, HERO_LEAD_CLASS } from "@/components/public/landing-styles";
 import { NumberedRows } from "@/components/public/numbered-rows";
-import { PageStartDestination } from "@/components/public/page-start";
 import { PublicNotFound } from "@/components/public/public-not-found";
 import { PublicPage, PublicPageSkeleton } from "@/components/public/public-page";
 import { StartBlock, getStartControlClassName } from "@/components/public/public-start";
@@ -19,6 +18,7 @@ import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { PlanLinkStartBar } from "./plan-link-start-bar";
 import { PlanLinkTracker } from "./plan-link-tracker";
 import { startPlanAction } from "./start-plan-action";
 import { StartPlanForm } from "./start-plan-form";
@@ -73,7 +73,10 @@ async function PlanLinkBody({ params }: Props) {
   const startHref = getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId });
 
   return (
-    <PublicPage ownStart>
+    <PublicPage
+      hideStart
+      rootClassName="max-sm:pb-[calc(--spacing(15)+1px+max(--spacing(4),env(safe-area-inset-bottom)))]"
+    >
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
         <PlanLinkTracker planId={planId} />
 
@@ -100,14 +103,15 @@ async function PlanLinkBody({ params }: Props) {
                 "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
               )}
             >
-              <PageStartDestination href={startHref} />
-              <Link className={getStartControlClassName()} href={startHref}>
-                {t({
-                  description:
-                    "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
-                  message: "Start my own plan",
-                })}
-              </Link>
+              <PlanLinkStartBar>
+                <Link className={getStartControlClassName()} href={startHref}>
+                  {t({
+                    description:
+                      "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+                    message: "Start my own plan",
+                  })}
+                </Link>
+              </PlanLinkStartBar>
             </StartBlock>
           )}
         </div>

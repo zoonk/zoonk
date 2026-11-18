@@ -348,7 +348,7 @@ describe(lessonPlayerReducer, () => {
     );
 
     expect(getCurrentStep(halfway)?.id).toBe("case");
-    expect(getLessonScreen(halfway).primary).toMatchObject({ disabled: false, label: "confirm" });
+    expect(getLessonScreen(halfway).primary).toMatchObject({ disabled: false, label: "check" });
   });
 
   it("skips the rest of a skipped activity's screens and goes on from where the learner is", () => {

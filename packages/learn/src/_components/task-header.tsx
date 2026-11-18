@@ -39,20 +39,27 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
 }
 
 /**
- * The end side closes with the sidebar's toggle on a task that has one, so the toggle holds the
- * bar's edge on every task, with or without a "…" before it.
+ * The last control holds the bar's edge. A lesson can put its screen menu after the sidebar toggle.
  */
 export function TaskHeaderSide({
+  afterToggle,
   align,
   children,
 }: {
+  afterToggle?: React.ReactNode;
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
   const t = useExtracted();
 
   return (
-    <div className={TASK_HEADER_SIDE_CLASS[align]}>
+    <div
+      className={cn(
+        TASK_HEADER_SIDE_CLASS[align],
+        afterToggle &&
+          "lg:group-data-aside/task:[&_.edge:last-child:not([data-slot=sidebar-toggle])]:-me-(--edge-pull) lg:group-data-aside/task:[&_[data-slot=sidebar-toggle]:has(+.edge)]:me-0",
+      )}
+    >
       {children}
       {align === "end" && (
         <SidebarToggle
@@ -62,6 +69,7 @@ export function TaskHeaderSide({
           side="end"
         />
       )}
+      {afterToggle}
     </div>
   );
 }

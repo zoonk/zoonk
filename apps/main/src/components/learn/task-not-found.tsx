@@ -4,18 +4,17 @@ import { TaskFrame } from "@zoonk/learn/task-frame";
 import { TaskActions, TaskStopMessage } from "@zoonk/learn/task-layout";
 import { MainLearnProvider } from "./main-learn-provider";
 
-/** A task's link that leads nowhere, in the task's own frame: its ✕ and its bar both leave for the home page. */
 export async function TaskNotFound() {
   const words = await getNotFoundWords();
 
   return (
     <MainLearnProvider>
       <TaskFrame
-        exitHref="/"
+        exitHref="/today"
         exitToApp
         footer={
           <TaskActions>
-            <MainDocumentLink href="/">{words.home}</MainDocumentLink>
+            <MainDocumentLink href="/today">{words.today}</MainDocumentLink>
           </TaskActions>
         }
       >

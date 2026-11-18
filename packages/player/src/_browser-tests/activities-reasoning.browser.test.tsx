@@ -129,8 +129,17 @@ describe("reasoning activities", () => {
     await sortCard({ group: "New substance", item: "Rusting iron" });
     await sortCard({ group: "New substance", item: "Burning wood" });
     await expect.element(page.getByText("All sorted. Choose a card to move it.")).toBeVisible();
+    const group = page.getByRole("heading", { name: "Same substance" });
+    const board = page.getByRole("figure");
+
+    const groupTop = () =>
+      group.element().getBoundingClientRect().top - board.element().getBoundingClientRect().top;
+
+    const top = groupTop();
+
     await checkActivity();
     await expectVerdict("Correct!");
+    expect(Math.abs(groupTop() - top)).toBeLessThanOrEqual(1);
     await expect.element(page.getByText("3 of 3 in the right group")).toBeVisible();
   });
 

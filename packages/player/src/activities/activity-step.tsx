@@ -5,8 +5,13 @@ import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { NumericAnswerField } from "@zoonk/learn/numeric-answer-field";
 import { cn } from "@zoonk/ui/lib/utils";
-import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import {
+  exactFractionDigitsFor,
+  formatLocalizedNumber,
+  parseLocalizedNumber,
+} from "@zoonk/utils/localized-number";
 import { getUnitPosition } from "@zoonk/utils/math-answer";
+import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import { useId, useState } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
@@ -35,10 +40,14 @@ function ActivityCheckArea({
   className,
   content,
   isCorrect,
+  maximumFractionDigits,
   onAnswerChange,
   phase,
+  places,
 }: Pick<ActivityStepProps, "answer" | "content" | "isCorrect" | "onAnswerChange" | "phase"> & {
   className?: string;
+  maximumFractionDigits?: number;
+  places: number | null;
 }) {
   const { check } = content;
   const locale = useAppLocale();
@@ -58,8 +67,7 @@ function ActivityCheckArea({
   }
 
   if (check.kind === "numeric") {
-    const value = answer?.kind === "numeric" ? answer.value : null;
-    const places = getActivityDecimalPlaces(content);
+    const value = numericValue(answer) ?? null;
 
     const result = phase === "checked" ? numericResult(isCorrect) : null;
 
@@ -70,11 +78,7 @@ function ActivityCheckArea({
           entry={places === null ? null : { kind: "decimals", places }}
           labelledBy={questionId}
           locked={phase === "checked"}
-          maximumFractionDigits={exactFractionDigitsFor({
-            expected: check.answer,
-            tolerance: check.tolerance,
-            value: value ?? check.answer,
-          })}
+          maximumFractionDigits={maximumFractionDigits}
           onChange={(number) =>
             onAnswerChange(number === null ? null : { kind: "numeric", value: number })
           }
@@ -97,6 +101,30 @@ function ActivityCheckArea({
   return null;
 }
 
+function numericValue(answer: ActivityStepProps["answer"]): number | undefined {
+  return answer?.kind === "numeric" ? answer.value : undefined;
+}
+
+function displayedAnswer(
+  answer: ActivityStepProps["answer"],
+  maximumFractionDigits: number | undefined,
+): ActivityStepProps["answer"] {
+  if (answer?.kind !== "numeric") {
+    return answer;
+  }
+
+  const locale = "en";
+
+  const text = formatLocalizedNumber({
+    grouping: false,
+    locale,
+    maximumFractionDigits,
+    value: answer.value,
+  });
+
+  return { ...answer, value: parseLocalizedNumber({ locale, text }) ?? answer.value };
+}
+
 export function ActivityStep({
   answer,
   content,
@@ -109,9 +137,38 @@ export function ActivityStep({
   const labelId = useId();
   const interactionState = usePlayerInteractionState();
   const { answersOnCanvas, badge } = activityRenderers[content.template];
+  const places = getActivityDecimalPlaces(content);
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const badgeKind = badge(content);
   const [canvasAsks, setCanvasAsks] = useState(false);
+  const [typedValue, setTypedValue] = useState<number>();
+  const value = numericValue(answer);
+  const { check } = content;
+  const typedPlaces = typedValue === value ? countDecimalPlaces(typedValue ?? 0) : 0;
+
+  const maximumFractionDigits =
+    check.kind === "numeric"
+      ? Math.max(
+          exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
+          places ?? 0,
+          typedPlaces,
+        )
+      : undefined;
+
+  const shownAnswer = phase === "checked" ? displayedAnswer(answer, maximumFractionDigits) : answer;
+
+  // The formula chart uses the submitted number to format its label, just like feedback.
+  const canvasAnswer = content.template === "formulaModel" ? shownAnswer : answer;
+
+  function changeCanvasAnswer(next: ActivityStepProps["answer"]) {
+    setTypedValue(undefined);
+    onAnswerChange(next);
+  }
+
+  function changeFieldAnswer(next: ActivityStepProps["answer"]) {
+    setTypedValue(numericValue(next));
+    onAnswerChange(next);
+  }
 
   return (
     <InteractiveStepLayout data-slot="activity-step">
@@ -127,11 +184,11 @@ export function ActivityStep({
         <PlayerInteractionContext value={isLocked ? "paused" : interactionState}>
           <CanvasQuestionContext value={setCanvasAsks}>
             <BrowserCanvas
-              answer={answer}
+              answer={canvasAnswer}
               content={content}
               expected={expected}
               labelId={labelId}
-              onAnswerChange={onAnswerChange}
+              onAnswerChange={changeCanvasAnswer}
               phase={phase}
             />
           </CanvasQuestionContext>
@@ -146,16 +203,19 @@ export function ActivityStep({
           answer={answer}
           className="pt-2"
           content={content}
-          onAnswerChange={onAnswerChange}
+          maximumFractionDigits={maximumFractionDigits}
+          onAnswerChange={changeFieldAnswer}
           phase={phase}
+          places={places}
         />
       )}
 
       {phase === "checked" && isCorrect !== null && (
         <ActivityFeedback
-          answer={answer}
+          answer={shownAnswer}
           content={content}
           isCorrect={isCorrect}
+          places={places}
           showsNumbers={!answersOnCanvas}
         />
       )}

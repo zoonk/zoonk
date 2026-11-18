@@ -12,11 +12,13 @@ const MS_PER_SECOND = 1000;
 export function AccessLayout({
   actions,
   description,
+  heading,
   icon,
   title,
 }: {
   actions?: React.ReactNode;
   description?: string;
+  heading?: "h1" | "h2";
   icon: React.ReactNode;
   title: string;
 }) {
@@ -26,7 +28,7 @@ export function AccessLayout({
         className="flex flex-1 flex-col gap-6 pt-4 pb-8"
         data-slot="lesson-access"
       >
-        <TaskStopMessage description={description} icon={icon} title={title} />
+        <TaskStopMessage description={description} heading={heading} icon={icon} title={title} />
       </PlayerContentFrame>
 
       {actions && (

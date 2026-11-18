@@ -40,7 +40,7 @@ export function PublicTopBar({
         )}
       >
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
-        {nav && <nav className="flex shrink-0 items-center">{nav}</nav>}
+        {nav && <nav className="max-sm:signed-in:hidden flex shrink-0 items-center">{nav}</nav>}
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:col-start-3 sm:justify-self-end">
           {actions}
         </div>

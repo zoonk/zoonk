@@ -1,9 +1,11 @@
 "use client";
 
+import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
+import { getLessonFocusTarget } from "../_utils/lesson-focus";
 import { type ExplainingStep } from "../_utils/lesson-struggle";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { DidntGetItButton, hasDidntGetIt } from "./didnt-get-it-button";
@@ -12,9 +14,26 @@ import { useStrugglePause } from "./use-struggle-pause";
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   const t = useExtracted();
   const buddy = useTutorBuddy();
+  const asideShown = useTaskAsideShown();
   const [dismissed, setDismissed] = useState(false);
+  const removedWithFocus = useRef(false);
 
-  if (!buddy || buddy.consulted || dismissed) {
+  const offerRef = useCallback(
+    (offer: HTMLDivElement | null) => () => {
+      removedWithFocus.current = offer?.contains(document.activeElement) ?? false;
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
+    if (asideShown && removedWithFocus.current) {
+      getLessonFocusTarget()?.focus({ preventScroll: true });
+    }
+
+    removedWithFocus.current = false;
+  });
+
+  if (!buddy || buddy.consulted || asideShown || dismissed) {
     return null;
   }
 
@@ -25,6 +44,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
       aria-live="polite"
       className="border-border flex flex-col gap-2 border-t pt-3 text-sm"
       data-slot="lesson-ask-buddy-offer"
+      ref={offerRef}
     >
       <p>
         {reason === "misses"

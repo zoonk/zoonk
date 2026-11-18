@@ -43,7 +43,7 @@ describe("lesson recap", () => {
     ]);
 
     renderLessonPlayer({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(aside().getByText("From the lesson")).toBeVisible();
     expect(markedText()).toBeNull();
@@ -61,7 +61,7 @@ describe("lesson recap", () => {
     ]);
 
     renderLessonPlayer({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
 
     await expect.element(aside().getByText("From the lesson")).toBeVisible();
@@ -77,14 +77,14 @@ describe("lesson recap", () => {
     ]);
 
     renderLessonPlayer({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await answer(WRONG_OPTION, "Not quite");
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
     expect(markedText()).toBeNull();
 
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await answer(WRONG_OPTION, "Not quite");
     await expect.element(aside().getByText("Where the cloud is densest")).toBeVisible();
@@ -100,10 +100,10 @@ describe("lesson recap", () => {
     ]);
 
     renderLessonPlayer({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(WRONG_OPTION, "Not quite");
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
@@ -126,8 +126,8 @@ describe("lesson recap", () => {
     await answer(WRONG_OPTION, "Not quite");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
@@ -144,7 +144,7 @@ describe("lesson recap", () => {
       ]);
 
       renderLessonPlayer({ lesson });
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
 
       const recap = page.getByRole("button", { name: /^From the lesson/u });
 
@@ -173,7 +173,7 @@ describe("lesson recap", () => {
       ]);
 
       renderLessonPlayer({ lesson });
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
 
       await expect.element(page.getByRole("button", { name: "Explain first" })).toBeVisible();
 

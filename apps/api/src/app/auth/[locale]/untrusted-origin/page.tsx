@@ -1,4 +1,4 @@
-import { AuthHeader, AuthTitle } from "@/components/auth-form";
+import { AuthDescription, AuthHeader, AuthTitle } from "@/components/auth-form";
 import { AuthFrame } from "@/components/auth-frame";
 import { Login } from "@/components/login";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -14,6 +14,9 @@ export default async function UntrustedOriginPage() {
       <Login>
         <AuthHeader>
           <AuthTitle>{t("That link didn't work")}</AuthTitle>
+          <AuthDescription>
+            {t("The link may have expired. Go to Zoonk and log in again for a new one.")}
+          </AuthDescription>
         </AuthHeader>
 
         <a className={cn(buttonVariants({ size: "lg" }), "w-full")} href={MAIN_URL}>

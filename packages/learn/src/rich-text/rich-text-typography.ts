@@ -19,69 +19,11 @@ function isPostalCode(before: string): boolean {
   return POSTAL_LABEL.test(before) || STATE_CODE.test(before);
 }
 
-/** In their own case: "A" is amperes, "a" is a word. */
-const UNITS = [
-  "%",
-  "°C",
-  "°F",
-  "A",
-  "B",
-  "GB",
-  "GHz",
-  "Hz",
-  "J",
-  "K",
-  "KB",
-  "L",
-  "MB",
-  "MHz",
-  "N",
-  "Pa",
-  "TB",
-  "V",
-  "W",
-  "cal",
-  "cm",
-  "cm²",
-  "cm³",
-  "g",
-  "h",
-  "ha",
-  "kHz",
-  "kJ",
-  "kW",
-  "kWh",
-  "kcal",
-  "kg",
-  "km",
-  "km/h",
-  "km²",
-  "l",
-  "m",
-  "m/s",
-  "mA",
-  "mL",
-  "mg",
-  "min",
-  "ml",
-  "mm",
-  "mol",
-  "ms",
-  "m²",
-  "m³",
-  "nm",
-  "rpm",
-  "s",
-  "t",
-  "µm",
-  "Ω",
-  "kΩ",
-];
-
-/** Longest first, so "km/h" wins over "km". */
-const UNIT_PATTERN = UNITS.toSorted((a, b) => b.length - a.length).join("|");
-
-const NUMBER_THEN_UNIT = new RegExp(`(?<=\\d) (?=(?:${UNIT_PATTERN})(?![\\p{L}\\d]))`, "gu");
+const NUMBER_THEN_WORD = /(?<=\d)[ \t]+(?=[\p{L}%°])/gu;
+const NUMBER_AT_END = /(?<=\d)[ \t]+$/u;
+const LEADING_SPACE = /^[ \t]+/u;
+const ENDS_WITH_DIGIT = /\d$/u;
+const STARTS_WITH_WORD = /^[\p{L}%°]/u;
 
 /** A sign and its amount, apart by a space or by the no-break space a question's text keeps them with. */
 const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ](?=\d)/gu;
@@ -90,7 +32,7 @@ const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ](?=\d)/gu;
  * Only money, written the way the learner's money format writes it: a question's own text keeps its
  * other digits (a code in a table, an ID, a count it asks about) as written.
  */
-export function typesetMoney({ locale, text }: { locale: string; text: string }): string {
+function typesetMoney({ locale, text }: { locale: string; text: string }): string {
   return text.replaceAll(
     CURRENCY_THEN_NUMBER,
     (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
@@ -126,32 +68,59 @@ export function typesetProse<T extends Segment>({
       return segment;
     }
 
+    const previous = segments[index - 1];
     const next = segments[index + 1];
     const text = typeset(segment.text);
 
+    const joinsPrevious =
+      previous &&
+      isProse(previous) &&
+      ENDS_WITH_DIGIT.test(previous.text) &&
+      STARTS_WITH_WORD.test(text.trimStart());
+
+    const joined = joinsPrevious ? text.replace(LEADING_SPACE, NBSP) : text;
+
+    if (!next || !isProse(next)) {
+      return { ...segment, text: joined };
+    }
+
+    const withNumber = STARTS_WITH_WORD.test(next.text)
+      ? joined.replace(NUMBER_AT_END, NBSP)
+      : joined;
+
     return {
       ...segment,
-      text:
-        next && isProse(next) && STARTS_WITH_DIGIT.test(next.text)
-          ? text.replace(
-              SIGN_AT_END,
-              (_money, sign: string) =>
-                `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
-            )
-          : text,
+      text: STARTS_WITH_DIGIT.test(next.text)
+        ? withNumber.replace(
+            SIGN_AT_END,
+            (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
+          )
+        : withNumber,
     };
   });
 }
 
-export function typesetNumbers({ locale, text }: { locale: string; text: string }): string {
+export function typesetNumbers({
+  group = true,
+  locale,
+  text,
+}: {
+  group?: boolean;
+  locale: string;
+  text: string;
+}): string {
+  const together = text.replaceAll(NUMBER_THEN_WORD, NBSP);
+
+  if (!group) {
+    return typesetMoney({ locale, text: together });
+  }
+
   const grouping = getNumberFormatter(locale, { useGrouping: true });
 
   return typesetMoney({
     locale,
-    text: text
-      .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
-        isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
-      )
-      .replaceAll(NUMBER_THEN_UNIT, NBSP),
+    text: together.replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
+      isPostalCode(together.slice(0, offset)) ? digits : grouping.format(Number(digits)),
+    ),
   });
 }

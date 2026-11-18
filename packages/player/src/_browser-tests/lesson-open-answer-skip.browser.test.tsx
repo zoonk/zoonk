@@ -81,7 +81,7 @@ describe("open answer skip", () => {
 
     await page.getByRole("button", { name: "Explain first" }).click();
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
@@ -131,9 +131,9 @@ describe("open answer skip", () => {
 
       await expect.element(writingSkippedNotice()).toBeVisible();
       await expect.element(page.getByRole("button", { name: "Turn back on" })).toBeVisible();
-      await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
 
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
       await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
       await page.getByRole("button", { name: /^Continue/u }).click();
@@ -167,10 +167,10 @@ describe("open answer skip", () => {
 
     await page.getByRole("button", { name: "Turn back on" }).click();
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
     expect(isChosenToday(CANT_WRITE_TODAY)).toBe(false);
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
 
     unmount();

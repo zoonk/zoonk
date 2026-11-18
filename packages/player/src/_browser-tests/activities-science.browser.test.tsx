@@ -15,6 +15,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const FILL_THE_SQUARE = { ...activityContentFixtures.combinationGrid, check: interactionCheck };
 
@@ -154,18 +155,31 @@ describe("science activities", () => {
       .toContain("40.77");
   });
 
-  it("formula model simulation: the chart writes the right answer as the feedback does", async () => {
+  it("formula model simulation: feedback agrees with the chart and explanation after a slider miss", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
-      content: { ...simulation, check: { ...simulation.check, answer: 40.7747 } },
+      content: {
+        ...simulation,
+        check: {
+          ...simulation.check,
+          answer: 40.7747,
+          explanation: simulation.check.explanation.replace("40.77", "40.775"),
+        },
+      },
       template: "formulaModel",
     });
 
     await pressOnSlider("Launch angle", "ArrowRight", 14);
+    await expect.element(valueInput()).toHaveValue("40.75");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775 m", { exact: true }).first()).toBeVisible();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("40.775 m", { exact: true })).toBeVisible();
+
+    expect(feedback.getByText(/farther than at any other angle/u).element().textContent).toContain(
+      "40.775",
+    );
 
     await expect
       .poll(() =>
@@ -180,14 +194,23 @@ describe("science activities", () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
-      content: { ...simulation, check: { ...simulation.check, answer: 40.7747 } },
+      content: {
+        ...simulation,
+        check: {
+          ...simulation.check,
+          answer: 40.7747,
+          explanation: simulation.check.explanation.replace("40.77", "40.7747"),
+        },
+      },
       template: "formulaModel",
     });
 
-    await valueInput().fill("40.75");
+    await valueInput().fill("40.7849");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775 m", { exact: true }).first()).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("40.7849");
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("40.7747 m", { exact: true })).toBeVisible();
 
     await expect
       .poll(() =>
@@ -195,7 +218,7 @@ describe("science activities", () => {
           text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775 m");
+      .toContain("40.7747 m");
   });
 
   it("labeled diagram: every name on its part is right", async () => {
@@ -204,7 +227,7 @@ describe("science activities", () => {
     await labelSpots(HEART_SPOTS);
 
     await expect
-      .element(page.getByText("Every spot has a name. Tap a spot to change it."))
+      .element(page.getByText("Every spot has a name. Pick a spot to change it."))
       .toBeVisible();
 
     await checkActivity();
@@ -244,6 +267,50 @@ describe("science activities", () => {
     await expectVerdict("Not quite");
     await expect.element(page.getByText("The right order")).toBeVisible();
     await expect.element(page.getByText(/You had it at/u).first()).toBeVisible();
+  });
+
+  it("molecule builder: the first atom keeps the build status in place", async () => {
+    openActivity({ template: "moleculeBuilder" });
+    const card = page.getByRole("figure");
+
+    const statusTop = (text: string) =>
+      page.getByText(text, { exact: true }).element().getBoundingClientRect().top -
+      card.element().getBoundingClientRect().top;
+
+    const initialStatus = "Pick an element to add its first atom.";
+    await expect.element(page.getByText(initialStatus, { exact: true })).toBeVisible();
+    const top = statusTop(initialStatus);
+
+    await page.getByRole("button", { name: "Add Carbon" }).click();
+    await expect.element(page.getByText("Built: C", { exact: true })).toBeVisible();
+    expect(statusTop("1 atom has open bonds, shown as dots.")).toBe(top);
+  });
+
+  it("molecule builder: selecting an atom keeps the tools in place on a phone", async () => {
+    await atViewport({ height: 844, width: 320 }, async () => {
+      openActivity({ template: "moleculeBuilder" });
+      const card = page.getByRole("figure");
+      const undo = page.getByRole("button", { exact: true, name: "Undo" });
+      const addCarbon = page.getByRole("button", { name: /^Add Carbon/u });
+      const atom = page.getByRole("button", { name: "Carbon 1: 0 of 4 bonds" });
+
+      const toolsTop = () =>
+        undo.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+      await expect.element(undo).toBeVisible();
+      const beforeAdding = toolsTop();
+      await addCarbon.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "false");
+      const beforeSelecting = toolsTop();
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+      expect(toolsTop()).toBe(beforeSelecting);
+      expect(toolsTop()).toBe(beforeAdding);
+    });
   });
 
   it("molecule builder: two double bonds make carbon dioxide", async () => {

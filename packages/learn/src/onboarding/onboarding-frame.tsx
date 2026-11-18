@@ -9,7 +9,7 @@ import { Eyebrow } from "../_components/eyebrow";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
 import { TASK_WRAPPING_ACTION_CLASS, TaskActions } from "../_components/task-layout";
-import { OnboardingBarRow, isStepBar } from "./onboarding-bar";
+import { OnboardingBarRow } from "./onboarding-bar";
 import {
   NO_BAR,
   type OnboardingBar,
@@ -219,16 +219,12 @@ export function OnboardingHeading({
   className?: string;
 }) {
   const host = useOnboardingHost();
-  const { bar } = useOnboardingScreen();
 
   if (host?.kind === "page") {
     return (
       <div
         className={cn(
           "flex min-w-0 flex-col gap-1 *:data-[slot=eyebrow]:mb-2 *:data-[slot=onboarding-description]:pt-1 *:data-[slot=onboarding-subject]:mb-2",
-          // A step keeps the chip's line when it has none, so every step's title is at one height.
-          isStepBar(bar) &&
-            "first:not-has-[>[data-slot=onboarding-subject],>[data-slot=eyebrow]]:pt-8.5",
           className,
         )}
         data-slot="onboarding-heading"

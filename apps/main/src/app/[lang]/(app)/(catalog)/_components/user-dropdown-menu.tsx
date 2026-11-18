@@ -35,15 +35,17 @@ function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
 
 function MenuPageItem({
   children,
+  className,
   page,
 }: {
   children: React.ReactNode;
+  className?: string;
   page: Parameters<typeof getMenu>[0];
 }) {
   const { icon: Icon, url } = getMenu(page);
 
   return (
-    <DropdownMenuItem render={<Link href={url} prefetch />}>
+    <DropdownMenuItem className={className} render={<Link href={url} prefetch />}>
       <Icon aria-hidden="true" />
       {children}
     </DropdownMenuItem>
@@ -87,11 +89,13 @@ function getAccountStatus(learner: LearnerSummaryState) {
 export function UserDropdownMenu({
   align = "end",
   includeFeedback = true,
+  includePublicLinks = false,
   includeSearch = false,
   side = "bottom",
 }: {
   align?: "end" | "start";
   includeFeedback?: boolean;
+  includePublicLinks?: boolean;
   includeSearch?: boolean;
   side?: "bottom" | "top";
 }) {
@@ -105,6 +109,16 @@ export function UserDropdownMenu({
     <DropdownMenuContent align={align} className="w-64" keepMounted side={side}>
       {isAccount && <AccountIdentity account={summary.account} />}
       {includeSearch && <SearchDropdownItem />}
+      {includePublicLinks && (
+        <MenuPageItem className="sm:hidden" page="courses">
+          {t("Courses")}
+        </MenuPageItem>
+      )}
+      {includePublicLinks && isAccount && (
+        <MenuPageItem className="sm:hidden" page="pricing">
+          {t("Pricing")}
+        </MenuPageItem>
+      )}
       {status !== "visitor" && <MenuPageItem page="certificates">{t("Certificates")}</MenuPageItem>}
       <MenuPageItem page="settings">{t("Settings")}</MenuPageItem>
       <PlanItem isAccount={isAccount} plus={summary?.tier === "plus"} />

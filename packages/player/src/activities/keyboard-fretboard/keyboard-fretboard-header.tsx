@@ -1,14 +1,44 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
-import { type KeyboardHeading, type NoteTarget } from "./keyboard-fretboard-notes";
+import {
+  type KeyboardHeading,
+  type NoteTarget,
+  changesOneHalfStep,
+} from "./keyboard-fretboard-notes";
 
-type ByEar = { isRevealed: boolean; onPlay: (() => void) | null };
+type ByEar = { onPlay: (() => void) | null };
+
+export function KeyboardFretboardInstruction() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground text-sm text-pretty">{t("Play the sound, then pick.")}</p>
+  );
+}
+
+export function KeyboardHalfStepHint({
+  start,
+  target,
+}: {
+  start: readonly number[];
+  target: readonly number[];
+}) {
+  const t = useExtracted();
+
+  return changesOneHalfStep(start, target) ? (
+    <p className="text-muted-foreground text-sm text-pretty">
+      {t("A half step is the distance to the next key, counting black keys.")}
+    </p>
+  ) : null;
+}
 
 export function KeyboardFretboardHeader({
   byEar,
+  checked,
   heading,
   notes,
   onHear,
@@ -16,6 +46,7 @@ export function KeyboardFretboardHeader({
   target,
 }: {
   byEar: ByEar | null;
+  checked: boolean;
   heading: KeyboardHeading;
   notes: readonly string[];
   onHear: () => void;
@@ -25,8 +56,6 @@ export function KeyboardFretboardHeader({
   const t = useExtracted();
   const chordName = useChordName();
   const { display, spoken } = useNoteNames();
-
-  const isGuessing = byEar !== null && !byEar.isRevealed;
 
   function nameOf(shown: NoteTarget) {
     return shown.kind === "chord"
@@ -59,14 +88,16 @@ export function KeyboardFretboardHeader({
         </p>
       </div>
 
-      <div className="flex shrink-0 flex-wrap gap-2">
-        {isGuessing && byEar.onPlay && (
+      <div className={cn("grid w-fit max-w-full gap-2", byEar?.onPlay && "sm:grid-cols-2")}>
+        {byEar?.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}
 
-        {/* While the sound is a mystery there are two sounds to hear, so each button names its own. */}
-        <ActivitySoundButton disabled={notes.length === 0} onPlay={onHear}>
-          {isGuessing ? t("Hear your notes") : t("Hear it")}
+        <ActivitySoundButton
+          disabled={notes.length === 0 || (byEar !== null && checked)}
+          onPlay={onHear}
+        >
+          {byEar ? t("Hear your notes") : t("Play the sound")}
         </ActivitySoundButton>
       </div>
     </div>

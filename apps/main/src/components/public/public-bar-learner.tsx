@@ -36,7 +36,7 @@ export function PublicBarAccount({ visitor }: { visitor: ReactNode }) {
   const learner = useLearnerSummary();
 
   if (learner.status === "ready") {
-    return <UserAvatarMenu includeSearch />;
+    return <UserAvatarMenu includePublicLinks includeSearch />;
   }
 
   const known = learner.status === "visitor";

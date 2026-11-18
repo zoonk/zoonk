@@ -125,9 +125,14 @@ function GuestLimitReached({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.signUp} link={PageLink}>
-          {t("Create a free account")}
-        </EnterLink>
+        <div className="flex w-full flex-col items-center gap-2 *:first:w-full lg:w-auto">
+          <EnterLink href={routes.signUp} link={PageLink}>
+            {t("Create a free account")}
+          </EnterLink>
+          <PageLink className={buttonVariants({ variant: "ghost" })} href={routes.signUp}>
+            {t("Log in")}
+          </PageLink>
+        </div>
       }
       description={t("Everything you learned comes with you.")}
       icon={<UserRoundPlusIcon aria-hidden="true" />}
@@ -155,14 +160,26 @@ function Unavailable({
 }) {
   const t = useExtracted();
   const { actions } = useLessonPlayer();
-  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+  const { routes } = useLessonPlayerConfig();
 
   if (refusal.reason === "failed") {
     return (
       <AccessLayout
         actions={<EnterButton onClick={actions.retryStart}>{t("Try again")}</EnterButton>}
+        description={t("Nothing was lost. Try again in a moment.")}
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
+      />
+    );
+  }
+
+  if (refusal.reason === "notFound") {
+    return (
+      <AccessLayout
+        description={t("The link may be old or mistyped.")}
+        heading="h1"
+        icon={<CircleAlertIcon aria-hidden="true" />}
+        title={t("This lesson isn't available")}
       />
     );
   }
@@ -170,25 +187,12 @@ function Unavailable({
   return (
     <AccessLayout
       actions={
-        refusal.reason === "unauthorized" ? (
-          <EnterLink href={routes.signUp} link={PageLink}>
-            {t("Log in")}
-          </EnterLink>
-        ) : (
-          <EnterLink href={routes.exit} link={LinkComponent}>
-            {t("Back")}
-          </EnterLink>
-        )
-      }
-      description={
-        refusal.reason === "unauthorized" ? undefined : t("The link may be old or mistyped.")
+        <EnterLink href={routes.signUp} link={PageLink}>
+          {t("Log in")}
+        </EnterLink>
       }
       icon={<CircleAlertIcon aria-hidden="true" />}
-      title={
-        refusal.reason === "unauthorized"
-          ? t("You've been logged out")
-          : t("This lesson isn't available")
-      }
+      title={t("You've been logged out")}
     />
   );
 }

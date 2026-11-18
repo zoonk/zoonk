@@ -5,6 +5,10 @@ export type NumericEntry = {
   places: number | null;
 };
 
+export function getNumericEntryRule(entry: NumericEntry) {
+  return entry.kind === "decimals" && entry.places === 0 ? "roundToWhole" : entry.kind;
+}
+
 const FRACTION = /^(?<numerator>[^/]+)\/(?<denominator>[^/]+)$/u;
 
 function parseFraction({ locale, text }: { locale: string; text: string }): number | null {

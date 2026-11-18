@@ -5,6 +5,7 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useReasonCopy } from "../../language-aim/use-reason-copy";
+import { getCertificateExample } from "../_utils/certificate-example";
 import { type Choice, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
@@ -40,11 +41,15 @@ export function ReasonStep({
   pending,
   reasons,
   subject,
+  targetLanguage,
+  targetRegion,
 }: {
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   reasons: readonly LanguageReasonView[];
   subject: string;
+  targetLanguage: string | null;
+  targetRegion: string | null;
 }) {
   const t = useExtracted();
   const copyFor = useReasonCopy();
@@ -61,12 +66,15 @@ export function ReasonStep({
     pending,
   });
 
+  const example = getCertificateExample({ language: targetLanguage, region: targetRegion });
+
   const choices: Choice<LanguageReason>[] = reasons.map((view) => ({
     ...copyFor(view),
     after:
       view.reason === reason && asksWords(reason) ? (
         <ReasonWords onChange={setWords} reason={view.reason} value={words} />
       ) : undefined,
+    ...(view.reason === "certificate" && { description: example }),
     value: view.reason,
   }));
 

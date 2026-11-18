@@ -41,7 +41,7 @@ async function FirstDay({
     id: lesson.lessonId,
     kind: "lesson",
     minutes: rowMinutes[index] ?? 0,
-    state: index === 0 ? "current" : "ahead",
+    state: "ahead",
     title: lesson.title,
   }));
 

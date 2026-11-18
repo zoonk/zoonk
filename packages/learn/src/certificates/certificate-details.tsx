@@ -2,18 +2,12 @@
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { showSuccessToast } from "@zoonk/ui/components/toast";
-import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  type CertificateLinks,
-  formatCertificateCode,
-  getCertificateDisplayUrl,
-} from "@zoonk/utils/certificate-links";
+import { type CertificateLinks, formatCertificateCode } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
-import { SoftBreaks } from "../_components/soft-breaks";
 import { useLevelName } from "../course/use-level-name";
+import { CertificateLinkCopy } from "./certificate-copy-button";
 import { useCertificateDate, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
 import { type CertificateOwner } from "./certificate-page";
@@ -21,18 +15,28 @@ import { type CertificateOwner } from "./certificate-page";
 function DetailRow({
   children,
   label,
+  layout = "inline",
   mono,
 }: {
   children: React.ReactNode;
   label: string;
+  layout?: "inline" | "stacked";
   mono?: boolean;
 }) {
   return (
-    <div className="border-border text-compact flex min-h-11 items-baseline justify-between gap-4 border-t py-3">
+    <div
+      className={cn(
+        "flex",
+        layout === "stacked"
+          ? "flex-col gap-1.5 text-xs"
+          : "border-border text-compact min-h-11 items-baseline justify-between gap-4 border-t py-3",
+      )}
+    >
       <dt className="text-muted-foreground shrink-0">{label}</dt>
       <dd
         className={cn(
-          "min-w-0 text-right",
+          "min-w-0",
+          layout === "inline" && "text-end",
           mono ? "font-mono text-xs tabular-nums" : "font-medium",
         )}
       >
@@ -100,23 +104,18 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
   );
 }
 
-function OwnerLinkRow({ links }: { links: CertificateLinks }) {
+export function CertificateLinkRow({
+  layout,
+  url,
+}: {
+  layout?: "inline" | "stacked";
+  url: string;
+}) {
   const t = useExtracted();
-  const { copy } = useClipboard();
-  const shown = getCertificateDisplayUrl(links.url);
 
   return (
-    <DetailRow label={t("Link")} mono>
-      <span className="wrap-anywhere">
-        <SoftBreaks>{shown}</SoftBreaks>
-      </span>
-      <Button
-        className="ml-2 font-sans font-medium"
-        onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
-        variant="link"
-      >
-        {t("Copy")}
-      </Button>
+    <DetailRow label={t("Link")} layout={layout}>
+      <CertificateLinkCopy url={url} />
     </DetailRow>
   );
 }
@@ -146,7 +145,7 @@ export function CertificateDetails({
             {row.value}
           </DetailRow>
         ))}
-        {owner && <OwnerLinkRow links={links} />}
+        {owner && <CertificateLinkRow url={links.url} />}
       </dl>
       {owner && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">

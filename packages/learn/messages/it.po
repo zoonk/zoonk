@@ -1600,12 +1600,17 @@ msgid "Copied"
 msgstr "Copiato"
 
 #: src/certificates/certificate-copy-button.tsx
-#: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
 msgstr "Copia"
 
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "Copia link"
+
 #: src/certificates/certificate-details.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
@@ -1648,13 +1653,6 @@ msgstr "Nome e cognome"
 msgctxt "JBWS0c"
 msgid "Link"
 msgstr "Link"
-
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-share.tsx
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "Link copiato"
 
 #: src/certificates/certificate-details.tsx
 #: src/mock/mock-result-details.tsx
@@ -1994,11 +1992,6 @@ msgstr "Copia il testo suggerito"
 msgctxt "rIB4Ud"
 msgid "Post on"
 msgstr "Pubblica su"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "lbr3Lq"
-msgid "Copy link"
-msgstr "Copia link"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
@@ -4836,6 +4829,7 @@ msgstr "Chiedi a {name}"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
@@ -8833,16 +8827,16 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "Aggiunto al tuo materiale: {title}"
 
-#: src/onboarding/entry/goal-box.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "Voglio"
-
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-box.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {superare l’Abitur, parlare {language}…} bac {superare il bac, parlare {language}…} enem {superare l’ENEM, parlare {language}…} exani {superare l’EXANI-II, parlare {language}…} kyotsu {andare bene al Common Test, parlare {language}…} matura {superare la matura, parlare {language}…} maturita {superare la Maturità, parlare {language}…} suneung {andare bene al CSAT, parlare {language}…} yks {andare bene allo YKS, parlare {language}…} other {superare il SAT, parlare {language}…}}"
+
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "Voglio"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -8901,6 +8895,11 @@ msgctxt "_g7xra"
 msgid "How does inflation work?"
 msgstr "Come funziona l’inflazione?"
 
+#: src/onboarding/entry/goal-field.tsx
+msgctxt "goalField.0u-6yz"
+msgid "For example: <example></example>"
+msgstr "Per esempio: <example></example>"
+
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
@@ -8938,10 +8937,9 @@ msgid "Write my goal again"
 msgstr "Riscrivi il tuo obiettivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "E10uH8"
-msgid "Tell us a bit more"
-msgstr "Raccontaci qualcosa in più"
+msgctxt "UfGKGv"
+msgid "Write your goal again"
+msgstr "Riscrivi il tuo obiettivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Rt585I"
@@ -9114,9 +9112,9 @@ msgid "Understanding your goal"
 msgstr "Stiamo cercando di capire il tuo obiettivo"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "5o4Fqb"
-msgid "Next, you check what we understood."
-msgstr "Poi potrai controllare cosa abbiamo capito."
+msgctxt "Du-NAs"
+msgid "We're reading your goal"
+msgstr "Stiamo leggendo il tuo obiettivo"
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9230,9 +9228,15 @@ msgid "How it works"
 msgstr "Come funziona"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "OSlFuT"
-msgid "A course on this is ready now"
-msgstr "C’è già un corso su questo argomento"
+msgctxt "J7LA3k"
+msgid "Or start this ready course now"
+msgstr "Oppure inizia subito questo corso già pronto"
+
+#: src/onboarding/onboarding-bar.tsx
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} su {total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9254,12 +9258,6 @@ msgstr "Nessuna data"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Obiettivo"
-
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "Il tuo livello"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -9455,6 +9453,11 @@ msgctxt "P05JFf"
 msgid "Not sure, give me a short test"
 msgstr "Non so, vorrei fare un breve test"
 
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "Il tuo livello"
+
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "qcCnqJ"
 msgid "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}"
@@ -9616,12 +9619,6 @@ msgid "Lesson 1 is ready."
 msgstr "La lezione 1 è pronta."
 
 #: src/onboarding/steps/profile-step.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} su {total, number}"
-
-#: src/onboarding/steps/profile-step.tsx
 msgctxt "c2z6MR"
 msgid "About you"
 msgstr "Su di te"
@@ -9735,6 +9732,11 @@ msgctxt "Y7fjZb"
 msgid "What score do you need?"
 msgstr "Quale punteggio ti serve?"
 
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "E10uH8"
+msgid "Tell us a bit more"
+msgstr "Raccontaci qualcosa in più"
+
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "P5KfyI"
 msgid "Which certificate?"
@@ -9754,12 +9756,6 @@ msgstr "Perché impari questa lingua"
 msgctxt "v9nycX"
 msgid "Plan created"
 msgstr "Piano creato"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "Adatta"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "7T47RX"
@@ -10748,6 +10744,11 @@ msgid "More lessons than days left"
 msgstr "Restano più lezioni che giorni"
 
 #: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "Adatta"
+
+#: src/plan/plan-suggestion.tsx
 msgctxt "bgDfbl"
 msgid "Add time a day or pick a later date."
 msgstr "Aumenta il tempo di studio giornaliero o scegli una data più avanti."
@@ -11352,6 +11353,11 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {Abbiamo reinserito # argomenti di {subjects} nel tuo piano: hai sbagliato alcune domande su questi argomenti.}}"
 
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "Link copiato"
+
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -11921,6 +11927,11 @@ msgstr "Una frazione, come 2/3, o un numero decimale."
 msgctxt "6K_9T7"
 msgid "A whole number."
 msgstr "Un numero intero."
+
+#: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "Arrotonda al numero intero più vicino."
 
 #: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"

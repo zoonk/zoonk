@@ -79,7 +79,7 @@ export function RhythmDelayCalibration({
       {/* The set-up comes before anything can be checked, so its action is the bar's. */}
       {reading === null ? (
         <ActivityBarAction disabled={isRunning} onPress={() => void start()}>
-          {phase.kind === "done" ? t("Try again") : t("Start")}
+          {phase.kind === "done" ? t("Try again") : t("Start the beat")}
         </ActivityBarAction>
       ) : (
         <ActivityBarAction onPress={() => onDone(reading)}>{t("Continue")}</ActivityBarAction>

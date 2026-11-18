@@ -19,7 +19,7 @@ import {
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getFirstSentence } from "@zoonk/utils/string";
-import { Loader2Icon, NotebookPenIcon, RefreshCwIcon } from "lucide-react";
+import { Loader2Icon, PencilLineIcon, RefreshCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 import {
@@ -152,7 +152,7 @@ export function CourseListClient({
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <NotebookPenIcon aria-hidden="true" />
+            <PencilLineIcon aria-hidden="true" />
           </EmptyMedia>
           <EmptyTitle>{t("No courses here yet")}</EmptyTitle>
           <EmptyDescription>

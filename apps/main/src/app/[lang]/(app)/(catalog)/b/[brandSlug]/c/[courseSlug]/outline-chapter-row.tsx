@@ -4,7 +4,6 @@ import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { FactSegments } from "@zoonk/learn/facts";
 import { RouteMark } from "@zoonk/learn/route-line";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
@@ -32,21 +31,16 @@ const CHAPTERS_FOLDED_FROM = CHAPTERS_SHOWN + 3;
 
 /*
  * Targets stay inside the row, never overlap and are at least 44px each way: the title reaches
- * through the row's padding (`py-4`, `mt-1.5`), and a lone lesson through its row's bottom (`pb-5.5`).
+ * through the row's padding (`py-4`, `mt-1.5`).
  */
 const ROW_CLASS = "relative flex gap-4 py-4";
-const LONE_LESSON_ROW_CLASS = "pb-5.5";
 const ROW_STATION_CLASS = "top-[1.6875rem]";
 
 const CHAPTER_LINK_CLASS =
   "focus-visible:ring-ring/50 relative inline-block rounded-md outline-none before:absolute before:inset-x-0 before:-top-4 before:-bottom-1.5 before:min-w-11 hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
 
-/** Inset: a link at a line's start sits on FactSegments' clip edge, which would cut an outer ring. */
 const LESSON_LINK_CLASS =
-  "hover:text-foreground focus-visible:ring-ring/50 rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px] focus-visible:ring-inset";
-
-const LONE_LESSON_LINK_CLASS =
-  "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
+  "hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
 
 function ChapterLessonLinks({
   chapter,
@@ -55,29 +49,20 @@ function ChapterLessonLinks({
   chapter: OutlineChapter;
   params: OutlineParams;
 }) {
-  const hasLoneLesson = chapter.lessons.length === 1;
-
   return (
-    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-balance">
-      <FactSegments
-        facts={chapter.lessons.map((lesson) => ({
-          content: (
-            <Link
-              className={cn(LESSON_LINK_CLASS, hasLoneLesson && LONE_LESSON_LINK_CLASS)}
-              href={getLessonHref({
-                ...params,
-                chapterSlug: chapter.slug,
-                lessonSlug: lesson.slug,
-              })}
-              prefetch
-            >
-              {lesson.title}
-            </Link>
-          ),
-          key: lesson.id,
-        }))}
-      />
-    </p>
+    <ul className="text-muted-foreground mt-1.5 max-w-140 text-sm text-pretty">
+      {chapter.lessons.map((lesson) => (
+        <li key={lesson.id}>
+          <Link
+            className={LESSON_LINK_CLASS}
+            href={getLessonHref({ ...params, chapterSlug: chapter.slug, lessonSlug: lesson.slug })}
+            prefetch
+          >
+            {lesson.title}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -129,7 +114,7 @@ export function OutlineChapterRow({
   params: OutlineParams;
 }) {
   return (
-    <li className={cn(ROW_CLASS, chapter.lessons.length === 1 && LONE_LESSON_ROW_CLASS)}>
+    <li className={ROW_CLASS}>
       <RouteMark className={ROW_STATION_CLASS} station="stop" />
 
       <span className="text-faint w-6 flex-none font-mono text-xs leading-5.5 tabular-nums">

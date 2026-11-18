@@ -1,6 +1,10 @@
+import { Link } from "@/i18n/navigation";
 import { TaskBody } from "@zoonk/learn/task-layout";
+import { BackLink } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PublicTopBar } from "./public-top-bar";
+
+const BRAND_NAME = "Zoonk";
 
 /** What a child set to `display: contents` puts back on the column itself. */
 export const COLUMN_CONTENT_CLASS = "mx-auto w-full max-w-(--column)";
@@ -22,7 +26,18 @@ export function ColumnScreen({
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <PublicTopBar actions={null} />
+      <PublicTopBar
+        actions={null}
+        start={
+          <BackLink
+            aria-label={BRAND_NAME}
+            render={<Link className="text-reading h-11" href="/" />}
+            tone="foreground"
+          >
+            {BRAND_NAME}
+          </BackLink>
+        }
+      />
       <main className="flex flex-1 flex-col">
         <TaskBody
           className={cn(

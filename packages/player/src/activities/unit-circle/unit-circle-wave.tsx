@@ -21,7 +21,12 @@ const SAMPLE_STEP = 5;
 const HALF_TURN = 180;
 const QUARTER_TURN = 90;
 const DOT_RADIUS = 5;
-const WAVE_TICKS = [QUARTER_TURN, HALF_TURN, HALF_TURN + QUARTER_TURN, FULL_TURN];
+const WAVE_TICKS = [0, QUARTER_TURN, HALF_TURN, HALF_TURN + QUARTER_TURN, FULL_TURN];
+
+const SPARSE_WAVE_TICKS = [
+  [0, HALF_TURN, FULL_TURN],
+  [0, FULL_TURN],
+];
 
 const WAVES: Record<
   WaveName,
@@ -87,12 +92,17 @@ export function UnitCircleWave({
 
       <ActivityPlot
         height={PLOT_HEIGHT}
-        padding={{ left: 28 }}
+        padding={{ left: 28, right: 24 }}
         xDomain={[0, FULL_TURN]}
         yDomain={[-1, 1]}
       >
-        <ActivityPlotGridY align="start" format={(value) => format(value)} ticks={[-1, 0, 1]} />
-        <ActivityPlotAxisX format={formatAngle} ticks={WAVE_TICKS} />
+        <ActivityPlotGridY format={(value) => format(value)} ticks={[-1, 0, 1]} />
+        <ActivityPlotAxisX
+          allowTickLabelOverhang
+          fallbackTicks={SPARSE_WAVE_TICKS}
+          format={formatAngle}
+          ticks={WAVE_TICKS}
+        />
 
         {show.map((name) => (
           <g key={name}>

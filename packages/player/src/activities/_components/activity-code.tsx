@@ -24,6 +24,7 @@ const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
 };
 
 // Inputs below 16px trigger automatic zoom on iOS.
+const CODE_SCROLL_SIGN = "[&>button]:pointer-coarse:inline-flex";
 const CODE_TEXT = "font-mono text-base leading-7 sm:text-sm sm:leading-6";
 
 export function ActivityCodeTokens({ tokens }: { tokens: readonly CodeToken[] }) {
@@ -48,7 +49,7 @@ export function ActivityCodeBlock({
   label: string;
 }) {
   return (
-    <ActivityHorizontalScroll box={{ label }} className={cn("-mx-2", className)}>
+    <ActivityHorizontalScroll box={{ label }} className={cn(CODE_SCROLL_SIGN, "-mx-2", className)}>
       <div
         className={cn(
           "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1",
@@ -191,9 +192,23 @@ export function ActivityCodeEditor({
 
   return (
     <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
-      <ActivityHorizontalScroll box={{ label }}>
-        <div className={cn("grid w-max min-w-full px-4 py-3", CODE_TEXT)}>
-          <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">
+      <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
+        <div
+          className={cn(
+            "grid w-max min-w-full grid-cols-[max-content_minmax(0,1fr)] px-4 py-3",
+            CODE_TEXT,
+          )}
+        >
+          <div
+            aria-hidden="true"
+            className="text-muted-foreground col-start-1 row-start-1 pr-3 text-right tabular-nums select-none"
+          >
+            {keyedByPosition(lines, (line) => line).map(({ key }, index) => (
+              <div key={key}>{index + 1}</div>
+            ))}
+          </div>
+
+          <div aria-hidden="true" className="col-start-2 row-start-1 whitespace-pre">
             {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
               <div key={key}>
                 <ActivityCodeTokens tokens={item} />
@@ -205,7 +220,7 @@ export function ActivityCodeEditor({
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className={cn(FIELD_RESET, "min-h-11 w-full [font:inherit]")}
+            className={cn(FIELD_RESET, "col-start-2 min-h-11 w-full [font:inherit]")}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {
               if (onSubmit && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -286,7 +301,7 @@ export function ActivitySnippetBar({
   snippets: readonly (CodeSnippet & { label: string; name: string })[];
 }) {
   return (
-    <ActivityHorizontalScroll box={{ label }}>
+    <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
       <div className="flex w-max min-w-full gap-2" data-slot="activity-snippet-bar">
         {snippets.map((snippet) => (
           <button

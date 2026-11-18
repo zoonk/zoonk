@@ -162,18 +162,16 @@ export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
   return step.kind === "explanation" && labeledDiagramOf(step) !== null && !image && !pending;
 }
 
-function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictureFrame }) {
+export function LessonPicturePending({
+  children,
+  ...props
+}: Omit<React.ComponentProps<typeof MediaPending>, "icon">) {
   const t = useExtracted();
 
   return (
-    <MediaPending
-      scrollable
-      className={cn(PICTURE_BOX_CLASS, PICTURE_FRAME_CLASS[frame])}
-      icon={<ImageIcon aria-hidden="true" className="size-6 shrink-0" />}
-      style={pictureBoxStyle(DRAWN_PICTURE_SIZE.scene)}
-    >
+    <MediaPending {...props} icon={<ImageIcon aria-hidden="true" className="size-6 shrink-0" />}>
       <p role="status">{t("Drawing the picture…")}</p>
-      {alt && <p>{alt}</p>}
+      {children}
     </MediaPending>
   );
 }
@@ -214,7 +212,13 @@ export function LessonStepPicture({
   if (pending) {
     return (
       <PictureFrame className={className}>
-        <LessonPicturePending alt={asks ? request?.alt : undefined} frame={frame} />
+        <LessonPicturePending
+          scrollable
+          className={cn(PICTURE_BOX_CLASS, PICTURE_FRAME_CLASS[frame])}
+          style={pictureBoxStyle(DRAWN_PICTURE_SIZE.scene)}
+        >
+          {asks && request?.alt && <p>{request.alt}</p>}
+        </LessonPicturePending>
       </PictureFrame>
     );
   }

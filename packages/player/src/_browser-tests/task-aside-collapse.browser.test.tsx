@@ -130,7 +130,7 @@ describe("collapsing a task's sidebar", () => {
 
   it("moves what it holds into the lesson and remembers the choice", async () => {
     playQuestion();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(aside()).toBeVisible();
     await expect.element(aside().getByText("From the lesson")).toBeVisible();
@@ -191,7 +191,7 @@ describe("collapsing a task's sidebar", () => {
     essay.unmount();
 
     playQuestion();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("button", { name: "Expand sidebar" })).toBeVisible();
     expect(aside().query()).toBeNull();

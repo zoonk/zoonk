@@ -3,6 +3,7 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useDaysLeftText } from "../_components/days-left";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
@@ -77,7 +78,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage ?? null })
         : null,
     ),
-    level !== null && { id: "level", label: t("Your level"), value: level },
+    level !== null && { id: "level", label: t("Level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),
@@ -97,12 +98,20 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
       <dl className="flex flex-col [&>div+div]:border-t">
         {facts.map((fact) => (
           <div
-            className="grid grid-cols-[6rem_minmax(0,1fr)] items-baseline gap-3 py-2.5 text-sm"
+            className="grid grid-cols-[fit-content(50%)_minmax(0,1fr)] items-baseline gap-3 py-2.5 text-sm"
             key={fact.id}
           >
-            <dt className="text-muted-foreground text-compact">{fact.label}</dt>
+            <dt className="text-muted-foreground text-compact text-pretty">{fact.label}</dt>
             <dd className="flex min-w-0 flex-col gap-0.5">
-              <span className="font-medium text-pretty wrap-break-word">{fact.value}</span>
+              <span
+                className={cn(
+                  "text-pretty wrap-break-word",
+                  (fact.id === "time" || (fact.id === "date" && fact.count)) &&
+                    "font-mono tabular-nums",
+                )}
+              >
+                {fact.value}
+              </span>
               {fact.note && (
                 <span className="text-muted-foreground text-xs wrap-break-word">{fact.note}</span>
               )}

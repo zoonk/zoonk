@@ -45,4 +45,19 @@ describe("the free lessons gate", () => {
       .element(page.getByText(/More tomorrow, or subscribe to keep going\.$/u))
       .toBeVisible();
   });
+
+  it("closes a missing lesson without showing its progress or options", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const startLesson = vi.fn().mockResolvedValue({ reason: "notFound" });
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+
+    await expect
+      .element(page.getByRole("heading", { name: "This lesson isn't available" }))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("link", { name: "Leave" })).toBeVisible();
+    expect(page.getByRole("progressbar").query()).toBeNull();
+    expect(page.getByRole("button", { name: "Screen options" }).query()).toBeNull();
+  });
 });

@@ -35,6 +35,16 @@ describe("geometry and data activities", () => {
       .toHaveAttribute("aria-valuetext", expect.stringMatching(/Angles: 72°, 45°, 63°\.$/u));
 
     await valueInput().fill("180");
+
+    const degree = page.getByText("°", { exact: true });
+    const input = valueInput().element();
+    const group = input.closest('[data-slot="input-group"]')!;
+    await expect.element(valueInput()).toHaveAccessibleDescription("°");
+
+    expect(degree.element().getBoundingClientRect().left).toBeLessThan(
+      group.getBoundingClientRect().left + group.getBoundingClientRect().width / 2,
+    );
+
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("The angles always add to 180°.")).toBeVisible();
@@ -265,6 +275,20 @@ describe("geometry and data activities", () => {
     await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
   });
 
+  it("keeps the target label clear of the mean after a wrong check", async () => {
+    openActivity({ template: "distributionExplorer" });
+    await expect.element(page.getByRole("slider", { name: "Lower handle" })).toBeVisible();
+    await valueInput().fill("49.5");
+    await checkActivity();
+    await expectVerdict("Not quite");
+
+    const target = page.getByText("70 to 130: 95.45%", { exact: true });
+    await expect.element(target).toBeVisible();
+    const mean = dialText((label) => label === "100");
+    expect(mean).toBeDefined();
+    expect(target.element().getBoundingClientRect().top).toBeGreaterThanOrEqual(mean!.bottom);
+  });
+
   it("random simulation by sampling: bigger samples bunch up", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
     await expect.element(page.getByText("200 samples of 400", { exact: true })).toBeVisible();
@@ -292,6 +316,7 @@ describe("geometry and data activities", () => {
 
   it("random simulation by sampling: the wrong guess is marked", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
+    await expect.element(page.getByRole("slider")).toBeVisible();
     await page.getByRole("radio", { name: /The same/u }).click();
     await checkActivity();
     await expectVerdict("Not quite");

@@ -1,7 +1,9 @@
 "use client";
 
 import { type SpokenAudioState } from "@zoonk/learn/speech";
+import { Bubble, BubbleContent } from "@zoonk/ui/components/bubble";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { LearnerBubble } from "@zoonk/ui/components/message";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapPin, UserRound } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -35,6 +37,14 @@ function ChatLine({
   const t = useExtracted();
   const isThem = line.speaker === "them";
 
+  const text = (
+    <>
+      <span className="sr-only">{isThem ? t("They say:") : t("You said:")} </span>
+      <span className="text-base font-medium">{line.text}</span>
+      <span className="text-muted-foreground text-sm">{line.translation}</span>
+    </>
+  );
+
   return (
     <li className={cn("flex items-end gap-2.5", !isThem && "flex-row-reverse")}>
       {isThem && (
@@ -46,19 +56,21 @@ function ChatLine({
         </span>
       )}
 
-      <div
-        className={cn(
-          "flex min-w-0 flex-col rounded-xl px-3.5 py-2.5",
-          isThem ? "bg-background rounded-bl-md shadow-xs" : "bg-viz-accent-soft rounded-br-md",
-        )}
-      >
-        <span className="sr-only">{isThem ? t("They say:") : t("You said:")} </span>
-        <span className="text-base font-medium">{line.text}</span>
-        <span className="text-muted-foreground text-sm">{line.translation}</span>
-      </div>
+      {isThem ? (
+        <Bubble variant="outline">
+          <BubbleContent className="flex flex-col rounded-bl-sm">{text}</BubbleContent>
+        </Bubble>
+      ) : (
+        <LearnerBubble className="flex flex-col">{text}</LearnerBubble>
+      )}
 
       {canSpeak && isThem && (
-        <ActivitySpeakButton label={t("Hear this line")} onClick={onSpeak} state={speechState} />
+        <ActivitySpeakButton
+          className="ms-auto"
+          label={t("Hear this line")}
+          onClick={onSpeak}
+          state={speechState}
+        />
       )}
     </li>
   );
@@ -68,9 +80,15 @@ function ReplyContent({ isChecked, reply }: { isChecked: boolean; reply: Dialogu
   const t = useExtracted();
 
   return (
-    <span className="flex flex-col gap-0.5">
+    <span>
       <PlayerChoiceSceneOptionText>{reply.text}</PlayerChoiceSceneOptionText>
-      {isChecked && <span className="text-muted-foreground text-sm">{reply.translation}</span>}
+      {isChecked && (
+        <>
+          <br />
+          <span className="text-muted-foreground text-sm">{reply.translation}</span>
+          <br />
+        </>
+      )}
       {isChecked && (
         <span className="text-sm leading-snug font-normal">
           {/* Every reply stays to say why, so the best one is named, whichever was picked. */}

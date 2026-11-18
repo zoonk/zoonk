@@ -81,7 +81,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     stubTutorApi({ lesson });
     renderLessonPlayer({ lesson, tutor: buildTutor() });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await expect.element(page.getByRole("button", { name: "Previous screen" })).toBeVisible();
 

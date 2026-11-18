@@ -20,6 +20,7 @@ import { MoleculeCanvas } from "./molecule-canvas";
 import { ExploredMolecule, MoleculeExample } from "./molecule-example";
 import {
   type Build,
+  MAX_ATOMS,
   bondTotal,
   bondsUsed,
   builtCounts,
@@ -34,8 +35,6 @@ import { type BuilderChange, useMoleculeBuilder } from "./use-molecule-builder";
 import { useTweenedLayout } from "./use-tweened-layout";
 
 type MoleculeProps = ActivityRendererProps<"moleculeBuilder">;
-
-const MAX_ATOMS = 16;
 
 function answerFor(content: MoleculeProps["content"], build: Build): ActivityAnswer | null {
   if (content.check.kind === "numeric") {
@@ -116,12 +115,6 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {/* The title names the molecule to build; this line keeps its room so the first atom moves nothing. */}
-      <ActivityCanvasLabel className="min-h-5 text-sm tabular-nums">
-        {build.atoms.length > 0 &&
-          t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
-      </ActivityCanvasLabel>
-
       <div className="bg-background/60 rounded-xl bg-[radial-gradient(var(--viz-grid)_1px,transparent_1.2px)] bg-size-[18px_18px]">
         <MoleculeCanvas
           atomLabel={(atom) =>
@@ -139,8 +132,14 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
       </div>
 
       <div className="flex flex-col gap-3">
+        <ActivityCanvasLabel className="min-h-5 text-sm tabular-nums">
+          {build.atoms.length > 0 &&
+            t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
+        </ActivityCanvasLabel>
+
         <MoleculeStatus
           build={build}
+          elements={elements}
           isChecked={isChecked}
           selectedName={selected ? nameOf(selected) : null}
         />

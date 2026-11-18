@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChallengeMeterState } from "@zoonk/core/library/challenges/run";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
@@ -105,6 +106,7 @@ export function ChallengeMeters({
   meters: ChallengeMeterState[];
 }) {
   const t = useExtracted();
+  const format = useFormatNumber();
 
   if (meters.length === 0) {
     return null;
@@ -121,7 +123,10 @@ export function ChallengeMeters({
         <div className="flex flex-col gap-1.5" key={meter.id}>
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="text-foreground">{fill(meter.label)}</span>
-            {hasMoved && <MeterChange meter={meter} />}
+            <span className="flex items-baseline gap-2 tabular-nums">
+              {format(meter.value)}
+              {hasMoved && <MeterChange meter={meter} />}
+            </span>
           </div>
           <Meter
             aria-hidden={false}

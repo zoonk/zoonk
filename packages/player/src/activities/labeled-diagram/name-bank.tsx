@@ -90,8 +90,8 @@ export function NameBank({
     <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-xs">
         {activeNumber === null
-          ? t("Every spot has a name. Tap a spot to change it.")
-          : t("Tap a name for spot {number}, or drag it onto any spot.", {
+          ? t("Every spot has a name. Pick a spot to change it.")
+          : t("Pick a name for spot {number}, or drag it onto any spot.", {
               number: String(activeNumber),
             })}
         {extraNames > 0 && (

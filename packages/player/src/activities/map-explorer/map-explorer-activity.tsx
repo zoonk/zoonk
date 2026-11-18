@@ -62,17 +62,7 @@ function MapLegend({
   );
 }
 
-function PlaceDetails({ number, place }: { number: number; place: Place | null }) {
-  const t = useExtracted();
-
-  if (!place) {
-    return (
-      <p className="text-muted-foreground text-sm text-pretty">
-        {t("Tap a numbered place to see what's there.")}
-      </p>
-    );
-  }
-
+function PlaceDetails({ number, place }: { number: number; place: Place }) {
   return (
     <div className={cn(ACTIVITY_CARD_CLASS, "flex gap-3")} data-slot="map-place-details">
       <span className="bg-viz-accent text-background flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums">
@@ -149,8 +139,7 @@ function MapCanvas({
   content,
   drawing,
   labelId,
-  phase,
-}: Pick<MapExplorerProps, "content" | "labelId" | "phase"> & { drawing: BaseMapDrawing }) {
+}: Pick<MapExplorerProps, "content" | "labelId"> & { drawing: BaseMapDrawing }) {
   const t = useExtracted();
   const format = useFormatNumber();
   const labelText = useBaseMapLabels();
@@ -170,6 +159,7 @@ function MapCanvas({
   });
 
   const selectedIndex = fields.places.findIndex((place) => place.id === selectedId);
+  const selected = fields.places[selectedIndex];
   const baseMap = getActivityBaseMap(fields.baseMapId);
   const name = baseMap ? mapName(baseMap.id) : "";
   const note = baseMap ? mapNote(baseMap.id) : null;
@@ -183,14 +173,12 @@ function MapCanvas({
     <ActivityCanvas labelId={labelId}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-pretty">{name}</p>
-        {phase !== "checked" && (
-          <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
-            {t("{count} of {total} explored", {
-              count: format(visited.length),
-              total: format(fields.places.length),
-            })}
-          </ActivityCanvasLabel>
-        )}
+        <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
+          {t("{count} of {total} explored", {
+            count: format(visited.length),
+            total: format(fields.places.length),
+          })}
+        </ActivityCanvasLabel>
       </div>
 
       <MapFrame ref={ref}>
@@ -219,8 +207,8 @@ function MapCanvas({
         {note && <ActivityCanvasLabel>{note}</ActivityCanvasLabel>}
       </div>
 
-      <div aria-live="polite">
-        <PlaceDetails number={selectedIndex + 1} place={fields.places[selectedIndex] ?? null} />
+      <div aria-live="polite" className={selected ? undefined : "sr-only"}>
+        {selected && <PlaceDetails number={selectedIndex + 1} place={selected} />}
       </div>
 
       <ActivityTextAlternative>
@@ -246,11 +234,11 @@ function MapUnavailable({ labelId }: { labelId: string }) {
   );
 }
 
-export function MapExplorerActivity({ content, labelId, phase }: MapExplorerProps) {
+export function MapExplorerActivity({ content, labelId }: MapExplorerProps) {
   const drawing = use(loadBaseMap(content.fields.baseMapId));
 
   return drawing ? (
-    <MapCanvas content={content} drawing={drawing} labelId={labelId} phase={phase} />
+    <MapCanvas content={content} drawing={drawing} labelId={labelId} />
   ) : (
     <MapUnavailable labelId={labelId} />
   );

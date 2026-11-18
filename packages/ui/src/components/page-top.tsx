@@ -10,7 +10,7 @@ import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 const BACK_LINK_CLASS = cn(
   buttonVariants({ edge: "start", size: "sm", variant: "ghost" }),
-  "text-muted-foreground min-w-0 shrink",
+  "min-w-0 shrink",
 );
 
 /**
@@ -21,18 +21,31 @@ const BACK_LINK_CLASS = cn(
 function BackLink({
   children,
   render,
+  tone = "muted",
   ...props
-}: Omit<useRender.ComponentProps<"a">, "className"> & { "aria-label": string }) {
+}: Omit<useRender.ComponentProps<"a">, "className"> & {
+  "aria-label": string;
+  tone?: "foreground" | "muted";
+}) {
   return useRender({
     defaultTagName: "a",
-    props: mergeProps<"a">({ className: BACK_LINK_CLASS }, props, {
-      children: (
-        <>
-          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
-          <span className="truncate">{children}</span>
-        </>
-      ),
-    }),
+    props: mergeProps<"a">(
+      {
+        className: cn(
+          BACK_LINK_CLASS,
+          tone === "foreground" ? "text-foreground" : "text-muted-foreground",
+        ),
+      },
+      props,
+      {
+        children: (
+          <>
+            <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
+            <span className="truncate">{children}</span>
+          </>
+        ),
+      },
+    ),
     render,
     state: { slot: "back-link" },
   });

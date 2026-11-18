@@ -3,7 +3,13 @@
 import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { GoalField, GoalFieldLabel, GoalFieldText, type useGoalFieldAction } from "./goal-field";
+import {
+  GoalField,
+  GoalFieldExample,
+  GoalFieldLabel,
+  GoalFieldText,
+  type useGoalFieldAction,
+} from "./goal-field";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
 type GoalAction = ReturnType<typeof useGoalFieldAction>;
@@ -28,6 +34,15 @@ export function GoalBox({
   const t = useExtracted();
   const example = useLocalGoalExample();
   const inputId = useId();
+  const exampleId = useId();
+
+  const exampleText = t({
+    description:
+      "Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.",
+    message:
+      "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}",
+    values: example,
+  });
 
   return (
     <GoalField
@@ -35,23 +50,22 @@ export function GoalBox({
       className="@container grid grid-cols-[minmax(0,1fr)_auto]"
       id={id}
     >
-      <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
+      <div className="col-span-2 flex min-w-0 items-start gap-2 @xl:col-span-1">
         <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
-        <GoalFieldText
-          autoFocusOnPointer
-          defaultValue={defaultValue}
-          id={inputId}
-          maxLength={MAX_GOAL_PROMPT_LENGTH}
-          placeholder={t({
-            description:
-              "Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.",
-            message:
-              "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}",
-            values: example,
-          })}
-          {...goal.field}
-        />
+        <div className="group/goal grid min-w-0 flex-1">
+          <GoalFieldExample id={exampleId}>{exampleText}</GoalFieldExample>
+          <GoalFieldText
+            aria-describedby={exampleId}
+            autoFocusOnPointer
+            className="col-start-1 row-start-1 contain-inline-size"
+            defaultValue={defaultValue}
+            id={inputId}
+            maxLength={MAX_GOAL_PROMPT_LENGTH}
+            placeholder=" "
+            {...goal.field}
+          />
+        </div>
       </div>
 
       <div className="col-span-2 flex items-center justify-end gap-1 empty:hidden @xl:col-span-1">

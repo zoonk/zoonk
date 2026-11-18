@@ -5,7 +5,7 @@ import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/compo
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { tickCounts } from "@zoonk/utils/plot-scale";
-import { Lock } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import {
@@ -140,7 +140,7 @@ export function ActivityGuessScale({
           share={share}
           trackWidth={trackWidth}
         >
-          {disabled && guess !== null && <Lock aria-hidden="true" className="size-3" />}
+          {disabled && guess !== null && <MapPin aria-hidden="true" className="size-3" />}
           {guess === null
             ? t("Drag to guess")
             : t("Your guess: {value}", { value: formatValue(guess) })}

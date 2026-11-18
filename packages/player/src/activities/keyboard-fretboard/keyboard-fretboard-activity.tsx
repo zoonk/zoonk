@@ -12,7 +12,11 @@ import { useNoteNames } from "../_utils/use-music-labels";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { GuitarMirror } from "./guitar-mirror";
 import { GuitarOnlyBoard } from "./guitar-only-board";
-import { KeyboardFretboardHeader } from "./keyboard-fretboard-header";
+import {
+  KeyboardFretboardHeader,
+  KeyboardFretboardInstruction,
+  KeyboardHalfStepHint,
+} from "./keyboard-fretboard-header";
 import {
   KEYBOARD_FROM,
   KEYBOARD_TO,
@@ -28,7 +32,7 @@ import {
   targetSpelling,
   togglePitch,
 } from "./keyboard-fretboard-notes";
-import { CantListenSwitch, SoundAsText, useCantListen } from "./sound-as-text";
+import { CantListenSwitch, SoundAsText, useKeyboardListening } from "./sound-as-text";
 
 type KeyboardFretboardProps = ActivityRendererProps<"keyboardFretboard">;
 
@@ -41,7 +45,6 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const { content, expected, labelId, onAnswerChange, phase } = props;
   const { check, fields } = content;
   const piano = useInstrument("piano");
-  const [cantListen, setCantListen] = useCantListen();
   const [pressed, setPressed] = useState(() => initialPitches(props));
   const isChecked = phase === "checked";
   const start = targetPitches(fields.start);
@@ -70,21 +73,19 @@ function PianoBoard(props: KeyboardFretboardProps) {
     }
   }
 
-  const soundUnavailable = piano.status === "unavailable";
-  const offersWayOut = fields.byEar && phase === "answering" && (cantListen || !soundUnavailable);
+  const listening = useKeyboardListening({
+    byEar: fields.byEar,
+    onPlay: () => void piano.play(targetSound(fields.target)),
+    phase,
+    unavailable: piano.status === "unavailable",
+  });
 
   return (
     <>
       <ActivityCanvas labelId={labelId}>
         <KeyboardFretboardHeader
-          byEar={
-            fields.byEar
-              ? {
-                  isRevealed: phase !== "answering",
-                  onPlay: cantListen ? null : () => void piano.play(targetSound(fields.target)),
-                }
-              : null
-          }
+          byEar={listening.earControls}
+          checked={isChecked}
           heading={keyboardHeading({ content, phase, shown })}
           notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
           onHear={() =>
@@ -111,9 +112,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
           to={KEYBOARD_TO}
         />
 
-        {fields.byEar && !isChecked && (cantListen || soundUnavailable) && (
-          <SoundAsText notes={targetSpelling(fields.target)} />
-        )}
+        {listening.showText && <SoundAsText notes={targetSpelling(fields.target)} />}
 
         {fields.instruments.includes("guitar") && (
           <GuitarMirror
@@ -123,9 +122,8 @@ function PianoBoard(props: KeyboardFretboardProps) {
           />
         )}
 
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("A half step is the distance to the next key, counting black keys.")}
-        </p>
+        {listening.showInstruction && <KeyboardFretboardInstruction />}
+        <KeyboardHalfStepHint start={start} target={target} />
         <ActivitySoundNote status={piano.status} />
 
         <ActivityTextAlternative>
@@ -135,7 +133,9 @@ function PianoBoard(props: KeyboardFretboardProps) {
         </ActivityTextAlternative>
       </ActivityCanvas>
 
-      {offersWayOut && <CantListenSwitch cantListen={cantListen} onChange={setCantListen} />}
+      {listening.offersWayOut && (
+        <CantListenSwitch cantListen={listening.cantListen} onChange={listening.setCantListen} />
+      )}
     </>
   );
 }

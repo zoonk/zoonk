@@ -2,10 +2,11 @@
 
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
 
-export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
+const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
 const GOAL_FIELD = "goal";
 
@@ -62,7 +63,7 @@ export function GoalField({ className, ...props }: React.ComponentProps<"form">)
     <form
       className={cn(
         GOAL_PANEL_CLASS,
-        "flex min-h-14 items-end gap-2 p-1.5 pl-4 text-left",
+        "flex min-h-14 items-end gap-2 px-3 py-2 text-left",
         className,
       )}
       data-slot="goal-field"
@@ -91,6 +92,30 @@ export function GoalFieldLabel({
     >
       {children}
     </label>
+  );
+}
+
+/** The example keeps its line wraps in the grid even after the field holds words. */
+export function GoalFieldExample({ children, id }: { children: React.ReactNode; id: string }) {
+  const t = useExtracted("goalField");
+
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className={cn(
+          GOAL_FIELD_TEXT_CLASS,
+          "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
+          "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
+        )}
+        data-slot="goal-example"
+      >
+        {children}
+      </span>
+      <span className="sr-only" id={id}>
+        {t.rich("For example: <example></example>", { example: () => children })}
+      </span>
+    </>
   );
 }
 
@@ -135,7 +160,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none placeholder:truncate",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-pretty outline-none",
         className,
       )}
       enterKeyHint="go"

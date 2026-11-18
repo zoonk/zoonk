@@ -41,7 +41,6 @@ export function StepSolverActivity({
 
   const isChecked = phase === "checked";
   const current = isChecked ? fields.steps.length : currentStepIndex(fields.steps, picks);
-  const maxValue = Math.max(...fields.steps.map((step) => Math.abs(step.value)));
 
   function handlePick(stepId: string, choiceId: string) {
     const next = addPick(picks, stepId, choiceId);
@@ -66,24 +65,19 @@ export function StepSolverActivity({
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <RichTextBlocks className="text-base leading-snug [&>p]:font-medium" text={fields.problem} />
 
-      <div className="relative">
-        <div aria-hidden="true" className="bg-border absolute top-4 bottom-4 left-[15px] w-0.5" />
-
-        <ol aria-label={t("Steps")} className="flex flex-col gap-5">
-          {fields.steps.map((step, index) => (
-            <StepSolverStep
-              index={index}
-              isChecked={isChecked}
-              key={step.id}
-              maxValue={maxValue}
-              onPick={(choiceId) => handlePick(step.id, choiceId)}
-              picks={picks[step.id] ?? []}
-              status={statusOf(index, current)}
-              step={step}
-            />
-          ))}
-        </ol>
-      </div>
+      <ol aria-label={t("Steps")} className="flex flex-col gap-5">
+        {fields.steps.map((step, index) => (
+          <StepSolverStep
+            index={index}
+            isChecked={isChecked}
+            key={step.id}
+            onPick={(choiceId) => handlePick(step.id, choiceId)}
+            picks={picks[step.id] ?? []}
+            status={statusOf(index, current)}
+            step={step}
+          />
+        ))}
+      </ol>
 
       <ActivityTextAlternative>
         {t("Step {current} of {total}.", {

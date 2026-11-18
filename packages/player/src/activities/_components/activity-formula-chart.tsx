@@ -1,7 +1,7 @@
 "use client";
 
 import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
-import { estimatedLabelWidth, sideOffLine } from "../_utils/drawing-label";
+import { estimatedLabelWidth, touchesSegment } from "../_utils/drawing-label";
 import { tickLabels } from "../_utils/plot-ticks";
 import { type PlotPoint } from "../_utils/sample-formula";
 import {
@@ -17,6 +17,7 @@ import {
 import { ActivityPlotAxisX } from "./activity-plot-axis";
 
 const PLOT_HEIGHT = 168;
+const TOP_ROOM = 28;
 const MARK_RADIUS = 4.5;
 const EXPECTED_RADIUS = 7;
 const DELTA_LABEL_GAP = 8;
@@ -71,11 +72,13 @@ function DeltaMark({
 }
 
 function ExpectedMark({
+  baseline,
   label,
   line,
   x,
   y,
 }: {
+  baseline: Curve | null;
   label: string;
   line: readonly PlotPoint[];
   x: number;
@@ -83,25 +86,57 @@ function ExpectedMark({
 }) {
   const scales = usePlotScales();
   const mark = { x: scales.x.toPixel(x), y: scales.y.toPixel(y) };
+  const halfWidth = estimatedLabelWidth(label) / 2;
+  const halfHeight = LABEL_HEIGHT / 2;
+  const [left, right] = scales.x.range;
+  const [bottom] = scales.y.range;
+  const labelX = Math.max(left + halfWidth, Math.min(mark.x, right - halfWidth));
 
-  const side = sideOffLine({
-    gap: EXPECTED_LABEL_GAP,
-    line: line.map((point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) })),
-    mark,
-    size: { height: LABEL_HEIGHT, width: estimatedLabelWidth(label) },
+  const plotPoint = (point: PlotPoint) => ({
+    x: scales.x.toPixel(point.x),
+    y: scales.y.toPixel(point.y),
   });
+
+  const segments = [line, baseline?.points ?? []].flatMap((curve) =>
+    curve
+      .slice(1)
+      .map((point, index) => ({ from: plotPoint(curve[index] ?? point), to: plotPoint(point) })),
+  );
+
+  const nearest = EXPECTED_LABEL_GAP + halfHeight;
+
+  const candidates = Array.from({ length: Math.ceil(bottom / halfHeight) }, (_, index) => {
+    const offset = nearest + index * halfHeight;
+    return [mark.y - offset, mark.y + offset];
+  }).flat();
+
+  const labelY =
+    candidates.find((at) => {
+      if (at < halfHeight || at > bottom - halfHeight) {
+        return false;
+      }
+
+      const box = {
+        bottom: at + halfHeight,
+        left: labelX - halfWidth,
+        right: labelX + halfWidth,
+        top: at - halfHeight,
+      };
+
+      return segments.every((segment) => !touchesSegment(box, segment, EXPECTED_LABEL_GAP));
+    }) ?? halfHeight;
 
   return (
     <>
-      <ActivityPlotDot className="fill-success" radius={EXPECTED_RADIUS} x={x} y={y} />
+      <ActivityPlotDot className="fill-success-text" radius={EXPECTED_RADIUS} x={x} y={y} />
       <text
         aria-hidden="true"
         className="fill-success-text stroke-background text-xs font-semibold tabular-nums [paint-order:stroke]"
-        dominantBaseline={side === "above" ? "text-after-edge" : "text-before-edge"}
+        dominantBaseline="central"
         strokeWidth={EXPECTED_LABEL_HALO}
         textAnchor="middle"
-        x={mark.x}
-        y={mark.y + (side === "above" ? -EXPECTED_LABEL_GAP : EXPECTED_LABEL_GAP)}
+        x={labelX}
+        y={labelY}
       >
         {label}
       </text>
@@ -119,7 +154,9 @@ export function ActivityFormulaChart({
   formatX,
   x,
   xDomain,
+  xLabel,
   yDomain,
+  yLabel,
 }: {
   baseline: Curve | null;
   compare?: { x: number; y: number } | null;
@@ -131,7 +168,9 @@ export function ActivityFormulaChart({
   formatX: (value: number) => string;
   x: number;
   xDomain: NumericDomain;
+  xLabel: string;
   yDomain: NumericDomain;
+  yLabel: string;
 }) {
   const ticks = niceTicks(yDomain, 3);
   const labels = tickLabels({ format: formatTick, ticks });
@@ -139,9 +178,11 @@ export function ActivityFormulaChart({
   return (
     <ActivityPlot
       height={PLOT_HEIGHT}
-      padding={{ left: labels.room, right: PLOT_LINE_WIDTH / 2 }}
+      padding={{ left: labels.room, right: PLOT_LINE_WIDTH / 2, top: TOP_ROOM }}
       xDomain={xDomain}
+      xLabel={xLabel}
       yDomain={yDomain}
+      yLabel={yLabel}
     >
       <ActivityPlotGridY format={labels.format} ticks={ticks} />
       <ActivityPlotAxisX format={formatX} ticks={[xDomain[0], xDomain[1]]} />
@@ -179,15 +220,21 @@ export function ActivityFormulaChart({
         />
       )}
 
-      {expected && (
-        <ExpectedMark label={expected.label} line={current.points} x={expected.x} y={expected.y} />
-      )}
-
       {current.y !== null && (
         <>
           <ActivityPlotGuide x={x} y={current.y} />
           <ActivityPlotDot x={x} y={current.y} />
         </>
+      )}
+
+      {expected && (
+        <ExpectedMark
+          baseline={baseline}
+          label={expected.label}
+          line={current.points}
+          x={expected.x}
+          y={expected.y}
+        />
       )}
     </ActivityPlot>
   );

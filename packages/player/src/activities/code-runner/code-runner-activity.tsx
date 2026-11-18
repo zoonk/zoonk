@@ -197,7 +197,7 @@ export function CodeRunnerActivity({
         <SandboxRunBar
           hasRun={run !== null}
           isRunning={isRunning}
-          needsRun={isExploring ? null : answer === null}
+          isExploring={isExploring}
           onReset={Object.keys(edits).length > 0 ? reset : undefined}
           onRetry={runtime.retry}
           onRun={() => void handleRun()}

@@ -1600,12 +1600,17 @@ msgid "Copied"
 msgstr "복사됨"
 
 #: src/certificates/certificate-copy-button.tsx
-#: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
 msgstr "복사"
 
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "링크 복사"
+
 #: src/certificates/certificate-details.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "y1Qr81"
 msgid "Level"
@@ -1648,13 +1653,6 @@ msgstr "성명"
 msgctxt "JBWS0c"
 msgid "Link"
 msgstr "링크"
-
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-share.tsx
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "링크를 복사했어요"
 
 #: src/certificates/certificate-details.tsx
 #: src/mock/mock-result-details.tsx
@@ -1994,11 +1992,6 @@ msgstr "추천 문구 복사하기"
 msgctxt "rIB4Ud"
 msgid "Post on"
 msgstr "게시할 곳"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "lbr3Lq"
-msgid "Copy link"
-msgstr "링크 복사"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
@@ -4836,6 +4829,7 @@ msgstr "{name}에게 물어보기"
 
 #: src/journey/journey-menu.tsx
 #: src/journey/schedule-details.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
@@ -8833,16 +8827,16 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "자료에 추가했어요: {title}"
 
-#: src/onboarding/entry/goal-box.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "내 목표"
-
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-box.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {Abitur 합격하기, {language} 말하기…} bac {bac 합격하기, {language} 말하기…} enem {ENEM 합격하기, {language} 말하기…} exani {EXANI-II 합격하기, {language} 말하기…} kyotsu {Common Test 잘 보기, {language} 말하기…} matura {matura 합격하기, {language} 말하기…} maturita {maturità 합격하기, {language} 말하기…} suneung {수능 잘 보기, {language} 말하기…} yks {YKS 잘 보기, {language} 말하기…} other {SAT 합격하기, {language} 말하기…}}"
+
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "내 목표"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
@@ -8901,6 +8895,11 @@ msgctxt "_g7xra"
 msgid "How does inflation work?"
 msgstr "인플레이션은 어떤 원리로 일어나나요?"
 
+#: src/onboarding/entry/goal-field.tsx
+msgctxt "goalField.0u-6yz"
+msgid "For example: <example></example>"
+msgstr "예: <example></example>"
+
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
@@ -8938,10 +8937,9 @@ msgid "Write my goal again"
 msgstr "내 목표 다시 쓰기"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "E10uH8"
-msgid "Tell us a bit more"
-msgstr "조금 더 알려 주세요"
+msgctxt "UfGKGv"
+msgid "Write your goal again"
+msgstr "목표를 다시 써 보세요"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "Rt585I"
@@ -9114,9 +9112,9 @@ msgid "Understanding your goal"
 msgstr "목표를 파악하고 있어요"
 
 #: src/onboarding/entry/understanding-wait.tsx
-msgctxt "5o4Fqb"
-msgid "Next, you check what we understood."
-msgstr "다음으로 저희가 이해한 내용을 확인해 주세요."
+msgctxt "Du-NAs"
+msgid "We're reading your goal"
+msgstr "목표를 읽고 있어요"
 
 #: src/onboarding/entry/use-goal-creation.ts
 msgctxt "BtsGFn"
@@ -9230,9 +9228,15 @@ msgid "How it works"
 msgstr "이용 방법"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "OSlFuT"
-msgid "A course on this is ready now"
-msgstr "이 주제를 바로 배울 수 있는 코스가 있어요"
+msgctxt "J7LA3k"
+msgid "Or start this ready course now"
+msgstr "또는 준비된 코스 바로 시작하기"
+
+#: src/onboarding/onboarding-bar.tsx
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}/{total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9254,12 +9258,6 @@ msgstr "날짜 없음"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "목표"
-
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "내 수준"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
@@ -9455,6 +9453,11 @@ msgctxt "P05JFf"
 msgid "Not sure, give me a short test"
 msgstr "잘 모르겠어요. 짧은 테스트를 볼래요"
 
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "내 수준"
+
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "qcCnqJ"
 msgid "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}"
@@ -9616,12 +9619,6 @@ msgid "Lesson 1 is ready."
 msgstr "레슨 1이 준비됐어요."
 
 #: src/onboarding/steps/profile-step.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}"
-
-#: src/onboarding/steps/profile-step.tsx
 msgctxt "c2z6MR"
 msgid "About you"
 msgstr "내 소개"
@@ -9735,6 +9732,11 @@ msgctxt "Y7fjZb"
 msgid "What score do you need?"
 msgstr "몇 점이 필요한가요?"
 
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "E10uH8"
+msgid "Tell us a bit more"
+msgstr "조금 더 알려 주세요"
+
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "P5KfyI"
 msgid "Which certificate?"
@@ -9754,12 +9756,6 @@ msgstr "배우는 이유"
 msgctxt "v9nycX"
 msgid "Plan created"
 msgstr "계획 완성"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "조정하기"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "7T47RX"
@@ -10748,6 +10744,11 @@ msgid "More lessons than days left"
 msgstr "남은 날보다 레슨이 많아요"
 
 #: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "조정하기"
+
+#: src/plan/plan-suggestion.tsx
 msgctxt "bgDfbl"
 msgid "Add time a day or pick a later date."
 msgstr "하루 학습 시간을 늘리거나 날짜를 늦추세요."
@@ -11352,6 +11353,11 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {주제 #개가 계획에 다시 포함됐어요. {subjects}에서 관련 문제를 틀렸기 때문이에요.}}"
 
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "링크를 복사했어요"
+
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -11921,6 +11927,11 @@ msgstr "2/3 같은 분수나 소수로 입력하세요."
 msgctxt "6K_9T7"
 msgid "A whole number."
 msgstr "정수로 입력하세요."
+
+#: src/questions/numeric-answer-field.tsx
+msgctxt "cn1r-h"
+msgid "Round to the nearest whole number."
+msgstr "소수 첫째 자리에서 반올림하세요."
 
 #: src/questions/numeric-answer-field.tsx
 msgctxt "zRImZF"

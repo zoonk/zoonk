@@ -41,6 +41,20 @@ export function targetPitches(target?: NoteTarget): number[] {
   return pitches ?? [];
 }
 
+export function changesOneHalfStep(start: readonly number[], target: readonly number[]): boolean {
+  const removed = start.filter((pitch) => !target.includes(pitch));
+  const added = target.filter((pitch) => !start.includes(pitch));
+  const [from] = removed;
+  const [to] = added;
+
+  if (removed.length !== 1 || added.length !== 1 || from === undefined || to === undefined) {
+    return false;
+  }
+
+  const distance = Math.abs(from - to);
+  return distance === 1 || distance === OCTAVE - 1;
+}
+
 export function targetSpelling(target: NoteTarget | undefined): string[] {
   if (!target) {
     return [];

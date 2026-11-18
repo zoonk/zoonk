@@ -24,14 +24,14 @@ describe("challenge lesson", () => {
       .toBeVisible();
 
     await page.getByRole("radio", { name: "Go ahead and launch" }).click();
-    await page.getByRole("button", { name: /^Confirm/u }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "Priya has doubts. What now?" }))
       .toBeVisible();
 
     await page.getByRole("radio", { name: "Keep it live" }).click();
-    await page.getByRole("button", { name: /^Confirm/u }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByText(/the early gap was chance/u)).toBeVisible();
 
     await press("Enter");
@@ -58,9 +58,9 @@ describe("challenge lesson", () => {
         await expect.element(page.getByText("Meeting with Tom today at 3 pm")).toBeVisible();
         await press("Enter");
         await page.getByRole("radio", { name: "Go ahead and launch" }).click();
-        await page.getByRole("button", { name: /^Confirm/u }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
         await page.getByRole("radio", { name: "Keep it live" }).click();
-        await page.getByRole("button", { name: /^Confirm/u }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
         await expect.element(page.getByText(/the early gap was chance/u)).toBeVisible();
 
         await press("Enter");

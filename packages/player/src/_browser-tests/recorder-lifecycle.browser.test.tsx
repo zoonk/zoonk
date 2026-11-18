@@ -151,7 +151,9 @@ describe("recorder ownership", () => {
     TestRecorder.startError = true;
     await page.getByRole("button", { exact: true, name: "Record" }).click();
 
-    await expect.element(page.getByText("We can't use your microphone.")).toBeVisible();
+    await expect
+      .element(page.getByText("We can't use your microphone, so type what you'd say."))
+      .toBeVisible();
 
     expect(mic.track.stop).toHaveBeenCalledOnce();
     expect(view.gradeSpokenAnswer).not.toHaveBeenCalled();

@@ -87,7 +87,15 @@ function QuestionStepScreen({
         />
       );
     case "reason":
-      return <ReasonStep {...props} reasons={view.languageAim?.reasons ?? []} subject={subject} />;
+      return (
+        <ReasonStep
+          {...props}
+          reasons={view.languageAim?.reasons ?? []}
+          subject={subject}
+          targetLanguage={view.goal.targetLanguage}
+          targetRegion={view.goal.targetRegion}
+        />
+      );
     case "target":
       return (
         <TextStep
