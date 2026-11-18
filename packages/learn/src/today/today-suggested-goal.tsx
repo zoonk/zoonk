@@ -58,7 +58,7 @@ function SuggestedGoalCard({
     <Suggestion label={t("Suggested goal")} mark={<CompassIcon />}>
       <SuggestionLine>
         <SuggestionSummary>{question}</SuggestionSummary>
-        <SuggestionOpen />
+        <SuggestionOpen>{t("Answer")}</SuggestionOpen>
       </SuggestionLine>
 
       <SuggestionContent>

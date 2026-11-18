@@ -9228,8 +9228,8 @@ msgid "How it works"
 msgstr "So funktioniert’s"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "J7LA3k"
-msgid "Or start this ready course now"
+msgctxt "UdYIBZ"
+msgid "Or start this ready-made course now"
 msgstr "Oder jetzt diesen fertigen Kurs starten"
 
 #: src/onboarding/onboarding-bar.tsx
@@ -9439,9 +9439,9 @@ msgid "I know a few things"
 msgstr "Ich weiß schon ein paar Dinge"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
-msgstr "Wir überspringen, was du schon weißt"
+msgctxt "9qvbRt"
+msgid "Skip what I already know"
+msgstr "Überspringen, was ich schon weiß"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
@@ -9664,9 +9664,9 @@ msgid "Change careers"
 msgstr "Den Beruf wechseln"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "mSBFVD"
-msgid "Back to the level you had, after a short test"
-msgstr "Nach einem kurzen Test zurück auf dein früheres Level"
+msgctxt "cp6QBi"
+msgid "Back to the level I had, after a short test"
+msgstr "Nach einem kurzen Test zurück auf mein früheres Level"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -10774,9 +10774,9 @@ msgid "I'll set it up"
 msgstr "Ich richte es ein"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "yHP5HT"
-msgid "Learn with examples. You won't practice on your own device."
-msgstr "Lern anhand von Beispielen. Du übst nicht an deinem eigenen Gerät."
+msgctxt "y3f3Qe"
+msgid "You'll practice with examples instead."
+msgstr "Du übst stattdessen mit Beispielen."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -11010,10 +11010,11 @@ msgctxt "_zDz_e"
 msgid "Study {time} a day?"
 msgstr "Täglich {time} lernen?"
 
+#. Asks whether to stop studying on these weekdays every week. {days} lists them, such as “Saturday and Sunday”.
 #: src/plan/use-operation-question.ts
-msgctxt "qhZ_eV"
-msgid "{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}"
-msgstr "{count, plural, one {{days} zum Pausentag machen?} other {{days} zu Pausentagen machen?}}"
+msgctxt "fLRTEs"
+msgid "{count, plural, one {Rest every {days}?} other {Rest every {days}?}}"
+msgstr "{count, plural, other {Jeden {days} Pause machen?}}"
 
 #: src/plan/use-operation-question.ts
 msgctxt "iRxfqr"
@@ -12086,16 +12087,16 @@ msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "Push-Benachrichtigungen"
 
-#: src/reminders/reminders-screen.tsx
-msgctxt "6eLTbX"
-msgid "Reminders are off."
-msgstr "Erinnerungen sind ausgeschaltet."
-
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
 msgctxt "vBM5w1"
 msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
 msgstr "Schalt Push-Benachrichtigungen in der Zoonk-App ein, damit du sie auf deinem Smartphone erhältst."
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "Erinnerungen sind ausgeschaltet."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -13358,6 +13359,7 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} in {days, plural, one {# Tag} other {# Tagen}}"
 
 #: src/today/today-insight.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "DwjT1H"
 msgid "Answer"
 msgstr "Antworten"
@@ -13502,10 +13504,11 @@ msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {# erledigt}} · {skipped, plural, other {# übersprungen}}"
 
+#. Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"
-msgstr "{count, plural, other {+# weitere}}"
+msgstr "{count, plural, other {+# mehr}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"

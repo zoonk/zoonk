@@ -59,7 +59,7 @@ export function LevelChoiceList({
     { description: t("From scratch, with everyday examples"), label: labels.none, value: "none" },
     { description: t("I know a few things"), label: labels.basic, value: "basic" },
     {
-      description: t("We'll skip what you already know"),
+      description: t("Skip what I already know"),
       label: labels.intermediate,
       value: "intermediate",
     },

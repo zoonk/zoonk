@@ -45,7 +45,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       value: "careerChange",
     },
     {
-      description: t("Back to the level you had, after a short test"),
+      description: t("Back to the level I had, after a short test"),
       label: t("Refresh what I studied"),
       value: "refresh",
     },

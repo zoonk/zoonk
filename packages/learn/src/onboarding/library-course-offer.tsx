@@ -26,7 +26,7 @@ export function LibraryCourseOffer({
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm font-medium">{course.title}</span>
         <span className="text-muted-foreground text-xs text-pretty">
-          {t("Or start this ready course now")}
+          {t("Or start this ready-made course now")}
         </span>
       </span>
       <RowChevron />

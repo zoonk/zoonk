@@ -9228,8 +9228,8 @@ msgid "How it works"
 msgstr "Nasıl işler"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "J7LA3k"
-msgid "Or start this ready course now"
+msgctxt "UdYIBZ"
+msgid "Or start this ready-made course now"
 msgstr "Ya da bu hazır kursa hemen başla"
 
 #: src/onboarding/onboarding-bar.tsx
@@ -9439,9 +9439,9 @@ msgid "I know a few things"
 msgstr "Birkaç şey biliyorum"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
-msgstr "Zaten bildiklerini atlayacağız"
+msgctxt "9qvbRt"
+msgid "Skip what I already know"
+msgstr "Zaten bildiklerimi atlamak"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
@@ -9664,9 +9664,9 @@ msgid "Change careers"
 msgstr "Meslek değiştirmek"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "mSBFVD"
-msgid "Back to the level you had, after a short test"
-msgstr "Kısa bir seviye tespit testinden sonra eski seviyeme dönmek"
+msgctxt "cp6QBi"
+msgid "Back to the level I had, after a short test"
+msgstr "Kısa bir testten sonra eski seviyeme dönmek"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -10774,9 +10774,9 @@ msgid "I'll set it up"
 msgstr "Kuracağım"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "yHP5HT"
-msgid "Learn with examples. You won't practice on your own device."
-msgstr "Örneklerle öğren. Kendi cihazında uygulama yapmayacaksın."
+msgctxt "y3f3Qe"
+msgid "You'll practice with examples instead."
+msgstr "Bunun yerine örneklerle pratik yapacaksın."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -11010,10 +11010,11 @@ msgctxt "_zDz_e"
 msgid "Study {time} a day?"
 msgstr "Günde {time} çalışalım mı?"
 
+#. Asks whether to stop studying on these weekdays every week. {days} lists them, such as “Saturday and Sunday”.
 #: src/plan/use-operation-question.ts
-msgctxt "qhZ_eV"
-msgid "{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}"
-msgstr "{count, plural, other {{days} dinlenme günü olsun mu?}}"
+msgctxt "fLRTEs"
+msgid "{count, plural, one {Rest every {days}?} other {Rest every {days}?}}"
+msgstr "{count, plural, other {Her hafta {days} dinlenmek ister misin?}}"
 
 #: src/plan/use-operation-question.ts
 msgctxt "iRxfqr"
@@ -12086,16 +12087,16 @@ msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "Anlık bildirimler"
 
-#: src/reminders/reminders-screen.tsx
-msgctxt "6eLTbX"
-msgid "Reminders are off."
-msgstr "Hatırlatmalar kapalı."
-
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
 msgctxt "vBM5w1"
 msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
 msgstr "Telefonuna bildirim gelmesi için Zoonk mobil uygulamasında anlık bildirimleri aç."
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "Hatırlatmalar kapalı."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -13358,6 +13359,7 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam} için {days, plural, other {# gün}} kaldı"
 
 #: src/today/today-insight.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "DwjT1H"
 msgid "Answer"
 msgstr "Cevapla"
@@ -13502,6 +13504,7 @@ msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {# tamamlandı}} · {skipped, plural, other {# atlandı}}"
 
+#. Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"

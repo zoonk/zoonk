@@ -69,9 +69,11 @@ function useTimeQuestion() {
       );
 
       return operation.minutes === 0
-        ? t("{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}", {
-            count: operation.weekdays.length,
-            days,
+        ? t({
+            description:
+              "Asks whether to stop studying on these weekdays every week. {days} lists them, such as “Saturday and Sunday”.",
+            message: "{count, plural, one {Rest every {days}?} other {Rest every {days}?}}",
+            values: { count: operation.weekdays.length, days },
           })
         : t("Study {time} on {days}?", { days, time: formatDuration(operation.minutes) });
     }

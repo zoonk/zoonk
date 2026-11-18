@@ -32,7 +32,7 @@ function useToolChoices(): Choice<ToolChoice>[] {
       value: "setup",
     },
     {
-      description: t("Learn with examples. You won't practice on your own device."),
+      description: t("You'll practice with examples instead."),
       label: t("No install"),
       value: "none",
     },

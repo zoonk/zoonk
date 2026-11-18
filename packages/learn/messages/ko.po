@@ -9228,9 +9228,9 @@ msgid "How it works"
 msgstr "이용 방법"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "J7LA3k"
-msgid "Or start this ready course now"
-msgstr "또는 준비된 코스 바로 시작하기"
+msgctxt "UdYIBZ"
+msgid "Or start this ready-made course now"
+msgstr "또는 미리 준비된 코스 바로 시작하기"
 
 #: src/onboarding/onboarding-bar.tsx
 #: src/questions/choice-questions-run.tsx
@@ -9439,8 +9439,8 @@ msgid "I know a few things"
 msgstr "조금은 알아요"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
+msgctxt "9qvbRt"
+msgid "Skip what I already know"
 msgstr "이미 아는 내용은 건너뛰어요"
 
 #: src/onboarding/steps/level-choices.tsx
@@ -9664,9 +9664,9 @@ msgid "Change careers"
 msgstr "직업을 바꾸고 싶어요"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "mSBFVD"
-msgid "Back to the level you had, after a short test"
-msgstr "짧은 테스트 후 예전 실력을 되찾아요"
+msgctxt "cp6QBi"
+msgid "Back to the level I had, after a short test"
+msgstr "짧은 테스트를 보고 예전 실력을 되찾아요"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -10774,9 +10774,9 @@ msgid "I'll set it up"
 msgstr "설치할게요"
 
 #: src/plan/plan-tool-sheet.tsx
-msgctxt "yHP5HT"
-msgid "Learn with examples. You won't practice on your own device."
-msgstr "예시를 보며 배우세요. 개인 기기에서 직접 실습하지는 않아요."
+msgctxt "y3f3Qe"
+msgid "You'll practice with examples instead."
+msgstr "대신 예시로 연습해요."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "nvvnr8"
@@ -11010,10 +11010,11 @@ msgctxt "_zDz_e"
 msgid "Study {time} a day?"
 msgstr "하루에 {time} 공부할까요?"
 
+#. Asks whether to stop studying on these weekdays every week. {days} lists them, such as “Saturday and Sunday”.
 #: src/plan/use-operation-question.ts
-msgctxt "qhZ_eV"
-msgid "{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}"
-msgstr "{count, plural, other {{days}을(를) 쉬는 날로 정할까요?}}"
+msgctxt "fLRTEs"
+msgid "{count, plural, one {Rest every {days}?} other {Rest every {days}?}}"
+msgstr "{count, plural, other {매주 {days}에 쉴까요?}}"
 
 #: src/plan/use-operation-question.ts
 msgctxt "iRxfqr"
@@ -12086,16 +12087,16 @@ msgctxt "Awq32I"
 msgid "Push notifications"
 msgstr "푸시 알림"
 
-#: src/reminders/reminders-screen.tsx
-msgctxt "6eLTbX"
-msgid "Reminders are off."
-msgstr "알림이 꺼져 있어요."
-
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
 msgctxt "vBM5w1"
 msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
 msgstr "휴대폰으로 푸시 알림을 받으려면 Zoonk 모바일 앱에서 켜세요."
+
+#: src/reminders/reminders-screen.tsx
+msgctxt "6eLTbX"
+msgid "Reminders are off."
+msgstr "알림이 꺼져 있어요."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -13358,6 +13359,7 @@ msgid "{exam} in {days, plural, one {# day} other {# days}}"
 msgstr "{exam}까지 {days, plural, other {#일}}"
 
 #: src/today/today-insight.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "DwjT1H"
 msgid "Answer"
 msgstr "답하기"
@@ -13502,6 +13504,7 @@ msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {#개 완료}} · {skipped, plural, other {#개 건너뜀}}"
 
+#. Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"

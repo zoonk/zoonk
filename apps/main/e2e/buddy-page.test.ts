@@ -99,7 +99,7 @@ test.describe("Buddy tab", () => {
 
       // The card's title is the question while proposed and the statement once applied.
       const card = conversation.getByRole("region", { name: new RegExp(day, "u") });
-      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      await expect(card).toHaveAccessibleName(`Rest every ${day}?`);
       await expect(card.getByRole("button", { name: "Change my plan" })).toBeVisible();
       expect(asked).toStrictEqual([{ question: `No studying on ${day}s` }]);
       expect(await readChangeStatus(change.id)).toBe("proposed");
@@ -108,7 +108,7 @@ test.describe("Buddy tab", () => {
       // tap works them out from today's plan and asks again; the second applies it.
       await card.getByRole("button", { name: "Change my plan" }).click();
       await expect(card.getByText(REPRICED)).toBeVisible();
-      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      await expect(card).toHaveAccessibleName(`Rest every ${day}?`);
       expect(await readChangeStatus(change.id)).toBe("proposed");
 
       await card.getByRole("button", { name: "Change my plan" }).click();
@@ -123,7 +123,7 @@ test.describe("Buddy tab", () => {
         .toBe(0);
 
       await card.getByRole("button", { name: "Undo" }).click();
-      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      await expect(card).toHaveAccessibleName(`Rest every ${day}?`);
       await expect(card.getByRole("button", { name: "Change my plan" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
     });
@@ -154,7 +154,7 @@ test.describe("Buddy tab", () => {
       const release = await holdScripts(page);
       await page.goto("/buddy", { waitUntil: "domcontentloaded" });
 
-      const card = page.getByRole("region", { name: `Make ${day} a rest day?` });
+      const card = page.getByRole("region", { name: `Rest every ${day}?` });
       await card.getByRole("button", { name: "Not now" }).click();
       await release();
 

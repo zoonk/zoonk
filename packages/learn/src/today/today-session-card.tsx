@@ -163,7 +163,12 @@ function SessionQueue({ next }: { next: DayStep | null }) {
           label={
             moreOpen
               ? t("Show less")
-              : t("{count, plural, one {+# more} other {+# more}}", { count: more })
+              : t({
+                  description:
+                    "Shows the rest of today's list; # is how many rows it adds. Keep it as short as the English: the plus sign, the number and the one word for “more”.",
+                  message: "{count, plural, one {+# more} other {+# more}}",
+                  values: { count: more },
+                })
           }
           onToggle={toggleMore}
           open={moreOpen}
