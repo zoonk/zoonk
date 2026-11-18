@@ -297,9 +297,28 @@ describe("money and society activities", () => {
 
     await expect
       .element(page.getByText("Linked: Years of drought led to Dust storms."))
-      .toBeVisible();
+      .not.toBeVisible();
 
     await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
+  });
+
+  it("cause and effect: Check keeps the board in place without a link notice", async () => {
+    openActivity({ content: chainQuestion, template: "causeEffectChain" });
+    const instruction = page.getByText("Pick a cause, then pick what it led to.");
+    const chain = page.getByRole("list", { name: "Causes and effects" });
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    await page.getByRole("radio", { name: "Plowing and drought together" }).click();
+    await expect.element(instruction).toBeVisible();
+    const top = boardTop();
+
+    await checkActivity();
+    await expectVerdict("Correct!");
+    expect(boardTop()).toBe(top);
+    await expect.element(instruction).not.toBeVisible();
   });
 
   it("cause and effect: a picked cause is named once, under the cards", async () => {
