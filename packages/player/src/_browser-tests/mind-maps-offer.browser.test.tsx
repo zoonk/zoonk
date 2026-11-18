@@ -168,6 +168,14 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect.element(rowCreate("Reactions")).toHaveFocus();
 
     await expect
+      .element(rowCreate("Reactions"))
+      .toHaveAccessibleDescription(
+        "Reactions Making a map writes its chapter's lessons first, from your free lessons.",
+      );
+
+    await expect.element(rowCreate("Atoms")).toHaveAccessibleDescription("Atoms");
+
+    await expect
       .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
       .toHaveAttribute("aria-expanded", "true");
   });

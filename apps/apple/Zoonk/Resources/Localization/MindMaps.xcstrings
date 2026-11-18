@@ -1526,60 +1526,60 @@
         }
       }
     },
-    "Making one of these maps writes its lessons first, and they count toward your free lessons." : {
+    "Making a map writes its chapter's lessons first, from your free lessons." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für eine dieser Mindmaps erstellen wir zuerst ihre Lektionen, und sie werden auf deine kostenlosen Lektionen angerechnet."
+            "value" : "Wenn du eine Mindmap erstellst, werden zuerst die Lektionen des Kapitels erstellt und auf deine kostenlosen Lektionen angerechnet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para hacer uno de estos mapas, primero se preparan sus lecciones, y cuentan para tu límite de lecciones gratis."
+            "value" : "Al crear un mapa, primero se preparan las lecciones del capítulo con tus lecciones gratis."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour créer une de ces cartes, on prépare d’abord ses leçons, qui sont décomptées de tes leçons gratuites."
+            "value" : "Créer une carte mentale prépare d’abord les leçons du chapitre en utilisant tes leçons gratuites."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per creare una di queste mappe prepariamo prima le sue lezioni, che contano tra le tue lezioni gratuite."
+            "value" : "Creare una mappa prepara prima le lezioni del capitolo, usando le tue lezioni gratuite."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。"
+            "value" : "マップを作成すると、まず無料レッスンからその章のレッスンが作成されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
+            "value" : "마인드맵을 만들려면 먼저 무료 레슨에서 해당 챕터의 레슨을 만들어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Żeby zrobić jedną z tych map, najpierw przygotujemy jej lekcje i wliczymy je do twojej puli bezpłatnych lekcji."
+            "value" : "Aby utworzyć mapę, najpierw przygotowujemy lekcje z danego rozdziału, korzystając z bezpłatnych lekcji."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para fazer um destes mapas, as aulas dele são criadas primeiro e contam para o seu limite de aulas grátis."
+            "value" : "Criar um mapa gera primeiro as aulas do capítulo usando suas aulas grátis."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu haritalardan birini yapmak için önce derslerini hazırlıyoruz ve bunlar ücretsiz ders hakkından düşüyor."
+            "value" : "Harita oluşturulmadan önce, ünitenin dersleri ücretsiz derslerinden hazırlanır."
           }
         }
       }

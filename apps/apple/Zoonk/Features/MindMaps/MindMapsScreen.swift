@@ -244,12 +244,55 @@ private struct MindMapCreateSection: View {
 
     let ready = notMade.filter(\.canMakeNow)
     let others = notMade.filter { !$0.canMakeNow }
+    // As main: they fold only under chapters that can be made now; alone, they are listed.
+    let folds = !ready.isEmpty && !others.isEmpty
 
-    if !ready.isEmpty {
-      Section {
-        ForEach(ready) { map in
+    Section {
+      ForEach(ready) { map in
+        MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+      }
+
+      if folds {
+        FoldRow(isUnfolded: $showsChapters) {
+          Group {
+            if showsChapters {
+              Text(
+                "Show fewer chapters", tableName: "Plan",
+                comment: "Folds a phase's chapters back to the ones around the next")
+            } else {
+              Text(
+                "\(others.count) more chapters", tableName: "Plan",
+                comment: "Shows the phase's chapters left out around the next one")
+            }
+          }
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+        }
+      }
+
+      if !others.isEmpty, showsChapters || !folds {
+        // A row's Create spends lessons from a free learner's allowance, so the list says so once.
+        if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 }) {
+          Text(
+            "Making a map writes its chapter's lessons first, from your free lessons.",
+            tableName: "MindMaps"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+        }
+
+        ForEach(others) { map in
           MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
         }
+      }
+    } header: {
+      SectionTitle(
+        Text(
+          "No map yet", tableName: "MindMaps",
+          comment: "Heading over the chapters whose mind map hasn't been made yet.")
+      ) {
+        Text(verbatim: notMade.count.formatted())
       }
     }
 
@@ -286,60 +329,6 @@ private struct MindMapCreateSection: View {
         .listRowSeparator(.hidden)
         .announcesStatus(note(line))
       }
-    }
-
-    if !others.isEmpty {
-      // As main: they fold only under chapters that can be made now; alone, they are listed.
-      let folds = !ready.isEmpty
-
-      Section {
-        if folds {
-          FoldRow(isUnfolded: $showsChapters) {
-            othersLabel(count: others.count)
-          }
-        } else {
-          othersLabel(count: others.count)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
-        }
-
-        if showsChapters || !folds {
-          // A row's Create spends lessons from a free learner's allowance, so the list says so once.
-          if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 })
-          {
-            Text(
-              "Making one of these maps writes its lessons first, and they count toward your free lessons.",
-              tableName: "MindMaps"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-            .listRowSeparator(.hidden)
-          }
-
-          ForEach(others) { map in
-            MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
-          }
-        }
-      }
-    }
-  }
-
-  /// Centered, not on one baseline: a small count's capitals sit low on the label's.
-  private func othersLabel(count: Int) -> some View {
-    HStack(spacing: 8) {
-      Text(
-        "No map yet", tableName: "MindMaps",
-        comment: "Heading over the chapters whose mind map hasn't been made yet."
-      )
-      .typeStyle(.body)
-      .layoutPart(.label)
-
-      Spacer(minLength: 8)
-
-      Text(verbatim: count.formatted())
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-        .layoutPart(.value)
     }
   }
 
