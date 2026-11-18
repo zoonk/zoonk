@@ -189,10 +189,6 @@ function FormulaModelBoard({
         )}
       </div>
 
-      {view.baseline && (
-        <FormulaModelLegend activeLabels={view.activeLabels} kind={view.baseline.kind} />
-      )}
-
       <ActivityModelSliders
         disabled={isChecked}
         onChange={(name, value) => update({ ...sliders, [name]: value }, events)}
@@ -201,6 +197,10 @@ function FormulaModelBoard({
         values={sliders}
         variables={fields.variables}
       />
+
+      {view.baseline && (
+        <FormulaModelLegend activeLabels={view.activeLabels} kind={view.baseline.kind} />
+      )}
 
       <FormulaModelDescription
         axis={axis.label}
