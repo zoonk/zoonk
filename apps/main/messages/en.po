@@ -409,6 +409,7 @@ msgstr "Go to a page, run an action or ask a question."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancel"
@@ -851,11 +852,6 @@ msgstr "Your questions from lessons that were updated, with their answers."
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "No earlier questions"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "When a lesson you asked about is updated, your questions and their answers are kept here."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1431,11 +1427,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "You keep Plus until the end of the period you already paid for."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "Go back"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1627,7 +1618,6 @@ msgstr "Activity"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1858,9 +1848,9 @@ msgid "Evening"
 msgstr "Evening"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "Any day"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "No best day yet"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
@@ -3008,6 +2998,11 @@ msgstr "This page didn't load"
 msgctxt "iFsDVR"
 msgid "Loading"
 msgstr "Loading"
+
+#: src/components/learn/section-layout.tsx
+msgctxt "KeiV4d"
+msgid "Back to {page}"
+msgstr "Back to {page}"
 
 #: src/components/learn/upload-request-client.tsx
 msgctxt "Hv1OVQ"

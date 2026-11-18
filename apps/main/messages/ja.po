@@ -409,6 +409,7 @@ msgstr "ページを開いたり、操作を実行したり、質問したりで
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "キャンセル"
@@ -851,11 +852,6 @@ msgstr "更新されたレッスンでの質問と、その回答です。"
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "以前の質問はありません"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "質問したことのあるレッスンが更新されると、その質問と回答がここに保存されます。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1431,11 +1427,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "お支払い済みの期間が終わるまで、引き続きPlusを利用できます。"
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "戻る"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1627,7 +1618,6 @@ msgstr "学習量"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1858,9 +1848,9 @@ msgid "Evening"
 msgstr "夕方"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "どの曜日でも"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "一番調子のよい曜日はまだわかりません"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
@@ -3008,6 +2998,11 @@ msgstr "このページを読み込めませんでした"
 msgctxt "iFsDVR"
 msgid "Loading"
 msgstr "読み込み中"
+
+#: src/components/learn/section-layout.tsx
+msgctxt "KeiV4d"
+msgid "Back to {page}"
+msgstr "{page}に戻る"
 
 #: src/components/learn/upload-request-client.tsx
 msgctxt "Hv1OVQ"

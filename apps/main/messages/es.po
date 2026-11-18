@@ -409,6 +409,7 @@ msgstr "Ve a una página, realiza una acción o haz una pregunta."
 #: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -851,11 +852,6 @@ msgstr "Tus preguntas de lecciones que se actualizaron, con sus respuestas."
 msgctxt "QKPtX3"
 msgid "No earlier questions"
 msgstr "No hay preguntas anteriores"
-
-#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "O62YuA"
-msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
-msgstr "Cuando se actualiza una lección sobre la que hiciste preguntas, tus preguntas y sus respuestas se guardan aquí."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -1431,11 +1427,6 @@ msgctxt "ZwO-lB"
 msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Conservarás Plus hasta que termine el periodo que ya pagaste."
 
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "orvpWh"
-msgid "Go back"
-msgstr "Volver"
-
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "YrbiTE"
 msgid "Plus ends on <mono>{date}</mono>."
@@ -1627,7 +1618,6 @@ msgstr "Actividad"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1858,9 +1848,9 @@ msgid "Evening"
 msgstr "Noche"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "cwmQSC"
-msgid "Any day"
-msgstr "Cualquier día"
+msgctxt "VPQ8Rv"
+msgid "No best day yet"
+msgstr "Aún no hay un día que destaque"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "wmdZZD"
@@ -3008,6 +2998,11 @@ msgstr "Esta página no cargó"
 msgctxt "iFsDVR"
 msgid "Loading"
 msgstr "Cargando"
+
+#: src/components/learn/section-layout.tsx
+msgctxt "KeiV4d"
+msgid "Back to {page}"
+msgstr "Volver a {page}"
 
 #: src/components/learn/upload-request-client.tsx
 msgctxt "Hv1OVQ"
