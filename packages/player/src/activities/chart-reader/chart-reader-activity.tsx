@@ -177,7 +177,9 @@ export function ChartReaderActivity({
         })}
       </ActivityPlot>
 
-      <ActivityCanvasLabel className="text-sm">{t("Tap a span to measure it")}</ActivityCanvasLabel>
+      <ActivityCanvasLabel className="text-sm">
+        {t("Pick a span to measure it")}
+      </ActivityCanvasLabel>
 
       <ActivitySelectGrid label={t("Spans to measure")}>
         {fields.spans.map((span) => (
