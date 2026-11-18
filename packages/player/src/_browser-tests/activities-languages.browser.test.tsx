@@ -22,21 +22,24 @@ function rowHeights() {
 function tagPlacement(row: Element): string | null {
   const tag = row.querySelector('[data-slot="answer-option-tag"]')?.getBoundingClientRect();
 
-  const text = document
-    .createTreeWalker(row, NodeFilter.SHOW_TEXT, (node) =>
-      node.parentElement?.closest('[data-slot="line-marker"]')
-        ? NodeFilter.FILTER_REJECT
-        : NodeFilter.FILTER_ACCEPT,
-    )
-    .nextNode();
-
-  if (!tag || !text) {
+  if (!tag) {
     return null;
   }
 
+  const text = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, (node) =>
+    node.parentElement?.closest('[data-slot="line-marker"]') || !node.textContent?.trim()
+      ? NodeFilter.FILTER_REJECT
+      : NodeFilter.FILTER_ACCEPT,
+  );
+
   const range = document.createRange();
-  range.selectNodeContents(text);
-  const lines = [...range.getClientRects()];
+  const lines: DOMRect[] = [];
+
+  for (let node = text.nextNode(); node; node = text.nextNode()) {
+    range.selectNodeContents(node);
+    lines.push(...range.getClientRects());
+  }
+
   const first = lines[0];
   const last = lines.at(-1);
 

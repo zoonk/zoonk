@@ -1,5 +1,6 @@
 "use client";
 
+import { LearnerBubble } from "@zoonk/ui/components/message";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -123,10 +124,10 @@ export function ChallengePickView({ text }: { text: string }) {
 
   return (
     <li className="flex justify-end" data-slot="challenge-pick">
-      <p className="bg-primary text-primary-foreground max-w-[85%] rounded-xl px-4 py-2.5 text-base leading-relaxed">
+      <LearnerBubble>
         <span className="sr-only">{`${t("You:")} `}</span>
         <LessonRichText text={text} />
-      </p>
+      </LearnerBubble>
     </li>
   );
 }
