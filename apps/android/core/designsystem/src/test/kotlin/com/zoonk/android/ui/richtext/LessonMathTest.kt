@@ -94,6 +94,25 @@ class LessonMathTest {
         assertEquals("(1\u2044" + "4)2", math("\\frac{1}{4}^2").text.text)
     }
 
+    /** KaTeX nests (2³)²; written as 2³² it would read as 2 to the power of 32. */
+    @Test
+    fun aBracedPowerKeepsItsOwnExponentApartFromTheNextOne() {
+        val nested = math("{2^3}^2")
+        val shifts = nested.text.text.indices.map { at -> nested.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null } }
+
+        assertEquals("(23)2", nested.text.text)
+        assertEquals(listOf(false, false, true, false, true), shifts)
+        assertEquals("232", math("2^{32}").text.text)
+    }
+
+    /** A screen reader keeps (3/2)² and 3/2² apart, as the brackets do on screen. */
+    @Test
+    fun aSpokenScriptAfterAFractionSquaresTheWholeQuotient() {
+        assertEquals("3 over 2, squared", math("\\frac{3}{2}^2").spoken)
+        assertEquals("3 over 2 squared", math("\\frac{3}{2^2}").spoken)
+        assertEquals("x + 1 over 2, squared", math("{\\frac{x+1}{2}}^2").spoken)
+    }
+
     /** Braces around the fraction don't change its base: KaTeX squares the whole quotient either way. */
     @Test
     fun aBracedFractionKeepsTheWholeQuotientAsItsScriptsBase() {

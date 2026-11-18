@@ -135,9 +135,10 @@ private class MathParser(
                     '{' -> {
                         index++
                         val group = parse(until = '}', style = style)
-                        // A script after braces applies to the whole group, as KaTeX sets it: {(x+1)/2}² is ((x + 1)/2)².
+                        // A script after braces applies to the whole group, as KaTeX sets it: {(x+1)/2}² is ((x + 1)/2)², and {2³}² is (2³)².
                         val next = source.drop(index).trimStart().firstOrNull()
-                        if (next != null && next in SCRIPT_MARKS) group.grouped(style) else group
+                        val apart = next != null && next in SCRIPT_MARKS && (!group.isSingleTerm(style) || group.endsInScript(style))
+                        if (apart) group.scriptBase(style) else group
                     }
 
                     '^', '_' -> {
@@ -346,7 +347,7 @@ private class MathParser(
                     }
                 // A script after a fraction applies to the whole quotient, as KaTeX sets it: ((x + 1)/2)².
                 val next = source.drop(index).trimStart().firstOrNull()
-                if (next != null && next in SCRIPT_MARKS) Piece(fraction.bracketed(style).text, spoken) else fraction
+                if (next != null && next in SCRIPT_MARKS) fraction.scriptBase(style) else fraction
             }
 
             "sqrt" -> {
@@ -426,6 +427,12 @@ private class MathParser(
     private fun Piece.grouped(style: Script): Piece = if (isSingleTerm(style)) this else bracketed(style)
 
     private fun Piece.bracketed(style: Script): Piece = run("(", style, italic = false) + this + run(")", style, italic = false)
+
+    /** A group a script applies to as a whole, bracketed on screen and followed by a pause when spoken: "3 over 2, squared". */
+    private fun Piece.scriptBase(style: Script): Piece = Piece(bracketed(style).text, "${spoken.trimEnd()}, ")
+
+    private fun Piece.endsInScript(style: Script): Boolean =
+        text.spanStyles.any { it.end == plain.length && it.item.baselineShift.let { shift -> shift != null && shift != SHIFTS[style] } }
 
     /**
      * Read from the marks the parser set, not the letters: "distance" is one `\text` word, while side-by-side symbols ("RT",
