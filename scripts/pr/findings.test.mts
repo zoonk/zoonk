@@ -88,6 +88,21 @@ describe("closing a finding", () => {
     assert.deepEqual(kinds(await check()), []);
   });
 
+  it("closes a finding on the read a retake kept, before the retake is read", async () => {
+    const fixture = checkFixture();
+    const retakes = { file: "earlier/a.png", read: { ...CLEAN, findings: [broken] } };
+    const { folder } = fixture.capture([fixture.shot({ file: "a.png", read: undefined, retakes })]);
+    const state = { commit: fixture.current, state: "fixed" } as const;
+
+    await resolveFinding({ id: broken.id, root: fixture.repository, state });
+    const [item] = (await readManifest(folder)) ?? [];
+
+    assert.deepEqual(
+      item && "retakes" in item && item.retakes?.read.findings.map((finding) => finding.state),
+      ["fixed"],
+    );
+  });
+
   it("names a finding it can't find", async () => {
     const { root } = readWith([polish]);
 

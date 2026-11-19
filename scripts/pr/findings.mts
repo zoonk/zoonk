@@ -4,12 +4,38 @@ import { findManifests } from "./locate.mts";
 import {
   type Finding,
   type FindingState,
+  type ManifestItem,
+  type Read,
   blocks,
   pathWithin,
   readManifest,
   readOf,
   writeManifest,
 } from "./media.mts";
+
+/** The read that holds a picture's findings: its own, or, until a retake is read, the one it kept. */
+function heldBy(item: ManifestItem): Read | undefined {
+  return readOf(item) ?? ("retakes" in item ? item.retakes?.read : undefined);
+}
+
+function closeIn(item: ManifestItem, close: (finding: Finding) => Finding): ManifestItem {
+  const read = readOf(item);
+
+  if (read) {
+    return { ...item, read: { ...read, findings: read.findings.map(close) } };
+  }
+
+  if (!("retakes" in item) || !item.retakes) {
+    return item;
+  }
+
+  const kept = item.retakes.read;
+
+  return {
+    ...item,
+    retakes: { ...item.retakes, read: { ...kept, findings: kept.findings.map(close) } },
+  };
+}
 
 /**
  * Closes the finding `id` on every picture under `root` that holds it. One the PR must fix never
@@ -31,11 +57,11 @@ export async function resolveFinding({
   );
 
   const holding = manifests.filter(({ items }) =>
-    items.some((item) => readOf(item)?.findings.some((finding) => finding.id === id)),
+    items.some((item) => heldBy(item)?.findings.some((finding) => finding.id === id)),
   );
 
   const found = holding
-    .flatMap(({ items }) => items.flatMap((item) => readOf(item)?.findings ?? []))
+    .flatMap(({ items }) => items.flatMap((item) => heldBy(item)?.findings ?? []))
     .find((finding) => finding.id === id);
 
   if (!found) {
@@ -55,10 +81,7 @@ export async function resolveFinding({
     holding.map(async ({ folder, items }) =>
       writeManifest(
         folder,
-        items.map((item) => {
-          const read = readOf(item);
-          return read ? { ...item, read: { ...read, findings: read.findings.map(close) } } : item;
-        }),
+        items.map((item) => closeIn(item, close)),
       ),
     ),
   );
@@ -88,7 +111,7 @@ export async function closedSection(root: string): Promise<string> {
   const shown = await Promise.all(
     folders.map(async (folder) =>
       ((await readManifest(folder)) ?? []).flatMap((item) =>
-        (readOf(item)?.findings ?? []).map((finding) => ({
+        (heldBy(item)?.findings ?? []).map((finding) => ({
           finding,
           picture: pathWithin(root, resolve(folder, item.file)),
         })),
