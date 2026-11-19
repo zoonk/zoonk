@@ -154,9 +154,9 @@ class FreeLessonGateTest {
         val subscribe = rule.onNodeWithText("Suscribirse").getBoundsInRoot()
 
         clock.passOpening()
-        rule.waitUntil(10_000) { rule.onAllNodesWithText("Empezar la lección").fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(10_000) { rule.onAllNodesWithText("Empezar").fetchSemanticsNodes().isNotEmpty() }
 
-        val start = rule.onNodeWithText("Empezar la lección").getBoundsInRoot()
+        val start = rule.onNodeWithText("Empezar").getBoundsInRoot()
         assertEquals(subscribe.left to subscribe.top, start.left to start.top)
         assertEquals(subscribe.height, start.height)
     }
