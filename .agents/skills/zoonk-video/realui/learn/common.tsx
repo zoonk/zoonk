@@ -157,12 +157,13 @@ function TopBar({ goal }: { goal: ShellGoal }) {
             goals={[
               {
                 dailyMinutes: goal.dailyMinutes,
+                displayName: goal.title,
                 id: goal.id,
                 kind: goal.kind as any,
                 status: "active",
                 targetDate: goal.targetDate,
+                targetDateEstimated: false,
                 targetLanguage: null,
-                title: goal.title,
               },
             ]}
             newGoalHref="/start"
