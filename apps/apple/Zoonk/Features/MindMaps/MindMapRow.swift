@@ -84,7 +84,26 @@ struct MindMapRow: View {
     return nil
   }
 
+  @ViewBuilder
   private func row(_ now: Date) -> some View {
+    if case .notMade = place {
+      // Main's library row: the chapter's name and its action, nothing that repeats on every row.
+      HStack(spacing: 12) {
+        words
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        if shown == .writingLessons || shown == .drawing {
+          ProgressView().controlSize(.small)
+        } else if !(failure?.hidesCreate(at: now) ?? false) || shown != .create {
+          action
+        }
+      }
+    } else {
+      markedRow(now)
+    }
+  }
+
+  private func markedRow(_ now: Date) -> some View {
     MarkedRow(alignment: .center) {
       slot
     } content: {
@@ -191,7 +210,7 @@ struct MindMapRow: View {
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite > 0:
+        case .create where map.lessonsToWrite > 0 && (place == .library || !isPlus):
           String(
             localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
@@ -200,6 +219,8 @@ struct MindMapRow: View {
             localized: "As text", table: "MindMaps",
             comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
         case .create, .ready: nil
+        // The list's spinner shows it, and the page says once that maps are on their way.
+        case .writingLessons where place != .library, .drawing where place != .library: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 

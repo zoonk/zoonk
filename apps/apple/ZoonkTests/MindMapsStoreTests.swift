@@ -910,9 +910,9 @@ final class MindMapsStoreTests: XCTestCase {
       line)
   }
 
-  /// The web's `NotMadeLine` counts only the chapters under "No map yet": a failed map whose
-  /// lessons are written shows its own row above them, and so does a map being drawn.
-  func testTheLineCountsOnlyTheChaptersUnderOtherChapters() {
+  /// The web's `NotMadeLine` counts every map on its way: each row shows only a spinner, so the
+  /// line says once that they're being made. A failed map has its own Try again instead.
+  func testTheLineCountsEveryMapOnItsWay() {
     let failed = ChapterMindMap(
       chapterId: "failed-1", image: nil, lessonsToWrite: 0, outline: nil, position: 1,
       saved: false, status: .failed, subject: nil, title: "Failed")
@@ -933,23 +933,58 @@ final class MindMapsStoreTests: XCTestCase {
 
     // The web: "1 on the way. You can leave while it's made."
     XCTAssertEqual(line([failed, writing]), .onTheWay(1))
-    // The web prints no line: the drawing map's own row says it's being made.
-    XCTAssertNil(line([drawing]))
+    XCTAssertEqual(line([drawing]), .onTheWay(1))
+    XCTAssertEqual(line([failed, writing, drawing]), .onTheWay(2))
   }
 
-  /// As main's `isOpenOnArrival`: "No map yet" opens on arrival to show a map on its way, and
-  /// a map that didn't finish with its row's Try again.
-  func testOtherChaptersOpensOnArrivalForAMapOnItsWayOrOneThatDidntFinish() {
+  /// As main's `needsAttention`: a map on its way, and one that didn't finish with its row's Try
+  /// again, lead "No map yet".
+  func testAMapOnItsWayOrOneThatDidntFinishNeedsAttention() {
     func map(_ status: ChapterMindMap.Status) -> ChapterMindMap {
       ChapterMindMap(
         chapterId: status.rawValue, image: nil, lessonsToWrite: 3, outline: nil, position: 1,
         saved: false, status: status, subject: nil, title: "Chapter")
     }
 
-    XCTAssertTrue(map(.writingLessons).opensItsGroupOnArrival)
-    XCTAssertTrue(map(.drawing).opensItsGroupOnArrival)
-    XCTAssertTrue(map(.failed).opensItsGroupOnArrival)
-    XCTAssertFalse(map(.available).opensItsGroupOnArrival)
+    XCTAssertTrue(map(.writingLessons).needsAttention)
+    XCTAssertTrue(map(.drawing).needsAttention)
+    XCTAssertTrue(map(.failed).needsAttention)
+    XCTAssertFalse(map(.available).needsAttention)
+  }
+
+  /// As main's `orderNotMade`: maps on their way or failed, then chapters whose lessons are
+  /// written, then chapters the learner finished a lesson in, then the rest; five show and the
+  /// rest fold by subject, unless only a few more would.
+  func testNotMadeShowsTheLikeliestFiveAndFoldsTheRestBySubject() {
+    func map(
+      _ id: String, lessons: Int = 2, status: ChapterMindMap.Status = .available,
+      subject: String? = nil
+    ) -> ChapterMindMap {
+      ChapterMindMap(
+        chapterId: id, image: nil, lessonsToWrite: lessons, outline: nil, position: 1,
+        saved: false, status: status,
+        subject: subject.map { ChapterMindMap.Subject(key: $0, name: $0.capitalized) }, title: id)
+    }
+
+    let few = (1...7).map { map("c\($0)") }
+    XCTAssertEqual(NotMadeOrder(few, studied: []).next.map(\.chapterId), few.map(\.chapterId))
+    XCTAssertTrue(NotMadeOrder(few, studied: []).restGroups.isEmpty)
+
+    let chapters = [
+      map("a"), map("b"), map("studied"), map("written", lessons: 0), map("c"),
+      map("drawing", lessons: 0, status: .drawing), map("d"), map("e"),
+    ]
+    let order = NotMadeOrder(chapters, studied: ["studied"])
+
+    XCTAssertEqual(order.next.map(\.chapterId), ["drawing", "written", "studied", "a", "b"])
+    XCTAssertEqual(order.restGroups.map(\.name), [nil])
+    XCTAssertEqual(order.restGroups.first?.chapters.map(\.chapterId), ["c", "d", "e"])
+
+    let subjects = (1...9).map { map("s\($0)", subject: $0 <= 6 ? "general" : "organic") }
+    let folded = NotMadeOrder(subjects, studied: [])
+
+    XCTAssertEqual(folded.restGroups.map(\.name), ["General", "Organic"])
+    XCTAssertEqual(folded.restGroups.map(\.chapters.count), [1, 3])
   }
 
   /// A list with no chapters keeps its stop, so the page itself reads it again at the stop's

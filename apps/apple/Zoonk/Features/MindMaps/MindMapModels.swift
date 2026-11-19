@@ -16,14 +16,14 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
   }
 
   /// Main's `canMakeNow`: its lessons are written, so its map is made, or being made, without
-  /// writing any. Its row sits above "No map yet", whose rows alone the page's line counts.
+  /// writing any.
   var canMakeNow: Bool {
     lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
   }
 
-  /// Main's `isOpenOnArrival`: a map on its way, or one that didn't finish with its Try again. Its
-  /// row says where it stands, so "No map yet" opens on arrival to show it.
-  var opensItsGroupOnArrival: Bool {
+  /// Main's `needsAttention`: a map on its way, or one that didn't finish with its Try again, so
+  /// its row leads "No map yet".
+  var needsAttention: Bool {
     status.isOnItsWay || status == .failed
   }
 
@@ -167,6 +167,69 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   }
 }
 
+/// Main's `orderNotMade`: maps on their way or failed first, then chapters whose lessons are all
+/// written (made in half a minute), then chapters the learner finished a lesson in, then the rest,
+/// syllabus order within each. Five show; the rest fold by subject, unless a few more would do.
+struct NotMadeOrder {
+  struct Group {
+    let key: String
+    /// Nil when the goal's chapters have no subjects: the rest fold under one row.
+    let name: String?
+    let chapters: [ChapterMindMap]
+  }
+
+  private static let nextRows = 5
+  private static let foldAfter = nextRows + 2
+
+  let next: [ChapterMindMap]
+  let restGroups: [Group]
+
+  init(_ chapters: [ChapterMindMap], studied: Set<String>) {
+    func rank(_ chapter: ChapterMindMap) -> Int {
+      if chapter.needsAttention { return 0 }
+      if chapter.canMakeNow { return 1 }
+      return studied.contains(chapter.chapterId) ? 2 : 3
+    }
+
+    let ordered = chapters.enumerated()
+      .sorted { (rank($0.element), $0.offset) < (rank($1.element), $1.offset) }
+      .map(\.element)
+
+    guard ordered.count > Self.foldAfter else {
+      next = ordered
+      restGroups = []
+      return
+    }
+
+    next = Array(ordered.prefix(Self.nextRows))
+    let shown = Set(next.map(\.chapterId))
+    let rest = chapters.filter { !shown.contains($0.chapterId) }
+
+    guard rest.allSatisfy({ $0.subject != nil }) else {
+      restGroups = [Group(key: "", name: nil, chapters: rest)]
+      return
+    }
+
+    var keys: [String] = []
+    var bySubject: [String: [ChapterMindMap]] = [:]
+
+    for chapter in rest {
+      let key = chapter.subject?.key ?? ""
+
+      if bySubject[key] == nil {
+        keys.append(key)
+      }
+
+      bySubject[key, default: []].append(chapter)
+    }
+
+    restGroups = keys.map { key in
+      let grouped = bySubject[key] ?? []
+      return Group(key: key, name: grouped.first?.subject?.name, chapters: grouped)
+    }
+  }
+}
+
 struct GoalMindMaps: Decodable, Equatable, Sendable {
   /// The list as a refusal answered it: nothing starts until a read says otherwise.
   func stopped(by stop: MindMapAllowanceStop) -> GoalMindMaps {
@@ -290,4 +353,11 @@ enum MindMapRequest: Equatable, Sendable {
   /// Ready, on its way or a chapter without one: reading it again says which.
   case read
   case refused(MindMapLimit)
+}
+
+extension GoalMindMaps {
+  /// The chapters without a map yet, in the syllabus's order.
+  var notMade: [ChapterMindMap] {
+    chapters.filter { [.available, .failed, .writingLessons, .drawing].contains($0.status) }
+  }
 }

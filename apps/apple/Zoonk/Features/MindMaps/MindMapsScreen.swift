@@ -50,54 +50,65 @@ struct MindMapsScreen: View {
     switch list.state {
     case .loaded(let maps):
       let shown = tab ?? maps.firstTab
+      let notMade = maps.notMade
 
-      ScrollViewReader { proxy in
+      // Main's right column: beside the maps on every tab where there's room, so the page keeps
+      // its width as tabs switch; without it, the list follows the chapters' maps.
+      PaneBeside(isAvailable: !notMade.isEmpty, paneEdge: .trailing, primaryShare: 0.62) {
         ZoonkList {
-          Section {
-            PageHeader(title)
+          MindMapCreateSection(goalId: goal.id, maps: maps, notMade: notMade)
+        }
+      } content: { isBeside in
+        ScrollViewReader { proxy in
+          ZoonkList {
+            Section {
+              PageHeader(title)
 
-            Picker(selection: $tab) {
-              ForEach(GoalMindMaps.Tab.allCases, id: \.self) { tab in
-                tabTitle(tab, maps: maps)
-                  .tag(Optional(tab))
+              Picker(selection: $tab) {
+                ForEach(GoalMindMaps.Tab.allCases, id: \.self) { tab in
+                  tabTitle(tab, maps: maps)
+                    .tag(Optional(tab))
+                }
+              } label: {
+                Text("Maps", tableName: "MindMaps", comment: "Picks which maps the page lists")
               }
-            } label: {
-              Text("Maps", tableName: "MindMaps", comment: "Picks which maps the page lists")
+              .pickerStyle(.segmented)
+              .listRowSeparator(.hidden)
             }
-            .pickerStyle(.segmented)
-            .listRowSeparator(.hidden)
-          }
 
-          switch shown {
-          case .chapters:
-            MindMapChaptersTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
-          case .lessons:
-            MindMapLessonsTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
-          case .saved:
-            MindMapSavedTab(goalId: goal.id, maps: maps)
+            switch shown {
+            case .chapters:
+              MindMapChaptersTab(
+                goalId: goal.id, maps: maps, subjectKey: subjectKey, listsNotMade: !isBeside)
+            case .lessons:
+              MindMapLessonsTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
+            case .saved:
+              MindMapSavedTab(goalId: goal.id, maps: maps)
+            }
+          }
+          .onAppear {
+            if tab == nil {
+              tab = shown
+            }
+
+            if let subjectKey {
+              proxy.scrollTo(subjectKey, anchor: .top)
+            }
           }
         }
-        .onAppear {
-          if tab == nil {
-            tab = shown
+        .lonePage(!isBeside)
+        // Study opens what the tab counts, where this device last was in it. The bar is the maps'
+        // own, as main's, so it ends where their column ends, not under the list beside them.
+        .bottomBar {
+          if count(shown, maps: maps) > 0 {
+            Button {
+              router.open(.mindMapStudy(goalId: goal.id, tab: shown))
+            } label: {
+              Text("Study maps", tableName: "MindMaps")
+            }
+            .buttonStyle(.mainAction)
+            .keyboardShortcut(.defaultAction)
           }
-
-          if let subjectKey {
-            proxy.scrollTo(subjectKey, anchor: .top)
-          }
-        }
-      }
-      .lonePage()
-      // Study opens what the tab counts, where this device last was in it.
-      .bottomBar {
-        if count(shown, maps: maps) > 0 {
-          Button {
-            router.open(.mindMapStudy(goalId: goal.id, tab: shown))
-          } label: {
-            Text("Study maps", tableName: "MindMaps")
-          }
-          .buttonStyle(.mainAction)
-          .keyboardShortcut(.defaultAction)
         }
       }
     case .empty:
@@ -175,6 +186,8 @@ private struct MindMapChaptersTab: View {
   let goalId: String
   let maps: GoalMindMaps
   let subjectKey: String?
+  /// False while the list of chapters without a map sits in its own pane beside this one.
+  let listsNotMade: Bool
 
   var body: some View {
     let index = maps.chapters.filter { $0.status == .ready }
@@ -183,11 +196,9 @@ private struct MindMapChaptersTab: View {
       MindMapRow(goalId: goalId, map: map, place: .library)
     }
 
-    let notMade = maps.chapters.filter {
-      [.available, .failed, .writingLessons, .drawing].contains($0.status)
-    }
+    let notMade = maps.notMade
 
-    if !notMade.isEmpty {
+    if listsNotMade, !notMade.isEmpty {
       MindMapCreateSection(goalId: goalId, maps: maps, notMade: notMade)
     } else if index.isEmpty {
       EmptyTab {
@@ -205,28 +216,18 @@ private struct MindMapChaptersTab: View {
   }
 }
 
-/// The chapters without a map yet. Those that can be made now come first, each with its own button;
-/// the rest wait folded under one row (listed when none is ready), with one line for where they stand.
+/// Main's `NotMadeYet`: the chapters without a map, the next few first and the rest folded by
+/// subject, or behind one row when the goal has none, with one line for where they stand.
 private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
-  /// As main, decided once on arrival: open while one of its chapters is being made or didn't
-  /// finish, so that row is in view; a learner who closes it keeps it closed.
-  @State private var showsChapters: Bool
+  @State private var unfolded: Set<String> = []
   /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
   @State private var showedStop = false
 
   let goalId: String
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
-
-  init(goalId: String, maps: GoalMindMaps, notMade: [ChapterMindMap]) {
-    self.goalId = goalId
-    self.maps = maps
-    self.notMade = notMade
-    _showsChapters = State(
-      initialValue: notMade.contains { !$0.canMakeNow && $0.opensItsGroupOnArrival })
-  }
 
   /// The offer's stop takes the rows' Create until a read lifts it.
   var body: some View {
@@ -241,49 +242,52 @@ private struct MindMapCreateSection: View {
     let offer = maps.createOffer
     let line = line(offer, stop: stop, canStart: canStart)
     let isStopped = if case .stopped = line { true } else { false }
-
-    let ready = notMade.filter(\.canMakeNow)
-    let others = notMade.filter { !$0.canMakeNow }
-    // As main: they fold only under chapters that can be made now; alone, they are listed.
-    let folds = !ready.isEmpty && !others.isEmpty
+    let order = NotMadeOrder(notMade, studied: Set(maps.lessonGroups.map(\.chapterId)))
 
     Section {
-      ForEach(ready) { map in
-        MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+      if offer.stop == nil, showsLessonsNote {
+        Text(
+          "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
+          comment:
+            "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .listRowSeparator(.hidden)
       }
 
-      if folds {
-        FoldRow(isUnfolded: $showsChapters) {
-          Group {
-            if showsChapters {
-              Text(
-                "Show fewer chapters", tableName: "Plan",
-                comment: "Folds a phase's chapters back to the ones around the next")
-            } else {
-              Text(
-                "\(others.count) more chapters", tableName: "Plan",
-                comment: "Shows the phase's chapters left out around the next one")
+      ForEach(order.next) { row($0, canStart: canStart) }
+
+      ForEach(order.restGroups, id: \.key) { group in
+        FoldRow(isUnfolded: $unfolded.contains(group.key)) {
+          HStack {
+            Group {
+              if let name = group.name {
+                Text(name)
+              } else if unfolded.contains(group.key) {
+                Text(
+                  "Show fewer chapters", tableName: "Plan",
+                  comment: "Folds a phase's chapters back to the ones around the next")
+              } else {
+                Text(
+                  "\(group.chapters.count) more chapters", tableName: "Plan",
+                  comment: "Shows the phase's chapters left out around the next one")
+              }
+            }
+            .typeStyle(group.name == nil ? .body : .rowTitle)
+            .foregroundStyle(group.name == nil ? .mutedForeground : Color(.foreground))
+
+            if group.name != nil {
+              Spacer(minLength: 8)
+              Text(verbatim: group.chapters.count.formatted())
+                .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
             }
           }
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
-        }
-      }
-
-      if !others.isEmpty, showsChapters || !folds {
-        if offer.stop == nil, showsLessonsNote {
-          Text(
-            "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
-            comment:
-              "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
         }
 
-        ForEach(others) { map in
-          MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+        if unfolded.contains(group.key) {
+          ForEach(group.chapters) { row($0, canStart: canStart) }
         }
       }
     } header: {
@@ -373,6 +377,10 @@ private struct MindMapCreateSection: View {
     case .unreachable, .stopped, nil:
       nil
     }
+  }
+
+  private func row(_ map: ChapterMindMap, canStart: Bool) -> some View {
+    MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
   }
 
   /// Rows don't repeat that writing lessons spends free lessons: this says it once, when a row
@@ -747,8 +755,7 @@ enum MindMapsCreateLine: Equatable {
   ) {
     let offer = maps.createOffer
     // As main's, only the chapters under "No map yet": the others' rows say where they stand.
-    let others = maps.chapters.filter { !$0.canMakeNow }
-    let onTheWay = others.count { $0.status.isOnItsWay }
+    let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
 
     if unreachable {
       self = .unreachable
