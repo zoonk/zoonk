@@ -9,6 +9,7 @@ import {
   overlapFindings,
   pressFindings,
   pressMoves,
+  restoreMoves,
 } from "./press-checks.mts";
 import {
   type Frame,
@@ -194,8 +195,9 @@ export function pressWalk(
       const faults = pressFindings(press);
       findings.push(...faults);
 
-      const restored =
-        comparison !== null && !faults.some((fault) => fault.check.startsWith("Press: not back"));
+      // A press that failed isn't judged on its undo, but its picture before is taken only on the
+      // screen it started from: an accordion that closed another section never gets it back.
+      const restored = comparison !== null && restoreMoves(comparison).length === 0;
 
       if (last.after) {
         // Back on the screen before the press, the same elements outlined where they started.

@@ -20,6 +20,7 @@ function change(label: string, before: Place, after: Place, overrides: Partial<M
     inside: false,
     isTarget: false,
     label,
+    reworded: false,
     ...overrides,
   };
 }
@@ -196,6 +197,30 @@ describe("words that change inside a control", () => {
     );
 
     assert.deepEqual(pressFindings(press("pick", { moved: [label] })), []);
+  });
+
+  it("leaves a button whose own label changed growing from the edge it's aligned to", () => {
+    const button = change(
+      'button "Remove focus"',
+      at(860, { left: 562, width: 78 }),
+      at(860, { left: 510, width: 130 }),
+      { drawn: true, reworded: true },
+    );
+
+    assert.deepEqual(pressFindings(press("pick", { moved: [button] })), []);
+  });
+
+  it("still fails a button that changed size with the same label", () => {
+    const button = change(
+      'button "Save"',
+      at(860, { left: 562, width: 78 }),
+      at(860, { left: 510, width: 130 }),
+      { drawn: true },
+    );
+
+    assert.deepEqual(checks(pressFindings(press("pick", { moved: [button] }))), [
+      "fail Press: the screen moved",
+    ]);
   });
 
   it("still fails a label that moved without changing", () => {

@@ -20,6 +20,7 @@ function change(label: string, before: Place, after: Place, overrides: Partial<M
     inside: false,
     isTarget: false,
     label,
+    reworded: false,
     ...overrides,
   };
 }

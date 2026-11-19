@@ -93,9 +93,10 @@ function heldAnchor(start: number, size: number, newStart: number, newSize: numb
 }
 
 /**
- * A text whose own words changed ("Save" becoming "Remove focus" in a full-width button) moves its
- * box only around its own anchor: its start, middle or end held. That's the words changing, not
- * the screen jumping; a box around it that changes size is judged on its own.
+ * A text whose own words changed ("Save" becoming "Remove focus") moves its box only around its own
+ * anchor: its start, middle or end held. That's the words changing, not the screen jumping. A
+ * button whose own label changed may grow or shrink the same way; any other box around it that
+ * changes size is judged on its own.
  */
 function rewords({ after, before }: Moved) {
   return (
@@ -149,7 +150,7 @@ export function pressMoves(press: Press): Moved[] {
       return !(pushes && below && across === 0);
     }
 
-    if (resizeOf(change) >= MIN_PX && change.drawn) {
+    if (resizeOf(change) >= MIN_PX && change.drawn && !(change.reworded && rewords(change))) {
       return !(pushes && wider === 0 && (change.holds || below));
     }
 
@@ -157,7 +158,8 @@ export function pressMoves(press: Press): Moved[] {
   });
 }
 
-function restoreMoves(undone: Comparison): Moved[] {
+/** What an undo left out of place: something that moved on its own, or a drawn box that kept a new size. */
+export function restoreMoves(undone: Comparison): Moved[] {
   return undone.moved.filter(
     (change) =>
       !change.inside &&

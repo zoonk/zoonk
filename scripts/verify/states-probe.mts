@@ -18,6 +18,8 @@ export type Moved = {
   inside: boolean;
   isTarget: boolean;
   label: string;
+  /** A control whose own words changed ("Save" becoming "Remove focus"). */
+  reworded: boolean;
 };
 
 /**
@@ -42,7 +44,7 @@ export type Action = {
   role: string;
 };
 
-type Snapshot = { element: HTMLElement; floating: boolean; place: Place }[];
+type Snapshot = { element: HTMLElement; floating: boolean; place: Place; words?: string }[];
 
 declare global {
   // oxlint-disable-next-line no-var -- A page global is declared with `var`.
@@ -201,6 +203,7 @@ export function markActions(scope: string): Action[] {
  * changes, so it and what's in it are left out.
  */
 export function snapshotLayout(slot = "step") {
+  const WORDED = "button, [role=button], [role=tab], a[href]";
   const { place } = globalThis.zoonkPage;
   const all = [...document.body.querySelectorAll<HTMLElement>("*")];
   const positions = new Map(all.map((element) => [element, getComputedStyle(element).position]));
@@ -233,7 +236,12 @@ export function snapshotLayout(slot = "step") {
           !sticky.some((bar) => bar.contains(element)) &&
           element.checkVisibility({ visibilityProperty: true }),
       )
-      .map((element) => ({ element, floating: floating(element), place: place(element) })),
+      .map((element) => ({
+        element,
+        floating: floating(element),
+        place: place(element),
+        words: element.matches(WORDED) ? (element.textContent ?? "") : undefined,
+      })),
   };
 }
 
@@ -312,7 +320,7 @@ export function compareLayout(
 
   globalThis.zoonkMoved = changed.map(({ element }) => element);
 
-  const moved = changed.map(({ element, place: start }) => ({
+  const moved = changed.map(({ element, place: start, words }) => ({
     after: now.get(element) ?? start,
     anchor: anchors !== "" && element.matches(anchors),
     before: start,
@@ -322,6 +330,7 @@ export function compareLayout(
     inside: target !== null && element !== target && target.contains(element),
     isTarget: element === target,
     label: label(element),
+    reworded: words !== undefined && (element.textContent ?? "") !== words,
   }));
 
   return { moved, target: target instanceof HTMLElement ? place(target) : null };
