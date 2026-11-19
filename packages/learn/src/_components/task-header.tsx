@@ -53,13 +53,7 @@ export function TaskHeaderSide({
   const t = useExtracted();
 
   return (
-    <div
-      className={cn(
-        TASK_HEADER_SIDE_CLASS[align],
-        afterToggle &&
-          "lg:group-data-aside/task:[&_.edge:last-child:not([data-slot=sidebar-toggle])]:-me-(--edge-pull) lg:group-data-aside/task:[&_[data-slot=sidebar-toggle]:has(+.edge)]:me-0",
-      )}
-    >
+    <div className={TASK_HEADER_SIDE_CLASS[align]}>
       {children}
       {align === "end" && (
         <SidebarToggle

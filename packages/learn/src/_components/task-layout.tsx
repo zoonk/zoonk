@@ -31,11 +31,13 @@ export const TASK_HEADER_BAR_CLASS =
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
  * button, and every button centers on that line: a 44 px one hangs past it instead of growing it,
- * so the bar is as tall as the aside's header beside it. Where the sidebar's toggle closes the end
- * side, what comes before it gives the edge up to it.
+ * so the bar is as tall as the aside's header beside it. Where the sidebar's toggle is on the end
+ * side, the last control holds the edge: what comes before the toggle gives it up, and so does the
+ * toggle when a control follows it. "Follows" is `~`, not `+` or `:last-child`, because an open
+ * menu puts focus guards around its trigger.
  */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle]):not([data-slot=sidebar-toggle]~*)]:me-0 lg:group-data-aside/task:[&_[data-slot=sidebar-toggle]:has(~.edge)]:me-0",
   start:
     "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1 [&_[data-slot=task-close]]:-translate-x-0.5 rtl:[&_[data-slot=task-close]]:translate-x-0.5",
 } as const;
