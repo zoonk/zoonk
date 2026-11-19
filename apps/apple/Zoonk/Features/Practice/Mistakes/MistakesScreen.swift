@@ -56,9 +56,9 @@ struct MistakesScreen: View {
           hooks.navigate(.mistakePractice(skillId: nil))
         } label: {
           Text(
-              LocalizedStringResource(
-                "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
-                comment: "Opens practice on the mistakes that are ready to fix."))
+            LocalizedStringResource(
+              "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
+              comment: "Opens practice on the mistakes that are ready to fix."))
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)

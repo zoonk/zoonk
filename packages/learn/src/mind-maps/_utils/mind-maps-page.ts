@@ -108,7 +108,7 @@ export function needsAttention(chapter: MindMapsPageChapter): boolean {
 }
 
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
-export function canMakeNow(chapter: MindMapsPageChapter): boolean {
+function canMakeNow(chapter: MindMapsPageChapter): boolean {
   return (
     chapter.lessonsToWrite === 0 &&
     (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
