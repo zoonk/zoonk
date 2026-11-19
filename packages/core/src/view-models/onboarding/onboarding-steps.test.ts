@@ -35,9 +35,9 @@ describe(getOnboardingSteps, () => {
       "purpose",
       "level",
       "targetDate",
+      "buddy",
       "placement",
       "schedule",
-      "buddy",
       "plan",
     ]);
   });
@@ -309,7 +309,7 @@ describe(getOnboardingSteps, () => {
     ).not.toContain("buddy");
   });
 
-  it("asks a course start for its optional date and level, places the learner, then asks the time", () => {
+  it("asks a course start for its optional date, level and time, then places the learner", () => {
     const steps = getOnboardingSteps({
       goal: {
         details: { courseStart: { chapterId: null } },
@@ -320,7 +320,7 @@ describe(getOnboardingSteps, () => {
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "targetDate", "placement", "schedule", "buddy", "plan"]);
+    expect(steps).toStrictEqual(["level", "targetDate", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {

@@ -14,29 +14,18 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
-import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
-import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
-import {
-  PROFILE_QUESTIONS,
-  isProfileQuestion,
-} from "../../profile/questions/profile-question-contract";
+import { PROFILE_QUESTIONS } from "../../profile/questions/profile-question-contract";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
-import {
-  ONBOARDING_QUESTIONS,
-  type OnboardingAnswerInput,
-  type OnboardingStep,
-} from "./onboarding-contract";
 
 /** These goals are in English, whose "you" never marks gender, so the address question stays in Settings. */
 const ENGLISH_PROFILE_STEPS = PROFILE_QUESTIONS.filter((question) => question !== "addressForm");
@@ -113,72 +102,7 @@ async function getSteps(goalId: string) {
   return result.status === "ready" ? result.onboarding.steps : [];
 }
 
-const GOAL_QUESTIONS = ONBOARDING_QUESTIONS.filter((question) => question !== "schedule");
-
-/** The goal's own questions are answered up front, so the rest are these and the questions about the learner. */
-const ANSWERS: Partial<Record<OnboardingStep, OnboardingAnswerInput>> = {
-  buddy: { buddy: { kind: "otto", name: "Octavia" }, question: "buddy" },
-  placement: { question: "placement" },
-  schedule: { dailyMinutes: 60, question: "schedule" },
-};
-
-function answerFor(step: OnboardingStep): OnboardingAnswerInput {
-  return ANSWERS[step] ?? { forever: false, question: "skipProfile" };
-}
-
-async function listOwedLessonWrites(userId: string): Promise<unknown[]> {
-  const owed = await listOwed(userId);
-
-  return owed.flatMap((followUp) =>
-    followUp.kind === "writeLesson" && isJsonObject(followUp.input)
-      ? [followUp.input.lessonId]
-      : [],
-  );
-}
-
-/** Answers each screen in the order onboarding asks, noting the lessons owed once the questions about the learner start. */
-async function answerUntilPlan({
-  goalId,
-  userId,
-  written = null,
-}: {
-  goalId: string;
-  userId: string;
-  written?: unknown[] | null;
-}): Promise<unknown[] | null> {
-  const [step] = await getSteps(goalId);
-
-  if (step === undefined || step === "plan") {
-    return written;
-  }
-
-  const owed = written ?? (isProfileQuestion(step) ? await listOwedLessonWrites(userId) : null);
-  await answerOnboardingQuestion({ goalId, input: answerFor(step) });
-
-  return answerUntilPlan({ goalId, userId, written: owed });
-}
-
 describe("onboarding a new goal", () => {
-  it("owes the exam plan's first lesson before the questions about the learner, so it's written while they answer", async () => {
-    const user = await useLearner();
-    const { goal } = await learnerGoalFixture({ phases: [3], userId: user.id });
-
-    await prisma.goal.update({
-      data: {
-        details: { answered: GOAL_QUESTIONS, placementDeclined: true },
-        kind: "exam",
-        planRevealedAt: null,
-      },
-      where: { id: goal.id },
-    });
-
-    const written = await answerUntilPlan({ goalId: goal.id, userId: user.id });
-    const first = await findPlanFirstLessonId({ goalId: goal.id });
-
-    expect(first).toStrictEqual(expect.any(String));
-    expect(written).toStrictEqual([first]);
-  });
-
   it("does not owe placement from the first level answer while the graph is still empty", async () => {
     const user = await useLearner();
 
@@ -315,7 +239,7 @@ describe("onboarding a new goal", () => {
     expect(others.goalId).toBeNull();
   });
 
-  it("lists only what's still missing, then placement, the time, the profile and the plan", async () => {
+  it("lists only what's still missing, then the profile, placement, the time and the plan", async () => {
     await useLearner();
     const [goal] = await createGoal();
     const result = await getOnboarding({ goalId: goal?.id ?? "" });
@@ -330,10 +254,10 @@ describe("onboarding a new goal", () => {
           "purpose",
           "level",
           "targetDate",
-          "placement",
-          "schedule",
           ...ENGLISH_PROFILE_STEPS,
           "buddy",
+          "placement",
+          "schedule",
           "plan",
         ],
         timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
@@ -485,10 +409,10 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { level: "basic", question: "level" } });
 
     await expect(getSteps(goalId)).resolves.toStrictEqual([
-      "placement",
-      "schedule",
       ...ENGLISH_PROFILE_STEPS,
       "buddy",
+      "placement",
+      "schedule",
       "plan",
     ]);
 
@@ -867,9 +791,9 @@ describe("onboarding a new goal", () => {
     await expect(getSteps(goal?.id ?? "")).resolves.toStrictEqual([
       "target",
       "level",
+      ...ENGLISH_PROFILE_STEPS,
       "placement",
       "schedule",
-      ...ENGLISH_PROFILE_STEPS,
       "plan",
     ]);
   });
