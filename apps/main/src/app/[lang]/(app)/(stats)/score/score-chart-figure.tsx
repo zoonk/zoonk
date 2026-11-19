@@ -21,25 +21,22 @@ export function ScoreChartFigure({
 
   return (
     <ProgressChartFigure label={t("Weekly score trend")}>
-      <figcaption className="text-muted-foreground text-sm">
-        <span aria-hidden="true">{t("Weekly score trend")}</span>
-        <div className="sr-only">
-          {t("{score} across {count, plural, one {# answer} other {# answers}}", {
-            count: performance.totalAnswers,
-            score: formattedScore,
-          })}
-          <ul>
-            {dataPoints.map((dataPoint) => (
-              <li key={dataPoint.date}>
-                {t("{label}: {score} across {count, plural, one {# answer} other {# answers}}", {
-                  count: dataPoint.totalAnswers,
-                  label: dataPoint.label,
-                  score: formatMetricPercent({ format, value: dataPoint.score }),
-                })}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <figcaption className="sr-only">
+        {t("{score} across {count, plural, one {# answer} other {# answers}}", {
+          count: performance.totalAnswers,
+          score: formattedScore,
+        })}
+        <ul>
+          {dataPoints.map((dataPoint) => (
+            <li key={dataPoint.date}>
+              {t("{label}: {score} across {count, plural, one {# answer} other {# answers}}", {
+                count: dataPoint.totalAnswers,
+                label: dataPoint.label,
+                score: formatMetricPercent({ format, value: dataPoint.score }),
+              })}
+            </li>
+          ))}
+        </ul>
       </figcaption>
 
       {children}
