@@ -586,20 +586,20 @@ internal fun ScorePage(context: StatsContext) {
             .value.value ?: return StatsEmpty(context)
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        StatTile(
-            label = stringResource(R.string.stats_score),
-            value = metricPercent(score.score, locale),
-            modifier = Modifier.fillMaxWidth(),
-            detail =
-                pluralStringResource(
-                    R.plurals.stats_right_in_last_days,
-                    SCORE_WINDOW_DAYS,
-                    whole(score.correctAnswers, locale),
-                    whole(score.totalAnswers, locale),
-                    whole(SCORE_WINDOW_DAYS.toLong(), locale),
-                ),
-            tone = StatTone.Success,
-            icon = icon(R.drawable.ic_show_chart),
+        val detail =
+            pluralStringResource(
+                R.plurals.stats_right_in_last_days,
+                SCORE_WINDOW_DAYS,
+                whole(score.correctAnswers, locale),
+                whole(score.totalAnswers, locale),
+                whole(SCORE_WINDOW_DAYS.toLong(), locale),
+            )
+        StatTiles(
+            columns = 1,
+            tiles =
+                listOf { modifier ->
+                    StatTile(label = null, value = metricPercent(score.score, locale), modifier = modifier, detail = detail)
+                },
         )
         ScoreChart(score)
     }

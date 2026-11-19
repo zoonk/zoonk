@@ -33,8 +33,9 @@ import com.zoonk.android.feature.mock.mockDate
 import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.ui.components.Meter
-import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.StatTile
+import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -146,10 +147,10 @@ private fun LatestMockReadout(latest: LatestMock) {
             }
         }
 
-    Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Readout(percent(latest.percent), style = MaterialTheme.typography.headlineMedium)
-        Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-    }
+    StatTiles(
+        columns = 1,
+        tiles = listOf { modifier -> StatTile(label = null, value = percent(latest.percent), modifier = modifier, detail = line) },
+    )
 }
 
 @Composable
