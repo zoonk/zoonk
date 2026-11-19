@@ -759,15 +759,15 @@ private struct ExamProgressSection: View {
             .foregroundStyle(Color(.foreground))
         }
 
-        if progress.mocks.count > 1, let first = progress.mocks.first {
-          StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
-            StatTile(
-              label: Text(
-                "Latest mock exam", tableName: "Exam", comment: "The latest mock exam's score"),
-              quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
-              detail: Text(since(latest.percent - first.percent)))
-          }
+        StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
+          StatTile(
+            label: Text(
+              "Latest mock exam", tableName: "Exam", comment: "The latest mock exam's score"),
+            quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
+            detail: Text(latestDetail(progress, latest: latest)))
+        }
 
+        if progress.mocks.count > 1, let first = progress.mocks.first {
           Chart(progress.mocks) { mock in
             LineMark(
               x: .value(
@@ -799,10 +799,6 @@ private struct ExamProgressSection: View {
             Text(
               "Your mock exam scores, from \(first.percent)% to \(latest.percent)%",
               tableName: "Exam", comment: "The mock score chart"))
-        } else {
-          Text(latestName(latest))
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
         }
 
         let trends = progress.subjects.contains { $0.change != nil }
@@ -823,25 +819,28 @@ private struct ExamProgressSection: View {
     progress.mocks.last { $0.shape?.kind != .area } ?? progress.mocks.last
   }
 
-  /// "Right answers in Mock exam 1", over the subjects when it's the only one.
-  private func latestName(_ latest: ExamView.Progress.Point) -> String {
+  private func latestDetail(_ progress: ExamView.Progress, latest: ExamView.Progress.Point)
+    -> String
+  {
     let name = [
       MockLabels.title(number: latest.number),
       latest.shape?.kind == .area ? latest.shape?.area : nil,
     ].compactMap { $0 }.joinedFacts()
 
-    return exam.scoring.method == .net
+    let score =
+      exam.scoring.method == .net
       ? String(
         localized: "Score in \(name)", table: "Exam",
         comment: "The latest score, where a wrong answer takes a point off")
       : String(
         localized: "Right answers in \(name)", table: "Exam", comment: "The latest right answers")
-  }
 
-  private func since(_ change: Int) -> String {
-    String(
+    guard progress.mocks.count > 1, let first = progress.mocks.first else { return score }
+    let change = latest.percent - first.percent
+    let since = String(
       localized: "\(change > 0 ? "+\(change)" : "\(change)") since the first", table: "Exam",
       comment: "The change since the first mock")
+    return "\(score)\n\(since)"
   }
 
   /// Nothing when no subject moved.
