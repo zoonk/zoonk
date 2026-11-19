@@ -3419,11 +3419,6 @@ msgid "{change} since the first"
 msgstr "첫 모의고사 대비 {change}"
 
 #: src/exam/exam-mock-progress.tsx
-msgctxt "EF93SC"
-msgid "Latest mock exam"
-msgstr "최근 모의고사"
-
-#: src/exam/exam-mock-progress.tsx
 msgctxt "ratpqs"
 msgid "Your mock exam scores, from {first}% to {latest}%"
 msgstr "모의고사 점수 변화: {first}%에서 {latest}%로"

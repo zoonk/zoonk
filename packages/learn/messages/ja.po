@@ -3419,11 +3419,6 @@ msgid "{change} since the first"
 msgstr "初回から{change}"
 
 #: src/exam/exam-mock-progress.tsx
-msgctxt "EF93SC"
-msgid "Latest mock exam"
-msgstr "直近の模試"
-
-#: src/exam/exam-mock-progress.tsx
 msgctxt "ratpqs"
 msgid "Your mock exam scores, from {first}% to {latest}%"
 msgstr "模試のスコアの推移：{first}%から{latest}%へ"

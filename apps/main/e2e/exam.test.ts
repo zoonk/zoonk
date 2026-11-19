@@ -131,12 +131,11 @@ test.describe("Exam goal", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await page.goto("/exam");
 
-      const latest = page
-        .getByRole("region", { name: "Your progress" })
-        .getByRole("listitem")
-        .filter({ hasText: "Latest mock exam" });
-
-      await expect(latest).toHaveText(/^Latest mock exam\s*\d+%\s*Right answers in Mock exam 1$/u);
+      await expect(
+        page
+          .getByRole("region", { name: "Your progress" })
+          .getByText(/^\d+%\s*Right answers in Mock exam 1$/u),
+      ).toBeVisible();
     });
   });
 

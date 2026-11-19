@@ -3419,11 +3419,6 @@ msgid "{change} since the first"
 msgstr "{change} seit der ersten Probeprüfung"
 
 #: src/exam/exam-mock-progress.tsx
-msgctxt "EF93SC"
-msgid "Latest mock exam"
-msgstr "Letzte Probeprüfung"
-
-#: src/exam/exam-mock-progress.tsx
 msgctxt "ratpqs"
 msgid "Your mock exam scores, from {first}% to {latest}%"
 msgstr "Deine Scores in den Probeprüfungen, von {first} % bis {latest} %"
