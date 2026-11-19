@@ -170,13 +170,13 @@ A control's height is one of `Button`'s, and each height has one label size: 44p
 
 ### Z2. The same control is the same size everywhere
 
-A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px and 44px tall with a mouse or on touch ([Z3](#z3-targets-are-44px-and-dont-overlap)), the goal switcher's included.
+A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px, 36px tall with a mouse and 44px on touch, the goal switcher's included.
 
 - **Check.** Compare this screen's back, close and "…" with its sibling pages'.
 
 ### Z3. Targets are 44px and don't overlap
 
-Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is the [one exception](#exceptions-the-user-granted).
+Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is an [exception](#exceptions-the-user-granted). The user granted one more: with a fine pointer (a mouse), a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px.
 
 - **Check.** Small controls side by side: their `hit-area`s don't intersect.
 - **Usual break.** Two 30px buttons 8px apart.
@@ -513,6 +513,7 @@ Each is one named place where a rule above doesn't hold, by the user's decision.
 - A code's boxes (a sign-in or account code) are 56px tall, a little taller than wide, in two groups of three that together are as wide as the button under them, not field-height squares (Z1).
 - Tables in Admin and evals keep their roomier cells; they aren't tightened to a list row's height (D1).
 - The day's bar on Today keeps its look and its parts' popovers; it is never made 44px tall to press (Z3).
+- With a fine pointer, a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px (Z2, Z3).
 - A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
 - Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
 - The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](../SKILL.md#words)).

@@ -15,6 +15,10 @@ const TARGET_LIMITS = {
 /** Today's day bar keeps its look and is never made taller to press: a granted exception to Z3. */
 const EXEMPT_SLOTS = new Set(["today-day-segment"]);
 
+/** A menu's rows are 36 px with a mouse and 44 px on touch: a granted exception to Z3. */
+const MOUSE_ROW_PX = 36;
+const MENU_ROW_SLOTS = new Set(["dropdown-menu-item", "dropdown-menu-radio-item"]);
+
 export const TARGET_SELECTOR = [
   "a[href]",
   "button",
@@ -46,6 +50,7 @@ export type TargetSample = {
   blockFontSize: string;
   clipPath: string;
   display: string;
+  finePointer: boolean;
   firstLineHeight: number;
   height: number;
   width: number;
@@ -89,6 +94,7 @@ export function sampleTargets(selector: string): TargetSample[] {
       blockTextLength: block.textContent.trim().length,
       clipPath: style.clipPath,
       display: style.display,
+      finePointer: matchMedia("(pointer: fine)").matches,
       firstLineHeight: element.getClientRects()[0]?.height ?? rect.height,
       height: rect.height,
       inactive:
@@ -159,14 +165,20 @@ export function describeTarget(sample: TargetSample): string {
   return `<${sample.role}${slot}> "${name}"`;
 }
 
-export function findSmallTargets(samples: TargetSample[]): string[] {
-  const smallest = TARGET_LIMITS.min - TARGET_LIMITS.sizeTolerance;
+function getMinimum(sample: TargetSample): number {
+  const min =
+    sample.finePointer && MENU_ROW_SLOTS.has(sample.slot ?? "") ? MOUSE_ROW_PX : TARGET_LIMITS.min;
 
+  return min - TARGET_LIMITS.sizeTolerance;
+}
+
+export function findSmallTargets(samples: TargetSample[]): string[] {
   return samples.flatMap((sample) => {
     if (isHiddenTarget(sample) || isInText(sample) || EXEMPT_SLOTS.has(sample.slot ?? "")) {
       return [];
     }
 
+    const smallest = getMinimum(sample);
     const size = getHitArea(sample);
 
     if (size.height >= smallest && size.width >= smallest) {
