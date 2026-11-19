@@ -946,9 +946,9 @@ private fun ActionBar(
         TaskActions(back) { width ->
             if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
             if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+            ask()
             if (records && step != null) {
                 SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
-                ask()
                 return@TaskActions
             }
             Button(
@@ -957,7 +957,6 @@ private fun ActionBar(
                 modifier = width.focusRequester(primaryFocus),
                 enabled = primary.enabled,
             ) { Text(stringResource(primary.label.text())) }
-            ask()
         }
     }
 }

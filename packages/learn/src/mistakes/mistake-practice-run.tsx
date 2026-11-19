@@ -145,8 +145,7 @@ function PracticeBody({
             <AnswersSaveError failures={run.state.failures} onRetry={run.retry} />
           )}
           <QuestionActions>
-            <PracticeStepActions run={run} step={run.step} />
-            {askButton}
+            <PracticeStepActions ask={askButton} run={run} step={run.step} />
           </QuestionActions>
         </TaskActionBar>
       )}

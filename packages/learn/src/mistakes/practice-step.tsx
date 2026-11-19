@@ -72,7 +72,15 @@ export type LessonPracticeRenderer = (props: {
   recordIssue: Run["recordIssue"];
 }) => React.ReactNode;
 
-export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
+export function PracticeStepActions({
+  ask,
+  run,
+  step,
+}: {
+  ask?: React.ReactNode;
+  run: Run;
+  step: Step;
+}) {
   const t = useExtracted();
   const { phase } = run.state;
   const answering = phase.kind !== "feedback";
@@ -86,6 +94,8 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
           {step.entry.drill.kind === "noGuessing" && t("I'm not sure")}
         </QuestionDontKnow>
       )}
+
+      {ask}
 
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
         <QuestionMainAction {...getMainAction(run)} />

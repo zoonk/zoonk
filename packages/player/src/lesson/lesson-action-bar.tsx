@@ -121,6 +121,8 @@ export function LessonActionBar() {
 
         <PromptAudio />
 
+        <TutorAskButton />
+
         <MainActionSlot>
           <QuestionMainAction
             action={primary.label}
@@ -131,8 +133,6 @@ export function LessonActionBar() {
             onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
           />
         </MainActionSlot>
-
-        <TutorAskButton />
       </QuestionActions>
     </TaskActionBar>
   );

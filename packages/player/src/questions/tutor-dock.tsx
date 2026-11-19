@@ -263,7 +263,7 @@ export function TutorAskButton() {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="with-aside:hidden ml-auto h-11 shrink-0 lg:ml-0"
+            className="with-aside:hidden h-11 shrink-0"
             size="lg"
             type="button"
             variant="outline"

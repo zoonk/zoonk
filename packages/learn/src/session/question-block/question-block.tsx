@@ -237,12 +237,12 @@ export function QuestionBlock({
           {question && isQuestionPhase(phase) && (
             <QuestionActions>
               <BlockQuestionActions
+                ask={phase.kind !== "alreadyAnswered" && askButton}
                 blockDrill={blockDrill}
                 draft={draft}
                 question={question}
                 run={run}
               />
-              {phase.kind !== "alreadyAnswered" && askButton}
             </QuestionActions>
           )}
         </TaskActionBar>

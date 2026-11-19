@@ -489,18 +489,18 @@ struct LessonActionBar: View {
         .buttonStyle(.outline)
       }
 
-      if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
-      {
-        record
-      } else {
-        primaryButton
-      }
-
       if showsLessonAsk(
         isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
         hasOwnAsk: showsOwnAsk)
       {
         askButton
+      }
+
+      if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
+      {
+        record
+      } else {
+        primaryButton
       }
     }
   }

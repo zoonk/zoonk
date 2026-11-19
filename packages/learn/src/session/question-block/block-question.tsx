@@ -263,6 +263,7 @@ export function BlockQuestion({
 }
 
 type BlockActionsProps = {
+  ask?: React.ReactNode;
   blockDrill: BlockDrill;
   draft: DraftAnswer;
   question: StudyQuestion;
@@ -311,6 +312,8 @@ export function BlockQuestionActions(props: BlockActionsProps) {
           {noGuessing && t("I'm not sure")}
         </QuestionDontKnow>
       )}
+
+      {props.ask}
 
       <QuestionMainAction {...getMainAction(props)} />
     </>
