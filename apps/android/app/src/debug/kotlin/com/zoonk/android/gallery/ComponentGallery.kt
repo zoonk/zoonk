@@ -119,7 +119,6 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -486,7 +485,6 @@ private fun Chips() {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow("1 week")
         Eyebrow("Focus")
-        SuccessEyebrow("Now you know")
         Eyebrow(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
     }
 }

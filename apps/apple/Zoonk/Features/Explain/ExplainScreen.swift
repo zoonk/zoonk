@@ -235,12 +235,10 @@ private struct ExplainEnding: View {
       Section {
         VStack(alignment: .leading, spacing: 24) {
           PageHeader(
-            Text(explanation.title),
-            chip: Chip(
-              Text(
-                "Now you know", tableName: "Explain",
-                comment: "Eyebrow over a read quick explanation"),
-              tone: .success))
+            Text(
+              "Now you know", tableName: "Explain",
+              comment: "Title of a quick explanation's ending; the question shows under it"),
+            supporting: Text(explanation.title))
 
           if isSaving {
             Text(

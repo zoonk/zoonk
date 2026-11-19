@@ -464,7 +464,7 @@
       }
     },
     "Now you know" : {
-      "comment" : "Eyebrow over a read quick explanation",
+      "comment" : "Title of a quick explanation's ending; the question shows under it",
       "localizations" : {
         "de" : {
           "stringUnit" : {

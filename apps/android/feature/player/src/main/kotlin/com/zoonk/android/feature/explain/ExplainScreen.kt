@@ -73,7 +73,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.QUICK_EXPLANATION_MINUTES
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
 import com.zoonk.android.ui.components.taskColumn
@@ -436,9 +435,7 @@ internal fun ExplainEnding(
         withMoment = !saving,
         columnModifier = Modifier.taskColumn(),
         done = {
-            ExplainHeading(explanation.title) {
-                SuccessEyebrow(stringResource(R.string.explain_now_you_know))
-            }
+            ExplainHeading(stringResource(R.string.explain_now_you_know), subtitle = explanation.title, eyebrow = {})
 
             if (saving) {
                 Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
