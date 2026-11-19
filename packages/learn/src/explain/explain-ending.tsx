@@ -110,7 +110,7 @@ export function ExplainEnding({
   buddy?: LearnBuddy | null;
   deeper: React.ReactNode;
   doneHref: string;
-  explanation: Pick<ExplanationView, "goFurther" | "recap">;
+  explanation: Pick<ExplanationView, "goFurther" | "recap" | "title">;
   questionHref: (question: string) => string;
   result: ExplainResult;
   saving?: boolean;
@@ -122,7 +122,7 @@ export function ExplainEnding({
     <>
       <TaskBody className="gap-7" data-slot="explain-ending">
         <div className="flex flex-col gap-6">
-          <MomentHeader title={t("Now you know")}>
+          <MomentHeader detail={explanation.title} title={t("Now you know")}>
             {saving ? (
               <MomentSaving />
             ) : (
