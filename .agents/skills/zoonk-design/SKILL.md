@@ -49,7 +49,7 @@ A [marketing page](#marketing-pages) is outside the first and third rows: its to
 
 Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works).
 
-A rule holds on every screen. When one looks wrong for a screen, follow it and put the case to the user in your handoff: only the user grants an exception, and each one is listed in [craft](references/craft.md#exceptions-the-user-granted) so nobody "fixes" it later. A note that something was "kept on purpose" is not an exception; it's a finding. [Rethinking a screen](#rethink-when-stuck) changes its structure, never a role's way.
+A rule holds on every screen, and it serves how the screen looks. When following one makes a screen look worse (empty reserved room, chrome taller or wider than what it holds, a number that fits a phone and not a computer) or wrong for it, that's a finding against the rule: follow it, never break it quietly, and put the case and the change to the rule you propose to the user in your handoff: only the user grants an exception, and each one is listed in [craft](references/craft.md#exceptions-the-user-granted) so nobody "fixes" it later. A note that something was "kept on purpose" is not an exception; it's a finding. [Rethinking a screen](#rethink-when-stuck) changes its structure, never a role's way.
 
 ## Shape the experience
 

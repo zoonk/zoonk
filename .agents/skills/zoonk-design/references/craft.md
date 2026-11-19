@@ -413,24 +413,25 @@ A row, card, tab or button for a paid feature looks like its free neighbors: no 
 
 ## The craft read
 
-The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at:
+The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at. A rule serves how the screen looks, so the first question is the screen's, not a rule's:
 
-1. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
-2. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
-3. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
-4. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
-5. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)
-6. **Gaps.** In each group, is any gap unlike its neighbors? Is each title nearer its own content than what's above? (S2, S3, S4)
-7. **Corners.** Which radii can you tell apart, and what wears each? Any box of one job with other corners, any inner corner too round or too square, any pill? (H1, H2, H3)
-8. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)
-9. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
-10. **Numbers.** Do columns of numbers line up and end together? (T4)
-11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
-12. **Balance.** One enabled filled button on each surface? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
-13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
-14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
-15. **Roles.** Does the page's first thing (its bar's way back or actions, or a title whose bar holds nothing) sit on the sidebar's first row, with no empty bar over a title? Is the title close under a bar that holds something, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
-16. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
+1. **Proportion, at this size.** Asked at each size the screen is read at, before any ruler: does it look well made at this width? Any empty room held for nothing, chrome taller or wider than what it holds, room that grew with the gutter, a column that starts or ends somewhere odd, something sized for a phone on a wide screen? A screen that follows every rule and still looks worse for one is a finding against that rule (`departs: principle`), with the change to the rule it calls for.
+2. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
+3. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
+4. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
+5. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
+6. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)
+7. **Gaps.** In each group, is any gap unlike its neighbors? Is each title nearer its own content than what's above? (S2, S3, S4)
+8. **Corners.** Which radii can you tell apart, and what wears each? Any box of one job with other corners, any inner corner too round or too square, any pill? (H1, H2, H3)
+9. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)
+10. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
+11. **Numbers.** Do columns of numbers line up and end together? (T4)
+12. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
+13. **Balance.** One enabled filled button on each surface? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
+14. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
+15. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
+16. **Roles.** Does the page's first thing (its bar's way back or actions, or a title whose bar holds nothing) sit on the sidebar's first row, with no empty bar over a title? Is the title close under a bar that holds something, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
+17. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
 
 A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
 
