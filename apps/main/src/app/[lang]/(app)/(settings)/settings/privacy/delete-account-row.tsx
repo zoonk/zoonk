@@ -113,7 +113,7 @@ export function DeleteAccountRow({
 
       {asksLogin && (
         <SignInAgainDialog onClose={() => setAsksLogin(false)}>
-          {t("For your safety, log in again, then delete your account.")}
+          {t("For your security, log in again, then delete your account.")}
         </SignInAgainDialog>
       )}
     </>

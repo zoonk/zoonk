@@ -28,11 +28,11 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime.",
+      "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds timed mock exams and more help whenever you're stuck. Pay monthly or yearly, cancel anytime.",
       { lessons: getFreePlanLimits().lessonsPer30Days ?? 0 },
     ),
     // Absolute: the name is already in it.
-    title: { absolute: t("Zoonk pricing: free and Plus plans") },
+    title: { absolute: t("Zoonk pricing: Free and Plus") },
   };
 }
 
@@ -47,14 +47,14 @@ export async function PricingHero() {
       <Eyebrow>{t("Pricing")}</Eyebrow>
 
       <h1 className="text-headline mt-3 max-w-[16em]" id="pricing-title">
-        {t("Follow your study plan all the way to your exam, move or deadline.")}
+        {t("Follow your study plan all the way to your exam, move abroad or deadline.")}
       </h1>
 
       <p className="text-lead mt-4 max-w-152">
         {t({
           description: "“Plus” is the name of the subscription.",
           message:
-            "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job.",
+            "Plus has no monthly limit on lessons, so you can study every day of your plan, up to your exam, your move abroad or your new job.",
         })}
       </p>
     </section>

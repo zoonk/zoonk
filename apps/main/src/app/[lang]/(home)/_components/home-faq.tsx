@@ -47,9 +47,9 @@ export async function HomeFaq() {
     {
       answer: t({
         description:
-          "In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”",
+          "In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e passam por verificações automáticas antes de chegar até você. Depois, outro modelo de IA revisa as aulas e corrige os erros que encontra. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. A IA ainda pode errar. Viu um erro? Avise a gente pela própria aula e a gente confere.”",
         message:
-          "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it.",
+          "Lessons are made with the latest AI models and pass automatic checks before they reach you. Then another AI model reviews them and fixes the mistakes it finds. They follow what your goal covers, such as an exam's subjects and topics. AI can still make mistakes. See one? Tell us from the lesson and we'll look into it.",
       }),
       id: "trust",
       question: t({

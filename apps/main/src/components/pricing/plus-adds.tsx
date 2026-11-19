@@ -86,7 +86,7 @@ export async function PlusAdds() {
       <StopBody>
         <ProductWindow className="flex flex-col gap-5 p-6 sm:p-7">
           <div className="flex flex-col gap-0.5">
-            <p className="text-sm font-semibold">{t("A month of a plan")}</p>
+            <p className="text-sm font-semibold">{t("A month of study")}</p>
             <p className="text-muted-foreground text-compact">
               {t({
                 description:

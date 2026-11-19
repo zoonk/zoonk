@@ -26,7 +26,8 @@ export async function DeletionPlusNotice() {
         <p>
           {t({
             description: "Shown only to subscribers, in the box that deletes their account.",
-            message: "Plus from the App Store keeps charging until you cancel it there.",
+            message:
+              "Deleting your account doesn't cancel Plus from the App Store. Cancel it there.",
           })}
         </p>
       )}
@@ -34,7 +35,7 @@ export async function DeletionPlusNotice() {
         <p>
           {t({
             description: "Shown only to subscribers, in the box that deletes their account.",
-            message: "Plus from Google Play keeps charging until you cancel it there.",
+            message: "Deleting your account doesn't cancel Plus from Google Play. Cancel it there.",
           })}
         </p>
       )}

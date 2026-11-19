@@ -53,7 +53,11 @@ async function ChapterStart({
     <StartBlock
       className={className}
       note={
-        hasLesson ? <StartFreeNote pricing={pricing} /> : t("Its lessons get ready when you start.")
+        hasLesson ? (
+          <StartFreeNote pricing={pricing} />
+        ) : (
+          t("This chapter's lessons are prepared when you start.")
+        )
       }
     >
       <StartPlanLink chapterId={startChapterId} courseId={courseId} />

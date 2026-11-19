@@ -527,9 +527,9 @@ msgid "Go to the chapter"
 msgstr "챕터로 가기"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "gd9eyd"
-msgid "Its lessons get ready when you start."
-msgstr "시작하면 이 챕터의 레슨이 준비돼요."
+msgctxt "xdVKg5"
+msgid "This chapter's lessons are prepared when you start."
+msgstr "시작하면 이 챕터의 레슨이 만들어져요."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "lwelz-"
@@ -611,11 +611,11 @@ msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {챕터 #개}}"
 
-#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk gets the lessons ready, so use a different verb for each.
+#. The learner builds the plan and we prepare the lessons, so use a different verb for each.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "yjO9gi"
-msgid "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know."
-msgstr "계획을 세우면 Zoonk가 이미 아는 내용에 맞춰 이 코스의 레슨을 준비해 줘요."
+msgctxt "hAfKet"
+msgid "Once you build your plan, we prepare this course's lessons, starting from what you already know."
+msgstr "계획을 세우면 이미 아는 내용부터 이 코스의 레슨을 만들어요."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "vZu-i7"
@@ -639,9 +639,9 @@ msgstr "{count, plural, other {챕터 #개 더 보기}}"
 
 #. Under the name of a course's level, such as Intermediate, whose chapters aren't listed yet: they are ready by the time a learner reaches that level.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "dQiHV0"
-msgid "Ready when you get there."
-msgstr "이 단계까지 오면 준비돼 있어요."
+msgctxt "JoRkQz"
+msgid "Chapters are ready by the time you reach this level."
+msgstr "이 레벨에 도달할 때쯤이면 챕터가 준비돼 있어요."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "kIwawn"
@@ -692,9 +692,9 @@ msgstr "아직 코스가 없어요"
 
 #. Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "ARz6VZ"
-msgid "Write what you want to learn in the box above, and Zoonk builds a plan for it."
-msgstr "위 입력란에 배우고 싶은 내용을 쓰면 Zoonk가 학습 계획을 세워 드려요."
+msgctxt "XWGPS9"
+msgid "Write what you want to learn in the box above, and we'll build a plan for it."
+msgstr "위 상자에 배우고 싶은 내용을 적으면 그에 맞는 계획을 만들어 드려요."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -1208,9 +1208,9 @@ msgid "Delete"
 msgstr "삭제"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "WJqAZr"
-msgid "You'll confirm with a passkey you already have first"
-msgstr "먼저 기존 패스키로 본인 확인을 해요"
+msgctxt "7r5z0J"
+msgid "You'll confirm with one of your passkeys first"
+msgstr "먼저 패스키 중 하나로 본인 확인을 해요"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "guwku_"
@@ -1228,9 +1228,9 @@ msgid "Add"
 msgstr "추가"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "p_4dgc"
-msgid "For your safety, log in again, then add your passkey."
-msgstr "보안을 위해 다시 로그인한 후 패스키를 추가해 주세요."
+msgctxt "QnlAGt"
+msgid "For your security, log in again, then add your passkey."
+msgstr "보안을 위해 다시 로그인한 다음 패스키를 추가해 주세요."
 
 #: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
 msgctxt "ASrBq8"
@@ -1333,9 +1333,9 @@ msgid "Delete my account"
 msgstr "내 계정 삭제"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "huX1mW"
-msgid "For your safety, log in again, then delete your account."
-msgstr "보안을 위해 다시 로그인한 후 계정을 삭제해 주세요."
+msgctxt "RpdJZF"
+msgid "For your security, log in again, then delete your account."
+msgstr "보안을 위해 다시 로그인한 다음 계정을 삭제해 주세요."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
@@ -1345,15 +1345,15 @@ msgstr "계정을 삭제하면 Plus 이용이 바로 종료돼요."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
-msgctxt "eDC5E7"
-msgid "Plus from the App Store keeps charging until you cancel it there."
-msgstr "App Store에서 구독한 Plus는 App Store에서 해지할 때까지 요금이 계속 청구돼요."
+msgctxt "4NWY-o"
+msgid "Deleting your account doesn't cancel Plus from the App Store. Cancel it there."
+msgstr "계정을 삭제해도 App Store의 Plus 구독은 해지되지 않아요. App Store에서 해지해 주세요."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
-msgctxt "_eCS12"
-msgid "Plus from Google Play keeps charging until you cancel it there."
-msgstr "Google Play에서 구독한 Plus는 Google Play에서 해지할 때까지 요금이 계속 청구돼요."
+msgctxt "2ZLZD5"
+msgid "Deleting your account doesn't cancel Plus from Google Play. Cancel it there."
+msgstr "계정을 삭제해도 Google Play의 Plus 구독은 해지되지 않아요. Google Play에서 해지해 주세요."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
 msgctxt "tTFZyH"
@@ -1729,8 +1729,8 @@ msgid "Earned"
 msgstr "획득"
 
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
-msgctxt "Tw83HA"
-msgid "Coming"
+msgctxt "6_aEFZ"
+msgid "Upcoming"
 msgstr "획득 예정"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
@@ -1855,9 +1855,9 @@ msgid "You answer about the same every day."
 msgstr "어느 요일에 풀든 결과가 비슷해요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "RF7ki8"
-msgid "Your best time is the {time}."
-msgstr "{time}에 문제를 가장 잘 풀어요."
+msgctxt "exNfBJ"
+msgid "{period, select, night {You do best at night.} morning {You do best in the morning.} afternoon {You do best in the afternoon.} other {You do best in the evening.}}"
+msgstr "{period, select, night {밤에 가장 잘해요.} morning {아침에 가장 잘해요.} afternoon {오후에 가장 잘해요.} other {저녁에 가장 잘해요.}}"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "6hLEQI"
@@ -2019,7 +2019,7 @@ msgctxt "yUieOB"
 msgid "Stuck? Just ask"
 msgstr "막혔나요? 물어보세요"
 
-#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”
+#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na pergunta, do jeito mais simples que você precisar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
 msgctxt "m1tYsa"
 msgid "We explain right there in the question, as simply as you need."
@@ -2120,11 +2120,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "구독하면 어떤 혜택이 있나요?"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e passam por verificações automáticas antes de chegar até você. Depois, outro modelo de IA revisa as aulas e corrige os erros que encontra. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. A IA ainda pode errar. Viu um erro? Avise a gente pela própria aula e a gente confere.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "OhisJ3"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "레슨은 최신 AI 모델로 만들고, 보여 드리기 전에 확인해요. 여러 평가로 품질을 점검하고, 다른 AI 모델이 내용을 검토해요. 시험의 과목과 주제 등 목표에 맞는 내용으로 구성해요. 오류는 드물지만 생길 수 있어요. 잘못된 내용을 발견했나요? 레슨에서 바로 알려 주시면 살펴볼게요."
+msgctxt "ONFVEi"
+msgid "Lessons are made with the latest AI models and pass automatic checks before they reach you. Then another AI model reviews them and fixes the mistakes it finds. They follow what your goal covers, such as an exam's subjects and topics. AI can still make mistakes. See one? Tell us from the lesson and we'll look into it."
+msgstr "최신 AI 모델로 레슨을 만들고, 레슨이 제공되기 전에 자동으로 검토해요. 그런 다음 다른 AI 모델이 레슨을 다시 살펴보고 발견한 오류를 고쳐요. 시험 과목이나 주제처럼 목표에 포함된 내용을 다뤄요. AI도 실수할 수 있어요. 오류를 발견했나요? 레슨에서 알려 주시면 확인해 볼게요."
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2682,9 +2682,9 @@ msgid "A study plan"
 msgstr "학습 계획"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "t9b6Rt"
-msgid "You get your own plan for the same subject. It starts from what you already know."
-msgstr "같은 과목으로 나만의 계획을 세워 드려요. 이미 아는 내용에 맞춰 시작해요."
+msgctxt "3F537J"
+msgid "You get your own plan for the same goal. It starts from what you already know."
+msgstr "같은 목표로 나만의 계획을 받을 수 있어요. 이미 아는 내용부터 시작해요."
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "wInDqV"
@@ -2692,10 +2692,11 @@ msgid "Someone shared their study plan with you"
 msgstr "누군가 자신의 학습 계획을 보내 줬어요"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "Gi84AL"
-msgid "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed."
-msgstr "Zoonk가 같은 과목을 공부할 나만의 학습 계획을 매일 낼 수 있는 시간에 맞춰 세워 드려요. 계정 없이 무료로 시작해 보세요."
+msgctxt "EN9VDT"
+msgid "We build you your own study plan for the same goal, for the time you have each day. Start free, no account needed."
+msgstr "매일 학습할 수 있는 시간에 맞춰 같은 목표의 나만의 계획을 만들어 드려요. 계정 없이 무료로 시작할 수 있어요."
 
+#. Button under a study plan someone else shared: the reader gets a plan of their own for the same goal.
 #. Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2876,19 +2877,19 @@ msgid "Back to top"
 msgstr "맨 위로 가기"
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "rU0EEc"
-msgid "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter."
-msgstr "Zoonk가 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이 챕터부터 시작해요."
+msgctxt "uOndBF"
+msgid "We build you a study plan for each day. It fits your time and starts at this chapter."
+msgstr "매일 할 학습 계획을 만들어 드려요. 학습 시간에 맞추고 이 챕터부터 시작해요."
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "ISy5Wj"
-msgid "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know."
-msgstr "Zoonk가 시험일까지 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이미 아는 내용을 바탕으로 시작해요."
+msgctxt "JDlFY8"
+msgid "We build you a study plan for each day until your exam. It fits your time and starts from what you already know."
+msgstr "시험일까지 매일 할 학습 계획을 만들어 드려요. 학습 시간에 맞추고 이미 아는 내용부터 시작해요."
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "zfy4zA"
-msgid "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know."
-msgstr "Zoonk가 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이미 아는 내용을 바탕으로 시작해요."
+msgctxt "FtlA24"
+msgid "We build you a study plan for each day. It fits your time and starts from what you already know."
+msgstr "매일 할 학습 계획을 만들어 드려요. 학습 시간에 맞추고 이미 아는 내용부터 시작해요."
 
 #. Heading over a map showing where this chapter sits in its course. {course} is the course's name.
 #: src/components/catalog/chapter-strip.tsx
@@ -3070,9 +3071,9 @@ msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts
 msgstr "하루 {minutes, number}분씩 공부하면 {lessons, plural, other {레슨 #개는}} {days, plural, =5 {약 일주일} =10 {약 2주} other {약 #일}} 동안 공부할 분량이에요."
 
 #: src/components/pricing/plus-adds.tsx
-msgctxt "Czc1c4"
-msgid "A month of a plan"
-msgstr "한 달간의 학습 계획"
+msgctxt "RYNUZm"
+msgid "A month of study"
+msgstr "한 달 학습"
 
 #. Under a picture of a month of study: the example it draws. {time} is a duration such as “15 min”.
 #: src/components/pricing/plus-adds.tsx
@@ -3170,25 +3171,25 @@ msgid "Cancel anytime."
 msgstr "언제든 해지할 수 있어요."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "JtSBO2"
-msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime."
-msgstr "Zoonk에서는 매달 {lessons, plural, other {레슨 #개를}} 무료로 이용할 수 있어요. Zoonk Plus는 월간 레슨 제한이 없고, 모의고사와 막힐 때마다 도와주는 AI 공부 짝꿍도 제공해요. 매달 또는 매년 결제하고 언제든 해지할 수 있어요."
+msgctxt "9vnEcu"
+msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds timed mock exams and more help whenever you're stuck. Pay monthly or yearly, cancel anytime."
+msgstr "Zoonk는 한 달에 {lessons, plural, other {#개}} 레슨까지 무료예요. Zoonk Plus는 월간 레슨 제한이 없고, 시간제한 모의고사와 막힐 때마다 받을 수 있는 추가 도움을 제공해요. 월간 또는 연간으로 결제하고 언제든 해지할 수 있어요."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "ViRhm-"
-msgid "Zoonk pricing: free and Plus plans"
+msgctxt "9ylDUQ"
+msgid "Zoonk pricing: Free and Plus"
 msgstr "Zoonk 요금제: 무료와 Plus"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "iMG-Wq"
-msgid "Follow your study plan all the way to your exam, move or deadline."
-msgstr "시험일, 이사일, 마감일까지 학습 계획대로 공부하세요."
+msgctxt "S6T5h_"
+msgid "Follow your study plan all the way to your exam, move abroad or deadline."
+msgstr "시험이나 해외 이사, 마감일까지 계획을 따라가 보세요."
 
 #. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "YpTetq"
-msgid "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job."
-msgstr "Plus는 월간 레슨 수 제한이 없어 시험일이나 이삿날, 새 직장에 첫 출근하는 날까지 매일 계획에 맞춰 필요한 만큼 공부할 수 있어요."
+msgctxt "Tsotbk"
+msgid "Plus has no monthly limit on lessons, so you can study every day of your plan, up to your exam, your move abroad or your new job."
+msgstr "Plus는 월간 레슨 한도가 없어 계획에 있는 날마다 시험이나 해외 이사, 새 직장까지 공부할 수 있어요."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "Jp-smP"
@@ -3232,9 +3233,9 @@ msgid "Is Plus really unlimited?"
 msgstr "Plus는 정말 무제한인가요?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "gYe6Af"
-msgid "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>."
-msgstr "직접 공부하는 데 이용한다면 맞아요. 레슨, 목표, AI 공부 짝꿍에는 봇과 자동화 도구의 이용을 막기 위한 제한만 있어요. 말하기 연습 대화에는 일일 한도와 월간 한도가 있지만, Plus 없이 이용할 때보다 넉넉해요. <link>공정 이용 정책 보기</link>."
+msgctxt "gX3xv3"
+msgid "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free. <link>Read our fair use policy</link>."
+msgstr "일반적인 학습에는 네. 레슨, 목표, AI 공부 짝꿍은 봇과 자동화 도구를 막기 위한 제한만 있어요. 말하기 연습 대화에는 무료 요금제보다 높은 일일 및 월간 제한이 적용돼요. <link>공정 이용 정책 읽기</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"

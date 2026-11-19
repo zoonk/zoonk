@@ -96,9 +96,9 @@ export async function LibraryCourseOutline({
             <span>
               {t({
                 description:
-                  "Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk gets the lessons ready, so use a different verb for each.",
+                  "The learner builds the plan and we prepare the lessons, so use a different verb for each.",
                 message:
-                  "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know.",
+                  "Once you build your plan, we prepare this course's lessons, starting from what you already know.",
               })}
             </span>
           </p>

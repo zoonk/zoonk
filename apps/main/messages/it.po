@@ -527,9 +527,9 @@ msgid "Go to the chapter"
 msgstr "Vai al capitolo"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "gd9eyd"
-msgid "Its lessons get ready when you start."
-msgstr "Prepariamo le lezioni quando inizi."
+msgctxt "xdVKg5"
+msgid "This chapter's lessons are prepared when you start."
+msgstr "Le lezioni di questo capitolo vengono preparate quando inizi."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "lwelz-"
@@ -611,11 +611,11 @@ msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capitolo} other {# capitoli}}"
 
-#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk gets the lessons ready, so use a different verb for each.
+#. The learner builds the plan and we prepare the lessons, so use a different verb for each.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "yjO9gi"
-msgid "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know."
-msgstr "Quando crei il tuo piano, Zoonk prepara le lezioni di questo corso partendo da quello che sai già."
+msgctxt "hAfKet"
+msgid "Once you build your plan, we prepare this course's lessons, starting from what you already know."
+msgstr "Quando crei il tuo piano, prepariamo le lezioni di questo corso partendo da ciò che sai già."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "vZu-i7"
@@ -639,9 +639,9 @@ msgstr "{count, plural, one {Mostra # altro capitolo} other {Mostra altri # capi
 
 #. Under the name of a course's level, such as Intermediate, whose chapters aren't listed yet: they are ready by the time a learner reaches that level.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "dQiHV0"
-msgid "Ready when you get there."
-msgstr "Pronti quando ci arriverai."
+msgctxt "JoRkQz"
+msgid "Chapters are ready by the time you reach this level."
+msgstr "I capitoli saranno pronti quando arriverai a questo livello."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "kIwawn"
@@ -692,9 +692,9 @@ msgstr "Qui non ci sono ancora corsi"
 
 #. Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "ARz6VZ"
-msgid "Write what you want to learn in the box above, and Zoonk builds a plan for it."
-msgstr "Scrivi cosa vuoi imparare nel riquadro qui sopra e Zoonk crea un piano per te."
+msgctxt "XWGPS9"
+msgid "Write what you want to learn in the box above, and we'll build a plan for it."
+msgstr "Scrivi nella casella qui sopra cosa vuoi imparare e creeremo un piano."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -1208,9 +1208,9 @@ msgid "Delete"
 msgstr "Elimina"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "WJqAZr"
-msgid "You'll confirm with a passkey you already have first"
-msgstr "Prima userai una passkey che hai già per confermare"
+msgctxt "7r5z0J"
+msgid "You'll confirm with one of your passkeys first"
+msgstr "Prima confermerai con una delle tue passkey"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "guwku_"
@@ -1228,9 +1228,9 @@ msgid "Add"
 msgstr "Aggiungi"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "p_4dgc"
-msgid "For your safety, log in again, then add your passkey."
-msgstr "Per la tua sicurezza, accedi di nuovo, poi aggiungi la tua passkey."
+msgctxt "QnlAGt"
+msgid "For your security, log in again, then add your passkey."
+msgstr "Per la tua sicurezza, accedi di nuovo e poi aggiungi la tua passkey."
 
 #: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
 msgctxt "ASrBq8"
@@ -1333,9 +1333,9 @@ msgid "Delete my account"
 msgstr "Elimina il mio account"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "huX1mW"
-msgid "For your safety, log in again, then delete your account."
-msgstr "Per la tua sicurezza, accedi di nuovo, poi elimina il tuo account."
+msgctxt "RpdJZF"
+msgid "For your security, log in again, then delete your account."
+msgstr "Per la tua sicurezza, accedi di nuovo e poi elimina il tuo account."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
@@ -1345,15 +1345,15 @@ msgstr "Se elimini il tuo account, Plus termina subito."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
-msgctxt "eDC5E7"
-msgid "Plus from the App Store keeps charging until you cancel it there."
-msgstr "Continuerai a pagare Plus finché non lo disdici sull’App Store."
+msgctxt "4NWY-o"
+msgid "Deleting your account doesn't cancel Plus from the App Store. Cancel it there."
+msgstr "Eliminare il tuo account non disdice Plus dall’App Store. Disdici l’abbonamento lì."
 
 #. Shown only to subscribers, in the box that deletes their account.
 #: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
-msgctxt "_eCS12"
-msgid "Plus from Google Play keeps charging until you cancel it there."
-msgstr "Continuerai a pagare Plus finché non lo disdici su Google Play."
+msgctxt "2ZLZD5"
+msgid "Deleting your account doesn't cancel Plus from Google Play. Cancel it there."
+msgstr "Eliminare il tuo account non disdice Plus da Google Play. Disdici l’abbonamento lì."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
 msgctxt "tTFZyH"
@@ -1729,9 +1729,9 @@ msgid "Earned"
 msgstr "Ottenuta"
 
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
-msgctxt "Tw83HA"
-msgid "Coming"
-msgstr "Da conquistare"
+msgctxt "6_aEFZ"
+msgid "Upcoming"
+msgstr "In arrivo"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
@@ -1855,9 +1855,9 @@ msgid "You answer about the same every day."
 msgstr "Ottieni risultati simili ogni giorno."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "RF7ki8"
-msgid "Your best time is the {time}."
-msgstr "Rendi meglio di {time}."
+msgctxt "exNfBJ"
+msgid "{period, select, night {You do best at night.} morning {You do best in the morning.} afternoon {You do best in the afternoon.} other {You do best in the evening.}}"
+msgstr "{period, select, night {Dai il meglio di te di notte.} morning {Dai il meglio di te al mattino.} afternoon {Dai il meglio di te nel pomeriggio.} other {Dai il meglio di te di sera.}}"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "6hLEQI"
@@ -2019,7 +2019,7 @@ msgctxt "yUieOB"
 msgid "Stuck? Just ask"
 msgstr "Ti blocchi? Basta chiedere"
 
-#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”
+#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na pergunta, do jeito mais simples que você precisar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
 msgctxt "m1tYsa"
 msgid "We explain right there in the question, as simply as you need."
@@ -2120,11 +2120,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "Cosa ottengo con l’abbonamento?"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e passam por verificações automáticas antes de chegar até você. Depois, outro modelo de IA revisa as aulas e corrige os erros que encontra. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. A IA ainda pode errar. Viu um erro? Avise a gente pela própria aula e a gente confere.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "OhisJ3"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "Le lezioni sono create con i modelli di IA più recenti e controllate prima di mostrartele: ne verifichiamo la qualità con diverse valutazioni e altri modelli ne rivedono il contenuto. Seguono i contenuti previsti dal tuo obiettivo, come le materie e gli argomenti di un esame. Gli errori sono rari, ma possono capitare. Hai notato qualcosa che non va? Segnalacelo direttamente dalla lezione e faremo una verifica."
+msgctxt "ONFVEi"
+msgid "Lessons are made with the latest AI models and pass automatic checks before they reach you. Then another AI model reviews them and fixes the mistakes it finds. They follow what your goal covers, such as an exam's subjects and topics. AI can still make mistakes. See one? Tell us from the lesson and we'll look into it."
+msgstr "Le lezioni vengono create con i modelli di IA più recenti e passano controlli automatici prima di arrivare a te. Poi un altro modello di IA le rivede e corregge gli errori che trova. Seguono gli argomenti del tuo obiettivo, come le materie e gli argomenti di una prova. L’IA può ancora sbagliare. Hai notato un errore? Avvisaci dalla lezione e lo controlleremo."
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2682,9 +2682,9 @@ msgid "A study plan"
 msgstr "Un piano di studio"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "t9b6Rt"
-msgid "You get your own plan for the same subject. It starts from what you already know."
-msgstr "Ricevi un piano tutto tuo per la stessa materia. Parte da quello che sai già."
+msgctxt "3F537J"
+msgid "You get your own plan for the same goal. It starts from what you already know."
+msgstr "Avrai un piano tutto tuo per lo stesso obiettivo. Partirà da ciò che sai già."
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "wInDqV"
@@ -2692,10 +2692,11 @@ msgid "Someone shared their study plan with you"
 msgstr "Qualcuno ha condiviso il suo piano con te"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "Gi84AL"
-msgid "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed."
-msgstr "Zoonk crea per te un piano di studio sulla stessa materia, adatto al tempo che hai ogni giorno. Inizia gratis, senza bisogno di un account."
+msgctxt "EN9VDT"
+msgid "We build you your own study plan for the same goal, for the time you have each day. Start free, no account needed."
+msgstr "Creiamo un piano di studio tutto tuo per lo stesso obiettivo, in base al tempo che hai ogni giorno. Inizia gratis, senza bisogno di un account."
 
+#. Button under a study plan someone else shared: the reader gets a plan of their own for the same goal.
 #. Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2876,19 +2877,19 @@ msgid "Back to top"
 msgstr "Torna in cima"
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "rU0EEc"
-msgid "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter."
-msgstr "Zoonk crea per te un piano per studiare ogni giorno. Si adatta al tempo che hai e parte da questo capitolo."
+msgctxt "uOndBF"
+msgid "We build you a study plan for each day. It fits your time and starts at this chapter."
+msgstr "Creiamo un piano di studio per ogni giorno. Si adatta al tempo che hai e parte da questo capitolo."
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "ISy5Wj"
-msgid "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know."
-msgstr "Zoonk crea per te un piano per studiare ogni giorno fino all’esame. Si adatta al tempo che hai e parte da quello che sai già."
+msgctxt "JDlFY8"
+msgid "We build you a study plan for each day until your exam. It fits your time and starts from what you already know."
+msgstr "Creiamo un piano di studio per ogni giorno fino alla prova. Si adatta al tempo che hai e parte da ciò che sai già."
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "zfy4zA"
-msgid "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know."
-msgstr "Zoonk crea per te un piano per studiare ogni giorno. Si adatta al tempo che hai e parte da quello che sai già."
+msgctxt "FtlA24"
+msgid "We build you a study plan for each day. It fits your time and starts from what you already know."
+msgstr "Creiamo un piano di studio per ogni giorno. Si adatta al tempo che hai e parte da ciò che sai già."
 
 #. Heading over a map showing where this chapter sits in its course. {course} is the course's name.
 #: src/components/catalog/chapter-strip.tsx
@@ -3070,9 +3071,9 @@ msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts
 msgstr "Con {minutes, number} minuti al giorno, {lessons, plural, one {# lezione basta per} other {# lezioni bastano per}} {days, plural, =5 {circa una settimana} =10 {circa due settimane} one {un giorno} other {circa # giorni di studio}}."
 
 #: src/components/pricing/plus-adds.tsx
-msgctxt "Czc1c4"
-msgid "A month of a plan"
-msgstr "Un mese del piano"
+msgctxt "RYNUZm"
+msgid "A month of study"
+msgstr "Un mese di studio"
 
 #. Under a picture of a month of study: the example it draws. {time} is a duration such as “15 min”.
 #: src/components/pricing/plus-adds.tsx
@@ -3170,25 +3171,25 @@ msgid "Cancel anytime."
 msgstr "Puoi disdire quando vuoi."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "JtSBO2"
-msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime."
-msgstr "Zoonk ti offre {lessons, plural, one {# lezione} other {# lezioni}} gratis al mese. Zoonk Plus non ha limiti mensili e include simulazioni d’esame e un compagno di studio con l’IA per aiutarti quando ti blocchi. Paga ogni mese o ogni anno, disdici quando vuoi."
+msgctxt "9vnEcu"
+msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds timed mock exams and more help whenever you're stuck. Pay monthly or yearly, cancel anytime."
+msgstr "Zoonk è gratis per {lessons, plural, one {# lezione} other {# lezioni}} al mese. Zoonk Plus non ha limiti mensili e include simulazioni a tempo e più aiuto quando hai difficoltà. Puoi pagare ogni mese o ogni anno e disdire quando vuoi."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "ViRhm-"
-msgid "Zoonk pricing: free and Plus plans"
-msgstr "Prezzi di Zoonk: formule Free e Plus"
+msgctxt "9ylDUQ"
+msgid "Zoonk pricing: Free and Plus"
+msgstr "Prezzi di Zoonk: Free e Plus"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "iMG-Wq"
-msgid "Follow your study plan all the way to your exam, move or deadline."
-msgstr "Segui il tuo piano fino all’esame, al trasferimento o alla scadenza."
+msgctxt "S6T5h_"
+msgid "Follow your study plan all the way to your exam, move abroad or deadline."
+msgstr "Segui il tuo piano di studio fino alla prova, al trasferimento all’estero o alla scadenza."
 
 #. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "YpTetq"
-msgid "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job."
-msgstr "Plus non ha un limite mensile di lezioni, così studi quanto serve ogni giorno, fino al tuo esame, al tuo trasferimento o al tuo nuovo lavoro."
+msgctxt "Tsotbk"
+msgid "Plus has no monthly limit on lessons, so you can study every day of your plan, up to your exam, your move abroad or your new job."
+msgstr "Plus non ha limiti mensili di lezioni, così puoi studiare ogni giorno del tuo piano, fino alla prova, al trasferimento all’estero o al tuo nuovo lavoro."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "Jp-smP"
@@ -3232,9 +3233,9 @@ msgid "Is Plus really unlimited?"
 msgstr "Plus è davvero illimitato?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "gYe6Af"
-msgid "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>."
-msgstr "Per chi studia, sì. I limiti per le lezioni, gli obiettivi e il compagno di studio con l’IA servono solo a bloccare bot e strumenti automatici. Le conversazioni di allenamento hanno limiti giornalieri e mensili più alti di quelli previsti senza Plus. <link>Leggi le nostre regole sull’uso corretto</link>."
+msgctxt "gX3xv3"
+msgid "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free. <link>Read our fair use policy</link>."
+msgstr "Per studiare normalmente, sì. Lezioni, obiettivi e compagno di studio con l’IA hanno solo limiti pensati per bloccare bot e strumenti automatizzati. Le conversazioni di allenamento hanno limiti giornalieri e mensili, più alti rispetto a Free. <link>Leggi la nostra policy sull’uso corretto</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"

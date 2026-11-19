@@ -145,7 +145,7 @@ msgstr "Trocar e-mail"
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "xNDAQj"
 msgid "Enter the code we sent to <address>{email}</address>."
-msgstr "Digite o código que enviamos para <address>{email}</address>."
+msgstr "Digite o código que a gente enviou para <address>{email}</address>."
 
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "zx7CKB"

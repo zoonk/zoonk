@@ -182,7 +182,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
         <SettingRow
           description={
             passkeys.length > 0
-              ? t("You'll confirm with a passkey you already have first")
+              ? t("You'll confirm with one of your passkeys first")
               : t("Your fingerprint, face or screen lock on this device")
           }
           label={t("Add a passkey")}
@@ -204,7 +204,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
 
       {asksLogin && (
         <SignInAgainDialog onClose={() => setAsksLogin(false)}>
-          {t("For your safety, log in again, then add your passkey.")}
+          {t("For your security, log in again, then add your passkey.")}
         </SignInAgainDialog>
       )}
 

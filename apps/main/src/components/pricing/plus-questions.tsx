@@ -97,7 +97,7 @@ export async function PlusQuestionItems({ viewerState }: { viewerState?: PlusVie
       <PublicDisclosure summary={t("Is Plus really unlimited?")}>
         <p className={DISCLOSURE_ANSWER_CLASS}>
           {t.rich(
-            "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
+            "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free. <link>Read our fair use policy</link>.",
             { link: renderFairUseLink },
           )}
         </p>

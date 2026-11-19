@@ -70,7 +70,7 @@ export async function BeltRack({
           key={belt.key}
         >
           <span
-            aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Coming")}`}
+            aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Upcoming")}`}
             className={cn(
               "flex h-6.5 w-full max-w-8 items-center justify-center rounded-md md:h-9.5 md:max-w-13 md:rounded-lg",
               index === currentIndex && "bg-selected-tint",

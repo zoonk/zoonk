@@ -11,17 +11,16 @@ import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { PatternChartSkeleton } from "./pattern-chart";
 import { DayPatterns, WeekPatterns } from "./pattern-charts";
-import { getBestDayName, getBestTimeName } from "./pattern-summary";
+import { getBestDayName } from "./pattern-summary";
+
+/** In core's period order, as `getTimePeriodNames`. */
+const TIME_PERIODS = ["night", "morning", "afternoon", "evening"] as const;
 
 /** The page's finding, in words: when the learner answers best, or that it makes no difference, and the days it covers. */
 async function PatternsFinding({ patterns }: { patterns: ScorePatternsData }) {
   const { dayVerdict, timeVerdict } = patterns;
 
-  const [t, dayName, timeName] = await Promise.all([
-    getExtracted(),
-    getBestDayName(dayVerdict),
-    getBestTimeName(timeVerdict),
-  ]);
+  const [t, dayName] = await Promise.all([getExtracted(), getBestDayName(dayVerdict)]);
 
   const day =
     dayVerdict.kind === "best"
@@ -30,7 +29,10 @@ async function PatternsFinding({ patterns }: { patterns: ScorePatternsData }) {
 
   const time =
     timeVerdict.kind === "best"
-      ? t("Your best time is the {time}.", { time: (timeName ?? "").toLowerCase() })
+      ? t(
+          "{period, select, night {You do best at night.} morning {You do best in the morning.} afternoon {You do best in the afternoon.} other {You do best in the evening.}}",
+          { period: TIME_PERIODS.at(timeVerdict.best.period) ?? "evening" },
+        )
       : timeVerdict.kind === "even" && t("The time of day makes no difference.");
 
   const sentences = [day, time].filter(Boolean);

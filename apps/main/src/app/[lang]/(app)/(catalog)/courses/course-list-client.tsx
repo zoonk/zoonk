@@ -160,7 +160,7 @@ export function CourseListClient({
               description:
                 "Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.",
               message:
-                "Write what you want to learn in the box above, and Zoonk builds a plan for it.",
+                "Write what you want to learn in the box above, and we'll build a plan for it.",
             })}
           </EmptyDescription>
         </EmptyHeader>

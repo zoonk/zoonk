@@ -60,7 +60,7 @@ export async function UnwrittenLevel({
               {t({
                 description:
                   "Under the name of a course's level, such as Intermediate, whose chapters aren't listed yet: they are ready by the time a learner reaches that level.",
-                message: "Ready when you get there.",
+                message: "Chapters are ready by the time you reach this level.",
               })}
             </span>
           }

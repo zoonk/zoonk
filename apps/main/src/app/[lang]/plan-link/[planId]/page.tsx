@@ -67,7 +67,7 @@ async function PlanLinkBody({ params }: Props) {
   const { outline } = result;
 
   const makeItYours = t(
-    "You get your own plan for the same subject. It starts from what you already know.",
+    "You get your own plan for the same goal. It starts from what you already know.",
   );
 
   const startHref = getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId });
@@ -94,7 +94,7 @@ async function PlanLinkBody({ params }: Props) {
           {!session && (
             <p className={HERO_LEAD_CLASS}>
               {t(
-                "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
+                "We build you your own study plan for the same goal, for the time you have each day. Start free, no account needed.",
               )}
             </p>
           )}
@@ -111,7 +111,7 @@ async function PlanLinkBody({ params }: Props) {
                 <Link className={getStartControlClassName()} href={startHref}>
                   {t({
                     description:
-                      "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+                      "Button under a study plan someone else shared: the reader gets a plan of their own for the same goal.",
                     message: "Start my own plan",
                   })}
                 </Link>

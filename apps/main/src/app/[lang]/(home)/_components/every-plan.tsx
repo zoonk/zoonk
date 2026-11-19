@@ -89,7 +89,7 @@ export async function EveryPlan() {
             })}
             text={t({
               description:
-                "The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”",
+                "The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na pergunta, do jeito mais simples que você precisar.”",
               message: "We explain right there in the question, as simply as you need.",
             })}
           />
