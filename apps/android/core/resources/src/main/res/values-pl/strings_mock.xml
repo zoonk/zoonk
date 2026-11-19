@@ -34,11 +34,6 @@
   "mock_left_blank_only": "57a917a2bf5757a50b22ef1b1a3ffd3ed16f2dbd3231a988f756d2434b3de535",
   "mock_left_flagged": "fe9f06acce310af9cde66189e1086da1b3c790dd02bb013895a3cd39a70ec5be",
   "mock_left_flagged_only": "3bc435f88f4f0e494308ad1bb412990419ba52dab5de551aea3153627b52022e",
-  "mock_legend_answered": "6d31f85fc12b339abfdc626e7942fb577eead4d6fa96435f1ce3f0c7d4002dff",
-  "mock_legend_current": "0a0d9463892d288af13261bde68faf775eef3ce550f8bb8a899ad54e48b892a0",
-  "mock_legend_review": "4be4466b1479a1906194b7c96e89b1114c05444399ee84f3d8e29c5a80a68e35",
-  "mock_legend_review_count": "f5683a1a01ef7f1027c307e3eda3cc74524e982fd30ba3228d34f4b3eacc2568",
-  "mock_legend_unanswered": "d399804e23446dc1d38e691859feeaf7bd3746f0df5134805d77b86f88c37328",
   "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
   "mock_moves_forward_must": "7310517b3ce53cecc567124a4ce0e1d4cfb2ee2a41b539e141ba98ad9257e61c",
   "mock_moves_must": "97ee1542015a3e659628e73406014d59d36f531eb2578d0d14e65066bfb0708b",
@@ -202,16 +197,6 @@
         <item quantity="few">%d z odpowiedzią</item>
         <item quantity="many">%d z odpowiedzią</item>
         <item quantity="other">%d z odpowiedzią</item>
-    </plurals>
-    <string name="mock_legend_unanswered">Bez odpowiedzi</string>
-    <string name="mock_legend_answered">Z odpowiedzią</string>
-    <string name="mock_legend_current">Bieżące pytanie</string>
-    <string name="mock_legend_review">Oznaczone do sprawdzenia</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d pytanie oznaczono do sprawdzenia</item>
-        <item quantity="few">%d pytania oznaczono do sprawdzenia</item>
-        <item quantity="many">%d pytań oznaczono do sprawdzenia</item>
-        <item quantity="other">%d pytania oznaczono do sprawdzenia</item>
     </plurals>
     <string name="mock_questions">Pytania</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

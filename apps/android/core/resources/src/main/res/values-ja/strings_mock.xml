@@ -34,11 +34,6 @@
   "mock_left_blank_only": "e75e9c821e5d71c5efcbad626f1073702cba2a4360763246c48f6bbf9260686a",
   "mock_left_flagged": "742c1f6113727d338674efddce3ca8e284ddbe893e7a2590ef944e58c5306eac",
   "mock_left_flagged_only": "2b1e34204b40b6e3cd0d1b0948686e3b08bc6c3298a319a1bbc8d117c87b443a",
-  "mock_legend_answered": "45e828efc8a5f5bd350692d15f552b0b9b03082013967ea344bc2569b9450c80",
-  "mock_legend_current": "053f45318f568733c4e177a070dc00a16e2aa026e582e3dd23bb222c2ea13e7a",
-  "mock_legend_review": "e96c0c3a538b56cb93497923800e8b7a7f4102f18dc5b1552700cb1469c58ed7",
-  "mock_legend_review_count": "9c4fadec408265a6ed35bcf238a2f5076c5949f5ea955f708716ff124d1a87bd",
-  "mock_legend_unanswered": "8dbf3f6f74f6772a6411c3d821f6e7f5f3e5db2f20723635df0bcf7525b67fd1",
   "mock_moves_forward": "2fda31c05d0e03b5f3ed4a2eae6467f654f2689a9a006e03a8045d53eea84384",
   "mock_moves_forward_must": "642453c7caf8ef66cf664ab9d4929b44e185f2dcf3dc9a77b9e960b7f1ec5ada",
   "mock_moves_must": "b98cbd713a6e6ce4ff44b2783a443d23489bd34247009c91c2dadd9f3a7b8e23",
@@ -175,13 +170,6 @@
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="other">%d問に回答済み</item>
-    </plurals>
-    <string name="mock_legend_unanswered">未回答</string>
-    <string name="mock_legend_answered">回答済み</string>
-    <string name="mock_legend_current">現在の問題</string>
-    <string name="mock_legend_review">見直し対象</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="other">%d問が見直し対象</item>
     </plurals>
     <string name="mock_questions">問題</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

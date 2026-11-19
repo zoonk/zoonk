@@ -34,11 +34,6 @@
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
   "mock_left_flagged": "d7436fba742079f4e6d34a66821c5fa222e6a220285d9d32af0bcd8e29ca766a",
   "mock_left_flagged_only": "4efcc92ad8858a604d396b69121801c395bfc908bc1a12f1a29740bc92834358",
-  "mock_legend_answered": "2565ab2e18692a0f47ff912433369d847ee424d227c45646ff3e8e3a4028bad6",
-  "mock_legend_current": "b198b8b64b3959edf623750d7ddc1c577327b3126f622201a21dc555cdaa73cc",
-  "mock_legend_review": "df9fa22175080913fe3d5ad408041ac7cc6b7fe2c1b30707595c6945c8290a35",
-  "mock_legend_review_count": "d3d2c0f53e8aa2c8500f927ec831a23662c4358b1f335966bd07d2aebd04b322",
-  "mock_legend_unanswered": "7a57068ec3320ca634b75c564fd907502dac804aba1fa28e4e56825e5d741d76",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
   "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
   "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
@@ -184,14 +179,6 @@
     <plurals name="mock_answered_count">
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
-    </plurals>
-    <string name="mock_legend_unanswered">Cevaplanmadı</string>
-    <string name="mock_legend_answered">Cevaplandı</string>
-    <string name="mock_legend_current">Şu anki soru</string>
-    <string name="mock_legend_review">Tekrar bakmak için işaretlendi</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d soru tekrar bakmak için işaretlendi</item>
-        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
     </plurals>
     <string name="mock_questions">Sorular</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

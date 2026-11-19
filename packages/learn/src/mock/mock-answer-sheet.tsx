@@ -163,38 +163,6 @@ export function MockQuestionMap({ className }: { className?: string }) {
   );
 }
 
-function SheetLegend() {
-  const t = useExtracted();
-  const { flagged } = useSectionCounts();
-
-  const states = [
-    { label: t("Unanswered"), style: "ring-border" },
-    { label: t("Answered"), style: CELL_FILLED_CLASS },
-    { label: t("Current question"), style: CELL_CURRENT_CLASS },
-    {
-      label: t(
-        "{flagged, plural, =0 {Marked for review} one {# marked for review} other {# marked for review}}",
-        { flagged },
-      ),
-      style: CELL_FLAGGED_CLASS,
-    },
-  ];
-
-  return (
-    <ul className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1.5 text-xs">
-      {states.map((state) => (
-        <li className="flex items-center gap-1.5" key={state.label}>
-          <span
-            aria-hidden="true"
-            className={cn("size-3.5 shrink-0 rounded-sm ring-1 ring-inset", state.style)}
-          />
-          {state.label}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function SheetNotes() {
   const { runner } = useMockScreen();
   const tools = runner.view.sections.find((section) => section.status === "current")?.tools;
@@ -222,10 +190,11 @@ function MockSheetContent({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <SheetGrid onPick={onPick} />
-        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend />
-          {withMoves && <MovesNote />}
-        </div>
+        {withMoves && (
+          <div className="text-muted-foreground text-xs empty:hidden">
+            <MovesNote />
+          </div>
+        )}
       </div>
       <SheetNotes />
       <SheetSections />

@@ -84,14 +84,6 @@
         <item quantity="one">%d answered</item>
         <item quantity="other">%d answered</item>
     </plurals>
-    <string name="mock_legend_unanswered">Unanswered</string>
-    <string name="mock_legend_answered">Answered</string>
-    <string name="mock_legend_current">Current question</string>
-    <string name="mock_legend_review">Marked for review</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d marked for review</item>
-        <item quantity="other">%d marked for review</item>
-    </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
