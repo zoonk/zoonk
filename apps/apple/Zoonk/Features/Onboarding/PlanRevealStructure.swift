@@ -138,9 +138,10 @@ private struct RevealSubjectRow: View {
             ForEach(run.topics) { topic in
               SubjectTopicRow(
                 goal: goal, topic: topic,
-                isExpanded: $open.contains("topic:\(subject.key)/\(topic.id)"), opens: false)
-                // A fold inside a fold's rows gets the system's style unless told again.
-                .disclosureGroupStyle(.fold)
+                isExpanded: $open.contains("topic:\(subject.key)/\(topic.id)"), opens: false
+              )
+              // A fold inside a fold's rows gets the system's style unless told again.
+              .disclosureGroupStyle(.fold)
             }
           }
         }
