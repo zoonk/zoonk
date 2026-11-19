@@ -216,6 +216,10 @@ test.describe("Quick explanations", () => {
       await page.getByRole("button", { name: "Try again" }).click();
 
       await expect(page.getByText("Now you know")).toBeVisible();
+
+      await expect(
+        page.locator("[data-slot='lesson-player-header']").getByRole("heading", { level: 1 }),
+      ).toHaveClass(/sr-only/u);
     });
   });
 });

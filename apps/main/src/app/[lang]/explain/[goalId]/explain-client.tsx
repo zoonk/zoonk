@@ -98,6 +98,7 @@ function createExplainEnding({
           />
         </>
       ),
+    completionTitled: true,
   };
 }
 
