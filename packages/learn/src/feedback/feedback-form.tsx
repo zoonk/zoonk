@@ -12,6 +12,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { cn } from "@zoonk/ui/lib/utils";
 import { parseFormField } from "@zoonk/utils/form";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -199,7 +200,8 @@ export function FeedbackForm({
           <FieldContent>
             <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
             <Textarea
-              className="min-h-32"
+              // The box runs to the bar's end; its words still wrap at a width that reads well.
+              className={cn("min-h-32", layout === "page" && "lg:pe-[max(0.75rem,100%-42rem)]")}
               id={messageId}
               name="message"
               onChange={(event) => setDraft(event.target.value)}

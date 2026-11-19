@@ -1310,12 +1310,6 @@ msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
 msgstr "Tes réponses servent à personnaliser tes exemples et ton compagnon. Tout est facultatif."
 
-#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-split.tsx
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Fermer"
-
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
 msgid "Language and region"
@@ -2419,6 +2413,11 @@ msgstr "Partout"
 msgctxt "ugxven"
 msgid "While you study"
 msgstr "Pendant que tu étudies"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fermer"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx

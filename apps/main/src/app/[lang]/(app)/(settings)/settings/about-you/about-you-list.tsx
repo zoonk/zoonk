@@ -7,13 +7,14 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../../_components/protected-section";
 import { AboutYouCurrentScreen } from "./about-you-split";
+import { firstOpenQuestion } from "./first-open-question";
 
 async function AboutYouContent() {
   const view = await getProfileQuestions({ locale: await getAppLocale() });
 
   return (
     <ProtectedSection allowGuests next="/settings/about-you">
-      {view && <AboutYouCurrentScreen view={view} />}
+      {view && <AboutYouCurrentScreen fallback={firstOpenQuestion(view)?.id ?? null} view={view} />}
     </ProtectedSection>
   );
 }

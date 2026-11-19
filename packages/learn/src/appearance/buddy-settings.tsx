@@ -10,6 +10,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -21,7 +22,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
-import { SideDetail, useSideColumn } from "../_components/side-detail";
+import { SIDE_DETAIL_PLACE_CLASS, SideDetail, useSideColumn } from "../_components/side-detail";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
@@ -127,6 +128,29 @@ export function BuddyEditor({
   );
 }
 
+/**
+ * The learner's buddy, whole, in the section's aside until its editor opens there. The row beside
+ * it names it, so this only shows it.
+ */
+function BuddyBeside({ buddy, look }: { buddy: AppearanceBuddy; look: BuddyLook }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(SIDE_DETAIL_PLACE_CLASS, "hidden items-center pt-16")}
+      data-slot="buddy-beside"
+    >
+      <Buddy
+        beltColor={look.beltColor}
+        className="size-44"
+        energy={look.energy}
+        glasses={buddy.glasses}
+        kind={buddy.kind}
+        studiedToday={look.studiedToday}
+      />
+    </div>
+  );
+}
+
 function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy }) {
   const name = useBuddyName(buddy);
 
@@ -187,6 +211,8 @@ export function BuddySettings({
           {buddy.picked ? t("Change") : t("Choose your buddy")}
         </Button>
       </ListRow>
+
+      {!isEditing && <BuddyBeside buddy={buddy} look={look} />}
 
       {isEditing && (
         <BuddyEditor

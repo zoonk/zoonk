@@ -13,8 +13,9 @@ import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SectionBarFrame, type SectionLink } from "./section-layout";
 
-/** From 72rem, beside every page of the section, for whoever has a session. */
-const ASIDE_CLASS = "hidden min-[72rem]:hidden min-[72rem]:in-data-signed-in:flex";
+/** From `xl`, beside the pages of the section that have something for it, for whoever has a session. */
+const ASIDE_CLASS =
+  "hidden min-[72rem]:hidden xl:in-data-signed-in:flex xl:in-data-signed-in:has-[>[hidden]]:hidden";
 
 export function SectionPage({
   aside,

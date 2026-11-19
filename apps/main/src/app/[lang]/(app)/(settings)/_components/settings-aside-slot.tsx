@@ -3,27 +3,36 @@
 import { usePathname } from "@/i18n/navigation";
 
 /**
- * What the section's aside holds: it steps out while a page's detail is open over it, and one page
- * may add something of its own under it.
+ * What the section's aside holds, page by page: the account where it matters, what one page adds
+ * under it, or the room a page fills itself. A page with none of these has no aside, and what the
+ * aside holds steps out while a detail is open over it.
  */
 export function SettingsAsideSlot({
+  accountOn,
   children,
-  detailsUnder,
   extras,
+  filledBy,
 }: {
+  /** The pages that show whose account this is. */
+  accountOn: string[];
+  /** The account. */
   children: React.ReactNode;
-  /** The pages whose own pages open as details beside them. */
-  detailsUnder: string[];
-  /** What one page shows beside it, after what every page shows. */
+  /** What one page shows beside it. */
   extras: { content: React.ReactNode; href: string }[];
+  /** The pages that draw into the aside's room themselves. */
+  filledBy: string[];
 }) {
   const pathname = usePathname();
-  const covered = detailsUnder.some((href) => pathname.startsWith(`${href}/`));
+  const extra = extras.find((item) => item.href === pathname);
+  const account = accountOn.includes(pathname);
 
   return (
-    <div className="contents in-data-side-detail:hidden" hidden={covered}>
-      {children}
-      {extras.find((extra) => extra.href === pathname)?.content}
+    <div
+      className="contents in-data-side-detail:hidden"
+      hidden={!account && !extra && !filledBy.includes(pathname)}
+    >
+      {account && children}
+      {extra?.content}
     </div>
   );
 }
