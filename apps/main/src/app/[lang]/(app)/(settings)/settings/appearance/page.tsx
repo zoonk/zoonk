@@ -78,7 +78,7 @@ export default async function AppearancePage() {
   const t = await getExtracted();
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader
         title={t({
           description:

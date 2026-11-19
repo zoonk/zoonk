@@ -105,7 +105,7 @@ test("Settings reserves the profile column while its contents load", async ({
   expect(width).toBe(formWidth);
 });
 
-test("Subscription stacks its plan placeholders before the plans load", async ({
+test("Subscription sets its plan placeholders side by side, as the plans are", async ({
   baseURL,
   userWithoutProgress: page,
 }) => {
@@ -126,7 +126,7 @@ test("Subscription stacks its plan placeholders before the plans load", async ({
         nodes.map((node) => node.getBoundingClientRect().left),
       );
 
-      expect(new Set(columns).size).toBe(1);
+      expect(new Set(columns).size).toBe(2);
     },
     { baseURL },
   );

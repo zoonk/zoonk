@@ -124,7 +124,7 @@ export async function CurrentPlan({
     : Boolean(subscription.cancelAt || subscription.cancelAtPeriodEnd);
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader title={t("Subscription")} />
 
       <PageSection>

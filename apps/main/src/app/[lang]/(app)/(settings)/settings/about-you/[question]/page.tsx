@@ -51,7 +51,7 @@ async function QuestionContent({ params }: Props) {
 
 export default function AboutYouQuestionPage(props: Props) {
   return (
-    <Page measure="form">
+    <Page>
       <Suspense fallback={<AboutYouQuestionSkeleton />}>
         <QuestionContent {...props} />
       </Suspense>

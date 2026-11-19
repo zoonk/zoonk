@@ -97,7 +97,7 @@ export default async function SettingsPage() {
       <div className="hidden md:contents">
         <Suspense
           fallback={
-            <Page measure="form">
+            <Page>
               <SettingsHubSkeleton />
             </Page>
           }

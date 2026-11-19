@@ -194,7 +194,12 @@ export function FeedbackForm({
 
   return (
     <>
-      <form action={formAction} className="flex w-full flex-col gap-6" id={formId}>
+      <form
+        action={formAction}
+        className="flex w-full flex-col gap-6"
+        data-slot="feedback-form"
+        id={formId}
+      >
         <Field>
           <FieldContent>
             <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
@@ -253,7 +258,7 @@ export function FeedbackForm({
 export function FeedbackFormSkeleton({ children }: { children?: React.ReactNode }) {
   return (
     <>
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2" data-slot="feedback-form">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-32 w-full rounded-xl" />
       </div>
