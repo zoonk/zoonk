@@ -76,7 +76,7 @@ Each rule's detail is in the file it links.
 
 ## Where to read
 
-Skills (`.agents/skills/<name>/SKILL.md`) hold procedures, and your harness lists each with when to use it; when it doesn't, list that folder. Guides and scoped `AGENTS.md` files hold conventions. This index is not a reading list for every edit.
+Skills (`.agents/skills/<name>/SKILL.md`) hold procedures, and your harness lists each with when to use it; when it doesn't, list that folder. Guides and scoped `AGENTS.md` files hold conventions: read the `AGENTS.md` nearest the files you change, whether or not it has a line here. This index is not a reading list for every edit.
 
 When you're:
 
