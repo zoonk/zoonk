@@ -196,6 +196,22 @@ final class PhaseEndTests: XCTestCase {
     XCTAssertNil(try goalPlanFixture(estimateEnd: "2027-02-10").roadmapFinish(isExam: true))
   }
 
+  func testAnExamPhaseEndingOnItsChallengesDayIsAnEstimate() throws {
+    let plan = try plan(phases: [
+      phase(0, kind: "foundations", state: "current", end: "2027-01-20", challenge: "2027-01-22")
+    ])
+
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-01-22", estimate: true))
+  }
+
+  func testEveryPhaseOfAPlanWhoseDateIsAnEstimateIsOne() throws {
+    let plan = try goalPlanFixture(
+      phases: [phase(0, kind: "foundations", state: "current", end: "2027-01-10")],
+      targetDate: "2027-11-14", targetDateEstimated: true)
+
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-01-10", estimate: true))
+  }
+
   private func end(_ isoDate: String, estimate: Bool, month: Bool = false) -> PhaseEnd {
     PhaseEnd(isoDate, estimate: estimate, month: month, today: "2027-01-04")
   }

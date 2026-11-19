@@ -29,6 +29,23 @@ extension LanguageStanding {
 
     return level.target.map { "\(level.label) → \($0)" } ?? level.label
   }
+
+  /// Main's `LevelValue`, for a readout: the level reached, then the one aimed for, smaller and
+  /// muted.
+  func levelValue(dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> Text {
+    guard let level, let target = level.target else {
+      return Text(verbatim: levelText)
+    }
+
+    var environment = EnvironmentValues()
+    environment.dynamicTypeSize = dynamicTypeSize
+    environment.legibilityWeight = legibility
+    let aim = Text(verbatim: " → \(target)")
+      .font(TypeStyle.readoutTarget.font(in: environment))
+      .foregroundStyle(.mutedForeground)
+
+    return Text("\(Text(verbatim: level.label))\(aim)")
+  }
 }
 
 extension LanguageStanding.Level {

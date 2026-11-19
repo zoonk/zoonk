@@ -103,6 +103,7 @@ private struct PlanPhaseRow: View {
       ) {
         header(next: own.state == .current)
       }
+      .currentRow(own.state == .current)
 
       if isOpen {
         events
@@ -114,7 +115,12 @@ private struct PlanPhaseRow: View {
         chapterRows
         events
       } label: {
-        header(next: false)
+        // Open, a phase named like one of its chapters goes by its place, so the two rows don't read
+        // the same; the current phase keeps its name, as main's does.
+        header(
+          next: false,
+          byPlace: isExpanded && phase.state != .current
+            && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
     }
   }
@@ -189,8 +195,9 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
-  private func header(next: Bool) -> some View {
-    PlanPhaseLabel(context: context, phase: phase, description: meta, next: next)
+  private func header(next: Bool, byPlace: Bool = false) -> some View {
+    PlanPhaseLabel(
+      context: context, phase: phase, description: meta, next: next, byPlace: byPlace)
   }
 
   private var meta: Text? {
@@ -241,9 +248,11 @@ struct PlanPhaseLabel: View {
   let phase: PlanPhase
   var description: Text?
   var next = false
+  /// "Phase 2", for a phase named like one of the chapters under it.
+  var byPlace = false
 
   var body: some View {
-    let title = Text(phase.title)
+    let title = Text(byPlace ? phase.placeName : phase.title)
       .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
@@ -290,6 +299,7 @@ struct PlanChapterRow: View {
       PlanRouteLink(route: route(chapterId)) {
         content(isMuted: false)
       }
+      .currentRow(chapter.state == .current)
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
@@ -522,10 +532,21 @@ struct PlanSyllabusSection: View {
     PageSection {
       SharedExamsNote(exams: syllabus.sharedExams)
 
-      ForEach(syllabus.subjects) { subject in
-        NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
-          SyllabusSubjectRow(
-            subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+      // Main's groups: the notice's in its order, then what the plan adds outside it.
+      ForEach(syllabus.subjectGroups) { group in
+        if group.extra {
+          SectionLabel(Text("Also in your plan", tableName: "Plan"))
+            .listRowSeparator(.hidden)
+        } else if let name = group.name {
+          SectionLabel(Text(name))
+            .listRowSeparator(.hidden)
+        }
+
+        ForEach(group.subjects) { subject in
+          NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
+            SyllabusSubjectRow(
+              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+          }
         }
       }
     } header: {
@@ -548,17 +569,39 @@ struct PlanSyllabusSection: View {
       }
     } footer: {
       SectionFooter {
-        if isExam {
-          Text(
-            "\(syllabus.subjects.count) subjects", tableName: "Plan",
-            comment: "How many subjects the exam has")
-        } else {
-          Text(
-            "\(syllabus.subjects.count) modules", tableName: "Plan",
-            comment: "How many modules the plan has")
-        }
+        count
       }
     }
+  }
+
+  /// Main's `useSectionCount`: the notice's own subjects, as the reveal counts them, with its topics;
+  /// the learner's material counts its topics.
+  @ViewBuilder private var count: some View {
+    let subjects = syllabus.subjects.filter { $0.source == "notice" }.count
+
+    if syllabus.fromMaterial {
+      Text(
+        "\(syllabus.topicCount > 0 ? syllabus.topicCount : subjects) topics from your material",
+        tableName: "Plan",
+        comment: "How many topics a plan built from the learner's own material holds")
+    } else if syllabus.kind == "notice" && syllabus.topicCount > 0 {
+      FactSegments([
+        subjectsText(subjects),
+        String(
+          localized: "\(syllabus.topicCount) topics", table: "Plan",
+          comment: "How many topics a subject has"),
+      ])
+    } else if goalKind == .exam {
+      Text(verbatim: subjectsText(syllabus.kind == "notice" ? subjects : syllabus.subjects.count))
+    } else {
+      Text(
+        "\(syllabus.subjects.count) modules", tableName: "Plan",
+        comment: "How many modules the plan has")
+    }
+  }
+
+  private func subjectsText(_ count: Int) -> String {
+    String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
   }
 }
 
@@ -657,12 +700,12 @@ struct SyllabusSubjectRow: View {
     } words: {
       VStack(alignment: .leading, spacing: 6) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(subject.name)
+          Text(subject.shortName)
             .typeStyle(.rowTitle)
             .foregroundStyle(
               subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
             )
-            .layoutPart(.label, text: Text(subject.name))
+            .layoutPart(.label, text: Text(subject.shortName))
 
           AlsoInExams(exams: sharedExams)
         }
@@ -691,17 +734,18 @@ struct SyllabusSubjectRow: View {
   }
 }
 
-/// A topic whose lessons aren't ready: how many it has and when it starts, else "Not ready yet".
+/// Main's `useFarTopicLine`: a topic whose lessons aren't ready, how many it has and when it starts
+/// (its day this month, else its month), else "Not ready yet".
 func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
   guard lessons > 0, let start else {
     return Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
   }
 
-  if PlanDate.days(from: today, to: start) > 31 {
+  if start.prefix(7) != today.prefix(7) {
     return Text(
-      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today))",
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today, wide: true))",
       tableName: "Plan",
-      comment: "A topic not ready yet: its lessons and the month they start, like 'Jan'")
+      comment: "A topic not ready yet: its lessons and the month they start, like 'January'")
   }
 
   return Text(

@@ -457,24 +457,11 @@ internal fun PlanContent(
                         item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
                         if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                     }
-                    if (focusTest != null || completedLessonsRow || mindMapsRow) {
-                        item(key = "places", contentType = "places") {
-                            Column {
-                                focusTest?.invoke()
-                                if (completedLessonsRow) {
-                                    PlaceRow(
-                                        R.drawable.ic_history,
-                                        R.string.navigation_completed_lessons,
-                                        links::completedLessons,
-                                    )
-                                }
-                                if (mindMapsRow) PlaceRow(R.drawable.ic_lan, R.string.plan_mind_maps, links::mindMaps)
-                            }
-                        }
-                    }
                     if (structure != null) {
-                        item(key = "structure", contentType = "structure") {
-                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin)) {
+                        // Main's order: above the subjects, not among them, since neither is a subject with a preparation.
+                        item(key = "places", contentType = "places") {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                focusTest?.invoke()
                                 // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
                                 if (!asideBeside) {
                                     PlanChoiceLines(
@@ -484,13 +471,17 @@ internal fun PlanContent(
                                 }
                             }
                         }
+                        item(key = "structure", contentType = "structure") {
+                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin))
+                        }
                     } else {
+                        focusTest?.let { row -> item(key = "places", contentType = "places") { row() } }
                         item(key = "path", contentType = "path") {
                             PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
                         }
                     }
-                    if (!asideBeside) {
-                        item(key = "more", contentType = "more") { MoreSection(links) }
+                    item(key = "more", contentType = "more") {
+                        MoreSection(links, completedLessons = completedLessonsRow, mindMaps = mindMapsRow, exam = !asideBeside)
                     }
                     barNoteInPage(noteRoom)
                 }
@@ -542,21 +533,6 @@ private fun PathSheet(
             brief = true,
         )
     }
-}
-
-/** A place the drawer lists on wide windows: Completed lessons, then Mind maps. */
-@Composable
-private fun PlaceRow(
-    icon: Int,
-    title: Int,
-    onClick: () -> Unit,
-) {
-    ListRow(
-        headline = { Text(stringResource(title)) },
-        modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = onClick,
-        leading = { MarkIcon(icon) },
-    )
 }
 
 @Composable

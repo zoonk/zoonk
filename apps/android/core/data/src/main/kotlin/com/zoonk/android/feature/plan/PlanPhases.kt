@@ -96,7 +96,9 @@ fun Plan.estimateNamesMonth(end: LocalDate): Boolean = ChronoUnit.DAYS.between(w
 /**
  * Main's `getPhaseEnd`: the one date a phase is named by, wherever it shows: when it ends. A learning phase ends
  * when its lessons and challenge are done, so its end is an estimate while it's ahead, and while it's current with
- * its challenge (which has no booked day) still to come. A phase behind the learner has none: its check says it.
+ * its challenge (which has no booked day) still to come. A phase that ends on its challenge's day is an estimate too,
+ * and so is every phase of a plan whose own date is one, since its phases are laid out back from it. A phase behind
+ * the learner has none: its check says it.
  */
 fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
     val short = phase.short
@@ -113,7 +115,11 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
         }
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
     val ahead = phase.state == PlanPhase.State.UPCOMING
-    val estimate = learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
+    val endsOnChallenge = lastDay != phase.end
+    val estimate =
+        endsOnChallenge ||
+            schedule.targetDateEstimated ||
+            (learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING))
     return PlanEnd(lastDay, estimate, month = estimate && ahead && estimateNamesMonth(lastDay))
 }
 

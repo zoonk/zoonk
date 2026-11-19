@@ -27,10 +27,15 @@ extension PlanPhase {
         localized: "After the exam", table: "Plan",
         comment: "Name of the phase that goes on after the exam")
     case .learn:
-      return String(
-        localized: "Phase \(index + 1)", table: "Plan",
-        comment: "Name of an unnamed phase by its number")
+      return placeName
     }
+  }
+
+  /// The phase by its place in the plan, "Phase 2".
+  var placeName: String {
+    String(
+      localized: "Phase \(index + 1)", table: "Plan",
+      comment: "Name of an unnamed phase by its number")
   }
 
   var weight: Double {
@@ -137,8 +142,8 @@ private struct RoadmapCompact: View {
         parts: phases.map { phase in
           MeterParts.Part(
             weight: phase.weight,
-            fill: phase.state == .done
-              ? .color(.success) : phase.state == .current ? .current : .track)
+            fill: phase.state == .current
+              ? .currentPhase(phase.lessonShare) : .share(phase.lessonShare))
         })
 
       if hasLine {
@@ -242,10 +247,10 @@ struct PhaseEnd: Equatable {
 }
 
 extension GoalPlan {
-  /// Nothing for a phase behind the learner, and nothing on the last one where the finish row or
-  /// the goal's date already says the end. A learning phase's end is an estimate while it's ahead,
-  /// and while it's current with its challenge, which has no booked day, still to come; an exam's
-  /// phases end on booked days.
+  /// Main's `getPhaseEnd`: nothing for a phase behind the learner. A learning phase's end is an
+  /// estimate while it's ahead, and while it's current with its challenge, which has no booked
+  /// day, still to come. A phase that ends on its challenge's day is an estimate too, and so is
+  /// every phase of a plan whose own date is one, since its phases are laid out back from it.
   func phaseEnd(_ phase: PlanPhase) -> PhaseEnd? {
     guard phase.state == .current || phase.state == .upcoming else {
       return nil
@@ -264,7 +269,10 @@ extension GoalPlan {
 
     let learns = phase.kind == .learn || phase.kind == .afterExam
     let ahead = phase.state == .upcoming
-    let isEstimate = learns && (ahead || phase.checkpoint?.state == .upcoming)
+    let endsOnChallenge = lastDay != phase.endDate
+    let isEstimate =
+      endsOnChallenge || schedule.targetDateEstimated
+      || (learns && (ahead || phase.checkpoint?.state == .upcoming))
 
     return PhaseEnd(
       lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
@@ -317,11 +325,16 @@ extension PlanPhase {
 
 struct PlanNumbersSection: View {
   @Environment(PlanStore.self) private var store
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let context: PlanContext
   let syllabus: GoalSyllabus?
+  var timeShownBeside = false
 
-  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+  /// Main's `@2xl` container: two tiles side by side only from 42rem, where each value fits one line
+  /// in every language.
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 332.0
 
   var body: some View {
     let standing = standingNumber
@@ -329,19 +342,38 @@ struct PlanNumbersSection: View {
 
     if standing != nil || schedule != nil {
       PageSection {
-        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
-          if let standing {
-            tile(standing) { context.show(.standing) }
-          }
-
-          if let schedule {
-            tile(schedule) { context.show(.schedule) }
+        Group {
+          // Main's aside draws the numbers as stats, one under the other with no box; the page's
+          // column draws them as tiles.
+          if timeShownBeside {
+            VStack(alignment: .leading, spacing: 24) {
+              numbers(standing: standing, schedule: schedule)
+            }
+            .environment(\.statTileLone, true)
+          } else {
+            StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+              numbers(standing: standing, schedule: schedule)
+            }
           }
         }
         .buttonStyle(.plain)
+        .environment(\.statTileTitled, true)
       } header: {
         EmptyView()
       }
+      // Main's numbers and the suggestion under them share one block, a row's room apart.
+      .listSectionSpacing(0)
+    }
+  }
+
+  @ViewBuilder
+  private func numbers(standing: PlanNumber?, schedule: PlanNumber?) -> some View {
+    if let standing {
+      tile(standing) { context.show(.standing) }
+    }
+
+    if let schedule {
+      tile(schedule) { context.show(.schedule) }
     }
   }
 
@@ -350,7 +382,7 @@ struct PlanNumbersSection: View {
     Button(action: open) {
       StatTile(
         label: Text(number.label),
-        value: Text(number.value),
+        value: number.value,
         icon: { EmptyView() },
         detail: number.detail.map {
           Text($0).foregroundStyle(
@@ -375,7 +407,7 @@ struct PlanNumbersSection: View {
       return PlanNumber(
         label: String(
           localized: "Preparation", table: "Plan", comment: "Label of the exam preparation number"),
-        value: preparation.value.formatted(.percent.precision(.fractionLength(0))),
+        value: Text(verbatim: preparation.value.formatted(.percent.precision(.fractionLength(0)))),
         detail: points == 0
           ? nil
           : points > 0
@@ -393,7 +425,9 @@ struct PlanNumbersSection: View {
         return nil
       }
 
-      return PlanNumber(label: language.levelTitle, value: language.levelText)
+      return PlanNumber(
+        label: language.levelTitle,
+        value: language.levelValue(dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight))
     }
 
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {
@@ -405,13 +439,14 @@ struct PlanNumbersSection: View {
     return PlanNumber(
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
-      value: goalProgressPercent(share),
+      value: Text(verbatim: goalProgressPercent(share)),
       detail: lessonsProgressLine(studied: lessons.done - lessons.known, known: lessons.known),
       share: share)
   }
 
-  /// The plan's state, and the lessons left once its date passed. The time a day has its own row
-  /// on the Plan, so the tile doesn't say it again.
+  /// Main's `useScheduleNumber`: the plan's state, then the time a day while it's under way, or the
+  /// lessons left once its date passed. Beside the plan's settings, whose "Daily study time" row says
+  /// it, the time isn't said again.
   private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
@@ -419,23 +454,34 @@ struct PlanNumbersSection: View {
 
     let paused = planIsResting(status, isPaused: context.isPaused)
     let detail: String? =
-      status.kind == .pastDate
-      ? String(
-        localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
-        comment: "Lessons left in a plan whose date passed")
-      : nil
+      switch status.kind {
+      case .pastDate:
+        String(
+          localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
+          comment: "Lessons left in a plan whose date passed")
+      case .ahead, .behind, .onTrack:
+        timeShownBeside
+          ? nil
+          : String(
+            localized:
+              "About \(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
+            table: "Plan")
+      default:
+        nil
+      }
 
     return PlanNumber(
       label: String(
         localized: "Schedule", table: "Plan",
         comment: "Label of the tile with the plan's state, such as \"Up to date\""),
-      value: planStatusText(status, isPaused: context.isPaused), detail: paused ? nil : detail)
+      value: Text(verbatim: planStatusText(status, isPaused: context.isPaused)),
+      detail: paused ? nil : detail)
   }
 }
 
 private struct PlanNumber {
   var label: String
-  var value: String
+  var value: Text
   var detail: String?
   var detailIsGain = false
   /// From 0 to 1.

@@ -937,6 +937,8 @@ private struct WeekDayMark: View {
 struct TodayProgressSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
 
@@ -947,7 +949,9 @@ struct TodayProgressSection: View {
       card(
         // A space holds the title's line until the language's level is read.
         title: Text(standing.value?.levelTitle ?? " "),
-        value: standing.value?.levelText, detail: nil
+        value: standing.value?.levelValue(
+          dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+        detail: nil
       ) {
         EmptyView()
       }
@@ -957,7 +961,7 @@ struct TodayProgressSection: View {
         card(
           title: Text(
             "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
-          value: progress.value.formatted(.percent.precision(.fractionLength(0))),
+          value: Text(verbatim: progress.value.formatted(.percent.precision(.fractionLength(0)))),
           detail: weekGain(progress.weekGain ?? 0)
         ) {
           EmptyView()
@@ -966,7 +970,7 @@ struct TodayProgressSection: View {
         card(
           title: Text(
             "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
-          value: goalProgressPercent(progress.value),
+          value: Text(verbatim: goalProgressPercent(progress.value)),
           detail: nil,
           spoken: Text(
             "The share of your plan's lessons you've studied or already knew.", tableName: "Plan",
@@ -981,7 +985,7 @@ struct TodayProgressSection: View {
   }
 
   private func card(
-    title: Text, value: String?, detail: Text?, spoken: Text? = nil,
+    title: Text, value: Text?, detail: Text?, spoken: Text? = nil,
     @ViewBuilder content: () -> some View
   ) -> some View {
     PageSection {
@@ -991,7 +995,7 @@ struct TodayProgressSection: View {
         VStack(alignment: .leading, spacing: 10) {
           VStack(alignment: .leading, spacing: 2) {
             if let value {
-              Text(value)
+              value
                 .typeStyle(.readout)
             }
 

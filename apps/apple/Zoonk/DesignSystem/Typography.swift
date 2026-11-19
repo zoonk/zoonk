@@ -94,6 +94,8 @@ extension TypeStyle {
   /// A block's one big number, its unit beside it in `.body` and the secondary color.
   static let readout = TypeStyle(
     size: 24, relativeTo: .title2, weight: .semibold, tracking: -0.04, isTabular: true)
+  /// Main's `LevelValue`: the level aimed for, after the one reached in a `readout`.
+  static let readoutTarget = TypeStyle(size: 16, relativeTo: .callout, weight: .semibold)
   /// The number a moment or a result leads with.
   static let momentReadout = TypeStyle(
     size: 40, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, isTabular: true)

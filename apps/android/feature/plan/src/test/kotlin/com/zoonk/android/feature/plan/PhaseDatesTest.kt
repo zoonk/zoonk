@@ -70,6 +70,18 @@ class PhaseDatesTest {
     }
 
     @Test
+    fun marksAnExamPhaseThatEndsOnItsChallengesDayAsAnEstimate() {
+        val shaped = planOf(phase(0, "current", "2026-11-20", kind = "foundations", checkpoint = challenge()))
+        assertEquals(PlanEnd(day("2026-11-22"), estimate = true, month = false), shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
+    fun marksEveryPhaseOfAPlanWhoseDateIsAnEstimateAsOne() {
+        val shaped = planOf(phase(0, "current", "2026-11-20", kind = "foundations"), target = "2027-05-01", targetEstimated = true)
+        assertEquals(PlanEnd(day("2026-11-20"), estimate = true, month = false), shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
     fun keepsAChallengeOnItsPhasesLastDayAtThatDay() {
         val shaped = planOf(phase(0, "current", "2026-11-20", checkpoint = challenge("2026-11-20")))
         assertEquals(day("2026-11-20"), (shaped.phaseEnd(shaped.phases[0]) as PlanEnd).date)

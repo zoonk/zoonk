@@ -254,11 +254,11 @@
   "plan_exam_date_label": "caea26dfa6fa36c007b3812992075aca6905b815cead875eedefff25c646dc17",
   "plan_exam_day": "acf946054bb780e369a63070aa177cdf27c0a15450b0b5ca98e28296cd9c63c7",
   "plan_exam_over_ask": "69c5b28bacc4ba827e6e287acfcbba7d9337cd295be7f24155ca28b5dd513a3c",
-  "plan_far_count_from": "0417dfa25c1b41740e8285f1efb04325cb0e86aa31d7ff24c8989e70c46e6d53",
-  "plan_far_count_from_month": "84b50220152e4acfab6425db56f8d931f0d1b1c243820195991e17cb87327d29",
+  "plan_far_count_from": "1788cc0ea13b442d0392ad7e722a8806d95c20aee8c9a90d9355d3caf9a4a538",
+  "plan_far_count_from_month": "3936fd07f60a27cc2a4cc6d7e528dc9ea5b2859b9b8ed9d15e33ca86fa829f63",
   "plan_far_explain": "2ca2e6cdcab9392ca0740ac2dee7c891fa2bbeba43211e470a7dc5a25d5251f7",
-  "plan_far_from": "cf5337487d0a260a7c00a1715a54b378efef0e72820b82e8bacfaf96263bb9b6",
-  "plan_far_from_month": "a79412bae99efa7849ee48683d0ecada027ef0db4849b35fb49274a97d048f49",
+  "plan_far_from": "995bdd16e769fa908fabaee6cd2661ef235458c9c561d2bfdc8a861063cd2405",
+  "plan_far_from_month": "0daa3da399e282a6dd8705f7005e56503d5e5d47bd98c5d7a595c1d78904791a",
   "plan_far_lessons": "3a0850df7b73a26118e051fc1531f03a16ebf35664f64f37ec9da9063569a6df",
   "plan_far_lessons_about": "3dc54f6fac7dd843169865d25a83078980b1363bff74cfc71ec4ca3b342c56cc",
   "plan_far_nothing_left": "f0f365039a4f5cf57c8342b6a889ecd595840c6a73fef70f0e9fc3dd74537f5e",
@@ -417,6 +417,7 @@
   "plan_skills_you_know": "25d280be6eb31e4eb9f197572375065f1f0a51d1147e400ff0b339eaa1f4d0af",
   "plan_skipped": "d6c4b3a5c7deb80a3876fe1e5262b3e108fa87aded474f0293a0ddd5b027d125",
   "plan_skipped_known": "7928674c9ad62b78afa253934c7d4b50373df7cb3c69d804da58a6a0fdceb36b",
+  "plan_sources": "6864e8a17836d54085857921166ddb2adceb0593282a7693f43e9e9150c26491",
   "plan_stays_as_it_is": "53503b25cc1394f04e130fd175f12ff255a7c32be4db61d98b58e0faba91b619",
   "plan_still_first_challenge": "56191bf91178d52a9005e21ad9f39826c9e6b4eff09a5beb69d84ba33af31910",
   "plan_still_first_mock": "191be5b6a198ffd87b80b30e6b2315625f567948cdcd1e8c72cd53130e885c28",
@@ -436,7 +437,7 @@
   "plan_tests_taken": "16e5da5d45f47704ea62fbb2eab951300c26ef7d760e7bcfc37f22239d8245a5",
   "plan_this_week": "6b3248b5aaf88f25cda7f1e29cd13c4c7e5c895ec133f81d0d92e69378a4ce84",
   "plan_thursdays": "ca20816cd4241142996da02cc24d568a5b509726b8be74ffc5131d542673e8ed",
-  "plan_time_a_day": "6f9fbf1e46286c5c9735b584dbaf7ec068d8f0e918c65a650a24e47279bdc85e",
+  "plan_time_a_day": "87837329e62178598cf4b93a6902e3319143234cefbeccfd376949bdd4f924a4",
   "plan_time_ask_failed": "225e46f7b9a9954f66572b069854ccb62f7e9c97f26801f2d2e472ed1554b711",
   "plan_time_asking": "a58135df80dbb49b0faf43579a8c38b13c39a73fe17611236ccfb2a397adf396",
   "plan_time_covers_everything": "c51fd95211e08efab13f821cee24d1e236c8058b4d8fcc105b34c7b0860320f7",
@@ -446,8 +447,8 @@
   "plan_time_covers_exam_all_month": "81f74bb77e2ca7eabf060d08d426d2863f85131f40b81312ab3f857bb1678c8e",
   "plan_time_covers_goal_all": "f62501511bfa3e523d0787309c5052552c157dacf75a0fdd0ff62ac97290b208",
   "plan_time_covers_goal_all_month": "a2124c6f75d96b3828927656a6aa6873f74f2a54963ffa855fc42955ccb90b6b",
-  "plan_time_covers_share_exam": "a4e4a5130b50782bedd7989356689a3c23b486ede532ed15cbb660941a6b7999",
-  "plan_time_covers_share_goal": "921dc94d20739c459f87629b65b5a62e8987def0c5b53f24934b8c4de2950fa6",
+  "plan_time_covers_share_exam": "6ae5b57db1980f9cbf8021cd61efc4c61ee3b90ddec35772bdaf16a572041fdb",
+  "plan_time_covers_share_goal": "b21b63c1dcc685a01658bbeee92f63690325a357afa1fe3b3d5603605638ff08",
   "plan_time_find_failed": "a84e025675eded5caf37cc9fdaee40a6cf551cff382a9ef459d368d36ec6d8de",
   "plan_time_finish_failed": "ac3048ae09df782f32ee2e00bc0398542b42efbb33c9953459ec3efff8dadd30",
   "plan_time_finish_unknown": "3346a675149d05658086f591b76bd0119d435b05981842fb1bbb4e123724ee0f",
@@ -639,19 +640,16 @@
     <string name="plan_skipped_known">건너뜀 · 이미 알던 내용</string>
     <string name="plan_going_deeper">앞서 배운 주제를 더 깊이 배워요</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_from">%1$s부터</string>
-    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
-    <string name="plan_far_from_month">%1$s부터</string>
+    <string name="plan_far_from">%1$s 시작</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_from_month">%1$s에 시작</string>
     <plurals name="plan_far_lessons">
         <item quantity="other">레슨 %d개</item>
     </plurals>
-    <plurals name="plan_far_lessons_about">
-        <item quantity="other">레슨 약 %d개</item>
-    </plurals>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · %2$s부터</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · %2$s부터</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · %2$s 시작</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_count_from_month">%1$s · %2$s에 시작</string>
     <string name="plan_far_explain">이 레슨을 준비하는 데 약 30초가 걸려요.</string>
     <string name="plan_far_see_lessons">레슨 준비하기</string>
     <string name="plan_far_writing">레슨을 준비하고 있어요…</string>
@@ -679,6 +677,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">날짜 미정</string>
     <string name="plan_more">많음</string>
+    <string name="plan_sources">출처</string>
     <string name="plan_mind_maps">마인드맵</string>
     <string name="plan_your_plan">내 계획</string>
     <string name="plan_exam_date">시험일</string>
@@ -714,7 +713,7 @@
     <string name="plan_pace">일정</string>
     <string name="plan_your_pace">내 일정</string>
     <string name="plan_pace_value_paused">일시 중지됨</string>
-    <string name="plan_time_a_day">하루 %1$s</string>
+    <string name="plan_time_a_day">하루 약 %1$s</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">다시 시작할 때까지는 학습 일정이 잡히지 않아요.</string>
     <plurals name="plan_lessons_left">
@@ -1097,9 +1096,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_exam">하루 %1$s이면 시험에 나오는 주제 중 약 %2$s를 공부할 수 있어요</string>
+    <string name="plan_time_covers_share_exam">하루 %1$s씩 공부하면 시험 주제의 약 %2$s를 학습할 수 있어요</string>
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_goal">하루 %1$s이면 목표로 한 내용의 약 %2$s를 공부할 수 있어요</string>
+    <string name="plan_time_covers_share_goal">하루 %1$s씩 공부하면 목표 학습량의 약 %2$s를 채울 수 있어요</string>
     <string name="plan_covered_not_enough">목표에 필요한 내용을 모두 공부하려면 하루 %1$s보다 더 많은 시간이 필요해요.</string>
     <string name="plan_finding">필요한 시간을 찾고 있어요…</string>
     <string name="plan_try_again">다시 시도</string>

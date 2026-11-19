@@ -144,7 +144,7 @@ fun chapterLine(chapter: PlanPhaseChaptersInner): String? =
         else -> null
     }
 
-/** Main's `useFarTopicLine`: about how many lessons, and from when (the day this month, else the month). */
+/** Main's `useFarTopicLine`: how many lessons, and when they start (the day this month, else the month). */
 @Composable
 fun farTopicLine(
     lessons: Int?,
@@ -162,12 +162,7 @@ fun farTopicLine(
             }
         }
     if (lessons == null) return start?.let { stringResource(if (month) R.string.plan_far_from_month else R.string.plan_far_from, it) }
-    val count =
-        if (lessons == 1) {
-            pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons)
-        } else {
-            pluralStringResource(R.plurals.plan_far_lessons_about, lessons, lessons)
-        }
+    val count = pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons)
     return start?.let { stringResource(if (month) R.string.plan_far_count_from_month else R.string.plan_far_count_from, count, it) }
         ?: count
 }

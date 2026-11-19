@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
@@ -43,7 +45,6 @@ fun PlanSyllabusSection(
     syllabus: Syllabus,
     onOpenSubject: (String) -> Unit,
     modifier: Modifier = Modifier,
-    note: @Composable () -> Unit = {},
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
     val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
@@ -68,7 +69,6 @@ fun PlanSyllabusSection(
                     )
                 }
                 SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
-                Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
                 SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.padding(horizontal = PAGE_PADDING)) {
                     CoverageLegend()
@@ -90,8 +90,16 @@ fun PlanSyllabusSection(
                 }
             }
 
-            QuestionsSourceNote(syllabus, sectionCount(syllabus), Modifier.padding(top = 12.dp))
-            CourseWeightsNote(syllabus.subjects, syllabus.courseWeights, Modifier.padding(top = 8.dp))
+            SectionNote(annotate(sectionCount(syllabus)), Modifier.padding(top = 12.dp))
+            // Main's quiet "Sources": where the question counts and the course's weights come from, for who wants to check.
+            if (syllabus.questionsSource != null || syllabus.courseWeights?.source != null) {
+                QuietDisclosure(stringResource(R.string.plan_sources), Modifier.padding(horizontal = PAGE_PADDING)) {
+                    Column(Modifier.bleed(PAGE_PADDING).padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        QuestionsSourceNote(syllabus)
+                        CourseWeightsNote(syllabus.subjects, syllabus.courseWeights)
+                    }
+                }
+            }
         }
     }
 }
@@ -115,7 +123,7 @@ private fun SubjectRow(
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
         Column(nameModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                text = subject.name,
+                text = subject.shortName,
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             )
             if (alsoIn != null) {
@@ -204,14 +212,9 @@ private fun sectionCount(syllabus: Syllabus): String {
 @Composable
 private fun QuestionsSourceNote(
     syllabus: Syllabus,
-    lead: String,
     modifier: Modifier = Modifier,
 ) {
-    val source = syllabus.questionsSource
-    if (source == null) {
-        SectionNote(annotate(lead), modifier)
-        return
-    }
+    val source = syllabus.questionsSource ?: return
     val publisher = sourceHost(source.url)
     val edition = source.edition
     val sentence =
@@ -221,7 +224,7 @@ private fun QuestionsSourceNote(
             stringResource(R.string.goalcontent_questions_source_latest, publisher)
         }
 
-    SectionNote(annotate(factsLine(lead, sentence), publisher to LinkTarget(source.url)), modifier)
+    SectionNote(annotate(sentence, publisher to LinkTarget(source.url)), modifier)
 }
 
 /** How the learner's course weighs the exam's parts, which the plan's time follows. */
