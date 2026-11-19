@@ -218,7 +218,7 @@ private fun AreaChoice(
         modifier = Modifier.fillMaxWidth().semantics { role = Role.Checkbox },
         shape = MaterialTheme.shapes.medium,
         color = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent,
-        border = if (checked) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
+        border = BorderStroke(1.dp, colors.outline),
     ) {
         Row(
             modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),

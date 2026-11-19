@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -316,11 +318,10 @@ internal fun QuestionCell(
     // Flagged is read in the key's words, as the web's cell is.
     val name = if (flagged) stringResource(R.string.mock_cell_marked_for_review, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
-    // The current one is ringed the way a pick is; a flagged one keeps its amber ring.
+    // The current one has a bar under its number, the web's; a flagged one keeps its amber ring.
     val border =
         when {
             flagged -> MaterialTheme.zoonk.warning
-            current -> MaterialTheme.colorScheme.onSurface
             answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
         }
@@ -346,12 +347,22 @@ internal fun QuestionCell(
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
                 .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
-                .border(if (current || flagged) 2.dp else 1.dp, border, shape)
+                .border(if (flagged) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
             CellLabel(question, answered || current, flagged)
             if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
+            if (current) {
+                Box(
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 12.dp, end = 12.dp, bottom = 6.dp)
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(MaterialTheme.colorScheme.onSurface, CircleShape),
+                )
+            }
         }
     }
 }
