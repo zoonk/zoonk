@@ -278,7 +278,7 @@ struct FocusTestCheckpoint: View {
             get: { questions != .paused },
             set: { setQuestions($0 ? .on : .paused, from: questions) }),
           title: Text(
-            "Ask a few more as I study", tableName: "FocusTest",
+            "Ask a few more questions as I study", tableName: "FocusTest",
             comment:
               "Switch on the Focus test's result: \"a few more\" are test questions, asked while the learner studies their lessons"
           ),

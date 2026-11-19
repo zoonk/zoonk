@@ -569,7 +569,7 @@ enum UnderstoodRows {
   private static func noticeDayText(_ isoDate: String) -> String {
     let date = PlanDate.format(isoDate, .sentence, today: PlanDate.today())
     return String(
-      localized: "The official exam date is \(date). Use it as your exam date?", table: "Onboarding"
+      localized: "The official exam date is \(date). Use it?", table: "Onboarding"
     )
   }
 

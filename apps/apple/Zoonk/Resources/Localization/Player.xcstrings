@@ -3604,7 +3604,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo o que você aprendeu vai com você."
+            "value" : "Tudo o que você aprendeu continua com você."
           }
         },
         "tr" : {
@@ -4193,7 +4193,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O preparo leva alguns minutos."
+            "value" : "Isso leva alguns minutos."
           }
         },
         "tr" : {
@@ -10278,7 +10278,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa aula ainda não está pronta"
+            "value" : "Esta aula ainda não está pronta"
           }
         },
         "tr" : {
@@ -11456,7 +11456,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu preparar essa aula"
+            "value" : "A gente não conseguiu preparar esta aula"
           }
         },
         "tr" : {

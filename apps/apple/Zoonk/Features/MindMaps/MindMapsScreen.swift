@@ -247,7 +247,7 @@ private struct MindMapCreateSection: View {
     Section {
       if offer.stop == nil, showsLessonsNote {
         Text(
-          "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
+          "Creating maps counts toward your free lessons.", tableName: "MindMaps",
           comment:
             "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
         )

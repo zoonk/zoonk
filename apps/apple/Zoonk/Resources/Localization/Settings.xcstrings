@@ -2835,67 +2835,67 @@
         }
       }
     },
-    "Personal examples, plans that fit your week and calls with %@ that remember your news" : {
+    "Personal examples, plans that fit your week and calls with %@ that remember what you share" : {
       "comment" : "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %@, die an deine Neuigkeiten anknüpfen"
+            "value" : "Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %@, bei denen alles Wichtige im Gedächtnis bleibt"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personal examples, plans that fit your week and calls with %@ that remember your news"
+            "value" : "Personal examples, plans that fit your week and calls with %@ that remember what you share"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejemplos de tu vida, planes que se adaptan a tu semana y llamadas con %@ que recuerdan lo que le cuentas"
+            "value" : "Ejemplos personales, planes que se adaptan a tu semana y conversaciones con %@ que recuerdan lo que compartes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où %@ se souvient de ce que tu as raconté"
+            "value" : "Exemples personnalisés, plans adaptés à ta semaine et conversations avec %@ qui gardent en mémoire ce que tu racontes"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esempi su misura per te, piani adatti alla tua settimana e conversazioni con %@ che tengono conto delle tue novità"
+            "value" : "Esempi personali, piani adatti alla tua settimana e conversazioni con %@ che ricordano ciò che racconti"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "身近な例、1週間の予定に合った学習計画、近況を踏まえた%@との会話"
+            "value" : "共有したことを覚えている%@との会話や、週に合わせた学習計画、個人に合わせた例"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 %@와(과)의 대화"
+            "value" : "개인 맞춤 예시, 한 주에 맞는 계획, 공유한 내용을 기억하는 %@와의 대화"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których %@ pamięta, co u ciebie nowego"
+            "value" : "Osobiste przykłady, plany dopasowane do twojego tygodnia i rozmowy, w których %@ pamięta to, co opowiadasz"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exemplos personalizados, planos que cabem na sua semana e conversas com %@ que lembram das suas novidades"
+            "value" : "Exemplos personalizados, planos que cabem na sua semana e conversas com %@ que lembram do que você conta"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan %@ ile sohbetler"
+            "value" : "Paylaştıklarını hatırlayan %@ ile sohbetler, kişisel örnekler ve haftana uyan planlar"
           }
         }
       }

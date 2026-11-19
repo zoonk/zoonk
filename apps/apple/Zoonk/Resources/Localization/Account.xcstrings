@@ -1356,6 +1356,124 @@
         }
       }
     },
+    "Deleting your account doesn't cancel Plus from Google Play. Cancel it there." : {
+      "comment" : "Shown only to subscribers, in the box that deletes their account.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dein Konto löschst, wird dein Plus-Abo bei Google Play nicht gekündigt. Kündige es dort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar tu cuenta no cancela Plus de Google Play. Cancélalo ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suppression de ton compte n’annule pas ton abonnement Plus sur Google Play. Annule-le là-bas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminare il tuo account non disdice Plus da Google Play. Disdici l’abbonamento lì."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除しても、Google PlayのPlusは解約されません。Google Playで解約してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제해도 Google Play의 Plus 구독은 해지되지 않아요. Google Play에서 해지해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięcie konta nie anuluje subskrypcji Plus w Google Play. Anuluj ją w Google Play."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir sua conta não cancela o Plus do Google Play. Cancele por lá."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silmek Google Play’deki Plus aboneliğini iptal etmez. Oradan iptal et."
+          }
+        }
+      }
+    },
+    "Deleting your account doesn't cancel Plus from the App Store. Cancel it there." : {
+      "comment" : "Shown only to subscribers, in the box that deletes their account.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dein Konto löschst, wird dein Plus-Abo im App Store nicht gekündigt. Kündige es dort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar tu cuenta no cancela Plus del App Store. Cancélalo ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suppression de ton compte n’annule pas ton abonnement Plus sur l’App Store. Annule-le là-bas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminare il tuo account non disdice Plus dall’App Store. Disdici l’abbonamento lì."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除しても、App StoreのPlusは解約されません。App Storeで解約してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제해도 App Store의 Plus 구독은 해지되지 않아요. App Store에서 해지해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięcie konta nie anuluje subskrypcji Plus w App Store. Anuluj ją w App Store."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir sua conta não cancela o Plus da App Store. Cancele por lá."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silmek App Store’daki Plus aboneliğini iptal etmez. Oradan iptal et."
+          }
+        }
+      }
+    },
     "Deleting your account ends Plus right away." : {
       "comment" : "Shown only to subscribers, in the box that deletes their account.",
       "localizations" : {
@@ -1767,7 +1885,7 @@
         }
       }
     },
-    "For your safety, log in again, then delete your account." : {
+    "For your security, log in again, then delete your account." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2476,124 +2594,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus"
-          }
-        }
-      }
-    },
-    "Plus from Google Play keeps charging until you cancel it there." : {
-      "comment" : "Shown only to subscribers, in the box that deletes their account.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für Plus von Google Play zahlst du weiter, bis du es dort kündigst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play seguirá cobrándote por Plus hasta que lo canceles ahí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement sur Google Play."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuerai a pagare Plus finché non lo disdici su Google Play."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Playで登録したPlusは、Google Playで解約するまで請求が続きます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play에서 구독한 Plus는 Google Play에서 해지할 때까지 요금이 계속 청구돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play będzie pobierać opłaty za Plus, dopóki go tam nie anulujesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Plus do Google Play continua sendo cobrado até você cancelar por lá."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Google Play’den aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
-          }
-        }
-      }
-    },
-    "Plus from the App Store keeps charging until you cancel it there." : {
-      "comment" : "Shown only to subscribers, in the box that deletes their account.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für Plus aus dem App Store zahlst du weiter, bis du es dort kündigst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El App Store seguirá cobrándote por Plus hasta que lo canceles ahí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement dans l’App Store."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuerai a pagare Plus finché non lo disdici sull’App Store."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Storeで登録したPlusは、App Storeで解約するまで請求が続きます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store에서 구독한 Plus는 App Store에서 해지할 때까지 요금이 계속 청구돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store będzie pobierać opłaty za Plus, dopóki go tam nie anulujesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Plus da App Store continua sendo cobrado até você cancelar por lá."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
           }
         }
       }

@@ -75,7 +75,7 @@ struct LevelTestStep: View {
         "Preparing your level test", table: "Onboarding",
         comment: "Title while a language's level test questions are written"),
       description: LocalizedStringResource(
-        "We're writing the questions for the \(Locale.current.languageName(targetLanguage)) test now. It takes a minute or two, and only this once.",
+        "Getting the \(Locale.current.languageName(targetLanguage)) test ready takes a minute or two, and only this once.",
         table: "Onboarding", comment: "Why the level test waits: the language's name"),
       generationID: generationID,
       kind: .levelTestBank,
@@ -93,7 +93,7 @@ struct LevelTestStep: View {
         // The bar holds the way out; what skipping does is said at the end of the wait.
         Section {
           Text(
-            "Your plan starts from the level you gave, and your first sessions fine-tune it.",
+            "Your plan starts from the level you gave, and your first days fine-tune it.",
             tableName: "Onboarding", comment: "What skipping the level test does"
           )
           .typeStyle(.note)

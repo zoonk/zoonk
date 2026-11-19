@@ -3305,7 +3305,7 @@
         }
       }
     },
-    "New mock" : {
+    "New mock exam" : {
       "comment" : "Opens the mock chooser",
       "localizations" : {
         "de" : {
@@ -4952,60 +4952,60 @@
         }
       }
     },
-    "The official exam date is %@. Use it as your exam date?" : {
+    "The official exam date is %@. Use it?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der offizielle Prüfungstermin ist am %@. Diesen Termin für deine Prüfung übernehmen?"
+            "value" : "Der offizielle Prüfungstermin ist der %@. Möchtest du ihn verwenden?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha oficial del examen es %@. ¿Quieres usarla como tu fecha de examen?"
+            "value" : "La fecha oficial del examen es %@. ¿Usarla?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date officielle de l’examen est le %@. Utiliser cette date pour ton examen ?"
+            "value" : "La date officielle de l’examen est le %@. Tu veux l’utiliser ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla come data del tuo esame?"
+            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正式な試験日は%@です。この日を試験日に設定しますか？"
+            "value" : "公式な試験日は%@です。この日付を使いますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "공식 시험일은 %@이에요. 이 날짜를 시험일로 설정할까요?"
+            "value" : "공식 시험일은 %@예요. 이 날짜를 사용할까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oficjalny termin egzaminu to %@. Ustawić go jako termin twojego egzaminu?"
+            "value" : "Oficjalny termin egzaminu to %@. Przyjąć ten termin?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data oficial da prova é %@. Quer usar essa data para sua prova?"
+            "value" : "A data oficial da prova é %@. Quer usar essa data?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resmî sınav tarihi %@. Bu tarihi sınav tarihin olarak kullanalım mı?"
+            "value" : "Resmî sınav tarihi %@. Bu tarihi kullanalım mı?"
           }
         }
       }
@@ -6237,7 +6237,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você perde mais pontos do que ganha nas questões marcadas: deixe essas questões em branco."
+            "value" : "Você perde mais pontos do que ganha nas respostas marcadas: deixe essas questões em branco."
           }
         },
         "tr" : {
@@ -6296,7 +6296,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você ainda ganha pontos nas questões marcadas: continue respondendo essas questões."
+            "value" : "Suas respostas marcadas ainda rendem pontos: continue respondendo essas questões."
           }
         },
         "tr" : {

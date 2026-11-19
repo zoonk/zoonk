@@ -108,7 +108,7 @@ struct CourseOutlineSections: View {
       if chapters.isEmpty {
         Label {
           Text(
-            "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know.",
+            "Once you build your plan, we prepare this course's lessons, starting from what you already know.",
             tableName: "Courses", comment: "A course outline before its chapters are written")
         } icon: {
           Image(systemName: "sparkles")
@@ -259,7 +259,7 @@ private struct UnwrittenLevel: View {
         LevelTitle(level: level, isHere: isHere)
 
         Text(
-          "Ready when you get there.", tableName: "Courses",
+          "Chapters are ready by the time you reach this level.", tableName: "Courses",
           comment:
             "Under the name of a course's level, such as Intermediate, whose chapters aren't ready yet"
         )

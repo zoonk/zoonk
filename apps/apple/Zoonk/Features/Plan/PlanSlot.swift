@@ -506,7 +506,7 @@ struct PlanSuggestionSection: View {
       PlanSlotCard(
         title: Text(tooTightTitle), mark: .symbol("calendar.badge.clock"),
         description: Text(
-          "Add time a day or pick a later date.", tableName: "Plan",
+          "Study longer each day or pick a later date.", tableName: "Plan",
           comment: "Under the Plan's notice when the plan has more lessons than days left")
       ) {
         Button {

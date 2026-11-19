@@ -384,7 +384,7 @@ extension TestOutcome where Lead == EmptyView {
   }
 }
 
-/// No test could be made for the goal, which is fine: the first days find the learner's level.
+/// No test could be made for the goal, which is fine: the first days show what the learner knows.
 /// The short test's and the Focus test's.
 struct PlacementUnavailable: View {
   let isSaving: Bool
@@ -394,11 +394,8 @@ struct PlacementUnavailable: View {
   var body: some View {
     TestOutcome(
       title: Text(
-        "We'll find your level as you study", tableName: "Onboarding",
+        "We'll see what you know in your first few days", tableName: "Onboarding",
         comment: "Title when no test could be made for a goal; nothing is wrong"),
-      description: Text(
-        "There's no test for this goal yet. Your first few days show us what you already know.",
-        tableName: "Onboarding", comment: "Under \"We'll find your level as you study\""),
       isSaving: isSaving, failed: failed, onContinue: onContinue)
   }
 }

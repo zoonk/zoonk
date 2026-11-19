@@ -1185,65 +1185,6 @@
         }
       }
     },
-    "Another goal now needs a subscription" : {
-      "comment" : "A free learner tried to start another goal from the buddy: either they study as many goals at once as their plan allows or they started as many new goals as it allows recently, so it names neither",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für ein weiteres Ziel brauchst du jetzt ein Abo"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ahora necesitas una suscripción para crear otro objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te faut maintenant un abonnement pour commencer un autre objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora serve un abbonamento per iniziare un altro obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "別の目標を始めるにはサブスクリプションへの登録が必要です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 다른 목표를 시작하려면 구독이 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejny cel wymaga teraz subskrypcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para começar outro objetivo agora, é preciso assinar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başka bir hedefe başlamak için artık abonelik gerekiyor"
-          }
-        }
-      }
-    },
     "Apply" : {
       "comment" : "Applies a plan change the buddy proposed",
       "localizations" : {
@@ -5366,6 +5307,65 @@
         }
       }
     },
+    "Starting another goal needs a subscription" : {
+      "comment" : "A free learner tried to start another goal from the buddy: either they study as many goals at once as their plan allows or they started as many new goals as it allows recently, so it names neither",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für ein weiteres Ziel brauchst du ein Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una suscripción para crear otro objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il te faut un abonnement pour commencer un autre objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per iniziare un altro obiettivo serve un abbonamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の目標を始めるにはサブスクリプションが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 목표를 시작하려면 구독이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpoczęcie kolejnego celu wymaga pakietu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para começar outro objetivo, é preciso assinar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni bir hedefe başlamak için abonelik gerekiyor"
+          }
+        }
+      }
+    },
     "Statistics" : {
       "comment" : "The buddy offers the statistics",
       "localizations" : {
@@ -7603,7 +7603,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua sessão terminou."
+            "value" : "Você saiu da sua conta."
           }
         },
         "tr" : {

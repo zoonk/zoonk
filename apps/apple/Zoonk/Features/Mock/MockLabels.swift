@@ -64,7 +64,8 @@ enum MockLabels {
     switch (leftOut.part, leftOut.name) {
     case (.choice, let name):
       String(
-        localized: "\(name ?? "") isn't in it until you pick which one you take.", table: "Mock",
+        localized: "\(name ?? "") isn't in your mock exams until you pick which one you take.",
+        table: "Mock",
         comment:
           "The argument is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet"
       )

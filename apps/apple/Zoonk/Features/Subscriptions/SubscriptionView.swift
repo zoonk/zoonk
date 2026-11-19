@@ -842,7 +842,7 @@ private struct PlusQuestions: View {
       DisclosureGroup {
         answer(
           Text(
-            "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus.",
+            "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free.",
             tableName: "Subscriptions",
             comment: "Answers whether Plus is unlimited, never in minutes"))
 

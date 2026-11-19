@@ -108,7 +108,7 @@ struct ExamSpeakingSections: View {
     if feedback.brief {
       notes.append(
         String(
-          localized: "You said little, so this estimate is rough.", table: "Voice",
+          localized: "You didn't say much, so this estimate is rough.", table: "Voice",
           comment: "A speaking estimate from a short answer"))
     }
 

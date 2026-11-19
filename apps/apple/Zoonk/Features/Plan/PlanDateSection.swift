@@ -154,5 +154,5 @@ func planNoticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay, document: ExamD
     )
   }
 
-  return Text("The official exam date is \(date). Use it as your exam date?", tableName: "Plan")
+  return Text("The official exam date is \(date). Use it?", tableName: "Plan")
 }

@@ -206,7 +206,7 @@ private struct ChapterStart: View {
       note: hasLesson
         ? nil
         : Text(
-          "Its lessons get ready when you start.", tableName: "Courses",
+          "This chapter's lessons are prepared when you start.", tableName: "Courses",
           comment: "Under a chapter's start when its lessons aren't written yet"))
   }
 }

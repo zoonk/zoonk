@@ -2141,65 +2141,6 @@
         }
       }
     },
-    "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know." : {
-      "comment" : "A course outline before its chapters are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erstell deinen Plan und Zoonk bereitet die Lektionen dieses Kurses vor. Dabei baut Zoonk auf dem auf, was du schon weißt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea tu plan y Zoonk prepara las lecciones de este curso a partir de lo que ya sabes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crée ton plan et Zoonk prépare les leçons de ce cours à partir de ce que tu sais déjà."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea il tuo piano e Zoonk prepara le lezioni di questo corso, partendo da quello che sai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を作ると、すでに知っている内容に合わせてZoonkがこのコースのレッスンを準備します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획을 만들면 Zoonk가 이미 아는 내용을 바탕으로 이 코스의 레슨을 준비해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ułóż swój plan, a Zoonk przygotuje lekcje tego kursu, uwzględniając to, co już wiesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Monte seu plano e o Zoonk prepara as aulas deste curso, a partir do que você já sabe."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planını oluştur. Zoonk, bu kursun derslerini zaten bildiklerine göre hazırlar."
-          }
-        }
-      }
-    },
     "Business" : {
       "comment" : "Course category for business and management, separate from Economics.",
       "localizations" : {
@@ -2497,6 +2438,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ünite yüklenemiyor"
+          }
+        }
+      }
+    },
+    "Chapters are ready by the time you reach this level." : {
+      "comment" : "Under the name of a course's level, such as Intermediate, whose chapters aren't ready yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis du dieses Level erreichst, sind die Kapitel fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los capítulos estarán listos cuando llegues a este nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les chapitres seront prêts quand tu atteindras ce niveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I capitoli saranno pronti quando raggiungerai questo livello."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレベルに進む頃には、章の準備ができています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단계에 도달할 때쯤 챕터가 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozdziały będą gotowe, zanim dotrzesz do tego poziomu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os capítulos ficam prontos até você chegar a este nível."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu seviyeye geldiğinde üniteler hazır olur."
           }
         }
       }
@@ -4106,65 +4106,6 @@
         }
       }
     },
-    "Its lessons get ready when you start." : {
-      "comment" : "Under a chapter's start when its lessons aren't written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir bereiten die Lektionen vor, sobald du startest."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sus lecciones se preparan cuando empiezas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ses leçons sont préparées quand tu commences."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prepariamo le lezioni quando inizi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始めるときにレッスンを準備します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시작하면 레슨이 준비돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotujemy lekcje, gdy zaczniesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas ficam prontas quando você começa."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başladığında dersler hazırlanır."
-          }
-        }
-      }
-    },
     "Just a guess, it doesn't count" : {
       "comment" : "Over a lesson's first question on its Library page, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points.",
       "localizations" : {
@@ -5227,6 +5168,65 @@
         }
       }
     },
+    "Once you build your plan, we prepare this course's lessons, starting from what you already know." : {
+      "comment" : "A course outline before its chapters are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobald du deinen Plan erstellst, bereiten wir die Lektionen dieses Kurses vor. Wir beginnen mit dem, was du schon kennst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando crees tu plan, prepararemos las lecciones de este curso a partir de lo que ya sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une fois ton plan créé, nous préparons les leçons de ce cours en partant de ce que tu connais déjà."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando configuri il tuo piano, prepariamo le lezioni di questo corso partendo da ciò che sai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を作成すると、知っている内容から始めて、このコースのレッスンを準備します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 만들면 이미 아는 내용부터 이 코스의 레슨을 준비해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gdy ułożysz plan, przygotujemy lekcje z tego kursu, zaczynając od tego, co już znasz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando você monta seu plano, a gente prepara as aulas deste curso a partir do que você já sabe."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planını oluşturduğunda, zaten bildiklerinden başlayarak bu kursun derslerini hazırlıyoruz."
+          }
+        }
+      }
+    },
     "Overview" : {
       "comment" : "Heading above a course's overview chapters.",
       "localizations" : {
@@ -5518,65 +5518,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir soru"
-          }
-        }
-      }
-    },
-    "Ready when you get there." : {
-      "comment" : "Under the name of a course's level, such as Intermediate, whose chapters aren't ready yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bereit, sobald du dieses Level erreichst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estará listo cuando llegues."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout sera prêt quand tu y arriveras."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sarà tutto pronto quando ci arriverai."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このレベルに進む頃には準備が整います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습할 차례가 되면 준비돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Będzie gotowy, gdy tu dotrzesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tudo pronto quando você chegar lá."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu seviyeye geldiğinde hazır olacak."
           }
         }
       }
@@ -6631,6 +6572,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu ünite"
+          }
+        }
+      }
+    },
+    "This chapter's lessons are prepared when you start." : {
+      "comment" : "Under a chapter's start when its lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du startest, erstellen wir die Lektionen für dieses Kapitel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones de este capítulo se preparan cuando empiezas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons de ce chapitre sont préparées quand tu commences."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepariamo le lezioni di questo capitolo quando inizi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章のレッスンは、始めるときに準備されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챕터의 레슨은 시작할 때 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje z tego rozdziału przygotujemy, gdy go rozpoczniesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas deste capítulo são preparadas quando você começa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitenin dersleri, başladığında hazırlanır."
           }
         }
       }

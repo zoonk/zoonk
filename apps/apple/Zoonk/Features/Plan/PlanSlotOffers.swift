@@ -470,7 +470,7 @@ struct PlanCoverageSlot: View {
     if let most = time.most {
       return String(
         localized:
-          "The most any time covers is about \(most.coveredShare.formatted(.percent.precision(.fractionLength(0)))), at \(planDurationText(minutes: Double(most.minutes))) a day.",
+          "The most you can cover is about \(most.coveredShare.formatted(.percent.precision(.fractionLength(0)))), at \(planDurationText(minutes: Double(most.minutes))) a day.",
         table: "Plan",
         comment: "No time a day covers everything: the most any covers, and at what time a day")
     }
@@ -480,7 +480,7 @@ struct PlanCoverageSlot: View {
     }
 
     return String(
-      localized: "No time a day covers everything by \(date ?? "").", table: "Plan",
+      localized: "There isn't enough time to cover everything by \(date ?? "").", table: "Plan",
       comment:
         "No time a day covers the whole goal by its date; the argument is a day like \"May 5\""
     )
@@ -598,7 +598,7 @@ struct PlanFitSlot: View {
           check.run { await add() }
         } label: {
           Text(
-            "Add to my plan", tableName: "Plan",
+            "Add to plan", tableName: "Plan",
             comment: "Brings into the plan the lessons the learner's time fits")
         }
         .mainActionUnlessBarHoldsOne()
@@ -628,7 +628,7 @@ struct PlanFitSlot: View {
   }
 }
 
-/// What "Add to my plan" found.
+/// What "Add to plan" found.
 enum FitOfferCheck: Equatable {
   /// Today's numbers are the offer's, so its edits were applied.
   case applied

@@ -136,7 +136,7 @@ final class HeldSlotTests: XCTestCase {
     try show(
       Sized(width: width) {
         HeldSlot(gated: true) {
-          Text(verbatim: "You'll have enough later today, or subscribe to make it now.")
+          Text(verbatim: "You'll have enough later today, or subscribe to create it now.")
         }
         .onGeometryChange(for: CGFloat.self, of: \.size.height) { heights.append($0) }
       })

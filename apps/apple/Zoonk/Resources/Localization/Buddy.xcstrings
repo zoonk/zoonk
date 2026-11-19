@@ -108,7 +108,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está cochilando. Estude para espantar o sono."
+            "value" : "%1$@ está cochilando. Estude e %1$@ acorda."
           }
         },
         "tr" : {
@@ -2452,7 +2452,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cresce quando você chega à %@"
+            "value" : "Cresce quando você alcança a %@"
           }
         },
         "tr" : {
@@ -4291,61 +4291,61 @@
         }
       }
     },
-    "Study today to keep it up." : {
+    "Study today to keep Energy up." : {
       "comment" : "The buddy's Energy drops without studying today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lern heute, damit die Energie nicht sinkt."
+            "value" : "Lern heute, damit die Energy hoch bleibt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudia hoy para mantenerla."
+            "value" : "Estudia hoy para mantener alta la Energía."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étudie aujourd’hui pour qu’elle reste au même niveau."
+            "value" : "Étudie aujourd’hui pour garder ton Énergie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studia oggi per mantenerla alta."
+            "value" : "Studia oggi per mantenere alta l’Energia."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日の学習でエネルギーを保ちましょう。"
+            "value" : "今日も学習して、エナジーを保ちましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘 공부해서 에너지를 유지해 보세요."
+            "value" : "두뇌력을 유지하려면 오늘 공부해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poucz się dziś, żeby utrzymać poziom energii."
+            "value" : "Ucz się dziś, żeby utrzymać Energy na dobrym poziomie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estude hoje para manter a energia."
+            "value" : "Estude hoje para manter a Energia."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enerjisini korumak için bugün ders çalış."
+            "value" : "Beyin Gücü’nü yüksek tutmak için bugün çalış."
           }
         }
       }
@@ -5105,7 +5105,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vença seu primeiro desafio"
+            "value" : "Vencer seu primeiro desafio"
           }
         },
         "tr" : {
@@ -5164,7 +5164,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vença o último desafio do seu plano"
+            "value" : "Vencer o último desafio do seu plano"
           }
         },
         "tr" : {

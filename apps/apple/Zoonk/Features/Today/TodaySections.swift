@@ -969,7 +969,7 @@ struct TodayProgressSection: View {
           value: goalProgressPercent(progress.value),
           detail: nil,
           spoken: Text(
-            "Lessons you've studied or already knew, out of your plan's.", tableName: "Plan",
+            "The share of your plan's lessons you've studied or already knew.", tableName: "Plan",
             comment: "What the goal's progress number is made of")
         ) {
           if lessons.total > 0 {

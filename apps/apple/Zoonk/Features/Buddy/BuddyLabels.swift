@@ -106,7 +106,7 @@ extension BuddyStatus {
     return energy.studiedToday
       ? nil
       : Text(
-        "Study today to keep it up.", tableName: "Buddy",
+        "Study today to keep Energy up.", tableName: "Buddy",
         comment: "The buddy's Energy drops without studying today")
   }
 

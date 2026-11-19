@@ -3096,7 +3096,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar data de término"
+            "value" : "Mudar data final"
           }
         },
         "tr" : {
@@ -3640,65 +3640,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir tarih seç"
-          }
-        }
-      }
-    },
-    "Choose an end date" : {
-      "comment" : "Opens the date question from the daily time question, for a goal without an end date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enddatum wählen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegir una fecha de fin"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisir une date de fin"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli una data di fine"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標日を選ぶ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표일 정하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz datę zakończenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolher uma data de término"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir bitiş tarihi seç"
           }
         }
       }
@@ -6650,7 +6591,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data de término"
+            "value" : "Data final"
           }
         },
         "tr" : {
@@ -7896,6 +7837,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seyahatlerde anlaşabilmek: sipariş vermek, yol sormak, sohbet etmek"
+          }
+        }
+      }
+    },
+    "Getting the %@ test ready takes a minute or two, and only this once." : {
+      "comment" : "Why the level test waits: the language's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir bereiten den %@-Test in ein bis zwei Minuten vor. Das ist nur dieses eine Mal nötig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar la prueba de %@ toma uno o dos minutos y solo hay que hacerlo esta vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La préparation du test de %@ prend une ou deux minutes, et ça n’a lieu qu’une fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparare il test di %@ richiede uno o due minuti, solo la prima volta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のレベル診断テストの準備には1〜2分ほどかかります。必要なのは今回だけです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 레벨 테스트를 준비하는 데 1~2분 정도 걸려요. 이번 한 번만 준비하면 돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowanie testu z %@ zajmie minutę lub dwie. Tylko tym razem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar o teste de %@ leva um ou dois minutos, e só desta vez."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ için seviye tespit testini hazırlamak bir iki dakika sürer; bu yalnızca bir kez olur."
           }
         }
       }
@@ -10131,7 +10131,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudar mais objetivos ao mesmo tempo exige uma assinatura"
+            "value" : "Para estudar mais objetivos ao mesmo tempo, é preciso assinar"
           }
         },
         "tr" : {
@@ -15340,6 +15340,65 @@
         }
       }
     },
+    "Set end date" : {
+      "comment" : "Opens the date question from the daily time question, for a goal without an end date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enddatum festlegen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Establecer fecha de finalización"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir la date de fin"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imposta la data di fine"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了日を設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종료일 설정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustaw datę końcową"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definir data final"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitiş tarihini belirle"
+          }
+        }
+      }
+    },
     "Short lessons, in the right order" : {
       "comment" : "Under the understand material intent",
       "localizations" : {
@@ -18136,60 +18195,60 @@
         }
       }
     },
-    "The official exam date is %@. Use it as your exam date?" : {
+    "The official exam date is %@. Use it?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der offizielle Prüfungstermin ist am %@. Diesen Termin für deine Prüfung übernehmen?"
+            "value" : "Der offizielle Prüfungstermin ist der %@. Möchtest du ihn verwenden?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha oficial del examen es %@. ¿Quieres usarla como tu fecha de examen?"
+            "value" : "La fecha oficial del examen es %@. ¿Usarla?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date officielle de l’examen est le %@. Utiliser cette date pour ton examen ?"
+            "value" : "La date officielle de l’examen est le %@. Tu veux l’utiliser ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla come data del tuo esame?"
+            "value" : "La data ufficiale dell’esame è %@. Vuoi usarla?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正式な試験日は%@です。この日を試験日に設定しますか？"
+            "value" : "公式な試験日は%@です。この日付を使いますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "공식 시험일은 %@이에요. 이 날짜를 시험일로 설정할까요?"
+            "value" : "공식 시험일은 %@예요. 이 날짜를 사용할까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oficjalny termin egzaminu to %@. Ustawić go jako termin twojego egzaminu?"
+            "value" : "Oficjalny termin egzaminu to %@. Przyjąć ten termin?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data oficial da prova é %@. Quer usar essa data para sua prova?"
+            "value" : "A data oficial da prova é %@. Quer usar essa data?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resmî sınav tarihi %@. Bu tarihi sınav tarihin olarak kullanalım mı?"
+            "value" : "Resmî sınav tarihi %@. Bu tarihi kullanalım mı?"
           }
         }
       }
@@ -18308,65 +18367,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sesli mesajı hazırlıyoruz…"
-          }
-        }
-      }
-    },
-    "There's no test for this goal yet. Your first few days show us what you already know." : {
-      "comment" : "Under \"We'll find your level as you study\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für dieses Ziel gibt es noch keinen Test. In den ersten Tagen sehen wir, was du schon weißt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay una prueba para este objetivo. En tus primeros días veremos lo que ya sabes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il n’y a pas encore de test pour cet objectif. Tes premiers jours d’étude nous montrent ce que tu sais déjà."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è ancora un test per questo obiettivo. Nei primi giorni capiremo cosa sai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この目標にはまだテストがありません。最初の数日間の学習を通じて、すでに知っている内容を確かめます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 목표에는 아직 테스트가 없어요. 처음 며칠간 학습하는 동안 이미 아는 내용을 파악해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie ma jeszcze testu dla tego celu. Pierwsze dni nauki pokażą nam, co już wiesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não tem teste para esse objetivo. Nos primeiros dias, a gente descobre o que você já sabe."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu hedef için henüz test yok. İlk birkaç günde zaten bildiklerini göreceğiz."
           }
         }
       }
@@ -20319,7 +20319,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente ainda não consegue ensinar %@"
+            "value" : "A gente ainda não ensina %@"
           }
         },
         "tr" : {
@@ -20861,65 +20861,6 @@
         }
       }
     },
-    "We'll find your level as you study" : {
-      "comment" : "Title when no test could be made for a goal; nothing is wrong",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir finden dein Level beim Lernen heraus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conoceremos tu nivel mientras estudias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On découvrira ton niveau au fil des leçons"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scopriremo il tuo livello mentre studi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習を進めながらレベルを確かめます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습하면서 레벨을 알아가요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustalimy twój poziom w trakcie nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente vai descobrir seu nível enquanto você estuda"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalıştıkça seviyeni belirleyeceğiz"
-          }
-        }
-      }
-    },
     "We'll read it again. To fix one detail, use its pencil below." : {
       "comment" : "Under the typed words while they're being changed",
       "localizations" : {
@@ -20975,6 +20916,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden okuyacağız. Tek bir ayrıntıyı düzeltmek için aşağıda o ayrıntının yanındaki kalem simgesine dokun."
+          }
+        }
+      }
+    },
+    "We'll see what you know in your first few days" : {
+      "comment" : "Title when no test could be made for a goal; nothing is wrong",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinen ersten Tagen sehen wir, was du weißt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veremos qué sabes durante tus primeros días"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On verra ce que tu sais pendant tes premiers jours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nei primi giorni vedremo cosa sai"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の数日で、知っていることを確認します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처음 며칠 동안 이미 아는 내용을 확인해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W pierwszych dniach sprawdzimy, co już wiesz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vê o que você já sabe nos seus primeiros dias"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk birkaç gün içinde neler bildiğini göreceğiz"
           }
         }
       }
@@ -21099,65 +21099,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk öğreneceklerini seçip çalışma günlerine dağıtıyoruz. Yeni bir konu için bu işlem bir iki dakika sürebilir."
-          }
-        }
-      }
-    },
-    "We're writing the questions for the %@ test now. It takes a minute or two, and only this once." : {
-      "comment" : "Why the level test waits: the language's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen jetzt die Fragen für den %@-Test. Das dauert ein bis zwei Minuten und ist nur dieses eine Mal nötig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ahora estamos preparando las preguntas para la prueba de %@. Tardaremos uno o dos minutos y solo lo haremos esta vez."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous préparons les questions du test %@ en ce moment. Ça prend une ou deux minutes, et ça n’arrive qu’une fois."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo preparando ora le domande per il test di livello di %@. Ci vorranno un paio di minuti, solo questa volta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@のレベル診断テストの問題を作成しています。1〜2分ほどかかりますが、作成するのは今回だけです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 %@ 레벨 테스트 문제를 만들고 있어요. 1~2분 정도 걸리며, 처음 한 번만 진행돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy teraz pytania do testu %@. Zajmie to minutę lub dwie i zdarzy się tylko raz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estamos criando agora as perguntas para o teste de %@. Isso leva um ou dois minutos e só acontece desta vez."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şu anda %@ için seviye tespit testi sorularını hazırlıyoruz. Bu yalnızca bir kez olur ve bir iki dakika sürer."
           }
         }
       }
@@ -25532,61 +25473,61 @@
         }
       }
     },
-    "Your plan starts from the level you gave, and your first sessions fine-tune it." : {
+    "Your plan starts from the level you gave, and your first days fine-tune it." : {
       "comment" : "What skipping the level test does",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan beginnt bei dem Level, das du angegeben hast. Deine ersten Lerneinheiten stimmen ihn genauer ab."
+            "value" : "Dein Plan startet mit dem Level, das du angegeben hast. In den ersten Tagen passen wir ihn genauer an."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan parte del nivel que indicaste y se ajusta en tus primeras sesiones."
+            "value" : "Tu plan parte del nivel que indicaste y tus primeros días lo ajustan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan part du niveau que tu as indiqué, et tes premières séances permettent de l’affiner."
+            "value" : "Ton plan part du niveau que tu as indiqué, puis tes premiers jours permettent de l’ajuster."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo piano parte dal livello che hai indicato e si adatta meglio a te nelle prime sessioni."
+            "value" : "Il tuo piano parte dal livello che hai indicato e nei primi giorni lo metteremo a punto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "教えてもらったレベルから始め、最初の数回の学習で学習計画を調整します。"
+            "value" : "学習計画は申告したレベルから始まり、最初の数日で調整されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알려 주신 수준부터 시작하는 계획이에요. 처음 몇 번의 학습을 통해 다듬어 가요."
+            "value" : "설정한 레벨에서 계획을 시작하고, 처음 며칠 동안 세부 조정해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój plan zaczyna się od podanego poziomu, a podczas pierwszych dni nauki lepiej go dopasujemy."
+            "value" : "Twój plan zaczyna się od podanego poziomu, a pierwsze dni pozwolą go dopracować."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano começa pelo nível que você informou, e suas primeiras sessões ajudam a ajustar ele."
+            "value" : "Seu plano começa no nível que você informou e vai sendo ajustado nos primeiros dias."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planın belirttiğin seviyeden başlar ve ilk çalışmalarında sana göre ayarlanır."
+            "value" : "Planın, verdiğin seviyeden başlar; ilk birkaç gün içinde ince ayarı yapılır."
           }
         }
       }

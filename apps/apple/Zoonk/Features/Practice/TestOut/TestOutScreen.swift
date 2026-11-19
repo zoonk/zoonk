@@ -109,7 +109,7 @@ struct TestOutScreen: View {
       title: LocalizedStringResource(
         "Already know this?", table: "Practice", comment: "Title of a chapter test-out's start."),
       detail: LocalizedStringResource(
-        "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.",
+        "A few questions on this chapter. Do well, and your plan skips what you already know.",
         table: "Practice",
         comment: "What a chapter test-out does."),
       writingDetail: LocalizedStringResource(

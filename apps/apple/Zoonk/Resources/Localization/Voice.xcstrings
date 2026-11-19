@@ -3933,65 +3933,6 @@
         }
       }
     },
-    "It's open in another tab or on another device. Starting this one ends it, without its feedback." : {
-      "comment" : "Another call of the learner's is open",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du dieses Gespräch startest, endet das andere ohne Feedback."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Está abierta en otra pestaña o en otro dispositivo. Al iniciar esta llamada, la otra termina sin darte comentarios."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un autre appel est ouvert dans un autre onglet ou sur un autre appareil. Démarrer cet appel met fin à l’autre, sans bilan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "È aperta in un’altra scheda o su un altro dispositivo. Se inizi questa, l’altra termina senza commenti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "別のタブか端末で会話を開いています。この会話を始めると、そちらの会話はフィードバックなしで終了します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다른 탭이나 기기에서 대화가 진행 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trwa w innej karcie lub na innym urządzeniu. Gdy zaczniesz tę rozmowę, tamta zakończy się bez informacji zwrotnej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela está aberta em outra aba ou em outro dispositivo. Começar esta encerra a outra sem feedback."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başka bir sekmede veya cihazda açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın."
-          }
-        }
-      }
-    },
     "It's the same for everyone right now. Try again later." : {
       "comment" : "Calls are paused for everyone",
       "localizations" : {
@@ -6723,6 +6664,65 @@
         }
       }
     },
+    "Rematch next time you study" : {
+      "comment" : "A checkpoint call that didn't pass",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim nächsten Lernen noch einmal antreten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a intentarlo la próxima vez que estudies"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revanche à ta prochaine séance d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riprova la prossima volta che studi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の学習で再戦"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 학습 때 재대결"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rewanż przy następnej nauce"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revanche na próxima vez que você estudar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sonraki çalışmanda rövanş yap"
+          }
+        }
+      }
+    },
     "Repeating sentences" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -8263,6 +8263,65 @@
         }
       }
     },
+    "That call is open in another tab or on another device. Starting this one ends it without feedback." : {
+      "comment" : "Another call of the learner's is open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Gespräch ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du dieses startest, wird das andere ohne Feedback beendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esa llamada está abierta en otra pestaña o dispositivo. Si empiezas esta, la otra terminará sin comentarios."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet appel est ouvert dans un autre onglet ou sur un autre appareil. En démarrer un autre met fin à celui-ci sans commentaire."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa conversazione è aperta in un’altra scheda o su un altro dispositivo. Avviandola qui, la chiuderai senza commenti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その会話は別のタブまたは別の端末で開いています。こちらを始めると、フィードバックなしで終了します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 탭이나 기기에서 해당 대화가 열려 있어요. 이 대화를 시작하면 피드백 없이 기존 대화가 종료돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta rozmowa jest otwarta w innej karcie lub na innym urządzeniu. Rozpoczęcie tej rozmowy zakończy tamtą bez informacji zwrotnej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa conversa está aberta em outra aba ou em outro dispositivo. Se você começar esta, a outra termina sem feedback."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu sohbet başka bir sekmede veya cihazda açık. Bunu başlatırsan geri bildirim almadan sona erer."
+          }
+        }
+      }
+    },
     "That didn't go through. Try again." : {
       "comment" : "Grading a word failed",
       "localizations" : {
@@ -8377,65 +8436,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru söyledin"
-          }
-        }
-      }
-    },
-    "The call comes back so you can try again." : {
-      "comment" : "A checkpoint call that didn't pass",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Gespräch wird wieder angeboten, damit du es noch einmal versuchen kannst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La llamada vuelve a aparecer para que puedas intentarlo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’appel te sera proposé à nouveau pour que tu puisses réessayer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti riproporremo la conversazione, così potrai riprovare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この会話はまた出てくるので、もう一度挑戦できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다시 시도할 수 있게 이 대화가 다시 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta rozmowa wróci, więc możesz spróbować jeszcze raz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A conversa volta para você tentar de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar deneyebilmen için sohbet yeniden karşına çıkar."
           }
         }
       }
@@ -11219,6 +11219,65 @@
         }
       }
     },
+    "You didn't say much, so this estimate is rough." : {
+      "comment" : "A speaking estimate from a short answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast wenig gesagt, daher ist das nur eine grobe Schätzung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu respuesta fue breve, así que esta estimación es poco precisa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comme tu as peu parlé, cette estimation est approximative."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai parlato poco, quindi questa stima è approssimativa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話した内容が少ないため、スコアは大まかな推定です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답변이 짧아서 정확하게 추정하기 어려워요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wypowiedź jest krótka, więc to tylko przybliżony wynik."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você falou pouco, então esta estimativa é menos precisa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevabın kısa olduğu için bu tahmin pek kesin değil."
+          }
+        }
+      }
+    },
     "You said" : {
       "comment" : "What the learner said in the call",
       "localizations" : {
@@ -11274,65 +11333,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Söylediklerin"
-          }
-        }
-      }
-    },
-    "You said little, so this estimate is rough." : {
-      "comment" : "A speaking estimate from a short answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast wenig gesagt, daher ist das nur eine grobe Schätzung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu respuesta fue breve, así que esta estimación es poco precisa."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comme tu as peu parlé, cette estimation est approximative."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai parlato poco, quindi questa stima è approssimativa."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "話した内容が少ないため、スコアは大まかな推定です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답변이 짧아서 정확하게 추정하기 어려워요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wypowiedź jest krótka, więc to tylko przybliżony wynik."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como você falou pouco, esta estimativa é menos precisa."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevabın kısa olduğu için bu tahmin pek kesin değil."
           }
         }
       }

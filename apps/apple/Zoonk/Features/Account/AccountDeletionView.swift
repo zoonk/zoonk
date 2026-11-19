@@ -330,7 +330,7 @@ struct AccountDeletionView: View {
 
   private var logInAgainReason: Text {
     Text(
-      "For your safety, log in again, then delete your account.", tableName: "Account")
+      "For your security, log in again, then delete your account.", tableName: "Account")
   }
 
   private var accountDeleted: Text {
@@ -405,13 +405,13 @@ struct AccountDeletionView: View {
     switch provider {
     case .apple:
       Text(
-        "Plus from the App Store keeps charging until you cancel it there.",
+        "Deleting your account doesn't cancel Plus from the App Store. Cancel it there.",
         tableName: "Account",
         comment:
           "Shown only to subscribers, in the box that deletes their account.")
     case .google:
       Text(
-        "Plus from Google Play keeps charging until you cancel it there.",
+        "Deleting your account doesn't cancel Plus from Google Play. Cancel it there.",
         tableName: "Account",
         comment:
           "Shown only to subscribers, in the box that deletes their account.")

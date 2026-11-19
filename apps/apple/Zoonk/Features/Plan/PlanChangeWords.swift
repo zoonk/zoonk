@@ -81,7 +81,7 @@ enum PlanChangeWords {
         comment: "A plan change was applied, and today's lessons follow it")
     case "unchanged":
       String(
-        localized: "Done. It starts on your next study day.", table: "Plan",
+        localized: "Done. The change starts on your next study day.", table: "Plan",
         comment: "A plan change was applied from the next study day")
     default:
       String(localized: "Done.", table: "Plan", comment: "A plan change was applied")
@@ -115,7 +115,7 @@ enum PlanChangeWords {
     switch kind {
     case "missedDays":
       String(
-        localized: "Your plan moved to fit the days you missed.", table: "Plan",
+        localized: "Your plan changed to make up for the days you missed.", table: "Plan",
         comment: "A plan change the plan made after missed study days")
     case "estimateUpdated":
       effect.map { $0.lessonsAdded != $0.lessonsRemoved } == true
@@ -324,7 +324,7 @@ enum PlanChangeWords {
       )
     case "fitLessons":
       return String(
-        localized: "Add the lessons your time fits?", table: "Plan",
+        localized: "Add the lessons that fit your time?", table: "Plan",
         comment: "Asks to bring in the lessons the learner's time fits")
     default:
       return nil

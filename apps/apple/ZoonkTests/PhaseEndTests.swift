@@ -33,7 +33,7 @@ final class PhaseEndTests: XCTestCase {
       PhaseEnd("2027-01-22", estimate: true, month: false, today: "2027-01-04"),
       "the challenge's day, after the last lesson's, ends the phase")
     XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.shown, "~Jan 22")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.spoken, "Ends about Jan 22")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.spoken, "Ends around Jan 22")
     XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "~Feb 5")
     XCTAssertEqual(
       plan.phaseEnd(plan.phases[2])?.shown, "~Apr",

@@ -47,10 +47,10 @@ struct PlanStandingSheet: View {
         calculated(
           preparation.components.mocks.kind == "fullReviews"
             ? Text(
-              "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once.",
+              "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once.",
               tableName: "Plan")
             : Text(
-              "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam.",
+              "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam.",
               tableName: "Plan", comment: "How the exam preparation number is worked out"))
       } else if let lessons = syllabus?.lessons {
         let share = lessons.total > 0 ? min(1, Double(lessons.done) / Double(lessons.total)) : 0
@@ -58,7 +58,7 @@ struct PlanStandingSheet: View {
         readout(
           share: share, text: goalProgressPercent(share),
           line: Text(
-            "Lessons you've studied or already knew, out of your plan's.", tableName: "Plan",
+            "The share of your plan's lessons you've studied or already knew.", tableName: "Plan",
             comment: "What the goal's progress number is made of"))
 
         Section {
@@ -229,7 +229,8 @@ struct PlanScheduleSheet: View {
       )
     case .needsAdjusting:
       return String(
-        localized: "You have more lessons than days left. Add time a day or pick a later date.",
+        localized:
+          "You have more lessons than days left. Study longer each day or pick a later date.",
         table: "Plan", comment: "A plan with more lessons than days left before its date")
     case .pastDate:
       return context.goal.kind == .exam

@@ -2105,61 +2105,61 @@
         }
       }
     },
-    "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know." : {
+    "A few questions on this chapter. Do well, and your plan skips what you already know." : {
       "comment" : "What a chapter test-out does.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein paar Fragen zu diesem Kapitel. Dein Ergebnis siehst du am Ende. Wenn du gut abschneidest, überspringt dein Plan, was du schon weißt."
+            "value" : "Ein paar Fragen zu diesem Kapitel. Wenn du gut abschneidest, nimmt dein Plan alles, was du schon kennst, nicht mit auf."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unas preguntas sobre este capítulo, con tus resultados al final. Si te va bien, tu plan se salta lo que ya sabes."
+            "value" : "Responde algunas preguntas sobre este capítulo. Si te va bien, tu plan saltará lo que ya sabes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quelques questions sur ce chapitre, avec tes résultats à la fin. Si tu réussis, ton plan saute ce que tu sais déjà."
+            "value" : "Quelques questions sur ce chapitre. Si tu réussis, ton plan sautera ce que tu connais déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualche domanda su questo capitolo, con i risultati alla fine. Se rispondi bene, il tuo piano salta quello che sai già."
+            "value" : "Qualche domanda su questo capitolo. Se vai bene, il tuo piano salterà ciò che sai già."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この章の問題にいくつか答えると、最後に結果が表示されます。よい結果が出れば、すでに知っている内容は学習計画でスキップされます。"
+            "value" : "この章の問題にいくつか答えます。よくできた内容は、学習計画でスキップされます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 챕터의 문제를 몇 개 풀고 마지막에 결과를 확인할 수 있어요. 잘 풀면 계획에서 이미 아는 내용을 건너뛰어요."
+            "value" : "이 챕터에 관한 문제 몇 개를 풀어요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kilka pytań z tego rozdziału. Wyniki zobaczysz na końcu. Jeśli dobrze ci pójdzie, plan pominie to, co już znasz."
+            "value" : "Kilka pytań z tego rozdziału. Jeśli dobrze ci pójdzie, plan pominie to, co już znasz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algumas perguntas sobre este capítulo, com seu resultado no final. Se você for bem, seu plano pula o que você já sabe."
+            "value" : "Algumas perguntas sobre este capítulo. Se você for bem, seu plano pula o que você já sabe."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu üniteyle ilgili birkaç soru var. Sonuçlarını en sonda görürsün. İyi bir sonuç alırsan planın zaten bildiklerini atlar."
+            "value" : "Bu üniteden birkaç soru. İyi yaparsan planın zaten bildiğin konuları atlar."
           }
         }
       }
@@ -6330,7 +6330,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulados exigem uma assinatura"
+            "value" : "Para fazer simulados, é preciso assinar"
           }
         },
         "tr" : {
@@ -8288,6 +8288,12 @@
             "value" : "Fehler üben"
           }
         },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice mistakes"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8327,19 +8333,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar erros"
+            "value" : "Praticar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yanlışlarına çalış"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Practice mistakes"
           }
         }
       }
@@ -15764,7 +15764,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus erros recentes foram só de digitação. Não há nenhuma regra para aprender nem nada para praticar."
+            "value" : "Seus erros recentes foram só de digitação. Não tem nenhuma regra para aprender nem nada para praticar."
           }
         },
         "tr" : {

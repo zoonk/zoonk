@@ -74,19 +74,19 @@ extension ProgressDaypart {
     switch self {
     case .morning:
       String(
-        localized: "Your best time is the morning.", table: "Progress",
+        localized: "You do best in the morning.", table: "Progress",
         comment: "Over the patterns charts: the part of the day the learner answers best")
     case .afternoon:
       String(
-        localized: "Your best time is the afternoon.", table: "Progress",
+        localized: "You do best in the afternoon.", table: "Progress",
         comment: "Over the patterns charts: the part of the day the learner answers best")
     case .evening:
       String(
-        localized: "Your best time is the evening.", table: "Progress",
+        localized: "You do best in the evening.", table: "Progress",
         comment: "Over the patterns charts: the part of the day the learner answers best")
     case .night:
       String(
-        localized: "Your best time is the night.", table: "Progress",
+        localized: "You do best at night.", table: "Progress",
         comment: "Over the patterns charts: the part of the day the learner answers best")
     }
   }

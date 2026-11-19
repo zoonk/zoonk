@@ -130,7 +130,7 @@ struct TutorToolOfferCard: View {
           .startGoal(goal: start.goal)),
         gate: start.access == .plusRequired
           ? Text(
-            "Another goal now needs a subscription", tableName: "Tutor",
+            "Starting another goal needs a subscription", tableName: "Tutor",
             comment:
               "A free learner tried to start another goal from the buddy: either they study as many goals at once as their plan allows or they started as many new goals as it allows recently, so it names neither"
           ) : nil)

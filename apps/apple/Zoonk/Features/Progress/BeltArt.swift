@@ -155,7 +155,7 @@ struct BeltRack: View {
             .accessibilityLabel(Text(belt.localizedTitle))
             .accessibilityValue(
               index <= currentIndex
-                ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
+                ? Text("Earned", tableName: "Progress") : Text("Upcoming", tableName: "Progress")
             )
             .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
         }

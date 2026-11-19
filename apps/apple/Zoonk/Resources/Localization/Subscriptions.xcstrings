@@ -1870,61 +1870,61 @@
         }
       }
     },
-    "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus." : {
+    "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free." : {
       "comment" : "Answers whether Plus is unlimited, never in minutes",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du selbst lernst, ja. Für Lektionen, Ziele und den KI-Lernkumpel gelten nur Limits, die Bots und automatisierte Tools stoppen. Für Übungsgespräche gelten tägliche und monatliche Limits, die höher sind als ohne Plus."
+            "value" : "Für normales Lernen: ja. Für Lektionen, Ziele und den KI-Kumpel gibt es nur Limits, die Bots und automatisierte Tools stoppen. Für Gespräche zum Sprechtraining gelten tägliche und monatliche Limits, die höher sind als bei Free."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para quienes estudian, sí. Las lecciones, los objetivos y el compañero de estudio con IA solo tienen límites para bloquear bots y herramientas automatizadas. Las llamadas para practicar la expresión oral tienen límites diarios y mensuales más altos que sin Plus."
+            "value" : "Para estudiar normalmente, sí. Las lecciones, los objetivos y el Compañero de IA solo tienen límites para evitar el uso de bots y herramientas automatizadas. Las llamadas de práctica de expresión oral tienen límites diarios y mensuales, más altos que en Gratis."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oui, si tu l’utilises pour apprendre. Les seules limites pour les leçons, les objectifs et le compagnon d’étude IA servent à bloquer les robots et les outils automatisés. Les appels pour s’entraîner à l’oral ont des limites par jour et par mois, plus élevées que sans Plus."
+            "value" : "Pour étudier normalement, oui. Les leçons, les objectifs et le compagnon d’étude IA ont seulement des limites qui empêchent les bots et les outils automatisés. Les appels d’entraînement à l’oral sont soumis à des limites quotidiennes et mensuelles, plus élevées que dans la formule gratuite."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per chi studia, sì. I limiti per lezioni, obiettivi e compagno di studio con l’IA servono solo a bloccare bot e strumenti automatici. Le conversazioni di allenamento hanno limiti giornalieri e mensili più alti rispetto a quelli senza Plus."
+            "value" : "Per il normale studio, sì. Le lezioni, gli obiettivi e il compagno di studio con l’IA hanno solo limiti che servono a fermare bot e strumenti automatici. Le conversazioni di allenamento per l’esercitazione orale hanno limiti giornalieri e mensili, più alti rispetto a Free."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "はい、学習する方は無制限に利用できます。レッスン、目標、学習の相棒（AI）には、ボットや自動化ツールの利用を防ぐための制限だけがあります。会話練習には1日と1か月の利用上限がありますが、Plusに登録していない場合より多く利用できます。"
+            "value" : "通常の学習なら、はい。レッスン、目標、AI学習の相棒には、ボットなどの自動ツールを防ぐための制限しかありません。スピーキング練習の会話には1日と1か月ごとの上限がありますが、無料プランより高く設定されています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "직접 공부하는 분이라면 무제한이에요. 레슨, 목표, AI 공부 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있어요. 말하기 연습 대화에는 일일 한도와 월간 한도가 있지만, Plus를 이용하지 않을 때보다 넉넉해요."
+            "value" : "일반적인 학습은 제한 없이 할 수 있어요. 레슨, 목표, AI 공부 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있어요. 말하기 연습 대화에는 일일 및 월간 제한이 있지만, 무료보다 한도가 높아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tak, jeśli się uczysz. Limity lekcji, celów i kumpla do nauki z AI są tylko po to, by blokować boty i narzędzia automatyczne. Rozmowy do ćwiczenia mówienia mają dzienne i miesięczne limity, wyższe niż bez pakietu Plus."
+            "value" : "Do zwykłej nauki — tak. Lekcje, cele i kumpel do nauki z AI mają limity, które powstrzymują boty i automatyczne narzędzia. Rozmowy ćwiczące mówienie mają dzienne i miesięczne limity, wyższe niż w pakiecie Free."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para quem estuda, sim. Aulas, objetivos e o parceiro de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas para praticar têm limites diários e mensais, maiores do que sem o Plus."
+            "value" : "Para quem está estudando, sim. As aulas, os objetivos e o parceiro de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öğrenmek için kullanıyorsan evet. Derslere, hedeflere ve yapay zekâ destekli ders arkadaşına yalnızca botları ve otomatik araçları engellemek için sınır koyuyoruz. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları ise Plus olmadan sunulanlardan daha yüksek."
+            "value" : "Normal çalışma için evet. Dersler, hedefler ve yapay zekâ ders arkadaşı yalnızca botları ve otomatik araçları engelleyen sınırlara sahip. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; bu sınırlar Ücretsiz pakettekinden daha yüksek."
           }
         }
       }
@@ -2101,65 +2101,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus gerçekten sınırsız mı?"
-          }
-        }
-      }
-    },
-    "It writes more lessons than you get for free." : {
-      "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dafür werden mehr Lektionen erstellt, als du kostenlos bekommst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al crearlo, se preparan más lecciones de las que incluye el plan gratis."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elle prépare plus de leçons que la formule gratuite n’en inclut."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per crearla dobbiamo preparare più lezioni di quelle incluse gratis."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このマップで作成されるレッスン数は、無料で使える数を超えています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do tej mapy przygotowujemy więcej lekcji, niż dostajesz bezpłatnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ele cria mais aulas do que você recebe de graça."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor."
           }
         }
       }
@@ -2920,7 +2861,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais conversas para praticar"
+            "value" : "Mais conversas de prática"
           }
         },
         "tr" : {
@@ -3221,6 +3162,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü sohbet süren doldu"
+          }
+        }
+      }
+    },
+    "No more early lessons today" : {
+      "comment" : "The learner saw all the topics ahead of time they can today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute keine weiteren Lektionen im Voraus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no hay más lecciones anticipadas por hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as vu toutes les leçons en avance possibles aujourd’hui"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per oggi non ci sono altre lezioni in anticipo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上、先取りレッスンを受けられません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 미리 볼 수 있는 레슨을 모두 확인했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ma już dziś lekcji z wyprzedzeniem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem mais aulas antecipadas por hoje"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün erken erişebileceğin başka ders kalmadı"
+          }
+        }
+      }
+    },
+    "No more early lessons without an account" : {
+      "comment" : "A guest saw the topic ahead of time they can without an account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne Konto keine weiteren Lektionen im Voraus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no hay más lecciones anticipadas sin una cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as vu toutes les leçons en avance possibles sans compte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ci sono altre lezioni in anticipo senza un account"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントなしでは、これ以上先取りレッスンを受けられません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정 없이 미리 볼 수 있는 레슨을 모두 확인했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez konta nie ma już lekcji z wyprzedzeniem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais aulas antecipadas só com uma conta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap açmadan erken erişebileceğin başka ders kalmadı"
           }
         }
       }
@@ -3575,124 +3634,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü yeni zihin haritası hakkın bitti"
-          }
-        }
-      }
-    },
-    "No more previews today" : {
-      "comment" : "The learner saw all the topics ahead of time they can today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute keine Vorschauen mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te quedan vistas previas hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite d’aperçus atteinte pour aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito le anteprime per oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日利用できるプレビューはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 미리 보기를 더 이용할 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit podglądów tematów na dziś"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de prévias de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü ön izleme hakkın bitti"
-          }
-        }
-      }
-    },
-    "No more previews without an account" : {
-      "comment" : "A guest saw the topic ahead of time they can without an account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ohne Konto keine weiteren Vorschauen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para acceder a más vistas previas, necesitas una cuenta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite d’aperçus sans compte atteinte"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per altre anteprime serve un account"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントなしで利用できるプレビューはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "미리 보기를 더 이용하려면 계정이 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejne podglądy tematów wymagają konta"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de prévias sem uma conta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha fazla ön izleme için hesap gerekiyor"
           }
         }
       }
@@ -4628,7 +4569,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversas para praticar"
+            "value" : "Conversas de prática"
           }
         },
         "tr" : {
@@ -5051,6 +4992,65 @@
         }
       }
     },
+    "This chapter has more lessons than you get for free." : {
+      "comment" : "Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Kapitel hat mehr Lektionen, als du kostenlos nutzen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este capítulo tiene más lecciones de las que puedes empezar gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce chapitre comporte plus de leçons que tu ne peux en commencer gratuitement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo capitolo ha più lezioni di quante puoi seguire gratis."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章には、無料で利用できる数を超えるレッスンがあります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챕터에는 무료로 이용할 수 있는 레슨보다 레슨이 더 많아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten dział ma więcej lekcji, niż możesz rozpocząć za darmo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este capítulo tem mais aulas do que você recebe de graça."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitede, ücretsiz erişebileceğin derslerden daha fazlası var."
+          }
+        }
+      }
+    },
     "This map needs a subscription" : {
       "localizations" : {
         "de" : {
@@ -5098,7 +5098,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você precisa assinar para criar este mapa"
+            "value" : "Para criar este mapa, é preciso assinar"
           }
         },
         "tr" : {
@@ -5822,7 +5822,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escreva para a gente"
+            "value" : "Enviar mensagem"
           }
         },
         "tr" : {
@@ -6124,12 +6124,12 @@
         }
       }
     },
-    "You can make this map now" : {
+    "You can create this map now" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst diese Mindmap jetzt erstellen"
+            "value" : "Du kannst diese Karte jetzt erstellen"
           }
         },
         "es" : {
@@ -6147,19 +6147,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ora puoi creare questa mappa"
+            "value" : "Puoi creare questa mappa ora"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このマップを今すぐ作成できます"
+            "value" : "このマップを作成できます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이제 이 마인드맵을 만들 수 있어요"
+            "value" : "지금 이 지도를 만들 수 있어요"
           }
         },
         "pl" : {
@@ -6532,49 +6532,49 @@
         }
       }
     },
-    "You'll have enough later today, or subscribe to make it now." : {
+    "You'll have enough later today, or subscribe to create it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Später heute hast du genug. Mit einem Abo kannst du sie schon jetzt erstellen."
+            "value" : "Später heute hast du genug Lektionen, oder du abonnierst, um die Karte jetzt zu erstellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás suficientes más tarde hoy, o puedes suscribirte para crearlo ahora."
+            "value" : "Tendrás suficientes lecciones más tarde hoy, o suscríbete para crear el mapa ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu en auras assez plus tard aujourd’hui. Pour la créer maintenant, abonne-toi."
+            "value" : "Tu auras assez de leçons plus tard aujourd’hui, ou tu peux t’abonner pour créer la carte maintenant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne avrai abbastanza in giornata, oppure abbonati per crearla subito."
+            "value" : "Ne avrai abbastanza più tardi oggi, oppure puoi abbonarti per crearla subito."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日中には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+            "value" : "今日の後半には足りるようになります。今すぐ作成するには登録してください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+            "value" : "오늘 늦게면 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeszcze dziś będziesz mieć wystarczająco dużo lekcji. Z subskrypcją utworzysz mapę już teraz."
+            "value" : "Lekcji wystarczy ci jeszcze dziś albo wykup pakiet, aby utworzyć mapę już teraz."
           }
         },
         "pt" : {
@@ -6586,54 +6586,54 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün ilerleyen saatlerde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+            "value" : "Bugün ilerleyen saatlerde yeterli dersin olacak; şimdi oluşturmak için abone ol."
           }
         }
       }
     },
-    "You'll have enough on %@, or subscribe to make it now." : {
+    "You'll have enough on %@, or subscribe to create it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as \"November 22\" in English.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Am %@ hast du genug. Mit einem Abo kannst du sie schon jetzt erstellen."
+            "value" : "Am %@ hast du genug Lektionen, oder du abonnierst, um die Karte jetzt zu erstellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás suficientes el %@, o puedes suscribirte para crearlo ahora."
+            "value" : "Tendrás suficientes lecciones el %@, o suscríbete para crear el mapa ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu en auras assez le %@. Pour la créer maintenant, abonne-toi."
+            "value" : "Tu auras assez de leçons le %@, ou tu peux t’abonner pour créer la carte maintenant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne avrai abbastanza il giorno %@, oppure abbonati per crearla subito."
+            "value" : "Ne avrai abbastanza il %@, oppure puoi abbonarti per crearla subito."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+            "value" : "%@には足りるようになります。今すぐ作成するには登録してください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+            "value" : "%@에는 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ będziesz mieć wystarczająco dużo lekcji. Z subskrypcją utworzysz mapę już teraz."
+            "value" : "Lekcji wystarczy ci %@ albo wykup pakiet, aby utworzyć mapę już teraz."
           }
         },
         "pt" : {
@@ -6645,54 +6645,54 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ tarihinde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+            "value" : "%@ tarihinde yeterli dersin olacak; şimdi oluşturmak için abone ol."
           }
         }
       }
     },
-    "You'll have enough tomorrow, or subscribe to make it now." : {
+    "You'll have enough tomorrow, or subscribe to create it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Morgen hast du genug. Mit einem Abo kannst du sie schon jetzt erstellen."
+            "value" : "Morgen hast du genug Lektionen, oder du abonnierst, um die Karte jetzt zu erstellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás suficientes mañana, o puedes suscribirte para crearlo ahora."
+            "value" : "Tendrás suficientes lecciones mañana, o suscríbete para crear el mapa ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu en auras assez demain. Pour la créer maintenant, abonne-toi."
+            "value" : "Tu auras assez de leçons demain, ou tu peux t’abonner pour créer la carte maintenant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne avrai abbastanza domani, oppure abbonati per crearla subito."
+            "value" : "Ne avrai abbastanza domani, oppure puoi abbonarti per crearla subito."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "明日には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+            "value" : "明日には足りるようになります。今すぐ作成するには登録してください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+            "value" : "내일이면 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jutro będziesz mieć wystarczająco dużo lekcji. Z subskrypcją utworzysz mapę już teraz."
+            "value" : "Lekcji wystarczy ci jutro albo wykup pakiet, aby utworzyć mapę już teraz."
           }
         },
         "pt" : {
@@ -6704,7 +6704,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yarın yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+            "value" : "Yarın yeterli dersin olacak; şimdi oluşturmak için abone ol."
           }
         }
       }
@@ -6938,6 +6938,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbet süren doldu"
+          }
+        }
+      }
+    },
+    "You've used your early lessons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast deine kostenlosen Lektionen aufgebraucht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya usaste tus lecciones anticipadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé tes leçons en avance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai usato le tue lezioni anticipate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先取りレッスンを使い切りました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리 이용할 수 있는 레슨을 모두 사용했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano już wcześniejsze lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você atingiu o limite de aulas antecipadas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erken erişim derslerini kullandın"
           }
         }
       }
@@ -7228,64 +7286,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavı hakkın bitti"
-          }
-        }
-      }
-    },
-    "You've used your previews" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein Limit für Vorschauen erreicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste tu límite de vistas previas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite d’aperçus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito le anteprime"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プレビューの利用上限に達しました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "미리 보기 한도를 다 썼어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit podglądów"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de prévias"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ön izleme hakkın bitti"
           }
         }
       }

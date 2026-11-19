@@ -230,12 +230,12 @@ struct PhaseEnd: Equatable {
       month
       ? String(
         localized: LocalizedStringResource(
-          "endsAboutMonth", defaultValue: "Ends about \(date)", table: "Plan",
+          "endsAboutMonth", defaultValue: "Ends around \(date)", table: "Plan",
           comment:
             "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'"
         ))
       : String(
-        localized: "Ends about \(date)", table: "Plan",
+        localized: "Ends around \(date)", table: "Plan",
         comment:
           "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
   }

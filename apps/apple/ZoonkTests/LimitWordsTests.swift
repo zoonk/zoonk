@@ -136,13 +136,13 @@ final class LimitWordsTests: XCTestCase {
       text(dated.mapLessonsWords(now: now, calendar: calendar)),
       [
         "Not enough free lessons for this map yet",
-        "You'll have enough on November 22, or subscribe to make it now.",
+        "You'll have enough on November 22, or subscribe to create it now.",
       ])
     XCTAssertEqual(
-      text(dated.mapLessonsWords(now: fits, calendar: calendar)), ["You can make this map now"])
+      text(dated.mapLessonsWords(now: fits, calendar: calendar)), ["You can create this map now"])
     XCTAssertEqual(
       text(HelpLimit.limitReached(period: .total, tier: .free).mapLessonsWords()),
-      ["This map needs a subscription", "It writes more lessons than you get for free."])
+      ["This map needs a subscription", "This chapter has more lessons than you get for free."])
   }
 
   /// A call start is refused only when no call time is left, so a speaking task's refusal is the

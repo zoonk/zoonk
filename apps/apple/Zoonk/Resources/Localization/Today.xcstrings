@@ -8155,7 +8155,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar por %lld min"
+            "value" : "Praticar %lld min"
           }
         },
         "tr" : {
@@ -8214,7 +8214,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar por mais %lld min"
+            "value" : "Praticar mais %lld min"
           }
         },
         "tr" : {
@@ -9170,7 +9170,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover data de término"
+            "value" : "Remover data final"
           }
         },
         "tr" : {

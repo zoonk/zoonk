@@ -33,7 +33,7 @@ struct LanguageVariety: Equatable, Sendable {
     note
       ?? String(
         localized:
-          "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use \(Locale.current.varietyNameInSentence(language: language, region: taughtRegion)).",
+          "Your practice calls and our answers to your questions match the country you choose. Lessons and their audio use \(Locale.current.varietyNameInSentence(language: language, region: taughtRegion)).",
         table: "Plan",
         comment:
           "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'"

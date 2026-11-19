@@ -247,7 +247,7 @@ struct ConversationResultView: View {
       SectionFooter {
         if conversation.kind == .checkpoint, !result.passed {
           Text(
-            "The call comes back so you can try again.", tableName: "Voice",
+            "Rematch next time you study", tableName: "Voice",
             comment: "A checkpoint call that didn't pass")
         } else if showsStars {
           Text(

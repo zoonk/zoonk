@@ -1632,6 +1632,65 @@
         }
       }
     },
+    "Creating maps counts toward your free lessons." : {
+      "comment" : "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindmaps erstellen zählt zu deinen kostenlosen Lektionen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear mapas cuenta para tus lecciones gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer des cartes mentales compte dans tes leçons gratuites."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creare mappe rientra nel limite delle lezioni gratuite."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップの作成も無料レッスンの上限に含まれます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맵을 만들면 무료 레슨 횟수에 포함돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tworzenie map wlicza się do limitu bezpłatnych lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar mapas conta para o seu limite de aulas grátis."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harita oluşturmak, ücretsiz ders hakkından düşer."
+          }
+        }
+      }
+    },
     "Done" : {
       "comment" : "Closes the reader after the last map",
       "localizations" : {
@@ -2630,7 +2689,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há mapa"
+            "value" : "Ainda sem mapa"
           }
         },
         "tr" : {
@@ -4288,65 +4347,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sunucuya ulaşamadık. Bağlantını kontrol et."
-          }
-        }
-      }
-    },
-    "Writing lessons counts toward your free lessons." : {
-      "comment" : "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erstellte Lektionen werden auf dein Kontingent an kostenlosen Lektionen angerechnet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparar lecciones cuenta para tu límite de lecciones gratis."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les leçons préparées comptent dans ton quota de leçons gratuites."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le lezioni preparate vengono conteggiate nel tuo limite di lezioni gratuite."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスンの作成には、無料で利用できるレッスン枠を使います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨을 만들면 무료 레슨 한도에서 차감돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar aulas conta para o seu limite de aulas grátis."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazırladığımız dersler ücretsiz ders hakkından düşülür."
           }
         }
       }

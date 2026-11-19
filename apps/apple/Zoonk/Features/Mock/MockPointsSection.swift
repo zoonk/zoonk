@@ -66,11 +66,12 @@ extension MockPoints {
     let line =
       minimum.unit == .percent
       ? String(
-        localized: "At \(MockLabels.percent(first.scorePercent)). It needs \(needed).",
+        localized:
+          "You scored \(MockLabels.percent(first.scorePercent)). The minimum is \(needed).",
         table: "Mock",
-        comment: "Under a missed minimum share: the test's share, then the one it needs")
+        comment: "Under a missed minimum share: the learner's share, then the minimum")
       : String(
-        localized: "\(MockLabels.points(first.short ?? 0)) short of the \(needed) it needs.",
+        localized: "\(MockLabels.points(first.short ?? 0)) short of the minimum, \(needed).",
         table: "Mock",
         comment: "Under a missed minimum: the first argument is like '2 points'")
 

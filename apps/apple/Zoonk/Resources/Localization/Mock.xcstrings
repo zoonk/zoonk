@@ -233,61 +233,61 @@
         }
       }
     },
-    "%@ isn't in it until you pick which one you take." : {
+    "%@ isn't in your mock exams until you pick which one you take." : {
       "comment" : "The argument is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ist erst dabei, wenn du dich für eine Variante entschieden hast."
+            "value" : "%@ ist erst in deinen Probeprüfungen enthalten, wenn du auswählst, welche du machst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ no se incluye hasta que elijas qué opción presentar."
+            "value" : "%@ no aparecerá en tus simulacros hasta que elijas cuál presentar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ n’y figure pas tant que tu n’as pas choisi ton option."
+            "value" : "%@ ne figure pas dans tes examens blancs tant que tu n’as pas choisi lequel passer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ non rientra nella simulazione finché non scegli quale prova sostenere."
+            "value" : "Non troverai %@ nelle tue simulazioni finché non scegli quale sostenere."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@は、どれを受験するか選ぶまで模試に含まれません。"
+            "value" : "受けるものを選ぶまで、%@は模試に含まれません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "응시할 항목을 고르기 전에는 %@ 파트가 포함되지 않아요."
+            "value" : "어떤 시험을 볼지 선택하기 전까지는 %@은(는) 모의고사에 포함되지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: ta część nie jest uwzględniona, dopóki nie wybierzesz wariantu."
+            "value" : "%@ nie pojawi się na egzaminach próbnych, dopóki nie wybierzesz, do którego podejdziesz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ só entra no simulado depois que você escolher qual vai fazer."
+            "value" : "Seus simulados só incluem %@ depois que você escolhe qual vai fazer."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, seçimini yapana kadar bu deneme sınavına dahil değil."
+            "value" : "Deneme sınavlarında %@, hangi sınava gireceğini seçene kadar görünmez."
           }
         }
       }
@@ -741,67 +741,67 @@
         }
       }
     },
-    "%@ short of the %@ it needs." : {
+    "%@ short of the minimum, %@." : {
       "comment" : "Under a missed minimum: the first argument is like '2 points'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch %1$@ bis zum Minimum von %2$@."
+            "value" : "%1$@ fehlen bis zum Mindestwert, %2$@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ short of the %2$@ it needs."
+            "value" : "%1$@ short of the minimum, %2$@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ por debajo del mínimo de %2$@."
+            "value" : "A %1$@ del puntaje mínimo, %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il manque %1$@ pour atteindre le minimum de %2$@."
+            "value" : "%1$@ sous le minimum, %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora %1$@ per raggiungere il minimo di %2$@."
+            "value" : "Mancano %1$@ per raggiungere il minimo: %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@足りず、必要な%2$@に届いていません。"
+            "value" : "最低点まであと%1$@、%2$@。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 부족해 최소 기준인 %2$@에 못 미쳤어요."
+            "value" : "최소 기준보다 %1$@ 부족해요, %2$@."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O %1$@ poniżej wymaganego minimum: %2$@."
+            "value" : "Brakuje %1$@ do minimum, %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ abaixo do mínimo de %2$@."
+            "value" : "%1$@ abaixo do mínimo, %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ eksik; en az %2$@ gerekiyor."
+            "value" : "Minimum puanı %1$@ kadar kaçırdın, %2$@."
           }
         }
       }
@@ -2074,432 +2074,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$#@blank@ und %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Frage ist unbeantwortet"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Fragen sind unbeantwortet"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg ist markiert"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sind markiert"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ y %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pregunta está en blanco"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg preguntas están en blanco"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg está marcada"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg están marcadas"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ et %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg question est sans réponse"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg questions sont sans réponse"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg est marquée"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sont marquées"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ e %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg domanda è in bianco"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg domande sono in bianco"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg è contrassegnata"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sono contrassegnate"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@、%2$#@flagged@。"
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "空欄の問題が%arg問あります"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "見直し対象の問題が%arg問あります"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@, %2$#@flagged@입니다."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "빈 문제 %arg개"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "표시한 문제 %arg개"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ i %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytanie jest puste"
-                    }
-                  },
-                  "few" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytania są puste"
-                    }
-                  },
-                  "many" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytań jest pustych"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytania są puste"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytanie jest oznaczone"
-                    }
-                  },
-                  "few" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytania są oznaczone"
-                    }
-                  },
-                  "many" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytań jest oznaczonych"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pytania są oznaczone"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ e %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg questão está em branco"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg questões estão em branco"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg está marcada"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg estão marcadas"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$#@blank@ ve %2$#@flagged@."
-          },
-          "substitutions" : {
-            "blank" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg soru boş bırakıldı"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg soru boş bırakıldı"
-                    }
-                  }
-                }
-              }
-            },
-            "flagged" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg soru işaretlendi"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg soru işaretlendi"
-                    }
-                  }
-                }
-              }
-            }
           }
         },
         "en" : {
@@ -2549,6 +2123,54 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ y %2$#@flagged@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ et %2$#@flagged@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ e %2$#@flagged@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@、%2$#@flagged@。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@, %2$#@flagged@입니다."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ i %2$#@flagged@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ e %2$#@flagged@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$#@blank@ ve %2$#@flagged@."
+          }
         }
       }
     },
@@ -2568,6 +2190,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld Fragen sind unbeantwortet."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld question is blank."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld questions are blank."
                 }
               }
             }
@@ -2654,16 +2294,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pytanie pozostaje bez odpowiedzi."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld pytania pozostają bez odpowiedzi."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pytanie pozostaje bez odpowiedzi."
                 }
               },
               "other" : {
@@ -2704,24 +2344,6 @@
               }
             }
           }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld question is blank."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld questions are blank."
-                }
-              }
-            }
-          }
         }
       }
     },
@@ -2741,6 +2363,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld Fragen sind markiert."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld question is flagged."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld questions are flagged."
                 }
               }
             }
@@ -2827,12 +2467,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pytanie jest oznaczone."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -2843,6 +2477,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld pytań jest oznaczonych."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pytanie jest oznaczone."
                 }
               },
               "other" : {
@@ -2885,24 +2525,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld soru işaretlendi."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld question is flagged."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld questions are flagged."
                 }
               }
             }
@@ -4425,71 +4047,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ ile gereken %2$@ sınırının altında"
-          }
-        }
-      }
-    },
-    "At %@. It needs %@." : {
-      "comment" : "Under a missed minimum share: the test's share, then the one it needs",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erreicht: %1$@. Nötig: %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "At %1$@. It needs %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtuvo %1$@. Necesita %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résultat : %1$@. Minimum : %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al %1$@. Serve il %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "得点率は%1$@です。%2$@以上が必要です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "현재 %1$@예요. 최소 %2$@는 되어야 해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik: %1$@. Wymagane minimum: %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Está em %1$@. O mínimo é %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puan oranı %1$@. En az %2$@ gerekiyor."
           }
         }
       }
@@ -6257,7 +5814,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respostas com dúvida"
+            "value" : "Respostas marcadas"
           }
         },
         "tr" : {
@@ -7792,7 +7349,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulados exigem uma assinatura"
+            "value" : "Para fazer simulados, é preciso assinar"
           }
         },
         "tr" : {
@@ -8447,7 +8004,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há questões suficientes para este simulado. Escolha outro."
+            "value" : "Ainda não tem questões suficientes para este simulado. Escolha outro."
           }
         },
         "tr" : {
@@ -13222,7 +12779,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o mesmo tempo da prova real. Você vê seu resultado no final."
+            "value" : "Cronometrado, como na prova de verdade. Você vê seu resultado no final."
           }
         },
         "tr" : {
@@ -13464,7 +13021,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@."
+            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e leva cerca de %3$@."
           }
         },
         "tr" : {
@@ -14919,6 +14476,71 @@
         }
       }
     },
+    "You scored %@. The minimum is %@." : {
+      "comment" : "Under a missed minimum share: the learner's share, then the minimum",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %1$@ erreicht. Der Mindestwert liegt bei %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You scored %1$@. The minimum is %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtuviste %1$@. El puntaje mínimo es %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as obtenu %1$@. Le minimum est de %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai totalizzato %1$@. Il minimo è %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スコアは%1$@です。最低点は%2$@です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "점수는 %1$@예요. 최소 점수는 %2$@예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój wynik to %1$@. Minimum to %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você fez %1$@. O mínimo é %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puanın %1$@. Minimum puan %2$@."
+          }
+        }
+      }
+    },
     "You typed in at least one task, and typing shows nothing of how you sound, so the speaking part has no estimate. Speak every task next time to get one." : {
       "comment" : "A speaking paper with a typed task",
       "localizations" : {
@@ -15203,7 +14825,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As respostas que você marcou como incertas também renderam pontos, então continue respondendo."
+            "value" : "Suas respostas marcadas ainda renderam pontos, então continue respondendo a essas questões."
           }
         },
         "tr" : {

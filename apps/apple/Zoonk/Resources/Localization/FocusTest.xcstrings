@@ -184,25 +184,25 @@
         }
       }
     },
-    "Ask a few more as I study" : {
+    "Ask a few more questions as I study" : {
       "comment" : "Switch on the Focus test's result: \"a few more\" are test questions, asked while the learner studies their lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beim Lernen ein paar weitere Testfragen stellen"
+            "value" : "Beim Lernen ein paar weitere Fragen stellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hazme unas preguntas más mientras estudio"
+            "value" : "Hacerme algunas preguntas más mientras estudio"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Me poser quelques questions de plus pendant mes leçons"
+            "value" : "Me poser quelques questions de plus pendant mes séances"
           }
         },
         "it" : {
@@ -214,31 +214,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習中にも何問か問題を出す"
+            "value" : "学習中に問題をもう少し出す"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습하면서 문제를 몇 개 더 풀래요"
+            "value" : "학습 중 문제 몇 개 더 풀기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podczas nauki dostaję kilka dodatkowych pytań"
+            "value" : "Zadawaj mi kilka dodatkowych pytań podczas nauki"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fazer mais algumas perguntas enquanto estudo"
+            "value" : "Receber mais algumas perguntas enquanto estudo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalışırken bana birkaç soru daha sor"
+            "value" : "Çalışırken birkaç soru daha sorulsun"
           }
         }
       }

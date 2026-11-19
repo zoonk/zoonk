@@ -27,7 +27,7 @@ struct MemoryView: View {
             title: Text(
               "Use memory", tableName: "Settings", comment: "Switch that turns memory on or off"),
             description: Text(
-              "Personal examples, plans that fit your week and calls with \(learner.buddyDisplayName) that remember your news",
+              "Personal examples, plans that fit your week and calls with \(learner.buddyDisplayName) that remember what you share",
               tableName: "Settings",
               comment:
                 "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it."

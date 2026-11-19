@@ -56,14 +56,14 @@ final class PlanSlotCheckTests: XCTestCase {
     let actions = PlanSlotActions(apply: { applied.append($0) }, notNow: {})
 
     try await across(
-      from: from, to: to, tap: "Add to my plan", api: api
+      from: from, to: to, tap: "Add to plan", api: api
     ) {
       PlanFitSlot(context: context, offer: offer, title: Text(verbatim: "Fit"), actions: actions)
     } completed: {
       applied.count == 1
     }
 
-    XCTAssertEqual(applied.count, 1, "Add to my plan applies once")
+    XCTAssertEqual(applied.count, 1, "Add to plan applies once")
   }
 
   private func previewsAcross(from: Width, to: Width) async throws {

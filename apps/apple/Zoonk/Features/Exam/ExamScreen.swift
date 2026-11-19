@@ -152,7 +152,7 @@ struct ExamList: View {
         if options.running != nil {
           Text("Continue", tableName: "Exam", comment: "A running mock")
         } else {
-          Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
+          Text("New mock exam", tableName: "Exam", comment: "Opens the mock chooser")
         }
       }
       .buttonStyle(.mainAction)
@@ -268,7 +268,7 @@ private struct ExamHero: View {
               "Based on past exams, the likely date is \(day). Use it as your exam date?",
               tableName: "Exam", comment: "An estimated date and what adopting it changes")
           } else {
-            Text("The official exam date is \(day). Use it as your exam date?", tableName: "Exam")
+            Text("The official exam date is \(day). Use it?", tableName: "Exam")
           }
           if change.outcome == false {
             FailureLine(
@@ -709,7 +709,7 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.mockChooser)
           } label: {
-            Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
+            Text("New mock exam", tableName: "Exam", comment: "Opens the mock chooser")
           }
           .buttonStyle(.outline)
           .controlSize(.small)

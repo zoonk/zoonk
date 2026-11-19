@@ -265,7 +265,7 @@ extension HelpLimit {
     case .mindMaps:
       LocalizedStringResource("You've used your mind maps", table: "Subscriptions")
     case .previews:
-      LocalizedStringResource("You've used your previews", table: "Subscriptions")
+      LocalizedStringResource("You've used your early lessons", table: "Subscriptions")
     case .goals:
       LocalizedStringResource("You've started all the new goals you can", table: "Subscriptions")
     case .uploads:
@@ -301,7 +301,7 @@ extension HelpLimit {
         comment: "The learner made all the new mind maps they can today")
     case .previews:
       LocalizedStringResource(
-        "No more previews today", table: "Subscriptions",
+        "No more early lessons today", table: "Subscriptions",
         comment: "The learner saw all the topics ahead of time they can today")
     case .callTime:
       LocalizedStringResource(
@@ -325,7 +325,7 @@ extension HelpLimit {
         comment: "A guest made the mind maps they can try without an account")
     case .previews:
       LocalizedStringResource(
-        "No more previews without an account", table: "Subscriptions",
+        "No more early lessons without an account", table: "Subscriptions",
         comment: "A guest saw the topic ahead of time they can without an account")
     case .callTime:
       LocalizedStringResource(
@@ -436,9 +436,9 @@ extension HelpLimit {
       return LimitWords(
         title: LocalizedStringResource("This map needs a subscription", table: "Subscriptions"),
         line: LocalizedStringResource(
-          "It writes more lessons than you get for free.", table: "Subscriptions",
+          "This chapter has more lessons than you get for free.", table: "Subscriptions",
           comment:
-            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start."
+            "Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start."
         ))
     case .limitReached, .slowDown, .signUpRequired:
       return words(.mindMaps, now: now, calendar: calendar)
@@ -452,14 +452,14 @@ extension HelpLimit {
     switch day {
     case .open:
       return LimitWords(
-        title: LocalizedStringResource("You can make this map now", table: "Subscriptions"))
+        title: LocalizedStringResource("You can create this map now", table: "Subscriptions"))
     case nil:
       return LimitWords(title: title)
     case .today:
       return LimitWords(
         title: title,
         line: LocalizedStringResource(
-          "You'll have enough later today, or subscribe to make it now.", table: "Subscriptions",
+          "You'll have enough later today, or subscribe to create it now.", table: "Subscriptions",
           comment:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
         ))
@@ -467,7 +467,7 @@ extension HelpLimit {
       return LimitWords(
         title: title,
         line: LocalizedStringResource(
-          "You'll have enough tomorrow, or subscribe to make it now.", table: "Subscriptions",
+          "You'll have enough tomorrow, or subscribe to create it now.", table: "Subscriptions",
           comment:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
         ))
@@ -475,7 +475,7 @@ extension HelpLimit {
       return LimitWords(
         title: title,
         line: LocalizedStringResource(
-          "You'll have enough on \(date), or subscribe to make it now.", table: "Subscriptions",
+          "You'll have enough on \(date), or subscribe to create it now.", table: "Subscriptions",
           comment:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as \"November 22\" in English."
         ))

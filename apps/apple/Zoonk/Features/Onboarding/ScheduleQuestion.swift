@@ -458,7 +458,7 @@ struct ScheduleQuestion: View {
         comment:
           "Opens the date question from the daily time question, for a goal with an end date")
       : Text(
-        "Choose an end date", tableName: "Onboarding",
+        "Set end date", tableName: "Onboarding",
         comment:
           "Opens the date question from the daily time question, for a goal without an end date")
   }

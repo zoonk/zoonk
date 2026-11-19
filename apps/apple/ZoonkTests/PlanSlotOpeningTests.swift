@@ -3,7 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// PR comment 33: "Add to my plan" waiting for its numbers belongs to the suggestion's opening. Put
+/// PR comment 33: "Add to plan" waiting for its numbers belongs to the suggestion's opening. Put
 /// off, paged past or its sheet closed, the answer arrives and nothing is added; shown through a
 /// resize, it adds once.
 @MainActor
@@ -484,7 +484,7 @@ final class PlanSlotOpeningTests: XCTestCase {
   }
 
   private static let claim = String(localized: "Get your certificate", table: "Plan")
-  private static let add = String(localized: "Add to my plan", table: "Plan")
+  private static let add = String(localized: "Add to plan", table: "Plan")
   /// The pager, with one other suggestion.
   private static let more = String(localized: "\(1) more", table: "Plan")
 
