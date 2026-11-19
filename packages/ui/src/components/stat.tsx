@@ -71,16 +71,20 @@ export function StatDetail({ className, ...props }: React.ComponentProps<"span">
 export function StatSkeleton({
   children,
   detailLines = 0,
+  labeled = true,
 }: {
   children?: React.ReactNode;
   /** How many lines the stat's detail takes under its number. */
   detailLines?: number;
+  labeled?: boolean;
 }) {
   return (
     <Stat aria-hidden="true">
-      <StatLabel>
-        <Skeleton className="w-20 rounded-sm">{"\u00A0"}</Skeleton>
-      </StatLabel>
+      {labeled && (
+        <StatLabel>
+          <Skeleton className="w-20 rounded-sm">{"\u00A0"}</Skeleton>
+        </StatLabel>
+      )}
       <StatValue>
         <Skeleton className="w-14 rounded-sm">{"\u00A0"}</Skeleton>
       </StatValue>

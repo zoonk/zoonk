@@ -83,7 +83,7 @@ function CallFacts({
   }
 
   return (
-    <StatTiles className={cn((total === 0 || !showsBrainPower) && "grid-cols-1")}>
+    <StatTiles>
       {total > 0 && (
         <StatTile
           icon={<TargetIcon />}

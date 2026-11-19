@@ -1,13 +1,13 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
-import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { ArrowDownRightIcon, ArrowUpRightIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { StatTile, StatTiles } from "../_components/stat-tile";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatMomentDate } from "../_utils/iso-date";
 import { getMockSubject } from "../mock/mock-labels";
@@ -133,22 +133,26 @@ function LatestMock({ progress }: { progress: Progress }) {
   const change = first && progress.mocks.length > 1 ? latest.percent - first.percent : null;
 
   return (
-    <p className="flex flex-col gap-1.5" data-slot="latest-mock">
-      <BigQuantity className="pt-0.5 text-3xl">{`${latest.percent}%`}</BigQuantity>{" "}
-      <span className="text-muted-foreground text-compact text-pretty">
-        {exam.scoring.method === "net"
-          ? t("Score in {mock}", { mock: name })
-          : t("Right answers in {mock}", { mock: name })}
-        {change !== null && (
+    <StatTiles>
+      <StatTile
+        detail={
           <>
-            {FACT_SEPARATOR}
-            <span className={cn(change > 0 && "text-success-text")}>
-              {t("{change} since the first", { change: formatChange(change) })}
-            </span>
+            {exam.scoring.method === "net"
+              ? t("Score in {mock}", { mock: name })
+              : t("Right answers in {mock}", { mock: name })}
+            {change !== null && (
+              <>
+                {FACT_SEPARATOR}
+                <span className={cn(change > 0 && "text-success-text")}>
+                  {t("{change} since the first", { change: formatChange(change) })}
+                </span>
+              </>
+            )}
           </>
-        )}
-      </span>
-    </p>
+        }
+        value={`${latest.percent}%`}
+      />
+    </StatTiles>
   );
 }
 
