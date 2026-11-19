@@ -125,8 +125,9 @@ class OnboardingBarTest {
         assertPinned("Atoms", "Build my plan")
     }
 
+    /** A short wide window, since the level choices fit a 600dp one over the bar. */
     @Test
-    @Config(qualifiers = "w1280dp-h600dp-land-xhdpi")
+    @Config(qualifiers = "w1280dp-h520dp-land-xhdpi")
     fun onAWideWindowCourseStartKeepsItsActionsInReach() {
         showCourseStart()
         write("course-start-tall-wide")
