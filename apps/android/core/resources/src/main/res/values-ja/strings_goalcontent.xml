@@ -35,9 +35,6 @@
   "goalcontent_lessons_done": "97e305cbdfd1b3dee120361e7c88f125b0b299cc48ce2050257960a54aedfe8d",
   "goalcontent_lessons_known_skipped": "bb5f0bdc5823b1a505565b8aa7102c9a86a455ba26a8917502a0dddba40c7565",
   "goalcontent_lessons_skipped": "aea5ec2c296b481c62f9050a18ac0e625cd86d0460edef4301f157d8e4ec5e30",
-  "goalcontent_mastery": "31ddbee769d7911a2e9488bad9a3ffeff30b31325fa6eb44dba224e500a554ef",
-  "goalcontent_mastery_pending": "3d484bb9009dfb1b30ff6e5ec99e757473e8d42cde802edb321aa987896f0d4c",
-  "goalcontent_mastery_right": "9d542b836d2021b07efd0a351746255b1f35e1b6b2eb45b1c26dac4a95b5fae1",
   "goalcontent_material_topic_count": "0ad21583ee32085e5f25d78ee12630490df7b32cdb29800d4ef71ab658ec6021",
   "goalcontent_matrix_title": "cf51be90bc38c047b077e267131c4dd339b48798755bbf9f1f238d1ebe066e63",
   "goalcontent_module_count": "7506eee2df9cc8bf155fc341267dea929e4e8a8178ffab73e866119a166a2221",
@@ -135,10 +132,6 @@
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">準備状況</string>
     <string name="goalcontent_coverage">学習状況</string>
-    <string name="goalcontent_mastery">習熟度</string>
-    <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
-    <string name="goalcontent_mastery_right">%1$s問正解（全%2$s問）</string>
-    <string name="goalcontent_mastery_pending">練習問題をいくつか解くと表示されます</string>
     <string name="goalcontent_not_in_plan">学習計画に含まれていません</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">学習計画の追加項目</string>

@@ -35,9 +35,6 @@
   "goalcontent_lessons_done": "c4328df30c173ebf89560dca1350b53a74c4e2cba29e45aade515d928337dbb8",
   "goalcontent_lessons_known_skipped": "277400972492720d9788d9e92283dc66100550ff3ba29976ee3cc3d530b222f9",
   "goalcontent_lessons_skipped": "3e9373bc8b3d2d318de8053033a98de714c5d3d2bf51215c99c92de9aeb0a8b3",
-  "goalcontent_mastery": "16c84445f09382480e1023fbee86869f825251606b49d52bc1f064b7915d5604",
-  "goalcontent_mastery_pending": "70c8b4c49bd199361f41dbf3dc2c7500814ba27d32550a158354d248e658fc5f",
-  "goalcontent_mastery_right": "343ef601077b48bc752d3960da3011747f24f05a9bf8cca46b23f3edf93be782",
   "goalcontent_material_topic_count": "e839f6dc6ef7f24eb77780973d1f7c900149426f01b4547e2b97c2f5ba0cdff1",
   "goalcontent_matrix_title": "70a62fcd8fa9b6f8a93c4fd81b8c2c8a5bbfcbdac2913caaba0424de09570e88",
   "goalcontent_module_count": "58109cb58a65e0bfab9ff266cb5aa9ef27fb25d0a23860f890e75600622e17d0",
@@ -144,10 +141,6 @@
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Hazırlık</string>
     <string name="goalcontent_coverage">Kapsam</string>
-    <string name="goalcontent_mastery">Öğrenme düzeyi</string>
-    <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
-    <string name="goalcontent_mastery_right">%1$s doğru, toplam %2$s soru</string>
-    <string name="goalcontent_mastery_pending">Birkaç alıştırma sorusu çözdükten sonra görünür</string>
     <string name="goalcontent_not_in_plan">Planında yok</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Planında da var</string>
