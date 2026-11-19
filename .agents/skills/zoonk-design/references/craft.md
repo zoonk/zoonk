@@ -438,11 +438,11 @@ Then one line: would a principal designer find anything to pick at here, and wha
 
 ### The role read
 
-The craft read takes one screen. The role read takes one role on every screen, because a difference between two areas is invisible to a reader who sees one. It runs when a change draws or moves a role, touches a role's piece, or was built by more than one agent, and again on the whole when the parts are combined.
+The craft read takes one screen. The role read takes one role on every screen, because a difference between two areas is invisible to a reader who sees one. It runs once when a change draws or moves a role, touches a role's piece, or was built by more than one agent: on the whole, once the parts are combined.
 
 1. For each role the change reaches, collect a crop of every instance, from every area and not only the changed screens, at 390 and 1440, on one sheet per role: page tops, back links, bottom bars with their main action, the overlays (open, on a phone and a computer), subscription gates, empty states, the line over a title, tabs, a list's row ends. `pnpm verify:pages --roles <every page that draws it>` makes the sheets and a table of each instance's numbers ([role sheets](../../verify/references/pages.md#compare-shared-roles)); a role it has no hook for is cropped by hand.
 2. A reader that built none of them gets the sheets and this file, and nothing else. Per sheet it answers: which instances differ from the rest, in what (place, size, gap, glyph, words, what a key or a tap does), and by how much.
-3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`). A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
+3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`), with `before` saying whether main draws it so too. A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
 
 ### Independent picture review
 
