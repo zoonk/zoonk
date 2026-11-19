@@ -5639,9 +5639,9 @@ msgid "Call {name}"
 msgstr "Call {name}"
 
 #: src/language/conversation/call-intro-footer.tsx
-msgctxt "UJMZ20"
-msgid "Start the call"
-msgstr "Start the call"
+msgctxt "dCb7CD"
+msgid "Start call"
+msgstr "Start call"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "ZJuJDK"
@@ -5760,9 +5760,10 @@ msgid "This call has ended"
 msgstr "This call has ended"
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "QGKgDY"
-msgid "Start this call"
-msgstr "Start this call"
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "Start here"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -5966,9 +5967,9 @@ msgid "Call again, or end the call to get feedback on what you said."
 msgstr "Call again, or end the call to get feedback on what you said."
 
 #: src/language/conversation/dropped-call-screen.tsx
-msgctxt "ycr28Y"
-msgid "End the call"
-msgstr "End the call"
+msgctxt "Hzws31"
+msgid "End call"
+msgstr "End call"
 
 #: src/language/conversation/dropped-call-screen.tsx
 msgctxt "p5AWJt"
@@ -9858,11 +9859,6 @@ msgstr "Choices"
 msgctxt "sS7-IQ"
 msgid "Add time"
 msgstr "Add time"
-
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "xmtnm9"
-msgid "Start here"
-msgstr "Start here"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx

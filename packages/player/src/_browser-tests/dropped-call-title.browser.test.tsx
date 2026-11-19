@@ -74,7 +74,7 @@ describe("a call that stopped", () => {
   it("offers no Call again while calls are paused", async () => {
     renderDropped({ reason: "callsPaused", retry: null });
 
-    await expect.element(page.getByRole("button", { name: "End the call" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "End call" })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "Call again" })).not.toBeInTheDocument();
   });
 });

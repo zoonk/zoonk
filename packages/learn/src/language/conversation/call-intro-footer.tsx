@@ -20,7 +20,7 @@ export type CallIntroFooterState = "failed" | "idle" | "plusRequired" | "startin
 /** Long enough for a microphone already allowed to answer without a prompt. */
 const PROMPT_SHOWN_MS = 300;
 
-/** An examiner isn't someone the learner calls, so exams keep "Start the call". */
+/** An examiner isn't someone the learner calls, so exams keep "Start call". */
 function callsCharacter(conversation: Pick<LanguageConversationIntro, "examTask" | "kind">) {
   return !conversation.examTask && conversation.kind !== "speakingMock";
 }
@@ -229,7 +229,7 @@ function CallIntroActions({
         onPointerEnter={preloadLiveCall}
       >
         <TaskMainButton busy={starting} onClick={onStart}>
-          {isCall ? t("Call {name}", { name }) : t("Start the call")}
+          {isCall ? t("Call {name}", { name }) : t("Start call")}
         </TaskMainButton>
       </TaskActions>
     </>

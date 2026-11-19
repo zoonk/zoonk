@@ -43,7 +43,7 @@
   "conversation_dropped": "49845f05503402de3a377bb24967baa3123cfa2c4d1c9b9c4202ec15efc65b7a",
   "conversation_dropped_title": "d3d31953b5c074555378e88b5b3d650d659f2d15046e7d6fbcfe791db0267bb2",
   "conversation_end": "3402cb0cc8a2b0bb4e148506d073be0623a44768e22cbee12a39f5caa87f7c26",
-  "conversation_end_call": "bbd338de8cd4931f4d8f0deae573416fb99f40094e9b790146082c5b60e51c6e",
+  "conversation_end_call": "82a4fab1be1134af6ab543046a2a67ce552f3f811ff0c071848f4a21427a6913",
   "conversation_end_description": "85b1b9943a504e99bf7606fcf2980cc22f6ad26180419f334a6fb29b7afb15b7",
   "conversation_end_title": "dbe84d254914a02c0cd460aaff861348726a0e2c7770d0301c0efdfc6ce5da24",
   "conversation_ended": "12eb3f67f2af51c0d67f26e255d67d85e65b32999a01d817531801a8e2d856ca",
@@ -122,12 +122,12 @@
   "conversation_sound_note": "fedbb4b81e85d3cde45156884b6c28863e76ffc1f4d6e96db3d6b99975ecc9c1",
   "conversation_stars": "a554fbed8c65f644ca9f8b168d587d247b8eb64851530828f3154045a4a229a4",
   "conversation_stars_rule": "a4d44cce1e390d2a07bc50e8777bb7b47ba03a107f18b336e30c06c6708959f4",
-  "conversation_start": "926334a0aa9588dbd99ee6a28a1368c3df7b5e3012ac422ef0d58c223131e5a3",
+  "conversation_start": "9424009ba6cfabe6fedbd0a6d653c4ddd6dcb79e36c3cac0cef482065c9658e8",
   "conversation_start_failed": "c0742fecb9dbe7f0b52a7066c323fe97f512fba9b6c87ab836cd1c0f5be6b5af",
   "conversation_start_preparing": "4d418029c9ee93a9f09817f59860696b370350f278d757cc7125d15ba359605c",
   "conversation_still_closing": "d4341a1996f2055df26d9b1e51f6100f224ccb5f59915b6d80264eacf6e51c2c",
   "conversation_still_to_get_across": "e7515811d2c6469f5b708f58d63611e052b1e5dcdf284e2f500152781aafd3b1",
-  "conversation_take_over": "d46a6da50710b3c0dd901f88f3f7719e099989afd5a210579c6e91017193f7d5",
+  "conversation_take_over": "beb46ecf254ea39f50d99a381164348875bc07d6b01de74a3e81c6c3c50c1c16",
   "conversation_take_your_time": "f9c538ef19e9c6009815fcf6b188ce017965057748e02cf0d0b120292eaf783b",
   "conversation_taken_over": "582e54c33f5b59139fb1a0532eb660b95ed0b2c08a52ebd73a698cccfaa97f43",
   "conversation_talking": "0d9f48be85ac58407464fe0753bb4a8de2abbb90ec481c4a7df3d597b1db2aa5",
@@ -248,7 +248,7 @@
     <string name="conversation_paused">Şu an herkes aynı durumda. Daha sonra tekrar dene.</string>
     <string name="conversation_in_progress_title">Başka bir sohbetin açık</string>
     <string name="conversation_in_progress">Başka bir cihazda ya da tarayıcında açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın.</string>
-    <string name="conversation_take_over">Bu sohbeti başlat</string>
+    <string name="conversation_take_over">Buradan başla</string>
     <string name="conversation_dropped_title">Sohbet bağlantısı kesildi</string>
     <string name="conversation_dropped">Tekrar bağlan veya söylediklerin hakkında geri bildirim almak için sohbeti bitir.</string>
     <string name="conversation_end_call">Sohbeti bitir</string>

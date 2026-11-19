@@ -13,7 +13,7 @@
     <string name="conversation_sound_note">Turn your sound on.</string>
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Call %1$s</string>
-    <string name="conversation_start">Start the call</string>
+    <string name="conversation_start">Start call</string>
     <string name="conversation_start_failed">The call didn\'t start. Try again in a moment.</string>
     <string name="conversation_challenge_gate_title">This call needs a subscription</string>
     <string name="conversation_challenge_gate_line">Your plan goes on without it.</string>
@@ -80,10 +80,10 @@
     <string name="conversation_paused">It\'s the same for everyone right now. Try again later.</string>
     <string name="conversation_in_progress_title">You\'re in another call</string>
     <string name="conversation_in_progress">It\'s open on another device or in your browser. Starting this one ends it, without its feedback.</string>
-    <string name="conversation_take_over">Start this call</string>
+    <string name="conversation_take_over">Start here</string>
     <string name="conversation_dropped_title">The call dropped</string>
     <string name="conversation_dropped">Call again, or end the call to get feedback on what you said.</string>
-    <string name="conversation_end_call">End the call</string>
+    <string name="conversation_end_call">End call</string>
     <string name="conversation_call_again">Call again</string>
     <string name="conversation_not_connected_title">The call didn\'t connect</string>
     <string name="conversation_not_connected">This happens sometimes. Try again in a moment.</string>

@@ -22,6 +22,6 @@ export function useRefusalCopy() {
       title: t("Calls are paused"),
     },
     ended: { text: t("Start a new call to keep practicing."), title: t("This call has ended") },
-    takeover: t("Start this call"),
+    takeover: t("Start here"),
   };
 }

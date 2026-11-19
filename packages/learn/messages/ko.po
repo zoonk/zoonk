@@ -5639,8 +5639,8 @@ msgid "Call {name}"
 msgstr "{name}와(과) 대화하기"
 
 #: src/language/conversation/call-intro-footer.tsx
-msgctxt "UJMZ20"
-msgid "Start the call"
+msgctxt "dCb7CD"
+msgid "Start call"
 msgstr "대화 시작하기"
 
 #: src/language/conversation/call-limit-message.tsx
@@ -5760,9 +5760,10 @@ msgid "This call has ended"
 msgstr "이 대화가 끝났어요"
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "QGKgDY"
-msgid "Start this call"
-msgstr "이 대화 시작하기"
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "여기서 시작"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -5966,8 +5967,8 @@ msgid "Call again, or end the call to get feedback on what you said."
 msgstr "다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요."
 
 #: src/language/conversation/dropped-call-screen.tsx
-msgctxt "ycr28Y"
-msgid "End the call"
+msgctxt "Hzws31"
+msgid "End call"
 msgstr "대화 끝내기"
 
 #: src/language/conversation/dropped-call-screen.tsx
@@ -9858,11 +9859,6 @@ msgstr "선택지"
 msgctxt "sS7-IQ"
 msgid "Add time"
 msgstr "학습 시간 늘리기"
-
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "xmtnm9"
-msgid "Start here"
-msgstr "여기서 시작"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx

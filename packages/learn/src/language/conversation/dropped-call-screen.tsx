@@ -100,7 +100,7 @@ function DroppedCallActions({
   if (!retry) {
     return (
       <TaskActions>
-        <TaskMainButton onClick={onEnd}>{t("End the call")}</TaskMainButton>
+        <TaskMainButton onClick={onEnd}>{t("End call")}</TaskMainButton>
       </TaskActions>
     );
   }
@@ -116,7 +116,7 @@ function DroppedCallActions({
   return (
     <TaskActions className={cn(crowded && "max-lg:flex-col max-lg:items-stretch")}>
       <Button className="shrink-0" onClick={onEnd} size="lg" variant="outline">
-        {t("End the call")}
+        {t("End call")}
       </Button>
 
       {retry === "microphone" && (

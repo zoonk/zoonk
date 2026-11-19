@@ -80,7 +80,7 @@ test.describe("Exam speaking tasks", () => {
     await speaking.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}\\?from=exam$`, "u"));
 
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Start call" }).click();
     const transcript = page.getByRole("log", { name: "Conversation" });
     await expect(transcript.getByText(SCENARIO.openingLine)).toBeVisible();
     await expect(page.getByRole("region", { name: "Your card" })).toBeVisible();

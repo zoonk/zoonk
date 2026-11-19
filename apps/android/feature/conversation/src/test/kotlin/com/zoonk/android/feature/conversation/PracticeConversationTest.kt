@@ -67,7 +67,7 @@ class PracticeConversationTest {
         val runs = HeldRuns()
         val answers = ArrayDeque(listOf<CallStart>(CallStart.Writing("run-1"), CallStart.Started(started)))
         show(start = starting(answers, runs))
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
         compose.waitForIdle()
 
         compose.onNodeWithText("Your call opens as soon as it's ready.").assertExists()
@@ -98,7 +98,7 @@ class PracticeConversationTest {
                 PracticeConversation(practiceCall(), chapter, null, starter, { opened += it }, state = state)
             }
         }
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
         compose.waitForIdle()
         runs.write()
         compose.waitForIdle()
@@ -107,7 +107,7 @@ class PracticeConversationTest {
         compose.waitForIdle()
         compose.runOnIdle { state.sheetOpen = true }
         compose.waitForIdle()
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
         compose.waitForIdle()
         late.complete(CallStart.Writing("run-2"))
         compose.waitForIdle()
@@ -130,15 +130,15 @@ class PracticeConversationTest {
                     }
                 },
         )
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("More later today, or subscribe to keep going.").assertExists()
 
         clock.passOpening()
-        compose.waitUntil(LIFT_TIMEOUT) { compose.onAllNodesWithText("Start the call").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(LIFT_TIMEOUT) { compose.onAllNodesWithText("Start call").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
         compose.waitForIdle()
 
         assertEquals(2, requests.size)
@@ -159,7 +159,7 @@ class PracticeConversationTest {
         compose.onNodeWithText(minutes(2)).assertExists()
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Subscribe").assertExists()
-        compose.onNodeWithText("Start the call").assertDoesNotExist()
+        compose.onNodeWithText("Start call").assertDoesNotExist()
     }
 
     /** A guest's limit has no date and never lifts: Create a free account alone, the same shape. */
@@ -169,7 +169,7 @@ class PracticeConversationTest {
 
         compose.onNodeWithText("Create a free account").assertExists()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
-        compose.onNodeWithText("Start the call").assertDoesNotExist()
+        compose.onNodeWithText("Start call").assertDoesNotExist()
     }
 
     /** With no call time left the server sends no lengths, and the sheet shows neither them nor their label. */
@@ -192,18 +192,18 @@ class PracticeConversationTest {
             practiceCall(limit = limitJson("plus", clock.opening)),
         )
 
-        compose.onNodeWithText("Start the call").assertIsNotEnabled()
+        compose.onNodeWithText("Start call").assertIsNotEnabled()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
         compose.onNodeWithText(minutes(2)).assertIsNotEnabled()
 
         clock.passOpening()
         compose.waitUntil(LIFT_TIMEOUT) {
-            compose.onAllNodesWithText("Start the call").fetchSemanticsNodes().any {
+            compose.onAllNodesWithText("Start call").fetchSemanticsNodes().any {
                 SemanticsProperties.Disabled !in
                     it.config
             }
         }
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
         compose.waitForIdle()
 
         assertEquals(3L, (requests.single() as CallRequest.Practice).minutes)
@@ -218,9 +218,9 @@ class PracticeConversationTest {
         val lengths = top(minutes(1))
 
         clock.passOpening()
-        compose.waitUntil(LIFT_TIMEOUT) { compose.onAllNodesWithText("Start the call").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(LIFT_TIMEOUT) { compose.onAllNodesWithText("Start call").fetchSemanticsNodes().isNotEmpty() }
 
-        assertEquals(action, top("Start the call"))
+        assertEquals(action, top("Start call"))
         assertEquals(lengths, top(minutes(1)))
         assertEquals(title, compose.onAllNodesWithText("Practice a conversation")[1].getBoundsInRoot().top)
     }

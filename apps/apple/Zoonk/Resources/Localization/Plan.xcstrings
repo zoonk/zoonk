@@ -29625,7 +29625,7 @@
         }
       }
     },
-    "Start the call" : {
+    "Start call" : {
       "comment" : "Starts the practice call",
       "localizations" : {
         "de" : {
@@ -29643,7 +29643,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lancer l’appel"
+            "value" : "Démarrer l’appel"
           }
         },
         "it" : {
@@ -29655,7 +29655,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "会話練習を始める"
+            "value" : "会話を始める"
           }
         },
         "ko" : {
@@ -29673,7 +29673,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a conversa"
+            "value" : "Começar conversa"
           }
         },
         "tr" : {

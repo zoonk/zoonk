@@ -123,7 +123,7 @@ class ConversationFlowTest {
         compose.onNodeWithText("Call Lucía").performClick()
 
         compose.onNodeWithText("You're in another call").assertExists()
-        compose.onNodeWithText("Start this call").performClick()
+        compose.onNodeWithText("Start here").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf(false, true), client.connects)
@@ -248,7 +248,7 @@ class ConversationFlowTest {
         transport.onLost()
         compose.waitForIdle()
 
-        compose.onNodeWithText("End the call").performClick()
+        compose.onNodeWithText("End call").performClick()
         compose.waitForIdle()
 
         assertEquals(

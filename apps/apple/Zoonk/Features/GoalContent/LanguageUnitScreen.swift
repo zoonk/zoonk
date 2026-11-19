@@ -619,7 +619,7 @@ struct PracticeCallSection: View {
       BusyButton(isBusy: start.isStarting, isRow: true) {
         startCall(minutes: picked)
       } label: {
-        Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
+        Text("Start call", tableName: "Plan", comment: "Starts the practice call")
       }
       .disabled(!isEnabled)
     }

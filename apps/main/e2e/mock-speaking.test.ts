@@ -132,7 +132,7 @@ test.describe("Mock speaking sections", () => {
     await page.getByRole("listitem").nth(1).getByRole("link", { name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${calls[1]?.id}\\?mock=`, "u"));
 
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Start call" }).click();
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Me parece una buena idea.");
     await page.keyboard.press("Enter");
     const transcript = page.getByRole("log", { name: "Conversation" });
