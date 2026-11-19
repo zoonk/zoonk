@@ -92710,7 +92710,7 @@
             "items": {
               "$ref": "#/components/schemas/PlanDay"
             },
-            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days is listed on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items"
+            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, a written lesson split across days is listed on its first day, and lessons still being written are listed on every day they fill. A day with time but nothing left to list isn't included; a rest day is, with no items"
           },
           "today": {
             "$ref": "#/components/schemas/StudyDay"
