@@ -31,7 +31,7 @@
   "mock_label_shape": "d28d06109dd466576d05228b472a4b7d06a7319f206a294a0e4b59dd6fc8d878",
   "mock_left_blank": "f61f974ed76763e29250721ca44febc209df4066a091ef702ed3d013eacf7c81",
   "mock_left_blank_and_flagged": "f8600bff6469b59d06cd78fa22b8a4a43dfb400ea21096e065ff6e884e1ded61",
-  "mock_left_blank_only": "4d188a5e618193a1a2c1f0dbab613af8bf48e203e9fb418e549b5fb6b0488092",
+  "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
   "mock_left_flagged": "f227be23001fe786850036fe1f63f7c5f5085ca1f9352cba8cde08f3fc602dfe",
   "mock_left_flagged_only": "ab3406728913a02f75f97b0afd70f1a868ecaa6e1abb31d10a822df8857c3b11",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
@@ -158,6 +158,7 @@
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s ve %2$s.</string>
     <plurals name="mock_left_blank_only">
+        <item quantity="one">%d soru boş.</item>
         <item quantity="other">%d soru boş.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">

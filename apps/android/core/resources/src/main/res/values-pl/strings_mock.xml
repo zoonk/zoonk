@@ -31,7 +31,7 @@
   "mock_label_shape": "a727ea4c5e978c01dfc0085e7fa49b922de1bc555ac2a972e3e4b40cb8abc44a",
   "mock_left_blank": "0a38881343a26c9691e6211ab908889e7cd6e5de207a2f34cd1c425640f5b8e2",
   "mock_left_blank_and_flagged": "f7a8cdbfb3381f4fb7805750f3878556c3e81f7567b9812c160d932fbf46416b",
-  "mock_left_blank_only": "75a6ee5bd403ca6c7827acb4e8ac907a3fe5c9444d482231db300a0f3d416de2",
+  "mock_left_blank_only": "4d488296b3530de4db72c5858aa2718011f9268e67fc786b58fb1693320d4700",
   "mock_left_flagged": "b531fbb9e869aa0ec2a7332aad314cdefba505cc815d75017fa789fd77562d9e",
   "mock_left_flagged_only": "a1e457b93e70042e4453a3be35441df75fe3c2ae6ea463ee6aa2adbb5a8baa93",
   "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
@@ -170,6 +170,7 @@
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d pytanie pozostaje bez odpowiedzi.</item>
         <item quantity="few">%d pytania pozostają bez odpowiedzi.</item>
+        <item quantity="many">%d pytań pozostaje bez odpowiedzi.</item>
         <item quantity="other">%d pytań pozostaje bez odpowiedzi.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">

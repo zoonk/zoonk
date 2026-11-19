@@ -29,11 +29,11 @@
   "mock_keep_going": "2abd78aa40fd90c56ba69fdb28dc1356378f4d97956fdd80f2c337e7fd5e1074",
   "mock_label": "99ee9836c7b33a07c7a37db48090ba9592ac50f1641910281cceea1ec15e8f02",
   "mock_label_shape": "6cb83fe97605ea7385e8e9d0ac6254dcf3fd8ae514e13aa2778d22dbb35b155f",
-  "mock_left_blank": "494264a66d3d43a927659e0623597dea634b9655af6359c852b282ae2d77fd0f",
+  "mock_left_blank": "ed5b2b753c98801fe9cff37a97806c46dcc024fedbd27ec506971ad41b88cad3",
   "mock_left_blank_and_flagged": "6d06ef6ee00a5b78f1c3a3a4b541dce97ce0f714128bced3f5ba12680475b646",
-  "mock_left_blank_only": "8fa536012b37c24503c359b6a0622f343cc39468c28baedfd9886d71c4c20660",
-  "mock_left_flagged": "1601b5a8edbfd0c3f9fa8928b75366ed5a5d45fddd2f96b8b91afd79296a816e",
-  "mock_left_flagged_only": "cee576bb562f4c419d1dd6706fcadec572ed048f2ea3eabafcf64afe6115a96c",
+  "mock_left_blank_only": "8cce4729aaf592fc82f0c0bfa098c0dc29b2e1373a73d87688446f4cdb90b0d1",
+  "mock_left_flagged": "4a9dee675ead616f7cfdd1d602a5662b2c809437fae8e406cf3690fb648a39fa",
+  "mock_left_flagged_only": "31815d2d3dc4b518a8809bdb318486214d1de9d28e383a07bdd2709913481360",
   "mock_moves_forward": "f2ee8c32e084f26e3979d6806bfbf7d0902a47669c17b5e1dfffa28ae1c1a8af",
   "mock_moves_forward_must": "9d75f80209b554e5fb16fc276043ea153d3c7f4a750fc366dfdfe6d19d34451d",
   "mock_moves_must": "31a19be81dc0a9973fe1b8e4dfa88fbf17db4d643a92b3ac2ca27552dec7c20e",
@@ -152,20 +152,24 @@
     <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question est sans réponse</item>
+        <item quantity="many">%d questions sont sans réponse</item>
         <item quantity="other">%d questions sont sans réponse</item>
     </plurals>
     <plurals name="mock_left_flagged">
         <item quantity="one">%d est marquée</item>
+        <item quantity="many">%d sont marquées</item>
         <item quantity="other">%d sont marquées</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s et %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d question est sans réponse.</item>
+        <item quantity="many">%d questions sont sans réponse.</item>
         <item quantity="other">%d questions sont sans réponse.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
         <item quantity="one">%d question est marquée.</item>
+        <item quantity="many">%d questions sont marquées.</item>
         <item quantity="other">%d questions sont marquées.</item>
     </plurals>
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
