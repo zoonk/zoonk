@@ -7210,12 +7210,6 @@ msgctxt "Ktc-vQ"
 msgid "Study maps"
 msgstr "Étudier les cartes mentales"
 
-#. A tab's name: the mind maps of the goal's chapters, one per chapter.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "IFE_-l"
-msgid "Chapter maps"
-msgstr "Cartes mentales des chapitres"
-
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "e39t_E"
 msgid "No chapter maps yet."
@@ -7225,6 +7219,12 @@ msgstr "Pas encore de cartes mentales de chapitre."
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Pas encore de cartes mentales de chapitre. Chaque chapitre que tu termines a la sienne."
+
+#. A tab's name: the mind maps of the goal's chapters, one per chapter.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "IFE_-l"
+msgid "Chapter maps"
+msgstr "Cartes mentales des chapitres"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "UpexRz"
@@ -7263,6 +7263,11 @@ msgctxt "mindMapsSavedTab"
 msgid "Saved"
 msgstr "Enregistrées"
 
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "1Eu-N_"
+msgid "Chapters with no map yet"
+msgstr "Chapitres sans carte mentale pour l’instant"
+
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
@@ -7273,11 +7278,6 @@ msgctxt "VSfWXI"
 msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
 msgstr "{count, plural, one {Tu peux créer # carte mentale de plus dès maintenant.} other {Tu peux créer # cartes mentales de plus dès maintenant.}}"
 
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "Les leçons préparées comptent dans ton quota de leçons gratuites."
-
 #. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "TeRns5"
@@ -7285,10 +7285,9 @@ msgid "No map yet"
 msgstr "Pas encore de carte mentale"
 
 #: src/mind-maps/not-made-yet.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, one {# chapitre} other {# chapitres}}"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Les leçons préparées comptent dans ton quota de leçons gratuites."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -7801,26 +7800,6 @@ msgstr "{answered, plural, =0 {# réponse} one {# réponse} other {# réponses}}
 msgctxt "7SPhv2"
 msgid "Later questions"
 msgstr "Questions suivantes"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "6go3bd"
-msgid "Unanswered"
-msgstr "Sans réponse"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "Xq1XH-"
-msgid "Answered"
-msgstr "Avec réponse"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "m8vPdI"
-msgid "Current question"
-msgstr "Question en cours"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "_Isgzp"
-msgid "{flagged, plural, =0 {Marked for review} one {# marked for review} other {# marked for review}}"
-msgstr "{flagged, plural, =0 {Marquée pour révision} one {# marquée pour révision} other {# marquées pour révision}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -13037,6 +13016,11 @@ msgstr "Dans tes documents"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "Aussi dans ton plan"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, one {# chapitre} other {# chapitres}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

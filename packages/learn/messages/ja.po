@@ -7210,12 +7210,6 @@ msgctxt "Ktc-vQ"
 msgid "Study maps"
 msgstr "マップを学習する"
 
-#. A tab's name: the mind maps of the goal's chapters, one per chapter.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "IFE_-l"
-msgid "Chapter maps"
-msgstr "章のマップ"
-
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "e39t_E"
 msgid "No chapter maps yet."
@@ -7225,6 +7219,12 @@ msgstr "章のマップはまだありません。"
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "章のマップはまだありません。章を終えるたびに作成されます。"
+
+#. A tab's name: the mind maps of the goal's chapters, one per chapter.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "IFE_-l"
+msgid "Chapter maps"
+msgstr "章のマップ"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "UpexRz"
@@ -7263,6 +7263,11 @@ msgctxt "mindMapsSavedTab"
 msgid "Saved"
 msgstr "保存済み"
 
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "1Eu-N_"
+msgid "Chapters with no map yet"
+msgstr "マップがまだない章"
+
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
@@ -7273,11 +7278,6 @@ msgctxt "VSfWXI"
 msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
 msgstr "{count, plural, other {今すぐ、マップをあと#枚作成できます。}}"
 
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "レッスンの作成には、無料で利用できるレッスン枠を使います。"
-
 #. Heading over the chapters whose mind map hasn't been made yet.
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "TeRns5"
@@ -7285,10 +7285,9 @@ msgid "No map yet"
 msgstr "マップはまだありません"
 
 #: src/mind-maps/not-made-yet.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {#章}}"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "レッスンの作成には、無料で利用できるレッスン枠を使います。"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -7801,26 +7800,6 @@ msgstr "{answered, plural, =0 {#問に回答済み} other {#問に回答済み}}
 msgctxt "7SPhv2"
 msgid "Later questions"
 msgstr "後の問題"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "6go3bd"
-msgid "Unanswered"
-msgstr "未回答"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "Xq1XH-"
-msgid "Answered"
-msgstr "回答済み"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "m8vPdI"
-msgid "Current question"
-msgstr "現在の問題"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "_Isgzp"
-msgid "{flagged, plural, =0 {Marked for review} one {# marked for review} other {# marked for review}}"
-msgstr "{flagged, plural, =0 {見直し対象} other {#問が見直し対象}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -13037,6 +13016,11 @@ msgstr "資料から"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "学習計画の追加項目"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {#章}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

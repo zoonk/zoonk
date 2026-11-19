@@ -18,6 +18,7 @@ import {
 /** `bottomBar` is the page's `BottomBar`: with an aside it pins over the main column only. */
 export function DetailLayout({
   aside,
+  asideClassName,
   asideLabel = "",
   bar,
   bottomBar,
@@ -27,6 +28,7 @@ export function DetailLayout({
   ...props
 }: React.ComponentProps<"article"> & {
   aside?: React.ReactNode;
+  asideClassName?: string;
   asideLabel?: string;
   bar?: React.ReactNode;
   bottomBar?: React.ReactNode;
@@ -54,7 +56,12 @@ export function DetailLayout({
   );
 
   const layout = aside ? (
-    <PageWithAside aside={aside} asideLabel={asideLabel} bottomBar={bottomBar}>
+    <PageWithAside
+      aside={aside}
+      asideClassName={asideClassName}
+      asideLabel={asideLabel}
+      bottomBar={bottomBar}
+    >
       {page}
     </PageWithAside>
   ) : (

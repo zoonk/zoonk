@@ -6,9 +6,10 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
+import { Disclosure } from "../_components/disclosure";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -19,10 +20,13 @@ import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
+import { FoldRow } from "../today/today-fold-row";
 import {
   type MindMapsPageChapter,
   countChapterMaps,
+  groupBySubject,
+  needsAttention,
+  orderNotMade,
   startsNoMap,
   toMindMapLimit,
 } from "./_utils/mind-maps-page";
@@ -122,40 +126,22 @@ function NotMadeLine({
   return null;
 }
 
-/** A map on its way, or one that didn't finish: its row says so, and its group opens to show it. */
-function isOpenOnArrival(chapter: MindMapsPageChapter): boolean {
-  return (
-    chapter.status === "drawing" ||
-    chapter.status === "writingLessons" ||
-    chapter.status === "failed"
-  );
-}
-
-/** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
-export function canMakeNow(chapter: MindMapsPageChapter): boolean {
-  return (
-    chapter.lessonsToWrite === 0 &&
-    (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
-  );
-}
-
 function NotMadeRows({
   chapters,
+  label,
   library,
-  lessonsWarningId,
   plus,
 }: {
   chapters: readonly MindMapsPageChapter[];
+  label?: string;
   library: MindMapsLibrary;
-  lessonsWarningId?: string;
   plus: boolean;
 }) {
   return (
-    <ul className={LIST_GROUP_CLASS}>
+    <ul aria-label={label} className={LIST_GROUP_CLASS}>
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
-            createDescribedBy={chapter.lessonsToWrite > 0 ? lessonsWarningId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -167,9 +153,63 @@ function NotMadeRows({
   );
 }
 
+function RestBySubject({
+  chapters,
+  library,
+  plus,
+}: {
+  chapters: readonly MindMapsPageChapter[];
+  library: MindMapsLibrary;
+  plus: boolean;
+}) {
+  const t = useExtracted();
+  const listId = useId();
+  const [open, setOpen] = useState(false);
+  const groups = groupBySubject(chapters);
+
+  if (groups.every((group) => group.name !== null)) {
+    return (
+      <ListGroup data-slot="maps-not-made-subjects">
+        {groups.map((group) => (
+          <Disclosure
+            aside={group.rows.length}
+            defaultOpen={group.rows.some((chapter) => needsAttention(chapter))}
+            icon={null}
+            key={group.key}
+            title={group.name ?? ""}
+          >
+            <NotMadeRows chapters={group.rows} library={library} plus={plus} />
+          </Disclosure>
+        ))}
+      </ListGroup>
+    );
+  }
+
+  return (
+    <>
+      <div className="contents" id={listId}>
+        {open && <NotMadeRows chapters={chapters} library={library} plus={plus} />}
+      </div>
+      <FoldRow
+        controls={listId}
+        done={false}
+        label={
+          open
+            ? t("Show fewer chapters")
+            : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                count: chapters.length,
+              })
+        }
+        onToggle={() => setOpen(!open)}
+        open={open}
+      />
+    </>
+  );
+}
+
 /**
- * The chapters without a map, after the ones that have one: one button that makes every map it
- * can, one line on what's happening, and each chapter's own row on demand.
+ * The chapters without a map, beside the learner's maps: the next few, the rest folded by subject,
+ * one button that makes every map it can and one line on what's happening.
  */
 export function NotMadeYet({
   chapters,
@@ -184,49 +224,14 @@ export function NotMadeYet({
   const { bulk, page } = library;
   const { needLessons, startable, stop } = page.createOffer;
   const plus = tier === "plus";
-  const now = chapters.filter((chapter) => canMakeNow(chapter));
-  const later = chapters.filter((chapter) => !canMakeNow(chapter));
+  const studied = new Set(page.lessonGroups.map((group) => group.chapterId));
+  const { next, rest } = orderNotMade({ chapters, studied });
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
-  const listId = useId();
-  const lessonsWarningId = useId();
   const warnsLessons = !plus && needLessons > 0 && stop === null;
-  const folds = now.length > 0 && later.length > 0;
-  const [open, setOpen] = useState(() => later.some((chapter) => isOpenOnArrival(chapter)));
-  const laterRef = useRef<HTMLDivElement>(null);
-  const focusOnOpen = useRef(false);
-
-  useEffect(() => {
-    if (open && focusOnOpen.current) {
-      focusRevealedRow(laterRef.current?.querySelector("li"));
-    }
-
-    focusOnOpen.current = false;
-  }, [open]);
-
-  const toggle = () => {
-    focusOnOpen.current = !open;
-    setOpen(!open);
-  };
-
-  const laterRows = (
-    <div className="flex flex-col gap-3" ref={laterRef}>
-      {warnsLessons && (
-        <p className={LINE_CLASS} id={lessonsWarningId}>
-          {t("Writing lessons counts toward your free lessons.")}
-        </p>
-      )}
-      <NotMadeRows
-        chapters={later}
-        lessonsWarningId={warnsLessons ? lessonsWarningId : undefined}
-        library={library}
-        plus={plus}
-      />
-    </div>
-  );
 
   return (
-    <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
+    <PageSection aria-labelledby={titleId} className="gap-3" data-slot="maps-not-made">
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>
           {t({
@@ -234,31 +239,17 @@ export function NotMadeYet({
             message: "No map yet",
           })}
         </PageSectionTitle>
-        <PageSectionDetail>
-          {t("{count, plural, one {# chapter} other {# chapters}}", { count: chapters.length })}
-        </PageSectionDetail>
+        <PageSectionDetail>{chapters.length}</PageSectionDetail>
       </PageSectionHeader>
 
-      <div className="flex flex-col gap-3 empty:hidden" id={listId}>
-        {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
-        {later.length > 0 && (!folds || open) && laterRows}
-      </div>
-
-      {folds && (
-        <FoldRow
-          controls={listId}
-          done={false}
-          label={
-            open
-              ? t("Show fewer chapters")
-              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                  count: later.length,
-                })
-          }
-          onToggle={toggle}
-          open={open}
-        />
+      {warnsLessons && (
+        <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
       )}
+
+      <div className="flex flex-col">
+        <NotMadeRows chapters={next} library={library} plus={plus} />
+        {rest.length > 0 && <RestBySubject chapters={rest} library={library} plus={plus} />}
+      </div>
 
       <div
         className="flex flex-col gap-3 [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
@@ -270,7 +261,7 @@ export function NotMadeYet({
             className="self-start"
             icon={<PlusIcon aria-hidden="true" />}
             onClick={bulk.createAll}
-            size="lg"
+            size="sm"
             variant="outline"
           >
             {t("Create all")}
@@ -278,7 +269,7 @@ export function NotMadeYet({
         )}
 
         <StatusRegion>
-          <NotMadeLine chapters={later} library={library} tier={tier} />
+          <NotMadeLine chapters={chapters} library={library} tier={tier} />
         </StatusRegion>
       </div>
     </PageSection>
