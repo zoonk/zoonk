@@ -15,12 +15,12 @@
   "mistakes_open_lesson": "8b7bd86580f0000587e9099a635c7d189a62f4e3729412fa182eff0c5aeb15f9",
   "mistakes_opens_tomorrow": "18f84c2fc2eceb39f6a9a107a08048be550beff16d7dd5336c6f3db036f1f330",
   "mistakes_other_questions": "af50c2795362752567a5723d1caa60841655bb2b42e5fab247a87223ad3612d6",
-  "mistakes_practice": "cc3f1c9a7c859a334a195f5c5606ab1c12dd9497ee1e224fd1f178af18fb5226",
+  "mistakes_practice": "5a8cad7918287c6d0d9730e1c2684eaf6e22d81277a489c4ba795fd08e3b6ba1",
   "mistakes_practice_comes_back": "671404c4e069639d6b1971113f83141d8d506e0bc7982fede82636cc7d9c6868",
   "mistakes_practice_end": "18ac011c0fee75e79297ec7f0d8b042ed79ca18091d24681be9becf9a0766d9f",
   "mistakes_practice_fixed": "e0f314d230b3f882629fdb7a2ea0e87b35222b5527dd8e0fdb7eec6186477358",
   "mistakes_practice_missed_and_unreached": "c1c62c244528faf071ed93bce018162eae113e239b011ed73c932d23e8c59f8b",
-  "mistakes_practice_title": "a27e7a5bdf209c6051f70354fff42b48125b921c13212616eed5d33cc0e3cd95",
+  "mistakes_practice_title": "a57a2dc994dd46b27d0c5a59fb61a157dbc09f9f0f000b450f61a8a888b0929d",
   "mistakes_practice_tomorrow": "baab5c2a4d8857e55e1ff47282a857389c61807f2197c10adc60c133cdb88696",
   "mistakes_practice_topic": "82ea684e07998005897f966715d42570fb4cf6e826f1b8bfdb4526e8ee96eee1",
   "mistakes_practice_unreached": "75a000c61a01e81d50a3d3227d3929c6531c9639f92f2242941f5c84ca1f11b6",
@@ -30,7 +30,7 @@
 }
 -->
 <resources>
-    <string name="mistakes_practice_title">Réviser tes erreurs</string>
+    <string name="mistakes_practice_title">Corriger tes erreurs</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Quitter. Tes réponses sont prises en compte.</string>
     <string name="mistakes_practice_comes_back">Les questions que tu as ratées reviennent un autre jour, pour que tu les retiennes mieux.</string>
@@ -44,7 +44,7 @@
     <string name="mistakes_nothing_title">Rien à réviser pour le moment</string>
     <string name="mistakes_nothing_description">Les erreurs reviennent en révision dès le lendemain.</string>
     <string name="mistakes_notebook_title">Carnet d’erreurs</string>
-    <string name="mistakes_practice">Réviser tes erreurs</string>
+    <string name="mistakes_practice">Corriger tes erreurs</string>
     <!-- Under the notebook's title when no mistake is ready yet and some come back tomorrow. -->
     <string name="mistakes_opens_tomorrow">Tu pourras t’entraîner demain</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->

@@ -20,7 +20,7 @@
   "mistakes_practice_end": "f705feb7e422c7bdc618826a7c29c073b9aba3f76a25c4a4bf242cffa851db68",
   "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
   "mistakes_practice_missed_and_unreached": "ec81cc6461925aa7b826e44f7e72c6c093145357f84b69e7cc3e0ac961c965f6",
-  "mistakes_practice_title": "42a5a8234fa98595f8ba577bda1812520e0392802cc11acd97fe2ee1ea67f27b",
+  "mistakes_practice_title": "60f1ef08f941e8f315e16a9b276039352b7bd3bae28b76f4770a134a502a21bc",
   "mistakes_practice_tomorrow": "33926b8027ce6dd5d49aa81ef5347197c7cb1e29ef8cc9fb597ef56373f90098",
   "mistakes_practice_topic": "6b7de4b80cfedbfca320bbf6c7873e34af012f4b1c482aedae1d86d36ba858da",
   "mistakes_practice_unreached": "6d0f3cd68142618a8ac976942ebf727dd0fd5e3ef1293e2cc28892eca871d3bf",
@@ -30,7 +30,7 @@
 }
 -->
 <resources>
-    <string name="mistakes_practice_title">Praticar erros</string>
+    <string name="mistakes_practice_title">Corrigir erros</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Sair. O que você já respondeu conta.</string>
     <string name="mistakes_practice_comes_back">O que você errou volta outro dia, quando fica mais fácil fixar.</string>

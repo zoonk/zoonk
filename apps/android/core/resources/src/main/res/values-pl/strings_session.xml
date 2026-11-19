@@ -11,7 +11,7 @@
   "session_block_mock_exam": "8c21b51a8acb5b2b8553f19f3c9bee8148386aa568dca04d5edbaacb2f56fd92",
   "session_block_new_lesson": "e98fad686e778b680ed1dfe3bcab73579da2c9abee64255e4e1fc34de51af722",
   "session_block_practice_areas": "d6b70943a1c01266ec0dd0b4d35897f981fc7aa4e9b4490686e0958f49cf8855",
-  "session_block_practice_mistakes": "a83d77337033ae27eaafb5aab6fe0c4be31bf8fc55a13ba9aa6240b70d46db62",
+  "session_block_practice_mistakes": "7aca9f3d121e4dbeaaa68fc8e1debda20af112cbf90e2701468360a60a6cee2e",
   "session_block_practice_topic": "b114ba1097761a439079f741dd4d697e161bf66ae3a15d606a08fef3877a412c",
   "session_block_questions": "71ec008d07ddde547a36bc13ee31d3e21473f15e35f6e33b8b8e08b1a242cc2e",
   "session_block_rematch": "ae747a994ed66d69f11b4f6c41feb68c886e7d8a50615e5d39a889d9ad14f078",
@@ -101,7 +101,7 @@
     <string name="session_block_what_you_know">To, co już wiesz</string>
     <string name="session_block_new_lesson">Nowa lekcja</string>
     <string name="session_block_writing_practice">Ćwiczenie pisania</string>
-    <string name="session_block_practice_mistakes">Praca nad błędami</string>
+    <string name="session_block_practice_mistakes">Popraw błędy</string>
     <string name="session_block_bonus_practice">Dodatkowe ćwiczenia</string>
     <string name="session_block_mixed_practice">Ćwiczenia z różnych tematów</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

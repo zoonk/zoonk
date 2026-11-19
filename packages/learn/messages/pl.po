@@ -7608,7 +7608,7 @@ msgstr "Wyjdź. Dotychczasowe odpowiedzi się liczą."
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Praca nad błędami"
+msgstr "Popraw błędy"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "SMv32M"
@@ -7620,7 +7620,7 @@ msgstr "Pomoc przy tym pytaniu"
 #: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Ćwicz błędy"
+msgstr "Popraw błędy"
 
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "GvnPe5"

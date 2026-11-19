@@ -60,7 +60,7 @@
 - “Mistakes notebook”: “Caderno de erros”
 - “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”
-- “practice mistakes”: “praticar o que você errou”
+- “Practice mistakes” (the notebook’s practice, as a button or a title): “Corrigir erros”, matching the tabs “Para corrigir” / “Corrigidos”; in a sentence, “praticar o que você errou”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Novo” / “Aprendendo” / “Firme” / “Dominado”
 - “Known before”: “Você já sabia”; “Known” (progress legend): “Já sabia”
 - “Preparation”: “Preparo”

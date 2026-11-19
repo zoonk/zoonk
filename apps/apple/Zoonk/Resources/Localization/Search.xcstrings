@@ -1087,7 +1087,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réviser tes erreurs"
+            "value" : "Corriger tes erreurs"
           }
         },
         "it" : {
@@ -1111,13 +1111,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Popracuj nad błędami"
+            "value" : "Popraw błędy"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar seus erros"
+            "value" : "Corrigir seus erros"
           }
         },
         "tr" : {

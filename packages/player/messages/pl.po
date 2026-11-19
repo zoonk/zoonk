@@ -2990,7 +2990,7 @@ msgstr "Nadal możesz robić powtórki i pracować nad błędami."
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Ćwicz błędy"
+msgstr "Popraw błędy"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "mOFG3K"

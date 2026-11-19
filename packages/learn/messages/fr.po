@@ -7608,7 +7608,7 @@ msgstr "Quitter. Tes réponses sont prises en compte."
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Réviser tes erreurs"
+msgstr "Corriger tes erreurs"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "SMv32M"
@@ -7620,7 +7620,7 @@ msgstr "Aide pour cette question"
 #: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Réviser tes erreurs"
+msgstr "Corriger tes erreurs"
 
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "GvnPe5"

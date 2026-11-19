@@ -68,7 +68,7 @@
 - “call” (speaking practice): “rozmowa”, not “połączenie”
 - “Mistakes notebook”: “Zeszyt błędów”
 - “Saved to your mistakes”: “Zapisano w zeszycie błędów”, in every line that starts with it
-- “To fix” / “Fixed” (notebook tabs): “Do poprawy” / “Poprawione”
+- “To fix” / “Fixed” (notebook tabs): “Do poprawy” / “Poprawione”; “Practice mistakes” (the notebook’s practice, as a button or a title): “Popraw błędy”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nowe” / “W trakcie nauki” / “Utrwalone” / “Opanowane”
 - “Known before”: “Znane wcześniej”; “Known” (progress legend): “Znane”
 - “Preparation”: “Przygotowanie”

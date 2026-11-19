@@ -46,7 +46,7 @@
 - “Mistakes notebook”: “Carnet d’erreurs”
 - “Saved to your mistakes”: “Ajouté à ton carnet d’erreurs”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “À corriger” / “Corrigées”
-- “practice mistakes”: “réviser tes erreurs”
+- “Practice mistakes” (the notebook’s practice, as a button or a title): “Corriger tes erreurs”, matching the tabs; never “réviser”, which a mock exam’s “Questions à revoir” uses
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nouveau” / “En cours” / “Solide” / “Maîtrisé”
 - “Known before”: “Déjà connus”; “Known” (progress legend): “Déjà acquis”
 - “Preparation”: “Préparation”

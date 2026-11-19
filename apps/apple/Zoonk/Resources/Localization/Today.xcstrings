@@ -8426,7 +8426,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réviser tes erreurs"
+            "value" : "Corriger tes erreurs"
           }
         },
         "it" : {
@@ -8456,7 +8456,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar erros"
+            "value" : "Corrigir erros"
           }
         },
         "tr" : {

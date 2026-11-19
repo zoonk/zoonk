@@ -2990,7 +2990,7 @@ msgstr "Tu peux toujours réviser tes leçons et tes erreurs."
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Réviser tes erreurs"
+msgstr "Corriger tes erreurs"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "mOFG3K"

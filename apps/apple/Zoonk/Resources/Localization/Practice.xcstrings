@@ -8060,7 +8060,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réviser tes erreurs"
+            "value" : "Corriger tes erreurs"
           }
         },
         "it" : {
@@ -8072,13 +8072,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違えた問題の練習"
+            "value" : "間違えたところの練習"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오답 연습"
+            "value" : "틀린 문제 연습"
           }
         },
         "pl" : {
@@ -8090,7 +8090,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar erros"
+            "value" : "Corrigir erros"
           }
         },
         "tr" : {
@@ -8303,7 +8303,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réviser tes erreurs"
+            "value" : "Corriger tes erreurs"
           }
         },
         "it" : {
@@ -8327,7 +8327,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwicz błędy"
+            "value" : "Popraw błędy"
           }
         },
         "pt" : {

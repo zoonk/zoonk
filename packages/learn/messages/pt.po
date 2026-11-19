@@ -7608,7 +7608,7 @@ msgstr "Sair. Suas respostas continuam valendo."
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Praticar erros"
+msgstr "Corrigir erros"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "SMv32M"
