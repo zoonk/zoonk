@@ -233,11 +233,14 @@ export function LearnSectionBar({
   end,
   history = "origin",
   listed,
+  phoneEnd,
   tabletBack,
   title,
 }: {
   back: { href: string; label?: string };
   end?: React.ReactNode;
+  /** The bar's end under `lg` only, where no sidebar holds it. */
+  phoneEnd?: React.ReactNode;
   /** A section entry returns to the page outside the section that opened it. */
   history?: "destination" | "origin" | "section-entry";
   listed?: ListedBy;
@@ -254,7 +257,14 @@ export function LearnSectionBar({
 
   return (
     <PageTopBar
-      actions={end}
+      actions={
+        (end || phoneEnd) && (
+          <>
+            {end}
+            {phoneEnd && <div className="contents lg:hidden">{phoneEnd}</div>}
+          </>
+        )
+      }
       className={listed && !end ? BARE_ON_COMPUTER_CLASS[listed] : undefined}
       back={
         <>
