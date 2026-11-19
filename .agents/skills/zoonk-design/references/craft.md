@@ -5,7 +5,7 @@ How a Zoonk screen is drawn, as rules with a number. The [taste bar](../SKILL.md
 The design system is the reference. A fault is one of two kinds:
 
 - **The screen departs from the system.** Fix the screen, or the shared piece when the fault is the piece's, so every screen gets the fix.
-- **The system departs from a rule here.** Report it once, against the token or component, never once per screen. Changing a token or a shared piece's look is the user's decision.
+- **The system departs from a rule here.** Report it once, against the token or component, never once per screen. A builder who changes a token or a shared piece's look lists it for the user to accept or overrule ([when a rule looks wrong](../../../guides/exceptions.md)).
 
 The [deliberate choices](#deliberate-choices) at the end are neither.
 
@@ -505,7 +505,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 
 ### Exceptions the user granted
 
-Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here follows the rule: ask in your handoff (in a task split among subagents, in [its exceptions file](../../../guides/orchestration.md#exceptions)), and add it here only once the user has accepted it.
+Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here is handled as [when a rule looks wrong](../../../guides/exceptions.md) says, and is added here only once the user has accepted it.
 
 - The landing page's hero headline and a blog post's title keep their own weight and line height (T1, T3).
 - A lesson question's picture is centered in the column (E9).
