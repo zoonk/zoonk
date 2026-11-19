@@ -5,7 +5,7 @@ import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { ListGroup, ListRow, ListRowContent, ListRowLeading } from "../../_components/list-group";
 import {
   PageSection,
@@ -40,6 +40,36 @@ function useItemTitle() {
   };
 }
 
+function WeekRow({
+  date,
+  dateWidth,
+  muted = false,
+  text,
+}: {
+  date: string;
+  dateWidth: number;
+  muted?: boolean;
+  text: string;
+}) {
+  return (
+    <ListRow data-slot="week-day">
+      <ListRowLeading
+        className="text-muted-foreground justify-start font-mono text-xs whitespace-nowrap tabular-nums"
+        data-slot="week-day-date"
+        style={{ minWidth: `${dateWidth}ch` }}
+      >
+        {date}
+      </ListRowLeading>
+
+      <ListRowContent>
+        <span className={cn("text-sm", muted && "text-muted-foreground")} data-slot="week-day-item">
+          {text}
+        </span>
+      </ListRowContent>
+    </ListRow>
+  );
+}
+
 /**
  * One line per day: how many lessons, anything else it holds (a review, a mock exam) and how long.
  * The names wait for the Plan, so the week stays a glance. The dates never wrap, and each row's
@@ -70,50 +100,64 @@ function WeekDayRow({
   ].filter(Boolean);
 
   return (
-    <ListRow data-slot="week-day">
-      <ListRowLeading
-        className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
-        data-slot="week-day-date"
-        style={{ minWidth: `${dateWidth}ch` }}
-      >
-        {date}
-      </ListRowLeading>
-
-      <ListRowContent>
-        <span
-          className={cn("text-sm", day.items.length === 0 && "text-muted-foreground")}
-          data-slot="week-day-item"
-        >
-          {day.items.length === 0 ? t("Rest day") : facts.join(FACT_SEPARATOR)}
-        </span>
-      </ListRowContent>
-    </ListRow>
+    <WeekRow
+      date={date}
+      dateWidth={dateWidth}
+      muted={day.items.length === 0}
+      text={day.items.length === 0 ? t("Rest day") : facts.join(FACT_SEPARATOR)}
+    />
   );
 }
 
-/** The week the learner is in: Today (`children`), then the six days after it. */
+/** Today in one line, for a week whose Today shows its lessons elsewhere. */
+function useTodayLine(reveal: PlanRevealDays | null): string | null {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const blocks = reveal?.today.blocks ?? [];
+  const lessons = blocks.filter((block) => block.lessonId).length;
+
+  if (!reveal || blocks.length === 0) {
+    return null;
+  }
+
+  return [
+    lessons > 0 && t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons }),
+    formatDuration(reveal.minutes),
+  ]
+    .filter(Boolean)
+    .join(FACT_SEPARATOR);
+}
+
+/**
+ * The week the learner is in: Today (`children`), then the six days after it. Without `children`,
+ * Today's lessons show elsewhere, so it's a line like the others.
+ */
 export function RevealWeek({
-  children,
+  children = null,
   reveal,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   reveal: PlanRevealDays | null;
 }) {
   const t = useExtracted();
+  const titleId = useId();
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
   const ahead = reveal?.nextDays ?? [];
+  const todayLine = useTodayLine(children ? null : reveal);
+  const todayDate = t("Today");
   const dates = ahead.map((day) => formatDate(day.date, "row", { weekday: true }));
-  const dateWidth = Math.max(0, ...dates.map((date) => date.length));
+  const shown = todayLine ? [todayDate, ...dates] : dates;
+  const dateWidth = Math.max(0, ...shown.map((date) => date.length));
 
   if (!reveal || reveal.week.days === 0) {
     return children;
   }
 
   return (
-    <PageSection aria-labelledby="reveal-week">
+    <PageSection aria-labelledby={titleId}>
       <PageSectionHeader>
-        <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
           {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>
@@ -121,8 +165,9 @@ export function RevealWeek({
 
       {children}
 
-      {ahead.length > 0 && (
+      {(ahead.length > 0 || todayLine) && (
         <ListGroup>
+          {todayLine && <WeekRow date={todayDate} dateWidth={dateWidth} text={todayLine} />}
           {ahead.map((day, index) => (
             <WeekDayRow
               date={dates[index] ?? day.date}

@@ -72,12 +72,11 @@ import kotlin.math.roundToLong
 
 internal val LocalRevealBuddy = compositionLocalOf { MomentBuddy(BuddyLook(), "") }
 
+/** Main's reveal header: "Plan created", the goal's name, and the buddy cheering beside it. */
 @Composable
 internal fun RevealHero(
-    plan: Plan,
     goal: Goal,
     play: Boolean,
-    today: LocalDate,
 ) {
     val buddy = LocalRevealBuddy.current
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -93,6 +92,18 @@ internal fun RevealHero(
                 )
             }
         }
+    }
+}
+
+/** Main's `RevealReadouts`: the plan's figures between two rules. */
+@Composable
+internal fun RevealReadouts(
+    plan: Plan,
+    goal: Goal,
+    play: Boolean,
+    today: LocalDate,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         HorizontalDivider()
         FlowRow(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RevealReadout(
@@ -267,15 +278,30 @@ internal fun RevealToday(
     }
 }
 
+/** Today in one line ("6 lessons · 41 min"), for a week whose Today shows its lessons elsewhere. */
+@Composable
+internal fun revealTodayLine(
+    day: DayView,
+    minutes: Long,
+): String {
+    val lessons = day.steps.count { it.lessonId != null }
+    return (
+        listOfNotNull(lessons.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.onboarding_course_lessons, it, it) }) +
+            formatMinutes(minutes.toInt(), currentLocale())
+    ).factsLine()
+}
+
 /**
  * Main's `RevealWeek`: the first week, its study days and time as core counts them (today among them when [today] lists
  * something), over Today and then each day after it on one line: the date, as wide as the week's longest and never
- * wrapping, then how many lessons, anything else the day holds and how long. The names wait for the Plan.
+ * wrapping, then how many lessons, anything else the day holds and how long. The names wait for the Plan. With [todayLine],
+ * Today's lessons show elsewhere and it's a row like the others.
  */
 @Composable
 internal fun RevealWeek(
     reveal: PlanRevealToday,
-    today: @Composable () -> Unit,
+    todayLine: String? = null,
+    today: @Composable () -> Unit = {},
 ) {
     val week = reveal.week
     val days = reveal.nextDays
@@ -285,9 +311,11 @@ internal fun RevealWeek(
     }
     val locale = currentLocale()
     val dateStyle = MaterialTheme.zoonkType.data.copy(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+    val todayLabel = stringResource(R.string.today_title)
     val dates = days.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.WeekdayDayOfMonth) }
     val measurer = rememberTextMeasurer()
-    val dateWidth = with(LocalDensity.current) { dates.maxOf { measurer.measure(it, dateStyle, softWrap = false).size.width }.toDp() }
+    val labels = if (todayLine == null) dates else listOf(todayLabel) + dates
+    val dateWidth = with(LocalDensity.current) { labels.maxOf { measurer.measure(it, dateStyle, softWrap = false).size.width }.toDp() }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(
             stringResource(R.string.onboarding_reveal_first_week),
@@ -299,6 +327,22 @@ internal fun RevealWeek(
         )
         today()
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            todayLine?.let {
+                ListRow(
+                    leading = {
+                        Text(
+                            todayLabel,
+                            Modifier.widthIn(min = dateWidth),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = dateStyle,
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                    },
+                    headline = { Text(it) },
+                )
+                if (days.isNotEmpty()) ListDivider()
+            }
             days.forEachIndexed { index, day ->
                 val lessons = day.items.sumOf { it.lessons.toInt() }
                 val others =

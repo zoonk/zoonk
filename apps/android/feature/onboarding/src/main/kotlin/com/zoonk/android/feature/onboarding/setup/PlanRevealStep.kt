@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -380,20 +382,40 @@ private fun ColumnScope.RevealBody(
     onCreateAccount: () -> Unit,
     focus: RevealFocus,
 ) {
-    SetupContent {
-        val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
-        val coverage = revealCoverage(plan, goal.kind, syllabus)
-
-        RevealHero(plan, goal, playMoment, today)
-        PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
-        PaceLine(plan, goal.kind)
-        NoticeDayLine(plan)
-        reveal?.let { shown ->
-            RevealWeek(shown) {
-                studyDay?.takeIf { it.steps.isNotEmpty() }?.let {
-                    RevealToday(it, shown.minutes, playMoment, onOpenStep, openingStep, failedStep)
-                }
+    val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
+    val coverage = revealCoverage(plan, goal.kind, syllabus)
+    val shownToday = studyDay?.takeIf { it.steps.isNotEmpty() }
+    // Main's `RevealGlance`: the plan at a glance, in the pane beside today's lessons, or under them.
+    val glance: @Composable () -> Unit = {
+        Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+            RevealReadouts(plan, goal, playMoment, today)
+            PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
+            PaceLine(plan, goal.kind)
+            NoticeDayLine(plan)
+            reveal?.let { shown -> RevealWeek(shown, todayLine = shownToday?.let { revealTodayLine(it, shown.minutes) }) }
+            if (plan.roadmapPhases.size >= 2) {
+                PlanPhases(plan, today)
+            } else {
+                plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
             }
+            if (plan.notice == Plan.Notice.USUAL) {
+                Text(
+                    stringResource(R.string.onboarding_reveal_usual_structure),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            syllabus?.areaWeights()?.let { AreaWeightList(it) }
+            // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
+            // topics) and choices (bases, study everything) go with this.
+            coverage?.let { CoverageWords(it, plan, focus) }
+        }
+    }
+
+    SetupContent(aside = { RevealGlancePane(glance) }) {
+        RevealHero(goal, playMoment)
+        reveal?.let { shown ->
+            shownToday?.let { RevealToday(it, shown.minutes, playMoment, onOpenStep, openingStep, failedStep) }
         }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
@@ -430,26 +452,14 @@ private fun ColumnScope.RevealBody(
             }
         }
 
-        if (plan.roadmapPhases.size >= 2) {
-            PlanPhases(plan, today)
-        } else {
-            plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
-        }
-
-        if (plan.notice == Plan.Notice.USUAL) {
-            Text(
-                stringResource(R.string.onboarding_reveal_usual_structure),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-
-        syllabus?.areaWeights()?.let { AreaWeightList(it) }
-
-        // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
-        // topics) and choices (bases, study everything) go with this.
-        coverage?.let { CoverageWords(it, plan, focus) }
+        if (!LocalWaitBeside.current) glance()
     }
+}
+
+/** The supporting pane's own scroll and margins, as the setup's plan-so-far pane has. */
+@Composable
+private fun RevealGlancePane(glance: @Composable () -> Unit) {
+    Column(Modifier.verticalScroll(rememberScrollState()).padding(24.dp)) { glance() }
 }
 
 @Composable

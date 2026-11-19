@@ -254,9 +254,17 @@ export function readPanel({
       return null;
     }
 
+    // A fixed panel centers in the room fixed boxes get, which its backdrop fills: a classic
+    // scrollbar, or the gutter a scroll lock keeps for it, narrows it.
+    const backdrop = [...document.querySelectorAll("[data-slot=drawer-backdrop]")]
+      .at(-1)
+      ?.getBoundingClientRect();
+
+    const room = backdrop ?? new DOMRect(0, 0, innerWidth, innerHeight);
+
     return (
-      Math.abs((box.left + box.right) / 2 - innerWidth / 2) <= 2 &&
-      Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) <= 2 &&
+      Math.abs((box.left + box.right) / 2 - (room.left + room.right) / 2) <= 2 &&
+      Math.abs((box.top + box.bottom) / 2 - (room.top + room.bottom) / 2) <= 2 &&
       ![...(panel?.querySelectorAll("[data-slot=drawer-handle]") ?? [])].some(shown)
     );
   }

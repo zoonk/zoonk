@@ -22,6 +22,7 @@ import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
 import { pageTopComparisons } from "./page-top-comparisons.mts";
 import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
+import { PRESS_VIEWPORTS, launchPressBrowser, pressSection } from "./press-report.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -30,6 +31,7 @@ import {
   renderRows,
   summarizeStatements,
 } from "./queries.mts";
+import { readableSection } from "./readable.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
 import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
@@ -112,6 +114,7 @@ const loadPerCore = () => (loadavg()[0] ?? 0) / availableParallelism();
 const BUSY_LOAD_PER_CORE = 3;
 const loadAtStart = loadPerCore();
 const browser = await chromium.launch();
+const pressBrowser = values.press ? await launchPressBrowser() : undefined;
 const actions = readActionNames(served);
 
 const queries = values.queries ? resolve(values.queries) : undefined;
@@ -151,6 +154,10 @@ const navigationViewports: ViewportName[] = viewports.filter(
   (viewport) => viewport === "phone" || viewport === "laptop",
 );
 
+const walkViewports: ViewportName[] = values.press
+  ? viewports.filter((viewport) => PRESS_VIEWPORTS.includes(viewport))
+  : navigationViewports;
+
 try {
   for (const path of paths) {
     await warmUp(target, path);
@@ -158,19 +165,22 @@ try {
     for (const viewport of viewports) {
       const load = await measureLoad(target, { path, schemes, viewport });
 
-      // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
-      if (navigationViewports.includes(viewport)) {
-        const { findings, ...coverage } = await walkStates(target, {
+      // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move. With
+      // --press, also on a tablet, every press judged pass or fail.
+      if (walkViewports.includes(viewport)) {
+        const { findings, pressRecords, ...coverage } = await walkStates(target, {
           capture: values.roles
             ? async (page, state) => {
                 roles.push(...(await captureRoles(page, { out, path, state, viewport })));
               }
             : undefined,
           path,
+          pressIn: pressBrowser,
           viewport,
         });
 
         load.walk = coverage;
+        load.pressRecords = pressRecords;
         load.findings.push(...findings);
       }
 
@@ -229,6 +239,7 @@ try {
   );
 } finally {
   await browser.close();
+  await pressBrowser?.close();
 }
 
 const production = loads.every((load) => load.production);
@@ -313,6 +324,8 @@ const report = renderReport({
     ...renderRows(renders),
     ...(soak ? soakRows(soak) : []),
     ...(comparison ? comparisonRows(comparison) : []),
+    ...(baseline ? readableSection(baseline.loads, loads) : []),
+    ...(values.press ? pressSection(loads, out) : []),
   ],
   sheets,
 });

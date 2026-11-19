@@ -6,7 +6,7 @@ import { type Step } from "./states.mts";
 const MIN_PX = 2;
 const LISTED = 3;
 
-function moved(change: Moved) {
+export function changeOf(change: Moved) {
   return {
     across: change.after.left - change.before.left,
     down: change.after.top - change.before.top,
@@ -15,8 +15,8 @@ function moved(change: Moved) {
   };
 }
 
-function describe(change: Moved) {
-  const { across, down } = moved(change);
+export function describeChange(change: Moved) {
+  const { across, down } = changeOf(change);
 
   const ways = [
     Math.abs(across) >= MIN_PX ? `${Math.abs(across)} px ${across > 0 ? "right" : "left"}` : "",
@@ -31,7 +31,7 @@ function describe(change: Moved) {
   return `${change.label} went from ${before.width}×${before.height} to ${after.width}×${after.height} px`;
 }
 
-function size({ across, down, taller, wider }: ReturnType<typeof moved>) {
+export function changeSize({ across, down, taller, wider }: ReturnType<typeof changeOf>) {
   return Math.max(Math.abs(across), Math.abs(down), Math.abs(taller), Math.abs(wider));
 }
 
@@ -47,7 +47,7 @@ function jumps({ action, comparison }: Step): Moved[] {
   const pushesDown = (action.kind === "fold" || action.kind === "search") && target !== null;
 
   return comparison.moved.filter((change) => {
-    const { across, down, taller, wider } = moved(change);
+    const { across, down, taller, wider } = changeOf(change);
     const shifted = Math.max(Math.abs(across), Math.abs(down)) >= MIN_PX;
     const resized = Math.max(Math.abs(taller), Math.abs(wider)) >= MIN_PX;
 
@@ -73,7 +73,7 @@ export function stateLeads(steps: Step[]): Finding[] {
       return [];
     }
 
-    const listed = seen.slice(0, LISTED).map((change) => describe(change));
+    const listed = seen.slice(0, LISTED).map((change) => describeChange(change));
     const more = seen.length > LISTED ? ` and ${seen.length - LISTED} more` : "";
     const failed = step.blocked ? " (the walk blocked its save, so this is a failed save)" : "";
 
@@ -81,7 +81,7 @@ export function stateLeads(steps: Step[]): Finding[] {
       lead(
         "X3",
         `${step.doing} ${step.action.label}: ${listed.join("; ")}${more}${failed}`,
-        Math.max(...seen.map((change) => size(moved(change)))),
+        Math.max(...seen.map((change) => changeSize(changeOf(change)))),
       ),
     ];
   });
