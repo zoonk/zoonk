@@ -6,6 +6,10 @@ import { type Page, expect, test } from "./fixtures";
 import { createMistakeLearner } from "./mistake-drill-days";
 import { openAs } from "./study-day";
 
+function endEdge(element: Element) {
+  return element.getBoundingClientRect().right;
+}
+
 function notebookTab(page: Page, name: RegExp) {
   return page.getByRole("navigation", { name: "Mistakes" }).getByRole("link", { name });
 }
@@ -182,6 +186,21 @@ test.describe("Mistakes notebook", () => {
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();
+
+    await page.context().close();
+  });
+
+  test("an entry and Practice mistakes end on one edge on a computer", async ({ browser }) => {
+    const { user } = await createMistakeLearner({ causes: ["trap"] });
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.goto("/mistakes");
+    const practice = page.getByRole("link", { name: /^Practice mistakes/u });
+    await expect(practice).toBeVisible();
+
+    const entryEnd = await page.locator('[data-slot="mistake-entry"]').first().evaluate(endEdge);
+    expect(entryEnd).toBeCloseTo(await practice.evaluate(endEdge), 0);
 
     await page.context().close();
   });

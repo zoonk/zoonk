@@ -93,12 +93,7 @@ async function NotebookSkeleton() {
   const t = await getExtracted();
 
   return (
-    <DetailSkeleton
-      aside={false}
-      bar={<MistakesNotebookBar />}
-      measure="list"
-      title={t("Mistakes notebook")}
-    />
+    <DetailSkeleton aside={false} bar={<MistakesNotebookBar />} title={t("Mistakes notebook")} />
   );
 }
 

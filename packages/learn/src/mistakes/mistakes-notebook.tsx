@@ -160,7 +160,7 @@ function MistakesInbox({
 
   return (
     <div
-      className="flex flex-col lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:grid-rows-[repeat(var(--skills),auto)_1fr] lg:items-start lg:gap-x-8 lg:*:aria-expanded:border-t-transparent lg:[&>[aria-expanded=true]+section+button]:border-t-transparent [&>button+button]:border-t [&>section+button]:border-t"
+      className="flex flex-col lg:grid lg:grid-cols-[minmax(20rem,1fr)_minmax(0,calc(var(--container-column)+2rem+1px))] lg:grid-rows-[repeat(var(--skills),auto)_1fr] lg:items-start lg:gap-x-8 lg:*:aria-expanded:border-t-transparent lg:[&>[aria-expanded=true]+section+button]:border-t-transparent [&>button+button]:border-t [&>section+button]:border-t"
       data-slot="mistakes-inbox"
       style={rowsStyle}
     >
@@ -264,7 +264,6 @@ export function MistakesNotebook({
     <DetailLayout
       bar={<MistakesNotebookBar />}
       bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
-      measure="list"
       data-slot="mistakes-notebook"
     >
       <DetailAside>
