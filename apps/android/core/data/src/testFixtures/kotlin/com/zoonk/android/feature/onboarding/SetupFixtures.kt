@@ -375,6 +375,6 @@ fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
         nextDays = ApiJson.decodeFromString(revealDaysOf()),
         week =
             com.zoonk.api.models
-                .PlanRevealTodayWeek(days = 7, minutes = 51),
+                .PlanRevealTodayWeek(days = 6, minutes = 69),
     )
 }
