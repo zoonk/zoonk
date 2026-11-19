@@ -14,6 +14,8 @@ import {
   type JourneyLinks,
   type JourneyStanding,
 } from "@repo/packages/learn/src/journey/journey-screen.tsx";
+import { getPlanTopics } from "@repo/packages/learn/src/journey/preparation/study-counts.ts";
+import { type PlanTopics } from "@repo/packages/learn/src/journey/preparation/use-preparation-parts.ts";
 import { LearnProvider } from "@repo/packages/learn/src/learn-provider.tsx";
 import { LearnBottomNavigation } from "@repo/packages/learn/src/shell/learn-navigation.tsx";
 import {
@@ -100,6 +102,7 @@ function phase(input: Partial<PlanPhaseView> & { index: number; name: string }):
     lessonsTotal: 0,
     milestone: null,
     mocks: { count: 0, nextDate: null },
+    notPlannedReason: null,
     short: null,
     startDate: null,
     state: "upcoming",
@@ -123,7 +126,7 @@ function basePlan(input: {
   );
 
   return {
-    access: { freeUntil: "2026-11-10", freeWeekOver: false, mocksRequirePlus: false },
+    access: { mocksRequirePlus: false },
     areas: [],
     bases: null,
     changes: [],
@@ -286,6 +289,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
       preparation: null,
       questions: null,
       share: null,
+      sharedWith: [],
       shortName: module.name,
       source: "plan",
       topicFrequencySource: null,
@@ -308,6 +312,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     noticeUrl: null,
     passMarks: null,
     questionsSource: null,
+    sharedExams: [],
     subjects,
     topicCount: 0,
     topicsMapped: false,
@@ -388,13 +393,17 @@ const LINKS: JourneyLinks = {
   subject: (key) => `/plan/${key}`,
 };
 
-function standingFor(lessons: SyllabusView["lessons"] | null): JourneyStanding {
+function standingFor(
+  lessons: SyllabusView["lessons"] | null,
+  topics: PlanTopics | null,
+): JourneyStanding {
   return {
     forExam: false,
     kind: "preparation",
     lessons,
     preparation: { value: 0, weekGain: 0 } as any,
     stillNeeded: [] as any,
+    topics,
   };
 }
 
@@ -480,10 +489,7 @@ function CareerModulePage({ lang }: { lang: "en" | "pt" }) {
     <PushedShell>
       <SubjectScreen
         actions={{ restore: async () => true, setWrittenCadence: async () => true }}
-        ask={{
-          bar: <AskTutor size="bar" target={target} tutor={tutor} />,
-          row: <AskTutor appearance="row" target={target} tutor={tutor} />,
-        }}
+        ask={<AskTutor size="bar" target={target} tutor={tutor} />}
         hrefs={{ adjust: "/plan", back: "/plan", chapter: (id) => `/content/chapters/${id}` }}
         subject={subject}
         syllabus={syllabus}
@@ -522,7 +528,7 @@ function CareerPlan({
         plan={careerPlan(lang, tools)}
         refresh={() => {}}
         shareHref="/plan-link/plan"
-        standing={standingFor(syllabus.lessons)}
+        standing={standingFor(syllabus.lessons, getPlanTopics(syllabus))}
         syllabus={toSyllabusSection(syllabus)}
         tutor={{ buddy: ZU, href: "/buddy" }}
       />
@@ -565,7 +571,7 @@ function PlanLearnView({ lang, q, state }: ViewProps) {
         plan={learnPlan(lang)}
         refresh={() => {}}
         shareHref="/plan-link/plan"
-        standing={standingFor({ done: 4, known: 0, total: 19 })}
+        standing={standingFor({ done: 4, known: 0, total: 19 }, null)}
         syllabus={null}
         tutor={{ buddy: ZU, href: "/buddy" }}
       />

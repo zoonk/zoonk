@@ -356,6 +356,7 @@ const ACTIONS = {
   examHref: "/exam",
   focusTestHref: "/focus-test",
   lessonAgainHref: (id: string) => `/learn/${id}`,
+  lessonHref: () => null,
   missionLinks: {
     hrefs: {
       areaPractice: (areaId: string) => `/practice/${areaId}`,
@@ -430,7 +431,6 @@ function Screen({
     >
       <TodayScreen
         actions={ACTIONS as any}
-        brainPower={120}
         buddy={{ ...ZU, studiedToday: today.studiedToday }}
         completedLessons
         missions={{ fullMeal: today.session.fullMeal, missions: dayMissions as any }}
