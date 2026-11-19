@@ -58,7 +58,7 @@ const planToolSchema = z
   })
   .meta({ id: "PlanTool" });
 
-export const planDaySchema = z
+const planDaySchema = z
   .object({
     date: isoDateSchema,
     items: z.array(planItemSchema),
