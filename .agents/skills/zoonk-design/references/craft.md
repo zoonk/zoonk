@@ -111,7 +111,7 @@ A title is closer to what it names than to what precedes it: the space above a s
 
 ### S4. Padding is even
 
-A box that holds content (a card, a panel, a composer, a bar) gives it the same room on all four sides. A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
+A box that holds content (a card, a panel, a composer) gives it the same room on all four sides. A bar pinned to the frame's edge is a strip of the frame, not a box: its sides are the frame's gutter and its room over and under is its own (Z4). A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
 
 - **Check.** In a box: content ink to each of the four edges, equal within 2px (`S4 padding is even`, for a panel 44px or taller). Text ink to the nearest bordered or filled edge is 8px or more.
 - **Usual break.** 16px at a card's sides and 12px over and under it. Two rails of one width with different inner padding.
@@ -183,10 +183,10 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The buttons have the same room over and under them as at their sides: the frame's gutter ([S5](#s5-the-gutter-is-the-frames)), which one class sets for the frame, its bar and the toast that rises over the bar (`FRAME_GUTTER_CLASS`), so no screen gives any of them a number. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar keeps 16px over and under its buttons at every size (`BOTTOM_BAR_ROOM_CLASS`), so it is 77px tall on a phone and a computer alike; at its sides it takes the frame's gutter ([S5](#s5-the-gutter-is-the-frames)). The room doesn't grow with the gutter: a bar as tall as a computer's gutter makes chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the bar's height and its buttons' places the same with and without an error line.
-- **Usual break.** An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; 16px over and under a row of buttons at 390 and 1440; the bar's height and its buttons' places the same with and without an error line.
+- **Usual break.** The bar's room taken from the gutter, so it grows to 125px on a computer. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
 
 ## Type
 

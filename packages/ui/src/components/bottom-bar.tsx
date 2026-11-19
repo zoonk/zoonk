@@ -3,12 +3,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 const ROW_CLASS =
   "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter)";
 
-/**
- * The frame's side padding at each size: the app's shell, a full page drawn without it, and the
- * toasts that rise over the bar this sets the height of.
- */
+/** The frame's side padding at each size: the app's shell and a full page drawn without it. */
 export const FRAME_GUTTER_CLASS =
   "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-gutter:--spacing(10)]";
+
+/**
+ * The bar's room over and under its buttons, 16px at every size, so the bar stays as compact on a
+ * computer as on a phone (77px with its hairline), plus the home indicator's inset where nothing is
+ * docked under it. A foot drawn level with the bar (a task's side panel) takes the same room.
+ */
+export const BOTTOM_BAR_ROOM_CLASS = "pt-4 pb-[max(1rem,var(--page-safe-bottom))]";
 
 /**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
@@ -19,9 +23,10 @@ export const FRAME_GUTTER_CLASS =
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
- * shell and in a full-screen task. Its buttons have the same room over and under them as at
- * their sides: the frame's gutter, and 16px where the frame names none. `className` is for the
- * frame's wrapper, to give the row the frame's column and gutter; a screen passes none.
+ * shell and in a full-screen task. Its sides are the frame's gutter, so its buttons line up with the
+ * page; over and under them it keeps its own 16px (`BOTTOM_BAR_ROOM_CLASS`), whatever the gutter.
+ * `className` is for the frame's wrapper, to give the row the frame's column and gutter; a screen
+ * passes none.
  */
 function BottomBar({
   children,
@@ -44,15 +49,7 @@ function BottomBar({
         {note && (
           <div className="bg-background border-border border-t">
             {/* The bar's own room over its buttons, so the note sits as far from its line as the buttons sit from the note. */}
-            <div
-              className={cn(
-                ROW_CLASS,
-                "pt-[max(1rem,var(--page-gutter))] text-sm lg:text-end",
-                className,
-              )}
-            >
-              {note}
-            </div>
+            <div className={cn(ROW_CLASS, "pt-4 text-sm lg:text-end", className)}>{note}</div>
           </div>
         )}
       </div>
@@ -60,7 +57,8 @@ function BottomBar({
       <div
         className={cn(
           ROW_CLASS,
-          "flex flex-col gap-2 pt-[max(1rem,var(--page-gutter))] pb-[max(1rem,var(--page-gutter),var(--page-safe-bottom))] lg:items-end",
+          "flex flex-col gap-2 lg:items-end",
+          BOTTOM_BAR_ROOM_CLASS,
           className,
         )}
         data-slot="bottom-bar-row"
