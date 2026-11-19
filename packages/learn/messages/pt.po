@@ -3943,7 +3943,7 @@ msgstr "Receber mais algumas perguntas enquanto estudo"
 #: src/focus-test/focus-test-result.tsx
 msgctxt "X1M8Kl"
 msgid "Answer more questions"
-msgstr "Responder a mais perguntas"
+msgstr "Responder mais perguntas"
 
 #: src/focus-test/focus-test-result.tsx
 msgctxt "qI81MQ"

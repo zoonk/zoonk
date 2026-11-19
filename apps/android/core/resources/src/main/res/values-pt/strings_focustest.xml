@@ -4,7 +4,7 @@
   "focustest_about": "58333e46add39ffacf702acd23c19d292503bd688ae8a6ccef639c8cfb812bb4",
   "focustest_about_left": "5ee470662a5e24e30fe4a72b26f6ccaade27ca57d25886fa05537141a9e77079",
   "focustest_also_skips": "2b1f55919f928997b8f97cd70704daf9fd98bce461de520664e7713a6ce1cf48",
-  "focustest_answer_more": "1f8ec467d1a1a7f66558c9fdeabbe9b1d5c019abfe81add8083506c5b3ac5397",
+  "focustest_answer_more": "b719c04bbe34f0c647342d5aea49edfb9561f264f0ee898d8e7e15587f31c154",
   "focustest_answers_saved": "ada36cb32cf03ec9a2a5201e0d38b869e2ad856e7da5b8b0f0f26bd950f41299",
   "focustest_answers_saved_line": "b11de79310afbc72ae5a039006cc7deebaac8c8115c80ea4657725ea38a74525",
   "focustest_answers_saved_title": "7938427867928839ee216d29cf0d9bc2584ba1414b096ed98f0cf9a5fb31091e",
@@ -147,7 +147,7 @@
     <string name="focustest_session_questions">Receber mais algumas perguntas nas minhas sessões</string>
     <string name="focustest_session_questions_when">Durante sua primeira semana</string>
     <string name="focustest_done">Concluído</string>
-    <string name="focustest_answer_more">Responder a mais perguntas</string>
+    <string name="focustest_answer_more">Responder mais perguntas</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Dedicar mais tempo a essas matérias?</string>
     <string name="focustest_proposal_description">Não dá tempo de estudar tudo antes da sua prova.</string>
