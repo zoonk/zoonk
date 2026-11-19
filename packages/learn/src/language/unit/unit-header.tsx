@@ -4,7 +4,7 @@ import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import { DetailContinueLink, useDoneShare } from "../../_components/detail-page";
+import { DetailContinueLink } from "../../_components/detail-page";
 import { FactSegments } from "../../_components/task-meta";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";
@@ -26,18 +26,15 @@ function useUnitPlace(unit: LanguageUnitView["unit"]): string {
 function UnitFacts({ view }: { view: LanguageUnitView }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const doneShare = useDoneShare();
   const place = useUnitPlace(view.unit);
   const { lessons } = view;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
-  const done = lessons.filter((lesson) => lesson.done).length;
 
   const facts = [
     place,
     lessons.length > 0 &&
       t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
     minutes > 0 && formatDuration(minutes),
-    lessons.length > 0 && doneShare(done / lessons.length),
   ].filter(Boolean);
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { BookOpenTextIcon, LanguagesIcon, ListChecksIcon } from "lucide-react";
+import { BookOpenTextIcon, LanguagesIcon, NotebookTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   DetailAside,
@@ -92,7 +92,7 @@ function UnitExtras({
           <Disclosure
             icon={
               <ListRowIcon>
-                <ListChecksIcon />
+                <NotebookTextIcon />
               </ListRowIcon>
             }
             title={t("Unit summary")}
