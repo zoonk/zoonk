@@ -3080,21 +3080,6 @@ msgctxt "ag_ax6"
 msgid "Example · {time} a day, about {count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "Ejemplo · {time} al día, aproximadamente {count, plural, one {# lección breve} other {# lecciones breves}}"
 
-#: src/components/pricing/plus-adds.tsx
-msgctxt "EGA7KK"
-msgid "One block is one study day"
-msgstr "Cada bloque es un día de estudio"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tbnyhv"
-msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
-msgstr "{lessons, plural, one {# lección} other {# lecciones}}: {days, plural, =5 {aproximadamente la primera semana} =10 {aproximadamente las primeras dos semanas} one {el primer día} other {los primeros # días de estudio}}"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "kFIKxT"
-msgid "Every lesson, all month"
-msgstr "Todas las lecciones, todo el mes"
-
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "v0Vpb-"
 msgid "Your whole study plan, every day to your deadline"
