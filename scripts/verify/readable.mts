@@ -14,7 +14,8 @@ export function readReadable(): Readable {
     "button, a[href], [role=button], [role=link], [role=tab], [role=menuitem], summary";
 
   const { label, shown } = globalThis.zoonkPage;
-  const clean = (value: string) => value.replaceAll(/\s+/gu, " ").trim();
+  // An SVG's `parentElement` is typed as HTML but has no `innerText`.
+  const clean = (value: string | undefined) => (value ?? "").replaceAll(/\s+/gu, " ").trim();
 
   function ownText(element: Element) {
     return clean(
