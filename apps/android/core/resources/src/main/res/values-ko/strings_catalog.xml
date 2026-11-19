@@ -64,7 +64,7 @@
   "catalog_show_fewer_chapters": "81ba706eeb778fd818a8bde019746bec27cc837a0dde1a4cec039385d9cd9326",
   "catalog_show_more_chapters": "86f305e17de85046b64e038195c66ed6257535e43fad2a9b7e6e31e0f38ea2f1",
   "catalog_start_free": "935b7343516d350a1e88b8acac0d71d7b163e39976db8ed42c6c6c5df9070644",
-  "catalog_start_goal": "46c2269138d5f40f0436fa3e023f794a29f827f6d33ab6deae159f2388a1f97c",
+  "catalog_start_goal": "0816917bf30c58d7700b164008cf805fbd622f8f79419487af456cdd95289b34",
   "catalog_start_lesson": "2deff84ac3be53239c62af90cda4f56f591f34ae4a17d8d559ee31f7ae2b3cef",
   "catalog_start_this_lesson": "f429eb31a4e9e008bc50006ba02b82b66410469e459206b68b0f72d1dda4fcd8",
   "catalog_subject_arts": "50ccdc412574da079b7315080dd1bdefcda9fd2e62ba166fa92fc0fabde24b18",
@@ -122,7 +122,7 @@
     </plurals>
     <string name="catalog_empty_title">코스 없음</string>
     <string name="catalog_empty_description">아직 이용할 수 있는 코스가 없어요.</string>
-    <string name="catalog_start_goal">목표 시작하기</string>
+    <string name="catalog_start_goal">새 목표</string>
     <string name="catalog_loading_more">코스를 더 불러오고 있어요…</string>
     <string name="catalog_load_more_failed">문제가 생겼어요. 다시 시도해 보세요.</string>
     <string name="catalog_edition_notice">이 코스는 사용 중인 언어로도 배울 수 있어요.</string>

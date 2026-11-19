@@ -120,7 +120,7 @@ class PageScaffoldTest {
         assertEquals(250f, (back.left + 12.dp).value, 1f)
     }
 
-    /** A missing page's way on is the page's main action, in its bottom bar, as main's `PageNotFound` puts "Go to Today". */
+    /** A missing page's way on is the page's main action, in its bottom bar, as main's `PageNotFound` puts "Today". */
     @Test
     @Config(qualifiers = "w400dp-h800dp")
     fun aMissingPageOffersTodayInItsBottomBar() {

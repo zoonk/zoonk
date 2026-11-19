@@ -3039,10 +3039,10 @@ msgid "We couldn't open this lesson"
 msgstr "Bu dersi açamadık"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Bugün sayfasına git"
+#: src/questions/tutor-conversation-parts.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Bugün"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3085,6 +3085,11 @@ msgid "Next lesson"
 msgstr "Sonraki derse geç"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Bugün sayfasına git"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "Bunu zaten biliyordun"
@@ -3110,9 +3115,9 @@ msgid "Building your plan"
 msgstr "Planını hazırlıyoruz"
 
 #: src/lesson/completion/lesson-completion-plan.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Planını gör"
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Planı gör"
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
@@ -3957,11 +3962,6 @@ msgstr "Önceki soruları yükle"
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "Sorun"
-
-#: src/questions/tutor-conversation-parts.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "Bugün"
 
 #: src/questions/tutor-conversation-parts.tsx
 msgctxt "6dIxDP"

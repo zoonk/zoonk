@@ -166,7 +166,7 @@ class AppNavigator(
         isSwitchingTabs = false
     }
 
-    /** Shows a tab at its root, closing any task: where "Start a goal" and a finished sign-in lead. */
+    /** Shows a tab at its root, closing any task: where "New goal" and a finished sign-in lead. */
     fun showRoot(
         tab: AppTab,
         root: AppRoute = tab.root,

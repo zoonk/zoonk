@@ -44,7 +44,7 @@
   "stats_evening": "ecd669b7efc50db88f620f8eb20fbdadfbc69211906b751d58f7ad07c2d42595",
   "stats_every_belt": "bf9405fdafcfb7f2702ea6c3840297f995a581f0263d7ddddd33df4ca2917a02",
   "stats_few_answers_legend": "251aa00d2a9b9475ecae3246db76c404d174c8f213ed9b26aa2aef514305677c",
-  "stats_go_to_today": "3b3a5a7bcd0faf9361bbb63f7b82ded3cddaed4bdc16ca09e6a81619649996b0",
+  "stats_go_to_today": "9030857434ff5f30683d8e45f003d289c0d67851db818dd3516dcb3944e034e3",
   "stats_high": "850e60784ac3f63bf9f88df06cd949567628fde5d9cfa93be16918c47f7ddb3b",
   "stats_less": "3edd6deeb383769fd3873b7fcf348610c2b360aeafb35fa5259663dad33331a2",
   "stats_lesson_count": "ca7fcd6cbcacc2ff31ec10e9092c5bb73ec01b6b2bdd1b036ed334968c0d117b",
@@ -91,7 +91,7 @@
     <string name="stats_patterns">Prawidłowości</string>
     <string name="stats_empty_title">Nie ma jeszcze statystyk</string>
     <string name="stats_empty_line">Pojawią się po pierwszej lekcji.</string>
-    <string name="stats_go_to_today">Przejdź do zakładki Dziś</string>
+    <string name="stats_go_to_today">Dziś</string>
     <string name="stats_not_yet">Jeszcze nie</string>
     <string name="stats_part_failed">Nie udało się wczytać tej części.</string>
     <string name="stats_days_studied">Dni nauki</string>

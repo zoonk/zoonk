@@ -91,5 +91,5 @@
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, goal %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">See your plan</string>
+    <string name="language_see_your_plan">See plan</string>
 </resources>

@@ -44,7 +44,7 @@
   "stats_evening": "9fafdf75fd6bb534c280dd23b1e7ddfcb2cf3217c79f6918bb727a3f5c0950ef",
   "stats_every_belt": "db1fecb6e5a872f11142316319c09b9364026a3ab23ce97fb7d38ca6fac8a62a",
   "stats_few_answers_legend": "aaa86b18ad022fa8d4cfed93b8c6a54ebaed7b8dfcba4aac9402c4418cea5bb7",
-  "stats_go_to_today": "8f3b656edcaa34f60b3bd16fbcfe84d8fe40eb6c13923e9cb4259de7e5cd57f1",
+  "stats_go_to_today": "3e126eb48fd545ab60a7a6bcbf2163cfd101bf724a8197632327379af86f4b6d",
   "stats_high": "423deceb4a8595c6156023ad5d9576cf57efd123a1c65fbfa38b5cf7cb849612",
   "stats_less": "55d81bc74b9e9c247cc6e2804addec280454530f46f2ae6bfbc0bcc3b5db6a69",
   "stats_lesson_count": "456c12604ee2c4f93bfeca801bc59f14e1aaf67fe874ceea0e22ca81ce4d7b27",
@@ -91,7 +91,7 @@
     <string name="stats_patterns">傾向</string>
     <string name="stats_empty_title">まだ統計データがありません</string>
     <string name="stats_empty_line">最初のレッスンを終えると表示されます。</string>
-    <string name="stats_go_to_today">「今日」へ移動する</string>
+    <string name="stats_go_to_today">今日</string>
     <string name="stats_not_yet">まだ</string>
     <string name="stats_part_failed">この部分を読み込めませんでした。</string>
     <string name="stats_days_studied">学習日数</string>

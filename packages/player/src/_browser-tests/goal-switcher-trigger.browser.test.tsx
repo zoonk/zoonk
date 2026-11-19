@@ -53,11 +53,11 @@ describe("the goal menu's trigger", () => {
 
     const trigger = page.getByRole("button", { name: "Quick explanations" });
     await expect.element(trigger).toBeVisible();
-    await expect.element(page.getByText("Start a goal")).not.toBeInTheDocument();
+    await expect.element(page.getByText("New goal")).not.toBeInTheDocument();
 
     await trigger.click();
     // The test's link stand-in keeps only its address, so the menu's row reads as a link.
-    await expect.element(page.getByRole("link", { name: "Start a goal" })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "New goal" })).toBeVisible();
   });
 
   it("keeps a long goal name on one line beside the sidebar's 32px buttons", async () => {

@@ -17,7 +17,7 @@ export async function getNotFoundWords(locale?: SupportedLocale) {
     description: t("The link may be old or mistyped."),
     home: t("Go to the home page"),
     title: t("We couldn't find this page"),
-    today: t("Go to Today"),
+    today: t("Today"),
   };
 }
 

@@ -162,7 +162,7 @@ struct PlanScheduleSheet: View {
               router.select(.today)
             } label: {
               Text(
-                "Go to Today", tableName: "Plan",
+                "Today", tableName: "Plan",
                 comment: "Opens Today, which puts the lessons from earlier days first")
             }
             .buttonStyle(.outline)

@@ -58,7 +58,7 @@ fun CreateAccountButton(onClick: () -> Unit) {
  *
  * - [title] is null under a heading that already says what needs the subscription.
  * - [line] is at most one sentence, only where the learner would otherwise think they're stuck.
- * - [action] is one way on that isn't paying, such as "Go to your Plan", after "Subscribe".
+ * - [action] is one way on that isn't paying, such as "See plan", after "Subscribe".
  */
 @Composable
 fun SubscribeGate(

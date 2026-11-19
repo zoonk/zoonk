@@ -202,6 +202,8 @@ msgstr "Estudado"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -5337,12 +5339,6 @@ msgctxt "dVA-0b"
 msgid "About {time} a day"
 msgstr "Cerca de {time} por dia"
 
-#: src/journey/schedule-details.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Ir para Hoje"
-
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
 msgid "Continue at {level}"
@@ -7218,10 +7214,11 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Faça o gesto de pinça, role a tela ou use + e - para ajustar o zoom; arraste ou use as setas para mover."
 
+#. Button on the Mind maps page that starts studying its maps.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RNV4nB"
-msgid "Study mind maps"
-msgstr "Estudar mapas mentais"
+msgctxt "Ktc-vQ"
+msgid "Study maps"
+msgstr "Estudar mapas"
 
 #. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -8993,9 +8990,12 @@ msgid "For example: <example></example>"
 msgstr "Por exemplo: <example></example>"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "Ir para seu plano"
+#: src/onboarding/steps/plan-wait.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Ver plano"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9712,13 +9712,6 @@ msgstr "Capítulos"
 msgctxt "rXkqB0"
 msgid "Your plan didn't start"
 msgstr "Seu plano não começou"
-
-#: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Ver seu plano"
 
 #: src/onboarding/steps/plan-wait.tsx
 msgctxt "x4Kcgs"
@@ -12858,9 +12851,9 @@ msgid "Paused"
 msgstr "Pausado"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.ng8fsM"
-msgid "Start a goal"
-msgstr "Começar um objetivo"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
+msgstr "Novo objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.JIzivc"

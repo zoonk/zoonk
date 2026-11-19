@@ -89,7 +89,7 @@
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
   "today_see_summary": "43baae1e0665cc4f86b1bb5a29e439bdcfdb3d18791ab80b8c3c0c609a50e397",
-  "today_see_your_plan": "aaf7e577a4f9b9e29179b62f635b84c5e10fe85cef60fa7a7a1726c9660cc2da",
+  "today_see_your_plan": "1da1415d5c3a28871cad431b21a4d2afb892b84d5cf754fcaa49ef929a2ab544",
   "today_segment_challenge_note": "b6ceb483b94a85cf0d340a45fa03e9ebe8bd25f875df662bd817c300f92782c9",
   "today_segment_essay_note": "e505a2791f3a06e2f234a0d3392abbbd6a5c2f957fc9fa43b0903c2d3ef26f6b",
   "today_segment_label": "d9b81784e3a46275dc529627a741d51f11a65680eb41fff0d493a3de2a761062",
@@ -328,7 +328,7 @@
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">준비도</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->
-    <string name="today_see_your_plan">내 계획 보기</string>
+    <string name="today_see_your_plan">계획 보기</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it rose this week, such as "5". -->
     <string name="today_week_gain">이번 주 +%1$s</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it fell this week, a negative number such as "-3". -->

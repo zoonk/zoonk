@@ -15,13 +15,13 @@
   "goal_switcher_quick_explanations": "08ca2150eb8e5a7da63a6b90869df89e3b432f12ca12750c31797815380289cb",
   "goal_switcher_ready_to_start": "0305cbb31fac523e184abdd6315a77027e069c7cff125f69f2a546ea20d9adc6",
   "goal_switcher_start_failed": "2bd2493752603b94aea601198bcae4296ac928343023dc99658689972e883e4a",
-  "goal_switcher_start_goal": "8c40d01eff300507504f2d7197ec80186c5ecbd16b8111bef95a339849fb88ac",
+  "goal_switcher_start_goal": "5d42c9266d360e291dc9049e26b791fe25e83fe319be307ec3c767959e69106e",
   "goal_switcher_starts_with_free_account": "00c6845dd917cd5a37b8b64e0ff6dd6dc4a3f7cc4d517d99730e2271c6aa7cad",
   "goal_switcher_your_goals": "8937b4edd5afed09bd1182c968c48e5847bac6385faab4b694d620f555653977"
 }
 -->
 <resources>
-    <string name="goal_switcher_start_goal">目標を始める</string>
+    <string name="goal_switcher_start_goal">新しい目標</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s、現在の目標です。目標を切り替える</string>
     <string name="goal_switcher_your_goals">目標</string>

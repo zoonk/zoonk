@@ -1012,65 +1012,6 @@
         }
       }
     },
-    "Go to Today" : {
-      "comment" : "Opens Today from a link that leads to something that doesn't exist",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir a Hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir Aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vai a Oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「今日」へ移動"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘로 가기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź do karty Dziś"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir para Hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün’e git"
-          }
-        }
-      }
-    },
     "It may have been removed or moved." : {
       "comment" : "Explains why a link leads to something that doesn't exist",
       "localizations" : {
@@ -1603,7 +1544,7 @@
       }
     },
     "New goal" : {
-      "comment" : "Goal switcher option that starts another goal",
+      "comment" : "Goal switcher option that starts another goal\nOpens Today, where the learner starts a goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2188,65 +2129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuşma"
-          }
-        }
-      }
-    },
-    "Start a goal" : {
-      "comment" : "Opens Today, where the learner starts a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ziel starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear un objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer un objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia un obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wyznacz cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar um objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir hedefe başla"
           }
         }
       }
@@ -3019,7 +2901,7 @@
       }
     },
     "Today" : {
-      "comment" : "Tab for the learner's day of lessons and reviews",
+      "comment" : "Tab for the learner's day of lessons and reviews\nOpens Today from a link that leads to something that doesn't exist",
       "localizations" : {
         "de" : {
           "stringUnit" : {

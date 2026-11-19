@@ -230,7 +230,7 @@ struct GoalLimitNoticeSection: View {
             router.showRoot(of: .plan)
           } label: {
             Text(
-              "Go to your Plan", tableName: "Onboarding",
+              "See plan", tableName: "Onboarding",
               comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
           }
         }
@@ -294,7 +294,7 @@ struct GoalLimitActions: View {
         router.showRoot(of: .plan)
       } label: {
         Text(
-          "Go to your Plan", tableName: "Onboarding",
+          "See plan", tableName: "Onboarding",
           comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
       }
       .buttonStyle(.outline)

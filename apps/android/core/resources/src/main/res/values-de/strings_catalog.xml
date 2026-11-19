@@ -64,7 +64,7 @@
   "catalog_show_fewer_chapters": "0c34f90f95efce10a98f88da3264520a0aea3e299959f8e63903ffdddccc213c",
   "catalog_show_more_chapters": "a71b440d578f1091ff916dbff2f5bdda4ca1d52281d3802c4a3cef64237d41db",
   "catalog_start_free": "b54f3e7a77bbd4d7988735031bb7bf33dbdeb8e230c25ee539c2d055393904d9",
-  "catalog_start_goal": "0235fe0bfc7cb319330f02ceb5feb114842b18af7a7dcaa8caf4662fc15ff382",
+  "catalog_start_goal": "5fe01f0b46e5304427924d731ca5dee278ee30fec4b709b49bee962667165d70",
   "catalog_start_lesson": "f720789f777382c549d932f528e4c5c7e52edb367a87088f40bd87f721b81777",
   "catalog_start_this_lesson": "193b1ba178593a43e119e49e1841658047072df6e24785ba377e48e4f62657ce",
   "catalog_subject_arts": "87c543ec9b1e2debf54d7f9735d25b4d0e6287a728e7873ab0948feb51a55b43",
@@ -123,7 +123,7 @@
     </plurals>
     <string name="catalog_empty_title">Keine Kurse</string>
     <string name="catalog_empty_description">Es gibt noch keine Kurse.</string>
-    <string name="catalog_start_goal">Ein Ziel starten</string>
+    <string name="catalog_start_goal">Neues Ziel</string>
     <string name="catalog_loading_more">Weitere Kurse werden geladen…</string>
     <string name="catalog_load_more_failed">Etwas ist schiefgelaufen. Versuch es noch einmal.</string>
     <string name="catalog_edition_notice">Dieser Kurs ist auch in deiner Sprache verfügbar.</string>

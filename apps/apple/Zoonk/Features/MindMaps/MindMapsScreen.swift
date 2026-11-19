@@ -94,7 +94,7 @@ struct MindMapsScreen: View {
           Button {
             router.open(.mindMapStudy(goalId: goal.id, tab: shown))
           } label: {
-            Text("Study mind maps", tableName: "MindMaps")
+            Text("Study maps", tableName: "MindMaps")
           }
           .buttonStyle(.mainAction)
           .keyboardShortcut(.defaultAction)

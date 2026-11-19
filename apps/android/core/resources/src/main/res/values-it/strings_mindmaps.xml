@@ -56,7 +56,7 @@
   "mindmaps_show_all": "341619c9803ccbacc80c96de1e37b9065eed08fc48355c75347cb5d80068cd09",
   "mindmaps_shown_as_text": "2adcd11bdf82c83d1e20c4da3666df1cc3c253179f2cb9067b02daec9c5e4fee",
   "mindmaps_start_from_first": "40d635d9f39c202bbf6679bce58fed7ec8850cefcd1b4ed4b7634565fbedc2bf",
-  "mindmaps_study": "81332ef4a741a7f2bb59db44e4e5f89fe80160b6cbe7d99a4fa55bb90d3c2117",
+  "mindmaps_study": "ae69e5ee2fb0c48a44bd2dc0a1465af0dba448dabc9ae7e7154e3fd525246655",
   "mindmaps_tab_chapters": "9704344072ffece7d0939579b237e03f2703ea9bc062e6a0e65a353baebde01a",
   "mindmaps_tab_lessons": "617d2a2510965e0e6392d44e2c63bba034a6346b6cd5ef306bbefdad99d3f2d7",
   "mindmaps_tab_saved": "e95c14f632516b49e38fd452d14466de452001b1bb17f950b5aab5e7e5d762d9",
@@ -151,7 +151,7 @@
     <string name="mindmaps_zoom_out">Riduci</string>
     <string name="mindmaps_fit">Adatta allo schermo</string>
     <string name="mindmaps_viewer_hint">Avvicina o allontana due dita, scorri o usa + e - per regolare lo zoom; trascina o usa le frecce per spostarti.</string>
-    <string name="mindmaps_study">Studia le mappe mentali</string>
+    <string name="mindmaps_study">Studia le mappe</string>
     <string name="mindmaps_create_all">Creale tutte</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Nessuna mappa per ora</string>

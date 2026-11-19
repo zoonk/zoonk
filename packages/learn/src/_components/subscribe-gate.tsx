@@ -56,7 +56,7 @@ export function SubscribeGate({
   provisional,
   title,
 }: {
-  /** A second way on that isn't paying, such as "Go to your Plan". */
+  /** A second way on that isn't paying, such as "See plan". */
   action?: ReactNode;
   children?: ReactNode;
   className?: string;

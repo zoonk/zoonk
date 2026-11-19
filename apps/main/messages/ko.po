@@ -50,10 +50,13 @@ msgstr "코스 둘러보기"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
 #: src/app/[lang]/session/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
 #: src/components/learn/section-layout.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "오늘"
@@ -69,7 +72,6 @@ msgid "Home page"
 msgstr "홈"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
 msgstr "목표 시작하기"
@@ -182,6 +184,7 @@ msgid "Ask"
 msgstr "물어보기"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
@@ -1003,9 +1006,10 @@ msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "내 계획 보기"
+#: src/components/public/course-start-failure.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "계획 보기"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1566,13 +1570,6 @@ msgstr "아직 통계가 없어요"
 msgctxt "EpdL-z"
 msgid "They show up after your first lesson."
 msgstr "첫 레슨을 마치면 통계가 표시돼요."
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-#: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/not-found-message.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "오늘의 학습으로 이동하기"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
 msgctxt "o0vS8L"
@@ -3341,11 +3338,6 @@ msgstr "이미 Plus를 구독하고 있어요."
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "결제를 시작할 수 없어요. hello@zoonk.com으로 문의해 주세요"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "내 계획으로 이동"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

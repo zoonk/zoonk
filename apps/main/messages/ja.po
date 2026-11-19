@@ -50,10 +50,13 @@ msgstr "コースを探す"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
 #: src/app/[lang]/session/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
 #: src/components/learn/section-layout.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "今日"
@@ -69,7 +72,6 @@ msgid "Home page"
 msgstr "ホーム"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
 msgstr "目標を始める"
@@ -182,6 +184,7 @@ msgid "Ask"
 msgstr "質問"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
@@ -1003,9 +1006,10 @@ msgid "Nothing is planned until you resume it."
 msgstr "再開するまで、学習の予定は入りません。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "学習計画を見る"
+#: src/components/public/course-start-failure.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "プランを見る"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1566,13 +1570,6 @@ msgstr "統計はまだありません"
 msgctxt "EpdL-z"
 msgid "They show up after your first lesson."
 msgstr "最初のレッスンを終えると表示されます。"
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-#: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/not-found-message.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "「今日」へ移動する"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
 msgctxt "o0vS8L"
@@ -3341,11 +3338,6 @@ msgstr "Plusに登録済みです。"
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "お支払い手続きを開始できませんでした。hello@zoonk.comまでお問い合わせください"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "学習計画を見る"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

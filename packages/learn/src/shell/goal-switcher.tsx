@@ -174,7 +174,7 @@ function NoGoalLink({
       <span className="me-1.5 flex shrink-0">
         <NoGoalMark />
       </span>
-      <span className="truncate">{t("Start a goal")}</span>
+      <span className="truncate">{t("New goal")}</span>
     </LearnLink>
   );
 }
@@ -316,7 +316,7 @@ export function GoalSwitcher({
             render={<LearnLink href={newGoalHref} />}
           >
             <PlusIcon aria-hidden="true" className="text-muted-foreground" />
-            {t("Start a goal")}
+            {t("New goal")}
           </DropdownMenuItem>
 
           <DropdownMenuItem

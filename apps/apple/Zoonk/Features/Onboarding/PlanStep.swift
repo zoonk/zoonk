@@ -145,7 +145,7 @@ enum PlanNext {
     case .reveal:
       WaitReady(
         label: Text(
-          "See your plan", tableName: "Onboarding",
+          "See plan", tableName: "Onboarding",
           comment: "Leaves the plan's wait, once the plan is ready, for the plan"),
         action: holding.moveOn)
     case .timeQuestion:

@@ -50,10 +50,13 @@ msgstr "Explorer les cours"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
 #: src/app/[lang]/session/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
 #: src/components/learn/section-layout.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Aujourd’hui"
@@ -69,7 +72,6 @@ msgid "Home page"
 msgstr "Page d’accueil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
 msgstr "Commencer un objectif"
@@ -182,6 +184,7 @@ msgid "Ask"
 msgstr "Poser une question"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
@@ -1003,9 +1006,10 @@ msgid "Nothing is planned until you resume it."
 msgstr "Rien n’est prévu tant que tu ne reprends pas cet objectif."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Voir ton plan"
+#: src/components/public/course-start-failure.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Voir le plan"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1566,13 +1570,6 @@ msgstr "Pas encore de statistiques"
 msgctxt "EpdL-z"
 msgid "They show up after your first lesson."
 msgstr "Elles apparaîtront après ta première leçon."
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-#: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/not-found-message.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Aller à Aujourd’hui"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
 msgctxt "o0vS8L"
@@ -3341,11 +3338,6 @@ msgstr "Tu as déjà Plus."
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Impossible de commencer le paiement. Contacte-nous à hello@zoonk.com"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "Voir ton plan"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

@@ -8,7 +8,7 @@
     <string name="stats_patterns">Patterns</string>
     <string name="stats_empty_title">No statistics yet</string>
     <string name="stats_empty_line">They show up after your first lesson.</string>
-    <string name="stats_go_to_today">Go to Today</string>
+    <string name="stats_go_to_today">Today</string>
     <string name="stats_not_yet">Not yet</string>
     <string name="stats_part_failed">We couldn\'t load this part.</string>
 

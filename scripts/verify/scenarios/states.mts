@@ -67,7 +67,7 @@ export const STATE_SCENARIOS: Scenario[] = [
     id: "onboarding.reveal",
     prerequisites: { persona: { name: "maya" }, state: "reveal" },
     proof: "Plan created",
-    reach: [{ click: "See your plan" }, { click: "Skip all" }, { wait: "Plan created" }],
+    reach: [{ click: "See plan" }, { click: "Skip all" }, { wait: "Plan created" }],
     screen: "/start/[goal]",
     sizes: PHONE_AND_LAPTOP,
     writes: true,

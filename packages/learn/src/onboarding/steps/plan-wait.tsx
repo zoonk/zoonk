@@ -145,7 +145,7 @@ function PlanWaitBar({
         }
       >
         <OnboardingPrimaryButton onClick={release}>
-          {next === "plan" ? t("See your plan") : t("Continue")}
+          {next === "plan" ? t("See plan") : t("Continue")}
         </OnboardingPrimaryButton>
       </WaitBar>
     );

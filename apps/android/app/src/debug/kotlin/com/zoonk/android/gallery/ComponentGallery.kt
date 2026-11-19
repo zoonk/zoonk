@@ -188,7 +188,7 @@ internal val gallerySections =
         GallerySection("Headers and empty states") { HeadersAndEmptyStates() },
         GallerySection("Limit notices") { LimitNotices() },
         GallerySection("Suggestions") { Suggestions() },
-        GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Go to Today") } } },
+        GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Today") } } },
         GallerySection("Loading") { PageLoading(Modifier.height(96.dp)) },
         GallerySection("Formatting") { Formatting() },
         GallerySection("Audio") { Audio() },

@@ -82,7 +82,10 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
       prefetch="intent"
       size="lg"
     >
-      {t("Study mind maps")}
+      {t({
+        description: "Button on the Mind maps page that starts studying its maps.",
+        message: "Study maps",
+      })}
     </EnterLink>
   );
 }

@@ -178,7 +178,7 @@ function Unavailable({
       <AccessLayout
         actions={
           <EnterLink href="/today" link={linkComponent}>
-            {t("Go to Today")}
+            {t("Today")}
           </EnterLink>
         }
         description={t("The link may be old or mistyped.")}

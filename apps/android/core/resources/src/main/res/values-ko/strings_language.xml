@@ -35,7 +35,7 @@
   "language_practice_estimates": "830ba9947f608b06dee627b08d6f72ec44ceaad5f7384dc0c0572356adc53973",
   "language_say_again": "e2f83bec3563132ebb674616db6ad3ba4103661a6828c81a2918bc68932cbd6c",
   "language_say_them": "f25ef5b5d58001fc70e2a7d236e1fae55ca6daa4d45ddb3883dc019102759b88",
-  "language_see_your_plan": "8027ed63df1d2615592369bed66b54b1056efd5b295847707a36c61194da8839",
+  "language_see_your_plan": "72f27705374d4837927902923824d603aa7c195c168989912beb9cef634626c6",
   "language_skill_listening": "ed834032508f537c30d9b522436422e5770f2575b4586362b84f5cd33ef4b460",
   "language_skill_reading": "cf9e79cca950b6730ca2e116aef255e5975795743fc1478ee6a0456db044a148",
   "language_skill_speaking": "3b64736f06c3e565e85097a2662fd6d916208c810326532a97415d42b35eef8e",
@@ -147,5 +147,5 @@
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, 목표 %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">내 계획 보기</string>
+    <string name="language_see_your_plan">계획 보기</string>
 </resources>

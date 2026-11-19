@@ -64,7 +64,7 @@
   "catalog_show_fewer_chapters": "f13c04678ccc679e5915b7ddb6aa95eca14918ed94aa868f418a8b9f41d2181e",
   "catalog_show_more_chapters": "41ce82227a7942a06498bbb3b571e5e958b3292de1fa57cd28f3ddc3f74a04d9",
   "catalog_start_free": "11f67af88125391843a47096c951217ccf2766c301dec652c9ab05676d874bcc",
-  "catalog_start_goal": "9030467457ff962ef96f141ad5a3ccb42d47e58f33cdc52178c019c195e00770",
+  "catalog_start_goal": "ade775c7baf19f96da42795317de1452e943e705c192eb69f26437611fc49b29",
   "catalog_start_lesson": "8a24c17271f7197e4a75dc99a61acfd46e43c7548a71c0cbd38983f8fa4cf40b",
   "catalog_start_this_lesson": "e3fd6c17d456db35d84fd1b6c1bb1289610299e8fcf54ca439e9775403b4ead2",
   "catalog_subject_arts": "0b106b436eb9b85d6208172b99f09d0ee0020850881cde5cc86910606de6a5a2",
@@ -123,7 +123,7 @@
     </plurals>
     <string name="catalog_empty_title">Kurs yok</string>
     <string name="catalog_empty_description">Henüz kurs bulunmuyor.</string>
-    <string name="catalog_start_goal">Bir hedefe başla</string>
+    <string name="catalog_start_goal">Yeni hedef</string>
     <string name="catalog_loading_more">Daha fazla kurs yüklüyoruz…</string>
     <string name="catalog_load_more_failed">Bir sorun oluştu. Lütfen tekrar dene.</string>
     <string name="catalog_edition_notice">Bu kurs senin dilinde de var.</string>

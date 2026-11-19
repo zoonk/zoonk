@@ -285,7 +285,7 @@ struct LessonCompletionView: View {
             }
           } label: {
             Text(
-              "See your plan", tableName: "Player",
+              "See plan", tableName: "Player",
               comment: "Ends a goal's first lesson for the plan the learner hasn't seen yet"
             )
           }

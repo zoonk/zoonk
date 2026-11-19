@@ -63,7 +63,7 @@ class GoalLimitScreenTest {
     private fun assertOnlyTheGate() {
         rule.onNode(hasText("That's all the goals you can study at once") and hasAnyAncestor(hasScrollAction())).assertExists()
         rule.onNode(hasText("Subscribe") and !hasAnyAncestor(hasScrollAction())).assertIsDisplayed()
-        rule.onNode(hasText("Go to your Plan") and !hasAnyAncestor(hasScrollAction())).assertIsDisplayed()
+        rule.onNode(hasText("See plan") and !hasAnyAncestor(hasScrollAction())).assertIsDisplayed()
         rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
         rule.onNodeWithText("How it works").assertDoesNotExist()
     }

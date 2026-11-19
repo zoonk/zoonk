@@ -44,7 +44,7 @@
   "stats_evening": "3673cc394ffc60e6d19ee53990973d095a6acee28d1ea69eb38cdf20d8360c43",
   "stats_every_belt": "3dab0c06d72eb08253063ad48a6d92709bcfcc1af342197e8107754c4b6bde08",
   "stats_few_answers_legend": "b31deda86d6cf1f11d1e3222b86d5d3a0790510847293dc1ceee8c273d3b29bd",
-  "stats_go_to_today": "8a5eccb48d7b3776f21ff61f02dea2e52848e5bb98179c0bd01f4f1f0004cc99",
+  "stats_go_to_today": "3afb73e7aaee5099f72e04215ff9fe1ae45f36cbc9bba00824e0372c23cf9954",
   "stats_high": "5c2d93c624e6fdaeab652bcb0faef963c2770e8e1759b141ea2455c557f31513",
   "stats_less": "55fd827ebfb57ed7290d23bd345b6c2b6e81273b4e4dd6ad7ec3472b71c362f4",
   "stats_lesson_count": "a3e9924f7a7be023e9ffb9941f3f30c469c0848a1b2a135a1b2e6f684eb7be47",
@@ -91,7 +91,7 @@
     <string name="stats_patterns">Eğilimler</string>
     <string name="stats_empty_title">Henüz istatistik yok</string>
     <string name="stats_empty_line">İlk dersinden sonra görünür.</string>
-    <string name="stats_go_to_today">Bugün sayfasına git</string>
+    <string name="stats_go_to_today">Bugün</string>
     <string name="stats_not_yet">Henüz değil</string>
     <string name="stats_part_failed">Bu kısmı yükleyemedik.</string>
     <string name="stats_days_studied">Çalışılan gün sayısı</string>

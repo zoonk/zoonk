@@ -79,7 +79,7 @@ export function ProgressCard({
       )}
 
       <LearnLink aria-labelledby={labelledBy} className={LINK_CLASS} href={routes.journey}>
-        <span id={linkId}>{t("See your plan")}</span>
+        <span id={linkId}>{t("See plan")}</span>
         <ChevronRightIcon aria-hidden="true" className="size-3.5" />
       </LearnLink>
     </PageSection>

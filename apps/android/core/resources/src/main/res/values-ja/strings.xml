@@ -37,7 +37,7 @@
   "gate_session_ended_description": "561691a2304d3f5a44e3e2d7d6273d25b33002f279802c43a4002efd14208f88",
   "gate_session_ended_title": "4a0b7717dfd4d3e3ec634a7559642d63ab19f9a852e2767a3002075d381a4808",
   "gate_sign_in_title": "e2f10622ab3cbabd276868091f86fb8aee6786efb1d5bbc5cf45aad2a00b1368",
-  "gate_start_goal": "cb4a44fb50bd5845985d96c179549fa4a7ff4d52b4d7998d0caa9a6390727bda",
+  "gate_start_goal": "9eca3d7e5988d22e96d375d32cd875cb05358fb785a72c0ddd8891f5bf7df292",
   "gate_start_goal_description": "d73b839138025fa04abc3ca8e19592ec1fe8a8bf67e28971604f2625b3eb3adb",
   "gate_start_goal_title": "ff4319c0e54acb293e6c590c35fae766c6f8f94e048cedf2735765c50e0c311f",
   "goal_with_variety": "22546ac8c219dc6bcbd5741f5c24af9047a3f28ccd55a4f5eedefa9533bbc09c",
@@ -65,7 +65,7 @@
   "navigation_today": "4a7f4a6930e3f644ba54e264fcb278e543e241eb4fb3808094dadafd92fab526",
   "navigation_user_menu": "96f94594c1591d29a646a2e1776108e8a03d2454d1bf7a02b8d88636bd8ce649",
   "not_found_description": "ce3925aee7c5a6fdf101e58e54f660d3dadbea286d0bd5a497fe4effff5d48dc",
-  "not_found_go_home": "6a6b96f6086fde4ef7f459e8a1828bb8fdd399d1ea89f10d637ab0d7c365f440",
+  "not_found_go_home": "16bd8042e2d8a55df73c397bbce15e61c256beeb4351313d26caecf41b6880de",
   "not_found_title": "1fb8cec8ca480ca78264b0eaa619f04f058c316fe639e6176734cf37f500d269",
   "player_not_saved": "935a3eb56de624d863959c0f9087faf9f745fdb110e86d99fa21d3c4ccb428fe",
   "player_not_saved_description": "c26124139fa6a455aacde74cc77c906102c28ccb4392a9856a1e5c027284f715",
@@ -108,7 +108,7 @@
     <string name="gate_build_plan">学習計画を作成する</string>
     <string name="gate_start_goal_title">目標を決めて始める</string>
     <string name="gate_start_goal_description">学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。</string>
-    <string name="gate_start_goal">目標を始める</string>
+    <string name="gate_start_goal">新しい目標</string>
     <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
     <string name="goal_with_variety">%1$s、%2$s</string>
     <string name="belt_white">白帯</string>
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">テストを受けてユニットをスキップする</string>
     <string name="not_found_title">ページが見つかりませんでした</string>
     <string name="not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
-    <string name="not_found_go_home">「今日」へ移動する</string>
+    <string name="not_found_go_home">今日</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s、%2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

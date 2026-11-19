@@ -355,7 +355,7 @@ class StartGoalFlowTest {
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
         api.draft = card(left = 0)
         api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
-        rule.onNodeWithText("Start musicianship").performClick()
+        rule.onNodeWithText("Start music basics").performClick()
         rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
 
         rule.onNodeWithText("Join the waitlist").performClick()
@@ -375,7 +375,7 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Join the waitlist").assertIsNotEnabled()
 
         api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
-        rule.onNodeWithText("Start musicianship").performClick()
+        rule.onNodeWithText("Start music basics").performClick()
         rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
 
         rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()

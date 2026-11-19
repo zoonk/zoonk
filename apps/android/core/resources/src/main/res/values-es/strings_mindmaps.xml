@@ -56,7 +56,7 @@
   "mindmaps_show_all": "8a6d82e2ee217a7e15c87df6adabeb7a32a7906236be1d64489586cf1c0cda8a",
   "mindmaps_shown_as_text": "8aea33a94b4a075b7f15a31408dc8ad6a2a81739789db6d33a74fc9a29bc34d3",
   "mindmaps_start_from_first": "5cc3fc937702b0f0c815b9dd3bd6cfb98004fb700be99d8047d1003454104f58",
-  "mindmaps_study": "dfd38c2f5731a5670351abaeccbb1680bdfe593ed502fde15e529929c45d6fc8",
+  "mindmaps_study": "25d746fb84bf527bf8ee23e54b759a9a701f4dff18e6bf3a82b20b1cb9423859",
   "mindmaps_tab_chapters": "0e531a5ff652d8f7688b865465ac6b3adbd4a2ffa966389548415b21cbccea81",
   "mindmaps_tab_lessons": "c3943e59796bc257c14be8f36e91e5e99751bc1cff262de3338e7cf11f00695f",
   "mindmaps_tab_saved": "64a8980a774c685b0809f8d382fecd6fb2b273153cb9b86bb58812dbda3149cc",
@@ -151,7 +151,7 @@
     <string name="mindmaps_zoom_out">Alejar</string>
     <string name="mindmaps_fit">Ajustar a la pantalla</string>
     <string name="mindmaps_viewer_hint">Junta o separa dos dedos, desplázate o usa + y - para acercar o alejar; arrastra o usa las flechas para mover el mapa.</string>
-    <string name="mindmaps_study">Estudiar mapas mentales</string>
+    <string name="mindmaps_study">Estudiar mapas</string>
     <string name="mindmaps_create_all">Crear todos</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Aún no hay mapa</string>

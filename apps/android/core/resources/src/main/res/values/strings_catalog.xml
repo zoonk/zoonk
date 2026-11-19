@@ -30,7 +30,7 @@
     </plurals>
     <string name="catalog_empty_title">No courses</string>
     <string name="catalog_empty_description">No courses available yet.</string>
-    <string name="catalog_start_goal">Start a goal</string>
+    <string name="catalog_start_goal">New goal</string>
     <string name="catalog_loading_more">Loading more courses…</string>
     <string name="catalog_load_more_failed">Something went wrong. Please try again.</string>
 

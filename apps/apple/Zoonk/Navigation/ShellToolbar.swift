@@ -225,7 +225,7 @@ struct GoalSwitcher: View {
   let isCompact: Bool
   let maxTitleWidth: CGFloat
 
-  /// The plain "Start a goal" row, with nothing in a menu to switch to: one quick explanation
+  /// The plain "New goal" row, with nothing in a menu to switch to: one quick explanation
   /// doesn't need a menu, two or more are listed in it.
   static func startsPlainly(followed: Int, waiting: Int, explanations: Int) -> Bool {
     followed == 0 && waiting == 0 && explanations <= 1
@@ -282,7 +282,7 @@ struct GoalSwitcher: View {
       Button {
         router.open(.startGoal())
       } label: {
-        // A toolbar draws a Label as its icon alone; main's link says "Start a goal" beside it.
+        // A toolbar draws a Label as its icon alone; main's link says "New goal" beside it.
         HStack(spacing: 4) {
           Image(systemName: "plus")
 
@@ -364,7 +364,7 @@ struct GoalSwitcher: View {
           } label: {
             Label {
               Text(
-                "Start a goal", tableName: "Navigation",
+                "New goal", tableName: "Navigation",
                 comment: "Goal switcher option that starts another goal")
             } icon: {
               Image(systemName: "plus")
@@ -501,7 +501,7 @@ struct GoalSwitcher: View {
 
 private var startGoalTitle: Text {
   Text(
-    "Start a goal", tableName: "Navigation",
+    "New goal", tableName: "Navigation",
     comment: "Opens Today, where the learner starts a goal")
 }
 

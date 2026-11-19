@@ -266,7 +266,7 @@ export const libraryLessonCompletionSchema = z
       .nullable()
       .meta({
         description:
-          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
       }),
     seconds: z.int().min(0),
     studyBlock: studyBlockCompletionSchema

@@ -67,7 +67,7 @@ struct StatsEmpty: View {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Go to Today", tableName: "Progress"
+          "Today", tableName: "Progress"
         )
       }
       .buttonStyle(.mainAction)

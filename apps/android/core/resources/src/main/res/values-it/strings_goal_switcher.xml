@@ -15,13 +15,13 @@
   "goal_switcher_quick_explanations": "14744fd32dcec1e336bf91788faa4b9c058c3c4d5a0d54ee1a8c7435fe5f952c",
   "goal_switcher_ready_to_start": "d38e53505feeac59a9fde594190d831f467951bd15ba93e360baa55f377ebbdc",
   "goal_switcher_start_failed": "652f8585cb072116bc23b354533e75e66c9715e5b0db9410202f7d4e93add271",
-  "goal_switcher_start_goal": "e048d1f9bccd368a296c8eac9fc9cb012032009d23e83f076106b277c0284294",
+  "goal_switcher_start_goal": "fef6bc7b3e4f2d0ba63cf836f9c4f7a0f9874c0a2bcb2d12aa1bebce1bb8511b",
   "goal_switcher_starts_with_free_account": "99dd496cb795568e07b79fd6a01517c6d7a1f5aa2538219c231b3e4e2316c31e",
   "goal_switcher_your_goals": "f9593f279faa1cd19b10135a0a7e0d410f66a43be3cf7997eda9e5056790d895"
 }
 -->
 <resources>
-    <string name="goal_switcher_start_goal">Inizia un obiettivo</string>
+    <string name="goal_switcher_start_goal">Nuovo obiettivo</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s, obiettivo attuale. Cambia obiettivo</string>
     <string name="goal_switcher_your_goals">I tuoi obiettivi</string>

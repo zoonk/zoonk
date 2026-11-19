@@ -3039,10 +3039,10 @@ msgid "We couldn't open this lesson"
 msgstr "이 레슨을 열지 못했어요"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "오늘의 학습으로 이동하기"
+#: src/questions/tutor-conversation-parts.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "오늘"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3085,6 +3085,11 @@ msgid "Next lesson"
 msgstr "다음 레슨"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "오늘의 학습으로 이동하기"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "이미 알고 있던 내용이에요"
@@ -3110,9 +3115,9 @@ msgid "Building your plan"
 msgstr "계획을 만들고 있어요"
 
 #: src/lesson/completion/lesson-completion-plan.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "내 계획 보기"
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "계획 보기"
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
@@ -3957,11 +3962,6 @@ msgstr "이전 질문 불러오기"
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "내 질문"
-
-#: src/questions/tutor-conversation-parts.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "오늘"
 
 #: src/questions/tutor-conversation-parts.tsx
 msgctxt "6dIxDP"

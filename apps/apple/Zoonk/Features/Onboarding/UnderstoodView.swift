@@ -960,7 +960,7 @@ private struct InstrumentOutcome: View {
         StepButtons(
           canSkip: waitlist != .joined,
           continueLabel: Text(
-            "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+            "Start music basics", tableName: "Onboarding", comment: "Starts a musicianship goal"),
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),

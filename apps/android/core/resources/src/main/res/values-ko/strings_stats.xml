@@ -44,7 +44,7 @@
   "stats_evening": "c8df8e6c13ceee7afc1329c9792b632abf1a96b960113e55f21aa3a85875e696",
   "stats_every_belt": "57b79a02c67e45c91c12cd56956b771e069b3095c7270c0d459e1b7e735147e5",
   "stats_few_answers_legend": "cf0e33bc3f2d88b4b380a1f3371261d7722df8dd3d4b96fdc2ff0857096c2e74",
-  "stats_go_to_today": "6af3f2f55fd6873ddf66241d49d8b3fae5228605b9ff322ff78442023cb817b2",
+  "stats_go_to_today": "4271a6a28487ec64610c4d35b5d5fe4fe6932ad361d36f97da7873275575cc9f",
   "stats_high": "d4517e0e55e27d773f68da1e72efe94cef30807ca005f734baf71ace91746dbb",
   "stats_less": "bdcb21d895d63930bd80ed0109afcfab3df8d92b1ef34fdc91acaf7c58741651",
   "stats_lesson_count": "5a04a1bf8d9bb55f440ae3f5690b8bf8d0bdb157b81e2559515878966e567e82",
@@ -91,7 +91,7 @@
     <string name="stats_patterns">학습 패턴</string>
     <string name="stats_empty_title">아직 통계가 없어요</string>
     <string name="stats_empty_line">첫 레슨을 마치면 볼 수 있어요.</string>
-    <string name="stats_go_to_today">오늘의 학습으로 이동하기</string>
+    <string name="stats_go_to_today">오늘</string>
     <string name="stats_not_yet">아직</string>
     <string name="stats_part_failed">이 부분을 불러오지 못했어요.</string>
     <string name="stats_days_studied">학습 일수</string>

@@ -3039,10 +3039,10 @@ msgid "We couldn't open this lesson"
 msgstr "Impossible d’ouvrir cette leçon"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Aller à Aujourd’hui"
+#: src/questions/tutor-conversation-parts.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Aujourd’hui"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3085,6 +3085,11 @@ msgid "Next lesson"
 msgstr "Leçon suivante"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Aller à Aujourd’hui"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "Tu savais déjà ça"
@@ -3110,9 +3115,9 @@ msgid "Building your plan"
 msgstr "Préparation de ton plan"
 
 #: src/lesson/completion/lesson-completion-plan.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Voir ton plan"
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Voir le plan"
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
@@ -3957,11 +3962,6 @@ msgstr "Charger les questions précédentes"
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "Ta question"
-
-#: src/questions/tutor-conversation-parts.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "Aujourd’hui"
 
 #: src/questions/tutor-conversation-parts.tsx
 msgctxt "6dIxDP"

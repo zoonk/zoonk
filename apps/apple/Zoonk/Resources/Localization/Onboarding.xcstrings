@@ -8195,65 +8195,6 @@
         }
       }
     },
-    "Go to your Plan" : {
-      "comment" : "Opens the Plan, whose menu pauses a goal and keeps its progress",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu deinem Plan"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir a tu Plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aller à ton plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vai al tuo Piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 계획으로 이동하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź do Planu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir para seu plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planına git"
-          }
-        }
-      }
-    },
     "Goal" : {
       "comment" : "Row naming an understood goal",
       "localizations" : {
@@ -15576,61 +15517,61 @@
         }
       }
     },
-    "See your plan" : {
-      "comment" : "Leaves the plan's wait, once the plan is ready, for the plan",
+    "See plan" : {
+      "comment" : "Opens the Plan, whose menu pauses a goal and keeps its progress\nLeaves the plan's wait, once the plan is ready, for the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deinen Plan ansehen"
+            "value" : "Plan ansehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver tu plan"
+            "value" : "Ver plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir ton plan"
+            "value" : "Voir le plan"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vedi il tuo piano"
+            "value" : "Vedi il piano"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画を見る"
+            "value" : "プランを見る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 계획 보기"
+            "value" : "계획 보기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobacz swój plan"
+            "value" : "Zobacz plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver seu plano"
+            "value" : "Ver plano"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planını gör"
+            "value" : "Planı gör"
           }
         }
       }
@@ -16944,31 +16885,31 @@
         }
       }
     },
-    "Start musicianship" : {
+    "Start music basics" : {
       "comment" : "Starts a musicianship goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Musikalische Grundlagen lernen"
+            "value" : "Mit musikalischen Grundlagen starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar con la formación musical"
+            "value" : "Empezar con las bases de la música"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer l’apprentissage de la musique"
+            "value" : "Apprendre les bases de la musique"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia la formazione musicale"
+            "value" : "Inizia dalle basi della musica"
           }
         },
         "ja" : {
@@ -16986,13 +16927,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zacznij naukę podstaw muzyki"
+            "value" : "Zacznij od podstaw muzyki"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a estudar música"
+            "value" : "Começar pelo básico da música"
           }
         },
         "tr" : {

@@ -88,7 +88,7 @@
   "onboarding_full_course_finish_month": "14a60e083438ce0b6d609f51cb13dabad7ca78b3b25b828ddf42eec5f5e693e9",
   "onboarding_full_course_rule": "4336be2ad785bf533ee9e7aea83ec6b0bb012c76423bbbf623aa4cf4e9e20e7c",
   "onboarding_full_course_until_exam": "3de208647f1da59804bcd4d4b0e6c00ffbb961b26474aed3d6bd3650d791387c",
-  "onboarding_go_to_plan": "417d55ca2cb167a192dd9fa09065158309d4e6b97384d7f00e80dd7dc8b77dc8",
+  "onboarding_go_to_plan": "0eb11d3b02e6aaaf36cd25a2c101bef1334bcb43222060b1fb313cc66839f8b9",
   "onboarding_goals_at_once_line": "43b940544f362db392a05d37dd178dcc609d9c1944a6675e0903cb4d959c3950",
   "onboarding_goals_at_once_title": "b298c750c1501f43a6712f2ab9a30cd865bcef17f93b2b964193e882f58791f9",
   "onboarding_guest_gate_description": "99101ea5f2c85b6d70b7bb97fa7997eb47b44d452c0200d2f6355bb0e06934f3",
@@ -180,7 +180,7 @@
   "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
   "onboarding_placement_right": "794ec45fa119e4fd61a3f8de722e2d0ca52a6868d4edbe2cc97c3b50d5ee4683",
-  "onboarding_placement_see_plan": "b7b6ebf11cf66009016170e4a0761be43c3028aecf6fbd71d6555f68cbe901dc",
+  "onboarding_placement_see_plan": "9c38a0a5b01246669d627600ad71e1beb385c2a6bdb7bdff05173ef90e2fe5b9",
   "onboarding_placement_set_description": "be11d80d08753c4b458c59093cdae937a13f0e77fe5bf9ca2555681aa18db902",
   "onboarding_placement_set_title": "b3c12f00baf9f7ab786e5920c8b8a47cd2c7b4b144789f2c55b41bd06d4eeed3",
   "onboarding_placement_skip_basics": "d4bc3f80cbbff888d016751c4a0e37e2ca5efaa0f36572e1e8448fa75c3c85d3",
@@ -376,13 +376,13 @@
   "onboarding_schedule_title": "78f46439681098daf9288049fbd786cd4d901cf42267ce1bd37e763f1184f3c8",
   "onboarding_score_placeholder": "a5d366dacbd42353e2c81e35fc6094974afbb93df232cb81cf4e15bdbeee08b8",
   "onboarding_score_title": "dc93538f21bc6779164b006c70ccdd6a55bf42932acefca66ea3a8979aa3aa00",
-  "onboarding_see_plan": "d290a6dd2a08b676d62245f7375d023170f1ff7ef9d8045f6e965b4bc0dc2894",
+  "onboarding_see_plan": "aa9b25f8b74e7b7149ea464c6e764530e471d0fa7139146b34cdb2aeafdab9a5",
   "onboarding_skip": "f4bb9715c1139287c32c08cb89c03645356770a38e96707e40f44b49354eaa9d",
   "onboarding_source": "be0bb6fdb16c48a51b682135a0bc67570d5141dd763cad85862aeedcecbf40cd",
   "onboarding_start_description": "12fb39d8077781f6b473848707ebb92a1806fde2579f64ad41d066338465fe2e",
   "onboarding_start_description_shared": "0093881030793177c06b458c8d47f1d0cce5bc07b5b761d37df6a04fbdfbcfdd",
   "onboarding_start_free": "f30ead2f142dd29eac1509a9cb73f8ce6d51bb8b4d56162d0bad9d63f814a010",
-  "onboarding_start_musicianship": "9fe101b218940e05ea930191020279d1bff4413aad0446d054abebd012240ab9",
+  "onboarding_start_musicianship": "0ef5c6134b2073f8b2eaa624375706f1935a76af232ae023fa8a8a8667992483",
   "onboarding_start_over": "8d7830fcaf18f186d57b9ae23d83c392dad1707ca12c345aeeb2d73c8c644981",
   "onboarding_start_over_confirm": "f18c5ddfc0e2054e8a8921019c51839f176f79893cf3026ee14bf79d260c1fbb",
   "onboarding_start_over_description": "1c56b2d482e9f5341cde25a3d10da75f65299f5bc6645e6c6e31e8a680f6f495",
@@ -478,7 +478,7 @@
     <plurals name="onboarding_day_too_short">
         <item quantity="other">1日%1$s以上を選んでください。%2$d件の目標を進めるのに必要です。</item>
     </plurals>
-    <string name="onboarding_go_to_plan">学習計画を見る</string>
+    <string name="onboarding_go_to_plan">プランを見る</string>
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">同時に取り組める目標の上限に達しました</string>
     <string name="onboarding_goals_at_once_line">学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。</string>
@@ -572,7 +572,7 @@
     <string name="onboarding_instrument_title">%1$sのレッスンは準備中です</string>
     <string name="onboarding_instrument_description">演奏や歌を教えるには、実際の音を聴く必要がありますが、その機能はまだ開発中です。事前登録をして、今日から楽譜の読み方や耳のトレーニング、リズムなど、音楽の基礎を学びましょう。</string>
     <string name="onboarding_musicianship_card">%1$sに役立つ音楽の基礎を学びます。和音を聴き分けたり、短いメロディーの楽譜を読んだり、リズムをとったりします。マイクは不要です。</string>
-    <string name="onboarding_start_musicianship">音楽の基礎を始める</string>
+    <string name="onboarding_start_musicianship">音楽の基礎を学び始める</string>
     <string name="onboarding_join_waitlist">事前登録する</string>
     <string name="onboarding_waitlist_joined">事前登録が完了しました。演奏のレッスンの準備ができたらお知らせします。</string>
     <string name="onboarding_waitlist_sign_in">お知らせを受け取るには、アカウントを作成してください。</string>
@@ -646,7 +646,7 @@
     <string name="onboarding_placement_right">正しい</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">誤り</string>
-    <string name="onboarding_placement_see_plan">学習計画を見る</string>
+    <string name="onboarding_placement_see_plan">プランを見る</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="other">%d問に回答済み</item>
     </plurals>
@@ -940,7 +940,7 @@
     <string name="onboarding_reveal_reading_line_guide">公式ガイドに記載されたパートとトピックを調べています…</string>
     <string name="onboarding_reveal_reading_line_dates">試験の日程と形式を確認しています…</string>
     <string name="onboarding_reveal_reading_line_fit">学習計画に組み込んでいます…</string>
-    <string name="onboarding_see_plan">学習計画を見る</string>
+    <string name="onboarding_see_plan">プランを見る</string>
     <string name="onboarding_plan_ready_goal">「%1$s」の学習計画ができました。</string>
     <string name="onboarding_reveal_start_here">ここからスタート</string>
     <string name="onboarding_reveal_up_next">次のレッスン</string>

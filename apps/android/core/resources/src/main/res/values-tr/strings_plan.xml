@@ -286,7 +286,7 @@
   "plan_full_course": "c7b0949576fbcb2f03b77df21b910de64e1495f07db5a7e087e7c460e0ae91db",
   "plan_full_course_switch": "a3a827a7496044525df043b081ebee1dfaf2b82e0793f1cae076118c797e8943",
   "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
-  "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
+  "plan_go_to_today": "337ee5ba1c2b499cf8f12cf3737f612624e659a66ce154a432c8d84d60c38b41",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
   "plan_goal_limit_reached": "6f6813c41802cd4017c9f24532bf7356c606ebb0f0f1fa7d0eba0c2495f65cb2",
   "plan_goal_paused": "896c464f0a074cffe81e4ce57d8248b86ba3982fb4b8c8564e736d0152895d57",
@@ -1207,7 +1207,7 @@
     <string name="plan_goal_paused">%1$s hedefin duraklatıldı</string>
     <string name="plan_no_longer_fits">Kalan gün sayısından fazla ders var</string>
     <string name="plan_adjust">Ayarla</string>
-    <string name="plan_go_to_today">Bugün sayfasına git</string>
+    <string name="plan_go_to_today">Bugün</string>
     <string name="plan_suggestion">Plan önerisi</string>
     <string name="plan_updated">Plan güncellendi</string>
     <string name="plan_updated_sentence">Planın güncellendi.</string>

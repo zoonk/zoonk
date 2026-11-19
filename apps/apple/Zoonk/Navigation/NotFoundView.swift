@@ -21,7 +21,7 @@ struct NotFoundView: View {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Go to Today", tableName: "Navigation",
+          "Today", tableName: "Navigation",
           comment: "Opens Today from a link that leads to something that doesn't exist")
       }
       .buttonStyle(.mainAction)
