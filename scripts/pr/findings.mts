@@ -37,6 +37,15 @@ function closeIn(item: ManifestItem, close: (finding: Finding) => Finding): Mani
   };
 }
 
+/** An exception names who granted it, and a not-a-fault says why; blank text says neither. */
+function saysWhy(state: FindingState): boolean {
+  if (state.state === "exception") {
+    return state.grantedBy.trim() !== "";
+  }
+
+  return state.state !== "not-a-fault" || state.reason.trim() !== "";
+}
+
 /**
  * Closes the finding `id` on every picture under `root` that holds it. One the PR must fix never
  * goes to an issue: it closes fixed, or by an exception the user granted.
@@ -50,6 +59,10 @@ export async function resolveFinding({
   root: string;
   state: FindingState;
 }): Promise<void> {
+  if (!saysWhy(state)) {
+    throw new Error("Say who granted the exception, or why it is not a fault.");
+  }
+
   const folders = await findManifests(root);
 
   const manifests = await Promise.all(

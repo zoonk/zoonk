@@ -120,7 +120,8 @@ async function recordRead({ positionals: [folder], values }: Arguments) {
 }
 
 async function resolutionOf(values: Arguments["values"]): Promise<FindingState> {
-  const { exception, fixed, issue } = values;
+  const { fixed, issue } = values;
+  const exception = values.exception?.trim();
   const reason = values["not-a-fault"]?.trim();
   const given = [exception, fixed, issue, reason].filter(Boolean);
 

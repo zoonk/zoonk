@@ -103,6 +103,17 @@ describe("closing a finding", () => {
     );
   });
 
+  it("refuses an exception with no one who granted it, and a not-a-fault with no reason", async () => {
+    const { findingsNow, root } = readWith([polish]);
+    const exception = { grantedBy: "   ", state: "exception" } as const;
+    const reason = { reason: " ", state: "not-a-fault" } as const;
+
+    await assert.rejects(resolveFinding({ id: polish.id, root, state: exception }), /who granted/u);
+    await assert.rejects(resolveFinding({ id: polish.id, root, state: reason }), /why/u);
+    const open = await findingsNow();
+    assert.ok(open.every((finding) => finding.state === "open"));
+  });
+
   it("names a finding it can't find", async () => {
     const { root } = readWith([polish]);
 
