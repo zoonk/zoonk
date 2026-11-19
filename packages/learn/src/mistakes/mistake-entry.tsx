@@ -154,7 +154,12 @@ function MistakeEntryActions({
 
       {links.lesson && (
         <LearnLink
-          className={buttonVariants({ size: "sm", variant: "ghost" })}
+          className={buttonVariants({
+            // Alone on its line, its words start on the column's edge like the text above.
+            edge: links.practiceSkill || availableTomorrow ? undefined : "start",
+            size: "sm",
+            variant: "ghost",
+          })}
           href={links.lesson}
           // The lesson may still be unwritten (it writes itself once opened), as in lesson lists.
           prefetch="auto"
