@@ -302,7 +302,7 @@ private fun TodayAction(
             }
 
             model.pastDate != null -> {
-                ActionButton(stringResource(R.string.plan_pick_date), busy = false, buttonModifier) {
+                ActionButton(stringResource(R.string.today_see_your_plan), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Plan(focus = "time"))
                 }
             }

@@ -144,7 +144,6 @@
   "player_saving_progress": "88aa09188d40416edd4df3de80fd49db4cb8c2a8bb13ba2499afa5fbb231b67a",
   "player_say_it_instead": "b981fadc5ae697923de315eafab2b24791b0331d9bcacb9f66a6d1f2bb4f55a4",
   "player_screen_options": "fa549e3ce14d23736e7d5d8fed84e3ddcde2bfab8c8746f39dabc95eca54ae3a",
-  "player_see_todays_summary": "985c70511b29a0410045c09a6a4afbcf04de61dca3d349862ff5875df57ae133",
   "player_set_aside_description": "e92946b831186dcaf14e5b88c5e4f717cf090b3c070a08f832d21f790b2ebb3b",
   "player_set_aside_title": "da1a3741e39d26aca549a34ffc0ada175f2741c3bbb5ccab5609754e7f6219d6",
   "player_slow_down_description": "3e1e233802ff4e5d327ca06826f77ab1d6932b5bdb42a4b559b53a62002568eb",
@@ -410,7 +409,6 @@
     <string name="player_time_studied">%1$s çalıştın</string>
     <string name="player_next_lesson">Sonraki derse geç</string>
     <string name="player_stop_for_today">Bugünlük bitir</string>
-    <string name="player_see_todays_summary">Bugünün özetini gör</string>
     <string name="player_next_step_failed">Sonraki adımı açamadık. Tekrar dene.</string>
     <string name="player_stop_failed">Çalışmayı durduramadık. Tekrar dene.</string>
     <string name="player_back_to_chapter">Üniteye dön</string>

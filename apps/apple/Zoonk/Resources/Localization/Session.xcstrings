@@ -5289,61 +5289,61 @@
         }
       }
     },
-    "Practice %lld more min" : {
+    "Practice %lld min" : {
       "comment" : "Adds practice once the day is done; the number is minutes",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weitere %lld Min. üben"
+            "value" : "%lld Min. üben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar %lld min más"
+            "value" : "Practicar %lld min"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’entraîner encore %lld min"
+            "value" : "S’entraîner %lld min"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercitati ancora per %lld min"
+            "value" : "Esercitati per %lld min"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "さらに%lld分練習する"
+            "value" : "%lld分練習する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld분 더 연습하기"
+            "value" : "%lld분 연습하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwicz jeszcze %lld min"
+            "value" : "Ćwicz przez %lld min"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar por mais %lld min"
+            "value" : "Praticar por %lld min"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld dk. daha pratik yap"
+            "value" : "%lld dk. pratik yap"
           }
         }
       }

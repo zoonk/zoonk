@@ -144,7 +144,6 @@
   "player_saving_progress": "dccc838f81370befa1da6bc7c2e4ac0a9af990bdfb01c3a7566bebdc0913df18",
   "player_say_it_instead": "41755450d1629b6505d7a1ab6226b0d4a0692726f486dda39b88f22a41d0e33f",
   "player_screen_options": "e48d8267d45e80aea7d46a217467585e919b1a203208627e7d6ecad445d030fc",
-  "player_see_todays_summary": "3b4e05e236356a4b45d478c410187d56458a957863d0e6a8112808b59c7e8160",
   "player_set_aside_description": "229bf4d5f76fdf2351ea9786af24dda7534c7b68be98a54e8e96a06f193bf758",
   "player_set_aside_title": "af9f3bd4b7b17133f58b00d05794db6151f279d3932b89549f8ef6caccf123d5",
   "player_slow_down_description": "100ca1cdac638016e08fd12b6dc1db92c01eaf694a088b635f742e03caa97623",
@@ -414,7 +413,6 @@
     <string name="player_time_studied">%1$s de estudio</string>
     <string name="player_next_lesson">Siguiente lección</string>
     <string name="player_stop_for_today">Dejarlo por hoy</string>
-    <string name="player_see_todays_summary">Ver el resumen de hoy</string>
     <string name="player_next_step_failed">No pudimos abrir el siguiente paso. Inténtalo de nuevo.</string>
     <string name="player_stop_failed">No pudimos detener la sesión. Inténtalo de nuevo.</string>
     <string name="player_back_to_chapter">Volver al capítulo</string>

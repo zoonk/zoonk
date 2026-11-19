@@ -116,7 +116,6 @@
   "today_step_skipped": "5cdfcb175ebebddc925c6ecdac781d505907d9250367dd17db19deb53b5f70ff",
   "today_steps_done": "da9bb6a9b91b5bffa46d4824d9144f1c84f5843d18e4ad74f8cd76a56a0d32d4",
   "today_study_everything": "eb8dd0b66a2712eaa9e31cfa11cc1004b47a025222848978f55dd8a31e746277",
-  "today_study_more_minutes": "5d9f1487dd854e4a8bbc022bf9e5ef4e01e56c4212401f491bef3fc321f73833",
   "today_suggested_goal_accept": "2f4544f1657c73a96e07ef09cfd197e329e05757a666a3365b8c895e42fc1395",
   "today_suggested_goal_detail": "56dbb2a5a25eeb9f09000fc90f6a70fa3c953cc2790ca2538772150ab9cfac10",
   "today_suggested_goal_question": "6fb8759b61fcc5da4a6c282d5b12e470498e13f76d368b5e2d488ae0de88a8af",
@@ -263,7 +262,6 @@
     <string name="today_week_mock_name">Probeprüfung</string>
     <string name="today_week_challenge_name">wöchentliche Herausforderung</string>
     <string name="today_week_full_review_detail">alle Themen</string>
-    <string name="today_study_more_minutes">Weitere %1$s Min. üben</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">Herausforderung am %1$s ansehen</string>
     <string name="today_see_day_mock">Probeprüfung am %1$s ansehen</string>

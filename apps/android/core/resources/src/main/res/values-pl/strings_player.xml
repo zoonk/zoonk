@@ -144,7 +144,6 @@
   "player_saving_progress": "e36ed9346e208e11fda92e0c37eb1c23be3ecf9515cda7725087e96bab029a32",
   "player_say_it_instead": "ced878ad03359ae8aeaeed4fef0d9f187d256bfe149188d8b77cd808e76488cc",
   "player_screen_options": "4fcf6031169ffbf55736bbf35216eb287734f08c4c0f03c27c4041d7efb16100",
-  "player_see_todays_summary": "ddb89fe8f723684ab49b4fa6bdd1d3d440cb0d5ce174d823c4672620d976d6b7",
   "player_set_aside_description": "4d3a7848adea03b9e19d5d39c6f60348eb95eb617cfa58779e13449e1bc0acfd",
   "player_set_aside_title": "3c8547651b73f22ba11e7ff05c66ce0761282f21c155d6f04e1547349f5274c2",
   "player_slow_down_description": "47a2f32828b22b9e016dc7b7c574c32437faf2626853f07c24f0b759dcac486b",
@@ -418,7 +417,6 @@
     <string name="player_time_studied">%1$s nauki</string>
     <string name="player_next_lesson">Przejdź do kolejnej lekcji</string>
     <string name="player_stop_for_today">Zakończ na dziś</string>
-    <string name="player_see_todays_summary">Zobacz dzisiejsze podsumowanie</string>
     <string name="player_next_step_failed">Nie udało się przejść do następnego kroku. Spróbuj ponownie.</string>
     <string name="player_stop_failed">Nie udało się zakończyć nauki. Spróbuj ponownie.</string>
     <string name="player_back_to_chapter">Wróć do rozdziału</string>

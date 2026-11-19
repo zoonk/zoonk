@@ -116,7 +116,6 @@
   "today_step_skipped": "cb24182ca6ea0f088d8d5b38f56bbd05e8cbb4acb8bdf4419ddf57ea1053c4ca",
   "today_steps_done": "6e91ae9a9cdf297c1eb649b3720d4d8268c4ee49eb2614d53db3b7dc40e8a13d",
   "today_study_everything": "9c70bdc7cb80dc8bab28ee732e4f33e262285ba9ddb8e5bb1532c6ff91b7bbcd",
-  "today_study_more_minutes": "efb2abdc79f1f3fbc66dbd863a5cbd2ea691d6103259957f098905dcd708d7dd",
   "today_suggested_goal_accept": "a45f91e3f624611c7dd0b0260dfe6cb61c8b81685674a549334900670db89158",
   "today_suggested_goal_detail": "8ce7c1b4c7dbe9475192d9e78d88564c55f0406a2d8323b8b4475607e0f960f5",
   "today_suggested_goal_question": "bcfed42f3e63b7570b5aa09431f3193781dbe08dfd22cb09212bae0942cc2e0f",
@@ -269,7 +268,6 @@
     <string name="today_week_mock_name">examen blanc</string>
     <string name="today_week_challenge_name">défi hebdomadaire</string>
     <string name="today_week_full_review_detail">tous les sujets</string>
-    <string name="today_study_more_minutes">S’entraîner %1$s min de plus</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">Voir le défi de %1$s</string>
     <string name="today_see_day_mock">Voir l’examen blanc de %1$s</string>

@@ -38,7 +38,7 @@
   "checkpoint_removed_title": "374979fbdf31a4b4ecf6352a2c7812c4cb9f753d961bb48f37226219cab20ec9",
   "checkpoint_retry_after_lessons": "0c983131830a4caef9aad441c138e99f36be6b6d067df5ae79bb07cd99bc8071",
   "checkpoint_retry_tomorrow": "9a3736b4a6dd4c007ea439823521f940475a39210a307d185392d67b7c104749",
-  "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
+  "checkpoint_review": "0def41943662eada754b4d9481cecf5bd4c7830db298e404cacfd9f00d4753b6",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
   "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
   "checkpoint_see_result": "2e730f72bf7414ca063304963c9f6d4621fc2134ceb40a155c93aa961aa29eb8",
@@ -147,5 +147,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">La siguiente fase, %1$s, ya está abierta.</string>
     <string name="checkpoint_answers">Las respuestas</string>
-    <string name="checkpoint_review">Revisar las respuestas</string>
+    <string name="checkpoint_review">Ver respuestas</string>
 </resources>

@@ -84,7 +84,6 @@ private fun MoreTime(
     if (!extraTime.available) return
 
     val minutes = formatNumber(extraTime.minutes.toDouble(), currentLocale())
-    val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_practice_minutes
 
     OutlinedButton(
         busy = viewModel.pending == TodayTap.KeepLearning,
@@ -92,7 +91,7 @@ private fun MoreTime(
         enabled = viewModel.pending == null,
         leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
     ) {
-        Text(stringResource(label, minutes))
+        Text(stringResource(R.string.today_practice_minutes, minutes))
     }
     if (viewModel.failed == TodayTap.KeepLearning) Failure(stringResource(R.string.today_save_failed))
 }

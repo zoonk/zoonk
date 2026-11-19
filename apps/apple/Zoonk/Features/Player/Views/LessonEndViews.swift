@@ -1047,7 +1047,7 @@ struct LessonGuestGateView: View {
         Button {
           routes.signIn()
         } label: {
-          Text("Sign in", tableName: "Player", comment: "A visitor signs in to play a lesson")
+          Text("Log in", tableName: "Player", comment: "A visitor signs in to play a lesson")
         }
         .buttonStyle(.mainAction)
       }

@@ -144,7 +144,6 @@
   "player_saving_progress": "42a818f1e45dc359825f0f69f5b5aa7b4daf6b6cf667bf3ffd7b1c0c34bd36e7",
   "player_say_it_instead": "785c9c4b63e85cdecee1dc39fbec00282b88b53197d96d6ea59547083b18b6cd",
   "player_screen_options": "1371cbf567e6f1ecd49cd9197e5007149b44c3bb26d1cdedeb82d041104633d0",
-  "player_see_todays_summary": "51988a28ac624c002b5f6714b2ca823e21d41cb320ff08d9bd07b58a28786bf1",
   "player_set_aside_description": "a89e23f293641bba300c93a1db56fabca0aef800ea94c7a7e43639fedd2b695d",
   "player_set_aside_title": "58ec14edf499fc8c9c54c2dcb5fbf6ae93484119f537ca2585b870034c14f8ec",
   "player_slow_down_description": "44bbdb196540ec1d9c20455aa4799c0894b5a529f43d7fc2fe491debe3f89aed",
@@ -414,7 +413,6 @@
     <string name="player_time_studied">%1$s d’étude</string>
     <string name="player_next_lesson">Leçon suivante</string>
     <string name="player_stop_for_today">Arrêter pour aujourd’hui</string>
-    <string name="player_see_todays_summary">Voir le bilan du jour</string>
     <string name="player_next_step_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
     <string name="player_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>
     <string name="player_back_to_chapter">Retour au chapitre</string>

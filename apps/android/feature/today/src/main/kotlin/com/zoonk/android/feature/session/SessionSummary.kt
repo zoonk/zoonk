@@ -610,7 +610,7 @@ private fun SummaryBar(
                     if (extra.lessons.isNotEmpty()) {
                         stringResource(R.string.today_keep_learning)
                     } else {
-                        stringResource(R.string.today_study_more_minutes, formatNumber(extra.minutes.toDouble(), locale))
+                        stringResource(R.string.today_practice_minutes, formatNumber(extra.minutes.toDouble(), locale))
                     },
                 )
             }

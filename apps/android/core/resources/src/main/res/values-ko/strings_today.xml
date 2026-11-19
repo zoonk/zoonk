@@ -116,7 +116,6 @@
   "today_step_skipped": "267b6025019b0fba857c29c3dedcb32770c0676fa8c4a6a449c92349f0af0f1e",
   "today_steps_done": "aa718aca8c8f31add24cc01d9840a449b4a99f928eca04f8e414097d4e56f64a",
   "today_study_everything": "fb74563cdb73010c55e31574d7ff537b39fd4e53bc8262a34a22d91b4ab84c36",
-  "today_study_more_minutes": "e0d06cb6ba862ec320d987dc8f4af70b8eb3a6884a8c075b7b72f65378e3f8db",
   "today_suggested_goal_accept": "134411228bdd7589c3d0fbc97aecf8a392a4fad3a524497423ea0c91be8ec7dc",
   "today_suggested_goal_detail": "2e1f72c77ad0be899171a83e07767dc6baeb166155992b65012971be65b5eef2",
   "today_suggested_goal_question": "2e971aebcfaa88400457015c4b3b668c6b53031610258b250ef00d4da53bb5f0",
@@ -257,7 +256,6 @@
     <string name="today_week_mock_name">모의고사</string>
     <string name="today_week_challenge_name">주간 챌린지</string>
     <string name="today_week_full_review_detail">모든 주제</string>
-    <string name="today_study_more_minutes">%1$s분 더 연습하기</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">%1$s 챌린지 보기</string>
     <string name="today_see_day_mock">%1$s 모의고사 보기</string>

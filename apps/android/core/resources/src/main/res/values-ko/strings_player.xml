@@ -144,7 +144,6 @@
   "player_saving_progress": "e0f0153d3008188529aa478cfb12799887e47643c9b0df520bc9dc9cd890e614",
   "player_say_it_instead": "cfab6b0ddb6c3b529975cfb6a3f763b1ce69fa264a4b5b05bd78a8d00808093a",
   "player_screen_options": "83c1b103275fc5175d841f5494cbb41ac2e95263767b268e1c8ae3fb6092e016",
-  "player_see_todays_summary": "fec3b5634d030c58d4ece75277daaa0fe7dc170b27165ecc26169888e2100e75",
   "player_set_aside_description": "d88a38905d2a7e46e65f9bb86c1aa06319eca39ac4bf6a9c538341be566deb96",
   "player_set_aside_title": "f4c345ce7c4e3e3edc833195a42cce1b9303ec7b4359c5ed80a70a316b6cc758",
   "player_slow_down_description": "221360a67c7a77803557ea0c21e94cf5a6399cbccbfc5565c61404308a770d06",
@@ -406,7 +405,6 @@
     <string name="player_time_studied">%1$s 학습</string>
     <string name="player_next_lesson">다음 레슨</string>
     <string name="player_stop_for_today">오늘 학습 마치기</string>
-    <string name="player_see_todays_summary">오늘의 요약 보기</string>
     <string name="player_next_step_failed">다음 단계를 열지 못했어요. 다시 시도해 보세요.</string>
     <string name="player_stop_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
     <string name="player_back_to_chapter">챕터로 돌아가기</string>

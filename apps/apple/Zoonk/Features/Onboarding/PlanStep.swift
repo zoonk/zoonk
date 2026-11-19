@@ -765,7 +765,8 @@ private struct PlanReveal: View {
         tone: .status,
         action: BarNote.Action(
           label: Text(
-            "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"),
+            "Create a free account", tableName: "Onboarding",
+            comment: "Opens sign-up from the plan"),
           perform: { router.present(.signIn) }))
     }
   }

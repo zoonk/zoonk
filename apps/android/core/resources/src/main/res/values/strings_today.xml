@@ -111,7 +111,6 @@
     <string name="today_week_mock_name">mock exam</string>
     <string name="today_week_challenge_name">weekly challenge</string>
     <string name="today_week_full_review_detail">every topic</string>
-    <string name="today_study_more_minutes">Practice %1$s more min</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">See %1$s\'s challenge</string>
     <string name="today_see_day_mock">See %1$s\'s mock exam</string>

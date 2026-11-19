@@ -5069,7 +5069,7 @@
       }
     },
     "Create a free account" : {
-      "comment" : "Opens sign-up; a guest's plan and progress come with them",
+      "comment" : "Opens sign-up; a guest's plan and progress come with them\nOpens sign-up from the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5246,7 +5246,7 @@
       }
     },
     "Create an account" : {
-      "comment" : "Opens sign-up from the plan\nOpens sign-up to add material",
+      "comment" : "Opens sign-up to add material",
       "localizations" : {
         "de" : {
           "stringUnit" : {

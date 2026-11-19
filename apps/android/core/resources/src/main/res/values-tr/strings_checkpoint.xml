@@ -38,7 +38,7 @@
   "checkpoint_removed_title": "3207b4d02e5695e39d7de11b3d6d0c429811d26275e62fc91d9b7903d738921c",
   "checkpoint_retry_after_lessons": "ccd828d34d2a88d0e0dbf50418df4939ab482913cc8df5b08d7c5e416757035d",
   "checkpoint_retry_tomorrow": "c54a1da3e23537caaac4a67595d3d243dd101bdd73d5e7c50530907281f813d8",
-  "checkpoint_review": "1239b6d6c37b608755862389c43715c99a0f88338317d6785c5aea380c136ca6",
+  "checkpoint_review": "99713eb7c8f4dd05ad1e0333e647dffaff10cc4d515243899c35e79b570cb41a",
   "checkpoint_rewards": "2192af6a53970dc6bd45cf06f50042c6627f1f4d2b640a4b956740260f5e7361",
   "checkpoint_right_to_win": "7815f14d073074f2b3ab6324ecf3f028897e58b2fe3149956592ab56b8d21ca6",
   "checkpoint_see_result": "695f11f9a21cc57482316fc9da671255a7c98a651cb2f523b3f7ed8d5d2c13a8",
@@ -139,5 +139,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">Sıradaki aşama olan %1$s şimdiden açık.</string>
     <string name="checkpoint_answers">Cevaplar</string>
-    <string name="checkpoint_review">Cevapları incele</string>
+    <string name="checkpoint_review">Cevapları gör</string>
 </resources>

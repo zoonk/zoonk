@@ -144,7 +144,6 @@
   "player_saving_progress": "1b97c936b457ec649c07c3914d357ef065ef365d1876f3a26d014053761a7678",
   "player_say_it_instead": "986eab8f39e59227d5876b872874551afd293f06946a4e9f3ec77e55a3df6e71",
   "player_screen_options": "95751c6cf9db4249ccaaf7fa72763b2ce39d1d554b7e2b6c687b49c2353fcd6b",
-  "player_see_todays_summary": "310b2b2be473f7e781cfe9ce9ca85580fe462eaa129f04adb1d0194aede7c450",
   "player_set_aside_description": "2e5459cf0b8380e8fdeeab8fadad809e471c88e212818a68202ea3e98dbe9d4e",
   "player_set_aside_title": "69908e141da5eaaed3d909e6751750fd9db91c6a66d8c052dfb8f2eeba186e0b",
   "player_slow_down_description": "fd1d963a6655e7b07aea9c5fc8e0de652bdee28046c6c913d056a297c9a458f3",
@@ -406,7 +405,6 @@
     <string name="player_time_studied">%1$s学習済み</string>
     <string name="player_next_lesson">次のレッスン</string>
     <string name="player_stop_for_today">今日はここまでにする</string>
-    <string name="player_see_todays_summary">今日のまとめを見る</string>
     <string name="player_next_step_failed">次のステップを開けませんでした。もう一度お試しください。</string>
     <string name="player_stop_failed">学習を終了できませんでした。もう一度お試しください。</string>
     <string name="player_back_to_chapter">章に戻る</string>
