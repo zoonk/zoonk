@@ -118,6 +118,7 @@ export function CompletedLessonsScreen({
         />
       }
       data-slot="completed-lessons"
+      measure="list"
     >
       <DetailHero>
         <DetailHeroText>
