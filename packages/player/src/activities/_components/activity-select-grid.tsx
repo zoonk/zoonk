@@ -51,7 +51,9 @@ export function ActivitySelectGridItem({
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-center text-sm tabular-nums transition-colors outline-none select-none focus-visible:ring-[3px]",
         !resultState && !isSelected && "border-border hover:bg-accent",
-        !resultState && isSelected && "border-border bg-selected-tint",
+        !resultState &&
+          isSelected &&
+          "bg-selected-tint contrast-more:border-border border-transparent",
         resultState === "correct" &&
           "border-success/60 bg-success/10 text-success-text font-medium",
         resultState === "incorrect" &&

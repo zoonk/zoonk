@@ -315,8 +315,8 @@
   --destructive-text: oklch(0.5 0.2 4);
   --selected: var(--foreground);
   --selected-foreground: var(--background);
-  /* A pick's whole look with its mark (a radio's dot, a check): darker than a hover's `muted`, never a ring. */
-  --selected-tint: color-mix(in srgb, var(--selected) 10%, transparent);
+  /* A pick's fill, as light as `muted`: its mark (a radio's dot, a check, an ink key) says it's picked, never a ring or a darker gray. */
+  --selected-tint: color-mix(in srgb, var(--selected) 6%, transparent);
   --warning: oklch(0.74 0.14 70);
   --warning-text: oklch(0.482 0.11 60);
   --success: oklch(0.66 0.14 252);
@@ -428,7 +428,7 @@
     --accent-foreground: oklch(0.94 0.003 286);
     --destructive: oklch(0.74 0.15 6);
     --destructive-text: oklch(0.76 0.15 6);
-    --selected-tint: color-mix(in srgb, var(--selected) 17%, transparent);
+    --selected-tint: color-mix(in srgb, var(--selected) 9%, transparent);
     --warning: oklch(0.83 0.12 80);
     --warning-text: var(--warning);
     --success: oklch(0.77 0.11 248);
