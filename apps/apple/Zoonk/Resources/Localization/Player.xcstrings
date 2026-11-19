@@ -34,8 +34,30 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**%1$lld** of %2$lld right"
+            "state" : "translated",
+            "value" : "%#@correct@"
+          },
+          "substitutions" : {
+            "correct" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "**%arg** of %2$lld right"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "**%arg** of %2$lld right"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
