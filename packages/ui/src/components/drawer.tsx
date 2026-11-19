@@ -47,26 +47,30 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
 }
 
 /**
- * A sheet docked at the bottom on a phone, where it also closes with a swipe down. From `sm` it is
- * a centered dialog, like `Dialog`: a pointer has no use for a grab handle, and a docked box puts
- * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
- * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
- */
-/**
  * A panel opens on its first field, a choice included (the checked radio of a group is the one it
  * can focus); with none, Base UI's default. Choice pieces carry a hidden input that never takes focus.
  */
 const FIRST_FIELD =
   "input:not([type=hidden],[disabled],[tabindex='-1']),textarea:not([disabled]),select:not([disabled]),[role=radio][tabindex='0'],[role=checkbox]:not([aria-disabled=true])";
 
+/**
+ * A sheet docked at the bottom on a phone, where it also closes with a swipe down. From `sm` it is
+ * a centered dialog, like `Dialog`: a pointer has no use for a grab handle, and a docked box puts
+ * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
+ * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
+ */
 function DrawerPopup({
   className,
   children,
   finalFocus,
   initialFocus,
+  opensOnField = true,
   ref,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Popup>) {
+}: React.ComponentProps<typeof DrawerPrimitive.Popup> & {
+  /** False for a panel opened to show something first, whose field comes second (a saved conversation over its composer). */
+  opensOnField?: boolean;
+}) {
   const handoff = useFocusAfterMenuItem(finalFocus);
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +102,8 @@ function DrawerPopup({
             finalFocus={handoff.finalFocus}
             initialFocus={
               initialFocus ??
-              (() => popupRef.current?.querySelector<HTMLElement>(FIRST_FIELD) ?? true)
+              (() =>
+                (opensOnField && popupRef.current?.querySelector<HTMLElement>(FIRST_FIELD)) || true)
             }
             ref={mergeRefs(popupRef, ref)}
           >

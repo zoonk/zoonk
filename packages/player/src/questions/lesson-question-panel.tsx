@@ -135,6 +135,7 @@ export function LessonQuestionDrawer({
           className="h-[max(70dvh,27rem)] max-h-[calc(100dvh-1rem)] outline-none sm:max-h-[calc(100dvh-2rem)]"
           data-slot="lesson-question-drawer"
           finalFocus={getFinalFocus}
+          opensOnField={false}
         >
           {/* When the sheet is short (landscape, large text, a keyboard), the header and quote scroll away instead of leaving the thread no room. */}
           <div

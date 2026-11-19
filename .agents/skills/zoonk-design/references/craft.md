@@ -367,7 +367,7 @@ What opens decides its panel, and the screen's size decides its place. On a phon
 
 ### B5. Focus goes in, and comes back
 
-A panel opens with focus on its first field, or on itself when it has none, and closes with focus back on what opened it. A task's "…" is the one exception: when it closes, focus goes back into the task (its main action when it can be pressed, otherwise its body), so Enter goes on with the task and doesn't reopen the menu.
+A panel opens with focus on its first field, or on itself when it has none or opens to show something first (a saved conversation over its composer, whose keyboard would cover it on a phone), and closes with focus back on what opened it. A task's "…" is the one exception: when it closes, focus goes back into the task (its main action when it can be pressed, otherwise its body), so Enter goes on with the task and doesn't reopen the menu.
 
 - **Check.** After opening, Tab stays inside the panel. After closing, the focused element is the trigger (`Behavior: panels`).
 - **Usual break.** Focus left on the page behind a dialog, or dropped to the top of the page on close.
