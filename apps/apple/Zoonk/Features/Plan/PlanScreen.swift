@@ -277,9 +277,7 @@ private struct PlanContent: View {
           PlanNumbersSection(context: context, syllabus: syllabus)
           PlanSuggestionSection(context: context, answer: $slotAnswer)
           structureSections(context: context, structure: structure, namesChoices: true)
-
-          PlanSettingsSection(context: context)
-
+          // The plan's settings are main's wide side column; a phone reaches them from Adjust plan.
           PlanMoreSection(goal: goal)
         }
       }

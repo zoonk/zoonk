@@ -86,11 +86,28 @@ struct PlanSlotAnswer {
   var isOver: Bool { until.map { $0 <= .now } ?? false }
 }
 
+private struct PlanChangePanel: ViewModifier {
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    if isShown {
+      content
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .panel()
+    } else {
+      content
+    }
+  }
+}
+
 /// One thing at a time, with "{count} more" bringing up the next, as main's slot does: "Not now"
 /// puts one off for as long as the app runs.
-/// An answer that changes the plan says what it did, with Undo, for a moment. In the page's column
-/// it's main's suggestion line, its summary with "View" opening the whole suggestion in a sheet,
-/// which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole suggestion.
+/// An answer that changes the plan says what it did, with Undo, for a moment. A change to the plan
+/// (its coverage, a date that passed) is the whole card at every width, as main's; any other in the
+/// page's column is main's suggestion line, its summary with "View" opening the whole suggestion in
+/// a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
+/// suggestion.
 struct PlanSuggestionSection: View {
   private enum Focus: Hashable {
     case item
@@ -174,12 +191,12 @@ struct PlanSuggestionSection: View {
         // One row whichever shows, so a pointer resting on it stays on it.
         VStack(alignment: .leading, spacing: 8) {
           if let answer, let applied {
-            if isInline {
+            if isInline || isPlanChange(answer.item) {
               result(answer, change: applied.change, sentence: applied.sentence)
             } else {
               resultLine(answer, change: applied.change, sentence: applied.sentence)
             }
-          } else if isInline && !isCoverage(item) {
+          } else if isInline || isPlanChange(item) {
             slot(item)
             answerFailure(item)
           } else if isStatement(item) {
@@ -201,6 +218,10 @@ struct PlanSuggestionSection: View {
           }
         }
         .padding(.vertical, isInline ? 4 : 0)
+        // In the page's column a change to the plan is main's card on its panel; beside the page
+        // it's the panel's words.
+        .modifier(PlanChangePanel(isShown: !isInline && isPlanChange(item)))
+        .environment(\.isPlanChangeCard, isPlanChange(item))
         // Beside the page a card's actions sit beside its words, so they're small, as main's
         // panel draws them; the sheet a line opens draws them large.
         .controlSize(isInline ? .small : .regular)
@@ -417,11 +438,13 @@ struct PlanSuggestionSection: View {
     )
   }
 
-  /// Finding the time that covers everything plans the goal many times, so beside the page too it
-  /// waits behind its line's "View".
-  private func isCoverage(_ item: PlanSlotItem) -> Bool {
-    if case .coverage = item { return true }
-    return false
+  /// Main's `PlanChangeSuggestion`: a change to the plan, one card at every width.
+  private func isPlanChange(_ item: PlanSlotItem) -> Bool {
+    switch item {
+    case .coverage: true
+    case .pastDate: !isStatement(item)
+    default: false
+    }
   }
 
   /// The page's bottom bar answers it, so its line says everything and opens nothing.
