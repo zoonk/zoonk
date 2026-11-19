@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.studyDaysWords
@@ -49,14 +50,21 @@ internal fun RevealReadouts(
         HorizontalDivider()
         Row(Modifier.height(IntrinsicSize.Min).padding(vertical = 12.dp)) {
             RevealReadout(formatMinutes(shape.weekdays.toInt(), locale), time, Modifier.weight(1f).padding(end = 12.dp))
-            finish?.let { (value, label) ->
+            finish?.let {
                 VerticalDivider()
-                RevealReadout(value, label, Modifier.weight(1f).padding(start = 12.dp))
+                RevealReadout(it.value, it.label, Modifier.weight(1f).padding(start = 12.dp), it.isQuantity)
             }
         }
         HorizontalDivider()
     }
 }
+
+/** A level such as "B2" reads whole, where a quantity's words read small beside its number. */
+private data class RevealFinish(
+    val value: String,
+    val label: String,
+    val isQuantity: Boolean = true,
+)
 
 /** Where the plan ends: the days left before a date, the level a language plan reaches, or the month it ends. */
 @Composable
@@ -64,31 +72,36 @@ private fun revealFinish(
     plan: Plan,
     goal: Goal,
     today: LocalDate,
-): Pair<String, String>? {
+): RevealFinish? {
     val locale = currentLocale()
     val facts = plan.revealFacts(today)
     val aim = plan.languageAim?.takeIf { facts.days == null && it.choices.any { choice -> choice.aim.value == it.aim?.value } }
     return when {
         aim != null -> {
-            (aim.label ?: aim.aim?.value.orEmpty()) to
+            RevealFinish(
+                aim.label ?: aim.aim?.value.orEmpty(),
                 facts.end
-                    ?.let { stringResource(R.string.onboarding_aim_by_month, formatDate(it, locale, DateStyle.MonthShort)) }
-                    .orEmpty()
+                    ?.let { stringResource(R.string.onboarding_aim_by_month, formatDate(it, locale, DateStyle.Month)) }
+                    .orEmpty(),
+                isQuantity = false,
+            )
         }
 
         facts.days != null -> {
-            pluralStringResource(
-                if (facts.daysEstimated) R.plurals.onboarding_reveal_days_estimated else R.plurals.onboarding_reveal_days,
-                facts.days,
-                formatNumber(facts.days.toDouble(), locale),
-            ) to
+            RevealFinish(
+                pluralStringResource(
+                    if (facts.daysEstimated) R.plurals.onboarding_reveal_days_estimated else R.plurals.onboarding_reveal_days,
+                    facts.days,
+                    formatNumber(facts.days.toDouble(), locale),
+                ),
                 stringResource(
                     if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_reveal_until_exam else R.string.onboarding_reveal_until_date,
-                )
+                ),
+            )
         }
 
         facts.end != null -> {
-            formatDate(facts.end, locale, DateStyle.MonthShort) to stringResource(R.string.onboarding_reveal_estimated_finish)
+            RevealFinish(formatDate(facts.end, locale, DateStyle.MonthShort), stringResource(R.string.onboarding_reveal_estimated_finish))
         }
 
         else -> {
@@ -102,9 +115,14 @@ private fun RevealReadout(
     value: String,
     label: String,
     modifier: Modifier = Modifier,
+    isQuantity: Boolean = true,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Readout(value)
+        if (isQuantity) {
+            Readout(value)
+        } else {
+            Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+        }
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
