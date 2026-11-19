@@ -35,6 +35,7 @@ function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
 }
 
 export function BuddyEditor({
+  beside = false,
   glasses,
   initial,
   look,
@@ -42,6 +43,8 @@ export function BuddyEditor({
   onSave,
   picked,
 }: {
+  /** Open in the settings' aside, beside the row that opened it, instead of over the page. */
+  beside?: boolean;
   glasses?: BuddyGlassesOption[];
   initial: BuddyChoice;
   look: BuddyLook;
@@ -65,8 +68,6 @@ export function BuddyEditor({
     choice.kind !== initial.kind ||
     choice.glasses !== initial.glasses ||
     name !== initial.name;
-
-  const beside = useSideColumn();
 
   const picker = (
     <>
@@ -216,6 +217,7 @@ export function BuddySettings({
 
       {isEditing && (
         <BuddyEditor
+          beside={beside}
           glasses={toGlassesOptions(availableGlasses)}
           initial={{ glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" }}
           look={look}
