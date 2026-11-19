@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "4d2a53c50130de368be63ae3211345870d18bc7cd3a6be0399de255d83522441",
   "onboarding_how_it_works_plan": "9cfff79696d0287aa786b4bde2356ded6b5de076ef206c882ddd4be65bbc4460",
   "onboarding_how_it_works_say": "2ae20f361d3d3fef3adf662a00d35bf0f4da2b28581a8a52a48649e0775b01e6",
-  "onboarding_instrument_description": "97ad1603f7a3f74ac0c260b008bf3d078211a85856d3fc8da87ab16dd41bd692",
-  "onboarding_instrument_title": "a31fe5e8e64be1e3835d04e9d98dd85e3812b2e0d53a9c0d4d81c0743170e47f",
+  "onboarding_instrument_description": "98db5ad92ed28f18f55432fc772d484053fbef0120ed0912b9fbc180f4e0ceba",
+  "onboarding_instrument_title": "74c86bd1e6f09352705249b5d42fa568472adf08bcb946fcc769fa0a985a17f8",
   "onboarding_intent_exam": "b9b726df3afc3f6089ed6ef3031d7b4cd1427cacf29d854ba0694bccbbb77937",
   "onboarding_intent_exam_description": "0e4e016c2c46c364e5b7772a3a65c8e61983574e6ea90921de0b6cad088c855a",
   "onboarding_intent_label": "6c4b6ad7aa8eac485f4f2d4ea95d0f0f0cf833a9762143231747e620dc370f41",
@@ -571,8 +571,8 @@
     <string name="onboarding_unclear_description">Was möchtest du lernen oder können? Zum Beispiel: „die Führerscheinprüfung bestehen“, „Statistik für die Arbeit verstehen“ oder „auf meiner Reise Französisch sprechen“.</string>
     <string name="onboarding_write_again">Ziel bearbeiten</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">Praktische Lektionen für %1$s kommen bald</string>
-    <string name="onboarding_instrument_description">Um dir das Musizieren beizubringen, müssen wir dich dabei hören können. Daran arbeiten wir noch. Trag dich in die Warteliste ein und fang heute mit musikalischen Grundlagen an: Notenlesen, Gehörbildung und Rhythmus.</string>
+    <string name="onboarding_instrument_title">Wir können dir %1$s noch nicht beibringen</string>
+    <string name="onboarding_instrument_description">Du kannst heute mit den musikalischen Grundlagen anfangen: Noten lesen, Rhythmus üben und dein Gehör trainieren.</string>
     <string name="onboarding_musicianship_card">Musikalische Grundlagen für %1$s: Akkorde erkennen, kurze Melodien lesen und den Takt halten. Kein Mikrofon nötig.</string>
     <string name="onboarding_start_musicianship">Starten</string>
     <string name="onboarding_join_waitlist">In Warteliste eintragen</string>

@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "a234a9145c3742142a0e554e271a0c7e6c877e8198cf999adb6f38b625585259",
   "account_failure_sign_in": "ee067e653c2af70d983a29e2866f9c7b423fc0d6e72e7be8cfc50b0f5a80fd38",
   "account_failure_wrong_code": "012c7dfe1e03aa5cbc7ba398c1f8aba2a249466e0df69975ceb51c79db46c16f",
-  "account_menu_create_account": "ddba4a27235c88d61de82abe0665532913269fc0febece8d6d8c4009400ae113",
+  "account_menu_create_account": "2aea314ed9850329a5d50103abaf450bc1ab048afd0bbdd5178af9a7a9c7c875",
   "account_menu_help": "313c1aafb8c2f5e9ade74127a309be7779f6024c44a66d58ed797082cdb2eb42",
   "account_menu_log_out": "cf8218bd30e028c920cea17e7cd995affddcc848d71fd2acaee701264ba3322b",
   "account_menu_pricing": "0370cf8fb6d6341396ebabd267ba07bf94118492433d874ef240256010b7d111",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">요금제</string>
     <string name="account_menu_help">도움말</string>
     <string name="account_menu_log_out">로그아웃</string>
-    <string name="account_menu_create_account">계정 만들기</string>
+    <string name="account_menu_create_account">무료 계정 만들기</string>
     <string name="account_sign_out_failed">로그아웃하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="account_name_required">이름</string>
     <string name="account_username_required">사용자 이름</string>

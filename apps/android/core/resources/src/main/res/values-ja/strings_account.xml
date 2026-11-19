@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "85349131339502a936151cb54d29bf39f2cf170cc2ef8ccf13352b59ca9a3eb4",
   "account_failure_sign_in": "ff101673baeaa038fa762e7de179b27a266cdf750810a2e8c865082558e561a0",
   "account_failure_wrong_code": "9fd78da940f0c5ce80c25e9161f627c2dda26df8630f938d3b420cb334e9a333",
-  "account_menu_create_account": "c8c3b0efc1e7fa0c40dd43148a8f4a6549c287be112f170ac83c825dfd8d2c12",
+  "account_menu_create_account": "1a095fb2eab86f4a248ad2081374af9298a680a6d65aeac450c14c820a694373",
   "account_menu_help": "401f7733fdf3b8b3a2231c943cef42067f0e5b2849bc9e633604e41f528a600b",
   "account_menu_log_out": "4f6fad1bb48b5a7bb37ccf30169f541e46b4cbc9222f1a4308a7591e488bdd94",
   "account_menu_pricing": "21a9ae691b3fac3d97f3cabdc2948d6a3b2e653e09978701e3e7105c2cb6c143",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">料金</string>
     <string name="account_menu_help">ヘルプ</string>
     <string name="account_menu_log_out">ログアウト</string>
-    <string name="account_menu_create_account">アカウントを作成する</string>
+    <string name="account_menu_create_account">無料アカウントを作成する</string>
     <string name="account_sign_out_failed">ログアウトできませんでした。接続状況を確認して、もう一度お試しください。</string>
     <string name="account_name_required">名前</string>
     <string name="account_username_required">ユーザー名</string>

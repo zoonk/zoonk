@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "1d98d4270b236f29ef08ffb50bcda810fae08e75b6e19b6ce9d2a251b26998c7",
   "onboarding_how_it_works_plan": "c74684ca348e2b2a07344c418d0ad156c2813fe4d0e24244a28aed81635568e0",
   "onboarding_how_it_works_say": "c42e9e7c39b654347d92fc6a47f09cd6d69c33ed833298e098352be15879e3bf",
-  "onboarding_instrument_description": "4a419846788d63920bac92d8527815bc3c633a667faa6e96333a0d8ead16a446",
-  "onboarding_instrument_title": "c4250ba9ae2137469e134ad0637cbd2ecff0e00f08d30ebfead6cad7948e6ebe",
+  "onboarding_instrument_description": "f4c89bd1f78987579bd3406bab27345352fc5242c1c3d4ea9551e5c178d467f5",
+  "onboarding_instrument_title": "6b17b0c217e94fbcb0b77cc5fff0d187c74591a8397202641153fdbbd406adfc",
   "onboarding_intent_exam": "2137963c7187dbd3861e9dc9b47d164c23071ff494986afc4052ffc3e2c74f65",
   "onboarding_intent_exam_description": "18e9819812896939429604428f96f0551fc88b89e3f79cbf687fa3cf3e134808",
   "onboarding_intent_label": "8a95ec6f307254e6f6384f47a174c038bc991d25f9b8bea5d96bcd4a82a728f1",
@@ -573,8 +573,8 @@
     <string name="onboarding_unclear_description">¿Qué quieres aprender o poder hacer? Por ejemplo: “aprobar el examen de manejo”, “entender estadística para el trabajo” o “hablar francés en mi viaje”.</string>
     <string name="onboarding_write_again">Editar objetivo</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">Pronto habrá lecciones de %1$s</string>
-    <string name="onboarding_instrument_description">Para enseñarte a tocar, necesitamos escucharte tocar, y aún estamos desarrollando esa función. Únete a la lista de espera y empieza hoy con la formación musical: lectura musical, entrenamiento auditivo y ritmo.</string>
+    <string name="onboarding_instrument_title">Aún no podemos enseñarte %1$s</string>
+    <string name="onboarding_instrument_description">Puedes empezar hoy con las bases de la música: lectura de notas, ritmo y entrenamiento del oído.</string>
     <string name="onboarding_musicianship_card">Formación musical para %1$s: escucha acordes, lee melodías cortas y sigue el ritmo. No necesitas micrófono.</string>
     <string name="onboarding_start_musicianship">Empezar</string>
     <string name="onboarding_join_waitlist">Unirte a la lista de espera</string>

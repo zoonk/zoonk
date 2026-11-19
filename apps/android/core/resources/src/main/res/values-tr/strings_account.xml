@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "56dc40fc5b1e6fbf00939b4a2a8dd8aa9d40a4d34295b1c3f6918157ac604c73",
   "account_failure_sign_in": "3c79e016393a069bd194434114e6775da117ec8b9fccaa334888573a55aef7ac",
   "account_failure_wrong_code": "f8189e1a6f4f1ce217aab85969a41b1b38a30c76fb3377e69508f0139a68cfe6",
-  "account_menu_create_account": "14b6f34274abbfab0658dbec1e643fc5e141d556ff6373ea0fd37874194575cc",
+  "account_menu_create_account": "9cc2fb47eed363828023490c48e3eab4fcaa49b62bc3b54e3f5c59a9b18ae86b",
   "account_menu_help": "03dbd9cf15b3f31ffdf20a84cb099271524c3f9f37f74cc5d83a1854ee153e76",
   "account_menu_log_out": "2d2d19f823836cbda6ebec7d0940b49b06dd9ada9dcf75af707fa3282947ba92",
   "account_menu_pricing": "6b80a0363b749012dc7853a6f6fcb27e6d988113f0440e533d14dd2fd73374f1",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">Fiyatlar</string>
     <string name="account_menu_help">Yardım</string>
     <string name="account_menu_log_out">Çıkış yap</string>
-    <string name="account_menu_create_account">Hesap oluştur</string>
+    <string name="account_menu_create_account">Ücretsiz hesap oluştur</string>
     <string name="account_sign_out_failed">Çıkış yapılamadı. Bağlantını kontrol et ve tekrar dene.</string>
     <string name="account_name_required">Ad</string>
     <string name="account_username_required">Kullanıcı adı</string>

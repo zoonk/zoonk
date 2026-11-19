@@ -56,7 +56,7 @@
     <string name="account_menu_pricing">Pricing</string>
     <string name="account_menu_help">Help</string>
     <string name="account_menu_log_out">Log out</string>
-    <string name="account_menu_create_account">Create an account</string>
+    <string name="account_menu_create_account">Create a free account</string>
     <string name="account_sign_out_failed">We couldn\'t log you out. Check your connection and try again.</string>
     <string name="account_name_required">Name</string>
     <string name="account_username_required">Username</string>

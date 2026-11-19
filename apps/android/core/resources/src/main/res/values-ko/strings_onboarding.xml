@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "47c4f64638c2fdfbeb46a594bfc658a6390b2be31b808760dfbe99482a58f61a",
   "onboarding_how_it_works_plan": "907dc5aceb020073f1a6c20a7e9f47e3fbc1313d2542c52eb8d2828ce2b2b363",
   "onboarding_how_it_works_say": "44f27afa36c90dd5c0ed974181750363bf2e925a81e6cac407c7ead376c4d0c2",
-  "onboarding_instrument_description": "56a5ff141b8bcd388ed51378570b976f3c2e522eb429a9ee806d9b09965e1451",
-  "onboarding_instrument_title": "61a7a840e4bdbfe12cbcf3e3b2b4f7c6fb49c7628e5b258f6f0c665710eee142",
+  "onboarding_instrument_description": "ac3f0293b7e89532c130360e8abe8c71b9608637df7ffdfc66bf8bdd46b3279e",
+  "onboarding_instrument_title": "68dc023a6922d89d769c1c29779835ff2d341d0b563834df7ec635a1e0856cce",
   "onboarding_intent_exam": "ac1fbcc9011a925f73ce826a4ef367ce0ef8400298695cd4b84939f1043f75a7",
   "onboarding_intent_exam_description": "ff66b336a1f620ed0bb50a2cf870ae08279bbf583cdf56d794949b1c410999da",
   "onboarding_intent_label": "007aa9bc7434963c395b9c490d29725bd70c1628e76f6bb0f37ac39717471192",
@@ -569,8 +569,8 @@
     <string name="onboarding_unclear_description">무엇을 배우거나 할 수 있게 되고 싶나요? 예를 들어 “운전면허 시험 합격하기”, “업무에 필요한 통계 이해하기”, “여행 중 프랑스어로 말하기”처럼 적어 보세요.</string>
     <string name="onboarding_write_again">목표 수정</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">%1$s 실기 레슨을 준비하고 있어요</string>
-    <string name="onboarding_instrument_description">연주나 노래를 가르치려면 그 소리를 들을 수 있어야 해요. 아직 그 기능을 만들고 있어요. 대기 명단에 등록하고, 오늘은 악보 읽기, 음 구별하기, 리듬 같은 음악 기초부터 시작해 보세요.</string>
+    <string name="onboarding_instrument_title">아직 %1$s을(를) 가르쳐 드릴 수 없어요</string>
+    <string name="onboarding_instrument_description">오늘부터 악보 읽기, 리듬 익히기, 음을 듣고 구별하기 같은 음악 기초를 배울 수 있어요.</string>
     <string name="onboarding_musicianship_card">%1$s 음악 기초로 화음 듣기, 짧은 멜로디의 악보 읽기, 박자 맞추기를 배워요. 마이크는 필요 없어요.</string>
     <string name="onboarding_start_musicianship">시작하기</string>
     <string name="onboarding_join_waitlist">대기자 명단 등록하기</string>

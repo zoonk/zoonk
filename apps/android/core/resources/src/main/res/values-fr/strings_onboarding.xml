@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "d06cce3849ba69d9745bac3234b6c92733c9bfc7d995f97eb4e5248fb436e4e6",
   "onboarding_how_it_works_plan": "7c4b855e187821d9d5a68ec8c09dae4cc739c3dee36655fa8cbafd47b95db6eb",
   "onboarding_how_it_works_say": "1676a2fd84bea0da6ec211c571079edf01e0c39bf92845a597537f542c69d8c5",
-  "onboarding_instrument_description": "cdaa70054d8ac7b51e059ecae3a9f8caf629bc2efeaa1f617f8db400bf26a228",
-  "onboarding_instrument_title": "a138fd264e28f3fb0b84b879a4afd5b9265043517c5d3cd22e2e0a49fa106ea3",
+  "onboarding_instrument_description": "1349ee3d45cd0b81ece5f293bd1a3feafc635a90945dd0bf5a5fa0e3b592f287",
+  "onboarding_instrument_title": "8098b4a59b17bec3e43dd71d05d3989691f41823eb97b510142077bf7e9850a4",
   "onboarding_intent_exam": "f8e9e279e298d3a5b51d7c3ff2f55ef55e044f94e610b8dada95a62957638621",
   "onboarding_intent_exam_description": "53a3ef0d6be3349347f0a36f84128b5d6023b288bd8aa5a582f2bd71051b0e84",
   "onboarding_intent_label": "5a8b63b1ad3b99eeaf68802df7dad85e0c2ee80dea10094c3e0a6b63b31ff709",
@@ -573,8 +573,8 @@
     <string name="onboarding_unclear_description">Qu’aimerais-tu apprendre ou savoir faire ? Par exemple : « obtenir le permis de conduire », « comprendre les statistiques pour mon travail » ou « parler espagnol pendant mon voyage ».</string>
     <string name="onboarding_write_again">Modifier l’objectif</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">%1$s : des leçons arrivent bientôt</string>
-    <string name="onboarding_instrument_description">Pour t’apprendre à jouer, il faut pouvoir t’entendre jouer, et on travaille encore sur cette fonction. Inscris-toi sur la liste d’attente et commence dès aujourd’hui par les bases musicales : lecture de partitions, travail de l’oreille et rythme.</string>
+    <string name="onboarding_instrument_title">%1$s : pas encore de cours</string>
+    <string name="onboarding_instrument_description">Tu peux commencer dès aujourd’hui par les bases de la musique : lire les notes, comprendre le rythme et développer ton oreille.</string>
     <string name="onboarding_musicianship_card">Bases musicales (%1$s) : reconnaître des accords, lire de courtes mélodies et garder le rythme. Pas besoin de micro.</string>
     <string name="onboarding_start_musicianship">Commencer</string>
     <string name="onboarding_join_waitlist">Rejoindre la liste d’attente</string>

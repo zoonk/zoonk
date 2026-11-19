@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "54bb9f9ee796cff8596877c20c4b7fa25199257d69400e7d1770efe0a7e3038a",
   "onboarding_how_it_works_plan": "8a413e723f0a294cfdce04d07a8ef9cbdcb18dd6634f012bb07ed7c4881470fc",
   "onboarding_how_it_works_say": "5d75d86d0d9fcde09f33ea4ac09566543a6664a5e632fd62c298fdea75f4ac23",
-  "onboarding_instrument_description": "5b5434e53a44cfa65bf440a8e546a166283136f47f57a47738b63d109dabc0a5",
-  "onboarding_instrument_title": "8ec0e2c5186984bc4ed936a9608e8c1d52c5a2af52d9b9df4c07d733021356fd",
+  "onboarding_instrument_description": "c816bbad4886adbf21b7c104e554d22bfe3d51b4290e0b0106d68708692bd097",
+  "onboarding_instrument_title": "66c4eb111ecbf076bdce4c351b2032549121dda0fb10b7098fabef7bc2baff1a",
   "onboarding_intent_exam": "5c6089caf84d2c0daae5a97c0650766e5e47e6a476cea020864fee3ee2f238b5",
   "onboarding_intent_exam_description": "4501375fbe508efdf6a1d37cd9127b15f41f0005855ad84897a20f5d3d609ff1",
   "onboarding_intent_label": "0589034a2371ed7ca6c60b98a439b89f7582e905d16ab5829263f600497f59f9",
@@ -569,8 +569,8 @@
     <string name="onboarding_unclear_description">学びたいことや、できるようになりたいことは何ですか？たとえば「運転免許試験に合格する」「仕事で使う統計を理解する」「旅行でフランス語を話す」などです。</string>
     <string name="onboarding_write_again">目標を編集</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">%1$sのレッスンは準備中です</string>
-    <string name="onboarding_instrument_description">演奏や歌を教えるには、実際の音を聴く必要がありますが、その機能はまだ開発中です。事前登録をして、今日から楽譜の読み方や耳のトレーニング、リズムなど、音楽の基礎を学びましょう。</string>
+    <string name="onboarding_instrument_title">まだ%1$sは教えられません</string>
+    <string name="onboarding_instrument_description">今日から、音符の読み方やリズム、音感を鍛える練習など、音楽の基礎を学べます。</string>
     <string name="onboarding_musicianship_card">%1$sに役立つ音楽の基礎を学びます。和音を聴き分けたり、短いメロディーの楽譜を読んだり、リズムをとったりします。マイクは不要です。</string>
     <string name="onboarding_start_musicianship">始める</string>
     <string name="onboarding_join_waitlist">待機リストに登録</string>

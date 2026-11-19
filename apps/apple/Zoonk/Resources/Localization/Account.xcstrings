@@ -1123,60 +1123,60 @@
         }
       }
     },
-    "Create an account" : {
+    "Create a free account" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto erstellen"
+            "value" : "Kostenloses Konto erstellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crear una cuenta"
+            "value" : "Crear una cuenta gratis"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer un compte"
+            "value" : "Créer un compte gratuit"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea un account"
+            "value" : "Crea un account gratuito"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントを作成する"
+            "value" : "無料アカウントを作成する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계정 만들기"
+            "value" : "무료 계정 만들기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Załóż konto"
+            "value" : "Utwórz bezpłatne konto"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criar uma conta"
+            "value" : "Criar uma conta grátis"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesap oluştur"
+            "value" : "Ücretsiz hesap oluştur"
           }
         }
       }

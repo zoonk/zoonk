@@ -136,8 +136,8 @@
     <string name="onboarding_unclear_description">What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.</string>
     <string name="onboarding_write_again">Edit goal</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
-    <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
+    <string name="onboarding_instrument_title">We can\'t teach %1$s yet</string>
+    <string name="onboarding_instrument_description">You can start with the basics of music today: reading notes, rhythm and training your ear.</string>
     <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
     <string name="onboarding_start_musicianship">Start</string>
     <string name="onboarding_join_waitlist">Join waitlist</string>

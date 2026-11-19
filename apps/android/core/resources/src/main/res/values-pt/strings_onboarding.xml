@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "8443498367dba6286eaefdf18b27e2252f9f8e96dfd147cdd59ac5800806db72",
   "onboarding_how_it_works_plan": "57173a68e0c35050f028ddf69778a88ea45ed648a9f4d720a63a74a79d3f8cc1",
   "onboarding_how_it_works_say": "6d7b85f9216acad277abf151517fe6fc21a50bf3157d963862a6855cdeb16fa3",
-  "onboarding_instrument_description": "bf2193e48e6236e9e94f949401a6240f378257f149dce2d3381806a12cc593a0",
-  "onboarding_instrument_title": "ecddbf5a8ab919b7d3c8c65c46d789cdac1373e1385656d49d3ca758b50cdb15",
+  "onboarding_instrument_description": "8f99bf3295d182c6201c232e4ef35f64f984d09e1a1817e036a3e1873b0909ed",
+  "onboarding_instrument_title": "b8840043b030dc01db87527677f93f06a4a05e0e7b1aedeb70ef3c054112514c",
   "onboarding_intent_exam": "eabdf6dac82c24dac510ecb234fa31777c1f05f482769c8640dbd5ed91249a77",
   "onboarding_intent_exam_description": "bfef5b93c55f02f19a7ee556a9e18222dc5148dfa6157312a53afa31c7454e20",
   "onboarding_intent_label": "2cc29784e561541c2ee1833a4cad6422aca2c73eebf38af71471a8e94a24462b",
@@ -573,8 +573,8 @@
     <string name="onboarding_unclear_description">O que você quer aprender ou ser capaz de fazer? Por exemplo: “passar na prova de direção”, “entender estatística para o trabalho” ou “falar francês na minha viagem”.</string>
     <string name="onboarding_write_again">Editar objetivo</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">Aulas de %1$s estão chegando</string>
-    <string name="onboarding_instrument_description">Para te ensinar a tocar, a gente precisa te ouvir tocando, e ainda estamos desenvolvendo isso. Entre na lista de espera e comece hoje pelos fundamentos musicais: leitura de partituras, percepção auditiva e ritmo.</string>
+    <string name="onboarding_instrument_title">A gente ainda não consegue ensinar %1$s</string>
+    <string name="onboarding_instrument_description">Você pode começar pelo básico da música hoje: ler notas, aprender ritmo e treinar o ouvido.</string>
     <string name="onboarding_musicianship_card">Formação musical para %1$s: reconhecer acordes de ouvido, ler melodias curtas e manter o ritmo. Não precisa de microfone.</string>
     <string name="onboarding_start_musicianship">Começar</string>
     <string name="onboarding_join_waitlist">Entrar na lista de espera</string>

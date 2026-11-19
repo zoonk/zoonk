@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "4285e7a1b5e6120a4690760fa0267c5feed6e77ea15d9f5144784101ab3c39fb",
   "account_failure_sign_in": "b839bc2d2c7e5a9dfcb582b48ed44cef8f92a0c2a84e2da66567a1c5d6ca94c0",
   "account_failure_wrong_code": "710f87e8a784142a8aaa6c3a020e1eddee19a69e374e4a700943aaed5568794d",
-  "account_menu_create_account": "3c1356366f23f7d352820cf72911fe3e03a4135eee1d4b4e7bbe2f59eea2ba65",
+  "account_menu_create_account": "a8d5a0f799e3e6e014e8bf33c8f82be01e1e086e47b824bdd81cf806770e9b79",
   "account_menu_help": "f4b1d937abc9207ae5c5bc619ba02528e098172d67990a790e520c3281ee925f",
   "account_menu_log_out": "91e6a33af80d6595947de693dd15a5f61ca46923efcff3377381971e484a44c0",
   "account_menu_pricing": "018fb574786a06393fbc7ca3f2f39242dfb10bbc6235678bb0f8ae968e77a8bd",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">Prezzi</string>
     <string name="account_menu_help">Aiuto</string>
     <string name="account_menu_log_out">Esci</string>
-    <string name="account_menu_create_account">Crea un account</string>
+    <string name="account_menu_create_account">Crea un account gratuito</string>
     <string name="account_sign_out_failed">Non siamo riusciti a disconnetterti. Controlla la connessione e riprova.</string>
     <string name="account_name_required">Nome</string>
     <string name="account_username_required">Nome utente</string>

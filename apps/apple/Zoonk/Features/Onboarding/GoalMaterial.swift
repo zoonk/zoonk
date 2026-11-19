@@ -99,7 +99,7 @@ struct GoalMaterialSections: View {
             router.present(.signIn)
           } label: {
             Text(
-              "Create an account", tableName: "Onboarding",
+              "Create a free account", tableName: "Onboarding",
               comment: "Opens sign-up to add material")
           }
         }

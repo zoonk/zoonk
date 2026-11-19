@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "1e4b648fa28d3b8c6b6cc83bc9a74ae2995fc14553233523f59bee7c8fb22e10",
   "account_failure_sign_in": "34e4dd549130ce412c5b3cd6eea281ac2993ad01683e37951350f33db371fb03",
   "account_failure_wrong_code": "1b6af6a946b93bc949abed31d5ef69efd19d9cda697a5e74a14afd117cfa06ec",
-  "account_menu_create_account": "633b66d3efa03dc2d8de6f0d646e824277a0380561d8af450306fbf4ed49742b",
+  "account_menu_create_account": "6bfce81ae19f1ec11befb0fe073617bf004c0426e3cdd6f53ece278710973f99",
   "account_menu_help": "22113066e49ec21e6835a5940c2a2555e23aeffcfc7521693f6e6fe7c3675ff7",
   "account_menu_log_out": "ce493d15a7085599f26bd11f558528d5ea81343fe0c1024eaa0c02bb2a5d84c8",
   "account_menu_pricing": "121229ad48b223fc996e4731355a91c299bcb5c3f82fb0dc53701d1e2f22e33b",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">Preise</string>
     <string name="account_menu_help">Hilfe</string>
     <string name="account_menu_log_out">Abmelden</string>
-    <string name="account_menu_create_account">Konto erstellen</string>
+    <string name="account_menu_create_account">Kostenloses Konto erstellen</string>
     <string name="account_sign_out_failed">Wir konnten dich nicht abmelden. Prüf deine Verbindung und versuch es noch einmal.</string>
     <string name="account_name_required">Name</string>
     <string name="account_username_required">Benutzername</string>

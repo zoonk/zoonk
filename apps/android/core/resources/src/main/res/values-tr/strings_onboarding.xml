@@ -98,8 +98,8 @@
   "onboarding_how_it_works_current": "5ccaef7db5c33725a0c09a1e89db741390be812400af7821935592db981d28e2",
   "onboarding_how_it_works_plan": "7bcc51362eac3a25d64137557ac819cf0cfacba241958fadafbcaf9a8be2120f",
   "onboarding_how_it_works_say": "22e2f3d9427f2e91566ff1bb8e53f6342ac0a8faf77c710fd9efc7fcc0aac3c4",
-  "onboarding_instrument_description": "ca157e5ee18dde6f3c4d846ca471212cac401bf3d53dbc9ec51375b109b6de7f",
-  "onboarding_instrument_title": "b0150dc7baf550eb9eda21c766a878b9deeffc97c7b625c6fc1889953542534c",
+  "onboarding_instrument_description": "a8ffb3f4ec532c900544186b45b37f80cf84a78c383a08717ebb7dadb872604a",
+  "onboarding_instrument_title": "41adb7682f04dc878752d43d785f6fcc7de9b95f7eaa03a72a168e44e2fa5777",
   "onboarding_intent_exam": "5d7ab070966cfc1d6b03f924557444f1fc30e0799d20d22b0745114649c0e254",
   "onboarding_intent_exam_description": "33488c4a8ca58397fe318ea5bdf6820bef720ca7f3eeae8658e8896a465f1631",
   "onboarding_intent_label": "e798c7c19e425add4041413dad9691952c25a2e2fa3f28557d77fcde8365b9a8",
@@ -571,8 +571,8 @@
     <string name="onboarding_unclear_description">Ne öğrenmek ya da yapabilmek istiyorsun? Örneğin: “ehliyet sınavını geçmek”, “işim için istatistiği anlamak” veya “seyahatimde Fransızca konuşmak”.</string>
     <string name="onboarding_write_again">Hedefi düzenle</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
-    <string name="onboarding_instrument_title">%1$s dersleri yakında</string>
-    <string name="onboarding_instrument_description">Sana çalmayı öğretmek için nasıl çaldığını duymamız gerekiyor. Bu özelliği hâlâ geliştiriyoruz. Bekleme listesine katıl ve bugün müzik temelleriyle başla: nota okuma, kulak eğitimi ve ritim.</string>
+    <string name="onboarding_instrument_title">Henüz %1$s dersleri veremiyoruz</string>
+    <string name="onboarding_instrument_description">Bugün müziğin temelleriyle başlayabilirsin: nota okuma, ritim ve kulak eğitimi.</string>
     <string name="onboarding_musicianship_card">%1$s için müzik temelleri: akorları dinle, kısa melodileri oku ve ritim tut. Mikrofon gerekmez.</string>
     <string name="onboarding_start_musicianship">Başla</string>
     <string name="onboarding_join_waitlist">Bekleme listesine katıl</string>

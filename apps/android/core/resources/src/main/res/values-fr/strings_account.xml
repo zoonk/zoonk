@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "85330fe40e8c97f4b06a843f23250747ce06c4a02b2c1c2744e71ba2cf7b7844",
   "account_failure_sign_in": "f4bacc22fbb9f135958bcf78669779ec389878290384489e2044590f721e8637",
   "account_failure_wrong_code": "6837b85ad2a0939e07957be284cd5ab6e0008713360500eaf00780704978b6a1",
-  "account_menu_create_account": "39224acf257c4a91a2314e59bf96481975955c473200570f4cd3b5a3325e5a3f",
+  "account_menu_create_account": "51e70e64077c7979fb247bb6f4157a9132112a30ddae7066b5b0c7ee33092c27",
   "account_menu_help": "5c8777ee0780e76b67a5978532566b543b4ed1c4935bf43cf82b6d8eae2a3c4d",
   "account_menu_log_out": "b476aad873326ccffdc85042c4b03266be73ef60e8f3aab10abb04602be07629",
   "account_menu_pricing": "bab77b8a308f7228fad03cfab3103e62f753b2c8e05c8674e53b5df18ccc0de0",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">Tarifs</string>
     <string name="account_menu_help">Aide</string>
     <string name="account_menu_log_out">Se déconnecter</string>
-    <string name="account_menu_create_account">Créer un compte</string>
+    <string name="account_menu_create_account">Créer un compte gratuit</string>
     <string name="account_sign_out_failed">Impossible de te déconnecter. Vérifie ta connexion et réessaie.</string>
     <string name="account_name_required">Nom</string>
     <string name="account_username_required">Nom d’utilisateur</string>

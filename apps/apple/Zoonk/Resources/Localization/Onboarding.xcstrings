@@ -5069,7 +5069,7 @@
       }
     },
     "Create a free account" : {
-      "comment" : "Opens sign-up; a guest's plan and progress come with them\nOpens sign-up from the plan",
+      "comment" : "Opens sign-up; a guest's plan and progress come with them\nOpens sign-up from the plan\nOpens sign-up to add material",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5241,65 +5241,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başka bir hedefe başlamak için ücretsiz hesap oluştur"
-          }
-        }
-      }
-    },
-    "Create an account" : {
-      "comment" : "Opens sign-up to add material",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konto erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear una cuenta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créer un compte"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea un account"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントを作成する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정 만들기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Załóż konto"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar uma conta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap oluştur"
           }
         }
       }
@@ -9607,65 +9548,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıfırdan müzik öğrenmek"
-          }
-        }
-      }
-    },
-    "Lessons for playing %@ are coming" : {
-      "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionen für %@ sind bald da"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronto habrá lecciones para tocar %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bientôt des leçons pour cet instrument : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lezioni di %@ in arrivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@の演奏レッスンを準備中です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 연주 레슨을 준비하고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Już wkrótce lekcje gry: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aulas para tocar %@ vêm aí"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ çalma dersleri yakında"
           }
         }
       }
@@ -19327,65 +19209,6 @@
         }
       }
     },
-    "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm." : {
-      "comment" : "Why playing an instrument is a waitlist for now",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um dir das Spielen beizubringen, müssen wir dich spielen hören können. Daran arbeiten wir noch. Trag dich in die Warteliste ein und starte heute mit den musikalischen Grundlagen: Notenlesen, Gehörbildung und Rhythmus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para enseñarte a tocar, necesitamos escucharte tocar, y aún estamos desarrollando esa función. Únete a la lista de espera y empieza hoy a desarrollar tus habilidades musicales: lectura musical, entrenamiento auditivo y ritmo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour t’apprendre à jouer, nous devons pouvoir t’écouter jouer, et nous y travaillons encore. Inscris-toi sur la liste d’attente et commence dès aujourd’hui par les bases de la musique : lecture des notes, écoute et rythme."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per insegnarti a suonare dobbiamo ascoltarti mentre suoni, ma stiamo ancora sviluppando questa funzione. Iscriviti alla lista d’attesa e inizia oggi con la formazione musicale: lettura della musica, allenamento dell’orecchio e ritmo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "演奏を教えるには、実際の演奏を聴く必要があります。そのための機能はまだ開発中です。順番待ちリストに登録して、今日から楽譜の読み方や音感トレーニング、リズムといった音楽の基礎を学びましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "악기 연주를 가르치려면 연주하는 소리를 들어야 하는데, 아직 그 기능을 만들고 있어요. 대기 명단에 등록하고, 오늘은 악보 읽기, 청음, 리듬 같은 음악 기초부터 시작해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Żeby uczyć cię gry, musimy słyszeć, jak grasz. Wciąż pracujemy nad tą funkcją. Dołącz do listy oczekujących i już dziś zacznij od podstaw muzyki: czytania nut, ćwiczeń słuchowych i rytmu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para te ensinar a tocar, a gente precisa ouvir você tocar, e ainda estamos criando esse recurso. Entre na lista de espera e comece hoje com fundamentos musicais: leitura de partituras, treino de ouvido e ritmo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sana enstrüman çalmayı öğretebilmek için nasıl çaldığını duymamız gerekiyor. Bu özelliği hâlâ geliştiriyoruz. Bekleme listesine katıl ve bugün müzik temelleriyle başla: nota okuma, kulak eğitimi ve ritim."
-          }
-        }
-      }
-    },
     "Today" : {
       "comment" : "Header over the plan's lessons today\nLeaves the start flow for Today",
       "localizations" : {
@@ -20739,6 +20562,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu dosyayı okuyamıyoruz. PDF, fotoğraf, Word, PowerPoint veya metin dosyası dene."
+          }
+        }
+      }
+    },
+    "We can't teach %@ yet" : {
+      "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dir %@ noch nicht beibringen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no podemos enseñarte %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : pas encore de cours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non possiamo ancora insegnarti %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ%@は教えられません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 %@을(를) 가르쳐 드릴 수 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tego jeszcze nie uczymy: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente ainda não consegue ensinar %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz %@ dersleri veremiyoruz"
           }
         }
       }
@@ -23989,6 +23871,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunların hepsini daha sonra değiştirebilirsin."
+          }
+        }
+      }
+    },
+    "You can start with the basics of music today: reading notes, rhythm and training your ear." : {
+      "comment" : "Why playing an instrument is a waitlist for now",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst heute mit den musikalischen Grundlagen anfangen: Noten lesen, Rhythmus üben und dein Gehör trainieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes empezar hoy con las bases de la música: lectura de notas, ritmo y entrenamiento del oído."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu peux commencer dès aujourd’hui par les bases de la musique : lire les notes, comprendre le rythme et développer ton oreille."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puoi iniziare oggi dalle basi della musica: leggere le note, capire il ritmo e allenare l’orecchio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日から、音符の読み方やリズム、音感を鍛える練習など、音楽の基礎を学べます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘부터 악보 읽기, 리듬 익히기, 음을 듣고 구별하기 같은 음악 기초를 배울 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Już dziś możesz zacząć od podstaw muzyki: czytania nut, rytmu i ćwiczenia słuchu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pode começar pelo básico da música hoje: ler notas, aprender ritmo e treinar o ouvido."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün müziğin temelleriyle başlayabilirsin: nota okuma, ritim ve kulak eğitimi."
           }
         }
       }
