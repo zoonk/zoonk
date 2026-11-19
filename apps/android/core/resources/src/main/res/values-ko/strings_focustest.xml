@@ -56,7 +56,6 @@
   "focustest_see_your_result": "5dfb1926eea291f109f29d125d1f0ade32521c3ae3c74b6332e4f9a99119c71b",
   "focustest_session_questions": "476c27f53a69d2cd45c58554e160e5aec73e1fd428d005267fb10f65398d4f43",
   "focustest_session_questions_when": "d04b2f8187491bd23804f92eca3c7f4cea634db55bc3d2bc6ca3ad73e050974e",
-  "focustest_skip_for_now": "86140ba0d15cdc9ecb69f497f673a946e6bc88d23310a2ad2012813514452e78",
   "focustest_skip_note": "78a74cbb501335879145dde71c4ef8106a97e0f9d68a5154e20d8e67c564e0d9",
   "focustest_speaking_not_checked": "fef00e3e9c47ecc8c8f82aa9bfb6b8d266d389e6f34b6934b67b679dccc84bdd",
   "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
@@ -101,7 +100,6 @@
     <string name="focustest_how_sessions_title">첫 주에는 몇 문제 더 풀어요</string>
     <string name="focustest_how_sessions">학습 중에 이런 문제가 몇 개 더 나와요. 원하면 잠시 나오지 않게 할 수 있어요.</string>
     <string name="focustest_start">테스트 시작하기</string>
-    <string name="focustest_skip_for_now">일단 건너뛰기</string>
     <string name="focustest_skip_note">나중에 계획에서 테스트를 볼 수 있어요.</string>
     <string name="focustest_not_now">나중에</string>
     <string name="focustest_resume_title">테스트 이어서 풀기</string>

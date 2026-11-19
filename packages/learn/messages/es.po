@@ -3257,6 +3257,8 @@ msgid "Leave for now?"
 msgstr "¿Salir por ahora?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
@@ -3883,12 +3885,6 @@ msgstr "¡Mensaje enviado con éxito! Te responderemos pronto."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a contacto@zoonk.com."
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "WYzHAI"
-msgid "Skip for now"
-msgstr "Saltar por ahora"
 
 #: src/focus-test/focus-test-flow.tsx
 msgctxt "BGeoDm"

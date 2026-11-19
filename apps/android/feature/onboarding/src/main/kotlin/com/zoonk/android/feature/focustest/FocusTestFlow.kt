@@ -107,7 +107,7 @@ internal fun ColumnScope.FocusTestFlow(
             val skip =
                 when {
                     shown.answered -> stringResource(R.string.focustest_see_my_result)
-                    onboarding -> stringResource(R.string.focustest_skip_for_now)
+                    onboarding -> stringResource(R.string.onboarding_skip)
                     else -> stringResource(R.string.focustest_not_now)
                 }
             PlacementWaiting(

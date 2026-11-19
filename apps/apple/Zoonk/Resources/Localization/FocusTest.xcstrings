@@ -1537,65 +1537,6 @@
         }
       }
     },
-    "Skip for now" : {
-      "comment" : "Postpones the Focus test; it can be taken later from the plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorerst überspringen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saltar por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sauter pour l’instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salta per ora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今はスキップする"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "일단 건너뛰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pomiń na razie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular por enquanto"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdilik atla"
-          }
-        }
-      }
-    },
     "Skip what you already know" : {
       "comment" : "What the Focus test does, for an exam without a date or with one subject",
       "localizations" : {
@@ -2490,7 +2431,7 @@
       }
     },
     "You can take the test later, from your plan." : {
-      "comment" : "Under Skip for now while the Focus test's questions are written",
+      "comment" : "Under Skip while the Focus test's questions are written",
       "localizations" : {
         "de" : {
           "stringUnit" : {

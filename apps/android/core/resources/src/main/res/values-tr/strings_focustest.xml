@@ -56,7 +56,6 @@
   "focustest_see_your_result": "4720f6a30d3c33a4f16ed6368d2b975e7faeefd146952748d9d24140e85d26d7",
   "focustest_session_questions": "60edbf2083077aafdc40ad6bc28420a18e6a82df3e113057960834766ed8f400",
   "focustest_session_questions_when": "60c7d40967538293f4962498c7c88eafbfa1e7d50802a4fd826161593cbdb203",
-  "focustest_skip_for_now": "4007a0f6eac0efaab99e9e3f9b0f6dcf79a365af8dc7a98554bad080ae8458d8",
   "focustest_skip_note": "ac83484e4b22c65dc511e2435159c6f213d5c98aea546c86bacbf9b0c15e67b6",
   "focustest_speaking_not_checked": "87676ccbcf6d89c7a3bc7af5b356e5c89d51c2837916529dd6c6890659940101",
   "focustest_start": "4ab9c05dc69e281186fe3fcafeadde580d66a38c885e89ca09ddafb4795bf7a9",
@@ -101,7 +100,6 @@
     <string name="focustest_how_sessions_title">İlk haftanda birkaç soru daha</string>
     <string name="focustest_how_sessions">Çalışmalarında bu sorulardan birkaç tane daha sorulur. Buna ara verebilirsin.</string>
     <string name="focustest_start">Testi başlat</string>
-    <string name="focustest_skip_for_now">Şimdilik atla</string>
     <string name="focustest_skip_note">Testi daha sonra planından çözebilirsin.</string>
     <string name="focustest_not_now">Sonraya bırak</string>
     <string name="focustest_resume_title">Testine devam et</string>

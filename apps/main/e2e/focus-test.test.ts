@@ -207,7 +207,7 @@ test.describe("An exam's Focus test in onboarding", () => {
     const goal = await createExamGoalAtFocusTest(noProgressUser.id);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { name: "Skip for now" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -276,7 +276,7 @@ test("a skip that doesn't save says so on the wait for questions, and the same b
     page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
   ).toBeVisible();
 
-  const skip = page.getByRole("button", { name: "Skip for now" });
+  const skip = page.getByRole("button", { exact: true, name: "Skip" });
   await skip.click();
 
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();

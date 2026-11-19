@@ -3257,6 +3257,8 @@ msgid "Leave for now?"
 msgstr "잠시 나갈까요?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
@@ -3883,12 +3885,6 @@ msgstr "메시지를 보냈어요! 곧 답변해 드릴게요."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "WYzHAI"
-msgid "Skip for now"
-msgstr "일단 건너뛰기"
 
 #: src/focus-test/focus-test-flow.tsx
 msgctxt "BGeoDm"

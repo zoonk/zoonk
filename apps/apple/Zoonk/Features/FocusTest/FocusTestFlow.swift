@@ -190,13 +190,12 @@ struct FocusTestFlow: View {
           ? Text(FocusTestCopy.seeResult)
           : host == .onboarding
             ? Text(
-              "Skip for now", tableName: "FocusTest",
-              comment: "Postpones the Focus test; it can be taken later from the plan")
+              "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
             : Text(FocusTestCopy.notNow),
         note: !answered && host == .onboarding
           ? Text(
             "You can take the test later, from your plan.", tableName: "FocusTest",
-            comment: "Under Skip for now while the Focus test's questions are written")
+            comment: "Under Skip while the Focus test's questions are written")
           : nil,
         isBusy: pressed != nil, failed: failed
       ) {
@@ -278,7 +277,7 @@ struct FocusTestFlow: View {
     }
   }
 
-  /// Leaving onboarding's step with nothing answered still saves its skip ("Skip for now"); a plan
+  /// Leaving onboarding's step with nothing answered still saves its skip ("Skip"); a plan
   /// that's already there only goes back to itself.
   private func leave(closing: Bool) async throws {
     if closing {

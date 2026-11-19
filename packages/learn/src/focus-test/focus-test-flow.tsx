@@ -24,7 +24,7 @@ function useWaitSkip({ answered, host }: { answered: boolean; host: FocusTestHos
   }
 
   return host === "onboarding"
-    ? { label: t("Skip for now"), note: t("You can take the test later, from your plan.") }
+    ? { label: t("Skip"), note: t("You can take the test later, from your plan.") }
     : { label: t("Not now"), note: null };
 }
 

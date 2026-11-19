@@ -58,7 +58,7 @@ export function FocusTestInvitation({
             icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
             onClick={onSkip}
           >
-            {host === "onboarding" ? t("Skip for now") : t("Not now")}
+            {host === "onboarding" ? t("Skip") : t("Not now")}
           </OnboardingSecondaryButton>
           <OnboardingPrimaryButton
             busy={pressed === "main"}
