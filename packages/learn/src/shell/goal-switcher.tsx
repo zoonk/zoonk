@@ -12,12 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { SidebarTooltip, useSidebarOpen } from "@zoonk/ui/components/sidebar-toggle";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { ChevronDownIcon, GoalIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
 import { DaysLeft } from "../_components/days-left";
@@ -144,9 +143,8 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
 const TRIGGER_CLASS = {
   // The end's padding plus the chevron's blank side match the start's padding, so the fill is even by ink.
   bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-1 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
-  // Collapsed, only the mark shows, centered where it sits when expanded.
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px] sidebar-collapsed:w-8 sidebar-collapsed:justify-center sidebar-collapsed:px-0 sidebar-collapsed:*:me-0 sidebar-collapsed:*:not-first:sr-only",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
@@ -161,14 +159,12 @@ function NoGoalLink({
   const t = useExtracted("goalSwitcher");
 
   return (
-    <SidebarTooltip label={t("New goal")}>
-      <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
-        <span className="me-1.5 flex shrink-0">
-          <NoGoalMark />
-        </span>
-        <span className="truncate">{t("New goal")}</span>
-      </LearnLink>
-    </SidebarTooltip>
+    <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
+      <span className="me-1.5 flex shrink-0">
+        <NoGoalMark />
+      </span>
+      <span className="truncate">{t("New goal")}</span>
+    </LearnLink>
   );
 }
 
@@ -209,10 +205,6 @@ export function GoalSwitcher({
   const selected = followed.find((goal) => goal.id === selectedId);
   const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
   const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Quick explanations");
-  const name = selected?.displayName ?? unselectedLabel;
-  // A collapsed sidebar's mark opens its menu beside it, never over it, and names the goal on hover.
-  const isSidebarOpen = useSidebarOpen("start");
-  const isRail = placement === "sidebar" && !isSidebarOpen;
 
   if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
@@ -237,31 +229,26 @@ export function GoalSwitcher({
   return (
     <>
       <DropdownMenu>
-        <SidebarTooltip label={name}>
-          <DropdownMenuTrigger
-            aria-busy={isPending}
-            className={TRIGGER_CLASS[placement]}
-            title={isRail ? undefined : selected?.displayName}
-          >
-            {selected ? (
-              <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
-                <GoalMark goal={selected} />
-              </span>
-            ) : (
-              <GoalIcon aria-hidden="true" className="sidebar-collapsed:block hidden size-4" />
-            )}
-            <span className="min-w-0 flex-1 truncate text-left">{name}</span>
-            {/* After the title, so the trigger's name starts with the words on screen. */}
-            {selected && <GoalCountryName goal={selected} />}
-            {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
-            <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-          </DropdownMenuTrigger>
-        </SidebarTooltip>
-
-        <DropdownMenuContent
-          className="w-72 max-w-[calc(100vw-2rem)]"
-          side={isRail ? "right" : "bottom"}
+        <DropdownMenuTrigger
+          aria-busy={isPending}
+          className={TRIGGER_CLASS[placement]}
+          title={selected?.displayName}
         >
+          {selected && (
+            <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
+              <GoalMark goal={selected} />
+            </span>
+          )}
+          <span className="min-w-0 flex-1 truncate text-left">
+            {selected?.displayName ?? unselectedLabel}
+          </span>
+          {/* After the title, so the trigger's name starts with the words on screen. */}
+          {selected && <GoalCountryName goal={selected} />}
+          {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
+          <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)]">
           {hasGoalOptions && (
             <DropdownMenuGroup>
               <DropdownMenuLabel>{t("Your goals")}</DropdownMenuLabel>

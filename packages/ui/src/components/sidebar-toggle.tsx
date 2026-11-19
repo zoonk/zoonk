@@ -165,83 +165,65 @@ function registerToggle(button: HTMLButtonElement, side: SidebarSide) {
   };
 }
 
-// Its glyph's ink ends on the bar's edge.
-const END_TOGGLE_CLASS = cn(
-  buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" }),
-  "shrink-0 [--glyph-blank:2]",
-);
-
-type SidebarToggleProps = { className?: string; collapseLabel: string; expandLabel: string } & (
-  | { side: "end" }
-  /** The row's visible words while the sidebar is open. */
-  | { children: React.ReactNode; side?: "start" }
-);
-
-/** What the toggle is on either side: its name, its key and the state it saves. */
-function useSidebarToggle({
-  collapseLabel,
-  expandLabel,
-  side,
-}: Pick<SidebarToggleProps, "collapseLabel" | "expandLabel"> & { side: SidebarSide }) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const collapsed = useSidebarCollapsed(side);
-
-  useEffect(() => (ref.current ? registerToggle(ref.current, side) : undefined), [side]);
-
-  return {
-    collapsed,
-    label: collapsed ? expandLabel : collapseLabel,
-    toggleProps: {
-      "aria-keyshortcuts": shortcutKeys("sidebar"),
-      "data-side": side,
-      "data-slot": "sidebar-toggle",
-      onClick: () => toggleSidebar(side),
-      ref,
-    },
-  };
-}
+const TOGGLE = {
+  // Its glyph's ink ends on the bar's edge.
+  end: {
+    Icon: PanelRightIcon,
+    className: cn(
+      buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" }),
+      "shrink-0 [--glyph-blank:2]",
+    ),
+    tooltipSide: "bottom",
+  },
+  // A sidebar item's square: its glyph ends where the items' counts and keycaps end.
+  start: {
+    Icon: PanelLeftIcon,
+    className: cn(SIDEBAR_ITEM_CLASS, "w-8 shrink-0 justify-center px-0"),
+    tooltipSide: "right",
+  },
+} as const;
 
 /**
  * Collapses and expands the sidebar on its side, and answers ⌘B and Ctrl+B while it's drawn, so a
- * screen gets the shortcut by drawing the toggle. The glyph, the name, the keycap on hover and the
- * saved state are the same on both sides; its box follows where it sits:
- * - `start`: a row of the sidebar's footer, like the items beside it, so its glyph holds one spot
- *   at both widths. Open, it shows its words; collapsed, its icon.
- * - `end`: a header's icon button.
+ * screen gets the shortcut by drawing the toggle. Its box follows its bar (a sidebar item at the
+ * start, a header's icon button at the end); the glyph, the name, the keycap and the saved state
+ * are the same.
  */
-export function SidebarToggle(props: SidebarToggleProps) {
-  const side = props.side ?? "start";
-  const { className, collapseLabel, expandLabel } = props;
+export function SidebarToggle({
+  className,
+  collapseLabel,
+  expandLabel,
+  side = "start",
+}: {
+  className?: string;
+  collapseLabel: string;
+  expandLabel: string;
+  side?: SidebarSide;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const label = useSidebarCollapsed(side) ? expandLabel : collapseLabel;
+  const { Icon, className: sideClass, tooltipSide } = TOGGLE[side];
 
-  const { collapsed, label, toggleProps } = useSidebarToggle({ collapseLabel, expandLabel, side });
+  useEffect(() => (ref.current ? registerToggle(ref.current, side) : undefined), [side]);
 
-  if (props.side === "end") {
-    return (
-      <ShortcutTooltip align="end" label={label} shortcut="sidebar" side="bottom">
-        <button className={cn(END_TOGGLE_CLASS, className)} type="button" {...toggleProps}>
-          <PanelRightIcon aria-hidden="true" />
-          <span className="sr-only">{label}</span>
-        </button>
-      </ShortcutTooltip>
-    );
-  }
-
-  // Open, the name sits over the row's start, by the pointer; collapsed, beside the icon like the others.
   return (
     <ShortcutTooltip
-      align={collapsed ? "center" : "start"}
+      align={side === "end" ? "end" : "center"}
       label={label}
       shortcut="sidebar"
-      side={collapsed ? "right" : "top"}
+      side={tooltipSide}
     >
       <button
-        aria-label={label}
-        className={cn(SIDEBAR_ITEM_CLASS, className)}
+        aria-keyshortcuts={shortcutKeys("sidebar")}
+        className={cn(sideClass, className)}
+        data-side={side}
+        data-slot="sidebar-toggle"
+        onClick={() => toggleSidebar(side)}
+        ref={ref}
         type="button"
-        {...toggleProps}
       >
-        <PanelLeftIcon aria-hidden="true" />
-        <span className="min-w-0 flex-1 truncate text-left">{props.children}</span>
+        <Icon aria-hidden="true" />
+        <span className="sr-only">{label}</span>
       </button>
     </ShortcutTooltip>
   );
@@ -261,7 +243,7 @@ export function SidebarToggleRoom({
   return (
     <span
       aria-hidden="true"
-      className={cn(END_TOGGLE_CLASS, !children && "invisible", className)}
+      className={cn(TOGGLE.end.className, !children && "invisible", className)}
       data-slot="sidebar-toggle-room"
     >
       {children}

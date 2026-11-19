@@ -1,7 +1,13 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { VisitorStartButton } from "@/components/public/visitor-start";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { Sidebar, SidebarBody, SidebarFooter, SidebarHeader } from "@zoonk/ui/components/sidebar";
+import {
+  Sidebar,
+  SidebarBody,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarHeaderRow,
+} from "@zoonk/ui/components/sidebar";
 import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon } from "lucide-react";
@@ -36,9 +42,10 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
     <Sidebar aria-label={t("Sidebar")} className="gap-4">
       <SidebarHeader className="gap-4">
         {/* 44px, as tall as a page's bar, so the goal and the page's way back share a line. */}
-        <div className="flex min-h-11 min-w-0 items-center">
+        <SidebarHeaderRow className="min-h-11">
           <LearnGoalMenu placement="sidebar" />
-        </div>
+          <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")} />
+        </SidebarHeaderRow>
         <LearnSidebarSearch />
       </SidebarHeader>
 
@@ -49,13 +56,6 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
 
       <SidebarFooter>
         <VisitorStartButton />
-        <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")}>
-          {t({
-            description:
-              "A row at the end of the sidebar that folds the sidebar to a narrow column of icons. One word.",
-            message: "Collapse",
-          })}
-        </SidebarToggle>
         <LearnSidebarFeedback />
         <SidebarAccount visitor={<VisitorAccount />} />
       </SidebarFooter>

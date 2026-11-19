@@ -71,7 +71,7 @@ function PendingAppGoalMenu(props: GoalMenuProps) {
         <PrivateShellPlaceholder>
           <div className="flex h-full items-center gap-2.5">
             <Skeleton className="size-4 shrink-0 rounded-sm" />
-            <Skeleton className="sidebar-collapsed:hidden h-3 w-24 rounded-sm" />
+            <Skeleton className="h-3 w-24 rounded-sm" />
           </div>
         </PrivateShellPlaceholder>
       }
