@@ -47,7 +47,8 @@ const OWNERS: Record<string, string> = {
   "Features/Onboarding/LevelTestStep.swift: finishing": "The level test has no split.",
   "Features/Onboarding/PlacementStep.swift: tasks":
     "Placement is the onboarding aside's PaneBeside content, which keeps its identity.",
-  "Features/Onboarding/PlanStep.swift: opening": "The plan reveal, which holds its PaneSplit.",
+  "Features/Onboarding/PlanStep.swift: starting":
+    "The plan reveal, which holds its onboarding pane column; Start's request is its own.",
   "Features/Plan/AdjustPlanSections.swift: saving":
     "A sheet of the Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/AdjustPlanSheet.swift: editor":
