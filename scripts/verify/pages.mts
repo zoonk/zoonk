@@ -31,6 +31,7 @@ import {
   renderRows,
   summarizeStatements,
 } from "./queries.mts";
+import { readableSection } from "./readable.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
 import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
@@ -323,6 +324,7 @@ const report = renderReport({
     ...renderRows(renders),
     ...(soak ? soakRows(soak) : []),
     ...(comparison ? comparisonRows(comparison) : []),
+    ...(baseline ? readableSection(baseline.loads, loads) : []),
     ...(values.press ? pressSection(loads, out) : []),
   ],
   sheets,
