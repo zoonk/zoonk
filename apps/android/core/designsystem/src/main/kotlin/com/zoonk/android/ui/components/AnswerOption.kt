@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,8 @@ fun AnswerOptionGroup(
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
  * once checked, the word its result shows. An option among several
- * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
+ * picks is a [Role.Checkbox], one that acts at once is a [Role.Button], and one shown after the
+ * fact has no role and nothing to press; [tag] replaces the
  * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
  * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
  * [keyAtTop]. [readingContent] supplies a picture's caption for intrinsic sizing without placing a
@@ -70,7 +72,7 @@ fun AnswerOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    role: Role = Role.RadioButton,
+    role: Role? = Role.RadioButton,
     tag: (@Composable () -> Unit)? = null,
     glyph: Painter? = null,
     keyAtTop: Boolean = false,
@@ -92,13 +94,20 @@ fun AnswerOption(
                 .border(tone.border, shape)
                 .then(
                     when (role) {
+                        null -> Modifier.semantics(mergeDescendants = true) {}
                         Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
                         Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
-        tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
+        tag =
+            tag ?: {
+                when {
+                    result != null -> AnswerTag(picked, result, guessed = guessed)
+                    picked && role != Role.Button -> PickedTag(guessed)
+                }
+            },
         leading =
             if (key ==
                 AnswerKey.None

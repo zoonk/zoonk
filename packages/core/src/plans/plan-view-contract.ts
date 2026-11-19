@@ -64,6 +64,8 @@ export type PlanItemView = {
   id: string | null;
   kind: PlanItemKind;
   lessonId: string | null;
+  /** The lessons it holds on its day: one written lesson, a share of lessons still to be written, none for other work. */
+  lessons: number;
   minutes: number | null;
   requiresPlus: boolean;
   scheduledFor: string | null;

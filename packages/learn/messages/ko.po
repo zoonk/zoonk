@@ -13,14 +13,12 @@ msgstr "선택지"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "정답"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -34,6 +32,11 @@ msgstr "내 답"
 msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "내 예상"
+
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "내 답과 정답"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
@@ -2519,7 +2522,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, other {이기려면 #개를 맞혀야 했어요.}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -3955,7 +3957,6 @@ msgid "See all subjects"
 msgstr "전체 과목 보기"
 
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -7140,6 +7141,16 @@ msgid "Show all {count, number}"
 msgstr "{count, number}개 모두 보기"
 
 #: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "왼쪽으로 스크롤하기"
+
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "오른쪽으로 스크롤하기"
+
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "요약:"
@@ -7568,11 +7579,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>내 답:</label> <answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "내일 연습할 수 있어요"
@@ -7828,14 +7834,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "쉬는 시간이 끝나면 다음 파트가 자동으로 시작돼요."
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "최근 모의고사"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "선택한 모의고사"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7856,36 +7858,6 @@ msgstr "모의고사를 준비하고 있어요…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "실제 시험과 비슷한 문제를 만들고 있어요. 준비가 끝나면 여기서 바로 시작돼요."
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "제한 시간"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "보통 걸리는 시간"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "약 {time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "서술형"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "파트"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7962,9 +7934,9 @@ msgstr "답변이 저장되지 않았어요."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {안 푼 문제가 #개 있고}} {flagged, plural, other {다시 볼 문제로 표시한 문제가 #개 있어요}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, other {빈 문제 #개}}, {flagged, plural, other {표시한 문제 #개}}입니다."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7974,9 +7946,9 @@ msgstr "{count, plural, other {답하지 않은 문제가 #개 있어요.}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {다시 볼 문제로 표시한 문제가 #개 있어요.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, other {표시한 문제 #개입니다.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8168,6 +8140,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, other {#문제}} · {time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "보통 {time}"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8178,6 +8156,13 @@ msgstr "답하지 않기"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "서술형 파트 · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "서술형"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8575,11 +8560,6 @@ msgid "After this mock exam"
 msgstr "이번 모의고사 이후"
 
 #: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "내 답과 정답"
-
-#: src/mock/mock-review.tsx
 msgctxt "S0XNnB"
 msgid "Question {number} · {area}"
 msgstr "문제 {number} · {area}"
@@ -8741,11 +8721,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "순점수 {score} / {total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, 다시 볼 문제로 표시됨"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question} (표시)"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9470,6 +9450,12 @@ msgstr "이미 아는 내용은 건너뛰어요"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "새롭거나 어려운 내용만"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "약 {time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"

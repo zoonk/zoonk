@@ -177,7 +177,7 @@ struct LessonOpeningMap: View {
   }
 }
 
-/// Main's `OpeningMapIdea`: the idea's icon in a dashed ring, in ink while its popover is open,
+/// Main's `OpeningMapIdea`: the idea's icon in a dashed ring, on the pick's fill while its popover is open,
 /// with its number on the top corner; without an icon, the number in the ring.
 private struct LessonOpeningIdea: View {
   static let size: CGFloat = 64
@@ -245,7 +245,8 @@ private struct LessonOpeningIdea: View {
     ZStack {
       Circle()
         .fill(Color(.systemBackground))
-        .strokeBorder(ring, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+        .overlay { Circle().fill(isShowingIdea ? Color.selectedTint : .clear) }
+        .overlay { Circle().strokeBorder(ring, style: StrokeStyle(lineWidth: 2, dash: [6, 4])) }
 
       if let icon = idea.icon {
         LessonIconImage(icon: icon, size: 44)
@@ -273,6 +274,10 @@ private struct LessonOpeningIdea: View {
   }
 
   private var ring: Color {
-    isShowingIdea || contrast == .increased ? Color(.foreground) : Color(.foreground).opacity(0.3)
+    if contrast == .increased {
+      return Color(.foreground)
+    }
+
+    return Color(.foreground).opacity(isShowingIdea ? 0.6 : 0.3)
   }
 }

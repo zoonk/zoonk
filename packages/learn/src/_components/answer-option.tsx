@@ -106,7 +106,7 @@ function useResultLabels() {
 }
 
 /** A right pick says whose it is, so it isn't called correct twice under its verdict. */
-function ResultTag({
+export function ResultTag({
   guessed,
   picked,
   result,
@@ -127,6 +127,21 @@ function ResultTag({
   return (
     <span className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[result])} data-slot="answer-option-tag">
       {labels[result]}
+    </span>
+  );
+}
+
+/** Before Check, a pick says it's the learner's in the words its verdict keeps. Unspoken: the radio is checked. */
+function PickedTag({ guessed }: { guessed: boolean }) {
+  const { yourAnswer, yourGuess } = useResultLabels();
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(ANSWER_TAG_CLASS, "text-foreground")}
+      data-slot="answer-option-tag"
+    >
+      {guessed ? yourGuess : yourAnswer}
     </span>
   );
 }
@@ -162,7 +177,7 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked or
  * disabled the key does nothing, so it hides in its room and the answer stays put.
  */
-function OptionMarker({
+export function OptionMarker({
   isChecked,
   layout,
   marker,
@@ -185,6 +200,24 @@ function OptionMarker({
       <Kbd className="[&_svg]:size-3">{marker}</Kbd>
     </LineMarker>
   );
+}
+
+function defaultTag({
+  guessed,
+  picked,
+  picks,
+  result,
+}: {
+  guessed: boolean;
+  picked: boolean;
+  picks: boolean;
+  result: AnswerOptionResult | null;
+}): React.ReactNode {
+  if (result) {
+    return <ResultTag guessed={guessed} picked={picked} result={result} />;
+  }
+
+  return picked && picks ? <PickedTag guessed={guessed} /> : undefined;
 }
 
 export function AnswerOption({
@@ -211,19 +244,14 @@ export function AnswerOption({
   // A submit option sends its form on the tap, so it's a plain button: nothing stays picked.
   const picks = type !== "submit";
 
-  const shownTag =
-    tag === undefined && result ? (
-      <ResultTag guessed={guessed} picked={picked} result={result} />
-    ) : (
-      tag
-    );
+  const shownTag = tag === undefined ? defaultTag({ guessed, picked, picks, result }) : tag;
 
   return (
     <button
       aria-checked={picks ? picked : undefined}
       className={cn(
         ANSWER_OPTION_CLASS,
-        "focus-visible:outline-ring enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
+        "focus-visible:outline-ring/50 enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
         layout === "row" && "flex-wrap",
         layout === "stacked" && "flex-col items-stretch p-2",

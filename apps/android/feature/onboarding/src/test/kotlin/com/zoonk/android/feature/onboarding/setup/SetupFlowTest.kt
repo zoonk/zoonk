@@ -86,12 +86,15 @@ class SetupFlowTest {
     }
 
     @Test
-    fun theAboutYouCountReplacesTheSetupDots() {
+    fun aboutYouScreensShareOnePlaceInTheCount() {
         val work = com.zoonk.api.models.OnboardingStep.WORK
+        val tools = com.zoonk.api.models.OnboardingStep.TOOLS
         val watch = com.zoonk.api.models.OnboardingStep.WATCH
-        val current = SetupFlow(GOAL, work, listOf(PURPOSE))
-        assertNull(setupProgress(current, listOf(work, watch, SCHEDULE, PLAN)))
-        assertEquals(SetupProgress(answered = 2, total = 3), setupProgress(current.opening(SCHEDULE), listOf(SCHEDULE, PLAN)))
+        val listen = com.zoonk.api.models.OnboardingStep.LISTEN
+        val onWatch = SetupFlow(GOAL, watch, listOf(PURPOSE, LEVEL, work, tools))
+        assertEquals(SetupProgress(answered = 2, total = 5), setupProgress(onWatch, listOf(watch, listen, BUDDY, SCHEDULE, PLAN)))
+        val onBuddy = SetupFlow(GOAL, BUDDY, listOf(PURPOSE, LEVEL, work, tools, watch, listen))
+        assertEquals(SetupProgress(answered = 3, total = 5), setupProgress(onBuddy, listOf(BUDDY, SCHEDULE, PLAN)))
     }
 
     @Test

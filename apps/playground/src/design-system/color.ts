@@ -132,13 +132,13 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
           "Blue, a button, a tab, a link, a hover, the learner's place (that's progress's blue).",
         meaning: "A pick before it's judged.",
         name: "selected",
-        use: "A 2px ring on `selected-tint` (`ANSWER_TONE.picked`, `ChoiceList`, `Toggle`), a checked radio or checkbox.",
+        use: "A checked radio or checkbox, and an answer's \"Your answer\" before it's checked.",
       },
       {
-        meaning: "The faint fill under a pick.",
+        meaning: "A pick's fill, darker than a hover, never with a ring.",
         name: "selected-tint",
         tint: true,
-        use: "Under a picked answer, choice or toggle; none with more contrast.",
+        use: "Under a picked answer, choice, card or toggle (`ANSWER_TONE.picked`, `ChoiceList`, `Toggle`).",
       },
       {
         meaning: "A check on a filled pick.",

@@ -118,9 +118,9 @@ A box that holds content (a card, a panel, a composer) gives it the same room on
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). The bottom bar's room over and under its buttons is the same number on purpose (Z4), so the main action's corner is even, and the right column and a task's frame on a computer keep it too. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
+Content keeps the frame's gutter from the screen's edge: 16px on a phone and 20px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`, from the one token `--spacing-frame`). The bottom bar's room over and under its buttons is the same number on purpose (Z4), so the main action's corner is even, and the right column, a task's frame on a computer (its sides, ✕ and end controls, its side panel) and the toasts keep it too. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
-- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 24px at 768 and beside the sidebar at 1440.
+- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 20px at 768 and beside the sidebar at 1440.
 - **Usual break.** A box drawn with an outside ring, 1px wider than the field above it. A frame or a column that pads by its own number instead of `--page-gutter`.
 
 ## Shape
@@ -154,10 +154,10 @@ Two controls of one size look one size: a filled and an outline button side by s
 
 ### H5. One line weight, no shadows on content
 
-Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no shadow; only overlays do.
+Borders and dividers are 1px. A thicker line means focus or a checked answer's verdict, never a pick. Content casts no shadow; only overlays do.
 
 - **Check.** No heavier divider or border; no shadow outside a menu, a sheet, a dialog or the palette.
-- **Usual break.** A selected chip with a 1px dark border beside picks with a 2px ring.
+- **Usual break.** A picked chip drawn with a dark border or ring instead of its fill.
 
 ## Control sizes
 
@@ -170,22 +170,22 @@ A control's height is one of `Button`'s, and each height has one label size: 44p
 
 ### Z2. The same control is the same size everywhere
 
-A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px and 44px tall with a mouse or on touch ([Z3](#z3-targets-are-44px-and-dont-overlap)), the goal switcher's included.
+A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px, 36px tall with a mouse and 44px on touch, the goal switcher's included.
 
 - **Check.** Compare this screen's back, close and "…" with its sibling pages'.
 
 ### Z3. Targets are 44px and don't overlap
 
-Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is the [one exception](#exceptions-the-user-granted).
+Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is an [exception](#exceptions-the-user-granted). The user granted one more: with a fine pointer (a mouse), a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px.
 
 - **Check.** Small controls side by side: their `hit-area`s don't intersect.
 - **Usual break.** Two 30px buttons 8px apart.
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar's room over and under its buttons is the frame's gutter, the same number as at its sides ([S5](#s5-the-gutter-is-the-frames), `BOTTOM_BAR_ROOM_CLASS`): a button alone in a corner reads right only with one inset from both edges. That makes the bar 77px tall on a phone and 93px from a tablet up; the gutter stays small enough that the bar never reads as chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar's room over and under its buttons is the frame's gutter, the same number as at its sides ([S5](#s5-the-gutter-is-the-frames), `BOTTOM_BAR_ROOM_CLASS`): a button alone in a corner reads right only with one inset from both edges. That makes the bar 77px tall on a phone and 85px from a tablet up; the gutter stays small enough that the bar never reads as chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the main action as far from the bar's bottom as from its end (16px at 390, 24px at 1440); the bar's height and its buttons' places the same with and without an error line.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the main action as far from the bar's bottom as from its end (16px at 390, 20px at 1440); the bar's height and its buttons' places the same with and without an error line.
 - **Usual break.** A corner with two insets (16px under the button, 24px beside it). A gutter grown to 40px, so the bar grows to 125px. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
 
 ## Type
@@ -308,17 +308,17 @@ Each surface has one enabled filled button at most, its main action. A surface i
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is one ring everywhere, the fields' soft one: 3px of the ring color at half strength (`ring-ring/50`, or the same outline on a control whose ring draws its line), 3:1 against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
 
 ### X2. A state is drawn one way
 
-A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`). The current item in navigation is the `muted` fill. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
+A pick is a soft fill darker than a hover (`selected-tint`) with the mark the piece already has (a radio's dot, a checkbox's check, an answer's "Your answer"), never a ring or an outline, so seven picks on one screen stay calm. The current item in navigation is the `muted` fill; the open question on a mock's answer sheet is a short bar under its number. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
 
 - **Check.** No two kinds of "selected" on one screen drawn differently.
-- **Usual break.** A toggle chip "on" with a 1px border beside radio cards "on" with a 2px ring.
+- **Usual break.** A dark ring or outline marking a pick or the current item.
 
 ### X3. A state change moves nothing
 
@@ -513,6 +513,7 @@ Each is one named place where a rule above doesn't hold, by the user's decision.
 - A code's boxes (a sign-in or account code) are 56px tall, a little taller than wide, in two groups of three that together are as wide as the button under them, not field-height squares (Z1).
 - Tables in Admin and evals keep their roomier cells; they aren't tightened to a list row's height (D1).
 - The day's bar on Today keeps its look and its parts' popovers; it is never made 44px tall to press (Z3).
+- With a fine pointer, a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px (Z2, Z3).
 - A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
 - Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
 - The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](../SKILL.md#words)).

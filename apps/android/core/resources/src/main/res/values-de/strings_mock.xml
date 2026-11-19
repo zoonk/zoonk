@@ -9,7 +9,7 @@
   "mock_break_detail": "4a2fd50be93cf8682291729de2150f03ad4feeb79a0f68e9bf3ec4d3ea882dda",
   "mock_break_time_left": "d0d583ef1f721ef6afe5cd51cc304dac780c65f961537e6a431ab24fc3e09616",
   "mock_cell_answered": "54c0769e569f82484ed0630821996817e51dea945cb8faa40ac1f4766a843f70",
-  "mock_cell_marked_for_review": "fc28da3772c74b45c3088e67313b324a6f95e20cff7dbc132026ee7255569a37",
+  "mock_cell_flagged": "162b2ec4ea77336158b4fffaabd44764665f2271bc97a907f3c5238eb98a76b4",
   "mock_continue": "8070e48e065069e0eea5e6091113ae8af12721bd7b3de437712a0c01fb68c95c",
   "mock_continue_section": "f4c54908fdc13388c7c72283863cdbbcc07d605292dda053a726bb0e1553a721",
   "mock_essay_blank": "4a5f860ee5cb5a10194f32b2a4d495e96ad5f31a098e3b3095f5782ea7bd241c",
@@ -32,8 +32,8 @@
   "mock_left_blank": "ce8ffd8b2a3c6e0ce03e9e381be9c08a032a5f0c7a8faa2f931485760b8a8e7c",
   "mock_left_blank_and_flagged": "7e1b60c99b954904fa52efc4a07d28b4cbe481cd34c1c7a56ea1dacf7cad0be8",
   "mock_left_blank_only": "0ad26202901e6cf83ae4c407d3b21599a6491ca2dc60710385b5d385dfb587fa",
-  "mock_left_flagged": "f068d8640c6ec921c37b3f1b8f3cb46d177251d3f1ace947749d3e8ee2aba115",
-  "mock_left_flagged_only": "cc0d076f2453a2746b2175964e9d94459f0adff664f7b1b573aee2a9574dadec",
+  "mock_left_flagged": "9872854a9fa82369200409f5a92db3fc50e654c965f20a87271921b8e673e067",
+  "mock_left_flagged_only": "ca7828fdfdac2c0b622c198cf6a5c5f06069f37a02eced319a87d3473ba96f5e",
   "mock_moves_forward": "cdc3ee0dd0e95a8c1e555be879946bcb9fee3b0062dab7aff5de72a4c4f3c4ed",
   "mock_moves_forward_must": "6556d0a8534c0513fce04ec7429e886d4d7ec87aec8b30723a573adf9c212592",
   "mock_moves_must": "ef103d1af4ba879750f8c213ea68b4e5b01ef07b9ab9e8622d37cfb23ad45412",
@@ -146,14 +146,14 @@
     <string name="mock_moves_must">Beantworte jede Frage, um weiterzukommen.</string>
     <string name="mock_hand_in_mock_title">Probeprüfung abgeben?</string>
     <string name="mock_hand_in_section_title">Diesen Abschnitt abgeben?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d Frage ist unbeantwortet</item>
         <item quantity="other">%d Fragen sind unbeantwortet</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d ist zur Überprüfung markiert</item>
-        <item quantity="other">%d sind zur Überprüfung markiert</item>
+        <item quantity="one">%d ist markiert</item>
+        <item quantity="other">%d sind markiert</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s und %2$s.</string>
@@ -162,8 +162,8 @@
         <item quantity="other">%d Fragen sind unbeantwortet.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d Frage ist zur Überprüfung markiert.</item>
-        <item quantity="other">%d Fragen sind zur Überprüfung markiert.</item>
+        <item quantity="one">%d Frage ist markiert.</item>
+        <item quantity="other">%d Fragen sind markiert.</item>
     </plurals>
     <string name="mock_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="mock_essay_blank">Der Aufsatz ist leer.</string>
@@ -186,8 +186,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Frage %1$d</string>
     <string name="mock_cell_answered">beantwortet</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, zur Überprüfung markiert</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, markiert</string>
     <string name="mock_sections">Abschnitte</string>
     <string name="mock_section_number">Abschnitt %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

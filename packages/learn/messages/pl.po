@@ -13,14 +13,12 @@ msgstr "Odpowiedzi do wyboru"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Poprawna odpowiedź"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -34,6 +32,11 @@ msgstr "Twoja odpowiedź"
 msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "Twój strzał"
+
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "Twoja odpowiedź i poprawna odpowiedź"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
@@ -2519,7 +2522,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, one {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytanie.} many {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytań.} other {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytania.}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -3955,7 +3957,6 @@ msgid "See all subjects"
 msgstr "Zobacz wszystkie przedmioty"
 
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -7140,6 +7141,16 @@ msgid "Show all {count, number}"
 msgstr "Pokaż wszystkie {count, number}"
 
 #: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Przewiń w lewo"
+
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Przewiń w prawo"
+
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "W skrócie:"
@@ -7568,11 +7579,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Odpowiadaj tylko wtedy, gdy masz pewność. Możesz też powiedzieć, że nie masz pewności."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>Twoja odpowiedź:</label> <answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Do przećwiczenia jutro"
@@ -7828,14 +7834,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "Kolejna część rozpocznie się automatycznie po zakończeniu przerwy."
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Twój ostatni egzamin próbny"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "Wybrany egzamin próbny"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7856,36 +7858,6 @@ msgstr "Przygotowujemy twój egzamin próbny…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe."
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "Limit czasu"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "Zwykle zajmuje"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Około {time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "Część pisemna"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "Części"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7962,9 +7934,9 @@ msgstr "Nie udało się zapisać odpowiedzi."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, one {# pytanie jest bez odpowiedzi} few {# pytania są bez odpowiedzi} many {# pytań jest bez odpowiedzi} other {# pytania jest bez odpowiedzi}} i {flagged, plural, other {# oznaczono do sprawdzenia}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, one {# pytanie jest puste} few {# pytania są puste} many {# pytań jest pustych} other {# pytania są puste}} i {flagged, plural, one {# pytanie jest oznaczone} few {# pytania są oznaczone} many {# pytań jest oznaczonych} other {# pytania są oznaczone}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7974,9 +7946,9 @@ msgstr "{count, plural, one {# pytanie pozostaje bez odpowiedzi.} few {# pytania
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, one {# pytanie oznaczono do sprawdzenia.} many {# pytań oznaczono do sprawdzenia.} other {# pytania oznaczono do sprawdzenia.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, one {# pytanie jest oznaczone.} few {# pytania są oznaczone.} many {# pytań jest oznaczonych.} other {# pytania są oznaczone.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8168,6 +8140,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, one {# pytanie} many {# pytań} other {# pytania}} · {time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "zwykle {time}"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8178,6 +8156,13 @@ msgstr "Zostaw bez odpowiedzi"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Część pisemna · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "Część pisemna"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8575,11 +8560,6 @@ msgid "After this mock exam"
 msgstr "Po tym egzaminie próbnym"
 
 #: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "Twoja odpowiedź i poprawna odpowiedź"
-
-#: src/mock/mock-review.tsx
 msgctxt "S0XNnB"
 msgid "Question {number} · {area}"
 msgstr "Pytanie {number} · {area}"
@@ -8741,11 +8721,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "Wynik netto: {score} z {total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, do ponownego sprawdzenia"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "Oznaczono: {question}"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9470,6 +9450,12 @@ msgstr "Pominąć to, co już znam"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "Tylko to, co nowe lub trudne"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Około {time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"

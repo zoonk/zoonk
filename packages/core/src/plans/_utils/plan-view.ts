@@ -221,6 +221,7 @@ export async function buildPlanView({
 
   const skillAreas = getSkillAreas({
     courseTitle: course?.title ?? null,
+    goalKind: goal.kind,
     skills: state.graph.skills,
   });
 

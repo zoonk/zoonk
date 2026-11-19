@@ -28,6 +28,7 @@ import {
   orderSkills,
 } from "./skill-order";
 import { countStandInLessons } from "./stand-in-size";
+import { putStartLessonFirst } from "./start-lesson";
 
 type QueueInput = {
   announcements?: readonly string[];
@@ -45,6 +46,7 @@ type QueueInput = {
   prerequisites: ReadonlyMap<string, readonly string[]>;
   readiness: ReadonlyMap<string, SkillReadiness>;
   settings: PlanSettings;
+  startLessonId?: string | null;
   strongAreas?: ReadonlySet<string>;
 };
 
@@ -269,7 +271,7 @@ export function buildPlanQueue(queueInput: QueueInput): {
       .map((skill) => skill.skillId),
   );
 
-  const lessonUnits = putChapterInProgressFirst({
+  const inProgressFirst = putChapterInProgressFirst({
     items: input.items,
     lessons: input.lessons,
     prerequisites: input.prerequisites,
@@ -285,6 +287,11 @@ export function buildPlanQueue(queueInput: QueueInput): {
         skills: ordered,
       }),
     }),
+  });
+
+  const lessonUnits = putStartLessonFirst({
+    lessonId: input.startLessonId,
+    units: inProgressFirst,
   });
 
   const units = (

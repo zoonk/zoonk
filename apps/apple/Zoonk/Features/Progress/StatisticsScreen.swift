@@ -220,7 +220,7 @@ private struct StatsSelection<Outline: InsettableShape>: ViewModifier {
     content
       .overlay {
         if isShown {
-          shape.strokeBorder(.tint, lineWidth: 2)
+          shape.fill(.selectedTint)
         }
       }
       .accessibilityAddTraits(isShown ? .isSelected : [])

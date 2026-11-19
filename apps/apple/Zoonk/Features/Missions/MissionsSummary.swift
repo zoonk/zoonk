@@ -1,19 +1,20 @@
 import SwiftUI
 
-/// Main's missions header: the buddy in its ring, "Today's missions" with how many are done, the
-/// day's bonus and the track. With `isOpen`, a press on the title shows or hides the missions.
+/// Main's missions header: "Today's missions", then the track with the day's bonus at its end. With
+/// `isOpen`, a press on the title shows or hides the missions; with `collapsesWhenWon`, a won day
+/// is one line.
 struct MissionsSummary: View {
-  @Environment(LearnerSummaryStore.self) private var learner
-
   let missions: [StudyMission]
   let bonus: Int
   let earned: Bool
   var isOpen: Binding<Bool>?
+  var collapsesWhenWon = true
 
   var body: some View {
     let done = missions.filter(\.isDone).count
+    let won = earned && done == missions.count
 
-    if earned && done == missions.count {
+    if won && collapsesWhenWon {
       AccessibilityStack(spacing: 8) {
         Text("Missions done", tableName: "Today", comment: "Today's missions are done")
           .typeStyle(.body.weight(.medium))
@@ -22,60 +23,52 @@ struct MissionsSummary: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {
-        MarkedRow(alignment: .center, stackedSpacing: 8) {
-          MissionsRing(done: done, total: missions.count) {
-            let buddy = learner.summary.value?.buddy ?? BuddyLook()
-            BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+        if let isOpen {
+          Button {
+            isOpen.wrappedValue.toggle()
+          } label: {
+            title(won: won, isOpen: isOpen.wrappedValue)
           }
-          .frame(width: 20)
-        } content: {
-          if let isOpen {
-            Button {
-              isOpen.wrappedValue.toggle()
-            } label: {
-              title(done: done, isOpen: isOpen.wrappedValue)
-            }
-            .buttonStyle(.plain)
-            .accessibilityValue(
-              isOpen.wrappedValue
-                ? Text("Shown", tableName: "Today", comment: "The missions' list is open")
-                : Text("Hidden", tableName: "Today", comment: "The missions' list is closed"))
-          } else {
-            title(done: done, isOpen: nil)
-          }
-        } end: {
-          BrainPowerReward(points: bonus, earned: false)
+          .buttonStyle(.plain)
+          .accessibilityValue(
+            isOpen.wrappedValue
+              ? Text("Shown", tableName: "Today", comment: "The missions' list is open")
+              : Text("Hidden", tableName: "Today", comment: "The missions' list is closed"))
+        } else {
+          title(won: won, isOpen: nil)
         }
 
-        MissionTrack(missions: missions)
+        HStack(spacing: 12) {
+          MissionTrack(
+            missions: missions,
+            label: Text(
+              String(
+                localized: "missionsDone", defaultValue: "\(done) of \(missions.count) done",
+                table: "Today",
+                comment: "Under the title Today's missions: how many of today's missions are done."
+              )))
+
+          BrainPowerReward(points: bonus, earned: won)
+            .fixedSize()
+        }
       }
     }
   }
 
-  private func title(done: Int, isOpen: Bool?) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      HStack(spacing: 6) {
-        Text("Today's missions", tableName: "Today", comment: "Today's missions header")
-          .typeStyle(.rowTitle)
+  private func title(won: Bool, isOpen: Bool?) -> some View {
+    HStack(spacing: 6) {
+      (won
+        ? Text("Missions done", tableName: "Today", comment: "Today's missions are done")
+        : Text("Today's missions", tableName: "Today", comment: "Today's missions header"))
+        .typeStyle(.rowTitle)
 
-        if let isOpen {
-          Image(systemName: "chevron.down")
-            .imageScale(.small)
-            .foregroundStyle(.mutedForeground)
-            .rotationEffect(.degrees(isOpen ? 0 : -90))
-            .accessibilityHidden(true)
-        }
+      if let isOpen {
+        Image(systemName: "chevron.down")
+          .imageScale(.small)
+          .foregroundStyle(.mutedForeground)
+          .rotationEffect(.degrees(isOpen ? 0 : -90))
+          .accessibilityHidden(true)
       }
-
-      // Its own key: other counts share the English, but Portuguese agrees with "missões".
-      Text(
-        String(
-          localized: "missionsDone", defaultValue: "\(done) of \(missions.count) done",
-          table: "Today",
-          comment: "Under the title Today's missions: how many of today's missions are done.")
-      )
-      .typeStyle(.meta)
-      .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .contentShape(.rect)

@@ -69,6 +69,9 @@ class MindMapsOfferTest {
         listOf(mapJson(1, "Waves", "available"), mapJson(2, "Light", "available"), mapJson(3, "Optics", "available", lessonsToWrite = 2))
     private val fresh = goalMindMaps(chapters, offer = FRESH_OFFER)
 
+    /** More chapters than No map yet shows: the first five, then a fold for the rest. */
+    private fun many(subject: (Int) -> String? = { null }) = (1..8).map { mapJson(it, "Chapter $it", "available", subject = subject(it)) }
+
     @After
     fun stop() = scope.cancel()
 
@@ -148,7 +151,7 @@ class MindMapsOfferTest {
 
         allowed = true
         scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 3 }
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
     }
 
@@ -203,7 +206,7 @@ class MindMapsOfferTest {
 
         allowanceBack = true
         scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 3 }
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
     }
 
@@ -235,7 +238,7 @@ class MindMapsOfferTest {
 
         allowanceBack = true
         scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 3 }
         compose.onNodeWithText("Create all").assertExists()
     }
 
@@ -285,7 +288,7 @@ class MindMapsOfferTest {
         compose.onAllNodesWithText("Create")[0].performClick()
 
         waitFor("This map needs a subscription")
-        compose.onAllNodesWithText("Create").assertCountEquals(1)
+        compose.onAllNodesWithText("Create").assertCountEquals(2)
     }
 
     /** A finished chapter's map is claimed like any other, so while the maps are stopped the empty list promises none. */
@@ -317,7 +320,7 @@ class MindMapsOfferTest {
         waitFor("Create all")
         compose.onAllNodesWithText("Create")[0].performClick()
 
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 3 }
     }
 
     @Test
@@ -426,47 +429,61 @@ class MindMapsOfferTest {
         compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
-    /** A chapter under No map yet being made opens the group on arrival, so its progress is in view; a learner's close holds. */
+    /** As main: a map on its way leads No map yet, ahead of the chapters folded after the first five. */
     @Test
-    fun otherChaptersOpenOnArrivalWhileOneIsBeingMade() {
-        api.mindMaps = { goalMindMaps(chapters + mapJson(4, "Lenses", "writingLessons", lessonsToWrite = 3), offer = FRESH_OFFER) }
+    fun aMapOnItsWayLeadsNoMapYet() {
+        api.mindMaps =
+            { goalMindMaps(many() + mapJson(9, "Lenses", "writingLessons", lessonsToWrite = 3, subject = null), offer = FRESH_OFFER) }
         show()
 
         waitFor("Lenses")
-        compose.onNodeWithText("Show fewer chapters").performClick()
-        compose.waitForIdle()
-        compose.onNodeWithText("Lenses").assertDoesNotExist()
+        compose.onNodeWithText("Chapter 4").assertExists()
+        compose.onNodeWithText("Chapter 5").assertDoesNotExist()
+        compose.onNodeWithText("4 more chapters").assertExists()
     }
 
-    /** As main: the heading counts every chapter without a map, and the fold counts the ones it shows. */
+    /** As main: the first five chapters show, and the heading counts every chapter without a map. */
     @Test
-    fun otherChaptersStayFoldedWithNothingBeingMade() {
-        api.mindMaps = { fresh }
+    fun theNextFiveShowAndTheRestFold() {
+        api.mindMaps = { goalMindMaps(many(), offer = FRESH_OFFER) }
         show()
 
         waitFor("No map yet")
-        compose.onNodeWithText("3 chapters").assertExists()
-        compose.onNodeWithText("Optics").assertDoesNotExist()
-
-        compose.onNodeWithText("1 more chapter").performClick()
-        waitFor("Optics")
+        compose.onNodeWithText("8").assertExists()
+        compose.onNodeWithText("Chapter 5").assertExists()
+        compose.onNodeWithText("Chapter 6").assertDoesNotExist()
+        compose.onNodeWithText("3 more chapters").performClick()
+        waitFor("Chapter 8")
         compose.onNodeWithText("Show fewer chapters").assertExists()
+    }
+
+    /** As main: past the first five, a goal's chapters fold by subject, each opening on its own. */
+    @Test
+    fun theRestFoldBySubject() {
+        api.mindMaps = { goalMindMaps(many { if (it > 6) "mathematics" else "natural-sciences" }, offer = FRESH_OFFER) }
+        show()
+
+        waitFor("Mathematics")
+        compose.onNodeWithText("Chapter 7").assertDoesNotExist()
+        compose.onNodeWithText("Mathematics").performClick()
+        waitFor("Chapter 7")
+        compose.onNodeWithText("Chapter 6").assertDoesNotExist()
     }
 
     /** As main's fold: TalkBack hears whether it's open and can open or close it. */
     @Test
     fun theFoldTellsTalkBackWhetherItsOpen() {
-        api.mindMaps = { fresh }
+        api.mindMaps = { goalMindMaps(many(), offer = FRESH_OFFER) }
         show()
 
-        waitFor("1 more chapter")
+        waitFor("3 more chapters")
         compose
-            .onNodeWithText("1 more chapter")
+            .onNodeWithText("3 more chapters")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
             .assert(SemanticsMatcher.keyIsDefined(SemanticsActions.Expand))
             .performSemanticsAction(SemanticsActions.Expand)
 
-        waitFor("Optics")
+        waitFor("Chapter 8")
         compose
             .onNodeWithText("Show fewer chapters")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Expanded"))
@@ -477,15 +494,15 @@ class MindMapsOfferTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun tabAfterOpeningTheFoldReachesTheChapterItShowed() {
-        api.mindMaps = { fresh }
+        api.mindMaps = { goalMindMaps(many(), offer = FRESH_OFFER) }
         show()
 
-        waitFor("1 more chapter")
-        compose.onNodeWithText("1 more chapter").requestFocus().performKeyInput { pressKey(Key.Enter) }
-        waitFor("Optics")
+        waitFor("3 more chapters")
+        compose.onNodeWithText("3 more chapters").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        waitFor("Chapter 6")
         compose.onNodeWithText("Show fewer chapters").performKeyInput { pressKey(Key.Tab) }
 
-        compose.onAllNodesWithText("Create")[2].assertIsFocused()
+        compose.onAllNodesWithText("Create")[5].assertIsFocused()
     }
 
     /** As main: with no chapter ready to make, the chapters that need their lessons first are listed, not folded. */

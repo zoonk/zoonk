@@ -21,8 +21,8 @@ export function useQuestionCellLabel({
   return flagged
     ? t({
         description:
-          'A cell of the mock exam\'s answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.',
-        message: "{question}, marked for review",
+          'A cell of the mock exam\'s answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.',
+        message: "{question}, flagged",
         values: { question: label },
       })
     : label;

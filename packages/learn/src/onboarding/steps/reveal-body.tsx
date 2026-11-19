@@ -17,6 +17,7 @@ import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
+import { usePlanBases } from "../../plan/use-bases-texts";
 import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
 import {
@@ -109,15 +110,6 @@ function RevealActions({
   );
 }
 
-function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
-  return (
-    <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
-      <PageSectionTitle>{title}</PageSectionTitle>
-      {children}
-    </div>
-  );
-}
-
 type StartFailure = "open" | "save";
 
 type RevealBodyProps = {
@@ -142,6 +134,7 @@ function RevealColumn({
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
+  const hasChoices = usePlanBases() !== null;
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
   const startStep = findRevealStart(reveal);
 
@@ -193,9 +186,12 @@ function RevealColumn({
       }
       className="gap-8"
       rail={
-        <RevealRailBlock title={t("Choices")}>
-          <PlanChoices />
-        </RevealRailBlock>
+        hasChoices ? (
+          <div className="flex flex-col gap-2">
+            <PageSectionTitle>{t("Choices")}</PageSectionTitle>
+            <PlanChoices />
+          </div>
+        ) : null
       }
     >
       <header className="flex min-w-0 flex-col gap-5 pt-2">
@@ -228,9 +224,11 @@ function RevealColumn({
       </div>
 
       {/* Without room for the rail, its one choice ends the column. */}
-      <div className="min-[72rem]:hidden">
-        <PlanChoices />
-      </div>
+      {hasChoices && (
+        <div className="min-[72rem]:hidden">
+          <PlanChoices />
+        </div>
+      )}
 
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}

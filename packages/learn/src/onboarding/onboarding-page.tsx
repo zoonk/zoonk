@@ -42,8 +42,8 @@ export function OnboardingSectionFrame({
   );
 }
 
-/** From 72rem, beside the column, unless none of the rail's blocks has more than its label. */
-const RAIL_CLASS = "hidden min-[72rem]:flex min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
+/** From 72rem, beside the column. */
+const RAIL_CLASS = "hidden min-[72rem]:flex";
 
 const SCREEN_MEASURE_CLASS = "lg:max-w-column";
 

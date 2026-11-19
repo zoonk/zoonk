@@ -250,6 +250,7 @@ function withWritingLesson(plan: PlanView, writing: boolean): PlanView {
             id: null,
             kind: "lesson",
             lessonId: null,
+            lessons: 1,
             minutes: 20,
             requiresPlus: false,
             scheduledFor: null,

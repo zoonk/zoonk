@@ -275,7 +275,6 @@ private fun BuddyMissions(
         onLevel = onLevel,
         opening = { mission -> taps.isOpening(mission.tap()) },
         openFailed = { mission -> taps.hasFailed(mission.tap()) },
-        showBuddy = false,
     )
 }
 

@@ -4,7 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,9 +18,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -67,8 +73,10 @@ import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.centeredColumn
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
@@ -248,7 +256,7 @@ internal fun MindMapsPage(
     var opened by rememberSaveable { mutableStateOf(listOfNotNull(subject)) }
     var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
     // Only on arrival: a learner who closes it keeps it closed.
-    var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown || mindMaps.foldedMapToShow) }
+    var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown) }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = mindMaps.subjectItem(tab, subject) ?: 0)
     val title = stringResource(R.string.navigation_mind_maps)
 
@@ -262,33 +270,56 @@ internal fun MindMapsPage(
         )
 
     val study = { actions.study(tab, null) }.takeIf { mindMaps.deck(tab).isNotEmpty() }
+    val studyBar: (@Composable ColumnScope.() -> Unit)? =
+        study?.let { { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } } }
+    // With No map yet beside them, the maps' column is no longer the page's middle: the page's bars keep to its edges,
+    // and Study maps goes under the maps, ending where their column does, as main's.
+    var notMadeBeside by remember { mutableStateOf(false) }
 
     PageScaffold(
         onBack = actions.back,
         title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        columnWidth = DETAIL_PAGE_WIDTH,
-        bottomBar =
-            study?.let {
-                { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } }
-            },
+        columnWidth = if (notMadeBeside) Dp.Unspecified else DETAIL_PAGE_WIDTH,
+        bottomBar = studyBar.takeUnless { notMadeBeside },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            BeforeFold { beforeFold ->
-                LazyColumn(beforeFold.centeredColumn(DETAIL_PAGE_WIDTH), listState, pagePadding()) {
-                    item(key = "hero", contentType = "hero") {
-                        PageTitleRow(title, Modifier.padding(bottom = 16.dp))
-                    }
-                    stickyHeader(key = "tabs", contentType = "tabs") {
-                        MindMapsTabs(tab, mindMaps.tabCounts(state.saves)) { picked = it.key }
-                    }
+        val shown = IndexState(opened.toSet(), tab.key in showAll)
 
-                    val shown = IndexState(opened.toSet(), tab.key in showAll)
-                    when (tab) {
-                        StudyTab.Chapters -> chaptersTab(mindMaps, shown, notMadeOpen, tabActions)
-                        StudyTab.Lessons -> lessonsTab(mindMaps, shown, tabActions)
-                        StudyTab.Saved -> savedTab(mindMaps, shown, tabActions)
+        // Main's right column: beside the maps on every tab where there's room, so the page keeps its width as tabs
+        // switch; without it, the list follows the chapters' maps.
+        PageWithSupportingPane(
+            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
+            panesTouch = true,
+            supportingPane =
+                mindMaps.notMade.takeIf { it.isNotEmpty() }?.let {
+                    {
+                        Row {
+                            VerticalDivider()
+                            LazyColumn(Modifier.fillMaxSize(), contentPadding = pagePadding()) {
+                                notMadeBlock(mindMaps, shown, notMadeOpen, tabActions, beside = true)
+                            }
+                        }
+                    }
+                },
+        ) { beside ->
+            SideEffect { notMadeBeside = beside }
+            Column(Modifier.fillMaxSize()) {
+                BeforeFold(Modifier.weight(1f)) { beforeFold ->
+                    LazyColumn(beforeFold.centeredColumn(DETAIL_PAGE_WIDTH), listState, pagePadding()) {
+                        item(key = "hero", contentType = "hero") {
+                            PageTitleRow(title, Modifier.padding(bottom = 16.dp))
+                        }
+                        stickyHeader(key = "tabs", contentType = "tabs") {
+                            MindMapsTabs(tab, mindMaps.tabCounts(state.saves)) { picked = it.key }
+                        }
+
+                        when (tab) {
+                            StudyTab.Chapters -> chaptersTab(mindMaps, shown, notMadeOpen, tabActions, listsNotMade = !beside)
+                            StudyTab.Lessons -> lessonsTab(mindMaps, shown, tabActions)
+                            StudyTab.Saved -> savedTab(mindMaps, shown, tabActions)
+                        }
                     }
                 }
+                if (beside) studyBar?.let { BottomBar(columnWidth = DETAIL_PAGE_WIDTH, content = it) }
             }
         }
     }
@@ -387,7 +418,7 @@ internal fun <T> LazyListScope.index(
 }
 
 @Composable
-private fun SubjectTitle(
+internal fun SubjectTitle(
     subject: IndexEntry.Subject,
     toggle: (String) -> Unit,
 ) {

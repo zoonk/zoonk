@@ -13,6 +13,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -70,6 +71,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -185,6 +187,24 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
         assertEquals(1, opened)
         rule.onNodeWithText("Start").assertExists()
+    }
+
+    @Test
+    fun theFirstWeekCountsTodayWithTheDaysAfterItAboveThem() {
+        show(reveal = revealTodayOf())
+        navigator.open(SETUP)
+        rule.waitForIdle()
+
+        val week =
+            rule
+                .onNodeWithText("Your first week")
+                .performScrollTo()
+                .getUnclippedBoundsInRoot()
+                .top
+        val today = rule.onNodeWithText("Today").getUnclippedBoundsInRoot().top
+
+        rule.onNodeWithText("6 study days", substring = true).assertExists()
+        assertTrue(week < today)
     }
 
     @Test

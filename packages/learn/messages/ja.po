@@ -13,14 +13,12 @@ msgstr "回答の選択肢"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "正解"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -34,6 +32,11 @@ msgstr "選んだ答え"
 msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "予想"
+
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "回答と正解"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
@@ -2519,7 +2522,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, other {勝つには#問の正解が必要でした。}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -3955,7 +3957,6 @@ msgid "See all subjects"
 msgstr "すべての科目を見る"
 
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -7140,6 +7141,16 @@ msgid "Show all {count, number}"
 msgstr "全{count, number}件を表示する"
 
 #: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "左にスクロールする"
+
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "右にスクロールする"
+
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "まとめ："
@@ -7568,11 +7579,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>回答：</label><answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "明日から練習できます"
@@ -7828,14 +7834,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "休憩が終わると、次のセクションが自動で始まります。"
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "前回の模試"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "選んだ模試"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7856,36 +7858,6 @@ msgstr "模試を準備しています…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "本番に近い問題を作成しています。準備ができ次第、ここで模試が始まります。"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "制限時間"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "所要時間の目安"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "約{time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "記述問題"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "パート"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7962,9 +7934,9 @@ msgstr "答えを保存できませんでした。"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {未回答の問題が#問}}、{flagged, plural, other {見直し対象の問題が#問}}あります。"
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, =1 {#問が空欄です} other {空欄の問題が#問あります}}、{flagged, plural, =1 {#問を見直しにしています} other {見直し対象の問題が#問あります}}。"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7974,9 +7946,9 @@ msgstr "{count, plural, other {未回答の問題が#問あります。}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {見直し対象の問題が#問あります。}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, =1 {#問を見直しにしています。} other {見直し対象の問題が#問あります。}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8168,6 +8140,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, other {#問}}・{time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "通常{time}ほど"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8178,6 +8156,13 @@ msgstr "未回答にする"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "記述問題 · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "記述問題"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8575,11 +8560,6 @@ msgid "After this mock exam"
 msgstr "今回の模試のあと"
 
 #: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "回答と正解"
-
-#: src/mock/mock-review.tsx
 msgctxt "S0XNnB"
 msgid "Question {number} · {area}"
 msgstr "問題{number} · {area}"
@@ -8741,11 +8721,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "減点後のスコア {score}／{total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}、見直し対象"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}（見直し）"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9470,6 +9450,12 @@ msgstr "知っている内容はスキップします"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "知らないことや難しいことだけを学びます"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "約{time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"

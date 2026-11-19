@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mock_chooser_about": "6ead66916b5b7b79caba03cff89f9936061c6169012eb59767f433e276d16c23",
   "mock_chooser_day": "362d4b4b34578ac3ecc7d633518be97d873cbb1be4c2961330b566a376e79d35",
   "mock_chooser_day_without": "e966729c55f8dbe03b257ef9a74a413a582fe137219f3acda51e2e5240b662c4",
   "mock_chooser_failed": "931046e9d49fbeb43b8af6f88776bb90e72b1ec9bd51faa94b7ae46e459ccb03",
@@ -15,12 +14,9 @@
   "mock_chooser_not_enough": "b4d32c300bc117212ffcc203992861fe9356e8e7253a5bc3011efb8960510cde",
   "mock_chooser_one_subject": "cc2b25c2807f2df45acb99125f39e169339203ec220978b0426dc62a6396e8bb",
   "mock_chooser_option_size": "9a5b3bb5ea2502fd55fd6b029508dec15e572e7ea30396a097c50101e97bb28f",
-  "mock_chooser_parts": "0d63399a6dfe81c0d31ad6ce383fa758383872c0ebb2cd67906ec330b59fe4d5",
   "mock_chooser_pick_another": "da5fdbb529842dc88225b38db70abb38d21cef7b5646287d9c45e7db3674f9d8",
-  "mock_chooser_picked": "79607e86e90f84e607f5d4ef9b1103de9dfdae19eb03dc1a116e26867c95f54f",
   "mock_chooser_preparing": "faa16602f8dd90cbd03aa13aaa64967d725e6244d9c8eb1b71e0e977b25944f3",
   "mock_chooser_preparing_detail": "a97e16099c20a0ac810f5bd7cc52159c009663dde2e3c355144f4417428b43b3",
-  "mock_chooser_questions": "87696f8bd86e57854e61e9689ce68471acd9b649c92cb2d28e9ee10d712e749a",
   "mock_chooser_short_day": "6056b1fe80a616a1123f92224ac7ade10df1eeaaea59811095fcfa45e89f98e6",
   "mock_chooser_short_later_today": "a64e68978fba92726c3de764dbbd7e2de6e0a8db9b79516877e45bc5d4870ba7",
   "mock_chooser_short_line": "967bd5a7b99f3757f6dcd18577323d0a444dbf58fe01bfd664f8ccfae81f82f9",
@@ -29,15 +25,12 @@
   "mock_chooser_size_latest_exam": "3054e57a1ad963d922d12280ae290c09ae9c11310d5183ae56b3a80a3c36b347",
   "mock_chooser_size_past_edition": "a7c88dd5c8e159f6aa73b54393dbe2b6abd761942aa94890306b3357aadfd57d",
   "mock_chooser_start": "3be2e8fcd8004e3c2989fa2571c2c30b23fe5807ab55b303f025b43b460e8beb",
-  "mock_chooser_subjects": "8c81a9641be7b561d2efab482653e76d8294efef53e05a633e523c764a3b98fb",
   "mock_chooser_the_exam": "bc74d6b5734deec884a09d687d36659fd013a600788acd5f96ae5b11fac832f7",
-  "mock_chooser_time_limit": "2149e10575145755e2f37cd6ec4175a7e93418fd6128717bf9f8cca7ae5f0b26",
   "mock_chooser_title": "2d2ae11539adeaac9512256e3993a3271af5fa8c4773c2c8969197cb4b97701d",
-  "mock_chooser_usually_takes": "aa8e58d6b866cd12fac994ac77f9335f2282274da3f9eca619f187f5adf8ed93",
+  "mock_chooser_usually": "90d61049e3aec93bb42b899c79a6dfb550ee980738dbddc04a6fd816c3167746",
   "mock_chooser_writing": "37f27aa30ca55987a6bfe1e0c8b21c019a1c1a9edf2192fcc7ffb9dd6ecd3d47",
   "mock_chooser_writing_questions": "4b3be9d8f8314fbbc870e49a5af68c5333a6fc18100319115fae31fcb4ee4486",
-  "mock_chooser_writing_questions_line": "196f54dd2cd53af75b30a3c06bd75fa8e320d8c4a8492b30c3d9409376c25b72",
-  "mock_chooser_written_part": "ab2bb9df5e72c6ca2e41165fa6e9d5c9b03408ebb2fda8d907f0c33af04a7444"
+  "mock_chooser_writing_questions_line": "196f54dd2cd53af75b30a3c06bd75fa8e320d8c4a8492b30c3d9409376c25b72"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -82,19 +75,8 @@
     <string name="mock_chooser_writing">Deneme sınavını hazırlıyoruz</string>
     <string name="mock_chooser_writing_questions">Sınavdakilere benzer sorular hazırlıyoruz</string>
     <string name="mock_chooser_writing_questions_line">Her branşta ne soracağımızı seçiyoruz…</string>
-    <!-- The panel beside the options, about the one picked. -->
-    <string name="mock_chooser_picked">Seçilen deneme sınavı</string>
-    <!-- Labels the number of questions in an exam or a mock exam. -->
-    <string name="mock_chooser_questions">Sorular</string>
-    <string name="mock_chooser_time_limit">Süre sınırı</string>
-    <string name="mock_chooser_usually_takes">Genelde gereken süre</string>
-    <!-- %1$s is a duration, such as "1 hr 20 min". -->
-    <string name="mock_chooser_about">Yaklaşık %1$s</string>
-    <string name="mock_chooser_subjects">Branşlar</string>
-    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
-    <string name="mock_chooser_parts">Oturumlar</string>
-    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
-    <string name="mock_chooser_written_part">Yazılı kısım</string>
+    <!-- After a mock exam's size and time limit: about how long learners usually take. -->
+    <string name="mock_chooser_usually">genellikle %1$s</string>
     <string name="mock_chooser_last_mock">Son deneme sınavın</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">%1$s için branş başına soru sayıları %2$s sayımına dayanıyor.</string>

@@ -166,8 +166,6 @@ function AsTextToggle({
   return (
     <Button
       aria-pressed={pressed}
-      // From 72rem the outline shows beside the picture, so only an "on" toggle stays, to turn off.
-      className={cn(!pressed && "min-[72rem]:hidden")}
       onClick={() => onChange(!pressed)}
       size="icon-bar"
       variant={pressed ? "secondary" : "ghost"}
@@ -246,25 +244,13 @@ export function MindMapViewer({
           {image && <MindMapDescription id={descriptionId} outline={outline} />}
 
           {image && !asText && (
-            <div className="flex min-h-0 flex-1">
-              <div className="flex min-w-0 flex-1 flex-col">
-                <ZoomFrame
-                  alt={alt}
-                  descriptionId={outline ? descriptionId : undefined}
-                  image={image}
-                  zoom={zoom}
-                />
-              </div>
-
-              {outline && (
-                <aside
-                  aria-hidden="true"
-                  className="border-border hidden w-80 shrink-0 overflow-y-auto border-l px-6 py-6 min-[72rem]:block"
-                  data-slot="mind-map-viewer-outline"
-                >
-                  <MindMapOutline outline={outline} />
-                </aside>
-              )}
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <ZoomFrame
+                alt={alt}
+                descriptionId={outline ? descriptionId : undefined}
+                image={image}
+                zoom={zoom}
+              />
             </div>
           )}
 

@@ -9,7 +9,7 @@
   "mock_break_detail": "fa66b05003c70d083de4b61ac45f07679aa330c6f62df6bdd99de3e3774c1ef5",
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
-  "mock_cell_marked_for_review": "fc6498bbb1af542fccc2f39c0fbad4ebd1de4cbaf33df22189122bb754a34d5e",
+  "mock_cell_flagged": "6aef00e008220edaf2b92c0d5b89b7bdf1e153d110a6883abc5ee055289f35c4",
   "mock_continue": "d484d6987ce9da48a0a05d13206675acecc4674a12e960efe25a96602b7a47e2",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
@@ -29,11 +29,11 @@
   "mock_keep_going": "86acc8ebe29a45bc9263485cc9c11dd3b7e947f55f0bc3ae4b8a37fbc0867bfe",
   "mock_label": "3066dc588bc3f8268b7830f124b64b4c0181cac79a9e7bcf866d2a68c509759e",
   "mock_label_shape": "b7e72d245210fc6353a484f7edb86f7517dedbe101f60c5b0e9df6821e23b218",
-  "mock_left_blank": "e7dc8b1ae9c9d3a0b526e1a2adf22d1ea14fcf2254d115b80006a27a79542f67",
-  "mock_left_blank_and_flagged": "bbd2b295859cc3c8265b84aadf36bf08c5dbb7c42957589ce9f71d633d1cc1a0",
-  "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
-  "mock_left_flagged": "2e46f6e86aa980506bd6f6c819e565cdb515f2751de4b81bacf382c44c987cad",
-  "mock_left_flagged_only": "32ad6a45b5ba4637304f2d69c9aa2c5a37f3cc006e3b92338044b9557f2e76f3",
+  "mock_left_blank": "f0cdffb8f8dd39002dfeb812cd23af7184d1e793b82bfb38a0990f5d6938781f",
+  "mock_left_blank_and_flagged": "15a5cbb74467719d327e880340574161b76b5b67deb94ef8178552a1783d28d8",
+  "mock_left_blank_only": "f8aeb4b5416e71388da551b94ead015a4028341a1d7e597018b3c4c978129135",
+  "mock_left_flagged": "89a7dcbc49dd8202f4fade21b07930d31b154857cefaad3c9aa05a4589c77903",
+  "mock_left_flagged_only": "465fed5fb72bb46d2ff07b6f9fdb5cf02f832a2ab562a61a70fe8604d50c3429",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
@@ -143,20 +143,20 @@
     <string name="mock_moves_must">다음으로 넘어가려면 각 문제에 답하세요.</string>
     <string name="mock_hand_in_mock_title">모의고사를 제출할까요?</string>
     <string name="mock_hand_in_section_title">이 파트를 제출할까요?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
-        <item quantity="other">답하지 않은 문제가 %d개</item>
+        <item quantity="other">빈 문제 %d개</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="other">다시 볼 문제로 표시한 문제가 %d개 있어요</item>
+        <item quantity="other">표시한 문제 %d개</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$s이고 %2$s.</string>
+    <string name="mock_left_blank_and_flagged">%1$s, %2$s입니다.</string>
     <plurals name="mock_left_blank_only">
-        <item quantity="other">답하지 않은 문제가 %d개예요.</item>
+        <item quantity="other">답하지 않은 문제가 %d개 있어요.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="other">다시 볼 문제로 표시한 문제가 %d개 있어요.</item>
+        <item quantity="other">표시한 문제 %d개입니다.</item>
     </plurals>
     <string name="mock_every_answered">모든 문제에 답했어요.</string>
     <string name="mock_essay_blank">에세이 내용이 없어요.</string>
@@ -177,8 +177,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
     <string name="mock_cell_answered">답안 작성 완료</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, 다시 볼 문제로 표시됨</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s (표시)</string>
     <string name="mock_sections">파트</string>
     <string name="mock_section_number">파트 %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

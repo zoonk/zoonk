@@ -1,13 +1,6 @@
 import SwiftUI
 
 enum MockLabels {
-  /// The answer sheet's key for the questions marked for review, with how many there are.
-  static func markedForReview(_ count: Int) -> LocalizedStringResource {
-    count == 0
-      ? LocalizedStringResource("Marked for review", table: "Mock")
-      : LocalizedStringResource("\(count) marked for review", table: "Mock")
-  }
-
   /// How many of the section's questions are answered, beside the answer sheet's title.
   static func answered(_ count: Int) -> LocalizedStringResource {
     count == 0
@@ -105,6 +98,14 @@ enum MockLabels {
 
   static func duration(minutes: Int) -> String {
     studyDuration(minutes: minutes)
+  }
+
+  /// How long learners usually take, to the nearest five minutes, when that's under the time
+  /// limit; the API gives the limit itself when no estimate covers the whole mock (main's
+  /// `usualMinutes`).
+  static func usualMinutes(_ option: MockOption) -> Int? {
+    let rounded = max(5, Int((Double(option.estimatedMinutes) / 5).rounded()) * 5)
+    return option.estimatedMinutes < option.minutes && rounded < option.minutes ? rounded : nil
   }
 
   static func number(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {

@@ -5,6 +5,12 @@ import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -22,10 +28,17 @@ import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
+import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
+import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { PROFILE_QUESTIONS } from "../../profile/questions/profile-question-contract";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
+import {
+  ONBOARDING_QUESTIONS,
+  type OnboardingAnswerInput,
+  type OnboardingStep,
+} from "./onboarding-contract";
 
 /** These goals are in English, whose "you" never marks gender, so the address question stays in Settings. */
 const ENGLISH_PROFILE_STEPS = PROFILE_QUESTIONS.filter((question) => question !== "addressForm");
@@ -102,7 +115,105 @@ async function getSteps(goalId: string) {
   return result.status === "ready" ? result.onboarding.steps : [];
 }
 
+const GOAL_QUESTIONS = ONBOARDING_QUESTIONS.filter((question) => question !== "schedule");
+
+/** The goal's own questions are answered up front, so the rest are these and the questions about the learner. */
+const ANSWERS: Partial<Record<OnboardingStep, OnboardingAnswerInput>> = {
+  buddy: { buddy: { kind: "otto", name: "Octavia" }, question: "buddy" },
+  placement: { question: "placement" },
+  schedule: { dailyMinutes: 120, question: "schedule" },
+};
+
+/** Answers each screen in the order onboarding asks, until the plan. */
+async function answerUntilPlan(goalId: string): Promise<void> {
+  const [step] = await getSteps(goalId);
+
+  if (step === undefined || step === "plan") {
+    return;
+  }
+
+  await answerOnboardingQuestion({
+    goalId,
+    input: ANSWERS[step] ?? { forever: false, question: "skipProfile" },
+  });
+
+  return answerUntilPlan(goalId);
+}
+
+/** Skills of one area and weight, in this order: at 15 minutes a day the exam's month can't hold them all. */
+const SKILL_LESSONS = [25, 15, 25, 15];
+
+async function shortExamFixture(userId: string) {
+  const [goal, chapter, skills] = await Promise.all([
+    goalFixture({
+      dailyMinutes: 15,
+      details: { answered: GOAL_QUESTIONS, placementDeclined: true },
+      kind: "exam",
+      planRevealedAt: null,
+      targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
+      userId,
+    }),
+    libraryChapterFixture({ title: "Life sciences" }),
+    Promise.all(SKILL_LESSONS.map((_, index) => skillFixture({ name: `Skill ${index + 1}` }))),
+  ]);
+
+  await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Exam" }],
+      skills: skills.map((skill, index) => ({
+        area: "Life sciences",
+        lessons: SKILL_LESSONS[index],
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: 5,
+      })),
+    },
+  });
+
+  await Promise.all(
+    skills.flatMap((skill, index) =>
+      Array.from({ length: SKILL_LESSONS[index] ?? 0 }, async (_, position) => {
+        const lesson = await libraryLessonFixture({
+          homeChapterId: chapter.id,
+          title: `${skill.name} lesson ${position + 1}`,
+        });
+
+        await Promise.all([
+          chapterLessonFixture({
+            chapterId: chapter.id,
+            lessonId: lesson.id,
+            position: index * 100 + position,
+          }),
+          lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+        ]);
+      }),
+    ),
+  );
+
+  await refreshGoalPlan({ goalId: goal.id, mode: "forced" });
+  return goal;
+}
+
 describe("onboarding a new goal", () => {
+  it("opens the plan with the lesson written while the learner answered, though the time a day reorders it", async () => {
+    const user = await useLearner();
+    const goal = await shortExamFixture(user.id);
+    const written = await findPlanFirstLessonId({ goalId: goal.id });
+
+    expect(written).toStrictEqual(expect.any(String));
+
+    await prisma.lesson.update({
+      data: { contentStatus: "running" },
+      where: { id: written ?? "" },
+    });
+
+    await answerUntilPlan(goal.id);
+
+    await expect(findPlanFirstLessonId({ goalId: goal.id })).resolves.toBe(written);
+  });
+
   it("does not owe placement from the first level answer while the graph is still empty", async () => {
     const user = await useLearner();
 

@@ -82,7 +82,7 @@ function StringPicker({
               column === 1 && firstFret === 1 && "border-foreground/70 border-r-4",
               column === 1 && firstFret > 1 && "border-viz-grid border-r-2",
               column > 1 && "border-viz-grid border-r-2",
-              "has-focus-visible:ring-ring/60 has-focus-visible:rounded-md has-focus-visible:ring-[3px] has-focus-visible:ring-inset",
+              "has-focus-visible:ring-ring/50 has-focus-visible:rounded-md has-focus-visible:ring-[3px] has-focus-visible:ring-inset",
             )}
             key={fret ?? "muted"}
           >

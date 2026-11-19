@@ -17,7 +17,12 @@ import { type ScreenTurn } from "../components/screen-turn";
 import { useSwipeNavigation } from "../lesson/use-swipe-navigation";
 import { type DeckSlide, type LessonMindMap, findLessonMap } from "./mind-map-deck";
 import { type MindMapReaderHrefs, MindMapReaderMenu } from "./mind-map-reader-menu";
-import { ChapterMapSlide, LessonMapSlide, SlideFrame } from "./mind-map-slides";
+import {
+  ChapterMapSlide,
+  type ChapterMapView,
+  LessonMapSlide,
+  SlideFrame,
+} from "./mind-map-slides";
 import { type ChapterLessons, type LoadLessonMaps, useChapterLessons } from "./use-chapter-lessons";
 
 export type MindMapReaderActions = { lessonMaps: LoadLessonMaps; save: SaveMindMap };
@@ -97,6 +102,8 @@ function Reader({
   const t = useExtracted();
   const body = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState<ReaderPlace>({ index: start, turn: null });
+  // Kept from map to map while the learner studies, so one who reads the text keeps reading it.
+  const [mapView, setMapView] = useState<ChapterMapView>("map");
   const [stored, setStored] = useState<ReadonlyMap<string, boolean>>(new Map());
   const chapters = useChapterLessons({ deck, index: at.index, load: actions.lessonMaps, loaded });
 
@@ -208,7 +215,15 @@ function Reader({
       >
         <SlideFrame key={`${at.index}`} turn={at.turn}>
           {shown.kind === "chapter" && save ? (
-            <ChapterMapSlide save={save} slide={shown} />
+            <ChapterMapSlide
+              onViewChange={(changed) => {
+                setMapView(changed);
+                body.current?.scrollTo({ top: 0 });
+              }}
+              save={save}
+              slide={shown}
+              view={mapView}
+            />
           ) : (
             <LessonMapSlide
               lesson={lesson}

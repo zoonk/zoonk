@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -147,65 +152,95 @@ internal fun mindMapDescription(
 }
 
 /**
- * The map in words under the header that names it: its central idea, its numbered branches, a
- * comparison and the gist.
+ * Main's `MindMapOutline`: the map in words, a section per branch (its number and title, its line
+ * and its points), then the comparison as a table and the gist last. [titled] leads with the map's
+ * own title where nothing above names it.
  */
 @Composable
 internal fun MindMapOutlineText(
     outline: MindMapOutline,
     modifier: Modifier = Modifier,
+    titled: Boolean = false,
 ) {
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
+    val heading = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
+    ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(32.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (titled) Text(outline.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+                Text(outline.centralIdea)
+            }
 
-        outline.branches.forEachIndexed { index, branch ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(
-                    Modifier
-                        .size(24.dp)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.extraSmall),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text("${index + 1}", color = quiet, style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"))
-                }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(branch.title, style = MaterialTheme.typography.titleSmall)
-                    Text(branch.explanation, style = MaterialTheme.typography.bodyMedium)
+            outline.branches.forEachIndexed { index, branch ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(Modifier.semantics(mergeDescendants = true) { heading() }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            "${index + 1}",
+                            Modifier.alignByBaseline().clearAndSetSemantics {},
+                            color = quiet,
+                            style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"),
+                        )
+                        Text(branch.title, Modifier.alignByBaseline(), style = heading)
+                    }
+                    Text(branch.explanation)
                     Points(branch.points)
                 }
             }
-        }
 
-        outline.comparison?.let { comparison ->
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(comparison.title, style = MaterialTheme.typography.titleMedium)
-                comparison.columns.forEach { column ->
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(column.name, style = MaterialTheme.typography.titleSmall)
-                        Points(column.points)
-                    }
+            outline.comparison?.let { comparison ->
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(comparison.title, Modifier.semantics { heading() }, style = heading)
+                    ComparisonTable(comparison.columns.map { it.name to it.points })
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                val inShort = stringResource(R.string.mindmaps_in_short)
+                Text(
+                    buildAnnotatedString {
+                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(inShort) }
+                        append(" ")
+                        append(outline.summary)
+                    },
+                )
+            }
+        }
+    }
+}
+
+/** The things a map sets side by side, a column each, their points row by row. */
+@Composable
+private fun ComparisonTable(columns: List<Pair<String, List<String>>>) {
+    val rows = columns.maxOfOrNull { it.second.size } ?: 0
+    val divider = MaterialTheme.colorScheme.outlineVariant
+
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            columns.forEach { (name, _) ->
+                Text(
+                    name,
+                    Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        }
+        repeat(rows) { row ->
+            HorizontalDivider(color = divider)
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                columns.forEach { (_, points) ->
+                    Text(points.getOrElse(row) { "" }, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
-
-        val inShort = stringResource(R.string.mindmaps_in_short)
-        Text(
-            text =
-                buildAnnotatedString {
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append(inShort) }
-                    append(" ")
-                    append(outline.summary)
-                },
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
 @Composable
 private fun Points(points: List<String>) {
-    val style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val style = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     points.forEach { point ->
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("•", Modifier.clearAndSetSemantics {}, style = style)

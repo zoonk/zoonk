@@ -52,14 +52,15 @@ export function SidebarHeader({ className, ...props }: React.ComponentProps<"div
 }
 
 /**
- * Its last child (the toggle) ends the row. Collapsed, the toggle is all it shows, so the row keeps
- * its height and nothing under it moves.
+ * Its last child (the toggle) ends the row. Collapsed, the toggle hides and the rest draw their
+ * icon-only form in place, so the row keeps its height and nothing under it moves; the sidebar
+ * draws its expand toggle elsewhere (`SidebarFooter`'s first child).
  */
 export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "sidebar-collapsed:*:not-last:hidden flex min-w-0 items-center justify-between gap-1",
+        "sidebar-collapsed:*:last:hidden flex min-w-0 items-center justify-between gap-1",
         className,
       )}
       data-slot="sidebar-header-row"

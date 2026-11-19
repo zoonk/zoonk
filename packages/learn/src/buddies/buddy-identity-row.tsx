@@ -21,7 +21,7 @@ export function BuddyIdentityRow({
   title: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-2.5" data-slot="buddy-identity-row">
+    <div className="flex items-start gap-2.5" data-slot="buddy-identity-row">
       {face}
       <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-1")}>
         {title}

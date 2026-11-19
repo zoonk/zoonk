@@ -9,7 +9,7 @@
   "mock_break_detail": "54c28ede2472defcce1ffe60e752abb0adb118908147837f3384d8f2061e9484",
   "mock_break_time_left": "4b08d9fdb17cd82510a2d45e540379314c39d2baba39acd02a540ab1bf71ae37",
   "mock_cell_answered": "f0ca2d3657366e5906ef6e99479b9bc46899b9a5dd9293d0650da985e685d48e",
-  "mock_cell_marked_for_review": "2e942d7e150fb4982cbd3b60d3897554f5a8b31c023bf0bbc147f39dda1bd1f7",
+  "mock_cell_flagged": "23dbc4bd5534c2969a857ecbccbde629e6a3b49eb5fb9f4353924ccd395463b5",
   "mock_continue": "59ebca15fca625f1f00d1f8da2a052b22b6cc153ff607e777134a05e7f9f8c0f",
   "mock_continue_section": "973f7cae7364368a9e56e5ebf83629345fa5fee7b58d5fbc2da67b66307e2655",
   "mock_essay_blank": "16c1fb57a4e8e1e27c0c000a01eea209c2983ba5c129c7e49fc20c9ed2caaf19",
@@ -29,11 +29,11 @@
   "mock_keep_going": "5de3e8d8b2cff4243c9a63094a70f7cd24b2ffd90ce07053ffd6cb06f6940daa",
   "mock_label": "d1ba71945b457343743bc0e04200f74648fef518e534855ed276652111ccb4a4",
   "mock_label_shape": "a727ea4c5e978c01dfc0085e7fa49b922de1bc555ac2a972e3e4b40cb8abc44a",
-  "mock_left_blank": "7ea161139a5bd53191cdcdcaf74e3c8b0d95759098cc5681125b2b3e10cc7b46",
+  "mock_left_blank": "0a38881343a26c9691e6211ab908889e7cd6e5de207a2f34cd1c425640f5b8e2",
   "mock_left_blank_and_flagged": "f7a8cdbfb3381f4fb7805750f3878556c3e81f7567b9812c160d932fbf46416b",
-  "mock_left_blank_only": "57a917a2bf5757a50b22ef1b1a3ffd3ed16f2dbd3231a988f756d2434b3de535",
-  "mock_left_flagged": "3eb8f1145eaeb75e41f1edb35619ba73df63b787f7dab9d705377d884d6dcb9c",
-  "mock_left_flagged_only": "19f80712d0920d9aaa1fdaebcc321af673da48cffdaee12d32dd664365245db9",
+  "mock_left_blank_only": "4d488296b3530de4db72c5858aa2718011f9268e67fc786b58fb1693320d4700",
+  "mock_left_flagged": "b531fbb9e869aa0ec2a7332aad314cdefba505cc815d75017fa789fd77562d9e",
+  "mock_left_flagged_only": "a1e457b93e70042e4453a3be35441df75fe3c2ae6ea463ee6aa2adbb5a8baa93",
   "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
   "mock_moves_forward_must": "7310517b3ce53cecc567124a4ce0e1d4cfb2ee2a41b539e141ba98ad9257e61c",
   "mock_moves_must": "97ee1542015a3e659628e73406014d59d36f531eb2578d0d14e65066bfb0708b",
@@ -152,29 +152,32 @@
     <string name="mock_moves_must">Odpowiedz na każde pytanie, by przejść dalej.</string>
     <string name="mock_hand_in_mock_title">Oddać egzamin próbny?</string>
     <string name="mock_hand_in_section_title">Oddać tę część?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
-        <item quantity="one">Na %d pytanie nie ma odpowiedzi</item>
-        <item quantity="few">Na %d pytania nie ma odpowiedzi</item>
-        <item quantity="many">Na %d pytań nie ma odpowiedzi</item>
-        <item quantity="other">Na %d pytań nie ma odpowiedzi</item>
+        <item quantity="one">%d pytanie jest puste</item>
+        <item quantity="few">%d pytania są puste</item>
+        <item quantity="many">%d pytań jest pustych</item>
+        <item quantity="other">%d pytania są puste</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="other">%d oznaczono do sprawdzenia</item>
+        <item quantity="one">%d pytanie jest oznaczone</item>
+        <item quantity="few">%d pytania są oznaczone</item>
+        <item quantity="many">%d pytań jest oznaczonych</item>
+        <item quantity="other">%d pytania są oznaczone</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s i %2$s.</string>
     <plurals name="mock_left_blank_only">
-        <item quantity="one">Na %d pytanie nie ma odpowiedzi.</item>
-        <item quantity="few">Na %d pytania nie ma odpowiedzi.</item>
-        <item quantity="many">Na %d pytań nie ma odpowiedzi.</item>
-        <item quantity="other">Na %d pytań nie ma odpowiedzi.</item>
+        <item quantity="one">%d pytanie pozostaje bez odpowiedzi.</item>
+        <item quantity="few">%d pytania pozostają bez odpowiedzi.</item>
+        <item quantity="many">%d pytań pozostaje bez odpowiedzi.</item>
+        <item quantity="other">%d pytań pozostaje bez odpowiedzi.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d pytanie oznaczono do sprawdzenia.</item>
-        <item quantity="few">%d pytania oznaczono do sprawdzenia.</item>
-        <item quantity="many">%d pytań oznaczono do sprawdzenia.</item>
-        <item quantity="other">%d pytania oznaczono do sprawdzenia.</item>
+        <item quantity="one">%d pytanie jest oznaczone.</item>
+        <item quantity="few">%d pytania są oznaczone.</item>
+        <item quantity="many">%d pytań jest oznaczonych.</item>
+        <item quantity="other">%d pytania są oznaczone.</item>
     </plurals>
     <string name="mock_every_answered">Na wszystkie pytania udzielono odpowiedzi.</string>
     <string name="mock_essay_blank">Wypracowanie jest puste.</string>
@@ -201,8 +204,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Pytanie %1$d</string>
     <string name="mock_cell_answered">udzielono odpowiedzi</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, do ponownego sprawdzenia</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">Oznaczono: %1$s</string>
     <string name="mock_sections">Części</string>
     <string name="mock_section_number">Część %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

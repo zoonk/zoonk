@@ -226,9 +226,15 @@ internal fun MindMapRow(
     modifier: Modifier = Modifier,
     saved: Boolean = false,
     numbered: Boolean = true,
+    compact: Boolean = false,
 ) {
     val title = map.rowTitle(place, shown)
-    val status = map.statusLine(place, shown, plus)
+    // Main's list of chapters without a map: a spinner says a map is on its way, and the page says it once; the
+    // lessons a map writes show only where they count toward the free lessons.
+    val status =
+        map.statusLine(place, shown, plus).takeUnless {
+            compact && (shown.onItsWay || (plus && shown == MindMapShown.Available))
+        }
     val supporting = if (place == MindMapPlace.Library && numbered) factsLine(chapterNumber(map.position), status) else status
     val refusedLimit = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
     val retry = limitLifted(refusedLimit)
@@ -250,13 +256,23 @@ internal fun MindMapRow(
                 onClick = rowClick,
                 onLongClickLabel = toggleSave?.let { stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save) },
                 onLongClick = toggleSave?.let { { menu = true } },
-                leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
+                leading = if (compact) null else ({ MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) }),
                 supporting = listRowDescription(if (failed) (chapterNumber(map.position).takeIf { numbered }) else supporting),
                 trailing =
                     if (saved) {
                         ({ SavedMark() })
                     } else if (failed) {
                         null
+                    } else if (compact && shown.onItsWay) {
+                        (
+                            {
+                                CircularProgressIndicator(
+                                    Modifier.size(16.dp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    strokeWidth = 2.dp,
+                                )
+                            }
+                        )
                     } else {
                         rowAction(map, place, shown, local, shownCap, retry, actions)
                     },
@@ -267,7 +283,11 @@ internal fun MindMapRow(
 
         if (failed) {
             Column(
-                Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
+                Modifier.padding(
+                    start = LIST_ITEM_INSET + if (compact) 0.dp else MARK_SIZE + MARK_GAP,
+                    end = LIST_ITEM_INSET,
+                    bottom = 12.dp,
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 status?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
@@ -280,7 +300,11 @@ internal fun MindMapRow(
                     notice,
                     local?.subject ?: LimitSubject.MindMaps,
                     actions.navigate,
-                    Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
+                    Modifier.padding(
+                        start = LIST_ITEM_INSET + if (compact) 0.dp else MARK_SIZE + MARK_GAP,
+                        end = LIST_ITEM_INSET,
+                        bottom = 12.dp,
+                    ),
                 )
             }
         }

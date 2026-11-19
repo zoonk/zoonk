@@ -607,6 +607,7 @@ class PlanViewModelTest {
                 id = null,
                 kind = PlanItem.Kind.LESSON,
                 lessonId = null,
+                lessons = 1L,
                 minutes = 20.0,
                 requiresPlus = false,
                 scheduledFor = null,

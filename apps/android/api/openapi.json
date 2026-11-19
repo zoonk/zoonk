@@ -84770,6 +84770,12 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "lessons": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "How many lessons it holds on its day: 1 for a written lesson, an estimate from its size for a day's share of lessons still being written, 0 for other work"
+                },
                 "minutes": {
                   "nullable": true,
                   "type": "number"
@@ -84801,11 +84807,11 @@
                 },
                 "title": {
                   "type": "string",
-                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
+                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course), or in a language plan the topic's own name"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
+                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, or in a language plan its topic's"
                 }
               },
               "required": [
@@ -84813,6 +84819,7 @@
                 "id",
                 "kind",
                 "lessonId",
+                "lessons",
                 "minutes",
                 "requiresPlus",
                 "scheduledFor",
@@ -86008,6 +86015,12 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "lessons": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "How many lessons it holds on its day: 1 for a written lesson, an estimate from its size for a day's share of lessons still being written, 0 for other work"
+          },
           "minutes": {
             "nullable": true,
             "type": "number"
@@ -86039,11 +86052,11 @@
           },
           "title": {
             "type": "string",
-            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
+            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course), or in a language plan the topic's own name"
           },
           "writing": {
             "type": "boolean",
-            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
+            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, or in a language plan its topic's"
           }
         },
         "required": [
@@ -86051,6 +86064,7 @@
           "id",
           "kind",
           "lessonId",
+          "lessons",
           "minutes",
           "requiresPlus",
           "scheduledFor",
@@ -92696,7 +92710,7 @@
             "items": {
               "$ref": "#/components/schemas/PlanDay"
             },
-            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days is listed on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items"
+            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, a written lesson split across days is listed on its first day, and lessons still being written are listed on every day they fill. A day with time but nothing left to list isn't included; a rest day is, with no items"
           },
           "today": {
             "$ref": "#/components/schemas/StudyDay"
