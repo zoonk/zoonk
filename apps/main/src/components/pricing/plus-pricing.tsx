@@ -4,6 +4,7 @@ import {
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
 import { PageStartMark } from "@/components/public/page-start";
+import { PublicQuestions } from "@/components/public/public-questions";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -20,7 +21,7 @@ import { ForViewer } from "./for-viewer";
 import { FreePlan } from "./free-plan";
 import { PLAN_CARD_CLASS } from "./plan-includes";
 import { type BillingPeriod, PlusLoginLink, PlusPlan, type PlusViewerState } from "./plus-plan";
-import { PlusQuestions } from "./plus-questions";
+import { PlusQuestionItems, PlusQuestions } from "./plus-questions";
 
 export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "description" | "title">> {
   const t = await getExtracted();
@@ -93,6 +94,8 @@ export function PricingPlans({
 
 const PLUS_PRICING_CLASS = "@container flex max-w-5xl flex-col gap-7";
 
+const PRICING_QUESTIONS_ID = "pricing-questions";
+
 function PlanCardSkeleton() {
   return (
     <div className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "gap-4")}>
@@ -111,12 +114,9 @@ function PlanCardSkeleton() {
 
 export function PricingQuestions() {
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-14 sm:pt-20 lg:pt-24")}>
-      <PlusQuestions
-        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-baseline lg:gap-12"
-        titleClassName="text-section"
-      />
-    </div>
+    <PublicQuestions id={PRICING_QUESTIONS_ID}>
+      <PlusQuestionItems />
+    </PublicQuestions>
   );
 }
 

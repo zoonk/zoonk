@@ -1,10 +1,9 @@
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
 } from "@/components/public/public-disclosure";
-import { QuestionsHeading } from "@/components/public/questions-heading";
+import { PublicQuestions } from "@/components/public/public-questions";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -97,30 +96,12 @@ export async function HomeFaq() {
   ];
 
   return (
-    <section aria-labelledby={TITLE_ID}>
-      <div
-        className={cn(
-          PUBLIC_CONTAINER_CLASS,
-          "grid grid-cols-1 gap-8 py-26 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20 lg:py-36",
-        )}
-      >
-        <div>
-          <QuestionsHeading id={TITLE_ID} lineClassName="mt-3.5" titleClassName="text-headline" />
-        </div>
-
-        <div className="border-b">
-          {questions.map((item, index) => (
-            <PublicDisclosure
-              className="border-t"
-              key={item.id}
-              open={index === 0}
-              summary={item.question}
-            >
-              <p className={cn(DISCLOSURE_ANSWER_CLASS, "pr-9")}>{item.answer}</p>
-            </PublicDisclosure>
-          ))}
-        </div>
-      </div>
-    </section>
+    <PublicQuestions id={TITLE_ID}>
+      {questions.map((item, index) => (
+        <PublicDisclosure key={item.id} open={index === 0} summary={item.question}>
+          <p className={cn(DISCLOSURE_ANSWER_CLASS, "pr-9")}>{item.answer}</p>
+        </PublicDisclosure>
+      ))}
+    </PublicQuestions>
   );
 }
