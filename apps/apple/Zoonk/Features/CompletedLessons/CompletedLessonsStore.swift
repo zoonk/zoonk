@@ -11,27 +11,58 @@ struct CompletedLesson: Equatable, Identifiable, Sendable {
   var id: String { lessonId }
 }
 
+struct CompletedLessonGroup: Equatable, Identifiable, Sendable {
+  /// Names the group when the list is asked for its lessons alone.
+  let key: String
+  let name: String
+  let lessons: Int
+
+  var id: String { key }
+}
+
+/// What a goal's list narrows to: the plan's groups that have completed lessons, the one with the
+/// most first. The same whichever group is shown.
+struct CompletedLessonsFilter: Equatable, Sendable {
+  enum Kind: Sendable {
+    case subjects, modules, phases
+  }
+
+  let groups: [CompletedLessonGroup]
+  let kind: Kind
+  /// Every completed lesson, in a group or not.
+  let total: Int
+}
+
 struct CompletedLessonsPage: Equatable, Sendable {
   var lessons: [CompletedLesson]
   var nextCursor: String?
+  /// Nil while the list is short enough to read whole, or has lessons of fewer than two groups.
+  var filter: CompletedLessonsFilter?
+}
+
+/// A goal's completed lessons, or only those of one of its plan's groups.
+struct CompletedLessonsQuery: Hashable, Sendable {
+  let goalId: String
+  var group: String?
 }
 
 @MainActor
 @Observable
 final class CompletedLessonsStore {
-  private(set) var loadMoreFailures: [String: APIError] = [:]
+  private(set) var loadMoreFailures: [CompletedLessonsQuery: APIError] = [:]
 
   @ObservationIgnored private let api: any CompletedLessonsAPIClient
   @ObservationIgnored private let cache: AppCache
-  @ObservationIgnored private var lists: [String: Resource<CompletedLessonsPage>] = [:]
+  @ObservationIgnored private var lists: [CompletedLessonsQuery: Resource<CompletedLessonsPage>] =
+    [:]
 
   init(api: any CompletedLessonsAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
   }
 
-  func lessons(goalId: String) -> Resource<CompletedLessonsPage> {
-    if let list = lists[goalId] {
+  func lessons(_ query: CompletedLessonsQuery) -> Resource<CompletedLessonsPage> {
+    if let list = lists[query] {
       return list
     }
 
@@ -43,17 +74,17 @@ final class CompletedLessonsStore {
         return nil
       }
 
-      return try await api.list(token: session.bearerToken, goalId: goalId, cursor: nil)
+      return try await api.list(token: session.bearerToken, query: query, cursor: nil)
     }
 
-    lists[goalId] = list
+    lists[query] = list
     return list
   }
 
   /// A replay moves its lesson to the top and shifts the pages after it, so a lesson already shown
   /// isn't added again; that also makes a second load of the same page harmless.
-  func loadMore(goalId: String) async {
-    let resource = lessons(goalId: goalId)
+  func loadMore(_ query: CompletedLessonsQuery) async {
+    let resource = lessons(query)
 
     guard case .loaded(let page) = resource.state, let cursor = page.nextCursor,
       let session = cache.session.authenticatedSession
@@ -62,10 +93,10 @@ final class CompletedLessonsStore {
     }
 
     let revision = resource.revision
-    loadMoreFailures[goalId] = nil
+    loadMoreFailures[query] = nil
 
     do {
-      let next = try await api.list(token: session.bearerToken, goalId: goalId, cursor: cursor)
+      let next = try await api.list(token: session.bearerToken, query: query, cursor: cursor)
 
       guard resource.revision == revision else {
         return
@@ -76,7 +107,7 @@ final class CompletedLessonsStore {
 
         return CompletedLessonsPage(
           lessons: current.lessons + next.lessons.filter { shown.insert($0.lessonId).inserted },
-          nextCursor: next.nextCursor)
+          nextCursor: next.nextCursor, filter: next.filter)
       }
     } catch APIError.unauthorized {
       await cache.session.expire(session)
@@ -85,22 +116,25 @@ final class CompletedLessonsStore {
         return
       }
 
-      loadMoreFailures[goalId] = error as? APIError ?? .unavailable
+      loadMoreFailures[query] = error as? APIError ?? .unavailable
     }
   }
 }
 
 protocol CompletedLessonsAPIClient: Sendable {
-  func list(token: String, goalId: String, cursor: String?) async throws -> CompletedLessonsPage
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+    -> CompletedLessonsPage
 }
 
 struct CompletedLessonsAPI: CompletedLessonsAPIClient {
   let clients: APIClientFactory
 
-  func list(token: String, goalId: String, cursor: String?) async throws -> CompletedLessonsPage {
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+    -> CompletedLessonsPage
+  {
     try await clients.perform(token: token) { client in
       switch try await client.listCurrentUserCompletedLessons(
-        query: .init(goalId: goalId, cursor: cursor))
+        query: .init(goalId: query.goalId, group: query.group, cursor: cursor))
       {
       case .ok(let response):
         let list = try response.body.json
@@ -111,7 +145,21 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
               lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle,
               finishedOn: lesson.finishedOn)
           },
-          nextCursor: list.pagination.nextCursor)
+          nextCursor: list.pagination.nextCursor,
+          filter: list.filter.map { filter in
+            CompletedLessonsFilter(
+              groups: filter.groups.map { group in
+                CompletedLessonGroup(key: group.key, name: group.name, lessons: group.lessons)
+              },
+              kind: {
+                switch filter.kind {
+                case .subjects: .subjects
+                case .modules: .modules
+                case .phases: .phases
+                }
+              }(),
+              total: filter.total)
+          })
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
