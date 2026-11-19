@@ -84770,6 +84770,12 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "lessons": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "How many lessons it holds on its day: 1 for a written lesson, an estimate from its size for a day's share of lessons still being written, 0 for other work"
+                },
                 "minutes": {
                   "nullable": true,
                   "type": "number"
@@ -84813,6 +84819,7 @@
                 "id",
                 "kind",
                 "lessonId",
+                "lessons",
                 "minutes",
                 "requiresPlus",
                 "scheduledFor",
@@ -86008,6 +86015,12 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "lessons": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "How many lessons it holds on its day: 1 for a written lesson, an estimate from its size for a day's share of lessons still being written, 0 for other work"
+          },
           "minutes": {
             "nullable": true,
             "type": "number"
@@ -86051,6 +86064,7 @@
           "id",
           "kind",
           "lessonId",
+          "lessons",
           "minutes",
           "requiresPlus",
           "scheduledFor",

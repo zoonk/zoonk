@@ -8,6 +8,7 @@ function lesson(id: string, extra: Partial<PlanItemView> = {}): PlanItemView {
     id,
     kind: "lesson",
     lessonId: `lesson-${id}`,
+    lessons: 1,
     minutes: 5,
     requiresPlus: false,
     scheduledFor: null,
@@ -98,7 +99,13 @@ describe(composeRevealDays, () => {
     const written = lesson("greetings", { minutes: 3 });
 
     const unwritten = (minutes: number) =>
-      lesson("moreGreetings", { lessonId: null, minutes, skillId: "greetings", writing: true });
+      lesson("moreGreetings", {
+        lessonId: null,
+        lessons: 2,
+        minutes,
+        skillId: "greetings",
+        writing: true,
+      });
 
     const days = [
       day("2026-11-19", [written]),

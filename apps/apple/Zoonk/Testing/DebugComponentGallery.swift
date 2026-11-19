@@ -585,8 +585,10 @@
   /// several lessons and a rest day.
   private struct FirstWeek: View {
     private static let days: [RevealDay] = {
-      let lesson = #"{"kind": "lesson", "lessonId": "l", "status": "pending", "title": "%@"}"#
-      let review = #"{"kind": "review", "lessonId": null, "status": "pending", "title": ""}"#
+      let lesson =
+        #"{"kind": "lesson", "lessonId": "l", "lessons": 1, "status": "pending", "title": "%@"}"#
+      let review =
+        #"{"kind": "review", "lessonId": null, "lessons": 0, "status": "pending", "title": ""}"#
       let day = { (date: String, items: [String]) in
         #"{"date": "\#(date)", "minutes": 30, "items": [\#(items.joined(separator: ","))]}"#
       }

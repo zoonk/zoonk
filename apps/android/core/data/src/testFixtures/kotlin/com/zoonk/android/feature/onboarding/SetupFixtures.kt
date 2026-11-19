@@ -319,7 +319,7 @@ fun revealDaysOf(): String {
             val entries =
                 items.mapIndexed { position, (kind, title) ->
                     """{"chapterId":null,"id":null,"kind":"$kind","lessonId":"019a482c-6a00-7000-8000-0000000002$index$position",
-          "minutes":6,"requiresPlus":false,"scheduledFor":"$date","skillId":null,"status":"todo","title":"$title","writing":false}"""
+          "lessons":${if (kind == "lesson") 1 else 0},"minutes":6,"requiresPlus":false,"scheduledFor":"$date","skillId":null,"status":"todo","title":"$title","writing":false}"""
                 }
             """{"date":"$date","items":${entries.joinToString(",", "[", "]")},"minutes":${items.size * 6},"mockFunding":null,
           "state":"${if (index == 0) "today" else "upcoming"}"}"""

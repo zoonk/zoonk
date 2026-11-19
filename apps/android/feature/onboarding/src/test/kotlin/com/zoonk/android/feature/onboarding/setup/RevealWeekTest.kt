@@ -33,6 +33,7 @@ class RevealWeekTest {
                     id = null,
                     kind = PlanItem.Kind.LESSON,
                     lessonId = null,
+                    lessons = 1L,
                     minutes = null,
                     requiresPlus = false,
                     scheduledFor = null,

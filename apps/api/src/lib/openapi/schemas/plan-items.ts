@@ -15,6 +15,13 @@ export const planItemSchema = z
       }),
     kind: z.enum(PlanItemKind),
     lessonId: uuidSchema().nullable(),
+    lessons: z
+      .int()
+      .nonnegative()
+      .meta({
+        description:
+          "How many lessons it holds on its day: 1 for a written lesson, an estimate from its size for a day's share of lessons still being written, 0 for other work",
+      }),
     minutes: z.number().nullable(),
     requiresPlus: z
       .boolean()

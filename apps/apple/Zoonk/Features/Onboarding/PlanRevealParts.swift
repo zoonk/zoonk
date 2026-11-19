@@ -393,7 +393,7 @@ struct RevealWeek: View {
   }
 
   private func summary(_ day: RevealDay) -> some View {
-    let lessons = day.items.filter(\.isTeaching).count
+    let lessons = day.items.reduce(0) { $0 + $1.lessons }
     var others: [String] = []
 
     for item in day.items where !item.isTeaching && !others.contains(item.revealTitle) {

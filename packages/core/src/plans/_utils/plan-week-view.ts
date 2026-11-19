@@ -8,20 +8,36 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
-import { isWritingItem } from "../planner/plan-item-rules";
+import { LEARN_KINDS, isWritingItem } from "../planner/plan-item-rules";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";
 
+/** A written lesson is one; lessons still to be written count the day's share of their size. */
+function countDayLessons({ item, onDay }: { item: PlanReadItem; onDay: PlanReadItem }): number {
+  if (!LEARN_KINDS.has(item.kind)) {
+    return 0;
+  }
+
+  if (item.lessonId !== null || !item.minutes || !onDay.minutes) {
+    return 1;
+  }
+
+  const share = onDay.minutes / item.minutes;
+  return Math.max(1, Math.round(Math.max(1, item.lessons ?? 1) * share));
+}
+
 function toPlanItemView({
   access,
   item,
+  lessons,
   skillAreas,
 }: {
   access: Pick<PlanView["access"], "mocksRequirePlus">;
   item: PlanReadItem;
+  lessons: number;
   skillAreas: SkillAreas;
 }): PlanItemView {
   const itemMinutes = item.minutes;
@@ -32,6 +48,7 @@ function toPlanItemView({
     id: item.id,
     kind: item.kind,
     lessonId: item.lessonId,
+    lessons,
     minutes: itemMinutes === null || itemMinutes === undefined ? null : Math.round(itemMinutes),
     requiresPlus: item.kind === "mock" && access.mocksRequirePlus,
     scheduledFor: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
@@ -105,9 +122,20 @@ function buildPlanDays({
     const date = addDays(from, offset);
     const day = toIsoDate(date);
 
-    const dayItems = items
-      .flatMap((item) => projectSavedAllocationOn({ date, item }) ?? [])
-      .map((item) => toPlanItemView({ access, item, skillAreas }));
+    const dayItems = items.flatMap((item) => {
+      const onDay = projectSavedAllocationOn({ date, item });
+
+      return onDay
+        ? [
+            toPlanItemView({
+              access,
+              item: onDay,
+              lessons: countDayLessons({ item, onDay }),
+              skillAreas,
+            }),
+          ]
+        : [];
+    });
 
     const dayMinutes =
       date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, overflow, targetDate });
@@ -173,7 +201,11 @@ export function buildFundedMocksView({
       }
 
       return [
-        { ...toPlanItemView({ access, item, skillAreas }), id: item.id, minutes: ledger.minutes },
+        {
+          ...toPlanItemView({ access, item, lessons: 0, skillAreas }),
+          id: item.id,
+          minutes: ledger.minutes,
+        },
       ];
     })
     .toSorted((a, b) => (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? ""));

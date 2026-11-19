@@ -301,7 +301,7 @@ internal fun RevealWeek(days: List<PlanDay>) {
         )
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             days.forEachIndexed { index, day ->
-                val lessons = day.items.count { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
+                val lessons = day.items.sumOf { it.lessons.toInt() }
                 val others =
                     day.items
                         .filterNot {
