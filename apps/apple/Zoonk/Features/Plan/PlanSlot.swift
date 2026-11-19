@@ -269,9 +269,10 @@ struct PlanSuggestionSection: View {
       header(
         choiceTitle(choice), icon: SuggestionMark(kind: .symbol("signpost.right")))
     } else {
-      header(
-        Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied"),
-        icon: StatusMark(status: .done))
+      // Main's "Plan updated" heads the card on its own, with no mark.
+      Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied")
+        .typeStyle(.body.weight(.semibold))
+        .accessibilityFocused($focus, equals: .item)
     }
 
     Text(sentence)
@@ -316,7 +317,7 @@ struct PlanSuggestionSection: View {
   }
 
   private func undoButton(_ answer: PlanSlotAnswer) -> some View {
-    Button {
+    BusyButton(isBusy: answer.editor.isSaving, icon: .undo) {
       answer.editor.run {
         await answer.editor.undo()
         // A failed Undo gets the whole moment again, so there's time to try once more.
