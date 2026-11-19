@@ -566,7 +566,9 @@ struct PlanSyllabusSection: View {
 }
 
 /// Main's `PlanChoiceLine`: one sentence naming what the plan follows, with Change inline.
-private struct PlanChoiceLine: View {
+/// Main's `PlanChoiceLine`: which option of an exam's choice the plan follows, with Change as a
+/// link at its end.
+struct PlanChoiceLine: View {
   let line: String
   let change: () -> Void
 

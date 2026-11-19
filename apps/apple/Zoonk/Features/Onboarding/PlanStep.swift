@@ -420,40 +420,6 @@ private struct RevealNoticeDay: View {
   }
 }
 
-/// Main's `PlanChoiceLines`: which option of each exam choice the plan follows. An unpicked choice
-/// is the plan suggestion's to ask.
-private struct RevealExamChoices: View {
-  let plan: GoalPlan
-  let change: (_ group: String) -> Void
-
-  var body: some View {
-    ForEach(plan.examChoices) { choice in
-      if let line = choice.followingLine {
-        // One sentence with the change inline, as main's: "Foreign language: Inglês · Change".
-        Button {
-          change(choice.group)
-        } label: {
-          Text("\(lineLabel(line))\(changeLabel)")
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .buttonStyle(.plain)
-      }
-    }
-  }
-
-  private func lineLabel(_ line: String) -> Text {
-    Text(verbatim: "\(line)\u{00A0}· ").foregroundStyle(.mutedForeground)
-  }
-
-  private var changeLabel: Text {
-    Text(
-      "Change", tableName: "Plan",
-      comment: "Opens the plan's settings to change the option of an exam's choice it follows"
-    )
-    .foregroundStyle(.foreground)
-  }
-}
-
 /// Main's `NoticeReading`; `lastEdition` while the next edition's documents aren't out, so the plan
 /// follows the last one's.
 struct NoticeReadingView: View {
@@ -634,7 +600,11 @@ private struct PlanReveal: View {
       VStack(alignment: .leading, spacing: 20) {
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
         coverage
-        RevealExamChoices(plan: plan) { adjusting = .choice($0) }
+        ForEach(plan.examChoices) { choice in
+          if let line = choice.followingLine {
+            PlanChoiceLine(line: line) { adjusting = .choice(choice.group) }
+          }
+        }
       }
       .listRowBackground(Color.clear)
     } header: {
