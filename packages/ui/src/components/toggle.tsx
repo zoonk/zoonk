@@ -15,6 +15,10 @@ const toggleVariants = cva(
         sm: "h-8 min-w-8 px-3",
       },
       variant: {
+        // One of a fixed set that is always all on screen (a week's days): off is the bare, faint
+        // label and on the pick's tile, so on and off are told apart without reading. More contrast
+        // gives both their line.
+        cell: "text-faint contrast-more:border-input border border-transparent bg-transparent",
         default: "bg-transparent",
         // Off, a line and a quiet label; on, the pick's fill takes the line's place.
         outline:

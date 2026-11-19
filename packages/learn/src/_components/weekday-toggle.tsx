@@ -59,7 +59,7 @@ export function WeekdayToggle({
   const formatWeekday = useFormatWeekday();
 
   return (
-    <Toggle className="h-control min-w-0 px-0 capitalize" variant="outline" {...props}>
+    <Toggle className="h-control min-w-0 px-0 capitalize" variant="cell" {...props}>
       <span className="shrink-0 whitespace-nowrap" data-slot="weekday-label">
         {formatWeekday(weekday, "short")}
       </span>
