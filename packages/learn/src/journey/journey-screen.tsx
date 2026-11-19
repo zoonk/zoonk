@@ -31,7 +31,6 @@ import { GoalMenuDialogs, type GoalStatusControl, useGoalMenu } from "./goal-act
 import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
-import { NextOnPath } from "./next-on-path";
 import { PlanHeader, usePlanDaysLeft } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
@@ -146,8 +145,6 @@ function JourneyBody({
             <PageHasMainAction value={hasMainAction}>
               <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             </PageHasMainAction>
-            {/* Without subjects the path is in the column beside it, already saying what's next. */}
-            {structure && !paused && <NextOnPath links={links} />}
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>

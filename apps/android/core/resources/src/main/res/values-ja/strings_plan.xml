@@ -310,7 +310,6 @@
   "plan_mock_exam": "a18d43d4b68a1343dd89d50210cae62f31a0d0b6f82485e792bccb054c8478db",
   "plan_mock_exams": "9dd5c6956f1ca2e7926b4039154a2c11bf8c49356f1268ea23c64adc7ec10f6c",
   "plan_mock_exams_count": "b5d410c915a0afbaccc60090642ad8610808c1f0cd5f124b0b70aca2f11a0578",
-  "plan_mocks_before_next_exam": "0f58cb9acef56ad4530bc1f6e97abf26f6be46bc04a26780e10641d1533ce63a",
   "plan_mocks_every_weeks": "4dbfe5dd8b9f80659c1db709e972f280fea1b676db73c26964ea0b1f57edcde5",
   "plan_mocks_next": "e26c198fda06cbf5343a2ac9f13574b3e9b534456029fdaee61180afc3ac9cff",
   "plan_mondays": "e41f4c27d5c637606736d98534f3196c540ad140796c30d97d8f3a8b4f0874bf",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "e959a085e6c0ae252a094cecc262d69e5cc6a15f695bfa3485c27f7dd496d883",
   "plan_next": "112662a7e6170fc510b86a399e6390db798b3f22b6003d0d524434f4566b2da5",
   "plan_next_keep_going": "4befaf1a93b19a07388cf6e7b797131a1fdf263ad37981c8a9ccaf38282f52d2",
-  "plan_next_on_path": "641ab63f5fb143965c6fe57342a6c69c19fcd209993b09769f265e68f3d9b828",
   "plan_next_past_share": "dfa14f3dd120c03080206a9aef2875eea924009583f7aebf9a2c279ad3285173",
   "plan_next_review_every_topic": "8e08bff682d805785e9eae68a94eafd907f0b68a70863ffeee7241c406818d33",
   "plan_next_review_forgetting": "716a947a53f9e8c7cb16375806eed983d85d1da8f193988323dd905968920454",
@@ -676,13 +674,9 @@
         <item quantity="other">%d回の模試</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="other">%1$d回の模試を次の試験日（%2$s）までに予定しています</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="other">%1$d / %2$dレッスン</item>
     </plurals>
-    <string name="plan_next_on_path">次のステップ</string>
     <string name="plan_date_to_be_confirmed">日程未定</string>
     <string name="plan_more">多い</string>
     <string name="plan_mind_maps">マインドマップ</string>

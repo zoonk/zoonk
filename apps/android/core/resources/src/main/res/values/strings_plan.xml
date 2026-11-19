@@ -152,16 +152,11 @@
         <item quantity="other">%d mock exams</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d mock exam before your next exam date, %2$s</item>
-        <item quantity="other">%1$d mock exams before your next exam date, %2$s</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d of %2$d lesson</item>
         <item quantity="other">%1$d of %2$d lessons</item>
     </plurals>
 
-    <string name="plan_next_on_path">Next on your path</string>
     <string name="plan_date_to_be_confirmed">Date to be confirmed</string>
     <string name="plan_more">More</string>
     <string name="plan_mind_maps">Mind maps</string>

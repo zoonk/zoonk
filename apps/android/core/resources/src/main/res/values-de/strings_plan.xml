@@ -310,7 +310,6 @@
   "plan_mock_exam": "125cdfb703981466dc7f5774f9d78a15b97cf80999546adfc5d4a69c4af40232",
   "plan_mock_exams": "3f1b1d86a76d1f5e70131fb01f3c2d5e107083560ea6edbfca6376c00c0d4f75",
   "plan_mock_exams_count": "2296af998315a421e3ba3823a04bac077f55198f779231549423bd3b23dd2074",
-  "plan_mocks_before_next_exam": "29edced7f0b61e7ede42b8d453b2fd6a521bc8c59881b6d81bd039c1d4046cb0",
   "plan_mocks_every_weeks": "e68319afad9aae291101fdef43db46e8cf76580cd0eed20610918b0872cd95c8",
   "plan_mocks_next": "91a8383a61c0694b783f4c4f0a2e4fb6d430670e5ff9a8afbc0b95b378a07b8d",
   "plan_mondays": "d80f854b697e88e65576561f1cb35efcc3e195d771a4d1296a4de10e5f6e4585",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "2bc11699a96f1d082a729e7a0bcd4628b030dacab9d0fbacb975b1c0ea63ec83",
   "plan_next": "27f094353bf05411a58968d3d6f5c7fb5c847a08c17d29405856c643cb5b1266",
   "plan_next_keep_going": "d3f970d03771c2fe478451f00f12738b7a60794dbe262712e572f72a2b956596",
-  "plan_next_on_path": "8378ba2f72cc63f0f08f21e02bf616b5c4c67a8b2bea3d673904a3c31f1219f0",
   "plan_next_past_share": "863745fa9bb1e06831b71ae04419d698ef204f4febc5079bc462dac78ea0e5db",
   "plan_next_review_every_topic": "573556bb4b2e72424ab2fce076564c7777f477188863cc9da08f6b9dc5947b90",
   "plan_next_review_forgetting": "3d54e1f7e2748f3b9fb23834b1a6e3ab7f756e33cb9ae52fbb29124052385ec3",
@@ -688,15 +686,10 @@
         <item quantity="other">%d Probeprüfungen</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d Probeprüfung vor deinem nächsten Prüfungstermin am %2$s</item>
-        <item quantity="other">%1$d Probeprüfungen vor deinem nächsten Prüfungstermin am %2$s</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d von %2$d Lektion</item>
         <item quantity="other">%1$d von %2$d Lektionen</item>
     </plurals>
-    <string name="plan_next_on_path">Als Nächstes auf deinem Weg</string>
     <string name="plan_date_to_be_confirmed">Datum noch offen</string>
     <string name="plan_more">Mehr</string>
     <string name="plan_mind_maps">Mindmaps</string>

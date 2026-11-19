@@ -197,7 +197,6 @@ private struct PlanSetupLeft: View {
 
 private struct PlanContent: View {
   @Environment(\.stacksContent) private var isStacked
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
@@ -263,7 +262,6 @@ private struct PlanContent: View {
           }
           BlockGridSection {
             PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
-            if structure != nil { NextOnPathSection(context: context) }
             PlanMoreSection(goal: goal)
           }
         }
@@ -277,21 +275,7 @@ private struct PlanContent: View {
           PlanSuggestionSection(context: context, answer: $slotAnswer)
           structureSections(context: context, structure: structure, namesChoices: true)
 
-          // What's next shows only where no path does: a path's next row is already its highlighted
-          // one. Main's tablet column puts it beside the other places.
-          if horizontalSizeClass == .regular {
-            BlockGridSection {
-              if structure != nil {
-                NextOnPathSection(context: context)
-              }
-              PlanSettingsSection(context: context)
-            }
-          } else {
-            if structure != nil {
-              NextOnPathSection(context: context)
-            }
-            PlanSettingsSection(context: context)
-          }
+          PlanSettingsSection(context: context)
 
           PlanMoreSection(goal: goal)
         }
