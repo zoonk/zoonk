@@ -25,13 +25,7 @@ import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark, NoGoalMark } from "./goal-mark";
-import {
-  GOAL_ROW_CLASS,
-  type GoalKind,
-  MENU_ROW_CLASS,
-  type WaitingGoal,
-  WaitingOption,
-} from "./goal-menu-row";
+import { type GoalKind, type WaitingGoal, WaitingOption } from "./goal-menu-row";
 import { hasNothingToSwitch } from "./goal-switch-options";
 import { MakeRoomSheet, type WaitingStart, useMakeRoom } from "./make-room-sheet";
 
@@ -119,11 +113,9 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   );
 }
 
-const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-medium";
-
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
-    <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
+    <DropdownMenuRadioItem closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col text-pretty">
         <span>
@@ -138,10 +130,7 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
 
 function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string }) {
   return (
-    <DropdownMenuItem
-      className={cn(MENU_ROW_CLASS, "items-start py-2 pr-2")}
-      render={<LearnLink href={href} />}
-    >
+    <DropdownMenuItem className="items-start" render={<LearnLink href={href} />}>
       <LineMarker aria-hidden="true">
         <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
       </LineMarker>
@@ -259,10 +248,10 @@ export function GoalSwitcher({
           <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)] p-1.5">
+        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)]">
           {hasGoalOptions && (
             <DropdownMenuGroup>
-              <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("Your goals")}</DropdownMenuLabel>
 
               <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
                 {followed.map((goal) => (
@@ -294,10 +283,8 @@ export function GoalSwitcher({
 
           {explanations.length > 0 && (
             <DropdownMenuGroup>
-              {hasGoalOptions && <DropdownMenuSeparator className="-mx-1.5" />}
-              <DropdownMenuLabel className={MENU_LABEL_CLASS}>
-                {t("Quick explanations")}
-              </DropdownMenuLabel>
+              {hasGoalOptions && <DropdownMenuSeparator />}
+              <DropdownMenuLabel>{t("Quick explanations")}</DropdownMenuLabel>
 
               {explanations.map((goal) => (
                 <ExplanationOption
@@ -309,20 +296,14 @@ export function GoalSwitcher({
             </DropdownMenuGroup>
           )}
 
-          <DropdownMenuSeparator className="-mx-1.5" />
+          <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            className={cn(MENU_ROW_CLASS, "pr-2")}
-            render={<LearnLink href={newGoalHref} />}
-          >
+          <DropdownMenuItem render={<LearnLink href={newGoalHref} />}>
             <PlusIcon aria-hidden="true" className="text-muted-foreground" />
             {t("New goal")}
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className={cn(MENU_ROW_CLASS, "pr-2")}
-            render={<LearnLink href={exploreHref} />}
-          >
+          <DropdownMenuItem render={<LearnLink href={exploreHref} />}>
             <LayoutGridIcon aria-hidden="true" className="text-muted-foreground" />
             {t("Explore courses")}
           </DropdownMenuItem>

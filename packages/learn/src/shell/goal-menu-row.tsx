@@ -1,17 +1,12 @@
 "use client";
 
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "./goal-mark";
 
 export type GoalKind = "exam" | "explain" | "language" | "learn";
-
-export const MENU_ROW_CLASS = "rounded-lg pl-2 text-compact pointer-fine:min-h-9";
-
-export const GOAL_ROW_CLASS = cn(MENU_ROW_CLASS, "gap-2.5 py-1.5");
 
 export type WaitingGoal = {
   id: string;
@@ -61,27 +56,17 @@ export function WaitingOption({
   );
 
   if (goal.locked && onMakeRoom) {
-    return (
-      <DropdownMenuItem className={GOAL_ROW_CLASS} onClick={onMakeRoom}>
-        {content}
-      </DropdownMenuItem>
-    );
+    return <DropdownMenuItem onClick={onMakeRoom}>{content}</DropdownMenuItem>;
   }
 
   if (goal.locked) {
     return (
-      <DropdownMenuItem className={GOAL_ROW_CLASS} render={<LearnLink href={routes.signUp} />}>
-        {content}
-      </DropdownMenuItem>
+      <DropdownMenuItem render={<LearnLink href={routes.signUp} />}>{content}</DropdownMenuItem>
     );
   }
 
   return (
-    <DropdownMenuItem
-      className={GOAL_ROW_CLASS}
-      disabled={isStarting}
-      onClick={() => onStart(goal.id)}
-    >
+    <DropdownMenuItem disabled={isStarting} onClick={() => onStart(goal.id)}>
       {content}
     </DropdownMenuItem>
   );
