@@ -9,17 +9,13 @@ import { useExtracted } from "next-intl";
 export function useExamQuestionCount() {
   const t = useExtracted();
 
-  return (count: number, fromPastExams = false) =>
-    fromPastExams
-      ? t("{count, plural, one {# question from past exams} other {# questions from past exams}}", {
-          count,
-        })
-      : t({
-          description: "The number of questions in an exam or a mock exam.",
-          id: "examQuestionCount",
-          message: "{count, plural, one {# question} other {# questions}}",
-          values: { count },
-        });
+  return (count: number) =>
+    t({
+      description: "The number of questions in an exam or a mock exam.",
+      id: "examQuestionCount",
+      message: "{count, plural, one {# question} other {# questions}}",
+      values: { count },
+    });
 }
 
 export function useExamQuestionsLabel() {

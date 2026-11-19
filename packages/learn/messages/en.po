@@ -3755,11 +3755,6 @@ msgctxt "gemtGt"
 msgid "Your goal: {target}"
 msgstr "Your goal: {target}"
 
-#: src/exam/use-exam-question-count.ts
-msgctxt "vZpDIe"
-msgid "{count, plural, one {# question from past exams} other {# questions from past exams}}"
-msgstr "{count, plural, one {# question from past exams} other {# questions from past exams}}"
-
 #. The number of questions in an exam or a mock exam.
 #: src/exam/use-exam-question-count.ts
 msgctxt "examQuestionCount"
