@@ -57,21 +57,27 @@ import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.FeedbackNote
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
@@ -395,15 +401,22 @@ fun LessonCompletionView(
         doneWhenSplit = { state.lessonMap?.let { LessonEndMap(it) } },
         next = {
             completion.result?.planReveal?.let { reveal ->
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.onboarding_whats_next), style = MaterialTheme.typography.labelLarge)
-                    Text(
-                        stringResource(
-                            if (reveal.planReady) R.string.onboarding_your_plan_ready else R.string.onboarding_reveal_building_title,
-                        ),
-                        style = MaterialTheme.typography.titleSmall,
+                // Main's `LessonCompletionPlan`.
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SectionLabel(stringResource(R.string.onboarding_whats_next))
+                    ListRow(
+                        headline = {
+                            val ready = reveal.planReady
+                            Text(
+                                stringResource(
+                                    if (ready) R.string.onboarding_your_plan_ready else R.string.onboarding_reveal_building_title,
+                                ),
+                            )
+                        },
+                        modifier = Modifier.bleed(LIST_ITEM_INSET),
+                        leading = { if (reveal.planReady) DoneMark() else MarkIcon(R.drawable.ic_map) },
+                        supporting = { Text(reveal.goalTitle) },
                     )
-                    Text(reveal.goalTitle, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
             }
             if (completion.result?.planReveal == null && completion.status == CompletionStatus.Saved && ending.guest) {

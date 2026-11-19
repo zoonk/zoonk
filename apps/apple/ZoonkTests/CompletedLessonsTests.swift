@@ -8,10 +8,10 @@ final class CompletedLessonsTests: XCTestCase {
     let api = CompletedLessonsAPIStub(
       firstPages: [page(["a", "b"], next: "two")], nextPage: page(["b", "c"], next: nil))
     let store = makeStore(api: api)
-    let lessons = store.lessons(goalId: "goal")
+    let lessons = store.lessons(goal)
     await lessons.load()
 
-    await store.loadMore(goalId: "goal")
+    await store.loadMore(goal)
 
     XCTAssertEqual(lessons.value, page(["a", "b", "c"], next: nil))
     let cursors = await api.cursors
@@ -23,10 +23,10 @@ final class CompletedLessonsTests: XCTestCase {
       firstPages: [page(["a"], next: "two"), page(["b", "a"], next: "two")],
       nextPage: page(["c"], next: nil), holdsNextPage: true)
     let store = makeStore(api: api)
-    let lessons = store.lessons(goalId: "goal")
+    let lessons = store.lessons(goal)
     await lessons.load()
 
-    let more = Task { await store.loadMore(goalId: "goal") }
+    let more = Task { await store.loadMore(goal) }
     await api.untilNextPageIsAsked()
     await lessons.refresh()
     await api.releaseNextPage()
@@ -35,20 +35,28 @@ final class CompletedLessonsTests: XCTestCase {
     XCTAssertEqual(lessons.value, page(["b", "a"], next: "two"))
   }
 
-  func testDayTitleFollowsTheLearnersOwnDay() throws {
-    let saoPaulo = try XCTUnwrap(TimeZone(identifier: "America/Sao_Paulo"))
-    // 01:30 on November 2 in UTC is still November 1 in São Paulo.
-    let now = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-11-02T01:30:00Z"))
+  func testAGroupsLessonsAreAListOfTheirOwn() async {
+    let api = CompletedLessonsAPIStub(
+      firstPages: [page(["a", "b"], next: nil), page(["b"], next: nil)],
+      nextPage: page([], next: nil))
+    let store = makeStore(api: api)
+    let math = CompletedLessonsQuery(goalId: "goal", group: "math")
 
-    XCTAssertEqual(completedLessonsDayTitle("2026-11-01", now: now, timeZone: saoPaulo), "Today")
-    XCTAssertEqual(
-      completedLessonsDayTitle("2026-10-31", now: now, timeZone: saoPaulo), "Yesterday")
-    XCTAssertEqual(completedLessonsDayTitle("2026-11-02", now: now, timeZone: .gmt), "Today")
-    XCTAssertFalse(
-      completedLessonsDayTitle("2026-10-29", now: now, timeZone: saoPaulo).contains("2026"))
-    XCTAssertTrue(
-      completedLessonsDayTitle("2025-10-29", now: now, timeZone: saoPaulo).contains("2025"))
+    await store.lessons(goal).load()
+    await store.lessons(math).load()
+
+    XCTAssertEqual(store.lessons(goal).value, page(["a", "b"], next: nil))
+    XCTAssertEqual(store.lessons(math).value, page(["b"], next: nil))
+    let groups = await api.groups
+    XCTAssertEqual(groups, [nil, "math"])
   }
+
+  func testMonthTitleNamesItsYearOnlyInAnotherYear() {
+    XCTAssertEqual(completedLessonsMonthTitle("2026-11", today: "2026-11-19"), "November")
+    XCTAssertEqual(completedLessonsMonthTitle("2025-12", today: "2026-11-19"), "December 2025")
+  }
+
+  private let goal = CompletedLessonsQuery(goalId: "goal")
 
   private func page(_ ids: [String], next: String?) -> CompletedLessonsPage {
     CompletedLessonsPage(
@@ -66,6 +74,7 @@ final class CompletedLessonsTests: XCTestCase {
 
 private actor CompletedLessonsAPIStub: CompletedLessonsAPIClient {
   private(set) var cursors: [String?] = []
+  private(set) var groups: [String?] = []
   private var firstPages: [CompletedLessonsPage]
   private let nextPage: CompletedLessonsPage
   private let holdsNextPage: Bool
@@ -80,8 +89,11 @@ private actor CompletedLessonsAPIStub: CompletedLessonsAPIClient {
     self.holdsNextPage = holdsNextPage
   }
 
-  func list(token: String, goalId: String, cursor: String?) async throws -> CompletedLessonsPage {
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+    -> CompletedLessonsPage
+  {
     cursors.append(cursor)
+    groups.append(query.group)
 
     guard cursor != nil else {
       return firstPages.removeFirst()

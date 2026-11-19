@@ -7,7 +7,6 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { useAppLocale } from "../_utils/locale";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
@@ -154,7 +153,6 @@ export function OnboardingStepScreen(props: Parameters<typeof StepScreen>[0]) {
 
 function StepScreen({
   actions,
-  buddy,
   isGuest,
   onAnswer,
   onPlacementDone,
@@ -171,7 +169,6 @@ function StepScreen({
   view,
 }: {
   actions: OnboardingActions;
-  buddy: LearnBuddy | null;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
   onPlacementDone: () => Promise<boolean>;
@@ -280,7 +277,6 @@ function StepScreen({
         <PlanReveal
           {...wait}
           actions={actions}
-          buddy={buddy}
           goal={{ displayName: view.goal.displayName, kind: view.goal.kind }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
@@ -288,7 +284,6 @@ function StepScreen({
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
-          planRevealed={view.planRevealed}
           run={run}
           signUpHref={routes.signUp}
           toToday={toToday}

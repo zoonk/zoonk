@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterLink } from "../_components/enter-button";
-import { SuccessEyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -123,10 +122,7 @@ export function ExplainEnding({
     <>
       <TaskBody className="gap-7" data-slot="explain-ending">
         <div className="flex flex-col gap-6">
-          <MomentHeader
-            eyebrow={<SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>}
-            title={explanation.title}
-          >
+          <MomentHeader detail={explanation.title} title={t("Now you know")}>
             {saving ? (
               <MomentSaving />
             ) : (

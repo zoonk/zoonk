@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "completed_lessons_all": "af3ad2e08881fe586056c9b59d13fd24a1dab3abcfc58e55f6aee5e7c926932b",
   "completed_lessons_empty_description": "655ae5f3abcb293adf5f0972400202a62859877540835929d1a42d21008acd61",
   "completed_lessons_load_more_failed": "6dac605a702a34dd61c2fb2d6367c5f680c6422aa282860562b8ef62fb21c01e",
-  "completed_lessons_loading_more": "dc6a8fcea7d1178314718ed2813885978bca5542163bcec7882df4c4b8d84f6c",
-  "completed_lessons_today": "9267e3298a3443f6768a0dc69300868f6f2f53e7afb12d91579cff4523cabc0e",
-  "completed_lessons_yesterday": "c0b5d3952d2dce04e2bd47b6af5de9d90eccafd3637157d90d45c32d1be8ba40"
+  "completed_lessons_loading_more": "dc6a8fcea7d1178314718ed2813885978bca5542163bcec7882df4c4b8d84f6c"
 }
 -->
 <resources>
-    <!-- A section title over the lessons the learner last finished today. -->
-    <string name="completed_lessons_today">Dziś</string>
-    <!-- A section title over the lessons the learner last finished yesterday. -->
-    <string name="completed_lessons_yesterday">Wczoraj</string>
+    <!-- The first choice of the filter on Completed lessons, before the subjects: every lesson. -->
+    <string name="completed_lessons_all">Wszystkie</string>
     <string name="completed_lessons_empty_description">Tutaj znajdziesz ukończone lekcje, które możesz powtórzyć w każdej chwili.</string>
     <!-- Read aloud while the next lessons load at the end of the list. -->
     <string name="completed_lessons_loading_more">Wczytujemy kolejne lekcje…</string>

@@ -39,7 +39,7 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
   const waiting = poll.status === "polling";
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader title={t("Subscription")} />
 
       <PageSection>

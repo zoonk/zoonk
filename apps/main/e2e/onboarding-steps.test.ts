@@ -129,7 +129,7 @@ test.describe("When a wait can't go on", () => {
 
     const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();
-    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeHidden();
     await failed.getByRole("button", { name: "Try again" }).click();
 
     await expect
@@ -140,7 +140,7 @@ test.describe("When a wait can't go on", () => {
       .not.toBe(runId);
 
     await expect(failed).toBeVisible();
-    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeHidden();
   });
 
   test("a failed run says so, and Try again starts it over", async ({

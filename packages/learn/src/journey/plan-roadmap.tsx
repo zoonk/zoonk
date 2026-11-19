@@ -4,43 +4,22 @@ import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { StatusMark } from "../_components/status-mark";
 import { FactSegments } from "../_components/task-meta";
-import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
-import { usePlanScreen } from "../plan/plan-context";
-import { PlanDateText } from "../plan/plan-date-text";
-import { usePhaseName } from "../plan/use-phase-name";
+import { getPhaseWeight } from "../plan/phase-weight";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
-import { PathRowBody } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
-import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
-import { PhaseAxis, TodayTick } from "./roadmap-lane";
-import {
-  BAND_CLASS,
-  BAND_COLUMN_CLASS,
-  BAND_ROWS_CLASS,
-  BAND_STATE_CLASS,
-  getBandColumnsStyle,
-} from "./roadmap-styles";
-import {
-  getLessonShare,
-  useAxisDatedPhases,
-  useRoadmapFinish,
-  useRoadmapPhases,
-  useRoadmapPosition,
-} from "./use-roadmap";
+import { BAND_STATE_CLASS } from "./roadmap-styles";
+import { getLessonShare, useRoadmapPhases, useRoadmapPosition } from "./use-roadmap";
 
 const PERCENT = 100;
 
 function RoadmapCompact({
   className,
-  lined = true,
   onOpen,
 }: {
   className?: string;
-  lined?: boolean;
   onOpen: (() => void) | null;
 }) {
   const t = useExtracted();
@@ -74,7 +53,7 @@ function RoadmapCompact({
         ))}
       </MeterParts>
 
-      {lined && position && (
+      {position && (
         <span
           className="flex w-full items-center justify-between gap-2 text-xs"
           data-slot="plan-roadmap-line"
@@ -133,107 +112,6 @@ function RoadmapCompact({
   );
 }
 
-const PHASE_MARK = {
-  current: "next",
-  done: "done",
-  leftOut: "todo",
-  unfinished: "todo",
-  upcoming: "todo",
-} as const;
-
-function RoadmapRevealList({ className = "sm:hidden" }: { className?: string }) {
-  const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
-  const { phases } = useRoadmapPhases();
-
-  return (
-    <div className={cn("flex flex-col gap-2", className)} data-slot="plan-roadmap">
-      {/* The list under it marks the learner's phase and dates each phase's end, so the meter has no line. */}
-      <RoadmapCompact lined={false} onOpen={null} />
-
-      <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
-        {phases.map((phase) => (
-          <li
-            className="flex min-h-11 items-center gap-3 py-2 text-sm"
-            data-slot="path-row"
-            key={phase.index}
-          >
-            <StatusMark
-              label={phase.state === "current" ? t("You are here") : undefined}
-              status={PHASE_MARK[phase.state]}
-            />
-            <PathRowBody
-              value={<PhaseWhen className="text-muted-foreground text-xs" phase={phase} />}
-            >
-              <span className="font-medium text-pretty">
-                {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-              </span>
-            </PathRowBody>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
-function RoadmapReveal() {
-  const t = useExtracted();
-  const { currentIndex, phases, today } = useRoadmapPhases();
-  const finish = useRoadmapFinish();
-  const axisDated = useAxisDatedPhases();
-  const dated = phases.every((phase) => phase.startDate !== null);
-
-  return (
-    <div className="flex flex-col gap-1.5 max-sm:hidden" data-slot="plan-roadmap">
-      <ol
-        className={cn(BAND_ROWS_CLASS, "grid-rows-[repeat(3,auto)] gap-y-1.5")}
-        style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
-      >
-        {phases.map((phase, position) => {
-          const isCurrent = position === currentIndex;
-
-          return (
-            <li className={BAND_COLUMN_CLASS} key={phase.index}>
-              <TodayTick
-                share={
-                  dated && isCurrent ? getShareInPhase({ at: "start", date: today, phase }) : null
-                }
-              />
-              <span
-                aria-current={phase.state === "current" ? "step" : undefined}
-                className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
-              >
-                <BandFace isLast={position === phases.length - 1} phase={phase} />
-              </span>
-
-              {dated && phase.startDate && (
-                <>
-                  <PhaseAxis
-                    isLast={position === phases.length - 1}
-                    labelled={axisDated.has(phase.index)}
-                    phase={phase}
-                  />
-                  <span className="sr-only">
-                    <PhaseWhen phase={phase} />
-                  </span>
-                </>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-
-      {dated && finish && (
-        <p className="sr-only">
-          {t("Until")}{" "}
-          <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-        </p>
-      )}
-    </div>
-  );
-}
-
 export function PlanRoadmap({
   className,
   density,
@@ -241,8 +119,7 @@ export function PlanRoadmap({
   onOpen = null,
 }: {
   className?: string;
-  /** `revealList` is the reveal's list at every width, for a narrow column. */
-  density: "compact" | "full" | "reveal" | "revealList";
+  density: "compact" | "full";
   links?: JourneyPathLinks | null;
   onOpen?: (() => void) | null;
 }) {
@@ -254,19 +131,6 @@ export function PlanRoadmap({
 
   if (density === "full" && links) {
     return <RoadmapFull className={className} links={links} />;
-  }
-
-  if (density === "revealList") {
-    return <RoadmapRevealList className="" />;
-  }
-
-  if (density === "reveal") {
-    return (
-      <>
-        <RoadmapRevealList />
-        <RoadmapReveal />
-      </>
-    );
   }
 
   return <RoadmapCompact className={className} onOpen={onOpen} />;

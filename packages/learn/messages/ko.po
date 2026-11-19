@@ -599,6 +599,18 @@ msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
+#: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "왼쪽으로 스크롤하기"
+
+#: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "오른쪽으로 스크롤하기"
+
 #: src/_components/practice-outcome-message.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
@@ -2215,7 +2227,6 @@ msgstr "마지막에 결과를 볼 수 있어요."
 
 #: src/challenge/challenge-labels.tsx
 #: src/challenge/challenge-moved-screen.tsx
-#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/essay/essay-closed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
@@ -2224,7 +2235,6 @@ msgstr "마지막에 결과를 볼 수 있어요."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2330,7 +2340,6 @@ msgstr "챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -2590,20 +2599,40 @@ msgid "Do a lesson again"
 msgstr "레슨 다시 하기"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "6dIxDP"
-msgid "Yesterday"
-msgstr "어제"
+#: src/focus-test/focus-test-subjects.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ay-crl"
+msgid "Subjects"
+msgstr "과목"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "qckJsw"
-msgid "Lessons you finish show up here, so you can do them again anytime."
-msgstr "레슨을 완료하면 여기에 표시돼요. 언제든 다시 해 볼 수 있어요."
+#: src/syllabus/syllabus-section.tsx
+msgctxt "TwcPrx"
+msgid "Modules"
+msgstr "모듈"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/roadmap-full.tsx
+msgctxt "P7djTu"
+msgid "Phases"
+msgstr "단계"
+
+#. The first choice of the filter on Completed lessons, before the subjects: every lesson.
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "completedLessonsAll"
+msgid "All"
+msgstr "전체"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "더 보기"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "레슨을 완료하면 여기에 표시돼요. 언제든 다시 해 볼 수 있어요."
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -3960,12 +3989,6 @@ msgctxt "a9uRoF"
 msgid "See all subjects"
 msgstr "전체 과목 보기"
 
-#: src/focus-test/focus-test-subjects.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ay-crl"
-msgid "Subjects"
-msgstr "과목"
-
 #. A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lJ7_om"
@@ -4733,7 +4756,6 @@ msgid "{count, plural, one {# chapter you already know} other {# chapters you al
 msgstr "{count, plural, other {이미 알던 챕터 #개}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "추가 레슨"
@@ -4768,7 +4790,6 @@ msgstr "챕터 접기"
 
 #: src/journey/journey-chapters.tsx
 #: src/mind-maps/not-made-yet.tsx
-#: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
@@ -4953,7 +4974,6 @@ msgstr "{count, plural, other {모의고사 #회 (다음 시험일 전까지)}}"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5038,16 +5058,6 @@ msgstr "{date}에 끝나요"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number}개 단계 완료 / {total, plural, other {전체 #개}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "현재 위치"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "yPg8s6"
-msgid "Until"
-msgstr "종료일"
 
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
@@ -5233,12 +5243,6 @@ msgstr "종료일"
 msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "계획 완료"
-
-#: src/journey/roadmap-full.tsx
-#: src/onboarding/steps/plan-shape.tsx
-msgctxt "P7djTu"
-msgid "Phases"
-msgstr "단계"
 
 #. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
@@ -7147,16 +7151,6 @@ msgid "Show all {count, number}"
 msgstr "{count, number}개 모두 보기"
 
 #: src/mind-maps/mind-map-outline.tsx
-msgctxt "jzFcrt"
-msgid "Scroll left"
-msgstr "왼쪽으로 스크롤하기"
-
-#: src/mind-maps/mind-map-outline.tsx
-msgctxt "-lsh8v"
-msgid "Scroll right"
-msgstr "오른쪽으로 스크롤하기"
-
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "요약:"
@@ -8392,6 +8386,7 @@ msgstr "{before}에서 상승"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -9494,6 +9489,7 @@ msgstr "{document, select, notice {시험의 과목, 주제, 일정에 맞춰 �
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "계획이 준비됐어요"
@@ -9575,12 +9571,6 @@ msgstr "먼저 배울 내용을 고르고 일정에 맞춰 계획을 짜고 있�
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "계획 만들기가 중단됐어요"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "챕터"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -9721,16 +9711,6 @@ msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "배우는 이유"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "계획 완성"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "7T47RX"
-msgid "Choices"
-msgstr "선택지"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
@@ -9793,33 +9773,6 @@ msgstr "{month}까지"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "예상 완료일"
-
-#: src/onboarding/steps/reveal-week.tsx
-#: src/session/use-review-title.ts
-#: src/today/today-week-challenge.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "복습"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "챌린지"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "쉬는 날"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "첫 주"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "V9hgFL"
-msgid "{days, plural, one {# study day} other {# study days}}"
-msgstr "{days, plural, other {#일 학습}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10348,7 +10301,6 @@ msgstr "변경 사항을 확인하고 있어요…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
-#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "사전 지식"
@@ -10362,11 +10314,6 @@ msgstr "주제의 바탕이 되는 내용이에요. 학습량을 선택하세요
 msgctxt "YT4OTs"
 msgid "{group}: {option}"
 msgstr "{group}: {option}"
-
-#: src/plan/plan-choices.tsx
-msgctxt "pNi2vP"
-msgid "Your choices"
-msgstr "내 선택"
 
 #: src/plan/plan-country.tsx
 msgctxt "sqZp59"
@@ -12662,6 +12609,12 @@ msgctxt "ql88uE"
 msgid "Review done"
 msgstr "복습 완료"
 
+#: src/session/use-review-title.ts
+#: src/today/today-week-challenge.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "복습"
+
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
 msgctxt "goalSwitcher.4dyYDe"
@@ -12866,6 +12819,11 @@ msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plu
 msgstr "{done, plural, other {챕터 #개 완료}}, {known, plural, other {이미 알던 챕터 #개}}"
 
 #: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "챕터"
+
+#: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "챕터 {done, number}/{total, number}개 완료"
@@ -12998,11 +12956,6 @@ msgstr "{course}의 경우 {institution}에서 {parts}에 더 큰 비중을 두�
 msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "{course}의 경우 {institution}에서 시험의 모든 파트를 같은 비중으로 반영해요. 가중치는 <link>{publisher}</link> 자료를 바탕으로 해요."
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "TwcPrx"
-msgid "Modules"
-msgstr "모듈"
 
 #: src/syllabus/syllabus-section.tsx
 msgctxt "Cw_XA_"

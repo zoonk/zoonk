@@ -18,7 +18,6 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
           </Suspense>
         }
         hub={{ href: getMenu("settings").url, title: t("Settings") }}
-        measure="form"
         nav={
           <Suspense fallback={<SettingsNavbarSkeleton />}>
             <SettingsNavbar />

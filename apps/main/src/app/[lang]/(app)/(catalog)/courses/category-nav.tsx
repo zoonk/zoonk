@@ -4,7 +4,13 @@ import { Link } from "@/i18n/navigation";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { SubjectGlyph } from "@zoonk/learn/subject-label";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
-import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
+import {
+  TAB_CLASS,
+  TAB_LIST_CLASS,
+  TAB_ROW_CLASS,
+  TAB_ROW_COUNT_CLASS,
+  TAB_SCROLL_ROW_CLASS,
+} from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
@@ -12,15 +18,10 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
 
-/** A tab's fill starts 10 px before its label, so the row starts that much early and the labels start on the column. */
-const ROW_BLEED_CLASS = "-mx-4 [--scroll-inset:--spacing(1.5)] sm:-mx-2.5 sm:[--scroll-inset:0px]";
-
 const CHIPS_FRAME_CLASS =
   "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-(--catalog-bar) z-20 -my-2 py-2 backdrop-blur lg:hidden";
 
 const LIST_FRAME_CLASS = "sticky top-8 hidden self-start lg:block";
-
-const LIST_LINK_CLASS = cn(TAB_CLASS, "h-8 gap-2.5");
 
 function revealChip(chip: HTMLAnchorElement | null) {
   chip?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -63,7 +64,7 @@ function CategoryNavView(props: CategoryNavProps) {
     <>
       <div className={CHIPS_FRAME_CLASS}>
         <HorizontalScroll
-          className={ROW_BLEED_CLASS}
+          className={TAB_SCROLL_ROW_CLASS}
           labels={{ left: t("Scroll left"), right: t("Scroll right") }}
         >
           <HorizontalScrollContent
@@ -95,7 +96,7 @@ function CategoryNavView(props: CategoryNavProps) {
             <li key={link.key}>
               <Link
                 aria-current={link.current ? "page" : undefined}
-                className={LIST_LINK_CLASS}
+                className={TAB_ROW_CLASS}
                 href={link.href}
                 prefetch
               >
@@ -105,9 +106,7 @@ function CategoryNavView(props: CategoryNavProps) {
                   <span aria-hidden="true" className="size-2 shrink-0" />
                 )}
                 <span className="truncate">{link.label}</span>
-                <span className="text-muted-foreground ml-auto pl-3 font-mono text-xs tabular-nums">
-                  {link.courseCount}
-                </span>
+                <span className={TAB_ROW_COUNT_CLASS}>{link.courseCount}</span>
               </Link>
             </li>
           ))}

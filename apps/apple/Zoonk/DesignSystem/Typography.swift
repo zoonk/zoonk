@@ -73,6 +73,9 @@ extension TypeStyle {
   static let smallButton = TypeStyle(size: 13, relativeTo: .footnote, weight: .medium)
   /// A note under a block, a hint.
   static let note = TypeStyle(size: 13, relativeTo: .footnote, weight: .regular)
+  /// Main's `PageSectionLabel`.
+  static let sectionLabel = TypeStyle(
+    size: 13, relativeTo: .footnote, weight: .medium, lineHeight: 19.0 / 13)
   /// A row's description, in the secondary color.
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.

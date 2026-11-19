@@ -5,10 +5,23 @@ import { FeedbackForm, FeedbackFormSkeleton } from "@zoonk/learn/feedback/form";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getSocialProfiles } from "@zoonk/ui/lib/social-profiles";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
 const FOLLOW_US_ID = "follow-us";
+
+/**
+ * On a computer the message box keeps a width that reads well and ends where the bar's Send does,
+ * with what the page says and where else to find us at the start.
+ */
+const HELP_COLUMNS_CLASS = cn(
+  "lg:grid lg:grid-cols-[minmax(16rem,1fr)_minmax(0,var(--container-column))] lg:grid-rows-[auto_auto_1fr] lg:gap-x-10",
+  "lg:**:data-[slot=page-subtitle]:col-start-1 lg:**:data-[slot=page-subtitle]:row-start-1",
+  "lg:*:data-[slot=page-section]:col-start-1 lg:*:data-[slot=page-section]:row-start-2",
+  "lg:*:data-[slot=feedback-form]:col-start-2 lg:*:data-[slot=feedback-form]:row-span-2 lg:*:data-[slot=feedback-form]:row-start-1",
+  "lg:*:data-[slot=bottom-bar]:col-span-full",
+);
 
 async function ContactSupport({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -33,7 +46,7 @@ async function FollowUs() {
         <PageSectionTitle id={FOLLOW_US_ID}>{t("Follow us")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className="scroll-fade-x -mx-3 -my-1 flex gap-x-2 overflow-x-auto px-1.5 py-1 sm:gap-x-3">
+      <ul className="scroll-fade-x -mx-3 -my-1 flex gap-x-2 overflow-x-auto px-1.5 py-1 sm:gap-x-3 lg:flex-wrap lg:gap-y-1">
         {socials.map((social) => (
           <li className="shrink-0" key={social.name}>
             {/* oxlint-disable-next-line next/no-html-link-for-pages -- external links */}
@@ -62,7 +75,7 @@ export async function SupportContent() {
   const t = await getExtracted();
 
   return (
-    <Page measure="form">
+    <Page className={HELP_COLUMNS_CLASS}>
       <SectionPageHeader
         description={t("Ask a question, report a problem or share an idea. We answer by email.")}
         title={t("Help")}

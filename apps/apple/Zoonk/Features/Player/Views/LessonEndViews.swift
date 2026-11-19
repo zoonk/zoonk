@@ -233,38 +233,30 @@ struct LessonCompletionView: View {
   private var planRevealRow: some View {
     if let planReveal {
       VStack(alignment: .leading, spacing: 8) {
-        Text("What's next", tableName: "Player", comment: "Header over where a lesson leads")
-          .sectionTitleStyle()
+        SectionLabel(
+          Text("What's next", tableName: "Player", comment: "Header over where a lesson leads"))
 
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        ListRow(planRevealTitle(planReveal), description: Text(planReveal.goalTitle)) {
           if planReveal.planReady {
             StatusMark(status: .done)
           } else {
             Image(systemName: "map")
-              .foregroundStyle(.mutedForeground)
-              .frame(width: 20)
-              .accessibilityHidden(true)
           }
-
-          VStack(alignment: .leading, spacing: 2) {
-            if planReveal.planReady {
-              Text(
-                "Your plan is ready", tableName: "Player",
-                comment: "At a first lesson's end: the goal's plan was built meanwhile")
-            } else {
-              Text(
-                "Building your plan", tableName: "Player",
-                comment: "At a first lesson's end: the goal's plan is still being built")
-            }
-
-            Text(planReveal.goalTitle)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-          .typeStyle(.rowTitle)
         }
         .accessibilityElement(children: .combine)
       }
+    }
+  }
+
+  private func planRevealTitle(_ planReveal: PlanRevealLead) -> Text {
+    if planReveal.planReady {
+      Text(
+        "Your plan is ready", tableName: "Player",
+        comment: "At a first lesson's end: the goal's plan was built meanwhile")
+    } else {
+      Text(
+        "Building your plan", tableName: "Player",
+        comment: "At a first lesson's end: the goal's plan is still being built")
     }
   }
 
@@ -456,7 +448,7 @@ struct LessonReadouts: View {
 
       if let studied {
         Text(studied)
-          .typeStyle(.note.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
     }

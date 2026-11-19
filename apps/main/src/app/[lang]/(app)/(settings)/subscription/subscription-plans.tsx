@@ -57,7 +57,7 @@ export async function SubscriptionPlans({
 
   if (webSubscription?.status === "ready" && webSubscription.state === "unpaid") {
     return (
-      <Page measure="form">
+      <Page>
         <SectionPageHeader title={t("Subscription")} />
 
         <PageSection>
@@ -72,7 +72,7 @@ export async function SubscriptionPlans({
   }
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader title={t("Subscription")} />
 
       <PlusPricing

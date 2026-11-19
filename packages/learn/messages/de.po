@@ -599,6 +599,18 @@ msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "Das dauert länger als üblich. Es öffnet sich von selbst, du musst nicht noch einmal tippen."
 
+#: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Nach links scrollen"
+
+#: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Nach rechts scrollen"
+
 #: src/_components/practice-outcome-message.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
@@ -2215,7 +2227,6 @@ msgstr "Dein Ergebnis siehst du am Ende."
 
 #: src/challenge/challenge-labels.tsx
 #: src/challenge/challenge-moved-screen.tsx
-#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/essay/essay-closed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
@@ -2224,7 +2235,6 @@ msgstr "Dein Ergebnis siehst du am Ende."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2330,7 +2340,6 @@ msgstr "Kapitel {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -2590,20 +2599,40 @@ msgid "Do a lesson again"
 msgstr "Lektion noch einmal machen"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "6dIxDP"
-msgid "Yesterday"
-msgstr "Gestern"
+#: src/focus-test/focus-test-subjects.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ay-crl"
+msgid "Subjects"
+msgstr "Fächer"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "qckJsw"
-msgid "Lessons you finish show up here, so you can do them again anytime."
-msgstr "Abgeschlossene Lektionen erscheinen hier, damit du sie jederzeit wiederholen kannst."
+#: src/syllabus/syllabus-section.tsx
+msgctxt "TwcPrx"
+msgid "Modules"
+msgstr "Module"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/roadmap-full.tsx
+msgctxt "P7djTu"
+msgid "Phases"
+msgstr "Phasen"
+
+#. The first choice of the filter on Completed lessons, before the subjects: every lesson.
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "completedLessonsAll"
+msgid "All"
+msgstr "Alle"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "Mehr anzeigen"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "Abgeschlossene Lektionen erscheinen hier, damit du sie jederzeit wiederholen kannst."
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -3960,12 +3989,6 @@ msgctxt "a9uRoF"
 msgid "See all subjects"
 msgstr "Alle Fächer ansehen"
 
-#: src/focus-test/focus-test-subjects.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ay-crl"
-msgid "Subjects"
-msgstr "Fächer"
-
 #. A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lJ7_om"
@@ -4733,7 +4756,6 @@ msgid "{count, plural, one {# chapter you already know} other {# chapters you al
 msgstr "{count, plural, other {# Kapitel kennst du schon}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "Weitere Lektionen"
@@ -4768,7 +4790,6 @@ msgstr "Weniger Kapitel anzeigen"
 
 #: src/journey/journey-chapters.tsx
 #: src/mind-maps/not-made-yet.tsx
-#: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
@@ -4953,7 +4974,6 @@ msgstr "{count, plural, one {# Probeprüfung vor deinem nächsten Prüfungstermi
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5038,16 +5058,6 @@ msgstr "Endet am {date}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} von {total, plural, one {# Phase} other {# Phasen}} abgeschlossen"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "Du bist hier"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "yPg8s6"
-msgid "Until"
-msgstr "Bis"
 
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
@@ -5233,12 +5243,6 @@ msgstr "Endtermin"
 msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "Du bist fertig"
-
-#: src/journey/roadmap-full.tsx
-#: src/onboarding/steps/plan-shape.tsx
-msgctxt "P7djTu"
-msgid "Phases"
-msgstr "Phasen"
 
 #. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
@@ -7147,16 +7151,6 @@ msgid "Show all {count, number}"
 msgstr "Alle {count, number} anzeigen"
 
 #: src/mind-maps/mind-map-outline.tsx
-msgctxt "jzFcrt"
-msgid "Scroll left"
-msgstr "Nach links scrollen"
-
-#: src/mind-maps/mind-map-outline.tsx
-msgctxt "-lsh8v"
-msgid "Scroll right"
-msgstr "Nach rechts scrollen"
-
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Kurz gesagt:"
@@ -8392,6 +8386,7 @@ msgstr "Gestiegen von {before}"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -9494,6 +9489,7 @@ msgstr "{document, select, notice {Dein Plan wird sich nach den Fächern, Themen
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Dein Plan ist fertig"
@@ -9575,12 +9571,6 @@ msgstr "Wir wählen aus, was du zuerst lernst, und verteilen es auf deine Tage. 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Die Erstellung deines Plans wurde unterbrochen"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Kapitel"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -9721,16 +9711,6 @@ msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "Warum du die Sprache lernst"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Plan erstellt"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "7T47RX"
-msgid "Choices"
-msgstr "Deine Auswahl"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
@@ -9793,33 +9773,6 @@ msgstr "bis {month}"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "voraussichtlicher Abschluss"
-
-#: src/onboarding/steps/reveal-week.tsx
-#: src/session/use-review-title.ts
-#: src/today/today-week-challenge.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Wiederholen"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Herausforderung"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Pausentag"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "Deine erste Woche"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "V9hgFL"
-msgid "{days, plural, one {# study day} other {# study days}}"
-msgstr "{days, plural, one {# Lerntag} other {# Lerntage}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10348,7 +10301,6 @@ msgstr "Wir prüfen, was sich ändert…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
-#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Voraussetzungen"
@@ -10362,11 +10314,6 @@ msgstr "Worauf deine Themen aufbauen. Wähle, wie viel du lernen möchtest."
 msgctxt "YT4OTs"
 msgid "{group}: {option}"
 msgstr "{group}: {option}"
-
-#: src/plan/plan-choices.tsx
-msgctxt "pNi2vP"
-msgid "Your choices"
-msgstr "Deine Auswahl"
 
 #: src/plan/plan-country.tsx
 msgctxt "sqZp59"
@@ -12662,6 +12609,12 @@ msgctxt "ql88uE"
 msgid "Review done"
 msgstr "Wiederholung abgeschlossen"
 
+#: src/session/use-review-title.ts
+#: src/today/today-week-challenge.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Wiederholen"
+
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
 msgctxt "goalSwitcher.4dyYDe"
@@ -12866,6 +12819,11 @@ msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plu
 msgstr "{done, plural, other {# Kapitel abgeschlossen}}, {known, plural, other {# kennst du schon}}"
 
 #: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Kapitel"
+
+#: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number} von {total, number} Kapiteln"
@@ -12998,11 +12956,6 @@ msgstr "Bei {course} an {institution} werden {parts} stärker gewichtet. Dein Pl
 msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "Bei {course} an {institution} werden alle Teile der Prüfung gleich gewichtet. Gewichtung laut <link>{publisher}</link>."
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "TwcPrx"
-msgid "Modules"
-msgstr "Module"
 
 #: src/syllabus/syllabus-section.tsx
 msgctxt "Cw_XA_"

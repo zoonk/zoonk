@@ -121,9 +121,8 @@ async function replayFromToday(page: Page, lesson: { id: string; title: string }
   await expect(page).toHaveURL(/\/today$/u);
 
   await page.getByRole("link", { name: "Completed lessons" }).click();
-  const today = page.getByRole("region", { name: "Today" });
 
-  await expect(today.getByRole("link", { name: lesson.title })).toHaveAttribute(
+  await expect(page.getByRole("main").getByRole("link", { name: lesson.title })).toHaveAttribute(
     "href",
     `/learn/${lesson.id}?from=%2Fcompleted-lessons`,
   );

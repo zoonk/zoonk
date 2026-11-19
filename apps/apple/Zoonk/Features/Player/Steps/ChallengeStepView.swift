@@ -79,9 +79,8 @@ struct ChallengeStepView: View {
         self.panel(panel)
       }
 
-      Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
-        .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.mutedForeground)
+      SectionLabel(
+        Text("Your team", tableName: "Player", comment: "Above the people in a challenge"))
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
         let name = name(for: slot.id)
@@ -509,11 +508,10 @@ struct ChallengeStepView: View {
       }
 
       if !content.skills.isEmpty {
-        Text(
-          "What you practiced", tableName: "Player", comment: "Above the skills a challenge trains"
-        )
-        .typeStyle(.note.weight(.medium))
-        .foregroundStyle(.mutedForeground)
+        SectionLabel(
+          Text(
+            "What you practiced", tableName: "Player",
+            comment: "Above the skills a challenge trains"))
         FlowLayout(spacing: 8) {
           ForEach(content.skills) { skill in
             Text(skill.name)

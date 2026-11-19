@@ -100,7 +100,7 @@ export default async function PrivacyPage() {
   const t = await getExtracted();
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader
         title={t({
           description:

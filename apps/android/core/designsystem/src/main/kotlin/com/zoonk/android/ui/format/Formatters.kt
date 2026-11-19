@@ -219,6 +219,9 @@ enum class DateStyle(
 
     Month("yMMMM"),
 
+    /** "November", and "November 2025" once it isn't this year's: a month that heads a list of its days. */
+    MonthName("LLLL", yearWhenAnotherYear = true),
+
     MonthShort("yMMM"),
 
     Short("yMMMd"),

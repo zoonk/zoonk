@@ -13,10 +13,16 @@ import com.zoonk.android.data.value
 import com.zoonk.api.models.CompletedLessonList
 import java.util.UUID
 
+/** A goal's completed lessons, or only those of one of its plan's groups (a `key` of the list's filter). */
+data class CompletedLessonsQuery(
+    val goalId: UUID,
+    val group: String? = null,
+)
+
 fun interface CompletedLessonsApi {
     suspend fun page(
         session: AuthenticatedSession,
-        goalId: UUID,
+        query: CompletedLessonsQuery,
         cursor: String?,
     ): CompletedLessonList
 }
@@ -26,9 +32,16 @@ class LiveCompletedLessonsApi(
 ) : CompletedLessonsApi {
     override suspend fun page(
         session: AuthenticatedSession,
-        goalId: UUID,
+        query: CompletedLessonsQuery,
         cursor: String?,
-    ) = perform { api.clients(session).libraryLessons.listCurrentUserCompletedLessons(goalId, PAGE_SIZE, cursor) }
+    ) = perform {
+        api.clients(session).libraryLessons.listCurrentUserCompletedLessons(
+            goalId = query.goalId,
+            group = query.group,
+            limit = PAGE_SIZE,
+            cursor = cursor,
+        )
+    }
 
     private companion object {
         const val PAGE_SIZE = 50L
@@ -41,8 +54,8 @@ class CompletedLessonsStore(
     private val sessions: SessionSource,
 ) {
     val lessons =
-        cache.keyed<UUID, CompletedLessonList>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
-            session?.let { api.page(it, goalId, cursor = null) }
+        cache.keyed<CompletedLessonsQuery, CompletedLessonList>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, query ->
+            session?.let { api.page(it, query, cursor = null) }
         }
 
     /**
@@ -50,8 +63,8 @@ class CompletedLessonsStore(
      * lesson already shown is left out: a replay moves it to the top and shifts the pages after it.
      * False when it didn't load, so the page offers to try again.
      */
-    suspend fun more(goalId: UUID): Boolean {
-        val list = lessons[goalId]
+    suspend fun more(query: CompletedLessonsQuery): Boolean {
+        val list = lessons[query]
         val cursor =
             list.state.value.value
                 ?.pagination
@@ -61,7 +74,7 @@ class CompletedLessonsStore(
 
         val next =
             try {
-                api.page(session, goalId, cursor)
+                api.page(session, query, cursor)
             } catch (e: ApiException) {
                 if (e.error == ApiError.Unauthorized) sessions.expire(session)
                 return false

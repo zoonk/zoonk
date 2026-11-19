@@ -44,7 +44,7 @@ export default async function MemoryPage() {
   const t = await getExtracted();
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader
         description={t("What Zoonk remembers to give you examples and plans that fit your life.")}
         title={t("Memory")}

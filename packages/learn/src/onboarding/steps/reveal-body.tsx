@@ -1,67 +1,33 @@
 "use client";
 
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
-import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { SuccessEyebrow } from "../../_components/eyebrow";
-import { PageSectionTitle } from "../../_components/page";
+import { useId, useState, useTransition } from "react";
 import { StepOpenFailed } from "../../_components/step-open-failed";
-import { BuddyArt } from "../../buddies/buddy-art";
-import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
-import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
-import { usePlanBases } from "../../plan/use-bases-texts";
 import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
 import {
   OnboardingActions,
   OnboardingColumn,
+  OnboardingDescription,
+  OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../onboarding-frame";
+import { OnboardingRailSection } from "../onboarding-rail";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
-import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
 import { RevealDayOpener, RevealToday, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
-import { RevealWeek } from "./reveal-week";
 
-/** Zu cheers on the moment's last beat, after the check and "Start here". */
-function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
-  return (
-    <BuddyArt
-      buddy={buddy}
-      className="[--buddy-height:--spacing(23)] lg:[--buddy-height:--spacing(28)]"
-      expression="happy"
-      fit="ink"
-      reaction={{ act: "cheer", delayMs: 3 * BEAT_MS }}
-      studiedToday
-    />
-  );
-}
-
-function PlanCreated() {
-  const t = useExtracted();
-  const celebrate = useCelebration();
-
-  return (
-    <SuccessEyebrow iconClassName={cn(celebrate && "animate-settle")}>
-      {t("Plan created")}
-    </SuccessEyebrow>
-  );
-}
-
-/** Start works from the moment's first frame. */
 function RevealActions({
   failure,
   isGuest,
@@ -113,54 +79,25 @@ function RevealActions({
 type StartFailure = "open" | "save";
 
 /**
- * The plan at a glance, beside today's lessons from 72rem and under them below it: the figures,
- * what the time covers, the rest of the week, the phases and the choices.
+ * What the learner chose, to check before starting: the time a day and where the plan ends, an
+ * exam's options, and the lines that only show when the plan needs something from them. Under the
+ * title, and beside today's lessons from 72rem. Everything else about the plan waits for the Plan.
  */
-function RevealGlance({
-  className,
-  onAdjust,
-  reveal,
-  side,
-}: {
-  className?: string;
-  onAdjust: (section: PlanEditorSection) => void;
-  reveal: PlanRevealDays | null;
-  /** In the side column, the phases list one per row and the choices take a title. */
-  side: boolean;
-}) {
-  const t = useExtracted();
+function RevealPlan({ onAdjust }: { onAdjust: (section: PlanEditorSection) => void }) {
   const { plan } = usePlanScreen();
-  const hasChoices = usePlanBases() !== null;
 
   return (
-    <div className={cn("flex min-w-0 flex-col gap-8", className)}>
-      <div className="flex flex-col gap-5">
-        <RevealReadouts flush={side} />
-        <RevealCoverage onAddTime={() => onAdjust("time")} />
-        <PlanChoiceLines choices={plan.examChoices} onChange={() => onAdjust("choices")} />
-        <RevealNoticeDay />
-      </div>
-
-      <RevealWeek reveal={reveal} />
-
-      <div className="flex flex-col gap-2">
-        <PlanPhasesBar stacked={side} />
-        <PlanChapterList />
-        {plan.notice === "usual" && <UsualStructureNote />}
-      </div>
-
-      {hasChoices && (
-        <div className="flex flex-col gap-2">
-          {side && <PageSectionTitle>{t("Choices")}</PageSectionTitle>}
-          <PlanChoices />
-        </div>
-      )}
+    <div className="flex min-w-0 flex-col gap-5" data-slot="reveal-plan">
+      <RevealReadouts />
+      <RevealCoverage onAddTime={() => onAdjust("time")} />
+      <PlanChoiceLines choices={plan.examChoices} onChange={() => onAdjust("choices")} />
+      <RevealNoticeDay />
+      {plan.notice === "usual" && <UsualStructureNote />}
     </div>
   );
 }
 
 type RevealBodyProps = {
-  buddy: LearnBuddy | null;
   isGuest: boolean;
   onStart: () => Promise<boolean>;
   reveal: PlanRevealDays | null;
@@ -168,7 +105,6 @@ type RevealBodyProps = {
 };
 
 function RevealColumn({
-  buddy,
   isGuest,
   markRevealed,
   onStart,
@@ -179,6 +115,7 @@ function RevealColumn({
   markRevealed: () => Promise<boolean>;
   openStep: ((step: DayStep) => Promise<boolean>) | null;
 }) {
+  const t = useExtracted();
   const { goal } = usePlanScreen();
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
   const startStep = findRevealStart(reveal);
@@ -216,6 +153,9 @@ function RevealColumn({
     section: null,
   });
 
+  const planTitleId = useId();
+  const adjust = (section: PlanEditorSection) => setEditor({ open: true, section });
+
   return (
     <OnboardingColumn
       bar={
@@ -231,29 +171,21 @@ function RevealColumn({
       }
       className="gap-8"
       rail={
-        <RevealGlance
-          onAdjust={(section) => setEditor({ open: true, section })}
-          reveal={reveal}
-          side
-        />
+        <OnboardingRailSection id={planTitleId} title={t("Your plan")}>
+          <RevealPlan onAdjust={adjust} />
+        </OnboardingRailSection>
       }
     >
-      <header className="flex items-start justify-between gap-4 pt-2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <PlanCreated />
-          <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
-        </div>
-        <RevealBuddy buddy={buddy} />
-      </header>
+      <OnboardingHeading>
+        <OnboardingTitle className="text-balance">{t("Your plan is ready")}</OnboardingTitle>
+        <OnboardingDescription>{goal.displayName}</OnboardingDescription>
+      </OnboardingHeading>
+
+      <div className="min-[72rem]:hidden">
+        <RevealPlan onAdjust={adjust} />
+      </div>
 
       <RevealToday locked={starting} open={openStep} reveal={reveal} />
-
-      <RevealGlance
-        className="min-[72rem]:hidden"
-        onAdjust={(section) => setEditor({ open: true, section })}
-        reveal={reveal}
-        side={false}
-      />
 
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}
@@ -268,26 +200,21 @@ function RevealColumn({
 export function RevealBody({
   goalId,
   markRevealed,
-  moment,
   refresh,
   ...props
 }: RevealBodyProps & {
   goalId: string;
   markRevealed: () => Promise<boolean>;
-  /** False once the learner pressed Start: a reveal they open again shows its end, still. */
-  moment: boolean;
   refresh: () => void;
 }) {
   return (
-    <CelebrationScope play={moment}>
-      <RevealDayOpener
-        goalId={goalId}
-        markRevealed={markRevealed}
-        refresh={refresh}
-        reveal={props.reveal}
-      >
-        {(openStep) => <RevealColumn {...props} markRevealed={markRevealed} openStep={openStep} />}
-      </RevealDayOpener>
-    </CelebrationScope>
+    <RevealDayOpener
+      goalId={goalId}
+      markRevealed={markRevealed}
+      refresh={refresh}
+      reveal={props.reveal}
+    >
+      {(openStep) => <RevealColumn {...props} markRevealed={markRevealed} openStep={openStep} />}
+    </RevealDayOpener>
   );
 }

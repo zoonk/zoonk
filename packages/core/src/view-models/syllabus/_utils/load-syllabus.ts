@@ -185,16 +185,11 @@ export async function loadSyllabusInput(
   };
 }
 
-/** Returns no labels with fewer than two subjects; GET callers should share their blueprint and saved plan. */
-export async function loadSkillSubjects(
-  goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
+async function loadPlanSubjects(
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind">,
   blueprint?: ExamBlueprint | null,
   savedPlan?: Pick<SavedPlan, "graph" | "settings"> | null,
-): Promise<Map<string, string>> {
-  if (!goal) {
-    return new Map();
-  }
-
+): Promise<{ graph: PlanGraph; subjects: Map<string, string> }> {
   const [plan, notice] = await Promise.all([
     savedPlan === undefined
       ? prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
@@ -205,9 +200,45 @@ export async function loadSkillSubjects(
   const graph = parsePlanGraph(plan?.graph);
 
   if (graph.skills.length === 0) {
-    return new Map();
+    return { graph, subjects: new Map() };
   }
 
   const areaCourses = await loadAreaCourses(graph, savedPlan === undefined ? prisma : "shared");
-  return getSkillSubjects({ areaCourses, notice, skills: toSkills(graph) });
+  return { graph, subjects: getSkillSubjects({ areaCourses, notice, skills: toSkills(graph) }) };
+}
+
+/** Returns no labels with fewer than two subjects; GET callers should share their blueprint and saved plan. */
+export async function loadSkillSubjects(
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
+  blueprint?: ExamBlueprint | null,
+  savedPlan?: Pick<SavedPlan, "graph" | "settings"> | null,
+): Promise<Map<string, string>> {
+  if (!goal) {
+    return new Map();
+  }
+
+  const { subjects } = await loadPlanSubjects(goal, blueprint, savedPlan);
+  return subjects;
+}
+
+export type SkillGroups = { kind: "phases" | "subjects"; names: Map<string, string> };
+
+/** Each skill's group as the Plan lists it: its subject, or its phase in a plan with fewer than two subjects. */
+export async function loadSkillGroups(
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind">,
+): Promise<SkillGroups | null> {
+  const { graph, subjects } = await loadPlanSubjects(goal);
+
+  if (subjects.size > 0) {
+    return { kind: "subjects", names: subjects };
+  }
+
+  const phases = new Map(
+    graph.skills.flatMap((skill) => {
+      const name = graph.phases[skill.phase]?.name;
+      return name ? [[skill.skillId, name] as const] : [];
+    }),
+  );
+
+  return new Set(phases.values()).size > 1 ? { kind: "phases", names: phases } : null;
 }

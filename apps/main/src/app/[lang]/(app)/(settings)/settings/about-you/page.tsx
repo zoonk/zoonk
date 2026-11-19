@@ -46,7 +46,7 @@ export default async function AboutYouPage() {
   const t = await getExtracted();
 
   return (
-    <Page measure="form">
+    <Page>
       <SectionPageHeader
         description={t("Your answers shape your examples and your buddy. Everything is optional.")}
         title={t("About you")}

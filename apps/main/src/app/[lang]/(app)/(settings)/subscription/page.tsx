@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Subscribers and everyone else see different pages, so the wait shows neither's headline. */
 function SubscriptionSkeleton() {
   return (
-    <Page aria-hidden="true" measure="form">
+    <Page aria-hidden="true">
       <Skeleton className="mx-1 h-9 w-64 max-w-full md:hidden" />
       <PlusPricingSkeleton />
     </Page>
