@@ -41,12 +41,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.text
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
@@ -351,19 +347,8 @@ private fun NumberButton(
     onOpen: () -> Unit,
 ) {
     val content: @Composable ColumnScope.() -> Unit = {
-        // Main's `NumberButton`: a tile's label is a stat tile's (`text-label`), the aside's a section title.
-        if (variant == NumberVariant.Tiles) {
-            Text(
-                text = number.label.toUpperCase(LocaleList.current),
-                modifier = Modifier.clearAndSetSemantics { text = AnnotatedString(number.label) },
-                style = MaterialTheme.zoonkType.label,
-                color = MaterialTheme.zoonk.faint,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        } else {
-            Text(number.label, style = MaterialTheme.zoonkType.sectionTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        }
+        // Main's `NumberButton`: a tile's label, as the aside's, is a section title.
+        Text(number.label, style = MaterialTheme.zoonkType.sectionTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
         val style = MaterialTheme.typography.headlineSmall
         val level = number.level
         when {

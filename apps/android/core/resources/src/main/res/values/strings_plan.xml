@@ -112,21 +112,17 @@
     <string name="plan_skipped_known">Skipped · you already know it</string>
     <string name="plan_going_deeper">More on an earlier topic</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_from">From %1$s</string>
-    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
-    <string name="plan_far_from_month">From %1$s</string>
+    <string name="plan_far_from">Starts %1$s</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_from_month">Starts in %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d lesson</item>
         <item quantity="other">%d lessons</item>
     </plurals>
-    <plurals name="plan_far_lessons_about">
-        <item quantity="one">About %d lesson</item>
-        <item quantity="other">About %d lessons</item>
-    </plurals>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · from %2$s</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · from %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · starts %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_count_from_month">%1$s · starts in %2$s</string>
     <string name="plan_far_explain">Getting these lessons ready takes about half a minute.</string>
     <string name="plan_far_see_lessons">Get them ready</string>
     <string name="plan_far_writing">Getting your lessons ready…</string>
@@ -197,7 +193,7 @@
     <string name="plan_pace">Schedule</string>
     <string name="plan_your_pace">Your schedule</string>
     <string name="plan_pace_value_paused">Paused</string>
-    <string name="plan_time_a_day">%1$s a day</string>
+    <string name="plan_time_a_day">About %1$s a day</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Nothing is planned until you resume it.</string>
     <plurals name="plan_lessons_left">

@@ -254,11 +254,11 @@
   "plan_exam_date_label": "f0ba48ca41908fad19a1ab00e680e71e8d407f927c859363a8fbe0b0ad1e41c0",
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
   "plan_exam_over_ask": "004c8665d9841aaf0fbf998eee90dadbcddd7adea9aa8a6043c712d0cc56b125",
-  "plan_far_count_from": "2e783a3041d1fe2a5b7032348e489e05f7dd3792df307dbae118594f8274e42c",
-  "plan_far_count_from_month": "32bd0ae9174f5eb05efbb4640c4462f0f002a8686a57558556b969284f056dd5",
+  "plan_far_count_from": "a956d51474a2a4c64605b00bbd120aa1360ac7181c3f5c246e2a3982a2f25b0e",
+  "plan_far_count_from_month": "64c8d974f51c6bbcc39d3048452f71b0d0a7c13ba2fbe20f143abf447a7d709d",
   "plan_far_explain": "2ca716250175932157381267156cd7613bdc593a1a4b0ba96cf7a29ae02fc290",
-  "plan_far_from": "505f366fd4f0033f845ffac5642aecbdf0fc64cdd2f2a52140a27d799da1dd98",
-  "plan_far_from_month": "ee876bf8d647b5b16b980b324c2631f5b388540028b5e66e40b722b2d0b9a47e",
+  "plan_far_from": "de61832bf77caf8c70b61673015e377199eeab6d7599333868eb014b80be0430",
+  "plan_far_from_month": "9c7abd7734a1f295a4ef74b572423afc80e0c787a38cda53cf1fdb7a3d26f679",
   "plan_far_lessons": "5fb84652f74f2e58bae4576a43d209493b94d98f74b2b01e729187cccbc891ca",
   "plan_far_lessons_about": "7167b815ba130f2ab8222f5100ad6c08ccecf3cf219cbbb3f2b8dbc1bce76826",
   "plan_far_nothing_left": "543bf8b00ce62a04ab9ccb47265f46e9844bcfde1c9fbb58dd2c6f8d1f72b99b",
@@ -436,7 +436,7 @@
   "plan_tests_taken": "0d34b584fe1557d4097764ee5a946ca3f640ff0f736fb462dee7c96453bede02",
   "plan_this_week": "a3512fd6bdfead371ca436414e70b002a04d4f189eb47d69b96b92f392291d6d",
   "plan_thursdays": "6ddfde5f4812a2dbe87b9b40b740aa44c94a65fc8e3fdf88a9270343323fe859",
-  "plan_time_a_day": "c23442afcd3a73e14bf794e31426c8ae29256db7986b66a86bba8967174b7caf",
+  "plan_time_a_day": "7b64bd929bab2c43788830e88cabd93817089efda52b105376225f68cf2ced06",
   "plan_time_ask_failed": "b43508776155dc8ddb5fea636fc8b2f8a2ace1ca95c5751d80a3b330766b58cd",
   "plan_time_asking": "31e418934d448b7d9064ccf908613c446b4bf1727a1925ebd30c122543e78eda",
   "plan_time_covers_everything": "65f88f163a4d31927445a5ba3ff42d9803818d753e8b435cb09a3b1a6366048c",
@@ -653,23 +653,18 @@
     <string name="plan_skipped_known">Sauté · tu connais déjà ce sujet</string>
     <string name="plan_going_deeper">Un sujet déjà abordé, plus en détail</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_from">À partir du %1$s</string>
-    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
-    <string name="plan_far_from_month">Dès %1$s</string>
+    <string name="plan_far_from">Commence le %1$s</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_from_month">Commence en %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d leçon</item>
         <item quantity="many">%d leçons</item>
         <item quantity="other">%d leçons</item>
     </plurals>
-    <plurals name="plan_far_lessons_about">
-        <item quantity="one">Environ %d leçon</item>
-        <item quantity="many">Environ %d leçons</item>
-        <item quantity="other">Environ %d leçons</item>
-    </plurals>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · à partir du %2$s</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · dès %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · commence le %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_count_from_month">%1$s · commence en %2$s</string>
     <string name="plan_far_explain">Préparer ces leçons prend environ trente secondes.</string>
     <string name="plan_far_see_lessons">Les préparer</string>
     <string name="plan_far_writing">Préparation de tes leçons…</string>
@@ -742,7 +737,7 @@
     <string name="plan_pace">Calendrier</string>
     <string name="plan_your_pace">Ton calendrier</string>
     <string name="plan_pace_value_paused">En pause</string>
-    <string name="plan_time_a_day">%1$s par jour</string>
+    <string name="plan_time_a_day">Environ %1$s par jour</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Rien n’est prévu tant que tu ne reprends pas cet objectif.</string>
     <plurals name="plan_lessons_left">

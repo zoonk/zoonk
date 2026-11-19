@@ -254,11 +254,11 @@
   "plan_exam_date_label": "0bec5c646db8aefa6a54db9c6fc6282c09470fd6083bec33ad7f6b715fe51a28",
   "plan_exam_day": "0b032c6ce85e563879c4ab61fd3d9f6d945fc2d358ab739fdd881466c56cc8a6",
   "plan_exam_over_ask": "f9fc999b981008d3b79f8acb63ac4dec5dcb4646545f6de71f169a36ff835f51",
-  "plan_far_count_from": "909e783e24d2052a6c71e4772affe3189c060beb7e902cf4cd57213d3a17c43f",
-  "plan_far_count_from_month": "394525c42adf4d04e4ba5b7cbe3d58b965938cc3a9461570afecf34eb2bfcfbb",
+  "plan_far_count_from": "8dc90635cfe325cc204f228e8203b97103910c28eb0c05c53de04d34bfd140e5",
+  "plan_far_count_from_month": "eba0483d63f4c45a6e59f19522556b851d9ca373d078e9d15420fc78b8acdf3f",
   "plan_far_explain": "31ecbe4e7c80358714c43fab1a93c7de35e48a838a4d8b28b2c47feae1b045f3",
-  "plan_far_from": "c38a7c7291589b7f339c3e6b6907b765af53b14c89e3f536fde3c5e115628bf7",
-  "plan_far_from_month": "776d650733c75827cf185c04297bc17e7ae7f09f2273997e701939bd0b2057ef",
+  "plan_far_from": "88c8f80503034b2a4a96f68a5997104fa7139bda38fc12cde0144ec6c61e0f55",
+  "plan_far_from_month": "82e9c7bd8ee899bfaae0ed982cebf137bef5f9c8efe07ff5f604fff48177b828",
   "plan_far_lessons": "e5e2b1ab82bc71e6e07b762de4ebba4f8cb4d2c50f55ce24d8464b730fa20f14",
   "plan_far_lessons_about": "dd76f528123aba35d7b048b4a14d928c97b06c75bbd2f56da224d4e0d4a12246",
   "plan_far_nothing_left": "9c402ebe5a2fb6b24e4918bb02a8f47d07e64797c324ab87413c67f87f2f0d5f",
@@ -436,7 +436,7 @@
   "plan_tests_taken": "28bcca1f6b73f9837e21112ce364e2da0999da3f68c8a33d0648c3b4c4adc51f",
   "plan_this_week": "745a65c02733a311f8352a7e2637cdab2b0c7c6f66a2b38e0b9900d88f99e23b",
   "plan_thursdays": "340acbaa133be16ccd0289b2f51ace288c6e02e1d3ab7c663d6e24b09a1feeea",
-  "plan_time_a_day": "81ae4208c7695f4eee1adb5b3976537110d32235401854c666bdc09967f9ddf2",
+  "plan_time_a_day": "ea76025f4d607d192cce5c2a37f040c054dee3d639271728136349414d89005a",
   "plan_time_ask_failed": "4c03053b2263003b52ac6652a090ac604ea4fdd4cc36d540d5a3b96faaa6e20d",
   "plan_time_asking": "9fdbb9bfe54ebbed9185fd49a9fe59feb252710582f3265a58cca52ca4045e77",
   "plan_time_covers_everything": "dfe5a47ee17f5996ad9fe06a9d652d869d3913df17994eac910eaae4c0131d69",
@@ -447,7 +447,7 @@
   "plan_time_covers_goal_all": "1c1735e8f0196fec9af2d43b62960109ce8986d4673dea6a3865c4b0f46c2092",
   "plan_time_covers_goal_all_month": "48b8c587a8f95837155a559c1edb54f7fc97f4accf0483593f4041e6787b4473",
   "plan_time_covers_share_exam": "ccf893dcb43f0ffa10cabdff39ce6272e28c4726f3eacd8a7715b5dbce2ad16e",
-  "plan_time_covers_share_goal": "8f1256d3dfe4603fe6a09cdfd88a0f53082d374f30adc96a0c4163c2a5f839b0",
+  "plan_time_covers_share_goal": "a20b8ddbab79f0f262c66252c400fea9eaac97ac3ae10a4c81bc6485aea8f154",
   "plan_time_find_failed": "cbf285069fea47fce4407856dfe1f6d30d3a97ca0044d88a54ad1e0b6fd9af18",
   "plan_time_finish_failed": "a82a6cdda102474baf390d630e1d7aba9393887c2fdd22c9c29142941de4b761",
   "plan_time_finish_unknown": "8e0bb9c929a13c9fbf111061d663634dc27ef68991fd99993a9adfd28cf45cc7",
@@ -653,23 +653,18 @@
     <string name="plan_skipped_known">Pulado · você já sabia</string>
     <string name="plan_going_deeper">Mais sobre um tópico anterior</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_from">A partir de %1$s</string>
-    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
-    <string name="plan_far_from_month">A partir de %1$s</string>
+    <string name="plan_far_from">Começa em %1$s</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_from_month">Começa em %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d aula</item>
         <item quantity="many">%d aulas</item>
         <item quantity="other">%d aulas</item>
     </plurals>
-    <plurals name="plan_far_lessons_about">
-        <item quantity="one">Cerca de %d aula</item>
-        <item quantity="many">Cerca de %d aulas</item>
-        <item quantity="other">Cerca de %d aulas</item>
-    </plurals>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · a partir de %2$s</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · a partir de %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · começa em %2$s</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_count_from_month">%1$s · começa em %2$s</string>
     <string name="plan_far_explain">Preparar essas aulas leva cerca de meio minuto.</string>
     <string name="plan_far_see_lessons">Preparar aulas</string>
     <string name="plan_far_writing">Preparando suas aulas…</string>
@@ -742,7 +737,7 @@
     <string name="plan_pace">Cronograma</string>
     <string name="plan_your_pace">Seu cronograma</string>
     <string name="plan_pace_value_paused">Em pausa</string>
-    <string name="plan_time_a_day">%1$s por dia</string>
+    <string name="plan_time_a_day">Cerca de %1$s por dia</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Nada está planejado até você retomar o objetivo.</string>
     <plurals name="plan_lessons_left">
@@ -1207,7 +1202,7 @@
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
     <string name="plan_time_covers_share_exam">Com %1$s por dia, dá para estudar cerca de %2$s dos tópicos da sua prova</string>
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_goal">Com %1$s por dia, dá para estudar cerca de %2$s do seu objetivo</string>
+    <string name="plan_time_covers_share_goal">Com %1$s por dia, dá para estudar cerca de %2$s do conteúdo do seu objetivo</string>
     <string name="plan_covered_not_enough">%1$s por dia não é suficiente para estudar todo o conteúdo do seu objetivo.</string>
     <string name="plan_finding">Calculando o tempo…</string>
     <string name="plan_try_again">Tentar de novo</string>

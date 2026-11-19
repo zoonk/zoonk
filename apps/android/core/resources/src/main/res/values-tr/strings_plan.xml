@@ -254,11 +254,11 @@
   "plan_exam_date_label": "11e415c382b7f53954aeff15163eac39ffeedc49666ee2519b2b7e195419bc6b",
   "plan_exam_day": "fdd0d94b54b6c5284830c835138d39c4226d372a6d82d7ed69ab9183aab2a9a6",
   "plan_exam_over_ask": "30c13fc0e6269aa90901cbb0c044f57b72e199f2596a51d2d7053d67f898d98d",
-  "plan_far_count_from": "2170998188c14d820f1d33baf352bc54a1594c49567e2264b46322dddd19c766",
-  "plan_far_count_from_month": "6e6bc69cbfbe62e63b12f7b5aacde8986cc44aa130f3170bda46b3dcf2515eec",
+  "plan_far_count_from": "d3cdaa5e502d7aa0fb6acb609f8d60505631f4e14623528c306e21bdb287b585",
+  "plan_far_count_from_month": "fb4bdc37a19b40f400e5050a90fabbb1e12ae4e26e7a369570b5e582789992e4",
   "plan_far_explain": "b607679dfca47b917df9d70e27efab93a69a2776828e810581ddbd5d2b71b332",
-  "plan_far_from": "af8e65d4de83fdd4ff305dd25a60c9174347aaa70cffbccf7ada6b427df59a93",
-  "plan_far_from_month": "6df66fb5cd541eba8e5a8641e99956f0343a895c6b2266a93df30ec7d59c5b05",
+  "plan_far_from": "9d66307e92e4b6659e576994fe42b19ea561c4bbe226591ac6e3285b5bb891dd",
+  "plan_far_from_month": "b1d2226b7ad56e7787d759b56c161aeda87bba95f844e0245555f852f638652f",
   "plan_far_lessons": "686defb96cf1edbce263f227bc04c64dd329d3507374baa9caf09a4e9ad19fde",
   "plan_far_lessons_about": "1d5619ab1df43dc310a4cc539d8c880c65162ce5083d99e3ae809911280f51b1",
   "plan_far_nothing_left": "899f1721e76393ad396fd54012c27e64aecd8f15fcfd7f86b283a92cd72f88ac",
@@ -436,7 +436,7 @@
   "plan_tests_taken": "ef3aa72320b9afd898788202dd6ef72e1e27275522346c4d2da34b3eabeddd9f",
   "plan_this_week": "2e54fbc27fc9a1b9e90f0b099d78f7ee01418248ac7826095b4680530047a789",
   "plan_thursdays": "3f23c4a01e21bf27547e341271ed55cf0da340f0e50d7337be6948e037a9bc25",
-  "plan_time_a_day": "37a37befd4fa17e53844439128ab2710dffa5484cd012523bca9597515637d44",
+  "plan_time_a_day": "d9d35be81f4f559f6a56282c6225d74b69c6705d2803096e9b150c204eb52f0f",
   "plan_time_ask_failed": "3cd35cbd880075a5cba3a8e776e306c1aa04a197b9a4f20b46ac4f58c9b76b58",
   "plan_time_asking": "6d390898b50109e5f02fec4c97b7ebdd157c938e80e8c74f942f31e949df40e2",
   "plan_time_covers_everything": "5b95dd15ac99a8dce63f1460fd681d63d95e66511ded22f74b5964dd4653ddcc",
@@ -446,8 +446,8 @@
   "plan_time_covers_exam_all_month": "4c38957f0647520db256b26c413415ca92e9c4b900cc40297d70754a304d7443",
   "plan_time_covers_goal_all": "6bf896a0a4228b3016257c6d2fdc7dde236c8edeaabc18d5ca7d757bd36f79cf",
   "plan_time_covers_goal_all_month": "a68bd23a04fc1e1fa250a99150b6d50821b5bc85f59fbd73d23d5894a2241a96",
-  "plan_time_covers_share_exam": "bb83029100acc2e965f7b04cf733c1b71fc71bf635907d330190f892566f4c71",
-  "plan_time_covers_share_goal": "834a00bda7aa66a962d736e1e195e5b1c6fadde5b5b25f4babe5c668685d0903",
+  "plan_time_covers_share_exam": "940db33ceaa264ace0d87ad5a09031f7e07cbe77ca138871307e735dad7dfd1a",
+  "plan_time_covers_share_goal": "5708111ed83d42ffa8c2e2ceca7a3cf087c7a96d27767988421a7010c8e60663",
   "plan_time_find_failed": "0c97894580e8aa20738a4a1d4139504b5c4cd9097c5058ea7413191f3a25f12f",
   "plan_time_finish_failed": "c21a915995afe27dedcd9b519acdcf6c316bc19556c58184aa1ec72bf90695c7",
   "plan_time_finish_unknown": "d5ec8a3d69f87f92f3956cee9f0d9bedf491eb728748a5140d48e0a4058cd72c",
@@ -646,21 +646,17 @@
     <string name="plan_skipped_known">Atlandı · zaten biliyordun</string>
     <string name="plan_going_deeper">Önceki bir konunun devamı</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_from">%1$s tarihinden itibaren</string>
-    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
-    <string name="plan_far_from_month">%1$s ayından itibaren</string>
+    <string name="plan_far_from">%1$s tarihinde başlar</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_from_month">%1$s ayında başlar</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d ders</item>
         <item quantity="other">%d ders</item>
     </plurals>
-    <plurals name="plan_far_lessons_about">
-        <item quantity="one">Yaklaşık %d ders</item>
-        <item quantity="other">Yaklaşık %d ders</item>
-    </plurals>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · %2$s tarihinden itibaren</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · %2$s ayından itibaren</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · %2$s tarihinde başlar</string>
+    <!-- %1$s is a count of lessons, such as "12 lessons"; %2$s is a month, such as "April" or "April 2027". -->
+    <string name="plan_far_count_from_month">%1$s · %2$s ayında başlar</string>
     <string name="plan_far_explain">Bu dersleri hazırlamak yaklaşık yarım dakika sürer.</string>
     <string name="plan_far_see_lessons">Dersleri hazırla</string>
     <string name="plan_far_writing">Derslerini hazırlıyoruz…</string>
@@ -728,7 +724,7 @@
     <string name="plan_pace">Takvim</string>
     <string name="plan_your_pace">Çalışma takvimin</string>
     <string name="plan_pace_value_paused">Duraklatıldı</string>
-    <string name="plan_time_a_day">Günde %1$s</string>
+    <string name="plan_time_a_day">Günde yaklaşık %1$s</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Devam edene kadar hiçbir şey planlanmaz.</string>
     <plurals name="plan_lessons_left">
@@ -1151,9 +1147,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Ayırdığın süreyle her şeyi %1$s itibarıyla bitirebilirsin</string>
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_exam">Günde %1$s ile sınav konularının yaklaşık %2$s kadarı plana sığar</string>
+    <string name="plan_time_covers_share_exam">Günde %1$s çalışarak sınav konularının yaklaşık %2$s kadarını bitirebilirsin</string>
     <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_goal">Günde %1$s ile hedefinin yaklaşık %2$s kadarı plana sığar</string>
+    <string name="plan_time_covers_share_goal">Günde %1$s çalışarak hedefinin yaklaşık %2$s kadarını tamamlayabilirsin</string>
     <string name="plan_covered_not_enough">Günde %1$s ayırmak, hedefin için gereken her şeyi çalışmaya yetmiyor.</string>
     <string name="plan_finding">Süreyi hesaplıyoruz…</string>
     <string name="plan_try_again">Tekrar dene</string>
