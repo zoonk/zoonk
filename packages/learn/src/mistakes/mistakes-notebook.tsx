@@ -143,10 +143,12 @@ function NotebookTabs({
 function MistakesInbox({
   groups,
   hrefs,
+  tomorrowOnPage,
   trueFalseLabels,
 }: {
   groups: MistakeEntry[][];
   hrefs: MistakesHrefs;
+  tomorrowOnPage: boolean;
   trueFalseLabels: Notebook["trueFalseLabels"];
 }) {
   const t = useExtracted();
@@ -212,6 +214,7 @@ function MistakesInbox({
                     key={mistake.id}
                     links={getMistakeEntryLinks({ hrefs, mistake })}
                     mistake={mistake}
+                    tomorrowOnPage={tomorrowOnPage}
                     trueFalseLabels={trueFalseLabels}
                   />
                 ))}
@@ -287,6 +290,7 @@ export function MistakesNotebook({
               <MistakesInbox
                 groups={groups}
                 hrefs={hrefs}
+                tomorrowOnPage={notebook.availability.ready === 0}
                 trueFalseLabels={notebook.trueFalseLabels}
               />
             </section>

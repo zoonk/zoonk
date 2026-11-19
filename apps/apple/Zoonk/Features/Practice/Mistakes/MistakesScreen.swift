@@ -166,6 +166,7 @@ private struct MistakeListSections: View {
           ForEach(Array(group.mistakes.enumerated()), id: \.element.id) { position, mistake in
             MistakeEntryView(
               mistake: mistake, labels: labels,
+              tomorrowOnPage: list.availability.ready == 0,
               continuesSet: position > 0 && mistake.snapshot.set != nil
                 && group.mistakes[position - 1].snapshot.set?.value1.id
                   == mistake.snapshot.set?.value1.id
@@ -268,6 +269,8 @@ private struct MistakeEntryView: View {
 
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
+  /// The page already says practice opens tomorrow, so the entry doesn't say it again.
+  let tomorrowOnPage: Bool
   let continuesSet: Bool
   @Environment(\.practiceHooks) private var hooks
 
@@ -327,10 +330,11 @@ private struct MistakeEntryView: View {
   @ViewBuilder
   private var actions: some View {
     let skillId = mistake.practiceAvailable ? mistake.skill?.id : nil
+    let tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
 
-    if mistake.practiceAvailableTomorrow || skillId != nil || mistake.lesson != nil {
+    if tomorrow || skillId != nil || mistake.lesson != nil {
       ButtonRow(spacing: 12) {
-        if mistake.practiceAvailableTomorrow {
+        if tomorrow {
           Text(
             "Practice tomorrow", tableName: "Practice",
             comment: "A mistake from today, ready to practice tomorrow."

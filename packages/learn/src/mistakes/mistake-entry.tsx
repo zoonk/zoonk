@@ -175,11 +175,14 @@ export function MistakeEntryCard({
   continued = false,
   links,
   mistake,
+  tomorrowOnPage = false,
   trueFalseLabels,
 }: {
   continued?: boolean;
   links: MistakeEntryLinks;
   mistake: MistakeEntry;
+  /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
+  tomorrowOnPage?: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const entryDate = useFormatMomentDate();
@@ -234,7 +237,10 @@ export function MistakeEntryCard({
         <ItemText className="text-muted-foreground leading-relaxed" text={snapshot.explanation} />
       )}
 
-      <MistakeEntryActions links={links} availableTomorrow={mistake.practiceAvailableTomorrow} />
+      <MistakeEntryActions
+        availableTomorrow={mistake.practiceAvailableTomorrow && !tomorrowOnPage}
+        links={links}
+      />
     </li>
   );
 }

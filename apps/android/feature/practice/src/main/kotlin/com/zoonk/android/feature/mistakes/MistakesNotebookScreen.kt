@@ -585,6 +585,7 @@ private fun Entries(
                         ?.snapshot
                         ?.set
                         ?.id == setId,
+                tomorrowOnPage = page.head.availability.ready == 0L,
                 actions = actions,
                 modifier = Modifier.padding(vertical = 16.dp),
             )
@@ -597,6 +598,8 @@ private fun MistakeEntry(
     mistake: Mistake,
     words: TrueFalseWords,
     continued: Boolean,
+    /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
+    tomorrowOnPage: Boolean,
     actions: NotebookActions,
     modifier: Modifier = Modifier,
 ) {
@@ -631,9 +634,10 @@ private fun MistakeEntry(
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
-        if (mistake.practiceAvailableTomorrow || skillId != null || mistake.lesson != null) {
+        val tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
+        if (tomorrow || skillId != null || mistake.lesson != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                if (mistake.practiceAvailableTomorrow) {
+                if (tomorrow) {
                     Text(
                         stringResource(R.string.mistakes_practice_tomorrow),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
