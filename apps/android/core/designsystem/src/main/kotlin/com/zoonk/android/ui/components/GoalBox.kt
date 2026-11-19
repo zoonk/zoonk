@@ -270,9 +270,10 @@ private fun ActionBeside(
     }
 }
 
+/** Only a quick explanation says what it is: the other examples' own words already do. */
 data class GoalExample(
     val label: String,
-    val kind: String,
+    val kind: String? = null,
 )
 
 /** Main's examples under the goal box: a tap sends the example as the goal. */
@@ -294,7 +295,7 @@ fun GoalExamples(
                     // The row's own tap, named for TalkBack.
                     modifier = Modifier.semantics { onClick(label = pickLabel, action = null) },
                     onClick = { onPick(example.label) },
-                    supporting = { Text(example.kind) },
+                    supporting = example.kind?.let { kind -> { Text(kind) } },
                 )
             }
         }
@@ -309,10 +310,10 @@ fun rememberGoalExamples(): List<GoalExample> {
     val quickExplanation = stringResource(R.string.goal_box_kind_quick_explanation, formatMinutes(QUICK_EXPLANATION_MINUTES, locale))
 
     return listOf(
-        GoalExample(stringResource(R.string.goal_box_example_exam), stringResource(R.string.goal_box_kind_exam)),
-        GoalExample(stringResource(R.string.goal_box_example_language, language), stringResource(R.string.goal_box_kind_language)),
-        GoalExample(stringResource(R.string.goal_box_example_topic), stringResource(R.string.goal_box_kind_topic)),
-        GoalExample(stringResource(R.string.goal_box_example_music), stringResource(R.string.goal_box_kind_music)),
+        GoalExample(stringResource(R.string.goal_box_example_exam)),
+        GoalExample(stringResource(R.string.goal_box_example_language, language)),
+        GoalExample(stringResource(R.string.goal_box_example_topic)),
+        GoalExample(stringResource(R.string.goal_box_example_music)),
         GoalExample(stringResource(R.string.goal_box_example_explanation), quickExplanation),
     )
 }

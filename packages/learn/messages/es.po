@@ -1184,7 +1184,6 @@ msgstr "Idioma y región"
 
 #: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
-#: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
@@ -8901,29 +8900,14 @@ msgid "Tell us in your own words. We'll build the plan."
 msgstr "Cuéntanos con tus propias palabras. Prepararemos el plan."
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "Examen"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "MhhJ4B"
 msgid "Speak {language} for a job interview"
 msgstr "Hablar {language} en una entrevista de trabajo"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "UdtpV7"
-msgid "Topic"
-msgstr "Tema"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "Zqp_hg"
 msgid "Understand quantum physics"
 msgstr "Entender la física cuántica"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "79lLl-"
-msgid "Music"
-msgstr "Música"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "PSyWa0"

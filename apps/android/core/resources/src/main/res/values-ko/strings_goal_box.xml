@@ -35,10 +35,6 @@
     <string name="goal_box_example_topic">양자 물리학 이해하기</string>
     <string name="goal_box_example_music">음악을 기초부터 배우기</string>
     <string name="goal_box_example_explanation">인플레이션은 어떤 원리로 일어나나요?</string>
-    <string name="goal_box_kind_exam">시험</string>
-    <string name="goal_box_kind_language">언어</string>
-    <string name="goal_box_kind_topic">주제</string>
-    <string name="goal_box_kind_music">음악</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">간단한 설명 · %1$s</string>
 </resources>

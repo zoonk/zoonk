@@ -35,10 +35,6 @@
     <string name="goal_box_example_topic">Entender física quântica</string>
     <string name="goal_box_example_music">Aprender música do zero</string>
     <string name="goal_box_example_explanation">Como funciona a inflação?</string>
-    <string name="goal_box_kind_exam">Prova</string>
-    <string name="goal_box_kind_language">Idioma</string>
-    <string name="goal_box_kind_topic">Tópico</string>
-    <string name="goal_box_kind_music">Música</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">Explicação rápida · %1$s</string>
 </resources>

@@ -6839,7 +6839,7 @@
       }
     },
     "Exam" : {
-      "comment" : "The kind of an example goal",
+      "comment" : "Beside a language goal's reason: a certificate's plan follows its exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9376,7 +9376,7 @@
       }
     },
     "Language" : {
-      "comment" : "Row with the language a goal learns\nThe kind of an example goal",
+      "comment" : "Row with the language a goal learns",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10256,65 +10256,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daha fazla ders"
-          }
-        }
-      }
-    },
-    "Music" : {
-      "comment" : "The kind of an example goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Musik"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Música"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Musique"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Musica"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "音楽"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "음악"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muzyka"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Música"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Müzik"
           }
         }
       }
@@ -19264,65 +19205,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün"
-          }
-        }
-      }
-    },
-    "Topic" : {
-      "comment" : "The kind of an example goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thema"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tema"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sujet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Argomento"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "トピック"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "주제"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temat"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tópico"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konu"
           }
         }
       }

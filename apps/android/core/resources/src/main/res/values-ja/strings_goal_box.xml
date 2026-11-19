@@ -35,10 +35,6 @@
     <string name="goal_box_example_topic">量子物理学を理解する</string>
     <string name="goal_box_example_music">音楽を基礎から学ぶ</string>
     <string name="goal_box_example_explanation">インフレはどういう仕組みですか？</string>
-    <string name="goal_box_kind_exam">試験</string>
-    <string name="goal_box_kind_language">言語</string>
-    <string name="goal_box_kind_topic">トピック</string>
-    <string name="goal_box_kind_music">音楽</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">短い解説 · %1$s</string>
 </resources>

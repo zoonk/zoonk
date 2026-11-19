@@ -1184,7 +1184,6 @@ msgstr "언어 및 지역"
 
 #: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
-#: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
@@ -8901,29 +8900,14 @@ msgid "Tell us in your own words. We'll build the plan."
 msgstr "원하는 내용을 자유롭게 적어 주세요. 계획을 세워 드릴게요."
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "시험"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "MhhJ4B"
 msgid "Speak {language} for a job interview"
 msgstr "취업 면접에서 {language} 말하기"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "UdtpV7"
-msgid "Topic"
-msgstr "주제"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "Zqp_hg"
 msgid "Understand quantum physics"
 msgstr "양자 물리학 이해하기"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "79lLl-"
-msgid "Music"
-msgstr "음악"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "PSyWa0"

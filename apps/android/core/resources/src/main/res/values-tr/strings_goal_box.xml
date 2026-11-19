@@ -35,10 +35,6 @@
     <string name="goal_box_example_topic">Kuantum fiziğini anla</string>
     <string name="goal_box_example_music">Sıfırdan müzik öğren</string>
     <string name="goal_box_example_explanation">Enflasyon nasıl işler?</string>
-    <string name="goal_box_kind_exam">Sınav</string>
-    <string name="goal_box_kind_language">Dil</string>
-    <string name="goal_box_kind_topic">Konu</string>
-    <string name="goal_box_kind_music">Müzik</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">Kısa açıklama · %1$s</string>
 </resources>
