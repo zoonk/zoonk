@@ -158,6 +158,7 @@ export function pressWalk(
           ...(await page.evaluate(readRegions, {
             controls: action.controls,
             from: `press-${pending.length}`,
+            targetId: action.id,
           })),
         },
         undone: null,

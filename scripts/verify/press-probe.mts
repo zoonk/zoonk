@@ -22,7 +22,9 @@ export type TextLine = {
 /**
  * Something on screen that showed up or went away, outermost first: what a press revealed, hid or
  * swapped. `tied` when the control names it in `aria-controls`; `floating` when it is laid out
- * outside the flow (fixed, absolute or sticky), like a menu or a tooltip, so it pushes nothing.
+ * outside the control's flow (in a fixed, absolute or sticky box that doesn't hold the control),
+ * like a menu or a tooltip, so it pushes nothing. A field revealed inside a sheet is in the sheet's
+ * flow, beside the switch that revealed it.
  */
 export type Region = {
   floating: boolean;
@@ -271,9 +273,18 @@ export function markOverlaps(indexes: number[]) {
  * since what's inside a region that came or went came or went with it. `controls` is the pressed
  * control's `aria-controls`.
  */
-export function readRegions({ controls = "", from }: { controls?: string; from: string }): Regions {
+export function readRegions({
+  controls = "",
+  from,
+  targetId,
+}: {
+  controls?: string;
+  from: string;
+  targetId: string;
+}): Regions {
   const LABEL_LENGTH = 40;
   const { label, place } = globalThis.zoonkPage;
+  const target = document.querySelector(`[data-zoonk-act="${targetId}"]`);
   const before = globalThis.zoonkLayout?.[from] ?? [];
   const known = new Set(before.map(({ element }) => element));
   const ids = controls.split(/\s+/u).filter(Boolean);
@@ -299,6 +310,10 @@ export function readRegions({ controls = "", from }: { controls?: string; from: 
     });
   }
 
+  function apart(layer: HTMLElement | null) {
+    return layer !== null && !(target && layer.contains(target));
+  }
+
   function floats(element: HTMLElement) {
     for (
       let current: HTMLElement | null = element;
@@ -306,7 +321,7 @@ export function readRegions({ controls = "", from }: { controls?: string; from: 
       current = current.parentElement
     ) {
       if (["fixed", "absolute", "sticky"].includes(getComputedStyle(current).position)) {
-        return true;
+        return apart(current);
       }
     }
 
@@ -329,8 +344,8 @@ export function readRegions({ controls = "", from }: { controls?: string; from: 
 
   const gone = before
     .filter(({ element }) => left.has(element))
-    .map(({ element, floating, place: was }) => ({
-      floating,
+    .map(({ element, layer, place: was }) => ({
+      floating: apart(layer),
       label: name(element),
       place: was,
       tied: tied(element),

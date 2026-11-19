@@ -44,7 +44,8 @@ export type Action = {
   role: string;
 };
 
-type Snapshot = { element: HTMLElement; floating: boolean; place: Place; words?: string }[];
+/** `layer` is the nearest fixed or absolute box around an element (itself included), if any. */
+type Snapshot = { element: HTMLElement; layer: HTMLElement | null; place: Place; words?: string }[];
 
 declare global {
   // oxlint-disable-next-line no-var -- A page global is declared with `var`.
@@ -209,7 +210,7 @@ export function snapshotLayout(slot = "step") {
   const positions = new Map(all.map((element) => [element, getComputedStyle(element).position]));
   const sticky = all.filter((element) => positions.get(element) === "sticky");
 
-  function floating(element: HTMLElement | null): boolean {
+  function layerOf(element: HTMLElement | null) {
     for (
       let current = element;
       current && current !== document.body;
@@ -218,11 +219,11 @@ export function snapshotLayout(slot = "step") {
       const position = positions.get(current);
 
       if (position === "fixed" || position === "absolute") {
-        return true;
+        return current;
       }
     }
 
-    return false;
+    return null;
   }
 
   globalThis.zoonkLayout = {
@@ -238,7 +239,7 @@ export function snapshotLayout(slot = "step") {
       )
       .map((element) => ({
         element,
-        floating: floating(element),
+        layer: layerOf(element),
         place: place(element),
         words: element.matches(WORDED) ? (element.textContent ?? "") : undefined,
       })),
