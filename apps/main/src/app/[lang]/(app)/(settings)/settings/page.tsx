@@ -80,7 +80,10 @@ async function FirstSettingsPage() {
   return session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />;
 }
 
-/** The server can't tell the screen's width, so the hub and the first page both render and CSS shows one. */
+/**
+ * The server can't tell the screen's width, so the hub and the first page both render and CSS shows
+ * one. Nothing stands in for the first page while it loads: whose it is decides which page it is.
+ */
 export default async function SettingsPage() {
   const t = await getExtracted();
 
@@ -100,13 +103,7 @@ export default async function SettingsPage() {
 
       {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
       <div className="hidden md:contents">
-        <Suspense
-          fallback={
-            <Page>
-              <SettingsHubSkeleton />
-            </Page>
-          }
-        >
+        <Suspense fallback={null}>
           <FirstSettingsPage />
         </Suspense>
       </div>

@@ -1,8 +1,6 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { Page } from "@zoonk/learn/page";
-import { PageAsideNote } from "@zoonk/learn/side-detail";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -29,24 +27,6 @@ async function MemoryContent() {
   );
 }
 
-/** The copy's block holds its place beside the rows, so they don't narrow as the memory arrives. */
-function MemorySkeleton() {
-  return (
-    <div className="flex flex-col gap-7">
-      <Skeleton className="h-15 rounded-lg" />
-      <div className="flex flex-col gap-3">
-        <Skeleton className="h-3.5 w-20" />
-        <Skeleton className="h-32 rounded-lg" />
-      </div>
-      <PageAsideNote className="flex flex-col gap-3">
-        <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-9 w-28 rounded-lg" />
-        <Skeleton className="max-w-column h-10 w-full" />
-      </PageAsideNote>
-    </div>
-  );
-}
-
 export default async function MemoryPage() {
   const t = await getExtracted();
 
@@ -57,7 +37,8 @@ export default async function MemoryPage() {
         title={t("Memory")}
       />
 
-      <Suspense fallback={<MemorySkeleton />}>
+      {/* Nothing stands in for the rows: what is remembered decides how wide they run. */}
+      <Suspense fallback={null}>
         <MemoryContent />
       </Suspense>
     </Page>

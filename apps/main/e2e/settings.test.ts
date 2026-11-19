@@ -76,34 +76,32 @@ test("on a phone statistics pages go back to the overview", async ({
   await expect(page).toHaveURL(/\/stats$/u);
 });
 
-test("Settings reserves the profile column while its contents load", async ({
+test("Profile reserves its side column while its contents load", async ({
   baseURL,
   userWithoutProgress: page,
 }) => {
   await page.setViewportSize({ height: 900, width: 1440 });
 
-  const width = await instant(
+  const placeholderEnd = await instant(
     page,
     async () => {
-      await page.goto("/settings");
+      await page.goto("/profile");
       const placeholders = page.locator('main [data-slot="page"] [data-slot="skeleton"]:visible');
       await expect(placeholders).not.toHaveCount(0);
 
       return placeholders.evaluateAll((nodes) =>
-        Math.max(...nodes.map((node) => node.getBoundingClientRect().width)),
+        Math.max(...nodes.map((node) => node.getBoundingClientRect().right)),
       );
     },
     { baseURL },
   );
 
-  const profile = page.getByRole("textbox", { exact: true, name: "Name" });
-  await expect(profile).toBeVisible();
+  const name = page.getByRole("textbox", { exact: true, name: "Name" });
+  await expect(name).toBeVisible();
 
-  const formWidth = await profile.evaluate(
-    (node) => node.closest("form")?.getBoundingClientRect().width,
-  );
+  const fieldEnd = await name.evaluate((node) => node.getBoundingClientRect().right);
 
-  expect(width).toBe(formWidth);
+  expect(placeholderEnd).toBe(fieldEnd);
 });
 
 test("Subscription sets its plan placeholders side by side, as the plans are", async ({
