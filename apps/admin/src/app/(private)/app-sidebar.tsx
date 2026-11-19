@@ -8,6 +8,7 @@ import {
   SidebarBody,
   SidebarFooter,
   SidebarHeader,
+  SidebarHeaderRow,
   SidebarSection,
 } from "@zoonk/ui/components/sidebar";
 import { SidebarSearch, SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
@@ -74,18 +75,16 @@ type AdminSidebarProps = { account: AdminAccount; counts: AdminNavCounts };
 function AdminSidebarContent({
   account,
   counts,
-  footerStart,
   onNavigate,
-}: AdminSidebarProps & { footerStart?: React.ReactNode; onNavigate?: () => void }) {
+}: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
       <SidebarBody className="gap-3">
         <AdminNav counts={counts} onNavigate={onNavigate} />
       </SidebarBody>
 
-      {/* Its hairline keeps the footer apart from the navigation that scrolls above it. */}
+      {/* Its hairline keeps the account apart from the navigation that scrolls above it. */}
       <SidebarFooter className="border-t">
-        {footerStart}
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -95,19 +94,14 @@ function AdminSidebarContent({
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-3">
-      <SidebarHeader>
+      <SidebarHeader className="gap-3">
+        <SidebarHeaderRow>
+          <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
+        </SidebarHeaderRow>
         <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
-      <AdminSidebarContent
-        account={account}
-        counts={counts}
-        footerStart={
-          <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar">
-            Collapse
-          </SidebarToggle>
-        }
-      />
+      <AdminSidebarContent account={account} counts={counts} />
     </Sidebar>
   );
 }
