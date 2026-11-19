@@ -8,6 +8,20 @@ import { mapGoalSkills } from "./onboarding-fixtures";
 
 const BEFORE_ABOUT_YOU = ["purpose", "targetDate", "level", "buddy"];
 
+const TIME_QUESTION = "How much time can you study each day?";
+
+/** What Skip all left on the first goal, asked again on the next one, in order. */
+const SKIPPED_ALL = [
+  "What have you studied?",
+  "What do you like to watch?",
+  "What do you like to listen to?",
+  "What do you like to play?",
+  "What do you like to read?",
+  "What do you like to do?",
+  "Do any of these apply to you?",
+  "What helps you learn?",
+];
+
 async function createGoalAtAboutYou(userId: string, answered: string[] = BEFORE_ABOUT_YOU) {
   const goal = await goalFixture({
     dailyMinutes: 30,
@@ -30,7 +44,6 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   await page.goto(`/start/${goal.id}`);
 
   await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
-  await expect(page.getByText("1 of 10", { exact: true })).toBeVisible();
 
   const work = page.getByRole("radio", { exact: true, name: "I work" });
   await expectHydrated(work);
@@ -47,9 +60,7 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
 
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
 
-  await expect(
-    page.getByRole("heading", { name: "How much time can you study each day?" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible();
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
@@ -69,8 +80,14 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   const next = await createGoalAtAboutYou(noProgressUser.id);
   await page.goto(`/start/${next.id}`);
 
-  await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
-  await expect(page.getByText("1 of 8", { exact: true })).toBeVisible();
+  for (const question of SKIPPED_ALL) {
+    // oxlint-disable-next-line no-await-in-loop -- Each question must show before it's skipped.
+    await expect(page.getByRole("heading", { name: question })).toBeVisible();
+    // oxlint-disable-next-line no-await-in-loop -- One skip, then the next question.
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
+  }
+
+  await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible();
 });
 
 function createGoalAtConditions(userId: string) {
