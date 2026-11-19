@@ -5081,14 +5081,14 @@ msgid "Estimated score"
 msgstr "Score estimé"
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "JcR3T_"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
-msgstr "Chaque matière compte selon son poids à l’examen. Le pourcentage affiché pour une matière correspond à la part étudiée multipliée par la qualité de tes réponses. Il reste sous 75 % tant que tu n’as pas révisé chaque sujet une fois."
+msgctxt "zK_gOm"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once."
+msgstr "Chaque matière compte selon son poids à l’examen. Sa part augmente à mesure que tu l’étudies et que tu réponds mieux, et reste sous les 75 % jusqu’à ce que tu aies révisé chaque sujet une fois."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "QexwxS"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
-msgstr "Chaque matière compte selon son poids à l’examen. Son pourcentage correspond à la part que tu as étudiée multipliée par ton taux de réussite, et reste sous 75 % tant que tu n’as pas passé d’examen blanc."
+msgctxt "xxx7_8"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam."
+msgstr "Chaque matière compte selon son poids à l’examen. Sa part augmente à mesure que tu l’étudies et que tu réponds mieux, et reste sous les 75 % jusqu’à ce que tu passes un examen blanc."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "Kch5Cx"

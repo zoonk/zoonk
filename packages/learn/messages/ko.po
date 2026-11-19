@@ -5081,14 +5081,14 @@ msgid "Estimated score"
 msgstr "예상 점수"
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "JcR3T_"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
-msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 수치는 공부한 비율에 정답률을 곱한 값으로, 모든 주제를 한 번씩 복습하기 전까지는 75% 미만으로 유지돼요."
+msgctxt "zK_gOm"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once."
+msgstr "각 과목의 비중은 시험에서 차지하는 비중과 같아요. 해당 과목을 더 많이 공부하고 문제를 더 잘 풀수록 수치가 올라가며, 모든 주제를 한 번씩 복습하기 전까지는 75%를 넘지 않아요."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "QexwxS"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
-msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 수치는 공부한 비율에 정답률을 곱한 값이고, 모의고사를 보기 전까지는 75% 미만이에요."
+msgctxt "xxx7_8"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam."
+msgstr "각 과목의 비중은 시험에서 차지하는 비중과 같아요. 해당 과목을 더 많이 공부하고 문제를 더 잘 풀수록 수치가 올라가며, 모의고사를 보기 전까지는 75%를 넘지 않아요."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "Kch5Cx"

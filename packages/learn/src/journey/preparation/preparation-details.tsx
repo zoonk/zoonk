@@ -82,13 +82,13 @@ function useMeasureNote({ forExam, preparation }: { forExam: boolean; preparatio
 
   if (forExam && preparation.components.mocks.kind === "fullReviews") {
     return t(
-      "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once.",
+      "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once.",
     );
   }
 
   return forExam
     ? t(
-        "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam.",
+        "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam.",
       )
     : t(
         "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them.",

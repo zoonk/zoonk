@@ -5081,14 +5081,14 @@ msgid "Estimated score"
 msgstr "Tahmini puan"
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "JcR3T_"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
-msgstr "Her branş, sınavdaki ağırlığına göre hesaba katılır. Bir branşın değeri, çalıştığın kısmın oranıyla cevaplarındaki başarının çarpımıdır ve her konuyu bir kez tekrar edene kadar %75’in altında kalır."
+msgctxt "zK_gOm"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once."
+msgstr "Her branş, sınavda taşıdığı ağırlık kadar hesaba katılır. O branşta çalıştıkça ve daha çok doğru cevap verdikçe oranı artar; tüm konuları bir kez tekrar edene kadar %75’in altında kalır."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "QexwxS"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
-msgstr "Her branş sınavdaki ağırlığına göre hesaba katılır. Bir branşın değeri, çalıştığın kısmın oranıyla doğru cevap oranının çarpımıdır ve deneme sınavına girene kadar %75’in altında kalır."
+msgctxt "xxx7_8"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam."
+msgstr "Her branş, sınavda taşıdığı ağırlık kadar hesaba katılır. O branşta çalıştıkça ve daha çok doğru cevap verdikçe oranı artar; deneme sınavına girene kadar %75’in altında kalır."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "Kch5Cx"

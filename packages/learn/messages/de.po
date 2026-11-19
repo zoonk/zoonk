@@ -5081,14 +5081,14 @@ msgid "Estimated score"
 msgstr "Geschätzter Score"
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "JcR3T_"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
-msgstr "Jedes Fach zählt so viel wie in der Prüfung. Der Wert für ein Fach ist der Anteil, den du schon gelernt hast, mal deine Trefferquote. Er bleibt unter 75 %, bis du jedes Thema einmal wiederholt hast."
+msgctxt "zK_gOm"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once."
+msgstr "Jedes Fach zählt in der Prüfung entsprechend seiner Gewichtung. Der Wert steigt, je mehr du dafür lernst und je mehr richtige Antworten du gibst. Er bleibt unter 75 %, bis du jedes Thema einmal wiederholt hast."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "QexwxS"
-msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
-msgstr "Jedes Fach zählt so viel wie in der Prüfung. Für seinen Wert multiplizieren wir den gelernten Anteil mit der Qualität deiner Antworten. Er bleibt unter 75 %, bis du eine Probeprüfung machst."
+msgctxt "xxx7_8"
+msgid "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam."
+msgstr "Jedes Fach zählt in der Prüfung entsprechend seiner Gewichtung. Der Wert steigt, je mehr du dafür lernst und je mehr richtige Antworten du gibst. Er bleibt unter 75 %, bis du eine Probeprüfung machst."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "Kch5Cx"
