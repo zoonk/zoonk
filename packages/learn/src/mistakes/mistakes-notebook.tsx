@@ -9,7 +9,7 @@ import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/de
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import {
   DETAIL_PRIMARY_CLASS,
   DetailAside,
@@ -33,6 +33,7 @@ import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
 import { useNotebookAvailabilityText } from "./notebook-availability-text";
+import { useMistakesInbox } from "./use-mistakes-inbox";
 
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
@@ -66,9 +67,6 @@ function groupBySkill(mistakes: readonly MistakeEntry[]) {
 function getGroupKey(group: readonly MistakeEntry[]): string {
   return group[0]?.skill?.id ?? "none";
 }
-
-/** Tailwind's `lg`. */
-const INBOX_QUERY = "(min-width: 64rem)";
 
 function NotebookHero({ notebook }: { notebook: Notebook }) {
   const t = useExtracted();
@@ -157,14 +155,8 @@ function MistakesInbox({
 }) {
   const t = useExtracted();
   const keys = groups.map((group) => getGroupKey(group));
-  const [picked, setPicked] = useState<string | null>(keys[0] ?? null);
-
-  const selected = picked === null || keys.includes(picked) ? picked : (keys[0] ?? null);
-
+  const { isShown, select } = useMistakesInbox(keys);
   const rowsStyle: CSSPropertiesWithVariables = { "--skills": groups.length };
-
-  const select = (key: string) =>
-    setPicked(selected === key && !globalThis.matchMedia(INBOX_QUERY).matches ? null : key);
 
   return (
     <div
@@ -174,7 +166,7 @@ function MistakesInbox({
     >
       {groups.map((group) => {
         const key = getGroupKey(group);
-        const open = selected === key;
+        const open = isShown(key);
         const name = group[0]?.skill?.name ?? t("Other questions");
         const panelId = `mistakes-skill-${key}`;
 

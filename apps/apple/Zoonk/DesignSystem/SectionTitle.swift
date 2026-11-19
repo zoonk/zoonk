@@ -44,6 +44,24 @@ extension View {
   }
 }
 
+/// Main's `PageSectionLabel`: a quiet label naming a group inside a section, such as what a
+/// lesson leads to or a run of topics. It's still a heading for VoiceOver.
+struct SectionLabel: View {
+  let text: Text
+
+  init(_ text: Text) {
+    self.text = text
+  }
+
+  var body: some View {
+    text
+      .typeStyle(.sectionLabel)
+      .foregroundStyle(.mutedForeground)
+      .textCase(nil)
+      .accessibilityAddTraits(.isHeader)
+  }
+}
+
 extension SectionTitle where Trailing == EmptyView {
   init(_ title: Text) {
     self.init(title) { EmptyView() }

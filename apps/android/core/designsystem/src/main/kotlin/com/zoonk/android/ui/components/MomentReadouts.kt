@@ -25,6 +25,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import kotlin.math.ceil
 
 data class MomentScore(
@@ -57,7 +58,7 @@ fun MomentReadouts(
             }
         }
         if (facts.isNotEmpty()) {
-            Text(facts.factsLine(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(facts.factsLine(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
         }
     }
 }

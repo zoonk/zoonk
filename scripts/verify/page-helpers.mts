@@ -249,7 +249,29 @@ export function installPageHelpers() {
       return drawn ? [drawn] : [];
     });
 
-    return union([...own, ...texts, ...children]);
+    return clipped(element, style, union([...own, ...texts, ...children]));
+  }
+
+  /**
+   * What an element's own overflow clip leaves shown of what it draws, such as a line of facts that
+   * hangs its wrapped line's dot past its edge to hide it.
+   */
+  function clipped(element: Element, style: CSSStyleDeclaration, drawn: InkBox | null) {
+    const across = CLIPS.has(style.overflowX);
+    const down = CLIPS.has(style.overflowY);
+
+    if (!drawn || (!across && !down)) {
+      return drawn;
+    }
+
+    const box = element.getBoundingClientRect();
+
+    return {
+      bottom: down ? Math.min(drawn.bottom, box.bottom) : drawn.bottom,
+      left: across ? Math.max(drawn.left, box.left) : drawn.left,
+      right: across ? Math.min(drawn.right, box.right) : drawn.right,
+      top: down ? Math.max(drawn.top, box.top) : drawn.top,
+    };
   }
 
   globalThis.zoonkPage = { ink, label, paints, pixels, place, rgba, rings, shown };

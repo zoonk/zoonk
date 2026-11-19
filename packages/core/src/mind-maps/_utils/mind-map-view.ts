@@ -1,5 +1,6 @@
 import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { type ChapterMindMap } from "@zoonk/db";
+import { superscriptPowers } from "@zoonk/utils/plain-powers";
 import {
   type ChapterMindMapView,
   type MindMapOutline,
@@ -13,7 +14,10 @@ export type MindMapRow = Pick<
   "imageHeight" | "imageUrl" | "imageWidth" | "status" | "structure" | "thumbnailUrl" | "updatedAt"
 > & { redrawOwedAt?: Date | null };
 
-/** Excludes picture-only sketches; returns null for invalid stored structures. */
+/**
+ * Excludes picture-only sketches; returns null for invalid stored structures. Its words are written
+ * to be lettered on the picture, so a power comes as a caret; the text reads it raised, as drawn.
+ */
 function toMindMapOutline(structure: unknown): MindMapOutline | null {
   const parsed = mindMapStructureSchema.safeParse(structure);
 
@@ -25,14 +29,20 @@ function toMindMapOutline(structure: unknown): MindMapOutline | null {
 
   return {
     branches: branches.map(({ explanation, points, title: name }) => ({
-      explanation,
-      points,
-      title: name,
+      explanation: superscriptPowers(explanation),
+      points: points.map((point) => superscriptPowers(point)),
+      title: superscriptPowers(name),
     })),
-    centralIdea,
-    comparison,
-    summary,
-    title,
+    centralIdea: superscriptPowers(centralIdea),
+    comparison: comparison && {
+      columns: comparison.columns.map((column) => ({
+        name: superscriptPowers(column.name),
+        points: column.points.map((point) => superscriptPowers(point)),
+      })),
+      title: superscriptPowers(comparison.title),
+    },
+    summary: superscriptPowers(summary),
+    title: superscriptPowers(title),
   };
 }
 

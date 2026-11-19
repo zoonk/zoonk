@@ -116,6 +116,6 @@ test.describe("Text typed before the page hydrates", () => {
     await expect(time).toHaveValue("45");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
-    await expect(page.getByText("45 min", { exact: true })).toBeVisible();
+    await expect(page.getByText("45 min", { exact: true }).filter({ visible: true })).toBeVisible();
   });
 });
