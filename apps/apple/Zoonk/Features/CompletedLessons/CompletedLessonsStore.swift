@@ -146,24 +146,28 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
               finishedOn: lesson.finishedOn)
           },
           nextCursor: list.pagination.nextCursor,
-          filter: list.filter.map { filter in
-            CompletedLessonsFilter(
-              groups: filter.groups.map { group in
-                CompletedLessonGroup(key: group.key, name: group.name, lessons: group.lessons)
-              },
-              kind: {
-                switch filter.kind {
-                case .subjects: .subjects
-                case .modules: .modules
-                case .phases: .phases
-                }
-              }(),
-              total: filter.total)
-          })
+          filter: (list.filter?.value1).map(CompletedLessonsFilter.init))
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
+  }
+}
+
+extension CompletedLessonsFilter {
+  fileprivate init(_ filter: Components.Schemas.CompletedLessonFilter) {
+    let kind: Kind =
+      switch filter.kind {
+      case .subjects: .subjects
+      case .modules: .modules
+      case .phases: .phases
+      }
+
+    self.init(
+      groups: filter.groups.map { group in
+        CompletedLessonGroup(key: group.key, name: group.name, lessons: group.lessons)
+      },
+      kind: kind, total: filter.total)
   }
 }

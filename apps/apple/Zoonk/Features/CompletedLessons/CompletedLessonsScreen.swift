@@ -86,8 +86,7 @@ private struct CompletedLessonsList: View {
       PracticeLoadFailureView(error: error) {
         Task { await lessons.refresh() }
       }
-    case .idle,
-      .loading where chips == nil:
+    case .idle where chips == nil, .loading where chips == nil:
       ProgressView()
         .lonePage()
     default:
