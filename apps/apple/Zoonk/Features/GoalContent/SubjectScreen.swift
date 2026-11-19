@@ -486,7 +486,7 @@ private struct SubjectTopicsSection: View {
             }
           }
         } else if let heading {
-          SectionTitle(Text(heading))
+          SectionLabel(Text(heading))
         }
       }
     }
