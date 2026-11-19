@@ -108,7 +108,11 @@ async function walk(
     }
 
     if (judged === "press" && before) {
-      await (left ? presses?.navigated() : presses?.pressed(action, doing, before, comparison));
+      const sent = guard.blocked() > writes;
+
+      await (left
+        ? presses?.navigated()
+        : presses?.pressed(action, { before, comparison, doing, sent }));
     } else if (judged === "undo") {
       await presses?.undone(left ? null : comparison);
     }
@@ -176,7 +180,7 @@ async function walk(
   async function open(action: Action, element: Locator) {
     await step(
       action,
-      "opening",
+      action.kind === "panel" ? "pressing" : "opening",
       async () => element.click({ timeout: ACT_TIMEOUT_MS }),
       STEP_SETTLE_MS,
       "press",

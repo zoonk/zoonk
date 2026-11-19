@@ -44,6 +44,9 @@ export function pressSection(loads: LoadReport[], out: string): string[] {
         coverage.held.submit.length > 0
           ? `submit buttons (send a form): ${coverage.held.submit.join(", ")}`
           : "",
+        coverage.held.sent.length > 0
+          ? `pressed but sent a request the walk blocked, so not judged (it may save or start a model call): ${coverage.held.sent.join(", ")}`
+          : "",
         coverage.held.button.length > 0
           ? `other buttons (may write or start a model call): ${coverage.held.button.join(", ")}`
           : "",

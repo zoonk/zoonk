@@ -83,18 +83,30 @@ export type ReadableItem = { context: string; kind: "control" | "figure" | "text
 
 const ORDER: ReadableItem["kind"][] = ["figure", "control", "text"];
 
+/** A number as it's read: "70%", "13:30", "1,200", "2027". */
+const FIGURE = /\d+(?:[.,:]\d+)*\s?%?/gu;
+
+/**
+ * A figure is each number a screen shows, compared as a number, so one that's still there in
+ * reworded text ("45 questions" for "45 perguntas") isn't lost; it's shown with the text it was in.
+ * Text and controls are compared whole.
+ */
 function items({ controls, texts }: Readable): ReadableItem[] {
   const named = new Set(controls);
 
   return [
-    ...controls.map((text) => ({ context: "", kind: "control" as const, text })),
-    ...texts
-      .filter(({ text }) => !named.has(text))
-      .map(({ context, text }) => ({
-        context,
-        kind: /\d/u.test(text) ? ("figure" as const) : ("text" as const),
-        text,
+    ...texts.flatMap(({ context, text }) =>
+      [...text.matchAll(FIGURE)].map(([figure]) => ({
+        context: context || text,
+        kind: "figure" as const,
+        text: figure.replaceAll(/\s/gu, ""),
       })),
+    ),
+    ...controls.map((text) => ({ context: "", kind: "control" as const, text })),
+    // A text that is only a number ("70%") is compared as that number alone.
+    ...texts
+      .filter(({ text }) => !named.has(text) && /\p{L}/u.test(text.replaceAll(FIGURE, "")))
+      .map(({ text }) => ({ context: "", kind: "text" as const, text })),
   ];
 }
 
@@ -119,9 +131,9 @@ function ordered(list: ReadableItem[]) {
 }
 
 /**
- * What the base showed that the branch doesn't (`lost`), and the reverse (`gained`): numbers,
- * percentages, dates and counts first, with the line around them, then controls by name, then
- * other text. Leads to answer, not failures: removed on purpose, or a fault.
+ * What the base showed that the branch doesn't (`lost`), and the reverse (`gained`): numbers
+ * (scores, percentages, dates, counts) first, each with the line it was in, then controls by name,
+ * then other text. Leads to answer, not failures: removed on purpose, or a fault.
  */
 export function readableChanges(base: Readable, branch: Readable) {
   const before = items(base);
@@ -134,7 +146,7 @@ type Compared = { path: string; readable?: Readable; viewport: string };
 const LISTED = 12;
 
 function describe(item: ReadableItem) {
-  const what = { control: "control", figure: "figure", text: "text" }[item.kind];
+  const what = { control: "control", figure: "number", text: "text" }[item.kind];
   const around = item.context ? ` (in "${item.context}")` : "";
   return `${what} "${item.text}"${around}`;
 }
@@ -153,13 +165,22 @@ export function readableSection(baseline: Compared[], loads: Compared[]): string
 
   const lines = [...pages].flatMap(([path, screens]) => {
     const list = (side: "gained" | "lost") => {
-      const where = new Map<string, { item: ReadableItem; screens: string[] }>();
+      const where = new Map<string, { count: number; item: ReadableItem; screens: string[] }>();
 
       for (const screen of screens) {
         for (const item of screen[side]) {
           const key = `${item.kind} ${item.text}`;
-          const seen = where.get(key) ?? { item, screens: [] };
-          seen.screens.push(screen.viewport);
+          const seen = where.get(key) ?? { count: 0, item, screens: [] };
+
+          if (!seen.screens.includes(screen.viewport)) {
+            seen.screens.push(screen.viewport);
+          }
+
+          seen.count = Math.max(
+            seen.count,
+            screen[side].filter((other) => `${other.kind} ${other.text}` === key).length,
+          );
+
           where.set(key, seen);
         }
       }
@@ -169,7 +190,10 @@ export function readableSection(baseline: Compared[], loads: Compared[]): string
       return [
         ...all
           .slice(0, LISTED)
-          .map(({ item, screens: on }) => `  - ${describe(item)} — ${on.join(", ")}`),
+          .map(
+            ({ count, item, screens: on }) =>
+              `  - ${describe(item)}${count > 1 ? ` ×${count}` : ""} — ${on.join(", ")}`,
+          ),
         ...(all.length > LISTED ? [`  - and ${all.length - LISTED} more`] : []),
       ];
     };

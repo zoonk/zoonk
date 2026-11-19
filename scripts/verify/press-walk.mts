@@ -24,10 +24,11 @@ import { type Action, type Comparison, snapshotLayout } from "./states-probe.mts
 /**
  * With `--press`: what was pressed, and the controls only held (never clicked) with why: a link
  * would leave the page, a submit button would send its form, and another button may write or start
- * a model call.
+ * a model call. A press that sent a request anyway (`sent`) isn't judged: the walk aborted it, so
+ * its screen is a failed save, not what a learner sees.
  */
 export type PressCoverage = {
-  held: Record<"button" | "link" | "submit", string[]>;
+  held: Record<"button" | "link" | "sent" | "submit", string[]>;
   pressed: string[];
 };
 
@@ -52,7 +53,11 @@ export function pressWalk(
   page: Page,
   { folder, reload }: { folder: string; reload: () => Promise<void> },
 ) {
-  const coverage: PressCoverage = { held: { button: [], link: [], submit: [] }, pressed: [] };
+  const coverage: PressCoverage = {
+    held: { button: [], link: [], sent: [], submit: [] },
+    pressed: [],
+  };
+
   const findings: Finding[] = [];
   const records: PressRecord[] = [];
   const overlapsSeen = new Set<string>();
@@ -127,7 +132,22 @@ export function pressWalk(
       pending.push({ after: null, number: 0, press: null });
     },
     overlaps,
-    async pressed(action: Action, doing: string, before: Frame, comparison: Comparison) {
+    async pressed(
+      action: Action,
+      {
+        before,
+        comparison,
+        doing,
+        sent,
+      }: { before: Frame; comparison: Comparison; doing: string; sent: boolean },
+    ) {
+      if (sent) {
+        coverage.pressed.pop();
+        coverage.held.sent.push(controlName(action));
+        pending.push({ after: null, number: 0, press: null });
+        return;
+      }
+
       const press: Press = {
         action,
         doing,

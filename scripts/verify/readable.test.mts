@@ -12,7 +12,7 @@ function screen(texts: (string | [string, string])[], controls: string[] = []): 
 }
 
 describe("what the base showed and the branch doesn't", () => {
-  it("lists a lost score first, with the line around it, then a lost control, then text", () => {
+  it("lists a lost score first, with the line it was in, then a lost control, then text", () => {
     const base = screen(
       ["Your mocks", ["70%", "Last mock 70% Score in mock 1"], "Keep going", "Start a mock"],
       ["Start a mock", "Review mistakes"],
@@ -30,7 +30,7 @@ describe("what the base showed and the branch doesn't", () => {
     ]);
   });
 
-  it("counts repeats, so one of two equal figures going missing is still a lead", () => {
+  it("counts repeats, so one of two equal numbers going missing is still a lead", () => {
     const { lost } = readableChanges(screen(["70%", "70%"]), screen(["70%"]));
 
     assert.deepEqual(
@@ -39,9 +39,20 @@ describe("what the base showed and the branch doesn't", () => {
     );
   });
 
+  it("doesn't list a number still shown in reworded text, only the rewording", () => {
+    const { gained, lost } = readableChanges(screen(["45 perguntas"]), screen(["45 questões"]));
+
+    assert.deepEqual(lost, [{ context: "", kind: "text", text: "45 perguntas" }]);
+    assert.deepEqual(gained, [{ context: "", kind: "text", text: "45 questões" }]);
+  });
+
   it("lists what the branch added too", () => {
     const { gained } = readableChanges(screen([]), screen(["3 lessons left"]));
-    assert.deepEqual(gained, [{ context: "", kind: "figure", text: "3 lessons left" }]);
+
+    assert.deepEqual(gained, [
+      { context: "3 lessons left", kind: "figure", text: "3" },
+      { context: "", kind: "text", text: "3 lessons left" },
+    ]);
   });
 });
 
@@ -60,7 +71,7 @@ describe("the report's section", () => {
     assert.deepEqual(readableSection(base, branch).slice(INTRO_LINES), [
       "- **/exam**",
       "  - On the base, not on the branch:",
-      '    - figure "70%" (in "Last mock 70%") — phone, laptop',
+      '    - number "70%" (in "Last mock 70%") — phone, laptop',
       "",
     ]);
   });

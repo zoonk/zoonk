@@ -78,6 +78,32 @@ function opensAbove({ pressed }: Press, control: Moved) {
   );
 }
 
+/** On one axis, a box that changed size but kept its start, middle or end where it was. */
+function heldAnchor(start: number, size: number, newStart: number, newSize: number) {
+  const ends = [
+    [start, newStart],
+    [start + size / 2, newStart + newSize / 2],
+    [start + size, newStart + newSize],
+  ];
+
+  return (
+    Math.abs(newStart - start) < MIN_PX ||
+    (newSize !== size && ends.some(([was, now = 0]) => Math.abs(now - (was ?? 0)) < MIN_PX))
+  );
+}
+
+/**
+ * A text whose own words changed ("Save" becoming "Remove focus" in a full-width button) moves its
+ * box only around its own anchor: its start, middle or end held. That's the words changing, not
+ * the screen jumping; a box around it that changes size is judged on its own.
+ */
+function rewords({ after, before }: Moved) {
+  return (
+    heldAnchor(before.left, before.width, after.left, after.width) &&
+    heldAnchor(before.top, before.height, after.top, after.height)
+  );
+}
+
 function shiftOf(change: Moved) {
   const { across, down } = changeOf(change);
   return Math.max(Math.abs(across), Math.abs(down));
@@ -119,7 +145,7 @@ export function pressMoves(press: Press): Moved[] {
     const { across, wider } = changeOf(change);
     const below = change.before.top >= bottomOf(target) - 1;
 
-    if (shiftOf(change) >= MIN_PX && !change.carried) {
+    if (shiftOf(change) >= MIN_PX && !change.carried && !rewords(change)) {
       return !(pushes && below && across === 0);
     }
 
@@ -255,7 +281,11 @@ export function findOverlaps(lines: TextLine[]): Overlap[] {
   const sorted = lines.toSorted((first, second) => first.top - second.top);
   const found = new Map<string, Overlap>();
 
-  function record(first: TextLine, second: TextLine, { height, width }: { height: number; width: number }) {
+  function record(
+    first: TextLine,
+    second: TextLine,
+    { height, width }: { height: number; width: number },
+  ) {
     const [a, b] = first.element < second.element ? [first, second] : [second, first];
     const key = `${a.element} ${b.element}`;
     const seen = found.get(key);
