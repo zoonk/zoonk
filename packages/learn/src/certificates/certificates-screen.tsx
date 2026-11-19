@@ -229,7 +229,6 @@ export function CertificatesScreen({
       }
       className="flex-1"
       data-slot="certificates"
-      measure="list"
     >
       <CertificatesHeader />
 
