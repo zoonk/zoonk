@@ -148,7 +148,10 @@ extension DaySegment {
     case .block(_, .done):
       return [String(localized: "Done", table: "Today", comment: "A finished block")]
     case .block(let block, .ahead):
-      return [studyDuration(minutes: block.estimatedMinutes)]
+      return [
+        String(localized: "planned", table: "Today", comment: "A day's status").labelCased(),
+        studyDuration(minutes: block.estimatedMinutes),
+      ]
     case .block(let block, .current) where block.status == .active && block.answered > 0:
       return [
         String(

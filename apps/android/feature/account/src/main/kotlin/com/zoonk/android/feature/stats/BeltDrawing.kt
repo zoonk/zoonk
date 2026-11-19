@@ -200,7 +200,7 @@ private fun RankStripe(
 
 /**
  * Main's `BeltRack`: every belt in order in equal columns, those earned tied and the rest folded, the
- * current one ringed and named under it (every belt named where all the names fit), then a key to the two shapes.
+ * current one ringed and named under it (every belt named where all the names fit).
  */
 @Composable
 internal fun BeltRack(current: Belt) {
@@ -209,44 +209,37 @@ internal fun BeltRack(current: Belt) {
     val coming = stringResource(R.string.stats_belt_coming)
     val now = stringResource(R.string.stats_belt_current)
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(Modifier.fillMaxWidth()) {
-                Belt.entries.forEach { entry ->
-                    val name = stringResource(entry.label)
-                    val tied = entry <= current
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(Modifier.fillMaxWidth()) {
+            Belt.entries.forEach { entry ->
+                val name = stringResource(entry.label)
+                val tied = entry <= current
 
+                Box(
+                    Modifier.weight(1f).clearAndSetSemantics {
+                        contentDescription = name
+                        stateDescription =
+                            when {
+                                entry == current -> now
+                                tied -> earned
+                                else -> coming
+                            }
+                    },
+                    contentAlignment = Alignment.Center,
+                ) {
                     Box(
-                        Modifier.weight(1f).clearAndSetSemantics {
-                            contentDescription = name
-                            stateDescription =
-                                when {
-                                    entry == current -> now
-                                    tied -> earned
-                                    else -> coming
-                                }
-                        },
+                        Modifier
+                            .size(RACK_WIDTH, RACK_HEIGHT)
+                            .then(if (entry == current) Modifier.border(1.5.dp, ink, RoundedCornerShape(ZoonkRadius.sm)) else Modifier),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Box(
-                            Modifier
-                                .size(RACK_WIDTH, RACK_HEIGHT)
-                                .then(if (entry == current) Modifier.border(1.5.dp, ink, RoundedCornerShape(ZoonkRadius.sm)) else Modifier),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            RackBelt(entry, tied, Modifier.fillMaxSize(RACK_FILL))
-                        }
+                        RackBelt(entry, tied, Modifier.fillMaxSize(RACK_FILL))
                     }
                 }
             }
-
-            BeltNames(current)
         }
 
-        Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            RackKey(earned, tied = true)
-            RackKey(coming, tied = false)
-        }
+        BeltNames(current)
     }
 }
 
@@ -280,17 +273,6 @@ private fun BeltNames(current: Belt) {
         layout(constraints.maxWidth, spots.maxOfOrNull { (index, _) -> names[index].height } ?: 0) {
             spots.forEach { (index, x) -> names[index].placeRelative(x, 0) }
         }
-    }
-}
-
-@Composable
-private fun RackKey(
-    label: String,
-    tied: Boolean,
-) {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-        RackBelt(Belt.Gray, tied, Modifier.size(KEY_SIZE))
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -378,7 +360,6 @@ private const val RACK_OUTLINE = 3f
 private const val RACK_FILL = 0.8f
 private val RACK_WIDTH = 32.dp
 private val RACK_HEIGHT = 26.dp
-private val KEY_SIZE = 20.dp
 
 /** The least room between two belts' names before only the current belt keeps its name. */
 private val NAME_GAP = 8.dp

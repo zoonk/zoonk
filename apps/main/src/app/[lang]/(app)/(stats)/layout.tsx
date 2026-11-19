@@ -7,7 +7,6 @@ import { StatsNav } from "./_components/stats-nav";
 
 export const metadata: Metadata = { robots: { follow: false, index: false } };
 
-/** Every number covers all of the learner's goals. */
 export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) {
   const t = await getExtracted();
 
@@ -17,7 +16,6 @@ export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) 
         hub={{ href: getMenu("stats").url, title: t("Statistics") }}
         measure="list"
         nav={<StatsNav />}
-        note={t("Across all your goals")}
       >
         {children}
       </SectionPage>

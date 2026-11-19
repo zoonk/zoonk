@@ -117,7 +117,7 @@ Write and edit this copy with [copywriting](../copywriting/SKILL.md) and [copy-e
 - **Kind motivation.** Rewards come from learning, and what earns one shows where it's earned (a mission's row, a challenge's "7 of 10 to win"). Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
 - **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the day's study.
 - **Interaction is learning.** An interactive activity is the learning action: the person moves, predicts, or builds something, and a question checks what they saw. Never add one that only decorates.
-- **Readable everywhere.** Neutral text (titles, body, muted lines) meets WCAG AA on every surface it sits on, in light and dark. Colored marks, icons, tints and colored words stay soft in the regular theme and turn strict only under `prefers-contrast: more`; color is never the only cue (a word, an icon or a shape says the same). Theme, contrast and reduced motion follow the device, and every animation has a calm reduced-motion version.
+- **Readable everywhere.** Neutral text (titles, body, muted lines) meets WCAG AA on every surface it sits on, in light and dark. Colored marks, icons, tints and colored words stay soft in the regular theme and turn strict only under `prefers-contrast: more`; color is never the only cue (a word, an icon, a shape or the mark's place in an order says the same, and a legend is added only when none of them does). Theme, contrast and reduced motion follow the device, and every animation has a calm reduced-motion version.
 
 ## Zoonk's visual language
 

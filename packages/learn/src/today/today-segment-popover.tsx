@@ -12,6 +12,7 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { FactSegments } from "../_components/task-meta";
+import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
@@ -58,7 +59,7 @@ function useSegmentFacts() {
     }
 
     if (state === "ahead") {
-      return { data: time };
+      return { data: time, status: toLabelCase(t("planned")) };
     }
 
     return block.status === "active" && block.answered > 0

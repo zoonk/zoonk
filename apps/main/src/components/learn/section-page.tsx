@@ -74,27 +74,17 @@ export function SectionPage({
 /** From a tablet up the tab marks the page, so the title stays only for screen readers. */
 export function SectionPageHeader({
   description,
-  note,
   title,
 }: {
-  /** The page's own line, at every width. */
   description?: React.ReactNode;
-  /** The section's line, which its header shows from a tablet up. */
-  note?: React.ReactNode;
   title: string;
 }) {
-  const line = description ?? note;
-
   return (
     <PageHeader className="md:contents">
       <PageHeaderContent className="md:contents">
         <AppEntryName name={title} />
         <PageTitle className="md:sr-only">{title}</PageTitle>
-        {line && (
-          <PageSubtitle className={cn("text-pretty md:pt-0", !description && "md:hidden")}>
-            {line}
-          </PageSubtitle>
-        )}
+        {description && <PageSubtitle className="text-pretty md:pt-0">{description}</PageSubtitle>}
       </PageHeaderContent>
     </PageHeader>
   );
