@@ -288,7 +288,7 @@ internal fun RevealWeek(
     val dates = days.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.WeekdayDayOfMonth) }
     val measurer = rememberTextMeasurer()
     val dateWidth = with(LocalDensity.current) { dates.maxOf { measurer.measure(it, dateStyle, softWrap = false).size.width }.toDp() }
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(
             stringResource(R.string.onboarding_reveal_first_week),
             detail =
