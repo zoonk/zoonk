@@ -39,6 +39,20 @@ describe("what the base showed and the branch doesn't", () => {
     );
   });
 
+  it("quotes the line the branch no longer shows when one of two equal numbers goes missing", () => {
+    const base = screen([
+      ["Score in mock 1", "Last mock 70% Score in mock 1"],
+      ["Day 1", "Day 1 Sun, Nov 14 5 h 30 min"],
+    ]);
+
+    const branch = screen([["Day 1", "Day 1 · Sun, Nov 14, 2027"]]);
+
+    assert.deepEqual(
+      readableChanges(base, branch).lost.filter((item) => item.kind === "figure"),
+      [{ context: "Last mock 70% Score in mock 1", kind: "figure", text: "1" }],
+    );
+  });
+
   it("doesn't list a number still shown in reworded text, only the rewording", () => {
     const { gained, lost } = readableChanges(screen(["45 perguntas"]), screen(["45 questões"]));
 

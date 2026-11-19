@@ -111,20 +111,50 @@ function items({ controls, texts }: Readable): ReadableItem[] {
   ];
 }
 
-function minus(from: ReadableItem[], taken: ReadableItem[]): ReadableItem[] {
-  const left = new Map<string, number>();
+function alike(first: string, second: string) {
+  const words = (line: string) =>
+    new Set(
+      line
+        .toLowerCase()
+        .split(/[^\p{L}\p{N}%]+/u)
+        .filter(Boolean),
+    );
 
-  for (const item of taken) {
-    const key = `${item.kind} ${item.text}`;
-    left.set(key, (left.get(key) ?? 0) + 1);
+  const [one, two] = [words(first), words(second)];
+  const shared = [...one].filter((word) => two.has(word)).length;
+  return shared / Math.max(one.size + two.size - shared, 1);
+}
+
+/**
+ * What `from` has that `taken` doesn't, counting repeats. Equal items pair up by how alike their
+ * lines are, so when one of two "1"s goes missing, the one listed is the one whose line went
+ * ("Score in mock 1"), not the first one read ("Day 1").
+ */
+function minus(from: ReadableItem[], taken: ReadableItem[]): ReadableItem[] {
+  const key = (item: ReadableItem) => `${item.kind} ${item.text}`;
+  const others = Map.groupBy(taken, key);
+  const paired = new Set<ReadableItem>();
+
+  for (const [name, mine] of Map.groupBy(from, key)) {
+    const theirs = others.get(name) ?? [];
+
+    const pairs = mine
+      .flatMap((item) =>
+        theirs.map((other) => ({ item, other, score: alike(item.context, other.context) })),
+      )
+      .toSorted((first, second) => second.score - first.score);
+
+    const used = new Set<ReadableItem>();
+
+    for (const { item, other } of pairs) {
+      if (!paired.has(item) && !used.has(other)) {
+        paired.add(item);
+        used.add(other);
+      }
+    }
   }
 
-  return from.filter((item) => {
-    const key = `${item.kind} ${item.text}`;
-    const count = left.get(key) ?? 0;
-    left.set(key, count - 1);
-    return count <= 0;
-  });
+  return from.filter((item) => !paired.has(item));
 }
 
 function ordered(list: ReadableItem[]) {
