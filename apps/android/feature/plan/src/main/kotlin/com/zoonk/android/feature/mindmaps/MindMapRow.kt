@@ -47,13 +47,13 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.listRowDescription
+import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
