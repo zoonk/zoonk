@@ -1,5 +1,14 @@
 import SwiftUI
 
+/// A host's own end for a lesson it plays, as main's `endingSlots.completion`: its page takes the
+/// place of the lesson's end while the lesson saves and once it's saved, with one "Done". A failed
+/// save, and a lesson with nothing left to answer, keep the lesson's own end.
+struct LessonEndSlot {
+  let content:
+    (_ completion: LessonPlayerState.Completion, _ correct: Int, _ answered: Int) -> AnyView
+  let done: () -> Void
+}
+
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.lessonPlayerRoutes) private var routes
@@ -12,6 +21,7 @@ struct LessonCompletionView: View {
   var guestEnding: LessonGuestEnding?
   /// A spread shows the lesson's map under what was done; one column keeps it in the menu.
   var lesson: PlayableLesson?
+  var ending: LessonEndSlot?
   let finish: () -> Void
   let close: () -> Void
 
@@ -20,6 +30,41 @@ struct LessonCompletionView: View {
   @State private var stopping = VisitRequest<Bool>()
 
   var body: some View {
+    end
+      .completionMoments(day)
+      .feedbackSheet(
+        isPresented: $showsSaveReport,
+        context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
+      )
+      .sensoryFeedback(.success, trigger: completion.status == .saved)
+      .onChange(of: completion.status) { _, status in
+        if status == .saved, soundsEnabled {
+          LessonSounds.shared.play(.finish)
+        }
+      }
+      .onDisappear {
+        stopping.leave()
+      }
+  }
+
+  @ViewBuilder
+  private var end: some View {
+    if let ending, completion.status == .saving || completion.status == .saved {
+      ending.content(completion, correct, answered)
+        .bottomBar {
+          Button(action: ending.done) {
+            Text("Done", tableName: "Player")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+          .disabled(completion.status == .saving)
+        }
+    } else {
+      lessonEnd
+    }
+  }
+
+  private var lessonEnd: some View {
     PaneSplit {
       page {
         moment
@@ -45,20 +90,6 @@ struct LessonCompletionView: View {
         guestEndingView
       }
       .bottomBar(note: stopFailure) { actionBar }
-    }
-    .completionMoments(day)
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
-    )
-    .sensoryFeedback(.success, trigger: completion.status == .saved)
-    .onChange(of: completion.status) { _, status in
-      if status == .saved, soundsEnabled {
-        LessonSounds.shared.play(.finish)
-      }
-    }
-    .onDisappear {
-      stopping.leave()
     }
   }
 
@@ -380,19 +411,11 @@ struct LessonCompletionView: View {
     }
   }
 
-  /// What it earned; a lesson opened outside a day also says its time (B2's R1).
+  /// A lesson opened outside a day also says its time (B2's R1).
   private func readouts(_ summary: LessonCompletionSummary) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      if summary.brainPower > 0 {
-        EarnedBrainPower(points: summary.brainPower)
-      }
-
-      if summary.block == nil, let studied = studied(summary.seconds) {
-        Text(studied)
-          .typeStyle(.note.monospacedDigit())
-          .foregroundStyle(.mutedForeground)
-      }
-    }
+    LessonReadouts(
+      correct: correct, answered: answered, brainPower: summary.brainPower,
+      studied: summary.block == nil ? studied(summary.seconds) : nil)
   }
 
   private func studied(_ seconds: Int) -> String? {
@@ -402,6 +425,59 @@ struct LessonCompletionView: View {
       localized: "\(progressLearningTime(seconds)) studied",
       table: "Player",
       comment: "The study time this lesson counted; the argument is a duration like '4 min'")
+  }
+}
+
+/// Main's `MomentReadouts` at a lesson's end: how many answers were right and the Brain Power it
+/// earned, side by side, then what it counted under them.
+struct LessonReadouts: View {
+  @Environment(\.self) private var environment
+
+  let correct: Int
+  let answered: Int
+  let brainPower: Int
+  var studied: String?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if answered > 0 || brainPower > 0 {
+        FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
+          if answered > 0 {
+            Text(score)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(.mutedForeground)
+          }
+
+          if brainPower > 0 {
+            EarnedBrainPower(points: brainPower)
+          }
+        }
+      }
+
+      if let studied {
+        Text(studied)
+          .typeStyle(.note.monospacedDigit())
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  /// The number in the readout's face, the words around it in the line's.
+  private var score: AttributedString {
+    var score = AttributedString(
+      localized: "**\(correct)** of \(answered) right", table: "Player",
+      comment:
+        "At a lesson's end: the answers the learner got right out of those answered. Keep the ** around the first number: it shows large."
+    )
+
+    for run in score.runs where run.inlinePresentationIntent?.contains(.stronglyEmphasized) == true
+    {
+      score[run.range].font = TypeStyle.readout.font(in: environment)
+      score[run.range].foregroundColor = Color(.foreground)
+      score[run.range].inlinePresentationIntent = nil
+    }
+
+    return score
   }
 }
 
