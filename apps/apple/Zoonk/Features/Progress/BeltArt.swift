@@ -170,8 +170,7 @@ struct BeltRack: View {
           }
         }
 
-        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex)
-        {
+        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex) {
           name(current, index: currentIndex, currentIndex: currentIndex)
         }
       }
