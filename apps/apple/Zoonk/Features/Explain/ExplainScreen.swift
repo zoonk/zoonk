@@ -135,12 +135,7 @@ private struct ExplanationView: View {
           StepButtons(
             continueLabel: Text(
               "Done", tableName: "Explain", comment: "Leaves a quick explanation"),
-            skipLabel: Text(
-              "Read it again", tableName: "Explain", comment: "Plays a quick explanation again"),
-            onContinue: done
-          ) {
-            router.open(.lesson(lessonId: lesson.id))
-          }
+            onContinue: done)
         } else {
           StepButtons(
             continueLabel: Text(
