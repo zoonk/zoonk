@@ -13,12 +13,13 @@ export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 export const TAB_ROW_GAP_CLASS = "flex min-w-0 flex-col gap-6";
 
 /**
- * A narrower measure for the page's content (`--page-measure`). Its bottom bar still spans the
- * page's room, so every bar is as wide as the frame lets it be; its buttons fill the measure on a
- * phone and a tablet, and end at the bar's end on a computer.
+ * A narrower measure for the page's content on a computer (`--page-measure`): under `lg` the frame's
+ * column is already about as narrow, and a measure a few pixels short of it would leave the bar's
+ * buttons short of its end. Its bottom bar still spans the page's room, so every bar is as wide as
+ * the frame lets it be; its buttons fill it on a phone and a tablet, and end at its end on a computer.
  */
 const MEASURE_CLASS = {
-  form: "[--page-measure:var(--container-form)]",
+  form: "lg:[--page-measure:var(--container-form)]",
   /**
    * A list on a computer: the list (20rem), the gap and the pane's inset (4rem), its hairline
    * (1px), then an entry at the column's measure.
