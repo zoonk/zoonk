@@ -10,7 +10,7 @@ export function BrainPowerReward({ earned, points }: { earned: boolean; points: 
       className="hit-area focus-visible:ring-ring/50 relative flex items-center rounded-md text-xs outline-none focus-visible:ring-[3px]"
       data-slot="brain-power-reward"
     >
-      <BrainPowerAmount earned={earned} explained points={points} />
+      <BrainPowerAmount earned={earned} explained points={points} short />
     </LearnLink>
   );
 }

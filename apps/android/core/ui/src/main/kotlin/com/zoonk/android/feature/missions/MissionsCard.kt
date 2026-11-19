@@ -391,14 +391,15 @@ fun BrainPowerReward(
     earned: Boolean,
     onLevel: () -> Unit,
 ) {
-    val label = stringResource(R.string.missions_brain_power)
+    val amount = stringResource(R.string.missions_points, points)
+    val spoken = "$amount ${stringResource(R.string.missions_brain_power)}"
 
     Row(
         modifier =
             Modifier
                 .clip(MaterialTheme.shapes.small)
                 .clickable(role = Role.Button, onClick = onLevel)
-                .semantics(mergeDescendants = true) {}
+                .clearAndSetSemantics { contentDescription = spoken }
                 .heightIn(min = 32.dp)
                 .padding(horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -426,14 +427,14 @@ fun BrainPowerReward(
                 tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
             )
             Text(
-                text = stringResource(R.string.missions_points, points),
+                text = amount,
                 color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.zoonkType.data.withTabularFigures(),
             )
         }
         Text(
-            label,
+            stringResource(R.string.missions_brain_power_short),
             modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,

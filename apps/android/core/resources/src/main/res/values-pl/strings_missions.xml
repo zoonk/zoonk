@@ -4,6 +4,7 @@
   "missions_after_lessons": "a3f8a6ed596b3c80457dca9508f81bb7de1e962867d04592094f8a25dd2af7e6",
   "missions_ask_buddy": "05241478e2154739e16569698b75be79c3fc6a351604b317faadcd939d16c4f8",
   "missions_brain_power": "8733c75a1aa7c30a94b91bd11aff21ba012b3996bff7aaa5f336a7734a9c9635",
+  "missions_brain_power_short": "0e672fd0b038c854ca78ba2df049f23fd9943dcd3bbe408a23c2dc23fc927865",
   "missions_call": "68cf7765ad1da69cb73541613fc52e62184afefa873025a26600cf456fa0f9e9",
   "missions_challenge": "60995bac42ec51403304843037d53b85909b3663963e722a147210d455079544",
   "missions_done": "d0025288f2b757730d479d0f0672cf2bd95654bc78bf43b697421d44b552fb2b",
@@ -68,6 +69,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">Ukończono %1$s z %2$s</string>
     <string name="missions_brain_power">Moc Umysłu</string>
+    <!-- Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives. -->
+    <string name="missions_brain_power_short">MU</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
     <string name="missions_review">Powtórz materiał</string>

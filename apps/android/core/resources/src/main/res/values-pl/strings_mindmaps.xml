@@ -233,8 +233,12 @@
     <string name="mindmaps_zoom">Powiększ</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Ta mapa nie jest już dostępna.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">Pokaż mapę jako</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">Mapa</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">Tekst</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">Stuknij mapę, aby ją powiększyć</string>
 </resources>

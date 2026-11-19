@@ -12,6 +12,7 @@
 
 ## Glossary
 
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “goal” (the learner's goal): “obiettivo”
 - “cancel” a subscription: “disdire” (“Disdici l'abbonamento”), not “annullare”
 - “Terms of service”: “Termini di servizio”, the legal page's title

@@ -64,6 +64,7 @@
 - “Buddy”: “Arkadaş”; “study buddy”, and the buddy in compounds (“ders arkadaşı mesajı”): “ders arkadaşı”; “Ask {buddy}”: “{buddy} ile konuş”
 - Buddy stages “Baby” / “Young” / “Adult”: “Bebek” / “Genç” / “Yetişkin”
 - “Brain Power”: “Beyin Gücü”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “BG”
 - “mission”: “görev”
 - “call” (speaking practice): “sohbet”, not “arama”
 - “Mistakes notebook”: “Yanlış defteri”

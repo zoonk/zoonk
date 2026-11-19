@@ -39,6 +39,18 @@ msgid "Your answer and the right one"
 msgstr "Your answer and the right one"
 
 #: src/_components/brain-power-amount.tsx
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Brain Power</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BP"
+
+#: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
@@ -553,11 +565,6 @@ msgstr "Your plan goes on without it."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Summaries"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Brain Power</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
