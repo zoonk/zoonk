@@ -220,7 +220,7 @@ struct SessionSummaryView: View {
     } label: {
       if extraTime.lessons.isEmpty {
         Text(
-          "Practice \(extraTime.minutes) min", tableName: "Session",
+          "Practice \(extraTime.minutes) more min", tableName: "Session",
           comment: "Adds practice once the day is done; the number is minutes")
       } else {
         Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")

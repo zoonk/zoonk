@@ -12,7 +12,7 @@
   "planlink_phases": "bcffadbd2901ef12b641f3c295fb42f1073d1a98e577b921629a5648cb8d6f04",
   "planlink_refused": "5209eed67c92a9f29850ce76f1b9ac3679d26acb0d729cf25a8d90cbf179cbe8",
   "planlink_skills": "aa82813d5ffecb28e0cf68d4e6dd0186473d78fd1d942c5fc236b907594a65b1",
-  "planlink_start": "6ca8f2e9f80f575d3ae34a2a79a020dbf881582294b2ffa68d9becdca7b89730",
+  "planlink_start": "d5ecaebc055437282a1f90d9336dfed1d5869f9e91be5f437a7eb330f49ece12",
   "planlink_study_plan": "46085e67ba8f048ea07ea4045da8a7ffb9719beb76aa9fb0289a99a59ca91b26"
 }
 -->
@@ -23,7 +23,7 @@
     <string name="planlink_study_plan">Un plan de estudio</string>
     <string name="planlink_minutes_label">¿Cuánto tiempo al día?</string>
     <!-- Starts the learner's own plan from a shared one. -->
-    <string name="planlink_start">Crear un plan a partir de este</string>
+    <string name="planlink_start">Crear mi propio plan</string>
     <string name="planlink_make_it_yours">Recibes tu propio plan para la misma materia. Parte de lo que ya sabes.</string>
     <string name="planlink_refused">No puedes crear otro objetivo en este momento. Primero completa o pausa uno.</string>
     <string name="planlink_failed">No funcionó. Vuelve a intentarlo en un momento.</string>

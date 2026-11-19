@@ -116,6 +116,7 @@
   "today_step_skipped": "fe1fe1be3c3d236b54c2f295c88cedc69a17d4021d401d8389ded58627be49ef",
   "today_steps_done": "8c285ca8d4603bdda1874d1363b363d130753c8636480ac5f6ee272afb6cd6d0",
   "today_study_everything": "2b1c5cd18b72cc66ec55dd8f9a93a7144410df895df8a15b0de60b07432e81f6",
+  "today_study_more_minutes": "ba3ac62477a33314c08125cc5c72274fc8493ab26818b122e5dee00b51b73ca5",
   "today_suggested_goal_accept": "168bde59f5f2ff0a638a71bb85196f1b13d5170077fb24141c4dce3fc2bead96",
   "today_suggested_goal_detail": "671db40e0460e02a6b15c20acd9ccf7c9d7b36f3a35a2f34850e77c6af48c434",
   "today_suggested_goal_question": "cc4ff5b2e94813d7b465225d1454aea6628c5b60ece0fc07b718fa8e3af2ffa0",
@@ -262,6 +263,7 @@
     <string name="today_week_mock_name">deneme sınavı</string>
     <string name="today_week_challenge_name">haftalık meydan okuma</string>
     <string name="today_week_full_review_detail">tüm konular</string>
+    <string name="today_study_more_minutes">%1$s dk. daha çalış</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">%1$s günkü meydan okumayı gör</string>
     <string name="today_see_day_mock">%1$s günkü deneme sınavını gör</string>

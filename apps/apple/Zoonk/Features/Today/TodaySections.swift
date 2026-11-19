@@ -83,9 +83,13 @@ struct TodayMoreSection: View {
             Button(action: addTime) {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
-                  Text(
-                    "Practice \(view.session.extraTime.minutes) min", tableName: "Today",
-                    comment: "Adds practice on a day with nothing new; the number is minutes")
+                  view.studiedToday
+                    ? Text(
+                      "Practice \(view.session.extraTime.minutes) more min", tableName: "Today",
+                      comment: "Adds study time once the day is done; the number is minutes")
+                    : Text(
+                      "Practice \(view.session.extraTime.minutes) min", tableName: "Today",
+                      comment: "Adds practice on a day with nothing new; the number is minutes")
 
                   if failed == .keepLearning {
                     saveFailure
