@@ -303,9 +303,9 @@
   "plan_level": "9fca9bb86f367515864df9e745b8b564c75412bd65abe5b95b47bd9c1497c174",
   "plan_level_complete": "e48318aaa179260c8f3836f583b976395697d39cdbf33cadc63b6a3e2e68bc06",
   "plan_loss_this_week": "02b87797123ca737f1e05dfe9958b4a1f8e74e236b03a7666aec71fa965e2915",
-  "plan_measure_mock_exam": "16f89622447737ef989fd12af42bff0c3eebd3b3b52e13ab5d2576536263b7d5",
+  "plan_measure_mock_exam": "e7942ac141dcd3cc28efa52f0c2f0e252f632191ff862609926861ba30f6a746",
   "plan_measure_progress": "3fa5a1053289a9f480b8ce751860b0f82b61b9053c87bbf6f56dab05cf8cf17f",
-  "plan_measure_review_once": "8ab9666492172bbafa90d2b2745a563a0dcbb057f618931029d7a1e20f906647",
+  "plan_measure_review_once": "60b50a3edc280c5caa0a18cc5fbc1141b449f3254f389ab44fb6f77bbaf2c3b0",
   "plan_mind_maps": "42699d6ea7b806381c7a54a979e5ebd0a2597ef4a45d2df52fdb751ad3ddb636",
   "plan_mock_exam": "7eb6dad742ac3c1871367d4788db46ffe694a10578eb4d4af1f862913b177da0",
   "plan_mock_exams": "3ebda47defcfb6aa7f02e897f3693619508a134810668948b7fbfca6120d4f07",
@@ -872,9 +872,9 @@
     <string name="plan_how_calculated">Como é calculado</string>
     <string name="plan_measure_progress">A porcentagem de aulas do seu plano que você estudou ou que ensinam o que você já sabia. Seus acertos, o que você lembra e os desafios semanais mostram o quanto você conhece esse conteúdo.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de 75% até você revisar todos os tópicos uma vez.</string>
+    <string name="plan_measure_review_once">Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de %1$s até você revisar todos os tópicos uma vez.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de 75% até você fazer um simulado.</string>
+    <string name="plan_measure_mock_exam">Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de %1$s até você fazer um simulado.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Próximos passos</string>
     <string name="plan_next_topics_count_most">Estude os tópicos que valem mais</string>

@@ -97,12 +97,15 @@
     <string name="limit_map_enough_on">Am %1$s hast du genug Lektionen, oder du abonnierst, um die Karte jetzt zu erstellen.</string>
     <string name="limit_map_ready">Du kannst diese Karte jetzt erstellen</string>
     <string name="limit_map_needs_subscription">Für diese Mindmap brauchst du ein Abo</string>
-    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <!-- Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start. -->
     <string name="limit_map_needs_subscription_line">Dieses Kapitel hat mehr Lektionen, als du kostenlos nutzen kannst.</string>
     <string name="limit_mind_maps_guest">Für weitere Mindmaps brauchst du ein Konto</string>
     <string name="limit_mind_maps_day">Heute keine neuen Mindmaps mehr</string>
     <string name="limit_mind_maps_used">Du hast dein Limit für Mindmaps erreicht</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_guest">Ohne Konto gibt es keine weiteren vorab erstellten Lektionen</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_day">Heute gibt es keine weiteren vorab erstellten Lektionen</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_used">Du hast deine vorab erstellten Lektionen aufgebraucht</string>
 </resources>

@@ -303,9 +303,9 @@
   "plan_level": "95a95fe443a4248955c78a9835066202f43fb465242e3e67a9dc1c09a0ce3e09",
   "plan_level_complete": "30d1782ed9aa2010b41687a355f0579da1a2fae1e7303331f7e5213008a798a9",
   "plan_loss_this_week": "be4477cedaa16fbb2ca97e786e5b6ba4d517f118df75d758836c0b0d4c4a4b6b",
-  "plan_measure_mock_exam": "8083aa029e7fed8852a2a43f6dc1c70c4c4549511ad79bfea2852293e1b8a5a6",
+  "plan_measure_mock_exam": "3a1b44d246ae6693ba3ace1b577f4c9aeca7f69ed2f3678bc688362791c88a4a",
   "plan_measure_progress": "14f2947867a37a632ed8fc5abda941e2a633e518edefabeb9a6c585982d4d70e",
-  "plan_measure_review_once": "c48eadc23a80d8950e5ebcc496079b01b853c5537f161f96aa3955c5cd8880b0",
+  "plan_measure_review_once": "328fb9bb7b16395e4252e2239329899fa8d3b3c8dbc7f1e5dfb78595818c57e0",
   "plan_mind_maps": "0acc3eb1a25adafb0ffe6d8f85ceaa854f953f80a43695e4a00257283eb8ce1b",
   "plan_mock_exam": "f124b7e3210a50105fd8d0558b6fd3bb14f1535f7f40d0c1eee88029e5e019d9",
   "plan_mock_exams": "8c2c0a483ecf3ac90558744531c223b1f5bb3b497e1f8223abc0c6eb51029276",
@@ -814,9 +814,9 @@
     <string name="plan_how_calculated">계산 방법</string>
     <string name="plan_measure_progress">계획에 있는 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요. 정답률과 기억하는 정도, 주간 챌린지 결과로 얼마나 잘 알고 있는지 알 수 있어요.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">시험에서 각 과목은 배점만큼 반영돼요. 더 많이 공부하고 문제를 더 잘 풀수록 점수가 올라가며, 모든 주제를 한 번씩 복습할 때까지는 75%를 넘지 않아요.</string>
+    <string name="plan_measure_review_once">과목별 수치는 시험에서 해당 과목이 차지하는 비중을 반영해요. 해당 과목을 더 공부하고 문제를 더 잘 풀수록 수치가 올라가며, 모든 주제를 한 번씩 복습할 때까지는 %1$s 미만으로 유지돼요.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">시험에서 각 과목은 배점만큼 반영돼요. 더 많이 공부하고 문제를 더 잘 풀수록 점수가 올라가며, 모의고사를 보기 전까지는 75%를 넘지 않아요.</string>
+    <string name="plan_measure_mock_exam">과목별 수치는 시험에서 해당 과목이 차지하는 비중을 반영해요. 해당 과목을 더 공부하고 문제를 더 잘 풀수록 수치가 올라가며, 모의고사를 볼 때까지는 %1$s 미만으로 유지돼요.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">다음 단계</string>
     <string name="plan_next_topics_count_most">시험에서 비중이 큰 주제 공부하기</string>

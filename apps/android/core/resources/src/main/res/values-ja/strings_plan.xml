@@ -303,9 +303,9 @@
   "plan_level": "8956d4cef1507cc7ee0db6f4ff06934f269380293f460ac2a81d7f520f7f9db5",
   "plan_level_complete": "9b37826fbb63af2f405f6d112470d1e55ff291e6cad4576e74a44dba40f1e1a2",
   "plan_loss_this_week": "400178d524c6994a578af04bae843685bca72a2d4cc1e5145bfda5f5105fad8b",
-  "plan_measure_mock_exam": "dfdad336721c2809b91e1b0bd93ef814dae1abc6a077abda7005b6beda6a2e32",
+  "plan_measure_mock_exam": "68b39b2f257f84de69ebba136eb3d7e3eb7ce5cd0ae3ff9b0a21d469c99a240d",
   "plan_measure_progress": "f370096a9692b94d1b99c5b133c73058fc3158552fdae684f49f2d084aac3c7f",
-  "plan_measure_review_once": "d2a80a72625b748af947daff4d28407d3b1b247ea540471108fbb459a3612905",
+  "plan_measure_review_once": "dbda13649cc82429437bf4b8a43b509a6453e938c0c395143011b8484de270b6",
   "plan_mind_maps": "da3ff8bfa6023f7aec43431ae79edd726c07e122b3096237a46b737e1493915c",
   "plan_mock_exam": "a18d43d4b68a1343dd89d50210cae62f31a0d0b6f82485e792bccb054c8478db",
   "plan_mock_exams": "9dd5c6956f1ca2e7926b4039154a2c11bf8c49356f1268ea23c64adc7ec10f6c",
@@ -814,9 +814,9 @@
     <string name="plan_how_calculated">計算方法</string>
     <string name="plan_measure_progress">学習計画のレッスンのうち、学習したものや、もともと知っていたものの割合です。正答率や覚えている内容、週間チャレンジの結果から、どれくらい身についているかがわかります。</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">各科目の評価は、試験での配点に応じて決まります。その科目を学習し、問題に正解するほど数値が上がりますが、すべてのトピックを一度ずつ復習するまでは75％未満です。</string>
+    <string name="plan_measure_review_once">各科目の数値は、試験での配点に応じて決まります。その科目を学習し、問題により多く正解するほど数値は上がりますが、すべてのトピックを一度復習するまでは%1$sを超えません。</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">各科目の評価は、試験での配点に応じて決まります。その科目を学習し、問題に正解するほど数値が上がりますが、模試を受けるまでは75％未満です。</string>
+    <string name="plan_measure_mock_exam">各科目の数値は、試験での配点に応じて決まります。その科目を学習し、問題により多く正解するほど数値は上がりますが、模試を受けるまでは%1$sを超えません。</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">次にすること</string>
     <string name="plan_next_topics_count_most">配点の高いトピックを学習する</string>

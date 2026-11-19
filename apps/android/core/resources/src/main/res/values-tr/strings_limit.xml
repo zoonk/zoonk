@@ -97,12 +97,15 @@
     <string name="limit_map_enough_on">%1$s tarihinde yeterli dersin olacak; şimdi oluşturmak için abone ol.</string>
     <string name="limit_map_ready">Bu haritayı şimdi oluşturabilirsin</string>
     <string name="limit_map_needs_subscription">Bu harita için abonelik gerekiyor</string>
-    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <!-- Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start. -->
     <string name="limit_map_needs_subscription_line">Bu ünitede ücretsiz kullanabildiğinden daha fazla ders var.</string>
     <string name="limit_mind_maps_guest">Daha fazla zihin haritası için bir hesap gerekiyor</string>
     <string name="limit_mind_maps_day">Bugün yeni zihin haritası hakkın kalmadı</string>
     <string name="limit_mind_maps_used">Zihin haritası hakkın bitti</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_guest">Hesap açmadan daha fazla erken erişim dersi yok</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_day">Bugün daha fazla erken erişim dersi yok</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_used">Erken erişim derslerini kullandın</string>
 </resources>

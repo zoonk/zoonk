@@ -303,9 +303,9 @@
   "plan_level": "57d6db93631485bcbe8a6f9c6a6667e62434e7538a47ac9134830b2b99a183da",
   "plan_level_complete": "9ab968f0c091e7f954eac24468b818809eeb6c4584194324a65c34ec643e00e7",
   "plan_loss_this_week": "4485baadd88f6a0274f4979ca30ddd3cc571bc2af839d78e265a38e6a2bfc8aa",
-  "plan_measure_mock_exam": "4d1aa3cad15a33585b4e2bc3b9776498534fb9420a44f6e2f861d25351325cef",
+  "plan_measure_mock_exam": "cb8bb35750c709eeaf624f3db91f1170c7d333bc3049b8099661bd7ae822ef60",
   "plan_measure_progress": "0c4570f73e60d35e6d0b5248c90de408eef16fc449b8e8da4baea0b10175341a",
-  "plan_measure_review_once": "131415f4fdeb87fca39be2e48949a085ed4bf990c638d408083286f72d8ec7d8",
+  "plan_measure_review_once": "b780f559e86bd7621a993b16e7799ae750e65e8e56ecf94bab582b1fe26f99b0",
   "plan_mind_maps": "536840654cd0901a06c006ecf354af24ba022d5dc9d62d0be676dba532c749ba",
   "plan_mock_exam": "9d492ed16650185e77706fd483fef558695b2fa1c8b302ac7c7f733cb1de6cc1",
   "plan_mock_exams": "f0af37de2af30a392d8eb36dc34fc6821891d0e0e6d0480f65cfbf8661a388c5",
@@ -872,9 +872,9 @@
     <string name="plan_how_calculated">Scopri come si calcola</string>
     <string name="plan_measure_progress">La percentuale di lezioni del tuo piano che hai studiato o che conoscevi già. Le risposte corrette, ciò che ricordi e le sfide settimanali mostrano quanto le conosci bene.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Ogni materia pesa quanto vale nell’esame. Il suo punteggio aumenta man mano che studi e rispondi meglio, e resta sotto il 75% finché non ripassi ogni argomento almeno una volta.</string>
+    <string name="plan_measure_review_once">Ogni materia conta in base al suo peso nell’esame. Il suo valore aumenta man mano che la studi e rispondi meglio, e resta sotto %1$s finché non ripassi una volta tutti gli argomenti.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Ogni materia pesa quanto vale nell’esame. Il suo punteggio aumenta man mano che studi e rispondi meglio, e resta sotto il 75% finché non fai una simulazione d’esame.</string>
+    <string name="plan_measure_mock_exam">Ogni materia conta in base al suo peso nell’esame. Il suo valore aumenta man mano che la studi e rispondi meglio, e resta sotto %1$s finché non fai una simulazione d’esame.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Prossimi passi</string>
     <string name="plan_next_topics_count_most">Studia gli argomenti che contano di più</string>

@@ -303,9 +303,9 @@
   "plan_level": "72a342f643b4090fa9598162936eaaac5d91b07f257cf3c796d5279ee014430a",
   "plan_level_complete": "c04351049be42891b021b2fc16709ef5f8df694d94b633e4f5113ab60e17f596",
   "plan_loss_this_week": "c809d5da094083fa9aba2059618e903043785448dd24d33593e20cad8201dfe4",
-  "plan_measure_mock_exam": "6c13e871479f5e9c6917f20514654577427ec5863a7d22704cebf53c7c6d9272",
+  "plan_measure_mock_exam": "cb7fd3b5e8845a000b9cfa7fb02ad3fd97ed90336ded932f30d2a5acdecfc3a4",
   "plan_measure_progress": "9c0e92230416e3f7e6e33e01a39671f778649990b230aa9fc4ace7de551fbabe",
-  "plan_measure_review_once": "89488e8d3689f75b95d52e6d96723cc56465dfed5b242db80f53a7319dba5a4f",
+  "plan_measure_review_once": "297101154a081b6e7a2a0f3defd3463a3affca9830154d7cf40dd292f9b771cd",
   "plan_mind_maps": "684f1894c87dc0e3a3b477b9f187a417c488333dc31204908a6063096690890c",
   "plan_mock_exam": "193b0b8402cb75edc7f8f6b09f357490663989ae0c1dc77d9205e784f98ebb41",
   "plan_mock_exams": "52f3bfaf3a43f3a00dfff6939f9e3d06a00b124adc4b3e4d6ef8d273f846c099",
@@ -872,9 +872,9 @@
     <string name="plan_how_calculated">Comment c’est calculé</string>
     <string name="plan_measure_progress">La part des leçons de ton plan que tu as étudiées ou que tu connaissais déjà. Tes bonnes réponses, ce que tu retiens et les défis hebdomadaires montrent à quel point tu les maîtrises.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Chaque matière compte en fonction de son poids à l’examen. Son score augmente à mesure que tu l’étudies et que tu réponds mieux, et reste inférieur à 75 % tant que tu n’as pas révisé chaque sujet une fois.</string>
+    <string name="plan_measure_review_once">Chaque matière compte selon son poids à l’examen. Sa valeur augmente à mesure que tu l’étudies davantage et que tu réponds mieux, et reste inférieure à %1$s jusqu’à ce que tu aies révisé chaque sujet une fois.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Chaque matière compte en fonction de son poids à l’examen. Son score augmente à mesure que tu l’étudies et que tu réponds mieux, et reste inférieur à 75 % tant que tu n’as pas passé un examen blanc.</string>
+    <string name="plan_measure_mock_exam">Chaque matière compte selon son poids à l’examen. Sa valeur augmente à mesure que tu l’étudies davantage et que tu réponds mieux, et reste inférieure à %1$s jusqu’à ce que tu passes un examen blanc.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Prochaines étapes</string>
     <string name="plan_next_topics_count_most">Étudie les sujets qui comptent le plus</string>

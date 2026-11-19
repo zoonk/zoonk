@@ -97,12 +97,15 @@
     <string name="limit_map_enough_on">%1$sには足りるようになります。今すぐ作成するには登録してください</string>
     <string name="limit_map_ready">このマップを作成できます</string>
     <string name="limit_map_needs_subscription">このマップの作成にはサブスクリプションが必要です</string>
-    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <!-- Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start. -->
     <string name="limit_map_needs_subscription_line">このチャプターには、無料で利用できる数を超えるレッスンがあります。</string>
     <string name="limit_mind_maps_guest">アカウントなしで作れるマインドマップはここまでです</string>
     <string name="limit_mind_maps_day">今日はこれ以上新しいマインドマップを作れません</string>
     <string name="limit_mind_maps_used">マインドマップの利用上限に達しました</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_guest">アカウントなしでは、これ以上先取りレッスンを利用できません</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_day">今日はこれ以上先取りレッスンを利用できません</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_used">先取りレッスンを使い切りました</string>
 </resources>

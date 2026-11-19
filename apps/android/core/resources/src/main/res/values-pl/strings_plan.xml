@@ -303,9 +303,9 @@
   "plan_level": "5d97545584814a6007b7cf3e8ea37465d7004abe50d281087120b582caa294d2",
   "plan_level_complete": "f6196d36c3ae465fa751e1083b7fc89b90fe44e2f4ef5296c750f983b6968752",
   "plan_loss_this_week": "9217643c6ec515f8752d6d402feb49ec207996480d73e238c72278d42cac4c89",
-  "plan_measure_mock_exam": "5974e378ae903497baf73b7f3758a8b98fd23a041439cf96f0beb6310ee2927e",
+  "plan_measure_mock_exam": "131c99836ad09737ccf655f67a1bfa23664bbf355d1f68040241212e59138456",
   "plan_measure_progress": "3055cfd4a175269c99cecc572b1a0414772352997b4f9323ec6989067a36ce69",
-  "plan_measure_review_once": "b219a6838919827a7efac833376dc21eea5e4ee59b41d20718f24162db52f5de",
+  "plan_measure_review_once": "9eb43f4069b5ae62c0b2177ce6fb445691b0bd200393817481d24a548ea03aa9",
   "plan_mind_maps": "2856fffa3b7fa01327613133fe364db6b61a19a8cb33bd2386a0d2aa006b5935",
   "plan_mock_exam": "aae14db5ec759181eb5e70ff643d09ee345af66a4374dfc7efaeb53da88bc6cf",
   "plan_mock_exams": "c9b91607de5ee7f255fe2986a84b7e6325cbc918789aeb6b2c0ebf7dbcd9a162",
@@ -901,9 +901,9 @@
     <string name="plan_how_calculated">Zobacz, jak to obliczamy</string>
     <string name="plan_measure_progress">Część lekcji z twojego planu, które są już przerobione lub były ci znane wcześniej. Poprawne odpowiedzi, to, co pamiętasz, i wyzwania tygodnia pokazują, jak dobrze znasz ten materiał.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Każdy przedmiot ma taką wagę jak na egzaminie. Jego wynik rośnie, gdy uczysz się go więcej i lepiej odpowiadasz, ale nie przekracza 75%, dopóki nie powtórzysz każdego tematu przynajmniej raz.</string>
+    <string name="plan_measure_review_once">Każdy przedmiot jest uwzględniany w wyniku egzaminu zgodnie ze swoją wagą. Jego wskaźnik rośnie, gdy uczysz się więcej i lepiej odpowiadasz, ale pozostaje poniżej %1$s, dopóki nie powtórzysz każdego tematu.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Każdy przedmiot ma taką wagę jak na egzaminie. Jego wynik rośnie, gdy uczysz się go więcej i lepiej odpowiadasz, ale nie przekracza 75%, dopóki nie podejdziesz do egzaminu próbnego.</string>
+    <string name="plan_measure_mock_exam">Każdy przedmiot jest uwzględniany w wyniku egzaminu zgodnie ze swoją wagą. Jego wskaźnik rośnie, gdy uczysz się więcej i lepiej odpowiadasz, ale pozostaje poniżej %1$s, dopóki nie rozwiążesz egzaminu próbnego.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Kolejne kroki</string>
     <string name="plan_next_topics_count_most">Ucz się najważniejszych tematów</string>

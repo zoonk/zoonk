@@ -313,9 +313,9 @@
     <string name="plan_how_calculated">How it\'s calculated</string>
     <string name="plan_measure_progress">The share of your plan\'s lessons you\'ve studied or already knew. Right answers, what you remember and weekly challenges show how well you know them.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once.</string>
+    <string name="plan_measure_review_once">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under %1$s until you review every topic once.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam.</string>
+    <string name="plan_measure_mock_exam">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under %1$s until you take a mock exam.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Next</string>
     <string name="plan_next_topics_count_most">Study the topics that count most</string>

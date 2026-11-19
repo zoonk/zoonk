@@ -97,12 +97,15 @@
     <string name="limit_map_enough_on">%1$s에는 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요.</string>
     <string name="limit_map_ready">지금 이 지도를 만들 수 있어요</string>
     <string name="limit_map_needs_subscription">이 마인드맵을 만들려면 구독이 필요해요</string>
-    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <!-- Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start. -->
     <string name="limit_map_needs_subscription_line">이 챕터에는 무료로 이용할 수 있는 레슨 수보다 레슨이 더 많아요.</string>
     <string name="limit_mind_maps_guest">마인드맵을 더 만들려면 계정이 필요해요</string>
     <string name="limit_mind_maps_day">오늘은 새 마인드맵을 더 만들 수 없어요</string>
     <string name="limit_mind_maps_used">마인드맵 한도를 다 썼어요</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_guest">계정 없이 미리 준비된 레슨을 더 이용할 수 없어요</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_day">오늘은 미리 준비된 레슨을 더 이용할 수 없어요</string>
+    <!-- Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons. -->
     <string name="limit_outlines_used">미리 준비된 레슨을 다 이용했어요</string>
 </resources>

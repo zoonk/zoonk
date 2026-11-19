@@ -303,9 +303,9 @@
   "plan_level": "cf9e33223adf7b19c40dc5f05eed5248d096b37d68502fa9f4009e06beb4eda8",
   "plan_level_complete": "15c353cd7d6acc2055f764b8ac12d6436cdd69c7561e23791698e6e7d639f205",
   "plan_loss_this_week": "2719857f5aa5427f2ef1d6f28edf75802f9145700d7ea98d34e12e8787df3172",
-  "plan_measure_mock_exam": "be191c1322641ef52691b62496d2f18dc43a23d877fda8741bd5e7ab5718de18",
+  "plan_measure_mock_exam": "ecececee449eb88873d61d07090ea5b89e3603e18fe38fa1ccb776531619a0ee",
   "plan_measure_progress": "e02f967cd17a74e50fb8d983dd52841e4082a469aada259f12df4ad347153a04",
-  "plan_measure_review_once": "a483bf9db97c1fd95d97f2da0a6cb139c5a7cf97a838f5ce417b5bd80a55bca9",
+  "plan_measure_review_once": "855be9f5aedf3ea5c9c5de706bb8cc1a42126a385066305c4d1e7d521a18987c",
   "plan_mind_maps": "dcb457bfa4cfb1a8f9b3ebdc2206a66593e20ceca5b4099a9d04f08b533163b5",
   "plan_mock_exam": "1c7c332ba3f7b2cd529a17322f9af0152f3356a25b8e725a9d74ebcc871828fb",
   "plan_mock_exams": "13036099ebdc32c3afaa9ebb332643f46a6a0fbd6080ade2bdcb0bd82bfa5579",
@@ -843,9 +843,9 @@
     <string name="plan_how_calculated">Nasıl hesaplanır</string>
     <string name="plan_measure_progress">Planındaki derslerden çalıştıklarının veya önceden bildiklerinin oranı. Doğru cevapların, hatırladıkların ve haftalık meydan okumalar bu dersleri ne kadar iyi bildiğini gösterir.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Her branş, sınavda ne kadar ağırlığı varsa o kadar etkili olur. Daha çok çalışıp daha doğru cevap verdikçe puanı artar; her konuyu bir kez gözden geçirene kadar %75’in altında kalır.</string>
+    <string name="plan_measure_review_once">Sınavda her branş, kendi ağırlığı kadar hesaba katılır. Üzerinde daha çok çalışıp daha iyi cevaplar verdikçe değeri artar; her konuyu bir kez gözden geçirene kadar %1$s değerine ulaşmaz.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Her branş, sınavda ne kadar ağırlığı varsa o kadar etkili olur. Daha çok çalışıp daha doğru cevap verdikçe puanı artar; deneme sınavına girene kadar %75’in altında kalır.</string>
+    <string name="plan_measure_mock_exam">Sınavda her branş, kendi ağırlığı kadar hesaba katılır. Üzerinde daha çok çalışıp daha iyi cevaplar verdikçe değeri artar; bir deneme sınavına girene kadar %1$s değerine ulaşmaz.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Sıradaki adımlar</string>
     <string name="plan_next_topics_count_most">En çok puan getiren konulara çalış</string>
