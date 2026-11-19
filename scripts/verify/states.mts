@@ -107,14 +107,15 @@ async function walk(
       await reload();
     }
 
-    if (judged === "press" && before) {
-      const sent = guard.blocked() > writes;
+    const sent = guard.blocked() > writes;
 
+    if (judged === "press" && before) {
       await (left
         ? presses?.navigated()
         : presses?.pressed(action, { before, comparison, doing, sent }));
     } else if (judged === "undo") {
-      await presses?.undone(left ? null : comparison);
+      // An undo that saves shows a failed save, so only the press it undoes is judged.
+      await presses?.undone(left || sent ? null : comparison);
     }
 
     return performed;

@@ -1,9 +1,8 @@
 /* oxlint-disable max-lines-per-function, max-statements, unicorn/consistent-function-scoping -- Each function is sent to the page on its own, so its helpers live inside it (`probe.mts`). */
 
 /**
- * Where a visible text is drawn, in viewport pixels: a block's whole box (a paragraph, a row's
- * title), or each line of a text inside a line of other text, cut to its line height so tight
- * leading doesn't reach the next line; either cut to the boxes that clip it. `element` is its
+ * One line of visible text, in viewport pixels, cut to its line height (so tight leading doesn't
+ * reach the next line) and to the boxes that clip it, as the browser clips it. `element` is its
  * element's place in `zoonkTextElements` and `within` its ancestors' there; `layer` is the floating
  * layer it's drawn in, if any: an `overlay` (a menu, dialog, popover or tooltip) or a pinned (fixed
  * or sticky) box.
@@ -187,7 +186,6 @@ export function readTextLines(): TextLine[] {
   }
 
   const lines: TextLine[] = [];
-  const seen = new Set<Element>();
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 
   const nodes: Node[] = [];
@@ -223,18 +221,8 @@ export function readTextLines(): TextLine[] {
 
     const name = `${element.tagName.toLowerCase()} "${(label(element, true) || (node.textContent ?? "").trim()).slice(0, NAME_LENGTH)}"`;
 
-    const inline = style.display === "inline";
-    const boxes = inline ? [...range.getClientRects()] : [element.getBoundingClientRect()];
-
-    if (!inline && seen.has(element)) {
-      // oxlint-disable-next-line no-continue -- A block with several texts is one box.
-      continue;
-    }
-
-    seen.add(element);
-
-    for (const rect of boxes) {
-      const inset = inline ? Math.max(0, (rect.height - lineHeight) / 2) : 0;
+    for (const rect of range.getClientRects()) {
+      const inset = Math.max(0, (rect.height - lineHeight) / 2);
 
       const box = {
         bottom: Math.min(rect.bottom - inset, clip.bottom),
