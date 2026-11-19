@@ -751,13 +751,11 @@ private struct ExamProgressSection: View {
   var body: some View {
     if let progress = exam.progress, !exam.mocks.isEmpty, let latest = latestMock(progress) {
       Section {
-        VStack(alignment: .leading, spacing: 6) {
-          BigQuantity((Double(latest.percent) / 100).formatted(.percent))
-          latestLine(progress, latest: latest)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+        StatTileGrid(columns: [1], minimumWidth: 0) {
+          StatTile(
+            quantity: (Double(latest.percent) / 100).formatted(.percent),
+            detail: latestLine(progress, latest: latest))
         }
-        .accessibilityElement(children: .combine)
 
         if let line = progressLine(progress) {
           Text(line)
