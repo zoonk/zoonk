@@ -1368,11 +1368,7 @@ private struct SubjectsLevelQuestion: View {
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons(
-        skipLabel: Text(
-          "I'm new", tableName: "Onboarding",
-          comment: "Says the learner knows none of the exam's subjects yet")
-      ) {
+      StepButtons {
         onAnswer([
           "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),
           "question": "level",

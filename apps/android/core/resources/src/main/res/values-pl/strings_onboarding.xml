@@ -392,7 +392,6 @@
   "onboarding_study_days": "5844468366721bbb6aed11552424891aaf34af5e404d4c8f230a93c743d4037b",
   "onboarding_study_material": "e6f69576dabaa04fa6b8d4d0a0fd8b4af6948134ce3971bf218bedeb7ab8735c",
   "onboarding_subjects_description": "46aed052b73c2efe3fbedb4fdb4e8aab9da60a8e9c4aa53f851f3f6b326062d2",
-  "onboarding_subjects_from_scratch": "253548fe402531edae39f4fcfc2c98d97343f5c4b40787f9bcbcc1762520ecf4",
   "onboarding_subjects_label": "3d4489133679f47c7262517f1d799221e2286ae72158396bd3ce0b9449b86367",
   "onboarding_subjects_title": "86047de2813437df70984e9a8f4818af73eebf0f5e9f7635f5da014585377fba",
   "onboarding_target_label": "57d6472247724c7a657dcbdfecd6c3245162c82b17110ad858e43dcdb574b58f",
@@ -904,7 +903,6 @@
     <string name="onboarding_subjects_title">Które przedmioty znasz już dobrze?</string>
     <string name="onboarding_subjects_description">Twój plan pomija podstawy tych przedmiotów. Krótki test określa twój poziom z pozostałych.</string>
     <string name="onboarding_subjects_label">Przedmioty, które dobrze znasz</string>
-    <string name="onboarding_subjects_from_scratch">Zaczynam od zera</string>
     <string name="onboarding_admission_title">Jaki kierunek wybierasz i jaki wynik chcesz osiągnąć?</string>
     <string name="onboarding_target_label">Twój cel</string>
     <string name="onboarding_admission_placeholder">Np. medycyna, 750 punktów</string>

@@ -392,7 +392,6 @@
   "onboarding_study_days": "026e7b8db10836437112ab77820218656c615e83ce1795004d9f1e635e953b05",
   "onboarding_study_material": "fff6f3e1bbcc831315ca5d60ee14f9154569f97f165a60d947d0f14560ca5a5b",
   "onboarding_subjects_description": "69a6ee41a17b48e82b3c33757df4a1bfa833519f88715c42165547a66efa7208",
-  "onboarding_subjects_from_scratch": "aa11763a529d0b46086d11594cdb8154c56bfe572dcee70e455da353b77d5fa4",
   "onboarding_subjects_label": "c75d66640adaba93ae0fdc1044a6f39aa0e36cc806d52cf8e0fc4a79df475a4d",
   "onboarding_subjects_title": "664d38a4f8e5d4688af7bf6baea5ac527e5f530b05b4d9fce7b02087f198d2bd",
   "onboarding_target_label": "3443005e32ec7e183f854d10b00083093d83cd053c7966d471f04bae6e37c2ff",
@@ -887,7 +886,6 @@
     <string name="onboarding_subjects_title">¿Qué materias ya conoces bien?</string>
     <string name="onboarding_subjects_description">Tu plan se salta lo básico de esas materias. Una prueba rápida determina tu nivel en las demás.</string>
     <string name="onboarding_subjects_label">Materias que conoces bien</string>
-    <string name="onboarding_subjects_from_scratch">Estoy empezando</string>
     <string name="onboarding_admission_title">¿Qué carrera y qué puntaje buscas?</string>
     <string name="onboarding_target_label">Tu meta</string>
     <string name="onboarding_admission_placeholder">P. ej., medicina, 750 puntos</string>

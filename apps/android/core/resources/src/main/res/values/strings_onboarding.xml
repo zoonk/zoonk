@@ -440,7 +440,6 @@
     <string name="onboarding_subjects_title">Which subjects do you already know well?</string>
     <string name="onboarding_subjects_description">Your plan starts past their basics. A quick test places you in the rest.</string>
     <string name="onboarding_subjects_label">Subjects you know well</string>
-    <string name="onboarding_subjects_from_scratch">I\'m new</string>
     <string name="onboarding_admission_title">Which course and score are you aiming for?</string>
     <string name="onboarding_target_label">Your target</string>
     <string name="onboarding_admission_placeholder">E.g., medicine, 750 points</string>

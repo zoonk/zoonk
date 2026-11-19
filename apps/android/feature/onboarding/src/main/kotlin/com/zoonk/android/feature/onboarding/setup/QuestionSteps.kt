@@ -348,7 +348,6 @@ internal fun ColumnScope.SubjectsLevelStep(
         description = stringResource(R.string.onboarding_subjects_description),
         subject = subject,
         canContinue = known.isNotEmpty(),
-        skipLabel = stringResource(R.string.onboarding_subjects_from_scratch),
         pending = pending,
         onContinue = {
             onAnswer(

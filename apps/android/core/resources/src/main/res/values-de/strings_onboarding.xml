@@ -392,7 +392,6 @@
   "onboarding_study_days": "d803dcd8957eb5c03dca7d885377392b2fad49d3a0de30a7fde5c04efe4df0d6",
   "onboarding_study_material": "90e9b54d8918a21f740a4b2cdb365ba08679100ecaa2abc4bced3b9792479bd8",
   "onboarding_subjects_description": "72f8d5f76b940990a444d543abf2519ee9d34c006b184da967dc353e9054dd5d",
-  "onboarding_subjects_from_scratch": "18e6b47535376b4558e5d7528996191c56a0dc96b5f00ef68a5f3df71b7cbc13",
   "onboarding_subjects_label": "7db80a2c65fbf3bdb4bf9f5fdbff3b6e97b7a6248257be9b3e142ab821e8b7d1",
   "onboarding_subjects_title": "80f7e0693f0153461498e6e468ed42099c9bd4a909b4f173c89b065550874cc2",
   "onboarding_target_label": "fe79b49b1aff02ce96dc8de87efec63e9149fd3868ec1543ac1c04d9620692e9",
@@ -870,7 +869,6 @@
     <string name="onboarding_subjects_title">Welche Fächer kennst du schon gut?</string>
     <string name="onboarding_subjects_description">Bei diesen Fächern lässt dein Plan die Grundlagen aus. Bei den übrigen zeigt ein kurzer Test, wo du einsteigst.</string>
     <string name="onboarding_subjects_label">Fächer, die du schon gut kennst</string>
-    <string name="onboarding_subjects_from_scratch">Ich bin neu</string>
     <string name="onboarding_admission_title">Welchen Studiengang und welchen Score strebst du an?</string>
     <string name="onboarding_target_label">Dein Ziel</string>
     <string name="onboarding_admission_placeholder">Z. B. Medizin, 750 Punkte</string>

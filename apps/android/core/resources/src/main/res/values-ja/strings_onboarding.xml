@@ -392,7 +392,6 @@
   "onboarding_study_days": "97afb7c1dd2e5dbf72ebfbd70add2e709dee8aa48617689537da6cfa791f8a76",
   "onboarding_study_material": "cf15f7da30c4695e0560335cc1606219aef11b7028d682b881a7c804cbb01875",
   "onboarding_subjects_description": "d960487c7ac14646b35ebd1da39db6147f9dfa36aeccbfaa7c2488378473f87f",
-  "onboarding_subjects_from_scratch": "7666cc82e833ace75e172f24f1f69cdf0ef876d7c7c7b66b176c24529bc16f82",
   "onboarding_subjects_label": "a09836ec95a763540547c0c78a89b37305a98dc2d62c0dd46636b203e21cfdd2",
   "onboarding_subjects_title": "dd42819d4864da6240f581531452f5c43f2c4a3415199c85a4369170727b570b",
   "onboarding_target_label": "a28034d110ee81ad2e3c15f0d1990be31afd6033f657333a23ca9cf2c908110e",
@@ -853,7 +852,6 @@
     <string name="onboarding_subjects_title">すでによく理解している科目はどれですか？</string>
     <string name="onboarding_subjects_description">学習計画では、選んだ科目の基礎をスキップします。残りの科目は、短いテストでどこから学ぶかを決めます。</string>
     <string name="onboarding_subjects_label">よく理解している科目</string>
-    <string name="onboarding_subjects_from_scratch">初めてです</string>
     <string name="onboarding_admission_title">志望する学部と目標の点数は何ですか？</string>
     <string name="onboarding_target_label">目標</string>
     <string name="onboarding_admission_placeholder">例：医学部、750点</string>

@@ -392,7 +392,6 @@
   "onboarding_study_days": "62cc9554b517a1d3609a078f7c72dfcdb72bf6abca6d0bd79ac64b6c241a3c6e",
   "onboarding_study_material": "334b3b8df8ec6aba9493ce9bc57a58551304948afeac732347dacebac545c4b5",
   "onboarding_subjects_description": "9c24a0b25175b64154469c7707c2f44e7600f1dcc6ce880e5c373f774380690b",
-  "onboarding_subjects_from_scratch": "8959ffc8916b1fd3ac3a3a20fba7dd9ccea70373425647ad427ecf1f6fa7082e",
   "onboarding_subjects_label": "53d6b52bec3c2a9b15ccc8df9c57fa02a998bb647bcecf40dc19e3ec6e4793f4",
   "onboarding_subjects_title": "386c8efad9d330e2124d3117beebde4ed01f8d9d76eaa740dadc7631bb577a5c",
   "onboarding_target_label": "48ca6936ffac4ad3042e9cb3806b34dba8b050f9e0020dfd052947ebcd1ccba5",
@@ -887,7 +886,6 @@
     <string name="onboarding_subjects_title">Quali materie conosci già bene?</string>
     <string name="onboarding_subjects_description">Il tuo piano salta le basi di queste materie. Un breve test stabilisce da dove iniziare nelle altre.</string>
     <string name="onboarding_subjects_label">Materie che conosci bene</string>
-    <string name="onboarding_subjects_from_scratch">Parto da zero</string>
     <string name="onboarding_admission_title">A quale corso vuoi accedere e con quale punteggio?</string>
     <string name="onboarding_target_label">Il tuo obiettivo</string>
     <string name="onboarding_admission_placeholder">Es. medicina, 80 punti</string>
