@@ -93,6 +93,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* The frame's one inset from a tablet up (`FRAME_GUTTER_CLASS`): a page's and a task's sides, the bottom bar's room, the right column's and a task panel's sides. */
+  --spacing-frame: 1.25rem;
   --container-column: 40rem;
   --container-form: 45rem;
   --container-wide: 84rem;

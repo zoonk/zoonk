@@ -5,13 +5,14 @@ const ROW_CLASS =
   "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter) lg:max-w-none";
 
 /**
- * The frame's gutter, 16px on a phone and 24px from `sm`: its side padding, and the bottom bar's
+ * The frame's gutter, 16px on a phone and 20px from `sm` (`--spacing-frame`): its side padding, and the bottom bar's
  * room over and under its buttons (`BOTTOM_BAR_ROOM_CLASS`). The two are one number on purpose: a
  * button alone in the bar's corner reads right only with the same inset from both edges. Every
  * frame that draws app pages takes it from here: the app's shell, a full page drawn without it,
  * the internal tools' pages.
  */
-export const FRAME_GUTTER_CLASS = "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(6)]";
+export const FRAME_GUTTER_CLASS =
+  "[--page-gutter:--spacing(4)] sm:[--page-gutter:var(--spacing-frame)]";
 
 /**
  * The bar's room over and under its buttons: the frame's gutter, 16px where the frame names none,
