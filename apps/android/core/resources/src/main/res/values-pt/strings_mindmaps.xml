@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "01ab0b32a493c914c7c5bd48a162a47ecca1667801291537f82342179e0f7a67",
   "mindmaps_saved_state": "be6fc66d881a398211a2f2c0ca5ecd7497662e98c7b28ed0889c7e28df628670",
   "mindmaps_show_all": "422ac56c45fa3e82c9b52206e579d85d7029e9bd0cbb3b8352fd21e890806570",
+  "mindmaps_shown_as": "995655719cf1604930a3f9a37c6bfb619e3ccc06d5b14287a64ebb4cec20ac39",
   "mindmaps_shown_as_text": "1081d6bdc78761e0d65f227dfc59c7e335719b0c60e5d3fddff4a9bfe339ce8f",
+  "mindmaps_shown_map": "fc1db9320e56670eb8587c35d072c21fa67793fb14d9c67d5de7f1cf8d55d662",
+  "mindmaps_shown_text": "01a9ddf06ed548e739df05ac55652e69d4c70f3846081152a80b33a42242764f",
   "mindmaps_start_from_first": "48ef663e42ffe30474e65999e643acecd468fde58a7f5758e53360a1f5ae3864",
   "mindmaps_study": "f3561f96bf89a177f45edc15fe3eef5e24e835d4ba32dea96052656bf31e6ea2",
   "mindmaps_tab_chapters": "fe2e13b180dade8c4262428a067c63c523ccf281318fca384774c65855a771c8",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "5bf534c64f8a9f01a29d4d6210f416512cdf475b31aa68ed83a88f352da7b6a5",
   "mindmaps_writing_lessons_wait": "11ae684e936cfd12bf6c717b149e3e16f2a0bb7e8799f6afa3487c1c8215cb7f",
   "mindmaps_zoom": "ea7bffef8e1b9dc33ec7604842fea13091ba25ffe61f0497cef0266e57f80e0c",
+  "mindmaps_zoom_hint": "befc465c58a3fa47994bf67d384661481c9a5c61e8bb254f18cde9391b7f89e9",
   "mindmaps_zoom_in": "3719f260834b7704a19f09f0b3d624961677a3e15faf454532acf7fb3735d027",
   "mindmaps_zoom_out": "4d320ce7c9581ac89574dc0bdda3aeaca604151ea9d92905e38cfff34df7cf67"
 }
@@ -221,4 +225,8 @@
     <string name="mindmaps_zoom">Ampliar</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Este mapa não está mais disponível.</string>
+    <string name="mindmaps_shown_as">Mostrar o mapa como</string>
+    <string name="mindmaps_shown_map">Mapa</string>
+    <string name="mindmaps_shown_text">Texto</string>
+    <string name="mindmaps_zoom_hint">Toque no mapa para ampliar</string>
 </resources>

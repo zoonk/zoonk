@@ -57,6 +57,7 @@ import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.time.toJavaInstant
 
 private val NOT_MADE =
@@ -94,11 +95,12 @@ internal fun LazyListScope.chaptersTab(
     shown: IndexState,
     notMadeOpen: Boolean,
     actions: TabActions,
+    listsNotMade: Boolean = true,
 ) {
     val groups = mindMaps.chapterIndex()
     val notMade = mindMaps.notMade
 
-    if (groups.isEmpty() && notMade.none { it.canMakeNow() }) {
+    if (groups.isEmpty() && (!listsNotMade || notMade.none { it.canMakeNow() })) {
         item(key = "chapters-empty", contentType = "empty") {
             // A finished chapter's map is claimed like any other, so it waits while the offer is stopped.
             val stopped = mindMaps.createOffer.let { it.stop != null && it.startable == 0L }
@@ -110,7 +112,7 @@ internal fun LazyListScope.chaptersTab(
         Divided(divided) { ChapterRow(map, actions, stop = mindMaps.createOffer.stop) }
     }
 
-    if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
+    if (listsNotMade && notMade.isNotEmpty()) notMadeBlock(mindMaps, shown, notMadeOpen, actions)
 }
 
 /** [stop] is what keeps any new map from starting now ([gate]), which takes its Create away; [numbered] rows say which chapter they are. */
@@ -121,6 +123,7 @@ private fun ChapterRow(
     open: (() -> Unit)? = null,
     stop: MindMapAllowanceStop? = null,
     numbered: Boolean = true,
+    compact: Boolean = false,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
     val local = rowLocal(actions.state.requests[map.chapterId], MindMapPlace.Library)
@@ -146,6 +149,7 @@ private fun ChapterRow(
                 ),
             saved = saved,
             numbered = numbered,
+            compact = compact,
         )
     }
 }
@@ -153,14 +157,51 @@ private fun ChapterRow(
 /** The chapters whose map isn't made yet. */
 internal val GoalMindMaps.notMade: List<GoalMindMap> get() = chapters.filter { it.status in NOT_MADE }
 
-/**
- * A chapter folded under No map yet is being made or didn't finish, so the group opens on arrival with its
- * progress, or its row's Try again, in view.
- */
-internal val GoalMindMaps.foldedMapToShow: Boolean
-    get() = notMade.any { !it.canMakeNow() && it.status in ON_ITS_WAY_OR_FAILED }
+/** Main's `needsAttention`: a map on its way, or one that didn't finish with its Try again, so its row leads the list. */
+private fun GoalMindMap.needsAttention(): Boolean = status in ON_ITS_WAY_OR_FAILED
 
 private val ON_ITS_WAY_OR_FAILED = setOf(GoalMindMap.Status.WRITING_LESSONS, GoalMindMap.Status.DRAWING, GoalMindMap.Status.FAILED)
+
+/** The chapters No map yet shows first, and the rest, folded by subject (one group without a name when there are none). */
+internal data class NotMadeOrder(
+    val next: List<GoalMindMap>,
+    val rest: List<IndexGroup<GoalMindMap>>,
+)
+
+private const val NEXT_ROWS = 5
+
+/** A few more than the first rows aren't worth folding away. */
+private const val FOLD_AFTER = NEXT_ROWS + 2
+
+/**
+ * Main's `orderNotMade`: maps on their way or failed, then chapters whose lessons are all written (made in half a
+ * minute), then chapters the learner finished a lesson in, then the rest, the syllabus's order within each.
+ */
+internal fun notMadeOrder(
+    notMade: List<GoalMindMap>,
+    studied: Set<UUID>,
+): NotMadeOrder {
+    fun rank(map: GoalMindMap) =
+        when {
+            map.needsAttention() -> 0
+            map.canMakeNow() -> 1
+            map.chapterId in studied -> 2
+            else -> 3
+        }
+
+    val ordered = notMade.sortedBy { rank(it) }
+    if (ordered.size <= FOLD_AFTER) return NotMadeOrder(ordered, emptyList())
+
+    val next = ordered.take(NEXT_ROWS)
+    val rest = notMade - next.toSet()
+    val groups =
+        if (rest.all { it.subject != null }) {
+            rest.groupBy { it.subject?.key.orEmpty() }.map { (key, maps) -> IndexGroup(key, maps.first().subject?.name, maps) }
+        } else {
+            listOf(IndexGroup("", null, rest))
+        }
+    return NotMadeOrder(next, groups)
+}
 
 /** What each tab counts, as main's `countTabs`: the ready chapter maps, every lesson map, and every saved map it lists. */
 internal fun GoalMindMaps.tabCounts(saves: Map<MindMapTarget, Boolean>): Map<StudyTab, Int> =
@@ -176,63 +217,69 @@ private fun GoalMindMap.canMakeNow(): Boolean =
         (status == GoalMindMap.Status.AVAILABLE || status == GoalMindMap.Status.DRAWING || status == GoalMindMap.Status.FAILED)
 
 /**
- * Main's `NotMadeYet`, after the chapters that have a map, under its own No map yet heading that counts them all:
- * each chapter whose map can be made now as its own row, the rest folded behind a row that counts them (listed when
- * none is ready), then Create all
- * when two or more can start and one line about them all, after the rows they act on. The rows mix subjects, so they
- * go without their number.
+ * Main's `NotMadeYet` under its own No map yet heading that counts them all: the five chapters the learner most likely
+ * wants, the rest folded by subject (or behind one row that counts them when the goal has none), then Create all when
+ * two or more can start and one line about them all, after the rows they act on. Its rows show the chapter's name and
+ * its action alone.
  */
-private fun LazyListScope.notMadeBlock(
+internal fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
-    notMade: List<GoalMindMap>,
+    shown: IndexState,
     open: Boolean,
     actions: TabActions,
+    beside: Boolean = false,
 ) {
-    val now = notMade.filter { it.canMakeNow() }
-    val later = notMade.filterNot { it.canMakeNow() }
+    val notMade = mindMaps.notMade
+    val order = notMadeOrder(notMade, mindMaps.lessonGroups.map { it.chapterId }.toSet())
     val stop = mindMaps.createOffer.stop
-    val folds = now.isNotEmpty() && later.isNotEmpty()
+    // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
+    val note =
+        stop == null && !actions.state.plus && notMade.any { it.lessonsToWrite > 0 && it.status != GoalMindMap.Status.WRITING_LESSONS }
 
     item(key = "not-made-title", contentType = "title") {
         SectionHeader(
             stringResource(R.string.mindmaps_other_chapters),
-            Modifier.padding(top = 24.dp, bottom = 8.dp),
-            detail = pluralStringResource(R.plurals.mindmaps_chapter_count, notMade.size, notMade.size),
+            Modifier.padding(top = if (beside) 0.dp else 24.dp, bottom = 8.dp),
+            detail = formatNumber(notMade.size.toDouble(), currentLocale()),
         )
     }
-    items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
-        Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
-    }
-    if (folds) {
-        item(key = "not-made-fold", contentType = "fold") {
-            MoreChaptersRow(
-                text =
-                    if (open) {
-                        stringResource(R.string.plan_show_fewer_chapters)
-                    } else {
-                        pluralStringResource(R.plurals.plan_more_chapters, later.size, later.size)
-                    },
-                open = open,
-                onClick = actions.toggleNotMade,
+    if (note) {
+        item(key = "not-made-spends", contentType = "line") {
+            Text(
+                stringResource(R.string.mindmaps_lessons_count_free),
+                Modifier.padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
-    if ((open || !folds) && later.isNotEmpty()) {
-        // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
-        val note = stop == null && !actions.state.plus && later.any { it.lessonsToWrite > 0 }
-        if (note) {
-            item(key = "not-made-spends", contentType = "line") {
-                Text(
-                    stringResource(R.string.mindmaps_lessons_count_free),
-                    Modifier.padding(vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+    items(order.next, key = { "next-${it.chapterId}" }, contentType = { "map" }) { map ->
+        Divided(map != order.next.first()) { ChapterRow(map, actions, stop = stop, numbered = false, compact = true) }
+    }
+    order.rest.forEach { group ->
+        val key = "not-made:${group.key}"
+        val name = group.name
+        val unfolded = if (name == null) open else key in shown.opened
+        item(key = "fold-$key", contentType = "fold") {
+            if (name == null) {
+                MoreChaptersRow(
+                    text =
+                        if (open) {
+                            stringResource(R.string.plan_show_fewer_chapters)
+                        } else {
+                            pluralStringResource(R.plurals.plan_more_chapters, group.rows.size, group.rows.size)
+                        },
+                    open = open,
+                    onClick = actions.toggleNotMade,
                 )
+            } else {
+                SubjectTitle(IndexEntry.Subject(key, name, group.rows.size, unfolded), actions.toggleSubject)
             }
         }
-        items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
-            // The note parts the two lists; without it a hairline does, as between any two rows.
-            Divided(map != later.first() || (now.isNotEmpty() && !note)) { ChapterRow(map, actions, stop = stop, numbered = false) }
+        if (unfolded) {
+            items(group.rows, key = { "rest-${it.chapterId}" }, contentType = { "map" }) { map ->
+                Divided(true) { ChapterRow(map, actions, stop = stop, numbered = false, compact = true) }
+            }
         }
     }
     item(key = "not-made", contentType = "not-made") {

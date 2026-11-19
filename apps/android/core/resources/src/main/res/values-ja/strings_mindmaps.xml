@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "5c518de1a85b820c71915825f72515cc4f9b1535d45b4d1ca058fcd1be117213",
   "mindmaps_saved_state": "14114ba00a4ed1dd4df7b36bc471030e326a777a615e171ef6c7907c235e45c1",
   "mindmaps_show_all": "e416d1939f873aae278a4c29cec042b3c7253429bca533b126069e0827cf2785",
+  "mindmaps_shown_as": "663fa3e084b367115bc2838560cadf4a8da9e34df648660f35c09b10fef067bd",
   "mindmaps_shown_as_text": "edea9c39aba2bbfa8ef64c28f8289ee80fb020813b78181f0986c8cb1e327792",
+  "mindmaps_shown_map": "f281013ef9f0dddad32708f82ebe2e3cb515d39bbbdef7f5b3ff037977b52e56",
+  "mindmaps_shown_text": "d53c3eed4b6a0b3ce0b999ab4a73c649a1b3b5e7bcc6ff82fafc58b49e8e763f",
   "mindmaps_start_from_first": "ab9e6f9dca2c5e8007295cc2d1fb928904762b29029e790b8455bf5170efbda9",
   "mindmaps_study": "7f615be93252d3c706d512ac0f28be7beb52c739278dce0f963a09b04af40435",
   "mindmaps_tab_chapters": "bd8b048d4c304a152d0f1476935a0920191a9bc1ab043c26ab50dda431377425",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "e98d19518eb041dc373926bfe7aed54fcaf7ab1abef5c43f958cb358881fef1a",
   "mindmaps_writing_lessons_wait": "97ea6d439e51b0207b7eb61524d57cff1acf15ae7e7ff427312ca0360882cb56",
   "mindmaps_zoom": "6d02121789adc075ba62bd0409ae58539e4ca4c9546b17a31df2769a97b91f77",
+  "mindmaps_zoom_hint": "06fc0913e972f853d4b6545828bf79c6c8a924481ab0c5362d89de5ae21d1e8c",
   "mindmaps_zoom_in": "fd8f1240e05d2124eb5cf536185a0f2b59cbaa4202468c23d294b81c100d584f",
   "mindmaps_zoom_out": "1f451ac16fd49cd0a0d987eeb129e0df7b1fafca1ff0505ac1bb03453ea684b2"
 }
@@ -205,4 +209,8 @@
     <string name="mindmaps_zoom">拡大する</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">このマップはもう利用できません。</string>
+    <string name="mindmaps_shown_as">マップの表示方法</string>
+    <string name="mindmaps_shown_map">マップ</string>
+    <string name="mindmaps_shown_text">テキスト</string>
+    <string name="mindmaps_zoom_hint">マップをタップすると拡大できます</string>
 </resources>

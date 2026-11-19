@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "e881ff27e0fdceb643b1a7dbf3a27c60fbbb991790617a95412b0a5e8a1ed050",
   "mindmaps_saved_state": "09200c9c85102e569963a393e29c29a4981100752bd6955a89891d5ab2d9d76c",
   "mindmaps_show_all": "a85512e49fe7f0a37e772fb2256801be4d6806ac9b272fbc4df38a93cae41947",
+  "mindmaps_shown_as": "541a63961fc1332af5f2e302e29af7ded84157a3d3e6b793629800dd0bba88e8",
   "mindmaps_shown_as_text": "7a3c16c4fe0d0ac8b04fdf3090cf7e5e429a8e3700d0c82f00bbcf1699980317",
+  "mindmaps_shown_map": "bd2994f813d044a92d49f0a1d943684f7d047e412dbab1dc6a714b82b1d16812",
+  "mindmaps_shown_text": "def188776714897055af8e9b8c2fad9df8e91ec7ee3edb14789358583ba05887",
   "mindmaps_start_from_first": "9770b5936add74b23105f23fb0aefd8d924e358a4a18534258c30a253c74acca",
   "mindmaps_study": "836c9d09beec889ef52c6709f49707ba7b471b60e2e7e0dda2a17c461864510d",
   "mindmaps_tab_chapters": "f30d37ae3c878be0f27577e7d04a1b742f36d13a7ba378652c2eea0ed3a4af68",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "68f8bbc7a119656bcb7374ac437a0b00c3d291fb131626ac7e3bb8db29c268e7",
   "mindmaps_writing_lessons_wait": "24e72ff3c0e690341d24040b7a9ef026e2265a43f6eda7174076456aa949e681",
   "mindmaps_zoom": "a0b5b36ef350b3dd00096fbd0ee95917280f36258ee6574c9f84409f897b305d",
+  "mindmaps_zoom_hint": "298bac5efe7dd1ce498fbe1d0a2e981f444df0a72206854d406af0c7184f7168",
   "mindmaps_zoom_in": "85c157258ed59f4b45704d736a213066e976ba8a3195a571f5e0db929ad8e4be",
   "mindmaps_zoom_out": "3c8b1c99bea16762a1344d0f95f471d2a1587daa66d58c25d3e821d81757c4bc"
 }
@@ -221,4 +225,8 @@
     <string name="mindmaps_zoom">Agrandir</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Cette carte mentale n’est plus disponible.</string>
+    <string name="mindmaps_shown_as">Afficher la carte en</string>
+    <string name="mindmaps_shown_map">Carte</string>
+    <string name="mindmaps_shown_text">Texte</string>
+    <string name="mindmaps_zoom_hint">Touchez la carte pour l’agrandir</string>
 </resources>
