@@ -15,7 +15,12 @@ import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { useAppLocale } from "../_utils/locale";
-import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
+import {
+  TASK_COLUMN_CLASS,
+  TASK_HEADER_BAR_CLASS,
+  TASK_HEADER_END_CLASS,
+  TASK_HEADER_SIDE_CLASS,
+} from "./task-layout";
 
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
   const scrolled = useScrolled();
@@ -23,7 +28,7 @@ export function TaskHeader({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       className={cn(
-        "after:from-background relative z-30 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:mt-px after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
+        "after:from-background relative z-40 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:mt-px after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}
@@ -38,32 +43,31 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/**
- * The last control holds the bar's edge. A lesson can put its screen menu after the sidebar toggle.
- */
+/** On the end side the aside's toggle, on a task that has one, is the outermost control. */
 export function TaskHeaderSide({
-  afterToggle,
   align,
   children,
 }: {
-  afterToggle?: React.ReactNode;
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
   const t = useExtracted();
 
+  if (align === "start") {
+    return <div className={TASK_HEADER_SIDE_CLASS.start}>{children}</div>;
+  }
+
   return (
-    <div className={TASK_HEADER_SIDE_CLASS[align]}>
-      {children}
-      {align === "end" && (
+    <div className={TASK_HEADER_SIDE_CLASS.end}>
+      <div className={TASK_HEADER_END_CLASS} data-slot="task-header-end">
+        {children}
         <SidebarToggle
           className="hidden lg:group-data-aside/task:inline-flex"
           collapseLabel={t("Collapse sidebar")}
           expandLabel={t("Expand sidebar")}
           side="end"
         />
-      )}
-      {afterToggle}
+      </div>
     </div>
   );
 }

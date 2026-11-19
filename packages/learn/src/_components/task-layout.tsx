@@ -31,16 +31,22 @@ export const TASK_HEADER_BAR_CLASS =
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
  * button, and every button centers on that line: a 44 px one hangs past it instead of growing it,
- * so the bar is as tall as the aside's header beside it. Where the sidebar's toggle is on the end
- * side, the last control holds the edge: what comes before the toggle gives it up, and so does the
- * toggle when a control follows it. "Follows" is `~`, not `+` or `:last-child`, because an open
- * menu puts focus guards around its trigger.
+ * so the bar is as tall as the aside's header beside it. The end side only keeps the bar's balance;
+ * its controls are in `TASK_HEADER_END_CLASS`.
  */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle]):not([data-slot=sidebar-toggle]~*)]:me-0 lg:group-data-aside/task:[&_[data-slot=sidebar-toggle]:has(~.edge)]:me-0",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 justify-end self-start",
   start:
     "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1 [&_[data-slot=task-close]]:-translate-x-0.5 rtl:[&_[data-slot=task-close]]:translate-x-0.5",
 } as const;
+
+/**
+ * The end side's controls, with the aside's toggle last. On a task with an aside they hold the
+ * window's corner from `lg`, over the aside's header while it's open, so opening or closing the
+ * aside moves neither; what comes before the toggle gives the edge up to it.
+ */
+export const TASK_HEADER_END_CLASS =
+  "flex min-h-9 items-center justify-end *:-my-1 lg:group-data-aside/task:fixed lg:group-data-aside/task:top-0 lg:group-data-aside/task:right-0 lg:group-data-aside/task:h-(--task-bar) lg:group-data-aside/task:pr-[24px] lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0";
 
 /** The bar's room over and under its buttons, for a foot that sits level with it. */
 export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:py-6";
@@ -99,6 +105,13 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
+/**
+ * The task header's controls sit over this header's end (`TASK_HEADER_END_CLASS`), so it leaves
+ * them their 40 px each, less the toggle's pull, and a gap.
+ */
+const TASK_ASIDE_HEADER_ROOM_CLASS =
+  "pr-[6.5rem] group-has-[[data-slot=task-header-end]>button:nth-of-type(3)]/task:pr-[9rem]";
+
 export function TaskAsideHeader({
   className,
   meta,
@@ -114,6 +127,7 @@ export function TaskAsideHeader({
     <div
       className={cn(
         "flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15",
+        TASK_ASIDE_HEADER_ROOM_CLASS,
         className,
       )}
       data-slot="task-aside-header"
@@ -271,12 +285,17 @@ export function TaskSkeleton({
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {menu && (
-              <Skeleton
-                className={cn("-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10", aside && "lg:mr-0")}
-              />
-            )}
-            {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
+            <div className={TASK_HEADER_END_CLASS} data-slot="task-header-end">
+              {menu && (
+                <Skeleton
+                  className={cn(
+                    "-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10",
+                    aside && "lg:mr-0",
+                  )}
+                />
+              )}
+              {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
+            </div>
           </div>
         </div>
 
