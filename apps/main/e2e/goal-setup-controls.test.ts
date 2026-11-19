@@ -79,6 +79,44 @@ test("keeps the German goal box the same height when typing starts on a phone", 
     .toBe(emptyHeight);
 });
 
+function edges(element: Element) {
+  const box = element.getBoundingClientRect();
+  return { end: box.right, middle: (box.left + box.right) / 2, width: box.width };
+}
+
+test("centers a setup screen's column between the corners its bars hold on a computer", async ({
+  page,
+}) => {
+  await page.setViewportSize({ height: 900, width: 1440 });
+  await page.goto("/start");
+
+  const actions = page.locator('[data-slot="bottom-bar-actions"]');
+  const send = actions.getByRole("button", { name: "Build my plan" });
+  await expectHydrated(send);
+
+  const column = await page.locator('[data-slot="onboarding-column"]').evaluate(edges);
+  const row = await actions.evaluate(edges);
+  const action = await send.evaluate(edges);
+
+  expect(column.width).toBeLessThan(row.width);
+  expect(column.middle).toBeCloseTo(row.middle, 0);
+  expect(action.end).toBeCloseTo(row.end, 0);
+
+  // A room only a little wider than the column: it fills the room instead of stopping just short.
+  await page.setViewportSize({ height: 900, width: 1280 });
+
+  await expect
+    .poll(async () => {
+      const [narrowColumn, narrowRow] = await Promise.all([
+        page.locator('[data-slot="onboarding-column"]').evaluate(edges),
+        actions.evaluate(edges),
+      ]);
+
+      return Math.round(narrowRow.width - narrowColumn.width);
+    })
+    .toBe(0);
+});
+
 test("names the goal example the same way on the home and onboarding pages", async ({ page }) => {
   const goal = page.locator('[data-slot="goal-field"]').first().getByRole("textbox");
 
