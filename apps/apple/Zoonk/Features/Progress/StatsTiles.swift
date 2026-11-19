@@ -35,7 +35,7 @@ struct StatTile<Icon: View, Value: View>: View {
   @Environment(\.statTileLone) private var lone
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
+    VStack(alignment: .leading, spacing: lone ? 10 : 6) {
       if let label {
         HStack(spacing: 6) {
           icon

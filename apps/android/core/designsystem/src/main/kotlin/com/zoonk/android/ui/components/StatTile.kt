@@ -75,7 +75,7 @@ fun StatTile(
 ) {
     val lone = LocalLoneStat.current
     val content = @Composable {
-        Column(if (lone) Modifier else Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(if (lone) Modifier else Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(if (lone) 10.dp else 6.dp)) {
             if (label != null) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     val labelStyle = MaterialTheme.zoonkType.label
