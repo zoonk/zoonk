@@ -58,22 +58,32 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
 
 type SessionQueueView = { left: number; rows: readonly SessionQueueRow[] };
 
-export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFrameAside {
+/**
+ * Under a header that already says "Today", the time left heads the list; a screen whose header
+ * names something else asks for `named`.
+ */
+export function useSessionQueueAside(
+  { left, rows }: SessionQueueView,
+  { named = false }: { named?: boolean } = {},
+): TaskFrameAside {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const timeLeft = left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined;
+  const children = <SessionQueue rows={rows} />;
 
-  return {
-    children: <SessionQueue rows={rows} />,
-    label: t("Today"),
-    meta: left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined,
-    title: t("Today"),
-  };
+  if (named) {
+    return { children, label: t("Today"), meta: timeLeft, title: t("Today") };
+  }
+
+  return { children, label: t("Today"), title: timeLeft };
 }
 
 export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
   return (
     <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
-      <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
+      {(aside.title || aside.meta) && (
+        <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
+      )}
       {aside.children}
     </section>
   );
