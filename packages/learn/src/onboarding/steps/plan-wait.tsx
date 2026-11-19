@@ -140,7 +140,7 @@ function PlanWaitBar({
         // The progress view's heading already says it.
         note={
           next === "timeQuestion" && view === "quiz"
-            ? t("You'll see it when you finish setting up.")
+            ? t("One last question, then you'll see it.")
             : undefined
         }
       >

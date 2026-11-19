@@ -11381,6 +11381,65 @@
         }
       }
     },
+    "One last question, then you'll see it." : {
+      "comment" : "Under \"Your plan is ready\" when the time question comes before the plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur noch eine Frage, dann siehst du ihn."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una última pregunta y podrás verlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une dernière question, puis tu le verras."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un’ultima domanda, poi lo vedrai."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後の質問に答えると、学習計画が見られます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막 질문에 답하면 계획을 볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze jedno pytanie i zobaczysz plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só mais uma pergunta e você vai ver seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son bir soru kaldı, sonra planını göreceksin."
+          }
+        }
+      }
+    },
     "One moment. Try again in a few seconds." : {
       "comment" : "The learner is sending goals too quickly",
       "localizations" : {
@@ -23871,64 +23930,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuştuğun dil"
-          }
-        }
-      }
-    },
-    "You'll see it when you finish setting up." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du siehst es, wenn du mit der Einrichtung fertig bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo verás cuando termines de configurar todo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu le verras quand tu auras fini la configuration."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo vedrai quando avrai finito di configurare tutto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定が終わると表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설정을 마치면 계획을 확인할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobaczysz go, gdy skończysz konfigurację."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você vai ver isso quando terminar de configurar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurulumu tamamlayınca göreceksin."
           }
         }
       }

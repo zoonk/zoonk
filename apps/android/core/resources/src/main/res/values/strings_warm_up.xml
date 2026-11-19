@@ -11,7 +11,8 @@
     <string name="warm_up_guess_hint">Just for fun. Your answers don\'t count.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Your plan is ready</string>
-    <string name="warm_up_plan_ready_after_setup">You\'ll see it when you finish setting up.</string>
+    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
+    <string name="warm_up_plan_ready_one_question">One last question, then you\'ll see it.</string>
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">See it whenever you\'re ready.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->

@@ -9591,9 +9591,9 @@ msgstr "好きなタイミングで学習計画を見られます。"
 
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-msgctxt "Rfs90n"
-msgid "You'll see it when you finish setting up."
-msgstr "設定が終わると表示されます。"
+msgctxt "TTJuzU"
+msgid "One last question, then you'll see it."
+msgstr "最後の質問に答えると、学習計画が見られます。"
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"

@@ -276,7 +276,7 @@ private fun PlanReadyHeading(next: PlanNext) {
         stringResource(
             when (next) {
                 PlanNext.Plan -> R.string.warm_up_plan_ready_whenever
-                PlanNext.TimeQuestion -> R.string.warm_up_plan_ready_after_setup
+                PlanNext.TimeQuestion -> R.string.warm_up_plan_ready_one_question
             },
         ),
     )
