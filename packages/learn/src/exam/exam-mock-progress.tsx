@@ -114,7 +114,7 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
   );
 }
 
-function useLatestMock(progress: Progress) {
+function LatestMock({ progress }: { progress: Progress }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
   const first = progress.mocks[0];
@@ -130,49 +130,21 @@ function useLatestMock(progress: Progress) {
     .filter(Boolean)
     .join(FACT_SEPARATOR);
 
-  return {
-    change: first && progress.mocks.length > 1 ? latest.percent - first.percent : null,
-    measure:
-      exam.scoring.method === "net"
-        ? t("Score in {mock}", { mock: name })
-        : t("Right answers in {mock}", { mock: name }),
-    percent: latest.percent,
-  };
-}
-
-/** With one mock exam, what the rows measure is the section's own line, under its title. */
-function OneMockMeasure({ progress }: { progress: Progress }) {
-  const latest = useLatestMock(progress);
-
-  if (!latest || latest.change !== null) {
-    return null;
-  }
-
-  return <p className="text-muted-foreground text-compact">{latest.measure}</p>;
-}
-
-function LatestMock({ progress }: { progress: Progress }) {
-  const t = useExtracted();
-  const latest = useLatestMock(progress);
-
-  if (!latest) {
-    return null;
-  }
-
-  // One mock exam has nothing to compare: the subject rows below are its result.
-  if (latest.change === null) {
-    return null;
-  }
+  const change = first && progress.mocks.length > 1 ? latest.percent - first.percent : null;
 
   return (
     <StatTiles>
       <StatTile
         detail={
           <>
-            {latest.measure}
-            <span className={cn("block", latest.change > 0 && "text-success-text")}>
-              {t("{change} since the first", { change: formatChange(latest.change) })}
-            </span>
+            {exam.scoring.method === "net"
+              ? t("Score in {mock}", { mock: name })
+              : t("Right answers in {mock}", { mock: name })}
+            {change !== null && (
+              <span className={cn("block", change > 0 && "text-success-text")}>
+                {t("{change} since the first", { change: formatChange(change) })}
+              </span>
+            )}
           </>
         }
         icon={<TimerIcon />}
@@ -235,12 +207,9 @@ export function ExamMockProgress() {
 
   return (
     <PageSection aria-labelledby={TITLE_ID}>
-      <div className="flex flex-col gap-1">
-        <PageSectionHeader>
-          <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
-        </PageSectionHeader>
-        <OneMockMeasure progress={exam.progress} />
-      </div>
+      <PageSectionHeader>
+        <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
+      </PageSectionHeader>
       <ProgressCard progress={exam.progress} />
     </PageSection>
   );
