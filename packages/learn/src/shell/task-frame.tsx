@@ -114,7 +114,9 @@ export function TaskFrame({
           <div className="text-foreground flex min-w-0 shrink justify-center text-center text-sm font-medium text-balance">
             {headerTitle}
           </div>
-          <TaskHeaderSide align="end">{headerEnd}</TaskHeaderSide>
+          <TaskHeaderSide align="end" inColumn>
+            {headerEnd}
+          </TaskHeaderSide>
         </TaskHeaderBar>
 
         {progress && "bar" in progress && progress.bar}

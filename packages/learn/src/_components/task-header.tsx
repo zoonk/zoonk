@@ -7,7 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { SidebarToggle, useSidebarOpen } from "@zoonk/ui/components/sidebar-toggle";
+import {
+  SidebarToggle,
+  SidebarToggleRoom,
+  useSidebarOpen,
+} from "@zoonk/ui/components/sidebar-toggle";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
@@ -16,9 +20,10 @@ import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { useAppLocale } from "../_utils/locale";
 import {
+  TASK_ASIDE_TOGGLE_CLASS,
+  TASK_ASIDE_TOGGLE_ROOM_CLASS,
   TASK_COLUMN_CLASS,
   TASK_HEADER_BAR_CLASS,
-  TASK_HEADER_END_CLASS,
   TASK_HEADER_SIDE_CLASS,
 } from "./task-layout";
 
@@ -43,13 +48,19 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/** On the end side the aside's toggle, on a task that has one, is the outermost control. */
+/**
+ * On the end side the aside's toggle, on a task that has one, is the outermost control, with "…"
+ * just inside it. `inColumn` is for a bar that ends at its column, short of the window's corner,
+ * so it needs no room for the toggle.
+ */
 export function TaskHeaderSide({
   align,
   children,
+  inColumn = false,
 }: {
   align: "end" | "start";
   children?: React.ReactNode;
+  inColumn?: boolean;
 }) {
   const t = useExtracted();
 
@@ -58,17 +69,19 @@ export function TaskHeaderSide({
   }
 
   return (
-    <div className={TASK_HEADER_SIDE_CLASS.end}>
-      <div className={TASK_HEADER_END_CLASS} data-slot="task-header-end">
+    <>
+      <div className={TASK_HEADER_SIDE_CLASS.end}>
         {children}
+        {!inColumn && <SidebarToggleRoom className={TASK_ASIDE_TOGGLE_ROOM_CLASS} />}
+      </div>
+      <div className={TASK_ASIDE_TOGGLE_CLASS}>
         <SidebarToggle
-          className="hidden lg:group-data-aside/task:inline-flex"
           collapseLabel={t("Collapse sidebar")}
           expandLabel={t("Expand sidebar")}
           side="end"
         />
       </div>
-    </div>
+    </>
   );
 }
 

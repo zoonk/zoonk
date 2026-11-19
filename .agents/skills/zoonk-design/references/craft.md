@@ -494,7 +494,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - A highlighted term's band reaches 0.1em past its letters on both sides, so its letters sit where plain text would; at a line's start the band passes the column by that much.
 - A chat bubble has one small corner, its tail, on the side of who wrote it.
 - A control with no outline hangs its hover box past the column so its glyph's ink sits on the edge (`edge`).
-- In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens. Where a task has a side panel, the panel's toggle holds the right corner with "…" just inside it, on every screen of the task, and neither moves when the panel opens or closes.
+- In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens. Where a task has a side panel, the panel's toggle holds the window's right corner, on the panel's header row while it's open, and never moves when pressed; "…" stays at the end of the task's own header, so its menu opens over the task, and moves with the content when the panel opens or closes. Left to right it's always "…", then the toggle.
 - Onboarding, the player and the buddy's conversation center one column; pages that are worked in never do.
 - Content is flat: no shadows, few boxes. Body text is 14px in the app.
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.

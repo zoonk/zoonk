@@ -1,4 +1,5 @@
 import { BOTTOM_BAR_ROOM_CLASS, BottomBar } from "@zoonk/ui/components/bottom-bar";
+import { SidebarToggleRoom } from "@zoonk/ui/components/sidebar-toggle";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
@@ -31,22 +32,27 @@ export const TASK_HEADER_BAR_CLASS =
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
  * button, and every button centers on that line: a 44 px one hangs past it instead of growing it,
- * so the bar is as tall as the aside's header beside it. The end side only keeps the bar's balance;
- * its controls are in `TASK_HEADER_END_CLASS`.
+ * so the bar is as tall as the aside's header beside it.
  */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-h-9 min-w-fit flex-1 basis-0 justify-end self-start",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:without-aside:[&_.edge:has(~[data-slot=sidebar-toggle-room])]:me-0",
   start:
     "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1 [&_[data-slot=task-close]]:-translate-x-0.5 rtl:[&_[data-slot=task-close]]:translate-x-0.5",
 } as const;
 
 /**
- * The end side's controls, with the aside's toggle last. On a task with an aside they hold the
- * window's corner from `lg`, over the aside's header while it's open, so opening or closing the
- * aside moves neither; what comes before the toggle gives the edge up to it.
+ * The aside's toggle holds the window's corner, on the aside's header while it's open, so pressing
+ * it moves nothing under the hand. The header's other controls stay with the task's content.
  */
-export const TASK_HEADER_END_CLASS =
-  "flex min-h-9 items-center justify-end *:-my-1 lg:group-data-aside/task:fixed lg:group-data-aside/task:top-0 lg:group-data-aside/task:right-0 lg:group-data-aside/task:h-(--task-bar) lg:group-data-aside/task:pr-[24px] lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0";
+/**
+ * With the aside collapsed, the window's corner is the bar's end, so the bar keeps the toggle's
+ * room there and what comes before it gives the edge up to it.
+ */
+export const TASK_ASIDE_TOGGLE_ROOM_CLASS =
+  "hidden lg:group-data-aside/task:without-aside:inline-flex";
+
+export const TASK_ASIDE_TOGGLE_CLASS =
+  "fixed top-0 right-0 z-40 hidden h-(--task-bar) items-center pr-[24px] lg:group-data-aside/task:flex";
 
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
@@ -102,12 +108,8 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
-/**
- * The task header's controls sit over this header's end (`TASK_HEADER_END_CLASS`), so it leaves
- * them their 40 px each, less the toggle's pull, and a gap.
- */
-const TASK_ASIDE_HEADER_ROOM_CLASS =
-  "pr-[6.5rem] group-has-[[data-slot=task-header-end]>button:nth-of-type(3)]/task:pr-[9rem]";
+/** The aside's toggle sits over this header's end (`TASK_ASIDE_TOGGLE_CLASS`). */
+const TASK_ASIDE_HEADER_ROOM_CLASS = "pr-16";
 
 export function TaskAsideHeader({
   className,
@@ -282,18 +284,23 @@ export function TaskSkeleton({
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            <div className={TASK_HEADER_END_CLASS} data-slot="task-header-end">
-              {menu && (
-                <Skeleton
-                  className={cn(
-                    "-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10",
-                    aside && "lg:mr-0",
-                  )}
-                />
-              )}
-              {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
-            </div>
+            {menu && (
+              <Skeleton
+                className={cn(
+                  "-mr-3.5 size-11 rounded-lg lg:-mr-3 lg:size-10",
+                  aside && "lg:without-aside:mr-0",
+                )}
+              />
+            )}
+            {aside && <SidebarToggleRoom className={TASK_ASIDE_TOGGLE_ROOM_CLASS} />}
           </div>
+          {aside && (
+            <div className={TASK_ASIDE_TOGGLE_CLASS}>
+              <SidebarToggleRoom>
+                <Skeleton className="absolute -inset-px rounded-lg" />
+              </SidebarToggleRoom>
+            </div>
+          )}
         </div>
 
         {progress && (

@@ -229,6 +229,28 @@ export function SidebarToggle({
   );
 }
 
+/**
+ * The end toggle's box, kept in a bar that draws the toggle elsewhere; with `children` (a loading
+ * placeholder) it shows them in that box.
+ */
+export function SidebarToggleRoom({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(TOGGLE.end.className, !children && "invisible", className)}
+      data-slot="sidebar-toggle-room"
+    >
+      {children}
+    </span>
+  );
+}
+
 /** Opens the app's command palette, which answers ⌘K and Ctrl+K itself. */
 export function SidebarSearch({
   className,
