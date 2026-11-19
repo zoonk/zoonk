@@ -22,7 +22,7 @@ describe("lesson score", () => {
     { isFirstCompletion: false, retryRight: false },
     { isFirstCompletion: false, retryRight: true },
   ])(
-    "counts the bar's answers on first completion $isFirstCompletion with retry right $retryRight",
+    "counts the run's answers, with no bar left at the end, on first completion $isFirstCompletion with retry right $retryRight",
     async ({ isFirstCompletion, retryRight }) => {
       await atViewport({ height: 844, width: 390 }, async () => {
         const lesson = buildLesson([teachingStep("check")]);
@@ -68,11 +68,7 @@ describe("lesson score", () => {
         await answer(retryRight ? RIGHT : WRONG);
         await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-        expect(
-          [...document.querySelectorAll<HTMLElement>("[data-segment]")].map(
-            (segment) => segment.dataset.segment,
-          ),
-        ).toStrictEqual(["wrong", retryRight ? "right" : "wrong"]);
+        expect(document.querySelectorAll("[data-segment]")).toHaveLength(0);
 
         await expect
           .element(page.getByText(`${retryRight ? 1 : 0} of 2 right`, { exact: true }))

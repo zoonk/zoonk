@@ -86,7 +86,7 @@ describe("the lesson map", () => {
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     expect(adapters.completeLesson).toHaveBeenCalledOnce();
-    expect(segments()).toStrictEqual(["read", "wrong", "right", "read"]);
+    expect(segments()).toStrictEqual([]);
   });
 
   it("opens on the map when every screen was answered before, goes back to them answered, and saves only on Continue", async () => {
@@ -191,7 +191,7 @@ describe("the opening guess's action bar", () => {
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     expect(adapters.checkStep).not.toHaveBeenCalled();
-    expect(segments()).toStrictEqual(["read", "read"]);
+    expect(segments()).toStrictEqual([]);
   });
 
   it("starts writing the lesson's examples, as any answer does", async () => {
