@@ -27,6 +27,12 @@ import com.zoonk.android.ui.components.markSize
 /** How many rows follow the next one before "+N more" folds the rest, on Today and the plan's reveal. */
 const val UPCOMING_ROWS = 4
 
+/**
+ * As main's `getFoldedRows`: how many of the [count] rows after the next one show while folded. A single row past the
+ * first few shows: folding it would cost a tap to save one row.
+ */
+fun shownUpcomingRows(count: Int): Int = if (count - UPCOMING_ROWS > 1) UPCOMING_ROWS else count
+
 /** Today's fold row: the day's later rows behind one line, also used by the plan's reveal. */
 @Composable
 fun FoldRow(

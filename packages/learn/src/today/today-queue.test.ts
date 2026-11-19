@@ -90,7 +90,9 @@ describe(getFoldedRows, () => {
 
     expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
       count: 2,
+      folds: true,
       lessonsOnly: true,
+      shown: 4,
     });
   });
 
@@ -99,7 +101,9 @@ describe(getFoldedRows, () => {
 
     expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
       count: 2,
+      folds: true,
       lessonsOnly: false,
+      shown: 4,
     });
   });
 
@@ -108,11 +112,25 @@ describe(getFoldedRows, () => {
 
     expect(getFoldedRows({ after, lessonsAhead: true })).toStrictEqual({
       count: 2,
+      folds: true,
       lessonsOnly: false,
+      shown: 4,
     });
   });
 
   it("folds nothing while the rows fit", () => {
-    expect(getFoldedRows({ after: [lesson, review, lesson], lessonsAhead: true }).count).toBe(0);
+    expect(getFoldedRows({ after: [lesson, review, lesson], lessonsAhead: true }).folds).toBe(
+      false,
+    );
+  });
+
+  it("shows a single row past the first few instead of folding it", () => {
+    expect(
+      getFoldedRows({ after: [lesson, lesson, lesson, lesson, review], lessonsAhead: false }),
+    ).toMatchObject({ folds: false, shown: 5 });
+
+    expect(
+      getFoldedRows({ after: [lesson, lesson, lesson, lesson], lessonsAhead: true }),
+    ).toMatchObject({ folds: false, shown: 4 });
   });
 });
