@@ -660,6 +660,8 @@
 @layer base {
   :root {
     color-scheme: light dark;
+    /* A page that gets shorter drops its scrollbar: with its room kept, nothing beside it moves. */
+    scrollbar-gutter: stable;
   }
 
   * {
