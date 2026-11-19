@@ -429,21 +429,31 @@ private struct RevealExamChoices: View {
   var body: some View {
     ForEach(plan.examChoices) { choice in
       if let line = choice.followingLine {
+        // One sentence with the change inline, as main's: "Foreign language: Inglês · Change".
         Section {
-          Text(line)
-            .foregroundStyle(.mutedForeground)
-
           Button {
             change(choice.group)
           } label: {
-            Text(
-              "Change", tableName: "Plan",
-              comment:
-                "Opens the plan's settings to change the option of an exam's choice it follows")
+            Text("\(lineLabel(line))\(changeLabel)")
+              .frame(maxWidth: .infinity, alignment: .leading)
           }
+          .buttonStyle(.plain)
+          .listRowBackground(Color.clear)
         }
       }
     }
+  }
+
+  private func lineLabel(_ line: String) -> Text {
+    Text(verbatim: "\(line)\u{00A0}· ").foregroundStyle(.mutedForeground)
+  }
+
+  private var changeLabel: Text {
+    Text(
+      "Change", tableName: "Plan",
+      comment: "Opens the plan's settings to change the option of an exam's choice it follows"
+    )
+    .foregroundStyle(.foreground)
   }
 }
 
@@ -604,20 +614,23 @@ private struct PlanReveal: View {
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
     let day = onboarding.revealToday(goalID: goal.id)
 
+    // What the learner does now leads; the plan at a glance sits beside it, or under it.
     PaneSplit {
       ZoonkList {
-        heroSections(goal: goal, day: day)
+        todaySections(goal: goal, day: day)
       }
       .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
     } secondary: {
       ZoonkList {
+        glanceSections(goal: goal, day: day)
         detailSections(context: context, structure: structure)
       }
     } single: {
       ZoonkList {
-        heroSections(goal: goal, day: day)
+        todaySections(goal: goal, day: day)
+        glanceSections(goal: goal, day: day)
         detailSections(context: context, structure: structure)
       }
       .bottomBar(note: barNote) { actions(day: day.value?.today) }
@@ -644,10 +657,31 @@ private struct PlanReveal: View {
   }
 
   @ViewBuilder
-  private func heroSections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
+  private func todaySections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
+    Section {
+      RevealHero(title: goal.displayName, buddy: learner.summary.value?.buddy ?? BuddyLook())
+        .listRowBackground(Color.clear)
+    }
+
+    switch day.state {
+    case .loaded(let reveal):
+      RevealToday(
+        day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
+        open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) })
+    case .idle, .loading:
+      // Today's rows hold their place, so the plan doesn't move as they come.
+      if plan.hasLessonsToday {
+        RevealTodayPlaceholder()
+      }
+    case .empty, .failed:
+      EmptyView()
+    }
+  }
+
+  @ViewBuilder
+  private func glanceSections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
-        RevealHero(title: goal.displayName, buddy: learner.summary.value?.buddy ?? BuddyLook())
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
         coverage
       }
@@ -661,16 +695,11 @@ private struct PlanReveal: View {
 
     switch day.state {
     case .loaded(let reveal):
-      RevealWeek(
-        days: reveal.nextDays, week: reveal.week,
-        today: RevealToday(
-          day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
-          open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) }))
+      RevealWeek(days: reveal.nextDays, week: reveal.week)
     case .idle, .loading:
-      // The week's rows hold their place, so it doesn't move as they come; a reveal whose seven
-      // days hold no lesson draws nothing.
+      // A reveal whose seven days hold no lesson draws nothing.
       if plan.hasLessonsInNextSevenDays {
-        RevealWeekPlaceholder(hasToday: plan.hasLessonsToday)
+        RevealWeekPlaceholder()
       }
     case .empty, .failed:
       EmptyView()
