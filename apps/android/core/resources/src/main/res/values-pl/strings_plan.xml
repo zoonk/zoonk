@@ -285,7 +285,6 @@
   "plan_fridays": "b119b7b07df1aff0d1cdc1f1060f3ac260cd94da1d380e23931ce285e06d38e0",
   "plan_full_course": "822024d11469ba6763c6b86c1aed7430ea0f8740f4223782e6d3bcb40c7931ae",
   "plan_full_course_switch": "6455c22c755ca086817d98614f6ddfd8d6c4267209657615aa6c969d7f791c18",
-  "plan_gain_this_week": "a3bcc74fcd68138e71516f7dd00263672bb2ff47fe7b1208c6f93ce72cacf080",
   "plan_go_to_today": "d57ac6bd9ad4516ca29eaabeea9306f0568df13c5bc0efb572971864ab7955ff",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
   "plan_goal_limit_reached": "c11e1906d98f421aa5b101ef0a17ceb1d173733bba28401658f7d4c24c5c38ea",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "d4c38f33b7a100d4a6d8cd9f4cfa125b815d9b9ac2a03e8cf61ab672a8be890e",
   "plan_level": "5d97545584814a6007b7cf3e8ea37465d7004abe50d281087120b582caa294d2",
   "plan_level_complete": "f6196d36c3ae465fa751e1083b7fc89b90fe44e2f4ef5296c750f983b6968752",
-  "plan_loss_this_week": "9217643c6ec515f8752d6d402feb49ec207996480d73e238c72278d42cac4c89",
   "plan_measure_mock_exam": "131c99836ad09737ccf655f67a1bfa23664bbf355d1f68040241212e59138456",
   "plan_measure_progress": "3055cfd4a175269c99cecc572b1a0414772352997b4f9323ec6989067a36ce69",
   "plan_measure_review_once": "9eb43f4069b5ae62c0b2177ce6fb445691b0bd200393817481d24a548ea03aa9",
@@ -840,18 +838,6 @@
         <item quantity="other">Opanowano %1$s lekcji</item>
     </plurals>
     <string name="plan_studied_and_known">Przerobione: %1$s · znane wcześniej: %2$s</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="one">+%d w tym tygodniu</item>
-        <item quantity="few">+%d w tym tygodniu</item>
-        <item quantity="many">+%d w tym tygodniu</item>
-        <item quantity="other">+%d w tym tygodniu</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="one">%d w tym tygodniu</item>
-        <item quantity="few">%d w tym tygodniu</item>
-        <item quantity="many">%d w tym tygodniu</item>
-        <item quantity="other">%d w tym tygodniu</item>
-    </plurals>
     <string name="plan_estimate_waits">Rozwiąż cały egzamin próbny lub jego połowę, aby poznać szacowany wynik.</string>
     <string name="plan_estimated_score">Szacowany wynik</string>
     <string name="plan_estimate_based_on_last">Na podstawie ostatniego egzaminu próbnego</string>

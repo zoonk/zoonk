@@ -285,7 +285,6 @@
   "plan_fridays": "fbc8fe30a5f764e8ce9ab801e84449ba75ad090cc698c7f083dbaedb71ace6b8",
   "plan_full_course": "4eed2bbba60b7d4344863bf97cd9cfc000e1fd0d45f420634dafe627e57a2660",
   "plan_full_course_switch": "30f416806f444f1422364917938bc21285a4bed62551893653199b4bdc9d1378",
-  "plan_gain_this_week": "8b928f2a91ccade6dafe77f1181e0215b3e37e8eb7f08d27ec7e7ef13d6160de",
   "plan_go_to_today": "993950485b0204261f33119d07bda282dd7f03401c7ce2641e02de1e5ea53fe0",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
   "plan_goal_limit_reached": "b59deff5fb4667f03cb66b0de6248f7f6309928b260d9be765c4655fde15aaec",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "81d34b985808033c19c1f89b8b392c5a26ae25fe6c4129df86d41b423793a37c",
   "plan_level": "9fca9bb86f367515864df9e745b8b564c75412bd65abe5b95b47bd9c1497c174",
   "plan_level_complete": "e48318aaa179260c8f3836f583b976395697d39cdbf33cadc63b6a3e2e68bc06",
-  "plan_loss_this_week": "02b87797123ca737f1e05dfe9958b4a1f8e74e236b03a7666aec71fa965e2915",
   "plan_measure_mock_exam": "e7942ac141dcd3cc28efa52f0c2f0e252f632191ff862609926861ba30f6a746",
   "plan_measure_progress": "3fa5a1053289a9f480b8ce751860b0f82b61b9053c87bbf6f56dab05cf8cf17f",
   "plan_measure_review_once": "60b50a3edc280c5caa0a18cc5fbc1141b449f3254f389ab44fb6f77bbaf2c3b0",
@@ -818,16 +816,6 @@
         <item quantity="other">%1$s aulas estudadas</item>
     </plurals>
     <string name="plan_studied_and_known">Estudou %1$s · já sabia %2$s</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="one">+%d esta semana</item>
-        <item quantity="many">+%d esta semana</item>
-        <item quantity="other">+%d esta semana</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="one">%d esta semana</item>
-        <item quantity="many">%d esta semana</item>
-        <item quantity="other">%d esta semana</item>
-    </plurals>
     <string name="plan_estimate_waits">Faça um simulado completo ou só metade dele para ver sua pontuação estimada.</string>
     <string name="plan_estimated_score">Pontuação estimada</string>
     <string name="plan_estimate_based_on_last">Com base no seu último simulado</string>

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -97,6 +98,7 @@ private data class PlanNumber(
     val label: String,
     val value: String,
     val detail: String?,
+    val detailColor: Color? = null,
     val share: Float? = null,
     val numeric: Boolean = true,
     val level: LanguagePlanLevel? = null,
@@ -220,10 +222,12 @@ private fun standingNumber(standing: Standing): PlanNumber {
         is Standing.Preparation -> {
             val preparation = standing.progress.preparation
             val value = preparation?.value ?: 0.0
+            val gain = weekGain(preparation?.weekGain ?: 0.0)
             PlanNumber(
                 label = stringResource(R.string.plan_preparation),
                 value = formatPercent(value, locale),
-                detail = weekGain(preparation?.weekGain ?: 0.0),
+                detail = gain?.text,
+                detailColor = gain?.color,
                 share = value.toFloat(),
             )
         }
@@ -287,18 +291,6 @@ private fun lessonsStudied(
     known: Long,
 ): Long = (done - known).coerceAtLeast(0)
 
-@Composable
-private fun weekGain(gain: Double): String? {
-    val points = (gain * PERCENT).roundToInt()
-    return when {
-        points == 0 -> null
-        points > 0 -> pluralStringResource(R.plurals.plan_gain_this_week, points, points)
-        else -> pluralStringResource(R.plurals.plan_loss_this_week, -points, points)
-    }
-}
-
-private const val PERCENT = 100
-
 /**
  * The tile: the plan's state as its value, and its time a day or the lessons left as its one line. The
  * side column's numbers sit above the plan's details, whose "Daily study time" row already says the time.
@@ -360,7 +352,7 @@ private fun NumberButton(
         if (number.share != null || number.detail != null) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Bottom)) {
                 number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
-                number.detail?.let { MetaLine(it) }
+                number.detail?.let { MetaLine(it, number.detailColor ?: MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
     }

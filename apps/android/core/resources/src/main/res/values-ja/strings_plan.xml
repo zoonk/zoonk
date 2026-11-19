@@ -285,7 +285,6 @@
   "plan_fridays": "294546d6d834ed2f45b9e3ad4e0adc201b1fd34147ab5469d7adc3231a999c01",
   "plan_full_course": "8c9b172a4bdff7bb62395347fa9d5d5be3131c67add484ff5c8f71556725992c",
   "plan_full_course_switch": "2ebef4584c23c7f1bf358133ba5935261d8154d5f81c650dc4bd40bbb8a55444",
-  "plan_gain_this_week": "3e2d63de1e39c1386a902dea424bc14fc2f79c257d5d655a98701a83075173f6",
   "plan_go_to_today": "b4d10b99e23e90272fe92b226ea28f0d183b6238ac890118a54cb246c3655194",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
   "plan_goal_limit_reached": "144c776a2644eea115c77fac6ed4e6653475b449d4613d3e6320e1b8aa556d44",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "1d6b27c6998fd4537a1ea41aba8a57934e5f6d22b10425f86facef59a5e80f6b",
   "plan_level": "8956d4cef1507cc7ee0db6f4ff06934f269380293f460ac2a81d7f520f7f9db5",
   "plan_level_complete": "9b37826fbb63af2f405f6d112470d1e55ff291e6cad4576e74a44dba40f1e1a2",
-  "plan_loss_this_week": "400178d524c6994a578af04bae843685bca72a2d4cc1e5145bfda5f5105fad8b",
   "plan_measure_mock_exam": "68b39b2f257f84de69ebba136eb3d7e3eb7ce5cd0ae3ff9b0a21d469c99a240d",
   "plan_measure_progress": "f370096a9692b94d1b99c5b133c73058fc3158552fdae684f49f2d084aac3c7f",
   "plan_measure_review_once": "dbda13649cc82429437bf4b8a43b509a6453e938c0c395143011b8484de270b6",
@@ -774,12 +772,6 @@
         <item quantity="other">%1$sレッスンを学習済み</item>
     </plurals>
     <string name="plan_studied_and_known">学習済み%1$sレッスン・もともと知っていた%2$sレッスン</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="other">今週 +%d</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="other">今週 %d</item>
-    </plurals>
     <string name="plan_estimate_waits">通常の模試か半分の長さの模試を受けると、推定スコアがわかります。</string>
     <string name="plan_estimated_score">推定スコア</string>
     <string name="plan_estimate_based_on_last">前回の模試をもとに算出</string>

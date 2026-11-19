@@ -19,6 +19,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
+import com.zoonk.android.feature.plan.WeekGain
+import com.zoonk.android.feature.plan.weekGain
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -32,7 +34,6 @@ import com.zoonk.api.models.TodayProgressOneOf
 import com.zoonk.api.models.TodayProgressOneOf1
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 /** Main's `TodayPreparation` for goals other than a language's: an exam's preparation, or the lessons studied. The Plan lists the subjects. */
 @Composable
@@ -88,7 +89,7 @@ private fun LessonsCard(
 @Composable
 private fun ProgressCard(
     title: String,
-    detail: String?,
+    detail: WeekGain?,
     value: String,
     onOpenPlan: () -> Unit,
     modifier: Modifier,
@@ -106,8 +107,8 @@ private fun ProgressCard(
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
             detail?.let {
                 Text(
-                    it,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    it.text,
+                    color = it.color,
                     style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                 )
             }
@@ -119,17 +120,6 @@ private fun ProgressCard(
         )
         content()
         TextButton(onClick = onOpenPlan, forward = true, edge = ButtonEdge.Start) { Text(stringResource(R.string.today_see_your_plan)) }
-    }
-}
-
-@Composable
-private fun weekGain(gain: Double): String? {
-    val points = (gain * PERCENT).roundToInt()
-    val shown = formatNumber(points.toDouble(), currentLocale())
-    return when {
-        points > 0 -> stringResource(R.string.today_week_gain, shown)
-        points < 0 -> stringResource(R.string.today_week_loss, shown)
-        else -> null
     }
 }
 
@@ -156,5 +146,3 @@ private fun LessonsBar(
         CoverageBar(studied = done.toDouble() / total)
     }
 }
-
-private const val PERCENT = 100

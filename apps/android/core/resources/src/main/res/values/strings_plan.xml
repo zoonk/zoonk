@@ -265,14 +265,6 @@
         <item quantity="other">%1$s lessons studied</item>
     </plurals>
     <string name="plan_studied_and_known">%1$s studied · %2$s already known</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="one">+%d this week</item>
-        <item quantity="other">+%d this week</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="one">%d this week</item>
-        <item quantity="other">%d this week</item>
-    </plurals>
     <string name="plan_estimate_waits">Take a full or half mock exam to see your estimated score.</string>
     <string name="plan_estimated_score">Estimated score</string>
     <string name="plan_estimate_based_on_last">Based on your last mock exam</string>

@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -610,8 +611,11 @@ internal fun FlagMark() {
 internal val SHEET_MARGIN = 24.dp
 
 @Composable
-internal fun MetaLine(text: String) {
-    Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+internal fun MetaLine(
+    text: String,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    Text(text = text, style = MaterialTheme.typography.bodyMedium, color = color)
 }
 
 /** Main's `ListRowTrailing` on every Plan row and line: a date is data in mono, words keep the text face. */

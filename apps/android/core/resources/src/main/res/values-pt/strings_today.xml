@@ -145,9 +145,9 @@
   "today_week_exam_day": "aedaf60d5219c9b5d146629e72be2a32f0a878d9b3fe3019941410980c6fa5f6",
   "today_week_full_review_detail": "520cee99cf3efda3cc7bd50eb17190d13e224eeae015c8148103e3f2de699d39",
   "today_week_full_review_name": "02100cd5a4f5bcb73860b3a9e709fac33c13da4dc084770e44e2dec784da2c2b",
-  "today_week_gain": "68605e62469186bf1d680be6483f001f50744a97d2e79c9bf0cc5b5aa2f89a20",
+  "today_week_gain": "1e927c490265d07adeb6ef86f929515f6fc306ea561558cb3738942748494ea9",
   "today_week_goal_reached": "67698d1440181292f183cf5b6a621aa0ef82b7d0ccfe56c648ba302bdfa3a348",
-  "today_week_loss": "9f34b604d5a7705081dac0cdbf4f157eef92b69f97fb234bd9519f343c837d53",
+  "today_week_loss": "a85b5d592e8d4a92b99e34cdb518444d37607dde048602557fbc2a718d7d291a",
   "today_week_mock_name": "d3470a9f26b47471769399511a8b2b4e8fe1efc1a62702b378b9fa55717162d8",
   "today_week_not_studied": "85d9d01dd9c95b0f29be9603ddce0a13cae2354b37b559e95fb832efed4d1599",
   "today_week_planned": "3e2510da4ea96d2108bf4e1004cb1fe3b4ed6390f2f82ccf19403d221166875a",
@@ -351,9 +351,9 @@
     <!-- A link at the end of the progress card that opens the learner's plan. -->
     <string name="today_see_your_plan">Ver plano</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it rose this week, such as "5". -->
-    <string name="today_week_gain">+%1$s esta semana</string>
+    <string name="today_week_gain">+%1$s nesta semana</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it fell this week, a negative number such as "-3". -->
-    <string name="today_week_loss">%1$s esta semana</string>
+    <string name="today_week_loss">%1$s nesta semana</string>
     <!-- Read by screen readers for the progress card's lesson cells: %s is how many lessons are planned today. -->
     <plurals name="today_progress_lessons_today">
         <item quantity="one">Hoje: %s aula</item>

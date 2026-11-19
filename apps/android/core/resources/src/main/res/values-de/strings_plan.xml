@@ -285,7 +285,6 @@
   "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
   "plan_full_course": "3aeb35c1aaff06d5659736c71cc09e08b4ce82dc96316ff41e006c7c5c0ffcb5",
   "plan_full_course_switch": "a25a110e457098c8c0c91e32a83956deed1da213850ae35603dc49066d861841",
-  "plan_gain_this_week": "e4aa8a5299d029c6c4b0b065509853ad614528a2ab67e4e618c174913c60972f",
   "plan_go_to_today": "e6b54cc1b753ecd8fd1088280d907d3dbdda918887e43c2e470070ed722a913c",
   "plan_goal_date": "b446fe7ede82a727c514a3c58637afe97d9793532cbb0a8f58fac837ebe95cbc",
   "plan_goal_limit_reached": "0ad4559c2ffdec2c8eadb0cf434d078e302d59f35d3d983857281068180a0301",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "a269ca00b6ec777056cb5bd365b8272291cbf0abf66e16bf2bd86ceccb211c8c",
   "plan_level": "468b02b5b329d1d64cce686e55df8fb7c13dc3a65d9ce339eac0ec3548e501c7",
   "plan_level_complete": "b835ef87d10bb2cf72f05f2f0c3a2f7fc057372293bf133770d7672cd12b706a",
-  "plan_loss_this_week": "6c4f9af3960dae0aee639de55fbb509ce98906e00cdb8a158a7676aac12d2dc5",
   "plan_measure_mock_exam": "1e6bad36312335af07bab16c30a833bdac5a5ff36879a068dff79a34b7ae35cb",
   "plan_measure_progress": "c3bba1c7972259098cdaf41ec7c6a59161662551279f9698a5c4db5bc7ee726c",
   "plan_measure_review_once": "5d3a6a351b33b1c161ba86846626cbdcf2ebbf33172080f433e57cd4be5db95e",
@@ -796,14 +794,6 @@
         <item quantity="other">%1$s Lektionen gelernt</item>
     </plurals>
     <string name="plan_studied_and_known">%1$s gelernt · %2$s schon bekannt</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="one">+%d diese Woche</item>
-        <item quantity="other">+%d diese Woche</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="one">%d diese Woche</item>
-        <item quantity="other">%d diese Woche</item>
-    </plurals>
     <string name="plan_estimate_waits">Mach eine ganze oder halbe Probeprüfung, um deinen geschätzten Score zu sehen.</string>
     <string name="plan_estimated_score">Geschätzter Score</string>
     <string name="plan_estimate_based_on_last">Basierend auf deiner letzten Probeprüfung</string>

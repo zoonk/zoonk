@@ -285,7 +285,6 @@
   "plan_fridays": "7df04b7bf8541cfaa289ac541beaa2f6e7e6e2f69dbb2fbdbe9f74904a969b07",
   "plan_full_course": "c7b0949576fbcb2f03b77df21b910de64e1495f07db5a7e087e7c460e0ae91db",
   "plan_full_course_switch": "a3a827a7496044525df043b081ebee1dfaf2b82e0793f1cae076118c797e8943",
-  "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
   "plan_go_to_today": "337ee5ba1c2b499cf8f12cf3737f612624e659a66ce154a432c8d84d60c38b41",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
   "plan_goal_limit_reached": "6f6813c41802cd4017c9f24532bf7356c606ebb0f0f1fa7d0eba0c2495f65cb2",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "cada70ede7601e07a41fc4f27a181862b3c808e97134f3daa43446fa052ac8d5",
   "plan_level": "cf9e33223adf7b19c40dc5f05eed5248d096b37d68502fa9f4009e06beb4eda8",
   "plan_level_complete": "15c353cd7d6acc2055f764b8ac12d6436cdd69c7561e23791698e6e7d639f205",
-  "plan_loss_this_week": "2719857f5aa5427f2ef1d6f28edf75802f9145700d7ea98d34e12e8787df3172",
   "plan_measure_mock_exam": "ecececee449eb88873d61d07090ea5b89e3603e18fe38fa1ccb776531619a0ee",
   "plan_measure_progress": "e02f967cd17a74e50fb8d983dd52841e4082a469aada259f12df4ad347153a04",
   "plan_measure_review_once": "855be9f5aedf3ea5c9c5de706bb8cc1a42126a385066305c4d1e7d521a18987c",
@@ -796,14 +794,6 @@
         <item quantity="other">%1$s ders tamamladın</item>
     </plurals>
     <string name="plan_studied_and_known">%1$s ders çalışıldı · %2$s ders zaten biliniyordu</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="one">Bu hafta +%d</item>
-        <item quantity="other">Bu hafta +%d</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="one">Bu hafta %d</item>
-        <item quantity="other">Bu hafta %d</item>
-    </plurals>
     <string name="plan_estimate_waits">Tahmini puanını görmek için tam veya yarım deneme sınavına gir.</string>
     <string name="plan_estimated_score">Tahmini puan</string>
     <string name="plan_estimate_based_on_last">Son deneme sınavına göre</string>

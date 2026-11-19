@@ -285,7 +285,6 @@
   "plan_fridays": "e3bc455ed02d257b3456cb9258d30e5198c827495069c11bd916e7521702f21f",
   "plan_full_course": "07d9f9670334a535868a19cd1170f8c7a86232758359f827b792c939a0055274",
   "plan_full_course_switch": "8b66f991102d00d0a31ff2a9cfcb4f63182f4c52b7d298e4edc2c3c66449410e",
-  "plan_gain_this_week": "9e41fae3f22e56dc1bb7c4a39deb5b6daa3f4ff5a06c3d78727a3810ea0cbccd",
   "plan_go_to_today": "2612f5e30907a9678bb34138b59c2158388e6e81696e24072fc38d106f968219",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
   "plan_goal_limit_reached": "246ae51803ae2ea2f38bf11e49230526b1ce90069a47920ca611cc88cb59e089",
@@ -302,7 +301,6 @@
   "plan_lessons_studied": "dc55775a1dc01503e6f79db18e9f1bb4e5502f998d1cffef77b86dd0bb9a9b84",
   "plan_level": "95a95fe443a4248955c78a9835066202f43fb465242e3e67a9dc1c09a0ce3e09",
   "plan_level_complete": "30d1782ed9aa2010b41687a355f0579da1a2fae1e7303331f7e5213008a798a9",
-  "plan_loss_this_week": "be4477cedaa16fbb2ca97e786e5b6ba4d517f118df75d758836c0b0d4c4a4b6b",
   "plan_measure_mock_exam": "3a1b44d246ae6693ba3ace1b577f4c9aeca7f69ed2f3678bc688362791c88a4a",
   "plan_measure_progress": "14f2947867a37a632ed8fc5abda941e2a633e518edefabeb9a6c585982d4d70e",
   "plan_measure_review_once": "328fb9bb7b16395e4252e2239329899fa8d3b3c8dbc7f1e5dfb78595818c57e0",
@@ -774,12 +772,6 @@
         <item quantity="other">레슨 %1$s개 학습 완료</item>
     </plurals>
     <string name="plan_studied_and_known">학습 완료 %1$s개 · 이미 알던 것 %2$s개</string>
-    <plurals name="plan_gain_this_week">
-        <item quantity="other">이번 주 +%d</item>
-    </plurals>
-    <plurals name="plan_loss_this_week">
-        <item quantity="other">이번 주 %d</item>
-    </plurals>
     <string name="plan_estimate_waits">예상 점수를 보려면 모의고사를 전체 또는 절반 분량으로 풀어 보세요.</string>
     <string name="plan_estimated_score">예상 점수</string>
     <string name="plan_estimate_based_on_last">최근 모의고사 기준</string>
