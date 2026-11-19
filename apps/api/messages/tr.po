@@ -178,9 +178,10 @@ msgid "Use 150 characters or fewer."
 msgstr "En fazla 150 karakter kullan."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Zoonk’a git"
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "l22EVR"
+msgid "Open Zoonk"
+msgstr "Zoonk’u aç"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
@@ -258,11 +259,6 @@ msgstr "Önce {minutes, plural, other {# dakika}} çalış. Bugünkü planında 
 msgctxt "EUWgvZ"
 msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
 msgstr "Bu hedef için {minutes, plural, other {# dakika}}, ardından {others, plural, other {# hedef daha}}."
-
-#: src/lib/reminders/reminder-copy.ts
-msgctxt "l22EVR"
-msgid "Open Zoonk"
-msgstr "Zoonk’u aç"
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

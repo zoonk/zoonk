@@ -53,7 +53,7 @@
   "profile_questions_skip_all": "36d571455753b0f6e6e7d9e2cfe7bbf03261ccb8355e10747077703a881810b0",
   "profile_questions_skip_all_label": "22f08f8f48f82332e38495c71a420dec97ae968962e58c9bc7dc89f4e864ee85",
   "profile_questions_something_else": "c7e094cd6eadc3a5c9c0c82dfc5077ce8016cca9109b12e8016cf78faecb863a",
-  "profile_questions_start_lesson": "5b4d1fbc7b6fca7974a88273e77690174eb5b5c513a38f4280f0b49033e96282",
+  "profile_questions_start_lesson": "dbd25383a1b898cbe60c732bd326e3404bcb4c94df5b9a5d4367e914707f260d",
   "profile_questions_studies_description": "ecf7c04137290696220d0346a75e3737838e2a397d8363c4c1d439e1077186b0",
   "profile_questions_studies_title": "5ec601a002132f1c3cde31c1b4d9bef0193393524a07e4396dfb469fdf341693",
   "profile_questions_subject": "6ac72b5c162141b3b5767478400661a0e930f6185c177ca410a21107dfb5c3b0",
@@ -136,7 +136,7 @@
     <string name="profile_questions_support_note_help">Zapamiętamy to. Możesz to w każdej chwili usunąć w Ustawieniach.</string>
     <string name="profile_questions_support_note_help_settings">Zapamiętamy to. Możesz to usunąć w każdej chwili.</string>
     <string name="profile_questions_lesson_ready">Lekcja 1 jest gotowa.</string>
-    <string name="profile_questions_start_lesson">Zacznij lekcję 1</string>
+    <string name="profile_questions_start_lesson">Zacznij</string>
     <string name="profile_questions_save_start_lesson">Zapisz i rozpocznij lekcję 1</string>
     <string name="profile_questions_your_day">Twój dzień</string>
     <string name="profile_questions_for_fun">Dla przyjemności</string>

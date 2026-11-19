@@ -205,6 +205,7 @@ msgstr "学習済み"
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
@@ -305,6 +306,9 @@ msgstr "続ける"
 #: src/mock/mock-chooser-page.tsx
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
@@ -8990,9 +8994,9 @@ msgid "We'll write you a short explanation that takes about 5 minutes to read."
 msgstr "5分ほどで読める短い解説を作成します。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "別の目標を試す"
+msgctxt "Q25Oon"
+msgid "New goal"
+msgstr "新しい目標"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
@@ -9005,9 +9009,9 @@ msgid "Zoonk doesn't teach anything that could hurt you or others, gambling or w
 msgstr "Zoonkでは、自分やほかの人を傷つけること、ギャンブル、不正行為の方法は教えていません。ほかに学びたいことはありますか？"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Bwx5dr"
-msgid "Write my goal again"
-msgstr "目標を書き直す"
+msgctxt "0ijmyj"
+msgid "Edit goal"
+msgstr "目標を編集"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "UfGKGv"
@@ -9030,14 +9034,9 @@ msgid "Create an account so we can let you know."
 msgstr "お知らせを受け取るには、アカウントを作成してください。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "h6_d7P"
-msgid "Join the waitlist"
-msgstr "事前登録する"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "aeY0ZL"
-msgid "Start music basics"
-msgstr "音楽の基礎を学び始める"
+msgctxt "iZKwrf"
+msgid "Join waitlist"
+msgstr "待機リストに登録"
 
 #. {instrument} names what the learner wants to play, or singing, like "guitar".
 #: src/onboarding/entry/goal-outcomes.tsx
@@ -9049,11 +9048,6 @@ msgstr "まだ{instrument}は教えられません"
 msgctxt "UKaff7"
 msgid "You can start with the basics of music today: reading notes, rhythm and training your ear."
 msgstr "今日から、音符の読み方やリズム、音感を鍛える練習など、音楽の基礎を学べます。"
-
-#: src/onboarding/entry/guest-goal-gate.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "「今日」に戻る"
 
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
@@ -9699,12 +9693,6 @@ msgctxt "x4Kcgs"
 msgid "Your plan will be waiting when you finish."
 msgstr "レッスンが終わる頃には、学習計画ができています。"
 
-#: src/onboarding/steps/plan-wait.tsx
-#: src/onboarding/steps/profile-step.tsx
-msgctxt "z2snrT"
-msgid "Start lesson 1"
-msgstr "レッスン1を始める"
-
 #: src/onboarding/steps/profile-step.tsx
 msgctxt "5o1SSN"
 msgid "Lesson 1 is ready."
@@ -10037,10 +10025,11 @@ msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "選んだ科目の基礎は学習計画でスキップします。"
 
+#. Answers the question when the learner knows none of the subjects yet.
 #: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "irvMbh"
-msgid "I'm new to all of them"
-msgstr "どの科目も初めて"
+msgctxt "8F5ajW"
+msgid "I'm new"
+msgstr "初めてです"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"

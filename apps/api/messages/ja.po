@@ -178,9 +178,10 @@ msgid "Use 150 characters or fewer."
 msgstr "150文字以内で入力してください。"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Zoonkへ移動する"
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "l22EVR"
+msgid "Open Zoonk"
+msgstr "Zoonkを開く"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
@@ -258,11 +259,6 @@ msgstr "まずは{minutes, plural, other {#分}}から始めましょう。今�
 msgctxt "EUWgvZ"
 msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
 msgstr "この目標に{minutes, plural, other {#分}}取り組み、その後は{others, plural, other {ほかの#個の目標}}に進みます。"
-
-#: src/lib/reminders/reminder-copy.ts
-msgctxt "l22EVR"
-msgid "Open Zoonk"
-msgstr "Zoonkを開く"
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

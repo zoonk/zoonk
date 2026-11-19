@@ -205,6 +205,7 @@ msgstr "Estudiado"
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
@@ -305,6 +306,9 @@ msgstr "Continuar"
 #: src/mock/mock-chooser-page.tsx
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
@@ -8990,9 +8994,9 @@ msgid "We'll write you a short explanation that takes about 5 minutes to read."
 msgstr "Te prepararemos una explicación breve que podrás leer en aproximadamente 5 minutos."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "Probar con otro objetivo"
+msgctxt "Q25Oon"
+msgid "New goal"
+msgstr "Nuevo objetivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
@@ -9005,9 +9009,9 @@ msgid "Zoonk doesn't teach anything that could hurt you or others, gambling or w
 msgstr "Zoonk no enseña nada que pueda hacerte daño a ti o a otras personas, ni juegos de azar ni formas de hacer trampa. ¿Hay algo más que te gustaría aprender?"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Bwx5dr"
-msgid "Write my goal again"
-msgstr "Volver a escribir mi objetivo"
+msgctxt "0ijmyj"
+msgid "Edit goal"
+msgstr "Editar objetivo"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "UfGKGv"
@@ -9030,14 +9034,9 @@ msgid "Create an account so we can let you know."
 msgstr "Crea una cuenta para que podamos avisarte."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "h6_d7P"
-msgid "Join the waitlist"
-msgstr "Unirse a la lista de espera"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "aeY0ZL"
-msgid "Start music basics"
-msgstr "Empezar con las bases de la música"
+msgctxt "iZKwrf"
+msgid "Join waitlist"
+msgstr "Unirte a la lista de espera"
 
 #. {instrument} names what the learner wants to play, or singing, like "guitar".
 #: src/onboarding/entry/goal-outcomes.tsx
@@ -9049,11 +9048,6 @@ msgstr "Aún no podemos enseñarte {instrument}"
 msgctxt "UKaff7"
 msgid "You can start with the basics of music today: reading notes, rhythm and training your ear."
 msgstr "Puedes empezar hoy con las bases de la música: lectura de notas, ritmo y entrenamiento del oído."
-
-#: src/onboarding/entry/guest-goal-gate.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "Volver a Hoy"
 
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
@@ -9699,12 +9693,6 @@ msgctxt "x4Kcgs"
 msgid "Your plan will be waiting when you finish."
 msgstr "Tu plan te estará esperando cuando termines."
 
-#: src/onboarding/steps/plan-wait.tsx
-#: src/onboarding/steps/profile-step.tsx
-msgctxt "z2snrT"
-msgid "Start lesson 1"
-msgstr "Empezar la lección 1"
-
 #: src/onboarding/steps/profile-step.tsx
 msgctxt "5o1SSN"
 msgid "Lesson 1 is ready."
@@ -10037,10 +10025,11 @@ msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "Tu plan se salta lo básico de esas materias."
 
+#. Answers the question when the learner knows none of the subjects yet.
 #: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "irvMbh"
-msgid "I'm new to all of them"
-msgstr "Todas son nuevas para mí"
+msgctxt "8F5ajW"
+msgid "I'm new"
+msgstr "Estoy empezando"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"

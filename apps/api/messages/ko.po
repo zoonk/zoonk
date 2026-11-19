@@ -178,9 +178,10 @@ msgid "Use 150 characters or fewer."
 msgstr "150자 이내로 입력해 주세요."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Zoonk로 이동하기"
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "l22EVR"
+msgid "Open Zoonk"
+msgstr "Zoonk 열기"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
@@ -258,11 +259,6 @@ msgstr "먼저 {minutes, plural, other {#분}} 공부해 보세요. 오늘 계�
 msgctxt "EUWgvZ"
 msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
 msgstr "이 목표에는 {minutes, plural, other {#분}}이 잡혀 있고, 그다음에는 목표가 {others, plural, other {#개}} 더 있어요."
-
-#: src/lib/reminders/reminder-copy.ts
-msgctxt "l22EVR"
-msgid "Open Zoonk"
-msgstr "Zoonk 열기"
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

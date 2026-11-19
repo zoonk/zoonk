@@ -35,7 +35,10 @@ export function SubjectsLevelStep({
       onSkip={() => onAnswer({ level: "none", question: "level" })}
       pending={pending}
       skipIcon={null}
-      skipLabel={t("I'm new to all of them")}
+      skipLabel={t({
+        description: "Answers the question when the learner knows none of the subjects yet.",
+        message: "I'm new",
+      })}
       subject={subject}
       title={t("Which subjects do you already know well?")}
     >

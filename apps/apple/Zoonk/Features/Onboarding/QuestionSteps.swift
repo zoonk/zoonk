@@ -1370,7 +1370,7 @@ private struct SubjectsLevelQuestion: View {
     } buttons: {
       StepButtons(
         skipLabel: Text(
-          "I'm new to all of them", tableName: "Onboarding",
+          "I'm new", tableName: "Onboarding",
           comment: "Says the learner knows none of the exam's subjects yet")
       ) {
         onAnswer([

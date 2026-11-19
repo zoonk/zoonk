@@ -15,7 +15,7 @@
   "warm_up_play_quiz": "2e61ebc6b87d5c44de650cba5bc319b84dd369f77aa9491424d7b188b69f1d13",
   "warm_up_questions_ready": "7cdaced74dbd0b36e871668b26b8e8ef42cc4afdaa4439452623de7b89900b30",
   "warm_up_ready_to_start": "7fd3311e465d1ddf2f69dd02e1f44fe11b16c089253980fd48c2269c3c3783ab",
-  "warm_up_start_first_lesson": "07ce1f4c6a464258936aacadd55f906b4fcc824353d7da173e259d6abcf1f231",
+  "warm_up_start_first_lesson": "9792c62fccd9bb30399f686746862c1999a00e61684255f8c5cd7c4670488440",
   "warm_up_title": "1e4928dc7b6dd8412a417e5f3392e3a0f715c94513f4948208aabaa60a4f0594",
   "warm_up_title_ready": "08937e6f806b421e8304c59277836a37077b260c15bc8858f5301ac670cbfc11"
 }
@@ -43,7 +43,7 @@
     <string name="warm_up_first_lesson_writing">첫 레슨을 만들고 있어요: %1$s</string>
     <string name="warm_up_first_lesson_ready">첫 레슨이 준비됐어요</string>
     <string name="warm_up_plan_waiting">레슨을 마치면 계획이 준비되어 있을 거예요.</string>
-    <string name="warm_up_start_first_lesson">1번 레슨 시작하기</string>
+    <string name="warm_up_start_first_lesson">시작하기</string>
     <string name="warm_up_first_lesson">첫 레슨</string>
     <string name="warm_up_ready_to_start">바로 시작 가능</string>
     <string name="warm_up_first_lesson_screens">짧은 설명 화면을 5개 정도 만들고 있어요</string>

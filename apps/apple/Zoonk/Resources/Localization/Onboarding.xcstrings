@@ -2635,65 +2635,6 @@
         }
       }
     },
-    "Back to Today" : {
-      "comment" : "Leaves the start flow for Today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zurück zu Heute"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a Hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retour à Aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Torna a Oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「今日」に戻る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘로 돌아가기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróć do „Dziś”"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar para Hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün’e dön"
-          }
-        }
-      }
-    },
     "Build my plan" : {
       "comment" : "Ends the level test to build the plan\nSends the typed goal to start building a plan\nStarts a course as the learner's goal",
       "localizations" : {
@@ -6661,6 +6602,65 @@
         }
       }
     },
+    "Edit goal" : {
+      "comment" : "Goes back to write the goal with more detail",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel bearbeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier l’objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica obiettivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 수정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytuj cel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar objetivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefi düzenle"
+          }
+        }
+      }
+    },
     "End date" : {
       "comment" : "Row with the date a goal aims for",
       "localizations" : {
@@ -9021,61 +9021,61 @@
         }
       }
     },
-    "I'm new to all of them" : {
+    "I'm new" : {
       "comment" : "Says the learner knows none of the exam's subjects yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Fächer sind neu für mich"
+            "value" : "Ich bin neu"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas son nuevas para mí"
+            "value" : "Estoy empezando"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je débute dans toutes ces matières"
+            "value" : "Je débute"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parto da zero in tutte"
+            "value" : "Parto da zero"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "どの科目も初めて"
+            "value" : "初めてです"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 과목이 처음이에요"
+            "value" : "저는 처음이에요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystko zaczynam od zera"
+            "value" : "Zaczynam od zera"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não conheço nenhuma delas"
+            "value" : "Sou iniciante"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hepsine sıfırdan başlıyorum"
+            "value" : "Yeni başlıyorum"
           }
         }
       }
@@ -9316,19 +9316,19 @@
         }
       }
     },
-    "Join the waitlist" : {
+    "Join waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf die Warteliste setzen"
+            "value" : "In Warteliste eintragen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unirse a la lista de espera"
+            "value" : "Unirte a la lista de espera"
           }
         },
         "fr" : {
@@ -9346,19 +9346,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "順番待ちリストに登録する"
+            "value" : "待機リストに登録"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대기 명단에 등록하기"
+            "value" : "대기자 명단 등록하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisz się na listę oczekujących"
+            "value" : "Dołącz do listy oczekujących"
           }
         },
         "pt" : {
@@ -10669,6 +10669,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "notlarım"
+          }
+        }
+      }
+    },
+    "New goal" : {
+      "comment" : "Goes back to write a different goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo obiettivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい目標"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 목표"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy cel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novo objetivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni hedef"
           }
         }
       }
@@ -16461,7 +16520,7 @@
       }
     },
     "Start" : {
-      "comment" : "Opens the plan's first step\nStarts placement's questions\nStarts the level test",
+      "comment" : "Opens the plan's first step\nStarts placement's questions\nStarts the level test\nStarts a musicianship goal\nOpens the goal's first lesson, written before its plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16822,124 +16881,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buradan başla"
-          }
-        }
-      }
-    },
-    "Start lesson 1" : {
-      "comment" : "Opens the goal's first lesson, written before its plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektion 1 starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar la lección 1"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer la leçon 1"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia la lezione 1"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン1を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨 1 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij lekcję 1"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar a aula 1"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1. derse başla"
-          }
-        }
-      }
-    },
-    "Start music basics" : {
-      "comment" : "Starts a musicianship goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit musikalischen Grundlagen starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar con las bases de la música"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apprendre les bases de la musique"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia dalle basi della musica"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "音楽の基礎を学び始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "음악 기초 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij od podstaw muzyki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar pelo básico da música"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Müzik temellerine başla"
           }
         }
       }
@@ -19446,7 +19387,7 @@
       }
     },
     "Today" : {
-      "comment" : "Header over the plan's lessons today",
+      "comment" : "Header over the plan's lessons today\nLeaves the start flow for Today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -19677,65 +19618,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene"
-          }
-        }
-      }
-    },
-    "Try another goal" : {
-      "comment" : "Goes back to write a different goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versuch ein anderes Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Probar otro objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essayer un autre objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prova un altro obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "別の目標を試す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다른 목표 입력하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj z innym celem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar outro objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başka bir hedef dene"
           }
         }
       }
@@ -23580,65 +23462,6 @@
         }
       }
     },
-    "Write my goal again" : {
-      "comment" : "Goes back to write the goal with more detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mein Ziel noch einmal schreiben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a escribir mi objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réécrire mon objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riscrivi il tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標を書き直す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 목표 다시 쓰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opisz cel ponownie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escrever meu objetivo de novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hedefini yeniden yaz"
-          }
-        }
-      }
-    },
     "Writing" : {
       "comment" : "A language skill",
       "localizations" : {
@@ -26182,7 +26005,7 @@
       }
     },
     "Your plan will be waiting when you finish." : {
-      "comment" : "Over Start lesson 1, while the plan is still built",
+      "comment" : "Over Start, while the plan is still built",
       "localizations" : {
         "de" : {
           "stringUnit" : {

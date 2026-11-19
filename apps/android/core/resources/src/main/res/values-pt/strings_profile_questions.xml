@@ -53,7 +53,7 @@
   "profile_questions_skip_all": "7790b6ca37f44c055a801d03550de33fefd55122bc1ccf1b0ce14042afe70428",
   "profile_questions_skip_all_label": "c89b18f798a838766ca99ddd2fe1491f545c6bd1f5f8033f50b3eb185d64e6cd",
   "profile_questions_something_else": "c44c7f602d8cae2b1d86e899dad3bb0c53241b2bbb4929418ab93670662d0668",
-  "profile_questions_start_lesson": "250c5effefdfec461de9444f51c913fd61e9d93e447ac9aff92cb753a0ffd6dd",
+  "profile_questions_start_lesson": "e9cc58c5f46759f2739d07bd82830c8a4d30f838c2ed27588f3555f085cf4b25",
   "profile_questions_studies_description": "6e2e76c8c0e6cf252e932c0117ae5653c299f4fdc6dc60f44f8bd310a36f4e3a",
   "profile_questions_studies_title": "1a6ffe128fb61ce920d0d0a1ce165c25a3e121fa4599fd392642b0370f99abf8",
   "profile_questions_subject": "d0d8491b519b6b784564b2866dddb2369f41d541340083a57a73c6f8b5688a17",
@@ -136,7 +136,7 @@
     <string name="profile_questions_support_note_help">A gente vai lembrar disso. Você pode apagar quando quiser nas Configurações.</string>
     <string name="profile_questions_support_note_help_settings">A gente vai lembrar disso. Você pode apagar quando quiser.</string>
     <string name="profile_questions_lesson_ready">A aula 1 está pronta.</string>
-    <string name="profile_questions_start_lesson">Começar a aula 1</string>
+    <string name="profile_questions_start_lesson">Começar</string>
     <string name="profile_questions_save_start_lesson">Salvar e começar a aula 1</string>
     <string name="profile_questions_your_day">Seu dia</string>
     <string name="profile_questions_for_fun">Por diversão</string>

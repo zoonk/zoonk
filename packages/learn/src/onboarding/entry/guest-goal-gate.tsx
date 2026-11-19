@@ -23,7 +23,7 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
       bar={
         <OnboardingActions>
           <LearnLink className={ONBOARDING_ACTION_LINK_CLASS.other} href={routes.today}>
-            {t("Back to Today")}
+            {t("Today")}
           </LearnLink>
           <SignUpMainLink href={routes.signUp} />
         </OnboardingActions>

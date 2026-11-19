@@ -31,7 +31,7 @@
   "onboarding_attach_sign_in": "0ff3b609f3a46c7b5b8af10967cea61eb1f37e370af9108166e0ba041908fa87",
   "onboarding_attach_slow_down": "966e6460abb0ce403d0b5b42d3319de6eb3bde38427fc312ed587b00b6f7e396",
   "onboarding_attach_unsupported": "72ed8efa92241ea51dba6e256656e9f31bc9bc0cd6a58bfbe22cb5862d356c72",
-  "onboarding_back_to_today": "6d623cf3144e50e999daaed341ad715c8487de3bef29fc94d9fee4c29207e5e2",
+  "onboarding_back_to_today": "4c5949857df6bfe89a07c57ce7d7b83b33269d057aa4d28802bb5571617209db",
   "onboarding_buddy_description": "c5e979883c22522257e434395e2923b2e94a3b04c4d3cbb6c76d54ddefa3faed",
   "onboarding_buddy_title": "7b1f65043e21c45fda8f51007bee00d1121212c641123cef2c5ca7237005ff67",
   "onboarding_cancel": "1b2978937718830f42dbfb19cadcaa3e85898f4149e64279f9e732fa07de0f14",
@@ -108,7 +108,7 @@
   "onboarding_intent_title": "e68207cae2157de6a4fd7debe1eb965d2b3afbb417187d79b3472a5c022b6c55",
   "onboarding_intent_understand": "89456833157e8ed1343e1a6f0b42a181e20f94b04d3f3a95d9b287bf70bb5f90",
   "onboarding_intent_understand_description": "3bc7fc66bf7562d0fd242f3053bf13ad9ce227a1b0092909f9bec079ad0cf06f",
-  "onboarding_join_waitlist": "f522ca533164115fc213b3805641c8ac5513a551cde5f5551e22d71060ec8f9e",
+  "onboarding_join_waitlist": "7043456c8c8058459dedb3fabba19b0c4eb6a32598fb2f772c6b2807f0ec3306",
   "onboarding_language_test_audio_on_its_way": "73f8b345a38de840ba7a06b9b8e9543b911bdf15dab3a817dc28cddbc838f14e",
   "onboarding_language_test_build_plan": "69e464df699419d32db26a92fcae4f246b81f7569ddfb6e5f2cead33e416ee08",
   "onboarding_language_test_description": "7a25222e329b27aa22691bc2ad4c2b6f697e33e2c444bd4c6c9911d0647dc785",
@@ -382,7 +382,7 @@
   "onboarding_start_description": "8a3102df05481645ea33ba8438b85c0256c2f2d0a44db3759af9d8ebc079dd54",
   "onboarding_start_description_shared": "3a0bba09bc18ff18eac59590f73a8d65257900b19f7ccecb0fac9d43f1763cd8",
   "onboarding_start_free": "1f2295fcf69b0de03525e87426b281278bc65adbe9b94e32379731ed36deef86",
-  "onboarding_start_musicianship": "d17df901a4d60b8d93521d280b2916781e01acab449e8b02f9da5a080a53e2cf",
+  "onboarding_start_musicianship": "57b64257ffd2b36947662b5b4561f8dc35671e1d0f8d60213a5ba138582e4d71",
   "onboarding_start_over": "32f90481bfaf549996906b5ca7806e7305f679bb7d9a2dc6ca2abbff898bd661",
   "onboarding_start_over_confirm": "653d289756682df1e11721f3b7fbbb507dca38b90f069d7613549cad59f821cb",
   "onboarding_start_over_description": "1ef0bdc10b074e66c433fa1d0bfaded718895a20fe3404c2895f088d2435ce2b",
@@ -392,7 +392,7 @@
   "onboarding_study_days": "d803dcd8957eb5c03dca7d885377392b2fad49d3a0de30a7fde5c04efe4df0d6",
   "onboarding_study_material": "90e9b54d8918a21f740a4b2cdb365ba08679100ecaa2abc4bced3b9792479bd8",
   "onboarding_subjects_description": "72f8d5f76b940990a444d543abf2519ee9d34c006b184da967dc353e9054dd5d",
-  "onboarding_subjects_from_scratch": "0597c4d6e7f432d0e360c1a334756c640a042c919fd0d4b707546da6954ccfab",
+  "onboarding_subjects_from_scratch": "18e6b47535376b4558e5d7528996191c56a0dc96b5f00ef68a5f3df71b7cbc13",
   "onboarding_subjects_label": "7db80a2c65fbf3bdb4bf9f5fdbff3b6e97b7a6248257be9b3e142ab821e8b7d1",
   "onboarding_subjects_title": "80f7e0693f0153461498e6e468ed42099c9bd4a909b4f173c89b065550874cc2",
   "onboarding_target_label": "fe79b49b1aff02ce96dc8de87efec63e9149fd3868ec1543ac1c04d9620692e9",
@@ -410,7 +410,7 @@
   "onboarding_test_level_c2_plus": "5a8090451a53314ef5cd16f5e1de73401ca1259a3922557635ccda6e0b2038bc",
   "onboarding_test_question_progress": "a76059752a9a7aa5ddf17613a156c59c1c00530574c0831611e98565936d7b72",
   "onboarding_time_a_day": "aaec93030512e483125164b045c28e26d11fda0bd123ab09c22cc83b3f041bbe",
-  "onboarding_try_another_goal": "305cc511b608611bde2ec748786c7e6dca5abdbfe5efde64c3ea76c46cdd8f63",
+  "onboarding_try_another_goal": "cff8660e37607de54111e638a10861e1640e5aca56b6710c90ffa44a742d61b1",
   "onboarding_unclear_description": "c9e553e6e54c7ebe40099c8b1934dbb0451d1a34a235d7d885b32769dc1163e2",
   "onboarding_unclear_title": "b1e86f6be99d37ae29cef2183a861bf855c3f3604f37da1d09ba1b7e6a3de1cb",
   "onboarding_understanding_description": "39184e0a1986705e9a0f45c12a02abba11ccf34553f2c185da2525b6170dadce",
@@ -432,7 +432,7 @@
   "onboarding_waitlist_sign_in": "febcaf9addfa353933755edea0541ec401067a1c0f104f27831131db326d376d",
   "onboarding_what_you_wrote": "5b305da868185d0ae68452aa1418770f2e898128f8148a1f0382fa6b52e04c84",
   "onboarding_whats_next": "0b98f446c274371331aa1011c3dc34bd439e5a2384b2c0ed245de7e1f5801f2c",
-  "onboarding_write_again": "3aeba6aa478261e7d7a79859d591fe7fdaef8b339877ecd09bb90be657f83e8d",
+  "onboarding_write_again": "4a247a1d756d023e7703a61c5af1a531269cb1bae2c3e1a2e28157d9c5e58efa",
   "onboarding_you_picked": "80b58f2f9a1f49b10203805749e135575605aef78d51238b8450a8803ee602db",
   "onboarding_your_answer": "f5be2adfde7648c54e0d905621f362160c96d1b150341968fc8d65b64de6fc88",
   "onboarding_your_plan_ready": "86e2cd202782fd96191e2a7ab80e5957d13e562304ed99f9e58233cab817de04",
@@ -486,7 +486,7 @@
     <string name="onboarding_create_account">Kostenloses Konto erstellen</string>
     <string name="onboarding_guest_gate_title">Erstelle ein kostenloses Konto, um ein weiteres Ziel zu starten</string>
     <string name="onboarding_guest_gate_description">Ohne Konto kannst du ein Ziel verfolgen. Wenn du ein Konto erstellst, nimmst du deinen Plan und Fortschritt mit.</string>
-    <string name="onboarding_back_to_today">Zurück zu Heute</string>
+    <string name="onboarding_back_to_today">Heute</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Wir erfassen dein Ziel</string>
     <string name="onboarding_understanding_description">Als Nächstes prüfst du, was wir verstanden haben.</string>
@@ -566,16 +566,16 @@
     <string name="onboarding_explain_it">Erklär es mir</string>
     <string name="onboarding_declined_title">Bei diesem Ziel können wir dir nicht helfen</string>
     <string name="onboarding_declined_description">Zoonk bringt dir nichts bei, was dir oder anderen schaden könnte, und auch keine Glücksspiele oder Tricks zum Schummeln. Möchtest du etwas anderes lernen?</string>
-    <string name="onboarding_try_another_goal">Anderes Ziel versuchen</string>
+    <string name="onboarding_try_another_goal">Neues Ziel</string>
     <string name="onboarding_unclear_title">Erzähl uns etwas mehr</string>
     <string name="onboarding_unclear_description">Was möchtest du lernen oder können? Zum Beispiel: „die Führerscheinprüfung bestehen“, „Statistik für die Arbeit verstehen“ oder „auf meiner Reise Französisch sprechen“.</string>
-    <string name="onboarding_write_again">Mein Ziel noch einmal schreiben</string>
+    <string name="onboarding_write_again">Ziel bearbeiten</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
     <string name="onboarding_instrument_title">Praktische Lektionen für %1$s kommen bald</string>
     <string name="onboarding_instrument_description">Um dir das Musizieren beizubringen, müssen wir dich dabei hören können. Daran arbeiten wir noch. Trag dich in die Warteliste ein und fang heute mit musikalischen Grundlagen an: Notenlesen, Gehörbildung und Rhythmus.</string>
     <string name="onboarding_musicianship_card">Musikalische Grundlagen für %1$s: Akkorde erkennen, kurze Melodien lesen und den Takt halten. Kein Mikrofon nötig.</string>
-    <string name="onboarding_start_musicianship">Mit musikalischen Grundlagen starten</string>
-    <string name="onboarding_join_waitlist">Auf die Warteliste setzen</string>
+    <string name="onboarding_start_musicianship">Starten</string>
+    <string name="onboarding_join_waitlist">In Warteliste eintragen</string>
     <string name="onboarding_waitlist_joined">Du stehst auf der Liste. Wir sagen dir Bescheid, sobald die Lektionen zum Spielen bereit sind.</string>
     <string name="onboarding_waitlist_sign_in">Erstelle ein Konto, damit wir dir Bescheid sagen können.</string>
     <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
@@ -870,7 +870,7 @@
     <string name="onboarding_subjects_title">Welche Fächer kennst du schon gut?</string>
     <string name="onboarding_subjects_description">Bei diesen Fächern lässt dein Plan die Grundlagen aus. Bei den übrigen zeigt ein kurzer Test, wo du einsteigst.</string>
     <string name="onboarding_subjects_label">Fächer, die du schon gut kennst</string>
-    <string name="onboarding_subjects_from_scratch">Alle Fächer sind neu für mich</string>
+    <string name="onboarding_subjects_from_scratch">Ich bin neu</string>
     <string name="onboarding_admission_title">Welchen Studiengang und welchen Score strebst du an?</string>
     <string name="onboarding_target_label">Dein Ziel</string>
     <string name="onboarding_admission_placeholder">Z. B. Medizin, 750 Punkte</string>

@@ -154,7 +154,7 @@ function PlanWaitBar({
   if (lessonReady) {
     return (
       <WaitBar note={t("Your plan will be waiting when you finish.")}>
-        <WaitLinkAction href={lessonHref(firstLesson.id)}>{t("Start lesson 1")}</WaitLinkAction>
+        <WaitLinkAction href={lessonHref(firstLesson.id)}>{t("Start")}</WaitLinkAction>
       </WaitBar>
     );
   }
@@ -186,7 +186,7 @@ function PlanWaitPage({
   const flowRail = useOnboardingRail();
   const screen = useOnboardingScreen();
   const stop = holding ? null : getStop({ notice, run });
-  // "Start lesson 1" is the bar's main action then.
+  // "Start" is the bar's main action then.
   const barHasMainAction = firstLesson?.status === "ready";
 
   const progress = notice ? (

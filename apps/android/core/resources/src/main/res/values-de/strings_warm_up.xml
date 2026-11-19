@@ -15,7 +15,7 @@
   "warm_up_play_quiz": "73f45122ee7f0b05b27b5d90ee064d03deb4b7e45106c5cc373377e9642cd3a0",
   "warm_up_questions_ready": "6887754276ed34810197007789fe8a12fec87239190e56132248931ea6ad9cda",
   "warm_up_ready_to_start": "baa4a9d641c619169b48e94ed892bdca136f465d837bbed8e39aa4e13f4fd832",
-  "warm_up_start_first_lesson": "955873a36e73a7beebd359ed1e16dee6c6fa98634458352426b0fe01881767bb",
+  "warm_up_start_first_lesson": "1f27f9f814427ef268881a1d47b8057bcaa6dbd960d55fea87c60328fbb99e22",
   "warm_up_title": "ed07f6720ec9ea020a2c86f86356dff8d7800d7864b31bead4e0ca895a3598bc",
   "warm_up_title_ready": "cd92060ed62790ffafb54e6495b39f717fefe9659e5a10fdcbadbf1121a07b32"
 }
@@ -43,7 +43,7 @@
     <string name="warm_up_first_lesson_writing">Wir erstellen deine erste Lektion: %1$s</string>
     <string name="warm_up_first_lesson_ready">Deine erste Lektion ist fertig</string>
     <string name="warm_up_plan_waiting">Dein Plan wartet auf dich, wenn du fertig bist.</string>
-    <string name="warm_up_start_first_lesson">Lektion 1 starten</string>
+    <string name="warm_up_start_first_lesson">Starten</string>
     <string name="warm_up_first_lesson">Deine erste Lektion</string>
     <string name="warm_up_ready_to_start">Bereit zum Start</string>
     <string name="warm_up_first_lesson_screens">Wir erstellen etwa 5 kurze Seiten</string>

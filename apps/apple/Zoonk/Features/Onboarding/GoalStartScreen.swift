@@ -83,7 +83,7 @@ private struct GuestGoalGate: View {
       Button {
         router.showRoot(of: .today)
       } label: {
-        Text("Back to Today", tableName: "Onboarding", comment: "Leaves the start flow for Today")
+        Text("Today", tableName: "Onboarding", comment: "Leaves the start flow for Today")
       }
     }
     .lonePage()

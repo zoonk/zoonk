@@ -47,7 +47,7 @@
     <string name="onboarding_create_account">Create a free account</string>
     <string name="onboarding_guest_gate_title">Create a free account to start another goal</string>
     <string name="onboarding_guest_gate_description">Without an account, you can follow one goal. Your plan and progress come with you.</string>
-    <string name="onboarding_back_to_today">Back to Today</string>
+    <string name="onboarding_back_to_today">Today</string>
 
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Understanding your goal</string>
@@ -131,16 +131,16 @@
     <string name="onboarding_explain_it">Explain it</string>
     <string name="onboarding_declined_title">We can\'t help with this goal</string>
     <string name="onboarding_declined_description">Zoonk doesn\'t teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you\'d like to learn?</string>
-    <string name="onboarding_try_another_goal">Try another goal</string>
+    <string name="onboarding_try_another_goal">New goal</string>
     <string name="onboarding_unclear_title">Tell us a bit more</string>
     <string name="onboarding_unclear_description">What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.</string>
-    <string name="onboarding_write_again">Write my goal again</string>
+    <string name="onboarding_write_again">Edit goal</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
     <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
     <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
     <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
-    <string name="onboarding_start_musicianship">Start music basics</string>
-    <string name="onboarding_join_waitlist">Join the waitlist</string>
+    <string name="onboarding_start_musicianship">Start</string>
+    <string name="onboarding_join_waitlist">Join waitlist</string>
     <string name="onboarding_waitlist_joined">You\'re on the list. We\'ll let you know when lessons for playing are ready.</string>
     <string name="onboarding_waitlist_sign_in">Create an account so we can let you know.</string>
     <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
@@ -440,7 +440,7 @@
     <string name="onboarding_subjects_title">Which subjects do you already know well?</string>
     <string name="onboarding_subjects_description">Your plan starts past their basics. A quick test places you in the rest.</string>
     <string name="onboarding_subjects_label">Subjects you know well</string>
-    <string name="onboarding_subjects_from_scratch">I\'m new to all of them</string>
+    <string name="onboarding_subjects_from_scratch">I\'m new</string>
     <string name="onboarding_admission_title">Which course and score are you aiming for?</string>
     <string name="onboarding_target_label">Your target</string>
     <string name="onboarding_admission_placeholder">E.g., medicine, 750 points</string>

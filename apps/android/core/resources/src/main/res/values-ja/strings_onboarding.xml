@@ -31,7 +31,7 @@
   "onboarding_attach_sign_in": "4154f944ddee78b5b95203b2d56b66474ccd180b8da355fefbd69cc8406a810d",
   "onboarding_attach_slow_down": "563bcac23b0bbafce5f042580984571c9893aca873dd8ea19775140974e90ce1",
   "onboarding_attach_unsupported": "a728be94710b81d547b932e6ab041abbee55028eed33e00e590512ef0ac17199",
-  "onboarding_back_to_today": "89c682122d6ab741ca5579def5ce5edcbfd5cc37c79051912587d698381b1937",
+  "onboarding_back_to_today": "7398ad66ab73416f71f02c850add9948832444b4ca426e7062c58b33f799357f",
   "onboarding_buddy_description": "4deab14de496423fd347c846018a3cf518bd91e3285a397e5069800dd954c9b1",
   "onboarding_buddy_title": "6a67fc4117c2e75adaf3fa3b52991a7ccc36fe5bb3a3353bde878eab6d324471",
   "onboarding_cancel": "f38bf700f1e5d2d5d337be42237ce4c6df18c7e024fd50763ef149479b3b2206",
@@ -108,7 +108,7 @@
   "onboarding_intent_title": "93e0fb80ce6eb84e64d76d1048b4bfb8a784fc3a2a8e9a98ecd144f87839ba18",
   "onboarding_intent_understand": "8dcaa3c6a1b79d261620943e216eef4b6f7961968f01572117b9dbdd9e04a1ae",
   "onboarding_intent_understand_description": "d0658b9505575d7ed7a6b5ddddf4d1d54a4f0e18e19c058ed961c2c7cc6edd39",
-  "onboarding_join_waitlist": "606c57da83dd8eba78d44a51fd284b908581c3ff8e06236aaf518350ad8259e2",
+  "onboarding_join_waitlist": "427d4bcc193d9062760081e6eb3d31ada31ce547cb31ee0d665a3fc967944ac6",
   "onboarding_language_test_audio_on_its_way": "b4eeccf5b74e1903105a0c160c9141ec35e3a2e3742218c0abb4c8578569bb9f",
   "onboarding_language_test_build_plan": "2f97e46789205e925d01a95e3d619900d4d920c3e3d90fb65849ab0441962c28",
   "onboarding_language_test_description": "6a8d17b3cd7ab02fbb96aad40453b0495851fccb0077d8828e1fefb2b05ae23d",
@@ -382,7 +382,7 @@
   "onboarding_start_description": "12fb39d8077781f6b473848707ebb92a1806fde2579f64ad41d066338465fe2e",
   "onboarding_start_description_shared": "0093881030793177c06b458c8d47f1d0cce5bc07b5b761d37df6a04fbdfbcfdd",
   "onboarding_start_free": "f30ead2f142dd29eac1509a9cb73f8ce6d51bb8b4d56162d0bad9d63f814a010",
-  "onboarding_start_musicianship": "0ef5c6134b2073f8b2eaa624375706f1935a76af232ae023fa8a8a8667992483",
+  "onboarding_start_musicianship": "a23161de47f6ba76f739bc281a2476898a0629c66e33940f6f17132707805a42",
   "onboarding_start_over": "8d7830fcaf18f186d57b9ae23d83c392dad1707ca12c345aeeb2d73c8c644981",
   "onboarding_start_over_confirm": "f18c5ddfc0e2054e8a8921019c51839f176f79893cf3026ee14bf79d260c1fbb",
   "onboarding_start_over_description": "1c56b2d482e9f5341cde25a3d10da75f65299f5bc6645e6c6e31e8a680f6f495",
@@ -392,7 +392,7 @@
   "onboarding_study_days": "97afb7c1dd2e5dbf72ebfbd70add2e709dee8aa48617689537da6cfa791f8a76",
   "onboarding_study_material": "cf15f7da30c4695e0560335cc1606219aef11b7028d682b881a7c804cbb01875",
   "onboarding_subjects_description": "d960487c7ac14646b35ebd1da39db6147f9dfa36aeccbfaa7c2488378473f87f",
-  "onboarding_subjects_from_scratch": "4314d9bd6fc1e2462f4795cd2b9a9142773841cdd531e8e6424cf710910546c2",
+  "onboarding_subjects_from_scratch": "7666cc82e833ace75e172f24f1f69cdf0ef876d7c7c7b66b176c24529bc16f82",
   "onboarding_subjects_label": "a09836ec95a763540547c0c78a89b37305a98dc2d62c0dd46636b203e21cfdd2",
   "onboarding_subjects_title": "dd42819d4864da6240f581531452f5c43f2c4a3415199c85a4369170727b570b",
   "onboarding_target_label": "a28034d110ee81ad2e3c15f0d1990be31afd6033f657333a23ca9cf2c908110e",
@@ -410,7 +410,7 @@
   "onboarding_test_level_c2_plus": "16261dc23862991ae119847f963651491226b86dc96ca612d4262008519791e0",
   "onboarding_test_question_progress": "b961cb7d52f7b5929b56130bbf5dc34de683d60bdb035b47261d58b0861dc326",
   "onboarding_time_a_day": "baaf4145673d12b779f72c6d2ef09db7b21ee58dc3cbead230a548d394a53078",
-  "onboarding_try_another_goal": "9a1df28b0a2163bb20959f5647856cc1fdd84a78e74551b7612ef9aae984b828",
+  "onboarding_try_another_goal": "960517586a088fff0c63a8584b2687035c2e15a95da4dd8af1053e9a122e48eb",
   "onboarding_unclear_description": "4b6d79204ca60b69620925e55a3aeda2ee1b7cd20430d6466df93262cf618cfc",
   "onboarding_unclear_title": "653dfea15209a9ea18091d4f8340b82f293c79ff2c0fbbc902cadb46c7acc722",
   "onboarding_understanding_description": "40465cdc8e0cd3ce5c6efe80e081e5989b0fe014b962798ddff8be14e960972f",
@@ -432,7 +432,7 @@
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
   "onboarding_what_you_wrote": "127c9898fabd74953f59e504d37489d0d5675013410f01582e1281fc76018edd",
   "onboarding_whats_next": "a2a79de5ba395f25786d23afb005bcb020477cf87068f623a256de1f1a5912c9",
-  "onboarding_write_again": "fe7aaa75a7b0de67fa935c0ebf756841376df42b49b075740a9130673cb2d875",
+  "onboarding_write_again": "1ebaed72ae0234a6d88286067096a50dd86529f04605fa2fd3be6fdd6668fa73",
   "onboarding_you_picked": "3a320d91b9f5a38dc66a710ff7948091c265ddeee7350edc7692bfde3816430c",
   "onboarding_your_answer": "717baafb8067fe5aa708ebb45a178661251996b7ac05f2e2e0183e7be8a5be19",
   "onboarding_your_plan_ready": "51f6b6a6a95b97c7935d5c6a410f0faf45f65e8fecd5b0ef8b8549b527295478",
@@ -485,7 +485,7 @@
     <string name="onboarding_create_account">無料アカウントを作成する</string>
     <string name="onboarding_guest_gate_title">無料アカウントを作成して、別の目標を始める</string>
     <string name="onboarding_guest_gate_description">アカウントなしで取り組める目標は1つです。アカウントを作成すると、学習計画と進捗をそのまま引き継げます。</string>
-    <string name="onboarding_back_to_today">「今日」に戻る</string>
+    <string name="onboarding_back_to_today">今日</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">目標の内容を読み取っています</string>
     <string name="onboarding_understanding_description">次に、目標が正しく伝わっているか確認します。</string>
@@ -564,16 +564,16 @@
     <string name="onboarding_explain_it">説明を聞く</string>
     <string name="onboarding_declined_title">この目標には対応できません</string>
     <string name="onboarding_declined_description">Zoonkでは、自分やほかの人を傷つけること、ギャンブル、不正行為の方法は教えていません。ほかに学びたいことはありますか？</string>
-    <string name="onboarding_try_another_goal">別の目標を試す</string>
+    <string name="onboarding_try_another_goal">新しい目標</string>
     <string name="onboarding_unclear_title">もう少し教えてください</string>
     <string name="onboarding_unclear_description">学びたいことや、できるようになりたいことは何ですか？たとえば「運転免許試験に合格する」「仕事で使う統計を理解する」「旅行でフランス語を話す」などです。</string>
-    <string name="onboarding_write_again">目標を書き直す</string>
+    <string name="onboarding_write_again">目標を編集</string>
     <!-- %1$s is an instrument's name, such as "guitar". -->
     <string name="onboarding_instrument_title">%1$sのレッスンは準備中です</string>
     <string name="onboarding_instrument_description">演奏や歌を教えるには、実際の音を聴く必要がありますが、その機能はまだ開発中です。事前登録をして、今日から楽譜の読み方や耳のトレーニング、リズムなど、音楽の基礎を学びましょう。</string>
     <string name="onboarding_musicianship_card">%1$sに役立つ音楽の基礎を学びます。和音を聴き分けたり、短いメロディーの楽譜を読んだり、リズムをとったりします。マイクは不要です。</string>
-    <string name="onboarding_start_musicianship">音楽の基礎を学び始める</string>
-    <string name="onboarding_join_waitlist">事前登録する</string>
+    <string name="onboarding_start_musicianship">始める</string>
+    <string name="onboarding_join_waitlist">待機リストに登録</string>
     <string name="onboarding_waitlist_joined">事前登録が完了しました。演奏のレッスンの準備ができたらお知らせします。</string>
     <string name="onboarding_waitlist_sign_in">お知らせを受け取るには、アカウントを作成してください。</string>
     <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
@@ -853,7 +853,7 @@
     <string name="onboarding_subjects_title">すでによく理解している科目はどれですか？</string>
     <string name="onboarding_subjects_description">学習計画では、選んだ科目の基礎をスキップします。残りの科目は、短いテストでどこから学ぶかを決めます。</string>
     <string name="onboarding_subjects_label">よく理解している科目</string>
-    <string name="onboarding_subjects_from_scratch">どの科目も初めて</string>
+    <string name="onboarding_subjects_from_scratch">初めてです</string>
     <string name="onboarding_admission_title">志望する学部と目標の点数は何ですか？</string>
     <string name="onboarding_target_label">目標</string>
     <string name="onboarding_admission_placeholder">例：医学部、750点</string>

@@ -358,7 +358,7 @@ test("a learner whose first lesson is written before the plan starts it from the
   });
 
   await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
-  await page.getByRole("link", { name: "Start lesson 1" }).click();
+  await page.getByRole("link", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });
 

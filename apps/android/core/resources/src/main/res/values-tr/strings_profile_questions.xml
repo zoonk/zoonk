@@ -53,7 +53,7 @@
   "profile_questions_skip_all": "f1b4eed840eaa5eec68dbc0a727d0b85fcbb4625dcfe38d0e8b032181275ee2f",
   "profile_questions_skip_all_label": "7e0c89cd93c05a8accb8a5b6cf8575f20994da19d7d103f2a9398c9d88427b3b",
   "profile_questions_something_else": "901331e4746338e6b22ba82495a9b6db18786e3388a3354a25be2989fc136b9b",
-  "profile_questions_start_lesson": "f39c103a073ee5b991504b3bdfd757a6ad2035abeb459a97388af61792c1c516",
+  "profile_questions_start_lesson": "d566b892b0a489ff1ba0d910910a63570fc79472e26eb280b3646a7053b0a692",
   "profile_questions_studies_description": "1542a9543fd227f3c6b50ba427f90e986057dbe261a23802099a132757124d86",
   "profile_questions_studies_title": "9bafda741be87e066b67e66dda667db7d964fc86d5ed169a2a5a3455fae3b766",
   "profile_questions_subject": "14f0007c8c421f42ec5a99e58581b4348f8336d808a5f1ef2a44099a7bbd1a4a",
@@ -136,7 +136,7 @@
     <string name="profile_questions_support_note_help">Bunu aklımızda tutacağız. İstediğin zaman Ayarlar’dan silebilirsin.</string>
     <string name="profile_questions_support_note_help_settings">Bunu hatırlayacağız. İstediğin zaman silebilirsin.</string>
     <string name="profile_questions_lesson_ready">1. ders hazır.</string>
-    <string name="profile_questions_start_lesson">1. derse başla</string>
+    <string name="profile_questions_start_lesson">Başla</string>
     <string name="profile_questions_save_start_lesson">Kaydet ve 1. derse başla</string>
     <string name="profile_questions_your_day">Günün</string>
     <string name="profile_questions_for_fun">Eğlenmek için</string>

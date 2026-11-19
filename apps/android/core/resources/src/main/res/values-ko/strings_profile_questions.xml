@@ -53,7 +53,7 @@
   "profile_questions_skip_all": "8af4869f68403606c4ae5f24eec49d4b74e9cd8fed286343594b39b39c4b3af8",
   "profile_questions_skip_all_label": "bff88f2b854d2f10825ae28f4412e72c19cf05bc89f7fbbb794a0271aaa4cb3a",
   "profile_questions_something_else": "be3b65775842b4142db63ebd0047b75d7061f15d6414e4d8e6fb95df7aeb5400",
-  "profile_questions_start_lesson": "4096dfd2999189fd909a61ed7a663f2bd9e9e8703eff8379739800dbfca8254d",
+  "profile_questions_start_lesson": "1f71e051ca2e281a3755653604917ab81b6e62b4a8ffbf08be4dc50dc932660c",
   "profile_questions_studies_description": "ca76820ca3bded1a7b22583aa5a8ba6cb2b300b5c674258c5f2d31173c765158",
   "profile_questions_studies_title": "e14c285ef2ceab27f292a0ed5a8e0ee8a8a0fc1e73dc0355d9df533cc006ffe0",
   "profile_questions_subject": "7bec3b5178f4dcebd17bce7460365dd30adda3bca669de27c518abd6f238c603",
@@ -136,7 +136,7 @@
     <string name="profile_questions_support_note_help">이 내용을 기억해 둘게요. 설정에서 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_support_note_help_settings">이 내용을 기억해 둘게요. 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_lesson_ready">레슨 1이 준비됐어요.</string>
-    <string name="profile_questions_start_lesson">1번 레슨 시작하기</string>
+    <string name="profile_questions_start_lesson">시작하기</string>
     <string name="profile_questions_save_start_lesson">저장하고 레슨 1 시작하기</string>
     <string name="profile_questions_your_day">내 하루</string>
     <string name="profile_questions_for_fun">여가 활동</string>

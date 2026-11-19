@@ -2933,61 +2933,61 @@
         }
       }
     },
-    "Start lesson 1" : {
+    "Start" : {
       "comment" : "Opens the goal's first lesson from an About you question, saving its answer first",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektion 1 starten"
+            "value" : "Starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comenzar la lección 1"
+            "value" : "Empezar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer la leçon 1"
+            "value" : "Commencer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia la lezione 1"
+            "value" : "Inizia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスン1を始める"
+            "value" : "始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨 1 시작하기"
+            "value" : "시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozpocznij lekcję 1"
+            "value" : "Zacznij"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a aula 1"
+            "value" : "Começar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. derse başla"
+            "value" : "Başla"
           }
         }
       }

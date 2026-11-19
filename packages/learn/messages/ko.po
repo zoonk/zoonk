@@ -205,6 +205,7 @@ msgstr "학습함"
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
@@ -305,6 +306,9 @@ msgstr "계속하기"
 #: src/mock/mock-chooser-page.tsx
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
@@ -8990,9 +8994,9 @@ msgid "We'll write you a short explanation that takes about 5 minutes to read."
 msgstr "읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "다른 목표 시도하기"
+msgctxt "Q25Oon"
+msgid "New goal"
+msgstr "새 목표"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
@@ -9005,9 +9009,9 @@ msgid "Zoonk doesn't teach anything that could hurt you or others, gambling or w
 msgstr "Zoonk는 자신이나 다른 사람에게 해를 끼칠 수 있는 내용이나 도박, 부정행위 방법은 가르치지 않아요. 그 밖에 배우고 싶은 게 있나요?"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Bwx5dr"
-msgid "Write my goal again"
-msgstr "내 목표 다시 쓰기"
+msgctxt "0ijmyj"
+msgid "Edit goal"
+msgstr "목표 수정"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "UfGKGv"
@@ -9030,14 +9034,9 @@ msgid "Create an account so we can let you know."
 msgstr "소식을 받아 보려면 계정을 만드세요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "h6_d7P"
-msgid "Join the waitlist"
-msgstr "대기 명단 등록하기"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "aeY0ZL"
-msgid "Start music basics"
-msgstr "음악 기초 시작하기"
+msgctxt "iZKwrf"
+msgid "Join waitlist"
+msgstr "대기자 명단 등록하기"
 
 #. {instrument} names what the learner wants to play, or singing, like "guitar".
 #: src/onboarding/entry/goal-outcomes.tsx
@@ -9049,11 +9048,6 @@ msgstr "아직 {instrument}을(를) 가르쳐 드릴 수 없어요"
 msgctxt "UKaff7"
 msgid "You can start with the basics of music today: reading notes, rhythm and training your ear."
 msgstr "오늘부터 악보 읽기, 리듬 익히기, 음을 듣고 구별하기 같은 음악 기초를 배울 수 있어요."
-
-#: src/onboarding/entry/guest-goal-gate.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "오늘로 돌아가기"
 
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
@@ -9699,12 +9693,6 @@ msgctxt "x4Kcgs"
 msgid "Your plan will be waiting when you finish."
 msgstr "레슨을 마치면 계획이 준비되어 있을 거예요."
 
-#: src/onboarding/steps/plan-wait.tsx
-#: src/onboarding/steps/profile-step.tsx
-msgctxt "z2snrT"
-msgid "Start lesson 1"
-msgstr "1번 레슨 시작하기"
-
 #: src/onboarding/steps/profile-step.tsx
 msgctxt "5o1SSN"
 msgid "Lesson 1 is ready."
@@ -10037,10 +10025,11 @@ msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "선택한 과목의 기초는 건너뛰어요."
 
+#. Answers the question when the learner knows none of the subjects yet.
 #: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "irvMbh"
-msgid "I'm new to all of them"
-msgstr "모두 처음 배워요"
+msgctxt "8F5ajW"
+msgid "I'm new"
+msgstr "저는 처음이에요"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"

@@ -53,7 +53,7 @@
   "profile_questions_skip_all": "3018d5643221ee1033aaa6972659db44a0fb8fa85c12ba8ba50c5fc3dbafb19e",
   "profile_questions_skip_all_label": "52eaf7e67076606a3de0e43ad642e7b446542cc9220518e48f6484d4ae5be6d5",
   "profile_questions_something_else": "29e0ea51f42396998530ce10fc3e7af02b46909b0586f49e140e1aaf556db85e",
-  "profile_questions_start_lesson": "f757e77cad9e760b9c9151c1ded170959d8fc43a8894722f555d059915f67da6",
+  "profile_questions_start_lesson": "fed500bc49d61c5b992739082b450e06e7eab9189c162f47d5637c550150b1ae",
   "profile_questions_studies_description": "5c21112e4bea4d493c04ec9ed78965fab4e6cdd97f962d4869f1132ecc489e45",
   "profile_questions_studies_title": "7c8265ad975341d837b5abbf7fe949d22380e4ee0465f27b6c30ca71fa0b2bdb",
   "profile_questions_subject": "c437180ffa3329dada1124d7c689b44e5d134f6c3a62bbe3c1f87d2c26b54483",
@@ -136,7 +136,7 @@
     <string name="profile_questions_support_note_help">この内容を覚えておきます。設定でいつでも削除できます。</string>
     <string name="profile_questions_support_note_help_settings">この内容を覚えておきます。いつでも削除できます。</string>
     <string name="profile_questions_lesson_ready">レッスン1の準備ができました。</string>
-    <string name="profile_questions_start_lesson">レッスン1を始める</string>
+    <string name="profile_questions_start_lesson">始める</string>
     <string name="profile_questions_save_start_lesson">保存してレッスン1を始める</string>
     <string name="profile_questions_your_day">今日の学習</string>
     <string name="profile_questions_for_fun">趣味</string>

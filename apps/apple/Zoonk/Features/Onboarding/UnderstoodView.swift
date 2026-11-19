@@ -960,9 +960,9 @@ private struct InstrumentOutcome: View {
         StepButtons(
           canSkip: waitlist != .joined,
           continueLabel: Text(
-            "Start music basics", tableName: "Onboarding", comment: "Starts a musicianship goal"),
+            "Start", tableName: "Onboarding", comment: "Starts a musicianship goal"),
           skipLabel: Text(
-            "Join the waitlist", tableName: "Onboarding",
+            "Join waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
           skipIcon: .notify,
           onContinue: onStartMusicianship
@@ -1022,7 +1022,7 @@ private struct DeclinedOutcome: View {
     .bottomBar {
       StepButtons(
         continueLabel: Text(
-          "Try another goal", tableName: "Onboarding",
+          "New goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
         onContinue: onRetry)
     }
@@ -1048,7 +1048,7 @@ private struct UnclearOutcome: View {
     .bottomBar {
       StepButtons(
         continueLabel: Text(
-          "Write my goal again", tableName: "Onboarding",
+          "Edit goal", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
         onContinue: onRetry)
     }

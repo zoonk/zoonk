@@ -160,9 +160,7 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
     <OnboardingColumn
       bar={
         <OnboardingActions>
-          <OnboardingPrimaryButton onClick={onRetry}>
-            {t("Try another goal")}
-          </OnboardingPrimaryButton>
+          <OnboardingPrimaryButton onClick={onRetry}>{t("New goal")}</OnboardingPrimaryButton>
         </OnboardingActions>
       }
     >
@@ -189,9 +187,7 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
     <OnboardingColumn
       bar={
         <OnboardingActions>
-          <OnboardingPrimaryButton onClick={onRetry}>
-            {t("Write my goal again")}
-          </OnboardingPrimaryButton>
+          <OnboardingPrimaryButton onClick={onRetry}>{t("Edit goal")}</OnboardingPrimaryButton>
         </OnboardingActions>
       }
     >
@@ -274,16 +270,14 @@ export function InstrumentGoal({
         <GoalActions error={error} signUpHref={signUpHref}>
           <OnboardingSecondaryButton
             busy={isJoining}
-            // Both labels are long: on a phone each takes a line, so neither wraps.
-            className="max-lg:basis-full"
             disabled={waitlist === "joined"}
             icon={<BellIcon aria-hidden="true" />}
             onClick={onJoinWaitlist}
           >
-            {t("Join the waitlist")}
+            {t("Join waitlist")}
           </OnboardingSecondaryButton>
           <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
-            {t("Start music basics")}
+            {t("Start")}
           </OnboardingPrimaryButton>
         </GoalActions>
       }
