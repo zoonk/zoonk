@@ -591,20 +591,6 @@ private struct PlanReveal: View {
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
-  /// The moment plays the first time this device shows the reveal before its action is pressed;
-  /// opened again, after a restart too, the reveal draws its end, still.
-  @State private var playsMoment: Bool
-
-  init(view: GoalOnboarding, plan: GoalPlan) {
-    self.view = view
-    self.plan = plan
-    _playsMoment = State(
-      initialValue: !view.planRevealed && !UserDefaults.standard.bool(forKey: Self.momentKey(view)))
-  }
-
-  private static func momentKey(_ view: GoalOnboarding) -> String {
-    "planReveal.momentPlayed.\(view.goal.id)"
-  }
 
   var body: some View {
     let goal = learnerGoal
@@ -639,12 +625,6 @@ private struct PlanReveal: View {
       .onboardingColumn()
     }
     .loads(syllabus, day, refreshable: false)
-    .environment(\.celebrates, playsMoment)
-    .onAppear {
-      if playsMoment {
-        UserDefaults.standard.set(true, forKey: Self.momentKey(view))
-      }
-    }
     .onDisappear {
       opening.leave()
       openingRow = nil
@@ -658,10 +638,7 @@ private struct PlanReveal: View {
 
   @ViewBuilder
   private func todaySections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
-    Section {
-      RevealHero(title: goal.displayName, buddy: learner.summary.value?.buddy ?? BuddyLook())
-        .listRowBackground(Color.clear)
-    }
+    StepHeader(title: Text(.planReady), description: Text(verbatim: goal.displayName))
 
     switch day.state {
     case .loaded(let reveal):

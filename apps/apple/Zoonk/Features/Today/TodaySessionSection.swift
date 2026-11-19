@@ -396,7 +396,7 @@ struct BlockRow: View {
   var showsDetail = false
   /// Said in place of the row's own line, such as a review's first explanations.
   var lineOverride: String?
-  /// Main's reveal tags its next block where to start, on the moment's third beat.
+  /// Main's reveal tags its next block where to start.
   var tag: Text?
 
   var body: some View {
@@ -413,7 +413,6 @@ struct BlockRow: View {
           tag
             .typeStyle(.meta.weight(.medium))
             .foregroundStyle(.successText)
-            .settles(delay: 2 * .beat)
         }
 
         if failed {

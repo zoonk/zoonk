@@ -1,44 +1,5 @@
 import SwiftUI
 
-/// Main's reveal hero: the plan just made, its goal and the buddy, who cheers on the moment's last
-/// beat, after the check, the lesson count and "Start here".
-struct RevealHero: View {
-  let title: String
-  let buddy: BuddyLook
-
-  @Environment(\.celebrates) private var celebrates
-
-  var body: some View {
-    HStack(alignment: .top, spacing: 16) {
-      VStack(alignment: .leading, spacing: 6) {
-        Chip(
-          Text(
-            "Plan created", tableName: "Onboarding",
-            comment: "Eyebrow over a goal whose plan was just built"),
-          tone: .success)
-
-        Text(title)
-          .typeStyle(.pageTitle)
-          .accessibilityAddTraits(.isHeader)
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-
-      BuddyCharacter(
-        look: studied, expression: .happy,
-        reaction: celebrates ? ActReaction(act: .cheer, delay: 3 * .beat) : nil
-      )
-      .frame(width: 80, height: 80)
-      .accessibilityHidden(true)
-    }
-  }
-
-  private var studied: BuddyLook {
-    var look = buddy
-    look.studiedToday = true
-    return look
-  }
-}
-
 /// Main's `RevealReadouts`: the time a day and when it ends, side by side.
 struct RevealReadouts: View {
   let plan: GoalPlan
