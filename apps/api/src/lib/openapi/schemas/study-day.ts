@@ -3,7 +3,6 @@ import { missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { dayBlockRefSchema } from "@zoonk/core/sessions/day-block";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
-import { planDaySchema } from "./plans";
 import { studySessionResponseSchema } from "./study-sessions";
 
 const nonBlockDestinations = missionSchema.shape.opens
@@ -36,23 +35,5 @@ export const studyDayResponseSchema = z
   });
 
 export const planRevealTodayResponseSchema = z
-  .object({
-    minutes: z
-      .int()
-      .min(0)
-      .meta({ description: "The minutes of what `today` lists, from its blocks' estimates" }),
-    nextDays: z
-      .array(planDaySchema)
-      .meta({
-        description:
-          "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, a written lesson split across days is listed on its first day, and lessons still being written are listed on every day they fill. A day with time but nothing left to list isn't included; a rest day is, with no items",
-      }),
-    today: studyDayResponseSchema,
-    week: z
-      .object({ days: z.int().min(0), minutes: z.int().min(0) })
-      .meta({
-        description:
-          "The first week's study days, today among them when `today` lists something, and their time a day added up: the first week's header",
-      }),
-  })
+  .object({ today: studyDayResponseSchema })
   .meta({ id: "PlanRevealToday" });

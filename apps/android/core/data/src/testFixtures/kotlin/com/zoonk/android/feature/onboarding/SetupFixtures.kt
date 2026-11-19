@@ -295,37 +295,6 @@ fun specialtyChoice(subject: String? = null) =
       "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1}]
     """.trimIndent()
 
-fun revealDaysOf(): String {
-    val today = LocalDate.now()
-    // A week as the planner writes one: a lesson most days, a busy day with more kinds than the row shows, and a rest day.
-    val days =
-        listOf(
-            listOf("lesson" to "Songs and calls"),
-            listOf("lesson" to "Pitch, rhythm and tone"),
-            listOf(
-                "lesson" to "Who sings, and when",
-                "lesson" to "The dawn chorus",
-                "review" to "What you already know",
-                "checkpoint" to "Check what you know",
-                "review" to "Songs and calls",
-            ),
-            emptyList(),
-            listOf("lesson" to "Calls that warn"),
-            listOf("lesson" to "Listening in layers"),
-        )
-    return days
-        .mapIndexed { index, items ->
-            val date = today.plusDays(index.toLong() + 1)
-            val entries =
-                items.mapIndexed { position, (kind, title) ->
-                    """{"chapterId":null,"id":null,"kind":"$kind","lessonId":"019a482c-6a00-7000-8000-0000000002$index$position",
-          "lessons":${if (kind == "lesson") 1 else 0},"minutes":6,"requiresPlus":false,"scheduledFor":"$date","skillId":null,"status":"todo","title":"$title","writing":false}"""
-                }
-            """{"date":"$date","items":${entries.joinToString(",", "[", "]")},"minutes":${items.size * 6},"mockFunding":null,
-          "state":"${if (index == 0) "today" else "upcoming"}"}"""
-        }.joinToString(",", "[", "]")
-}
-
 fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
     val today = LocalDate.now().toString()
     val blocks =
@@ -369,12 +338,6 @@ fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
                     put("left", kotlinx.serialization.json.JsonPrimitive(15))
                 },
         )
-    return com.zoonk.api.models.PlanRevealToday(
-        today = todayDay,
-        minutes = 15,
-        nextDays = ApiJson.decodeFromString(revealDaysOf()),
-        week =
-            com.zoonk.api.models
-                .PlanRevealTodayWeek(days = 6, minutes = 69),
-    )
+    return com.zoonk.api.models
+        .PlanRevealToday(today = todayDay)
 }

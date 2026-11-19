@@ -167,11 +167,6 @@ export function buildWeekView(input: DaysInput): PlanView["week"] {
   };
 }
 
-/** Today and the six days after it, whatever the weekday: a week from Monday read on a Sunday holds one day ahead. */
-export function buildNextDaysView(input: DaysInput): PlanDayView[] {
-  return buildPlanDays({ ...input, from: input.today });
-}
-
 export function buildFundedMocksView({
   access,
   funding,

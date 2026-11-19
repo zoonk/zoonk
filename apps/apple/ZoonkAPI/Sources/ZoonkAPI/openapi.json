@@ -21732,7 +21732,7 @@
     },
     "/goals/{goalId}/plan-reveal/today": {
       "get": {
-        "description": "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson is listed once and every number matches what's listed. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+        "description": "The day the plan reveal's Start opens, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
         "operationId": "getPlanRevealToday",
         "security": [
           {
@@ -21771,7 +21771,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The reveal's Today and first week",
+            "description": "The day Today will show",
             "content": {
               "application/json": {
                 "schema": {
@@ -92782,49 +92782,12 @@
       "PlanRevealToday": {
         "type": "object",
         "properties": {
-          "minutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "The minutes of what `today` lists, from its blocks' estimates"
-          },
-          "nextDays": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanDay"
-            },
-            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, a written lesson split across days is listed on its first day, and lessons still being written are listed on every day they fill. A day with time but nothing left to list isn't included; a rest day is, with no items"
-          },
           "today": {
             "$ref": "#/components/schemas/StudyDay"
-          },
-          "week": {
-            "type": "object",
-            "properties": {
-              "days": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "minutes": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "days",
-              "minutes"
-            ],
-            "additionalProperties": false,
-            "description": "The first week's study days, today among them when `today` lists something, and their time a day added up: the first week's header"
           }
         },
         "required": [
-          "minutes",
-          "nextDays",
-          "today",
-          "week"
+          "today"
         ],
         "additionalProperties": false
       },
