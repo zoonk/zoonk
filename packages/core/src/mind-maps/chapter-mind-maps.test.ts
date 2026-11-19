@@ -259,6 +259,40 @@ describe("chapter mind maps", () => {
     });
   });
 
+  it("reads a power its picture letters with a caret as the picture draws it, raised", async () => {
+    const { map } = await drawnSharedMap();
+    const [first, ...rest] = structure.branches;
+
+    await prisma.chapterMindMap.update({
+      data: {
+        structure: {
+          ...structure,
+          branches: first
+            ? [{ ...first, points: ["M = C·(1 + i)^n", "CO₂ is a molecule"] }, ...rest]
+            : rest,
+          comparison: {
+            columns: [
+              { name: "Area", points: ["A = πr^2"] },
+              { name: "Volume", points: ["V = a^3"] },
+            ],
+            title: "Circle and cube",
+          },
+        },
+      },
+      where: { id: map.id },
+    });
+
+    const result = await getChapterMindMap({ chapterId: map.chapterId });
+    const outline = result.status === "ready" ? result.mindMap.outline : null;
+
+    expect(outline?.branches[0]?.points).toStrictEqual(["M = C·(1 + i)ⁿ", "CO₂ is a molecule"]);
+
+    expect(outline?.comparison?.columns.map((column) => column.points)).toStrictEqual([
+      ["A = πr²"],
+      ["V = a³"],
+    ]);
+  });
+
   it("counts a new map toward the learner's mind map limits once, and a second ask joins the run", async () => {
     const { finished, goal, user } = await finishedChapter();
 

@@ -28,6 +28,14 @@ const OVERLAPPING = `
     <button style="--button-variant: default" data-box="300,200,100,40">Under</button>
   </div>`;
 
+/** A row whose facts line wraps, hanging its dot past its edge where its clip hides it. */
+const factsRow = (label: string, y: number) =>
+  `<div data-box="0,${y},300,70"><span data-slot="list-row-title" data-box="0,${y + 5},100,20">${label}</span>
+    <span data-slot="list-row-trailing" data-box="0,${y + 25},300,40">
+      <span style="overflow-x: clip" data-box="0,${y + 25},300,40">
+        <span data-box="0,${y + 25},140,20">45 questions</span>
+        <span data-box="-14,${y + 45},130,20">· usually 2 hr</span></span></span></div>`;
+
 describe("reading a declared piece in the page", () => {
   it("reads rows through a display-contents wrapper, so their fault still fails", () => {
     document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
@@ -37,6 +45,16 @@ describe("reading a declared piece in the page", () => {
 
     assert.equal(fault?.rule, "label-start");
     assert.equal(fault?.measured, 28);
+  });
+
+  it("reads a stacked value by what its own clip shows, not a separator it hides past its edge", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,140">
+      ${factsRow("Half of day 1", 0)}${factsRow("Half of day 2", 70)}</div>`;
+
+    assert.equal(
+      evaluateCapture(read()).find((finding) => finding.rule === "label-start"),
+      undefined,
+    );
   });
 
   it("reads a group with no height of its own by the rows it draws, and leaves out one drawing nothing", () => {

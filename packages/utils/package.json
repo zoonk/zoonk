@@ -59,6 +59,7 @@
     "./once": "./src/once.ts",
     "./org": "./src/org.ts",
     "./origin": "./src/origin.ts",
+    "./plain-powers": "./src/plain-powers.ts",
     "./plot-scale": "./src/plot-scale.ts",
     "./posthog": "./src/posthog.ts",
     "./private-blob-store": "./src/private-blob-store.ts",
