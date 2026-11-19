@@ -55,7 +55,6 @@ export function TimeAnswer({
   aim = null,
   date,
   exam,
-  findFailed = false,
   line,
   minutes,
   offer,
@@ -69,8 +68,6 @@ export function TimeAnswer({
   aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
-  /** The line is known, but the time that covers everything couldn't be worked out. */
-  findFailed?: boolean;
   line: TimeLine;
   minutes: number | null;
   offer: TimeOffer | null;
@@ -81,7 +78,7 @@ export function TimeAnswer({
 }) {
   const t = useExtracted();
   const space = useSentenceSpace();
-  const failed = FAILED_KINDS.has(line.kind) || findFailed;
+  const failed = FAILED_KINDS.has(line.kind);
   const offered = offer && !failed ? offer : null;
 
   return (

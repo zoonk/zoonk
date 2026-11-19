@@ -152,7 +152,8 @@ internal fun DailyCoverage(
                     line = line,
                     minutes = minutes,
                     note = fullTimeNote(found, line, studiesEveryDay),
-                    noteStatus = noteStatus(search),
+                    // Asked as the editor opens, so a search not answered yet is being found; one that failed shows nothing.
+                    finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
                     offer = timeOffer(found, line, minutes),
                     offerAsButton = true,
                     onRetry = { edits.findTimeToCover(plan, null) },
@@ -190,14 +191,6 @@ internal fun DailyCoverage(
         }
     }
 }
-
-/** The answer is asked as the editor opens, so a search not answered yet is being found. */
-private fun noteStatus(search: TimeToCoverState): NoteStatus? =
-    when (search) {
-        is TimeToCoverState.Answered -> null
-        is TimeToCoverState.Failed, is TimeToCoverState.Building -> NoteStatus.Failed
-        TimeToCoverState.Idle, is TimeToCoverState.Pending -> NoteStatus.Finding
-    }
 
 /** Main's `PlanFinish`: when a plan without a date finishes. */
 @Composable

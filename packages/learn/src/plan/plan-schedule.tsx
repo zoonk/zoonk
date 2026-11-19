@@ -12,7 +12,7 @@ import { WeekendTime, getMissingDays } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
 import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
-import { type FindStatus, MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
+import { MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
 import { PlanFinish } from "./plan-finish";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
@@ -20,10 +20,6 @@ import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 import { useTimeToCover } from "./use-time-to-cover";
-
-function hasFindFailed(status: FindStatus): boolean {
-  return status === "failed" || status === "building";
-}
 
 /** Asked when the editor opens, never on loading the page: it plans the goal at many times. */
 function useTimeAnswer(dated: boolean) {
@@ -36,7 +32,7 @@ function useTimeAnswer(dated: boolean) {
     }
   }, [dated, state.status]);
 
-  return { answered, failed: hasFindFailed(state.status), retry: () => void find() };
+  return { answered, retry: () => void find() };
 }
 
 /**
@@ -116,7 +112,6 @@ function DailyCoverage({
           <TimeAnswer
             date={date}
             exam={goal.kind === "exam"}
-            findFailed={answer.failed}
             line={line}
             minutes={minutes}
             offer={getOffer({ found, line, minutes })}

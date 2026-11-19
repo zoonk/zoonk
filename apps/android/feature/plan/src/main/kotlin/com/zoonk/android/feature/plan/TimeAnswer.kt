@@ -45,8 +45,6 @@ data class DaySplit(
     val rest: Int,
 )
 
-enum class NoteStatus { Finding, Failed }
-
 /**
  * Main's `TimeAnswer`, shared by onboarding's time question and the Plan's time a day: what
  * covering everything takes, what the time shown covers, and the other time to use, in one polite
@@ -63,7 +61,7 @@ fun TimeAnswer(
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    noteStatus: NoteStatus? = null,
+    finding: Boolean = false,
     offerAsButton: Boolean = false,
     split: DaySplit? = null,
     updating: Boolean = false,
@@ -71,9 +69,9 @@ fun TimeAnswer(
     action: (@Composable () -> Unit)? = null,
     aim: String? = null,
 ) {
-    val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed || noteStatus == NoteStatus.Failed
+    val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed
     val offered = offer?.takeUnless { failed }
-    val busy = updating || line.isBusy || noteStatus == NoteStatus.Finding
+    val busy = updating || line.isBusy || finding
     val busyWords = stringResource(R.string.plan_working_out_coverage)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
