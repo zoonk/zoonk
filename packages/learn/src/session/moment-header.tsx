@@ -10,12 +10,10 @@ import { MOMENT_TITLE_PROPS } from "./moment-ceremony";
 export function MomentHeader({
   children,
   detail,
-  eyebrow,
   title,
 }: {
   children?: React.ReactNode;
   detail?: React.ReactNode;
-  eyebrow?: React.ReactNode;
   title: React.ReactNode;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
@@ -29,7 +27,6 @@ export function MomentHeader({
   return (
     <div className="flex flex-col items-start gap-6" data-slot="moment-header" role="status">
       <StepHeader>
-        {eyebrow}
         <h2 className="text-title outline-none" ref={heading} {...MOMENT_TITLE_PROPS}>
           {title}
         </h2>

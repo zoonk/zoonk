@@ -1,6 +1,5 @@
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 
 const EYEBROW_TONE = {
   neutral: "text-muted-foreground ring-border",
@@ -31,18 +30,5 @@ export function Eyebrow({
       {icon && <LineMarker>{icon}</LineMarker>}
       <span className="min-w-0">{children}</span>
     </p>
-  );
-}
-
-export function SuccessEyebrow({
-  iconClassName,
-  ...props
-}: Omit<React.ComponentProps<typeof Eyebrow>, "icon" | "tone"> & { iconClassName?: string }) {
-  return (
-    <Eyebrow
-      icon={<CheckIcon aria-hidden="true" className={iconClassName} />}
-      tone="success"
-      {...props}
-    />
   );
 }
