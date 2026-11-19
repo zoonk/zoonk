@@ -126,7 +126,7 @@ private struct LessonPlayerContent: View {
                 store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0))))
           }
         )
-        .taskTitle(title)
+        .taskTitle(title, isShown: !endShowsTitle)
         .taskClose { closeButton }
         .toolbar {
           if showsUnsavedAnswers {
@@ -433,6 +433,12 @@ private struct LessonPlayerContent: View {
         }
       }
     }
+  }
+
+  /// A host's end titles the screen with the lesson's own name, as main's `completionTitled`.
+  private var endShowsTitle: Bool {
+    guard ending != nil, let state = store.state, state.phase == .completed else { return false }
+    return state.completion?.status == .saving || state.completion?.status == .saved
   }
 
   private var title: Text {
