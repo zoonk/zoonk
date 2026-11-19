@@ -13,14 +13,12 @@ msgstr "Alternativas de resposta"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Correto"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -34,6 +32,11 @@ msgstr "Sua resposta"
 msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "Seu palpite"
+
+#: src/_components/answer-option.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "Sua resposta e a resposta certa"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
@@ -2542,7 +2545,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, one {Você precisava de # acerto para vencer.} other {Você precisava de # acertos para vencer.}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -3982,7 +3984,6 @@ msgid "See all subjects"
 msgstr "Ver todas as matérias"
 
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -7584,11 +7585,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Responda só quando tiver certeza. Tudo bem dizer que não tem certeza."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>Você respondeu:</label> <answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Pratique amanhã"
@@ -7844,14 +7840,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "A próxima seção começa automaticamente quando o intervalo termina."
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Seu último simulado"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "Simulado escolhido"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7872,36 +7864,6 @@ msgstr "Preparando seu simulado…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "A gente está criando perguntas parecidas com as da prova para você. O simulado começa aqui assim que elas estiverem prontas."
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "Tempo limite"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "Costuma levar"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Cerca de {time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "Parte escrita"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "Partes"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -8184,6 +8146,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, one {# questão} other {# questões}} · {time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "geralmente {time}"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8194,6 +8162,13 @@ msgstr "Deixar em branco"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Parte escrita · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "Parte escrita"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8588,11 +8563,6 @@ msgstr "{change} desde o último simulado"
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Depois deste simulado"
-
-#: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "Sua resposta e a resposta certa"
 
 #: src/mock/mock-review.tsx
 msgctxt "S0XNnB"
@@ -9506,6 +9476,12 @@ msgstr "Pular o que eu já sei"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "Só o que é novo ou difícil"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Cerca de {time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"
