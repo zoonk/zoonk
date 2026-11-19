@@ -994,18 +994,6 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Not checked this time"
 
-#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
-#: src/_components/weekend-time.tsx
-msgctxt "MuKIuz"
-msgid "Add Saturday or Sunday to your study days."
-msgstr "Add Saturday or Sunday to your study days."
-
-#. Why a switch for a different study time on weekends is off: only weekend days are study days.
-#: src/_components/weekend-time.tsx
-msgctxt "dQytAa"
-msgid "Add a weekday to your study days."
-msgstr "Add a weekday to your study days."
-
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -9248,12 +9236,6 @@ msgid "Or start this ready-made course now"
 msgstr "Or start this ready-made course now"
 
 #: src/onboarding/onboarding-bar.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} of {total, number}"
-
-#: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
 msgid "Questions answered"
 msgstr "Questions answered"
@@ -10396,6 +10378,7 @@ msgstr "Checking what changes…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
+#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Prerequisites"
@@ -11874,6 +11857,11 @@ msgstr "We'll remember this. You can delete it anytime in Settings."
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "We checked what often helps with what you picked. Change anything you like."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} of {total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"

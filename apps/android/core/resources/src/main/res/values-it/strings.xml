@@ -77,8 +77,6 @@
   "test_out_skip_unit": "fa44585fda5913bcee1f70a86eb14d94ca0cd45bbefb75663526bca633bad110",
   "test_out_title": "b32c9cdec3769bbc31a488be464676f78b02d331a7121c4bec34779811ce46fe",
   "web_page_unavailable": "bfd96936ef946aecdbd76707a3002dc9aa87b9e937365e2c49d47803e0b7d311",
-  "weekend_time_add_weekday": "2660915a46aa06dacabba8eab251818997c53337d8ea49e5474f32890f68c65f",
-  "weekend_time_add_weekend_day": "721e8fcfb2bdc813f7a9562f5d94ce1ea0e9a94c2bafb331149936dd32f2b078",
   "weekend_time_differs": "e01a003e6e3d68dd6ff2aea969929519c204bd777fb971b2ee18cac70a10880c",
   "weekend_time_label": "fe180849525befdea56952889626b19f9ffaf6c5852602951b1a252e9144d363"
 }
@@ -140,10 +138,6 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="weekend_time_differs">Tempo di studio diverso nel fine settimana</string>
     <string name="weekend_time_label">Tempo nel fine settimana</string>
-    <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
-    <string name="weekend_time_add_weekend_day">Aggiungi il sabato o la domenica ai tuoi giorni di studio.</string>
-    <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->
-    <string name="weekend_time_add_weekday">Aggiungi un giorno dal lunedì al venerdì ai tuoi giorni di studio.</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">Scegli un’opzione per includerla nel tuo piano.</string>
     <string name="disclosure_expanded">Espanso</string>

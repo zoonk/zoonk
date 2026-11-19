@@ -12190,65 +12190,6 @@
         }
       }
     },
-    "Add a weekday to your study days." : {
-      "comment" : "Why a switch for a different study time on weekends is off: only weekend days are study days.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Füg einen Tag von Montag bis Freitag zu deinen Lerntagen hinzu."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agrega un día entre semana a tus días de estudio."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute un jour de semaine à tes jours d’étude."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi un giorno dal lunedì al venerdì ai tuoi giorni di studio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習する曜日に平日を追加してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 요일에 평일 중 하루를 추가하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodaj do dni nauki dowolny dzień od poniedziałku do piątku."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicione um dia de semana aos seus dias de estudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerine hafta içinden bir gün ekle."
-          }
-        }
-      }
-    },
     "Add it back" : {
       "comment" : "Puts a skipped subject back in the plan",
       "localizations" : {
@@ -12304,65 +12245,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden ekle"
-          }
-        }
-      }
-    },
-    "Add Saturday or Sunday to your study days." : {
-      "comment" : "Why a switch for a different study time on weekends is off: no weekend day is a study day.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Füg Samstag oder Sonntag zu deinen Lerntagen hinzu."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agrega el sábado o el domingo a tus días de estudio."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute le samedi ou le dimanche à tes jours d’étude."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi il sabato o la domenica ai tuoi giorni di studio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習する曜日に土曜日か日曜日を追加してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 요일에 토요일이나 일요일을 추가하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodaj do dni nauki sobotę lub niedzielę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicione sábado ou domingo aos seus dias de estudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerine cumartesi veya pazar gününü ekle."
           }
         }
       }

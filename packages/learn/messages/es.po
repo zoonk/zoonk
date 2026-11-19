@@ -994,18 +994,6 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Esta vez no comprobamos tu respuesta"
 
-#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
-#: src/_components/weekend-time.tsx
-msgctxt "MuKIuz"
-msgid "Add Saturday or Sunday to your study days."
-msgstr "Agrega el sábado o el domingo a tus días de estudio."
-
-#. Why a switch for a different study time on weekends is off: only weekend days are study days.
-#: src/_components/weekend-time.tsx
-msgctxt "dQytAa"
-msgid "Add a weekday to your study days."
-msgstr "Agrega un día entre semana a tus días de estudio."
-
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -9248,12 +9236,6 @@ msgid "Or start this ready-made course now"
 msgstr "O empezar ahora este curso que ya está listo"
 
 #: src/onboarding/onboarding-bar.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} de {total, number}"
-
-#: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
 msgid "Questions answered"
 msgstr "Preguntas respondidas"
@@ -10396,6 +10378,7 @@ msgstr "Revisando los cambios…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
+#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Requisitos previos"
@@ -11874,6 +11857,11 @@ msgstr "Lo recordaremos. Puedes eliminarlo cuando quieras en Configuración."
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "Marcamos las opciones que suelen ayudar según lo que elegiste. Cambia lo que quieras."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} de {total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"

@@ -994,18 +994,6 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "이번에는 답을 확인하지 않았어요"
 
-#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
-#: src/_components/weekend-time.tsx
-msgctxt "MuKIuz"
-msgid "Add Saturday or Sunday to your study days."
-msgstr "학습 요일에 토요일이나 일요일을 추가하세요."
-
-#. Why a switch for a different study time on weekends is off: only weekend days are study days.
-#: src/_components/weekend-time.tsx
-msgctxt "dQytAa"
-msgid "Add a weekday to your study days."
-msgstr "학습 요일에 평일 중 하루를 추가하세요."
-
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -9248,12 +9236,6 @@ msgid "Or start this ready-made course now"
 msgstr "또는 미리 준비된 코스 바로 시작하기"
 
 #: src/onboarding/onboarding-bar.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}"
-
-#: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
 msgid "Questions answered"
 msgstr "답한 문제 수"
@@ -10396,6 +10378,7 @@ msgstr "변경 사항을 확인하고 있어요…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
+#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "사전 지식"
@@ -11874,6 +11857,11 @@ msgstr "이 내용을 기억해 둘게요. 언제든 설정에서 삭제할 수 
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "선택한 내용에 맞춰 도움이 되는 경우가 많은 방법을 미리 골라 뒀어요. 원하는 대로 바꿔 보세요."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}/{total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
