@@ -16,6 +16,7 @@ import {
   PageHeaderContent,
   PageSubtitle,
   PageTitle,
+  SECTION_SUBPAGE_HEADER_CLASS,
   SECTION_SUBPAGE_TITLE_CLASS,
 } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
@@ -31,7 +32,7 @@ export function AboutYouQuestionSkeleton() {
   return (
     <div className={QUESTION_COLUMN_CLASS}>
       <PageHeader>
-        <PageHeaderContent className="flex-1">
+        <PageHeaderContent className={cn("flex-1", SECTION_SUBPAGE_HEADER_CLASS)}>
           <div className={cn("text-title", SECTION_SUBPAGE_TITLE_CLASS)}>
             <Skeleton className="h-lh w-3/4" />
           </div>
@@ -95,8 +96,10 @@ export function AboutYouQuestionScreen({
         }}
       >
         <PageHeader>
-          <PageHeaderContent>
-            <PageTitle className={SECTION_SUBPAGE_TITLE_CLASS}>{title}</PageTitle>
+          <PageHeaderContent className={SECTION_SUBPAGE_HEADER_CLASS}>
+            <PageTitle className={cn(SECTION_SUBPAGE_TITLE_CLASS, "outline-none")} tabIndex={-1}>
+              {title}
+            </PageTitle>
             {description && <PageSubtitle className="text-pretty">{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>

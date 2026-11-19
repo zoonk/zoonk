@@ -1,4 +1,5 @@
 import { instant } from "@next/playwright";
+import { prisma } from "@zoonk/db";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
@@ -85,7 +86,7 @@ test("Settings reserves the profile column while its contents load", async ({
     page,
     async () => {
       await page.goto("/settings");
-      const placeholders = page.locator('main [data-slot="skeleton"]:visible');
+      const placeholders = page.locator('main [data-slot="page"] [data-slot="skeleton"]:visible');
       await expect(placeholders).not.toHaveCount(0);
 
       return placeholders.evaluateAll((nodes) =>
@@ -132,6 +133,24 @@ test("Subscription sets its plan placeholders side by side, as the plans are", a
   );
 });
 
+test("Profile waits for a change before enabling Save, and again once it's saved", async ({
+  userWithoutProgress: page,
+}) => {
+  await page.goto("/profile");
+
+  const name = page.getByRole("textbox", { exact: true, name: "Name" });
+  const save = page.getByRole("button", { exact: true, name: "Save" });
+  await expectHydrated(name);
+  await expect(save).toBeDisabled();
+
+  await name.fill("Rita Lee");
+  await expect(save).toBeEnabled();
+
+  await name.press("Enter");
+  await expect(page.getByText("Saved.")).toBeVisible();
+  await expect(save).toBeDisabled();
+});
+
 test("Help waits for a message before enabling Send", async ({ userWithoutProgress: page }) => {
   await page.goto("/support");
 
@@ -146,4 +165,39 @@ test("Help waits for a message before enabling Send", async ({ userWithoutProgre
   await expect(send).toBeEnabled();
   await message.clear();
   await expect(send).toBeDisabled();
+});
+
+test("the buddy editor is open beside Preferences' rows on a wide screen and a dialog from its row on a narrow one", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await page.setViewportSize({ height: 900, width: 1440 });
+  await page.goto("/settings/appearance");
+
+  const editor = page.getByRole("region", { name: "Your buddy" });
+  const noodle = editor.getByRole("radio", { name: /^Noodle/u });
+  const save = editor.getByRole("button", { exact: true, name: "Save" });
+  await expectHydrated(noodle);
+  await expect(page.getByRole("button", { name: "Choose your buddy" })).toBeHidden();
+
+  await noodle.click();
+  const name = editor.getByRole("textbox", { name: "Name" });
+  await name.fill("Mina");
+  await name.press("Enter");
+  await expect(save).toBeDisabled();
+  await expect(noodle).toBeChecked();
+
+  await expect
+    .poll(() =>
+      prisma.userLearningProfile.findUnique({
+        select: { buddyKind: true, buddyName: true },
+        where: { userId: noProgressUser.id },
+      }),
+    )
+    .toEqual({ buddyKind: "noodle", buddyName: "Mina" });
+
+  await page.setViewportSize({ height: 900, width: 1024 });
+  await expect(editor).toBeHidden();
+  await page.getByRole("button", { exact: true, name: "Change" }).click();
+  await expect(page.getByRole("dialog", { name: "Your buddy" })).toBeVisible();
 });

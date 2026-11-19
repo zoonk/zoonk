@@ -2,7 +2,9 @@ import { SectionPageHeader } from "@/components/learn/section-page";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
+import { LIST_DETAIL_GRID_CLASS, SIDE_DETAIL_PANE_CLASS } from "@zoonk/learn/side-detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
@@ -61,14 +63,29 @@ function SectionSkeleton({ className, label }: { className: string; label: strin
   );
 }
 
+/** Laid out as the page is, rows and the buddy's pane where it has one, so nothing moves as it loads. */
 async function AppearanceSkeleton() {
   const t = await getExtracted();
 
   return (
-    <div className="flex flex-col gap-7">
-      <SectionSkeleton className="h-15 rounded-lg" label={t("Your buddy")} />
-      <SectionSkeleton className="h-30 rounded-lg" label={t("Lessons")} />
-      <SectionSkeleton className="h-30 rounded-lg" label={t("Language and region")} />
+    <div className={cn("flex flex-col gap-7", LIST_DETAIL_GRID_CLASS)}>
+      <div className="xl:in-data-signed-in:hidden">
+        <SectionSkeleton className="h-15 rounded-lg" label={t("Your buddy")} />
+      </div>
+
+      <div
+        className={cn(
+          "hidden xl:in-data-signed-in:col-start-2 xl:in-data-signed-in:row-start-1",
+          SIDE_DETAIL_PANE_CLASS,
+        )}
+      >
+        <SectionSkeleton className="h-41 rounded-xl" label={t("Your buddy")} />
+      </div>
+
+      <div className="flex flex-col gap-7 xl:in-data-signed-in:col-start-1 xl:in-data-signed-in:row-start-1">
+        <SectionSkeleton className="h-30 rounded-lg" label={t("Lessons")} />
+        <SectionSkeleton className="h-30 rounded-lg" label={t("Language and region")} />
+      </div>
     </div>
   );
 }
@@ -78,7 +95,7 @@ export default async function AppearancePage() {
   const t = await getExtracted();
 
   return (
-    <Page>
+    <Page className="flex-1">
       <SectionPageHeader
         title={t({
           description:

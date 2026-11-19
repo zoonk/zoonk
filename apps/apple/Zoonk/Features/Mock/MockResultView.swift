@@ -464,7 +464,7 @@ private struct MockScoreSections: View {
 
   var hasScoreNote: Bool { scoreNote != nil }
 
-  /// Main's one sentence under the number: every minimum reached, or the best and worst subjects.
+  /// Main's one sentence under the number: every minimum reached, or the subjects core names.
   /// A missed minimum's headline stands alone.
   private var verdict: String? {
     if let points = result.points {
@@ -475,11 +475,26 @@ private struct MockScoreSections: View {
       }
     }
 
-    guard let areas = result.verdictAreas else { return nil }
-
-    return String(
-      localized: "Strongest: \(areas.best.name). Work on: \(areas.worst.name).", table: "Mock",
-      comment: "Under a mock exam's score: its best and worst subjects")
+    switch (view.verdict?.strongest, view.verdict?.weakest) {
+    case (let best?, let worst?):
+      return String(
+        localized: "Strongest: \(best). Work on: \(worst).", table: "Mock",
+        comment: "Under a mock exam's score: its best and worst subjects")
+    case (let best?, nil):
+      return String(
+        localized: "Strongest: \(best).", table: "Mock",
+        comment:
+          "Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.”"
+      )
+    case (nil, let worst?):
+      return String(
+        localized: "Work on: \(worst).", table: "Mock",
+        comment:
+          "Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”"
+      )
+    case (nil, nil):
+      return nil
+    }
   }
 
   private var score: (label: String, value: String) {

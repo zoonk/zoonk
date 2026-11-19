@@ -21,6 +21,8 @@ import {
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { showErrorToast, showSuccessToast } from "@zoonk/ui/components/toast";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
 import { profileFormAction } from "./actions";
@@ -112,9 +114,12 @@ export function ProfileForm({
 
   const saveError = useChangeSaveErrorMessage();
 
+  const [saved, setSaved] = useState({ name: defaultName, username: defaultUsername });
+
   /** A save's answer goes in a toast, so Save and the rows under it stay where they are. */
-  const tellResult = (result: typeof initialState) => {
+  const tellResult = (result: typeof initialState, name: string) => {
     if (result.status === "success") {
+      setSaved({ name, username: result.username });
       showSuccessToast(t("Saved."));
     } else if (result.status === "usernameTaken") {
       showErrorToast(t("{username} is already taken", { username: result.username }));
@@ -132,7 +137,7 @@ export function ProfileForm({
         status: "error" as const,
       }));
 
-      tellResult(result);
+      tellResult(result, parseFormField(formData, "name") ?? "");
       return result;
     },
     initialState,
@@ -142,7 +147,12 @@ export function ProfileForm({
   const [name, setName] = useState(defaultName);
 
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
-  const canSave = !isNameTooLong && (status === "idle" || status === "available");
+  // Until the page hydrates Save stays open, so a name typed and saved early is queued, not lost.
+  const hydrated = useIsMounted();
+  const changed = name.trim() !== saved.name || username !== saved.username;
+
+  const canSave =
+    (changed || !hydrated) && !isNameTooLong && (status === "idle" || status === "available");
 
   return (
     <>

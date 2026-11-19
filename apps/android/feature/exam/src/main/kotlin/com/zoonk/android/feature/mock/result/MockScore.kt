@@ -41,7 +41,6 @@ import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockResult
-import com.zoonk.api.models.MockResultAreasInner
 import kotlin.math.roundToInt
 
 /**
@@ -57,7 +56,7 @@ internal fun ScoreStep(
     review: (@Composable () -> Unit)?,
 ) {
     val missed = missedMinimum(result.points)
-    val verdict = verdict(result).takeIf { missed == null }
+    val verdict = verdict(view, result).takeIf { missed == null }
 
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         ScoreHeader(view, result, missed)
@@ -97,28 +96,21 @@ internal fun hasDetails(
         about.isNotEmpty() ||
         view.sizeSource.pastEdition != null
 
-private fun areaMeasure(area: MockResultAreasInner): Double = area.score?.score ?: if (area.total > 0) area.correct / area.total else 0.0
-
-/**
- * Main's `getVerdictAreas`: the subject that went best and the one to work on, only where the answers
- * tell them apart. An estimate ranks subjects even when nothing was answered, so a subject is the
- * strongest only with a right answer in it, and the one to work on only with a miss.
- */
-internal fun verdictAreas(areas: List<MockResultAreasInner>): Pair<MockResultAreasInner, MockResultAreasInner>? {
-    val ranked = areas.sortedByDescending(::areaMeasure)
-    val best = ranked.firstOrNull() ?: return null
-    val worst = ranked.last()
-    if (areaMeasure(best) == areaMeasure(worst)) return null
-    if (best.correct <= 0 || worst.correct >= worst.total) return null
-    return best to worst
-}
-
-/** One sentence on what the number means for the learner's next days, or nothing. */
+/** One sentence on what the number means for the learner's next days, or nothing: the subjects core names. */
 @Composable
-private fun verdict(result: MockResult): String? {
+private fun verdict(
+    view: MockExam,
+    result: MockResult,
+): String? {
     if (reachedEveryMinimum(result.points)) return stringResource(R.string.mock_result_every_minimum)
-    val (best, worst) = verdictAreas(result.areas) ?: return null
-    return stringResource(R.string.mock_result_strongest, best.name, worst.name)
+    val best = view.verdict?.strongest
+    val worst = view.verdict?.weakest
+    return when {
+        best != null && worst != null -> stringResource(R.string.mock_result_strongest, best, worst)
+        best != null -> stringResource(R.string.mock_result_strongest_only, best)
+        worst != null -> stringResource(R.string.mock_result_work_on, worst)
+        else -> null
+    }
 }
 
 /** A [range] reads as one number, so its dash keeps the numbers' size; a raw score's [lead] is its number, the rest its unit. */

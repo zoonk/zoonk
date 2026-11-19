@@ -90523,6 +90523,9 @@
           },
           "trueFalseLabels": {
             "$ref": "#/components/schemas/TrueFalseLabels"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/MockVerdict"
           }
         },
         "required": [
@@ -90568,7 +90571,8 @@
           "startTime",
           "status",
           "timeZone",
-          "trueFalseLabels"
+          "trueFalseLabels",
+          "verdict"
         ],
         "additionalProperties": false
       },
@@ -91513,6 +91517,28 @@
         ],
         "description": "The paper's own rule: a minimum shared with another paper (`group`, DELE's with listening), its own minimum (`paper`), a floor below which the whole exam fails (`floor`, DELF), or none",
         "type": "object"
+      },
+      "MockVerdict": {
+        "nullable": true,
+        "description": "Once it's over: the subject that went clearly best and the one that went clearly worst. Each is null unless its estimated range (without one, its share of right answers, given the same 90% range, with more points too) stands clear of every other subject's: the strongest's bottom above every other's top, the weakest's top below every other's bottom. A part is never measured against the subject it belongs to and the two are never both set, and a mock with no right answer or no miss sets neither. Null before it's over",
+        "type": "object",
+        "properties": {
+          "strongest": {
+            "nullable": true,
+            "description": "The subject that went best, as `result.areas` names it",
+            "type": "string"
+          },
+          "weakest": {
+            "nullable": true,
+            "description": "The subject to work on, as `result.areas` names it",
+            "type": "string"
+          }
+        },
+        "required": [
+          "strongest",
+          "weakest"
+        ],
+        "additionalProperties": false
       },
       "MockEssayGrades": {
         "type": "object",

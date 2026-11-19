@@ -76,7 +76,7 @@ export function BuddyPicker({
     <div className="flex flex-col gap-5" data-slot="buddy-picker">
       <RadioGroup
         aria-label={t("Buddy")}
-        className="grid grid-cols-2 gap-3"
+        className="grid grid-cols-2 gap-3 @lg/buddy-pane:grid-cols-4"
         onValueChange={(value) => {
           const kind = BUDDY_KINDS.find((item) => item === value);
 

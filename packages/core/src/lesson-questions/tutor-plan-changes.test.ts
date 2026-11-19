@@ -37,7 +37,7 @@ import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const ANSWER_RUN = {
-  answer: "Prepared it: tap Apply when you're ready.",
+  answer: "Prepared it: nothing changes until you confirm it on the card.",
   finishReason: "stop",
   generatedAt: NOW.toISOString(),
   model: "google/gemini-3.8-flash",

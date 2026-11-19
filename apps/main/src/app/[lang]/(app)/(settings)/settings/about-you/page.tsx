@@ -1,12 +1,12 @@
 import { getAppLocale } from "@/i18n/locale";
 import { getProfileQuestions } from "@zoonk/core/profile/questions/get";
+import { firstOpenAboutYouQuestion } from "@zoonk/learn/about-you/order";
 import { AboutYouQuestionSkeleton } from "@zoonk/learn/about-you/question";
 import { Page } from "@zoonk/learn/page";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { AboutYouQuestion } from "./[question]/about-you-question";
-import { firstOpenQuestion } from "./first-open-question";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function FirstOpenQuestion() {
   const view = await getProfileQuestions({ locale: await getAppLocale() });
-  const question = view && firstOpenQuestion(view);
+  const question = view && firstOpenAboutYouQuestion(view);
 
   return (
     question && (

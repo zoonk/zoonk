@@ -96,8 +96,6 @@ struct QuestionForm<Content: View, Buttons: View>: View {
     .bottomBar(note: failure.map { BarNote($0) }) {
       buttons
     }
-    // Skip's outline is see-through, so what scrolls under the bar stops at its edge.
-    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 }
 
@@ -171,13 +169,16 @@ struct StepHeader: View {
   var subjectFacts: [String] = []
   let title: Text
   var description: Text?
+  /// The plan's reveal ends setup: no step after it has a title to line up with.
+  var linesUpWithSteps = true
 
   @Environment(\.onboardingAside) private var aside
 
   /// Setup's steps put their titles at one height, chip or not; the same screens elsewhere, such
   /// as About you in Settings, are pages, with nothing over their titles.
   private var keepsChipRoom: Bool {
-    if case .planSoFar = aside { true } else { false }
+    guard linesUpWithSteps else { return false }
+    if case .planSoFar = aside { return true } else { return false }
   }
 
   var body: some View {
@@ -191,6 +192,8 @@ struct StepHeader: View {
       )
       .listRowBackground(Color.clear)
     }
+    // Main's step reads on from its heading, a row's room below it, not a section's.
+    .listSectionSpacing(0)
   }
 }
 

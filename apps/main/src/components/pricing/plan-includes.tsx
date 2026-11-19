@@ -1,18 +1,29 @@
 import { CheckItem } from "@/components/public/check-mark";
+import { PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { cn } from "@zoonk/ui/lib/utils";
 
+/** In a plan's card the summary is the card's own line; on a page it is a section's title. */
 export function PlanIncludes({
   items,
   summary,
+  summaryAs = "card",
 }: {
   items: { id: string; text: string }[];
   summary: string;
+  summaryAs?: "card" | "section";
 }) {
   return (
-    <div className="flex flex-col gap-3.5">
-      <p className="text-base leading-snug font-semibold tracking-[-0.015em] text-balance">
-        {summary}
-      </p>
+    <div className={cn("flex flex-col", summaryAs === "card" ? "gap-3.5" : "gap-3")}>
+      {summaryAs === "card" ? (
+        <p className="text-base leading-snug font-semibold tracking-[-0.015em] text-balance">
+          {summary}
+        </p>
+      ) : (
+        <PageSectionHeader>
+          <PageSectionTitle>{summary}</PageSectionTitle>
+        </PageSectionHeader>
+      )}
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (

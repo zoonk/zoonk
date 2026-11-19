@@ -111,8 +111,15 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
 export const PAGE_SECTION_TITLE_CLASS =
   "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance";
 
-/** A page under a section's tab: from a tablet up the section's header is its title, so its own steps down. */
-export const SECTION_SUBPAGE_TITLE_CLASS = "md:text-sm md:leading-5 md:tracking-[-0.01em]";
+/**
+ * A page under a section's tab: from a tablet up the section's header is its title, so its own
+ * steps down to one line of text that starts where a tab's first line does.
+ */
+export const SECTION_SUBPAGE_TITLE_CLASS =
+  "md:min-h-0 md:py-0 md:text-sm md:leading-5 md:tracking-[-0.01em] md:[text-box:none]";
+
+/** Its header starts on the tab's first line too, level with the list a wide screen keeps beside it. */
+export const SECTION_SUBPAGE_HEADER_CLASS = "md:pt-0";
 
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
@@ -152,7 +159,7 @@ export function PageSectionFooter({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground max-w-column text-compact leading-snug [&_a]:underline [&_a]:underline-offset-2",
+        "text-muted-foreground max-w-column text-compact leading-snug [&_a]:underline [&_a]:underline-offset-2 [&:lang(ja)]:[word-break:auto-phrase]",
         className,
       )}
       data-slot="page-section-footer"

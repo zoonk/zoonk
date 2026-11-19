@@ -28,7 +28,13 @@ import {
 import { clockTimeSchema } from "./exams";
 import { itemSetSchema } from "./item-set";
 import { mockLeftOutSchema } from "./mock-left-out";
-import { mockScoreNotesSchema, mockSectionSchema, mockSizeSourceSchema } from "./mock-parts";
+import {
+  mockAdaptSchema,
+  mockScoreNotesSchema,
+  mockSectionSchema,
+  mockSizeSourceSchema,
+  mockVerdictSchema,
+} from "./mock-parts";
 import { logicalDateSchema } from "./study-sessions";
 
 const MOCK_QUESTION_FORMATS = ["multipleChoice", "numeric", "trueFalse", "typed"] as const;
@@ -84,27 +90,6 @@ export const mockPurposeSchema = z
   .meta({
     description:
       "`planned`: the plan's weekly mock. `practice`: one taken any time. `placement`: a diagnostic mock taken in onboarding instead of the quick placement",
-  });
-
-const mockAdaptSchema = z
-  .object({
-    focus: z
-      .object({ area: z.string(), correct: z.number(), total: z.number().int() })
-      .nullable()
-      .meta({ description: "The area that went worst, to give more of the plan's time" }),
-    skip: z
-      .object({ lessons: z.number().int().min(1), topics: z.array(z.string()) })
-      .nullable()
-      .meta({
-        description:
-          "The lessons of the topics the mock showed the learner knows (every question right), to skip",
-      }),
-  })
-  .nullable()
-  .meta({
-    description:
-      "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
-    id: "MockAdapt",
   });
 
 export const mockViewResponseSchema = z
@@ -288,6 +273,7 @@ export const mockViewResponseSchema = z
       }),
     timeZone: z.string().nullable(),
     trueFalseLabels: trueFalseLabelsSchema,
+    verdict: mockVerdictSchema,
   })
   .meta({ id: "MockExam" });
 

@@ -100,7 +100,8 @@
   "mock_result_skip_line": "d0a11918020bc89d58c0ecb6155d54b12419ca0ad614a0562457749b5dcc86ca",
   "mock_result_skip_them": "dd883ab2cd6aa86e5d7a9f20c13922af4b17a09200d41146e09feb48ddd13337",
   "mock_result_skip_title": "c38b46b19c1d5aa45f9d9c5d5f64c5b0dc378d913a96e70a760e5d64330d8020",
-  "mock_result_strongest": "8253d5bbe51decca11b32607967e2faf9ba0ffcd9aaa634d75a9e848229963f4",
+  "mock_result_strongest": "8b133fa879fd4448673839e5340fd3a450afee7efcd829cca08cb22a826a0005",
+  "mock_result_strongest_only": "2499f40e2ff8f466af953195212793c202ac61e10ccd0ed68bb4e3436d9d18eb",
   "mock_result_task_not_graded": "7f886803152b86042d8a0e82a6902ed4916b05ba3f4c95f3914b28232813676d",
   "mock_result_tests_together": "e2ed55bbd21134ee1b6cdf919d61c20722d48412b2b2a62b03f7fabd65252340",
   "mock_result_timing": "143df9274e3ba6d3f955a2a0a8cc3881ca4ee7776e2e5aca5eadd9fd41ae235c",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "ce4334d5bac93fae3d52d511f88b19ea1f317b8bd817c3e9dc160d53cc0cca68",
   "mock_result_up": "ff5304c8cbba6c4718b75201a8d4ace41f104453d8f8293fae88e41c6fef5f3b",
   "mock_result_up_from": "438ba797c5ad23dca69e11bbfe25e86680c02d2db3986d9ca0a03d99c7735bd8",
+  "mock_result_work_on": "ad2ef87bec06a73914523ef0922f001c0f6947dee2b08af2b0b867afae2e5a18",
   "mock_result_written_part": "077ff651df910cc9b93ff5b271e39b395c3d87303b6eb4179da8f777288a349e",
   "mock_result_wrong": "d516733f9ee6541402c1da1ee50780514beb974926cc388884cb72fe0fe19957",
   "mock_result_your_plan": "bdfa68278e9a8bf98bc658d7bc8800dc775c3cc988d8c191c689ecc3d66f4f44",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s w porównaniu z poprzednim egzaminem</string>
     <string name="mock_result_every_minimum">W tym egzaminie próbnym udało ci się osiągnąć wszystkie wymagane minima.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">Najlepszy wynik: %1$s. Do przećwiczenia: %2$s.</string>
+    <string name="mock_result_strongest">Najmocniejsza strona: %1$s. Popracuj nad: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Najmocniejsza strona: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Popracuj nad: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Zobacz szczegóły</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

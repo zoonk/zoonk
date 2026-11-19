@@ -22,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -295,13 +294,19 @@ private fun PhaseMark(phase: PlanPhase) {
     }
 }
 
+/** Main's `CurrentPhaseMark`: where the learner is in the plan, an ink dot in a faint ring of its ink. */
 @Composable
-private fun CurrentPhaseMark(description: String? = null) {
-    val color = MaterialTheme.colorScheme.tertiary
-    Canvas(Modifier.size(markSize()).semantics { if (description != null) contentDescription = description }) {
-        drawCircle(color, radius = size.minDimension * 0.4f, style = Stroke(2.dp.toPx()))
+private fun CurrentPhaseMark() {
+    val ink = MaterialTheme.colorScheme.onSurface
+    Canvas(Modifier.size(markSize())) {
+        drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = (CURRENT_DOT + CURRENT_RING).toPx())
+        drawCircle(ink, radius = CURRENT_DOT.toPx())
     }
 }
+
+private val CURRENT_DOT = 5.dp
+private val CURRENT_RING = 4.dp
+private const val CURRENT_RING_ALPHA = 0.15f
 
 @Composable
 internal fun ChapterMark(
@@ -352,7 +357,7 @@ internal fun ChapterMark(
 ) {
     when {
         isNext -> {
-            CurrentPhaseMark(stringResource(R.string.plan_up_next))
+            StatusMark(MarkStatus.Next, contentDescription = stringResource(R.string.plan_up_next))
         }
 
         !done && !writing && lessonsDone > 0 && lessonsTotal > 0 -> {

@@ -66,7 +66,7 @@ extension PlanPhase {
   var mark: StatusMark.Status {
     switch state {
     case .done: .done
-    case .current: .next
+    case .current: .currentPhase
     case .leftOut, .unfinished, .upcoming: .todo
     }
   }
@@ -244,7 +244,7 @@ struct PlanPhaseLabel: View {
 
   var body: some View {
     let title = Text(phase.title)
-      .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
+      .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
     ListRow(title, description: description) {
@@ -341,7 +341,7 @@ struct PlanChapterRow: View {
       LocalizedStringResource(
         "\(chapter.lessonsDone) of \(chapter.lessonsTotal) lessons done", table: "Plan",
         comment: "Spoken on a started chapter, before its title")
-    case .todo:
+    case .todo, .currentPhase:
       nil
     }
   }
@@ -563,7 +563,9 @@ struct PlanSyllabusSection: View {
 }
 
 /// Main's `PlanChoiceLine`: one sentence naming what the plan follows, with Change inline.
-private struct PlanChoiceLine: View {
+/// Main's `PlanChoiceLine`: which option of an exam's choice the plan follows, with Change as a
+/// link at its end.
+struct PlanChoiceLine: View {
   let line: String
   let change: () -> Void
 

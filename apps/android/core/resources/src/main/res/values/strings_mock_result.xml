@@ -15,6 +15,10 @@
     <string name="mock_result_every_minimum">You reached every minimum in this mock exam.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Strongest: %1$s. Work on: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Strongest: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Work on: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Details</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

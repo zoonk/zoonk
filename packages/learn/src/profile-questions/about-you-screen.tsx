@@ -24,15 +24,10 @@ import {
 } from "../_components/notice-card";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { LearnLink } from "../learn-link";
+import { ABOUT_YOU_GROUPS } from "./about-you-order";
 import { type ProfileQuestion } from "./profile-draft";
 
-const GROUPS = [
-  { id: "day", questions: ["work", "tools", "studies"] },
-  { id: "fun", questions: ["watch", "listen", "play", "read", "activities"] },
-  { id: "learn", questions: ["addressForm", "conditions", "learningSupport"] },
-] as const satisfies { id: string; questions: ProfileQuestion[] }[];
-
-type GroupId = (typeof GROUPS)[number]["id"];
+type GroupId = (typeof ABOUT_YOU_GROUPS)[number]["id"];
 
 export function aboutYouQuestionHref(question: ProfileQuestion): string {
   return `/settings/about-you/${question}`;
@@ -223,7 +218,7 @@ export function AboutYouScreen({
     <div className="flex flex-col gap-7" data-slot="about-you-screen">
       {!view.memoryEnabled && <MemoryOffNotice />}
 
-      {GROUPS.map((group) => (
+      {ABOUT_YOU_GROUPS.map((group) => (
         <PageSection aria-labelledby={`about-you-${group.id}`} key={group.id}>
           <PageSectionHeader>
             <PageSectionTitle id={`about-you-${group.id}`}>

@@ -1,6 +1,7 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { Page } from "@zoonk/learn/page";
+import { PageAsideNote } from "@zoonk/learn/side-detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -28,6 +29,7 @@ async function MemoryContent() {
   );
 }
 
+/** The copy's block holds its place beside the rows, so they don't narrow as the memory arrives. */
 function MemorySkeleton() {
   return (
     <div className="flex flex-col gap-7">
@@ -36,6 +38,11 @@ function MemorySkeleton() {
         <Skeleton className="h-3.5 w-20" />
         <Skeleton className="h-32 rounded-lg" />
       </div>
+      <PageAsideNote className="flex flex-col gap-3">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
+        <Skeleton className="max-w-column h-10 w-full" />
+      </PageAsideNote>
     </div>
   );
 }
