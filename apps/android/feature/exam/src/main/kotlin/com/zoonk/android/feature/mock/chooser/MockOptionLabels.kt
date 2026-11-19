@@ -5,8 +5,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.MockLeftOut
 import com.zoonk.api.models.MockOption

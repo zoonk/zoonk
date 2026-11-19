@@ -151,7 +151,11 @@ internal fun PracticeChooser(
                 {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         SectionHeader(stringResource(R.string.mock_chooser_last_mock))
-                        MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }, stacked = true)
+                        MockSummaryRow(
+                            last,
+                            onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } },
+                            stacked = true,
+                        )
                     }
                 }
             },

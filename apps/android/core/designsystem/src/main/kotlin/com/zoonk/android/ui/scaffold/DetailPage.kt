@@ -48,25 +48,26 @@ fun DetailPage(
     PageWithSupportingPane(
         modifier = modifier,
         panesTouch = true,
-        supportingPane = aside?.let {
-            {
-            Row {
-                VerticalDivider()
-                Column(Modifier.semantics { paneTitle = asideLabel }) {
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(padding),
-                        verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-                        content = it,
-                    )
-                    asideBar?.let { bar -> BottomBar { bar() } }
+        supportingPane =
+            aside?.let {
+                {
+                    Row {
+                        VerticalDivider()
+                        Column(Modifier.semantics { paneTitle = asideLabel }) {
+                            Column(
+                                Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(padding),
+                                verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
+                                content = it,
+                            )
+                            asideBar?.let { bar -> BottomBar { bar() } }
+                        }
+                    }
                 }
-            }
-            }
-        },
+            },
     ) { asideBeside ->
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
             LazyColumn(
