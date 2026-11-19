@@ -41,14 +41,16 @@ declare global {
 }
 
 /**
- * What a press can do to the page itself: `scrollbar` is the room a classic scrollbar takes (0
- * where it overlays, as on phones), `sideways` how far the page scrolls sideways.
+ * What a press can do to the page itself: `scrollbar` is the room a classic scrollbar takes from
+ * the page (0 where it overlays, as on phones), `sideways` how far the page scrolls sideways. The
+ * room is read from the root's box: a page that keeps the scrollbar's gutter is already that much
+ * narrower before the bar draws, while its `clientWidth` only drops once it does.
  */
 export function readFrame() {
   const root = document.documentElement;
 
   return {
-    scrollbar: innerWidth - root.clientWidth,
+    scrollbar: Math.round(innerWidth - root.getBoundingClientRect().width),
     sideways: root.scrollWidth - root.clientWidth,
   };
 }
