@@ -144,21 +144,18 @@ internal fun SubjectCoverage(
 enum class LegendDot { Studied, Known, New }
 
 /**
- * Main's `CoverageLegend`: what the coverage bar's parts are, in its order, in one set of words wherever the bar shows;
- * "Already knew" only where some lessons are [known]. The words beside the bar say the numbers, so TalkBack skips it.
+ * Main's `CoverageLegend`: what the coverage bar's parts are, in its order. The words beside the bar say the numbers,
+ * so TalkBack skips it.
  */
 @Composable
-fun CoverageLegend(
-    modifier: Modifier = Modifier,
-    known: Boolean = true,
-) {
+fun CoverageLegend(modifier: Modifier = Modifier) {
     FlowRow(
         modifier.clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
-        if (known) LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
+        LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
         LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))
     }
 }

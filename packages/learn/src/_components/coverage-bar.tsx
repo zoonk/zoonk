@@ -37,9 +37,9 @@ export function CoverageBar({
   );
 }
 
-type CoverageState = "known" | "new" | "studied" | "today";
+type CoverageState = "known" | "new" | "studied";
 
-const DEFAULT_STATES: readonly CoverageState[] = ["studied", "known", "new"];
+const STATES: readonly CoverageState[] = ["studied", "known", "new"];
 
 function LegendItem({ state }: { state: CoverageState }) {
   const t = useExtracted();
@@ -48,7 +48,6 @@ function LegendItem({ state }: { state: CoverageState }) {
     known: { className: "bg-muted-foreground/70", label: t("Already knew") },
     new: { className: "ring-muted-foreground/70 ring-1 ring-inset", label: t("New") },
     studied: { className: "bg-success", label: t("Studied") },
-    today: { className: "ring-success ring-1 ring-inset", label: t("Today") },
   };
 
   return (
@@ -59,20 +58,14 @@ function LegendItem({ state }: { state: CoverageState }) {
   );
 }
 
-export function CoverageLegend({
-  className,
-  states = DEFAULT_STATES,
-}: {
-  className?: string;
-  states?: readonly CoverageState[];
-}) {
+export function CoverageLegend({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
       className={cn("text-muted-foreground text-2xs flex items-center gap-3", className)}
       data-slot="coverage-legend"
     >
-      {states.map((state) => (
+      {STATES.map((state) => (
         <LegendItem key={state} state={state} />
       ))}
     </span>

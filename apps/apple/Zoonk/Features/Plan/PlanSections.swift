@@ -406,32 +406,8 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known, known: lessons.known), share: share)
-  }
-
-  private func studiedText(_ studied: Int, known: Int) -> String {
-    if known > 0 {
-      return [
-        studied > 0
-          ? String(
-            localized: "\(studied) studied", table: "Plan",
-            comment:
-              "Under the plan's progress percent, beside the lessons already known: the lessons studied"
-          )
-          : nil,
-        String(
-          localized: "\(known) already known", table: "Plan",
-          comment: "Under the plan's progress percent: lessons the learner already knew"),
-      ].compactMap(\.self).joinedFacts()
-    }
-
-    return studied == 0
-      ? String(
-        localized: "No lessons studied yet", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
-      : String(
-        localized: "\(studied) lessons studied", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile: the lessons studied")
+      detail: lessonsProgressLine(studied: lessons.done - lessons.known, known: lessons.known),
+      share: share)
   }
 
   /// The plan's state, and the lessons left once its date passed. The time a day has its own row
@@ -836,4 +812,31 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   }
 
   return days.map(symbol).formatted(.list(type: .and, width: .narrow))
+}
+
+/// The line under a goal's progress percent, on the Plan and on Today. The percent counts lessons
+/// studied and those the learner already knew, so once there are known ones the line names both.
+func lessonsProgressLine(studied: Int, known: Int) -> String {
+  if known > 0 {
+    return [
+      studied > 0
+        ? String(
+          localized: "\(studied) studied", table: "Plan",
+          comment:
+            "Under the plan's progress percent, beside the lessons already known: the lessons studied"
+        )
+        : nil,
+      String(
+        localized: "\(known) already known", table: "Plan",
+        comment: "Under the plan's progress percent: lessons the learner already knew"),
+    ].compactMap(\.self).joinedFacts()
+  }
+
+  return studied == 0
+    ? String(
+      localized: "No lessons studied yet", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
+    : String(
+      localized: "\(studied) lessons studied", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile: the lessons studied")
 }

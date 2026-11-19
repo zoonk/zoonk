@@ -19,9 +19,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
-import com.zoonk.android.feature.goalcontent.CoverageLegend
 import com.zoonk.android.feature.plan.lessonsStudied
-import com.zoonk.android.feature.plan.studiedLessonsLine
+import com.zoonk.android.feature.plan.lessonsProgressLine
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -82,15 +81,12 @@ private fun LessonsCard(
 
     ProgressCard(
         title = stringResource(R.string.today_progress),
-        detail = studiedLessonsLine(lessons.done, counts.known),
+        detail = lessonsProgressLine(lessons.done, counts.known),
         value = formatProgressShare(progress.value, currentLocale()),
         onOpenPlan = onOpenPlan,
         modifier = modifier,
     ) {
-        if (counts.total > 0) {
-            LessonsBar(counts)
-            CoverageLegend(known = counts.known > 0)
-        }
+        if (counts.total > 0) LessonsBar(counts)
     }
 }
 
@@ -171,7 +167,8 @@ private fun LessonsBar(counts: LessonCounts) {
         }
 
     Box(Modifier.semantics { summary?.let { contentDescription = it } }) {
-        CoverageBar(studied = counts.studied.toDouble() / counts.total, known = counts.known.toDouble() / counts.total)
+        // One fill for what's done, studied or already known, as the percent counts them.
+        CoverageBar(studied = (counts.studied + counts.known).toDouble() / counts.total)
     }
 }
 
