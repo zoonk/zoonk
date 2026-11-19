@@ -29,7 +29,7 @@ import { DayStepOpener } from "../../session/day-step-opener";
 import { type DayStep } from "../../session/session-types";
 import { useBlockTitle } from "../../session/use-block-copy";
 import { FoldRow, useMoreLabel } from "../../today/today-fold-row";
-import { UPCOMING_ROWS, getFoldedRows, isFinished, splitTodayQueue } from "../../today/today-queue";
+import { getFoldedRows, isFinished, splitTodayQueue } from "../../today/today-queue";
 import { useStepLabel } from "../../today/use-row-label";
 
 const REVEAL_TODAY_LIST_ID = "reveal-today-list";
@@ -201,7 +201,7 @@ export function RevealToday({
             ...done,
             ...before,
             ...(next ? [next] : []),
-            ...(moreOpen ? after : after.slice(0, UPCOMING_ROWS)),
+            ...(moreOpen ? after : after.slice(0, folded.shown)),
           ].map((block) => (
             <TodayRow
               block={block}
@@ -215,7 +215,7 @@ export function RevealToday({
         </ListGroup>
       </form>
 
-      {folded.count > 0 && (
+      {folded.folds && (
         <FoldRow
           controls={REVEAL_TODAY_LIST_ID}
           done={false}
