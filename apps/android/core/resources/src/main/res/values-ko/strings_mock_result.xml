@@ -100,7 +100,8 @@
   "mock_result_skip_line": "ac329d9ae802d22fa2cfca0eed64fb9a52a4d792391576baf8be7749381df57f",
   "mock_result_skip_them": "a3146d40a66994fe45c8838e1404ac34f80597eb3a881c55cb622065f7ebfe1b",
   "mock_result_skip_title": "017201943b011bd212c6a4e6ec2301f6fb1859ca2469b60a09768bd82643f702",
-  "mock_result_strongest": "8a1e605749f3be83ca954df36ab2f8d00a4ad3493e6d20100c3875c1984ea46b",
+  "mock_result_strongest": "aafd156e633a22ff4f61d0c7a73c69b30b6b406781fb5489dd3d1189231dd7f1",
+  "mock_result_strongest_only": "1894f5806a1a0d6891a4347035191c94de2dd737005422128c331f6a6598e854",
   "mock_result_task_not_graded": "331af5b3da95e2ddbc7c8b574827dfd0af0ecbb117c8280417d7177cd94c41db",
   "mock_result_tests_together": "a56de28073557dc0a4c025cd750ef5d806903cc618502a240132b8300b026d28",
   "mock_result_timing": "44bbb8b7b685ae18337955a14636cf2bed2ae21af29403dc7d07ed2e50614ea1",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "2e41e7c6ae94ef4d99175e00d702be8c2e28dd1f0c769cf2ef3021baab482135",
   "mock_result_up": "0ad3c8cbbcf6be5b187ddfb317889e6efddcf13122a28d45e40e96d627e6199d",
   "mock_result_up_from": "33a7de792f4342e7c3b0c59a0586d3138f285adecb2c5fe58d87a0c8d232e2d2",
+  "mock_result_work_on": "56e115e9d0735d3dddda239e2e0c5888e1f772b379add4d3714ba738a5a6115c",
   "mock_result_written_part": "4ae25f7bc4ec1362be12f1f80f31fcdcdf473f41ddf4819540d8f011eea28e7f",
   "mock_result_wrong": "1bd7a6cbaf4af81b3f1dd94e955dbd89dfa29d10495d21a7b8f769cc5df10d88",
   "mock_result_your_plan": "bde7ec63472d415fcc146d077bd104df1b50866c9e14bbe0486a7aa0bd05f278",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">지난 모의고사 대비 %1$s</string>
     <string name="mock_result_every_minimum">이번 모의고사에서 최소 점수 기준을 모두 충족했어요.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">가장 잘한 과목: %1$s. 더 공부할 과목: %2$s.</string>
+    <string name="mock_result_strongest">가장 잘한 부분: %1$s. 더 공부할 부분: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">가장 잘한 부분: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">더 공부할 부분: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">자세히 보기</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

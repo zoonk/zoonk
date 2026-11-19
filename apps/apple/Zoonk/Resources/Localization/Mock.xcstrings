@@ -10948,13 +10948,72 @@
         }
       }
     },
+    "Strongest: %@." : {
+      "comment" : "Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am stärksten: %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu punto más fuerte: %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton point fort : %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto forte: %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いちばん得意なのは%@です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 잘한 부분: %@."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najmocniejsza strona: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melhor desempenho: %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En güçlü alanın: %@."
+          }
+        }
+      }
+    },
     "Strongest: %@. Work on: %@." : {
       "comment" : "Under a mock exam's score: its best and worst subjects",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Am stärksten: %1$@. Mehr üben: %2$@."
+            "value" : "Am stärksten: %1$@. Hier solltest du üben: %2$@."
           }
         },
         "en" : {
@@ -10966,13 +11025,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo mejor: %1$@. Por mejorar: %2$@."
+            "value" : "Tu punto más fuerte: %1$@. Refuerza: %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Points forts : %1$@. À travailler : %2$@."
+            "value" : "Ton point fort : %1$@. À travailler : %2$@."
           }
         },
         "it" : {
@@ -10984,31 +11043,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最も得意な科目：%1$@。力を入れたい科目：%2$@。"
+            "value" : "いちばん得意なのは%1$@です。%2$@に力を入れましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가장 잘한 과목: %1$@. 더 공부할 과목: %2$@."
+            "value" : "가장 잘한 부분: %1$@. 더 공부할 부분: %2$@."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Najmocniejsze strony: %1$@. Do przećwiczenia: %2$@."
+            "value" : "Najmocniejsza strona: %1$@. Popracuj nad: %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponto forte: %1$@. Para melhorar: %2$@."
+            "value" : "Melhor desempenho: %1$@. Pratique: %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En iyi olduğun: %1$@. Çalışman gereken: %2$@."
+            "value" : "En güçlü alanın: %1$@. Çalışman gereken alan: %2$@."
           }
         }
       }
@@ -13887,6 +13946,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Öne çıkanlar"
+          }
+        }
+      }
+    },
+    "Work on: %@." : {
+      "comment" : "Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier solltest du üben: %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refuerza: %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À travailler : %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da migliorare: %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に力を入れましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 공부할 부분: %@."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popracuj nad: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pratique: %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışman gereken alan: %@."
           }
         }
       }

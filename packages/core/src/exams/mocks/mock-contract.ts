@@ -187,6 +187,9 @@ export const mockResultSchema = z
 
 export type MockResult = z.infer<typeof mockResultSchema>;
 
+/** The subjects the result names, each only where its numbers stand clear of every other subject's. */
+export type MockVerdict = { strongest: string | null; weakest: string | null };
+
 export type MockView = {
   adapt: MockAdaptView | null;
   blockId: string;
@@ -231,6 +234,7 @@ export type MockView = {
   status: "expired" | "finished" | "ready" | "running";
   timeZone: string | null;
   trueFalseLabels: TrueFalseLabels;
+  verdict: MockVerdict | null;
 };
 
 const anytimeMockChoiceSchema = z.object({

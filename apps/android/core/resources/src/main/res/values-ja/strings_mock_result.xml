@@ -100,7 +100,8 @@
   "mock_result_skip_line": "66e230db4fd9d7dd7d2f1063d04a6fc4151e37470109a3c1e8c25939b01c6376",
   "mock_result_skip_them": "cc316095962d9e1511a8c033246cd32e7120a6607ae55aea2b4b93ba43c1d440",
   "mock_result_skip_title": "72528bbcdda0a08cea2953ae53441d9869e21427a76c64a53968333212189932",
-  "mock_result_strongest": "0ad3746cf29cc5817f9aa3c038e787b4a302b422ec772411789ad40077f11bdc",
+  "mock_result_strongest": "021fb2dd8bd80daba6f692fe0ce442e0b4c7d5f1f5784de88a9bd5e8df41f8c8",
+  "mock_result_strongest_only": "4bb4b91ac6f334b13bdf84d4ad10ebd870805cecac7c8c7e0264d421d5f5ba8f",
   "mock_result_task_not_graded": "3679ca7e171f844882dce9f6b97be62f23d39ff28c91a03602faba8a24fb06a0",
   "mock_result_tests_together": "f32fd98bc80fc39b597588c8cb7391331a11337c73579dc8d1ca6ad427048d74",
   "mock_result_timing": "7c35af6fdbed0d4cbf3c3f5706d3e3c788147aeb2c56edc7f117b58ccf66c3be",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "0146f5f6a6c3d1a391e4bbd4fe9b4d720c35966742b5bce3848af368cbbada91",
   "mock_result_up": "85b2d9f40fa091b25115b3b70de8d4f213295782c33cc21300eaede456888bfc",
   "mock_result_up_from": "7ba34496369ac61f08440de2c0e9b86997c84f329bbd902a475c024862c1e7dc",
+  "mock_result_work_on": "e8d8c9ff0ff02b7915cb6a167453102afe157a8719771c5ecf07938cf8f1b6cb",
   "mock_result_written_part": "be4ecf48a201d95e3b3feb460cb485613822c02c979289902dc4abd066409c49",
   "mock_result_wrong": "fbbe5b7086da1f767ddf6c21b48a073fbfc94ee15fb95602884bd9d0d5f4bdf0",
   "mock_result_your_plan": "567c5e7800de7ed847ad191053121c1248b44c20e5254d3927a9419146d2f258",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s（前回比）</string>
     <string name="mock_result_every_minimum">この模試では、すべての最低基準を満たしました。</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">いちばんよくできたのは%1$sです。%2$sの学習に力を入れてください。</string>
+    <string name="mock_result_strongest">いちばん得意なのは%1$sです。%2$sに力を入れましょう。</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">いちばん得意なのは%1$sです。</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">%1$sに力を入れましょう。</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">詳細</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

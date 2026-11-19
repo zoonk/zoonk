@@ -34,12 +34,12 @@ import {
   hasPlanChange,
   usePlanChange,
 } from "./mock-result-plan";
-import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
+import { useMissedMinimum } from "./mock-result-points";
 import { ResultSection } from "./mock-result-section";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
 import { MockReview } from "./mock-review";
-import { getVerdictAreas } from "./mock-verdict";
+import { useMockVerdict } from "./use-mock-verdict";
 
 /** The number the result leads with, and the one line that names it. */
 function useScore(result: MockResult): { caption: string; value: string } {
@@ -88,20 +88,6 @@ function useScore(result: MockResult): { caption: string; value: string } {
       total: String(result.total),
     }),
   };
-}
-
-/** One sentence on what the number means for the learner's next days, or nothing. */
-function useVerdict(result: MockResult): string | null {
-  const t = useExtracted();
-  const areas = getVerdictAreas(result.areas);
-
-  if (reachedEveryMinimum(result.points)) {
-    return t("You reached every minimum in this mock exam.");
-  }
-
-  return areas
-    ? t("Strongest: {best}. Work on: {worst}.", { best: areas.best.name, worst: areas.worst.name })
-    : null;
 }
 
 function DeltaLine({ result }: { result: MockResult }) {
@@ -167,7 +153,7 @@ function ScoreStep({ result }: { result: MockResult }) {
   const { runner } = useMockScreen();
   const score = useScore(result);
   const missed = useMissedMinimum(result.points);
-  const verdict = useVerdict(result);
+  const verdict = useMockVerdict({ result, verdict: runner.view.verdict });
 
   return (
     <StepCard className="gap-8">

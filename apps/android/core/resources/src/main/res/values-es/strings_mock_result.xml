@@ -100,7 +100,8 @@
   "mock_result_skip_line": "cd97da35b74a5acaeb47405472babab802cea54ce56f2e23e237f85b9cd705b6",
   "mock_result_skip_them": "38a6aabbd412fa414fc18092d5b9ad7bc79ba9726d9182ff763ac240cc1db5aa",
   "mock_result_skip_title": "4964ffd337bd51e5242a74b363a943aad0fd224fe50f636c4223b28eacc01437",
-  "mock_result_strongest": "ff9e708e64339248af8057b22a7515929e3771d05bfe40f8c924e157034d865e",
+  "mock_result_strongest": "3343e30ee1311a8f26ec0a231a9f10a64d3611502c79cda693e2c809be21dc10",
+  "mock_result_strongest_only": "623c8b0eb1622c2f7eb79402b4084a873d432d9d7cdd3ae70ff99cdbabd5fb9e",
   "mock_result_task_not_graded": "843180ec3eb54d6c41088110087b6525a6d7dc4ab0f69b00356a25e5ade71f18",
   "mock_result_tests_together": "4707546c3aefae3f50296e07459c1ccc6438b1f91ac69f6951d7137c76a4702c",
   "mock_result_timing": "987b1cf583c9780c60f49fc10927efb839718f603ce166b1becefeaa630d8212",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "4406a61a9240c1c81f8ab6de96699d0395b4b76259f2be0602fa9326c903dd38",
   "mock_result_up": "9564df470c8322eb8bd929540300aad75a77f75e5b57378060c3ac1ff2918333",
   "mock_result_up_from": "95ea8d69f5e0eca12606a1cd70baf88d7e85ac8c594604c8e8b7806c2e47947f",
+  "mock_result_work_on": "3acb5c9c0d06e636094adbde5ccfe93d027fbc587a5acec1569f7702086beddf",
   "mock_result_written_part": "240e957f3610bd93c5baddfbcd0ed4b7cb00b39d526c4a39c319ca1ccc0de609",
   "mock_result_wrong": "8ed2f563dbf561fb21acb396deeb523e6ec87527797dcbcff0393b7b0f90ce96",
   "mock_result_your_plan": "037bc363fd551cacdf3bd13f2adafe7a7aadbbe3d83fb79711168c87ed3c21a3",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s desde el anterior</string>
     <string name="mock_result_every_minimum">Alcanzaste todos los puntajes mínimos en este simulacro.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">Mejor desempeño: %1$s. Por reforzar: %2$s.</string>
+    <string name="mock_result_strongest">Tu punto más fuerte: %1$s. Refuerza: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Tu punto más fuerte: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Refuerza: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Detalles</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
