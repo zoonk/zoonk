@@ -37,7 +37,6 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
@@ -90,7 +89,6 @@ internal fun ColumnScope.FocusTestCheckpoint(
         TestHeader(
             title = stringResource(if (focus != null) R.string.focustest_result_title else R.string.focustest_starting_point_title),
             description = answer?.let { outcomeLine(it) } ?: resultLine(focus, lessons, onPlan = plan != null),
-            eyebrow = { if (plan == null) SuccessEyebrow(stringResource(R.string.focustest_answers_saved)) else TestEyebrow() },
             announced = answer != null,
         )
         if (plan != null && answer != null) Undo(answer, plan)

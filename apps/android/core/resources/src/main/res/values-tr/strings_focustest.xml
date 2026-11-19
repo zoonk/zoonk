@@ -115,8 +115,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Bu konuların çoğuna henüz çalışmadın mı? Sorun değil. Burada durup öğrenmeye başlayabilirsin.</string>
     <string name="focustest_answers_saved_title">Cevapların kaydedildi</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Cevaplar kaydedildi</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">İşte odaklanman gereken branşlar</string>
     <string name="focustest_result_description">Cevaplarına ve branşların sınavındaki ağırlığına göre belirlendi. Odaklanmak hiçbir branşı plandan çıkarmaz.</string>

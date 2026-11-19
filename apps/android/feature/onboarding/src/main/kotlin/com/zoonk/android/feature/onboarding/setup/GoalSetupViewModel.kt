@@ -121,7 +121,6 @@ internal class GoalSetupViewModel(
     private val drafts: SetupDrafts?,
     private val handle: SavedStateHandle,
     goalId: String,
-    revealMoment: Boolean = false,
     private val doors: RevealDoors = RevealDoors(),
 ) : ViewModel() {
     /** This visit to the setup: what its saves lead to (a failure, lesson 1) shows only on it. */
@@ -145,12 +144,6 @@ internal class GoalSetupViewModel(
         profileDrafts = profileDrafts + (question to draft)
         savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
     }
-
-    init {
-        if (!handle.contains("revealMoment")) handle["revealMoment"] = revealMoment
-    }
-
-    fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
 
     /** The aim sheet's opening: a save asked from an earlier opening closes nothing in a later one. */
     val aimSheet = visit.opening()
@@ -452,7 +445,6 @@ internal class GoalSetupViewModel(
     ) {
         val goalId = view.goal.id.toString()
         val movedGoal = goalId != flow.goalId
-        if (step == OnboardingStep.SCHEDULE && flow.current == step) handle["revealMoment"] = true
         update(
             if (flow.current == step) {
                 flow.arriving(goalId, step, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN)

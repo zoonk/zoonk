@@ -116,8 +116,6 @@ internal fun ColumnScope.PlanRevealStep(
     onReveal: () -> Unit = {},
     saving: Boolean = false,
     saveFailed: Boolean = false,
-    playMoment: () -> Boolean = { false },
-    planRevealed: Boolean = false,
     onOpenStep: ((DayView, DayStep, Boolean) -> Unit)? = null,
     openingStep: Long? = null,
     failedStep: Long? = null,
@@ -191,7 +189,6 @@ internal fun ColumnScope.PlanRevealStep(
                             startStepFailed -> R.string.today_step_open_failed
                             else -> null
                         },
-                    playMoment = !planRevealed && remember { playMoment() },
                     onStart = {
                         val step = day?.steps?.firstOrNull { it.position == day.nextPosition && it.canOpen }
                         if (day != null && step != null && onOpenStep != null) {
@@ -372,7 +369,6 @@ private fun ColumnScope.RevealBody(
     isGuest: Boolean,
     starting: Boolean,
     startError: Int?,
-    playMoment: Boolean,
     onOpenStep: ((DayView, DayStep) -> Unit)? = null,
     openingStep: Long? = null,
     failedStep: Long? = null,
@@ -388,7 +384,7 @@ private fun ColumnScope.RevealBody(
     // Main's `RevealGlance`: the plan at a glance, in the pane beside today's lessons, or under them.
     val glance: @Composable () -> Unit = {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-            RevealReadouts(plan, goal, playMoment, today)
+            RevealReadouts(plan, goal, today)
             PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
             PaceLine(plan, goal.kind)
             NoticeDayLine(plan)
@@ -413,9 +409,9 @@ private fun ColumnScope.RevealBody(
     }
 
     SetupContent(aside = { RevealGlancePane(glance) }) {
-        RevealHero(goal, playMoment)
+        StepHeading(stringResource(R.string.warm_up_plan_ready), goal.displayName)
         reveal?.let { shown ->
-            shownToday?.let { RevealToday(it, shown.minutes, playMoment, onOpenStep, openingStep, failedStep) }
+            shownToday?.let { RevealToday(it, shown.minutes, onOpenStep, openingStep, failedStep) }
         }
 
         val started = studyDay?.steps?.any { it.isFinished } == true

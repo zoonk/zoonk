@@ -643,15 +643,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">誤り</string>
     <string name="onboarding_placement_see_plan">プランを見る</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="other">%d問に回答済み</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">今日の問題はここまでです</string>
-    <string name="onboarding_placement_enough_description">最初の数回の学習では、もう少し問題を出して学習計画を調整します。</string>
-    <string name="onboarding_placement_set_title">学習のスタート地点が決まりました</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">毎日の学習で、より正確になります。</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -698,7 +689,6 @@
     <string name="onboarding_reveal_reading_last">次回の試験の公式資料がまだ公開されていないため、前回の科目とトピックをもとに学習計画を立てます。新しい資料が公開されたらお知らせします。資料の読み込みには通常、数分かかります。</string>
     <string name="onboarding_reveal_reading_done_step">回答内容をもとにした学習計画</string>
     <string name="onboarding_reveal_reading_step">公式資料を読み込んでいます</string>
-    <string name="onboarding_reveal_created">学習計画を作成しました</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

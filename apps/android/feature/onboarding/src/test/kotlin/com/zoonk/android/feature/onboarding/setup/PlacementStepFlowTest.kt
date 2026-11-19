@@ -109,7 +109,7 @@ class PlacementStepFlowTest {
 
         assertEquals(2, api.placementAnswers.size)
         assertEquals(api.placementAnswers[0], api.placementAnswers[1])
-        rule.onNodeWithText("Your starting point is set").assertIsDisplayed()
+        rule.onNodeWithText("Your answers are saved").assertIsDisplayed()
     }
 
     @Test

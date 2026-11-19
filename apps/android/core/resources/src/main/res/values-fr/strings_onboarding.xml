@@ -649,17 +649,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Faux</string>
     <string name="onboarding_placement_see_plan">Voir le plan</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="one">%d question répondue</item>
-        <item quantity="many">%d questions répondues</item>
-        <item quantity="other">%d questions répondues</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">C’est assez de questions pour aujourd’hui</string>
-    <string name="onboarding_placement_enough_description">Tes premières séances te poseront quelques questions de plus pour affiner ton plan.</string>
-    <string name="onboarding_placement_set_title">Ton point de départ est défini</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">Il se précise chaque jour.</string>
     <string name="onboarding_placement_unavailable_title">On verra ce que tu sais pendant tes premiers jours</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -706,7 +695,6 @@
     <string name="onboarding_reveal_reading_last">Les documents de la prochaine édition ne sont pas encore disponibles. Ton plan suit donc les matières et les sujets de la dernière édition. Nous te préviendrons dès que les nouveaux documents seront disponibles. Cela prend généralement quelques minutes.</string>
     <string name="onboarding_reveal_reading_done_step">Ton plan, à partir de ce que tu nous as dit</string>
     <string name="onboarding_reveal_reading_step">Lecture des documents officiels</string>
-    <string name="onboarding_reveal_created">Plan créé</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

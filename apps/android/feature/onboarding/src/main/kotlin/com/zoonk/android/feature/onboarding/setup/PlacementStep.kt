@@ -68,7 +68,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
-import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.richtext.RichInlineText
@@ -192,8 +191,8 @@ internal fun ColumnScope.PlacementStep(
             }
         }
 
-        is PlacementPhase.Done -> {
-            PlacementDone(shown, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
+        PlacementPhase.Done -> {
+            PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
         }
     }
 }
@@ -565,36 +564,20 @@ private fun AnswerList(
     }
 }
 
+/** Main's `PlacementDone`: a test that's over and not saved yet; the title says it's done. */
 @Composable
 private fun ColumnScope.PlacementDone(
-    done: PlacementPhase.Done,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    when {
-        done.forToday -> {
-            PlacementOutcome(
-                eyebrow = pluralStringResource(R.plurals.onboarding_placement_answered, done.answered, done.answered),
-                title = stringResource(R.string.onboarding_placement_enough_title),
-                description = stringResource(R.string.onboarding_placement_enough_description),
-                pending = pending,
-                failed = failed,
-                onContinue = onContinue,
-            )
-        }
-
-        else -> {
-            PlacementOutcome(
-                eyebrow = pluralStringResource(R.plurals.onboarding_placement_answered, done.answered, done.answered),
-                title = stringResource(R.string.onboarding_placement_set_title),
-                description = stringResource(R.string.onboarding_placement_set_description),
-                pending = pending,
-                failed = failed,
-                onContinue = onContinue,
-            )
-        }
-    }
+    PlacementOutcome(
+        title = stringResource(R.string.focustest_answers_saved_title),
+        description = null,
+        pending = pending,
+        failed = failed,
+        onContinue = onContinue,
+    )
 }
 
 @Composable
@@ -604,7 +587,6 @@ internal fun ColumnScope.PlacementUnavailable(
     onContinue: () -> Unit,
 ) {
     PlacementOutcome(
-        eyebrow = null,
         title = stringResource(R.string.onboarding_placement_unavailable_title),
         description = null,
         pending = pending,
@@ -616,7 +598,6 @@ internal fun ColumnScope.PlacementUnavailable(
 
 @Composable
 private fun ColumnScope.PlacementOutcome(
-    eyebrow: String?,
     title: String,
     description: String?,
     pending: Boolean,
@@ -625,7 +606,6 @@ private fun ColumnScope.PlacementOutcome(
     action: String = stringResource(R.string.onboarding_placement_see_plan),
 ) {
     SetupContent {
-        eyebrow?.let { SuccessEyebrow(it) }
         OnboardingHeading(title, description)
         OnboardingActions {
             FinishFailed(failed)

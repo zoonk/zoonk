@@ -117,8 +117,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Nie znasz jeszcze większości tego materiału? Nic nie szkodzi. Możesz zakończyć test i zacząć naukę.</string>
     <string name="focustest_answers_saved_title">Twoje odpowiedzi są zapisane</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Zapisano odpowiedzi</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">Oto twoje priorytety</string>
     <string name="focustest_result_description">Na podstawie twoich odpowiedzi i tego, co najbardziej liczy się na egzaminie. Priorytety nie wykluczają żadnego przedmiotu z planu.</string>

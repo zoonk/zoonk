@@ -461,7 +461,7 @@ private fun Preparing(
             icon = R.drawable.ic_check,
             sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
         ) { main ->
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }, modifier = main) {
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
                 Text(stringResource(R.string.onboarding_see_plan))
             }
         }

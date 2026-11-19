@@ -115,8 +115,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Hast du das meiste davon noch nicht gelernt? Das ist okay. Du kannst hier aufhören und mit dem Lernen anfangen.</string>
     <string name="focustest_answers_saved_title">Deine Antworten sind gespeichert</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Antworten gespeichert</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">Darauf solltest du den Fokus legen</string>
     <string name="focustest_result_description">Grundlage sind deine Antworten und das, was in deiner Prüfung am meisten zählt. Durch den Fokus wird nie ein Fach gestrichen.</string>

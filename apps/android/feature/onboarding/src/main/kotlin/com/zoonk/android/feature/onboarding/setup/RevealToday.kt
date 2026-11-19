@@ -70,37 +70,11 @@ import java.time.LocalDate
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-internal val LocalRevealBuddy = compositionLocalOf { MomentBuddy(BuddyLook(), "") }
-
-/** Main's reveal header: "Plan created", the goal's name, and the buddy cheering beside it. */
-@Composable
-internal fun RevealHero(
-    goal: Goal,
-    play: Boolean,
-) {
-    val buddy = LocalRevealBuddy.current
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SuccessEyebrow(stringResource(R.string.onboarding_reveal_created), iconModifier = Modifier.revealSettle(play))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(goal.displayName, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium)
-            CelebrationScope(play) {
-                StandingBuddy(
-                    buddy.look,
-                    height = 80.dp,
-                    reaction = ActReaction(BuddyAct.Cheer, 3 * ZoonkMotion.BEAT_MILLIS),
-                    label = buddy.name,
-                )
-            }
-        }
-    }
-}
-
 /** Main's `RevealReadouts`: the plan's figures between two rules. */
 @Composable
 internal fun RevealReadouts(
     plan: Plan,
     goal: Goal,
-    play: Boolean,
     today: LocalDate,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -122,16 +96,8 @@ internal fun RevealReadouts(
             )
             val total = plan.revealPhases.sumOf { it.lessonsTotal }
             val done = plan.revealPhases.sumOf { it.lessonsDone }
-            val count = remember { Animatable(if (play) 0f else total.toFloat()) }
-            LaunchedEffect(total, play) {
-                if (play) {
-                    count.animateTo(total.toFloat(), tween(700, delayMillis = ZoonkMotion.BEAT_MILLIS, easing = ZoonkMotion.EaseOut))
-                } else {
-                    count.snapTo(total.toFloat())
-                }
-            }
             RevealReadout(
-                formatNumber(count.value.roundToLong().toDouble(), currentLocale()),
+                formatNumber(total.toDouble(), currentLocale()),
                 if (done >
                     0
                 ) {
@@ -203,7 +169,6 @@ private fun RevealReadout(
 internal fun RevealToday(
     day: DayView,
     minutes: Long,
-    play: Boolean,
     onOpenStep: ((DayView, DayStep) -> Unit)? = null,
     openingStep: Long? = null,
     failedStep: Long? = null,
@@ -242,7 +207,6 @@ internal fun RevealToday(
                                     stringResource(
                                         if (started) R.string.onboarding_reveal_up_next else R.string.onboarding_reveal_start_here,
                                     ),
-                                    Modifier.revealSettle(play, 2 * ZoonkMotion.BEAT_MILLIS),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
@@ -391,22 +355,3 @@ private fun revealItemTitle(item: PlanItem): String =
         PlanItem.Kind.CHECKPOINT, PlanItem.Kind.BOSS -> stringResource(R.string.onboarding_reveal_challenge)
         else -> item.title.ifBlank { stringResource(R.string.onboarding_reveal_more_lessons) }
     }
-
-@Composable
-private fun Modifier.revealSettle(
-    play: Boolean,
-    delayMillis: Int = 0,
-): Modifier {
-    val scale = remember { Animatable(if (play) 0.5f else 1f) }
-    LaunchedEffect(play) {
-        if (play && currentCoroutineContext()[MotionDurationScale]?.scaleFactor != 0f) {
-            scale.animateTo(1f, tween(650, delayMillis = delayMillis, easing = ZoonkMotion.EaseSpring))
-        } else {
-            scale.snapTo(1f)
-        }
-    }
-    return graphicsLayer {
-        scaleX = scale.value
-        scaleY = scale.value
-    }
-}

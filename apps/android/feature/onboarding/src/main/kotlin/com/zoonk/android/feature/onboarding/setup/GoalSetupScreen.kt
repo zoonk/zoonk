@@ -104,15 +104,11 @@ fun GoalSetupScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val buddy =
-        com.zoonk.android.feature.ceremonies
-            .momentBuddy(app)
     val placementReport = rememberSaveFailureReport(app, "placement-question")
     val levelTestReport = rememberSaveFailureReport(app, "level-test-question")
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
     CompositionLocalProvider(
-        LocalRevealBuddy provides buddy,
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it, app.sessions) },
         LocalSetupSpeech provides app.speech,
     ) {
@@ -153,7 +149,6 @@ fun GoalSetupScreen(
                 drafts,
                 createSavedStateHandle(),
                 route.goalId,
-                route.revealMoment,
                 RevealDoors(prepareToday, openRevealStep),
             )
         }
@@ -584,8 +579,6 @@ private fun ColumnScope.QuestionStep(
                 onOpenStep = openRevealStep?.let { { day, step, fromStart -> vm.openRevealStep(day, step, fromStart) } },
                 saving = vm.isSaving,
                 saveFailed = vm.saveFailed,
-                playMoment = vm::takeRevealMoment,
-                planRevealed = view.planRevealed,
                 today = store.revealToday[view.goal.id.toString()],
             )
         }

@@ -643,15 +643,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">틀려요</string>
     <string name="onboarding_placement_see_plan">계획 보기</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="other">%d문제에 답했어요</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">오늘은 이만큼만 풀어도 충분해요</string>
-    <string name="onboarding_placement_enough_description">처음 몇 번의 학습에서 문제를 조금 더 풀며 계획을 다듬어요.</string>
-    <string name="onboarding_placement_set_title">학습 시작점이 정해졌어요</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">매일 더 정확해져요.</string>
     <string name="onboarding_placement_unavailable_title">처음 며칠 동안 알고 있는 내용을 확인해 볼게요</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -698,7 +689,6 @@
     <string name="onboarding_reveal_reading_last">다음 시험의 공식 문서가 아직 나오지 않아 지난 시험의 과목과 주제를 바탕으로 계획을 세워요. 새 문서가 나오면 알려 드릴게요. 보통 몇 분 정도 걸려요.</string>
     <string name="onboarding_reveal_reading_done_step">알려 주신 내용에 맞춘 계획</string>
     <string name="onboarding_reveal_reading_step">공식 문서를 읽고 있어요</string>
-    <string name="onboarding_reveal_created">계획 완성</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

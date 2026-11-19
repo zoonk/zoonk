@@ -116,8 +116,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Tu n’as pas encore étudié la plupart de ces notions ? Ce n’est pas grave. Tu peux t’arrêter ici et commencer à apprendre.</string>
     <string name="focustest_answers_saved_title">Tes réponses sont enregistrées</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Réponses enregistrées</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">Voici tes priorités</string>
     <string name="focustest_result_description">D’après tes réponses et ce qui compte le plus à ton examen. Définir des priorités ne supprime aucune matière.</string>

@@ -218,16 +218,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
     <string name="onboarding_placement_see_plan">See plan</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="one">%d question answered</item>
-        <item quantity="other">%d questions answered</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">That\'s enough questions for today</string>
-    <string name="onboarding_placement_enough_description">Your first sessions ask a few more to fine-tune your plan.</string>
-    <string name="onboarding_placement_set_title">Your starting point is set</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">It gets more accurate every day.</string>
     <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
@@ -276,7 +266,6 @@
     <string name="onboarding_reveal_reading_last">The next edition\'s documents aren\'t out yet, so your plan follows the last one\'s subjects and topics. We\'ll tell you when the new ones are out. This usually takes a few minutes.</string>
     <string name="onboarding_reveal_reading_done_step">Your plan, from what you told us</string>
     <string name="onboarding_reveal_reading_step">Reading the official documents</string>
-    <string name="onboarding_reveal_created">Plan created</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

@@ -481,7 +481,7 @@ internal fun completionMainAction(
                     {
                         state.completion?.result?.planReveal?.let {
                             exits.replace(
-                                AppRoute.GoalSetup(it.goalId.toString(), revealMoment = true),
+                                AppRoute.GoalSetup(it.goalId.toString()),
                             )
                         }
                     }

@@ -211,6 +211,16 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
+    fun theTitleSaysThePlanIsReadyWithNoChipOverIt() {
+        show(reveal = revealTodayOf())
+        navigator.open(SETUP)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your plan is ready").assertIsDisplayed()
+        rule.onNodeWithText("Plan created").assertDoesNotExist()
+    }
+
+    @Test
     fun startOpensTheTaggedStepThroughTheRowCallback() {
         val reveal = revealWithNextPosition(1)
         var opened: Pair<DayView, DayStep>? = null
@@ -380,7 +390,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Plan created").assertIsDisplayed()
+        rule.onNodeWithText("Adjust").assertIsDisplayed()
     }
 
     @Test
@@ -392,7 +402,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Plan created").assertIsDisplayed()
+        rule.onNodeWithText("Adjust").assertIsDisplayed()
     }
 
     @Test
@@ -409,7 +419,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Plan created").assertIsDisplayed()
+        rule.onNodeWithText("Adjust").assertIsDisplayed()
     }
 
     @Test
@@ -431,7 +441,7 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Your plan is ready").assertIsDisplayed()
         rule.onNodeWithText("Here's the answer").assertExists()
         rule.onNodeWithText("Next guess").assertDoesNotExist()
-        rule.onNodeWithText("Plan created").assertDoesNotExist()
+        rule.onNodeWithText("Adjust").assertDoesNotExist()
     }
 
     @Test
@@ -449,7 +459,7 @@ class PlanRevealStepFlowTest {
         // The plan shows once a second passes after that tap, so a second tap can't land on it.
         rule.mainClock.advanceTimeBy(1_100)
 
-        rule.onNodeWithText("Plan created").assertIsDisplayed()
+        rule.onNodeWithText("Adjust").assertIsDisplayed()
     }
 
     private companion object {

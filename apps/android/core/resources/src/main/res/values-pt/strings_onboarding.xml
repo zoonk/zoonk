@@ -649,17 +649,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Errado</string>
     <string name="onboarding_placement_see_plan">Ver plano</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="one">%d pergunta respondida</item>
-        <item quantity="many">%d perguntas respondidas</item>
-        <item quantity="other">%d perguntas respondidas</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">Você já respondeu o suficiente por hoje</string>
-    <string name="onboarding_placement_enough_description">Nas suas primeiras sessões, você vai responder a mais algumas perguntas para ajustar seu plano.</string>
-    <string name="onboarding_placement_set_title">Seu ponto de partida está definido</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">Fica mais preciso a cada dia.</string>
     <string name="onboarding_placement_unavailable_title">A gente vê o que você já sabe nos seus primeiros dias</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -706,7 +695,6 @@
     <string name="onboarding_reveal_reading_last">Os documentos da próxima edição ainda não saíram, então seu plano segue as matérias e os tópicos da última edição. A gente te avisa quando os novos documentos saírem. Isso costuma levar alguns minutos.</string>
     <string name="onboarding_reveal_reading_done_step">Seu plano, com base no que você contou</string>
     <string name="onboarding_reveal_reading_step">Lendo os documentos oficiais</string>
-    <string name="onboarding_reveal_created">Plano criado</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

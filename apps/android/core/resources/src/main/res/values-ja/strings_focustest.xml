@@ -114,8 +114,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">まだ学んでいない内容が多いですか？大丈夫です。ここでテストを終えて、学習を始められます。</string>
     <string name="focustest_answers_saved_title">回答を保存しました</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">回答を保存しました</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">重点的に学ぶ科目はこちら</string>
     <string name="focustest_result_description">回答内容と試験での重要度をもとに提案しています。重点を置いても、それを理由に科目を学習計画から外すことはありません。</string>

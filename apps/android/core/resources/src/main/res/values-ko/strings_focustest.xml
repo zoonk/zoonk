@@ -114,8 +114,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">아직 공부하지 않은 내용이 대부분인가요? 괜찮아요. 여기서 멈추고 학습을 시작해도 돼요.</string>
     <string name="focustest_answers_saved_title">답변이 저장됐어요</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">답변 저장됨</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">이 과목에 집중해 보세요</string>
     <string name="focustest_result_description">답변과 시험에서 비중이 큰 부분을 바탕으로 추천했어요. 집중을 이유로 과목을 제외하지 않아요.</string>

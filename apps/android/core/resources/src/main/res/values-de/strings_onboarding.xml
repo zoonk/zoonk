@@ -646,16 +646,6 @@
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Falsch</string>
     <string name="onboarding_placement_see_plan">Plan ansehen</string>
-    <plurals name="onboarding_placement_answered">
-        <item quantity="one">%d Frage beantwortet</item>
-        <item quantity="other">%d Fragen beantwortet</item>
-    </plurals>
-    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
-    <string name="onboarding_placement_enough_title">Das sind genug Fragen für heute</string>
-    <string name="onboarding_placement_enough_description">In deinen ersten Lerneinheiten stellen wir noch ein paar Fragen, um deinen Plan genauer abzustimmen.</string>
-    <string name="onboarding_placement_set_title">Dein Ausgangspunkt steht fest</string>
-    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
-    <string name="onboarding_placement_set_description">Wir schätzen deinen Ausgangspunkt jeden Tag genauer ein.</string>
     <string name="onboarding_placement_unavailable_title">In deinen ersten Tagen sehen wir, was du schon weißt</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -702,7 +692,6 @@
     <string name="onboarding_reveal_reading_last">Die Unterlagen für die nächste Prüfung sind noch nicht veröffentlicht. Deshalb richtet sich dein Plan nach den Fächern und Themen der letzten Prüfung. Wir sagen dir Bescheid, wenn die neuen Unterlagen da sind. Das dauert normalerweise ein paar Minuten.</string>
     <string name="onboarding_reveal_reading_done_step">Dein Plan auf Grundlage deiner Angaben</string>
     <string name="onboarding_reveal_reading_step">Wir lesen die offiziellen Unterlagen</string>
-    <string name="onboarding_reveal_created">Plan erstellt</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->

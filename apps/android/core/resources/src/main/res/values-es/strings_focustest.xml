@@ -116,8 +116,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">¿Aún no estudiaste la mayor parte de esto? No pasa nada. Puedes parar aquí y empezar a aprender.</string>
     <string name="focustest_answers_saved_title">Tus respuestas están guardadas</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Respuestas guardadas</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">En qué enfocarte</string>
     <string name="focustest_result_description">Según tus respuestas y lo que más cuenta en tu examen. Enfocarte no elimina ninguna materia.</string>

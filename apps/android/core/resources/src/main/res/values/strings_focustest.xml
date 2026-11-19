@@ -40,8 +40,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>
     <string name="focustest_answers_saved_title">Your answers are saved</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Answers saved</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">Here\'s where to focus</string>
     <string name="focustest_result_description">Based on your answers and what counts most in your exam. Focusing never removes a subject.</string>
