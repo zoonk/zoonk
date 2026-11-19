@@ -102,6 +102,7 @@
     "./logbook": "./src/week/logbook-screen.tsx",
     "./about-you": "./src/profile-questions/about-you-screen.tsx",
     "./about-you/question": "./src/profile-questions/about-you-question-screen.tsx",
+    "./about-you/order": "./src/profile-questions/about-you-order.ts",
     "./memory": "./src/memory/memory-screen.tsx",
     "./memory-updated": "./src/memory/memory-updated.tsx",
     "./messages": "./src/messages.ts",

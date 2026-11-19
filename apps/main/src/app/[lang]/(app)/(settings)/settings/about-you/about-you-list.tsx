@@ -1,20 +1,22 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getAppLocale } from "@/i18n/locale";
 import { getProfileQuestions } from "@zoonk/core/profile/questions/get";
+import { firstOpenAboutYouQuestion } from "@zoonk/learn/about-you/order";
 import { Page } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../../_components/protected-section";
 import { AboutYouCurrentScreen } from "./about-you-split";
-import { firstOpenQuestion } from "./first-open-question";
 
 async function AboutYouContent() {
   const view = await getProfileQuestions({ locale: await getAppLocale() });
 
   return (
     <ProtectedSection allowGuests next="/settings/about-you">
-      {view && <AboutYouCurrentScreen fallback={firstOpenQuestion(view)?.id ?? null} view={view} />}
+      {view && (
+        <AboutYouCurrentScreen fallback={firstOpenAboutYouQuestion(view)?.id ?? null} view={view} />
+      )}
     </ProtectedSection>
   );
 }
