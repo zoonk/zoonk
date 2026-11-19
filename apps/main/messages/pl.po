@@ -3181,7 +3181,7 @@ msgstr "rocznie"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "x0atec"
 msgid "That's {amount} a month."
-msgstr ""
+msgstr "To {amount} miesięcznie."
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"

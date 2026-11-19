@@ -3181,7 +3181,7 @@ msgstr "yıllık"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "x0atec"
 msgid "That's {amount} a month."
-msgstr ""
+msgstr "Bu da ayda {amount} ediyor."
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"

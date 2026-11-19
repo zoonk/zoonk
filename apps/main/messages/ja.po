@@ -3181,7 +3181,7 @@ msgstr "／年"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "x0atec"
 msgid "That's {amount} a month."
-msgstr ""
+msgstr "1か月あたり{amount}です。"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"

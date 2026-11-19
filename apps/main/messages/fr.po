@@ -3181,7 +3181,7 @@ msgstr "par an"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "x0atec"
 msgid "That's {amount} a month."
-msgstr ""
+msgstr "Soit {amount} par mois."
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"
