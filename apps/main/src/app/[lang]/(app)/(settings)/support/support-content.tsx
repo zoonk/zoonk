@@ -6,6 +6,15 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { FollowUs } from "../_components/follow-us";
 
+/** From 72rem whoever has a session finds it in the section's aside instead. */
+function FollowUsOnPage() {
+  return (
+    <div className="contents min-[72rem]:in-data-signed-in:hidden">
+      <FollowUs />
+    </div>
+  );
+}
+
 async function ContactSupport({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
@@ -31,12 +40,12 @@ export async function SupportContent() {
       <Suspense
         fallback={
           <FeedbackFormSkeleton>
-            <FollowUs />
+            <FollowUsOnPage />
           </FeedbackFormSkeleton>
         }
       >
         <ContactSupport>
-          <FollowUs />
+          <FollowUsOnPage />
         </ContactSupport>
       </Suspense>
     </Page>
