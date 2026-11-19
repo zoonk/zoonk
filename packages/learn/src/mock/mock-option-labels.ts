@@ -1,7 +1,6 @@
 "use client";
 
 import { type MockOptionView } from "@zoonk/core/exams/mocks/contract";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 
@@ -55,9 +54,6 @@ export function useMockOptionDetail() {
 
 const ESTIMATE_STEP_MINUTES = 5;
 
-/** Keeps a fact on one line, so a narrow row breaks only between its facts. */
-const NO_BREAK_SPACE = "\u00A0";
-
 /**
  * How long learners usually take, to the nearest five minutes, when that's under the time limit.
  * Core gives the limit itself when no estimate covers the whole mock (an essay, too few answers).
@@ -88,17 +84,17 @@ export function useMockOptionSize() {
     });
 }
 
-/** The chooser's row: the size, then how long learners usually take when it's less. */
-export function useMockOptionSizeAndPace() {
+/** The chooser's row's facts: the size, then how long learners usually take when it's less. */
+export function useMockOptionSizeFacts() {
   const t = useExtracted();
   const duration = useFormatDuration();
   const size = useMockOptionSize();
 
-  return (option: Pick<MockOptionView, "estimatedMinutes" | "minutes" | "questions">): string => {
+  return (option: Pick<MockOptionView, "estimatedMinutes" | "minutes" | "questions">): string[] => {
     const usual = usualMinutes(option);
 
     return usual === null
-      ? size(option)
+      ? [size(option)]
       : [
           size(option),
           t({
@@ -107,8 +103,6 @@ export function useMockOptionSizeAndPace() {
             message: "usually {time}",
             values: { time: duration(usual) },
           }),
-        ]
-          .map((fact) => fact.replaceAll(" ", NO_BREAK_SPACE))
-          .join(FACT_SEPARATOR);
+        ];
   };
 }

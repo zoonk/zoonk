@@ -387,31 +387,30 @@ private struct MockChooser: View {
 
   /// The size, then how long learners usually take when that's under the limit (main's
   /// `useMockOptionSizeAndPace`).
-  private func optionSize(_ option: MockOption) -> String {
+  private func optionSize(_ option: MockOption) -> [String] {
     let size = String(
       localized:
         "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
       table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
 
     guard let usual = MockLabels.usualMinutes(option) else {
-      return size
+      return [size]
     }
 
     let pace = String(
       localized: "usually \(MockLabels.duration(minutes: usual))", table: "Mock",
       comment: "After a mock exam's size and time limit: about how long learners usually take.")
 
-    // Each fact stays on one line, so a narrow row breaks only between them.
-    return [size, pace].map { $0.replacing(" ", with: "\u{00A0}") }.joinedFacts()
+    return [size, pace]
   }
 
   /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or before the row's
   /// mark, and the mark at the end, empty until the row is picked, so the rows read as choices.
   private func choiceRow(
-    isPicked: Bool, title: String, detail: String?, trailing: String,
+    isPicked: Bool, title: String, detail: String?, trailing: [String],
     action: @escaping () -> Void
   ) -> some View {
-    let size = Text(trailing)
+    let size = FactSegments(trailing)
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
 

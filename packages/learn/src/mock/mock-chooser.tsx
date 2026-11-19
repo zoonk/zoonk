@@ -6,13 +6,14 @@ import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 import {
   useMockOptionDetail,
   useMockOptionName,
-  useMockOptionSizeAndPace,
+  useMockOptionSizeFacts,
 } from "./mock-option-labels";
 import { MockShortDialog } from "./mock-short-dialog";
 
@@ -33,12 +34,12 @@ function useMockChoices({
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
-  const size = useMockOptionSizeAndPace();
+  const sizeFacts = useMockOptionSizeFacts();
 
   return options.map((option) => ({
     description: detail({ option, severalDays }) || undefined,
     label: name({ option, severalDays }),
-    trailing: size(option),
+    trailing: <FactSegments facts={sizeFacts(option)} />,
     value: getMockOptionKey(option),
   }));
 }
