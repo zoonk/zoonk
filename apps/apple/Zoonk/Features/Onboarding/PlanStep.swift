@@ -133,9 +133,7 @@ enum PlanNext {
         "See it whenever you're ready.", table: "Onboarding",
         comment: "Under \"Your plan is ready\" when the plan shows next")
     case .timeQuestion:
-      LocalizedStringResource(
-        "One last question, then you'll see it.", table: "Onboarding",
-        comment: "Under \"Your plan is ready\" when the time question comes before the plan")
+      LocalizedStringResource("You'll see it when you finish setting up.", table: "Onboarding")
     }
   }
 

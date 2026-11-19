@@ -9591,9 +9591,9 @@ msgstr "준비되면 언제든 확인해 보세요."
 
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-msgctxt "TTJuzU"
-msgid "One last question, then you'll see it."
-msgstr "마지막 질문에 답하면 계획을 볼 수 있어요."
+msgctxt "Rfs90n"
+msgid "You'll see it when you finish setting up."
+msgstr "설정을 마치면 계획을 확인할 수 있어요."
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"

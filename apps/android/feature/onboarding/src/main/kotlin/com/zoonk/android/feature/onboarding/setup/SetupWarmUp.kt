@@ -139,7 +139,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
                 hold.holding -> {
                     if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
                         Text(
-                            stringResource(R.string.warm_up_plan_ready_one_question),
+                            stringResource(R.string.warm_up_plan_ready_after_setup),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

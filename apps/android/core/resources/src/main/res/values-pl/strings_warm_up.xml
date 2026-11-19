@@ -9,7 +9,7 @@
   "warm_up_guess_hint": "75699a442641ff2544e6d6be94706cf1e0d7195c2c6dd17a7ac7f0bed183b725",
   "warm_up_next": "83c9e2bb47134909235c93084d500727869216c537d5a8fbd4a41bb050a1cba3",
   "warm_up_plan_ready": "07c4464cf9e041ae4f34234861616e8a17ffb57f0ee3ef6bc3c39629e702740a",
-  "warm_up_plan_ready_one_question": "0d9ff5330cdbd9248a9839e704fa85fdfa1f20f0fc5b11c21c085ca584eab670",
+  "warm_up_plan_ready_after_setup": "8fa01213b2f9f61066d0aa4f2ced8a3fbd82d238dc2fd8e4ff057f11e62678ac",
   "warm_up_plan_ready_whenever": "c0f06a9be492af0fe597749082b07536c683e7734c05501f58745305b0b7856c",
   "warm_up_plan_waiting": "e865dd58074607df0a89394d48655797d9700752b32168a3ef995d1840607f40",
   "warm_up_play_quiz": "a84fde706234aef8d25b8315ab1472fecdb9401b0064e854858e06f0c06bf482",
@@ -32,8 +32,7 @@
     <string name="warm_up_guess_hint">To tylko zabawa. Odpowiedzi nie wliczają się do wyniku.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Twój plan jest gotowy</string>
-    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
-    <string name="warm_up_plan_ready_one_question">Jeszcze jedno pytanie i zobaczysz plan.</string>
+    <string name="warm_up_plan_ready_after_setup">Zobaczysz go, gdy skończysz konfigurację.</string>
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">Zobacz go, kiedy chcesz.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->

@@ -22,7 +22,7 @@ export function PlanReadyHeading({ next }: { next: PlanNext }) {
       description={
         next === "plan"
           ? t("See it whenever you're ready.")
-          : t("One last question, then you'll see it.")
+          : t("You'll see it when you finish setting up.")
       }
       title={t("Your plan is ready")}
     />

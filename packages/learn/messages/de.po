@@ -9591,9 +9591,9 @@ msgstr "Schau ihn dir an, wenn du bereit bist."
 
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-msgctxt "TTJuzU"
-msgid "One last question, then you'll see it."
-msgstr "Nur noch eine Frage, dann siehst du ihn."
+msgctxt "Rfs90n"
+msgid "You'll see it when you finish setting up."
+msgstr "Du siehst es, wenn du mit der Einrichtung fertig bist."
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"

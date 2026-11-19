@@ -9591,9 +9591,9 @@ msgstr "Zobacz go, kiedy chcesz."
 
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-msgctxt "TTJuzU"
-msgid "One last question, then you'll see it."
-msgstr "Jeszcze jedno pytanie i zobaczysz plan."
+msgctxt "Rfs90n"
+msgid "You'll see it when you finish setting up."
+msgstr "Zobaczysz go, gdy skończysz konfigurację."
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"

@@ -9591,9 +9591,9 @@ msgstr "Hazır olduğunda planına göz atabilirsin."
 
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-msgctxt "TTJuzU"
-msgid "One last question, then you'll see it."
-msgstr "Son bir soru kaldı, sonra planını göreceksin."
+msgctxt "Rfs90n"
+msgid "You'll see it when you finish setting up."
+msgstr "Kurulumu tamamlayınca göreceksin."
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"

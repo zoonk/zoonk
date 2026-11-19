@@ -9,7 +9,7 @@
   "warm_up_guess_hint": "0672dad56d7ba6722154e5d23cd3f9c7a9d6314318c163e6159345d671f7c24d",
   "warm_up_next": "d0158be36da63d97113f14bc49b8113e74ada446d12eb642389105ea4004e575",
   "warm_up_plan_ready": "2421219dd41f631bde1c1c28349cd70d23bfac2ec9d57e739c2648007f79d587",
-  "warm_up_plan_ready_one_question": "389cfece76a0c2ec43f232d6e72f1d6b875a163ea00f53e341fa2a3bc008bc8f",
+  "warm_up_plan_ready_after_setup": "09f52add6fbc23d3ada24c1ef1469a930a00d55ea6f8d9a8179b013869ecc929",
   "warm_up_plan_ready_whenever": "ff7f4907ecc4d89abcc91f11995f07fbefaa8fea83519e6e9e3adec05cce750e",
   "warm_up_plan_waiting": "aa80dfdd0d7d52c739886454261a3b025bddb00ddcb671a1adf12f7a0100799d",
   "warm_up_play_quiz": "8db098fbc4d7cecbfa0a638a52efd992704976601cd4559452f6aab2971c1035",
@@ -32,8 +32,7 @@
     <string name="warm_up_guess_hint">Sadece eğlence için. Cevapların hesaba katılmaz.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Planın hazır</string>
-    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
-    <string name="warm_up_plan_ready_one_question">Son bir sorudan sonra planını göreceksin.</string>
+    <string name="warm_up_plan_ready_after_setup">Kurulumu tamamlayınca göreceksin.</string>
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">Hazır olduğunda planına bakabilirsin.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->

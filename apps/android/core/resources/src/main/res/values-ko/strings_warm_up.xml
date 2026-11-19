@@ -9,7 +9,7 @@
   "warm_up_guess_hint": "fb79efca7262c23c579870177affcb1d99368bc2663f4160e02825e9e864a303",
   "warm_up_next": "bf2d83e99c5e4a014213e11a209b4b62021f456725fab29dc09750f2266ee52e",
   "warm_up_plan_ready": "d5d103ee65a8d8f781fa913cb8b8911bdc8ce4e499612093ef4343fd0ac4b114",
-  "warm_up_plan_ready_one_question": "ea6529bbf03573824d1237bbb4ce86fe667bf94c3c3119034be57d014c7349b4",
+  "warm_up_plan_ready_after_setup": "1f5077a48d79d2f62df16587ec0abfd31f8bb5385d6c14081679e5afd14d6450",
   "warm_up_plan_ready_whenever": "3f41b727071dc937f1b8f5357c15a6fd5c15f6f7e25900d6b912951f49089a38",
   "warm_up_plan_waiting": "5fa1d597d6fce291d3f86522edc7187a1872fa711deca38c36a370080e88e6d8",
   "warm_up_play_quiz": "2e61ebc6b87d5c44de650cba5bc319b84dd369f77aa9491424d7b188b69f1d13",
@@ -32,8 +32,7 @@
     <string name="warm_up_guess_hint">재미로 풀어 보세요. 학습 결과에는 반영되지 않아요.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">계획이 준비됐어요</string>
-    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
-    <string name="warm_up_plan_ready_one_question">질문 하나에만 더 답하면 계획을 볼 수 있어요.</string>
+    <string name="warm_up_plan_ready_after_setup">설정을 마치면 계획을 확인할 수 있어요.</string>
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">준비되면 언제든 확인해 보세요.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->

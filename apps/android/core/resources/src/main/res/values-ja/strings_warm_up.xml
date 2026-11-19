@@ -9,7 +9,7 @@
   "warm_up_guess_hint": "74ea0b6203bc14531e9ad82a286e93eed6cf962975d7db2c6d26a77cddf53789",
   "warm_up_next": "8035b4031aed63ddb042195ffbf9612d2ee2f81677354f871ded3fda369dc16b",
   "warm_up_plan_ready": "0087789b7978eb2ae8560aae375b754f65fe949e7059dde32abb8a996e1abff4",
-  "warm_up_plan_ready_one_question": "34fd26b6c23697b5fd845a37056214382cd0fa961cfadbf53688bd9da18b0445",
+  "warm_up_plan_ready_after_setup": "f8afaa6264121d6f4d5d54c18223bf075171a7c9c013c60bec5d404e81225256",
   "warm_up_plan_ready_whenever": "897677cf56baa4a28bb5eb0868315bd5aaad416adf2fc6e9ff77f84d23ebbdd5",
   "warm_up_plan_waiting": "26d19ad5722cf08421adf9e228a406cd5df7cea4dc9b8b25e38275d85b8439e2",
   "warm_up_play_quiz": "573cfff63dd9c76c2a01dcdeca14fe5dd820cd740eba7b62f2eb121cef0e3cbb",
@@ -32,8 +32,7 @@
     <string name="warm_up_guess_hint">気軽にどうぞ。答えは成績に影響しません。</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">学習計画ができました</string>
-    <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
-    <string name="warm_up_plan_ready_one_question">あと1問答えると、学習計画を見られます。</string>
+    <string name="warm_up_plan_ready_after_setup">設定が終わると表示されます。</string>
     <!-- Under "Your plan is ready" on the step that shows the plan. -->
     <string name="warm_up_plan_ready_whenever">好きなときに見られます。</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
