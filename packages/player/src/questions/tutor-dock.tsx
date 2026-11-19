@@ -1,7 +1,7 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import { TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
+import { TASK_ASIDE_PLACE_CLASS, TASK_GUTTER_CLASS } from "@zoonk/learn/task-layout";
 import { BOTTOM_BAR_ROOM_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Empty } from "@zoonk/ui/components/empty";
@@ -197,7 +197,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className={cn("bg-background px-6", BOTTOM_BAR_ROOM_CLASS)}>
+        <div className={cn("bg-background px-6", TASK_GUTTER_CLASS, BOTTOM_BAR_ROOM_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>

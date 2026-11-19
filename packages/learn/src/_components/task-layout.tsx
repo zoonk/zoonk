@@ -10,11 +10,13 @@ export const TASK_COLUMN_CLASS =
   "max-w-column mx-auto w-full px-[16px] in-data-[slot=task-body]:px-0";
 
 /**
- * A bar's buttons keep the task's gutter at their sides: 16px, and 24px from `lg`. Named as the
- * row's `--page-gutter`, so the bar's note above it takes the same sides.
+ * A task's gutter: 16px, and 24px from `lg`, the app frame's on a computer. Set on the bar's row and
+ * on what sits level with it, never above the bar, which would pull it out by its margin.
  */
-const TASK_BAR_ROW_CLASS =
-  "max-w-column mx-auto w-full [--page-gutter:16px] lg:max-w-none lg:[--page-gutter:24px]";
+export const TASK_GUTTER_CLASS = "[--page-gutter:16px] lg:[--page-gutter:24px]";
+
+/** The bar's row on the task's column: the gutter at its sides and over and under its buttons. */
+const TASK_BAR_ROW_CLASS = cn("max-w-column mx-auto w-full lg:max-w-none", TASK_GUTTER_CLASS);
 
 export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -88,7 +90,7 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
- * `--task-aside-bottom` the action bar's row (77px), or the buddy's dock when it's taller.
+ * `--task-aside-bottom` the action bar's row (93px), or the buddy's dock when it's taller.
  * Lay out what depends on the aside with the `with-aside` and `without-aside` variants, not `lg`:
  * once the learner collapses it from the header (`TaskHeaderSide`), the task lays out as below `lg`.
  */
@@ -96,7 +98,7 @@ export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAside
   return {
     className: cn(
       "group/task with-aside:pr-(--task-aside)",
-      "lg:[--task-aside-bottom:max(4.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
+      "lg:[--task-aside-bottom:max(5.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
@@ -193,6 +195,7 @@ export function TaskAside({
           className={cn(
             "bg-background flex flex-col gap-2 px-6 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
+            TASK_GUTTER_CLASS,
             BOTTOM_BAR_ROOM_CLASS,
           )}
           data-slot="task-aside-footer"

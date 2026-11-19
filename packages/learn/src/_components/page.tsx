@@ -6,6 +6,13 @@ export { PageTitle } from "@zoonk/ui/components/page-top";
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
 /**
+ * A row of tabs and what's around it: 24px under the title, so on a computer the tabs sit on the
+ * sidebar's second row, and 24px over the views they switch. No line under the tabs: the current
+ * tab's fill says which view shows.
+ */
+export const TAB_ROW_GAP_CLASS = "flex min-w-0 flex-col gap-6";
+
+/**
  * A narrower measure for the page's content (`--page-measure`). Its bottom bar still spans the
  * page's room, so every bar is as wide as the frame lets it be; its buttons fill the measure on a
  * phone and a tablet, and end at the bar's end on a computer.

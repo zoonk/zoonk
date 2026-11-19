@@ -118,7 +118,7 @@ A box that holds content (a card, a panel, a composer) gives it the same room on
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). It is about the room the page's corners keep across (the bottom bar's and the page top's 16px) and the sidebar's own inset, so a corner reads even and the page never looks more padded than the frame around it. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
+Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). The bottom bar's room over and under its buttons is the same number on purpose (Z4), so the main action's corner is even, and the right column and a task's frame on a computer keep it too. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
 - **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 24px at 768 and beside the sidebar at 1440.
 - **Usual break.** A box drawn with an outside ring, 1px wider than the field above it. A frame or a column that pads by its own number instead of `--page-gutter`.
@@ -183,10 +183,10 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar keeps 16px over and under its buttons at every size (`BOTTOM_BAR_ROOM_CLASS`), so it is 77px tall on a phone and a computer alike; at its sides it takes the frame's gutter ([S5](#s5-the-gutter-is-the-frames)). The room doesn't grow with the gutter: a bar as tall as a computer's gutter makes chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar's room over and under its buttons is the frame's gutter, the same number as at its sides ([S5](#s5-the-gutter-is-the-frames), `BOTTOM_BAR_ROOM_CLASS`): a button alone in a corner reads right only with one inset from both edges. That makes the bar 77px tall on a phone and 93px from a tablet up; the gutter stays small enough that the bar never reads as chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most; 16px over and under a row of buttons at 390 and 1440; the bar's height and its buttons' places the same with and without an error line.
-- **Usual break.** The bar's room taken from the gutter, so it grows to 125px on a computer. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the main action as far from the bar's bottom as from its end (16px at 390, 24px at 1440); the bar's height and its buttons' places the same with and without an error line.
+- **Usual break.** A corner with two insets (16px under the button, 24px beside it). A gutter grown to 40px, so the bar grows to 125px. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
 
 ## Type
 
