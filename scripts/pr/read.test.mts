@@ -182,6 +182,25 @@ describe("recording a read", () => {
     assert.equal(read?.retake, true);
   });
 
+  it("opens again a fixed finding the check of the fixes reports again", async () => {
+    const { folder, root } = twoEqualPictures();
+    const [first, second] = (await readManifest(folder)) ?? [];
+
+    const entries =
+      parseFindings([{ ...SORTED, file: "after/first.png", text: "Cut title" }]) ?? [];
+
+    const [reported] = entries;
+    const fixed = reported && { ...reported.finding, commit: "c0ffee", state: "fixed" as const };
+    const earlier = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [fixed] };
+    const retakes = { file: "earlier/first.png", read: earlier };
+    writeFileSync(join(folder, "capture.json"), JSON.stringify([{ ...first, retakes }, second]));
+
+    await recordReads({ by: "another reader", entries, root });
+    const [retaken] = (await readManifest(folder)) ?? [];
+
+    assert.deepEqual(retaken && readOf(retaken)?.findings.map(({ state }) => state), ["open"]);
+  });
+
   it("keeps a picture's read and findings when it is registered again", async () => {
     const root = mkdtempSync(join(tmpdir(), "pr-media-register-"));
     const folder = join(root, "native");

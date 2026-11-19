@@ -94,13 +94,14 @@ export async function recordReads({
         }
 
         // A finding leaves a record only through resolve, so a read replacing one keeps it, and a
-        // read of a retake keeps the findings of the read it retakes.
+        // read of a retake keeps the findings of the read it retakes. One the reader reports again
+        // is open again, whatever closed it.
         const retakes = "retakes" in item ? item.retakes : undefined;
         const unnamed = "read" in item ? (item.read?.findings ?? []) : [];
         const kept = [...(retakes?.read.findings ?? []), ...unnamed];
 
         const added = entries.flatMap(({ files, finding }) =>
-          files.includes(id) && !kept.some((earlier) => earlier.id === finding.id) ? [finding] : [],
+          files.includes(id) ? [finding] : [],
         );
 
         const findings = [...new Map([...kept, ...added].map((one) => [one.id, one])).values()];
