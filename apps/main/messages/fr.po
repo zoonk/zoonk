@@ -1112,20 +1112,6 @@ msgctxt "95pnlV"
 msgid "Your account"
 msgstr "Ton compte"
 
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/components/pricing/plus-adds.tsx
-#: src/components/pricing/plus-plan.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "Gratuite"
-
 #. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
@@ -1471,6 +1457,14 @@ msgstr "Le paiement de ton dernier renouvellement a échoué."
 msgctxt "gTWrWX"
 msgid "Through the website"
 msgstr "Via le site web"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/components/pricing/plus-adds.tsx
+#: src/components/pricing/plus-plan.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "1y_a8B"
@@ -3038,6 +3032,12 @@ msgstr "Ce que tu as aujourd’hui"
 msgctxt "gptbpf"
 msgid "Included in Plus"
 msgstr "Inclus dans Plus"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "Gratuite"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"
