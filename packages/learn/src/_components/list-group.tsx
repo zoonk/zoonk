@@ -66,6 +66,7 @@ export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
 export function ListRowLink({
   children,
   className,
+  current,
   href,
   lessonWritten,
   onClick,
@@ -73,6 +74,8 @@ export function ListRowLink({
 }: {
   children: React.ReactNode;
   className?: string;
+  /** The page it opens is the one showing beside the list. */
+  current?: boolean;
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
@@ -80,6 +83,7 @@ export function ListRowLink({
 }) {
   return (
     <LearnLink
+      aria-current={current ? "page" : undefined}
       className={cn(LIST_ROW_INTERACTIVE_CLASS, className)}
       href={href}
       lessonWritten={lessonWritten}

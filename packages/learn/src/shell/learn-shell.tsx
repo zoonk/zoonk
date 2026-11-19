@@ -43,6 +43,8 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
  * hairline and scroll away, so the title takes the bar's row (`PageTopBar`'s `className`). A bar
  * holds nothing when its end shows nothing: no actions, or on a computer only a phone's
  * (`data-phone-only`). `data-signed-in` says whose frame this is before the first paint.
+ * - `beside`: from 72rem for whoever has a session, where the page it goes back to stays on screen
+ *   and this one opens in the aside.
  * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
  * - `learner`, `visitor`: from `lg`, a page the sidebar lists in that state.
  * - `tabs`: a page whose way back is Today, the Plan or the buddy, for a learner, who reaches them by
@@ -50,6 +52,10 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
  * - `sectionTabs`: from `md`, where a section's own tabs lead to its first page.
  */
 export const NO_WAY_BACK = {
+  beside: {
+    back: "min-[72rem]:in-data-signed-in:hidden",
+    bare: "min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:static min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:pb-0 min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+  },
   computer: {
     back: "lg:hidden",
     bare: "lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",

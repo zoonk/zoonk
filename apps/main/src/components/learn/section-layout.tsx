@@ -26,7 +26,13 @@ export function SectionBarFrame({
   }
 
   if (parent) {
-    return <LearnSectionBar back={{ href: parent.href, label: parent.title }} end={end} />;
+    return (
+      <LearnSectionBar
+        back={{ href: parent.href, label: parent.title }}
+        end={end}
+        listed="beside"
+      />
+    );
   }
 
   return <LearnSectionBar back={{ href: hub.href, label: hub.title }} end={end} sectionTabs />;

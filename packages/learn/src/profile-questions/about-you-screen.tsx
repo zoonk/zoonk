@@ -158,7 +158,15 @@ function useSavedSummary(question: ProfileQuestionView): string | null {
   }
 }
 
-function QuestionRow({ editable, question }: { editable: boolean; question: ProfileQuestionView }) {
+function QuestionRow({
+  current,
+  editable,
+  question,
+}: {
+  current: boolean;
+  editable: boolean;
+  question: ProfileQuestionView;
+}) {
   const summary = useSavedSummary(question);
 
   const body = (
@@ -175,7 +183,9 @@ function QuestionRow({ editable, question }: { editable: boolean; question: Prof
   );
 
   return editable ? (
-    <ListRowLink href={aboutYouQuestionHref(question.id)}>{body}</ListRowLink>
+    <ListRowLink current={current} href={aboutYouQuestionHref(question.id)}>
+      {body}
+    </ListRowLink>
   ) : (
     <ListRow>{body}</ListRow>
   );
@@ -201,7 +211,14 @@ function MemoryOffNotice() {
   );
 }
 
-export function AboutYouScreen({ view }: { view: ProfileQuestionsView }) {
+export function AboutYouScreen({
+  current = null,
+  view,
+}: {
+  /** The question open beside the list. */
+  current?: string | null;
+  view: ProfileQuestionsView;
+}) {
   return (
     <div className="flex flex-col gap-7" data-slot="about-you-screen">
       {!view.memoryEnabled && <MemoryOffNotice />}
@@ -221,6 +238,7 @@ export function AboutYouScreen({ view }: { view: ProfileQuestionsView }) {
               return (
                 question && (
                   <QuestionRow
+                    current={current === id}
                     editable={view.memoryEnabled || group.id === "learn"}
                     key={id}
                     question={question}

@@ -97,7 +97,7 @@ export function AboutYouQuestionScreen({
         <PageHeader>
           <PageHeaderContent>
             <PageTitle className={SECTION_SUBPAGE_TITLE_CLASS}>{title}</PageTitle>
-            {description && <PageSubtitle>{description}</PageSubtitle>}
+            {description && <PageSubtitle className="text-pretty">{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
 

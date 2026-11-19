@@ -59,10 +59,11 @@ function useTabName(href: string): string | undefined {
 }
 
 /** Whose sidebar lists the page, which the sidebar then leads to from `lg`. */
-type ListedBy = "learner" | "visitor";
+type ListedBy = "beside" | "learner" | "visitor";
 
 /** Each case as it holds from `lg` alone. */
 const ON_COMPUTER: Record<NoWayBack, NoWayBack> = {
+  beside: "beside",
   computer: "computer",
   learner: "learner",
   sectionTabs: "computer",
