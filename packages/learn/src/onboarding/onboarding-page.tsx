@@ -79,7 +79,7 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={RAIL_CLASS}
       asideLabel={t("Getting started")}
-      className={cn("flex-1 gap-1 lg:gap-4", BAR_LEAD_ON_COLUMN_CLASS)}
+      className={cn("flex-1 gap-1 lg:gap-2", BAR_LEAD_ON_COLUMN_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
