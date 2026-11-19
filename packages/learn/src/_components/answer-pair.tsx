@@ -27,7 +27,7 @@ function ShownAnswer({
       data-result={result}
       data-slot="answer-option"
     >
-      <OptionMarker isChecked layout="row" marker={marker} />
+      <OptionMarker isChecked layout="row" marker={marker} picked={false} />
 
       <TagBesideOrUnder
         tag={<ResultTag guessed={false} picked={result === "wrong"} result={result} />}
