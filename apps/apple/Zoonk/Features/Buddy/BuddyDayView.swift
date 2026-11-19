@@ -34,25 +34,23 @@ struct BuddyDayView: View {
         Section {
           MissionsSummary(
             missions: today.missions.compactMap(StudyMission.init), bonus: today.fullMeal.bonus,
-            earned: earned
+            earned: earned, collapsesWhenWon: false
           )
           .listRowSeparator(.hidden, edges: .bottom)
 
-          if !earned {
-            ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
-              if let row = StudyMission(mission) {
-                let blockID = mission.opens?.value1.blockID
+          ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
+            if let row = StudyMission(mission) {
+              let blockID = mission.opens?.value1.blockID
 
-                MissionRow(
-                  mission: row, buddyName: name, isBusy: blockID != nil && tap.opening == blockID,
-                  failed: blockID != nil && tap.failed == blockID
-                ) {
-                  if let opens = mission.opens?.value1 {
-                    open(opens)
-                  }
+              MissionRow(
+                mission: row, buddyName: name, isBusy: blockID != nil && tap.opening == blockID,
+                failed: blockID != nil && tap.failed == blockID
+              ) {
+                if let opens = mission.opens?.value1 {
+                  open(opens)
                 }
-                .disabled(tap.opening != nil && tap.opening != blockID)
               }
+              .disabled(tap.opening != nil && tap.opening != blockID)
             }
           }
         }

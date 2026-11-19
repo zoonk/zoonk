@@ -74,11 +74,10 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 
 /**
- * The day's missions (main's `MissionsCard`), one look wherever they show: the buddy, the title, how many
- * are done beside the Brain Power they earn together, a track, and every mission as a row. [foldRows] keeps
- * the rows behind the title (Today, where most are rows of the day's list already); [collapseWhenDone]
- * folds a won day to one line; [showBuddy] off where the whole page is the buddy's. [opening] and
- * [openFailed] say where a row's tap stands.
+ * The day's missions (main's `MissionsCard`), one look wherever they show: the title, a track with the Brain Power
+ * the missions earn together at its end, and every mission as a row. [foldRows] keeps the rows behind the title
+ * (Today, where most are rows of the day's list already); [collapseWhenDone] folds a won day to one line. [opening]
+ * and [openFailed] say where a row's tap stands.
  */
 @Composable
 fun MissionsCard(
@@ -94,7 +93,6 @@ fun MissionsCard(
     openFailed: (DayMission) -> Boolean = { false },
     foldRows: Boolean = false,
     collapseWhenDone: Boolean = false,
-    showBuddy: Boolean = true,
 ) {
     if (missions.isEmpty()) return
 
@@ -122,18 +120,16 @@ fun MissionsCard(
 
     OutlinedCard(modifier) {
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = if (open) 4.dp else 16.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                if (showBuddy) Buddy(buddy, Modifier.size(24.dp), crop = BuddyCrop.Face)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        MissionsStatus(progress, Modifier.weight(1f))
-                        BrainPowerReward(points, earned = won, onLevel)
-                    }
-                }
-            }
+            MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
 
-            MissionTrack(progress, Modifier.padding(top = 14.dp))
+            Row(
+                Modifier.padding(top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                MissionTrack(progress, Modifier.weight(1f), label = missionsDoneLabel(progress))
+                BrainPowerReward(points, earned = won, onLevel)
+            }
 
             if (open) {
                 Column(Modifier.padding(top = 6.dp)) {
@@ -196,28 +192,14 @@ private fun MissionsLine(
     }
 }
 
-/** How many are done; nothing once they all are, where the reward says it. */
+/** How many are done, said for the track. */
 @Composable
-private fun MissionsStatus(
-    progress: MissionProgress,
-    modifier: Modifier,
-) {
+private fun missionsDoneLabel(progress: MissionProgress): String {
     val locale = currentLocale()
-
-    Text(
-        text =
-            if (progress.full) {
-                ""
-            } else {
-                stringResource(
-                    R.string.missions_progress,
-                    formatNumber(progress.done.toDouble(), locale),
-                    formatNumber(progress.total.toDouble(), locale),
-                )
-            },
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+    return stringResource(
+        R.string.missions_progress,
+        formatNumber(progress.done.toDouble(), locale),
+        formatNumber(progress.total.toDouble(), locale),
     )
 }
 
@@ -267,6 +249,7 @@ internal fun MissionTrack(
     modifier: Modifier,
     justDone: Collection<DayMission> = emptyList(),
     delayMillis: Int = 0,
+    label: String? = null,
 ) {
     val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
@@ -274,7 +257,10 @@ internal fun MissionTrack(
     val celebrate = celebrates()
     val delays = fillDelays(fills, delayMillis)
 
-    Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Row(
+        modifier.fillMaxWidth().clearAndSetSemantics { label?.let { contentDescription = it } },
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
         fills.zip(delays).forEach { (part, delay) ->
             val (start, fill) = part
             val animates = celebrate && delay != null

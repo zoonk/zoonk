@@ -82,7 +82,7 @@ function BuddyTodaySheet({
 
           {today && today.missions.length > 0 && (
             <div className="border-t pt-5">
-              <MissionsCard showBuddy={false} buddy={buddy} links={links} today={today} />
+              <MissionsCard buddy={buddy} links={links} today={today} />
             </div>
           )}
 
