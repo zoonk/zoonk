@@ -229,7 +229,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
       };
     case "tried":
       return {
-        actions: <OpenLink>{t("See how it went")}</OpenLink>,
+        actions: <OpenLink>{t("See result")}</OpenLink>,
         line: (
           <StatusLine icon={<RotateCcwIcon className="size-4" />}>
             {t(
@@ -240,7 +240,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         ),
       };
     case "done":
-      return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
+      return { actions: <OpenLink>{t("See result")}</OpenLink>, line: null };
     case "plusRequired":
       return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
     case "waiting":

@@ -22,7 +22,7 @@
     <string name="pattern_where_you_slipped">Where you slipped</string>
     <string name="pattern_see_rule">See the rule</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_it_went">See how it went</string>
+    <string name="pattern_see_how_it_went">See result</string>
     <string name="pattern_got_it">You\'ve got this rule.</string>
     <string name="pattern_keep_going">Knowing the rule is the first step. It gets easier each time you use it.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

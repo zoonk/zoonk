@@ -44,7 +44,7 @@ export function ChallengeMovedScreen({
           >
             {t("Undo")}
           </Button>
-          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+          <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
         </TaskActions>
       }
       footerNote={moveFailed}

@@ -332,7 +332,7 @@ struct LessonCompletionView: View {
       routes.signIn()
     } label: {
       Text(
-        "Create an account to save", tableName: "Player",
+        "Create a free account", tableName: "Player",
         comment: "A guest creates an account at the end of a lesson")
     }
     .buttonStyle(.outline)
@@ -425,7 +425,7 @@ struct LessonUnavailableView: View {
   }
 }
 
-/// Once a free learner's next lesson has opened, "Start the lesson" asks again where "Subscribe" was.
+/// Once a free learner's next lesson has opened, "Start" asks again where "Subscribe" was.
 private struct LessonUnavailableBody: View {
   @Environment(\.lessonPlayerRoutes) private var routes
   @Environment(AppRouter.self) private var router
@@ -475,10 +475,8 @@ private struct LessonUnavailableBody: View {
               router.open(.mistakes)
             } label: {
               Text(
-                "Practice your mistakes", tableName: "Search",
-                comment:
-                  "A button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes."
-              )
+                "Practice mistakes", tableName: "Practice",
+                comment: "Starts practicing the notebook's ready mistakes.")
             }
             .buttonStyle(.ghost)
           }
@@ -505,7 +503,7 @@ private struct LessonUnavailableBody: View {
     switch refusal {
     case .limitReached where isReady:
       Button(action: retry) {
-        Text("Start the lesson", tableName: "Player")
+        Text("Start", tableName: "Player")
       }
     case .failed:
       Button(action: retry) {
@@ -740,10 +738,7 @@ enum LessonWaitWords {
   }
 
   var start: LocalizedStringResource {
-    switch self {
-    case .lesson: LocalizedStringResource("Start this lesson", table: "Player")
-    case .challenge: LocalizedStringResource("Start this challenge", table: "Player")
-    }
+    LocalizedStringResource("Start", table: "Player")
   }
 }
 
@@ -823,7 +818,7 @@ struct LessonWaitingView: View {
       if holding == nil, writing == .notStarted {
         Button(action: write) {
           Text(
-            "Get it ready", tableName: "Player",
+            "Prepare", tableName: "Player",
             comment: "Starts making a lesson that isn't ready yet; it opens once it's ready")
         }
         .buttonStyle(.mainAction)

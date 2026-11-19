@@ -284,7 +284,7 @@ class LessonPlayerFlowTest {
     fun aWorkedExamplesShownStepsComeBackAfterAndroidClosesTheAppInTheBackground() {
         val restoration = StateRestorationTester(rule)
         harness.play(listOf(workedExampleStep("worked"), summaryStep("end")), restoration = restoration)
-        tap("Show the next step")
+        tap("Next step")
         rule.onNodeWithText("Each part is 20", substring = true).assertExists()
 
         harness.viewModel = openAgain()

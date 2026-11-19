@@ -42,7 +42,7 @@ describe("lesson math in accessible names", () => {
     expect(document.querySelectorAll("[data-slot='answer-option'] math")).toHaveLength(3);
 
     await radio("10 to the power of −8").click();
-    await page.getByRole("button", { name: /^See the answer/u }).click();
+    await page.getByRole("button", { name: /^See answer/u }).click();
 
     await expect.element(radio("10 to the power of −8 Your guess")).toBeChecked();
     await expect.element(radio("10 squared Correct")).toBeVisible();

@@ -109,7 +109,7 @@ test.describe("Pronunciation reviews", () => {
         }),
       ).resolves.toBe(0);
 
-      await page.getByRole("button", { name: "See how it went" }).click();
+      await page.getByRole("button", { name: "See result" }).click();
 
       const end = page.getByRole("status").filter({ hasText: "Practice done" });
       await expect(end.getByRole("heading", { level: 2, name: "Practice done" })).toBeVisible();

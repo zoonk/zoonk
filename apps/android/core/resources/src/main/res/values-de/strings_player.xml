@@ -5,9 +5,9 @@
   "player_action_confirm": "5943345d289ada30b3b463a7b58ecc39d78a702f46348fde2583b90b60cd9930",
   "player_action_continue": "36f0409d6b32b3dbd9dbcd84be8413b86cf0032a1e6e21ad3ad4616d1e1de92c",
   "player_action_next": "aeacb10804c7a5efafb633d92a10b370335c4a76d41f85fe7fe1031ab70f0c7d",
-  "player_action_next_step": "0d5f93d627ec11d3c07aedf506c17d3eb6863d47b22e1d3978f84e8f4291e5ae",
-  "player_action_see_answer": "a465e5d4214b7ceaf28b4fc6f2db235a52f77a9b1f9c4a9d1b1123e8a9a42f4b",
-  "player_action_see_how_it_went": "be4e093b2f7c6fb38f404102ee1b16e5ca3f38ad4fffde9b41275e7bee8bea2c",
+  "player_action_next_step": "1a8d7ffb8afef6725cc61781df1a658a01b2ac286dbad60df670cea28d955c1d",
+  "player_action_see_answer": "a60304f3f2eb61d22f50bab8da3e0fd6ed8eaca874cd29615591d1ca3f5e6613",
+  "player_action_see_how_it_went": "550743dc8390c5cb030d20f78c683f3672a25c75b59fe03a6ccea0e0862a2d0f",
   "player_action_start": "e40301f771b7a69b547cb1cb4d3381d9b2ea99ab40f83c6cd839310bbd29df72",
   "player_activity_example_data": "d8314858ab60768404cb0ae553383a7e8ced0c5db3b4b51e3e54fda68358698f",
   "player_activity_source": "c43d1b3394dfbe8ba7670df4addee1ee1a8e5dd341797fc42c7d48abb6dfcf4c",
@@ -62,7 +62,7 @@
   "player_correction_right": "397ebd420a388073477539ce23d1e1111946ded31860344f0b4daccba03a876b",
   "player_correction_yours": "d365a532f5084e79d6de3fac1cbe41b21ca9b3c8dc2086aeea724db64fe8e5c2",
   "player_course_size": "360e3de0ad83f7d9dc1d1ff68619ea5c7ca11649901abf61c0368fd323c62b2e",
-  "player_create_account_to_save": "4f5c2e3607465d24dc788e09795ad26bcceea9635140590faae1b23fbdabcfaf",
+  "player_create_account_to_save": "0469eea215c2754b65dcd9d15edb5e6747b74b9be60bbc3a58e8719ea3f51a2f",
   "player_didnt_get_it": "3915dc789e908ddb9a42ee67c3f2ef1eb855d108974e29cbad31dbdf232b4cbb",
   "player_done": "cb7f69657399660da0c86aba0cc00f3949e2c7869b0cb25c7a59769611f297af",
   "player_dont_know_yet": "fc0cb08c3ec16ab07e06e3cdab25d74857a5f2f9557ddd32927a8f5f9624bc09",
@@ -75,7 +75,7 @@
   "player_explain_first": "b3de64aa110d227ca39f32b3eb6da66050ef31edf8ffbb6cae60cb2ef329d8b1",
   "player_finish": "8d29d7d263c9b12062203bd70f7aae4928aa3774188f5281005f85e507faa516",
   "player_from_the_lesson": "594187847d9bc0f3f09dc9784d2d0855dba7f84136a4377016fae55a80bcd606",
-  "player_get_it_ready": "b8072df5f161b62b31c2b4e1f641e73e62252004862ece483d8e29b3a01c5e34",
+  "player_get_it_ready": "da504491f4261946b625e00ca839625e96f4d44013aac47a6fe885c8903d3975",
   "player_getting_challenge_ready": "61699e5b20b31e6bbbb62b02730a3badf37aa0836d1d78525bfbc8db23909005",
   "player_getting_lesson_ready": "7ca830b47eee47ad159f4b066ce622d7816c8b85e4298db1bdb230b4da1a1c21",
   "player_guess_chip": "3c2723ef1c91a25a4dbef7f6651de611ad72a2640cdf93e0c5dcb97e701a1d52",
@@ -155,9 +155,9 @@
   "player_start_failed_description": "b441a07264fe9b90f7246d7a00c1e1bd3a650940fb79ffb6d1e98291c36b3510",
   "player_start_failed_title": "fb6a9a6bfad46b9d0e308c6fc2eaec3888467d63e54a1835da747ed0e5f7d527",
   "player_start_note": "9ffbf258f79b4db659acbc5961611223b4289d1085073b856c1ac9d2e15c02a2",
-  "player_start_the_lesson": "c74271b02a25e77cfea3dc234017196cd5fc354fb9154e0ae29be4904c1def7f",
-  "player_start_this_challenge": "dce620b9f1f9e6e7f79b07ef255bba523aa83a9b9b028225a45247afaea12d28",
-  "player_start_this_lesson": "047cf80251ea5e1e452ea9297bef57c78c1f44e53517d456e8d57359141eda6d",
+  "player_start_the_lesson": "6128d9f5111103aa777edc13a8a308ce1526d01b917dabf1ec865008b09c0455",
+  "player_start_this_challenge": "f4f8e6a2ba9a61a1e907a9ad9fbd0d93b273c19e95080d8a1de6f5338ce42006",
+  "player_start_this_lesson": "3849ef323c3843a7ba47d90f302b1653709cb5352fef16cfcb2868e1e0b75929",
   "player_still_checking": "edede2860025c358ea2da0d1c64445dbff8cfe4737354fb49972672e82f2545f",
   "player_stop_failed": "828b44860cd68e520d332e2a71ddcf159beebcb8d3d94b495c25de8fba4faedc",
   "player_stop_for_today": "043063d23dd9b7dc637f9ef660b3b0b44c26380ef10adfc1a74417ec6ea05142",
@@ -218,8 +218,8 @@
     <string name="player_action_confirm">Bestätigen</string>
     <string name="player_action_continue">Weiter</string>
     <string name="player_action_next">Weiter</string>
-    <string name="player_action_next_step">Nächsten Schritt anzeigen</string>
-    <string name="player_action_see_answer">Antwort ansehen</string>
+    <string name="player_action_next_step">Nächster Schritt</string>
+    <string name="player_action_see_answer">Antwort anzeigen</string>
     <string name="player_action_see_how_it_went">Ergebnis ansehen</string>
     <string name="player_action_start">Starten</string>
     <string name="player_previous_screen">Vorherige Seite</string>
@@ -293,17 +293,17 @@
     <string name="player_your_answer">Deine Antwort</string>
     <string name="player_write_your_answer">Schreib deine Antwort</string>
     <string name="player_not_written_title">Diese Lektion ist noch nicht fertig</string>
-    <string name="player_get_it_ready">Lektion vorbereiten</string>
+    <string name="player_get_it_ready">Vorbereiten</string>
     <string name="player_getting_lesson_ready">Wir bereiten deine Lektion vor</string>
     <string name="player_getting_challenge_ready">Wir bereiten deine Herausforderung vor</string>
     <string name="player_lesson_ready">Deine Lektion ist bereit</string>
     <string name="player_wait_stopped">Wir konnten diese Lektion nicht vorbereiten</string>
-    <string name="player_start_this_lesson">Diese Lektion starten</string>
+    <string name="player_start_this_lesson">Starten</string>
     <string name="player_challenge_not_written_title">Diese Herausforderung ist noch nicht fertig</string>
     <string name="player_challenge_ready">Deine Herausforderung ist fertig</string>
     <string name="player_challenge_wait_stopped">Wir konnten diese Herausforderung nicht fertigstellen</string>
-    <string name="player_start_this_challenge">Diese Herausforderung starten</string>
-    <string name="player_start_the_lesson">Lektion starten</string>
+    <string name="player_start_this_challenge">Starten</string>
+    <string name="player_start_the_lesson">Starten</string>
     <string name="player_writing_lesson">Wir erstellen deine Lektion</string>
     <string name="player_phase_plan">Wir planen die Lektion</string>
     <string name="player_phase_plan_line_1">Wir wählen die Inhalte aus…</string>
@@ -426,7 +426,7 @@
     </plurals>
     <string name="player_guest_save_note">Speichere deinen Fortschritt und eine kurze Wiederholung hilft dir später, das Gelernte zu behalten.</string>
     <string name="player_build_my_plan">Meinen Plan erstellen</string>
-    <string name="player_create_account_to_save">Konto erstellen und speichern</string>
+    <string name="player_create_account_to_save">Kostenloses Konto erstellen</string>
     <string name="player_nothing_left_title">Keine Fragen mehr offen</string>
     <string name="player_nothing_left_description">Schließe ab, um dein Ergebnis zu sehen.</string>
     <string name="player_finish">Abschließen</string>

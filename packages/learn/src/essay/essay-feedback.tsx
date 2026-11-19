@@ -260,7 +260,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         onRewrite ? (
           <TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>
         ) : (
-          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+          <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
         )
       }
       items={items}

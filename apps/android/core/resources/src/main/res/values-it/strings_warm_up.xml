@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_back_to_quiz": "972c0f00594fc0c1991f12aa51c473da2289fd226fca0b662044f665d7d7127d",
+  "warm_up_back_to_quiz": "03c4616874e58d160ad4f34642cfc915f98e1af2587020d2f77acca03480344b",
   "warm_up_first_lesson": "85147e182c8e80ddce192ebb7a70f3d17628f2004d8ca223013a6a32341319b8",
   "warm_up_first_lesson_ready": "d8fe6ce971b1506af36f7a6b3466878b081e767a76053d06679e6d733eff2180",
   "warm_up_first_lesson_screens": "4e41adfc751e6f57327b59e35a1c98083e9fcd1321d49d12c2ce8a7278d1b177",
@@ -12,7 +12,7 @@
   "warm_up_plan_ready_one_question": "7f533c7a4ba8122236aa10c56a3d2b5b9371474eb20a834e2da3552e2d76f4a9",
   "warm_up_plan_ready_whenever": "5f20948e2ada27d9d9fc7b5913543316eecda07b491002e3cbefe6abd9d3cf22",
   "warm_up_plan_waiting": "2d0f69248decf7de8d8cfd7cb29ada1f9a9a44c330c19e7c3e767dc67e30b0f9",
-  "warm_up_play_quiz": "82de0e62e9a872f7fcd2997b0efd83e731b4643311ab765f9f7dc0aad7c9e5da",
+  "warm_up_play_quiz": "7a0096dc5e80734c5afbebd420f2f88b7d82ffa09a1d976aef0d2c4a8187ca98",
   "warm_up_questions_ready": "916d897fba61dd02b853df9500cad66e0146580b4cc0e2ebcc6e400b03185db7",
   "warm_up_ready_to_start": "ae28bd23e127cf08cac58d00b839676e224c45fb39de97154a926ce9b5e065f6",
   "warm_up_start_first_lesson": "0f96d8e097fb248f44b5bf6ff56de8789dff0b7accc6a39037cfd4fa07d42da7",
@@ -39,7 +39,7 @@
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Le tue domande sono pronte</string>
     <string name="warm_up_back_to_quiz">Torna al quiz</string>
-    <string name="warm_up_play_quiz">Fai un quiz mentre aspetti</string>
+    <string name="warm_up_play_quiz">Fai un quiz</string>
     <string name="warm_up_first_lesson_writing">Stiamo preparando la tua prima lezione: %1$s</string>
     <string name="warm_up_first_lesson_ready">La tua prima lezione è pronta</string>
     <string name="warm_up_plan_waiting">Il tuo piano ti aspetterà quando avrai finito.</string>

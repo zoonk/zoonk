@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "challenge_back_to_today": "094e87a877354146c9080f0afabd655172d32b6dfe3828545b7b6128ae27473c",
+  "challenge_back_to_today": "37466bc899ab5b315af74da80fec59c8553395ded9628aae2d2b3ef75ef6f603",
   "challenge_call_detail": "516c453bad9b0e1bff6a8646f4478b89a606c2d95829d34fcdabb7849db99c3d",
   "challenge_call_gate": "7b0bed6cee9fec67b8866048db5f23061f0919b0e02b84c80b5963613a9a71df",
   "challenge_call_gate_line": "f6d71a69f61ee2cdc096c587aad2f0cccb35b2134227a8ab853260fab0f9e21b",
@@ -38,7 +38,7 @@
   "challenge_result_right": "42180ab5ae05d8f1c7400dea756d298299d3424641d6d6577184fd3700e96077",
   "challenge_section_questions": "d200efd2ce5bf4da329381a88317c40c8b80fe7a6c781d8c693c8850e93307a0",
   "challenge_section_size": "68153c00a312ceb1aa7c9aa284dc3496f13d159e864f0356cfbcc0f0d701f081",
-  "challenge_see_result": "b1d298ac78083d579a4d5242bf502be7605e9308650dfaf95cf3be1f5a5431c0",
+  "challenge_see_result": "4488f5d138442f8cb21e54f1ad1d5cbdeb50672706366ba69df7b1041426974e",
   "challenge_start": "0966d1fd89f6cf4e4df74ae13bc34806839d123d80337073a6fe58f6042e7e13",
   "challenge_start_failed": "a481ce377b108b27abc286387b18f97ff3950dfd354b4b5f26f2034ca7de7edc",
   "challenge_start_slow": "44b486c8126e6af83843731dec68aa143904b34974e9eb47a0841f8141a42692",
@@ -143,7 +143,7 @@
     <string name="challenge_start_failed">Nie udało się. Spróbuj ponownie za chwilę.</string>
     <string name="challenge_start_slow">Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle.</string>
     <string name="challenge_continue">Kontynuuj</string>
-    <string name="challenge_see_result">Zobacz, jak poszło</string>
+    <string name="challenge_see_result">Zobacz wynik</string>
     <string name="challenge_opens_tomorrow">Dostępne od jutra</string>
     <plurals name="challenge_opens_in">
         <item quantity="one">Dostępne za %d dzień</item>
@@ -154,7 +154,7 @@
     <string name="challenge_opens_after_lessons">Dostępne po ukończeniu lekcji z tego etapu</string>
     <string name="challenge_not_ready">To wyzwanie nie jest jeszcze gotowe.</string>
     <string name="challenge_next_session">Podczas następnej nauki</string>
-    <string name="challenge_back_to_today">Wróć do „Dziś”</string>
+    <string name="challenge_back_to_today">Dziś</string>
     <string name="challenge_move">Przenieś na poniedziałek</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Przeniesiono: %1$s</string>

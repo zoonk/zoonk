@@ -169,7 +169,7 @@ extension AppNavigationTests {
     let window = try show(
       LessonUnavailableView(refusal: .limitReached(tier: .free, period: .day), retry: {})
         .environment(router).zoonkStyles())
-    try await activate("Practice your mistakes", in: window)
+    try await activate("Practice mistakes", in: window)
     XCTAssertEqual(router.selectedTab, .mistakes)
     XCTAssertTrue(router.tasks.isEmpty)
   }

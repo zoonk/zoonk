@@ -18,7 +18,7 @@ function SkippedEssay() {
       exitHref={hrefs.exit}
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+          <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
         </TaskActions>
       }
       headerTitle={<TaskHeaderTitle title={label} />}

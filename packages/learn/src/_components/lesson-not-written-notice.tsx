@@ -31,7 +31,7 @@ function RefusedNotice({
         retries && (
           <form action={() => onRetry()} className="contents">
             <Button size="sm" type="submit" variant="outline">
-              {ready ? t("Start the lesson") : t("Try again")}
+              {ready ? t("Start") : t("Try again")}
             </Button>
           </form>
         )

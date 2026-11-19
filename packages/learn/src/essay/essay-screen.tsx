@@ -155,7 +155,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           onClick={() => void writer.send()}
           size="xl"
         >
-          {drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading")}
+          {drafts.length > 0 ? t("Grade rewrite") : t("Grade essay")}
         </Button>
       </TaskActions>
     </>

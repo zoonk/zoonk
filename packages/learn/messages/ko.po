@@ -197,12 +197,16 @@ msgstr "학습함"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/challenge/challenge-moved-screen.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-steps.tsx
@@ -221,6 +225,7 @@ msgstr "오늘"
 #: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/guest-lesson-ending.tsx
 #: src/onboarding/save-plan-note.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
@@ -289,6 +294,7 @@ msgid "Continue"
 msgstr "계속하기"
 
 #: src/_components/detail-page.tsx
+#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
@@ -521,11 +527,6 @@ msgid "{done, number} of {total, number}"
 msgstr "{done, number}/{total, number}"
 
 #: src/_components/lesson-not-written-notice.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "레슨 시작하기"
-
-#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
@@ -642,20 +643,22 @@ msgid "Next"
 msgstr "다음"
 
 #: src/_components/question-actions.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "다음 풀이 과정 보기"
+#: src/essay/essay-feedback.tsx
+msgctxt "d-qgix"
+msgid "Next step"
+msgstr "다음 단계"
 
 #: src/_components/question-actions.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
+msgctxt "ylGsid"
+msgid "See answer"
 msgstr "정답 보기"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
+#: src/mock/mock-screen.tsx
+msgctxt "4tdaRm"
+msgid "See result"
 msgstr "결과 보기"
 
 #: src/_components/question-actions.tsx
@@ -2286,15 +2289,6 @@ msgid "Undo"
 msgstr "실행 취소"
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "오늘로 돌아가기"
-
-#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}로 옮겼어요"
@@ -3045,11 +3039,6 @@ msgid "Comments"
 msgstr "평가 의견"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "d-qgix"
-msgid "Next step"
-msgstr "다음 단계"
-
-#: src/essay/essay-feedback.tsx
 msgctxt "BQrBD9"
 msgid "Nothing left to work on"
 msgstr "더 고칠 부분이 없어요"
@@ -3230,14 +3219,14 @@ msgid "Rewrite what needs work"
 msgstr "수정할 부분 다시 쓰기"
 
 #: src/essay/essay-screen.tsx
-msgctxt "Wleedk"
-msgid "Grade the rewrite"
-msgstr "수정한 글 채점하기"
+msgctxt "osZlj7"
+msgid "Grade rewrite"
+msgstr "다시 쓴 에세이 채점"
 
 #: src/essay/essay-screen.tsx
-msgctxt "o88h1t"
-msgid "Send for grading"
-msgstr "채점 요청하기"
+msgctxt "KVfx1c"
+msgid "Grade essay"
+msgstr "에세이 채점"
 
 #: src/essay/essay-screen.tsx
 msgctxt "xNSBn4"
@@ -3255,6 +3244,7 @@ msgid "Leave for now?"
 msgstr "잠시 나갈까요?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
@@ -6614,11 +6604,6 @@ msgid "Nothing said this time"
 msgstr "이번에는 말한 단어가 없어요"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "6ie6AS"
-msgid "Skip this word"
-msgstr "이 단어 건너뛰기"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "다시 소리 내어 말하기"
@@ -8701,11 +8686,6 @@ msgid "Leave the mock exam?"
 msgstr "모의고사에서 나갈까요?"
 
 #: src/mock/mock-screen.tsx
-msgctxt "4tdaRm"
-msgid "See result"
-msgstr "결과 보기"
-
-#: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
 msgstr "모의고사를 제출했어요"
@@ -9070,6 +9050,11 @@ msgid "You can start with the basics of music today: reading notes, rhythm and t
 msgstr "오늘부터 악보 읽기, 리듬 익히기, 음을 듣고 구별하기 같은 음악 기초를 배울 수 있어요."
 
 #: src/onboarding/entry/guest-goal-gate.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "오늘로 돌아가기"
+
+#: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
 msgid "Create a free account to start another goal"
 msgstr "다른 목표를 시작하려면 무료 계정을 만드세요"
@@ -9293,11 +9278,6 @@ msgstr "{chapters, plural, other {챕터 #개}} · 약 {time}"
 msgctxt "ik72yw"
 msgid "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
 msgstr "{number, number}번째 레슨 · {total, plural, other {총 #개}}"
-
-#: src/onboarding/guest-lesson-ending.tsx
-msgctxt "oxr39K"
-msgid "Create an account to save"
-msgstr "계정 만들고 저장하기"
 
 #: src/onboarding/how-it-works.tsx
 msgctxt "3DwJaq"
@@ -13763,15 +13743,15 @@ msgstr "재미로 풀어 보세요. 답은 점수에 반영되지 않아요."
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "8ZwEZ-"
-msgid "Back to the quiz"
+msgctxt "HPwc9j"
+msgid "Back to quiz"
 msgstr "퀴즈로 돌아가기"
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "3IyRnV"
-msgid "Play a quiz while you wait"
-msgstr "기다리는 동안 퀴즈 풀기"
+msgctxt "0dZmxB"
+msgid "Play a quiz"
+msgstr "퀴즈 풀기"
 
 #: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"

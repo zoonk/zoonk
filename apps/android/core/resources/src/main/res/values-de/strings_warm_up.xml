@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_back_to_quiz": "c1a4327d6f3de43fb010cebe5053e7394dd37991f990d1af32d095e63a3d197d",
+  "warm_up_back_to_quiz": "bdd1815d5c666fb2aedc6f3276794361802766bce0d814b0b8b9b11aaaf17157",
   "warm_up_first_lesson": "1eb4b0f91f675a20ae692e6371d0c4a9bb74ecc1f75fa7cfc769f9a36a03f480",
   "warm_up_first_lesson_ready": "cf529af220823818ab72910dc63b9dfdd843f6ad404d12f5f97aedfcfbcfb845",
   "warm_up_first_lesson_screens": "13041509182833e4b71766dcd741b686a11ac63ba37cc629fa5cbe82b9bfd45b",
@@ -12,7 +12,7 @@
   "warm_up_plan_ready_one_question": "983997493295d5a9e54b27330d5556b969ebbbe84ad50ac74686b01945b4a552",
   "warm_up_plan_ready_whenever": "71011903bc301d55f200e35830bbeebefb10ef416f3b9f1d369e989377ee493e",
   "warm_up_plan_waiting": "7301c1f68f93731b9027ba452b54fb7cdb30f64a2888340d03ba5f896091f492",
-  "warm_up_play_quiz": "f5721f5c8a5252d30e193684ef7b0a219ea844e0b2a76c1a7f23331776cefd95",
+  "warm_up_play_quiz": "73f45122ee7f0b05b27b5d90ee064d03deb4b7e45106c5cc373377e9642cd3a0",
   "warm_up_questions_ready": "6887754276ed34810197007789fe8a12fec87239190e56132248931ea6ad9cda",
   "warm_up_ready_to_start": "baa4a9d641c619169b48e94ed892bdca136f465d837bbed8e39aa4e13f4fd832",
   "warm_up_start_first_lesson": "955873a36e73a7beebd359ed1e16dee6c6fa98634458352426b0fe01881767bb",
@@ -38,8 +38,8 @@
     <string name="warm_up_plan_ready_whenever">Schau ihn dir an, wenn du so weit bist.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Deine Fragen sind fertig</string>
-    <string name="warm_up_back_to_quiz">Zum Quiz zurückkehren</string>
-    <string name="warm_up_play_quiz">Quiz spielen, während du wartest</string>
+    <string name="warm_up_back_to_quiz">Zurück zum Quiz</string>
+    <string name="warm_up_play_quiz">Quiz spielen</string>
     <string name="warm_up_first_lesson_writing">Wir erstellen deine erste Lektion: %1$s</string>
     <string name="warm_up_first_lesson_ready">Deine erste Lektion ist fertig</string>
     <string name="warm_up_plan_waiting">Dein Plan wartet auf dich, wenn du fertig bist.</string>

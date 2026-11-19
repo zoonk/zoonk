@@ -595,7 +595,7 @@ struct LessonActionBar: View {
         return PrimaryAction(
           action: .continueLesson,
           title: LocalizedStringResource(
-            "Show the next step", table: "Player",
+            "Next step", table: "Player",
             comment: "Reveals the next part of a worked example"),
           icon: .forward)
       }
@@ -623,7 +623,7 @@ struct LessonActionBar: View {
         return PrimaryAction(
           action: .check,
           title: LocalizedStringResource(
-            "See how it went", table: "Player", comment: "Checks a finished challenge"),
+            "See result", table: "Player", comment: "Checks a finished challenge"),
           icon: .forward)
       case .deciding(_, _, _, let pending):
         return PrimaryAction(
@@ -650,7 +650,7 @@ struct LessonActionBar: View {
   private func checkTitle(_ step: LessonStep) -> LocalizedStringResource {
     step.kind == .hook
       ? LocalizedStringResource(
-        "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
+        "See answer", table: "Player", comment: "Reveals a hook's answer after a guess")
       : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
   }
 

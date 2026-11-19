@@ -197,12 +197,16 @@ msgstr "Studied"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/challenge/challenge-moved-screen.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-steps.tsx
@@ -221,6 +225,7 @@ msgstr "Today"
 #: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/guest-lesson-ending.tsx
 #: src/onboarding/save-plan-note.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
@@ -289,6 +294,7 @@ msgid "Continue"
 msgstr "Continue"
 
 #: src/_components/detail-page.tsx
+#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
@@ -521,11 +527,6 @@ msgid "{done, number} of {total, number}"
 msgstr "{done, number} of {total, number}"
 
 #: src/_components/lesson-not-written-notice.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "Start the lesson"
-
-#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
@@ -642,21 +643,23 @@ msgid "Next"
 msgstr "Next"
 
 #: src/_components/question-actions.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "Show the next step"
+#: src/essay/essay-feedback.tsx
+msgctxt "d-qgix"
+msgid "Next step"
+msgstr "Next step"
 
 #: src/_components/question-actions.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "See the answer"
+msgctxt "ylGsid"
+msgid "See answer"
+msgstr "See answer"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "See how it went"
+#: src/mock/mock-screen.tsx
+msgctxt "4tdaRm"
+msgid "See result"
+msgstr "See result"
 
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
@@ -2286,15 +2289,6 @@ msgid "Undo"
 msgstr "Undo"
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "Back to Today"
-
-#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "Moved to {date}"
@@ -3045,11 +3039,6 @@ msgid "Comments"
 msgstr "Comments"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "d-qgix"
-msgid "Next step"
-msgstr "Next step"
-
-#: src/essay/essay-feedback.tsx
 msgctxt "BQrBD9"
 msgid "Nothing left to work on"
 msgstr "Nothing left to work on"
@@ -3230,14 +3219,14 @@ msgid "Rewrite what needs work"
 msgstr "Rewrite what needs work"
 
 #: src/essay/essay-screen.tsx
-msgctxt "Wleedk"
-msgid "Grade the rewrite"
-msgstr "Grade the rewrite"
+msgctxt "osZlj7"
+msgid "Grade rewrite"
+msgstr "Grade rewrite"
 
 #: src/essay/essay-screen.tsx
-msgctxt "o88h1t"
-msgid "Send for grading"
-msgstr "Send for grading"
+msgctxt "KVfx1c"
+msgid "Grade essay"
+msgstr "Grade essay"
 
 #: src/essay/essay-screen.tsx
 msgctxt "xNSBn4"
@@ -3255,6 +3244,7 @@ msgid "Leave for now?"
 msgstr "Leave for now?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
@@ -6614,11 +6604,6 @@ msgid "Nothing said this time"
 msgstr "Nothing said this time"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "6ie6AS"
-msgid "Skip this word"
-msgstr "Skip this word"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Say it again"
@@ -8701,11 +8686,6 @@ msgid "Leave the mock exam?"
 msgstr "Leave the mock exam?"
 
 #: src/mock/mock-screen.tsx
-msgctxt "4tdaRm"
-msgid "See result"
-msgstr "See result"
-
-#: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
 msgstr "Mock exam handed in"
@@ -9070,6 +9050,11 @@ msgid "You can start with the basics of music today: reading notes, rhythm and t
 msgstr "You can start with the basics of music today: reading notes, rhythm and training your ear."
 
 #: src/onboarding/entry/guest-goal-gate.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "Back to Today"
+
+#: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
 msgid "Create a free account to start another goal"
 msgstr "Create a free account to start another goal"
@@ -9293,11 +9278,6 @@ msgstr "{chapters, plural, one {# chapter} other {# chapters}} · about {time}"
 msgctxt "ik72yw"
 msgid "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
 msgstr "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
-
-#: src/onboarding/guest-lesson-ending.tsx
-msgctxt "oxr39K"
-msgid "Create an account to save"
-msgstr "Create an account to save"
 
 #: src/onboarding/how-it-works.tsx
 msgctxt "3DwJaq"
@@ -13763,15 +13743,15 @@ msgstr "Just for fun. Your answers don't count."
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "8ZwEZ-"
-msgid "Back to the quiz"
-msgstr "Back to the quiz"
+msgctxt "HPwc9j"
+msgid "Back to quiz"
+msgstr "Back to quiz"
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "3IyRnV"
-msgid "Play a quiz while you wait"
-msgstr "Play a quiz while you wait"
+msgctxt "0dZmxB"
+msgid "Play a quiz"
+msgstr "Play a quiz"
 
 #: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"

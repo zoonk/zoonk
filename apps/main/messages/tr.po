@@ -505,7 +505,6 @@ msgid "Start the lesson"
 msgstr "Derse başla"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Bu derse başla"
@@ -2617,9 +2616,9 @@ msgid "Your challenge is ready"
 msgstr "Meydan okuman hazır"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "erF9ms"
-msgid "Start this challenge"
-msgstr "Bu meydan okumaya başla"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Başla"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "NEAV17"
@@ -2657,8 +2656,8 @@ msgid "It takes a few minutes, and keeps going if you leave."
 msgstr "Birkaç dakika sürer, buradan ayrılsan da devam ederiz."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "1H9PtO"
-msgid "Get it ready"
+msgctxt "SSl2nr"
+msgid "Prepare"
 msgstr "Hazırla"
 
 #: src/app/[lang]/mistakes/practice/page.tsx

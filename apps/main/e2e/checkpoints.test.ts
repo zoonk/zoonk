@@ -140,7 +140,7 @@ test.describe("A checkpoint from today's session", () => {
     await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
 
     const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: /^See how it went/u }).click();
+    await page.getByRole("button", { name: /^See result/u }).click();
     await finish.held;
 
     await expect(page.getByRole("status")).toHaveText(/^Correct!/u);

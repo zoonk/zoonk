@@ -112,7 +112,7 @@ function RefusedCall({ first }: { first: boolean }) {
 }
 
 describe("a limit whose day has come", () => {
-  it("offers Start the lesson for a refusal reopened after its day, as from the lesson's address", async () => {
+  it("offers Start for a refusal reopened after its day, as from the lesson's address", async () => {
     render(
       <LearnProvider adapters={ADAPTERS}>
         <LessonNotWrittenNotice
@@ -132,7 +132,7 @@ describe("a limit whose day has come", () => {
       </LearnProvider>,
     );
 
-    await expect.element(page.getByRole("button", { name: "Start the lesson" })).toBeVisible();
+    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
     await expect.element(page.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
   });
 
@@ -194,7 +194,7 @@ describe("a limit whose day has come", () => {
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
     await expect
-      .element(page.getByRole("button", { name: "Start the lesson" }))
+      .element(page.getByRole("button", { exact: true, name: "Start" }))
       .not.toBeInTheDocument();
   });
 
@@ -217,7 +217,7 @@ describe("a limit whose day has come", () => {
       .toBeVisible();
 
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
-    expect(page.getByRole("button", { name: /^Start the lesson/u }).query()).toBeNull();
+    expect(page.getByRole("button", { exact: true, name: "Start" }).query()).toBeNull();
   });
 
   it("opens Level from the missions reward", async () => {
@@ -246,7 +246,7 @@ describe("a limit whose day has come", () => {
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
     await expect
-      .element(page.getByRole("link", { name: "Practice your mistakes" }))
+      .element(page.getByRole("link", { name: "Practice mistakes" }))
       .toHaveAttribute("href", "/mistakes");
   });
 

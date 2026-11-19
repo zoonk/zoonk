@@ -37,11 +37,7 @@ function FreeLessonActions({ children }: { children: React.ReactNode }) {
     <div className="flex w-full flex-col items-center gap-2 *:first:w-full lg:w-auto">
       {children}
       <LinkComponent className={buttonVariants({ variant: "ghost" })} href={routes.mistakes}>
-        {t({
-          description:
-            "A button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes.",
-          message: "Practice your mistakes",
-        })}
+        {t("Practice mistakes")}
       </LinkComponent>
     </div>
   );
@@ -56,7 +52,7 @@ function FreeLessonReady({ title }: { title: string }) {
     <AccessLayout
       actions={
         <FreeLessonActions>
-          <EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>
+          <EnterButton onClick={actions.retryStart}>{t("Start")}</EnterButton>
         </FreeLessonActions>
       }
       icon={<SparklesIcon aria-hidden="true" />}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "challenge_back_to_today": "267368c8e02097e4f8eccbc1e00bbac6ff044eaddc65eee33dd44066ae0fe1f9",
+  "challenge_back_to_today": "1d0cea864af9698a0b2a27b4e62211aa6c182bf70ef979bc197e4b475a9a9892",
   "challenge_call_detail": "7c225e2d0bce05fa6d62c0816e2418a02bc5a8059100a5f0758a80a5b9b94b24",
   "challenge_call_gate": "2924cbe422a9acb68659ad86b25012df58bf12b115e023fe1cf5bd3c54e405b0",
   "challenge_call_gate_line": "60149af984cf82cc9c412af1ef1dabf6d022fc70f88d03436e58f46da8819e09",
@@ -38,7 +38,7 @@
   "challenge_result_right": "b294c0277eb20ecbe7fdb09a549371cbd4764c949e637015877e9c4b0a8d9b2b",
   "challenge_section_questions": "4342d84011bb9df58c3b108922150a6f527b765b8fdff50eac08eea91d38bc4d",
   "challenge_section_size": "97bb46e5f7cc1c2bc3a1363198586b2f7c7a730e61d3118ad170e4c24bc39e73",
-  "challenge_see_result": "05501b852e839dfd1b5bc4377c19ffa74130e43626d1609644ba3f947d23f7be",
+  "challenge_see_result": "f9c75eec3357e153553581b82c9c3cfaafae6b57102f0e76fb71c7b45b6e0853",
   "challenge_start": "9d4d2d80b58f0a82a9a1dee1ea9616bb4b1c4700f53a72b418d268e2a1e1d5d0",
   "challenge_start_failed": "bf5a1e00dc8023adbf5983efdf29641ace177886260fd58d048d3ba37db798a3",
   "challenge_start_slow": "33504b0864e1a4ef6e243238b2d07c9c7e4c525b5d3d24df441f80368878da82",
@@ -140,7 +140,7 @@
     <string name="challenge_opens_after_lessons">Wird nach den Lektionen dieser Phase freigeschaltet</string>
     <string name="challenge_not_ready">Diese Herausforderung ist noch nicht bereit.</string>
     <string name="challenge_next_session">In deiner nächsten Lerneinheit</string>
-    <string name="challenge_back_to_today">Zurück zu Heute</string>
+    <string name="challenge_back_to_today">Heute</string>
     <string name="challenge_move">Auf Montag verschieben</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Auf %1$s verschoben</string>

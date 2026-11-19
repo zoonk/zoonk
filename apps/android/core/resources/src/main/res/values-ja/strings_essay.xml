@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "essay_back_to_today": "e82b0b0ad01eb1a1cefcb74a9b41dec5ad428016b2b06b46ae141b937affbebf",
+  "essay_back_to_today": "08800daefd37f4afb780f5e35f21fddebb6e1ae719f1b6b6f971f5bd7339ce14",
   "essay_comments": "d3eb1a202931265d7c92b4282f6476b1b0c9353a2e70d161061a57284721ba38",
   "essay_criterion_addressing": "715178a160a183f31dbe242ef4828c4b5efc4baaa74ddafe00e22e6a83224610",
   "essay_criterion_argument": "08005253d96bde999e21befe867b2cf0507de253a03a1e2b4fdd3f5b39d269d3",
@@ -23,7 +23,7 @@
   "essay_finish_failed": "b19dde046ab7a10b0b6a1cddf8a0bd7f3afe04d2a79840a50883dfd6f487b6da",
   "essay_for_example": "9fc4bdd101b4885d7b209e25c0c631d7b6e1ed13decd6f4db634fb7ce9eb24a0",
   "essay_full_marks": "94b8f50e3c6c107fa114629e26440ac92cd52570c6d502a092c669db967b3e21",
-  "essay_grade_rewrite": "90d40264912dd5eda0943fe36d9b33fdb4b624e9347a2da282a14229ae474ed5",
+  "essay_grade_rewrite": "0b710543e2d850970cbe522dad34ebee0be32b8655e089301989502e08dc2aaf",
   "essay_grading": "7588371af0744e3cc2129b96705362218a878d5c7c4ebf33afbef02765414684",
   "essay_grading_slow": "22b1485efcedcfe39e2c4b6d6cb957e236a5e06c9b7dc54749b92622418669d7",
   "essay_keep_writing": "bf22bf27cf32f08ae37cd730d1f6eeae538e1df81815ca856e1650ac794f73b6",
@@ -43,7 +43,7 @@
   "essay_score_of": "5ecd3430bfa212b660e7a02292e772773246c8c35aa3331e175fe05e78233261",
   "essay_see_comments": "fb08822e3f1e67e39f418fc3a1a92f4fc1ab708c1f65986cfe15356cf2b3b890",
   "essay_see_grade": "6674663c4a920d6827269788aff0608dbf9cf7a7ecf8c0a54b6b7705c1e08dea",
-  "essay_send": "4ae87040227699f06e3821de0be1116395620418699febe321c22e805569d3d3",
+  "essay_send": "6c97245742a728114ba7ca0bc8cda92350677b26e02cb5877f3579297239f102",
   "essay_send_failed": "eab999a6d7f51d76ee55b50bff100c053362019d7ed6bed028b5fd5305422fe9",
   "essay_skip_rewrite": "539fbb845e730a567ade28dcaa5547e89893dfa7847abfc9fa782829f88e1c53",
   "essay_skipped": "220fac68806b898c9405950e022ac84016c6f7f3ed10557abcebedafd60ff3b1",
@@ -103,14 +103,14 @@
     </plurals>
     <!-- On an essay the learner skipped, opened again from a link. -->
     <string name="essay_skipped">この小論文はスキップしました。</string>
-    <string name="essay_back_to_today">「今日」に戻る</string>
+    <string name="essay_back_to_today">今日</string>
     <string name="essay_send_failed">うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。</string>
     <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
     <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
     <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
     <string name="essay_skip_rewrite">スキップ</string>
-    <string name="essay_grade_rewrite">書き直した文章を採点する</string>
-    <string name="essay_send">採点に送る</string>
+    <string name="essay_grade_rewrite">書き直しを採点する</string>
+    <string name="essay_send">小論文を採点する</string>
     <string name="essay_leave_title">いったん中断しますか？</string>
     <string name="essay_leave_description">文章はこの端末に保存され、戻ってきたときに再開できます。</string>
     <string name="essay_keep_writing">書き続ける</string>

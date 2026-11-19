@@ -5,9 +5,9 @@
   "player_action_confirm": "2f8022b74816958c0fadd4716252c83c3bc3d42ded05b4409c2caac7c72ed333",
   "player_action_continue": "0ebe4de04fe13db94a959fbcc219c2cb7d4196439f264397f1229bec211662d6",
   "player_action_next": "28a4f66d58d3a20568fb9a746a32e209302ce6d354d2799c234d9fdad08e912c",
-  "player_action_next_step": "3264b7a104f7dac4647360df0b5af8cccce93d4d321a9aa677b11e02333d1390",
-  "player_action_see_answer": "3e132e1d8f4fe07831df8edf0021e876c63bae6102644959f9645c44be58decd",
-  "player_action_see_how_it_went": "684dcfa8ad20755f316f586a0df9cb89e8da1aa5d1f4c79fb15aa916443d043d",
+  "player_action_next_step": "a26c5bc13ffd33fbf03e1cd71999eeb6fd32df4c42f761c2e750d09284c41926",
+  "player_action_see_answer": "485ccd0cff40786259da59a1faf1eeaa86870214c4d669e61610e3da18e2b629",
+  "player_action_see_how_it_went": "004d76c606569168c93cf2fe678917fbe6670839cb782d39eea9e826b8f0b16e",
   "player_action_start": "8495c3d527f196ac1a748b6845650bd9af39a334edbd360c7f56fef2fd54fa3d",
   "player_activity_example_data": "4a1551cb79238578b39dd6b09986edb6065e876677d5539c5e7f1fdd44de5334",
   "player_activity_source": "b5c57a4759eeac95789e36df1137bde0b75b317d641ce22687bc49e818abe7e1",
@@ -62,7 +62,7 @@
   "player_correction_right": "811f2dd0b23fb5b12041105e2116af07a491043ed27247bb54f37b476123df7e",
   "player_correction_yours": "94039e56148651e4f5ee60acda7c8fb7a87bc3c86d5ae71ba5c13856a8c62d58",
   "player_course_size": "ff7f60513b7e30ce4b27cec2854cc01e8f674e0e2de82734305b157b92f04b8f",
-  "player_create_account_to_save": "9672a6c1ec7c8c4197024ec76fc26b0e7c4728762449eaab7f11bd76b835d532",
+  "player_create_account_to_save": "7f95c454c97d4c99a6fe8064c3b1bac36aaa09bef4c68d7e80182c66e231d6dc",
   "player_didnt_get_it": "36e33ef51b33c48a6bcaec3d9f056af660bb342cfda97bc05e23cc7b2559c545",
   "player_done": "77c71e67d8ce266b33a1d0fd7bdd80437205c9804bb282d237171b8fbb1125e2",
   "player_dont_know_yet": "c3ffdc0441acc26e7372c9d8c1d8f14a7e579250b9c6a601ad434ccebd385573",
@@ -75,7 +75,7 @@
   "player_explain_first": "fccc2a995158ab210dd96edb358f0f6d36a670fcac484c169dff921b6c46fcb5",
   "player_finish": "d5824258e72a7d853c32aa92a5fc617f6112d6df67613af917e22787cc0fa2d3",
   "player_from_the_lesson": "17d73ce0224daa289bc763099f2d2e6c1e671ed3564435a49d08dc3d3c5f6bb6",
-  "player_get_it_ready": "52ebe63f16866207a3e761d60c27898ba92d93f70051cdd3892e15cc798d53de",
+  "player_get_it_ready": "e9fa73a25dc502edf114ae7600362b0507fcc6590b06031c117085a2561cae9e",
   "player_getting_challenge_ready": "f5476898657e9490977eb2667b1958cd893c149f30a94b4e03d3050a25178b4c",
   "player_getting_lesson_ready": "d9f1152b8ddfeb981957ca6ae7a1ad6e2684da0db2fbea9493ceb2ea8300772e",
   "player_guess_chip": "14e424f42a05bd3765bf320e582766b9069412c1d2e04292e93c7a620393f602",
@@ -155,9 +155,9 @@
   "player_start_failed_description": "e53a76b4a4dcc001a913241d8a9e77d781cc159f4bb14c70f58e402509b0e277",
   "player_start_failed_title": "ee9100adec2e2d0dd407ab0b6b5d0ffc7af06e4b5401d082970c88951beef496",
   "player_start_note": "373f0e5e0126b9060958232ded3078c7719e3eb6f812b46055bac52323da943b",
-  "player_start_the_lesson": "5d7595d1c2e8ce9ad395816bd89093767ed985ab1fa7fc2b55ec8fde9bf6db3a",
-  "player_start_this_challenge": "71cadc3893049c544fb6b736da87fb750250c13fb947514b6fb08fdf359151c2",
-  "player_start_this_lesson": "390cf859f433d3fd22db0d701f1c33cff598d1cacdfb27909156c23460d1da52",
+  "player_start_the_lesson": "bac25661bca7720d1bb2287d963ac3b4d1ddb54e64d730be7b736e0f94561369",
+  "player_start_this_challenge": "c5efbb5e452481b661a43f8926351a4e7b992925902806ac76542b5af0ef2997",
+  "player_start_this_lesson": "c8079ef598906c297d4de2f1a8e0bf0461c95253839781170c3a65283ac712a8",
   "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
   "player_stop_failed": "bacf92739ba6d6ce5820f7a347860fc437c77c6c30ae5128c0d9fa66f03e1c14",
   "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
@@ -218,9 +218,9 @@
     <string name="player_action_confirm">Onayla</string>
     <string name="player_action_continue">Devam et</string>
     <string name="player_action_next">Devam et</string>
-    <string name="player_action_next_step">Sonraki adımı göster</string>
+    <string name="player_action_next_step">Sonraki adım</string>
     <string name="player_action_see_answer">Cevabı gör</string>
-    <string name="player_action_see_how_it_went">Sonucunu gör</string>
+    <string name="player_action_see_how_it_went">Sonucu gör</string>
     <string name="player_action_start">Başla</string>
     <string name="player_previous_screen">Önceki ekrana dön</string>
     <string name="player_quick_check">Hızlı kontrol · %1$s/%2$s</string>
@@ -298,12 +298,12 @@
     <string name="player_getting_challenge_ready">Meydan okumanı hazırlıyoruz</string>
     <string name="player_lesson_ready">Dersin hazır</string>
     <string name="player_wait_stopped">Bu dersi hazırlayamadık</string>
-    <string name="player_start_this_lesson">Bu derse başla</string>
+    <string name="player_start_this_lesson">Başla</string>
     <string name="player_challenge_not_written_title">Bu meydan okuma henüz hazır değil</string>
     <string name="player_challenge_ready">Meydan okuman hazır</string>
     <string name="player_challenge_wait_stopped">Bu meydan okumayı hazırlayamadık</string>
-    <string name="player_start_this_challenge">Bu meydan okumaya başla</string>
-    <string name="player_start_the_lesson">Derse başla</string>
+    <string name="player_start_this_challenge">Başla</string>
+    <string name="player_start_the_lesson">Başla</string>
     <string name="player_writing_lesson">Dersini hazırlıyoruz</string>
     <string name="player_phase_plan">Dersi planlıyoruz</string>
     <string name="player_phase_plan_line_1">Neleri işleyeceğimizi seçiyoruz…</string>
@@ -426,7 +426,7 @@
     </plurals>
     <string name="player_guest_save_note">İlerlemeni kaydet; öğrendiklerini pekiştirmen için daha sonra kısa bir tekrar karşına çıkacak.</string>
     <string name="player_build_my_plan">Planımı oluştur</string>
-    <string name="player_create_account_to_save">Kaydetmek için hesap oluştur</string>
+    <string name="player_create_account_to_save">Ücretsiz hesap oluştur</string>
     <string name="player_nothing_left_title">Cevaplanacak soru kalmadı</string>
     <string name="player_nothing_left_description">Sonucunu görmek için bitir.</string>
     <string name="player_finish">Bitir</string>

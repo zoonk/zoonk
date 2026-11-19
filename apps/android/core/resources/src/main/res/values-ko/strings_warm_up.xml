@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_back_to_quiz": "bc269c9a6fadd66472c506a3ab1b8cf793fde465f06c89e36f1aa27240413443",
+  "warm_up_back_to_quiz": "e7deeb49a19c31ee1d500a46665c2c4ab4d6448ad019ae2a91df453b9ec169dc",
   "warm_up_first_lesson": "ec0fad3d8666d975ac8e2adc5ec058daa1322969047fb25a59b4c2255a5e87cc",
   "warm_up_first_lesson_ready": "96fee1759a2527a29ba8f1a31e91a652c5a45093bb7079f3c19b8ffe9087f067",
   "warm_up_first_lesson_screens": "fd7298e44c5a29785576f1594dcecd901e56c2f1bb9cc175039125d1270cda8e",
@@ -12,7 +12,7 @@
   "warm_up_plan_ready_one_question": "ea6529bbf03573824d1237bbb4ce86fe667bf94c3c3119034be57d014c7349b4",
   "warm_up_plan_ready_whenever": "3f41b727071dc937f1b8f5357c15a6fd5c15f6f7e25900d6b912951f49089a38",
   "warm_up_plan_waiting": "5fa1d597d6fce291d3f86522edc7187a1872fa711deca38c36a370080e88e6d8",
-  "warm_up_play_quiz": "a0cf81c724d893b70e225f82df2a0161386d5ac9bd8f111ee4f857b0698969a5",
+  "warm_up_play_quiz": "2e61ebc6b87d5c44de650cba5bc319b84dd369f77aa9491424d7b188b69f1d13",
   "warm_up_questions_ready": "7cdaced74dbd0b36e871668b26b8e8ef42cc4afdaa4439452623de7b89900b30",
   "warm_up_ready_to_start": "7fd3311e465d1ddf2f69dd02e1f44fe11b16c089253980fd48c2269c3c3783ab",
   "warm_up_start_first_lesson": "07ce1f4c6a464258936aacadd55f906b4fcc824353d7da173e259d6abcf1f231",
@@ -39,7 +39,7 @@
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">문제가 준비됐어요</string>
     <string name="warm_up_back_to_quiz">퀴즈로 돌아가기</string>
-    <string name="warm_up_play_quiz">기다리는 동안 퀴즈 풀기</string>
+    <string name="warm_up_play_quiz">퀴즈 풀기</string>
     <string name="warm_up_first_lesson_writing">첫 레슨을 만들고 있어요: %1$s</string>
     <string name="warm_up_first_lesson_ready">첫 레슨이 준비됐어요</string>
     <string name="warm_up_plan_waiting">레슨을 마치면 계획이 준비되어 있을 거예요.</string>

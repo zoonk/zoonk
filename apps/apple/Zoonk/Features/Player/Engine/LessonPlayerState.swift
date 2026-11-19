@@ -206,7 +206,7 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// The opening guess with nothing picked: its main button is "I don't know yet", which reveals the
-  /// answer; a pick makes it "See the answer".
+  /// answer; a pick makes it "See answer".
   var revealsWithoutGuess: Bool {
     guard phase == .playing, let step = currentStep, case .hook(let hook) = step.content,
       hook.asksGuess

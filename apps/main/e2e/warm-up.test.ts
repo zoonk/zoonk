@@ -20,7 +20,7 @@ const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
-const PLAY_QUIZ = "Play a quiz while you wait";
+const PLAY_QUIZ = "Play a quiz";
 
 /**
  * A goal at the time question while its plan is built, by a run that already reported its deck. A

@@ -197,12 +197,16 @@ msgstr "学習済み"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/challenge/challenge-moved-screen.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-steps.tsx
@@ -221,6 +225,7 @@ msgstr "今日"
 #: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/guest-lesson-ending.tsx
 #: src/onboarding/save-plan-note.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
@@ -289,6 +294,7 @@ msgid "Continue"
 msgstr "続ける"
 
 #: src/_components/detail-page.tsx
+#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
@@ -521,11 +527,6 @@ msgid "{done, number} of {total, number}"
 msgstr "{done, number}/{total, number}"
 
 #: src/_components/lesson-not-written-notice.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "レッスンを始める"
-
-#: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
@@ -642,20 +643,22 @@ msgid "Next"
 msgstr "次へ"
 
 #: src/_components/question-actions.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "次のステップを表示"
+#: src/essay/essay-feedback.tsx
+msgctxt "d-qgix"
+msgid "Next step"
+msgstr "次のステップ"
 
 #: src/_components/question-actions.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
+msgctxt "ylGsid"
+msgid "See answer"
 msgstr "答えを見る"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
+#: src/mock/mock-screen.tsx
+msgctxt "4tdaRm"
+msgid "See result"
 msgstr "結果を見る"
 
 #: src/_components/question-actions.tsx
@@ -2286,15 +2289,6 @@ msgid "Undo"
 msgstr "元に戻す"
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "「今日」に戻る"
-
-#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}に移動しました"
@@ -3045,11 +3039,6 @@ msgid "Comments"
 msgstr "コメント"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "d-qgix"
-msgid "Next step"
-msgstr "次のステップ"
-
-#: src/essay/essay-feedback.tsx
 msgctxt "BQrBD9"
 msgid "Nothing left to work on"
 msgstr "直すところはありません"
@@ -3230,14 +3219,14 @@ msgid "Rewrite what needs work"
 msgstr "改善が必要な部分を書き直す"
 
 #: src/essay/essay-screen.tsx
-msgctxt "Wleedk"
-msgid "Grade the rewrite"
-msgstr "書き直した文章を採点する"
+msgctxt "osZlj7"
+msgid "Grade rewrite"
+msgstr "書き直しを採点する"
 
 #: src/essay/essay-screen.tsx
-msgctxt "o88h1t"
-msgid "Send for grading"
-msgstr "採点に送る"
+msgctxt "KVfx1c"
+msgid "Grade essay"
+msgstr "小論文を採点する"
 
 #: src/essay/essay-screen.tsx
 msgctxt "xNSBn4"
@@ -3255,6 +3244,7 @@ msgid "Leave for now?"
 msgstr "いったん中断しますか？"
 
 #: src/essay/essay-skip-button.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
@@ -6614,11 +6604,6 @@ msgid "Nothing said this time"
 msgstr "今回は発音しませんでした"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "6ie6AS"
-msgid "Skip this word"
-msgstr "この単語をスキップする"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "もう一度声に出して言う"
@@ -8701,11 +8686,6 @@ msgid "Leave the mock exam?"
 msgstr "模試を中断しますか？"
 
 #: src/mock/mock-screen.tsx
-msgctxt "4tdaRm"
-msgid "See result"
-msgstr "結果を見る"
-
-#: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
 msgstr "模試を提出しました"
@@ -9070,6 +9050,11 @@ msgid "You can start with the basics of music today: reading notes, rhythm and t
 msgstr "今日から、音符の読み方やリズム、音感を鍛える練習など、音楽の基礎を学べます。"
 
 #: src/onboarding/entry/guest-goal-gate.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "「今日」に戻る"
+
+#: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
 msgid "Create a free account to start another goal"
 msgstr "無料アカウントを作成して、別の目標を始める"
@@ -9293,11 +9278,6 @@ msgstr "{chapters, plural, other {#章}}・約{time}"
 msgctxt "ik72yw"
 msgid "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
 msgstr "{number, number}レッスン目（{total, plural, other {全#レッスン}}）"
-
-#: src/onboarding/guest-lesson-ending.tsx
-msgctxt "oxr39K"
-msgid "Create an account to save"
-msgstr "アカウントを作成して保存する"
 
 #: src/onboarding/how-it-works.tsx
 msgctxt "3DwJaq"
@@ -13763,15 +13743,15 @@ msgstr "気軽に楽しめるクイズです。回答は評価に影響しませ
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "8ZwEZ-"
-msgid "Back to the quiz"
+msgctxt "HPwc9j"
+msgid "Back to quiz"
 msgstr "クイズに戻る"
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-screen.tsx
-msgctxt "3IyRnV"
-msgid "Play a quiz while you wait"
-msgstr "待ち時間にクイズをする"
+msgctxt "0dZmxB"
+msgid "Play a quiz"
+msgstr "クイズを始める"
 
 #: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"

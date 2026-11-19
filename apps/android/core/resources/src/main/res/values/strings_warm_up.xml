@@ -17,8 +17,8 @@
     <string name="warm_up_plan_ready_whenever">See it whenever you\'re ready.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Your questions are ready</string>
-    <string name="warm_up_back_to_quiz">Back to the quiz</string>
-    <string name="warm_up_play_quiz">Play a quiz while you wait</string>
+    <string name="warm_up_back_to_quiz">Back to quiz</string>
+    <string name="warm_up_play_quiz">Play a quiz</string>
     <string name="warm_up_first_lesson_writing">Writing your first lesson: %1$s</string>
     <string name="warm_up_first_lesson_ready">Your first lesson is ready</string>
     <string name="warm_up_plan_waiting">Your plan will be waiting when you finish.</string>

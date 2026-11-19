@@ -41,7 +41,7 @@
   "checkpoint_review": "724b840140d7d037e505a562d3c50d70e949cecad8d285ffa416fccc65b27b63",
   "checkpoint_rewards": "f7a96c2738363f1694b54eab6d4ec0878039898b19b21aaceb6a26018c322c85",
   "checkpoint_right_to_win": "805d0699297a1bb5c721942e0f4f2fab400c1c996fd163c5f95fd65c8c16915c",
-  "checkpoint_see_result": "6eb58adc031a9b43e27d15445832424230836e84df8e2e7cd2b9390a7ed2a9af",
+  "checkpoint_see_result": "0edf4cf7325ff727ab978d83b42167ae6d9df3c452b54b781edd2ea86a48cdfb",
   "checkpoint_shield": "c569069ac9fe3776afab03ac3b9d564fe0ae5a7b7218551deb1465e6be087dff",
   "checkpoint_shield_value": "d6734d8feecd03477ad73d8b134ef57da85b3144d0a4dd0ad68fd3d5006b1c69",
   "checkpoint_to_go": "b17af4184e3421ec663cef73f72081e0062bc4b8a3b354892552424b9bc7f66c",
@@ -63,7 +63,7 @@
     <string name="checkpoint_phase_plain">Sfida della fase</string>
     <string name="checkpoint_confirm">Conferma</string>
     <string name="checkpoint_next">Avanti</string>
-    <string name="checkpoint_see_result">Scopri com’è andata</string>
+    <string name="checkpoint_see_result">Vedi il risultato</string>
     <string name="checkpoint_why_later">Alla fine scoprirai perché.</string>
     <string name="checkpoint_won_line">Il suo scudo è rotto. Hai vinto!</string>
     <string name="checkpoint_lost_line">Questa volta il suo scudo ha retto.</string>

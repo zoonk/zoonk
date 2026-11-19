@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "challenge_back_to_today": "558c2c24dcb724a39f2407fd729b5f79c23cbc851074448a04ca6efd38928817",
+  "challenge_back_to_today": "7f4c8e8cf8d090e46c2d63e2846c867de5682180ffb412ee294e14be42a33cff",
   "challenge_call_detail": "37d760aca6fdea6c0a54c9998b196c960b88850a67b4dc9ce240aff8c9b52e71",
   "challenge_call_gate": "f024ed7099255fa81f6fa09e9c0f57502de7e109042a6a2d6c8a3bd99e5ee83b",
   "challenge_call_gate_line": "cff4b79751b65b30575cb3e8a7d23867017f41710ac4fd1049a72b46623f8bc5",
@@ -38,7 +38,7 @@
   "challenge_result_right": "cfefb71af122149f6d53987bba66185dc8156740df09ce23b22af8bfd50f3ad6",
   "challenge_section_questions": "db85e901bf29ef0373fb78f9fffa53571a152bedb76339e5c26ddde402192eee",
   "challenge_section_size": "468220a1e0d3a376966b74d161da6b28c1b10ffbfe3fcc7db7af375d9b005d20",
-  "challenge_see_result": "c8ae151a7b1e1dc74399600e6eba8d1791ad24a22ac0dde3ef1a1803a331c9cf",
+  "challenge_see_result": "4f277a4848f2f2964bf1e21de6b5a8515d623dbb49a51a87a41f0514f3b8f644",
   "challenge_start": "1a25bfa6afeab602358d5ef086ad0b45d85f760ecfecbb0d3742fd41692bc72a",
   "challenge_start_failed": "0f7bc3615ae7d686c03bf497b86a3bdcc3deb36bbf5450a193195dbc8aed3a01",
   "challenge_start_slow": "340207e96dc16d38d35e99fbf417a13666f22ad9f61af9ee50ce2938526e8206",
@@ -137,7 +137,7 @@
     <string name="challenge_start_failed">Não deu certo. Tente de novo daqui a pouco.</string>
     <string name="challenge_start_slow">Ainda está começando. Está demorando mais que o normal.</string>
     <string name="challenge_continue">Continuar</string>
-    <string name="challenge_see_result">Ver como foi</string>
+    <string name="challenge_see_result">Ver resultado</string>
     <string name="challenge_opens_tomorrow">Abre amanhã</string>
     <plurals name="challenge_opens_in">
         <item quantity="one">Abre em %d dia</item>
@@ -147,7 +147,7 @@
     <string name="challenge_opens_after_lessons">Abre depois das aulas desta fase</string>
     <string name="challenge_not_ready">Este desafio ainda não está pronto.</string>
     <string name="challenge_next_session">Na sua próxima sessão</string>
-    <string name="challenge_back_to_today">Voltar para Hoje</string>
+    <string name="challenge_back_to_today">Hoje</string>
     <string name="challenge_move">Mudar para segunda-feira</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">Movido para %1$s</string>

@@ -30,14 +30,14 @@ describe("the free lessons gate", () => {
       .element(page.getByRole("heading", { name: "You've used your free lessons" }))
       .toBeVisible();
 
-    expect(page.getByRole("button", { name: /^Start the lesson/u }).query()).toBeNull();
+    expect(page.getByRole("button", { exact: true, name: "Start" }).query()).toBeNull();
 
     await expect
       .element(page.getByRole("heading", { name: "Your next free lesson is ready" }))
       .toBeVisible();
 
     expect(page.getByRole("link", { name: "Subscribe" }).query()).toBeNull();
-    await page.getByRole("button", { name: /^Start the lesson/u }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect.poll(() => startLesson.mock.calls).toHaveLength(2);
 

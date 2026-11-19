@@ -116,7 +116,7 @@ describe("lesson visuals", () => {
 
     renderLessonPlayer({ lesson });
 
-    await page.getByRole("button", { name: "Show the next step" }).click();
+    await page.getByRole("button", { name: "Next step" }).click();
 
     const table = page.getByRole("table");
     await expect.element(table.getByRole("columnheader", { name: "x (N)" })).toBeVisible();
@@ -325,8 +325,8 @@ describe("lesson visuals", () => {
 
     await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
     await page.getByRole("radio").first().click();
-    await expect.element(page.getByRole("button", { name: "See the answer" })).toBeEnabled();
-    await page.getByRole("button", { name: "See the answer" }).click();
+    await expect.element(page.getByRole("button", { name: "See answer" })).toBeEnabled();
+    await page.getByRole("button", { name: "See answer" }).click();
     await expect.element(page.getByRole("button", { exact: true, name: "Continue" })).toBeVisible();
   });
 

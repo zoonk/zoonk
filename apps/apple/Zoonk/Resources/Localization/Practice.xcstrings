@@ -10105,7 +10105,7 @@
         }
       }
     },
-    "See how it went" : {
+    "See result" : {
       "comment" : "Finishes a checkpoint to see its result.\nOpens a finished checkpoint's result.",
       "localizations" : {
         "de" : {
@@ -10117,7 +10117,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cómo te fue"
+            "value" : "Ver resultado"
           }
         },
         "fr" : {
@@ -10129,7 +10129,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda com’è andata"
+            "value" : "Vedi il risultato"
           }
         },
         "ja" : {
@@ -10147,19 +10147,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobacz, jak poszło"
+            "value" : "Zobacz wynik"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver como foi"
+            "value" : "Ver resultado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sonucunu gör"
+            "value" : "Sonucu gör"
           }
         }
       }

@@ -57,7 +57,7 @@ export function OpenNextStep({
                 className={buttonVariants({ size: "sm", variant: "ghost" })}
                 href={exitHref}
               >
-                {t("Back to Today")}
+                {t("Today")}
               </LearnLink>
             </div>
           </div>

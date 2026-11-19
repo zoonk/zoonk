@@ -7018,7 +7018,7 @@
         }
       }
     },
-    "See how it went" : {
+    "See result" : {
       "comment" : "Ends the round",
       "localizations" : {
         "de" : {
@@ -7030,7 +7030,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cómo te fue"
+            "value" : "Ver resultado"
           }
         },
         "fr" : {
@@ -7042,7 +7042,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vedi com’è andata"
+            "value" : "Vedi il risultato"
           }
         },
         "ja" : {
@@ -7060,19 +7060,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprawdź, jak poszło"
+            "value" : "Zobacz wynik"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver como foi"
+            "value" : "Ver resultado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nasıl geçtiğini gör"
+            "value" : "Sonucu gör"
           }
         }
       }
@@ -7136,61 +7136,61 @@
         }
       }
     },
-    "Skip this word" : {
+    "Skip" : {
       "comment" : "Skips a word in the round",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Wort überspringen"
+            "value" : "Überspringen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saltar esta palabra"
+            "value" : "Saltar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passer ce mot"
+            "value" : "Passer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salta questa parola"
+            "value" : "Salta"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この単語をスキップ"
+            "value" : "スキップ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 단어 건너뛰기"
+            "value" : "건너뛰기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pomiń to słowo"
+            "value" : "Pomiń"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pular esta palavra"
+            "value" : "Pular"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu kelimeyi atla"
+            "value" : "Atla"
           }
         }
       }

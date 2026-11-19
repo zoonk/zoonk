@@ -10,7 +10,7 @@
   "pattern_practice": "fa54f7caafbf6971ed77c28029241289cc4df76e5499959af69baaaabb3b22e9",
   "pattern_quoted": "84cebeaa547f8f2a6bce843c3ee13eef6316e3ecf470dc17a024fdcafee23813",
   "pattern_rule": "8402de96e275072a3e6a28040af298ff2505cb96204d0acd559f72ae9b2ba4b9",
-  "pattern_see_how_it_went": "8128a8bc20006109664b38791f361b385d2e64b5c68172620a61d4c3a5752c77",
+  "pattern_see_how_it_went": "4e33567e273cc488de351b691a1b3918851d52262f41d966591e226c01b8a4cb",
   "pattern_see_rule": "f49a834b03675bae4a09960afaac364bb2c3aae32d03d276be1971253fe9f51a",
   "pattern_seen": "45deec57c4640bcf9e9d41d8e648c8bfd10ec1cd2937c136001d538e235173e0",
   "pattern_seen_times": "b60305b1a231c2bca1ea73896e426188155b4ea891f618fa0b8ab30bfb10dd07",
@@ -45,7 +45,7 @@
     <string name="pattern_where_you_slipped">Co poszło nie tak</string>
     <string name="pattern_see_rule">Zobacz zasadę</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_it_went">Zobacz, jak poszło</string>
+    <string name="pattern_see_how_it_went">Zobacz wynik</string>
     <string name="pattern_got_it">Masz tę zasadę opanowaną.</string>
     <string name="pattern_keep_going">Znajomość zasady to pierwszy krok. Im częściej ją stosujesz, tym łatwiej ci idzie.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

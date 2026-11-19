@@ -20,8 +20,8 @@
   "pronunciation_save_failed": "9cae2f3d361e7863663cf9a2d8216a9ef5ae03870de49f0cc10cd80760fcd40f",
   "pronunciation_save_retry": "d8d786bc57387c2cbdbc5267119fe1abf4c7e318a776f7e81914a05457eb34a0",
   "pronunciation_say_it_like": "11e08d8b8c6ea78b3dbc81f800110ae5b268d59d0ca128aea0d24d9a3a6cbd24",
-  "pronunciation_see_how": "ea10e994044b93815359db68e6101df7eef845ba24680e5a9e4a6a4524fb5876",
-  "pronunciation_skip": "f3d288ae9c2e6ee34273979a7e8d76cbfc05c4c06bacf5b03ad917734b90a564",
+  "pronunciation_see_how": "4e696082397789d98d3c796bcfef316b85999d076ea637da1ac203cba5637529",
+  "pronunciation_skip": "d3fbe6b30d4f62e56912063b96e3d5ae7f4719dbe623866ec6f0a46fcc31af92",
   "pronunciation_sounded_right": "e98f841950a5836d4e81b16e637bf17ad2a5589e05d7c0daac813a252019fae8",
   "pronunciation_title": "492b7df47bdd106d39bed3bdf9f0e919c39e63ae9662ebfbdc2190dc51b16334",
   "pronunciation_try_again": "a677c404ededc2de1934cbadbe17c8df14e16540f3d8a2994cae20220522e86f"
@@ -36,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">%1$s처럼 소리 내어 말해 보세요</string>
     <string name="pronunciation_options">화면 옵션</string>
-    <string name="pronunciation_skip">이 단어 건너뛰기</string>
+    <string name="pronunciation_skip">건너뛰기</string>
     <string name="pronunciation_press_record">녹음 버튼을 누르고 단어를 소리 내어 말해 보세요</string>
     <string name="pronunciation_recording">녹음하고 있어요… 다 말했으면 중지 버튼을 누르세요.</string>
     <string name="pronunciation_grading">발음을 듣고 있어요…</string>

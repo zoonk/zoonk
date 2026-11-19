@@ -108,7 +108,7 @@ export const SEEDED_SCREEN_SCENARIOS: Scenario[] = [
     evidence: ["text=/Rematch tomorrow/"],
     fixture: "lost",
     id: "challenge.lost",
-    proof: "See how it went",
+    proof: "See result",
     screen: "/challenge/[challenge]",
   }),
   seeded({

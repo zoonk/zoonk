@@ -505,7 +505,6 @@ msgid "Start the lesson"
 msgstr "Start the lesson"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Start this lesson"
@@ -2617,9 +2616,9 @@ msgid "Your challenge is ready"
 msgstr "Your challenge is ready"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "erF9ms"
-msgid "Start this challenge"
-msgstr "Start this challenge"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Start"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "NEAV17"
@@ -2657,9 +2656,9 @@ msgid "It takes a few minutes, and keeps going if you leave."
 msgstr "It takes a few minutes, and keeps going if you leave."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "1H9PtO"
-msgid "Get it ready"
-msgstr "Get it ready"
+msgctxt "SSl2nr"
+msgid "Prepare"
+msgstr "Prepare"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

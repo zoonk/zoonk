@@ -182,7 +182,7 @@ class NextStopTest {
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
         rule.waitForIdle()
-        rule.onNodeWithText("Play a quiz while you wait").performClick()
+        rule.onNodeWithText("Play a quiz").performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         rule.onNodeWithText("Next guess").assertExists()
 
@@ -280,8 +280,8 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Try again").assertExists()
-        rule.onNodeWithText("Play a quiz while you wait").assertDoesNotExist()
-        rule.onNodeWithText("Back to the quiz").assertDoesNotExist()
+        rule.onNodeWithText("Play a quiz").assertDoesNotExist()
+        rule.onNodeWithText("Back to quiz").assertDoesNotExist()
         rule.onNodeWithText("Next guess").assertDoesNotExist()
     }
 
@@ -293,7 +293,7 @@ class NextStopTest {
         show()
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
-        rule.onNodeWithText("Play a quiz while you wait").performClick()
+        rule.onNodeWithText("Play a quiz").performClick()
         rule.onNodeWithText(QUIZ_QUESTION).assertExists()
 
         settled = LessonReadiness.Status.FAILED

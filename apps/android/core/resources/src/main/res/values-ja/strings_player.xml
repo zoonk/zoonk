@@ -5,9 +5,9 @@
   "player_action_confirm": "899ff4c6be69c2a377bb8c72d0fc6e0e81186741a8af97eaa650f883d2827c75",
   "player_action_continue": "fb73f37fdda5ea8eac556a79e554161910b6b2566ee5cf21d7a3a97396208528",
   "player_action_next": "762468f2155e9f6a76d2a5cdad149ed9688ce79b35226d921fe7e49d933680f5",
-  "player_action_next_step": "d310105e2040904caa37f1367080907d8bae832b884790cca60a662d6fd02cdd",
-  "player_action_see_answer": "3e0b4b4a299c98ac504e168e88585eaf011a3f34dbc52559f7d943866472dc2c",
-  "player_action_see_how_it_went": "c71a55f849f9dc5e941558ecad42ebd517da1922bb752c6418959ca0c9fc628b",
+  "player_action_next_step": "5e8c8e29407d2517cc35b75a8752fe5d4b97992ef6c571b11b00c2332780f872",
+  "player_action_see_answer": "4268d5b5ad73fa744dc91d6bbf90b75ad33ca6f38d7eca67055e8b66ccb35d9b",
+  "player_action_see_how_it_went": "816cf33ed055a9d03f819d71d1697bfe6c99583b4a6ee03b18fcfd3b7a06706b",
   "player_action_start": "1649d6a9ba65d883b9e2f2dd0afadd74846ad3f7ee19a5b3f4535986967d842a",
   "player_activity_example_data": "45cbbfc72222a02fa6cc59e0f2f8c0ff7865ff7b303bd9d2b6789fd53cd27ffa",
   "player_activity_source": "c8c37cef0f2841eda6a34b9e745285f1e356e1e3332b91a017680af8de1f52f2",
@@ -62,7 +62,7 @@
   "player_correction_right": "25de97fc9c6f8ed0fddb1cf612c87e9a84e58d6d5066576f16f9eae856f4965b",
   "player_correction_yours": "ceabd298f3a781655578005e1b38cb89497247fc14a693f20395b300c0bc2ff1",
   "player_course_size": "422db32ce0fc0faf46e37b4a2d331b279d4e5889459282f4bddf2714f308b970",
-  "player_create_account_to_save": "b5518fb7f0ebb1d7681a5836c6ec9fad55c027ff12e9dba27caf0381f3bbd5dc",
+  "player_create_account_to_save": "69c59cff768b93116874af0bbbab22fd6620e6c1ce3a42b0fc5af59cc53319f6",
   "player_didnt_get_it": "585dacdb268e26e2f9a4d426c313b637d10901bd1c36ca2946291841d3b8c4af",
   "player_done": "697efb2878041c16960287cced06fe0a85e4be34e0ba3a19ff5a34df02a57dd6",
   "player_dont_know_yet": "28e2260534b8216d3ace4459d370ec241093e1d8930c7ce10dc60f453451d48b",
@@ -75,7 +75,7 @@
   "player_explain_first": "cc912bbf4a3d3f444fdf2477a743bdf45bc277d981dc0c9fd4f69f09f90c0d9f",
   "player_finish": "6125fb5faa5b30cf9bbab8563006825d7a16f261c6dc22abdf7b9105c9e2eadd",
   "player_from_the_lesson": "0e11ee36bf56bbdeae293ebdfca7aa1392d21cc8e0df34ae94db9db98ade7ba0",
-  "player_get_it_ready": "8c9f88ca74f2881349f301ddffb3c66125d056d53ba9ebf6897d8ae11e82a1f5",
+  "player_get_it_ready": "c965c37d51cdbdb583e7b4633cda05582640b26a3b72ae04a76858d46354a6cf",
   "player_getting_challenge_ready": "c4f2efa5ab6dfa483060399838c85973037a60823d18db04371674f9a9f71b4e",
   "player_getting_lesson_ready": "52af08e49c675d8e4d78a639d86971ef63444d99dcc4e40aafeba8a7c18bb5f7",
   "player_guess_chip": "c7f4a553f6728373e9d47ad80b4db97efd40aa1e9f2115f69d99613c145a4827",
@@ -155,9 +155,9 @@
   "player_start_failed_description": "de98ee78104a4116a5718bf3a16dea6feb653ec201c26c6a2889a2c79bfaefe0",
   "player_start_failed_title": "89ce378768070c4170dd9e26f0764e74502e48fef689c48f566872bffd0d62ed",
   "player_start_note": "2c4fdc44691664fe9b50e2efcfb1093bcde37d4513a4db70f15dd225bc07a213",
-  "player_start_the_lesson": "0ce4f339111d805b929b3b8ca37049fa77778c1dece0b064a4106e5f393042e4",
-  "player_start_this_challenge": "3ea18dad1ca6928892c4ac0d5b88f926e47f375da80bdc38a76dc9779384f770",
-  "player_start_this_lesson": "67a6672a5b07c3ee73fd46fcfd693d84218dedef0067cac5a9af3f3a416ace62",
+  "player_start_the_lesson": "04a6d309b12c122f9ab5ac6a9c32c6bbff89211b98764cf8679305e04351b32b",
+  "player_start_this_challenge": "8c1b6cbe5ee8b8a70dd2d65f6c92e8d54646cb932c8c019d417006403707ffa6",
+  "player_start_this_lesson": "8a06e1ebf5cfd00eb1a14fc0d9421a303548fce39806e1a2f2d267142102afca",
   "player_still_checking": "148cccc6548151d5599617bbca4c6281fec412b78fc18b350e81a02ec731b4c1",
   "player_stop_failed": "63865b30383fc1d7e6ba798dde382a8e91b31875bf4a5615d98e2029da2a6da1",
   "player_stop_for_today": "472db717c3a08fd47b72a37c56badedffcba72e84ed5e09cd34798d3e1f5ed32",
@@ -218,7 +218,7 @@
     <string name="player_action_confirm">確定する</string>
     <string name="player_action_continue">続ける</string>
     <string name="player_action_next">次へ</string>
-    <string name="player_action_next_step">次の手順を見る</string>
+    <string name="player_action_next_step">次のステップ</string>
     <string name="player_action_see_answer">答えを見る</string>
     <string name="player_action_see_how_it_went">結果を見る</string>
     <string name="player_action_start">始める</string>
@@ -291,17 +291,17 @@
     <string name="player_your_answer">選んだ答え</string>
     <string name="player_write_your_answer">答えを書いてください</string>
     <string name="player_not_written_title">このレッスンはまだ準備できていません</string>
-    <string name="player_get_it_ready">レッスンを準備する</string>
+    <string name="player_get_it_ready">準備する</string>
     <string name="player_getting_lesson_ready">レッスンを準備しています</string>
     <string name="player_getting_challenge_ready">チャレンジを準備しています</string>
     <string name="player_lesson_ready">レッスンの準備ができました</string>
     <string name="player_wait_stopped">このレッスンを準備できませんでした</string>
-    <string name="player_start_this_lesson">このレッスンを始める</string>
+    <string name="player_start_this_lesson">始める</string>
     <string name="player_challenge_not_written_title">このチャレンジはまだ準備ができていません</string>
     <string name="player_challenge_ready">チャレンジの準備ができました</string>
     <string name="player_challenge_wait_stopped">このチャレンジの準備ができませんでした</string>
-    <string name="player_start_this_challenge">このチャレンジを始める</string>
-    <string name="player_start_the_lesson">レッスンを始める</string>
+    <string name="player_start_this_challenge">始める</string>
+    <string name="player_start_the_lesson">始める</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
     <string name="player_phase_plan">レッスンの構成を考えています</string>
     <string name="player_phase_plan_line_1">扱う内容を選んでいます…</string>
@@ -420,7 +420,7 @@
     </plurals>
     <string name="player_guest_save_note">進み具合を保存すると、後で短い復習ができ、学んだことが身につきやすくなります。</string>
     <string name="player_build_my_plan">学習計画を作成する</string>
-    <string name="player_create_account_to_save">アカウントを作成して保存する</string>
+    <string name="player_create_account_to_save">無料アカウントを作成する</string>
     <string name="player_nothing_left_title">すべての問題に回答しました</string>
     <string name="player_nothing_left_description">終了すると結果を確認できます。</string>
     <string name="player_finish">終了する</string>

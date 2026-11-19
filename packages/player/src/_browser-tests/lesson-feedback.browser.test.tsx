@@ -136,7 +136,7 @@ describe("lesson feedback", () => {
     const lesson = buildLesson([teachingStep("hook"), teachingStep("explanation")]);
     renderLessonPlayer({ lesson });
 
-    await answer("Yes, exactly", "Here's the answer", /^See the answer/u);
+    await answer("Yes, exactly", "Here's the answer", /^See answer/u);
 
     await expect
       .element(page.getByRole("radio", { name: "Yes, exactly" }))
@@ -152,7 +152,7 @@ describe("lesson feedback", () => {
     const lesson = buildLesson([teachingStep("hook"), teachingStep("explanation")]);
     renderLessonPlayer({ lesson });
 
-    await answer("No", "Good guess!", /^See the answer/u);
+    await answer("No", "Good guess!", /^See answer/u);
 
     await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Your guess/u);
     await expect.element(page.getByText("Your answer")).not.toBeInTheDocument();
@@ -170,7 +170,7 @@ describe("lesson feedback", () => {
     const previous = page.getByRole("button", { name: "Previous screen" });
     await expect.element(previous).not.toBeInTheDocument();
 
-    await answer("No", "Good guess!", /^See the answer/u);
+    await answer("No", "Good guess!", /^See answer/u);
     await next();
     await expect.element(previous).toBeVisible();
     await next();

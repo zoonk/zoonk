@@ -174,7 +174,7 @@ describe("the opening guess's action bar", () => {
       .not.toBeInTheDocument();
 
     await expect.element(barButton("I don't know yet")).not.toBeInTheDocument();
-    await barButton("See the answer").click();
+    await barButton("See answer").click();
 
     await expect
       .element(page.getByRole("status").filter({ hasText: "Here's the answer" }))
@@ -182,7 +182,7 @@ describe("the opening guess's action bar", () => {
 
     await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Correct/u);
     await expect.element(page.getByText("Your guess")).not.toBeInTheDocument();
-    await expect.element(barButton("See the answer")).not.toBeInTheDocument();
+    await expect.element(barButton("See answer")).not.toBeInTheDocument();
     expect(segments()[0]).toBe("read");
 
     await next();
@@ -210,7 +210,7 @@ describe("the opening guess's action bar", () => {
       lesson,
     });
 
-    await barButton("See the answer").click();
+    await barButton("See answer").click();
 
     await expect
       .element(page.getByRole("status").filter({ hasText: "Here's the answer" }))
@@ -219,22 +219,22 @@ describe("the opening guess's action bar", () => {
     expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: lesson.steps[1]?.id });
   });
 
-  it("reads See the answer with a pick, without one, and after unpicking", async () => {
+  it("reads See answer with a pick, without one, and after unpicking", async () => {
     renderLessonPlayer({
       lesson: buildLesson([teachingStep("hook"), teachingStep("explanation")]),
     });
 
-    await expect.element(barButton("See the answer")).toBeVisible();
+    await expect.element(barButton("See answer")).toBeVisible();
 
     await page.getByRole("radio", { name: "Yes, exactly" }).click();
-    await expect.element(barButton("See the answer")).toBeVisible();
+    await expect.element(barButton("See answer")).toBeVisible();
 
     await page.getByRole("radio", { name: "Yes, exactly" }).click();
     await expect.element(page.getByRole("radio", { name: "Yes, exactly" })).not.toBeChecked();
-    await expect.element(barButton("See the answer")).toBeVisible();
+    await expect.element(barButton("See answer")).toBeVisible();
 
     await page.getByRole("radio", { name: "No" }).click();
-    await barButton("See the answer").click();
+    await barButton("See answer").click();
 
     await expect.element(page.getByRole("status").filter({ hasText: "Good guess!" })).toBeVisible();
     await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Your guess/u);
@@ -245,7 +245,7 @@ describe("the opening guess's action bar", () => {
       lesson: buildLesson([teachingStep("hook"), teachingStep("explanation")]),
     });
 
-    await expect.element(barButton("See the answer")).toBeVisible();
+    await expect.element(barButton("See answer")).toBeVisible();
     await press("Enter");
 
     await expect
@@ -259,7 +259,7 @@ describe("the opening guess's action bar", () => {
     });
 
     await press("3");
-    await expect.element(barButton("See the answer")).toBeVisible();
+    await expect.element(barButton("See answer")).toBeVisible();
     await press("Enter");
     await expect.element(page.getByRole("status").filter({ hasText: "Good guess!" })).toBeVisible();
   });

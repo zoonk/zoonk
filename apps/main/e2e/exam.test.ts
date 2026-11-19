@@ -176,7 +176,7 @@ test.describe("Exam goal", () => {
       await rewrite.fill(draft);
       await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible();
 
-      const send = page.getByRole("button", { name: "Grade the rewrite" });
+      const send = page.getByRole("button", { name: "Grade rewrite" });
 
       const failed = page.getByText(
         "That didn't go through. Your text is still here. Try again in a moment.",

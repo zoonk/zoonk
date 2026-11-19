@@ -505,7 +505,6 @@ msgid "Start the lesson"
 msgstr "레슨 시작하기"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "이 레슨 시작하기"
@@ -2617,9 +2616,9 @@ msgid "Your challenge is ready"
 msgstr "챌린지가 준비됐어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "erF9ms"
-msgid "Start this challenge"
-msgstr "챌린지 시작하기"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "시작하기"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "NEAV17"
@@ -2657,9 +2656,9 @@ msgid "It takes a few minutes, and keeps going if you leave."
 msgstr "준비하는 데 몇 분 정도 걸리고, 화면을 나가도 계속 진행돼요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "1H9PtO"
-msgid "Get it ready"
-msgstr "레슨 준비하기"
+msgctxt "SSl2nr"
+msgid "Prepare"
+msgstr "준비하기"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
