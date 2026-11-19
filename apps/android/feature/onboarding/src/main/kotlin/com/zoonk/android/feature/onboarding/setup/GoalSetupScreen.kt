@@ -26,9 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,7 +36,6 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
-import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
@@ -60,7 +57,6 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
-import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.navigation.AppNavigator
@@ -71,7 +67,6 @@ import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MoreButton
@@ -81,7 +76,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -573,12 +567,11 @@ private fun ColumnScope.QuestionStep(
                 plans,
                 navigator,
                 onReveal = vm::reveal,
-                openingStep = vm.openingStep,
-                failedStep = vm.failedStep,
                 startStepFailed = vm.startStepFailed,
-                onOpenStep = openRevealStep?.let { { day, step, fromStart -> vm.openRevealStep(day, step, fromStart) } },
+                onOpenStep = openRevealStep?.let { { day, step -> vm.openRevealStep(day, step) } },
                 saving = vm.isSaving,
                 saveFailed = vm.saveFailed,
+                onUseNoticeDay = { vm.useNoticeDay(plans, it) },
                 today = store.revealToday[view.goal.id.toString()],
             )
         }

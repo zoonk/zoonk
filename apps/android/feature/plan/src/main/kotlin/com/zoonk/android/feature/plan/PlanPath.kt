@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -128,9 +127,9 @@ private fun PhaseItem(
         val isNext = own.state == PlanPhaseChaptersInner.State.CURRENT
         Column {
             PhaseRow(
-                page,
+                page.plan,
                 phase,
-                open,
+                phaseMeta(page, phase, open),
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
@@ -144,7 +143,7 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null
     if (!hasContent) {
-        PhaseRow(page, phase, open)
+        PhaseRow(page.plan, phase, phaseMeta(page, phase, open))
         return
     }
 
@@ -153,31 +152,38 @@ private fun PhaseItem(
     val byPlace = phase.isNamedLikeAChapter(name)
 
     Column {
-        PhaseRow(page, phase, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
+        PhaseRow(
+            page.plan,
+            phase,
+            phaseMeta(page, phase, open),
+            onClick = { expanded = !expanded },
+            expanded = expanded,
+            byPlace = byPlace && expanded,
+        )
         if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
     }
 }
 
+/** A phase's row on the path: its mark, its name over [line], and when it ends. */
 @Composable
-private fun PhaseRow(
-    page: PlanPageState,
+internal fun PhaseRow(
+    plan: Plan,
     phase: PlanPhase,
-    open: Boolean,
+    line: PlanDateWords?,
     onClick: (() -> Unit)? = null,
     highlighted: Boolean = false,
     expanded: Boolean? = null,
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
 ) {
-    val date = phaseEnd(page, phase)
-    val name = phaseName(phase, page.mocksRequirePlus, byPlace = byPlace)
+    val date = phaseEnd(plan, phase, plan.today)
+    val name = phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
             stringResource(R.string.plan_up_next_suffix)
         } else {
             phaseStateWords(phase.state)
         }
-    val line = phaseMeta(page, phase, open)
     val color = if (phase.state == PlanPhase.State.DONE) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
 
     ListRow(
@@ -281,7 +287,7 @@ private fun phaseMeta(
     return null
 }
 
-private fun sameWords(text: String) = PlanDateWords(text, text)
+internal fun sameWords(text: String) = PlanDateWords(text, text)
 
 @Composable
 private fun PhaseMark(phase: PlanPhase) {
@@ -428,10 +434,11 @@ internal fun PhaseChapters(
     }
 }
 
+/** Without [links] the row only says what's there, and opens nothing. */
 @Composable
-private fun ChapterRow(
+internal fun ChapterRow(
     chapter: PlanPhaseChaptersInner,
-    links: PlanLinks,
+    links: PlanLinks?,
     indent: Dp,
 ) {
     val isNext = chapter.state == PlanPhaseChaptersInner.State.CURRENT
@@ -457,11 +464,12 @@ private fun ChapterRow(
         },
         onClick =
             when {
+                links == null -> null
                 chapter.writing && skillId != null -> links.farTopic(FarTopic(skillId, title, chapter.plannedLessons, chapter.nextDate))
                 chapterId != null -> ({ links.chapter(chapterId) })
                 else -> null
             },
-        highlighted = isNext && opensChapter,
+        highlighted = isNext && opensChapter && links != null,
         indent = indent,
         leading = { ChapterMark(chapter, isNext) },
         supporting = listRowDescription(line),

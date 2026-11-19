@@ -39,10 +39,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
@@ -543,11 +540,12 @@ internal fun LazyListScope.subjectTopics(
     }
 }
 
+/** Without [actions] its chapters only say what's there: none opens. */
 @Composable
-private fun TopicGroupRow(
+internal fun TopicGroupRow(
     group: TopicGroup<SyllabusTopic>,
     showFrequency: Boolean,
-    actions: SubjectActions,
+    actions: SubjectActions?,
     countDigits: Int,
 ) {
     val mark = group.mark
@@ -660,14 +658,18 @@ private fun ChildTopic(child: TopicChild<SyllabusTopic>) {
 }
 
 @Composable
-private fun TopicChapterLink(
+internal fun TopicChapterLink(
     chapter: SyllabusChapter,
-    actions: SubjectActions,
+    actions: SubjectActions?,
 ) {
     val chapterId = chapter.chapterId
-    val openFarTopic = actions.openFarTopic
+    val openFarTopic = actions?.openFarTopic
     val onClick =
         when {
+            actions == null -> {
+                null
+            }
+
             chapterId != null -> {
                 { actions.openChapter(chapterId) }
             }

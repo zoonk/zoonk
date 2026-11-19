@@ -38,7 +38,7 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
 /** Null when the plan covers everything in depth or has no date to cover it by. */
-internal fun planCoverage(plan: Plan): PlanFeasibility? = plan.feasibility?.takeIf { it.deadline != null && !it.fits }
+fun planCoverage(plan: Plan): PlanFeasibility? = plan.feasibility?.takeIf { it.deadline != null && !it.fits }
 
 /** The learner's own time covers everything once planned again at it, so no other time is offered. */
 internal fun timeEnough(plan: Plan): Boolean = plan.feasibility?.timeCovers ?: false
@@ -47,7 +47,7 @@ internal fun canMoveDate(page: PlanPageState): Boolean = !page.isExam && planCov
 
 /** Main's `useCoveredText`: what the learner's time a day covers now, named by that time beside an offer of another. */
 @Composable
-internal fun coveredText(
+fun coveredText(
     plan: Plan,
     coverage: PlanFeasibility,
 ): String {

@@ -199,31 +199,25 @@ internal class GoalSetupViewModel(
 
     /** "Start": marks the plan seen, reads Today again, then leads there. */
     fun reveal() =
-        reveal(null) { started ->
+        reveal { started ->
             doors.prepareToday()
             revealed.send(started, Revealed())
             true
         }
 
-    var openingStep by mutableStateOf<Long?>(null)
-        private set
-
-    private val stepFailure = visit.outcome<Long>()
     private val startStepFailure = visit.outcome<Unit>()
 
-    /** The reveal's step whose opening failed on this visit. */
-    val failedStep get() = stepFailure.value
+    /** Start's step didn't open on this visit. */
     val startStepFailed get() = startStepFailure.value != null
 
-    /** A step of the revealed day: marks the plan seen, opens the step, reads Today again, then leads to it. */
+    /** "Start" with a step to open: marks the plan seen, opens the step, reads Today again, then leads to it. */
     fun openRevealStep(
         day: DayView,
         step: DayStep,
-        fromStart: Boolean = false,
     ) {
         val open = doors.openRow ?: return
         val tappedGoal = java.util.UUID.fromString(goalId)
-        reveal(step.position, fromStart) { started ->
+        reveal { started ->
             when (val result = open(day, step, tappedGoal)) {
                 is MutationResult.Done -> {
                     result.value?.let {
@@ -245,15 +239,9 @@ internal class GoalSetupViewModel(
     }
 
     /** Marks the plan seen, then runs [opened] with the visit that asked, only while that visit lasts. */
-    private fun reveal(
-        position: Long?,
-        fromStart: Boolean = false,
-        opened: suspend (started: Int) -> Boolean,
-    ) {
+    private fun reveal(opened: suspend (started: Int) -> Boolean) {
         if (isSaving) return
         isSaving = true
-        openingStep = position.takeUnless { fromStart }
-        stepFailure.clear()
         startStepFailure.clear()
         clearFailure()
         val started = visit.number
@@ -262,18 +250,15 @@ internal class GoalSetupViewModel(
             when (store.markPlanRevealed(revealingGoal)) {
                 is WriteOutcome.Done -> {
                     // A visit that ended while it marked opens no step and leads nowhere.
-                    if (visit.number == started && !opened(started)) {
-                        if (fromStart) startStepFailure.send(started, Unit) else position?.let { stepFailure.send(started, it) }
-                    }
+                    if (visit.number == started && !opened(started)) startStepFailure.send(started, Unit)
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (position == null || fromStart) failure.send(started, SaveFailure()) else stepFailure.send(started, position)
+                    failure.send(started, SaveFailure())
                 }
             }
-            openingStep = null
             isSaving = false
         }
     }
@@ -423,6 +408,32 @@ internal class GoalSetupViewModel(
         if (isSaving) return
         clearFailure()
         update(flow.opening(OnboardingStep.TARGET_DATE))
+    }
+
+    /** The reveal's "Use this date": the day the exam's notice gives becomes the goal's date. */
+    fun useNoticeDay(
+        plans: com.zoonk.android.feature.plan.PlanStore,
+        date: java.time.LocalDate,
+    ) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        val started = visit.number
+        viewModelScope.launch {
+            val result =
+                plans.change(
+                    java.util.UUID.fromString(goalId),
+                    listOf(
+                        com.zoonk.android.feature.plan.PlanOp
+                            .TargetDate(date),
+                    ),
+                )
+            val applied =
+                result is com.zoonk.android.data.MutationResult.Done &&
+                    result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED
+            if (!applied && result != com.zoonk.android.data.MutationResult.Obsolete) failure.send(started, SaveFailure())
+            isSaving = false
+        }
     }
 
     /** Start over archived what this setup made: the learner starts again from their words. */

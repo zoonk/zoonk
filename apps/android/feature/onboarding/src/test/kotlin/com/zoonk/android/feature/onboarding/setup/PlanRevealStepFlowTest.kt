@@ -9,12 +9,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -62,7 +61,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -71,7 +69,6 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -145,14 +142,7 @@ class PlanRevealStepFlowTest {
                                 saving = vm.isSaving,
                                 saveFailed = vm.saveFailed,
                                 startStepFailed = vm.startStepFailed,
-                                openingStep = vm.openingStep,
-                                failedStep = vm.failedStep,
-                                onOpenStep =
-                                    if (open != null) {
-                                        { day, step, fromStart -> vm.openRevealStep(day, step, fromStart) }
-                                    } else {
-                                        onOpenStep?.let { callback -> { day, step, _ -> callback(day, step) } }
-                                    },
+                                onOpenStep = if (open != null) vm::openRevealStep else onOpenStep,
                                 today = if (reveal != null || readReveal != null) onboarding.revealToday[GOAL_ID] else null,
                             )
                         }
@@ -190,38 +180,7 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
-    fun todaysLessonsLeadAndTheFirstWeekCountsTodayAsItsFirstRow() {
-        show(reveal = revealTodayOf())
-        navigator.open(SETUP)
-        rule.waitForIdle()
-
-        val week =
-            rule
-                .onNodeWithText("Your first week")
-                .performScrollTo()
-                .getUnclippedBoundsInRoot()
-                .top
-        val todays = rule.onAllNodesWithText("Today")
-        assertEquals(2, todays.fetchSemanticsNodes().size)
-        val lessons = todays[0].getUnclippedBoundsInRoot().top
-        val row = todays[1].getUnclippedBoundsInRoot().top
-
-        rule.onNodeWithText("6 study days", substring = true).assertExists()
-        assertTrue(lessons < week && week < row)
-    }
-
-    @Test
-    fun theTitleSaysThePlanIsReadyWithNoChipOverIt() {
-        show(reveal = revealTodayOf())
-        navigator.open(SETUP)
-        rule.waitForIdle()
-
-        rule.onNodeWithText("Your plan is ready").assertIsDisplayed()
-        rule.onNodeWithText("Plan created").assertDoesNotExist()
-    }
-
-    @Test
-    fun startOpensTheTaggedStepThroughTheRowCallback() {
+    fun startOpensTheDaysNextStep() {
         val reveal = revealWithNextPosition(1)
         var opened: Pair<DayView, DayStep>? = null
         show(reveal = reveal, onOpenStep = { day, step -> opened = day to step })
@@ -236,36 +195,18 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
-    fun onlyStartIsBusyWhileItOpensTheTaggedStep() {
+    fun startIsBusyWhileItOpensTheDaysNextStep() {
         val opened = CompletableDeferred<MutationResult<AppRoute?>>()
         val reveal = revealWithNextPosition(0)
         show(reveal = reveal, open = { _, _ -> opened.await() })
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
-        val title = "How birds use sound"
-        rule.onNodeWithText(title).performScrollTo().assertHasNoClickAction()
         opened.complete(MutationResult.Done(null))
     }
 
     @Test
-    fun openingRowKeepsItsClickActionWhileStartIsDisabled() {
-        val opened = CompletableDeferred<MutationResult<AppRoute?>>()
-        val reveal = revealWithNextPosition(0)
-        show(reveal = reveal, open = { _, _ -> opened.await() })
-        val title = "How birds use sound"
-        rule
-            .onNodeWithText(title)
-            .performScrollTo()
-            .performClick()
-            .assertHasClickAction()
-        rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
-        rule.onNodeWithText("Start").performScrollTo().assertIsNotEnabled()
-        opened.complete(MutationResult.Done(null))
-    }
-
-    @Test
-    fun startShowsSaveFailureBeforeOpenFailureAndNeverDuplicatesItOnTheRow() {
+    fun startShowsSaveFailureBeforeOpenFailure() {
         var markFails = true
         var opens = 0
         show(reveal = revealWithNextPosition(1), mark = {
@@ -298,7 +239,7 @@ class PlanRevealStepFlowTest {
             .performClick()
         assertEquals(SETUP, navigator.currentRoute)
         loaded.complete(revealWithNextPosition(1))
-        rule.waitUntil { rule.onAllNodesWithText("Start here").fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil { rule.onAllNodes(hasText("Start") and isEnabled()).fetchSemanticsNodes().isNotEmpty() }
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.runOnIdle { assertEquals(true, opened) }
         assertEquals(SETUP, navigator.currentRoute)
@@ -323,19 +264,6 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
-    }
-
-    @Test
-    fun aRestDayShowsNoTodaySection() {
-        val reveal = ApiJson.encodeToJsonElement(revealTodayOf()).jsonObject
-        val today = reveal.getValue("today").jsonObject
-        val rest = JsonObject(today + ("blocks" to JsonArray(emptyList())) + ("nextPosition" to JsonNull))
-        show(reveal = ApiJson.decodeFromJsonElement(JsonObject(reveal + ("today" to rest))))
-        navigator.open(SETUP)
-        rule.waitForIdle()
-
-        rule.onNodeWithText("Your first week").assertExists()
-        rule.onAllNodesWithText("Today").assertCountEquals(0)
     }
 
     private fun revealWithNextPosition(position: Long?): PlanRevealToday {
@@ -390,7 +318,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Adjust").assertIsDisplayed()
+        rule.onNodeWithText("Adjust plan").assertIsDisplayed()
     }
 
     @Test
@@ -402,7 +330,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Adjust").assertIsDisplayed()
+        rule.onNodeWithText("Adjust plan").assertIsDisplayed()
     }
 
     @Test
@@ -419,7 +347,7 @@ class PlanRevealStepFlowTest {
         planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
-        rule.onNodeWithText("Adjust").assertIsDisplayed()
+        rule.onNodeWithText("Adjust plan").assertIsDisplayed()
     }
 
     @Test
@@ -441,7 +369,7 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Your plan is ready").assertIsDisplayed()
         rule.onNodeWithText("Here's the answer").assertExists()
         rule.onNodeWithText("Next guess").assertDoesNotExist()
-        rule.onNodeWithText("Adjust").assertDoesNotExist()
+        rule.onNodeWithText("Adjust plan").assertDoesNotExist()
     }
 
     @Test
@@ -459,7 +387,7 @@ class PlanRevealStepFlowTest {
         // The plan shows once a second passes after that tap, so a second tap can't land on it.
         rule.mainClock.advanceTimeBy(1_100)
 
-        rule.onNodeWithText("Adjust").assertIsDisplayed()
+        rule.onNodeWithText("Adjust plan").assertIsDisplayed()
     }
 
     private companion object {

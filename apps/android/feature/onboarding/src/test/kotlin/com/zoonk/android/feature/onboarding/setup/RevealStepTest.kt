@@ -185,18 +185,17 @@ class RevealStepTest {
             runCurrent()
             assertEquals(1, marks)
             assertEquals(0, opens)
-            assertEquals(step.position, vm.openingStep)
+            assertTrue(vm.isSaving)
             marked.complete(Unit)
             runCurrent()
             assertEquals(1, opens)
             assertEquals(Revealed(AppRoute.Today), vm.revealed.value)
             assertFalse(vm.isSaving)
-            assertEquals(null, vm.openingStep)
         }
     }
 
     @Test
-    fun markAndOpenFailuresStayOnTheRowAndCanBeRetried() {
+    fun markAndOpenFailuresSayWhichFailedAndCanBeRetried() {
         var markFails = true
         var opens = 0
         var openFails = true
@@ -212,20 +211,21 @@ class RevealStepTest {
             vm.openRevealStep(day, step)
             runCurrent()
             assertEquals(0, opens)
-            assertEquals(step.position, vm.failedStep)
-            assertFalse(vm.saveFailed)
+            assertTrue(vm.saveFailed)
+            assertFalse(vm.startStepFailed)
             assertNull(vm.revealed.value)
             markFails = false
             vm.openRevealStep(day, step)
             runCurrent()
             assertEquals(1, opens)
-            assertEquals(step.position, vm.failedStep)
+            assertFalse(vm.saveFailed)
+            assertTrue(vm.startStepFailed)
             assertNull(vm.revealed.value)
             openFails = false
             vm.openRevealStep(day, step)
             runCurrent()
             assertEquals(Revealed(AppRoute.Today), vm.revealed.value)
-            assertEquals(null, vm.failedStep)
+            assertFalse(vm.startStepFailed)
         }
     }
 
@@ -237,8 +237,7 @@ class RevealStepTest {
 
             assertNull(vm.revealed.value)
             assertFalse(vm.isSaving)
-            assertEquals(null, vm.openingStep)
-            assertEquals(null, vm.failedStep)
+            assertFalse(vm.startStepFailed)
         }
     }
 
@@ -254,7 +253,6 @@ class RevealStepTest {
             vm.act(navigator)
             assertEquals(here, navigator.currentRoute)
             assertTrue(vm.isSaving)
-            assertEquals(step.position, vm.openingStep)
             prepared.complete(Unit)
             runCurrent()
             vm.act(navigator)

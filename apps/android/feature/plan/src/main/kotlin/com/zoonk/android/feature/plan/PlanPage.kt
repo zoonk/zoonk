@@ -352,7 +352,9 @@ internal fun PlanPage(
 
 /** Main's `?focus=` arrivals, as Today's and the tutor's links open the Plan. */
 private const val ADJUST = "adjust"
-private const val ADJUST_TIME = "time"
+
+/** The plan reveal's Add time: Android's reveal can't open the editor itself. */
+const val ADJUST_TIME = "time"
 
 /** The plan reveal's Change beside the exam option the plan follows: Android's reveal can't open the editor itself. */
 const val ADJUST_CHOICES = "choices"
