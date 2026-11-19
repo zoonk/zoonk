@@ -15,7 +15,7 @@
   "mistakes_open_lesson": "0ff6b4cfadd5c3ccfe92683831deb9edcd433ee02400f0df1be7db529b403c81",
   "mistakes_opens_tomorrow": "3b5eb190b03779f06ea04b75fdda4b73f2dac411d427bfa4df05c6d72bae2566",
   "mistakes_other_questions": "dbb0852cbb0f89007d3152f6716a810b6fd126620a3656aa21f4c711036bf0a1",
-  "mistakes_practice": "3fca7922bdc445e272a4424b1801168094722622372c9c28993cf71b63575613",
+  "mistakes_practice": "927bfe45e6f7cf78231bbb910f1ad146102bbaa57fdfffae0ea35bd65acd206b",
   "mistakes_practice_comes_back": "c1b8d358bb059122edc717e6c36735ac89d34f8df41a0a4c1e9c59cdb82e7cbb",
   "mistakes_practice_end": "f705feb7e422c7bdc618826a7c29c073b9aba3f76a25c4a4bf242cffa851db68",
   "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
@@ -44,7 +44,7 @@
     <string name="mistakes_nothing_title">Nada para praticar ainda</string>
     <string name="mistakes_nothing_description">Os erros voltam para prática a partir do dia seguinte.</string>
     <string name="mistakes_notebook_title">Caderno de erros</string>
-    <string name="mistakes_practice">Praticar</string>
+    <string name="mistakes_practice">Corrigir erros</string>
     <!-- Under the notebook's title when no mistake is ready yet and some come back tomorrow. -->
     <string name="mistakes_opens_tomorrow">A prática fica disponível amanhã</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->

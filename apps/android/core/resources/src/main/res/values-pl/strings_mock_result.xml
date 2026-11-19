@@ -83,7 +83,6 @@
   "mock_result_relative": "a382d2f3696c99a1b39a49b7ecd2e7ab02742d0028be5ecd54fb34e13ff69ca7",
   "mock_result_repeats": "96a9f59aa5c1dcfbd8d026408dcbf03965196a6245a31d115065350aa38b0db1",
   "mock_result_review": "a48821afd1b79b64ce9737eecce634c8c5e4c962a88888906dba076c4c6d517b",
-  "mock_result_review_mistakes": "c803de49159c63000e6d3c8cc74fc4ae41e4cdf98fa24e56c3771c046ebbf1ee",
   "mock_result_right": "3df3b4c4c525bb983a73be746f052ed5ef174d169e2d23619644cc9278a0d680",
   "mock_result_right_answers": "73f79e219d2664c498a03c3356223c92782ed767caf1a99478e8b5f5029107e5",
   "mock_result_right_of": "fdd3469935198d4fb818dc35dc2f0f5c71062d108e0144c161f16ed35fe40665",
@@ -404,6 +403,5 @@
     <string name="mock_result_focus_done">W twoim planie jest więcej czasu na przedmiot: %1$s.</string>
     <string name="mock_result_after">Po tym egzaminie próbnym</string>
     <string name="mock_result_continue">Kontynuuj</string>
-    <string name="mock_result_review_mistakes">Przejrzyj błędy</string>
     <string name="mock_result_not_now">Nie teraz</string>
 </resources>

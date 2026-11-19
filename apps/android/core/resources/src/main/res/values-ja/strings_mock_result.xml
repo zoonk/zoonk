@@ -83,7 +83,6 @@
   "mock_result_relative": "f7cfd20d4fc7dc15db55b53b760cd82ee5b809af07d30c3db126505b30b19c3c",
   "mock_result_repeats": "63d01326fff6ae699a3d719596abc0b0a53e78928730ddccc50cb0df7651d561",
   "mock_result_review": "d5e25a7c09333715ae8a9d2460016c6cecc1c00ae43fd36ccdfc4eceaf93f092",
-  "mock_result_review_mistakes": "8d285e531e86c67d87dc8692c3a96c6a545076adf24e57798f107a47b6ebd3b7",
   "mock_result_right": "51cd0ee3c5c75858c97e226a5ac2dd6edd1fe50fcaf4a18049f68a1e531a78df",
   "mock_result_right_answers": "2052708d45fe5b6f61990dc90e706ea0890679d38fda86325dd3558d8db65780",
   "mock_result_right_of": "656091b72b37cf4fef90effbdb87774ff9ca8a64bde2e26d006c0c802fbcd4c7",
@@ -344,6 +343,5 @@
     <string name="mock_result_focus_done">学習計画では%1$sの学習時間が増えます。</string>
     <string name="mock_result_after">今回の模試のあと</string>
     <string name="mock_result_continue">続ける</string>
-    <string name="mock_result_review_mistakes">間違いを復習する</string>
     <string name="mock_result_not_now">今はしない</string>
 </resources>

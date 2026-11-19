@@ -83,7 +83,6 @@
   "mock_result_relative": "cbcb3fb1e65687d722cec0f346a309b905e178058be8fd80239802abd20811cd",
   "mock_result_repeats": "ed548b0c0701a31352d5021d445c24a2a818fce11c1b8a2b884c830b36c49e5d",
   "mock_result_review": "742165ee48fe505b8f49539fe2ed3f11afd2db7d7b475cd76e0928fd8cac78de",
-  "mock_result_review_mistakes": "64019e2235c4444f7b44148a0d497e31469e5bb50d4aa4def63ecefaaf3af19a",
   "mock_result_right": "1a340437215b5dc41304857daadf6df08f98ffdba0eab98333a7e9133b688a67",
   "mock_result_right_answers": "b8f37869d7c79efaa5d5b526721e616d38b1a7abeccf172c43a65673f68e26c5",
   "mock_result_right_of": "5167a42ce71475be90fc6131a86f1c729c4c4ae2bb56139c802ef41e0098f895",
@@ -364,6 +363,5 @@
     <string name="mock_result_focus_done">Planın %1$s için daha fazla zaman ayırıyor.</string>
     <string name="mock_result_after">Bu deneme sınavından sonra</string>
     <string name="mock_result_continue">Devam et</string>
-    <string name="mock_result_review_mistakes">Yanlışlarını gözden geçir</string>
     <string name="mock_result_not_now">Sonraya bırak</string>
 </resources>

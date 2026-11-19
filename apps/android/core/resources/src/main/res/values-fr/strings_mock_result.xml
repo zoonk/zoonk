@@ -83,7 +83,6 @@
   "mock_result_relative": "781baf78ea60af3ed32d31a2ba9bdb017e7772ebea64f90f914d10b7e86309e1",
   "mock_result_repeats": "0cc9ba06d527ce929af031a7aa19861cb5cf068098872c5e4a2fc0647e4e602a",
   "mock_result_review": "bf2051191c08675d972d0bb779333621dc3b99660c407cd370696262af57af7c",
-  "mock_result_review_mistakes": "0da83092e14df112be9578982db9a5987e60bb8b0183bb5e73f2aa7fd2cbbae9",
   "mock_result_right": "bd3922e5c9022a2e211f95020e6e43109e76bc4e562ccc1ecb50a7b27882c0b7",
   "mock_result_right_answers": "05ab782f2fe9cec501792800e7a29136928b5a3f75c77d59efa7428e4504f30f",
   "mock_result_right_of": "3baf06aecb49dd9701628390a97661fbcac0e70463532520721bbb124b8d7adf",
@@ -384,6 +383,5 @@
     <string name="mock_result_focus_done">Ton plan prévoit plus de temps pour %1$s.</string>
     <string name="mock_result_after">Après cet examen blanc</string>
     <string name="mock_result_continue">Continuer</string>
-    <string name="mock_result_review_mistakes">Réviser tes erreurs</string>
     <string name="mock_result_not_now">Pas maintenant</string>
 </resources>

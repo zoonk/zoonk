@@ -238,6 +238,5 @@
     <string name="mock_result_focus_done">Your plan gives %1$s more time.</string>
     <string name="mock_result_after">After this mock exam</string>
     <string name="mock_result_continue">Continue</string>
-    <string name="mock_result_review_mistakes">Review mistakes</string>
     <string name="mock_result_not_now">Not now</string>
 </resources>

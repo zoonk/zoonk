@@ -7617,6 +7617,7 @@ msgstr "Bu soru için yardım"
 
 #. Opens practice on the mistakes that are ready to fix.
 #: src/mistakes/mistakes-notebook.tsx
+#: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "Yanlışlarına çalış"
@@ -8185,11 +8186,6 @@ msgstr "Soru {number} / {total} · {area}"
 msgctxt "IbIchk"
 msgid "Question {number} of {total}"
 msgstr "Soru {number} / {total}"
-
-#: src/mock/mock-result-actions.tsx
-msgctxt "hkWfVA"
-msgid "Review mistakes"
-msgstr "Yanlışlarını incele"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx

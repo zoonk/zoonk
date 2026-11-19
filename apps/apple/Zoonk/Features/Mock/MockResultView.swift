@@ -255,7 +255,10 @@ struct MockResultView: View {
       Button {
         router.open(.mistakes)
       } label: {
-        Text("Review mistakes", tableName: "Mock", comment: "Opens the notebook")
+        Text(
+          LocalizedStringResource(
+            "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
+            comment: "Opens practice on the mistakes that are ready to fix."))
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)

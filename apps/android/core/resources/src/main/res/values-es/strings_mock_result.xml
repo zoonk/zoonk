@@ -83,7 +83,6 @@
   "mock_result_relative": "74541ecf8b5b929f8dcef187b120165bfa0987f791f58cc8a3c304bf256e9050",
   "mock_result_repeats": "a922d533cbd60991baa51bd2dfaf252a4d199ac10ae512d1725777c5864fbcdd",
   "mock_result_review": "ac539d70be2ff04b39ee10ae1af60524411f1ef05c646ca306efad3b32d4761a",
-  "mock_result_review_mistakes": "f8d085599e3f7526a094de84d63041f3c2779ae30c2cb5e105237ca5e59fd0d0",
   "mock_result_right": "5ee41a329d6bd2c436fcd9e792dff29577c99605925a394649c3c2ef93ab14eb",
   "mock_result_right_answers": "fd16bdf358c70475e32982026df53e3a813b4dc0b7790eebd7e9bfbc25d90cf7",
   "mock_result_right_of": "eb81a7b6e9a7be66c35e069eb1d7eb3bbabc5f018ec43e0399648e35a0ad83c4",
@@ -384,6 +383,5 @@
     <string name="mock_result_focus_done">Tu plan dedica más tiempo a %1$s.</string>
     <string name="mock_result_after">Después de este simulacro</string>
     <string name="mock_result_continue">Continuar</string>
-    <string name="mock_result_review_mistakes">Revisar errores</string>
     <string name="mock_result_not_now">Ahora no</string>
 </resources>

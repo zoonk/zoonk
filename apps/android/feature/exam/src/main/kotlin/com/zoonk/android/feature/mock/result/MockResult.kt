@@ -369,7 +369,7 @@ private fun MainAction(
         Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
     } else {
         Button(onClick = onMistakes, modifier) {
-            Text(stringResource(R.string.mock_result_review_mistakes))
+            Text(stringResource(R.string.mistakes_practice))
         }
     }
 }

@@ -25,7 +25,15 @@ export function MockResultActions() {
     return <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>;
   }
 
-  return <TaskMainLink href={hrefs.mistakes}>{t("Review mistakes")}</TaskMainLink>;
+  return (
+    <TaskMainLink href={hrefs.mistakes}>
+      {t({
+        description: "Opens practice on the mistakes that are ready to fix.",
+        id: "practiceMistakesAction",
+        message: "Practice mistakes",
+      })}
+    </TaskMainLink>
+  );
 }
 
 /**

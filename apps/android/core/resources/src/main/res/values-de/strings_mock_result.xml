@@ -83,7 +83,6 @@
   "mock_result_relative": "3d4ded8a0feb5e7aafc4a524fb6c963caebc2f8a0cbd1cc01dcc1552dcb83c6c",
   "mock_result_repeats": "6c25a3b8b0e00361f1990d0a74890e312dc9a9d9a35a5fea0523a3fdfde053f3",
   "mock_result_review": "3cf1715025f3ef563733ae65c0051750ae50e1afd45d5e5384eeefbeeaca312a",
-  "mock_result_review_mistakes": "aee2a598f9faf99db5f8c8ad157ad5854f89705b224ac2821de9264fd33a54ea",
   "mock_result_right": "12d802ad5fcdf78c298f9d7a09db1cb01f8ca904ae79fb7a017f52fd2686dd73",
   "mock_result_right_answers": "ff8122efd37fad4f5d9d678159b4812f2dbc6cc6585e97ccbfce05e7dded9463",
   "mock_result_right_of": "2ca2c78a181f73212375b5a7ed88a8f010dde4222981d0b43b636c7226942d6d",
@@ -364,6 +363,5 @@
     <string name="mock_result_focus_done">Dein Plan sieht mehr Zeit für %1$s vor.</string>
     <string name="mock_result_after">Nach dieser Probeprüfung</string>
     <string name="mock_result_continue">Weiter</string>
-    <string name="mock_result_review_mistakes">Fehler durchgehen</string>
     <string name="mock_result_not_now">Jetzt nicht</string>
 </resources>

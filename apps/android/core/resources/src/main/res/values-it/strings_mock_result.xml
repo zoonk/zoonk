@@ -83,7 +83,6 @@
   "mock_result_relative": "6170732f3445fa23ea75394776cd01f32dc696e73f1801e5c5d888ed3eb511de",
   "mock_result_repeats": "28cdfa9dbec19dd3070a453fd97e0b7bb8dbab44a2049fd8d7b738e3aa3f78d0",
   "mock_result_review": "1d41a4591f424efdc8b989739d9f873a478b8e470ff6594806b42c09303408a0",
-  "mock_result_review_mistakes": "d9138ad0503e5fe652efdc59c166f26702d73740fba5ebda9343c44e1666d80e",
   "mock_result_right": "252eb23217a7034e9d597b1d58df108bb2c2ad0c73c537864523ea138d84bd99",
   "mock_result_right_answers": "3d0f0521a2c95d22e01c67eda4516a6b4ed2683efa958450f4f53b8737281fd1",
   "mock_result_right_of": "88af607d5bd390c53ad7a003a795bea61516499a0208ab233f532d71d9955601",
@@ -384,6 +383,5 @@
     <string name="mock_result_focus_done">Il tuo piano dedica più tempo a %1$s.</string>
     <string name="mock_result_after">Dopo questa simulazione</string>
     <string name="mock_result_continue">Continua</string>
-    <string name="mock_result_review_mistakes">Rivedi gli errori</string>
     <string name="mock_result_not_now">Non ora</string>
 </resources>

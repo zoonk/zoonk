@@ -7617,6 +7617,7 @@ msgstr "이 문제 도움말"
 
 #. Opens practice on the mistakes that are ready to fix.
 #: src/mistakes/mistakes-notebook.tsx
+#: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "틀린 문제 연습"
@@ -8185,11 +8186,6 @@ msgstr "{number}번 문제 (총 {total}문제) · {area}"
 msgctxt "IbIchk"
 msgid "Question {number} of {total}"
 msgstr "{number}번 문제 (총 {total}문제)"
-
-#: src/mock/mock-result-actions.tsx
-msgctxt "hkWfVA"
-msgid "Review mistakes"
-msgstr "틀린 문제 복습하기"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx

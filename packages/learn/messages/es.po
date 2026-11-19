@@ -7617,6 +7617,7 @@ msgstr "Ayuda con esta pregunta"
 
 #. Opens practice on the mistakes that are ready to fix.
 #: src/mistakes/mistakes-notebook.tsx
+#: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "Practicar errores"
@@ -8185,11 +8186,6 @@ msgstr "Pregunta {number} de {total} · {area}"
 msgctxt "IbIchk"
 msgid "Question {number} of {total}"
 msgstr "Pregunta {number} de {total}"
-
-#: src/mock/mock-result-actions.tsx
-msgctxt "hkWfVA"
-msgid "Review mistakes"
-msgstr "Revisar errores"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx

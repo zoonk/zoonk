@@ -7617,6 +7617,7 @@ msgstr "この問題について相談する"
 
 #. Opens practice on the mistakes that are ready to fix.
 #: src/mistakes/mistakes-notebook.tsx
+#: src/mock/mock-result-actions.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "間違えたところの練習"
@@ -8185,11 +8186,6 @@ msgstr "第{number}問（全{total}問） · {area}"
 msgctxt "IbIchk"
 msgid "Question {number} of {total}"
 msgstr "第{number}問（全{total}問）"
-
-#: src/mock/mock-result-actions.tsx
-msgctxt "hkWfVA"
-msgid "Review mistakes"
-msgstr "間違えた問題を見直す"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
