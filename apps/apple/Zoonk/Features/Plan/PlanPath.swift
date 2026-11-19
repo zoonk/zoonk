@@ -115,7 +115,12 @@ private struct PlanPhaseRow: View {
         chapterRows
         events
       } label: {
-        header(next: false)
+        // Open, a phase named like one of its chapters goes by its place, so the two rows don't read
+        // the same; the current phase keeps its name, as main's does.
+        header(
+          next: false,
+          byPlace: isExpanded && phase.state != .current
+            && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
     }
   }
@@ -190,8 +195,9 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
-  private func header(next: Bool) -> some View {
-    PlanPhaseLabel(context: context, phase: phase, description: meta, next: next)
+  private func header(next: Bool, byPlace: Bool = false) -> some View {
+    PlanPhaseLabel(
+      context: context, phase: phase, description: meta, next: next, byPlace: byPlace)
   }
 
   private var meta: Text? {
@@ -242,9 +248,11 @@ struct PlanPhaseLabel: View {
   let phase: PlanPhase
   var description: Text?
   var next = false
+  /// "Phase 2", for a phase named like one of the chapters under it.
+  var byPlace = false
 
   var body: some View {
-    let title = Text(phase.title)
+    let title = Text(byPlace ? phase.placeName : phase.title)
       .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 

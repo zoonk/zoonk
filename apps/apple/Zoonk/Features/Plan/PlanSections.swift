@@ -27,10 +27,15 @@ extension PlanPhase {
         localized: "After the exam", table: "Plan",
         comment: "Name of the phase that goes on after the exam")
     case .learn:
-      return String(
-        localized: "Phase \(index + 1)", table: "Plan",
-        comment: "Name of an unnamed phase by its number")
+      return placeName
     }
+  }
+
+  /// The phase by its place in the plan, "Phase 2".
+  var placeName: String {
+    String(
+      localized: "Phase \(index + 1)", table: "Plan",
+      comment: "Name of an unnamed phase by its number")
   }
 
   var weight: Double {
