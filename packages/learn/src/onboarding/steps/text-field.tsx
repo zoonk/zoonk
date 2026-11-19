@@ -39,7 +39,6 @@ export function TextField({
       <Input
         aria-describedby={description ? descriptionId : undefined}
         autoFocus={autoFocus}
-        className="md:text-reading h-11 text-base"
         id={inputId}
         maxLength={maxLength}
         onChange={(event) => onChange(event.target.value)}

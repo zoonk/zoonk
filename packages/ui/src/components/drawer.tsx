@@ -108,7 +108,7 @@ function DrawerPopup({
             ref={mergeRefs(popupRef, ref)}
           >
             <div
-              className="bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full sm:hidden"
+              className="bg-foreground/20 contrast-more:bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full sm:hidden"
               data-slot="drawer-handle"
             />
             <MenuOpenerNotice onOpen={handoff.onOpen} />

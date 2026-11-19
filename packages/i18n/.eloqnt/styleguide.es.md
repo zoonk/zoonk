@@ -21,6 +21,7 @@
 - “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's: “puntaje”, not “puntuación” or “nota”; the admission cut-off: “puntaje mínimo”
 - “grade” (an essay): “calificar”, and the result “calificación”, not “corregir” or “nota”; “fix” (a mistake): “corregir”
 - “band” (an exam's score band): “banda”

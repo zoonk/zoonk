@@ -97,9 +97,10 @@ test.describe("Placement and the plan", () => {
     const page = await openAs(browser, user);
     await page.goto(`/start/${goal.id}`);
 
+    // Today's lessons lead the screen; the week counts today and lists it first, on one line.
+    await expect(page.getByRole("region", { name: "Today" })).toBeVisible();
     const week = page.getByRole("region", { name: "Your first week" });
-    await expect(week.getByRole("region", { name: "Today" })).toBeVisible();
-    await expect(week).toContainText(/\d+ study days? · /u);
+    await expect(week).toContainText(/\d+ study days?\s·\s.+?Today\s*\d+ lessons?\s·\s/u);
   });
 
   test("Start pressed before the page hydrates opens the step tagged to start, not Today", async ({
@@ -171,7 +172,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
-  await expect(page.getByText("45 min", { exact: true })).toBeVisible();
+  await expect(page.getByText("45 min", { exact: true }).filter({ visible: true })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
 });
 

@@ -81,7 +81,7 @@ export function FullCourseSwitch() {
 
   return (
     <div className="flex flex-col gap-2" id={FULL_COURSE_SWITCH_ID}>
-      <div className="flex min-h-11 items-center justify-between gap-3">
+      <div className="min-h-control flex items-center justify-between gap-3">
         <label className="cursor-pointer text-sm font-medium" htmlFor={switchId}>
           {label}
         </label>

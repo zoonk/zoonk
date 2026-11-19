@@ -129,9 +129,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
   /// Rows the queue shows after its next block before "+N more".
   static let upcomingRows = 4
 
-  /// Mirrors main's `getFoldedRows`: the blocks "N more" holds while the queue is folded.
-  var foldedBlocks: [StudyBlock] {
-    Array(queue(next: nextBlock).after.dropFirst(Self.upcomingRows))
+  /// Mirrors main's `getFoldedRows`: how many of the `count` rows after the next block show while
+  /// folded. A single row past the first few shows: folding it would cost a tap to save one row.
+  static func shownUpcomingRows(_ count: Int) -> Int {
+    count - upcomingRows > 1 ? upcomingRows : count
   }
 
   func foldedMinutes(showing blocks: [StudyBlock]) -> Double {

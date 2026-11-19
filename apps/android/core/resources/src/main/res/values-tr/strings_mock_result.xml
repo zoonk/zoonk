@@ -64,7 +64,6 @@
   "mock_result_notice_scoring": "cc06c1f2550fa1d32144c2f8f2e7b92377c5f3bbf1aa2aebea18f4ab10ee2191",
   "mock_result_of": "bdd019de4a7236e4a2000827e01615b814623a74498c817e6799e914d685666f",
   "mock_result_partly_right": "3556b27162a4a95871fe9b151c48f2b28d8dc43512d0eb3b69fab6d8c2404ef7",
-  "mock_result_partly_right_note": "bdda069a90aa6f7312160bd39b116ef9b8319fee3bb92ae794d0545668c936c1",
   "mock_result_pass_floor": "4c39c91b9a772a7f2cfcfa898e7c125dc7aa8a26f6d4eb777d10198db9b0a02b",
   "mock_result_pass_group": "452ad3c1b3a628bb02326b6774c0557ae25de2634bc85d3ec05807223097982e",
   "mock_result_pass_marks_language": "0c1a9a8b658f02ebe2b1d293551273c2ec6c8428211658edd438252feb706a93",
@@ -77,7 +76,6 @@
   "mock_result_projected_total": "64f66b7745f134cafae6844a125127dd7307024da19366869408358e783c9126",
   "mock_result_qualifying": "6e3c9484e5e17997a14208556e185727a365d2ab965d22d064af25da5b984b4f",
   "mock_result_question": "824f18f4ba50d37ae948d20c6a795a915def874b1639e0705b8429ca06bd5ba1",
-  "mock_result_question_area": "1ee719c030f72af991fe1f7ecf27f05d5a10c163c0619418122b3ca3b67b1160",
   "mock_result_range": "01ad869a7062268e7a2ab77e3ac72b2ffe786f7fa5c50d97e4303e20aa2b1e3d",
   "mock_result_reached_percent": "6e7a04b3e6b89251fab0040d505c958fb9045924a07be5487e8f76fc7ce9f59c",
   "mock_result_reached_points": "bddd386446f6bdccaf0fb94eae67d57b3439f75dac5b8d126d143e6bd58d85ef",
@@ -93,8 +91,6 @@
   "mock_result_scale_named": "fd905391b3e4e6f98fba50f02cda4ad63fa071faeda9a9f09db5ce4a1d964103",
   "mock_result_scale_score": "84e679dffc81cb31dab3647b886520a80a47c63980f7b59b58907e73cfc34c6b",
   "mock_result_scale_score_named": "7936cbba1e6f7cb505316c5b6c6f48038bf05f9c2d963b6b3dfff16ddc5f2b61",
-  "mock_result_see_answers": "3f83abc17b4f195db7c78cb84141326867d50eeb1c9c9351045ed737ef9f3a7a",
-  "mock_result_see_details": "50860166ec1bbf25934e1aa306b40708b7c69279f501acd8a5dd434754186cae",
   "mock_result_see_feedback": "81e4d2f4db02ab69cc91b86040866b581f084af3c4ba494aefef019eeb24c542",
   "mock_result_short_points": "f9ebd72f2073aab1507c25cd37b01b90c7adf04898c314c8ce7fbd0a22e303bd",
   "mock_result_short_points_decimal": "35e9d62ad38c43033e2a9b54fddc49b35cdf9e0b10a5b4321757ea65f2303c3d",
@@ -147,9 +143,6 @@
     <string name="mock_result_strongest">En güçlü branşın: %1$s. Çalışman gereken branş: %2$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Ayrıntıları gör</string>
-    <string name="mock_result_see_details">Ayrıntıları gör</string>
-    <!-- A small button under the result that opens the questions to review. -->
-    <string name="mock_result_see_answers">Cevapları gör</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
     <string name="mock_result_answers">Cevaplar</string>
     <string name="mock_result_about_title">Bu deneme sınavı hakkında</string>
@@ -309,11 +302,8 @@
     </plurals>
     <string name="mock_result_keep_answering">İşaretlediğin cevaplar yine de puan kazandırdı, bu yüzden bu soruları cevaplamaya devam et.</string>
     <string name="mock_result_review">Gözden geçirilecek sorular</string>
-    <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">Soru %1$d · %2$s</string>
     <string name="mock_result_question">Soru %1$d</string>
     <string name="mock_result_left_blank">Boş bıraktın.</string>
-    <string name="mock_result_partly_right_note">Kısmen doğru: bu sorudan kısmi puan aldın.</string>
     <string name="mock_result_written_part">Yazılı bölüm · %1$d / %2$d</string>
     <string name="mock_result_too_short">Not verilemeyecek kadar kısa</string>
     <string name="mock_result_grading">Sınavın değerlendirme ölçütlerine göre not veriyoruz. 30 saniyeye kadar sürebilir.</string>

@@ -39,11 +39,16 @@ msgid "Your answer and the right one"
 msgstr "Your answer and the right one"
 
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Brain Power"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Brain Power</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BP"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -556,11 +561,6 @@ msgstr "Your plan goes on without it."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Summaries"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Brain Power</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
@@ -2224,6 +2224,7 @@ msgstr "You see your result at the end."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -5750,6 +5751,13 @@ msgid "Goals"
 msgstr "Goals"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Brain Power"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
 msgid "A star for finishing, one for getting everything across and one without Help."
 msgstr "A star for finishing, one for getting everything across and one without Help."
@@ -8184,6 +8192,12 @@ msgid "Review mistakes"
 msgstr "Review mistakes"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Partly right"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8195,11 +8209,7 @@ msgid "Wrong"
 msgstr "Wrong"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Partly right"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Blank"
@@ -8236,21 +8246,6 @@ msgid "By topic"
 msgstr "By topic"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "See answers"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "See details"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Answers"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "About this mock exam"
@@ -8276,7 +8271,6 @@ msgid "Grade it"
 msgstr "Grade it"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "You left it blank."
@@ -8559,25 +8553,20 @@ msgid "{change} since the last one"
 msgstr "{change} since the last one"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Answers"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "After this mock exam"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Question {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Question {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Partly right: it earned part of its points."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

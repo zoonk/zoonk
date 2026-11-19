@@ -66,6 +66,7 @@
 - “Buddy”: “相棒”; “study buddy”: “学習の相棒”
 - Buddy stages “Baby” / “Young” / “Adult”: “赤ちゃん” / “こども” / “おとな”, never “アダルト”
 - “Brain Power”: “脳力” (a play on “能力”), never “能力” or “ブレインパワー”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “脳力” (the name is already short, so it stays whole)
 - “mission”: “ミッション”
 - “call” (speaking practice): “会話”, not “電話”; the verb: “会話練習をする”
 - “Mistakes notebook”: “間違いノート”

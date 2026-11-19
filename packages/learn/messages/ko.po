@@ -39,10 +39,15 @@ msgid "Your answer and the right one"
 msgstr "내 답과 정답"
 
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>두뇌력</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
 msgstr "두뇌력"
 
 #: src/_components/chapter-mark.tsx
@@ -556,11 +561,6 @@ msgstr "이 부분 없이도 계획은 계속 진행돼요."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "요약"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>두뇌력</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
@@ -2224,6 +2224,7 @@ msgstr "마지막에 결과를 볼 수 있어요."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -5750,6 +5751,13 @@ msgid "Goals"
 msgstr "목표"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "두뇌력"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
 msgid "A star for finishing, one for getting everything across and one without Help."
 msgstr "대화를 마치면 별 1개, 할 말을 모두 전하면 1개, 도움 없이 해내면 1개를 받아요."
@@ -8184,6 +8192,12 @@ msgid "Review mistakes"
 msgstr "틀린 문제 복습하기"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "부분 정답"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8195,11 +8209,7 @@ msgid "Wrong"
 msgstr "오답"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "부분 정답"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "미응답"
@@ -8236,21 +8246,6 @@ msgid "By topic"
 msgstr "주제별"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "정답 보기"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "자세히 보기"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "답변 수"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "이 모의고사에 대해"
@@ -8276,7 +8271,6 @@ msgid "Grade it"
 msgstr "채점하기"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "답하지 않았어요."
@@ -8559,25 +8553,20 @@ msgid "{change} since the last one"
 msgstr "지난 모의고사 대비 {change}"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "답변 수"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "이번 모의고사 이후"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "문제 {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "{number}번 문제"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "일부가 맞아 부분 점수를 받았어요."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

@@ -64,7 +64,6 @@
   "mock_result_notice_scoring": "d29c2866659d5095e09a1beeecc26a02e73c13d5839005ce757f8523d3f6925b",
   "mock_result_of": "cf967bca4c6ae4f6e85dc152e280395d26f96412d52e88033e2065eeb371d3d5",
   "mock_result_partly_right": "49480cb4851f4b132ad35afd2af17eaf6788cdadc830dffbe99a2ea565896df4",
-  "mock_result_partly_right_note": "83cee34a70241f9a96d9012a688339587159187fca242b895f1858348360f8ac",
   "mock_result_pass_floor": "792c7fe351da47397f6b7ef6f9dba3cee8d10ab4e578c269874f31d35e85801f",
   "mock_result_pass_group": "704ce0577d267dcc6c921b151fd5a92de634d46aec59e7921e2308a1391c7ac2",
   "mock_result_pass_marks_language": "9504ed553828fcb2bff70f9e60d42b848e50bc8a70bf79ae06f0ea8b170d0aa6",
@@ -77,7 +76,6 @@
   "mock_result_projected_total": "31fdde3f5239ad81e83668e3aa6dd28586fbd3dd2e2b5f2dd7fa8c62b89d77fe",
   "mock_result_qualifying": "0aa6d6e8527bc9971acba361d56217342432e3862da56e0780d466a1c553ff85",
   "mock_result_question": "612373a2f9b3afcb26d48885579cee2c87f527e4150f9c0a7845ed5b44602c5d",
-  "mock_result_question_area": "61df2aae7ffcc22c3f1402335324fd968a03b452c708464678446fe6b16ac7c9",
   "mock_result_range": "0c50739762ddd0ea0ceef662d990212eebd03a9c271d9f36bf9c721364378493",
   "mock_result_reached_percent": "713a0d96ec188901219b93c1c57c5ba300d85de2eca530c1f17255c6485b05a3",
   "mock_result_reached_points": "6e51b2a3b163811eeb6e3f482e2736d10157bed31d036d8d4727078143c8e979",
@@ -93,8 +91,6 @@
   "mock_result_scale_named": "b5126620fd7e57f2a5877878d79ce829b1c74931a4b0814dd71713560b72d949",
   "mock_result_scale_score": "49d1b77722a7a7668049f36089358e01a41ffa2792aee96175ed4595fb89cd4d",
   "mock_result_scale_score_named": "2e9147f570ab220674c95ce1902fa0be19cac17582a75bf55ab7c009f61663b7",
-  "mock_result_see_answers": "786f579ed3c919596aa50782772afba36cef10ea2152680f5480768216fc58f5",
-  "mock_result_see_details": "fcaf82b39b865fd616c794b39b6405f7ae1c864f8094a1562e464d2837bc320c",
   "mock_result_see_feedback": "8d2f0ee4e40b1e56f888e7f35d153296efb65acd8006b14813171420622241e5",
   "mock_result_short_points": "944fa042b0374aa0b31f22f3949939ba6a55ce4a2d2f99d0e4b54e0941d07292",
   "mock_result_short_points_decimal": "6788b42a165221c230c38085d2e8741ccfe1b1ebbdb2f753ddeb6ca87a95fe54",
@@ -147,9 +143,6 @@
     <string name="mock_result_strongest">가장 잘한 과목: %1$s. 더 공부할 과목: %2$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">자세히 보기</string>
-    <string name="mock_result_see_details">자세히 보기</string>
-    <!-- A small button under the result that opens the questions to review. -->
-    <string name="mock_result_see_answers">답안 보기</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
     <string name="mock_result_answers">답안</string>
     <string name="mock_result_about_title">이 모의고사에 대해</string>
@@ -293,11 +286,8 @@
     </plurals>
     <string name="mock_result_keep_answering">표시한 문제에서도 점수를 얻었으니, 계속 답해 보세요.</string>
     <string name="mock_result_review">다시 볼 문제</string>
-    <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">%1$d번 문제 · %2$s</string>
     <string name="mock_result_question">%1$d번 문제</string>
     <string name="mock_result_left_blank">답하지 않았어요.</string>
-    <string name="mock_result_partly_right_note">일부가 맞아 부분 점수를 받았어요.</string>
     <string name="mock_result_written_part">필기 파트 · %1$d / %2$d</string>
     <string name="mock_result_too_short">채점하기에는 너무 짧아요</string>
     <string name="mock_result_grading">시험의 평가 기준에 따라 채점하고 있어요. 최대 30초가 걸릴 수 있어요.</string>

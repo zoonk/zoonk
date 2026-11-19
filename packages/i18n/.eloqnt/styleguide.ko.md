@@ -71,6 +71,7 @@
 - “Buddy”: “짝꿍”; “study buddy”: “공부 짝꿍”
 - Buddy stages “Baby” / “Young” / “Adult”: “아기” / “어린이” / “어른”
 - “Brain Power”: “두뇌력”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “두뇌력” (the name is already short, so it stays whole)
 - “mission”: “미션”
 - “call” (speaking practice): “대화”, not “전화”
 - “Mistakes notebook”: “오답 노트”

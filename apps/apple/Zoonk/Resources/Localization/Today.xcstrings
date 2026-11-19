@@ -4180,31 +4180,31 @@
         }
       }
     },
-    "Brain Power" : {
-      "comment" : "Title of what Brain Power is\nUnder the missions' bonus",
+    "BP" : {
+      "comment" : "Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brain Power"
+            "value" : "BP"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poder Mental"
+            "value" : "PM"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puissance Mentale"
+            "value" : "PM"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Potenza Mentale"
+            "value" : "PM"
           }
         },
         "ja" : {
@@ -4222,19 +4222,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moc Umysłu"
+            "value" : "MU"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poder Mental"
+            "value" : "PM"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beyin Gücü"
+            "value" : "BG"
           }
         }
       }

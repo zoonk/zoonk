@@ -205,6 +205,36 @@ struct MockResult: Hashable, Decodable, Sendable {
     let change = Int((current - previous + 0.5).rounded(.down))
     return change == 0 ? nil : change
   }
+
+  /// Main's `getVerdictAreas`: the subject that went best and the one to work on, only where the
+  /// answers tell them apart. An estimate ranks subjects even when nothing was answered, so a
+  /// subject is the strongest only with a right answer in it, and the one to work on only with a
+  /// miss.
+  var verdictAreas: (best: Area, worst: Area)? {
+    let ranked = areas.sorted { $0.measure > $1.measure }
+
+    guard let best = ranked.first, let worst = ranked.last, best.measure != worst.measure,
+      best.correct > 0, worst.correct < Double(worst.total)
+    else { return nil }
+
+    return (best, worst)
+  }
+
+  /// What the answers were: nil where the score already is the count of right ones.
+  var answerCounts: (right: Double, wrong: Double, partial: Int, blank: Int)? {
+    if let net {
+      return (Double(net.right), Double(net.wrong), net.partial, net.blank)
+    }
+
+    guard irt != nil else { return nil }
+    return (correct, Double(total) - correct - Double(blank), 0, blank)
+  }
+}
+
+extension MockResult.Area {
+  fileprivate var measure: Double {
+    score?.score ?? (total > 0 ? correct / Double(total) : 0)
+  }
 }
 
 struct PointsMinimum: Hashable, Decodable, Sendable {

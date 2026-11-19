@@ -31,7 +31,7 @@
   "stats_best_time_evening": "0cd427a22a2f2f6470d6f9b27075acf510154f3a951e7ff9314b3b91b32bb672",
   "stats_best_time_morning": "fb17f48bd8f04a945d09b122fdbba9618bcf90cd3a6a45caf972832590883f87",
   "stats_best_time_night": "799ed938045a05d2fb76601db61428454aa7eec04f8e0d360c0020a3febf3aa1",
-  "stats_brain_power_amount": "476739cec779013fc2850816e2bb92e5626920c33a2153256a0478ddc2b11ad1",
+  "stats_brain_power_amount": "0faff23694159647a977bf7e97e115083ad7f59ebacb8c519a13a702980fc15e",
   "stats_brain_power_to": "58a403d0a1277d3026e27200e8bf325d553989d825b328a4a574062f8f2a18f5",
   "stats_calendar_activity_summary": "aee3de24a7d2d68f1edec9620f6f6640a0241692026ad101fa23d79643b452d1",
   "stats_calendar_energy_summary": "d3652d4aa9aa153f4e331210681675ee6853884aa323db570efe498b327ae908",
@@ -105,6 +105,7 @@
     <string name="stats_see_all">전체 보기</string>
     <string name="stats_best_day">정답률이 가장 높은 요일</string>
     <string name="stats_best_time">가장 잘 맞는 시간대</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
     <string name="stats_brain_power_amount">두뇌력 %1$s</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">모든 띠 획득</string>

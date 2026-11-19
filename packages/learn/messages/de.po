@@ -39,11 +39,16 @@ msgid "Your answer and the right one"
 msgstr "Deine Antwort und die richtige Antwort"
 
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Brain Power"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Brain Power</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BP"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -556,11 +561,6 @@ msgstr "Dein Plan läuft auch ohne diesen Teil weiter."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Zusammenfassungen"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Brain Power</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
@@ -2224,6 +2224,7 @@ msgstr "Dein Ergebnis siehst du am Ende."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -5750,6 +5751,13 @@ msgid "Goals"
 msgstr "Ziele"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Brain Power"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
 msgid "A star for finishing, one for getting everything across and one without Help."
 msgstr "Ein Stern fürs Abschließen, einer dafür, alles verständlich zu vermitteln, und einer fürs Gespräch ohne Hilfe."
@@ -8184,6 +8192,12 @@ msgid "Review mistakes"
 msgstr "Fehler durchgehen"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Teilweise richtig"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8195,11 +8209,7 @@ msgid "Wrong"
 msgstr "Falsch"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Teilweise richtig"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Nicht beantwortet"
@@ -8236,21 +8246,6 @@ msgid "By topic"
 msgstr "Nach Thema"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Antworten ansehen"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Details ansehen"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Antworten"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "Zu dieser Probeprüfung"
@@ -8276,7 +8271,6 @@ msgid "Grade it"
 msgstr "Bewerten lassen"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Du hast keine Antwort gegeben."
@@ -8559,25 +8553,20 @@ msgid "{change} since the last one"
 msgstr "{change} seit der letzten Probeprüfung"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Antworten"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Nach dieser Probeprüfung"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Frage {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Frage {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Teilweise richtig: Dafür gab es einen Teil der Punkte."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

@@ -163,7 +163,7 @@ Borders and dividers are 1px. A thicker line means focus or a checked answer's v
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is `size="bar"` (words) or `size="icon-bar"` (a glyph alone), 44px and 40px from `lg` (a 14px label there), never `sm`; a bottom bar's buttons are 44px at every width, and so are the buttons in a sheet's, a dialog's or a confirm's footer, its own bottom bar (`AlertDialogAction` and `AlertDialogCancel` are; a `DrawerFooter`'s buttons take `size="lg"`); chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's own actions sit in its top bar at those sizes, 8px apart, the "…" last as a ghost `icon-bar` on the bar's end edge (`edge="end"`), and nothing sits beside a pushed page's title. A tab root, which has no bar of its own, keeps its own action at its title row's end in the small size (`sm`, `icon-sm`).
+A control's height is one of `Button`'s, and each height has one label size: the control height (`lg`, `h-control`) for a screen's action, fields, selects, pressed chips and rows, 44px with a 15px label on touch and 36px with a 14px label with a mouse; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. `--control-height` sets it by the device's main pointer. No call site sets a button's height, label size or weight. A top bar's button is `size="bar"` (words) or `size="icon-bar"` (a glyph alone), the control height, never `sm`; a bottom bar's buttons, and what sits level with them, are 44px with every pointer (`keep-touch-size`); the buttons in a sheet's, a dialog's or a confirm's footer are the control height (`AlertDialogAction` and `AlertDialogCancel` are; a `DrawerFooter`'s buttons take `size="lg"`); chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's own actions sit in its top bar at those sizes, 8px apart, the "…" last as a ghost `icon-bar` on the bar's end edge (`edge="end"`), and nothing sits beside a pushed page's title. A tab root, which has no bar of its own, keeps its own action at its title row's end in the small size (`sm`, `icon-sm`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.
@@ -176,7 +176,7 @@ A page's "…", its way back, a sheet's close and a list's row are one size and 
 
 ### Z3. Targets are 44px and don't overlap
 
-Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is an [exception](#exceptions-the-user-granted). The user granted one more: with a fine pointer (a mouse), a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px.
+Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is an [exception](#exceptions-the-user-granted). The user granted one more: with a mouse a control is 36px ([Z1](#z1-heights-from-the-set-one-height-per-row)); touch keeps 44px.
 
 - **Check.** Small controls side by side: their `hit-area`s don't intersect.
 - **Usual break.** Two 30px buttons 8px apart.
@@ -308,14 +308,14 @@ Each surface has one enabled filled button at most, its main action. A surface i
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is one ring everywhere, the fields' soft one: 3px of the ring color at half strength (`ring-ring/50`, or the same outline on a control whose ring draws its line), 3:1 against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Fills, lines and chrome are light by default and darker only under `prefers-contrast: more`, never to pass a check. Focus is one ring everywhere, the fields' soft one: 3px of the ring color at half strength (`ring-ring/50`, or the same outline on a control whose ring draws its line), 3:1 against what's around it, never clipped. A slider's thumb, a white belt's outline, a keycap's mark and a row's chevron have 3:1 contrast against the page; an off switch's track and a sheet's handle are pale and reach 3:1 with more contrast. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
 
 ### X2. A state is drawn one way
 
-A pick is a soft fill darker than a hover (`selected-tint`) with the mark the piece already has (a radio's dot, a checkbox's check, an answer's "Your answer"), never a ring or an outline, so seven picks on one screen stay calm. The current item in navigation is the `muted` fill; the open question on a mock's answer sheet is a short bar under its number. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
+A pick is a soft tile: its fill (`selected-tint`, as light as `muted`) in its line's place, with the piece's own mark in ink (a radio's dot, a check, an answer's key and "Your answer", a chip's label, quiet while off), never a ring or a darker gray. The line returns with more contrast. The current item in navigation is the `muted` fill; on a mock's answer sheet an answered question is that tile, the open one has a short bar under its number, a flagged one an amber tint. What's inspected or played (a calendar's day, a rhythm's step) takes the focus ring. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
 
 - **Check.** No two kinds of "selected" on one screen drawn differently.
 - **Usual break.** A dark ring or outline marking a pick or the current item.
@@ -392,10 +392,10 @@ Each role is drawn by its shared piece, with nothing added around it by the scre
 
 ### R2. The main action is in the bottom bar
 
-An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. On a phone and a tablet the buttons fill the content's measure; on a computer the main action sits at the bar's end, one gutter in from its edge, wherever the content's column ends, as in the player, and the bar's note ends on that edge too. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
+An app screen's one main action sits in `BottomBar`, pinned to the screen's bottom on a phone and a computer, where the thumb and Enter's hint are. On a phone and a tablet the buttons fill the content's measure; on a computer the main action sits at the bar's end, one gutter in from its edge, as does the bar's note; what's above it runs to that end or is one column centered in the bar's width. A task's record or check button is its main action. A screen with no main action has no bar; an overlay keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
 
-- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`). At 1440 the main action ends one gutter from the bar's end (look at).
-- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer. The main action ending on a narrow column's edge, with empty bar beyond it.
+- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`). At 1440 it ends one gutter from the bar's end (look at).
+- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer. The action on a narrow column's edge with empty bar beyond it, or in the far corner over a narrow start-edge column.
 
 ### R3. The line over a title is `Eyebrow`
 
@@ -513,7 +513,7 @@ Each is one named place where a rule above doesn't hold, by the user's decision.
 - A code's boxes (a sign-in or account code) are 56px tall, a little taller than wide, in two groups of three that together are as wide as the button under them, not field-height squares (Z1).
 - Tables in Admin and evals keep their roomier cells; they aren't tightened to a list row's height (D1).
 - The day's bar on Today keeps its look and its parts' popovers; it is never made 44px tall to press (Z3).
-- With a fine pointer, a target may be smaller where 44px looks oversized, menu rows first (36px); touch always keeps 44px (Z2, Z3).
+- With a fine pointer a control is 36px; the bottom bar and touch keep 44px (Z1, Z3).
 - A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
 - Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
 - The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](../SKILL.md#words)).

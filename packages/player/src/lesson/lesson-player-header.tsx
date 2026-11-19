@@ -21,6 +21,7 @@ import { CloudOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTutorBuddy } from "../questions/tutor-buddy";
 import { getChallengeProgress } from "./_utils/challenge-progress";
+import { useCompletionProps } from "./completion/use-completion-props";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { LessonScreenMenu } from "./lesson-screen-menu";
@@ -115,8 +116,13 @@ function LessonProgress() {
 }
 
 export function LessonPlayerHeader() {
-  const { lesson } = useLessonPlayerConfig();
+  const { lesson, slots } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
+  const end = useCompletionProps();
+
+  const endShowsTitle = Boolean(
+    slots.completionTitled && end && end.completion.status !== "failed",
+  );
 
   if (state.run.status === "refused" && state.run.refusal.reason === "notFound") {
     return (
@@ -137,7 +143,7 @@ export function LessonPlayerHeader() {
           <LessonClose />
         </TaskHeaderSide>
 
-        <TaskHeaderTitle title={lesson.title} />
+        <TaskHeaderTitle spoken={endShowsTitle} title={lesson.title} />
 
         <TaskHeaderSide align="end">
           <UnsavedAnswers />

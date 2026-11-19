@@ -14,6 +14,7 @@
 - “write” (Zoonk generating content): “préparer”; learner writing: “écrire”
 - “share” (personal facts): “dire”
 - “Brain Power”: “Puissance Mentale”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's “band”: “Score”, not “note” or “bande”
 - Language skills “Listening” / “Speaking” / “Reading” / “Words”: “Écoute” / “Expression orale” / “Lecture” / “Vocabulaire”
 - Speaking criteria “Fluency” / “Accuracy” / “Range of language”: “Aisance” / “Précision” / “Richesse de la langue”

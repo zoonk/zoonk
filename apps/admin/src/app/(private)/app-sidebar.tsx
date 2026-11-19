@@ -74,16 +74,18 @@ type AdminSidebarProps = { account: AdminAccount; counts: AdminNavCounts };
 function AdminSidebarContent({
   account,
   counts,
+  footerStart,
   onNavigate,
-}: AdminSidebarProps & { onNavigate?: () => void }) {
+}: AdminSidebarProps & { footerStart?: React.ReactNode; onNavigate?: () => void }) {
   return (
     <>
       <SidebarBody className="gap-3">
         <AdminNav counts={counts} onNavigate={onNavigate} />
       </SidebarBody>
 
-      {/* Its hairline keeps the account apart from the navigation that scrolls above it. */}
+      {/* Its hairline keeps the footer apart from the navigation that scrolls above it. */}
       <SidebarFooter className="border-t">
+        {footerStart}
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -93,18 +95,19 @@ function AdminSidebarContent({
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-3">
-      {/* One row, so the whole navigation fits a laptop's height. The toggle comes first at both
-          widths, beside the search and, collapsed, above it, so it's read where it's drawn. */}
-      <SidebarHeader className="sidebar-collapsed:flex-col sidebar-collapsed:gap-4 flex-row items-center gap-1">
-        <SidebarToggle
-          className="hover:bg-transparent"
-          collapseLabel="Collapse sidebar"
-          expandLabel="Expand sidebar"
-        />
+      <SidebarHeader>
         <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
-      <AdminSidebarContent account={account} counts={counts} />
+      <AdminSidebarContent
+        account={account}
+        counts={counts}
+        footerStart={
+          <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar">
+            Collapse
+          </SidebarToggle>
+        }
+      />
     </Sidebar>
   );
 }

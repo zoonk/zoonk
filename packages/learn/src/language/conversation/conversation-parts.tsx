@@ -19,7 +19,7 @@ export function callTurnClass(hasTurn: boolean) {
   return cn(
     "ring-[3.5px] inset-ring-[1.5px] transition-shadow duration-150 ring-inset motion-reduce:transition-none",
     hasTurn
-      ? "inset-ring-foreground/40 ring-background"
+      ? "inset-ring-foreground/25 contrast-more:inset-ring-foreground ring-background"
       : "ring-transparent inset-ring-transparent",
   );
 }

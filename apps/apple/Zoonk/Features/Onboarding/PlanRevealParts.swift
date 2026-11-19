@@ -276,43 +276,51 @@ extension StudyBlock {
   }
 }
 
-/// The loaded week's shape, its headers' facts included, so nothing moves as it comes: Today's
-/// heading a row under the week's, on a day with lessons.
+/// The rest of the week's shape while the reveal's days load, so nothing under it moves as they come.
 struct RevealWeekPlaceholder: View {
-  let hasToday: Bool
-
   var body: some View {
     Section {
-      if hasToday {
-        SectionTitle(
-          Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
-        ) {
-          facts
-        }
-        .listRowSeparator(.hidden)
-      }
-
-      ForEach(0..<3, id: \.self) { _ in
-        Text(verbatim: "A lesson of the first day")
-          .typeStyle(.rowTitle)
-          .redacted(reason: .placeholder)
-      }
+      revealPlaceholderRows
     } header: {
       SectionTitle(
         Text(
           "Your first week", tableName: "Onboarding",
           comment: "Header over the plan's next seven days")
       ) {
-        facts
+        revealPlaceholderFacts
       }
     }
     .accessibilityHidden(true)
   }
+}
 
-  private var facts: some View {
-    FactSegments(["Mon, Nov 17", "30 min"])
+/// Today's lessons while the reveal's days load, holding their place.
+struct RevealTodayPlaceholder: View {
+  var body: some View {
+    Section {
+      revealPlaceholderRows
+    } header: {
+      SectionTitle(
+        Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
+      ) {
+        revealPlaceholderFacts
+      }
+    }
+    .accessibilityHidden(true)
+  }
+}
+
+@MainActor private var revealPlaceholderRows: some View {
+  ForEach(0..<3, id: \.self) { _ in
+    Text(verbatim: "A lesson of the first day")
+      .typeStyle(.rowTitle)
       .redacted(reason: .placeholder)
   }
+}
+
+@MainActor private var revealPlaceholderFacts: some View {
+  FactSegments(["Mon, Nov 17", "30 min"])
+    .redacted(reason: .placeholder)
 }
 
 /// Main's `RevealWeek`: the week the learner is in, Today first, then the six days after it, each

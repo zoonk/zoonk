@@ -53,7 +53,8 @@ function PracticeWordButton({
       className={cn(
         "focus-visible:ring-ring/50 me-1.5 inline-block rounded-md px-1 outline-none focus-visible:ring-[3px]",
         "bg-destructive/10 hover:bg-destructive/15",
-        isSelected && "ring-destructive/40 ring-2",
+        isSelected &&
+          "bg-destructive/20 hover:bg-destructive/20 contrast-more:ring-destructive contrast-more:ring-2",
         WORD_TONE[word.status],
       )}
       onClick={onSelect}

@@ -86,6 +86,7 @@ export function Steps({
   finalAction,
   finalOptions,
   finalSecondAction,
+  headerEnd,
   items,
 }: {
   aside?: TaskFrameAside | null;
@@ -94,6 +95,7 @@ export function Steps({
   finalOptions?: React.ReactNode;
   /** The bar's outlined second action on the last step (`BAR_SECOND_ACTION_CLASS`). */
   finalSecondAction?: React.ReactNode;
+  headerEnd?: React.ReactNode;
   items: StepsItem[];
 }) {
   const t = useExtracted();
@@ -191,6 +193,7 @@ export function Steps({
           </>
         ) : null
       }
+      headerEnd={headerEnd}
       headerTitle={
         phone.total > 1 ? (
           <>

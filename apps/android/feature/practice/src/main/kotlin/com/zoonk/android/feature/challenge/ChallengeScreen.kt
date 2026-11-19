@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -422,7 +423,7 @@ private fun topicsTitle(challenge: Challenge): String? =
 @Composable
 private fun Intro(challenge: Challenge) {
     val locale = currentLocale()
-    val prize = stringResource(R.string.challenge_prize, formatNumber(challenge.reward.brainPower.toDouble(), locale))
+    val prize = formatNumber(challenge.reward.brainPower.toDouble(), locale)
     val questions =
         challenge.questions
             ?.takeIf { it > 0 }
@@ -546,7 +547,7 @@ private fun IntroHeading(
     }
 }
 
-/** Its size in a line, with the prize in Brain Power's color. */
+/** Its size in a line, with the [prize] in Brain Power's color and its unit's short form, which TalkBack says in full. */
 @Composable
 private fun Facts(
     facts: List<String>,
@@ -554,14 +555,19 @@ private fun Facts(
 ) {
     if (facts.isEmpty() && prize == null) return
     val brain = MaterialTheme.zoonk.brainText
+    val amount = prize?.let { stringResource(R.string.missions_points, it) }
+    val unit = stringResource(R.string.missions_brain_power_short)
+    val spoken = (facts + listOfNotNull(prize?.let { stringResource(R.string.challenge_prize, it) })).factsLine()
     Text(
         buildAnnotatedString {
             append(facts.factsLine())
-            prize?.let {
+            amount?.let {
                 if (facts.isNotEmpty()) append(FACT_SEPARATOR)
                 withStyle(SpanStyle(color = brain)) { append(it) }
+                append(" $unit")
             }
         },
+        modifier = Modifier.semantics { contentDescription = spoken },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )

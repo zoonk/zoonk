@@ -141,14 +141,14 @@ const PHASE_MARK = {
   upcoming: "todo",
 } as const;
 
-function RoadmapRevealList() {
+function RoadmapRevealList({ className = "sm:hidden" }: { className?: string }) {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
   const { phases } = useRoadmapPhases();
 
   return (
-    <div className="flex flex-col gap-2 sm:hidden" data-slot="plan-roadmap">
+    <div className={cn("flex flex-col gap-2", className)} data-slot="plan-roadmap">
       {/* The list under it marks the learner's phase and dates each phase's end, so the meter has no line. */}
       <RoadmapCompact lined={false} onOpen={null} />
 
@@ -241,7 +241,8 @@ export function PlanRoadmap({
   onOpen = null,
 }: {
   className?: string;
-  density: "compact" | "full" | "reveal";
+  /** `revealList` is the reveal's list at every width, for a narrow column. */
+  density: "compact" | "full" | "reveal" | "revealList";
   links?: JourneyPathLinks | null;
   onOpen?: (() => void) | null;
 }) {
@@ -253,6 +254,10 @@ export function PlanRoadmap({
 
   if (density === "full" && links) {
     return <RoadmapFull className={className} links={links} />;
+  }
+
+  if (density === "revealList") {
+    return <RoadmapRevealList className="" />;
   }
 
   if (density === "reveal") {

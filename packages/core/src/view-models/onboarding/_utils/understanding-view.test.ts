@@ -62,7 +62,11 @@ describe(toUnderstandingView, () => {
 
     const cardFor = (examMonth: number) =>
       cardOf({
-        found: (lookup) => ({ lookup, searched: [], stored: { blueprintId, dates: [NOTICE_DAY] } }),
+        found: (lookup) => ({
+          lookup,
+          searched: [],
+          stored: { blueprintId, dates: [NOTICE_DAY], pastYear: false },
+        }),
         goal: {
           countryDependent: false,
           examMonth,
@@ -80,6 +84,28 @@ describe(toUnderstandingView, () => {
     expect(december?.examDates).toStrictEqual([NOTICE_DAY]);
     expect(december?.draft.details?.offeredNoticeDay).toBe("2099-11-08");
     expect(november?.draft.details?.offeredNoticeDay).toBeUndefined();
+  });
+
+  it("forgets a year whose exam is already over, so the next sitting is the exam's date everywhere", async () => {
+    const card = await cardOf({
+      found: (lookup) => ({
+        lookup,
+        searched: [],
+        stored: { blueprintId: randomUUID(), dates: [NOTICE_DAY], pastYear: true },
+      }),
+      goal: {
+        countryDependent: false,
+        examDay: "official",
+        examName: "Test Exam",
+        examYear: 2025,
+        kind: "exam",
+        subject: "Test Exam",
+        title: "Pass it",
+      },
+    });
+
+    expect(card?.examDates).toStrictEqual([NOTICE_DAY]);
+    expect(card?.draft.details).not.toHaveProperty("examYear");
   });
 
   it("keeps the position the reading recorded beside it, so an exam choice can tell it from a typed one", async () => {

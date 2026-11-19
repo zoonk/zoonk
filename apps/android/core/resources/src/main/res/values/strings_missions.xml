@@ -18,6 +18,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s of %2$s done</string>
     <string name="missions_brain_power">Brain Power</string>
+    <!-- Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives. -->
+    <string name="missions_brain_power_short">BP</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
 

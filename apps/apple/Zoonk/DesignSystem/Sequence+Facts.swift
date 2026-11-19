@@ -21,6 +21,10 @@ struct FactSegments: View {
     let text: String
     var compact: String?
     var color: Color?
+    /// Muted after the text, such as an amount's unit.
+    var unit: String?
+    /// What VoiceOver says instead of the text and its unit.
+    var spoken: String?
   }
 
   let facts: [Fact]
@@ -45,15 +49,17 @@ struct FactSegments: View {
             .accessibilityHidden(true)
         }
         ViewThatFits(in: .horizontal) {
-          text(fact.text, color: fact.color).fixedSize()
-          if let compact = fact.compact { text(compact, color: fact.color).fixedSize() }
-          text(fact.compact ?? fact.text, color: fact.color)
+          text(fact.text, color: fact.color, unit: fact.unit).fixedSize()
+          if let compact = fact.compact {
+            text(compact, color: fact.color, unit: fact.unit).fixedSize()
+          }
+          text(fact.compact ?? fact.text, color: fact.color, unit: fact.unit)
             .fixedSize(horizontal: false, vertical: true)
         }
       }
     }
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(Text(verbatim: facts.map(\.text).joinedFacts()))
+    .accessibilityLabel(Text(verbatim: facts.map { $0.spoken ?? $0.text }.joinedFacts()))
   }
 
   private var rowAlignment: HorizontalAlignment {
@@ -64,7 +70,18 @@ struct FactSegments: View {
     }
   }
 
-  @ViewBuilder private func text(_ words: String, color: Color?) -> some View {
-    if let color { Text(verbatim: words).foregroundStyle(color) } else { Text(verbatim: words) }
+  @ViewBuilder private func text(_ words: String, color: Color?, unit: String?) -> some View {
+    let lead = Group {
+      if let color { Text(verbatim: words).foregroundStyle(color) } else { Text(verbatim: words) }
+    }
+
+    if let unit {
+      HStack(alignment: .firstTextBaseline, spacing: 4) {
+        lead
+        Text(verbatim: unit).foregroundStyle(.mutedForeground)
+      }
+    } else {
+      lead
+    }
   }
 }
