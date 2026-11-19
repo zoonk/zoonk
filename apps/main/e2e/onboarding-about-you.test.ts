@@ -63,7 +63,7 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible();
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
   const [answers, facts] = await Promise.all([
     prisma.profileAnswer.findMany({ where: { userId: noProgressUser.id } }),

@@ -159,7 +159,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByLabel("Weekend time", { exact: true }).selectOption("60");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
     const saved = await prisma.goal.findUniqueOrThrow({
       include: { user: true },
@@ -312,7 +312,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   ).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
   await page.evaluate((text) => {
     const showsPrevious = () =>

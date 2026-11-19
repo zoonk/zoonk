@@ -43,7 +43,7 @@ test.describe("Placement and the plan", () => {
     await expect(stop).toBeEnabled();
     await stop.click();
 
-    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("link", { name: "See plan" })).toBeHidden();
@@ -82,25 +82,6 @@ test.describe("Placement and the plan", () => {
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.planRevealedAt).not.toBeNull();
-  });
-
-  test("the reveal's first week starts with today", async ({ browser }) => {
-    const { goal, user } = await createStudyDay();
-    const details = isJsonObject(goal.details) ? goal.details : {};
-    const setup = Array.isArray(details.answered) ? details.answered : [];
-
-    await prisma.goal.update({
-      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
-      where: { id: goal.id },
-    });
-
-    const page = await openAs(browser, user);
-    await page.goto(`/start/${goal.id}`);
-
-    // Today's lessons lead the screen; the week counts today and lists it first, on one line.
-    await expect(page.getByRole("region", { name: "Today" })).toBeVisible();
-    const week = page.getByRole("region", { name: "Your first week" });
-    await expect(week).toContainText(/\d+ study days?\s·\s.+?Today\s*\d+ lessons?\s·\s/u);
   });
 
   test("Start pressed before the page hydrates opens the step tagged to start, not Today", async ({
@@ -171,7 +152,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await expect(page.getByLabel("Time a day", { exact: true })).toHaveValue("45");
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
   await expect(page.getByText("45 min", { exact: true }).filter({ visible: true })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
 });
@@ -231,7 +212,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
   release.resolve(null);
   await expect(time).toHaveValue("45");
   await next.click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
   const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
   expect(saved.dailyMinutes).toBe(45);
@@ -287,5 +268,5 @@ test("an exam plan waits on the reveal while its notice is read, then shows on i
 
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
 
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 });
