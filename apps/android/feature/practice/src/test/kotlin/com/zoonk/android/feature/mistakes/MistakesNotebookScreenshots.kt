@@ -167,7 +167,7 @@ class MistakesNotebookScreenshots {
             }
         val store =
             MistakesNotebookStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { "UTC" }
-        rule.setContent { ZoonkTheme(darkTheme = dark) { Surface { Notebook(goalId, "ENEM 2026", store, rememberAppNavigator()) } } }
+        rule.setContent { ZoonkTheme(darkTheme = dark) { Surface { Notebook(goalId, store, rememberAppNavigator()) } } }
         if (fold) unfold()
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()

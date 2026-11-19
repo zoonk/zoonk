@@ -18,7 +18,7 @@ export type MindMapsPageChapter = Omit<GoalMindMapView, "image" | "outline"> & {
 export type MindMapsPage = Pick<
   GoalMindMapsView,
   "createOffer" | "firstTab" | "lessonGroups" | "saved"
-> & { chapters: MindMapsPageChapter[]; goal: Pick<GoalMindMapsView["goal"], "displayName" | "id"> };
+> & { chapters: MindMapsPageChapter[]; goal: Pick<GoalMindMapsView["goal"], "id"> };
 
 export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
   const { chapters, createOffer, firstTab, goal, lessonGroups, saved } = mindMaps;
@@ -30,7 +30,7 @@ export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
     })),
     createOffer,
     firstTab,
-    goal: { displayName: goal.displayName, id: goal.id },
+    goal: { id: goal.id },
     lessonGroups,
     saved,
   };

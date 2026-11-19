@@ -54,7 +54,7 @@ struct MindMapsScreen: View {
       ScrollViewReader { proxy in
         ZoonkList {
           Section {
-            PageHeader(title, supporting: Text(verbatim: goal.displayName))
+            PageHeader(title)
 
             Picker(selection: $tab) {
               ForEach(GoalMindMaps.Tab.allCases, id: \.self) { tab in

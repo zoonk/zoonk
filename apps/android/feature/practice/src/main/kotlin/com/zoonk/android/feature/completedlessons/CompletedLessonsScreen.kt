@@ -38,7 +38,6 @@ import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
-import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.SectionHeader
@@ -82,7 +81,7 @@ fun CompletedLessonsScreen(
                     // `finishedOn` is the goal's local day, and the summary is read again at its midnight.
                     val today = LocalDate.now(read.timeZone?.let(ZoneId::of) ?: ZoneId.systemDefault())
                     val goal = read.goals.firstOrNull { it.id == goalId }
-                    CompletedLessons(goalId, today, app.completedLessons, listState, goalName = goal?.displayName) {
+                    CompletedLessons(goalId, today, app.completedLessons, listState) {
                         navigator.open(AppRoute.Lesson(it.toString()))
                     }
                 }
@@ -110,7 +109,6 @@ internal fun CompletedLessons(
     today: LocalDate,
     store: CompletedLessonsStore,
     listState: LazyListState,
-    goalName: String? = null,
     onOpen: (UUID) -> Unit,
 ) {
     val resource = store.lessons[goalId]
@@ -152,7 +150,7 @@ internal fun CompletedLessons(
         LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
             item(key = "title", contentType = "title") {
                 val title = stringResource(R.string.navigation_completed_lessons)
-                if (goalName != null) PageHeader(title, supporting = goalName) else PageTitleRow(title)
+                PageTitleRow(title)
             }
 
             if (days.isEmpty()) {

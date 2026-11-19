@@ -89,7 +89,7 @@ class MistakesNotebookFailureTest {
         compose.setContent {
             ZoonkTheme {
                 PageScaffold(onBack = {}, title = { Text("Mistakes") }) { padding ->
-                    Box(Modifier.fillMaxSize().padding(padding)) { Notebook(goalId, "Math", store, rememberAppNavigator()) }
+                    Box(Modifier.fillMaxSize().padding(padding)) { Notebook(goalId, store, rememberAppNavigator()) }
                 }
             }
         }

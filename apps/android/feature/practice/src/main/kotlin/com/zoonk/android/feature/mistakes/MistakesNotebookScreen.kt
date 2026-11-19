@@ -83,11 +83,11 @@ import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.BottomBar
@@ -125,7 +125,7 @@ fun MistakesNotebookScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goal != null -> {
-                    Notebook(goal.id, goal.displayName, app.mistakesNotebook, navigator, read.nextChangeAt)
+                    Notebook(goal.id, app.mistakesNotebook, navigator, read.nextChangeAt)
                 }
 
                 summary is LoadState.Failed -> {
@@ -154,7 +154,6 @@ fun MistakesNotebookScreen(
 @Composable
 internal fun Notebook(
     goalId: UUID,
-    goalTitle: String,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
     nextChangeAt: Long? = null,
@@ -182,7 +181,6 @@ internal fun Notebook(
             Row(Modifier.fillMaxSize()) {
                 NotebookList(
                     goalId = goalId,
-                    goalTitle = goalTitle,
                     fixed = fixed && fold == null,
                     store = store,
                     navigator = navigator,
@@ -197,7 +195,6 @@ internal fun Notebook(
                 if (fold != null) {
                     NotebookList(
                         goalId = goalId,
-                        goalTitle = goalTitle,
                         fixed = true,
                         store = store,
                         navigator = navigator,
@@ -228,7 +225,6 @@ internal fun Notebook(
 @Composable
 private fun NotebookList(
     goalId: UUID,
-    goalTitle: String,
     fixed: Boolean,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
@@ -271,7 +267,6 @@ private fun NotebookList(
 
     val page =
         NotebookPage(
-            goalTitle = goalTitle,
             head = head,
             list = list,
             failed = loaded is LoadState.Failed,
@@ -331,7 +326,6 @@ private fun rememberListMemory(): ListMemory {
 }
 
 private class NotebookPage(
-    val goalTitle: String,
     /** The counts and availability: the same on both tabs, so a tab that's loading keeps showing them. */
     val head: MistakeList,
     val list: MistakeList?,
@@ -516,10 +510,9 @@ private fun NotebookHero(page: NotebookPage) {
     val availability = page.head.availability
     val opensTomorrow = availability.ready == 0L && availability.tomorrow > 0
 
-    PageHeader(
-        stringResource(R.string.mistakes_notebook_title),
-        supporting = factsLine(page.goalTitle, stringResource(R.string.mistakes_opens_tomorrow).takeIf { opensTomorrow }),
-    )
+    val title = stringResource(R.string.mistakes_notebook_title)
+
+    if (opensTomorrow) PageHeader(title, supporting = stringResource(R.string.mistakes_opens_tomorrow)) else PageTitleRow(title)
 }
 
 /** Main's "To fix / Fixed" toggle, as the app's tabs. */

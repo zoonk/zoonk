@@ -13,12 +13,7 @@ import {
 } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionHeader,
-  PageSectionTitle,
-  PageSubtitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
@@ -298,7 +293,6 @@ export function MindMapsScreen({
         <DetailHero>
           <DetailHeroText>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
-            <PageSubtitle>{page.goal.displayName}</PageSubtitle>
           </DetailHeroText>
         </DetailHero>
       </DetailAside>
