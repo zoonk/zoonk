@@ -29,7 +29,7 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
     <DrawerHeader closeLabel={t("Close")}>
       <DrawerTitle>{t("Send feedback")}</DrawerTitle>
       <DrawerDescription>
-        {t("Found a problem or have an idea? Tell us below or email hello@zoonk.com.")}
+        {t("Ask a question, report a problem or share an idea. We answer by email.")}
       </DrawerDescription>
     </DrawerHeader>
   );

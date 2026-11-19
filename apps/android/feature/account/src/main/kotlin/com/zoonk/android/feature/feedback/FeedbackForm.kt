@@ -243,7 +243,7 @@ private fun rememberFeedbackSheet(
                         )
                         if (!isReport) {
                             Text(
-                                text = stringResource(R.string.feedback_send_feedback_description),
+                                text = stringResource(R.string.feedback_help_description),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium,
                             )

@@ -1,6 +1,64 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Ask a question, report a problem or share an idea. We answer by email." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell eine Frage, melde ein Problem oder teile eine Idee. Wir antworten per E-Mail."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz una pregunta, reporta un problema o comparte una idea. Respondemos por correo electrónico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question, signale un problème ou partage une idée. Nous te répondons par e-mail."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai una domanda, segnala un problema o condividi un’idea. Ti rispondiamo via email."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問や問題の報告、アイデアをお寄せください。メールでお返事します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "궁금한 점이나 문제, 아이디어를 알려 주세요. 이메일로 답변해 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadaj pytanie, zgłoś problem lub podziel się pomysłem. Odpowiadamy e-mailem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por e-mail."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir soru sor, sorun bildir veya fikrini paylaş. E-postayla cevap veriyoruz."
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Dismisses the feedback form without sending it.",
       "localizations" : {
@@ -233,65 +291,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-posta adresi"
-          }
-        }
-      }
-    },
-    "Found a problem or have an idea? Tell us below or email hello@zoonk.com." : {
-      "comment" : "Introduction shown above the feedback fields.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hast du ein Problem entdeckt oder eine Idee? Schreib uns hier oder per E-Mail an hello@zoonk.com."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Encontraste un problema o tienes una idea? Cuéntanos abajo o escríbenos a contacto@zoonk.com."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as rencontré un problème ou tu as une idée ? Dis-le-nous ci-dessous ou écris-nous à hello@zoonk.com."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai trovato un problema o hai un’idea? Scrivici qui sotto o via email a hello@zoonk.com."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "気になる点やアイデアはありますか？下のフォームか、hello@zoonk.comへのメールでお知らせください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제를 발견했거나 아이디어가 떠올랐나요? 아래에 적어 주시거나 hello@zoonk.com으로 이메일을 보내 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coś nie działa lub masz pomysł? Napisz nam poniżej lub na adres hello@zoonk.com."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrou um problema ou tem uma ideia? Conte pra gente abaixo ou envie um e-mail para contato@zoonk.com."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder."
           }
         }
       }

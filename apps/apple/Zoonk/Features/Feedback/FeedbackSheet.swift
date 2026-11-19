@@ -149,9 +149,8 @@ private struct FeedbackForm: View {
       if !isReport {
         Section {
           Text(
-            "Found a problem or have an idea? Tell us below or email hello@zoonk.com.",
-            tableName: "Feedback",
-            comment: "Introduction shown above the feedback fields."
+            "Ask a question, report a problem or share an idea. We answer by email.",
+            tableName: "Feedback"
           )
           .foregroundStyle(.mutedForeground)
           .listRowBackground(Color.clear)

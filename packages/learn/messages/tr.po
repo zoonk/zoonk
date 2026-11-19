@@ -3825,9 +3825,9 @@ msgid "Send feedback"
 msgstr "Geri bildirim gönder"
 
 #: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.Kz11c4"
-msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
-msgstr "Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder."
+msgctxt "feedback.e60J1V"
+msgid "Ask a question, report a problem or share an idea. We answer by email."
+msgstr "Bir soru sor, sorun bildir veya fikrini paylaş. E-postayla cevap veriyoruz."
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"
