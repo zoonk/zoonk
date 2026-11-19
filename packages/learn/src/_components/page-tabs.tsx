@@ -3,6 +3,7 @@
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LearnLink } from "../learn-link";
+import { TAB_ROW_GAP_CLASS } from "./page";
 
 /** A page's views as links, each with how many things it lists. */
 export function PageTabs({
@@ -19,9 +20,12 @@ export function PageTabs({
   );
 }
 
-/** The tabs and the views they switch, nearer each other than to the page's header. */
+/**
+ * The tabs and the views they switch. Under a detail page's header it gives back 8px of the layout's
+ * 32px, so its tabs sit on the title's next row, as a section's do (`TAB_ROW_GAP_CLASS`).
+ */
 export function PageTabsGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex min-w-0 flex-col gap-6", className)} {...props} />;
+  return <div className={cn(TAB_ROW_GAP_CLASS, "-mt-2", className)} {...props} />;
 }
 
 export function PageTab({

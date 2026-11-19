@@ -5,6 +5,7 @@ import {
   type PageMeasure,
   PageSubtitle,
   PageTitle,
+  TAB_ROW_GAP_CLASS,
   pageMeasureClass,
 } from "@zoonk/learn/page";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
@@ -26,7 +27,7 @@ export function SectionPage({
   /** The section's one column: its bar's actions, title, tabs and pages all end on its edge. */
   measure?: PageMeasure;
   nav: React.ReactNode;
-  /** One line under the section's name, from a tablet up. */
+  /** A detail at the end of the section's name's row, from a tablet up, such as the account's email. */
   note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
@@ -51,12 +52,12 @@ export function SectionPage({
           measure && "[&>*:not([data-slot=page],.contents)]:max-w-(--page-measure)",
         )}
       >
-        <div className="hidden flex-col gap-3 border-b pb-3 md:flex">
-          <div className={PAGE_HEADER_CLASS}>
+        <div className={cn(TAB_ROW_GAP_CLASS, "hidden md:flex")}>
+          <div className={cn(PAGE_HEADER_CLASS, "flex-row items-center justify-between gap-4")}>
             <p className="text-title" data-slot="section-title">
               {hub.title}
             </p>
-            {note && <PageSubtitle className="min-h-5">{note}</PageSubtitle>}
+            {note && <PageSubtitle className="block min-w-0 truncate pt-0">{note}</PageSubtitle>}
           </div>
           {nav}
         </div>
