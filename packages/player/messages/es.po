@@ -2986,8 +2986,9 @@ msgctxt "q5JxBr"
 msgid "You can still review and practice your mistakes."
 msgstr "Aún puedes repasar y practicar con tus errores."
 
+#. Opens practice on the mistakes that are ready to fix.
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "HGnX5e"
+msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "Practicar errores"
 
@@ -3000,7 +3001,7 @@ msgstr "Empezar"
 #: src/questions/lesson-question-errors.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
-msgstr "Suscribirse"
+msgstr "Suscribirte"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx

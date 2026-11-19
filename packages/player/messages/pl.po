@@ -2986,10 +2986,11 @@ msgctxt "q5JxBr"
 msgid "You can still review and practice your mistakes."
 msgstr "Nadal możesz robić powtórki i pracować nad błędami."
 
+#. Opens practice on the mistakes that are ready to fix.
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "HGnX5e"
+msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Praca nad błędami"
+msgstr "Ćwicz błędy"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "mOFG3K"

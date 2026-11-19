@@ -5763,9 +5763,9 @@ msgctxt "ZXosfu"
 msgid "This call has ended"
 msgstr "This call has ended"
 
+#. Starts this call on this device and ends it in the other tab or device.
 #: src/language/conversation/call-refusal-copy.ts
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "xmtnm9"
+msgctxt "callTakeover"
 msgid "Start here"
 msgstr "Start here"
 
@@ -7627,7 +7627,6 @@ msgid "Leave. What you answered counts."
 msgstr "Leave. What you answered counts."
 
 #: src/mistakes/mistake-practice-run.tsx
-#: src/mistakes/mistakes-notebook.tsx
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
@@ -7637,6 +7636,12 @@ msgstr "Practice mistakes"
 msgctxt "SMv32M"
 msgid "Help with this question"
 msgstr "Help with this question"
+
+#. Opens practice on the mistakes that are ready to fix.
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "practiceMistakesAction"
+msgid "Practice mistakes"
+msgstr "Practice mistakes"
 
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "GvnPe5"
@@ -9826,6 +9831,11 @@ msgstr "Choices"
 msgctxt "sS7-IQ"
 msgid "Add time"
 msgstr "Add time"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "Start here"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx

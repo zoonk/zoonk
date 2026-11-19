@@ -101,7 +101,11 @@ function PracticeBar({ hrefs, notebook }: { hrefs: MistakesHrefs; notebook: Note
           prefetch={false}
           size="lg"
         >
-          {t("Practice mistakes")}
+          {t({
+            description: "Opens practice on the mistakes that are ready to fix.",
+            id: "practiceMistakesAction",
+            message: "Practice mistakes",
+          })}
         </EnterLink>
       </BottomBarActions>
     </BottomBar>

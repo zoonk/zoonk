@@ -37,7 +37,11 @@ function FreeLessonActions({ children }: { children: React.ReactNode }) {
     <div className="flex w-full flex-col items-center gap-2 *:first:w-full lg:w-auto">
       {children}
       <LinkComponent className={buttonVariants({ variant: "ghost" })} href={routes.mistakes}>
-        {t("Practice mistakes")}
+        {t({
+          description: "Opens practice on the mistakes that are ready to fix.",
+          id: "practiceMistakesAction",
+          message: "Practice mistakes",
+        })}
       </LinkComponent>
     </div>
   );

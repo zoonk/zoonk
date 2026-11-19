@@ -475,8 +475,9 @@ private struct LessonUnavailableBody: View {
               router.open(.mistakes)
             } label: {
               Text(
-                "Practice mistakes", tableName: "Practice",
-                comment: "Starts practicing the notebook's ready mistakes.")
+              LocalizedStringResource(
+                "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
+                comment: "Opens practice on the mistakes that are ready to fix."))
             }
             .buttonStyle(.ghost)
           }

@@ -2986,8 +2986,9 @@ msgctxt "q5JxBr"
 msgid "You can still review and practice your mistakes."
 msgstr "복습과 틀린 문제 연습은 계속할 수 있어요."
 
+#. Opens practice on the mistakes that are ready to fix.
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "HGnX5e"
+msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
 msgstr "틀린 문제 연습"
 
