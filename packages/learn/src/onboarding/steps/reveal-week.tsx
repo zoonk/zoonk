@@ -5,7 +5,7 @@ import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { ListGroup, ListRow, ListRowContent, ListRowLeading } from "../../_components/list-group";
 import {
   PageSection,
@@ -91,15 +91,16 @@ function WeekDayRow({
   );
 }
 
-/** The week the learner is in: Today (`children`), then the six days after it. */
+/** The week the learner is in: Today (`children`, when it shows here), then the six days after it. */
 export function RevealWeek({
-  children,
+  children = null,
   reveal,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   reveal: PlanRevealDays | null;
 }) {
   const t = useExtracted();
+  const titleId = useId();
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
   const ahead = reveal?.nextDays ?? [];
@@ -111,9 +112,9 @@ export function RevealWeek({
   }
 
   return (
-    <PageSection aria-labelledby="reveal-week">
+    <PageSection aria-labelledby={titleId}>
       <PageSectionHeader>
-        <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
           {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>

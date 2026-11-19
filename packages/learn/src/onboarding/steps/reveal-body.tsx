@@ -112,6 +112,53 @@ function RevealActions({
 
 type StartFailure = "open" | "save";
 
+/**
+ * The plan at a glance, beside today's lessons from 72rem and under them below it: the figures,
+ * what the time covers, the rest of the week, the phases and the choices.
+ */
+function RevealGlance({
+  className,
+  onAdjust,
+  reveal,
+  side,
+}: {
+  className?: string;
+  onAdjust: (section: PlanEditorSection) => void;
+  reveal: PlanRevealDays | null;
+  /** In the side column, the phases list one per row and the choices take a title. */
+  side: boolean;
+}) {
+  const t = useExtracted();
+  const { plan } = usePlanScreen();
+  const hasChoices = usePlanBases() !== null;
+
+  return (
+    <div className={cn("flex min-w-0 flex-col gap-8", className)}>
+      <div className="flex flex-col gap-5">
+        <RevealReadouts flush={side} />
+        <RevealCoverage onAddTime={() => onAdjust("time")} />
+        <PlanChoiceLines choices={plan.examChoices} onChange={() => onAdjust("choices")} />
+        <RevealNoticeDay />
+      </div>
+
+      <RevealWeek reveal={reveal} />
+
+      <div className="flex flex-col gap-2">
+        <PlanPhasesBar stacked={side} />
+        <PlanChapterList />
+        {plan.notice === "usual" && <UsualStructureNote />}
+      </div>
+
+      {hasChoices && (
+        <div className="flex flex-col gap-2">
+          {side && <PageSectionTitle>{t("Choices")}</PageSectionTitle>}
+          <PlanChoices />
+        </div>
+      )}
+    </div>
+  );
+}
+
 type RevealBodyProps = {
   buddy: LearnBuddy | null;
   isGuest: boolean;
@@ -132,9 +179,7 @@ function RevealColumn({
   markRevealed: () => Promise<boolean>;
   openStep: ((step: DayStep) => Promise<boolean>) | null;
 }) {
-  const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
-  const hasChoices = usePlanBases() !== null;
+  const { goal } = usePlanScreen();
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
   const startStep = findRevealStart(reveal);
 
@@ -186,49 +231,29 @@ function RevealColumn({
       }
       className="gap-8"
       rail={
-        hasChoices ? (
-          <div className="flex flex-col gap-2">
-            <PageSectionTitle>{t("Choices")}</PageSectionTitle>
-            <PlanChoices />
-          </div>
-        ) : null
+        <RevealGlance
+          onAdjust={(section) => setEditor({ open: true, section })}
+          reveal={reveal}
+          side
+        />
       }
     >
-      <header className="flex min-w-0 flex-col gap-5 pt-2">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex min-w-0 flex-col gap-1">
-            <PlanCreated />
-            <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
-          </div>
-          <RevealBuddy buddy={buddy} />
+      <header className="flex items-start justify-between gap-4 pt-2">
+        <div className="flex min-w-0 flex-col gap-1">
+          <PlanCreated />
+          <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
         </div>
-
-        <RevealReadouts />
-        <RevealCoverage onAddTime={() => setEditor({ open: true, section: "time" })} />
-
-        <PlanChoiceLines
-          choices={plan.examChoices}
-          onChange={() => setEditor({ open: true, section: "choices" })}
-        />
-        <RevealNoticeDay />
+        <RevealBuddy buddy={buddy} />
       </header>
 
-      <RevealWeek reveal={reveal}>
-        <RevealToday locked={starting} open={openStep} reveal={reveal} />
-      </RevealWeek>
+      <RevealToday locked={starting} open={openStep} reveal={reveal} />
 
-      <div className="flex flex-col gap-2">
-        <PlanPhasesBar />
-        <PlanChapterList />
-        {plan.notice === "usual" && <UsualStructureNote />}
-      </div>
-
-      {/* Without room for the rail, its one choice ends the column. */}
-      {hasChoices && (
-        <div className="min-[72rem]:hidden">
-          <PlanChoices />
-        </div>
-      )}
+      <RevealGlance
+        className="min-[72rem]:hidden"
+        onAdjust={(section) => setEditor({ open: true, section })}
+        reveal={reveal}
+        side={false}
+      />
 
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}
