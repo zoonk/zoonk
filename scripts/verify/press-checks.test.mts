@@ -293,6 +293,15 @@ describe("the page around a press, and undoing it", () => {
   });
 });
 
+describe("an undo after a press that already failed", () => {
+  it("reports the press once, not again as an undo that left it behind", () => {
+    const row = change('button "Combine changes"', at(640), at(285), { isTarget: true });
+    const found = pressFindings(press("fold", { moved: [row], undone: [row] }));
+
+    assert.deepEqual(checks(found), ["fail Press: the control moved"]);
+  });
+});
+
 describe("a press that takes its own control away", () => {
   it("doesn't judge the undo of a menu item that closed its menu", () => {
     const item = press("overlay", {

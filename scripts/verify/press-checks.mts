@@ -235,8 +235,10 @@ export function pressFindings(press: Press): Finding[] {
   }
 
   // A press that took its own control away (a menu item closing its menu) can't be put back by
-  // pressing it again, so only what stayed is judged.
-  const left = undone && press.pressed.target !== null ? restoreMoves(undone) : [];
+  // pressing it again, and a press that already failed leaves its fault behind (an accordion that
+  // closed another section), so only an undo after a clean press is judged.
+  const clean = !findings.some((finding) => finding.level === "fail");
+  const left = undone && clean && press.pressed.target !== null ? restoreMoves(undone) : [];
 
   if (left.length > 0) {
     findings.push({
