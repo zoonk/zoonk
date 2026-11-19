@@ -13,7 +13,6 @@ import { type ReactNode, useEffect, useRef, useState, useTransition } from "reac
 import { ChangeSaveError } from "../_components/save-error";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePoll } from "../_utils/use-poll";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import {
@@ -59,27 +58,12 @@ function DayTooShortWords({ goals, minutes }: DayTooShort) {
   );
 }
 
-/** The page read the buddy before the buddy step, so a pick on these steps takes its place. */
-function useShownBuddy(buddy: LearnBuddy | null) {
-  const [picked, setPicked] = useState<Pick<LearnBuddy, "kind" | "name"> | null>(null);
-
-  return {
-    buddy: picked ? { ...resolveLearnBuddy(buddy), ...picked } : buddy,
-    remember: (input: OnboardingAnswerInput) => {
-      if (input.question === "buddy" && input.buddy) {
-        setPicked({ kind: input.buddy.kind, name: input.buddy.name ?? null });
-      }
-    },
-  };
-}
-
 function StepSaveError({ dayTooShort }: Pick<Failed, "dayTooShort">) {
   return <ChangeSaveError>{dayTooShort && <DayTooShortWords {...dayTooShort} />}</ChangeSaveError>;
 }
 
 type StepsFlowProps = {
   actions: OnboardingActions;
-  buddy: LearnBuddy | null;
   generation?: GenerationRun | null;
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
@@ -164,7 +148,6 @@ function StepsFlowFrame({
 
 export function StepsFlow({
   actions,
-  buddy,
   generation = null,
   initialPlan,
   isGuest,
@@ -176,7 +159,6 @@ export function StepsFlow({
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState<Failed | null>(null);
   const [scheduleDraft, setScheduleDraft] = useState<ScheduleDraft | null>(null);
-  const shownBuddy = useShownBuddy(buddy);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -231,8 +213,6 @@ export function StepsFlow({
           resolve(false);
           return;
         }
-
-        shownBuddy.remember(input);
 
         // "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal's page.
         if (outcome.onboarding.goal.id !== state.view.goal.id) {
@@ -313,7 +293,6 @@ export function StepsFlow({
         >
           <OnboardingStepScreen
             actions={actions}
-            buddy={shownBuddy.buddy}
             isGuest={isGuest}
             onAnswer={answer}
             onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}

@@ -1,8 +1,6 @@
 "use client";
 
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
-import { useCelebration } from "@zoonk/ui/hooks/celebration";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
@@ -25,7 +23,6 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { StepOpenFailed } from "../../_components/step-open-failed";
-import { toIsoDay, useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { BlockMark } from "../../session/block-mark";
 import { DayStepOpener } from "../../session/day-step-opener";
@@ -37,18 +34,12 @@ import { useStepLabel } from "../../today/use-row-label";
 
 const REVEAL_TODAY_LIST_ID = "reveal-today-list";
 
-/** Lands on the moment's third beat, after the check and the lesson count. */
 function NextTag({ children }: { children: string }) {
-  const celebrate = useCelebration();
-
   return (
-    <span
-      className={cn("inline-block", celebrate && "animate-settle")}
-      style={celebrate ? { animationDelay: `${2 * BEAT_MS}ms` } : undefined}
-    >
+    <>
       <span className="text-success-text font-medium">{children}</span>
       {" ·\u00A0"}
-    </span>
+    </>
   );
 }
 
@@ -179,7 +170,6 @@ export function RevealToday({
 }) {
   const t = useExtracted();
   const session = reveal?.today;
-  const formatDate = useFormatIsoDate();
   const formatDuration = useFormatDuration();
   const label = useStepLabel();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -202,9 +192,7 @@ export function RevealToday({
     <PageSection aria-labelledby="reveal-today">
       <PageSectionHeader>
         <PageSectionTitle id="reveal-today">{t("Today")}</PageSectionTitle>
-        <PageSectionDetail>
-          {`${formatDate(toIsoDay(session.localDate), "row", { weekday: true })} · ${formatDuration(reveal.minutes)}`}
-        </PageSectionDetail>
+        <PageSectionDetail>{formatDuration(reveal.minutes)}</PageSectionDetail>
       </PageSectionHeader>
 
       <form className="contents">
