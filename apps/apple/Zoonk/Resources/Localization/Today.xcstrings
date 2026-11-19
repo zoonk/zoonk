@@ -8221,65 +8221,6 @@
         }
       }
     },
-    "Points for what you learn. They raise your belt and grow your buddy." : {
-      "comment" : "What Brain Power is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punkte für das, was du lernst. Damit erreichst du höhere Gürtel und dein Kumpel wächst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puntos por lo que aprendes. Con ellos subes de cinturón y tu compañero crece."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Des points pour ce que tu apprends. Ils te font passer à la ceinture supérieure et font grandir ton compagnon."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punti per quello che impari. Ti fanno avanzare di cintura e fanno crescere il tuo compagno."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学ぶともらえるポイントです。帯のランクが上がり、相棒が成長します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "배우면서 얻는 포인트예요. 포인트가 쌓이면 띠 등급이 올라가고 짝꿍이 자라요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punkty za to, czego się uczysz. Dzięki nim zdobywasz kolejne pasy, a twój kumpel rośnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontos pelo que você aprende. Com eles, você sobe de faixa e seu parceiro cresce."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öğrendikçe kazandığın puanlar. Üst kuşağa geçmeni ve ders arkadaşının büyümesini sağlar."
-          }
-        }
-      }
-    },
     "Practice" : {
       "comment" : "Mission: practice",
       "localizations" : {

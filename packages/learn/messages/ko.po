@@ -593,11 +593,6 @@ msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {맞힌 문제는 <number>#</number>개예요 (전체 {answered}개)} other {문제 <number>#</number>개를 맞혔어요 (전체 {answered}개)}}"
 
-#: src/_components/moment-readouts.tsx
-msgctxt "cYiR5r"
-msgid "Points for what you learn."
-msgstr "배운 만큼 쌓이는 포인트예요."
-
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
 msgid "Your buddy and all your certificates use this name."

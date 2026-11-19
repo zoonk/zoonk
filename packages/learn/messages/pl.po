@@ -593,11 +593,6 @@ msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {<number>#</number> z {answered} odpowiedzi było poprawnych} one {<number>#</number> poprawna odpowiedź z {answered}} few {<number>#</number> poprawne odpowiedzi z {answered}} many {<number>#</number> poprawnych odpowiedzi z {answered}} other {<number>#</number> poprawnej odpowiedzi z {answered}}}"
 
-#: src/_components/moment-readouts.tsx
-msgctxt "cYiR5r"
-msgid "Points for what you learn."
-msgstr "Punkty za to, czego się uczysz."
-
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
 msgid "Your buddy and all your certificates use this name."
