@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import sharp from "sharp";
 import { describe, it } from "vitest";
-import { type CaptureItem, type Read } from "./media.mts";
+import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
 import { tileBoxes, writeReadingSheet } from "./tiles.mts";
 
 const PIXELS = 1_150_000;
@@ -71,20 +71,27 @@ function item(name: string, side: CaptureItem["side"]): CaptureItem {
 }
 
 /** A capture root with a before and an after of `today`, and an after of a new screen. */
-async function capturedRoot({ after = [item("today", "after"), item("goal", "after")] } = {}) {
+async function capturedRoot({
+  after = [item("today", "after"), item("goal", "after")],
+  before = [item("today", "before")] as ManifestItem[],
+} = {}) {
   const root = mkdtempSync(join(tmpdir(), "pr-media-sheet-"));
 
   const png = await sharp({ create: { background: "#fff", channels: 4, height: 40, width: 40 } })
     .png()
     .toBuffer();
 
-  const sides = { after, before: [item("today", "before")] };
+  const sides = { after, before };
 
   for (const [side, items] of Object.entries(sides)) {
     mkdirSync(join(root, side));
     writeFileSync(join(root, side, "capture.json"), JSON.stringify(items));
 
-    for (const file of items.flatMap((one) => [one.file, one.retakes?.file ?? []]).flat()) {
+    const files = items.flatMap((one) =>
+      "retakes" in one ? [one.file, one.retakes?.file ?? []] : [one.file],
+    );
+
+    for (const file of files.flat()) {
       mkdirSync(join(root, side, dirname(file)), { recursive: true });
       writeFileSync(join(root, side, file), png);
     }
@@ -151,5 +158,23 @@ describe("the reader's sheet", () => {
 
     assert.ok(sheet.includes("## 1. after/today.png"));
     assert.ok(!sheet.includes("## Check the fixes"));
+  });
+
+  it("offers a registered before picture to match an after, and calls none new while one is left", async () => {
+    const registered: ManifestItem = {
+      file: "old-today.png",
+      kind: "shot",
+      platform: "web",
+      sha256: "old",
+      side: "before",
+      source: "main at its last release",
+    };
+
+    const root = await capturedRoot({ after: [item("today", "after")], before: [registered] });
+    const { path } = await writeReadingSheet({ root, sheet: join(root, "read") });
+    const sheet = await readFile(path, "utf8");
+
+    assert.ok(!sheet.includes("no before, so everything on it is this change's"));
+    assert.ok(sheet.includes("[before/old-today.png](../before/old-today.png)"));
   });
 });
