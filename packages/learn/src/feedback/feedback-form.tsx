@@ -252,15 +252,17 @@ export function FeedbackForm({
   );
 }
 
-export function FeedbackFormSkeleton({ children }: { children?: React.ReactNode }) {
+/**
+ * Only the message's field and Send. A guest's form is taller by its email field, so what a page
+ * shows under the form waits for the form.
+ */
+export function FeedbackFormSkeleton() {
   return (
     <>
       <div className="flex w-full flex-col gap-2">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-32 w-full rounded-xl" />
       </div>
-
-      {children}
 
       <BottomBar>
         <BottomBarActions>
