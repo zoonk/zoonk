@@ -385,15 +385,18 @@ describe(listPlanOutlineNeeds, () => {
     expect(soon).toStrictEqual([course.id]);
   });
 
-  it("leaves a long stand-in to its window on a rest day", async () => {
-    const { goal } = await longStandInFixture({ weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] });
+  it("outlines a long stand-in starting after a rest day ahead, without today waiting for it", async () => {
+    const { goal, onIt } = await longStandInFixture({ weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] });
 
     const [needs, soon] = await Promise.all([
       listPlanOutlineNeeds({ days: 14, goalId: goal.id }),
       listSoonStandInCourseIds({ days: 0, goalId: goal.id }),
     ]);
 
-    expect(needs).toStrictEqual([]);
+    expect(needs.flatMap((need) => need.bands.flatMap((band) => band.skills))).toStrictEqual([
+      expect.objectContaining({ id: onIt.id }),
+    ]);
+
     expect(soon).toStrictEqual([]);
   });
 
